@@ -26,43 +26,43 @@ import d1_common.checksum
 import d1_common.types.exceptions
 
 
-def validate_sysmeta_against_uploaded(request, sysmeta):
+def validate_sysmeta_against_uploaded(request, sysmeta_pyxb):
   if not 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
-    _validate_sysmeta_filesize(request, sysmeta)
-    _validate_sysmeta_checksum(request, sysmeta)
+    _validate_sysmeta_filesize(request, sysmeta_pyxb)
+    _validate_sysmeta_checksum(request, sysmeta_pyxb)
 
 
-def _validate_sysmeta_filesize(request, sysmeta):
-  if sysmeta.size != request.FILES['object'].size:
+def _validate_sysmeta_filesize(request, sysmeta_pyxb):
+  if sysmeta_pyxb.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'Object size in System Metadata does not match that of the '
-      u'uploaded object. sysmeta={} bytes, uploaded={} bytes'
-        .format(sysmeta.size, request.FILES['object'].size)
+      u'uploaded object. sysmeta_pyxb={} bytes, uploaded={} bytes'
+        .format(sysmeta_pyxb.size, request.FILES['object'].size)
     )
 
 
-def _validate_sysmeta_checksum(request, sysmeta):
-  h = _get_checksum_calculator(sysmeta)
+def _validate_sysmeta_checksum(request, sysmeta_pyxb):
+  h = _get_checksum_calculator(sysmeta_pyxb)
   c = _calculate_object_checksum(request, h)
-  if sysmeta.checksum.value().lower() != c.lower():
+  if sysmeta_pyxb.checksum.value().lower() != c.lower():
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       u'Checksum in System Metadata does not match that of the uploaded object. '
-      u'sysmeta="{}", uploaded="{}"'
-        .format(sysmeta.checksum.value().lower(), c.lower())
+      u'sysmeta_pyxb="{}", uploaded="{}"'
+        .format(sysmeta_pyxb.checksum.value().lower(), c.lower())
     )
 
 
-def _get_checksum_calculator(sysmeta):
+def _get_checksum_calculator(sysmeta_pyxb):
   try:
     return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
-      sysmeta.checksum.algorithm
+      sysmeta_pyxb.checksum.algorithm
     )
   except LookupError:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       u'Checksum algorithm is unsupported. algorithm="{}"'
-        .format(sysmeta.checksum.algorithm)
+        .format(sysmeta_pyxb.checksum.algorithm)
     )
 
 

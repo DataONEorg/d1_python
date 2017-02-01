@@ -80,34 +80,34 @@ def get_total_size_of_queued_replicas():
     ) ['size__sum'] or 0
 
 
-def add_to_replication_queue(source_node_urn, sysmeta):
+def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
   """Add a replication request issued by a CN to a queue that is processed
   asynchronously.
 
   Preconditions:
-  - sysmeta.identifier is verified not to exist. E.g., with
+  - sysmeta_pyxb.identifier is verified not to exist. E.g., with
   view_asserts.is_unused(pid).
 
   Postconditions:
   - The database is set up to track a new replica, with initial status,
   "queued".
-  - The PID provided in the sysmeta is reserved for the replica.
+  - The PID provided in the sysmeta_pyxb is reserved for the replica.
   """
   replica_info_model = app.models.replica_info(
     status_str='queued',
     source_node_urn=source_node_urn,
   )
   local_replica_model = app.models.local_replica(
-    pid=sysmeta.identifier.value(),
+    pid=sysmeta_pyxb.identifier.value(),
     replica_info_model=replica_info_model,
   )
   app.models.replication_queue(
     local_replica_model=local_replica_model,
-    size=sysmeta.size,
+    size=sysmeta_pyxb.size,
   )
 
 
-def assert_request_complies_with_replication_policy(sysmeta):
+def assert_request_complies_with_replication_policy(sysmeta_pyxb):
   if not settings.NODE_REPLICATE:
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'This node does not currently accept replicas. The replicate '
@@ -117,35 +117,35 @@ def assert_request_complies_with_replication_policy(sysmeta):
     )
 
   if settings.REPLICATION_MAXOBJECTSIZE != -1:
-    if sysmeta.size > settings.REPLICATION_MAXOBJECTSIZE:
+    if sysmeta_pyxb.size > settings.REPLICATION_MAXOBJECTSIZE:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'The object is over the size limit accepted by this node. '
         u'object_size={}, max_size={}'
-        .format(settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size)
+        .format(settings.REPLICATION_MAXOBJECTSIZE, sysmeta_pyxb.size)
       )
 
   if settings.REPLICATION_SPACEALLOCATED != -1:
     total = get_total_size_of_replicas()
-    if sysmeta.size + total > settings.REPLICATION_SPACEALLOCATED:
+    if sysmeta_pyxb.size + total > settings.REPLICATION_SPACEALLOCATED:
       raise d1_common.types.exceptions.InvalidRequest(
         0,
         u'The total size allocated for replicas on this node would be exceeded. '
         u'replica={} bytes, used={} bytes, allocated={} bytes'
-        .format(sysmeta.size, total, settings.REPLICATION_MAXOBJECTSIZE)
+        .format(sysmeta_pyxb.size, total, settings.REPLICATION_MAXOBJECTSIZE)
       )
 
   if len(settings.REPLICATION_ALLOWEDNODE):
-    if sysmeta.originMemberNode.value() not in settings.REPLICATION_ALLOWEDNODE:
+    if sysmeta_pyxb.originMemberNode.value() not in settings.REPLICATION_ALLOWEDNODE:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept replicas from originating node. '
-        u'originating_node="{}"'.format(sysmeta.originMemberNode.value())
+        u'originating_node="{}"'.format(sysmeta_pyxb.originMemberNode.value())
       )
 
   if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
-    if sysmeta.formatId.value() not in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
+    if sysmeta_pyxb.formatId.value() not in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept objects of specified format. format="{}"'
-        .format(sysmeta.formatId.value())
+        .format(sysmeta_pyxb.formatId.value())
       )
 
 
@@ -159,8 +159,8 @@ def assert_request_complies_with_replication_policy(sysmeta):
 #     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
 # </replica>
 
-def replica_pyxb_to_model(sciobj_model, sysmeta_obj):
-    for replica_pyxb in sysmeta_obj.replica:
+def replica_pyxb_to_model(sciobj_model, sysmeta_pyxb):
+    for replica_pyxb in sysmeta_pyxb.replica:
       _register_remote_replica(sciobj_model, replica_pyxb)
 
 

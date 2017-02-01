@@ -286,13 +286,13 @@ def get_checksum(request, pid):
       0,
       u'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
         algorithm, u', '.join(
-          d1_common.checksum.dataone_to_python_checksum_algorithm_map.keys()
+          d1_common.checksum. DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
         )
       )
     )
 
-  sciobj_row = app.models.ScienceObject.objects.get(pid__did=pid)
-  sciobj_iter = _get_sciobj_iter(sciobj_row)
+  sciobj_model = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj_iter = _get_sciobj_iter(sciobj_model)
   checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
     sciobj_iter, algorithm
   )
@@ -415,16 +415,16 @@ def put_meta(request):
   app.views.view_asserts.is_valid_for_update(pid)
   app.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
   sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  new_sysmeta_obj = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.has_matching_modified_timestamp(new_sysmeta_obj)
-  app.views.view_asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_obj, pid)
+  new_sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
+  app.views.view_asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
+  app.views.view_asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_pyxb, pid)
   # TODO: Need to clarify desired functionality.
-  app.views.view_util.update_sysmeta_with_mn_values(request, new_sysmeta_obj)
-  if app.sysmeta_sid.has_sid(new_sysmeta_obj):
-    sid = app.sysmeta_sid.get_sid(new_sysmeta_obj)
+  app.views.view_util.set_mn_controlled_values(request, new_sysmeta_pyxb)
+  if app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
+    sid = app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
     if app.sysmeta_sid.is_sid(sid):
       app.sysmeta_sid.update_sid(sid, pid)
-  app.sysmeta.update(new_sysmeta_obj)
+  app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
   app.event_log.update(pid, request)
   return app.views.view_util.http_response_with_boolean_true_type()
 
@@ -529,13 +529,13 @@ def post_object_list(request):
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
   sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.obsoletes_not_specified(sysmeta)
+  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
+  app.views.view_asserts.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
   app.views.view_asserts.is_unused(new_pid)
-  _create(request, sysmeta, new_pid)
-  if app.sysmeta_sid.has_sid(sysmeta):
-    sid = app.sysmeta_sid.get_sid(sysmeta)
+  _create(request, sysmeta_pyxb, new_pid)
+  if app.sysmeta_sid.has_sid(sysmeta_pyxb):
+    sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
     app.views.view_asserts.is_unused(sid)
     app.sysmeta_sid.create_sid(sid, new_pid)
   return new_pid
@@ -557,33 +557,33 @@ def put_object(request, old_pid):
   app.views.view_asserts.is_valid_for_update(old_pid)
   app.views.view_asserts.is_not_obsoleted(old_pid)
   sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.obsoletes_matches_pid_if_specified(sysmeta, old_pid)
-  app.views.view_asserts.is_valid_sid_for_chain_if_specified(sysmeta, old_pid)
-  sysmeta.obsoletes = old_pid
+  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
+  app.views.view_asserts.obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid)
+  app.views.view_asserts.is_valid_sid_for_chain_if_specified(sysmeta_pyxb, old_pid)
+  sysmeta_pyxb.obsoletes = old_pid
   new_pid = request.POST['newPid']
-  _create(request, sysmeta, new_pid)
+  _create(request, sysmeta_pyxb, new_pid)
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
   app.event_log.update(old_pid, request)
   app.sysmeta_obsolescence.set_obsolescence(old_pid, obsoleted_by_pid=new_pid)
-  if app.sysmeta_sid.has_sid(sysmeta):
-    sid = app.sysmeta_sid.get_sid(sysmeta)
+  if app.sysmeta_sid.has_sid(sysmeta_pyxb):
+    sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
     if app.sysmeta_sid.is_sid(sid):
       app.sysmeta_sid.update_sid(sid, new_pid)
   return new_pid
 
 
-def _create(request, sysmeta, new_pid):
+def _create(request, sysmeta_pyxb, new_pid):
   app.views.view_asserts.is_unused(new_pid)
-  # mn.views.view_asserts.is_unused(mn.sysmeta.get_value(sysmeta, 'seriesId'))
-  app.views.view_asserts.url_pid_matches_sysmeta(sysmeta, new_pid)
+  # mn.views.view_asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
+  app.views.view_asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
   app.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  app.views.view_asserts.obsoleted_by_not_specified(sysmeta)
-  app.sysmeta_validate.validate_sysmeta_against_uploaded(request, sysmeta)
-  app.views.view_util.update_sysmeta_with_mn_values(request, sysmeta)
-  #d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
-  app.views.view_util.create(request, sysmeta)
+  app.views.view_asserts.obsoleted_by_not_specified(sysmeta_pyxb)
+  app.sysmeta_validate.validate_sysmeta_against_uploaded(request, sysmeta_pyxb)
+  app.views.view_util.set_mn_controlled_values(request, sysmeta_pyxb)
+  #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
+  app.views.view_util.create(request, sysmeta_pyxb)
 
 
 # No locking. Public access.
@@ -664,9 +664,9 @@ def post_replicate(request):
   )
   sysmeta_xml = \
     app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = app.sysmeta.deserialize(sysmeta_xml)
-  app.sysmeta_replica.assert_request_complies_with_replication_policy(sysmeta)
-  pid = sysmeta.identifier.value()
+  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
+  app.sysmeta_replica.assert_request_complies_with_replication_policy(sysmeta_pyxb)
+  pid = sysmeta_pyxb.identifier.value()
   app.views.view_asserts.is_unused(pid)
-  app.sysmeta_replica.add_to_replication_queue(request.POST['sourceNode'], sysmeta)
+  app.sysmeta_replica.add_to_replication_queue(request.POST['sourceNode'], sysmeta_pyxb)
   return app.views.view_util.http_response_with_boolean_true_type()

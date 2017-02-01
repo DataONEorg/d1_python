@@ -185,11 +185,11 @@ class V2Migration(object):
         'Retrieving obsolescence chains', i, n, sciobj_row['pid']
       )
       try:
-        sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+        sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
         self._log(str(e))
         continue
-      obsolescence_list.append(self._identifiers(sysmeta_obj))
+      obsolescence_list.append(self._identifiers(sysmeta_pyxb))
     return obsolescence_list
 
   def _create_sciobj(self, topo_obsolescence_list):
@@ -202,14 +202,14 @@ class V2Migration(object):
       )
       sciobj_row = self._v1_cursor.fetchone()
       try:
-        sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+        sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
         self._log(str(e))
         continue
       # "obsoletedBy" back references are fixed in a second pass.
-      sysmeta_obj.obsoletedBy = None
+      sysmeta_pyxb.obsoletedBy = None
       self._log_pid_info('Creating SciObj DB representation', i, n, pid)
-      app.sysmeta.create(sysmeta_obj, sciobj_row['url'])
+      app.sysmeta.create(sysmeta_pyxb, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
@@ -218,12 +218,14 @@ class V2Migration(object):
       if obsoleted_by_pid is not None:
         if app.sysmeta.is_did(pid) and app.sysmeta.is_did(obsoleted_by_pid):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
-          app.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
+          app.sysmeta_obsolescence.set_obsolescence(
+            pid, obsoleted_by_pid=obsoleted_by_pid
+          )
 
-  def _identifiers(self, sysmeta_obj):
-    pid = app.sysmeta_util.get_value(sysmeta_obj, 'identifier')
-    obsoletes_pid = app.sysmeta_util.get_value(sysmeta_obj, 'obsoletes')
-    obsoleted_by_pid = app.sysmeta_util.get_value(sysmeta_obj, 'obsoletedBy')
+  def _identifiers(self, sysmeta_pyxb):
+    pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'identifier')
+    obsoletes_pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes')
+    obsoleted_by_pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy')
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
@@ -274,7 +276,7 @@ class V2Migration(object):
     logging.info(msg)
     self._events.count(msg)
 
-  def _sysmeta_obj_by_sciobj_row(self, sciobj_row):
+  def _sysmeta_pyxb_by_sciobj_row(self, sciobj_row):
     sysmeta_xml_path = self._file_path(GMN_V1_SYSMETA_PATH, sciobj_row['pid'])
     sysmeta_xml_ver_path = '{}.{}'.format(
       sysmeta_xml_path,

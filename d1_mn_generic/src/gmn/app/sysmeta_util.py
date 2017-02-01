@@ -25,28 +25,28 @@
 import app.models
 
 
-def create_id_row(did):
+def create_id_model(did):
   """Create a new SID or PID.
 
   Preconditions:
   - {did} is verified to be unused. E.g., with view_asserts.is_unused().
   """
-  id_row = app.models.IdNamespace()
-  id_row.did = did
-  id_row.save()
-  return id_row
+  id_model = app.models.IdNamespace()
+  id_model.did = did
+  id_model.save()
+  return id_model
 
 
-def get_sci_row(pid):
+def get_sci_model(pid):
   return app.models.ScienceObject.objects.get(pid__did=pid)
 
 
-def get_value(sysmeta_obj, sysmeta_attr):
+def get_value(sysmeta_pyxb, sysmeta_attr):
   """PyXB validation will fail if required elements are missing. Optional
   elements that are not present are represented with attributes
   that are present but set to None."""
   try:
-    return getattr(sysmeta_obj, sysmeta_attr).value()
+    return getattr(sysmeta_pyxb, sysmeta_attr).value()
   except (ValueError, AttributeError):
     return None
 

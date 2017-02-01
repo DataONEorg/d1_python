@@ -48,11 +48,9 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     See d1baseclient.DataONEBaseClient for args.
     """
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 1)
-    kwargs.setdefault('api_minor', 1)
     d1_client.mnclient.MemberNodeClient.__init__(self, *args, **kwargs)
 
-  def _get_api_version_url_element(self):
+  def _get_api_version_path_element(self):
     """Override the default API version selection to use GMNs custom /diag/
     endpoint."""
     return 'diag'
@@ -82,24 +80,22 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def get_replication_queue(self, headers=None):
-    url = self._rest_url('get_replication_queue')
-    response = self.GET(url, headers=headers)
+    response = self.GET('get_replication_queue', headers=headers)
     return response.content
 
   def clear_replication_queue(self, headers=None):
-    url = self._rest_url('clear_replication_queue')
-    response = self.GET(url, headers=headers)
+    response = self.GET('clear_replication_queue', headers=headers)
     return self._read_boolean_response(response)
 
-  def create_replication_queue(self, pid, sysmeta, sourceNode, vendorSpecific=None):
-    url = self._rest_url('replicate/%(pid)s', pid=pid)
-
-    mime_multipart_fields = [('pid', pid.encode('utf-8')), ('sourceNode', sourceNode)]
-    mime_multipart_files = [('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')), ]
+  def create_replication_queue(self, pid, sysmeta_pyxb, sourceNode, vendorSpecific=None):
+    mmp_fields = {
+      'pid': pid.encode('utf-8'),
+      'sourceNode': sourceNode,
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+    }
     response = self.POST(
-      url,
-      fields=mime_multipart_fields,
-      files=mime_multipart_files,
+      ['replicate', pid],
+      fields=mmp_fields,
       headers=vendorSpecific
     )
     return self._read_boolean_response(response)
@@ -109,18 +105,17 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def set_access_policy(self, pid, access_policy, headers=None):
-    url = self._rest_url('set_access_policy/%(pid)s', pid=pid)
-    files = [('access_policy', 'access_policy', access_policy.toxml().encode('utf-8')), ]
-    return self.POST(url, files=files, headers=headers)
+    mmp_fields = {
+      'access_policy': ('access_policy', access_policy.toxml().encode('utf-8')),
+    }
+    return self.POST(['set_access_policy', pid], fields=mmp_fields, headers=headers)
 
   def delete_all_access_policies(self, headers=None):
-    url = self._rest_url('delete_all_access_policies')
-    response = self.GET(url, headers=headers)
+    response = self.GET('delete_all_access_policies', headers=headers)
     return self._read_boolean_response(response)
 
   def get_access_policy(self, pid, headers=None):
-    url = self._rest_url('get_access_policy/%(pid)s', pid=pid)
-    response = self.GET(url, headers=headers)
+    response = self.GET(['get_access_policy', pid], headers=headers)
     return response.content
 
   # ----------------------------------------------------------------------------
@@ -128,81 +123,64 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def echo_session(self, headers=None):
-    url = self._rest_url('echo_session')
-    response = self.GET(url, headers=headers)
+    response = self.GET('echo_session', headers=headers)
     return response.content
 
   
   def whitelist_subject(self, subject_str, headers=None):
     """Add a subject to the whitelist"""
-    url = self._rest_url('whitelist_subject')
-    field_dict = {
+    mmp_fields = {
       'subject': subject_str,
     }
-    response = self.POST(url, fields=field_dict, headers=headers)
+    response = self.POST('whitelist_subject', fields=mmp_fields, headers=headers)
     return response.content
 
   # ----------------------------------------------------------------------------
   # Misc.
   # ----------------------------------------------------------------------------
 
-  def create(self, pid, obj, sysmeta, vendorSpecific=None):
+  def create(self, pid, obj, sysmeta_pyxb, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('create/%(pid)s', pid=pid)
-    mime_multipart_fields = [('pid', pid.encode('utf-8')), ]
-    mime_multipart_files = [
-      ('object', 'content.bin', obj),
-      ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
-    ]
+    mmp_fields = {
+      'pid': pid.encode('utf-8'),
+      'object': ('content.bin', obj),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+    }
     response = self.POST(
-      url,
-      fields=mime_multipart_fields,
-      files=mime_multipart_files,
+      ['create', pid],
+      fields=mmp_fields,
       headers=vendorSpecific
     )
     return self._read_boolean_response(response)
 
   def slash(self, arg1, arg2, arg3, headers=None):
-    url = self._rest_url(
-      'slash/%(arg1)s/%(arg2)s/%(arg3)s',
-      arg1=arg1, arg2=arg2,
-      arg3=arg3
-    )
-    response = self.GET(url, headers=headers)
+    response = self.GET(['slash', arg1, arg2, arg3], headers=headers)
     return response.content
 
   def exception(self, exception_type):
-    url = self._rest_url('exception/%(exception_type)s', exception_type=exception_type)
-    response = self.GET(url, headers=headers)
+    response = self.GET(['exception', exception_type], headers=headers)
     return response.content
 
   def echo_request_object(self, headers=None):
-    url = self._rest_url('echo_request_object')
-    response = self.GET(url, headers=headers)
+    response = self.GET('echo_request_object', headers=headers)
     return response.content
 
   def echo_raw_post_data(self, headers=None):
-    url = self._rest_url('echo_raw_post_data')
-    response = self.GET(url, headers=headers)
+    response = self.GET('echo_raw_post_data', headers=headers)
     return response.content
 
   def delete_all_objects(self, headers=None):
-    url = self._rest_url('delete_all_objects')
-    response = self.GET(url, headers=headers)
+    response = self.GET('delete_all_objects', headers=headers)
     return self._read_boolean_response(response)
 
   def test_delete_single_object(self, pid, headers=None):
-    url = self._rest_url('delete_single_object/%(pid)s', pid=pid)
-    response = self.GET(url, headers=headers)
+    response = self.GET(['delete_single_object', pid], headers=headers)
     return self._read_boolean_response(response)
 
   def get_setting(self, setting, headers=None):
-    url = self._rest_url('get_setting/%(setting)s', setting=setting)
-    response = self.GET(url, headers=headers)
-    setting_json = response.content
-    setting_obj = json.loads(setting_json)
-    return setting_obj
+    response = self.GET(['get_setting', setting], headers=headers)
+    return response.json()
 
   # ----------------------------------------------------------------------------
   # Event Log.
@@ -211,16 +189,16 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def delete_event_log(self, headers=None):
     """Delete event log for all objects.
     """
-    url = self._rest_url('delete_event_log')
-    response = self.GET(url, headers=headers)
+    response = self.GET('delete_event_log', headers=headers)
     return self._read_boolean_response(response)
 
   def inject_fictional_event_log(self, event_log_csv, headers=None):
     """Inject a fake event log.
     """
-    files = [('csv', 'csv', event_log_csv)]
-    url = self._rest_url('inject_fictional_event_log')
-    response = self.POST(url, files=files, headers=headers)
+    mmp_fields = {
+      'csv': ('csv', event_log_csv),
+    }
+    response = self.POST('inject_fictional_event_log', fields=mmp_fields, headers=headers)
     return self._read_boolean_response(response)
 
   # ----------------------------------------------------------------------------
@@ -230,37 +208,22 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def concurrency_clear(self, headers=None):
     """Clear test key/vals.
     """
-    url = self._rest_url('concurrency_clear')
-    return self.GET(url, headers=headers)
+    return self.GET('concurrency_clear', headers=headers)
 
   def concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
     """Test PID read locking.
     """
-    url = self._rest_url(
-      'concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
-      key=key,
-      sleep_before=sleep_before,
-      sleep_after=sleep_after
-    )
-    return self.GET(url, headers=headers)
+    return self.GET(['concurrency_read_lock', key, sleep_before, sleep_after], headers=headers)
 
   def concurrency_write_lock(self, key, val, sleep_before, sleep_after, headers=None):
     """Test PID write locking.
     """
-    url = self._rest_url(
-      'concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
-      key=key,
-      val=val,
-      sleep_before=sleep_before,
-      sleep_after=sleep_after
-    )
-    return self.GET(url, headers=headers)
+    return self.GET(['concurrency_write_lock', key, val, sleep_before, sleep_after], headers=headers)
 
   def concurrency_get_dictionary_id(self, headers=None):
     """Get dictionary ID.
     """
-    url = self._rest_url('concurrency_get_dictionary_id')
-    return self.GET(url, headers=headers)
+    return self.GET('concurrency_get_dictionary_id', headers=headers)
 
 # ==============================================================================
 
@@ -280,16 +243,16 @@ def populate_mn(client, filedir):
     # The pid is stored in the sysmeta.
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_xml = sysmeta_file.read()
-    sysmeta_obj = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
-    sysmeta_obj.rightsHolder = 'test_user_1'
+    sysmeta_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
+    sysmeta_pyxb.rightsHolder = 'test_user_1'
 
     headers = include_subjects('test_user_1')
     headers.update({'VENDOR_TEST_OBJECT': 1})
 
     client.create(
-      sysmeta_obj.identifier.value(),
+      sysmeta_pyxb.identifier.value(),
       object_file,
-      sysmeta_obj,
+      sysmeta_pyxb,
       vendorSpecific=headers
     )
 

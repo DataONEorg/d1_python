@@ -156,8 +156,8 @@ def whitelist_subject(request):
 def create(request, pid):
   """Minimal version of create() used for inserting test objects."""
   sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_util.create(request, sysmeta)
+  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
+  app.views.view_util.create(request, sysmeta_pyxb)
   return app.views.view_util.http_response_with_boolean_true_type()
 
 

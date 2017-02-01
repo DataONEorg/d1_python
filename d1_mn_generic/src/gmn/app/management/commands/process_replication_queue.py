@@ -122,21 +122,21 @@ class ReplicationQueueProcessor(object):
 
   def _replicate(self, queue_model):
     with django.db.transaction.atomic():
-      sysmeta_obj = self._get_system_metadata(queue_model)
-      self._set_origin(queue_model, sysmeta_obj)
+      sysmeta_pyxb = self._get_system_metadata(queue_model)
+      self._set_origin(queue_model, sysmeta_pyxb)
       sciobj_stream = self._get_sciobj_stream(queue_model)
-      self._create_replica(sysmeta_obj, sciobj_stream)
+      self._create_replica(sysmeta_pyxb, sciobj_stream)
       self._update_request_status(queue_model, 'completed')
 
-  def _set_origin(self, queue_model, sysmeta_obj):
-    if sysmeta_obj.originMemberNode is None:
-      sysmeta_obj.originMemberNode = \
+  def _set_origin(self, queue_model, sysmeta_pyxb):
+    if sysmeta_pyxb.originMemberNode is None:
+      sysmeta_pyxb.originMemberNode = \
         queue_model.local_replica.info.member_node.urn
-    if sysmeta_obj.authoritativeMemberNode is None:
-      sysmeta_obj.authoritativeMemberNode = \
+    if sysmeta_pyxb.authoritativeMemberNode is None:
+      sysmeta_pyxb.authoritativeMemberNode = \
         queue_model.local_replica.info.member_node.urn
-    if sysmeta_obj.serialVersion is None:
-      sysmeta_obj.serialVersion = 1
+    if sysmeta_pyxb.serialVersion is None:
+      sysmeta_pyxb.serialVersion = 1
 
   def _inc_and_get_failed_attempts(self, queue_model):
     replication_queue_model = app.models.ReplicationQueue.objects.get(
@@ -211,25 +211,25 @@ class ReplicationQueueProcessor(object):
   def _open_sciobj_stream_on_member_node(self, mn_client, pid):
     return mn_client.getReplica(pid)
 
-  def _create_replica(self, sysmeta_obj, sciobj_stream):
+  def _create_replica(self, sysmeta_pyxb, sciobj_stream):
     """GMN handles replicas differently from native objects, with the main
     differences being related to handling of restrictions related to
     obsolescence chains and SIDs. So this create sequence differs significantly
     from the regular one that is accessed through MNStorage.create().
     """
-    pid = sysmeta_obj.identifier.value()
+    pid = sysmeta_pyxb.identifier.value()
     self._assert_is_pid_of_local_unprocessed_replica(pid)
-    self._check_and_create_replica_obsolescence(sysmeta_obj, 'obsoletes')
-    self._check_and_create_replica_obsolescence(sysmeta_obj, 'obsoletedBy')
+    self._check_and_create_replica_obsolescence(sysmeta_pyxb, 'obsoletes')
+    self._check_and_create_replica_obsolescence(sysmeta_pyxb, 'obsoletedBy')
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
-    sciobj_model = app.sysmeta.create(sysmeta_obj, url)
+    sciobj_model = app.sysmeta.create(sysmeta_pyxb, url)
     self._store_science_object_bytes(pid, sciobj_stream)
     app.event_log.create_log_entry(
       sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
     )
 
-  def _check_and_create_replica_obsolescence(self, sysmeta_obj, attr_str):
-    obsolescence_attr = getattr(sysmeta_obj, attr_str)
+  def _check_and_create_replica_obsolescence(self, sysmeta_pyxb, attr_str):
+    obsolescence_attr = getattr(sysmeta_pyxb, attr_str)
     if obsolescence_attr is not None:
       pid = obsolescence_attr.value()
       self._assert_pid_is_unknown_or_replica(pid)

@@ -82,15 +82,15 @@ def _get_pyxb(major_version_int):
   node_pyxb.state = settings.NODE_STATE
   node_pyxb.subject.append(binding.Subject(settings.NODE_SUBJECT))
   node_pyxb.contactSubject.append(binding.Subject(settings.NODE_CONTACT_SUBJECT))
-  node_pyxb.services = _create_service_list(binding, major_version_int)
+  node_pyxb.services = _create_service_list_pyxb(binding, major_version_int)
   if settings.NODE_SYNCHRONIZE:
-    node_pyxb.synchronization = _create_sync_policy(binding)
+    node_pyxb.synchronization = _create_synchronization_policy_pyxb(binding)
   if settings.NODE_REPLICATE:
-    node_pyxb.nodeReplicationPolicy = _create_replication_policy(binding)
+    node_pyxb.nodeReplicationPolicy = _create_replication_policy_pyxb(binding)
   return node_pyxb
 
 
-def _create_sync_policy(binding):
+def _create_synchronization_policy_pyxb(binding):
   schedule_pyxb = binding.Schedule()
   schedule_pyxb.year = settings.NODE_SYNC_SCHEDULE_YEAR
   schedule_pyxb.mon = settings.NODE_SYNC_SCHEDULE_MONTH
@@ -104,7 +104,7 @@ def _create_sync_policy(binding):
   return sync
 
 
-def _create_replication_policy(binding):
+def _create_replication_policy_pyxb(binding):
   replication_pyxb = binding.nodeReplicationPolicy()
   if settings.REPLICATION_MAXOBJECTSIZE != -1:
     replication_pyxb.maxObjectSize = settings.REPLICATION_MAXOBJECTSIZE
@@ -119,25 +119,25 @@ def _create_replication_policy(binding):
   return replication_pyxb
 
 
-def _create_service_list(binding, major_version_int):
+def _create_service_list_pyxb(binding, major_version_int):
   service_list_pyxb = binding.services()
-  service_list_pyxb.extend(_create_service_list_for_version(binding, 'v1'))
+  service_list_pyxb.extend(_create_service_list_for_version_pyxb(binding, 'v1'))
   if major_version_int == 2:
-    service_list_pyxb.extend(_create_service_list_for_version(binding, 'v2'))
+    service_list_pyxb.extend(_create_service_list_for_version_pyxb(binding, 'v2'))
   return service_list_pyxb
 
 
-def _create_service_list_for_version(binding, service_version):
+def _create_service_list_for_version_pyxb(binding, service_version):
   service_list = []
-  service_list.append(_create_service(binding, 'MNCore', service_version))
-  service_list.append(_create_service(binding, 'MNRead', service_version))
-  service_list.append(_create_service(binding, 'MNAuthorization', service_version))
-  service_list.append(_create_service(binding, 'MNStorage', service_version))
-  service_list.append(_create_service(binding, 'MNReplication', service_version))
+  service_list.append(_create_service_pyxb(binding, 'MNCore', service_version))
+  service_list.append(_create_service_pyxb(binding, 'MNRead', service_version))
+  service_list.append(_create_service_pyxb(binding, 'MNAuthorization', service_version))
+  service_list.append(_create_service_pyxb(binding, 'MNStorage', service_version))
+  service_list.append(_create_service_pyxb(binding, 'MNReplication', service_version))
   return service_list
 
 
-def _create_service(binding, service_name, service_version):
+def _create_service_pyxb(binding, service_name, service_version):
   service_pyxb = binding.Service()
   service_pyxb.name = binding.ServiceName(service_name)
   service_pyxb.version = binding.ServiceVersion(service_version)

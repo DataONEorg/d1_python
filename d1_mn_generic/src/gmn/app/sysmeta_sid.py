@@ -34,12 +34,12 @@ def is_sid(did):
   ).exists()
 
 
-def has_sid(sysmeta_obj):
-  return get_sid(sysmeta_obj) is not None
+def has_sid(sysmeta_pyxb):
+  return get_sid(sysmeta_pyxb) is not None
 
 
-def get_sid(sysmeta_obj):
-  return sysmeta_util.get_value(sysmeta_obj, 'seriesId')
+def get_sid(sysmeta_pyxb):
+  return sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
 
 
 def create_sid(sid, pid):
@@ -49,8 +49,8 @@ def create_sid(sid, pid):
   - {sid} is verified to be unused. E.g., with view_asserts.is_unused().
   - {pid} is verified to exist. E.g., with view_asserts.is_pid().
   """
-  sci_row = sysmeta_util.get_sci_row(pid)
-  _create_sid(sid, sci_row)
+  sci_model = sysmeta_util.get_sci_model(pid)
+  _create_sid(sid, sci_model)
 
 
 def update_sid(sid, pid):
@@ -62,8 +62,8 @@ def update_sid(sid, pid):
   Postconditions:
   - The SID maps to the object specified by pid.
   """
-  sci_row = sysmeta_util.get_sci_row(pid)
-  _update_sid(sid, sci_row)
+  sci_model = sysmeta_util.get_sci_model(pid)
+  _update_sid(sid, sci_model)
 
 
 def resolve_sid(sid):
@@ -96,26 +96,26 @@ def get_sid_by_pid(pid):
 # Private
 #
 
-def _create_sid(sid, sci_row):
-  """Create a new {sid} that resolves to {sci_row}."""
-  sid_row = app.models.SeriesIdToScienceObject()
-  sid_row.sciobj = sci_row
-  sid_row.sid = app.models.did(sid)
-  sid_row.save()
+def _create_sid(sid, sci_model):
+  """Create a new {sid} that resolves to {sci_model}."""
+  sid_model = app.models.SeriesIdToScienceObject()
+  sid_model.sciobj = sci_model
+  sid_model.sid = app.models.did(sid)
+  sid_model.save()
 
 
-def _update_sid(sid, sci_row):
-  """Change an existing {sid} to resolve to {sci_row}"""
-  sid_row = app.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
-  sid_row.sciobj = sci_row
-  sid_row.save()
+def _update_sid(sid, sci_model):
+  """Change an existing {sid} to resolve to {sci_model}"""
+  sid_model = app.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
+  sid_model.sciobj = sci_model
+  sid_model.save()
 
 
-# def update_sid(sysmeta_obj):
-#   pid = sysmeta_obj.identifier.value()
-#   sci_row = sysmeta_util.get_sci_row(pid)
-#   _update_sid(sci_row, sysmeta_obj)
-#   sci_row.save()
+# def update_sid(sysmeta_pyxb):
+#   pid = sysmeta_pyxb.identifier.value()
+#   sci_model = sysmeta_util.get_sci_model(pid)
+#   _update_sid(sci_model, sysmeta_pyxb)
+#   sci_model.save()
 
 
 # def move_sid_to_last_object_in_chain(pid):

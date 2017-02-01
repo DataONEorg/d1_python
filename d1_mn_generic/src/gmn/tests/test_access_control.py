@@ -38,7 +38,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const
 import d1_client
-import d1_common.xml_compare
+import d1_common.xml
 
 # App.
 import gmn_test_client
@@ -58,19 +58,19 @@ class TestAccessControl(django.test.TestCase):
     pass
 
   def _gen_sysmeta(self, pid, size, md5, now, owner):
-    sysmeta = d1_common.types.dataoneTypes.systemMetadata()
-    sysmeta.identifier = pid
-    sysmeta.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
-    sysmeta.size = size
-    sysmeta.submitter = owner
-    sysmeta.rightsHolder = owner
-    sysmeta.checksum = d1_common.types.dataoneTypes.checksum(md5)
-    sysmeta.checksum.algorithm = 'MD5'
-    sysmeta.dateUploaded = now
-    sysmeta.dateSysMetadataModified = now
-    sysmeta.originMemberNode = 'MN1'
-    sysmeta.authoritativeMemberNode = 'MN1'
-    return sysmeta
+    sysmeta_pyxb = d1_common.types.dataoneTypes.systemMetadata()
+    sysmeta_pyxb.identifier = pid
+    sysmeta_pyxb.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
+    sysmeta_pyxb.size = size
+    sysmeta_pyxb.submitter = owner
+    sysmeta_pyxb.rightsHolder = owner
+    sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(md5)
+    sysmeta_pyxb.checksum.algorithm = 'MD5'
+    sysmeta_pyxb.dateUploaded = now
+    sysmeta_pyxb.dateSysMetadataModified = now
+    sysmeta_pyxb.originMemberNode = 'MN1'
+    sysmeta_pyxb.authoritativeMemberNode = 'MN1'
+    return sysmeta_pyxb
 
   def gen_access_policy(self, rules):
     access_policy = d1_common.types.dataoneTypes.accessPolicy()
@@ -118,8 +118,8 @@ class TestAccessControl(django.test.TestCase):
   #    # Create object containing random bytes.
   #    obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
   #
-  #    # Create sysmeta.
-  #    sysmeta = self.gen_sysmeta(
+  #    # Create sysmeta_pyxb.
+  #    sysmeta_pyxb = self.gen_sysmeta(
   #      pid, 1024,
   #      hashlib.md5(obj_str).hexdigest(),
   #      datetime.datetime.now(),
@@ -142,11 +142,11 @@ class TestAccessControl(django.test.TestCase):
   #    client = gmn_test_client.GMNTestClient(GMN_URL)
   #
   #    # Add the access policy to the SysMeta.
-  #    sysmeta.accessPolicy = access_policy
+  #    sysmeta_pyxb.accessPolicy = access_policy
   #
   #    # POST the new object to MN.
   #    response = client.createResponse(pid=pid,
-  #      obj=obj_str, sysmeta=sysmeta,
+  #      obj=obj_str, sysmeta_pyxb=sysmeta_pyxb,
   #      vendorSpecific=self.session(test_owner_1))
 
   @unittest.skip('TODO')
@@ -227,18 +227,18 @@ class TestAccessControl(django.test.TestCase):
     """Access policy is correctly reflected in SysMeta."""
     client = gmn_test_client.GMNTestClient(GMN_URL)
 
-    sysmeta = client.getSystemMetadata(
+    sysmeta_pyxb = client.getSystemMetadata(
       pid, vendorSpecific=self.session(test_owner_1)
     )
 
     self.assertEqual(
-      sysmeta.accessPolicy.allow[0].subject[0].value(), 'test_perm_7'
+      sysmeta_pyxb.accessPolicy.allow[0].subject[0].value(), 'test_perm_7'
     )
     self.assertEqual(
-      sysmeta.accessPolicy.allow[0].subject[1].value(), 'test_perm_8'
+      sysmeta_pyxb.accessPolicy.allow[0].subject[1].value(), 'test_perm_8'
     )
     self.assertEqual(
-      sysmeta.accessPolicy.allow[0].permission[0], 'changePermission'
+      sysmeta_pyxb.accessPolicy.allow[0].permission[0], 'changePermission'
     )
 
   @unittest.skip('TODO')

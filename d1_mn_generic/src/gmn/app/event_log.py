@@ -40,17 +40,17 @@ def _log(pid, request, event, timestamp=None):
   subject = auth.get_trusted_subjects_string()
 
   # Support logging events that are not associated with an object.
-  object_row = None
+  object_model = None
   if pid is not None:
     try:
-      object_row = models.ScienceObject.objects.filter(pid__did=pid)[0]
+      object_model = models.ScienceObject.objects.filter(pid__did=pid)[0]
     except IndexError:
       err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
         .format((pid))
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
-  event_log_row = create_log_entry(
-    object_row, event, ip_address, user_agent, subject
+  event_log_model = create_log_entry(
+    object_model, event, ip_address, user_agent, subject
   )
 
   # The datetime is an optional parameter. If it is not provided, a
@@ -58,19 +58,19 @@ def _log(pid, request, event, timestamp=None):
   # disadvantage to this approach is that we have to update the timestamp in a
   # separate step if we want to set it to anything other than Now.
   if timestamp is not None:
-    event_log_row.timestamp = timestamp
-    event_log_row.save()
+    event_log_model.timestamp = timestamp
+    event_log_model.save()
 
 
-def create_log_entry(object_row, event, ip_address, user_agent, subject):
-  event_log_row = models.EventLog()
-  event_log_row.sciobj = object_row
-  event_log_row.event = models.event(event)
-  event_log_row.ip_address = models.ip_address(ip_address)
-  event_log_row.user_agent = models.user_agent(user_agent)
-  event_log_row.subject = models.subject(subject)
-  event_log_row.save()
-  return event_log_row
+def create_log_entry(object_model, event, ip_address, user_agent, subject):
+  event_log_model = models.EventLog()
+  event_log_model.sciobj = object_model
+  event_log_model.event = models.event(event)
+  event_log_model.ip_address = models.ip_address(ip_address)
+  event_log_model.user_agent = models.user_agent(user_agent)
+  event_log_model.subject = models.subject(subject)
+  event_log_model.save()
+  return event_log_model
 
 def create(pid, request, timestamp=None):
   return _log(pid, request, 'create', timestamp)

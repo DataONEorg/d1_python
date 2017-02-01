@@ -48,7 +48,7 @@ class TestSysMeta(django.test.TestCase):
     sciobj_model.is_archived = False
     sciobj_model.modified_timestamp = datetime.datetime.now()
     sciobj_model.uploaded_timestamp = datetime.datetime.now()
-    sciobj_model.pid = app.sysmeta_util.create_id_row('test')
+    sciobj_model.pid = app.sysmeta_util.create_id_model('test')
     sciobj_model.serial_version = 1
     sciobj_model.size = 1
 
@@ -90,7 +90,7 @@ class TestSysMeta(django.test.TestCase):
   def test_050(self):
     orig_sysmeta_pyxb = util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = app.models.ScienceObject()
-    sciobj_model.pid = app.sysmeta_util.create_id_row(orig_sysmeta_pyxb.identifier.value())
+    sciobj_model.pid = app.sysmeta_util.create_id_model(orig_sysmeta_pyxb.identifier.value())
     app.sysmeta._base_pyxb_to_model(
       sciobj_model,
       orig_sysmeta_pyxb,

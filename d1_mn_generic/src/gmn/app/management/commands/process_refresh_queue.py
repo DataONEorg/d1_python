@@ -149,13 +149,13 @@ class SysMetaRefreshQueueProcessor(object):
     )
     return self.cn_client.getSystemMetadata(queue_model.sciobj.pid.did)
 
-  def _update_sysmeta(self, sysmeta_obj):
+  def _update_sysmeta(self, sysmeta_pyxb):
     """Update the System Metadata for an existing Science Object.
 
     No sanity checking is done on the provided System Metadata. It comes from a
     CN and is implicitly trusted.
     """
-    app.sysmeta.update(sysmeta_obj)
+    app.sysmeta.update(sysmeta_pyxb)
 
   def _assert_is_pid_of_native_object(self, pid):
     if not app.sysmeta.is_pid_of_existing_object(pid):
