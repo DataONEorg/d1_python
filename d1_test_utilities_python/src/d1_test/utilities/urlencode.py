@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''URL encode / decode provided string 
+"""URL encode / decode provided string
 
 Examples:
 
@@ -22,7 +22,7 @@ Examples:
   $ python urlencode.py "ฉันกินกระจกได้"
   %E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%81%E0%B8%B4%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%81%E0%B9%84%E0%B8%94%E0%B9%89
   
-'''
+"""
 
 import sys
 import logging

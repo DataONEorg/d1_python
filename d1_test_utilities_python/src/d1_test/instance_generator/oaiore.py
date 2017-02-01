@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`oaiore`
 =============
 
@@ -31,9 +31,9 @@ Requires:
   RDFLib
   Foresite python library, available in svn at:
     https://foresite-toolkit.googlecode.com/svn/foresite-python/trunk
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import sys
 import optparse
 import logging
@@ -63,9 +63,9 @@ def generate_resource_map(
   aggregation_id="aggregation_id",
   relations={}
 ):
-  '''
+  """
   relations = {metaid:[data id, data id, ...], ...}
-  '''
+  """
   uris = {}
   foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
   aggr = foresite.Aggregation(aggregation_id)
@@ -130,7 +130,7 @@ def serialize_resource_map(resourcemap, format='xml'):
 
 
 def example1():
-  '''Basic example of a single science metadata document and a science data
+  """Basic example of a single science metadata document and a science data
   object. That the two form a package is inferred by their presence in the
   resource map aggregation.
 
@@ -142,7 +142,7 @@ def example1():
 
   http://opencitations.wordpress.com/2011/06/30/datacite2rdf-mapping-datacite-metadata-scheme-terms-to-ontologies-2/
 
-  '''
+  """
   #Add the cito namespace
   foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
 

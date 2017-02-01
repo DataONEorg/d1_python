@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`create_dataone_test_certificate`
 ======================================
 
@@ -30,14 +30,14 @@
   by DataONE will normally trust the DataONE Test CA.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Example: ./create_dataone_test_certificate.py --ca-path test_files/ca_test.crt
 # --ca-key-path test_files/ca_test.key --ca-key-pw ca_test --public-key-path
 # test_files/new_cert_public_key.pem --subject-info-path
 # test_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import optparse
@@ -45,7 +45,7 @@ import os
 import re
 import sys
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_x509v3_certificate_generator
 

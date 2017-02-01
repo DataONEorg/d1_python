@@ -18,22 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.person
 ===================================
 
 :Synopsis: Generate random Person objects.
 :Created: 2011-12-08
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 
-# D1.
+# D1
 from d1_common.types.generated import dataoneTypes
 
-# App.
+# App
 import dates
 import random_data
 import subject

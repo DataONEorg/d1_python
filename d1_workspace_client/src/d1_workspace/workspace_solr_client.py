@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`workspace_solr_client`
+""":mod:`workspace_solr_client`
 ===============================
 
 :Synopsis:
  - Generate and run queries against Solr.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import HTMLParser
 import httplib
 import logging
@@ -35,15 +35,15 @@ import socket
 import urllib
 import urlparse
 
-# 3rd party.
+# 3rd party
 import requests
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.url
 
-# App.
+# App
 import workspace_exception
 
 # Replaced with the python.requests library.
@@ -85,7 +85,7 @@ import workspace_exception
 #
 #
 #  def _assert_response_is_ok(self, response):
-#    if response.status not in (200, ):
+#    if response.status_code not in (200, ):
 #      try:
 #        html_doc = response.read()
 #      except:
@@ -93,7 +93,7 @@ import workspace_exception
 #      #s = SimpleHTMLToText()
 #      #txt_doc = s.get_text(html_doc)
 #      logging.error(u'Error in Solr response: {0}\n{1}\n{2}'
-#                .format(response.status, response.reason, html_doc))
+#                .format(response.status_code, response.reason, html_doc))
 #      raise workspace_exception.WorkspaceException(
 #        u'Error in Solr response: {0}'.format(response.reason))
 #      #raise Exception(msg)
@@ -159,8 +159,8 @@ class SolrClient(object):
     return r.json()
 
   def escape_query_term_string(self, term):
-    '''Escape a query term string and wrap it in quotes.
-    '''
+    """Escape a query term string and wrap it in quotes.
+    """
     return u'"{0}"'.format(self._escape_query_term(term))
 
   # Private.
@@ -197,10 +197,10 @@ class SolrClient(object):
     return term
 
   #def prepare_query_term(self, field, term):
-  #  '''
+  #  """
   #  Prepare a query term for inclusion in a query.  This escapes the term and
   #  if necessary, wraps the term in quotes.
-  #  '''
+  #  """
   #  if term == "*":
   #    return term
   #  addstar = False

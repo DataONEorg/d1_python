@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_core_getlogrecords`
 ===================================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import datetime
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 
@@ -46,8 +46,8 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
     pass
 
   def test_010_create_events(self):
-    '''Event log contains the correct number of create events.
-    '''
+    """Event log contains the correct number of create events.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     log_records = client.getLogRecords(
       context.TOKEN, datetime.datetime(1800, 1, 1),
@@ -59,17 +59,17 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
     self.assertEqual(log_records.total, context.object_total)
 
   def test_020_get_total_events(self):
-    '''Get total number of events.
-    '''
+    """Get total number of events.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     log_records = client.getLogRecords(context.TOKEN, datetime.datetime(1800, 1, 1))
     context.log_records_total = log_records.total
 
   def xevent_log_contains_create_events(self):
-    '''Event log contains create events for all objects that are
+    """Event log contains create events for all objects that are
     currently known.
     Timestamp slicing includes the correct object.
-    '''
+    """
     for object_list in context.slices:
       for object_info in object_list.objectInfo:
         dates.append(object_info.dateSysMetadataModified)

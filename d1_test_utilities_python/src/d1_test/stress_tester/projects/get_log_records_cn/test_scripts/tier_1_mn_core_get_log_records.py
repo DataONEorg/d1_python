@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_core_get_log_records`
 =====================================
 
@@ -26,16 +26,16 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import os
 import random
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
@@ -49,15 +49,11 @@ class Transaction(transaction.Transaction):
 
   def get_log_records_total(self):
     client = self.create_client_for_cn()
-    try:
-      log = client.getLogRecords(count=0, start=0)
-    except Exception as e:
-      self.capture_response_and_raise_exception(e)
-    else:
-      return log.total
+    log = client.getLogRecords(count=0, start=0)
+    return log.total
 
   def d1_mn_api_call(self):
-    '''MNRead.getLogRecords(), paged, called by CN'''
+    """MNRead.getLogRecords(), paged, called by CN"""
     client = self.create_client_for_cn()
     start = random.randint(0, self.total - 1)
     count = settings.PAGE_SIZE

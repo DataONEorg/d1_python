@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_workspace`
+""":mod:`test_workspace`
 ========================
 
 :Synopsis:
  - Test the Workspace class.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import datetime
 import logging
 #import os
@@ -36,7 +36,7 @@ import sys
 import tempfile
 import unittest
 
-# D1.
+# D1
 sys.path.append('..')
 import workspace
 
@@ -46,21 +46,21 @@ class TestWorkspace(unittest.TestCase):
     pass
 
   def test_100(self):
-    '''Create Workspace with defaults'''
+    """Create Workspace with defaults"""
     a = workspace.Workspace()
 
   def test_110(self):
-    '''Create Workspace and unpickle default cache'''
+    """Create Workspace and unpickle default cache"""
     with workspace.Workspace() as w:
       pass
 
   def test_120(self):
-    '''Create Workspace, unpickle default cache and refresh with empty def'''
+    """Create Workspace, unpickle default cache and refresh with empty def"""
     with workspace.Workspace(workspace_def_path='workspace_empty.xml') as w:
       w.refresh()
 
   def test_130(self):
-    '''Create Workspace, unpickle default cache and refresh with single folder'''
+    """Create Workspace, unpickle default cache and refresh with single folder"""
     with workspace.Workspace(
       workspace_def_path='workspace_single.xml',
       automatic_refresh=True
@@ -68,7 +68,7 @@ class TestWorkspace(unittest.TestCase):
       pass
 
   #def test_140(self):
-  #  '''Create Workspace, unpickle default cache and refresh with all folders'''
+  #  """Create Workspace, unpickle default cache and refresh with all folders"""
   #  #with workspace.Workspace(workspace_def_path='workspace_tiny_two_levels.xml') as w:
   #  with workspace.Workspace(workspace_def_path='workspace_all.xml') as w:
   #    w.refresh()
@@ -76,7 +76,7 @@ class TestWorkspace(unittest.TestCase):
   #
   #
   #def test_150(self):
-  #  '''Retrieve folder'''
+  #  """Retrieve folder"""
   #  with workspace.Workspace(workspace_def_path='workspace_all.xml') as w:
   #    folder = w.get_folder([])
   #    pprint.pprint(folder)
@@ -86,14 +86,14 @@ class TestWorkspace(unittest.TestCase):
   #
 
   def test_140(self):
-    '''Create Workspace, unpickle default cache and refresh with all folders'''
+    """Create Workspace, unpickle default cache and refresh with all folders"""
     #with workspace.Workspace(workspace_def_path='workspace_tiny_two_levels.xml') as w:
     with workspace.Workspace(workspace_def_path='workspace_all.xml') as w:
       w.refresh()
       #pprint.pprint(w.get_cache())
 
   def test_150(self):
-    '''Retrieve folder'''
+    """Retrieve folder"""
     with workspace.Workspace() as w:
       #folder = w.get_folder([])
       #pprint.pprint(folder, depth=3)
@@ -110,7 +110,7 @@ class TestWorkspace(unittest.TestCase):
       print k
 
   def _test_1000(self):
-    '''TODO: Test refresh on various non-emtpy cache.'''
+    """TODO: Test refresh on various non-emtpy cache."""
     with tempfile.NamedTemporaryFile(delete=False) as f:
       pickle.dump([], f)
       f.close()

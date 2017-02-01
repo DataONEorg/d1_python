@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`error_handler`
 ====================
 
@@ -26,11 +26,11 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 
 def check_response(response):
-  if (response.status != 200):
+  if (response.status_code != 200):
     with open('/tmp/stress_test_error.html', 'w') as f:
       f.write(response.read())
     raise Exception('Invalid response code: {0}'.format(response.status))

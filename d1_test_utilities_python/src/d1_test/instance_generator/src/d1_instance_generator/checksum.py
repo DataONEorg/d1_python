@@ -18,31 +18,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`checksum`
 ===============
 
 :Synopsis: Generate checksum objects.
 :Created: 2011-12-05
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 import hashlib
 import StringIO
 import logging
-# D1.
+# D1
 import d1_common.const
 import d1_common.util
 from d1_common.types.generated import dataoneTypes
 
-# App.
+# App
 import random_data
 
 
 def random_checksum_algorithm():
-  return random.choice(d1_common.util.dataone_to_python_checksum_algorithm_map.keys())
+  return random.choice(d1_common.util.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
 
 
 def calculate_checksum_of_flo(
@@ -63,9 +63,9 @@ def calculate_checksum_of_string(s, algorithm='SHA-1'):
 
 
 def generate_from_flo(flo, algorithm=None):
-  '''Generate a Checksum object for a file-like-object, using random
+  """Generate a Checksum object for a file-like-object, using random
   algorithm.
-  '''
+  """
   if algorithm is None:
     algorithm = random_checksum_algorithm()
   hexdigest = calculate_checksum_of_flo(flo, algorithm)
@@ -75,12 +75,12 @@ def generate_from_flo(flo, algorithm=None):
 
 
 def generate_from_string(s, algorithm=None):
-  '''Generate a Checksum object for a string, using random algorithm.
-  '''
+  """Generate a Checksum object for a string, using random algorithm.
+  """
   return generate_from_flo(StringIO.StringIO(s), algorithm)
 
 
 def generate():
-  '''Generate a Checksum object for a random string, using random algorithm.'''
+  """Generate a Checksum object for a random string, using random algorithm."""
   s = random_data.random_bytes(100)
   return generate_from_string(s)

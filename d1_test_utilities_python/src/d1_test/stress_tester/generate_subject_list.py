@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`generate_subject_list`
+""":mod:`generate_subject_list`
 ===============================
 
 :Synopsis: Generate a list of test subjects.
 :Author: DataONE (Dahl)
-'''
-# Stdlib.
+"""
+# Stdlib
 import logging
 import optparse
 import os
@@ -32,10 +32,10 @@ import re
 import sys
 import unittest
 
-# D1.
+# D1
 from d1_test.instance_generator import random_data
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('./shared/'))
 import settings

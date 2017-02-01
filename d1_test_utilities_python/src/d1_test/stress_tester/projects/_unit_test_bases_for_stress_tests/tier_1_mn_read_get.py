@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_get`
 =========================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -47,8 +47,8 @@ class Test050Get(d1_test_case.D1TestCase):
     pass
 
   def validate_object(self, object_info):
-    '''Get object and verify retrieved information against its ObjectInfo.
-    '''
+    """Get object and verify retrieved information against its ObjectInfo.
+    """
     # The ObjectInfo records were retrieved during the listObjects tests.
     client = test_client.TestClient(context.node['baseurl'])
     pid = object_info.identifier.value()
@@ -64,16 +64,16 @@ class Test050Get(d1_test_case.D1TestCase):
     self.assertEqual(object_size, object_info.size)
 
   def test_010_get_object_by_invalid_pid(self):
-    '''404 NotFound when attempting to get non-existing object.
-    '''
+    """404 NotFound when attempting to get non-existing object.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
       d1_common.types.exceptions.NotFound, client.get, context.TOKEN, '_invalid_pid_'
     )
 
   def test_020_get_object_by_valid_pid(self):
-    '''Successful retrieval of known objects.
-    '''
+    """Successful retrieval of known objects.
+    """
     # Verify that objects learned about in earlier slicing tests can be
     # retrieved and that their checksums match what listObjects reported.
     for object_list in context.slices:

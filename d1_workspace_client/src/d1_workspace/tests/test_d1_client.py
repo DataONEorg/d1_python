@@ -18,20 +18,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_d1_client`
+""":mod:`test_d1_client`
 ========================
 
 :Synopsis:
  - Test the D1Client class.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import sys
 import unittest
 
-# D1.
+# D1
 sys.path.append('..')
 import onedrive_d1_client
 

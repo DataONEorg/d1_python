@@ -1,32 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
+"""
 Module d1_instance_generator.identifier
 =======================================
 
 :Synopsis: Generate instances of Identifier.
 :Created: 2011-07-31
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 
-# D1.
+# D1
 from d1_common.types.generated import dataoneTypes
 
-# App.
+# App
 import random_data
 
 
 def generate(prefix=u'', min_len=5, max_len=20):
-  '''Generate instance of Identifier holding a random unicode string'''
+  """Generate instance of Identifier holding a random unicode string"""
   s = generate_bare(prefix, min_len, max_len)
   return dataoneTypes.Identifier(s)
 
 
 def generate_bare(prefix=u'', min_len=5, max_len=20):
-  '''Generate bare Identifier holding a random unicode string'''
+  """Generate bare Identifier holding a random unicode string"""
   len_prefix = len(prefix)
   if len_prefix >= max_len:
     raise Exception('Unable to generate Identifier: No room for prefix')

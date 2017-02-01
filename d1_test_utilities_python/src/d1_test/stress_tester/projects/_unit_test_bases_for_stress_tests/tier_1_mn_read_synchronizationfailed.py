@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_synchronizationfailed`
 ===========================================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities

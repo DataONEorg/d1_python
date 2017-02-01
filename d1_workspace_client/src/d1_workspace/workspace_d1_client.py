@@ -18,27 +18,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`workspace_d1_client`
+""":mod:`workspace_d1_client`
 =============================
 
 :Synopsis:
  - Interact with the DataONE infrastructure.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import socket
 import ssl
 
-# D1.
+# D1
 import d1_common
 import d1_client.cnclient_1_1
 import d1_client.d1client
 import d1_client.mnclient
 
-# App.
+# App
 #import settings
 import workspace_exception
 
@@ -80,7 +80,7 @@ class D1Client(object):
       raise workspace_exception.WorkspaceException(str(e))
 
   def get_system_metadata(self, pid):
-    '''This method causes an implicit validation of the retrieved System Metadata'''
+    """This method causes an implicit validation of the retrieved System Metadata"""
     try:
       return self.client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
@@ -89,7 +89,7 @@ class D1Client(object):
       raise workspace_exception.WorkspaceException(str(e))
 
   def get_system_metadata_as_string(self, pid):
-    '''This method does not include validation of the System Metadata'''
+    """This method does not include validation of the System Metadata"""
     try:
       result = self.client.getSystemMetadataResponse(pid)
       return result.read()

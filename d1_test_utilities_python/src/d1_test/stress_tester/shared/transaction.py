@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`transaction`
 ==================
 
@@ -27,7 +27,7 @@
 :Synopsis: Base class for Multi-Mechanize Transaction.
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import codecs
@@ -36,11 +36,11 @@ import random
 import sys
 import time
 
-# D1.
+# D1
 import d1_client.mnclient
 import d1_common.const
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import certificate
@@ -100,12 +100,12 @@ class Transaction(object):
     )
 
   def check_response(self, response):
-    if (response.status != 200):
+    if response.status_code != 200:
       with open(settings.ERROR_PATH, 'w') as f:
         f.write(response.read())
       raise Exception(
         'Invalid response code: {0}. Error captured in {1}.'
-        .format(response.status, settings.ERROR_PATH)
+        .format(response.status_code, settings.ERROR_PATH)
       )
 
   def capture_response_and_raise_exception(self, e):
@@ -113,7 +113,7 @@ class Transaction(object):
       f.write(str(e))
     raise Exception(
       'Invalid response code: {0}. Error captured in {1}.'
-      .format(response.status, settings.ERROR_PATH)
+      .format(response.status_code, settings.ERROR_PATH)
     )
 
   def get_subject_list(self):

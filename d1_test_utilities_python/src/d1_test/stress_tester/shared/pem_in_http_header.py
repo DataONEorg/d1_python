@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`pem_in_http_header`
 =========================
 
@@ -30,7 +30,7 @@
   For debugging certificate processing logic, it is sometimes convenient
   to pass the certificates via HTTP headers instead of HTTPS. This converts
   PEM formatted certificates to and from HTTP header compatible values.
-'''
+"""
 import StringIO
 
 

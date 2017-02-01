@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_describe`
 ==============================
 
@@ -26,20 +26,20 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 import re
 import xml
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -50,8 +50,8 @@ class Test060Describe(d1_test_case.D1TestCase):
     pass
 
   def test_010_describe_by_invalid_pid(self):
-    '''404 NotFound when attempting to get description for non-existing object.
-    '''
+    """404 NotFound when attempting to get description for non-existing object.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     # The exception is caused by the body being empty since describe() uses a
     # HEAD request.
@@ -60,13 +60,13 @@ class Test060Describe(d1_test_case.D1TestCase):
     )
 
   def test_020_describe_by_valid_pid(self):
-    '''Successful describe for known objects.
+    """Successful describe for known objects.
     - Verify that required headers are present.
     - Verify that the object length reported by describe matches what was
       reported by listObjects.
     - Verify that date header contains a valid date.
     - Verify that date header matches what was reported by listObjects.
-    '''
+    """
     # Verify that the checksums retrieved by getChecksum match what listObjects
     # reported.
     for object_list in context.slices:

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_3_mn_storage_create`
 ===============================
 
@@ -26,7 +26,7 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import datetime
@@ -36,13 +36,13 @@ import StringIO
 import uuid
 import xml.sax.saxutils
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -53,7 +53,7 @@ class Test310Create(d1_test_case.D1TestCase):
     pass
 
   def generate_sysmeta(self, pid, size, checksum_algorithm, checksum, create_date):
-    return u'''<?xml version="1.0" encoding="UTF-8"?>
+    return u"""<?xml version="1.0" encoding="UTF-8"?>
 <D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>{0}</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -66,7 +66,7 @@ class Test310Create(d1_test_case.D1TestCase):
   <originMemberNode>MN1</originMemberNode>
   <authoritativeMemberNode>MN1</authoritativeMemberNode>
 </D1:systemMetadata>
-'''.format(
+""".format(
       xml.sax.saxutils.escape(pid), size, checksum_algorithm, checksum,
       datetime.datetime.isoformat(create_date)
     ).encode('utf-8')
@@ -77,8 +77,8 @@ class Test310Create(d1_test_case.D1TestCase):
     )
 
   def test_020_create_object(self):
-    '''Create a single test object.
-    '''
+    """Create a single test object.
+    """
     client = test_client.TestClient(context.node['baseurl'])
 
     #scidata_path = test_utilities.get_resource_path(
@@ -109,9 +109,9 @@ class Test310Create(d1_test_case.D1TestCase):
     )
 
   def test_030_object_exists(self):
-    '''Verify that created object can be retrieved and that its checksum
+    """Verify that created object can be retrieved and that its checksum
     matches.
-    '''
+    """
     client = test_client.TestClient(context.node['baseurl'])
     response = client.get(context.TOKEN, context.pid_created)
     # Calculate the checksum.
@@ -119,16 +119,16 @@ class Test310Create(d1_test_case.D1TestCase):
     self.assertEqual(context.checksum, checksum)
 
   def test_040_log_records_total_increased_by_one(self):
-    '''Total number of log records increased by one.
-    '''
+    """Total number of log records increased by one.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     log_records = client.getLogRecords(context.TOKEN, datetime.datetime(1800, 1, 1), 0, 0)
     self.assertEqual(context.log_records_total, log_records.total + 1)
 
   def test_070_describe_returns_correct_header(self):
-    '''Successful describe for newly created object.
+    """Successful describe for newly created object.
     - Verify that required headers are present.
-    '''
+    """
     client = test_client.TestClient(context.node['baseurl'])
     response = client.describe(context.TOKEN, context.pid_created)
     headers = response.getheaders()
@@ -141,8 +141,8 @@ class Test310Create(d1_test_case.D1TestCase):
     self.assertTrue('content-length' in headers_lower)
 
   def test_080_total_number_of_objects_increased_by_one(self):
-    '''Total number of objects reported by listObjects increased by one.
-    '''
+    """Total number of objects reported by listObjects increased by one.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(context.TOKEN, start=0, count=0)
     self.assertEqual(object_list.total, context.object_total + 1)

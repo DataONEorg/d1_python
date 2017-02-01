@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.tests.test_replication_policy
 ==========================================================
 
 :Synopsis: Unit tests for random replication policy generator.
 :Created: 2011-12-06
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import hashlib
 import logging
 import os
@@ -36,13 +36,13 @@ import unittest
 import uuid
 import StringIO
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
 import d1_common.xmlrunner
 
-# App.
+# App
 sys.path.append('../generator/')
 import replicationpolicy
 
@@ -54,7 +54,7 @@ class TestReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLComp
     pass
 
   def test_010(self):
-    '''generate()'''
+    """generate()"""
     replication_policy_obj = replicationpolicy.generate()
     self.assertTrue(replication_policy_obj.toxml())
 

@@ -21,7 +21,7 @@
 """Populate a Member Node with randomly generated objects
 """
 
-# Stdlib.
+# Stdlib
 import codecs
 import datetime
 import hashlib
@@ -31,7 +31,7 @@ import os
 import sys
 import StringIO
 
-# D1.
+# D1
 import d1_client.mnclient
 import d1_client.mnclient_2_0
 import d1_common.types.exceptions

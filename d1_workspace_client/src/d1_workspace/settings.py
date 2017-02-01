@@ -18,21 +18,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`settings`
+""":mod:`settings`
 ==================
 
 :Synopsis:
  - Default settings for the DataONE Workspace Client.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import d1_common.const
 import logging
 import os
 
-# D1.
+# D1
 
 
 # Create absolute path from path that is relative to the module from which

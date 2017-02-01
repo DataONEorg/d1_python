@@ -18,14 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`workspace_definition`
+""":mod:`workspace_definition`
 ==============================
 
 :Synopsis:
   Hold and perform operations against the workspace definition PyXB object.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 from log_decorator import log_func
 import settings

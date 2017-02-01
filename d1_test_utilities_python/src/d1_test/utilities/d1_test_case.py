@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_test_case
+"""Module d1_test_case
 ======================
 
 :Synopsis: Extends unittest.TestCase with DataONE specific asserts.
 :Created: 2011-04-27
 :Author: DataONE (Dahl)
-'''
+"""
 
 import datetime
 import unittest

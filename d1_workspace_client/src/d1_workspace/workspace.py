@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`workspace`
+""":mod:`workspace`
 ===================
 
 :Synopsis:
@@ -27,8 +27,8 @@
   and refresh the cache. Keep a pickled version of the cache on disk.
 :Author:
   DataONE (Dahl)
-'''
-'''
+"""
+"""
 TERMS
 
 wdef: The in-memory representation of the workspace definition as a PyXB object.
@@ -65,9 +65,9 @@ SYNC:
     - get any missing records for manually selected pids
     - run "count" queries to find mismatches between the cache and online queries.
       - if there's a mismatch, rerun query
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 try:
   import cPickle as pickle
@@ -76,7 +76,7 @@ except ImportError:
 import os
 import pprint
 
-# App.
+# App
 import check_dependencies
 import command_processor
 from log_decorator import log_func
@@ -88,18 +88,18 @@ import workspace_exception
 
 class Workspace(object):
   def __init__(self, **options):
-    '''options: Override any of the defaults in settings.py by passing in
+    """options: Override any of the defaults in settings.py by passing in
     key/value pairs where the key is in lower case. For instance:
     workspace_def_path=/tmp/my_file.xml will override the workspace_def_path
     default.
-    '''
+    """
     check_dependencies.check_dependencies()
     self._options = self._set_options(**options)
     self._command_processor = command_processor.CommandProcessor(self._options)
     util.ensure_dir_exists(self._options['workspace_cache_root'])
 
   def _set_options(self, **options_override):
-    '''Copy defaults from settings.py and optionally override them'''
+    """Copy defaults from settings.py and optionally override them"""
     options = {}
     for k, v in settings.__dict__.items():
       if not k.isupper():
@@ -119,30 +119,30 @@ class Workspace(object):
     self._flush_wcache()
 
   def refresh(self):
-    '''Synchronize the local cache of the workspace with the workspace
+    """Synchronize the local cache of the workspace with the workspace
     definition then add any missing Solr records and query results.
-    '''
+    """
     logging.info('Refreshing workspace')
     self._init_wcache()
     self.sync_wcache_with_wdef()
     self._wcache['workspace_timestamp'] = self._workspace_modified_timestamp()
 
   def get_folder(self, path, root=None):
-    '''Get the contents of a cached workspace folder'''
+    """Get the contents of a cached workspace folder"""
     return self._get_wcache_folder_recursive(path, root)
 
   def get_workspace_folder_name(self, workspace_folder):
     return workspace_folder['name']
 
   def get_object_record(self, pid):
-    '''This function is normally used for retriving records for objects cached
+    """This function is normally used for retriving records for objects cached
     in the workspace. Caching happens when the workspace is refreshed. The
     function can also be used for retriving records for objects that are
     currently not in the workspace. In that case, an attempt is made to retrieve
     the record from a CN on the fly. This allows the workspace caching system to
     be used for objects that are not in the workspace. ONEDrive uses this
     functionality for the FlatSpace folder.
-    '''
+    """
     try:
       return self._wcache['records'][pid]
     except KeyError:
@@ -268,9 +268,9 @@ class Workspace(object):
       self._create_wcache_item_for_pid(wcache_folder, pid)
 
   def _create_wcache_item_for_pid(self, wcache_folder, pid):
-    '''A workspace can contain identifiers that are no longer valid (or were
+    """A workspace can contain identifiers that are no longer valid (or were
     never valid). Any items for which a Solr record cannot be retrieved are
-    silently skipped.'''
+    silently skipped."""
     try:
       record = self._command_processor.get_solr_record(pid)
     except workspace_exception.WorkspaceException:

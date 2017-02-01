@@ -18,21 +18,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_core_get_log_records`
 =====================================
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Std.
 import os
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
@@ -44,7 +44,7 @@ class Transaction(transaction.Transaction):
     super(Transaction, self).__init__()
 
   def d1_mn_api_call(self):
-    '''MNRead.getLogRecords() for specific object called by regular subject'''
+    """MNRead.getLogRecords() for specific object called by regular subject"""
     obj, subject = self.select_random_private_object()
     client = self.create_client_for_subject(subject)
     response = client.getLogRecordsResponse(pidFilter=obj)

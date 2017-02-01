@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_list_objects`
 ==================================
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Std.
 import datetime
@@ -36,7 +36,7 @@ import uuid
 import xml.sax.saxutils
 import StringIO
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import transaction
@@ -69,7 +69,7 @@ class Transaction(transaction.Transaction):
   #                 vendorSpecific=None):
 
   def d1_mn_api_call(self):
-    '''MNRead.ListObjects()'''
+    """MNRead.ListObjects()"""
     client = self.create_client_for_cn()
     start = random.randint(0, self.total - 1)
     count = page_size

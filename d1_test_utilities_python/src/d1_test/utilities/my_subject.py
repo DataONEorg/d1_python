@@ -1,7 +1,7 @@
-'''Given a certificate, show the subject in DataONE format and optionally 
+"""Given a certificate, show the subject in DataONE format and optionally
 display included subject information such as mapped identities and group 
 memberships.
-'''
+"""
 
 import sys
 import logging
@@ -13,11 +13,11 @@ from lxml import etree
 
 
 def getSubjectFromName(xName):
-  '''Given a DN, returns a DataONE subject
+  """Given a DN, returns a DataONE subject
   TODO: This assumes that RDNs are in reverse order...
   
   @param 
-  '''
+  """
   parts = xName.get_components()
   res = []
   for part in parts:
@@ -43,8 +43,8 @@ def dumpExtensions(x509):
 
 
 def getSubjectInfoFromCert(x509):
-  '''Retrieve the SubjectInfo xml from the certificate, if present
-  '''
+  """Retrieve the SubjectInfo xml from the certificate, if present
+  """
   #This is a huge hack - iterate through the extensions looking for a UTF8 
   #object that contains the string "subjectInfo". The extension has no name, and 
   #the OpenSSL lib currently has no way to retrieve the extension by OID 

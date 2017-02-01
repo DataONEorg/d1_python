@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`list_effective_subjects`
 ==============================
 
@@ -27,16 +27,16 @@
   identities and groups for which the certificate holder is authenticated.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import optparse
 import os
 import re
 import sys
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.types.exceptions
 import d1_common.util

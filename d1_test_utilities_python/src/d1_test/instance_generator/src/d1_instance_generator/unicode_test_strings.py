@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''
+"""
 Module d1_instance_generator.unicode_test_strings
 =================================================
 
@@ -27,7 +27,7 @@ Module d1_instance_generator.unicode_test_strings
   A set of Unicode strings that are particularly likely to trip up the unwary.
 :Created: 2011-12-05
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
 UNICODE_TEST_STRINGS = [
   u'common-unicode-ascii-safe-ABCDEFGHIJKLMNOPQRSTUVWXYZ',

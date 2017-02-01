@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`generate_certificates`
+""":mod:`generate_certificates`
 ===============================
 
 :Synopsis:
@@ -27,8 +27,8 @@
   subject list and two certificates are created for test subjects with special
   permissions.
 :Author: DataONE (Dahl)
-'''
-# Stdlib.
+"""
+# Stdlib
 import codecs
 import logging
 import optparse
@@ -38,12 +38,12 @@ import sys
 import unittest
 import xml.sax.saxutils
 
-# D1.
+# D1
 import d1_x509v3_certificate_generator
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 from d1_test.instance_generator import random_data
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('./shared/'))
 import settings
@@ -54,7 +54,7 @@ logger = logging.getLogger()
 
 # The SubjectInfo to include in the certificate.
 subject_info_template = \
-'''<?xml version="1.0" encoding="UTF-8"?>
+"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
   <person>
     <subject>%subject%</subject>
@@ -64,7 +64,7 @@ subject_info_template = \
     <verified>true</verified>
   </person>
 </d1:subjectInfo>
-'''
+"""
 
 
 def main():

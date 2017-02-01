@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.tests.test_random_data
 ===================================================
 
 :Synopsis: Unit tests for random data generator.
 :Created: 2011-12-05
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import unittest
 import logging
 import os
@@ -36,13 +36,13 @@ import sys
 import uuid
 import StringIO
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
 import d1_common.xmlrunner
 
-# App.
+# App
 sys.path.append('../generator/')
 import random_data
 
@@ -65,18 +65,18 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertEqual(count ,  1)
 
   def test_005(self):
-    '''random_bytes()'''
+    """random_bytes()"""
     s = random_data.random_bytes(1000)
     self.assertEqual(len(s) ,  1000)
 
   def test_010(self):
-    '''random_unicode_name()'''
+    """random_unicode_name()"""
     name = random_data.random_unicode_name()
     self.assertTrue(len(name) > 0)
     self.assertTrue(isinstance(name, unicode))
 
   def test_020(self):
-    '''random_unicode_name_list()'''
+    """random_unicode_name_list()"""
     names = random_data.random_unicode_name_list(10)
     self.assertEqual(len(names) ,  10)
     for name in names:
@@ -84,7 +84,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertTrue(isinstance(name, unicode))
 
   def test_030(self):
-    '''random_unicode_name_unique_list()'''
+    """random_unicode_name_unique_list()"""
     for i in range(10):
       names = random_data.random_unicode_name_unique_list(30)
       self.assertEqual(len(names) ,  30)
@@ -92,19 +92,19 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self._assert_unique(names)
 
   def test_040(self):
-    '''random_word()'''
+    """random_word()"""
     word = random_data.random_word()
     self.assertTrue(len(word) > 0)
     self.assertTrue(isinstance(word, unicode))
 
   def test_045(self):
-    '''random_3_words()'''
+    """random_3_words()"""
     words = random_data.random_3_words()
     self.assertTrue(len(words) > 0)
     self.assertTrue(isinstance(words, unicode))
 
   def test_050(self):
-    '''random_word_list()'''
+    """random_word_list()"""
     words = random_data.random_word_list(10)
     self.assertEqual(len(words) ,  10)
     for word in words:
@@ -112,7 +112,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertTrue(isinstance(word, unicode))
 
   def test_060(self):
-    '''random_word_unique_list()'''
+    """random_word_unique_list()"""
     for i in range(10):
       names = random_data.random_word_unique_list(30)
       self.assertEqual(len(names) ,  30)
@@ -120,7 +120,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self._assert_unique(names)
 
   def test_070(self):
-    '''random_unicode_string()'''
+    """random_unicode_string()"""
     for i in range(10):
       min_len = random.randint(0, 100)
       max_len = random.randint(min_len, 100)
@@ -129,13 +129,13 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertTrue(len(s) <= max_len)
 
   def test_080(self):
-    '''random_email()'''
+    """random_email()"""
     for i in range(10):
       s = random_data.random_email()
       self.assertTrue(s)
 
   def test_090(self):
-    '''random_bool()'''
+    """random_bool()"""
     for i in range(10):
       b = random_data.random_bool()
       self.assertTrue(isinstance(b, bool))

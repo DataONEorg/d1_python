@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_3_mn_storage_update`
 ===============================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -47,8 +47,8 @@ class TestUpdate(d1_test_case.D1TestCase):
     pass
 
   def test_object_update(self):
-    '''Update an object.
-    '''
+    """Update an object.
+    """
     # New object.
     # SysMeta
     sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
@@ -68,8 +68,8 @@ class TestUpdate(d1_test_case.D1TestCase):
     return response
 
   def delete(self):
-    '''MN_crud.delete() in GMN and libraries.
-    '''
+    """MN_crud.delete() in GMN and libraries.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)

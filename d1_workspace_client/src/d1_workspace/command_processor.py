@@ -18,28 +18,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`command_processor`
+""":mod:`command_processor`
 ===========================
 
 :Synopsis:
  - Interface to the backends.
 :Author:
  - DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import hashlib
 import logging
 import os
 import pprint
 import re
 
-# D1.
+# D1
 import d1_client.d1client
 import d1_common.date_time
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
-# App.
+# App
 import cache_disk
 import workspace_d1_client
 import workspace_solr_client
@@ -139,8 +139,8 @@ class CommandProcessor():
         )
 
   def _close_open_date_ranges(self, record):
-    '''If a date range is missing the start or end date, close it by copying
-    the date from the existing value.'''
+    """If a date range is missing the start or end date, close it by copying
+    the date from the existing value."""
     date_ranges = (('beginDate', 'endDate'), )
     for begin, end in date_ranges:
       if begin in record and end in record:

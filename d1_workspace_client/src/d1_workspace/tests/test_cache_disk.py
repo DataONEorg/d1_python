@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_disk_cache`
+""":mod:`test_disk_cache`
 =========================
 
 :Synopsis:
  - Test the DiskCache class.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 #import os
 import logging
 import os
@@ -34,7 +34,7 @@ import sys
 import time
 import unittest
 
-# D1.
+# D1
 sys.path.append('..')
 import cache_disk
 

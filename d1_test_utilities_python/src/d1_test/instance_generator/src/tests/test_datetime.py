@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.tests.test_date
 ============================================
 
 :Synopsis: Unit tests for datetime generator.
 :Created: 2011-12-05
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import hashlib
 import logging
 import os
@@ -37,14 +37,14 @@ import unittest
 import uuid
 import StringIO
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
 import d1_common.xmlrunner
 
-# App.
+# App
 sys.path.append('../generator/')
 import dates
 
@@ -56,14 +56,14 @@ class TestDateTime(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     pass
 
   def test_010(self):
-    '''generate(), random'''
+    """generate(), random"""
     for i in range(10):
       t1 = dates.random_date()
       t2 = dates.random_date()
       self.assertTrue(t1 != t2)
 
   def test_011(self):
-    '''generate(), random, restricted'''
+    """generate(), random, restricted"""
     for i in range(10):
       t1 = dates.random_date(100, 200)
       t2 = dates.random_date(50, 60)

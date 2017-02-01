@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_3_mn_storage_create`
 ===============================
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Std.
 import os
@@ -32,11 +32,11 @@ import random
 import string
 import sys
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 from d1_test.instance_generator import random_data, systemmetadata
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
@@ -60,7 +60,7 @@ class Transaction(transaction.Transaction):
     super(Transaction, self).__init__()
 
   def d1_mn_api_call(self):
-    '''MNStorage.create()'''
+    """MNStorage.create()"""
     sci_obj = self.create_science_object()
     subjects = self.get_random_subjects(PUBLIC_ACCESS_PERCENT, N_SUBJECTS)
     access_policy = self.create_access_policy(subjects)

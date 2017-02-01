@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.accesspolicy
 =========================================
 
@@ -42,15 +42,15 @@ Module d1_instance_generator.accesspolicy
   "_read_" in it, should also contain the read permission entry.
 :Created: 2011-08-02
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 
-# D1.
+# D1
 import d1_common.types.dataoneTypes
 
-# App.
+# App
 import random_data
 
 # Map between permission labels and permissions.
@@ -77,9 +77,9 @@ def permissions_to_tag_string(permissions):
 
 
 def random_subject_with_permission_labels(permissions, group_chance=0.1):
-  '''Generate a random subject that is tagged with the provided permissions
+  """Generate a random subject that is tagged with the provided permissions
   and has a certain chance of being tagged as group
-  '''
+  """
   subject_base = random_data.random_3_words()
   tags = permissions_to_tag_string(permissions)
   group = '_group_' if random.random() <= group_chance else ''
@@ -95,8 +95,8 @@ def random_subjects_with_permission_labels(permissions, min=1, max=100, group_ch
 
 
 def generate(min_rules=1, max_rules=5, max_subjects=5):
-  '''Generate a random access policy document.
-  '''
+  """Generate a random access policy document.
+  """
   ap = d1_common.types.dataoneTypes.AccessPolicy()
   n_rules = random.randint(min_rules, max_rules)
   rules = []

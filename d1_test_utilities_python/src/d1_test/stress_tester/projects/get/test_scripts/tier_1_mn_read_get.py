@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_get`
 =========================
 
@@ -26,7 +26,7 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import codecs
@@ -39,12 +39,12 @@ import uuid
 import xml.sax.saxutils
 import StringIO
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
-# App.
+# App
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 #import certificate
@@ -58,7 +58,7 @@ class Transaction(transaction.Transaction):
     super(Transaction, self).__init__()
 
   def d1_mn_api_call(self):
-    '''MNRead.get() called by regular user'''
+    """MNRead.get() called by regular user"""
     pid = self.select_random_public_object()
     client = self.create_public_client()
     response = client.getResponse(pid)

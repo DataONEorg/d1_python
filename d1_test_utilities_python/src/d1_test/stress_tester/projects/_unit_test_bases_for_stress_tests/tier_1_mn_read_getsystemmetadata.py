@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_getsystemmetadata`
 =======================================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -47,8 +47,8 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
     pass
 
   def test_010_get_sysmeta_by_invalid_pid(self):
-    '''404 NotFound when attempting to get non-existing SysMeta.
-    '''
+    """404 NotFound when attempting to get non-existing SysMeta.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
       d1_common.types.exceptions.NotFound, client.getSystemMetadata, context.TOKEN,
@@ -56,8 +56,8 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
     )
 
   def test_020_get_sysmeta_by_valid_pid(self):
-    '''Successful retrieval of valid SysMeta objects.
-    '''
+    """Successful retrieval of valid SysMeta objects.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     for object_list in context.slices:
       for object_info in object_list.objectInfo:

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_instance_generator.words
 ==================================
 
@@ -27,7 +27,7 @@ Module d1_instance_generator.words
   the randomWords method below.
 :Created: 2011-07-31
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
 WORDS_1K = [
   u'untrimmed', u'Hydriote', u'burnish', u'tsia', u'petiolary', u'vocative',
@@ -227,10 +227,10 @@ def countlines(source):
 
 
 def randomWords(count=100, source='/usr/share/dict/words'):
-  '''Returns a random selection of count words from WORDS_1K or by reading 
+  """Returns a random selection of count words from WORDS_1K or by reading
   from source if the number of words requested is more than available in 
   WORDS_1K.
-  '''
+  """
   if len(WORDS_1K) > count:
     return random.sample(WORDS_1K, count)
   nlines = countlines(source)

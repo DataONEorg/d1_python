@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''
+"""
 Module d1_instance_generator.unicode_names
 ==========================================
 
@@ -27,7 +27,7 @@ Module d1_instance_generator.unicode_names
   http://www.i18nguy.com/unicode-example.html.
 :Created: 2011-07-31
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
 UNICODE_NAMES = [
   u"Արամ Խաչատրյան",

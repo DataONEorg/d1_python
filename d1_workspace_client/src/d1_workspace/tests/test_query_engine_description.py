@@ -18,19 +18,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_query_engine_description`
+""":mod:`test_query_engine_description`
 =======================================
 
 :Synopsis:
  - Test the QueryEngineDescription class.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import sys
 import unittest
 
-# D1.
+# D1
 sys.path.append('..')
 sys.path.append('../..')
 import query_engine_description

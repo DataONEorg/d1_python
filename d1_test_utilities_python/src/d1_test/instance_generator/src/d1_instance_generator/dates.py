@@ -18,26 +18,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`date`
 ===========
 
 :Synopsis: Generate random dates.
 :Created: 2011-08-01
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 import datetime
 
-# D1.
+# D1
 import d1_common.date_time
 
 
 def random_date(earliest=0, latest=1e10):
-  '''Generate a random date somewhere between earliest and latest. 
-  '''
+  """Generate a random date somewhere between earliest and latest.
+  """
   tstamp = random.randrange(earliest, latest)
   dt = datetime.datetime.utcfromtimestamp(tstamp)
   return d1_common.date_time.create_utc_datetime(
@@ -46,10 +46,10 @@ def random_date(earliest=0, latest=1e10):
 
 
 def now():
-  '''Generate a date with the current UTC date and time'''
+  """Generate a date with the current UTC date and time"""
   return datetime.datetime.utcnow()
 
 
 def generate():
-  '''Generate a dataoneTypes.DateTime with a random datetime'''
+  """Generate a dataoneTypes.DateTime with a random datetime"""
   dt = dataoneTypes.DateTime(random_date())

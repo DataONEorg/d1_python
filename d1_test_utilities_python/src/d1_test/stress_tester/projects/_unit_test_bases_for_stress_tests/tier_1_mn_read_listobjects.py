@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`tier_1_mn_read_listobjects`
 =================================
 
@@ -26,17 +26,17 @@
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Std.
 import sys
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
 
-# App.
+# App
 import context
 import test_client
 import test_utilities
@@ -53,8 +53,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     pass
 
   def test_010_get_object_count(self):
-    '''Get object count.
-    '''
+    """Get object count.
+    """
     client = test_client.TestClient(context.node['baseurl'])
 
     object_list = client.listObjects(context.TOKEN, start=0, count=0)
@@ -69,8 +69,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     context.object_total = object_list.total
 
   def test_020_validate_object_count_1(self):
-    '''Provided object count is correct (1).
-    '''
+    """Provided object count is correct (1).
+    """
     # Get a slice that contains the last object.
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
@@ -81,8 +81,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     self.assert_counts(object_list, context.object_total - 1, 1, object_list.total)
 
   def test_020_validate_object_count_2(self):
-    '''Provided object count is correct (2).
-    '''
+    """Provided object count is correct (2).
+    """
     # - Get a slice that contains any objects after the last object. If this
     # returns anything, the initially obtained object count was wrong.
     # - Verify that server responds correctly when more than the available number
@@ -96,10 +96,10 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     self.assert_counts(object_list, context.object_total, 0, object_list.total)
 
   def test_030_get_slices(self):
-    '''Get test object slices.
+    """Get test object slices.
     3 slices are needed, each with 5 objects. They are picked from the
     beginning, center and end of the available range.
-    '''
+    """
     client = test_client.TestClient(context.node['baseurl'])
     for start in (0, context.object_total / 2, context.object_total - 5):
       object_list = client.listObjects(context.TOKEN, start=start, count=5)
@@ -112,8 +112,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         context.slices = [object_list]
 
   def test_040_invalid_request_negative_start(self):
-    '''Negative 'start' parameter returns InvalidRequest.
-    '''
+    """Negative 'start' parameter returns InvalidRequest.
+    """
     # It's common to forget to check for negative numbers when validating
     # indexes.
     client = test_client.TestClient(context.node['baseurl'])
@@ -127,7 +127,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
 
   def test_050_invalid_request_invalid_count(self):
     ''''count' parameter higher than MAX_LISTOBJECTS returns InvalidRequest.
-    '''
+    """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest,
@@ -137,8 +137,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     )
 
   def test_060_invalid_request_negative_count(self):
-    '''Negative 'count' parameter returns InvalidRequest.
-    '''
+    """Negative 'count' parameter returns InvalidRequest.
+    """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest,
@@ -148,9 +148,9 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     )
 
   def test_070_date_range_1(self):
-    '''fromDate and toDate parameters are accepted separately and
+    """fromDate and toDate parameters are accepted separately and
     limit the number of returned objects.
-    '''
+    """
     # Find two unique datetimes.
     dates = []
     for object_list in context.slices:
@@ -176,9 +176,9 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     self.assertTrue(object_list.count < context.object_total)
 
   def test_075_date_range_2(self):
-    '''fromDate and toDate correctly split the number of returned
+    """fromDate and toDate correctly split the number of returned
     objects.
-    '''
+    """
     # Find middle timestamp.
     dates = []
     for object_list in context.slices:
@@ -197,9 +197,9 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     self.assertEqual(low + high, context.object_total)
 
   def test_080_date_range_3(self):
-    '''fromDate and toDate parameters are accepted together and
+    """fromDate and toDate parameters are accepted together and
     limit the number of returned objects.
-    '''
+    """
     # Find two unique datetimes.
     dates = []
     for object_list in context.slices:

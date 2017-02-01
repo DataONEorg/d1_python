@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`workspace_exception`
+""":mod:`workspace_exception`
 =============================
 
 :Synopsis:
  - Type that gets raised for errors in the Workspace.
 :Author: DataONE (Dahl)
-'''
+"""
 
 import inspect
 import logging

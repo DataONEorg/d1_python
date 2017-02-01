@@ -27,9 +27,9 @@ import optparse
 
 
 def generateVersion(schema_path, binding_path):
-  '''Given the DataONE types schema, generates a version module that
+  """Given the DataONE types schema, generates a version module that
   contains version information about the file.
-  '''
+  """
   from xml.etree.ElementTree import parse
   try:
     import pysvn

@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`generate_test_subject_certs`
+""":mod:`generate_test_subject_certs`
 =====================================
 
 :Synopsis: Create set of test certificates signed by the DataONE Test CA.
 :Author: DataONE (Dahl)
-'''
-# Stdlib.
+"""
+# Stdlib
 import logging
 import os
 import sys
@@ -37,7 +37,7 @@ except ImportError:
   print 'Try: sudo easy_install pyopenssl'
   raise
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # Get an instance of a logger.
@@ -157,7 +157,7 @@ subjects = [
 
 
 def create_key_pair(key_type, n_bits):
-  '''Create a public/private key pair.
+  """Create a public/private key pair.
 
   :param key_type: Key type (RSA or DSA).
   :type key_type: crypto.TYPE_RSA or crypto.TYPE_DSA
@@ -165,14 +165,14 @@ def create_key_pair(key_type, n_bits):
   :type n_bits: int
   :returns: Public/private key pair.
   :return type: PKey
-  '''
+  """
   pkey = crypto.PKey()
   pkey.generate_key(key_type, n_bits)
   return pkey
 
 
 def create_cert_request(pkey, digest="md5", **name):
-  '''Create a certificate request.
+  """Create a certificate request.
 
   :param pkey: Key to associate with the request.
   :type pkey: PKey
@@ -191,7 +191,7 @@ def create_cert_request(pkey, digest="md5", **name):
     OU - Organizational unit name
     CN - Common name
     emailAddress - E-mail address
-  '''
+  """
   req = crypto.X509Req()
   subj = req.get_subject()
 
@@ -204,14 +204,14 @@ def create_cert_request(pkey, digest="md5", **name):
 
 
 def create_session_extension(subject, persons, groups):
-  '''Create the custom X.509 extension object in which DataONE passes session
+  """Create the custom X.509 extension object in which DataONE passes session
   information.
   
   :param subjects: Subjects to store in session.
   :type subjects: list
   :returns: X.509 v3 certificate extension.
   :return type: X509Extension
-  '''
+  """
 
   subject_list = dataoneTypes.SubjectList()
   for person in persons:
@@ -258,7 +258,7 @@ def create_certificate(
   serial, (not_before, not_after),
   digest="md5"
 ):
-  '''Generate a certificate given a certificate request.
+  """Generate a certificate given a certificate request.
 
   :param req: Certificate reqeust.
   :type req: X509Req
@@ -278,7 +278,7 @@ def create_certificate(
   :type digest: str
   :returns: The signed certificate.
   :return type: X509  
-  '''
+  """
   cert = crypto.X509()
   cert.set_serial_number(serial)
   cert.gmtime_adj_notBefore(not_before)
