@@ -29,13 +29,13 @@ import sysmeta_util
 
 
 def is_obsoleted(pid):
-  return sysmeta_util.get_sci_row(pid).obsoleted_by is not None
+  return sysmeta_util.get_sci_model(pid).obsoleted_by is not None
 
 
 def set_obsolescence(pid, obsoletes_pid=None, obsoleted_by_pid=None):
-  sciobj_row = sysmeta_util.get_sci_row(pid)
-  _set_obsolescence(sciobj_row, obsoletes_pid, obsoleted_by_pid)
-  sciobj_row.save()
+  sciobj_model = sysmeta_util.get_sci_model(pid)
+  _set_obsolescence(sciobj_model, obsoletes_pid, obsoleted_by_pid)
+  sciobj_model.save()
 
 
 def cut_from_chain(pid):
@@ -58,76 +58,77 @@ def cut_from_chain(pid):
   - If the object was the last object in the chain and the chain has a SID, the
   SID reference is shifted over to the new last object in the chain.
   """
-  sciobj_row = sysmeta_util.get_sci_row(pid)
-  if is_head(sciobj_row):
-    _cut_head_from_chain(sciobj_row)
-  elif is_tail(sciobj_row):
-    _cut_tail_from_chain(sciobj_row)
+  sciobj_model = sysmeta_util.get_sci_model(pid)
+  if is_head(sciobj_model):
+    _cut_head_from_chain(sciobj_model)
+  elif is_tail(sciobj_model):
+    _cut_tail_from_chain(sciobj_model)
   else:
-    _cut_embedded_from_chain(sciobj_row)
-  sciobj_row.obsoletes = None
-  sciobj_row.obsoleted_by = None
-  sciobj_row.save()
+    _cut_embedded_from_chain(sciobj_model)
+  sciobj_model.obsoletes = None
+  sciobj_model.obsoleted_by = None
+  sciobj_model.save()
 
 #
 # Private
 #
 
-def _cut_head_from_chain(sciobj_row):
-  new_head_row = sysmeta_util.get_sci_row(sciobj_row.obsoletes.pid_or_sid)
-  new_head_row.obsoletedBy = None
-  new_head_row.save()
+def _cut_head_from_chain(sciobj_model):
+  new_head_model = sysmeta_util.get_sci_model(sciobj_model.obsoletes.pid_or_sid)
+  new_head_model.obsoletedBy = None
+  new_head_model.save()
 
 
-def _cut_tail_from_chain(sciobj_row):
-  new_tail_row = sysmeta_util.get_sci_row(sciobj_row.obsoleted_by.pid_or_sid)
-  new_tail_row.obsoletes = None
-  new_tail_row.save()
+def _cut_tail_from_chain(sciobj_model):
+  new_tail_model = sysmeta_util.get_sci_model(sciobj_model.obsoleted_by.pid_or_sid)
+  new_tail_model.obsoletes = None
+  new_tail_model.save()
 
 
-def _cut_embedded_from_chain(sciobj_row):
-  prev_row = sysmeta_util.get_sci_row(sciobj_row.obsoletes)
-  next_row = sysmeta_util.get_sci_row(sciobj_row.obsoleted_by)
-  prev_row.obsoleted_by = next_row.pid.pid_or_sid
-  next_row.obsoletes = prev_row.pid.pid_or_sid
-  prev_row.save()
-  next_row.save()
+def _cut_embedded_from_chain(sciobj_model):
+  prev_model = sysmeta_util.get_sci_model(sciobj_model.obsoletes)
+  next_model = sysmeta_util.get_sci_model(sciobj_model.obsoleted_by)
+  prev_model.obsoleted_by = next_model.pid.pid_or_sid
+  next_model.obsoletes = prev_model.pid.pid_or_sid
+  prev_model.save()
+  next_model.save()
 
 
-def _set_obsolescence(sciobj_row, obsoletes_pid, obsoleted_by_pid):
-  sciobj_row.obsoletes = app.models.did(obsoletes_pid) if obsoletes_pid else None
-  sciobj_row.obsoleted_by = app.models.did(obsoleted_by_pid) if obsoleted_by_pid else None
-
+def _set_obsolescence(sciobj_model, obsoletes_pid, obsoleted_by_pid):
+  if obsoletes_pid:
+    sciobj_model.obsoletes = app.models.did(obsoletes_pid)
+  if obsoleted_by_pid:
+    sciobj_model.obsoleted_by = app.models.did(obsoleted_by_pid)
 
 
 # def update_obsolescence_chain(pid, obsoletes_pid, obsoleted_by_pid, sid):
-#   with sysmeta_file.SysMetaFile(pid) as sysmeta_obj:
+#   with sysmeta_file.SysMetaFile(pid) as sysmeta_pyxb:
 #     sysmeta_file.update_obsolescence_chain(
-#       sysmeta_obj, obsoletes_pid, obsoleted_by_pid, sid
+#       sysmeta_pyxb, obsoletes_pid, obsoleted_by_pid, sid
 #     )
-#   sysmeta_db.update_obsolescence_chain(sysmeta_obj)
+#   sysmeta_db.update_obsolescence_chain(sysmeta_pyxb)
 
  #    if sysmeta.obsoletes is not None:
  # chain_pid_list = [pid]
  #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
  #  while sci_obj.obsoletes:
- #    obsoletes_pid = sysmeta_obj.obsoletes.value()
+ #    obsoletes_pid = sysmeta_pyxb.obsoletes.value()
  #    chain_pid_list.append(obsoletes_pid)
  #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoletes_pid)
  #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
  #  while sci_obj.obsoleted_by:
- #    obsoleted_by_pid = sysmeta_obj.obsoleted_by.value()
+ #    obsoleted_by_pid = sysmeta_pyxb.obsoleted_by.value()
  #    chain_pid_list.append(obsoleted_by_pid)
  #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoleted_by_pid)
  #  return chain_pid_list
 
 
-def is_head(sciobj_row):
-  return sciobj_row.obsoletes and not sciobj_row.obsoleted_by
+def is_head(sciobj_model):
+  return sciobj_model.obsoletes and not sciobj_model.obsoleted_by
 
 
-def is_tail(sciobj_row):
-  return sciobj_row.obsoleted_by and not sciobj_row.obsoletes
+def is_tail(sciobj_model):
+  return sciobj_model.obsoleted_by and not sciobj_model.obsoletes
 
 
 def get_pids_in_obsolescence_chain(pid):
@@ -136,13 +137,13 @@ def get_pids_in_obsolescence_chain(pid):
   typically obtained by resolving a SID. If the given PID is not in a chain, a
   list containing the single object is returned.
   """
-  sci_row = sysmeta_util.get_sci_row(pid)
-  while sci_row.obsoletes:
-    sci_row = sysmeta_util.get_sci_row(sci_row.obsoletes.pid.did)
-  chain_pid_list = [sci_row.pid.did]
-  while sci_row.obsoleted_by:
-    sci_row = sysmeta_util.get_sci_row(sci_row.obsoleted_by.pid.did)
-    chain_pid_list.append(sci_row.pid.did)
+  sci_model = sysmeta_util.get_sci_model(pid)
+  while sci_model.obsoletes:
+    sci_model = sysmeta_util.get_sci_model(sci_model.obsoletes.pid.did)
+  chain_pid_list = [sci_model.pid.did]
+  while sci_model.obsoleted_by:
+    sci_model = sysmeta_util.get_sci_model(sci_model.obsoleted_by.pid.did)
+    chain_pid_list.append(sci_model.pid.did)
   return chain_pid_list
 
 
@@ -190,9 +191,9 @@ def get_sid_by_pid(pid):
 #     )
 #
 
-# def update_obsolescence_chain(sysmeta_obj):
-#   pid = sysmeta_obj.identifier.value()
-#   sci_row = sysmeta_util.get_sci_row(pid)
-#   _update_obsolescence_chain(sci_row, sysmeta_obj)
-#   _update_modified_timestamp(sci_row, sysmeta_obj)
-#   sci_row.save()
+# def update_obsolescence_chain(sysmeta_pyxb):
+#   pid = sysmeta_pyxb.identifier.value()
+#   sci_model = sysmeta_util.get_sci_model(pid)
+#   _update_obsolescence_chain(sci_model, sysmeta_pyxb)
+#   _update_modified_timestamp(sci_model, sysmeta_pyxb)
+#   sci_model.save()
