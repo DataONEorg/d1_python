@@ -2313,6 +2313,25 @@ class GMNIntegrationTests(unittest.TestCase):
     sciobj_str, new_sysmeta_pyxb = self._get(client_v2, base_pid)
     self.assertEqual(new_sysmeta_pyxb.rightsHolder.value(), 'newRightsHolder')
 
+  def test_3060_v2_3(self):
+    """v2 MNStorage.updateSystemMetadata()
+    - Does not change dateUploaded
+    - Does update dateSysMetadataModified
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    ver1_sciobj_str, ver1_sysmeta_pyxb = self._create(client_v2, v2, base_pid, base_sid)
+    ver2_sciobj_str, ver2_sysmeta_pyxb = self._get(client_v2, base_pid)
+    ver2_sysmeta_pyxb.formatId = 'new_format_id'
+    is_ok = client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
+    self.assertTrue(is_ok)
+    ver3_sciobj_str, ver3_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self.assertEqual(ver2_sysmeta_pyxb.formatId, ver3_sysmeta_pyxb.formatId)
+    self.assertEqual(ver2_sysmeta_pyxb.dateUploaded, ver3_sysmeta_pyxb.dateUploaded)
+    self.assertGreater(ver3_sysmeta_pyxb.dateSysMetadataModified, ver2_sysmeta_pyxb.dateSysMetadataModified)
+
   #
   # Replication policy
   #
