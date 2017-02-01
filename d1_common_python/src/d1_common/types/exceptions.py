@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.types.exceptions
 =================================
 :Synopsis:
@@ -25,9 +25,9 @@ Module d1_common.types.exceptions
   - XML Serialization and deserialization of DataONE Exceptions
 :Created: 2010-04-12
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import inspect
 import string
 import sys
@@ -36,15 +36,15 @@ import xml.sax
 import StringIO
 import re
 
-# 3rd party.
+# 3rd party
 import pyxb
 import pyxb.utils.domutils
 import pyxb.binding.datatypes as XS
 
-# D1.
+# D1
 from d1_common.types import dataoneErrors
 import d1_common.util
-'''
+"""
 Example of serialized DataONE Exception:
 
 <error detailCode="1020" errorCode="404" name="NotFound" identifier="testpid">
@@ -55,11 +55,11 @@ auth.py(392)
 auth.py(315)
 </traceInformation>
 </error>
-'''
+"""
 
 
 class DataONEExceptionException(Exception):
-  '''Pass exceptions related to processing DataONEExceptions.'''
+  """Pass exceptions related to processing DataONEExceptions."""
 
   def __init__(self, value):
     self.value = value
@@ -71,12 +71,12 @@ class DataONEExceptionException(Exception):
 
 
 def deserialize(dataone_exception_xml):
-  '''Deserialize a DataONE Exception.
+  """Deserialize a DataONE Exception.
   :param dataone_exception_xml: XML Serialized DataONE Exception in UTF-8.
   :type dataone_exception_xml: str
   :returns: Native DataONE Exception Object.
   :return type: DataONEException subclass
-  '''
+  """
   try:
     # PyXB will print the following warning here:
     # WARNING:pyxb.binding.basis:Unable to convert DOM node value at <unknown>[1:209] to binding
@@ -106,9 +106,9 @@ def deserialize(dataone_exception_xml):
 
 
 def deserialize_from_headers(headers):
-  '''Deserialize a DataONE Exception that is stored in a map of HTTP headers
+  """Deserialize a DataONE Exception that is stored in a map of HTTP headers
   (used in responses to HTTP HEAD requests).
-  '''
+  """
   return _create_exception_by_name(
     _get_header(headers, 'DataONE-Exception-Name'),
     _get_header(headers, 'DataONE-Exception-DetailCode'),
@@ -165,8 +165,8 @@ def _create_exception_by_name(
 
 
 class DataONEException(Exception):
-  '''Base class for exceptions raised by DataONE.
-  '''
+  """Base class for exceptions raised by DataONE.
+  """
 
   @d1_common.util.utf8_to_unicode
   def __init__(
@@ -202,8 +202,8 @@ class DataONEException(Exception):
     return msg.getvalue()
 
   def friendly_format(self):
-    '''Serialize to a format more suitable for displaying to end users.
-    '''
+    """Serialize to a format more suitable for displaying to end users.
+    """
     if self.description is not None:
       msg = self.description
     else:
@@ -211,7 +211,7 @@ class DataONEException(Exception):
     return self.format_message(self.name, msg)
 
   def format_message(self, tag, msg):
-    '''If msg is None, print nothing.
+    """If msg is None, print nothing.
     If msg has a single line, print:
     tag: msg
     If msg has multiple lines, print:
@@ -219,7 +219,7 @@ class DataONEException(Exception):
       line 1
       line 2
     Msg is truncated to 1024 chars.
-    '''
+    """
     if msg is None:
       return
     msg = str(msg).strip()
@@ -256,16 +256,16 @@ class DataONEException(Exception):
     return self.serialize()
 
   def serialize_to_headers(self):
-    '''Serialize to a list of HTTP headers (used in responses to HTTP HEAD
+    """Serialize to a list of HTTP headers (used in responses to HTTP HEAD
     requests).
-    '''
+    """
     headers = []
     self._append_header(headers, 'DataONE-Exception-Name', self.__class__.__name__)
     self._append_header(headers, 'DataONE-Exception-ErrorCode', str(self.errorCode))
     self._append_header(headers, 'DataONE-Exception-DetailCode', str(self.detailCode))
     self._append_header(headers, 'DataONE-Exception-Description', self.description)
     self._append_header(
-      headers, 'DataONE-Exception-TraceInformation', self.traceInformation
+      headers, 'DataONE-Exception-TraceInformation', self.traceInformation[:1024]
     )
     self._append_header(headers, 'DataONE-Exception-Identifier', self.identifier)
     self._append_header(headers, 'DataONE-Exception-NodeID', self.nodeId)
