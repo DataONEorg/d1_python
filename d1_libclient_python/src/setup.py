@@ -41,6 +41,11 @@ def main():
       'rdflib == 4.0.1',
       'google.foresite-toolkit == 1.3',
       'python-dateutil == 2.1',
+      # Requests
+      'requests[security] == 2.12.4',
+      'cachecontrol == 0.11.7',
+      'requests-toolbelt == 0.7.0',
+
     ],
     setup_requires=[
       'setuptools_git >= 1.1'
