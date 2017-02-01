@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_systemmetadata
 ==========================================
 
@@ -28,16 +28,16 @@ Unit tests for serialization and de-serialization of the SystemMetadata type.
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import unittest
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.types.dataoneTypes as dataoneTypes
 
 

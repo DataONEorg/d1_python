@@ -30,11 +30,11 @@ Unit tests for serialization and de-serialization of the DataONEException type.
   - python 2.6
 """
 
-# Stdlib.
+# Stdlib
 import unittest
 import xml.dom.minidom
 
-# D1.
+# D1
 from d1_common.types import exceptions
 
 

@@ -28,14 +28,14 @@ Module d1_common.tests.test_objectlocationlist
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib.
+# Stdlib
 import unittest
 import xml.sax
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 from d1_common.types import dataoneTypes
 
 # App

@@ -30,14 +30,14 @@ Unit tests for serialization and de-serialization of the Checksum type.
   - python 2.6
 """
 
-# Stdlib.
+# Stdlib
 import unittest
 import xml.sax
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.checksum

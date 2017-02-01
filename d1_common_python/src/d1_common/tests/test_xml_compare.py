@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_xml_compare
 =======================================
 
@@ -28,14 +28,14 @@ Unit tests for XML document comparison utility.
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import unittest
 import StringIO
 
-# D1.
-import d1_common.xml_compare
+# D1
+import d1_common.xml
 
 XML_CORRECT = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
@@ -222,50 +222,50 @@ XML_SYNTAX_ERROR = """<?xml version="1.0" ?>
 
 class TestXMLCompare(unittest.TestCase):
   def test_100(self):
-    '''Compare xml_correct with itself and verify that compare passes.'''
-    d1_common.xml_compare.compare(
+    """Compare xml_correct with itself and verify that compare passes."""
+    d1_common.xml.is_equivalent(
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_CORRECT)
     )
 
   def test_110(self):
-    '''Compare xml_correct with itself and verify that compare passes.'''
-    d1_common.xml_compare.compare(
+    """Compare xml_correct with itself and verify that compare passes."""
+    d1_common.xml.is_equivalent(
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(
         XML_CORRECT_SWAPPED_ATTRIBUTES
       )
     )
 
   def test_120(self):
-    '''Verify that comparison fails when an attribute is missing.'''
+    """Verify that comparison fails when an attribute is missing."""
     self.assertRaises(
-      d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
+      d1_common.xml.CompareError, d1_common.xml.is_equivalent,
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_COUNT)
     )
 
   def test_130(self):
-    '''Verify that comparison fails when an element is missing.'''
+    """Verify that comparison fails when an element is missing."""
     self.assertRaises(
-      d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
+      d1_common.xml.CompareError, d1_common.xml.is_equivalent,
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_ENTRY)
     )
 
   def test_140(self):
-    '''Verify that comparison fails when to elements appear in the wrong order.'''
+    """Verify that comparison fails when to elements appear in the wrong order."""
     self.assertRaises(
-      d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
+      d1_common.xml.CompareError, d1_common.xml.is_equivalent,
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_WRONG_ORDER)
     )
 
   def test_150(self):
-    '''Verify that comparison fails when an element is missing text.'''
+    """Verify that comparison fails when an element is missing text."""
     self.assertRaises(
-      d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
+      d1_common.xml.CompareError, d1_common.xml.is_equivalent,
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_TEXT)
     )
 
   def test_160(self):
-    '''Verify that comparison fails when the document is not well formed.'''
+    """Verify that comparison fails when the document is not well formed."""
     self.assertRaises(
-      d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
+      d1_common.xml.CompareError, d1_common.xml.is_equivalent,
       StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_SYNTAX_ERROR)
     )

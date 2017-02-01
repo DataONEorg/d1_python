@@ -33,7 +33,9 @@ In the DataONE Python stack, XML docs are represented in a few different ways.
 We select string as the "hub" representation for XML.
 """
 
-# Stdlib.
+from __future__ import absolute_import
+
+# Stdlib
 import codecs
 import os
 import re
@@ -41,10 +43,7 @@ import unittest
 import xml.etree.ElementTree as etree
 
 # 3rd party
-# import pyxb.utils.domutils
-# from lxml import etree as ET
-
-# D1.
+import pyxb.utils.domutils
 
 # App
 import d1_common.util
@@ -74,6 +73,36 @@ for prefix_str, uri_str in NS_DICT.items():
 # pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(v1.Namespace)
 
 # etree_replace_namespace()
+
+# Misc type related functions
+
+def get_pyxb_bindings(major_version):
+  """Map D1 architecture version to PyXB bindings"""
+  major_version = str(major_version)
+  if major_version in ('v1', '1'):
+    return v1_1
+  elif major_version in ('v2', '2'):
+    return v2_0
+  else:
+    assert False, u'Unknown version. major_version="{}"'.format(major_version)
+
+
+def get_version_tag(major_version):
+  return u'v{}'.format(major_version)
+
+
+def get_version_tag_from_url(url):
+  m = re.match(r'(/|^)(v\d)(/|$)', url)
+  if not m:
+    return None
+  return m.group(2)
+
+
+def set_default_pyxb_namespace(major_version):
+  pyxb_bindings = get_pyxb_bindings(major_version)
+  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(
+    pyxb_bindings.Namespace
+  )
 
 # Convert types to v1
 
@@ -279,7 +308,7 @@ def v2_0_tag(element_name):
 # Solution based on lxml.
 #
 # # http://wiki.tei-c.org/index.php/Remove-Namespaces.xsl
-# xslt='''<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+# xslt="""<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 # <xsl:output method="xml" indent="no"/>
 #
 # <xsl:template match="/|comment()|processing-instruction()">
@@ -300,7 +329,7 @@ def v2_0_tag(element_name):
 #     </xsl:attribute>
 # </xsl:template>
 # </xsl:stylesheet>
-# '''
+# """
 #
 # xslt_doc = ET.parse(io.BytesIO(xslt))
 # transform = ET.XSLT(xslt_doc)

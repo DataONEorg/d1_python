@@ -19,13 +19,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib.
+# Stdlib
 import xml
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.dataoneErrors as dataoneErrors
 

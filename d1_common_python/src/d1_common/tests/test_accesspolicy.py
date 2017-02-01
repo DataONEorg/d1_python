@@ -30,16 +30,16 @@ Unit tests for serialization and de-serialization of the AccessPolicy type.
   - python 2.6
 """
 
-# Stdlib.
+# Stdlib
 import logging
 import sys
 import unittest
 import xml.sax
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 

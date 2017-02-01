@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.testcasewithurlcompare
 =======================================
 
@@ -27,25 +27,25 @@ Utility that checks whether two URLs are equal.
 :Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 import unittest
 import urlparse
 
 
 class TestCaseWithURLCompare(unittest.TestCase):
-  '''Utility that checks whether two URLs are equal. Not really as simple
+  """Utility that checks whether two URLs are equal. Not really as simple
   as it might seem at first.
-  '''
+  """
 
   def assertUrlEqual(self, a, b):
-    '''Given two URLs, test if they are equivalent.  This means decomposing into
+    """Given two URLs, test if they are equivalent.  This means decomposing into
     their parts and comparing all the pieces.  See RFC 1738 for details.
     
     :param a: URL #1
     :param b: URL #2
     :raises: AssertionError, accumulation of differences between a and b. 
-    '''
+    """
     ## Accumulator gathers all errors before reporting.
     accumulator = []
     a_parts = urlparse.urlparse(a)

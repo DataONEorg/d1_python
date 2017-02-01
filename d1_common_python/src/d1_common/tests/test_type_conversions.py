@@ -23,7 +23,7 @@ Module d1_common.tests.test_type_conversions
 =========================================
 """
 
-# Stdlib.
+# Stdlib
 import codecs
 import os
 import re
@@ -32,7 +32,7 @@ import unittest
 # 3rd party
 import pyxb.utils.domutils
 
-# D1.
+# D1
 
 # App
 import d1_common.type_conversions as c

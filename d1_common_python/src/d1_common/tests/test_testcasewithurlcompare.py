@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_testcasewithurlcompare
 ==================================================
 
@@ -28,16 +28,16 @@ Unit tests for TestCaseWithURLCompare.
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# D1.
+# D1
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 
 class Test_URLCompare(TestCaseWithURLCompare):
   def test_assertUrlEqual(self):
-    '''Test the Url comparison tester...
-    '''
+    """Test the Url comparison tester...
+    """
     #According to RFC  these URLs are equivalent
     a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=20&k2=abc#frag"
     b = "Http://www.SOME.host:999/a/b/c/;p2;p1;p3?k1=10&k2=abc&k1=20#frag"

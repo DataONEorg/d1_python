@@ -27,12 +27,12 @@ Module d1_common.tests.test_url
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib.
+# Stdlib
 import codecs
 import os
 import unittest
 
-# D1.
+# D1
 import d1_common.url
 
 # App
@@ -144,7 +144,7 @@ class TestUrl(unittest.TestCase):
     )
 
   def test_080(self):
-    '''makeMNBaseURL()'''
+    """makeMNBaseURL()"""
     self.assertEqual(d1_common.url.makeMNBaseURL(''), 'https://localhost/mn')
     self.assertEqual(d1_common.url.makeMNBaseURL('test.com'), 'https://test.com/mn')
     self.assertEqual(d1_common.url.makeMNBaseURL('test.com/mn'), 'https://test.com/mn')
