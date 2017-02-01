@@ -3,6 +3,7 @@ certificates/
 certs/
 settings_site.py
 stores/
+d1_objects/
 
 # IntelliJ / PyCharm
 .idea/

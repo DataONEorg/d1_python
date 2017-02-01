@@ -65,9 +65,9 @@ class Session(object):
     :param cert_pem_path: Path to a PEM formatted certificate file.
     :type cert_pem_path: string
     
-    :param cert_key_path: Path to a PEM formatted file that contains the private key
-      for the certificate file. Only required if the certificate file does not
-      itself contain the private key.
+    :param cert_key_path: Path to a PEM formatted file that contains the private
+      key for the certificate file. Only required if the certificate file does
+      not itself contain the private key.
     :type cert_key_path: string
 
     :param timeout: Time in seconds that requests will wait for a response.
@@ -75,13 +75,14 @@ class Session(object):
 
     :param retries: Set number of times to try a request before failing. If not
       set, retries are still performed, using the default number of retries. To
-      disable retries, set to to 1.
+      disable retries, set to 1.
     :type retries: int
     
     :param headers: headers that will be included with all connections.
     :type headers: dictionary
     
-    :param query: URL query parameters that will be included with all connections.
+    :param query: URL query parameters that will be included with all
+      connections.
     :type query: dictionary
 
     :param use_cache: Use the cachecontrol library to cache request responses.
@@ -151,26 +152,16 @@ class Session(object):
 
   def POST(self, rest_path_list, **kwargs):
     """Send a POST request with optional streaming multipart encoding.
-
-    See requests.sessions.request for optional parameters.
-
-    To post regular data, pass a string, iterator og generator as the
-    `data` argument.
-
-    To post a multipart stream, pass a dictionary or list of fields and files as
-    the `fields` argument. E.g.:
+    See requests.sessions.request for optional parameters. To post regular data,
+    pass a string, iterator og generator as the `data` argument. To post a
+    multipart stream, pass a dictionary multipart elements as the
+    `fields` argument. E.g.:
 
     fields = {
       'field0': 'value',
       'field1': 'value',
-      'field2': ('filename', open('file.py', 'rb'), 'text/plain')
+      'field2': ('filename.xml', open('file.xml', 'rb'), 'application/xml')
     }
-
-    or 
-    
-    fields = (
-      (param_name, (file_name, file or body, [optional mime type]))
-    )
 
     :returns: Response object
     """
@@ -182,11 +173,8 @@ class Session(object):
 
   def PUT(self, rest_path_list, **kwargs):
     """Send a PUT request with optional streaming multipart encoding.
-
-    See requests.sessions.request for optional parameters.
-
-    See post() for parameters.
-
+    See requests.sessions.request for optional parameters. See post() for
+    parameters.
     :returns: Response object
     """
     fields = kwargs.pop('fields', None)
@@ -250,7 +238,7 @@ class Session(object):
   def _request(self, method, rest_path_list, **kwargs):
     url = self._prep_url(rest_path_list)
     kwargs = self._prep_args(kwargs)
-    # logging.info(self.get_curl_command_line(method, url, **kwargs))
+    logging.info(self.get_curl_command_line(method, url, **kwargs))
     return self._session.request(method, url, **kwargs)
 
   def _prep_url(self, rest_path_list):
