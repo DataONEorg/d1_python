@@ -19,20 +19,22 @@
 # limitations under the License.
 
 """Utilities for manipulating System Metadata
-
 - Translate System Metadata between XML and PyXB.
 - Translate System Metadata between PyXB and GMN database representations.
 - Query the database for System Metadata properties.
 """
 
-# Stdlib.
+# Stdlib
 import datetime
+import logging
 
-# App
-
+# D1
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.util
+
+# App
 import app.auth
 import app.models
 import app.util
@@ -51,10 +53,10 @@ def archive_object(pid):
   - The object is not a replica.
   - The object is not archived.
   """
-  sciobj_row = sysmeta_util.get_sci_row(pid)
-  sciobj_row.is_archived = True
-  sciobj_row.save()
-  _update_modified_timestamp(sciobj_row)
+  sciobj_model = sysmeta_util.get_sci_model(pid)
+  sciobj_model.is_archived = True
+  sciobj_model.save()
+  _update_modified_timestamp(sciobj_model)
 
 
 # ------------------------------------------------------------------------------
@@ -84,9 +86,9 @@ def deserialize(sysmeta_xml):
   )
 
 
-def serialize(sysmeta_obj):
+def serialize(sysmeta_pyxb):
   try:
-    return sysmeta_obj.toxml().encode('utf-8')
+    return sysmeta_pyxb.toxml().encode('utf-8')
   except pyxb.IncompleteElementContentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0,
@@ -95,9 +97,12 @@ def serialize(sysmeta_obj):
       )
     )
 
+def serialize_pretty(sysmeta_pyxb):
+  return d1_common.util.pretty_xml(serialize(sysmeta_pyxb))
+
 # ------------------------------------------------------------------------------
 
-def create(sysmeta_obj, url):
+def create(sysmeta_pyxb, url):
   """Create database representation of a System Metadata object and closely
   related internal state.
 
@@ -119,16 +124,19 @@ def create(sysmeta_obj, url):
   actual System Metadata that enables processing of requests without having to
   read and deserialize the XML files.
   """
-  pid = sysmeta_obj.identifier.value()
-  sci_row = app.models.ScienceObject()
-  sci_row.pid = app.models.did(pid)
-  _base_pyxb_to_model(sci_row, sysmeta_obj, url)
-  sci_row.save()
-  _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
-  return sci_row
-  # _update_obsolescence_chain(sci_row, sysmeta_obj)
-  # _update_sid(sci_row, sysmeta_obj).
-  # _update_modified_timestamp(sci_row, sysmeta_obj)
+  pid = sysmeta_pyxb.identifier.value()
+  sci_model = app.models.ScienceObject()
+  sci_model.pid = app.models.did(pid)
+  _base_pyxb_to_model(sci_model, sysmeta_pyxb, url)
+  sci_model.save()
+  if _has_access_policy_pyxb(sysmeta_pyxb):
+    _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
+  if _has_replication_policy_pyxb(sysmeta_pyxb):
+    _replication_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
+  return sci_model
+  # _update_obsolescence_chain(sci_model, sysmeta_pyxb)
+  # _update_sid(sci_model, sysmeta_pyxb).
+  # _update_modified_timestamp(sci_model, sysmeta_pyxb)
 
 
 def update(sysmeta_obj, url=None):
