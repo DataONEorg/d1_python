@@ -4,7 +4,7 @@
 #
 # NOTE: This file was not created by DataONE.
 #
-'''
+"""
 Module d1_common.xmlrunner
 ==========================
 
@@ -17,7 +17,7 @@ Module d1_common.xmlrunner
   - python 2.6
 
 XML Test Runner for PyUnit.
-'''
+"""
 
 __revision__ = "$Id: /mirror/jroger/python/stdlib/xmlrunner.py 3506 2006-07-27T09:12:39.629878Z srittau  $"
 
