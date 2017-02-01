@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`create_science_object`
 ============================
 
@@ -54,9 +54,9 @@
   identifier is now in use by the previously created object.
 
   Any other errors will also be returned as DataONE exceptions.
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import datetime
 import hashlib
 import logging
@@ -64,10 +64,10 @@ import os
 import sys
 import StringIO
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_client.mnclient

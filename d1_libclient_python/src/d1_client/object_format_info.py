@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module object_format_info
+"""Module object_format_info
 ============================
 
 :Synopsis:
@@ -26,9 +26,9 @@
   mappings are provided in a CSV file. Raises KeyError for unknown values.
 :Created: 2012-10-25
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import csv
 import os
 
@@ -67,7 +67,7 @@ class ObjectFormatInfo(Singleton):
     return self.format_id_map[format_id][1]
 
   def read_csv_file(self, csv_file=None):
-    '''Reinitialize the map from a csv file object'''
+    """Reinitialize the map from a csv file object"""
     if csv_file is not None:
       self.csv_file = csv_file
     self._read_format_id_map_from_file()

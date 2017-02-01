@@ -18,45 +18,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.mnclient_1_1
-================================
 
-:Synopsis:
-  No functionality was added to the MN APIs in 1.1.
-
-  This module is a placeholder for consistency in the client hierarchy.
-
-:Created: 2011-01-21
-:Author: DataONE (Vieglais, Dahl)
-'''
-
-# Stdlib.
+# Stdlib
 import logging
 import sys
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.util
-  import d1_common.date_time
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const
+import d1_common.date_time
+import d1_common.util
 
-# App.
-import d1baseclient_1_1
+# App
+import baseclient_1_1
 import mnclient
 
 
 class MemberNodeClient_1_1(
-  d1baseclient_1_1.DataONEBaseClient_1_1,
+  baseclient_1_1.DataONEBaseClient_1_1,
   mnclient.MemberNodeClient,
 ):
+  """Extend DataONEBaseClient_1_1 and MemberNodeClient with functionality
+  for Member nodes that was added in v1.1 of the DataONE infrastructure.
+
+  For details on how to use these methods, see:
+
+  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+  """
   def __init__(self, *args, **kwargs):
-    """See d1baseclient.DataONEBaseClient for args."""
+    """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
     kwargs.setdefault('api_major', 1)
     kwargs.setdefault('api_minor', 1)
-    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
+    baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
     mnclient.MemberNodeClient.__init__(self, *args, **kwargs)

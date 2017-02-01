@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`validate_system_metadata`
 ===============================
 
@@ -46,19 +46,19 @@
   - DataONE Common Library for Python (automatically installed as a dependency)
   - DataONE Client Library for Python (sudo pip install dataone.libclient)
   - A client side certificate that is trusted by the target Member Node.
-'''
+"""
 
 # Future
 from __future__ import print_function
 
-# Stdlib.
+# Stdlib
 import StringIO
 import csv
 import hashlib
 import re
 import sys
 
-# 3rd party.
+# 3rd party
 import pyxb
 
 # DataONE.

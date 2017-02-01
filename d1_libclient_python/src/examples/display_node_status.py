@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`display_node_status`
 ==========================
 
@@ -43,9 +43,9 @@
   - Python 2.6 or 2.7.
   - DataONE Common Library for Python (automatically installed as a dependency)
   - DataONE Client Library for Python (sudo pip install dataone.libclient)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import codecs
 import datetime
 import hashlib
@@ -55,10 +55,10 @@ import shutil
 import sys
 import urllib
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const

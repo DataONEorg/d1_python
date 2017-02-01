@@ -18,51 +18,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.cnclient_1_1
-================================
 
-:Synopsis:
-  This module implements the DataONE Coordinating Client v1.1 API methods. It
-  extends CoordinatingNodeClient, which implements the 1.0 methods, making those
-  methods available as well.
-
-  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  for details on how to use the methods in this class.
-:Created: 2012-10-15
-:Author: DataONE (Dahl)
-'''
-
-# Stdlib.
+# Stdlib
 import logging
 import sys
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.types.dataoneTypes_v2_0
-  import d1_common.util
-  import d1_common.date_time
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const
+import d1_common.types.dataoneTypes_v2_0
+import d1_common.util
+import d1_common.date_time
 
-# App.
-import d1baseclient_1_1
+# App
+import baseclient_1_1
 import cnclient
 
 
-class CoordinatingNodeClient_1_1(d1baseclient_1_1.DataONEBaseClient_1_1,
+class CoordinatingNodeClient_1_1(baseclient_1_1.DataONEBaseClient_1_1,
                                  cnclient.CoordinatingNodeClient):
-  '''Connect to a Coordinating Node and perform REST calls against the CN API.
+  """Extend DataONEBaseClient_1_1 and CoordinatingNodeClient with functionality
+  for Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
 
-  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  for details on how to use the methods in this class.
+  For details on how to use these methods, see:
 
-  See d1baseclient.DataONEBaseClient for args.
-  '''
+  https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+  """
   def __init__(self, *args, **kwargs):
+    """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
     kwargs.setdefault('api_major', 1)
     kwargs.setdefault('api_minor', 1)
-    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
+    baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)

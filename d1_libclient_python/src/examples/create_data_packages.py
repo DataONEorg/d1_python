@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`create_data_package`
 ==========================
 
@@ -66,9 +66,9 @@
 
   Then, a package for all the files is generated. System metadata is generated
   for the package, and the package is uploaded to the Member Node.
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import codecs
 import datetime
 import hashlib
@@ -77,10 +77,10 @@ import os
 import sys
 import StringIO
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_client.data_package

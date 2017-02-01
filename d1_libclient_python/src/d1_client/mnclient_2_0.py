@@ -19,72 +19,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Module d1_client.mnclient_2_0
-================================
-
-:Synopsis:
-  This is where the new MN APIs in CCI 2.0 will be added.
-
-  This module implements the DataONE Member Node v2.0 API methods. It extends
-  MemberNodeClient_1_1, making 1.0 and 1.1 methods available as well.
-
-  See the `Member Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
-  details on how to use the methods in this class.
-
-:Created: 2014-08-18
-:Author: DataONE (Vieglais, Dahl)
-'''
-
-# Stdlib.
+# Stdlib
 import logging
 import sys
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
-  import d1_common.util
-  import d1_common.date_time
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+import d1_common.util
+import d1_common.date_time
 
-# App.
-import d1baseclient_2_0
+# App
+import baseclient_2_0
 import mnclient_1_1
 
 
-class MemberNodeClient_2_0(d1baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1):
+class MemberNodeClient_2_0(baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1):
+  """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
+  for Member nodes that was added in v2.0 of the DataONE infrastructure.
+
+  For details on how to use these methods, see:
+
+  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+  """
   def __init__(self, *args, **kwargs):
-    """See d1baseclient.DataONEBaseClient for args."""
+    """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
     kwargs.setdefault('api_major', 2)
     kwargs.setdefault('api_minor', 0)
-    d1baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
+    baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
     mnclient_1_1.MemberNodeClient_1_1.__init__(self, *args, **kwargs)
 
   # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
   # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
 
   @d1_common.util.utf8_to_unicode
-  def updateSystemMetadataResponse(self, pid, sysmeta, vendorSpecific=None):
-      if vendorSpecific is None:
-          vendorSpecific = {}
-
-      url = self._rest_url('meta')
-      mime_multipart_fields = [
-          ('pid', pid.encode('utf-8')),
-      ]
-      mime_multipart_files = [
-          ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
-      ]
-      return self.PUT(url, fields=mime_multipart_fields, files=mime_multipart_files,headers=vendorSpecific)
+  def updateSystemMetadataResponse(self, pid, sysmeta_pyxb, vendorSpecific=None):
+      mmp_dict = {
+        'pid': pid.encode('utf-8'),
+        'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      }
+      return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
 
 
   @d1_common.util.utf8_to_unicode
-  def updateSystemMetadata(self, pid, sysmeta):
-      response = self.updateSystemMetadataResponse(pid, sysmeta)
-      #cn_client =
+  def updateSystemMetadata(self, pid, sysmeta_pyxb):
+      response = self.updateSystemMetadataResponse(pid, sysmeta_pyxb)
       return self._read_boolean_response(response)
 

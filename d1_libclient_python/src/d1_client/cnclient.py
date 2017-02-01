@@ -18,50 +18,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.cnclient
-============================
 
-:Synopsis:
-  This module implements CoordinatingNodeClient, which extends DataONEBaseClient
-  with functionality specific to Coordinating Nodes.
-
-  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  for details on how to use the methods in this class.
-:Created: 2011-01-22
-:Author: DataONE (Vieglais, Dahl)
-'''
-
-# Stdlib.
+# Stdlib
 import logging
 import sys
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
-  import d1_common.util
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const # pip install dataone.common
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+import d1_common.util
 
-# App.
-import d1baseclient
+# App
+import baseclient
 
 
-class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
-  '''Connect to a Coordinating Node and perform REST calls against the CN API.
+class CoordinatingNodeClient(baseclient.DataONEBaseClient):
+  """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available on
+  Coordinating Nodes.
 
-  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  for details on how to use the methods in this class.
-  '''
+  For details on how to use these methods, see:
 
+  https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+  """
   def __init__(self, *args, **kwargs):
-    """See d1baseclient.DataONEBaseClient for args."""
+    """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
     kwargs.setdefault('api_major', 1)
     kwargs.setdefault('api_minor', 0)
-    d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
+    baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
 
   #=========================================================================
   # Core API
@@ -69,7 +53,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   # CNCore.ping() → null
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
-  # Implemented in d1baseclient.py
+  # Implemented in baseclient.py
 
   # CNCore.create(session, pid, object, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.create
@@ -79,8 +63,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listFormats
 
   def listFormatsResponse(self):
-    url = self._rest_url('formats')
-    return self.GET(url)
+    return self.GET('formats')
 
   def listFormats(self):
     response = self.listFormatsResponse()
@@ -91,8 +74,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def getFormatResponse(self, formatId):
-    url = self._rest_url('formats/%(formatId)s', formatId=formatId)
-    return self.GET(url)
+    return self.GET(['formats', formatId])
 
   @d1_common.util.utf8_to_unicode
   def getFormat(self, formatId):
@@ -101,16 +83,17 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
-  # Implemented in d1baseclient.py
+  # Implemented in baseclient.py
 
   # CNCore.reserveIdentifier(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.reserveIdentifier
 
   @d1_common.util.utf8_to_unicode
   def reserveIdentifierResponse(self, pid):
-    url = self._rest_url('reserve')
-    mime_multipart_fields = [('pid', pid.encode('utf-8')),]
-    return self.POST(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'pid': pid.encode('utf-8'),
+    }
+    return self.POST('reserve', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def reserveIdentifier(self, pid):
@@ -122,8 +105,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithmsResponse(self):
-    url = self._rest_url('checksum')
-    return self.GET(url)
+    return self.GET('checksum')
 
   @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithms(self):
@@ -135,12 +117,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setObsoletedByResponse(self, pid, obsoletedByPid, serialVersion):
-    url = self._rest_url('/obsoletedBy/%(pid)s', pid=pid)
-    mime_multipart_fields = [
-      ('obsoletedByPid', obsoletedByPid.encode('utf-8')),
-      ('serialVersion', str(serialVersion)),
-    ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'obsoletedByPid': obsoletedByPid.encode('utf-8'),
+      'serialVersion': str(serialVersion),
+    }
+    return self.PUT(['obsoletedBy', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def setObsoletedBy(self, pid, obsoletedByPid, serialVersion):
@@ -151,8 +132,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listNodes
 
   def listNodesResponse(self):
-    url = self._rest_url('node')
-    response = self.GET(url)
+    response = self.GET('node')
     return response
 
   def listNodes(self):
@@ -167,11 +147,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def hasReservationResponse(self, pid, subject):
-    url = self._rest_url(
-      'reserve/%(pid)s?subject=%(subject)s',
-      pid=pid, subject=subject
-    )
-    return self.GET(url)
+    return self.GET(['reserve', pid, subject])
 
   @d1_common.util.utf8_to_unicode
   def hasReservation(self, pid, subject):
@@ -183,18 +159,17 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNRead.get(session, pid) → OctetStream
-  # Implemented in d1baseclient.py
+  # Implemented in baseclient.py
 
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
-  # Implemented in d1baseclient.py
+  # Implemented in baseclient.py
 
   # CNRead.resolve(session, pid) → ObjectLocationList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.resolve
 
   @d1_common.util.utf8_to_unicode
   def resolveResponse(self, pid):
-    url = self._rest_url('resolve/%(pid)s', pid=pid)
-    return self.GET(url)
+    return self.GET(['resolve', pid])
 
   @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
@@ -209,8 +184,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def getChecksumResponse(self, pid):
-    url = self._rest_url('checksum/%(pid)s', pid=pid)
-    return self.GET(url)
+    return self.GET(['checksum', pid])
 
   @d1_common.util.utf8_to_unicode
   def getChecksum(self, pid):
@@ -221,16 +195,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.search
 
   #@d1_common.util.utf8_to_unicode
-  def searchResponse(self, queryType, query=None, **kwargs):
-
-    # url = self._rest_url('/solr/d1-cn-index/select/',
-    # queryType=queryType,
-    url = self._rest_url(
-      'search/%(queryType)s/%(query)s',
-      queryType=queryType,
-      query=query if query is not None else ''
-    )
-    return self.GET(url, query=kwargs)
+  def searchResponse(self, queryType, **kwargs):
+    return self.GET(['search', queryType], query=kwargs)
 
   #@d1_common.util.utf8_to_unicode
   def search(self, queryType, query=None, **kwargs):
@@ -242,12 +208,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   #@d1_common.util.utf8_to_unicode
   def queryResponse(self, queryEngine, query=None, **kwargs):
-    url = self._rest_url(
-      'query/%(queryEngine)s/%(query)s',
-      queryEngine=queryEngine,
-      query=query if query is not None else ''
-    )
-    return self.GET(url, query=kwargs)
+    return self.GET(['query', queryEngine], query=kwargs)
 
   #@d1_common.util.utf8_to_unicode
   def query(self, queryEngine, query=None, **kwargs):
@@ -259,8 +220,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
-    url = self._rest_url('query/%(queryEngine)s', queryEngine=queryEngine)
-    return self.GET(url, query=kwargs)
+    return self.GET(['query', queryEngine], query=kwargs)
 
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
@@ -276,12 +236,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setRightsHolderResponse(self, pid, userId, serialVersion):
-    url = self._rest_url('owner/%(pid)s', pid=pid)
-    mime_multipart_fields = [
-      ('userId', userId.encode('utf-8')),
-      ('serialVersion', str(serialVersion)),
-    ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'userId': userId.encode('utf-8'),
+      'serialVersion': str(serialVersion),
+    }
+    return self.PUT(['owner', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def setRightsHolder(self, pid, userId, serialVersion):
@@ -293,11 +252,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action):
-    url = self._rest_url(
-      'isAuthorized/%(pid)s?action=%(action)s',
-      pid=pid, action=action
-    )
-    return self.GET(url)
+    return self.GET(['isAuthorized', pid, action])
 
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, action):
@@ -309,19 +264,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setAccessPolicyResponse(self, pid, accessPolicy, serialVersion):
-    url = self._rest_url('accessRules/%(pid)s', pid=pid)
-    mime_multipart_fields = [('serialVersion', str(serialVersion)),]
-    mime_multipart_files = [
-      (
-        'accessPolicy', 'accessPolicy.xml', accessPolicy.toxml().encode(
-          'utf-8'
-        )
-      ),
-    ]
-    return self.PUT(
-      url, fields=mime_multipart_fields,
-      files=mime_multipart_files
-    )
+    mmp_dict = {
+      'serialVersion': str(serialVersion),
+      'accessPolicy': ('accessPolicy.xml', accessPolicy.toxml().encode('utf-8')),
+    }
+    return self.PUT(['accessRules', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def setAccessPolicy(self, pid, accessPolicy, serialVersion):
@@ -337,11 +284,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def registerAccountResponse(self, person):
-    url = self._rest_url('accounts')
     mime_multipart_files = [
       ('person', 'person.xml', person.toxml().encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST('accounts', files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def registerAccount(self, person):
@@ -353,11 +299,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateAccountResponse(self, person):
-    url = self._rest_url('accounts/%(subject)s', subject=person.value())
     mime_multipart_files = [
       ('person', 'person.xml', person.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, files=mime_multipart_files)
+    return self.PUT(['accounts', person.value()], files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def updateAccount(self, person):
@@ -369,11 +314,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def verifyAccountResponse(self, subject):
-    url = self._rest_url(
-      'accounts/verification/%(subject)s',
-      subject=subject.value()
-    )
-    return self.PUT(url)
+    return self.PUT(['accounts', subject.value()])
 
   @d1_common.util.utf8_to_unicode
   def verifyAccount(self, subject):
@@ -385,8 +326,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def getSubjectInfoResponse(self, subject):
-    url = self._rest_url('accounts/%(subject)s', subject=subject.value())
-    return self.GET(url)
+    return self.GET(['accounts', subject.value()])
 
   @d1_common.util.utf8_to_unicode
   def getSubjectInfo(self, subject):
@@ -398,9 +338,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def listSubjectsResponse(self, query, status=None, start=None, count=None):
-    url = self._rest_url('accounts?query=%(query)s', query=query)
-    url_query = {'status': status, 'start': start, 'count': count,}
-    return self.GET(url, query=url_query)
+    url_query = {'status': status, 'start': start, 'count': count, 'query': query}
+    return self.GET('accounts', query=url_query)
 
   @d1_common.util.utf8_to_unicode
   def listSubjects(self, query, status=None, start=None, count=None):
@@ -412,12 +351,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def mapIdentityResponse(self, primary_subject, secondary_subject):
-    url = self._rest_url('accounts/map')
-    mime_multipart_fields = [
-      ('primarySubject', primary_subject.value().encode('utf-8')),
-      ('secondarySubject', secondary_subject.value().encode('utf-8')),
-    ]
-    return self.POST(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'primarySubject': primary_subject.value().encode('utf-8'),
+      'secondarySubject': secondary_subject.value().encode('utf-8'),
+    }
+    return self.POST(['accounts', 'map'], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def mapIdentity(self, primary_subject, secondary_subject):
@@ -429,8 +367,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def removeMapIdentityResponse(self, subject):
-    url = self._rest_url('accounts/map/%(subject)s', subject=subject.value())
-    return self.DELETE(url)
+    return self.DELETE(['accounts', 'map', subject.value()])
 
   @d1_common.util.utf8_to_unicode
   def removeMapIdentity(self, subject):
@@ -442,11 +379,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject):
-    url = self._rest_url(
-      'accounts/pendingmap/%(subject)s',
-      subject=subject.value()
-    )
-    return self.DELETE(url)
+    return self.DELETE(['accounts', 'pendingmap', subject.value()])
 
   @d1_common.util.utf8_to_unicode
   def denyMapIdentity(self, subject):
@@ -458,9 +391,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def requestMapIdentityResponse(self, subject):
-    url = self._rest_url('accounts')
-    mime_multipart_fields = [('subject', subject.value().encode('utf-8')),]
-    return self.POST(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'subject': subject.value().encode('utf-8'),
+    }
+    return self.POST('accounts', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def requestMapIdentity(self, subject):
@@ -472,12 +406,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentityResponse(self, subject):
-    url = self._rest_url(
-      'accounts/pendingmap/%(subject)s',
-      subject=subject.value()
-    )
-    mime_multipart_fields = [('subject', subject.value().encode('utf-8')),]
-    return self.PUT(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'subject': subject.value().encode('utf-8'),
+    }
+    return self.PUT(['accounts', 'pendingmap', subject.value()], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentity(self, subject):
@@ -489,11 +421,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def createGroupResponse(self, group):
-    url = self._rest_url('groups')
     mime_multipart_files = [
       ('group', 'group.xml', group.toxml().encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST('groups', files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def createGroup(self, groupName):
@@ -505,11 +436,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateGroupResponse(self, group):
-    url = self._rest_url('groups')
     mime_multipart_files = [
       ('group', 'group.xml', group.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, files=mime_multipart_files)
+    return self.PUT('groups', files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def updateGroup(self, group):
@@ -525,24 +455,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setReplicationStatusResponse(self, pid, nodeRef, status, dataone_error=None):
-    url = self._rest_url('replicaNotifications/%(pid)s', pid=pid)
-    mime_multipart_fields = [
-      ('nodeRef', nodeRef.encode('utf-8')),
-      ('status', status.encode('utf-8')),
-    ]
-    mime_multipart_files = []
+    mmp_dict = {
+      'nodeRef': nodeRef.encode('utf-8'),
+      'status': status.encode('utf-8'),
+    }
     if dataone_error is not None:
-      mime_multipart_files.append((
-          'failure',
-          'failure.xml',
-          dataone_error.serialize(),
-      ))
-    return self.PUT(
-      url,
-      fields=mime_multipart_fields,
-      files=mime_multipart_files,
-      # dump_path='/tmp/dump.txt',
-    )
+      mmp_dict['failure'] = ('failure.xml', dataone_error.serialize())
+    return self.PUT(['replicaNotifications', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def setReplicationStatus(self, pid, nodeRef, status, dataone_error=None):
@@ -557,18 +476,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateReplicationMetadataResponse(
     self, pid, replicaMetadata, serialVersion
   ):
-    url = self._rest_url('replicaMetadata/%(pid)s', pid=pid)
-    mime_multipart_fields = [('serialVersion', str(serialVersion)),]
-    mime_multipart_files = [
-      (
-        'replicaMetadata', 'replicaMetadata.xml',
-        replicaMetadata.toxml().encode('utf-8')
-      ),
-    ]
-    return self.PUT(
-      url, fields=mime_multipart_fields,
-      files=mime_multipart_files
-    )
+    mmp_dict = {
+      'serialVersion': str(serialVersion),
+      'replicaMetadata': ('replicaMetadata.xml', replicaMetadata.toxml().encode('utf-8')),
+    }
+    return self.PUT(['replicaMetadata', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def updateReplicationMetadata(self, pid, replicaMetadata, serialVersion):
@@ -582,15 +494,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
-    url = self._rest_url('replicaPolicies/%(pid)s', pid=pid)
-    mime_multipart_files = [
+    mmp_dict = {
+      ('serialVersion', str(serialVersion)),
       ('policy', 'policy.xml', policy.toxml().encode('utf-8')),
-    ]
-    mime_multipart_fields = [('serialVersion', str(serialVersion)),]
-    return self.PUT(
-      url, fields=mime_multipart_fields,
-      files=mime_multipart_files
-    )
+    }
+    return self.PUT(['replicaPolicies', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicy(self, pid, policy, serialVersion):
@@ -606,12 +514,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def isNodeAuthorizedResponse(self, targetNodeSubject, pid):
-    url = self._rest_url(
-      'replicaAuthorizations/%(pid)s?targetNodeSubject=%(targetNodeSubject)s',
-      pid=pid,
-      targetNodeSubject=targetNodeSubject
-    )
-    return self.GET(url)
+    return self.GET(['replicaAuthorizations', pid], query={'targetNodeSubject': targetNodeSubject})
 
   @d1_common.util.utf8_to_unicode
   def isNodeAuthorized(self, targetNodeSubject, pid):
@@ -623,12 +526,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def deleteReplicationMetadataResponse(self, pid, nodeId, serialVersion):
-    url = self._rest_url('removeReplicaMetadata/%(pid)s', pid=pid)
-    mime_multipart_fields = [
-      ('nodeId', nodeId.encode('utf-8')),
-      ('serialVersion', str(serialVersion)),
-    ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    mmp_dict = {
+      'nodeId': nodeId.encode('utf-8'),
+      'serialVersion': str(serialVersion),
+    }
+    return self.PUT(['removeReplicaMetadata', pid], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def deleteReplicationMetadata(self, pid, nodeId, serialVersion):
@@ -646,9 +548,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
-    url = self._rest_url('node/%(nodeId)s', nodeId=nodeId)
     mime_multipart_files = [('node', 'node.xml', node.toxml().encode('utf-8')),]
-    return self.PUT(url, files=mime_multipart_files)
+    return self.PUT(['node', nodeId], files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilities(self, nodeId, node):
@@ -660,9 +561,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def registerResponse(self, node):
-    url = self._rest_url('node')
     mime_multipart_files = [('node', 'node.xml', node.toxml().encode('utf-8')),]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST('node', files=mime_multipart_files)
 
   @d1_common.util.utf8_to_unicode
   def register(self, node):

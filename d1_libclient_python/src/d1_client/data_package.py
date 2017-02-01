@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`data_package`
 ===================
 
@@ -35,17 +35,17 @@
 :Requires:
   RDFLib ($ pip install rdflib)
   Google Foresite Toolkit ($ pip install google.foresite-toolkit)
-'''
+"""
 
 # https://groups.google.com/forum/#!msg/foresite/3vS3_ZZ8Aj0/8tr_SgjbTAUJ
 # http://code.google.com/p/foresite-toolkit/source/browse/foresite-python/trunk/foresite/README.txt?r=85
 
-# Stdlib.
+# Stdlib
 #import xml.dom.minidom.parse
 #import xml.dom.minidom
 import datetime
 
-# 3rd party.
+# 3rd party
 import foresite
 import foresite.utils
 import rdflib
@@ -54,7 +54,7 @@ import rdflib.term
 import rdflib.plugin
 import rdflib.graph
 
-# D1.
+# D1
 import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 import d1_common.checksum
 import d1_common.const
@@ -85,7 +85,7 @@ class ResourceMapGenerator():
   def simple_generate_resource_map(
     self, resource_map_pid, science_metadata_pid, science_data_pids
   ):
-    '''Generate an OAI-ORE resource map for the common scenario where one
+    """Generate an OAI-ORE resource map for the common scenario where one
         resource map describes an aggregation containing a single Science Metadata
         object and one or more Science Data objects described by that object.
 
@@ -96,7 +96,7 @@ class ResourceMapGenerator():
         :science_metadata_pid: The PID for a single Science Metadata object.
         :science_data_pids: A list of one or more Science Data objects described by
           the Science Metadata object.
-        '''
+        """
     # Foresite for Python generates an Aggregation section with isDefinedBy
     # on this form:
     # <rdfs1:isDefinedBy>http://www.openarchives.org/ore/terms/</rdfs1:isDefinedBy>
@@ -118,13 +118,13 @@ class ResourceMapGenerator():
     rights_holder,
     checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
   ):
-    '''Generate a system metadata object for a resource map. The generated
+    """Generate a system metadata object for a resource map. The generated
         system metadata object is intended for use in DataONE API methods such as
         MNStorage.Create(). The object contains an access control rule allowing
         public access. For simple use cases with public access, the object can
         often be used as is. For more complex use cases, the object can be modified
         programmatically before use.
-        '''
+        """
     size = len(resource_map)
     checksum = d1_common.checksum.create_checksum_object(resource_map, checksum_algorithm)
     return self._generate_sys_meta(
@@ -135,9 +135,9 @@ class ResourceMapGenerator():
   #
 
   def _generate_resource_map(self, aggregation_id, resource_map_id, relations):
-    '''Generate an OAI-ORE resource map.
+    """Generate an OAI-ORE resource map.
         :relations: {metaid:[data id, data id, ...], ...}
-        '''
+        """
     foresite.utils.namespaces['cito'] = rdflib.namespace.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
     for sci_id in relations.keys():
@@ -215,21 +215,21 @@ class ResourceMapGenerator():
 
 
 class ResourceMapParser():
-  '''Parse a string containing a OAI-ORE document in RDF-XML and provide
+  """Parse a string containing a OAI-ORE document in RDF-XML and provide
     convenient access to information required by many DataONE clients, such as
     lists of aggregated science data and science metadata identifiers.
-    '''
+    """
 
   def __init__(self, rdf_xml_doc):
-    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
+    """:rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
         format
-        '''
+        """
     self._resource_map = self._parse(rdf_xml_doc)
 
   def _parse(self, rdf_xml_doc):
-    '''Parse a string containing a OAI-ORE document in RDF-XML
+    """Parse a string containing a OAI-ORE document in RDF-XML
         format to a Foresite ResourceMap object
-        '''
+        """
     foresite_doc = foresite.ReMDocument('file:data', data=rdf_xml_doc)
     # Possible values for format: xml, trix, n3, nt, rdfa
     foresite_doc.format = 'xml'
@@ -237,44 +237,44 @@ class ResourceMapParser():
     return rdf_libparser.parse(foresite_doc)
 
   def get_resource_map(self):
-    '''Return the main Foresite ResourceMap object'''
+    """Return the main Foresite ResourceMap object"""
     return self._resource_map
 
   def get_resource_map_graph(self):
-    '''Return the main Foresite ResourceMap graph. This graph contains all
+    """Return the main Foresite ResourceMap graph. This graph contains all
         the triples in the ResourceMap section of the OAI-ORE document
-        '''
+        """
     return self.get_resource_map().graph
 
   def get_aggregation(self):
-    '''Return the main Foresite Aggregation object
-        '''
+    """Return the main Foresite Aggregation object
+        """
     return self.get_resource_map().aggregation
 
   def get_aggregation_graph(self):
-    '''Return the main Foresite Aggregation graph. This graph contains all the
+    """Return the main Foresite Aggregation graph. This graph contains all the
         triples in the Aggregation section of the OAI-ORE document
-        '''
+        """
     return self.get_aggregation().graph
 
   def get_resource_map_pid(self):
-    '''Return the DataONE Persistent Identifier for the resource map
-        '''
+    """Return the DataONE Persistent Identifier for the resource map
+        """
     g = self.get_resource_map_graph()
-    q = '''
+    q = """
       PREFIX dcterms: <http://purl.org/dc/terms/>
 
       SELECT ?pid
       WHERE {
         ?o dcterms:identifier ?pid .
       }
-    '''
+    """
     return str([o[0] for o in g.query(q)][0])
 
   def get_merged_graph(self):
-    '''Return a rdflib.graph.Graph object that contains all the triples in the
+    """Return a rdflib.graph.Graph object that contains all the triples in the
         OAI-ORE document
-        '''
+        """
     graph = rdflib.graph.Graph()
     for s, p, o in self._resource_map.graph:
       graph.add((s, p, o))
@@ -288,27 +288,27 @@ class ResourceMapParser():
     return graph
 
   def get_all_triples(self):
-    '''Return a list of tuples that contain all the triples in the OAI-ORE
+    """Return a list of tuples that contain all the triples in the OAI-ORE
         document
-        '''
+        """
     g = self.get_merged_graph()
     return [(str(s), str(p), str(o)) for s, p, o in g]
 
   def get_all_predicates(self):
-    '''Return a list of all unique predicates in the OAI-ORE document
-        '''
+    """Return a list of all unique predicates in the OAI-ORE document
+        """
     g = self.get_merged_graph()
-    q = '''
+    q = """
       SELECT DISTINCT ?p
       WHERE {
         ?s ?p ?o .
       }
-    '''
+    """
     return map(str, [o[0] for o in g.query(q)])
 
   def get_subject_objects_by_predicate(self, predicate):
-    '''Return all subject/objects in the OAI-ORE document with a given predicate
-        '''
+    """Return all subject/objects in the OAI-ORE document with a given predicate
+        """
     g = self.get_merged_graph()
     # I tried allowing passing the predicate directly, but I could not get it
     # working. According to http://rdf.myexperiment.org/howtosparql?page=PREFIX,
@@ -334,7 +334,7 @@ class ResourceMapParser():
     #
     # But I could not make a query on the second form work. It just
     # returned zero results.
-    q = '''
+    q = """
       PREFIX dc: <http://purl.org/dc/elements/1.1/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -347,12 +347,12 @@ class ResourceMapParser():
       WHERE {{
         ?s {0} ?o .
       }}
-    '''.format(predicate)
+    """.format(predicate)
     return [(str(s), str(o)) for s, o in g.query(q)]
 
   def get_aggregated_pids(self):
     g = self.get_merged_graph()
-    q = '''
+    q = """
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
 
@@ -361,12 +361,12 @@ class ResourceMapParser():
         ?s ore:aggregates ?o .
         ?o dcterms:identifier ?pid .
       }
-    '''
+    """
     return map(str, [o[0] for o in g.query(q)])
 
   def get_aggregated_science_metadata_pids(self):
     g = self.get_merged_graph()
-    q = '''
+    q = """
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
       PREFIX cito: <http://purl.org/spar/cito/>
@@ -377,12 +377,12 @@ class ResourceMapParser():
         ?o cito:documents ?o2 .
         ?o dcterms:identifier ?pid .
       }
-    '''
+    """
     return map(str, [o[0] for o in g.query(q)])
 
   def get_aggregated_science_data_pids(self):
     g = self.get_merged_graph()
-    q = '''
+    q = """
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
       PREFIX cito: <http://purl.org/spar/cito/>
@@ -393,5 +393,5 @@ class ResourceMapParser():
         ?o cito:isDocumentedBy ?o2 .
         ?o dcterms:identifier ?pid .
       }
-    '''
+    """
     return map(str, [o[0] for o in g.query(q)])

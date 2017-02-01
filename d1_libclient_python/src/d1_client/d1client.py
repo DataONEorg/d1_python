@@ -18,39 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.d1client
-============================
+"""Perform high level operations against the DataONE infrastructure
 
-:Synopsis:
-  This module implements:
+The other Client classes are specific to CN or MN and to architecture version.
+This class provides a more abstract interface that can be used for interacting
+with any DataONE node regardless of type and version.
+"""
 
-  :DataONEClient: Uses CN- and MN clients to perform high level operations
-    against the DataONE infrastructure.
-  :DataONEObject: Wraps a single object and adds functionality such as
-    resolve and get.
-
-  See the `Coordinating Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  and `Member Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
-  APIs for details on how to use the methods in this class.
-
-:Created: 2011-01-26
-:Author: DataONE (Vieglais, Dahl)
-'''
-
-# Stdlib.
+# Stdlib
 import logging
 import time
 import sys
 import objectlistiterator
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.util
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const
+import d1_common.util
 
 # App
 import cnclient_2_0
@@ -86,15 +69,15 @@ class DataONEObject(object):
       )
 
   def getCredentials(self):
-    '''Override this method to retrieve credentials that can be used to
+    """Override this method to retrieve credentials that can be used to
         authenticate and retrieve a token for further operations.
-        '''
+        """
     return {}
 
   def _getClient(self, forcenew=False):
-    '''Internal method used to retrieve an instance of a DataONE client that
+    """Internal method used to retrieve an instance of a DataONE client that
         can be used for interacting with the DataONE services.
-        '''
+        """
     if self._client is None or forcenew:
       self._client = DataONEClient(
         credentials=self.getCredentials(
@@ -103,27 +86,27 @@ class DataONEObject(object):
     return self._client
 
   def getLocations(self, forcenew=False):
-    '''Retrieve a list of node base urls known to hold a copy of this object.
+    """Retrieve a list of node base urls known to hold a copy of this object.
 
         :param forcenew: The locations are cached. This causes the cache to be
           refreshed.
         :type forcenew: boolean
         :returns: List of object locations.
         :return type: PyXB ObjectLocationList.
-        '''
+        """
     if len(self._locations) < 1 or forcenew:
       cli = self._getClient()
       self._locations = self._client.resolve(self._pid)
     return self._locations
 
   def getSystemMetadata(self, forcenew=False):
-    '''
+    """
         :param forcenew: The System Metadata objects are cached. This causes the
           cache to be refreshed.
         :type forcenew: boolean
         :returns: List of object locations.
         :return type: PyXB ObjectLocationList.
-        '''
+        """
     if self._systemmetadata is None or forcenew:
       cli = self._getClient()
       self._systemmetadata = self._client.getSystemMetadata(self._pid)
@@ -140,13 +123,13 @@ class DataONEObject(object):
     return self._relations
 
   def save(self, outstr):
-    '''Persist a copy of the bytes of this object.
+    """Persist a copy of the bytes of this object.
 
         :param out_flo: file like object open for writing.
         :type out_flo: File Like Object
         :returns: None
         :return type: NoneType
-        '''
+        """
     cli = self._getClient()
     instr = self._client.get(self._pid)
     while True:
@@ -164,9 +147,9 @@ class DataONEObject(object):
 
 class DataONEClient(object):
   def __init__(self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None):
-    '''DataONEClient, which uses CN- and MN clients to perform high level
+    """DataONEClient, which uses CN- and MN clients to perform high level
         operations against the DataONE infrastructure.
-        '''
+        """
     if credentials is None:
       credentials = {}
     self._cnBaseUrl = cnBaseUrl
@@ -190,20 +173,20 @@ class DataONEClient(object):
     return self._mn
 
   def getAuthToken(self, forcenew=False):
-    '''Returns an authentication token using the credentials provided when
+    """Returns an authentication token using the credentials provided when
         this client was instantiated.
 
         :return type: AuthToken
-        '''
+        """
     if self._authToken is None or forcenew:
       self._authToken = None
     return self._authToken
 
   @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
-    '''
+    """
         :return type: list of base_url
-        '''
+        """
     cn = self._getCN()
     result = cn.resolve(pid)
     # result.objectLocation.sort(key='priority')
@@ -214,10 +197,10 @@ class DataONEClient(object):
 
   @d1_common.util.utf8_to_unicode
   def get(self, pid):
-    '''Returns a stream open for reading that returns the bytes of the object
+    """Returns a stream open for reading that returns the bytes of the object
         identified by PID.
         :return type: HTTPResponse
-        '''
+        """
     locations = self.resolve(pid)
     for location in locations:
       mn = self._getMN(location)
@@ -229,14 +212,14 @@ class DataONEClient(object):
 
   @d1_common.util.utf8_to_unicode
   def create(self, targetNodeId=None, ):
-    '''
-        '''
+    """
+        """
     pass
 
   @d1_common.util.utf8_to_unicode
   def getSystemMetadata(self, pid):
-    '''
-        '''
+    """
+        """
     if self._sysmetacache.has_key(pid):
       return self._sysmetacache[pid]
     cn = self._getCN()
@@ -245,9 +228,9 @@ class DataONEClient(object):
 
   @d1_common.util.utf8_to_unicode
   def getRelatedObjects(self, pid):
-    '''
+    """
         :return type: list of DataONEObject
-        '''
+        """
     relations = {
       'obsoletes': [],
       'obsoletedBy': [],
@@ -255,52 +238,52 @@ class DataONEClient(object):
       'describedBy': [],
       'describes': [],
     }
-    sysmeta = self.getSystemMetadata(pid)
+    sysmeta_pyxb = self.getSystemMetadata(pid)
     try:
-      for pid in sysmeta.obsoletes:
+      for pid in sysmeta_pyxb.obsoletes:
         relations['obsoletes'].append(pid.value())
     except TypeError:
       pass
     try:
-      for pid in sysmeta.obsoletedBy:
+      for pid in sysmeta_pyxb.obsoletedBy:
         relations['obsoletedBy'].append(pid.value())
     except TypeError:
       pass
     # TODO: These need to be augmented by querying agains the appropriate resource map(s).
-    #    for pid in sysmeta.derivedFrom:
+    #    for pid in sysmeta_pyxb.derivedFrom:
     #      relations['derivedFrom'].append(pid.value())
-    #    for pid in sysmeta.describedBy:
+    #    for pid in sysmeta_pyxb.describedBy:
     #      relations['describedBy'].append(pid.value())
-    #    for pid in sysmeta.describes:
+    #    for pid in sysmeta_pyxb.describes:
     #      relations['describes'].append(pid.value())
     return relations
 
   @d1_common.util.utf8_to_unicode
   def isData(self, pid):
-    '''Returns True is pid refers to a data object.
+    """Returns True is pid refers to a data object.
 
         Determine this by looking at the describes property of the System Metadata.
-        '''
-    sysmeta = self.getSystemMetadata(pid)
-    return len(sysmeta.describes) == 0
+        """
+    sysmeta_pyxb = self.getSystemMetadata(pid)
+    return len(sysmeta_pyxb.describes) == 0
 
   @d1_common.util.utf8_to_unicode
   def isScienceMetadata(self, pid):
-    '''return True if pid refers to a science metadata object
-        '''
-    sysmeta = self.getSystemMetadata(pid)
-    return len(sysmeta.describes) > 0
+    """return True if pid refers to a science metadata object
+        """
+    sysmeta_pyxb = self.getSystemMetadata(pid)
+    return len(sysmeta_pyxb.describes) > 0
 
   @d1_common.util.utf8_to_unicode
   def getScienceMetadata(self, pid):
-    '''Retrieve the pid for science metadata object for the specified PID. If
+    """Retrieve the pid for science metadata object for the specified PID. If
         PID refers to a science metadata object, then that object is returned.
-        '''
+        """
     if self.isScienceMetadata(pid):
       return [pid, ]
     res = []
-    sysmeta = self.getSystemMetadata(pid)
-    for id in sysmeta.describedBy:
+    sysmeta_pyxb = self.getSystemMetadata(pid)
+    for id in sysmeta_pyxb.describedBy:
       res.append(id.value())
     return res
 
@@ -309,86 +292,7 @@ class DataONEClient(object):
     if self.isData(pid):
       return [pid, ]
     res = []
-    sysmeta = self.getSystemMetadata(pid)
-    for id in sysmeta.describes:
+    sysmeta_pyxb = self.getSystemMetadata(pid)
+    for id in sysmeta_pyxb.describes:
       res.append(id.value())
     return res
-
-  @d1_common.util.utf8_to_unicode
-  def getObjects(self, pids):
-    '''
-        '''
-    pass
-
-  @d1_common.util.utf8_to_unicode
-  def listObjects(self, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS):
-    '''
-        '''
-    cli = self._getCN()
-    return objectlistiterator.ObjectListIterator(cli, start=start, max=count)
-
-  #=========================================================================
-
-  if __name__ == '__main__':
-
-    if len(sys.argv) < 2:
-      showHelp()
-      sys.exit(1)
-    command = sys.argv[1].lower()
-    if command not in COMMANDS:
-      showHelp()
-      sys.exit(1)
-
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option(
-      '-b',
-      '--base_url',
-      dest='base_url',
-      default='URL_DATAONE_ROOT',
-      help='Use BASEURL instead of predefined targets for testing'
-    )
-    parser.add_option(
-      '-p',
-      '--pid',
-      dest='pid',
-      default=None,
-      help='Use PID for testing existing object access'
-    )
-    parser.add_option(
-      '-c',
-      '--checksum',
-      dest='checksum',
-      default=None,
-      help='CHECKSUM for specified PID.'
-    )
-    parser.add_option(
-      '-l',
-      '--loglevel',
-      dest='llevel',
-      default=20,
-      type='int',
-      help='Reporting level: 10=debug, 20=Info, 30=Warning, ' + '40=Error, 50=Fatal'
-    )
-    (options, args) = parser.parse_args(sys.argv[2:])
-    if options.llevel not in [10, 20, 30, 40, 50]:
-      options.llevel = 20
-    logging.basicConfig(level=int(options.llevel))
-
-    if command == 'resolve':
-      if options.pid is None:
-        print '-p PID is required for resolve operation.'
-        sys.exit(1)
-      obj = DataONEObject(options.pid)
-      for loc in obj.getLocations():
-        print loc
-    elif command == 'total':
-      cli = DataONEClient(cnBaseUrl=options.base_url)
-      objlist = cli.listObjects(start=0, count=0)
-      print "total: %d" % objlist.totalObjectCount()
-    elif command == 'list':
-      pass
-    elif command == 'meta':
-      pass
-    elif command == 'get':
-      pass

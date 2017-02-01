@@ -18,37 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.cnclient_1_1_2_0
-================================
 
-:Synopsis:
-  This is where the new CN APIs in CCI 2.0 will be added.
-
-  This module implements the DataONE Coordinating Node v2.0 API methods. It
-  extends CoordinatingNodeClient_1_1, making 1.0 and 1.1 methods available as
-  well.
-
-  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
-  for details on how to use the methods in this class.
-:Created: 2014-08-18
-:Author: DataONE (Dahl)
-"""
-
-# Stdlib.
+# Stdlib
 import logging
 import sys
 
-# D1.
-try:
-  import d1_common.const
-  import d1_common.types.dataoneTypes_v2_0
-  import d1_common.util
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+# D1
+import d1_common.const
+import d1_common.types.dataoneTypes_v2_0
+import d1_common.util
 
-# App.
+# App
 import baseclient_2_0
 import cnclient_1_1
 
@@ -57,6 +37,13 @@ class CoordinatingNodeClient_2_0(
   baseclient_2_0.DataONEBaseClient_2_0,
   cnclient_1_1.CoordinatingNodeClient_1_1,
 ):
+  """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_1 with functionality
+  for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
+
+  For details on how to use these methods, see:
+
+  https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+  """
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -74,8 +61,7 @@ class CoordinatingNodeClient_2_0(
   # v2.0: The structure of v2_0.Types.ObjectFormat has changed.
 
   def listFormatsResponse(self):
-    url = self._rest_url('formats')
-    return self.get(url)
+    return self.GET('formats')
 
   def listFormats(self):
     response = self.listFormatsResponse()
@@ -84,8 +70,7 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def deleteObjectResponse(self, pid):
-    url = self._rest_url('object/%(pid)s', pid=pid)
-    return self.DELETE(url)
+    return self.DELETE(['object', pid])
 
 
   @d1_common.util.utf8_to_unicode
@@ -109,11 +94,8 @@ class CoordinatingNodeClient_2_0(
       count=d1_common.const.DEFAULT_LISTOBJECTS,
       vendorSpecific=None
   ):
-    if vendorSpecific is None:
-      vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
-    url = self._rest_url('object')
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
@@ -123,7 +105,7 @@ class CoordinatingNodeClient_2_0(
       'start': int(start),
       'count': int(count)
     }
-    return self.GET(url, query=query, headers=vendorSpecific)
+    return self.GET('object', query=query, headers=vendorSpecific)
 
 
   @d1_common.util.utf8_to_unicode
