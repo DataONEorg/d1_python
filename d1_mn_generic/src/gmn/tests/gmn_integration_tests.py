@@ -40,7 +40,7 @@
   events and the results are compared with the known correct responses.
 """
 
-# Stdlib.
+# Stdlib
 import StringIO
 import codecs
 import datetime
@@ -60,7 +60,7 @@ import unittest
 import urllib
 import urlparse
 
-# D1.
+# D1
 import d1_client.mnclient
 import d1_client.mnclient_2_0
 import d1_common.checksum
@@ -70,11 +70,13 @@ import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.types.exceptions
 import d1_common.url
+import d1_common.util
+import d1_common.xml
 
 # 3rd party
 import requests
 
-# App.
+# App
 import gmn_test_client
 
 # Configuration
@@ -146,7 +148,7 @@ class GMNIntegrationTests(unittest.TestCase):
           tempfile.gettempdir(), u'traceInformation_{}'.format(func_name)
         )
         with open(file_path, 'w') as f:
-          f.write(exc_value.traceInformation.encode('utf8'))
+          f.write(exc_value.traceInformation)
         link_path = os.path.join(
           tempfile.gettempdir(), u'traceInformation.html'
         )
@@ -204,47 +206,72 @@ class GMNIntegrationTests(unittest.TestCase):
     sid=None
   ):
     now = datetime.datetime.now()
-    sysmeta = binding.systemMetadata()
-    sysmeta.serialVersion = 1
-    sysmeta.identifier = pid
-    sysmeta.seriesId = sid
-    sysmeta.formatId = 'application/octet-stream'
-    sysmeta.size = len(sciobj_str)
-    sysmeta.submitter = owner
-    sysmeta.rightsHolder = owner
-    sysmeta.checksum = d1_common.types.dataoneTypes.checksum(
+    sysmeta_pyxb = binding.systemMetadata()
+    sysmeta_pyxb.serialVersion = 1
+    sysmeta_pyxb.identifier = pid
+    sysmeta_pyxb.seriesId = sid
+    sysmeta_pyxb.formatId = 'application/octet-stream'
+    sysmeta_pyxb.size = len(sciobj_str)
+    sysmeta_pyxb.submitter = owner
+    sysmeta_pyxb.rightsHolder = owner
+    sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(
       hashlib.md5(sciobj_str).hexdigest()
     )
-    sysmeta.checksum.algorithm = 'MD5'
-    sysmeta.dateUploaded = now
-    sysmeta.dateSysMetadataModified = now
-    sysmeta.originMemberNode = 'MN1'
-    sysmeta.authoritativeMemberNode = 'MN1'
-    sysmeta.obsoletes = obsoletes
-    sysmeta.obsoletedBy = obsoleted_by
-    return sysmeta
+    sysmeta_pyxb.checksum.algorithm = 'MD5'
+    sysmeta_pyxb.dateUploaded = now
+    sysmeta_pyxb.dateSysMetadataModified = now
+    sysmeta_pyxb.originMemberNode = 'MN1'
+    sysmeta_pyxb.authoritativeMemberNode = 'MN1'
+    sysmeta_pyxb.obsoletes = obsoletes
+    sysmeta_pyxb.obsoletedBy = obsoleted_by
+    sysmeta_pyxb.accessPolicy = self._generate_access_policy(binding)
+    sysmeta_pyxb.replicationPolicy = self._create_replication_policy_pyxb(binding)
+    return sysmeta_pyxb
 
-  def _generate_access_policy(self, binding, access_rules):
+  def _generate_access_policy(self, binding, access_rule_list=None):
+    if access_rule_list is None:
+      access_rule_list = [
+        ['subj1', 'read'],
+        ['subj2', 'write'],
+        # ['subj3', 'modify'],
+      ]
     accessPolicy = binding.accessPolicy()
-    for access_rule in access_rules:
+    for subject, permission in access_rule_list:
       accessRule = binding.AccessRule()
-      for subject in access_rule[0]:
-        accessRule.subject.append(subject)
-      for permission in access_rule[1]:
-        permission_pyxb = binding.Permission(permission)
-        accessRule.permission.append(permission_pyxb)
+      accessRule.subject.append(subject)
+      permission_pyxb = binding.Permission(permission)
+      accessRule.permission.append(permission_pyxb)
       accessPolicy.append(accessRule)
     return accessPolicy
+
+  def _create_replication_policy_pyxb(
+    self,
+    binding,
+    preferred_node_list=None,
+    blocked_node_list=None,
+    is_replication_allowed=True,
+    num_replicas=None,
+  ):
+    if preferred_node_list is None:
+      preferred_node_list = [self._random_tag('preferred_node') for _ in range(5)]
+    if blocked_node_list is None:
+      blocked_node_list = [self._random_tag('blocked_node') for _ in range(5)]
+    rep_pyxb = binding.ReplicationPolicy()
+    rep_pyxb.preferredMemberNode = preferred_node_list
+    rep_pyxb.blockedMemberNode = blocked_node_list
+    rep_pyxb.replicationAllowed = is_replication_allowed
+    rep_pyxb.numberReplicas = num_replicas or random.randint(10, 100)
+    return rep_pyxb
 
   def _generate_test_object(
     self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
-    sysmeta = self._generate_sysmeta(
+    sysmeta_pyxb = self._generate_sysmeta(
       binding, pid, sciobj, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC, obsoletes,
       obsoleted_by, sid
     )
-    return sciobj, sysmeta
+    return sciobj, sysmeta_pyxb
 
   def _include_subjects(self, subjects):
     if isinstance(subjects, basestring):
@@ -272,33 +299,38 @@ class GMNIntegrationTests(unittest.TestCase):
   def _random_sid(self):
       return 'SID_{}'.format(self._random_id())
 
+  def _random_tag(self, tag_str):
+    return '{}_{}'.format(tag_str, self._random_str())
+
   def _create(
     self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None
   ):
-    sci_obj_str, sysmeta_obj = self._generate_test_object(
+    sci_obj_str, sysmeta_pyxb = self._generate_test_object(
       binding, pid, obsoletes, obsoleted_by, sid
     )
     client.create(
-      pid, StringIO.StringIO(sci_obj_str), sysmeta_obj, vendorSpecific=self.
-      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      pid, sci_obj_str, sysmeta_pyxb,
+      vendorSpecific=self._include_subjects(
+        gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
+      ),
     )
-    return sci_obj_str, sysmeta_obj
+    return sci_obj_str, sysmeta_pyxb
 
   def _update(
     self, client, binding, old_pid, new_pid, sid=None, obsoletes=None, obsoleted_by=None
   ):
-    sci_obj_str, sysmeta_obj = self._generate_test_object(
+    sci_obj_str, sysmeta_pyxb = self._generate_test_object(
       binding, new_pid, obsoletes, obsoleted_by, sid
     )
     client.update(
-      old_pid, StringIO.StringIO(sci_obj_str), new_pid, sysmeta_obj,
+      old_pid, sci_obj_str, new_pid, sysmeta_pyxb,
       vendorSpecific=self.
-      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
-    return sci_obj_str, sysmeta_obj
+    return sci_obj_str, sysmeta_pyxb
 
   def _get(self, client, did):
-    sysmeta_obj = client.getSystemMetadata(
+    sysmeta_pyxb = client.getSystemMetadata(
       did, vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
@@ -306,26 +338,41 @@ class GMNIntegrationTests(unittest.TestCase):
       did, vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    self._assert_sci_obj_size_matches_sysmeta(response, sysmeta_obj)
-    self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_obj)
-    return response.content, sysmeta_obj
+    self._assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
+    self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
+    return response.content, sysmeta_pyxb
 
-  def _assert_sci_obj_size_matches_sysmeta(self, response, sysmeta_obj):
-    self.assertEqual(sysmeta_obj.size, len(response.content))
+  def _assert_sci_obj_size_matches_sysmeta(self, response, sysmeta_pyxb):
+    self.assertEqual(sysmeta_pyxb.size, len(response.content))
 
-  def _assert_sci_obj_checksum_matches_sysmeta(self, response, sysmeta_obj):
-    h = self._get_checksum_calculator(sysmeta_obj)
+  def _assert_sci_obj_checksum_matches_sysmeta(self, response, sysmeta_pyxb):
+    h = self._get_checksum_calculator(sysmeta_pyxb)
     c = self._calculate_object_checksum(response, h)
-    self.assertEqual(sysmeta_obj.checksum.value().lower(), c.lower())
+    self.assertEqual(sysmeta_pyxb.checksum.value().lower(), c.lower())
 
-  def _get_checksum_calculator(self, sysmeta_obj):
+  def _get_checksum_calculator(self, sysmeta_pyxb):
     return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
-      sysmeta_obj.checksum.algorithm
+      sysmeta_pyxb.checksum.algorithm
     )
 
   def _calculate_object_checksum(self, response, checksum_calculator):
     checksum_calculator.update(response.content)
     return checksum_calculator.hexdigest()
+
+  def _pyxb_to_pretty_xml(self, obj_pyxb):
+    xml_str = obj_pyxb.toxml().encode('utf-8')
+    return d1_common.util.pretty_xml(xml_str)
+
+  def _restore_sysmeta_mn_controlled_fields(self, sysmeta_a_pyxb, sysmeta_b_pyxb):
+    """Copy values that the MN overwrites from sysmeta_b to sysmeta_a so that
+    the sysmeta used in create() can be compared with sysmeta retrieved in
+    get().
+    """
+    sysmeta_a_pyxb.archived = sysmeta_b_pyxb.archived
+    sysmeta_b_pyxb.dateSysMetadataModified = sysmeta_a_pyxb.dateSysMetadataModified
+    sysmeta_b_pyxb.originMemberNode = sysmeta_a_pyxb.originMemberNode
+    sysmeta_b_pyxb.authoritativeMemberNode = sysmeta_a_pyxb.authoritativeMemberNode
+    sysmeta_b_pyxb.dateUploaded = sysmeta_a_pyxb.dateUploaded
 
   # ============================================================================
   # Prepare GMN for testing by putting it into a known state.
@@ -406,13 +453,13 @@ class GMNIntegrationTests(unittest.TestCase):
       # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = v1.CreateFromDocument(sysmeta_xml)
-      sysmeta_obj.rightsHolder = 'test_user_1'
+      sysmeta_pyxb = v1.CreateFromDocument(sysmeta_xml)
+      sysmeta_pyxb.rightsHolder = 'test_user_1'
 
       headers = self._include_subjects('test_user_1')
 
       client.create(
-        sysmeta_obj.identifier.value(), object_file, sysmeta_obj,
+        sysmeta_pyxb.identifier.value(), object_file, sysmeta_pyxb,
         vendorSpecific=headers
       )
 
@@ -549,14 +596,12 @@ class GMNIntegrationTests(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(OBJ_PATH, '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = d1_common.url.decodePathElement(os.path.basename(object_path))
-      #sysmeta_xml_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'rb').read()
-      #sysmeta_xml_d1 = client.getSystemMetadata(pid).read()
-      object_str_d1 = client.get(
+      sciobj_str = client.get(
         pid, vendorSpecific=self.
         _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-      ).read(1024**2)
-      self.assertEqual(object_str_disk, object_str_d1)
+      ).content
+      self.assertEqual(object_str_disk, sciobj_str)
 
   # ----------------------------------------------------------------------------
   # getSystemMetadata()
@@ -666,35 +711,35 @@ class GMNIntegrationTests(unittest.TestCase):
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = binding.CreateFromDocument(sysmeta_xml)
+      sysmeta_pyxb = binding.CreateFromDocument(sysmeta_xml)
 
       # Get corresponding object from objectList.
       found = False
       for object_info in object_list.objectInfo:
-        if object_info.identifier.value() == sysmeta_obj.identifier.value():
+        if object_info.identifier.value() == sysmeta_pyxb.identifier.value():
           found = True
           break
 
       self.assertTrue(
         found,
-        'Couldn\'t find object with pid "{}"'.format(sysmeta_obj.identifier)
+        'Couldn\'t find object with pid "{}"'.format(sysmeta_pyxb.identifier)
       )
 
       self.assertEqual(
-        object_info.identifier.value(), sysmeta_obj.identifier.value(),
+        object_info.identifier.value(), sysmeta_pyxb.identifier.value(),
         sysmeta_path
       )
-      self.assertEqual(object_info.formatId, sysmeta_obj.formatId, sysmeta_path)
+      self.assertEqual(object_info.formatId, sysmeta_pyxb.formatId, sysmeta_path)
       self.assertEqual(
         object_info.dateSysMetadataModified,
-        sysmeta_obj.dateSysMetadataModified, sysmeta_path
+        sysmeta_pyxb.dateSysMetadataModified, sysmeta_path
       )
-      self.assertEqual(object_info.size, sysmeta_obj.size, sysmeta_path)
+      self.assertEqual(object_info.size, sysmeta_pyxb.size, sysmeta_path)
       self.assertEqual(
-        object_info.checksum.value(), sysmeta_obj.checksum.value(), sysmeta_path
+        object_info.checksum.value(), sysmeta_pyxb.checksum.value(), sysmeta_path
       )
       self.assertEqual(
-        object_info.checksum.algorithm, sysmeta_obj.checksum.algorithm,
+        object_info.checksum.algorithm, sysmeta_pyxb.checksum.algorithm,
         sysmeta_path
       )
 
@@ -1587,9 +1632,9 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_1900(self, client, binding):
     pid = self._random_pid()
-    scidata, sysmeta = self._generate_test_object(binding, pid)
+    scidata, sysmeta_pyxb = self._generate_test_object(binding, pid)
     client.replicate(
-      sysmeta, 'test_source_node', vendorSpecific=self.
+      sysmeta_pyxb, 'test_source_node', vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
@@ -1611,9 +1656,9 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_1910(self, client, binding):
     known_pid = 'AnserMatrix.htm'
-    scidata, sysmeta = self._generate_test_object(binding, known_pid)
+    scidata, sysmeta_pyxb = self._generate_test_object(binding, known_pid)
     self.assertRaises(
-      d1_common.types.exceptions.IdentifierNotUnique, client.replicate, sysmeta,
+      d1_common.types.exceptions.IdentifierNotUnique, client.replicate, sysmeta_pyxb,
       'test_source_node', vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
@@ -1636,9 +1681,9 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_1920(self, client, binding):
     known_pid = 'new_pid_2'
-    scidata, sysmeta = self._generate_test_object(binding, known_pid)
+    scidata, sysmeta_pyxb = self._generate_test_object(binding, known_pid)
     self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, client.replicate, sysmeta,
+      d1_common.types.exceptions.NotAuthorized, client.replicate, sysmeta_pyxb,
       'test_source_node'
     )
 
@@ -1652,7 +1697,7 @@ class GMNIntegrationTests(unittest.TestCase):
   #    pid = '12Cpaup.txt'
   #
   #    # Generate a new System Metadata object with Access Policy.
-  #    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
+  #    sysmeta_pyxb = self.generate_sysmeta(pid, 123, 'baadf00d',
   #                                    datetime.datetime(1976, 7, 8),
   #                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
   #
@@ -1661,14 +1706,14 @@ class GMNIntegrationTests(unittest.TestCase):
   #      (('test_user_2',), ('read',))
   #    )
   #
-  #    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
+  #    sysmeta_pyxb.accessPolicy = self.generate_access_policy(access_policy_spec)
   #
-  #    sysmeta.rightsHolder = 'test_user_1'
+  #    sysmeta_pyxb.rightsHolder = 'test_user_1'
   #
   #    # Serialize System Metadata to XML.
-  #    sysmeta_xml = sysmeta.toxml()
+  #    sysmeta_xml = sysmeta_pyxb.toxml()
   #    mime_multipart_files = [
-  #      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+  #      ('sysmeta_pyxb','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
   #    ]
   #
   #    # POST to /meta/pid.
@@ -1844,10 +1889,10 @@ class GMNIntegrationTests(unittest.TestCase):
         pid_unescaped, pid_escaped = line.split('\t')
       except ValueError:
         continue
-      scidata, sysmeta = self._generate_test_object(binding, pid_unescaped)
+      scidata, sysmeta_pyxb = self._generate_test_object(binding, pid_unescaped)
       # Create the object on GMN.
       client.create(
-        pid_unescaped, StringIO.StringIO(scidata), sysmeta, vendorSpecific=self.
+        pid_unescaped, StringIO.StringIO(scidata), sysmeta_pyxb, vendorSpecific=self.
         _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       )
       # Retrieve the object from GMN.
@@ -1855,13 +1900,13 @@ class GMNIntegrationTests(unittest.TestCase):
         pid_unescaped, vendorSpecific=self.
         _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       ).read()
-      sysmeta_obj_retrieved = client.getSystemMetadata(
+      sysmeta_pyxb_retrieved = client.getSystemMetadata(
         pid_unescaped, vendorSpecific=self.
         _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       )
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
-      self.assertEqual(sysmeta_obj_retrieved.identifier.value()\
+      self.assertEqual(sysmeta_pyxb_retrieved.identifier.value()\
                        .encode('utf-8'), scidata)
 
   # ----------------------------------------------------------------------------
@@ -1924,14 +1969,14 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def test_3020_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3020(client, v1)
 
   def test_3020_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3020(client, v2)
@@ -1989,33 +2034,33 @@ class GMNIntegrationTests(unittest.TestCase):
   def _test_3030(self, client, binding):
     pid = self._random_pid()
     sid = self._random_sid()
-    create_sci_obj_str, create_sysmeta_obj = self._create(
+    create_sci_obj_str, create_sysmeta_pyxb = self._create(
       client, binding, pid, sid
     )
-    get_sci_obj_str, get_sysmeta_obj = self._get(client, sid)
+    get_sci_obj_str, get_sysmeta_pyxb = self._get(client, sid)
     self.assertEqual(create_sci_obj_str, get_sci_obj_str)
-    self.assertEqual(get_sysmeta_obj.identifier.value(), pid)
-    self.assertEqual(get_sysmeta_obj.seriesId.value(), sid)
+    self.assertEqual(get_sysmeta_pyxb.identifier.value(), pid)
+    self.assertEqual(get_sysmeta_pyxb.seriesId.value(), sid)
 
   # --
 
   def test_3032_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3032(client, v1)
 
   def test_3032_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3032(client, v2)
 
   def _test_3032(self, client, binding):
     """MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletes pointing to unknown object raises InvalidSystemMetadata.
     """
     pid = self._random_pid()
     sid = self._random_sid()
@@ -2030,14 +2075,14 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def test_3033_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3033(client, v1)
 
   def test_3033_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3033(client, v2)
@@ -2060,21 +2105,21 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def test_3034_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3034(client, v1)
 
   def test_3034_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3034(client, v2)
 
   def _test_3034(self, client, binding):
     """MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletedBy pointing to unknown object raises InvalidSystemMetadata.
+    sysmeta_pyxb.obsoletedBy pointing to unknown object raises InvalidSystemMetadata.
     """
     pid = self._random_pid()
     sid = self._random_sid()
@@ -2130,14 +2175,14 @@ class GMNIntegrationTests(unittest.TestCase):
     # Attempt update of valid base obj with invalid sysmeta.
     unk_pid = self._random_pid()
     update_pid = self._random_pid()
-    sci_obj_str, sysmeta_obj = self._generate_test_object(binding, unk_pid)
+    sci_obj_str, sysmeta_pyxb = self._generate_test_object(binding, unk_pid)
     self.assertRaises(
       d1_common.types.exceptions.InvalidSystemMetadata, client.update, base_pid,
-      StringIO.StringIO(sci_obj_str), update_pid, sysmeta_obj,
+      StringIO.StringIO(sci_obj_str), update_pid, sysmeta_pyxb,
       vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    return sci_obj_str, sysmeta_obj
+    return sci_obj_str, sysmeta_pyxb
 
   # --
 
@@ -2183,13 +2228,13 @@ class GMNIntegrationTests(unittest.TestCase):
     base_pid = self._random_pid()
     update_pid = self._random_pid()
     self._create(client, binding, base_pid)
-    base_obj_str, base_sysmeta_obj = self._get(client, base_pid)
-    self.assertIsNone(base_sysmeta_obj.obsoletes)
-    self.assertIsNone(base_sysmeta_obj.obsoletedBy)
+    base_obj_str, base_sysmeta_pyxb = self._get(client, base_pid)
+    self.assertIsNone(base_sysmeta_pyxb.obsoletes)
+    self.assertIsNone(base_sysmeta_pyxb.obsoletedBy)
     self._update(client, binding, base_pid, update_pid)
-    base_obj_str, base_sysmeta_obj = self._get(client, base_pid)
-    self.assertIsNone(base_sysmeta_obj.obsoletes)
-    self.assertEquals(base_sysmeta_obj.obsoletedBy.value(), update_pid)
+    base_obj_str, base_sysmeta_pyxb = self._get(client, base_pid)
+    self.assertIsNone(base_sysmeta_pyxb.obsoletes)
+    self.assertEquals(base_sysmeta_pyxb.obsoletedBy.value(), update_pid)
 
   # --
 
@@ -2213,15 +2258,15 @@ class GMNIntegrationTests(unittest.TestCase):
     base_sid = self._random_sid()
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, base_pid, base_sid)
-    base_obj_str, base_sysmeta_obj = self._get(client_v2, base_pid)
-    self.assertEquals(base_sysmeta_obj.identifier.value(), base_pid)
-    self.assertEquals(base_sysmeta_obj.seriesId.value(), base_sid)
+    base_obj_str, base_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self.assertEquals(base_sysmeta_pyxb.identifier.value(), base_pid)
+    self.assertEquals(base_sysmeta_pyxb.seriesId.value(), base_sid)
     # Update without SID
     update_pid = self._random_pid()
     self._update(client, binding, base_pid, update_pid)
     # Retrieve object by base SID and verify that it's the updated object.
-    update_obj_str, update_sysmeta_obj = self._get(client, update_pid)
-    self.assertEquals(update_sysmeta_obj.identifier.value(), update_pid)
+    update_obj_str, update_sysmeta_pyxb = self._get(client, update_pid)
+    self.assertEquals(update_sysmeta_pyxb.identifier.value(), update_pid)
 
   # --
 
@@ -2237,16 +2282,15 @@ class GMNIntegrationTests(unittest.TestCase):
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, base_pid, base_sid)
     # Get sysmeta
-    sciobj_str, sysmeta_obj = self._get(client_v2, base_pid)
-    self.assertEqual(sysmeta_obj.submitter.value(), 'public')
+    sciobj_str, sysmeta_pyxb = self._get(client_v2, base_pid)
+    self.assertEqual(sysmeta_pyxb.submitter.value(), 'public')
     # Change something
-    time.sleep(1)
-    sysmeta_obj.dateSysMetadataModified = datetime.datetime.now()
-    sysmeta_obj.submitter = 'new_submitter'
+    sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.now() + datetime.timedelta(1, 2)
+    sysmeta_pyxb.submitter = 'new_submitter'
     # Update
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest, client_v2.updateSystemMetadata,
-      base_pid, sysmeta_obj
+      base_pid, sysmeta_pyxb
     )
 
   def test_3060_v2_2(self):
@@ -2259,15 +2303,77 @@ class GMNIntegrationTests(unittest.TestCase):
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, base_pid, base_sid)
     # Get sysmeta
-    sciobj_str, sysmeta_obj = self._get(client_v2, base_pid)
+    sciobj_str, sysmeta_pyxb = self._get(client_v2, base_pid)
     # Update rightsHolder
-    self.assertEqual(sysmeta_obj.rightsHolder.value(), 'public')
-    sysmeta_obj.rightsHolder = 'newRightsHolder'
-    isOk = client_v2.updateSystemMetadata(base_pid, sysmeta_obj)
+    self.assertEqual(sysmeta_pyxb.rightsHolder.value(), 'public')
+    sysmeta_pyxb.rightsHolder = 'newRightsHolder'
+    isOk = client_v2.updateSystemMetadata(base_pid, sysmeta_pyxb)
     self.assertTrue(isOk)
     # Verify
-    sciobj_str, new_sysmeta_obj = self._get(client_v2, base_pid)
-    self.assertEqual(new_sysmeta_obj.rightsHolder.value(), 'newRightsHolder')
+    sciobj_str, new_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self.assertEqual(new_sysmeta_pyxb.rightsHolder.value(), 'newRightsHolder')
+
+  #
+  # Replication policy
+  #
+
+
+  def test_3070_v2_1(self):
+    """v2 MNStorage.create()
+    Replication policy is retained.
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    ver1_sci_obj_str, ver1_sysmeta_pyxb = self._create(client_v2, v2, base_pid, base_sid)
+    ver2_sci_obj_str, ver2_sysmeta_pyxb = self._get(client_v2, base_pid)
+    # Make sure the replication policy has enough entries for testing
+    self.assertGreaterEqual(
+      len(ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode), 3
+    )
+    self.assertGreaterEqual(
+      len(ver1_sysmeta_pyxb.replicationPolicy.blockedMemberNode), 3
+    )
+    self._restore_sysmeta_mn_controlled_fields(ver1_sysmeta_pyxb, ver2_sysmeta_pyxb)
+    self.assertTrue(d1_common.xml.is_sysmeta_equivalent(
+      ver1_sysmeta_pyxb.toxml(),
+      ver2_sysmeta_pyxb.toxml(),
+    ))
+
+
+  def test_3070_v2_2(self):
+    """v2 MNStorage.updateSystemMetadata()
+    Using updateSystemMetadata() to add new preferred and blocked nodes.
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    ver1_sci_obj_str, ver1_sysmeta_pyxb = self._create(client_v2, v2, base_pid, base_sid)
+    ver2_sci_obj_str, ver2_sysmeta_pyxb = self._get(client_v2, base_pid)
+    # Add a new preferred node
+    ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append('new_node')
+    client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
+    ver3_sci_obj_str, ver3_sysmeta_pyxb = self._get(client_v2, base_pid)
+    # Check that the count of preferred nodes increased by one
+    self.assertEqual(
+      len(ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode) + 1,
+      len(ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode),
+    )
+    # Second round of changes
+    ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append('preferred_1')
+    ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append('preferred_2')
+    ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append('blocked_1')
+    ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append('blocked_2')
+    client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
+    # Check
+    ver4_sci_obj_str, ver4_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self._restore_sysmeta_mn_controlled_fields(ver3_sysmeta_pyxb, ver4_sysmeta_pyxb)
+    self.assertTrue(d1_common.xml.is_sysmeta_equivalent(
+      ver3_sysmeta_pyxb.toxml(),
+      ver4_sysmeta_pyxb.toxml(),
+    ))
 
   #
   # Test wrapped mode
@@ -2277,15 +2383,15 @@ class GMNIntegrationTests(unittest.TestCase):
     self, client, binding, num_sciobj_bytes, redirect_bool
   ):
     pid = self._random_pid()
-    created_sciobj_str, created_sysmeta_obj = self._create_proxied_sciobj_httpbin(
+    created_sciobj_str, created_sysmeta_pyxb = self._create_proxied_sciobj_httpbin(
       client, binding, pid, num_sciobj_bytes, redirect_bool=redirect_bool
     )
     retrieved_sciobj_str = client.get(
       pid,
       vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
-    ).read()
-    retrieved_sysmeta_obj = client.getSystemMetadata(
+    ).content
+    retrieved_sysmeta_pyxb = client.getSystemMetadata(
       pid,
       vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
@@ -2293,10 +2399,10 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEqual(len(retrieved_sciobj_str), num_sciobj_bytes)
     self.assertEqual(created_sciobj_str, retrieved_sciobj_str)
     self.assertEqual(
-      created_sysmeta_obj.checksum.value(),
-      retrieved_sysmeta_obj.checksum.value()
+      created_sysmeta_pyxb.checksum.value(),
+      retrieved_sysmeta_pyxb.checksum.value()
     )
-    # self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_obj)
+    # self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
 
   def _create_proxied_sciobj_httpbin(
     self, client, binding, pid, num_sciobj_bytes, redirect_bool
@@ -2316,16 +2422,16 @@ class GMNIntegrationTests(unittest.TestCase):
       num_sciobj_bytes, pid, redirect_bool
     )
     sciobj_str = self._get_remote_sciobj_bytes(object_stream_url)
-    sysmeta_obj = self._generate_sysmeta(
+    sysmeta_pyxb = self._generate_sysmeta(
       binding, pid, sciobj_str, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
     )
-    self._create_proxied_sciobj(client, object_stream_url, sysmeta_obj, pid)
-    return sciobj_str, sysmeta_obj
+    self._create_proxied_sciobj(client, object_stream_url, sysmeta_pyxb, pid)
+    return sciobj_str, sysmeta_pyxb
 
-  def _create_proxied_sciobj(self, client, object_stream_url, sysmeta_obj, pid):
+  def _create_proxied_sciobj(self, client, object_stream_url, sysmeta_pyxb, pid):
     headers = self._include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     headers['VENDOR-GMN-REMOTE-URL'] = object_stream_url
-    client.create(pid, '', sysmeta_obj, vendorSpecific=headers)
+    client.create(pid, '', sysmeta_pyxb, vendorSpecific=headers)
 
   def _get_remote_sciobj_bytes(self, sciobj_url):
     r = requests.get(sciobj_url)
@@ -2348,16 +2454,16 @@ class GMNIntegrationTests(unittest.TestCase):
   def _assert_not_retrievable(self, url):
     pid = self._random_pid()
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
-    sysmeta_obj = self._generate_sysmeta(
+    sysmeta_pyxb = self._generate_sysmeta(
       v1, pid, pid, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
     )
-    # self._create_wrapped_sciobj(client, url, sysmeta_obj, pid)
+    # self._create_wrapped_sciobj(client, url, sysmeta_pyxb, pid)
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest,
       self._create_proxied_sciobj,
       client,
       url,
-      sysmeta_obj,
+      sysmeta_pyxb,
       pid,
     )
 
