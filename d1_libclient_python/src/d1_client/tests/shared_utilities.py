@@ -18,18 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_cnclient.py
+"""Module d1_client.tests.test_cnclient.py
 ==========================================
 
 :Synopsis: Unit tests for cnclient.
 :Created: 2012-12-07
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import random
 
-# # D1.
+# # D1
 # import d1_certificate.certificate_extractor
 #
 #
@@ -59,5 +59,5 @@ def get_random_valid_pid(client):
 
 
 def serial_version(client, pid):
-  sysmeta = client.getSystemMetadata(pid)
-  return sysmeta.serialVersion
+  sysmeta_pyxb = client.getSystemMetadata(pid)
+  return sysmeta_pyxb.serialVersion

@@ -18,20 +18,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_d1client
+"""Module d1_client.tests.test_d1client
 =======================================
 
 :Synopsis: Unit tests for d1client.
 :Created: 2010-01-08
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import sys
 import unittest
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
@@ -40,7 +40,7 @@ import d1_common.date_time
 import d1_common.url
 import d1_common.xmlrunner
 
-# App.
+# App
 sys.path.append('..')
 # import d1_client.d1client
 # import shared_utilities

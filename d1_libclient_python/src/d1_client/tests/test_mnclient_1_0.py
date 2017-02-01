@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_mnclient
+"""Module d1_client.tests.test_mnclient
 =======================================
 
 :Synopsis: Unit tests for mnclient.
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import random
 import sys
@@ -35,10 +35,10 @@ import uuid
 import StringIO
 from mock import patch
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
@@ -50,7 +50,7 @@ import d1_test.instance_generator.replicationpolicy
 import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
-# App.
+# App
 import d1_client.mnclient
 import shared_context
 import shared_settings
@@ -59,11 +59,11 @@ import shared_utilities
 
 class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
-    self.client = d1_client.mnclient.MemberNodeClient(shared_settings.MN_URL)
+    self.client = d1_client.mnclient.MemberNodeClient(shared_settings.MN_RESPONSES_URL)
     self.sysmeta_doc = open(
       './test_docs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     ).read()
-    self.sysmeta = d1_common.types.dataoneTypes.CreateFromDocument(
+    self.sysmeta_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
       self.sysmeta_doc
     )
     self.obj = 'test'
@@ -82,7 +82,7 @@ class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.createResponse(
-        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
       )
       self.assertEqual(200, response)
 
@@ -92,7 +92,7 @@ class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.create(
-        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
       )
       self.assertEqual(200, response)
 
@@ -108,7 +108,7 @@ class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     "TODO: Skipped due to waiting for test env. Should set up test env or remove"
   )
   def test_1010(self):
-    '''MNCore.ping() returns True'''
+    """MNCore.ping() returns True"""
     ping = self.client.ping()
     self.assertIsInstance(ping, bool)
     self.assertTrue(ping)
@@ -117,7 +117,7 @@ class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     "TODO: Skipped due to waiting for test env. Should set up test env or remove"
   )
   def test_1020(self):
-    '''MNCore.getCapabilities() returns a valid Node'''
+    """MNCore.getCapabilities() returns a valid Node"""
     node = self.client.getCapabilities()
     self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
 

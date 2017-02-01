@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`shared_context`
 ======================
 
@@ -27,4 +27,4 @@
   use it for sharing information that is used across tests.
 :Created: 2011-12-14
 :Author: DataONE (Dahl)
-'''
+"""

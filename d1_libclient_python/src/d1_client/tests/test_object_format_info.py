@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_object_format_info
+"""Module d1_client.tests.test_object_format_info
 =================================================
 
 Unit tests for ObjectFormatInfo.
@@ -27,18 +27,18 @@ Unit tests for ObjectFormatInfo.
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import StringIO
 import logging
 import sys
 import unittest
 
-# D1.
+# D1
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
-# App.
+# App
 sys.path.append('..')
 import d1_client.object_format_info
 import shared_utilities
@@ -48,14 +48,14 @@ import shared_context
 
 # netCDF-3,application/netcdf,.nc
 
-CSV_TEST_VALID = '''formatIdentifier,mimeType,extension
+CSV_TEST_VALID = """formatIdentifier,mimeType,extension
 abcd,efgh,ijkl
-'''
+"""
 
-CSV_TEST_INVALID = '''formatIdentifier,mimeType,extension
+CSV_TEST_INVALID = """formatIdentifier,mimeType,extension
 
 Blank line above.
-'''
+"""
 
 
 class TestObjectFormatInfo(TestCaseWithURLCompare):
@@ -63,41 +63,41 @@ class TestObjectFormatInfo(TestCaseWithURLCompare):
     self.i = d1_client.object_format_info.ObjectFormatInfo()
 
   def test_100(self):
-    '''init()'''
+    """init()"""
     pass # Successful setup of the test means that the class initialized ok.
 
   def test_200(self):
-    '''content_type_from_format_id()'''
+    """content_type_from_format_id()"""
     self.assertEqual(
       self.i.content_type_from_format_id('netCDF-3'), 'application/netcdf'
     )
 
   def test_300(self):
-    '''filename_extension_from_format_id()'''
+    """filename_extension_from_format_id()"""
     self.assertEqual(
       self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
     )
 
   def test_400(self):
-    '''read_csv_file()'''
+    """read_csv_file()"""
     self.i.read_csv_file()
     self.assertEqual(
       self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
     )
 
   def test_500(self):
-    '''read_csv_file(new_csv)'''
+    """read_csv_file(new_csv)"""
     self.i.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
   def test_600(self):
-    '''singleton'''
+    """singleton"""
     j = d1_client.object_format_info.ObjectFormatInfo()
     j.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
   def test_700(self):
-    '''bad_csv_file'''
+    """bad_csv_file"""
     self.assertRaises(
       Exception, self.i.read_csv_file, StringIO.StringIO(CSV_TEST_INVALID)
     )

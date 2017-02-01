@@ -1,13 +1,15 @@
 import d1_common.const
 
 CN_URL = d1_common.const.URL_DATAONE_ROOT
-CN_HOST = 'cn.dataone.org'
+#CN_HOST = 'cn.dataone.org'
 #self.baseurl = 'http://cn.dataone.org/cn'
 #self.baseurl = 'http://cn-dev.dataone.org/cn/'
 #self.baseurl = 'https://cn-dev.dataone.org/cn/'
 #self.baseurl = 'http://cn-dev-2.dataone.org/cn/'
 
-MN_URL = 'https://oneshare.unm.edu/knb/d1/mn'
+# MN_URL = 'https://oneshare.unm.edu/knb/d1/mn'
+CN_RESPONSES_URL = 'http://responses/cn'
+MN_RESPONSES_URL = 'http://responses/mn'
 
 #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
 #self.baseurl = 'http://localhost:8000/'

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.data_package.py
+"""Module d1_client.tests.data_package.py
 =========================================
 
 Unit tests for ResourceMapGenerator and ResourceMapParser.
@@ -27,20 +27,20 @@ Unit tests for ResourceMapGenerator and ResourceMapParser.
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import os
 import sys
 import unittest
 
-# D1.
+# D1
 import d1_common.testcasewithurlcompare
 
 # TODO: Update tests for new OAI-ORE library
 
-# # 3rd party.
+# # 3rd party
 # import foresite
 # import foresite.utils
 # import rdflib
@@ -49,7 +49,7 @@ import d1_common.testcasewithurlcompare
 # import rdflib.plugin
 # import rdflib.graph
 #
-# # App.
+# # App
 # sys.path.append(os.pardir)
 # import d1_client.data_package
 # import shared_utilities
@@ -77,6 +77,7 @@ import d1_common.testcasewithurlcompare
 # CITO_NS = 'http://purl.org/spar/cito/'
 # D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
 
+
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
 class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
@@ -92,7 +93,7 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.parser = d1_client.data_package.ResourceMapParser(self.ore_doc)
 
   def test_100(self):
-    '''init()'''
+    """init()"""
     pass # Successful setup of the test means that the parser and generator
     # initialized successfully.
 
@@ -101,7 +102,7 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     #
 
   def test_200(self):
-    '''simple_generate_resource_map()'''
+    """simple_generate_resource_map()"""
     doc = self.generator.simple_generate_resource_map(
       'MAP_PID', 'SCIMETA_PID', ['SCIDATA_PID_1', 'SCIDATA_PID_2']
     )
@@ -116,7 +117,7 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     )
 
   def test_210(self):
-    '''generate_system_metadata_for_resource_map()'''
+    """generate_system_metadata_for_resource_map()"""
     sys_meta = self.generator.generate_system_metadata_for_resource_map(
       'test_pid', 'test_object', 'rights_holder'
     )
@@ -130,19 +131,19 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   #
 
   def test_300(self):
-    '''get_resource_map()'''
+    """get_resource_map()"""
     self.assertIsInstance(
       self.parser.get_resource_map(), foresite.ore.ResourceMap
     )
 
   def test_310(self):
-    '''get_resource_map_graph()'''
+    """get_resource_map_graph()"""
     self.assertIsInstance(
       self.parser.get_resource_map_graph(), rdflib.graph.Graph
     )
 
   def test_320(self):
-    '''get_aggregation()'''
+    """get_aggregation()"""
     aggr = self.parser.get_aggregation()
     self.assertIsInstance(aggr, foresite.ore.Aggregation)
     self.assertEqual(
@@ -150,28 +151,28 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     )
 
   def test_330(self):
-    '''get_aggregation_graph()'''
+    """get_aggregation_graph()"""
     self.assertIsInstance(
       self.parser.get_aggregation_graph(), rdflib.graph.Graph
     )
 
   def test_340(self):
-    '''get_resource_map_pid()'''
+    """get_resource_map_pid()"""
     self.assertEqual(self.parser.get_resource_map_pid(), 'abc')
 
   def test_350(self):
-    '''get_merged_graph()'''
+    """get_merged_graph()"""
     g = self.parser.get_merged_graph()
     self.assertIsInstance(g, rdflib.graph.Graph)
     self.assertEqual(len(g), 20)
 
   def test_360(self):
-    '''get_all_triples()'''
+    """get_all_triples()"""
     triples = self.parser.get_all_triples()
     self.check_triples(triples)
 
   def test_370(self):
-    '''get_all_predicates()'''
+    """get_all_predicates()"""
     preds = self.parser.get_all_predicates()
     expected_preds = [
       'http://purl.org/dc/terms/modified',
@@ -191,14 +192,14 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertTrue(p in expected_preds)
 
   def test_380(self):
-    '''get_subject_objects_by_predicate()'''
+    """get_subject_objects_by_predicate()"""
     subject_objects = self.parser.get_subject_objects_by_predicate(
       'ore:aggregates'
     )
     self.assertEqual(len(subject_objects), 3)
 
   def test_390(self):
-    '''get_aggregated_pids()'''
+    """get_aggregated_pids()"""
     pids = self.parser.get_aggregated_pids()
     self.assertEqual(len(pids), 3)
     self.assertTrue('def' in pids)
@@ -206,20 +207,20 @@ class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.assertTrue('jkl' in pids)
 
   def test_400(self):
-    '''get_aggregated_science_metadata_pids()'''
+    """get_aggregated_science_metadata_pids()"""
     pids = self.parser.get_aggregated_science_metadata_pids()
     self.assertEqual(len(pids), 1)
     self.assertTrue('def' in pids)
 
   def test_410(self):
-    '''get_aggregated_science_data_pids()'''
+    """get_aggregated_science_data_pids()"""
     pids = self.parser.get_aggregated_science_data_pids()
     self.assertEqual(len(pids), 2)
     self.assertTrue('ghi' in pids)
     self.assertTrue('jkl' in pids)
 
   def test_420(self):
-    '''generator_and_parser_1'''
+    """generator_and_parser_1"""
     doc = self.generator.simple_generate_resource_map(
       'abc', 'def', [
         'ghi', 'jkl'

@@ -18,34 +18,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_d1baseclient.py
-==============================================
 
-:Synopsis: Unit tests for d1_client.d1_client.d1baseclient.
-:Created: 2011-01-20
-:Author: DataONE (Vieglais, Dahl)
-"""
-
-# Stdlib.
+# Stdlib
 import logging
 import mock
 import StringIO
 import sys
 import unittest
 
-# D1.
+# D1
 import d1_common.testcasewithurlcompare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
-# App.
+# App
 sys.path.append('..')
-import d1_client.d1baseclient
+import d1_client.baseclient
 import shared_utilities
 import shared_settings
 
-EXPECTED_LOG_RECORDS_V1_XML = open('./test_docs/expected_log_records_v1.xml', 'rb').read()
+EXPECTED_LOG_RECORDS_V1_XML = open(
+  './test_docs/expected_log_records_v1.xml', 'rb'
+).read()
 
 
 # noinspection PyUnresolvedReferences
@@ -53,7 +48,7 @@ class TestDataONEBaseClient(
   d1_common.testcasewithurlcompare.TestCaseWithURLCompare
 ):
   def setUp(self):
-    self.client = d1_client.d1baseclient.DataONEBaseClient(
+    self.client = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
     )
     self.header_value = [
@@ -70,31 +65,12 @@ class TestDataONEBaseClient(
   def tearDown(self):
     pass
 
-  #     def test_0read_and_capture(self):
-  #         with patch.object(d1_client.d1baseclient.DataONEBaseClient,'_read_and_capture') as mocked_method:
-  # #             mocked_method.capture_response_body.return_value = True
-  #             self.client.capture_response_body.return_value = True
-  #             response = self.client._read_and_capture()
-  #             self.assertEqual(EG_XML, response)
-  #     @patch('d1_common.types.exceptions.deserialize_from_headers')
-  #     @patch.object(d1_client.d1baseclient.DataONEBaseClient,'_status_is_200_ok')
-  #     @patch('d1_client.d1baseclient.DataONEBaseClient._read_and_capture')
-  #     @patch('httplib.HTTPResponse')
-  #     def test_0read_header_response_404(self,mock_getheaders,mock_read_and_capture,mock_status,mock_except):
-  #                 
-  #         mock_getheaders.getheaders.return_value = self.header_value
-  #         mock_read_and_capture.response_body.return_value = EG_XML
-  #         mock_status.return_value = False
-  #         mock_except.side_effect = "DataoneExeption"
-  #         response = self.client._read_header_response(mock_getheaders)
-  #         self.assertAssertRaises('DataoneExeption')
-
-  #     @patch.object(d1_client.d1baseclient.DataONEBaseClient,'_read_and_deserialize_dataone_type')
-  #     @patch.object(d1_client.d1baseclient.DataONEBaseClient,'_assert_correct_dataone_type')
-  #     @patch('d1_client.d1baseclient.DataONEBaseClient._read_and_capture')
+  #     @patch.object(d1_client.baseclient.DataONEBaseClient,'_read_and_deserialize_dataone_type')
+  #     @patch.object(d1_client.baseclient.DataONEBaseClient,'_assert_correct_dataone_type')
+  #     @patch('d1_client.baseclient.DataONEBaseClient._read_and_capture')
   #     @patch('d1_common.types.dataoneTypes.CreateFromDocument')
-  #     @patch.object(d1_client.d1baseclient.DataONEBaseClient,'_status_is_200_ok')
-  #     @patch.object(d1_client.d1baseclient.DataONEBaseClient,'_content_type_is_xml')
+  #     @patch.object(d1_client.baseclient.DataONEBaseClient,'_status_is_200_ok')
+  #     @patch.object(d1_client.baseclient.DataONEBaseClient,'_content_type_is_xml')
   #     @patch('httplib.HTTPResponse')
   #     def test_0read_dataone_type_response(self,mock_response,mock_type,mock_status,mock_create,mock_read,mock_assert_correct,mock_read_dataone):
   #         mock_response.return_value = 200
@@ -108,18 +84,17 @@ class TestDataONEBaseClient(
   #                 d1_common.types.dataoneTypes.Log))
 
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient,
-    '_read_and_deserialize_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_read_and_deserialize_dataone_type'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
   )
   @mock.patch('d1_common.types.dataoneTypes.CreateFromDocument')
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_content_type_is_xml'
+    d1_client.baseclient.DataONEBaseClient, '_content_type_is_xml'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0100(
@@ -128,7 +103,7 @@ class TestDataONEBaseClient(
   ):
     """read_dataone_type_assert_called_read_and_deserialize_dataone_type"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient,
+      d1_client.baseclient.DataONEBaseClient,
       '_read_and_deserialize_dataone_type'
     ) as mocked_method:
       mock_response.return_value = 200
@@ -139,18 +114,17 @@ class TestDataONEBaseClient(
       mocked_method.assert_called_with(mock_response)
 
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient,
-    '_read_and_deserialize_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_read_and_deserialize_dataone_type'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
   )
   @mock.patch('d1_common.types.dataoneTypes.CreateFromDocument')
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_content_type_is_xml'
+    d1_client.baseclient.DataONEBaseClient, '_content_type_is_xml'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0110(
@@ -159,7 +133,7 @@ class TestDataONEBaseClient(
   ):
     """read_dataone_type_assert_called_assert_correct_dataone_type"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
+      d1_client.baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
     ) as mocked_method:
       mock_response.return_value = 200
       mock_status.return_value = True
@@ -170,13 +144,13 @@ class TestDataONEBaseClient(
       mocked_method.assert_called_with('tst', 'log')
 
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0120(self, mock_response, mock_status):
     """read_dataone_type_response_error_called"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_error'
+      d1_client.baseclient.DataONEBaseClient, '_error'
     ) as mocked_method:
       mock_response.return_value = 200
       mock_status.return_value = False
@@ -184,17 +158,16 @@ class TestDataONEBaseClient(
       mocked_method.assert_called_with(mock_response)
 
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_assert_correct_dataone_type'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient,
-    '_read_and_deserialize_dataone_type'
+    d1_client.baseclient.DataONEBaseClient, '_read_and_deserialize_dataone_type'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_content_type_is_xml'
+    d1_client.baseclient.DataONEBaseClient, '_content_type_is_xml'
   )
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0130(
@@ -202,7 +175,7 @@ class TestDataONEBaseClient(
   ):
     """read_dataone_type_response_raise_service_failure_invalid_content_typecalled"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient,
+      d1_client.baseclient.DataONEBaseClient,
       '_raise_service_failure_invalid_content_type'
     ) as mocked_method:
       mock_response.return_value = 200
@@ -212,7 +185,7 @@ class TestDataONEBaseClient(
       mocked_method.assert_called_with(mock_response)
 
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0140(self, mock_getheaders, mock_status):
@@ -223,7 +196,7 @@ class TestDataONEBaseClient(
 
   @unittest.skip("TODO: Rewrite for Requests header")
   @mock.patch.object(
-    d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+    d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
   )
   @mock.patch('httplib.HTTPResponse')
   def test_0150(self, mock_getheaders, mock_status):
@@ -236,7 +209,7 @@ class TestDataONEBaseClient(
 
   #     def test_0155(self):
   #"""read_stream_response"""
-  #         with patch.object(d1_client.d1baseclient.DataONEBaseClient,'_status_is_200_ok') as mocked_method:
+  #         with patch.object(d1_client.baseclient.DataONEBaseClient,'_status_is_200_ok') as mocked_method:
   #             mocked_method.return_value = 200
   #             response = self.client._read_stream_response(200)
   #             self.assertEqual(200,response)
@@ -244,7 +217,7 @@ class TestDataONEBaseClient(
   def test_0160(self):
     """read_stream_response_404"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client._read_stream_response(404)
@@ -253,7 +226,7 @@ class TestDataONEBaseClient(
   def test_0170(self):
     """raise_service_failure"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_raise_service_failure'
+      d1_client.baseclient.DataONEBaseClient, '_raise_service_failure'
     ):
       msg = StringIO.StringIO()
       msg.write(
@@ -265,35 +238,10 @@ class TestDataONEBaseClient(
       response = self.client._raise_service_failure(msg.getvalue())
       self.assertRaises(response)
 
-  @mock.patch('d1_client.d1baseclient.DataONEBaseClient._read_and_capture')
-  @mock.patch('httplib.HTTPResponse.read')
-  def test_0180(self, mock_read, mock_read_and_capture):
-    """read_and_capture_capture_response_body"""
-    self.client.capture_response_body = True
-    #         mock_read = EG_XML
-    mock_read_and_capture.response_body.return_value = EXPECTED_LOG_RECORDS_V1_XML
-    mock_read.return_value = EXPECTED_LOG_RECORDS_V1_XML
-    response = self.client._read_and_capture(mock_read)
-    self.assertEqual(
-      EXPECTED_LOG_RECORDS_V1_XML,
-      mock_read_and_capture.response_body.return_value
-    )
-
-  @mock.patch('d1_client.d1baseclient.DataONEBaseClient._read_and_capture')
-  @mock.patch('httplib.HTTPResponse.read')
-  def test_0190(self, mock_read, mock_read_and_capture):
-    """read_and_capture_no_capture_response_body"""
-    self.client.capture_response_body = False
-    #         mock_read = EG_XML
-    mock_read_and_capture.response_body.return_value = EXPECTED_LOG_RECORDS_V1_XML
-    mock_read.return_value = EXPECTED_LOG_RECORDS_V1_XML
-    response = self.client._read_and_capture(mock_read)
-    self.assertIsNone(self.client.last_response_body)
-
   def test_0200(self):
     """raise_service_failure_invalid_content_type"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient,
+      d1_client.baseclient.DataONEBaseClient,
       '_raise_service_failure_invalid_content_type'
     ) as mocked_method:
       mocked_method.return_value = EXPECTED_LOG_RECORDS_V1_XML
@@ -303,7 +251,7 @@ class TestDataONEBaseClient(
   def test_0210(self):
     """status_is_200_ok"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_200_ok'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_200_ok'
     ) as mocked_method:
       mocked_method.return_value = 200
       mock_HTTPResponse = 200
@@ -320,7 +268,7 @@ class TestDataONEBaseClient(
   def test_0220(self):
     """status_is_404_not_found"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_404_not_found'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_404_not_found'
     ) as mocked_method:
       mocked_method.return_value = 404
       response = self.client._status_is_404_not_found(404)
@@ -329,7 +277,7 @@ class TestDataONEBaseClient(
   def test_0230(self):
     """status_is_401_not_authorized"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_401_not_authorized'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_401_not_authorized'
     ) as mocked_method:
       mocked_method.return_value = 401
       response = self.client._status_is_401_not_authorized(401)
@@ -338,7 +286,7 @@ class TestDataONEBaseClient(
   def test_0240(self):
     """status_is_303_redirect"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_303_redirect'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_303_redirect'
     ) as mocked_method:
       mocked_method.return_value = 303
       response = self.client._status_is_303_redirect(303)
@@ -347,7 +295,7 @@ class TestDataONEBaseClient(
   def test_0250(self):
     """content_type_is_xml"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_content_type_is_xml'
+      d1_client.baseclient.DataONEBaseClient, '_content_type_is_xml'
     ) as mocked_method:
       mocked_method.return_value = 'text/xml'
       mock_HTTPResponse = 200
@@ -358,7 +306,7 @@ class TestDataONEBaseClient(
   def test_0260(self):
     """status_is_ok_200"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_ok'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_ok'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client._status_is_ok(200)
@@ -367,7 +315,7 @@ class TestDataONEBaseClient(
   def test_0270(self):
     """status_is_ok_303"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_ok'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_ok'
     ) as mocked_method:
       mocked_method.return_value = 303
       response = self.client._status_is_ok(303)
@@ -376,7 +324,7 @@ class TestDataONEBaseClient(
   def test_0280(self):
     """status_is_ok"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_status_is_ok'
+      d1_client.baseclient.DataONEBaseClient, '_status_is_ok'
     ) as mocked_method:
       mocked_method.return_value = 303
       response = self.client._status_is_ok(303)
@@ -385,7 +333,7 @@ class TestDataONEBaseClient(
   def test_0290(self):
     """read_boolean_response"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, '_read_boolean_response'
+      d1_client.baseclient.DataONEBaseClient, '_read_boolean_response'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client._read_boolean_response(200)
@@ -394,7 +342,7 @@ class TestDataONEBaseClient(
   def test_0300(self):
     """ping"""
     with mock.patch.object(
-      d1_client.d1baseclient.DataONEBaseClient, 'ping'
+      d1_client.baseclient.DataONEBaseClient, 'ping'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.ping(200)
@@ -409,7 +357,7 @@ class TestDataONEBaseClient(
     host = 'bogus.target'
     fragment = 'test_frag'
     query = 'test_query'
-    client = d1_client.d1baseclient.DataONEBaseClient(url)
+    client = d1_client.baseclient.DataONEBaseClient(url)
     return_scheme, return_host, return_port, return_path, return_query, return_frag = client._parse_url(
       url
     )
@@ -422,11 +370,11 @@ class TestDataONEBaseClient(
 
   def test_0500(self):
     """DataONEBaseClient() create successful"""
-    d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    d1_client.baseclient.DataONEBaseClient("http://bogus.target/mn")
 
   def test_0510(self):
     """slice_sanity_check()"""
-    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    client = d1_client.baseclient.DataONEBaseClient("http://bogus.target/mn")
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest, client._slice_sanity_check, -1,
       0
@@ -442,7 +390,7 @@ class TestDataONEBaseClient(
 
   def test_0520(self):
     """date_span_sanity_check()"""
-    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    client = d1_client.baseclient.DataONEBaseClient("http://bogus.target/mn")
     old_date = d1_common.date_time.create_utc_datetime(1970, 4, 3)
     new_date = d1_common.date_time.create_utc_datetime(2010, 10, 11)
     self.assertRaises(
@@ -451,48 +399,25 @@ class TestDataONEBaseClient(
     )
     self.assertEqual(None, client._date_span_sanity_check(old_date, new_date))
 
-  def test_0530(self):
-    """rest_url()"""
-    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
-    self.assertEqual(
-      '/mn/v1/object/1234xyz',
-      client._rest_url('object/%(pid)s', pid='1234xyz')
-    )
-    self.assertEqual(
-      '/mn/v1/object/1234%2Fxyz',
-      client._rest_url('object/%(pid)s', pid='1234/xyz')
-    )
-    self.assertEqual(
-      '/mn/v1/meta/1234xyz',
-      client._rest_url('meta/%(pid)s', pid='1234xyz')
-    )
-    self.assertEqual('/mn/v1/log', client._rest_url('log'))
-
-  def test_0540(self):
-    """get_schema_version()"""
-    client = d1_client.d1baseclient.DataONEBaseClient(shared_settings.CN_URL)
-    version = client.get_schema_version()
-    self.assertTrue(version in ('v1', 'v2', 'v3'))
-
   # CNCore.getLogRecords()
   # MNCore.getLogRecords()
 
   def _getLogRecords(self, base_url):
     """getLogRecords() returns a valid Log. CNs will return an empty log for public connections"""
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     # getLogRecords() verifies that the returned type is Log.
     client.getLogRecords()
 
   def test_0550(self):
     """CNCore.getLogRecords()"""
-    self._getLogRecords(shared_settings.CN_URL)
+    self._getLogRecords(shared_settings.CN_RESPONSES_URL)
 
   @unittest.skip(
     "Need a permanent MN that allows public access to getLogRecords"
   )
   def test_0700(self):
     """MNRead.getLogRecords()"""
-    log = self._getLogRecords(shared_settings.MN_URL)
+    log = self._getLogRecords(shared_settings.MN_RESPONSES_URL)
     self.assertTrue(len(log.logEntry) >= 2)
 
   # CNCore.ping()
@@ -500,22 +425,22 @@ class TestDataONEBaseClient(
 
   def _ping(self, base_url):
     """ping()"""
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     self.assertTrue(client.ping())
 
   def test_0710(self):
     """ping() CN"""
-    self._ping(shared_settings.CN_URL)
+    self._ping(shared_settings.CN_RESPONSES_URL)
 
   def test_0720(self):
     """ping() MN"""
-    self._ping(shared_settings.MN_URL)
+    self._ping(shared_settings.MN_RESPONSES_URL)
 
   # CNRead.get()
   # MNRead.get()
 
   def _get(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
@@ -528,9 +453,9 @@ class TestDataONEBaseClient(
   )
   def test_0730(self):
     """CNRead.get()"""
-    self._get(shared_settings.MN_URL)
+    self._get(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_URL,
+      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_RESPONSES_URL,
       True
     )
 
@@ -539,9 +464,9 @@ class TestDataONEBaseClient(
   )
   def test_0440(self):
     """MNRead.get()"""
-    self._get(shared_settings.MN_URL)
+    self._get(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_URL,
+      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_RESPONSES_URL,
       True
     )
 
@@ -549,14 +474,14 @@ class TestDataONEBaseClient(
   # MNRead.getSystemMetadata()
 
   def _get_sysmeta(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
       pid = shared_utilities.get_random_valid_pid(client)
-    sysmeta = client.getSystemMetadata(pid)
+    sysmeta_pyxb = client.getSystemMetadata(pid)
     self.assertTrue(
-      isinstance(sysmeta, d1_common.types.dataoneTypes_v1_1.SystemMetadata)
+      isinstance(sysmeta_pyxb, d1_common.types.dataoneTypes_v1_1.SystemMetadata)
     )
 
   @unittest.skip(
@@ -564,10 +489,10 @@ class TestDataONEBaseClient(
   )
   def test_0510(self):
     """CNRead.getSystemMetadata()"""
-    self._get_sysmeta(shared_settings.CN_URL)
+    self._get_sysmeta(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self._get_sysmeta,
-      shared_settings.CN_URL, True
+      shared_settings.CN_RESPONSES_URL, True
     )
 
   @unittest.skip(
@@ -575,17 +500,17 @@ class TestDataONEBaseClient(
   )
   def test_0800(self):
     """MNRead.getSystemMetadata()"""
-    self._get_sysmeta(shared_settings.MN_URL)
+    self._get_sysmeta(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self._get_sysmeta,
-      shared_settings.MN_URL, True
+      shared_settings.MN_RESPONSES_URL, True
     )
 
   # CNRead.describe()
   # MNRead.describe()
 
   def _describe(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     if invalid_pid:
       pid = '_bogus_pid_4589734958791283794565'
     else:
@@ -597,23 +522,19 @@ class TestDataONEBaseClient(
   )
   def test_0610(self):
     """CNRead.describe()"""
-    self._describe(shared_settings.CN_URL)
+    self._describe(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure,
-      self._describe,
-      shared_settings.CN_URL,
-      invalid_pid=True
+      d1_common.types.exceptions.ServiceFailure, self._describe,
+      shared_settings.CN_RESPONSES_URL, invalid_pid=True
     )
 
   @unittest.skip("TODO: Check why this has been disabled")
   def test_0620(self):
     """MNRead.describe()"""
-    self._describe(shared_settings.MN_URL)
+    self._describe(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure,
-      self._describe,
-      shared_settings.MN_URL,
-      invalid_pid=True
+      d1_common.types.exceptions.ServiceFailure, self._describe,
+      shared_settings.MN_RESPONSES_URL, invalid_pid=True
     )
 
   # CNCore.listObjects()
@@ -621,7 +542,7 @@ class TestDataONEBaseClient(
 
   def _listObjects(self, baseURL):
     """listObjects() returns a valid ObjectList that contains at least 3 entries"""
-    client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
+    client = d1_client.baseclient.DataONEBaseClient(baseURL)
     list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
     self.assertTrue(
       isinstance(list, d1_common.types.dataoneTypes_v1_1.ObjectList)
@@ -644,14 +565,14 @@ class TestDataONEBaseClient(
   )
   def test_0810(self):
     """CNCore.listObjects()"""
-    self._listObjects(shared_settings.CN_URL)
+    self._listObjects(shared_settings.CN_RESPONSES_URL)
 
   @unittest.skip(
     "TODO: Skipped due to waiting for test env. Should set up test env or remove"
   )
   def test_0820(self):
     """MNCore.listObjects()"""
-    self._listObjects(shared_settings.MN_URL)
+    self._listObjects(shared_settings.MN_RESPONSES_URL)
 
   # CNCore.generateIdentifier()
   # MNStorage.generateIdentifier()
@@ -661,7 +582,7 @@ class TestDataONEBaseClient(
     """generateIdentifier(): Returns a valid identifier that matches scheme and fragment"""
     shared_context.test_fragment = 'test_reserve_identifier_' + \
         d1_instance_generator.random_data.random_3_words()
-    client = d1_client.d1baseclient.DataONEBaseClient(self.options.gmn_url)
+    client = d1_client.baseclient.DataONEBaseClient(self.options.gmn_url)
     identifier = client.generateIdentifier('UUID', shared_context.test_fragment)
     shared_context.generated_identifier = identifier.value()
 
@@ -679,7 +600,7 @@ class TestDataONEBaseClient(
   # MNAuthorization.isAuthorized()
 
   def _is_authorized(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1_client.baseclient.DataONEBaseClient(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
@@ -692,10 +613,10 @@ class TestDataONEBaseClient(
   )
   def test_0910(self):
     """CNAuthorization.isAuthorized()"""
-    self._is_authorized(shared_settings.CN_URL)
+    self._is_authorized(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self._is_authorized,
-      shared_settings.CN_URL, True
+      shared_settings.CN_RESPONSES_URL, True
     )
 
   @unittest.skip(
@@ -703,10 +624,10 @@ class TestDataONEBaseClient(
   )
   def test_0920(self):
     """MNAuthorization.isAuthorized()"""
-    self._is_authorized(shared_settings.MN_URL)
+    self._is_authorized(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self._is_authorized,
-      shared_settings.MN_URL, True
+      shared_settings.MN_RESPONSES_URL, True
     )
 
 #=========================================================================

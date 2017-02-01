@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_logrecorditerator
+"""Module d1_client.tests.test_logrecorditerator
 ================================================
 
 Unit tests for LogRecordIterator.
@@ -27,38 +27,38 @@ Unit tests for LogRecordIterator.
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import datetime
 import logging
 import unittest
 import urlparse
 import sys
 
-# D1.
+# D1
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
 import d1_common.types.dataoneTypes as dataoneTypes
 
-# App.
+# App
 import d1_client.cnclient
 import shared_settings
 import shared_utilities
 import shared_context
 
-
 logging.basicConfig(level=logging.DEBUG)
-
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
 
 MAX_OBJECTS = 20
 
+
 class TestLogRecordIterator(unittest.TestCase):
   """"""
+
   def setUp(self):
     pass
 
@@ -77,16 +77,14 @@ class TestLogRecordIterator(unittest.TestCase):
     )
 
   def _log_record_iterator_test(
-    self, page_size, start, from_date=None,
-    to_date=None
+    self, page_size, start, from_date=None, to_date=None
   ):
-    client = d1_client.mnclient.MemberNodeClient(base_url=shared_settings.MN_URL)
+    client = d1_client.mnclient.MemberNodeClient(
+      base_url=shared_settings.MN_RESPONSES_URL
+    )
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.logrecorditerator.LogRecordIterator(
-      client,
-      pageSize=page_size,
-      start=start,
-      fromDate=from_date,
+      client, pageSize=page_size, start=start, fromDate=from_date,
       toDate=to_date
     )
     cnt = 0
@@ -109,6 +107,5 @@ class TestLogRecordIterator(unittest.TestCase):
 
   def _get_log_total_count(self, client, from_date, to_date):
     return client.getLogRecords(
-      start=0, count=0, fromDate=from_date,
-      toDate=to_date
+      start=0, count=0, fromDate=from_date, toDate=to_date
     ).total

@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_mnclient_1_1
+"""Module d1_client.tests.test_mnclient_1_1
 ===========================================
 
 
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import random
 import sys
@@ -35,10 +35,10 @@ import uuid
 import StringIO
 from mock import patch
 
-# 3rd party.
+# 3rd party
 import pyxb
 
-# D1.
+# D1
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
@@ -50,7 +50,7 @@ import d1_test.instance_generator.replicationpolicy
 import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
-# App.
+# App
 import d1_client.mnclient_1_1
 import shared_context
 import shared_settings
@@ -59,11 +59,12 @@ import shared_utilities
 
 class TestMNClient_1_1(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
-    self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(shared_settings.MN_URL)
+    self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
+      shared_settings.MN_RESPONSES_URL
+    )
 
   def test_1000(self):
     """Initialize MemberNodeClient_1_1"""
     # Completion means that the client was successfully instantiated in
     # setUp().
     pass
-

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_solr_client.py
+"""Module d1_client.tests.test_solr_client.py
 =============================================
 
 Unit tests for solr_client.
@@ -27,17 +27,17 @@ Unit tests for solr_client.
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import sys
 import unittest
 
-# D1.
+# D1
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
-# App.
+# App
 sys.path.append('..')
 from d1_client import solr_client
 import shared_settings
@@ -57,7 +57,7 @@ class TestSolrClient(TestCaseWithURLCompare):
     self.assertTrue(False, 'Expected at least one row in results')
 
   def test_100(self):
-    '''SOLRSearchResponseIterator()'''
+    """SOLRSearchResponseIterator()"""
     # Orig host, solrBase:
     #client = solr_client.SolrConnection(host="cn-dev-unm-1.test.dataone.org", solrBase="/solr/d1-cn-index")
 
@@ -65,24 +65,21 @@ class TestSolrClient(TestCaseWithURLCompare):
     # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
 
     client = solr_client.SolrConnection(
-      host=shared_settings.CN_HOST,
-      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+      host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
     fields = 'abstract,author,date'
     pagesize = 5
     rows = solr_client.SOLRSearchResponseIterator(
-      client, q, fq=fq, fields=fields,
-      pagesize=pagesize
+      client, q, fq=fq, fields=fields, pagesize=pagesize
     )
     self._assert_at_least_one_row_populated(rows)
 
   def test_110(self):
-    '''SOLRArrayResponseIterator()'''
+    """SOLRArrayResponseIterator()"""
     client = solr_client.SolrConnection(
-      host=shared_settings.CN_HOST,
-      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+      host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
@@ -94,10 +91,9 @@ class TestSolrClient(TestCaseWithURLCompare):
     self._assert_at_least_one_row_populated(rows)
 
   def test_200(self):
-    '''SOLRValuesResponseIterator()'''
+    """SOLRValuesResponseIterator()"""
     client = solr_client.SolrConnection(
-      host=shared_settings.CN_HOST,
-      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+      host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
@@ -112,10 +108,9 @@ class TestSolrClient(TestCaseWithURLCompare):
   # D1 doesn't expose. Instead, use CNRead.getQueryEngineDescription() D1 API to
   # get the list of fields.
   def _test_300(self):
-    '''listFields()'''
+    """listFields()"""
     client = solr_client.SolrConnection(
-      host=shared_settings.CN_HOST,
-      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+      host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     flds = client.getFields()
     print "%d fields indexed\n" % len(flds['fields'].keys())

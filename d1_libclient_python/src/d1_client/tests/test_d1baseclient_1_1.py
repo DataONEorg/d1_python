@@ -18,29 +18,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_d1baseclient_1_1
+"""Module d1_client.tests.test_baseclient_1_1
 ===============================================
 
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib.
+# Stdlib
 import logging
 import mock
 import StringIO
 import sys
 import unittest
 
-# D1.
+# D1
 import d1_common.testcasewithurlcompare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
-# App.
+# App
 sys.path.append('..')
-import d1_client.d1baseclient_1_1
+import d1_client.baseclient_1_1
 import shared_utilities
 import shared_settings
 
@@ -50,7 +50,7 @@ class TestDataONEBaseClient(
   d1_common.testcasewithurlcompare.TestCaseWithURLCompare
 ):
   def setUp(self):
-    self.client = d1_client.d1baseclient.DataONEBaseClient(
+    self.client = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
     )
 

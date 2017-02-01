@@ -18,22 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_d1_client.cnclient.py
-==========================================
 
-Unit tests for d1_client.cnclient.
-
-:Created: 2012-12-07
-:Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
-"""
-
-# Stdlib.
+# Stdlib
 import sys
 import unittest
 
-# D1.
+# 3rd party
+import responses # pip install responses
+import requests
+
+# D1
 sys.path.append('..')
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
@@ -49,25 +43,27 @@ import d1_test.instance_generator.replicationpolicy
 import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
-# App.
+# App
 import d1_client.cnclient
 import shared_settings
 import shared_utilities
 import shared_context
 
+import mock_object_format_list
+
 
 class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     self.client = d1_client.cnclient.CoordinatingNodeClient(
-      shared_settings.CN_URL
+      shared_settings.CN_RESPONSES_URL
     )
 
   def tearDown(self):
     pass
-#
-#=========================================================================
-# Core API
-#=========================================================================
+
+  #=========================================================================
+  # Core API
+  #=========================================================================
 
   def test_1000(self):
     """Initialize CoordinatingNodeClient"""
@@ -75,8 +71,12 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     # setUp().
     pass
 
+  @responses.activate
   def test_1010(self):
-    """CNCore.listFormats() returns a valid ObjectFormatList with at least 3 entries"""
+    """CNCore.listFormats() returns a valid ObjectFormatList with at least 3
+    entries"""
+    mock_object_format_list.init(shared_settings.CN_RESPONSES_URL, 1)
+
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
@@ -99,8 +99,7 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     # Because this API should be called with a certificate, the test is considered
     # successful if a 401 NotAuthorized exception is received (since that
     # indicates that the d1_client.cnclient correctly issued the call).
-    shared_context.test_pid = d1_test.instance_generator.identifier.generate_bare(
-    )
+    shared_context.test_pid = d1_test.instance_generator.identifier.generate_bare()
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.reserveIdentifier,
       shared_context.test_pid
@@ -135,7 +134,9 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def test_1065(self):
     """CNCore.listNodes() returns a valid NodeList that contains at least 3 entries"""
     nodes = self.client.listNodes()
-    self.assertIsInstance(nodes, d1_common.types.generated.dataoneTypes_v1.NodeList)
+    self.assertIsInstance(
+      nodes, d1_common.types.generated.dataoneTypes_v1.NodeList
+    )
     self.assertTrue(len(nodes.node) >= 1)
 
   #=========================================================================

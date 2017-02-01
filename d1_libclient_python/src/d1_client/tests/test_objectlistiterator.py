@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_objectlistiterator
+"""Module d1_client.tests.test_objectlistiterator
 =================================================
 
 Unit tests for objectlistiterator.
@@ -27,7 +27,7 @@ Unit tests for objectlistiterator.
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 import sys
 import unittest
@@ -48,8 +48,8 @@ import shared_utilities
 
 
 class TestObjectListIterator(unittest.TestCase):
-  '''
-  '''
+  """
+  """
 
   def test_0010(self):
     """Walk over the list of log entries available from a given node.
@@ -57,7 +57,9 @@ class TestObjectListIterator(unittest.TestCase):
     base_url = "https://cn.dataone.org/cn"
     if len(sys.argv) > 1:
       target = sys.argv[1]
-    client = d1_client.mnclient.MemberNodeClient(base_url=shared_settings.MN_URL)
+    client = d1_client.mnclient.MemberNodeClient(
+      base_url=shared_settings.MN_RESPONSES_URL
+    )
     ol = d1_client.objectlistiterator.ObjectListIterator(client, max=200)
     counter = 0
     for o in ol:
