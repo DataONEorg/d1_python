@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.resolver_base`
+""":mod:`resolver.resolver_base`
 ===============================
 
 :Synopsis:
@@ -27,15 +27,15 @@
    their corresponding files and folders.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import abc
 import logging
 import os
 from StringIO import StringIO
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
@@ -61,9 +61,9 @@ class Resolver(object):
     return not len(path)
 
   def _raise_exception_if_empty_directory(self, directory, msg=None):
-    '''In hierarchies where ONEDrive dynamically renders directories only after
+    """In hierarchies where ONEDrive dynamically renders directories only after
     having determined that there are contents for them, an empty directory
-    means that the path is invalid.'''
+    means that the path is invalid."""
     if len(directory) <= 2:
       raise onedrive_exceptions.PathException(msg)
 

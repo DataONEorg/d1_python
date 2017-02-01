@@ -18,23 +18,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_author_resolver`
+""":mod:`test_author_resolver`
 ==============================
 
 :Synopsis:
  - Test the TestAuthorResolver class.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 #import os
 import pprint
 import sys
 import unittest
 
-# D1.
+# D1
 sys.path.append('../..')
 #sys.path.append('../resolver')
 import impl.resolver.author as author
@@ -56,7 +56,7 @@ class TestAuthorResolver(unittest.TestCase):
     pass
 
   def test_200(self):
-    '''get_attributes([])'''
+    """get_attributes([])"""
     a = self._resolver.get_attributes([], [])
     self.assertEqual(a.date(), None)
     self.assertEqual(a.size(), 0)

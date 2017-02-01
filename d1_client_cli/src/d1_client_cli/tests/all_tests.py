@@ -18,25 +18,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_client_cli.tests.all_tests
 ====================================
 
 :Synopsis: Run all Unit tests.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import sys
 import logging
 import os
 import unittest
 
-# D1.
+# D1
 from d1_common import xmlrunner, svnrevision
 
-# App.
+# App
 
 from test_access_control import TestAccessControl
 from test_cli_util import TestCLIUtil

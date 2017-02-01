@@ -18,27 +18,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.resource_map`
+""":mod:`resolver.resource_map`
 ===============================
 
 :Synopsis:
  - Resolve a filesystem path pointing to a resource map.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import os
 import pprint
 import sys
 
-# D1.
+# D1
 import d1_client.data_package
 from ..onedrive_exceptions import ONEDriveException
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory

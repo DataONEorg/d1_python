@@ -18,25 +18,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.taxa`
+""":mod:`resolver.taxa`
 =======================
 
 :Synopsis:
  - Resolve a filesystem path pointing into a Taxa controlled hierarchy.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import os
 import pprint
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
@@ -48,14 +48,14 @@ import resource_map
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u'''Taxa Folder
+README_TXT = u"""Taxa Folder
 
 This folder contains the items of the object_tree folder (the parent
 of this folder) grouped by their taxonomic classications.
 
 Items for which there is no taxonomic information are not included in these
 folders.
-'''
+"""
 
 # Example object list:
 #[{'author': 'Libe Washburn', 'id': 'doi:10.6073/AA/knb-lter-mcr.32.9'},

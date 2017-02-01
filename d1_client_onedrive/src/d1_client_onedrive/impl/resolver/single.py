@@ -18,25 +18,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.single`
+""":mod:`resolver.single`
 =========================
 
 :Synopsis:
  - This resolver simply renders all objects into a single folder.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import os
 import pprint
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
@@ -48,11 +48,11 @@ import resource_map
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u'''All Folder
+README_TXT = u"""All Folder
 
 This folder contains all the items of the object_tree folder (the parent
 of this folder) combined into a single folder.
-'''
+"""
 
 
 class Resolver(resolver_base.Resolver):

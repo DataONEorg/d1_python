@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`cli_exceptions`
 =====================
 
@@ -27,7 +27,7 @@
   DataONE Command Line Client.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
 
 class InvalidArguments(Exception):

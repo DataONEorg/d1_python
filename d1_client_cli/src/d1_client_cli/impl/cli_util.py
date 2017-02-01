@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`cli_util`
 ===============
 
@@ -26,9 +26,9 @@
   Interface
 :Created: 2012-03-07
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import os
 import shutil
 import string
@@ -42,8 +42,8 @@ import cli_exceptions
 
 
 def get_host(url):
-  '''Get the host component without the port number.
-  '''
+  """Get the host component without the port number.
+  """
   url_dict = urlparse.urlparse(url)
   if url_dict.netloc is not None:
     host = url_dict.netloc
@@ -97,7 +97,7 @@ def confirm(prompt, default=u'no', allow_blank=False):
 
 
 def output(file_like_object, path, verbose=False):
-  '''Display or save file like object'''
+  """Display or save file like object"""
   if not path:
     for line in file_like_object:
       if verbose:
@@ -123,8 +123,8 @@ def assert_file_exists(path):
     raise cli_exceptions.InvalidArguments(msg)
 
 #def create_sys_meta(session, pid, path, formatId=None):
-#  ''' Create a system meta data object.
-#  '''
+#  """ Create a system meta data object.
+#  """
 #  if session is None:
 #    raise cli_exceptions.InvalidArguments(u'Missing session')
 #  if pid is None:
@@ -193,8 +193,8 @@ def print_info(msg):
 
 
 def _print_level(level, msg):
-  '''Print the information in Unicode safe manner.
-  '''
+  """Print the information in Unicode safe manner.
+  """
   for l in unicode(msg.rstrip()).split(u'\n'):
     print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
 

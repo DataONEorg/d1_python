@@ -20,11 +20,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''
+"""
 Created on Jan 11, 2013
 
 @author: brumgard
-'''
+"""
 import sys
 import tarfile
 from setuptools import setup, find_packages

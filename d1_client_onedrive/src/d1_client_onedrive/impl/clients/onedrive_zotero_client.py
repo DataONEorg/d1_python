@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`zotero_cache`
+""":mod:`zotero_cache`
 ======================
 
 :Synopsis:
@@ -28,7 +28,7 @@
   - Expose a simple API to query and refresh the cache.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Zotero API:
 # http://programminghistorian.org/lessons/zotero-api/intro-to-the-zotero-api
@@ -36,7 +36,7 @@
 # For syncing with finer granularity in the future:
 # https://www.zotero.org/support/dev/web_api/v3/syncing
 
-# Stdlib.
+# Stdlib
 import logging
 try:
   import cPickle as pickle
@@ -47,10 +47,10 @@ import os
 from pprint import pprint
 import re
 
-# 3rd party.
+# 3rd party
 from pyzotero import zotero
 
-# App.
+# App
 from ..log_decorator import log_func
 from .. import util
 from .. import onedrive_exceptions
@@ -73,8 +73,8 @@ class ZoteroClient(object):
     self._pickle_to_disk()
 
   def refresh(self):
-    '''Refresh the local cache of the online Zotero library if stale.
-    '''
+    """Refresh the local cache of the online Zotero library if stale.
+    """
     while self.cache_is_stale():
       logging.info('Refreshing Zotero Library cache')
       self.force_refresh()
@@ -86,9 +86,9 @@ class ZoteroClient(object):
     self._cache['library_version'] = self._get_current_library_version()
 
   def get_filtered_sub_tree(self, path):
-    '''Get a sub-tree rooted at [path] that contains only DataONE items. The
+    """Get a sub-tree rooted at [path] that contains only DataONE items. The
     path is a list of collection names.
-    '''
+    """
     return self._get_filtered_sub_tree_recursive(path)
 
   def iterate_collection_trees(self):

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.root`
+""":mod:`resolver.root`
 =======================
 
 :Synopsis:
@@ -30,14 +30,14 @@
    resolver hierarchy and escapes entries that are received.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import os
 import sys
 
-# D1.
+# D1
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory

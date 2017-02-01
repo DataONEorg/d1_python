@@ -1,4 +1,4 @@
-'''
+"""
 Module d1_dokan.py
 ==================
 
@@ -23,7 +23,7 @@ Run as::
 
   python d1_dokan.py <mount point>
 
-'''
+"""
 
 # standard library
 import os
@@ -65,9 +65,9 @@ debug = False
 
 
 class DataONEFS(dokan.Operations, D1FS):
-  '''
+  """
   Read-only user-mode file system for DataONE using Dokan
-  '''
+  """
 
   def __init__(self, baseurl=d1_common.const.URL_DATAONE_ROOT,
                filter_query=None):
@@ -365,8 +365,8 @@ def main():
   parser.add_option('-u', '--unmount', dest='unmount', action='store_true',
                     default=False, help='Unmount the specified drive')
   #TODO add version option (see d1_fuse2.py)
-  '''parser.add_option('-v', '--version', dest='version', action='store_true',
-                    help='Report current versions and exit.')'''
+  """parser.add_option('-v', '--version', dest='version', action='store_true',
+                    help='Report current versions and exit.')"""
   #foreground vs background - running this as "pythonw d1_dokan.pyw" should 
   # take care of this problem
   

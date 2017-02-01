@@ -1,4 +1,4 @@
-'''
+"""
 Module to interface with Dokan
 
 :author: Ryan Kroiss
@@ -6,7 +6,7 @@ Module to interface with Dokan
 Exported classes:
 
 Dokan -- "no-op" Dokan implementation
-'''
+"""
 
 # standard library
 import ctypes
@@ -23,13 +23,13 @@ import const
 
 
 class Dokan(object):
-  '''
+  """
   "No-op" implementation of Dokan user-mode file system interface
-  '''
+  """
   
   def __init__(self, operations, mountPoint, driverOptions, serialNumber,
                num_threads):
-    '''
+    """
     Initialize Dokan instance.
     :param operations: implementations of callbacks to dokan operations
     :type operations: dokan_operations
@@ -39,7 +39,7 @@ class Dokan(object):
     :type DriverOption: long   
     :param num_threads: number of threads to launch Dokan with
     :type num_threads: int
-    '''
+    """
     self.mountPoint = mountPoint
     self.driverOptions = driverOptions
     self.serialNumber = serialNumber
@@ -71,7 +71,7 @@ class Dokan(object):
       #return const.DOKAN_ERROR
 
   def dokanMain(self, dokanOptions, dokanOperations):
-    '''
+    """
     Issue callback to start dokan drive.
     :param DokanOptions: drive options
     :type DokanOptions: DOKAN_OPTIONS
@@ -79,7 +79,7 @@ class Dokan(object):
     :type DokanOperations: DokanOperations
     :return: error code
     :rtype: int
-    '''
+    """
     return int(self.dokanDLL.DokanMain(
       PDOKAN_OPTIONS(dokanOptions),
       PDOKAN_OPERATIONS(dokanOperations)
@@ -92,7 +92,7 @@ class Dokan(object):
       ))
 
   
-  ''' 
+  """
   # DokanIsNameInExpression
   #   check whether Name can match Expression
   #   Expression can contain wildcard characters (? and *)
@@ -124,11 +124,11 @@ class Dokan(object):
       return wintypes.HANDLE(self.DokanDLL.DokanOpenRequestorToken(
           PDOKAN_FILE_INFO(DokanFileInfo)
       ))
-  '''
+  """
   
   def createFile(self, fileName, desiredAccess, shareMode,
                  creationDisposition, flagsAndAttributes, dokanFileInfo):
-    '''
+    """
     Creates a file.
     :param fileName: name of file to create
     :type fileName: ctypes.c_wchar_p
@@ -144,12 +144,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int  
-    '''
+    """
     return self.operations('createFile', fileName)
   
   
   def openDirectory(self, fileName, dokanFileInfo):
-    '''
+    """
     Opens a directory.
     :param fileName: name of directory to open
     :type fileName: ctypes.c_wchar_p
@@ -157,12 +157,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int  
-    '''
+    """
     return self.operations('openDirectory', fileName)
   
   
   def createDirectory(self, fileName, dokanFileInfo):
-    '''
+    """
     Create a directory.
     :param fileName: name of directory to create
     :type fileName: ctypes.c_wchar_p
@@ -170,12 +170,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int  
-    '''
+    """
     return self.operations('createDirectory', fileName)
   
   
   def cleanup(self, fileName, dokanFileInfo):
-    '''
+    """
     Cleanup when deleting a file or directory.
     :param fileName: name of file or directory to cleanup
     :type fileName: ctypes.c_wchar_p
@@ -183,12 +183,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO 
     :return: error code
     :rtype: ctypes.c_int  
-    '''
+    """
     return self.operations('cleanup', fileName)
   
   
   def closeFile(self, fileName, dokanFileInfo):
-    '''
+    """
     Close a file.
     :param fileName: name of file to close
     :type fileName: ctypes.c_wchar_p
@@ -196,13 +196,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO 
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('closeFile', fileName)
       
       
   def readFile(self, fileName, buffer, numberOfBytesToRead,
                numberOfBytesRead, offset, dokanFileInfo):
-    '''
+    """
     Read a file.
     :param fileName: name of file to read
     :type fileName: ctypes.c_wchar_p
@@ -218,7 +218,7 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     try:
       ret = self.operations('readFile', fileName, numberOfBytesToRead, offset)
       data = ctypes.create_string_buffer(ret[:numberOfBytesToRead],
@@ -235,7 +235,7 @@ class Dokan(object):
   
   def writeFile(self, fileName, buffer, numberOfBytesToWrite,
                 numberOfBytesWritten, offset, dokanFileInfo):
-    '''
+    """
     Read a file.
     :param fileName: name of file to write
     :type fileName: ctypes.c_wchar_p
@@ -251,13 +251,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('writeFile', fileName, buffer, numberOfBytesToWrite,
                            offset)
   
   
   def flushFileBuffers(self, fileName, dokanFileInfo):
-    '''
+    """
     Flush a file's buffer.
     :param fileName: name of file to flush
     :type fileName: ctypes.c_wchar_p
@@ -265,12 +265,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('flushFileBuffers', fileName)
   
   
   def getFileInformation(self, fileName, buffer, dokanFileInfo):
-    #'''
+    #"""
     #Get information about a file.
     #:param fileName: name of file fetch information for
     #:type fileName: ctypes.c_wchar_p
@@ -280,7 +280,7 @@ class Dokan(object):
     #:type dokanFileInfo: PDOKAN_FILE_INFO
     #:return: error code
     #:rtype: ctypes.c_int
-    #'''
+    #"""
 #    try:
       ret = self.operations('getFileInformation', fileName)
       if ret is None:
@@ -311,7 +311,7 @@ class Dokan(object):
   
   
   def findFiles(self, fileName, fillFindData, dokanFileInfo):
-    '''
+    """
     Find files in a certain path.
     :param fileName: path to search
     :type fileName: ctypes.c_wchar_p
@@ -321,13 +321,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('findFiles', fileName)
   
   
   def findFilesWithPattern(self, fileName, searchPattern, fillFindData,
                            dokanFileInfo):
-    '''
+    """
     Find files in a certain path that match the search pattern.
     :param fileName: path to search
     :type fileName: ctypes.c_wchar_p
@@ -339,7 +339,7 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     try:
       ret = self.operations('findFilesWithPattern', fileName, searchPattern)
       if ret is None:
@@ -372,7 +372,7 @@ class Dokan(object):
   
   
   def setFileAttributes(self, fileName, fileAttributes, dokanFileInfo):
-    '''
+    """
     Set attributes for a file.
     :param fileName: name of file to set attributes for
     :type fileName: ctypes.c_wchar_p
@@ -382,13 +382,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('setFileAttributes', fileName)
   
   
   def setFileTime(self, fileName, creationTime, lastAccessTime,
                   lastWriteTime, dokanFileInfo):
-    '''
+    """
     Set time values for a file.
     :param fileName: name of file to set time values for
     :type fileName: ctypes.c_wchar_p
@@ -402,12 +402,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('setFileTime', fileName)
   
   
   def deleteFile(self, fileName, dokanFileInfo):
-    '''
+    """
     Delete a file.
     :param fileName: name of file to delete
     :type fileName: ctypes.c_wchar_p
@@ -415,12 +415,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('deleteFile', fileName)
   
   
   def deleteDirectory(self, fileName, dokanFileInfo):
-    '''
+    """
     Delete a directory.
     :param fileName: name of directory to delete
     :type fileName: ctypes.c_wchar_p
@@ -428,13 +428,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('deleteDirectory', fileName)
   
   
   def moveFile(self, existingFileName, newFileName, replaceExisiting,
                dokanFileInfo):
-    '''
+    """
     Move a file.
     :param existingFileName: name of file to move
     :type existingFileName: ctypes.c_wchar_p
@@ -446,12 +446,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('moveFile', fileName)
   
   
   def setEndOfFile(self, fileName, length, dokanFileInfo):
-    '''
+    """
     Set end of file indicator.
     :param fileName: name of file to set EOF for
     :type fileName: ctypes.c_wchar_p
@@ -461,12 +461,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('setEndOfFile', fileName)
   
   
   def setAllocationSize(self, fileName, length, dokanFileInfo):
-    '''
+    """
     Set allocation size for a file.
     :param fileName: name of file to set allocation size for
     :type fileName: ctypes.c_wchar_p
@@ -476,12 +476,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('setAllocationSize', fileName)
   
   
   def lockFile(self, fileName, byteOffset, length, dokanFileInfo):
-    '''
+    """
     Lock a file.
     :param fileName: name of file to lock
     :type fileName: ctypes.c_wchar_p
@@ -493,12 +493,12 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('lockFile', fileName, byteOffset, length)
   
   
   def unlockFile(self, fileName, byteOffset, length, dokanFileInfo):
-    '''
+    """
     Unlock a file.
     :param fileName: name of file to unlock
     :type fileName: ctypes.c_wchar_p
@@ -510,13 +510,13 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('unlockFile', fileName, byteOffset, length)
   
   
   def getDiskFreeSpace(self, freeBytesAvailable, totalNumberOfBytes,
                        totalNumberOfFreeBytes, dokanFileInfo):
-    '''
+    """
     Get the amount of free space on this volume.
     :param freeBytesAvailable: pointer for free bytes available
     :type freeBytesAvailable: ctypes.c_void_p
@@ -528,7 +528,7 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     ret = self.operations('getDiskFreeSpace')
     ctypes.memmove(freeBytesAvailable,
                    ctypes.byref(ctypes.c_longlong(ret['freeBytesAvailable'])),
@@ -546,7 +546,7 @@ class Dokan(object):
                            volumeSerialNumber, maximumComponentLength,
                            fileSystemFlags, fileSystemNameBuffer,
                            fileSystemNameSize, dokanFileInfo):
-    '''
+    """
     Get information about the volume.
     :param volumeNameBuffer: buffer for volume name
     :type volumeNameBuffer: ctypes.c_void_p
@@ -566,7 +566,7 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     ret = self.operations('getVolumeInformation')
     # populate volume name buffer
     ctypes.memmove(volumeNameBuffer, 
@@ -599,20 +599,20 @@ class Dokan(object):
       
       
   def unmount(self, dokanFileInfo):
-    '''
+    """
     Unmount the volume.
     :param dokanFileInfo: used by Dokan
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('unmount', fileName)
   
   
   def getFileSecurity(self, fileName, securityInformation,
                       securityDescriptor, lengthSecurityDescriptorBuffer,
                       lengthNeeded, dokanFileInfo):
-    '''
+    """
     Get security attributes of a file.
     :param fileName: name of file to get security for
     :type fileName: ctypes.c_wchar_p
@@ -628,14 +628,14 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('getFileSecurity', fileName)
   
   
   def setFileSecurity(self, fileName, securityInformation,
                       securityDescriptor, lengthSecurityDescriptorBuffer,
                       dokanFileInfo):
-    '''
+    """
     Set security attributes of a file.
     :param fileName: name of file to set security for
     :type fileName: ctypes.c_wchar_p
@@ -649,7 +649,7 @@ class Dokan(object):
     :type dokanFileInfo: PDOKAN_FILE_INFO
     :return: error code
     :rtype: ctypes.c_int
-    '''
+    """
     return self.operations('setFileSecurity', fileName)
 
 
@@ -669,10 +669,10 @@ class Dokan(object):
   
       
   def main(self):
-    '''
+    """
     Starts Dokan drive which dispatches events to the appropriate
     handlers.
-    '''
+    """
     return self.dokanMain(self.options, self.dokan_ops)
 
 

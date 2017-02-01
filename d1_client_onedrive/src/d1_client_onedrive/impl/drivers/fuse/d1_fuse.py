@@ -1,7 +1,7 @@
 # Std.
 import os
 
-# App.
+# App
 import fuse
 import callbacks
 

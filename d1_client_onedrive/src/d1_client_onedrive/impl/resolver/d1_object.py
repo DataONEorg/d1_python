@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.d1_object`
+""":mod:`resolver.d1_object`
 ============================
 
 :Synopsis:
@@ -26,9 +26,9 @@
    to a resolver that is specialized for that type.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import os
@@ -36,12 +36,12 @@ import pprint
 import sys
 import pkg_resources
 
-# D1.
+# D1
 import d1_client.data_package
 import d1_client.object_format_info
 from .. import onedrive_exceptions
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory

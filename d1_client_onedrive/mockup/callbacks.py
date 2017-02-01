@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`callbacks`
+""":mod:`callbacks`
 ===================
 
 :Synopsis:
  - FUSE callback handlers.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Std.
 import datetime
@@ -38,7 +38,7 @@ import time
 import urllib
 import urlparse
 
-# D1.
+# D1
 import fs
 
 
@@ -62,7 +62,7 @@ class FUSECallbacks(fuse.Operations):
 
   @dbg
   def getattr(self, path, fh):
-    '''Called by FUSE when the attributes for a file or directory are required.
+    """Called by FUSE when the attributes for a file or directory are required.
 
     Returns a dictionary with keys identical to the stat C structure of stat(2).
     st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
@@ -71,7 +71,7 @@ class FUSECallbacks(fuse.Operations):
     field is ignored except if the 'use_ino' mount option is given.
 
     This method gets very heavy traffic.
-    '''
+    """
     path = self._mk_relative(path)
 
     if self._is_dir(path):
@@ -84,9 +84,9 @@ class FUSECallbacks(fuse.Operations):
 
   @dbg
   def readdir(self, path, fh):
-    '''Called by FUSE when a directory is opened.
+    """Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
-    '''
+    """
     path = self._mk_relative(path)
     c = self._get_direct_children(path)
     if not len(c):

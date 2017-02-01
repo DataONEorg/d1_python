@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`command_processor`
 ==================
 
 :Synopsis: Process and execute CLI operations.
 :Created: 2013-07-16
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import htmlentitydefs
 import os
 import re
@@ -42,7 +42,7 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
-# App.
+# App
 import cli_client
 import cli_exceptions
 import cli_util
@@ -98,8 +98,8 @@ class CommandProcessor():
           self._ping_base(mn_base_url)
 
   def search(self, line):
-    '''CN search.
-    '''
+    """CN search.
+    """
     if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
@@ -115,8 +115,8 @@ class CommandProcessor():
     self._output(self._nodes.format(cn_base_url))
 
   def resolve(self, pid):
-    '''Get Object Locations for Object.
-    '''
+    """Get Object Locations for Object.
+    """
     client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
     object_location_list = client.resolve(pid)
     for location in object_location_list.objectLocation:
@@ -139,8 +139,8 @@ class CommandProcessor():
   # Read operations
 
   def science_object_get(self, pid, path):
-    '''First try the MN set in the session. Then try to resolve via the CN set
-    in the session.'''
+    """First try the MN set in the session. Then try to resolve via the CN set
+    in the session."""
     mn_client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
     try:
       response = mn_client.get(pid)
@@ -209,13 +209,13 @@ class CommandProcessor():
   # Write operations (queued)
 
   def science_object_create(self, pid, path, format_id=None):
-    '''Create a new Science Object on a Member Node
-    '''
+    """Create a new Science Object on a Member Node
+    """
     self._queue_science_object_create(pid, path, format_id)
 
   def science_object_update(self, pid_old, path, pid_new, format_id=None):
-    '''Obsolete a Science Object on a Member Node with a different one.
-    '''
+    """Obsolete a Science Object on a Member Node with a different one.
+    """
     self._queue_science_object_update(pid_old, path, pid_new, format_id)
 
   def create_package(self, pids):
@@ -230,7 +230,7 @@ class CommandProcessor():
   #
 
   def _output(self, file_like_object, path=None):
-    '''Display or save file like object'''
+    """Display or save file like object"""
     if not path:
       self._output_to_dislay(file_like_object)
     else:
@@ -275,8 +275,8 @@ class CommandProcessor():
       cli_util.print_error('Did not respond: {0}'.format(url))
 
   def _search_solr(self, line):
-    '''Perform a SOLR search.
-    '''
+    """Perform a SOLR search.
+    """
     try:
       query = self._create_solr_query(line)
       client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
@@ -310,7 +310,7 @@ class CommandProcessor():
         cli_util.print_error(u'Unexpected error:\n%s' % str(e))
 
   def _create_solr_query(self, line):
-    '''Actual search - easier to test. '''
+    """Actual search - easier to test. """
     p0 = u''
     if line:
       p0 = line.strip()
@@ -394,10 +394,10 @@ class CommandProcessor():
     self._operation_queue.append(update_replication_policy_operation)
 
 #def get_object_by_pid(session, pid, filename=None, resolve=True):
-#  ''' Create a mnclient and look for the object.  If the object is not found,
+#  """ Create a mnclient and look for the object.  If the object is not found,
 #      simply return a None, don't throw an exception.  If found, return the
 #      filename.
-#  '''
+#  """
 #  if session is None:
 #    raise cli_exceptions.InvalidArguments(u'Missing session')
 #  if pid is None:
@@ -441,8 +441,8 @@ class CommandProcessor():
 #
 #
 #def get_baseUrl(session, nodeId):
-#  '''  Get the base url of the given node id.
-#  '''
+#  """  Get the base url of the given node id.
+#  """
 #  cn_client = CLICNClient(session)
 #  try:
 #    nodes = cn_client.listNodes()
@@ -455,8 +455,8 @@ class CommandProcessor():
 #
 #
 #def get_sys_meta_by_pid(session, pid, search_mn = False):
-#  '''  Get the system metadata object for this particular pid.
-#  '''
+#  """  Get the system metadata object for this particular pid.
+#  """
 #  if not session:
 #    raise cli_exceptions.InvalidArguments(u'Missing session')
 #  if not pid:

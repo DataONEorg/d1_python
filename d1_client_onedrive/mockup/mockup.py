@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`mockup`
+""":mod:`mockup`
 ================
 
 :Synopsis:
  - FUSE based system to create filesystem mockups for ONEDrive.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Std.
 import logging
@@ -32,7 +32,7 @@ import os
 import sys
 import optparse
 
-# 3rd party.
+# 3rd party
 import fuse
 
 import callbacks

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`onedrive`
+""":mod:`onedrive`
 ==================
 
 :Synopsis:
@@ -28,7 +28,7 @@
  - Mount FUSE / Dokan.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Std.
 import logging
@@ -38,7 +38,7 @@ import sys
 import optparse
 import platform
 
-# App.
+# App
 if not hasattr(sys, 'frozen'):
   sys.path.append(os.path.abspath(os.path.join('__file__', '../..')))
 

@@ -18,22 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`operation_executer`
 =========================
 
 :Synopsis: Execute queued write operations.
 :Created: 2013-07-17
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import StringIO
 
-# D1.
+# D1
 import d1_client.data_package
 
-# App.
+# App
 import cli_client
 import cli_util
 import system_metadata

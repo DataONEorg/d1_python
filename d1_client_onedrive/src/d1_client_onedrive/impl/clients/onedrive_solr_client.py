@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`solr_client`
+""":mod:`solr_client`
 =====================
 
 :Synopsis:
@@ -26,24 +26,24 @@
  - Cache the results.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import socket
 import urllib
 import urlparse
 
-# 3rd party.
+# 3rd party
 import requests
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.url
 
-# App.
+# App
 from .. import onedrive_exceptions
 
 
@@ -92,8 +92,8 @@ class SolrClient(object):
         )
 
   def _close_open_date_ranges(self, record):
-    '''If a date range is missing the start or end date, close it by copying
-    the date from the existing value.'''
+    """If a date range is missing the start or end date, close it by copying
+    the date from the existing value."""
     date_ranges = (('beginDate', 'endDate'), )
     for begin, end in date_ranges:
       if begin in record and end in record:
@@ -139,8 +139,8 @@ class SolrClient(object):
     return r.json()
 
   def _escape_query_term_string(self, term):
-    '''Escape a query term string and wrap it in quotes.
-    '''
+    """Escape a query term string and wrap it in quotes.
+    """
     return u'"{0}"'.format(self._escape_query_term(term))
 
   def _make_query_param_tuples(self, query_type, terms):

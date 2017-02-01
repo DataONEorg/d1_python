@@ -18,28 +18,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`system_metadata`
 ======================
 
 :Synopsis: Create System Metadata documents based on session variables.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import datetime
 import os
 import StringIO
 
-# D1.
+# D1
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
-# 3rd party.
+# 3rd party
 
-# App.
+# App
 import cli_util
 
 RESOURCE_MAP_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
@@ -191,12 +191,12 @@ class SystemMetadataCreator():
   #
 
   #def _create_missing_sys_meta_session_parameters(self):
-  #  ''' Make sure all the session values that are:
+  #  """ Make sure all the session values that are:
   #        necessary to create the sys_meta data
   #        can be determined from other values
   #      are there.
   #      * authoritative-mn, rights-holder
-  #  '''
+  #  """
   #  save_data = False
   #  if self.get(AUTH_MN_NAME) is None:
   #    mn = self.get(MN_URL_NAME)

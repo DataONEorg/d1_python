@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.flat_space`
+""":mod:`resolver.flat_space`
 =============================
 
 :Synopsis:
@@ -26,16 +26,16 @@
    of the directory by querying the query engine.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import os
 from datetime import datetime
 
-# D1.
+# D1
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
@@ -46,7 +46,7 @@ import resource_map
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u'''Use FlatSpace to go directly to any DataONE object by typing
+README_TXT = u"""Use FlatSpace to go directly to any DataONE object by typing
 the PID in the path.
 
 E.g.,
@@ -54,7 +54,7 @@ E.g.,
 Linux: ~/one/FlatSpace/MyObjectIdentifier
 
 Windows: O:\FlatSpace\MyObjectIdentifier
-'''
+"""
 
 
 class Resolver(resolver_base.Resolver):

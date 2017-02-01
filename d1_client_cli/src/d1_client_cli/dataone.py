@@ -18,23 +18,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`dataone`
 ==============
 
 :Synopsis: DataONE Command Line Interface
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import optparse
 from string import join
 import sys
 import traceback
 
-# D1.
+# D1
 import d1_common.types.exceptions
 
 # Create absolute path from path that is relative to the module from which
@@ -55,7 +55,7 @@ import d1_common.types.exceptions
 #
 # sys.path.append(os.path.join(module_path(), u'./impl'))
 
-# App.
+# App
 # import cli_util
 # import cli_exceptions
 # import check_dependencies
@@ -441,12 +441,12 @@ def handle_options(cli, options):
 
 
 def handle_unexpected_exception(max_traceback_levels=100):
-  '''Suppress stack traces for common errors and provide hints for how to
-  resolve them.'''
+  """Suppress stack traces for common errors and provide hints for how to
+  resolve them."""
   exc_type, exc_msgs = sys.exc_info()[:2]
   if exc_type.__name__ == u'SSLError':
     cli_util.print_error(
-      u'''HTTPS / TLS / SSL / X.509v3 Certificate Error:
+      u"""HTTPS / TLS / SSL / X.509v3 Certificate Error:
   An HTTPS connection could not be established. Verify that a DataONE node
   responds at the URL provided in the cn-url or mn-url session variable. If the
   URL is valid and if you intended to connect without authentication, make sure
@@ -456,14 +456,14 @@ def handle_unexpected_exception(max_traceback_levels=100):
   key in a separate file, also set "key-file" to the private key file.
   Otherwise, set "key-file" to None. Note that CILogon certificates must be
   renewed after 18 hours.
-'''
+"""
     )
   elif exc_type.__name__ == u'timeout':
     cli_util.print_error(
-      u'''Timeout error:
+      u"""Timeout error:
   A connection to a DataONE node timed out. Verify that a DataONE node responds
   at the URL provided in the cn-url or mn-url session variable.
-'''
+"""
     )
   else:
     _print_unexpected_exception(max_traceback_levels)

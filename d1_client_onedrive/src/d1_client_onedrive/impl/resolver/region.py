@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.region`
+""":mod:`resolver.region`
 =========================
 
 :Synopsis:
  - Resolve a filesystem path pointing into a Region controlled hierarchy.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import hashlib
 import httplib
 import json
@@ -37,9 +37,9 @@ import pprint
 import socket
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_disk
 from d1_client_onedrive.impl import directory
@@ -54,7 +54,7 @@ log = logging.getLogger(__name__)
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
-README_TXT = u'''Region Folder
+README_TXT = u"""Region Folder
 
 This folder provides a geographically ordered view of science data objects
 for which the geographical area being covered is known to DataONE. Objects with
@@ -77,7 +77,7 @@ data for California and Arizona and another that has data for Arizona and New
 Mexico, both objects will appear under United States and under Arizona. But only
 the first object will appear under California and only the second will appear
 under New Mexico.
-'''
+"""
 
 
 class Resolver(resolver_base.Resolver):
@@ -228,10 +228,10 @@ class Resolver(resolver_base.Resolver):
     return geo_records
 
   def _merge_region_trees(self, dst_tree, src_tree, pid):
-    '''Merge conflicts occur if a folder in one tree is a file in the other. As
+    """Merge conflicts occur if a folder in one tree is a file in the other. As
     the files are PIDs, this can only happen if a PID matches one of the
     geographical areas that the dataset covers and should be very rare. In such
-    conflicts, the destination wins.'''
+    conflicts, the destination wins."""
     for k, v in src_tree.items():
       # Prepend an underscore to the administrative area names, to make them
       # sort separately from the identifiers.
@@ -243,7 +243,7 @@ class Resolver(resolver_base.Resolver):
         self._merge_region_trees(dst_tree[k], v, pid)
 
   def _get_region_tree_item_and_unconsumed_path(self, region_tree, path, parent_key=''):
-    '''Return the region_tree item specified by path. An item can be a a folder
+    """Return the region_tree item specified by path. An item can be a a folder
     (represented by a dictionary) or a PID (represented by None).
 
     This function is also used for determining which section of a path is within
@@ -263,7 +263,7 @@ class Resolver(resolver_base.Resolver):
 
     - If the path goes to an invalid location within the region tree, an
       "invalid path" PathException is raised.
-    '''
+    """
     # Handle valid item within region tree.
     if not path:
       if region_tree is None:

@@ -1,6 +1,6 @@
-'''
+"""
 Constants used by the DataONE drive for Windows which is built using Dokan.
-'''
+"""
 
 # IO error codes
 ERROR_FILE_NOT_FOUND = 2;

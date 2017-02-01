@@ -17,11 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Start ONEDrive from the Mac OS X GUI.
+"""Start ONEDrive from the Mac OS X GUI.
 
 Automatically creates and deletes a mount point for ONEDrive and passes some
 OS X specific options to ONEDrive.
-'''
+"""
 
 import os
 import sys

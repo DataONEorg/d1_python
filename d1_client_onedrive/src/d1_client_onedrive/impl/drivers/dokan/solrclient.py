@@ -1,9 +1,9 @@
-'''
+"""
 This client code is built from:
 http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
 
 though has been modified in many respects.
-'''
+"""
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ though has been modified in many respects.
 # data = c.search(q='id:500', wt='python')
 # print 'first match=', eval(data)['response']['docs'][0]
 
-# Stdlib.
+# Stdlib
 import logging
 import httplib
 import socket
@@ -48,7 +48,7 @@ import random
 #===============================================================================
 
 class SolrException(Exception):
-  ''' An exception thrown by solr connections '''
+  """ An exception thrown by solr connections """
   def __init__(self, httpcode, reason=None, body=None):
     self.httpcode = httpcode
     self.reason = reason
@@ -64,9 +64,9 @@ class SolrException(Exception):
 #===============================================================================
 
 class SolrConnection:
-  '''
+  """
   Provides a connection to the SOLR index.
-  '''
+  """
 
   def __init__(self, host='localhost:8080', solrBase='/v1/solr',
                persistent=True, postHeaders={}):
@@ -179,9 +179,9 @@ class SolrConnection:
 
 
   def escapeQueryTerm(self, term):
-    '''
+    """
     + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-    '''
+    """
     reserved = ['+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', ]
     term = term.replace(u'\\', u'\\\\')
     for c in reserved:
@@ -190,10 +190,10 @@ class SolrConnection:
 
 
   def prepareQueryTerm(self, field, term):
-    '''
+    """
     Prepare a query term for inclusion in a query.  This escapes the term and
     if necessary, wraps the term in quotes.
-    '''
+    """
     if term == "*":
       return term
     addstar = False
@@ -231,12 +231,12 @@ class SolrConnection:
     return self.doUpdateXML(xstr)
 
   def coerceType(self, ftype, value):
-    '''
+    """
     Returns unicode(value) after trying to coerce it into the SOLR field type.
 
     @param ftype(string) The SOLR field type for the value
     @param value(any) The value that is to be represented as unicode text.
-    '''
+    """
     if value is None:
       return None
     if ftype == 'string':
@@ -266,11 +266,11 @@ class SolrConnection:
 
 
   def getSolrType(self, field):
-    '''
+    """
     Returns the SOLR type of the specified field name.  Assumes the convention
     of dynamic fields using an underscore + type character code for the field
     name.
-    '''
+    """
     ftype = 'string'
     try:
       ftype = self.fieldtypes[field]
@@ -322,8 +322,8 @@ class SolrConnection:
 
 
   def addDocs(self, docs):
-    '''docs is a list of fields that are a dictionary of name:value for a record
-    '''
+    """docs is a list of fields that are a dictionary of name:value for a record
+    """
     lst = ['<add>', ]
     for fields in docs:
       self.__add(lst, fields)
@@ -360,9 +360,9 @@ class SolrConnection:
 
 
   def count(self, q='*:*', fq=None):
-    '''
+    """
     Return the number of entries that match query
-    '''
+    """
     params = {'q':q,
               'rows': '0'}
     if not fq is None:
@@ -373,14 +373,14 @@ class SolrConnection:
 
 
   def getIds(self, query='*:*', fq=None, start=0, rows=1000):
-    '''Returns a dictionary of:
+    """Returns a dictionary of:
       matches: number of matches
       failed: if true, then an exception was thrown
       start: starting index
       ids: [id, id, ...]
 
     See also the SOLRSearchResponseIterator class
-    '''
+    """
     params = {'q':query,
               'start': str(start),
               'rows': str(rows),
@@ -408,9 +408,9 @@ class SolrConnection:
 
 
   def get(self, id):
-    '''
+    """
     Retrieves the specified document.
-    '''
+    """
     params = {'q': 'id:%s' % str(id),
               'wt': 'python'}
     request = urllib.urlencode(params, doseq=True)
@@ -427,7 +427,7 @@ class SolrConnection:
 
 
   def getFields(self, numTerms=1):
-    '''Retrieve a list of fields.  The response looks something like:
+    """Retrieve a list of fields.  The response looks something like:
 {
  'responseHeader':{
     'status':0,
@@ -462,7 +462,7 @@ class SolrConnection:
       'topTerms':['cepedianum',352],
       'histogram':['2',34,'4',34,'8',16,'16',13,'32',6,'64',3,'128',1,
        '256',2,'512',2]},
-    '''
+    """
     if not self._fields is None:
       return self._fields
     params = {'numTerms': str(numTerms),
@@ -475,7 +475,7 @@ class SolrConnection:
 
 
   def fieldValues(self, name, q="*:*", fq=None, maxvalues= -1):
-    '''
+    """
     Retrieve the unique values for a field, along with their usage counts.
     http://localhost:8080/solr/select/?q=*:*&rows=0&facet=true&indent=on&wt=python&facet.field=genus_s&facet.limit=10&facet.zeros=false&facet.sort=false
 
@@ -485,7 +485,7 @@ class SolrConnection:
     @param maxvalues(int) Maximum number of values to retrieve.  Default is -1,
       which causes retrieval of all values.
     @return dict of {fieldname: [[value, count], ... ], }
-    '''
+    """
     params = {'q':q,
               'rows':'0',
               'facet':'true',
@@ -503,7 +503,7 @@ class SolrConnection:
 
 
   def fieldMinMax(self, name, q='*:*', fq=None):
-    '''
+    """
     Returns the minimum and maximum values of the specified field.
     This requires two search calls to the service, each requesting a single
     value of a single field.
@@ -513,7 +513,7 @@ class SolrConnection:
     @param fq(string) Filter restricting range of query
 
     @return list of [min, max]
-    '''
+    """
     minmax = [None, None]
     oldpersist = self.persistent
     self.persistent = True
@@ -542,13 +542,13 @@ class SolrConnection:
 
 
   def getftype(self, name):
-    '''
+    """
     Returns the python type for the specified field name.  The field list is
     cached so multiple calls do not invoke a getFields request each time.
 
     @param name(string) The name of the SOLR field
     @returns Python type of the field.
-    '''
+    """
     fields = self.getFields()
     try:
       fld = fields['fields'][name]
@@ -567,13 +567,13 @@ class SolrConnection:
 
   def fieldAlphaHistogram(self, name, q='*:*', fq=None, nbins=10,
                           includequeries=True):
-    '''
+    """
     Generates a histogram of values from a string field.
     Output is:
       [[low, high, count, query],
        ... ]
     Bin edges is determined by equal division of the fields
-    '''
+    """
     oldpersist = self.persistent
     self.persistent = True
     bins = []
@@ -671,7 +671,7 @@ class SolrConnection:
 
   def fieldHistogram(self, name, q="*:*", fq=None, nbins=10, minmax=None,
                      includequeries=True):
-    '''
+    """
     Generates a histogram of values.
     Expects the field to be integer or floating point.
 
@@ -681,7 +681,7 @@ class SolrConnection:
     @param nbins(int) Number of bins in resulting histogram
 
     @return list of [binmin, binmax, n, binquery]
-    '''
+    """
     oldpersist = self.persistent
     self.persistent = True
     ftype = self.getftype(name)
@@ -763,7 +763,7 @@ class SolrConnection:
 
 
   def fieldHistogram2d(self, colname, rowname, q="*:*", fq=None, ncols=10, nrows=10):
-    '''
+    """
     Generates a 2d histogram of values.
     Expects the field to be integer or floating point.
 
@@ -780,7 +780,7 @@ class SolrConnection:
                      rows: [] list of min values for each row bin
                      z: [[],
                          []]
-    '''
+    """
     def _mkQterm(name, minv, maxv, isint, isfirst, islast):
       q = ''
       if isint:
@@ -871,12 +871,12 @@ class SolrConnection:
 #===============================================================================
 
 class SOLRRecordTransformer(object):
-  '''
+  """
   A SOLR record transformer.  Used to transform a SOLR search response document
   into some other form, such as a dictionary or list of values.
 
   This base implementation just returns the record unchanged.
-  '''
+  """
   def __init__(self):
     pass
 
@@ -887,9 +887,9 @@ class SOLRRecordTransformer(object):
 
 
 class SOLRArrayTransformer(SOLRRecordTransformer):
-  '''
+  """
   A transformer that returns a list of values for the sepcified columns.
-  '''
+  """
 
   def __init__(self, cols=['lng', 'lat', ]):
     self.cols = cols
@@ -912,14 +912,14 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
 
 
 class SOLRSearchResponseIterator(object):
-  '''
+  """
   Performs a search against a SOLR index and acts as an iterator to
   retrieve all the values.
-  '''
+  """
 
   def __init__(self, client, q, fq=None, fields='*', pagesize=100,
                transformer=SOLRRecordTransformer()):
-    '''
+    """
     Initialize.
 
     @param client(SolrConnection) An instance of a solr connection to use.
@@ -927,7 +927,7 @@ class SOLRSearchResponseIterator(object):
     @param fq(string) A facet query, restricts the set of rows that q is applied to
     @param fields(string) A comma delimited list of field names to return
     @param pagesize(int) Number of rows to retrieve in each call.
-    '''
+    """
     self.logger = logging.getLogger('solrclient.SOLRSearchResponseIterator')
     self.client = client
     self.q = q
@@ -944,9 +944,9 @@ class SOLRSearchResponseIterator(object):
 
 
   def _nextPage(self, offset):
-    '''
+    """
     Retrieves the next set of results from the service.
-    '''
+    """
     self.logger.debug("Iterator crecord=%s" % str(self.crecord))
     params = {'q': self.q,
               'start':str(offset),
@@ -965,9 +965,9 @@ class SOLRSearchResponseIterator(object):
 
 
   def processRow(self, row):
-    '''
+    """
     Override this method in derived classes to reformat the row response
-    '''
+    """
     return row
 
 
@@ -991,11 +991,11 @@ class SOLRSearchResponseIterator(object):
 #===============================================================================
 
 class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
-  '''
+  """
   Returns an interator that operates on a SOLR result set.  The output for each
   document is a list of values for the columns specified in the cols parameter
   of the constructor.
-  '''
+  """
 
   def __init__(self, client, q, fq=None, pagesize=100,
                cols=['lng', 'lat', ]):
@@ -1009,11 +1009,11 @@ class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
 #===============================================================================
 
 class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
-  '''Returns a pseudo-random subsample of the result set.  Works by calculating
+  """Returns a pseudo-random subsample of the result set.  Works by calculating
   the number of pages required for the entire data set and taking a random sample
   of pages until nsamples can be retrieved.  So pages are random, but records
   within a page are not.
-  '''
+  """
 
   def __init__(self, client, q, fq=None, fields='*', pagesize=100,
                nsamples=10000, transformer=SOLRRecordTransformer()):
@@ -1030,10 +1030,10 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
 
 
   def next(self):
-    '''
+    """
     Overrides the default iteration by sequencing through records within a page
     and when necessary selecting the next page from the randomly generated list.
-    '''
+    """
     if self.done:
       raise StopIteration()
     idx = self.crecord - self.res['response']['start']
@@ -1057,13 +1057,13 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
 #===============================================================================
 
 class SOLRValuesResponseIterator(object):
-  '''
+  """
   Iterates over a SOLR get values response.  This returns a list of distinct
   values for a particular field.
-  '''
+  """
 
   def __init__(self, client, field, q='*:*', fq=None, pagesize=1000):
-    '''
+    """
     Initialize.
 
     @param client(SolrConnection) An instance of a solr connection to use.
@@ -1072,7 +1072,7 @@ class SOLRValuesResponseIterator(object):
     @param fq(string) A facet query, restricts the set of rows that q is applied to
     @param fields(string) A comma delimited list of field names to return
     @param pagesize(int) Number of rows to retrieve in each call.
-    '''
+    """
     self.logger = logging.getLogger('solrclient.SOLRValuesResponseIterator')
     self.client = client
     self.q = q
@@ -1090,9 +1090,9 @@ class SOLRValuesResponseIterator(object):
 
 
   def _nextPage(self, offset):
-    '''
+    """
     Retrieves the next set of results from the service.
-    '''
+    """
     self.logger.debug("Iterator crecord=%s" % str(self.crecord))
 
     params = {'q':self.q,

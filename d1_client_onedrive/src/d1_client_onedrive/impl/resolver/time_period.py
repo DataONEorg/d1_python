@@ -18,25 +18,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.time_period`
+""":mod:`resolver.time_period`
 ==============================
 
 :Synopsis:
  - Resolve a filesystem path pointing into a TimePeriod controlled hierarchy.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import httplib
 import logging
 import os
 import pprint
 import sys
 
-# D1.
+# D1
 
-# App.
+# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
@@ -165,7 +165,7 @@ class Resolver(resolver_base.Resolver):
     return dir
 
   def _decade_ranges_in_date_range(self, begin_date, end_date):
-    '''Return a list of decades which is covered by date range'''
+    """Return a list of decades which is covered by date range"""
     begin_dated = begin_date.year / 10
     end_dated = end_date.year / 10
     decades = []
@@ -177,7 +177,7 @@ class Resolver(resolver_base.Resolver):
     return year >= begin_date.year and year <= end_date.year
 
   def _years_in_date_range_within_decade(self, decade, begin_date, end_date):
-    '''Return a list of years in one decade which is covered by date range'''
+    """Return a list of years in one decade which is covered by date range"""
     begin_year = begin_date.year
     end_year = end_date.year
     if begin_year < decade:

@@ -18,14 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`session`
 ==============
 
 :Synopsis: Hold and manipulate session variables.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
 #> set
 #         cli:
@@ -61,7 +61,7 @@
 #           replication allowed           True
 #
 
-# Stdlib.
+# Stdlib
 import ast
 import copy
 import os
@@ -69,11 +69,11 @@ import pickle
 import platform
 import types
 
-# D1.
+# D1
 import d1_common.checksum
 import d1_common.const
 
-# App.
+# App
 import access_control
 import cli_exceptions
 import cli_util
@@ -171,11 +171,11 @@ class Session(object):
     self._variables[variable] = value
 
   def set_with_conversion(self, variable, value_string):
-    '''Convert user supplied string to Python type. Lets user use values such as
+    """Convert user supplied string to Python type. Lets user use values such as
     True, False and integers. All variables can be set to None, regardless of
     type. Handle the case where a string is typed by the user and is not quoted,
     as a string literal.
-    '''
+    """
     self._assert_valid_variable(variable)
     try:
       v = ast.literal_eval(value_string)

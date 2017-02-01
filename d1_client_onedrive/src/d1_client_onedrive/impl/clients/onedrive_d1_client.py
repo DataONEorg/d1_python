@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`d1_client`
+""":mod:`d1_client`
 ===================
 
 :Synopsis:
   DataONE Client with caching
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 try:
   import cPickle as pickle
@@ -39,15 +39,15 @@ import re
 import socket
 import ssl
 
-# 3rd party.
+# 3rd party
 from pyzotero import zotero
 
-# D1.
+# D1
 import d1_common
 import d1_client.d1client
 import d1_client.mnclient
 
-# App.
+# App
 from ..log_decorator import log_func
 from .. import cache_disk
 from .. import onedrive_exceptions
@@ -78,11 +78,11 @@ class DataONEClient():
     return self._get_science_object_through_cache(pid)
 
   def get_system_metadata(self, pid):
-    '''This method causes an implicit validation of the retrieved System Metadata'''
+    """This method causes an implicit validation of the retrieved System Metadata"""
     return self._get_system_metadata(pid)
 
   def get_system_metadata_as_string(self, pid):
-    '''This method does not include validation of the System Metadata'''
+    """This method does not include validation of the System Metadata"""
     return self._get_system_metadata_as_string_through_cache(pid)
 
   def describe(self, pid):

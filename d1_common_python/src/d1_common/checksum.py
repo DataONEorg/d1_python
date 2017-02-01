@@ -17,32 +17,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.checksum
 =========================
 
 :Synopsis: Utilities for handling checksums.
 :Created: 2013-12-19
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import hashlib
 
-# App.
+# App
 import const
 from .types import dataoneTypes
 
+
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 
-dataone_to_python_checksum_algorithm_map = {
+DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
   'MD5': hashlib.md5,
   'SHA-1': hashlib.sha1,
 }
 
 
 def is_supported_algorithm(algorithm_str):
-  return algorithm_str in dataone_to_python_checksum_algorithm_map
+  return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP
 
 
 def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
@@ -98,7 +99,7 @@ def calculate_checksum_on_iterator(
 
 
 def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
-  return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]()
+  return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP[dataone_algorithm_name]()
 
 
 def get_default_checksum_algorithm():

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module all_tests
 ================
 
@@ -27,14 +27,14 @@ Run all Unit tests.
 :Created: 2012-10-05
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import sys
 import logging
 import unittest
 
-# D1.
+# D1
 import d1_common.xmlrunner
 
 # App

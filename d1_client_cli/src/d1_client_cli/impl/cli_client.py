@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`cli_client`
 =================
 
@@ -28,7 +28,7 @@
 
 The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
-'''
+"""
 
 # DataONE
 import d1_client

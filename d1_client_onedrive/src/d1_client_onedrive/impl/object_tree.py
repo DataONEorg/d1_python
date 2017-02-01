@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`object_tree`
+""":mod:`object_tree`
 =====================
 
 :Synopsis:
@@ -27,15 +27,15 @@
   - Cache the information on disk between runs of ONEDrive.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import pickle
 from pprint import pprint
 import util
 
-# App.
+# App
 import clients.onedrive_solr_client as onedrive_solr_client
 import clients.onedrive_d1_client as onedrive_d1_client
 import onedrive_exceptions
@@ -57,9 +57,9 @@ class ObjectTree():
     self._pickle_cache_to_disk()
 
   def refresh(self):
-    '''Synchronize the local tree of Solr records for DataONE identifiers and
+    """Synchronize the local tree of Solr records for DataONE identifiers and
     queries with the reference tree.
-    '''
+    """
     if self._source_tree.cache_is_stale():
       self._source_tree.refresh()
       logging.info('Refreshing object tree')
@@ -67,38 +67,38 @@ class ObjectTree():
       self.sync_cache_with_source_tree()
 
   def get_folder(self, path, root=None):
-    '''Get the contents of an object tree folder'''
+    """Get the contents of an object tree folder"""
     return self._get_cache_folder_recursive(path, root)
 
   def get_object_tree_folder_name(self, object_tree_folder):
     return object_tree_folder['name']
 
   def get_object_record(self, pid):
-    '''Get an object that has already been cached in the object tree.
+    """Get an object that has already been cached in the object tree.
     Caching happens when the object tree is refreshed.
-    '''
+    """
     try:
       return self._cache['records'][pid]
     except KeyError:
       raise onedrive_exceptions.ONEDriveException('Unknown PID')
 
   def get_object_record_with_sync(self, pid):
-    '''Get an object that may not currently be in the cache. If the object is
+    """Get an object that may not currently be in the cache. If the object is
     not in the cache, an attempt is made to retrieve the record from a CN on the
     fly. If the object is found, it is cached before being returned to the user.
     This allows the object tree caching system to be used for objects that are
     not in the object tree. ONEDrive uses this functionality for the FlatSpace
-    folder. '''
+    folder. """
     try:
       return self._cache['records'][pid]
     except KeyError:
       return self._get_uncached_object_record(pid)
 
   def add_object_to_cache(self, pid):
-    '''Attempt to add a specific object to the cache. Objects are normally only
+    """Attempt to add a specific object to the cache. Objects are normally only
     added to the object tree during refresh. This method is used by the
     FlatSpace resolver.
-    '''
+    """
     self._create_cache_item_for_pid(None, pid)
 
   def get_science_object(self, pid):
@@ -172,10 +172,10 @@ class ObjectTree():
       self._create_cache_item_for_pid(cache_folder, pid)
 
   def _create_cache_item_for_pid(self, cache_folder, pid):
-    '''The source tree can contain identifiers that are no longer valid (or
+    """The source tree can contain identifiers that are no longer valid (or
     were never valid). Any items for which a Solr record cannot be retrieved are
     silently skipped.
-    '''
+    """
     try:
       record = self._solr_client.get_solr_record(pid)
     except onedrive_exceptions.ONEDriveException:

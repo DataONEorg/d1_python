@@ -18,19 +18,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`replication_policy`
 =========================
 
 :Synopsis: Create and manipulate replication policies.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
-# D1.
+# D1
 import d1_common.const
 
-# App.
+# App
 import cli_exceptions
 import cli_util
 

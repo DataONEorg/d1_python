@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-''':mod:`d1_dokan`
+""":mod:`d1_dokan`
 ==================
 
 :Synopsis:
@@ -30,7 +30,7 @@
 
 :Author:
   DataONE (Kroiss, Dahl)
-'''
+"""
 
 # Std.
 import errno
@@ -70,11 +70,11 @@ from const import FILE_READ_ONLY_VOLUME
 from const import FILE_CASE_SENSITIVE_SEARCH
 from const import FILE_CASE_PRESERVED_NAMES
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.date_time
 
-# App.
+# App
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
@@ -139,9 +139,9 @@ def run(options, root_resolver):
 
 
 class DataONEFS(dokan.Operations):
-  '''
+  """
   Read-only user-mode file system for DataONE using Dokan
-  '''
+  """
 
   def __init__(self, options, root_resolver):
     self._options = options
@@ -301,7 +301,7 @@ class DataONEFS(dokan.Operations):
 #
 #
 #  def getattr(self, path, fh):
-#    '''Called by FUSE when the attributes for a file or directory are required.
+#    """Called by FUSE when the attributes for a file or directory are required.
 #
 #    Returns a dictionary with keys identical to the stat C structure of stat(2).
 #    st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
@@ -310,7 +310,7 @@ class DataONEFS(dokan.Operations):
 #    field is ignored except if the 'use_ino' mount option is given.
 #
 #    This method gets very heavy traffic.
-#    '''
+#    """
 #    self._raise_error_for_os_special_file(path)
 #    #log.debug(u'getattr(): {0}'.format(path))
 #    attribute = self._get_attributes_through_cache(path)
@@ -319,9 +319,9 @@ class DataONEFS(dokan.Operations):
 #
 #
 #  def readdir(self, path, fh):
-#    '''Called by FUSE when a directory is opened.
+#    """Called by FUSE when a directory is opened.
 #    Returns a list of file and directory names for the directory.
-#    '''
+#    """
 #    log.debug(u'readdir(): {0}'.format(path))
 #    try:
 #      dir = self.directory_cache[path]
@@ -332,9 +332,9 @@ class DataONEFS(dokan.Operations):
 #
 #
 #  def open(self, path, flags):
-#    '''Called by FUSE when a file is opened.
+#    """Called by FUSE when a file is opened.
 #    Determines if the provided path and open flags are valid.
-#    '''
+#    """
 #    log.debug(u'open(): {0}'.format(path))
 #    # ONEDrive is currently read only. Anything but read access is denied.
 #    if (flags & self.READ_ONLY_ACCESS_MODE) != os.O_RDONLY:

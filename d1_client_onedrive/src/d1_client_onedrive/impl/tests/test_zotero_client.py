@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Stdlib.
+# Stdlib
 import logging
 import os
 from pprint import pprint
@@ -8,10 +8,10 @@ import shutil
 import sys
 import unittest
 
-# 3rd party.
+# 3rd party
 from pyzotero import zotero
 
-# D1.
+# D1
 sys.path.append('../..')
 import command_echoer
 import impl.clients.onedrive_zotero_client as onedrive_zotero_client
@@ -106,7 +106,7 @@ class TestZoteroClient(unittest.TestCase):
         zotero_client.delete_item(i)
 
   #def test_100(self):
-  #  '''Create Zotero Cache with defaults, non-existing pickle'''
+  #  """Create Zotero Cache with defaults, non-existing pickle"""
   #  try:
   #    os.unlink(self.pickle_path)
   #  except OSError as e:
@@ -117,12 +117,12 @@ class TestZoteroClient(unittest.TestCase):
   #
   #
   #def test_110(self):
-  #  '''Check that pickle was written to disk'''
+  #  """Check that pickle was written to disk"""
   #  self.assertTrue(os.path.exists(self.pickle_path))
   #
   #
   #def test_120(self):
-  #  '''Check that empty pickle object is unpickled correctly'''
+  #  """Check that empty pickle object is unpickled correctly"""
   #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
   #    self.assertEqual(z._cache['filtered_tree'], {})
   #    self.assertEqual(z._cache['collections'], None)
@@ -130,7 +130,7 @@ class TestZoteroClient(unittest.TestCase):
   #
   #
   #def test_130(self):
-  #  '''refresh()'''
+  #  """refresh()"""
   #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
   #    self.assertEqual(z._cache['library_version'], 0)
   #    z.refresh()
@@ -138,19 +138,19 @@ class TestZoteroClient(unittest.TestCase):
   #
   #
   #def test_140(self):
-  #  '''get_filtered_sub_tree([])'''
+  #  """get_filtered_sub_tree([])"""
   #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
   #    z.get_filtered_sub_tree([])
   #
   #
   #def test_150(self):
-  #  '''get_filtered_sub_tree(['c1', 'c3'])'''
+  #  """get_filtered_sub_tree(['c1', 'c3'])"""
   #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
   #    z.get_filtered_sub_tree(['c1', 'c3'])
   #
   #
   #def test_160(self):
-  #  '''iterate_collection_trees()'''
+  #  """iterate_collection_trees()"""
   #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
   #    z.refresh()
   #    for a, b in z.iterate_collection_trees():

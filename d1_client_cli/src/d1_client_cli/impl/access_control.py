@@ -18,22 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`access_control`
 =====================
 
 :Synopsis: Create and manipulate access control objects.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import sys
 
-# D1.
+# D1
 import d1_common.const
 
-# App.
+# App
 import cli_exceptions
 import cli_util
 
@@ -70,7 +70,7 @@ class AccessControl():
   #
 
   def _get_valid_permissions(self):
-    '''List of permissions, in increasing order.'''
+    """List of permissions, in increasing order."""
     return (u'read', 'write', 'changePermission')
 
   def _add_allowed_subject(self, subject, permission):

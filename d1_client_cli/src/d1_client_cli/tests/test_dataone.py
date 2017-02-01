@@ -18,23 +18,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`test_dataone`
 ===================
 
 :Synopsis: Unit tests for DataONE Command Line Interface
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import os
 import sys
 import unittest
 import uuid
 
-# App.
+# App
 sys.path.append('..')
 sys.path.append('../impl')
 import dataone
@@ -66,7 +66,7 @@ class TestDataONE(unittest.TestCase):
   #  pass
 
   #def test_020(self):
-  #  ''' set '''
+  #  """ set """
   #  dataoneCLI = dataone.CLI()
   #  dataoneCLI.d1.session.set(PRETTY_sect, PRETTY_name, False)
   #  dataoneCLI.do_set('pretty true')
@@ -78,7 +78,7 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_021(self):
-  #  ''' set '''
+  #  """ set """
   #  dataoneCLI = dataone.CLI()
   #  dataoneCLI.d1.session.set(COUNT_sect, COUNT_name, 1)
   #  dataoneCLI.do_set('count 2')
@@ -90,7 +90,7 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_022(self):
-  #  ''' set '''
+  #  """ set """
   #  dataoneCLI = dataone.CLI()
   #  dataoneCLI.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, 1)
   #  dataoneCLI.do_set('query a=b')
@@ -102,7 +102,7 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_030(self):
-  #  ''' ping '''
+  #  """ ping """
   #  dataoneCLI = dataone.CLI()
   #  dataoneCLI.d1.session.set(CN_URL_sect, CN_URL_name, TEST_CN_URL)
   #  dataoneCLI.d1.session.set(MN_URL_sect, MN_URL_name, TEST_MN_URL)
@@ -116,7 +116,7 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_040(self):
-  #  ''' do_access(). '''
+  #  """ do_access(). """
   #  self.cli.do_allow('"some user named fred" write')
   #  access_dict = self.cli.d1.session.access_control.allow
   #  permission = access_dict.get('some user named fred')
@@ -125,7 +125,7 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_050(self):
-  #  ''' list nodes '''
+  #  """ list nodes """
   #  node_list = self.cli.d1.get_known_nodes()
   #  self.assertNotEqual(None, node_list, 'Didn\'t find any nodes.')
   #  self.assertTrue(len(node_list) > 4, 'Didn\'t find enough nodes')
@@ -134,20 +134,20 @@ class TestDataONE(unittest.TestCase):
   #
   #
   #def test_060(self):
-  #  ''' get '''
+  #  """ get """
   #  filename = 'output-test_dataone_060.xml'
   #  success = self.cli.d1.science_object_get('knb-lter-gce.294.17', filename, True)
   #  self.assertTrue(success, 'Didn\'t find node "knb-lter-gce.294.17".')
   #
   #
   #def test_070(self):
-  #  ''' list '''
+  #  """ list """
   #  filename = 'output-test_dataone_070.xml'
   #  self.cli.d1.list_objects(filename)
   #
   #
   #def test_080(self):
-  #  ''' search '''
+  #  """ search """
   #  expect = '*:* dateModified:[* TO *]'
   #  args = ' '.join(filter(None, ()))
   #  actual = self.cli.d1._create_solr_query(args)

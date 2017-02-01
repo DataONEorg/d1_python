@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_client_cli.tests.test_session
 =======================================
 
 :Synopsis: Unit tests for session parameters.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import unittest
 import logging
 import os
@@ -35,11 +35,11 @@ import sys
 import uuid
 import StringIO
 
-# D1.
+# D1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 
-# App.
+# App
 sys.path.append('..')
 sys.path.append('../impl')
 import session
@@ -68,18 +68,18 @@ class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     pass
 
   def test_010(self):
-    '''The session object can be instantiated'''
+    """The session object can be instantiated"""
     s = session.Session(nodes, format_ids)
     self.assertNotEquals(None, s, 'Could not instantiate session.')
 
   def test_020(self):
-    '''After instatiation, the default session parameters are available via get()'''
+    """After instatiation, the default session parameters are available via get()"""
     s = session.Session(nodes, format_ids)
     #self.assertEqual(s.get('pretty'), True)
     self.assertEqual(s.get('cn-url'), d1_common.const.URL_DATAONE_ROOT)
 
   def test_025(self):
-    '''Session parameters can be updated with set()'''
+    """Session parameters can be updated with set()"""
     s = session.Session(nodes, format_ids)
     s.set('verbose', False),
     s.set('rights-holder', 'test')
@@ -87,20 +87,20 @@ class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.assertEqual(s.get('rights-holder'), 'test')
 
   def test_030(self):
-    '''Setting invalid CN fails'''
+    """Setting invalid CN fails"""
     s = session.Session(nodes, format_ids)
     print 'Hit Enter on "Use anyway?" prompt'
     self.assertRaises(cli_exceptions.InvalidArguments, s.set, 'cn-url', 'test')
 
   def test_035(self):
-    '''Setting valid CN is successful'''
+    """Setting valid CN is successful"""
     s = session.Session(nodes, format_ids)
     valid_cn = 'https://cn-unm-1.dataone.org/cn'
     s.set('cn-url', valid_cn)
     self.assertEqual(s.get('cn-url'), valid_cn)
 
   def test_040(self):
-    '''Session parameters can be brought back to their defaults with reset()'''
+    """Session parameters can be brought back to their defaults with reset()"""
     s = session.Session(nodes, format_ids)
     s.set('query', 'testquery'),
     self.assertEqual(s.get('query'), 'testquery')
@@ -108,38 +108,38 @@ class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.assertEqual(s.get('query'), '*:*')
 
   def test_050(self):
-    '''Getting an non-existing session parameter raises InvalidArguments'''
+    """Getting an non-existing session parameter raises InvalidArguments"""
     s = session.Session(nodes, format_ids)
     self.assertRaises(cli_exceptions.InvalidArguments, s.get, 'bogus-value')
 
   def test_100(self):
-    '''set_with_conversion() handles None'''
+    """set_with_conversion() handles None"""
     s = session.Session(nodes, format_ids)
     self.assertEqual(s.get('verbose'), True)
     s.set_with_conversion('verbose', 'None')
     self.assertEqual(s.get('verbose'), None)
 
   def test_110(self):
-    '''set_with_conversion() handles integer conversions'''
+    """set_with_conversion() handles integer conversions"""
     s = session.Session(nodes, format_ids)
     self.assertEqual(s.get('verbose'), True)
     s.set_with_conversion('verbose', '1')
     self.assertEqual(s.get('verbose'), 1)
 
   def test_120(self):
-    '''set_with_conversion() raises InvalidArguments on non-existing session parameter'''
+    """set_with_conversion() raises InvalidArguments on non-existing session parameter"""
     s = session.Session(nodes, format_ids)
     self.assertRaises(
       cli_exceptions.InvalidArguments, s.set_with_conversion, 'bogus-value', '1'
     )
 
   def test_130(self):
-    '''Session object exposes access control'''
+    """Session object exposes access control"""
     s = session.Session(nodes, format_ids)
     s.get_access_control().add_allowed_subject('newsubject', 'write')
 
   def test_140(self):
-    '''print_all_variables() is available and appears to work'''
+    """print_all_variables() is available and appears to work"""
     # capture stdout
     old = sys.stdout
     sys.stdout = StringIO.StringIO()
@@ -154,7 +154,7 @@ class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.assertTrue(type(out) is str)
 
   def test_200(self):
-    '''Session is successfully saved and then loaded (pickled and unpickled)'''
+    """Session is successfully saved and then loaded (pickled and unpickled)"""
     tmp_pickle = './pickle.tmp'
     try:
       os.unlink(tmp_pickle)

@@ -18,23 +18,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_flat_space`
+""":mod:`test_flat_space`
 =========================
 
 :Synopsis:
  - Test the FlatSpaceResolver class.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 #import os
 import pprint
 import sys
 import unittest
 
-# D1.
+# D1
 sys.path.append('../..')
 import impl.directory
 import impl.resolver.flat_space as flat_space

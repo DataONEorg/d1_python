@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_mockup`
+""":mod:`test_mockup`
 =====================
 
 :Synopsis:
  - Test the ONEDrive Mockup creator.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 import pprint
 import sys

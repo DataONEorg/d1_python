@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`check_dependencies`
+""":mod:`check_dependencies`
 ============================
 
 :Synopsis:
  - Check the dependencies by attempting to import them.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import logging
 
 # Set up logger for this module.

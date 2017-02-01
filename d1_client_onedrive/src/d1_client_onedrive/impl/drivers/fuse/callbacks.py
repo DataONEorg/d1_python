@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-''':mod:`callbacks`
+""":mod:`callbacks`
 ========================
 
 :Synopsis:
@@ -27,7 +27,7 @@
    are performed on the filesystem.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Std.
 import errno
@@ -40,12 +40,12 @@ import time
 import urllib
 import urlparse
 
-# 3rd party.
+# 3rd party
 
-# D1.
+# D1
 import d1_common.date_time
 
-# App.
+# App
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
@@ -68,7 +68,7 @@ class FUSECallbacks(fuse.Operations):
 
 
   def getattr(self, path, fh):
-    '''Called by FUSE when the attributes for a file or directory are required.
+    """Called by FUSE when the attributes for a file or directory are required.
 
     Returns a dictionary with keys identical to the stat C structure of stat(2).
     st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
@@ -77,7 +77,7 @@ class FUSECallbacks(fuse.Operations):
     field is ignored except if the 'use_ino' mount option is given.
 
     This method gets very heavy traffic.
-    '''
+    """
     self._raise_error_if_os_special_file(path)
     #log.debug(u'getattr(): {0}'.format(path))
     attribute = self._get_attributes_through_cache(path)
@@ -86,9 +86,9 @@ class FUSECallbacks(fuse.Operations):
 
 
   def readdir(self, path, fh):
-    '''Called by FUSE when a directory is opened.
+    """Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
-    '''
+    """
     log.debug(u'readdir(): {0}'.format(path))
     try:
       dir = self._directory_cache[path]
@@ -99,9 +99,9 @@ class FUSECallbacks(fuse.Operations):
 
 
   def open(self, path, flags):
-    '''Called by FUSE when a file is opened.
+    """Called by FUSE when a file is opened.
     Determines if the provided path and open flags are valid.
-    '''
+    """
     log.debug(u'open(): {0}'.format(path))
     # ONEDrive is currently read only. Anything but read access is denied.
     if (flags & self._READ_ONLY_ACCESS_MODE) != os.O_RDONLY:

@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`directory`
+""":mod:`directory`
 ===================
 
 :Synopsis:
  - Hold the list of files and folders for a directory.
 :Author: DataONE (Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import collections
 import logging
 

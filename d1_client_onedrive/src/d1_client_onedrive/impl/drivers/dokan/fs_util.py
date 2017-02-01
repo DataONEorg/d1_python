@@ -1,10 +1,10 @@
-'''
+"""
 DataONE file system utilities
 
 TODO: This file should be merged with the equivalent used in the FUSE 
 implementation.  The main difference between the two is the caching 
 mechanism.  
-'''
+"""
 
 # standard
 import logging

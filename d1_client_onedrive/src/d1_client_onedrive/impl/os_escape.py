@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`os_escape`
+""":mod:`os_escape`
 ===================
 
 :Synopsis:
@@ -43,17 +43,17 @@ interacts with the file or folder.
 
 The current implementation simply uses URL percent-encoding of an UTF-8
 encoding of the Unicode strings.
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import os
 import logging
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
-'''Quote and unquote are somewhat borrowed from python urllib standard
+"""Quote and unquote are somewhat borrowed from python urllib standard
 library.
-'''
+"""
 _hexdig = '0123456789ABCDEFabcdef'
 _hextochr = dict((a + b, chr(int(a + b, 16))) for a in _hexdig for b in _hexdig)
 
@@ -75,9 +75,9 @@ def unquote(s):
   return s
 
 
-'''Pass in a dictionary that has unsafe characters as the keys, and the
+"""Pass in a dictionary that has unsafe characters as the keys, and the
 percent encoded value as the value.
-'''
+"""
 
 
 def quote(s, unsafe=u'/'):
