@@ -87,14 +87,14 @@ def is_valid_for_update(pid):
   is_not_archived(pid)
 
 
-def is_valid_sid_for_chain_if_specified(sysmeta_obj, pid):
-  """Assert that any SID in {sysmeta_obj} can be assigned to the single object
+def is_valid_sid_for_chain_if_specified(sysmeta_pyxb, pid):
+  """Assert that any SID in {sysmeta_pyxb} can be assigned to the single object
   {pid} or to the chain to which {pid} belongs.
 
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
   """
-  sid = app.sysmeta_util.get_value(sysmeta_obj, 'seriesId')
+  sid = app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
   if sid is None:
     return
   existing_sid = app.sysmeta_sid.get_sid_by_pid(pid)
@@ -167,11 +167,11 @@ def is_not_archived(pid):
     )
 
 
-def has_matching_modified_timestamp(new_sysmeta_obj):
-  pid = new_sysmeta_obj.identifier.value()
-  old_sysmeta_model = app.sysmeta_util.get_sci_row(pid)
+def has_matching_modified_timestamp(new_sysmeta_pyxb):
+  pid = new_sysmeta_pyxb.identifier.value()
+  old_sysmeta_model = app.sysmeta_util.get_sci_model(pid)
   old_ts = old_sysmeta_model.modified_timestamp
-  new_ts = new_sysmeta_obj.dateSysMetadataModified
+  new_ts = new_sysmeta_pyxb.dateSysMetadataModified
   if old_ts != new_ts:
     raise d1_common.types.exceptions.InvalidRequest(
       0,
@@ -187,33 +187,33 @@ def has_matching_modified_timestamp(new_sysmeta_obj):
 # ------------------------------------------------------------------------------
 
 
-def obsoleted_by_not_specified(sysmeta):
-  if sysmeta.obsoletedBy is not None:
+def obsoleted_by_not_specified(sysmeta_pyxb):
+  if sysmeta_pyxb.obsoletedBy is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'obsoletedBy cannot be specified in System Metadata for this method'
     )
 
 
-def obsoletes_not_specified(sysmeta):
-  if sysmeta.obsoletes is not None:
+def obsoletes_not_specified(sysmeta_pyxb):
+  if sysmeta_pyxb.obsoletes is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'obsoletes cannot be specified in System Metadata for this method'
     )
 
 
-def obsoletes_matches_pid_if_specified(sysmeta, old_pid):
-  if sysmeta.obsoletes is not None:
-    if sysmeta.obsoletes.value() != old_pid:
+def obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid):
+  if sysmeta_pyxb.obsoletes is not None:
+    if sysmeta_pyxb.obsoletes.value() != old_pid:
       raise d1_common.types.exceptions.InvalidSystemMetadata(
         0, u'Persistent ID (PID) specified in System Metadata "obsoletes" '
         u'field does not match PID specified in URL. '
-        u'sysmeta="{}", url="{}"'.format(sysmeta.obsoletes.value(), old_pid)
+        u'sysmeta_pyxb="{}", url="{}"'.format(sysmeta_pyxb.obsoletes.value(), old_pid)
       )
 
 
-def obsolescence_references_existing_objects_if_specified(sysmeta_obj):
-  _check_pid_exists_if_specified(sysmeta_obj, 'obsoletes')
-  _check_pid_exists_if_specified(sysmeta_obj, 'obsoletedBy')
+def obsolescence_references_existing_objects_if_specified(sysmeta_pyxb):
+  _check_pid_exists_if_specified(sysmeta_pyxb, 'obsoletes')
+  _check_pid_exists_if_specified(sysmeta_pyxb, 'obsoletedBy')
 
 
 def is_in_obsolescence_chain(pid):
@@ -228,9 +228,9 @@ def is_in_obsolescence_chain(pid):
     )
 
 
-def _check_pid_exists_if_specified(sysmeta_obj, sysmeta_attr):
+def _check_pid_exists_if_specified(sysmeta_pyxb, sysmeta_attr):
   try:
-    pid = getattr(sysmeta_obj, sysmeta_attr).value()
+    pid = getattr(sysmeta_pyxb, sysmeta_attr).value()
   except (ValueError, AttributeError):
     return
   if not app.models.ScienceObject.objects.filter(pid__did=pid).exists():
@@ -250,7 +250,7 @@ def is_not_obsoleted(pid):
 
 
 # def is_sid_in_obsolescence_chain(sid, pid):
-#   chain_list = mn.sysmeta.get_pids_in_obsolescence_chain(pid)
+#   chain_list = mn.sysmeta_pyxb.get_pids_in_obsolescence_chain(pid)
 #   # Allow a SID to be assigned to a single science object that is not (yet) part
 #   # of an obsolescence chain.
 #   if len(chain_list) == 1:
@@ -349,8 +349,8 @@ def url_is_retrievable(url):
     )
 
 
-def url_pid_matches_sysmeta(sysmeta, pid):
-  sysmeta_pid = sysmeta.identifier.value()
+def url_pid_matches_sysmeta(sysmeta_pyxb, pid):
+  sysmeta_pid = sysmeta_pyxb.identifier.value()
   if sysmeta_pid != pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,

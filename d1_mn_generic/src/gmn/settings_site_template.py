@@ -119,20 +119,35 @@ ALLOW_INTEGRATION_TESTS = True
 # - Use for production.
 STAND_ALONE = True
 
-# Enable Slender Node mode.
+# DataONE specifies which System Metadata values are initialized and controlled
+# by CNs, MNs and clients. Normally, GMN will ignore and overwrite any values
+# submitted by a client that are intended to be controlled by MNs.
+#
+# These settings allow trusting clients to supply values that are normally
+# initialized and controlled by the MN. They are useful in various situations
+# where clients can be considered to be part of the MN, such as when GMN
+# is used as the DataONE interface in a SlenderNode configuration.
+#
+# The settings apply to MNStorage.create(), MNStorage.update() and, with the
+# exception of TRUST_CLIENT_DATEUPLOADED, to MNStorage.updateSystemMetadata().
+# dataUploaded is an immutable value that cannot be changed after create() or
+# update().
+#
 # True:
-# - GMN allows clients to set System Metadata fields that are normally intended
-#   to be set only by MNs when calling MNStorage.create() and
-#   MNStorage.update(). This is because, in a Slender Node setup, the client is
-#   a Slender Node Connector which is itself part of the Member Node. Any fields
-#   not set by the client are set as normal by GMN. The effected fields are:
-#   submitter, originMemberNode, authoritativeMemberNode, dateUploaded,
-#   dateSysMetadataModified, serialVersion.
+# - GMN will use any value that is submitted by the client. If a value is not
+#   provided by the client, GMN will initialize the value.
+#
 # False (default):
-# - GMN overrides any values passed in the fields listed above. E.g., the
+# - GMN will overwrite any value that is submitted by the client. E.g., the
 #   submitter field is set to the primary subject of the certificate with which
 #   the call was made.
-SLENDER_NODE = False
+TRUST_CLIENT_SUBMITTER = False
+TRUST_CLIENT_ORIGINMEMBERNODE = False
+TRUST_CLIENT_AUTHORITATIVEMEMBERNODE = False
+TRUST_CLIENT_DATESYSMETADATAMODIFIED = False
+TRUST_CLIENT_SERIALVERSION = False
+TRUST_CLIENT_DATEUPLOADED = False
+
 
 # Enable monitoring.
 # True (default):
@@ -377,8 +392,8 @@ DATABASES = {
     # run more than a single query, as they hide any transitions between valid
     # states that may happen between queries.
     #
-    # Do not change this value from "True", as implicit transactions form the
-    # basis of concurrency control in GMN.
+    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
+    # the basis of concurrency control in GMN.
     'ATOMIC_REQUESTS': True,
   }
 }

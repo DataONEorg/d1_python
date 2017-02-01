@@ -102,27 +102,30 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   return HttpResponse(sysmeta_xml_str, d1_common.const.CONTENT_TYPE_XML)
 
 
-def update_sysmeta_with_mn_values(request, sysmeta_obj):
-  """If SLENDER_NODE is True, client is allowed to supply System Metadata
-  parameters that are normally set only by GMN."""
-  now = datetime.datetime.utcnow()
-  _pyxb_set_with_override(sysmeta_obj, 'submitter', request.primary_subject_str)
-  _pyxb_set_with_override(sysmeta_obj, 'originMemberNode', settings.NODE_IDENTIFIER)
-  _pyxb_set_with_override(sysmeta_obj, 'authoritativeMemberNode', settings.NODE_IDENTIFIER)
-  _pyxb_set_with_override(sysmeta_obj, 'dateUploaded', now)
-  _pyxb_set_with_override(sysmeta_obj, 'dateSysMetadataModified', now)
-  _pyxb_set_with_override(sysmeta_obj, 'serialVersion', 1)
+def set_mn_controlled_values(request, sysmeta_pyxb):
+  now_datetime = datetime.datetime.utcnow()
+  _pyxb_set_with_override(sysmeta_pyxb, 'submitter', request.primary_subject_str)
+  _pyxb_set_with_override(sysmeta_pyxb, 'originMemberNode', settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_pyxb, 'authoritativeMemberNode', settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_pyxb, 'dateSysMetadataModified', now_datetime)
+  _pyxb_set_with_override(sysmeta_pyxb, 'serialVersion', 1)
+  _pyxb_set_with_override(sysmeta_pyxb, 'dateUploaded', now_datetime)
 
 
 def _pyxb_set_with_override(pyxb, attr_str, value):
-  if settings.SLENDER_NODE:
+  """See the description of TRUST_CLIENT_* in settings_site.py.
+  """
+  is_trusted_from_client = getattr(
+    settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
+  )
+  if is_trusted_from_client:
     if app.sysmeta_util.get_value(pyxb, attr_str) is None:
       setattr(pyxb, attr_str, value)
   else:
     setattr(pyxb, attr_str, value)
 
 
-def create(request, sysmeta_obj):
+def create(request, sysmeta_pyxb):
   """Create a new native object.
 
   Preconditions:
@@ -139,12 +142,12 @@ def create(request, sysmeta_obj):
     view_asserts.url_is_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
-    pid = sysmeta_obj.identifier.value()
+    pid = sysmeta_pyxb.identifier.value()
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     _object_pid_post_store_local(request, pid)
-  app.sysmeta.create(sysmeta_obj, url)
+  app.sysmeta.create(sysmeta_pyxb, url)
   # Log the create event for this object.
-  app.event_log.create(sysmeta_obj.identifier.value(), request)
+  app.event_log.create(sysmeta_pyxb.identifier.value(), request)
 
 
 def _object_pid_post_store_local(request, pid):
