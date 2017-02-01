@@ -17,84 +17,84 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.url
 ====================
 
 :Synopsis: Utilities for handling URLs in DataONE.
 :Created: 2010-08-07
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+# Stdlib
 import re
 import sys
 import urllib
 import urlparse
 
-# D1.
+# D1
 import const
 
 # ==============================================================================
 
 
 def encodePathElement(element):
-  '''Encodes a URL path element according to RFC3986.
+  """Encodes a URL path element according to RFC3986.
 
   :param element: The path element to encode for transmission in a URL.
   :type element: Unicode
   :return: URL encoded path element
   :return type: UTF-8 encoded string.
-  '''
+  """
   return urllib.quote(element.encode('utf-8'), \
                safe=const.URL_PATHELEMENT_SAFE_CHARS)
 
 
 def decodePathElement(element):
-  '''Decodes a URL path element according to RFC3986.
+  """Decodes a URL path element according to RFC3986.
 
   :param element: The URL path element to decode.
   :type element: Unicode
   :return: decoded URL path element
   :return type: UTF-8 encoded string.
-  '''
+  """
   return urllib.unquote(element).decode('utf-8')
 
 
 def encodeQueryElement(element):
-  '''Encodes a URL query element according to RFC3986.
+  """Encodes a URL query element according to RFC3986.
 
   :param element: The query element to encode for transmission in a URL.
   :type element: Unicode
   :return: URL encoded query element
   :return type: UTF-8 encoded string.
-  '''
+  """
   return urllib.quote(element.encode('utf-8'), \
                safe=const.URL_QUERYELEMENT_SAFE_CHARS)
 
 
 def decodeQueryElement(element):
-  '''Decodes a URL query element according to RFC3986.
+  """Decodes a URL query element according to RFC3986.
 
   :param element: The query element to decode.
   :type element: Unicode
   :return: Decoded query element
   :return type: UTF-8 encoded string.
-  '''
+  """
   return urllib.unquote(element).decode('utf-8')
 
 
 def stripElementSlashes(element):
-  '''Strip any slashes from a URL element.
-  '''
+  """Strip any slashes from a URL element.
+  """
   m = re.match(r'/*(.*?)/*$', element)
   return m.group(1)
 
 
 def joinPathElements(*elements):
-  '''Join two or more URL elements, inserting '/' as needed. Note: Any leading
+  """Join two or more URL elements, inserting '/' as needed. Note: Any leading
   and trailing slashes are stripped from the resulting URL.
-  '''
+  """
   url = []
   for element in elements:
     element = stripElementSlashes(element)
@@ -105,9 +105,9 @@ def joinPathElements(*elements):
 
 
 def joinPathElementsNoStrip(*elements):
-  '''Join two or more URL elements, inserting '/' as needed. As opposed to
+  """Join two or more URL elements, inserting '/' as needed. As opposed to
   joinPathElements(), this function never removes slashes.
-  '''
+  """
   e = list(elements)
   for i, (x, y) in enumerate(zip(e, e[1:])):
     if not (x.endswith('/') or y.startswith('/')):
@@ -116,7 +116,7 @@ def joinPathElementsNoStrip(*elements):
 
 
 def normalizeTarget(target):
-  '''If necessary, modify target so that it ends with "/"'''
+  """If necessary, modify target so that it ends with '/'"""
   if target.endswith('/'):
     return target
   if target.endswith('?'):
@@ -127,7 +127,7 @@ def normalizeTarget(target):
 
 
 def urlencode(query, doseq=0):
-  '''Modified version of the standard urllib.urlencode that is conforms
+  """Modified version of the standard urllib.urlencode that is conforms
   to RFC3986. The urllib version encodes spaces as '+' which can lead
   to inconsistency. This version will always encode spaces as '%20'.
 
@@ -141,7 +141,7 @@ def urlencode(query, doseq=0):
   If the query arg is a sequence of two-element tuples, the order of the
   parameters in the output will match the order of parameters in the
   input.
-  '''
+  """
   if hasattr(query, "items"):
     # Remove None parameters from query. Dictionaries are mutable, so we can
     # remove the the items directly. dict.keys() creates a copy of the
@@ -207,8 +207,8 @@ def urlencode(query, doseq=0):
 
 
 def makeCNBaseURL(url):
-  '''Attempt to create a valid CN BaseURL when one or more sections of the URL
-  are missing'''
+  """Attempt to create a valid CN BaseURL when one or more sections of the URL
+  are missing"""
   o = urlparse.urlparse(url, scheme=const.DEFAULT_CN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc
@@ -230,8 +230,8 @@ def makeCNBaseURL(url):
 
 
 def makeMNBaseURL(url):
-  '''Attempt to create a valid MN BaseURL when one or more sections of the URL
-  are missing'''
+  """Attempt to create a valid MN BaseURL when one or more sections of the URL
+  are missing"""
   o = urlparse.urlparse(url, scheme=const.DEFAULT_MN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc

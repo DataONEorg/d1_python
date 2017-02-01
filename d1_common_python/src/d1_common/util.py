@@ -17,34 +17,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.util
 =====================
 
 :Synopsis: Utilities
 :Created: 2010-08-07
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
-# Stdlib.
+from __future__ import absolute_import
+
+# Stdlib
 import email.message
 import email.utils
 import hashlib
 import re
 import xml.dom.minidom
 
-# App.
-import const
-
-# XML.
-
 
 def pretty_xml(xml_doc):
-  '''Pretty formatting of XML.
+  """Pretty formatting of XML.
 
   :param xml_doc: xml text
   :type xml_doc: basestring
-  '''
+  """
   try:
     xml_obj = xml.dom.minidom.parseString(xml_doc)
   except TypeError:
@@ -62,14 +59,14 @@ def get_content_type(content_type):
 
 
 def utf8_to_unicode(f):
-  '''Decorator that converts string arguments to Unicode. Assumes that strings
+  """Decorator that converts string arguments to Unicode. Assumes that strings
   contains ASCII or UTF-8. All other argument types are passed through
   untouched.
 
   A UnicodeDecodeError raised here means that the wrapped function was called
   with a string argument that did not contain ASCII or UTF-8. In such a case,
   the user is required to convert the string to Unicode before passing it to the
-  function. '''
+  function. """
 
   def wrap(*args, **kwargs):
     new_args = []
