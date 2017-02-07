@@ -18,26 +18,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-:mod:`gmn_integration_tests`
-============================
+Integration testing of ITK and GMN.
 
-:Synopsis:
-  Integration testing of ITK and GMN.
+This test deletes any existing objects and event log records on the destination
+GMN instance. For the tests to be able to run, ALLOW_UNIT_TESTS must be set to
+True in the settings_site.py file of the GMN instance being tested.
 
-:Warning:
-  This test deletes any existing objects and event log records on the
-  destination GMN instance. For the tests to be able to run, ALLOW_UNIT_TESTS
-  must be set to True in the settings_site.py file of the GMN instance being
-  tested.
-
-:Details:
-  This test works by first putting the target GMN into a known state by deleting
-  any existing objects and all event logs from the instance and then creating a
-  set of test objects of which all object properties and exact contents are
-  known. For each object, a set of fictitious events are stored in the event
-  log. The test then runs through a series of tests where the GMN is queried,
-  through the ITK, about all aspects of the object collection and the associated
-  events and the results are compared with the known correct responses.
+This test works by first putting the target GMN into a known state by deleting
+any existing objects and all event logs from the instance and then creating a
+set of test objects of which all object properties and exact contents are known.
+For each object, a set of fictitious events are stored in the event log. The
+test then runs through a series of tests where the GMN is queried, through the
+ITK, about all aspects of the object collection and the associated events and
+the results are compared with the known correct responses.
 """
 
 # Stdlib
@@ -81,8 +74,11 @@ import gmn_test_client
 
 # Configuration
 
-GMN_URL = 'http://0.0.0.0:8000'
+# GMN_URL = 'http://192.168.1.128:8000'
+# GMN_URL = 'http://0.0.0.0:8000'
 # GMN_URL = 'https://192.168.1.128'
+GMN_URL = 'https://gmn-s.lternet.edu/mn'
+
 OBJ_PATH = './test_objects'
 OBJ_URL = 'http://localhost/test_objects/'
 
@@ -719,12 +715,10 @@ class GMNIntegrationTests(unittest.TestCase):
         if object_info.identifier.value() == sysmeta_pyxb.identifier.value():
           found = True
           break
-
       self.assertTrue(
         found,
         'Couldn\'t find object with pid "{}"'.format(sysmeta_pyxb.identifier)
       )
-
       self.assertEqual(
         object_info.identifier.value(), sysmeta_pyxb.identifier.value(),
         sysmeta_path
@@ -1969,14 +1963,14 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def test_3020_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3020(client, v1)
 
   def test_3020_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3020(client, v2)
@@ -2046,21 +2040,21 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def test_3032_v1(self):
     """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_3032(client, v1)
 
   def test_3032_v2(self):
     """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta_pyxb.obsoletes pointing to known object raises InvalidSystemMetadata.
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3032(client, v2)
 
   def _test_3032(self, client, binding):
     """MNStorage.create(): Attempt to create standalone object with
-    sysmeta_pyxb.obsoletes pointing to unknown object raises InvalidSystemMetadata.
+    sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata.
     """
     pid = self._random_pid()
     sid = self._random_sid()
@@ -2269,6 +2263,44 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEquals(update_sysmeta_pyxb.identifier.value(), update_pid)
 
   # --
+
+  def test_3051_v1(self):
+    """v1 MNStorage.update(): Creating an obsolescence chain creates and
+    preserves obsoletes and obsoletedBy references throughout the chain.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3051(client, v1)
+
+
+  def _test_3051(self, client, binding):
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, base_pid, base_sid)
+    base_obj_str, base_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self.assertEquals(base_sysmeta_pyxb.identifier.value(), base_pid)
+    self.assertEquals(base_sysmeta_pyxb.seriesId.value(), base_sid)
+    # Perform multiple updates
+    chain_len = 6
+    chain_base_pid = base_pid
+    pid_chain_list = [chain_base_pid]
+    for i in range(chain_len - 1):
+      update_pid = self._random_pid()
+      self._update(client, binding, base_pid, update_pid)
+      pid_chain_list.append(update_pid)
+      base_pid = update_pid
+    # Retrieve and verify chain
+    for i in range(chain_len):
+      obj_str, sysmeta_pyxb = self._get(client, pid_chain_list[i])
+      if i == 0:
+        self.assertIsNone(sysmeta_pyxb.obsoletes)
+        self.assertEqual(sysmeta_pyxb.obsoletedBy.value(), pid_chain_list[i + 1])
+      elif i == chain_len - 1:
+        self.assertEqual(sysmeta_pyxb.obsoletes.value(), pid_chain_list[i - 1])
+        self.assertIsNone(sysmeta_pyxb.obsoletedBy)
+      else:
+        self.assertEqual(sysmeta_pyxb.obsoletes.value(), pid_chain_list[i - 1])
+        self.assertEqual(sysmeta_pyxb.obsoletedBy.value(), pid_chain_list[i + 1])
 
   # MNStorage.updateSystemMetadata(). Method was added in v2.
 
@@ -2487,7 +2519,9 @@ class GMNIntegrationTests(unittest.TestCase):
     )
 
   def test_3100_v1(self):
-    """v1 Creating proxied object with URL to unknown domain returns InvalidRequest"""
+    """v1 Creating proxied object with URL to unknown domain returns
+    InvalidRequest
+    """
     self._assert_not_retrievable('http://some-non-existing-domain-2398.com')
 
   def test_3110_v1(self):

@@ -103,7 +103,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      settings.DATAONE_ROOT, cert_pem_path=settings.CLIENT_CERT_PATH,
+      cert_key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

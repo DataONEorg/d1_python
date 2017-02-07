@@ -107,7 +107,7 @@ ECHO_REQUEST_OBJECT = False
 # This helps prevent accidental deletion of objects on a MN that is in the
 # process of being deployed, and still has DEBUG_GMN set to True while also
 # holding objects that are intended to be used in production.
-ALLOW_INTEGRATION_TESTS = True
+ALLOW_INTEGRATION_TESTS = False
 
 # Enable stand-alone mode.
 # True (default):

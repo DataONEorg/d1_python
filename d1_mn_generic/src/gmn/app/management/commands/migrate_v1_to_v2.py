@@ -52,6 +52,7 @@ import app.views.diagnostics
 import app.views.view_asserts
 import util
 
+
 CONNECTION_STR = "host=''"
 
 ROOT_PATH = '/var/local/dataone'
