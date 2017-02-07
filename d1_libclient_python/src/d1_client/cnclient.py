@@ -284,10 +284,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def registerAccountResponse(self, person):
-    mime_multipart_files = [
-      ('person', 'person.xml', person.toxml().encode('utf-8')),
-    ]
-    return self.POST('accounts', files=mime_multipart_files)
+    mmp_dict = {
+      'person': ('person.xml', person.toxml().encode('utf-8')),
+    }
+    return self.POST('accounts', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def registerAccount(self, person):
@@ -299,10 +299,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateAccountResponse(self, person):
-    mime_multipart_files = [
-      ('person', 'person.xml', person.toxml().encode('utf-8')),
-    ]
-    return self.PUT(['accounts', person.value()], files=mime_multipart_files)
+    mmp_dict = {
+      'person': ('person.xml', person.toxml().encode('utf-8')),
+    }
+    return self.PUT(['accounts', person.value()], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def updateAccount(self, person):
@@ -421,10 +421,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def createGroupResponse(self, group):
-    mime_multipart_files = [
-      ('group', 'group.xml', group.toxml().encode('utf-8')),
-    ]
-    return self.POST('groups', files=mime_multipart_files)
+    mmp_dict = {
+      'group': ('group.xml', group.toxml().encode('utf-8')),
+    }
+    return self.POST('groups', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def createGroup(self, groupName):
@@ -436,10 +436,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateGroupResponse(self, group):
-    mime_multipart_files = [
-      ('group', 'group.xml', group.toxml().encode('utf-8')),
-    ]
-    return self.PUT('groups', files=mime_multipart_files)
+    mmp_dict = {
+      'group': ('group.xml', group.toxml().encode('utf-8')),
+    }
+    return self.PUT('groups', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def updateGroup(self, group):
@@ -514,7 +514,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def isNodeAuthorizedResponse(self, targetNodeSubject, pid):
-    return self.GET(['replicaAuthorizations', pid], query={'targetNodeSubject': targetNodeSubject})
+    query_dict = {
+      'targetNodeSubject': targetNodeSubject,
+    }
+    return self.GET(['replicaAuthorizations', pid], query=query_dict)
 
   @d1_common.util.utf8_to_unicode
   def isNodeAuthorized(self, targetNodeSubject, pid):
@@ -548,8 +551,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
-    mime_multipart_files = [('node', 'node.xml', node.toxml().encode('utf-8')),]
-    return self.PUT(['node', nodeId], files=mime_multipart_files)
+    mmp_dict = {
+      'node': ('node.xml', node.toxml().encode('utf-8'))
+    }
+    return self.PUT(['node', nodeId], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilities(self, nodeId, node):
@@ -561,8 +566,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def registerResponse(self, node):
-    mime_multipart_files = [('node', 'node.xml', node.toxml().encode('utf-8')),]
-    return self.POST('node', files=mime_multipart_files)
+    mmp_dict = {
+      'node': ('node.xml', node.toxml().encode('utf-8')),
+    }
+    return self.POST('node', mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def register(self, node):
