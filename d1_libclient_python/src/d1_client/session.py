@@ -267,9 +267,9 @@ class Session(object):
     if 'cert' not in kwargs:
       if self._cert_pem_path is not None:
         if self._cert_key_path is not None:
-          kwargs['cert'] = (self._cert_path, self._key_path)
+          kwargs['cert'] = self._cert_pem_path, self._cert_key_path
         else:
-          kwargs['cert'] = self._cert_path
+          kwargs['cert'] = self._cert_pem_path
     return kwargs
 
   def _datetime_to_iso8601(self, query):

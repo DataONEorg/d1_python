@@ -30,12 +30,8 @@ import os
 import sys
 import urllib
 
-# PyOpenSSL.
-try:
-  from OpenSSL import crypto
-except ImportError:
-  print 'Try: sudo easy_install pyopenssl'
-  raise
+# 3rd party
+import OpenSSL
 
 # D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -166,7 +162,7 @@ def create_key_pair(key_type, n_bits):
   :returns: Public/private key pair.
   :return type: PKey
   """
-  pkey = crypto.PKey()
+  pkey = OpenSSL.crypto.PKey()
   pkey.generate_key(key_type, n_bits)
   return pkey
 
@@ -192,7 +188,7 @@ def create_cert_request(pkey, digest="md5", **name):
     CN - Common name
     emailAddress - E-mail address
   """
-  req = crypto.X509Req()
+  req = OpenSSL.crypto.X509Req()
   subj = req.get_subject()
 
   for (key, value) in name.items():
@@ -248,7 +244,7 @@ def create_session_extension(subject, persons, groups):
   #    PyErr_SetString(PyExc_ValueError, "Unknown extension name");
   #    return NULL;
   #}
-  ext = crypto.X509Extension('nsComment', False, session.toxml())
+  ext = OpenSSL.crypto.X509Extension('nsComment', False, session.toxml())
 
   return ext
 
@@ -279,7 +275,7 @@ def create_certificate(
   :returns: The signed certificate.
   :return type: X509  
   """
-  cert = crypto.X509()
+  cert = OpenSSL.crypto.X509()
   cert.set_serial_number(serial)
   cert.gmtime_adj_notBefore(not_before)
   cert.gmtime_adj_notAfter(not_after)
@@ -313,7 +309,7 @@ def main():
   except IOError:
     logger.error('Must set path to CA key in config section')
     raise
-  ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_key_file, test_ca_pw)
+  ca_key = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, ca_key_file, test_ca_pw)
 
   # Load the DataONE Test CA cert.
   try:
@@ -321,7 +317,7 @@ def main():
   except IOError:
     logger.error('Must set path to CA key in config section')
     raise
-  ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, ca_cert_file)
+  ca_cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_cert_file)
 
   # Generate test certs.
   for subject in subjects:
@@ -329,7 +325,7 @@ def main():
 
     # Create private key.
     # crypto.TYPE_DSA does not work with digest='SHA1'
-    pkey = create_key_pair(crypto.TYPE_RSA, 4096)
+    pkey = create_key_pair(OpenSSL.crypto.TYPE_RSA, 4096)
 
     # Create CSR for subject.
     req = create_cert_request(pkey, CN=subject, digest='SHA1')
@@ -348,12 +344,12 @@ def main():
     # Write the private key to disk.
     out_key_path = os.path.join(cert_dir, '{0}.key'.format(urllib.quote(subject, '')))
     out_key_file = open(out_key_path, 'w')
-    out_key_file.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey))
+    out_key_file.write(OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, pkey))
 
     # Write the cert to disk.
     out_cert_path = os.path.join(cert_dir, '{0}.crt'.format(urllib.quote(subject, '')))
     out_cert_file = open(out_cert_path, 'w')
-    out_cert_file.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
+    out_cert_file.write(OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert))
 
 
 if __name__ == '__main__':
