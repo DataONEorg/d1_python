@@ -43,7 +43,7 @@ def main():
       # GMN uses dataone.common directly but, to keep the versions consistent,
       # let it be included by dataone.libclient.
       #'dataone.common',
-      'dataone.libclient == 2.0.0',
+      'dataone.libclient == 2.0.1rc2',
       'django == 1.10.1',
       'pyxb == 1.2.5',
       'iso8601 == 0.1.11',
@@ -54,12 +54,10 @@ def main():
       # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
-      # Temporary, until upgrading libclient to 2.0.1.
-      'requests[security] == 2.12.4',
     ],
 
     setup_requires=[
-      'setuptools_git >= 1.1'
+      'setuptools_git == 1.1'
     ],
   )
 
