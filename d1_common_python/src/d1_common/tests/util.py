@@ -20,6 +20,7 @@
 # limitations under the License.
 
 # Stdlib
+import codecs
 import xml
 
 # 3rd party
@@ -41,17 +42,26 @@ def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
 
+def get_test_filepath(filename):
+  return os.path.join(make_absolute('test_docs'), filename)
+
+
 def read_test_file(filename, mode_str='rb'):
-  with open(
-    os.path.join(make_absolute('test_docs'), filename), mode_str
-  ) as f:
+  with open(get_test_filepath(filename), mode_str) as f:
     return f.read()
 
+
+def read_utf8_to_unicode(filename):
+  utf8_path = get_test_filepath(filename)
+  unicode_file = codecs.open(utf8_path, encoding='utf-8', mode='r')
+  return unicode_file.read()
 
 def read_test_xml(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
   xml_obj = v2.CreateFromDocument(xml_str)
   return xml_obj
+
+
 
 
 def deserialize_and_check(doc, shouldfail=False):

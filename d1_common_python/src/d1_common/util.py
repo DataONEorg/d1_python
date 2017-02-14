@@ -17,39 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.util
-=====================
-
-:Synopsis: Utilities
-:Created: 2010-08-07
-:Author: DataONE (Vieglais, Dahl)
+"""General utilities often needed by DataONE clients and servers.
 """
 
 from __future__ import absolute_import
 
-# Stdlib
 import email.message
 import email.utils
-import hashlib
-import re
-import xml.dom.minidom
-
-
-def pretty_xml(xml_doc):
-  """Pretty formatting of XML.
-
-  :param xml_doc: xml text
-  :type xml_doc: basestring
-  """
-  try:
-    xml_obj = xml.dom.minidom.parseString(xml_doc)
-  except TypeError:
-    xml_obj = xml.dom.minidom.parse(xml_doc)
-  pretty_xml_str = xml_obj.toprettyxml(indent="  ")
-  # A bug in toprettyxml causes empty lines in the result.
-  return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
-
 
 
 def get_content_type(content_type):
@@ -66,7 +40,8 @@ def utf8_to_unicode(f):
   A UnicodeDecodeError raised here means that the wrapped function was called
   with a string argument that did not contain ASCII or UTF-8. In such a case,
   the user is required to convert the string to Unicode before passing it to the
-  function. """
+  function.
+  """
 
   def wrap(*args, **kwargs):
     new_args = []
@@ -84,7 +59,6 @@ def utf8_to_unicode(f):
       else:
         new_kwargs[key] = arg
     return f(*new_args, **new_kwargs)
-
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
   return wrap

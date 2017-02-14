@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_utils
-=================================
-
-:Synopsis: Unit tests for util.py
-:Created: 2011-01-21
-:Author: DataONE (Vieglais, Dahl)
+"""Test general utilities
 """
 
 # Stdlib
@@ -33,16 +27,6 @@ import sys
 import unittest
 
 
+# TODO: Add tests for the functions in util.py
 class TestUtils(unittest.TestCase):
   pass
-
-#===============================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)

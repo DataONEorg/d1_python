@@ -26,13 +26,27 @@ from __future__ import absolute_import
 # Stdlib
 import logging
 import StringIO
+import re
 import sys
+import xml.dom
 import xml.dom.minidom
 import xml.etree.ElementTree
 import xml.parsers.expat
 
 # D1
 import d1_common.types.dataoneTypes_v2_0 as v2
+
+
+def pretty_xml(xml_doc):
+  """Pretty formatting of XML
+  """
+  try:
+    xml_obj = xml.dom.minidom.parseString(xml_doc)
+  except TypeError:
+    xml_obj = xml.dom.minidom.parse(xml_doc)
+  pretty_xml_str = xml_obj.toprettyxml(indent="  ")
+  # Remove empty lines in the result caused by a bug in toprettyxml().
+  return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
 
 
 def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
@@ -51,6 +65,8 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
   TODO: Include test for tails. Skipped for now because tails are not used
   in any D1 types.
   """
+  assert isinstance(a_xml, basestring)
+  assert isinstance(b_xml, basestring)
   parser1 = xml.etree.ElementTree.XMLParser(encoding=encoding)
   parser2 = xml.etree.ElementTree.XMLParser(encoding=encoding)
   a_tree =  xml.etree.ElementTree.ElementTree(
@@ -63,15 +79,18 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
     _compare_attr(a_tree, b_tree)
     _compare_text(a_tree, b_tree)
   except CompareError as e:
-    logging.warn(str(e))
+    logging.debug(str(e))
     return False
   return True
 
 
-def is_sysmeta_equivalent(a_xml, b_xml, encoding='UTF-8'):
+def is_sysmeta_equivalent(a_xml, b_xml):
   """Attempt to normalize System Metadata before compare, so that differences
   that are not semantically significant, such as the order of subjects in
   permissions, does not cause the compare to fail.
+
+  {a_xml} and {b_xml} should be UTF-8 encoded DataONE System Metadata XML
+  documents.
 
   TODO: This needs to be a recursive function. For now, it just does the bare
   minimum required for unit tests.
@@ -84,11 +103,6 @@ def is_sysmeta_equivalent(a_xml, b_xml, encoding='UTF-8'):
 
   _sort_value_list_pyxb(a_pyxb.replicationPolicy, 'blockedMemberNode')
   _sort_value_list_pyxb(b_pyxb.replicationPolicy, 'blockedMemberNode')
-
-  # sort_nested_value_list_pyxb(sysmeta_a_pyxb.accessPolicy, 'allow', 'subject')
-  # sort_nested_value_list_pyxb(
-  #   sysmeta_a_pyxb.accessPolicy, 'allow', 'permission'
-  # )
 
   return is_equivalent(a_pyxb.toxml(), b_pyxb.toxml())
 
@@ -233,5 +247,4 @@ def _get_sorted_value_list_pyxb(obj_pyxb):
 
 class CompareError(Exception):
   pass
-
 

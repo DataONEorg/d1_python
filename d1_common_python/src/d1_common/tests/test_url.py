@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_url
-===============================
-
-:Synopsis: Unit tests for url.py
-:Created: 2011-01-21
-:Author: DataONE (Vieglais, Dahl)
+"""Test URL utilities
 """
 
 # Stdlib
@@ -36,16 +30,21 @@ import unittest
 import d1_common.url
 
 # App
+import util
+
 HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestUrl(unittest.TestCase):
+  def setUp(self):
+    self._unicode_strings = util.read_utf8_to_unicode(
+      'testUnicodeStrings.utf8.txt'
+    )
+
   def test_010(self):
     """encodePathElement()"""
-    ftest = os.path.join(HERE_DIR_PATH, 'testUnicodeStrings.utf8.txt')
-    testfile = codecs.open(ftest, encoding='utf-8', mode='r')
-    testrows = testfile.readlines()
-    for row in testrows:
+    for row in self._unicode_strings.splitlines():
+      self.assertTrue(isinstance(row, unicode))
       parts = row.split('\t')
       if len(parts) > 1:
         v = parts[0]
@@ -55,11 +54,7 @@ class TestUrl(unittest.TestCase):
 
   def test_020(self):
     """encodeQueryElement()"""
-    fpath = os.path.abspath(os.path.dirname(__file__))
-    ftest = os.path.join(fpath, 'testUnicodeStrings.utf8.txt')
-    testfile = codecs.open(ftest, encoding='utf-8', mode='r')
-    testrows = testfile.readlines()
-    for row in testrows:
+    for row in self._unicode_strings.splitlines():
       parts = row.split('\t')
       if len(parts) > 1:
         v = parts[0]
