@@ -17,13 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.checksum
-=========================
-
-:Synopsis: Utilities for handling checksums.
-:Created: 2013-12-19
-:Author: DataONE (Dahl)
+"""Utilities for handling checksums
 """
 
 # Stdlib

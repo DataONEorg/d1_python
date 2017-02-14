@@ -18,16 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_objectlist
-======================================
-
-Unit tests for serialization and de-serialization of the ObjectList type.
-
-:Created: 2010-07-21
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
+"""Test serialization and de-serialization of the ObjectList type
 """
 
 # Stdlib
@@ -42,6 +33,7 @@ from d1_common.types import dataoneTypes
 
 # App
 import util
+
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="154933"

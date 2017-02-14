@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_utils
-=================================
-
-:Synopsis: Unit tests for date_time.py
-:Created: 2011-01-21
-:Author: DataONE (Vieglais, Dahl)
-"""
 
 # Stdlib
 import datetime

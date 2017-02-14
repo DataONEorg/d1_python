@@ -18,9 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_type_conversions
-=========================================
+"""Test DataONE type conversions
 """
 
 # Stdlib
@@ -30,9 +28,8 @@ import re
 import unittest
 
 # 3rd party
+import d1_common.xml
 import pyxb.utils.domutils
-
-# D1
 
 # App
 import d1_common.type_conversions as c
@@ -49,10 +46,10 @@ class TestTypeConversions(unittest.TestCase):
     return open(os.path.join(test_docs_path, file_name)).read()
 
   def _print_pretty_xml_obj(self, xml_obj):
-    print d1_common.util.pretty_xml(xml_obj.toxml())
+    print d1_common.xml.pretty_xml(xml_obj.toxml())
 
   def _print_pretty_xml_str(self, xml_str):
-    print d1_common.util.pretty_xml(xml_str)
+    print d1_common.xml.pretty_xml(xml_str)
 
   def test_0010(self):
     """is_v1()"""

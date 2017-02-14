@@ -18,14 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_nodelist
-====================================
-
-:Synopsis: Unit tests for serialization and de-serialization of the NodeList
-  type.
-:Created: 2011-03-03
-:Author: DataONE (Vieglais, Dahl)
+"""Test serialization and de-serialization of the NodeList
 """
 
 # Stdlib
@@ -40,6 +33,7 @@ from d1_common.types import dataoneTypes
 
 # App
 import util
+
 
 EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"

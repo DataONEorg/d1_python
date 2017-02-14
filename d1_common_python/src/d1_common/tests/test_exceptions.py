@@ -18,16 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_exceptions
-======================================
-
-Unit tests for serialization and de-serialization of the DataONEException type.
-
-:Created: 2010-04-12
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
+"""Test serialization and de-serialization of the DataONEException
+type.
 """
 
 # Stdlib

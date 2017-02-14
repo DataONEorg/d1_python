@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.const
-======================
-
-:Synopsis: Provides system wide constants for the Python DataONE stack.
-:Created: 2010-01-20
-:Author: DataONE (Vieglais, Dahl)
+"""System wide constants for the Python DataONE stack
 """
 
 # Make contents of __init__ available.

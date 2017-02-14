@@ -18,29 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_common.tests.test_accesspolicy
-=======================================
-
-Unit tests for serialization and de-serialization of the AccessPolicy type.
-
-:Created: 2011-03-03
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
+"""Testserialization and de-serialization of the AccessPolicy type
 """
 
 # Stdlib
 import logging
 import sys
 import unittest
-import xml.sax
 
 # 3rd party
 import pyxb
 
 # D1
-from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
 # App
@@ -112,7 +101,7 @@ class TestAccessPolicy(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
       dataoneTypes.CreateFromDocument(doc)
-    except (pyxb.PyXBException, xml.sax.SAXParseException):
+    except pyxb.PyXBException:
       if shouldfail:
         return
       else:

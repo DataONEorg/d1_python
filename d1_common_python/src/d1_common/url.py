@@ -226,7 +226,9 @@ def makeCNBaseURL(url):
   else:
     netloc = const.DEFAULT_CN_HOST
     path = const.DEFAULT_CN_PATH
-  return urlparse.urlunparse((o.scheme, netloc, path, o.params, o.query, o.fragment))
+  return urlparse.urlunparse(
+    (o.scheme, netloc, path, o.params, o.query, o.fragment)
+  )
 
 
 def makeMNBaseURL(url):
@@ -249,4 +251,78 @@ def makeMNBaseURL(url):
   else:
     netloc = const.DEFAULT_MN_HOST
     path = const.DEFAULT_MN_PATH
-  return urlparse.urlunparse((o.scheme, netloc, path, o.params, o.query, o.fragment))
+  return urlparse.urlunparse(
+    (o.scheme, netloc, path, o.params, o.query, o.fragment)
+  )
+
+
+def find_url_mismatches(a_url, b_url):
+  """Given two URLs, return a list of any mismatches. If the list is empty, the
+  URLs are equivalent. Implemented by parsing and comparing the elements. See
+  RFC 1738 for details.
+  """
+  diff_list = []
+  a_parts = urlparse.urlparse(a_url)
+  b_parts = urlparse.urlparse(b_url)
+  # scheme
+  if a_parts.scheme.lower() != b_parts.scheme.lower():
+    diff_list.append(
+      u'Schemes differ. a="{}" b="{}" differ'.
+      format(a_parts.scheme.lower(), b_parts.scheme.lower())
+    )
+  # netloc
+  if a_parts.netloc.lower() != b_parts.netloc.lower():
+    diff_list.append(
+      u'Network locations differ. a="{}" b="{}"'.
+      format(a_parts.netloc.lower(), b_parts.netloc.lower)
+    )
+  # path
+  if a_parts.path != b_parts.path:
+    diff_list.append(
+      u'Paths differ: a="{}" b="{}"'.format(a_parts.path, b_parts.path)
+    )
+  # fragment
+  if a_parts.fragment != b_parts.fragment:
+    diff_list.append(
+      u'Fragments differ. a="{}" b="{}"'.
+      format(a_parts.fragment, b_parts.fragment)
+    )
+  # param
+  a_param_list = sorted(a_parts.params.split(";"))
+  b_param_list = sorted(b_parts.params.split(";"))
+  if a_param_list != b_param_list:
+    diff_list.append(
+      u'Parameters differ. a="{}" b="{}"'.format(
+        u', '.join(a_param_list),
+        u', '.join(b_param_list),
+      )
+    )
+  # query
+  a_query_dict = urlparse.parse_qs(a_parts.query)
+  b_query_dict = urlparse.parse_qs(b_parts.query)
+  if len(a_query_dict.keys()) != len(b_query_dict.keys()):
+    diff_list.append(
+      'Number of query keys differs. a={} b={}'.
+      format(len(a_query_dict.keys()), len(b_query_dict.keys()))
+    )
+  for a_key in b_query_dict:
+    if a_key not in b_query_dict.keys():
+      diff_list.append(
+        u'Query key in first missing in second. a_key="{}"'.format(a_key)
+      )
+    elif sorted(a_query_dict[a_key]) != sorted(b_query_dict[a_key]):
+      diff_list.append(
+        u'Query values differ. key="{}" a_value="{}" b_value="{}"'.format(
+          a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key])
+        )
+      )
+  for b_key in b_query_dict:
+    if b_key not in a_query_dict:
+      diff_list.append(
+        u'Query key in second missing in first. b_key="{}"'.format(b_key)
+      )
+  return diff_list
+
+
+def is_urls_equivalent(a_url, b_url):
+  return bool(not find_url_mismatches(a_url, b_url))
