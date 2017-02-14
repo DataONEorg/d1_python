@@ -56,12 +56,11 @@ def read_utf8_to_unicode(filename):
   unicode_file = codecs.open(utf8_path, encoding='utf-8', mode='r')
   return unicode_file.read()
 
+
 def read_test_xml(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
   xml_obj = v2.CreateFromDocument(xml_str)
   return xml_obj
-
-
 
 
 def deserialize_and_check(doc, shouldfail=False):
