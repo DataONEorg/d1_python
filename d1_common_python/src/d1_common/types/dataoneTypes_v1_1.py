@@ -18,5 +18,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Combine all PyXB bindings required for handling DataONE types up to and
+including v1.1.
+"""
+
+import logging
+
+logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+
 from d1_common.types.generated.dataoneTypes_v1 import *
 from d1_common.types.generated.dataoneTypes_v1_1 import *

@@ -18,4 +18,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Import the PYXB bindings required for handling the DataONE Exception types
+"""
+
+import logging
+
+logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+
 from d1_common.types.generated.dataoneErrors import *
