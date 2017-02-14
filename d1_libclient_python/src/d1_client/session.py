@@ -112,6 +112,8 @@ class Session(object):
     )[:4]
     self._cert_pem_path = cert_pem_path
     self._cert_key_path = cert_key_path
+    self._api_major = 1
+    self._api_minor = 0
 
     # kwargs
 
@@ -153,9 +155,9 @@ class Session(object):
   def POST(self, rest_path_list, **kwargs):
     """Send a POST request with optional streaming multipart encoding.
     See requests.sessions.request for optional parameters. To post regular data,
-    pass a string, iterator og generator as the `data` argument. To post a
-    multipart stream, pass a dictionary multipart elements as the
-    `fields` argument. E.g.:
+    pass a string, iterator or generator as the {data} argument. To post a
+    multipart stream, pass a dictionary of multipart elements as the
+    {fields} argument. E.g.:
 
     fields = {
       'field0': 'value',
@@ -193,8 +195,8 @@ class Session(object):
   def get_curl_command_line(self, method, url, **kwargs):
     """Get request as cURL command line for debugging.
     """
-    if kwargs['params']:
-      url = u'{0}?{1}'.format(url, d1_common.url.urlencode(kwargs['params']))
+    if kwargs.get('query'):
+      url = u'{0}?{1}'.format(url, d1_common.url.urlencode(kwargs['query']))
     curl_cmd = []
     curl_cmd.append(u'curl -X {0}'.format(method))
     for k, v in kwargs['headers'].items():
@@ -238,7 +240,7 @@ class Session(object):
   def _request(self, method, rest_path_list, **kwargs):
     url = self._prep_url(rest_path_list)
     kwargs = self._prep_args(kwargs)
-    logging.info(self.get_curl_command_line(method, url, **kwargs))
+    logging.debug(self.get_curl_command_line(method, url, **kwargs))
     return self._session.request(method, url, **kwargs)
 
   def _prep_url(self, rest_path_list):
