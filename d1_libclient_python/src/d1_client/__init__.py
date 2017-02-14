@@ -19,4 +19,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "2.0.1rc2"
+__version__ = "2.1.0"
