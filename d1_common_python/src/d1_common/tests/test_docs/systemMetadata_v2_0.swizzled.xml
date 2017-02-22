@@ -1,85 +1,62 @@
 <v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
-  <!--Optional:-->
   <serialVersion>11</serialVersion>
   <identifier>string</identifier>
   <formatId>string</formatId>
   <size>11</size>
   <checksum algorithm="string">string</checksum>
-  <!--Optional:-->
   <submitter>string</submitter>
   <rightsHolder>string</rightsHolder>
-  <!--Optional:-->
   <accessPolicy>
-    <!--1 or more repetitions:-->
     <allow>
-      <!--1 or more repetitions:-->
+      <subject>subj3</subject>
+      <subject>subj2</subject>
+      <subject>subj6</subject>
+      <subject>subj5</subject>
+      <permission>changePermission</permission>
+    </allow>
+    <allow>
+      <subject>subj4</subject>
       <subject>subj1</subject>
       <subject>subj2</subject>
       <subject>subj3</subject>
-      <subject>subj4</subject>
-      <!--1 or more repetitions:-->
       <permission>read</permission>
       <permission>write</permission>
     </allow>
-    <allow>
-      <!--1 or more repetitions:-->
-      <subject>subj2</subject>
-      <subject>subj3</subject>
-      <subject>subj5</subject>
-      <subject>subj6</subject>
-      <!--1 or more repetitions:-->
-      <permission>changePermission</permission>
-    </allow>
   </accessPolicy>
-  <!--Optional:-->
   <replicationPolicy replicationAllowed="true" numberReplicas="3">
-    <!--Zero or more repetitions:-->
-    <preferredMemberNode>node1</preferredMemberNode>
     <preferredMemberNode>node2</preferredMemberNode>
     <preferredMemberNode>node3</preferredMemberNode>
-    <!--Zero or more repetitions:-->
-    <blockedMemberNode>node4</blockedMemberNode>
+    <preferredMemberNode>node1</preferredMemberNode>
     <blockedMemberNode>node5</blockedMemberNode>
+    <blockedMemberNode>node4</blockedMemberNode>
   </replicationPolicy>
-  <!--Optional:-->
   <obsoletes>string</obsoletes>
-  <!--Optional:-->
   <obsoletedBy>string</obsoletedBy>
-  <!--Optional:-->
   <archived>true</archived>
-  <!--Optional:-->
   <dateUploaded>2014-09-18T17:18:33</dateUploaded>
-  <!--Optional:-->
   <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
-  <!--Optional:-->
   <originMemberNode>string</originMemberNode>
-  <!--Optional:-->
   <authoritativeMemberNode>string</authoritativeMemberNode>
-  <!--Zero or more repetitions:-->
-  <replica>
-    <replicaMemberNode>node1</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
-  </replica>
   <replica>
     <replicaMemberNode>node2</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
     <replicaVerified>2014-05-21T19:02:49-06:00</replicaVerified>
   </replica>
   <replica>
+    <replicaMemberNode>node1</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
+  </replica>
+  <replica>
     <replicaMemberNode>node3</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
     <replicaVerified>2015-05-21T19:02:49-06:00</replicaVerified>
   </replica>
-  <!--Optional:-->
   <seriesId>string</seriesId>
-  <!--Optional:-->
   <mediaType name="string">
-    <!--Zero or more repetitions:-->
     <property name="string">string1</property>
     <property name="string">string3</property>
     <property name="string">string4</property>
   </mediaType>
-  <!--Optional:-->
   <fileName>string</fileName>
 </v2:systemMetadata>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_0_6_3/dataoneTypes.xsd">
+    -->
+    <!-- <identifier>Identifier0</identifier> -->
+    <objectFormat>eml://ecoinformatics.org/eml-2.0.1</objectFormat>
+    <size>0</size>
+    <submitter>uid=jones,o=NCEAS,dc=ecoinformatics,dc=org</submitter>
+    <rightsHolder>uid=jones,o=NCEAS,dc=ecoinformatics,dc=org</rightsHolder>
+    <obsoletes>Obsoletes0</obsoletes>
+    <obsoletes>Obsoletes1</obsoletes>
+    <obsoletedBy>ObsoletedBy0</obsoletedBy>
+    <obsoletedBy>ObsoletedBy1</obsoletedBy>
+    <derivedFrom>DerivedFrom0</derivedFrom>
+    <derivedFrom>DerivedFrom1</derivedFrom>
+    <describes>Describes0</describes>
+    <describes>Describes1</describes>
+    <describedBy>DescribedBy0</describedBy>
+    <describedBy>DescribedBy1</describedBy>
+    <checksum algorithm="SHA-1">2e01e17467891f7c933dbaa00e1459d23db3fe4f</checksum>
+    <embargoExpires>2006-05-04T18:13:51.0Z</embargoExpires>
+    <accessRule rule="allow" service="read"/>
+    <accessRule rule="allow" service="read" subject="Subject1"/>
+    <replicationPolicy replicationAllowed="true" numberReplicas="2">
+        <preferredMemberNode>MemberNode12</preferredMemberNode>
+        <preferredMemberNode>MemberNode13</preferredMemberNode>
+        <blockedMemberNode>MemberNode6</blockedMemberNode>
+        <blockedMemberNode>MemberNode7</blockedMemberNode>
+    </replicationPolicy>
+    <dateUploaded>2006-05-04T18:13:51.0Z</dateUploaded>
+    <dateSysMetadataModified>2006-05-04T18:13:51.0Z</dateSysMetadataModified>
+    <originMemberNode>OriginMemberNode0</originMemberNode>
+    <authoritativeMemberNode>AuthoritativeMemberNode0</authoritativeMemberNode>
+    <replica>
+        <replicaMemberNode>ReplicaMemberNode0</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
+    </replica>
+    <replica>
+        <replicaMemberNode>ReplicaMemberNode1</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
+    </replica>
+</d1:systemMetadata>
