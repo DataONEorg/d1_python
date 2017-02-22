@@ -220,37 +220,13 @@ def is_equal_elements(a_el, b_el):
       return False
   return True
 
-# def is_equal_pyxb_lists(a_pyxb, b_pyxb, attr_name):
-#   return get_pyxb_value_list(a_pyxb, attr_name) \
-#          == get_pyxb_value_list(b_pyxb, attr_name)
 
-# def get_pyxb_value_list(obj_pyxb, attr_name):
-#   return sorted([v.value() for v in getattr(obj_pyxb, attr_name)])
+def sort_value_list_pyxb(obj_pyxb):
+  obj_pyxb.sort(key=lambda x: x.value())
 
 
-
-def _sort_value_list_pyxb(obj_pyxb, attr_name):
-  setattr(
-    obj_pyxb, attr_name,
-    _get_sorted_value_list_pyxb(getattr(obj_pyxb, attr_name))
-  )
-
-
-def _sort_nested_value_list_pyxb(obj_pyxb, attr1_name, attr2_name):
-  obj1_pyxb = getattr(obj_pyxb, attr1_name)
-  for a in obj1_pyxb:
-    _sort_value_list_pyxb(a, attr2_name)
-  # obj2_pyxb = getattr(obj1_pyxb, attr2_name)
-  setattr(
-    obj_pyxb, attr1_name, sorted(
-      obj1_pyxb,
-      key=lambda x: _get_sorted_value_list_pyxb(getattr(x, attr2_name))
-    )
-  )
-
-
-def _get_sorted_value_list_pyxb(obj_pyxb):
-  sorted([v.value() for v in obj_pyxb])
+def sort_elements_by_child_value(obj_pyxb, child_el_name):
+  obj_pyxb.sort(key=lambda x: getattr(x, child_el_name).value())
 
 
 class CompareError(Exception):
