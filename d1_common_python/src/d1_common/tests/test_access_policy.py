@@ -17,9 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test subject extraction from certificate and SubjectInfo
-
-This does not test certificate validation.
+"""Test the access_policy module
 """
 
 # Stdlib
@@ -37,11 +35,13 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_090(self):
     """_get_grouped_permission_dict()"""
-    perm_dict = d1_common.access_policy._get_grouped_permission_dict([
-      ('subj1', 'write'),
-      ('subj2', 'read'),
-      ('subj3', 'write'),
-    ])
+    perm_dict = d1_common.access_policy._get_grouped_permission_dict(
+      [
+        ('subj1', 'write'),
+        ('subj2', 'read'),
+        ('subj3', 'write'),
+      ]
+    )
     self.assertDictEqual(
       perm_dict, {
         'read': ['subj2'],
@@ -52,7 +52,9 @@ class TestAccessPolicy(unittest.TestCase):
   def test_100(self):
     """get_normalized_permission_from_iter()"""
     self.assertEqual(
-      d1_common.access_policy.get_normalized_permission_from_iter(['write', 'changePermission']),
+      d1_common.access_policy.get_normalized_permission_from_iter(
+        ['write', 'changePermission']
+      ),
       'changePermission',
     )
 
@@ -65,26 +67,33 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_102(self):
     """get_normalized_permission_from_iter()"""
-    self.assertIsNone(d1_common.access_policy.get_normalized_permission_from_iter([]))
-
+    self.assertIsNone(
+      d1_common.access_policy.get_normalized_permission_from_iter([])
+    )
 
   def test_110(self):
     """get_effective_permission_list_from_iter()"""
     self.assertListEqual(
-      d1_common.access_policy.get_effective_permission_list_from_iter(['write', 'changePermission']),
+      d1_common.access_policy.get_effective_permission_list_from_iter(
+        ['write', 'changePermission']
+      ),
       ['read', 'write', 'changePermission'],
     )
 
   def test_111(self):
     """get_effective_permission_list_from_iter()"""
     self.assertListEqual(
-      d1_common.access_policy.get_effective_permission_list_from_iter(['write']),
+      d1_common.access_policy.get_effective_permission_list_from_iter(
+        ['write']
+      ),
       ['read', 'write'],
     )
 
   def test_112(self):
     """get_effective_permission_list_from_iter()"""
-    self.assertIsNone(d1_common.access_policy.get_effective_permission_list_from_iter([]))
+    self.assertIsNone(
+      d1_common.access_policy.get_effective_permission_list_from_iter([])
+    )
 
   def test_120(self):
     """is_subject_allowed()"""
@@ -95,13 +104,15 @@ class TestAccessPolicy(unittest.TestCase):
   def test_121(self):
     """is_subject_allowed()"""
     self.assertFalse(
-      d1_common.access_policy.is_subject_allowed(self.ap_pyxb, 'subj1', 'write')
+      d1_common.access_policy.
+      is_subject_allowed(self.ap_pyxb, 'subj1', 'write')
     )
 
   def test_122(self):
     """is_subject_allowed()"""
     self.assertFalse(
-      d1_common.access_policy.is_subject_allowed(self.ap_pyxb, 'subj1', 'changePermission')
+      d1_common.access_policy.
+      is_subject_allowed(self.ap_pyxb, 'subj1', 'changePermission')
     )
 
   def test_123(self):
@@ -113,13 +124,15 @@ class TestAccessPolicy(unittest.TestCase):
   def test_124(self):
     """is_subject_allowed()"""
     self.assertTrue(
-      d1_common.access_policy.is_subject_allowed(self.ap_pyxb, 'subj2', 'write')
+      d1_common.access_policy.
+      is_subject_allowed(self.ap_pyxb, 'subj2', 'write')
     )
 
   def test_125(self):
     """is_subject_allowed()"""
     self.assertFalse(
-      d1_common.access_policy.is_subject_allowed(self.ap_pyxb, 'subj2', 'changePermission')
+      d1_common.access_policy.
+      is_subject_allowed(self.ap_pyxb, 'subj2', 'changePermission')
     )
 
   def test_130(self):
@@ -134,7 +147,9 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_140(self):
     """get_effective_permission_dict()"""
-    ap_dict = d1_common.access_policy.get_effective_permission_dict(self.ap_pyxb)
+    ap_dict = d1_common.access_policy.get_effective_permission_dict(
+      self.ap_pyxb
+    )
     expected_ap_dict = {
       u'subj1': ['read'],
       u'subj2': ['read', 'write'],
@@ -146,7 +161,9 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_150(self):
     """get_normalized_permission_list()"""
-    ap_list = d1_common.access_policy.get_normalized_permission_list(self.ap_pyxb)
+    ap_list = d1_common.access_policy.get_normalized_permission_list(
+      self.ap_pyxb
+    )
     expected_ap_list = [
       (u'subj1', 'read'),
       (u'subj2', 'write'),
@@ -158,5 +175,7 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_160(self):
     """get_effective_permission_list()"""
-    ap_list = d1_common.access_policy.get_effective_permission_list(self.ap_pyxb, 'subj5')
+    ap_list = d1_common.access_policy.get_effective_permission_list(
+      self.ap_pyxb, 'subj5'
+    )
     self.assertListEqual(ap_list, ['read', 'write'])

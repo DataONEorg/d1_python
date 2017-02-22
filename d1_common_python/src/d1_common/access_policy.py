@@ -78,18 +78,21 @@ and
 </accessPolicy>
 """
 
+# Stdlib
+import pprint
+
+# D1
+import d1_common.xml
 import d1_common.types.dataoneTypes
+
 
 ORDERED_PERMISSION_LIST = ['read', 'write', 'changePermission']
 
 
-def get_effective_permission_list(access_policy_pyxb, subject_str):
-  """Returns a list of permissions for {subject}. E.g., ['read', 'write'].
-  Handles implicit permissions. E.g., if {access_policy} specifies only
-  'write', returns ['read', 'write']. If {subject} is not in {access_policy},
-  returns [].
-  """
-  return get_effective_permission_dict(access_policy_pyxb)[subject_str]
+def normalize(access_policy_pyxb):
+  normalized_permission_list = get_normalized_permission_list(access_policy_pyxb)
+  grouped_permission_dict = _get_grouped_permission_dict(normalized_permission_list)
+  return get_access_policy_pyxb(grouped_permission_dict)
 
 
 def get_normalized_permission_list(access_policy_pyxb):
@@ -105,6 +108,15 @@ def get_normalized_permission_list(access_policy_pyxb):
     for s, p in
     sorted(get_effective_permission_dict(access_policy_pyxb).items())
   ]
+
+
+def get_effective_permission_list(access_policy_pyxb, subject_str):
+  """Returns a list of permissions for {subject}. E.g., ['read', 'write'].
+  Handles implicit permissions. E.g., if {access_policy} specifies only
+  'write', returns ['read', 'write']. If {subject} is not in {access_policy},
+  returns [].
+  """
+  return get_effective_permission_dict(access_policy_pyxb)[subject_str]
 
 
 def get_effective_permission_dict(access_policy_pyxb):
@@ -182,6 +194,18 @@ def get_normalized_permission_from_iter(permission_iterable):
   if perm_idx is not None:
     return ORDERED_PERMISSION_LIST[perm_idx]
 
+
+def is_equivalent_pyxb(a_pyxb, b_pyxb):
+  return get_normalized_permission_list(a_pyxb) \
+    == get_normalized_permission_list(b_pyxb)
+
+
+def is_equivalent_xml(a_xml, b_xml):
+  return is_equivalent_pyxb(
+    d1_common.xml.deserialize(a_xml),
+    d1_common.xml.deserialize(b_xml),
+  )
+
 #
 # Private
 #
@@ -220,5 +244,5 @@ def _get_unique_permissions_dict(access_policy_pyxb):
     for permission_pyxb in allow_pyxb.permission:
       perm_set.add(permission_pyxb)
     for subject_pyxb in allow_pyxb.subject:
-      perm_dict[subject_pyxb.value()] = perm_set
+      perm_dict.setdefault(subject_pyxb.value(), set()).update(perm_set)
   return perm_dict

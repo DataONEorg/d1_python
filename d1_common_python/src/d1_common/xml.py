@@ -37,16 +37,44 @@ import xml.parsers.expat
 import d1_common.types.dataoneTypes_v2_0 as v2
 
 
-def pretty_xml(xml_doc):
+def deserialize(doc_xml):
+  if not isinstance(doc_xml, unicode):
+    doc_xml = doc_xml.decode('utf8')
+  try:
+    return d1_common.types.dataoneTypes_v2_0.CreateFromDocument(doc_xml)
+  except pyxb.ValidationError as e:
+    raise ValueError(u'Unable to deserialize XML to PyXB. error="{}"'.format(e.details()))
+  except pyxb.PyXBException as e:
+    raise ValueError(u'Unable to deserialize XML to PyXB. error="{}"'.format(str(e)))
+  except Exception:
+    raise
+
+
+def serialize(obj_pyxb):
+  try:
+    return obj_pyxb.toxml('utf8')
+  except pyxb.ValidationError as e:
+    raise ValueError(u'Unable to serialize PyXB to XML. error="{}"'.format(e.details()))
+  except pyxb.PyXBException as e:
+    raise ValueError(u'Unable to serialize PyXB to XML. error="{}"'.format(str(e)))
+  except Exception:
+    raise
+
+
+def pretty_xml(doc_xml):
   """Pretty formatting of XML
   """
   try:
-    xml_obj = xml.dom.minidom.parseString(xml_doc)
+    xml_obj = xml.dom.minidom.parseString(doc_xml)
   except TypeError:
-    xml_obj = xml.dom.minidom.parse(xml_doc)
+    xml_obj = xml.dom.minidom.parse(doc_xml)
   pretty_xml_str = xml_obj.toprettyxml(indent="  ")
   # Remove empty lines in the result caused by a bug in toprettyxml().
   return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
+
+
+def pretty_pyxb(doc_pyxb):
+  return pretty_xml(doc_pyxb.toxml())
 
 
 def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
@@ -55,12 +83,10 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
   Using a_xml to determine the requirements for b_xml, this checks the
   following in b_xml:
 
-  - All elements are present and in the same order.
-  - All attributes are present and contain the correct values.
-  - All element text values are present and are the same.
-
-  This does NOT check if there is any information present in b_xml that
-  does not exist in a_xml.
+  - All elements are present and in the same order
+  - All attributes are present and contain the correct values
+  - All element text values are present and are the same
+  - All elements that exist in one document also exist in the other
 
   TODO: Include test for tails. Skipped for now because tails are not used
   in any D1 types.
@@ -75,6 +101,13 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
   b_tree =  xml.etree.ElementTree.ElementTree(
     xml.etree.ElementTree.fromstring(b_xml, parser=parser2)
   )
+  return _is_equivalent(a_tree, b_tree) and _is_equivalent(b_tree, a_tree)
+
+#
+# Private
+#
+
+def _is_equivalent(a_tree, b_tree):
   try:
     _compare_attr(a_tree, b_tree)
     _compare_text(a_tree, b_tree)
@@ -83,31 +116,6 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
     return False
   return True
 
-
-def is_sysmeta_equivalent(a_xml, b_xml):
-  """Attempt to normalize System Metadata before compare, so that differences
-  that are not semantically significant, such as the order of subjects in
-  permissions, does not cause the compare to fail.
-
-  {a_xml} and {b_xml} should be UTF-8 encoded DataONE System Metadata XML
-  documents.
-
-  TODO: This needs to be a recursive function. For now, it just does the bare
-  minimum required for unit tests.
-  """
-  a_pyxb = v2.CreateFromDocument(a_xml)
-  b_pyxb = v2.CreateFromDocument(b_xml)
-
-  _sort_value_list_pyxb(a_pyxb.replicationPolicy, 'preferredMemberNode')
-  _sort_value_list_pyxb(b_pyxb.replicationPolicy, 'preferredMemberNode')
-
-  _sort_value_list_pyxb(a_pyxb.replicationPolicy, 'blockedMemberNode')
-  _sort_value_list_pyxb(b_pyxb.replicationPolicy, 'blockedMemberNode')
-
-  return is_equivalent(a_pyxb.toxml(), b_pyxb.toxml())
-
-
-# Private
 
 def _compare_attr(a_tree, b_tree):
   for a_el in a_tree.getiterator():
