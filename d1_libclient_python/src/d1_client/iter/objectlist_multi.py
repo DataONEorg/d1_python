@@ -46,8 +46,8 @@ import d1_common.types.dataoneTypes_v2_0 as v2
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100
-MAX_WORKERS = 25
-MAX_QUEUE_SIZE = OBJECT_LIST_PAGE_SIZE * MAX_WORKERS
+MAX_WORKERS = 10
+MAX_QUEUE_SIZE = 100
 MAJOR_VERSION = 2
 
 
@@ -69,7 +69,7 @@ class ObjectListIteratorMulti(object):
     self._base_url = base_url
     self._page_size = page_size
     self._max_workers = max_workers
-    self._max_queue = max_queue_size
+    self._max_queue_size = max_queue_size
     self._major_version = major_version
     self._client_args_dict = client_args_dict or {}
     self._listObjects_args_dict = listObjects_args_dict or {}
@@ -77,7 +77,7 @@ class ObjectListIteratorMulti(object):
 
   def __iter__(self):
     manager = multiprocessing.Manager()
-    queue = manager.Queue(maxsize=self._max_queue)
+    queue = manager.Queue(maxsize=self._max_queue_size)
 
     process = multiprocessing.Process(
       target=_get_all_pages,
@@ -100,7 +100,6 @@ class ObjectListIteratorMulti(object):
 
 
 def _get_total_object_count(base_url, client_args_dict, listObjects_args_dict):
-  print client_args_dict
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
     base_url, **client_args_dict
   )
