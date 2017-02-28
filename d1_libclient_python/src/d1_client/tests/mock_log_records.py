@@ -18,7 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock getLogRecords() response
+"""Mock MNCore.getLogRecords() → Log
+
+# MNCore.getLogRecords(session[, fromDate][, toDate][, event][, pidFilter][,
+# start=0][, count=1000]) → Log
+
+# GET /log?[fromDate={fromDate}][&toDate={toDate}][&event={event}]
+# [&pidFilter={pidFilter}][&start={start}][&count={count}]
 """
 
 # Stdlib
@@ -31,47 +37,41 @@ import responses # pip install responses
 import requests
 
 # D1
-import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.type_conversions
 
 # App
 import d1_common.const
 import d1_common.url
+import mock_util
 
 # Config
+
 N_TOTAL = 1000
-
-# MNCore.getLogRecords(session[, fromDate][, toDate][, event][, pidFilter][,
-# start=0][, count=1000]) → Log
-
-# GET /log?[fromDate={fromDate}][&toDate={toDate}][&event={event}]
-# [&pidFilter={pidFilter}][&start={start}][&count={count}]
+LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
 
 
 def init(base_url):
-  # url_re = re.compile(r'https?://twitter.com/api/\d+/foobar')
-  # responses.add(responses.GET, url_re,
-  #               body='{"error": "not found"}', status=404,
-  #               content_type='application/json')
-
+  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)
+  endpoint_rx = re.compile(endpoint_rx_str)
   responses.add_callback(
     responses.GET,
-    d1_common.url.joinPathElements(base_url, '/v2/log'),
+    endpoint_rx,
     callback=_request_callback,
     content_type=d1_common.const.CONTENT_TYPE_XML,
   )
 
 
 def _request_callback(request):
-  url, query_dict = _parse_url(request.url)
-
+  major_version, pid, query_dict = _parse_url(request.url)
+  pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings(major_version)
   # print 'url="{}"'.format(url)
   # print 'query_dict={}'.format(query_dict)
+
 
   if 'start' in query_dict:
     n_start = int(query_dict['start'][0])
   else:
-    n_start = N_TOTAL
-
+    n_start = 0
   if 'count' in query_dict:
     n_count = int(query_dict['count'][0])
   else:
@@ -80,30 +80,22 @@ def _request_callback(request):
   # fromDate
   # toDate
   # pidFilter
-
   # payload = json.loads(request.body)
 
-  body_str = _generate_log_records(n_start, n_count)
+  body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
   headers = {}
-
   return 200, headers, body_str
 
 
-def _parse_url(url):
-  url_obj = urlparse.urlparse(url)
-  query_dict = urlparse.parse_qs(url_obj.query)
-  url = url_obj._replace(query=None).geturl()
-  return url, query_dict
 
-
-def _generate_log_records(n_start, n_count):
+def _generate_log_records(pyxb_bindings, n_start, n_count):
   if n_start + n_count > N_TOTAL:
     n_count = N_TOTAL - n_start
 
-  log = v2.log()
+  log = pyxb_bindings.log()
 
   for i in range(n_count):
-    logEntry = v2.LogEntry()
+    logEntry = pyxb_bindings.LogEntry()
 
     logEntry.entryId = str(i)
     logEntry.identifier = 'object#{}'.format(n_start + i)

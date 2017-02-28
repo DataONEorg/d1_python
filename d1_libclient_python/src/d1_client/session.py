@@ -137,6 +137,10 @@ class Session(object):
 
     self._create_requests_session()
 
+  @property
+  def base_url(self):
+    return self._base_url
+
   def GET(self, rest_path_list, **kwargs):
     """Send a GET request.
     See requests.sessions.request for optional parameters.
