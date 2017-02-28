@@ -18,167 +18,173 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:Synopsis: Unit tests for Session.
+"""Unit tests for Session.
 """
 
 # Stdlib
+import hashlib
+import json
 import logging
+import pprint
+import StringIO
 import sys
 import unittest
-import json
-import StringIO
 
 # 3rd party
+import responses # pip install responses
+import requests
 
 # D1
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.logging_context
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 
 # App
 sys.path.append('..')
+import mock_get
+import mock_post
 import session
+import shared_settings
 
 
 class TestSession(TestCaseWithURLCompare):
   def setUp(self):
-    pass
+    mock_get.init(shared_settings.MN_RESPONSES_URL)
+    mock_post.init(shared_settings.MN_RESPONSES_URL)
 
   def tearDown(self):
     pass
 
+  def _get_hash(self, pid):
+    s = session.Session(shared_settings.MN_RESPONSES_URL)
+    response = s.GET(['object', pid])
+    return hashlib.sha1(response.content).hexdigest()
+
+  def _get_response(self, pid):
+    s = session.Session(shared_settings.MN_RESPONSES_URL)
+    return s.GET(['object', pid])
+
+  def _post(self, query_dict, header_dict, body):
+    s = session.Session(
+      shared_settings.MN_RESPONSES_URL, query={
+        'default_query': 'test',
+      }
+    )
+    return s.POST(['post'], query=query_dict, headers=header_dict, data=body)
+
+  def _post_fields(self, fields_dict):
+    s = session.Session(shared_settings.MN_RESPONSES_URL)
+    return s.POST(['post'], fields=fields_dict)
+
+  @responses.activate
+  def test_005(self):
+    """HTTP GET is successful
+    Mocked GET returns object bytes uniquely tied to given PID.
+    """
+    a_pid = 'pid_hy7tf83453y498'
+    b_pid = 'pid_09y68gh73n60'
+    c_pid = 'pid_987i075058679589060'
+    a_hash = self._get_hash(a_pid)
+    b_hash = self._get_hash(b_pid)
+    c_hash = self._get_hash(c_pid)
+    self.assertNotEqual(a_hash, b_hash)
+    self.assertNotEqual(b_hash, c_hash)
+    self.assertNotEqual(a_hash, c_hash)
+    a1_hash = self._get_hash(a_pid)
+    c1_hash = self._get_hash(c_pid)
+    c2_hash = self._get_hash(c_pid)
+    a2_hash = self._get_hash(a_pid)
+    self.assertEqual(a_hash, a1_hash)
+    self.assertEqual(a_hash, a2_hash)
+    self.assertEqual(c_hash, c1_hash)
+    self.assertEqual(c_hash, c2_hash)
+
+  @responses.activate
   def test_010(self):
-    """HTTP GET against http://httpbin.org/ is successful"""
-    s = session.Session('http://httpbin.org')
-    response = s.get('/get')
+    """Successful HTTP GET returns 200 OK"""
+    response = self._get_response('pid1')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['url'], 'http://httpbin.org/get')
 
-  def test_011(self):
-    """HTTP GET against https://httpbin.org/ is successful"""
-    s = session.Session('https://httpbin.org')
-    response = s.get('/get')
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['url'], 'https://httpbin.org/get')
-
-  def test_012(self):
-    """HTTP GET, combine base_url and path 1"""
-    s = session.Session('https://httpbin.org/')
-    response = s.get('get')
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['url'], 'https://httpbin.org/get')
-
-  def test_013(self):
-    """HTTP GET, combine base_url and path 2"""
-    s = session.Session('https://httpbin.org')
-    response = s.get('get')
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['url'], 'https://httpbin.org/get')
-
-  def test_014(self):
-    """HTTP GET, combine base_url and path 3"""
-    s = session.Session('https://httpbin.org////')
-    response = s.get('/get')
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['url'], 'https://httpbin.org/get')
-
+  @responses.activate
   def test_020(self):
-    """HTTP GET against https://httpbin.org/status/404 fails with 404"""
-    s = session.Session('https://httpbin.org')
-    response = s.get('/status/404')
+    """HTTP GET 404"""
+    response = self._get_response('404')
     self.assertEqual(response.status_code, 404)
+    self.assertEqual(response.text, 'Return code: 404')
 
   def test_050(self):
     """HTTP GET against http://some.bogus.address/ raises ConnectionError"""
     s = session.Session('http://some.bogus.address')
-    import requests.packages.urllib3.exceptions
-    print type(requests.packages.urllib3.exceptions.ConnectionError)
-    self.assertRaises(requests.exceptions.ConnectionError, s.get, '/')
+    logger = logging.getLogger()
+    with d1_common.logging_context.LoggingContext(logger):
+      logger.setLevel(logging.ERROR)
+      self.assertRaises(requests.exceptions.ConnectionError, s.GET, '/')
 
+  @responses.activate
   def test_100(self):
-    """HTTP POST against httpbin server returns URL query parameters.
-    Query passed to post().
+    """HTTP POST is successful
+    Roundtrip for body, headers and query params.
     """
-    query = {'abcd': '1234', 'efgh': '5678'}
-    s = session.Session('http://httpbin.org')
-    response = s.post('/post', query=query)
-    data = response.json()
-    self.assertEqual(data['args']['abcd'], '1234')
-    self.assertEqual(data['args']['efgh'], '5678')
-    self.assertEqual(response.status_code, 200)
+    body_str = 'body_abc'
+    query_dict = {'abcd': '1234', 'efgh': '5678'}
+    header_dict = {'ijkl': '9876', 'mnop': '5432'}
+    response = self._post(query_dict, header_dict, body_str)
+    r_dict = response.json()
+    self.assertEqual(r_dict['body_str'], body_str)
+    self.assertIn('abcd', r_dict['query_dict'])
+    self.assertEqual(r_dict['query_dict']['abcd'], ['1234'])
+    self.assertIn('ijkl', r_dict['header_dict'])
+    self.assertEqual(r_dict['header_dict']['ijkl'], '9876')
+    self.assertIn('mnop', r_dict['header_dict'])
+    self.assertEqual(r_dict['header_dict']['mnop'], '5432')
+    self.assertIn('Content-Length', r_dict['header_dict'])
+    self.assertEqual(
+      r_dict['header_dict']['Content-Length'], str(len(body_str))
+    )
 
-  def test_101(self):
-    """HTTP POST against httpbin server returns URL query parameters.
-    Query passed to Session().
-    """
-    query = {'abcd': '1234', 'efgh': '5678'}
-    s = session.Session('http://httpbin.org', query=query)
-    response = s.post('/post')
-    data = response.json()
-    self.assertEqual(data['args']['abcd'], '1234')
-    self.assertEqual(data['args']['efgh'], '5678')
-    self.assertEqual(response.status_code, 200)
-
+  @responses.activate
   def test_102(self):
-    """HTTP POST against httpbin server returns URL query parameters.
-    Query passed to Session() and post(), must be combined.
+    """Query params passed to Session() and individual POST are combined
     """
-    query_session = {'abcd': '1234', 'efgh': '5678'}
-    s = session.Session('http://httpbin.org', query=query_session)
-    query_post = {'ijkl': '1234', 'efgh': '5678'}
-    response = s.post('/post', query=query_post)
-    data = response.json()
-    self.assertEqual(len(data['args']), 3)
-    self.assertEqual(data['args']['abcd'], '1234')
-    self.assertEqual(data['args']['efgh'], '5678')
-    self.assertEqual(data['args']['ijkl'], '1234')
-    self.assertEqual(response.status_code, 200)
+    body_str = 'body_abc'
+    query_dict = {'abcd': '1234', 'efgh': '5678'}
+    header_dict = {'ijkl': '9876', 'mnop': '5432'}
+    response = self._post(query_dict, header_dict, body_str)
+    r_dict = response.json()
+    self.assertEqual(r_dict['body_str'], body_str)
+    self.assertIn('abcd', r_dict['query_dict'])
+    self.assertEqual(r_dict['query_dict']['abcd'], ['1234'])
+    self.assertIn('default_query', r_dict['query_dict'])
+    self.assertEqual(r_dict['query_dict']['default_query'], ['test'])
 
+  @responses.activate
   def test_103(self):
-    """HTTP POST against httpbin server returns form parameters and url args"""
-    query = [['abcd', '1234'], ['efgh', '5678']]
-    fields = [['post_data_1', '1234'], ['post_data_2', '5678']]
-    s = session.Session('https://httpbin.org')
-    response = s.post('/post', query=query, fields=fields)
-    data = response.json()
-    self.assertEqual(len(data['form']), 2)
-    self.assertEqual(data['form']['post_data_1'], '1234')
-    self.assertEqual(data['form']['post_data_2'], '5678')
-    self.assertEqual(len(data['args']), 2)
-    self.assertEqual(data['args']['abcd'], '1234')
-    self.assertEqual(data['args']['efgh'], '5678')
-    self.assertEqual(response.status_code, 200)
+    """Roundtrip for HTML Form fields"""
+    field_dict = {
+      'post_data_1': '1234',
+      'post_data_2': '5678',
+    }
+    response = self._post_fields(field_dict)
+    r_dict = response.json()
+    # pprint.pprint(r_dict)
+    self.assertIn('Content-Type', r_dict['header_dict'])
+    self.assertIn('multipart/form-data', r_dict['header_dict']['Content-Type'])
+    self.assertIn('post_data_1', r_dict['body_str'])
+    self.assertIn('post_data_2', r_dict['body_str'])
+    self.assertIn('1234', r_dict['body_str'])
+    self.assertIn('5678', r_dict['body_str'])
 
-  def test_105(self):
-    """HTTP POST against httpbin server using file, form, and url args"""
-    test_file_data = u'<test>xml</test>'
-    query = [['abcd', '1234'], ['efgh', '5678']]
-    fields = [
-      ['post_data_1', '1234'], ['post_data_2', '5678'], [
-        'metadata',
-        ['sysmeta_pyxb.xml', StringIO.StringIO(test_file_data), 'text/xml']
-      ]
-    ]
-    s = session.Session('https://httpbin.org')
-    response = s.post('/post', query=query, fields=fields)
-    data = response.json()
-    self.assertEqual(data['form']['post_data_1'], '1234')
-    self.assertEqual(data['form']['post_data_2'], '5678')
-    self.assertEqual(data['args']['abcd'], '1234')
-    self.assertEqual(data['args']['efgh'], '5678')
-    self.assertEqual(data['files']['metadata'], test_file_data)
-    self.assertEqual(response.status_code, 200)
-
+  @responses.activate
   def test_200(self):
     """cURL command line retains query parameters and headers"""
-    query = {'abcd': '1234', 'efgh': '5678'}
-    headers = {'ijkl': '9876', 'mnop': '5432'}
-    s = session.Session('https://httpbin.org/some/base/')
+    query_dict = {'abcd': '1234', 'efgh': '5678'}
+    header_dict = {'ijkl': '9876', 'mnop': '5432'}
+    s = session.Session(shared_settings.MN_RESPONSES_URL)
     curl_str = s.get_curl_command_line(
-      'GET', 'url_selector/a/b', query=query, headers=headers
+      'POST', 'http://some.bogus.address', query=query_dict,
+      headers=header_dict,
     )
     self.assertEqual(
-      curl_str, 'curl -X GET -H "ijkl: 9876" -H "mnop: 5432" '
-      '-H "User-Agent: pyd1/2.0.0 +http://dataone.org/" '
-      'https://httpbin.org/some/base/url_selector/a/b?abcd=1234&efgh=5678'
+      curl_str,
+      'curl -X POST -H "ijkl: 9876" -H "mnop: 5432" http://some.bogus.address?abcd=1234&efgh=5678',
     )
