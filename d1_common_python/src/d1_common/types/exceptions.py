@@ -223,12 +223,11 @@ class DataONEException(Exception):
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
     if self._traceInformation is not None:
-      elem = None
       try:
         elem = pyxb.utils.domutils.StringToDOM(self.traceInformation)
       except:
         elem = pyxb.utils.domutils.StringToDOM(
-          "<x>" + self.traceInformation + "</x>"
+          "<value>" + self.traceInformation + "</value>"
         )
       dataone_exception_pyxb.traceInformation = elem.documentElement.firstChild
     if self.identifier is not None:

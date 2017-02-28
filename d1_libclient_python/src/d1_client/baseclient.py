@@ -392,9 +392,6 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def ping(self, vendorSpecific=None):
-    """Note: If the server returns a status code other than '200 OK',
-            the ping failed.
-        """
     try:
       response = self.pingResponse(vendorSpecific=vendorSpecific)
       return self._read_boolean_response(response)

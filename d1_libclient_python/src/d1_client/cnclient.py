@@ -569,7 +569,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     mmp_dict = {
       'node': ('node.xml', node.toxml().encode('utf-8')),
     }
-    return self.POST('node', mmp_dict)
+    return self.POST('node', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def register(self, node):
