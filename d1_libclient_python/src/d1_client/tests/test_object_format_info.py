@@ -36,12 +36,12 @@ import sys
 import unittest
 
 # D1
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
 sys.path.append('..')
 import d1_client.object_format_info
-import shared_utilities
+import util
 import shared_context
 
 # Typical mapping (format id, mimetype, extension):

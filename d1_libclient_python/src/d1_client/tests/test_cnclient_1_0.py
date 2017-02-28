@@ -24,12 +24,13 @@ import sys
 import unittest
 
 # 3rd party
+import d1_client.tests.util
 import responses # pip install responses
 import requests
 
 # D1
 sys.path.append('..')
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
@@ -46,13 +47,13 @@ import d1_test.instance_generator.systemmetadata
 # App
 import d1_client.cnclient
 import shared_settings
-import shared_utilities
+import util
 import shared_context
 
 import mock_object_format_list
 
 
-class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     self.client = d1_client.cnclient.CoordinatingNodeClient(
       shared_settings.CN_RESPONSES_URL
@@ -126,9 +127,9 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     # It's not desired to actually obsolete a random object on the CN, so the
     # call is made without a certificate. An appropriate failure from the CN
     # indicates that the call was correctly issued.
-    pid = shared_utilities.get_random_valid_pid(self.client)
-    obsoleted_pid = shared_utilities.get_random_valid_pid(self.client)
-    serial_version = shared_utilities.serial_version(self.client, pid)
+    pid = d1_client.tests.util.get_random_valid_pid(self.client)
+    obsoleted_pid = d1_client.tests.util.get_random_valid_pid(self.client)
+    serial_version = d1_client.tests.util.serial_version(self.client, pid)
     self.client.setObsoletedBy(pid, obsoleted_pid, 1)
 
   def test_1065(self):
@@ -145,7 +146,7 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 
   def test_2010_A(self):
     """CNRead.resolve() returns a valid ObjectLocationList when called with an existing PID"""
-    random_existing_pid = shared_utilities.get_random_valid_pid(self.client)
+    random_existing_pid = d1_client.tests.util.get_random_valid_pid(self.client)
     oll = self.client.resolve(random_existing_pid)
     self.assertIsInstance(oll, d1_common.types.dataoneTypes.ObjectLocationList)
 
@@ -160,7 +161,7 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def test_2020(self):
     """CNRead.getChecksum() returns a valid Checksum when called with an existing PID"""
     checksum = self.client.getChecksum(
-      shared_utilities.get_random_valid_pid(self.client)
+      d1_client.tests.util.get_random_valid_pid(self.client)
     )
     self.assertIsInstance(checksum, d1_common.types.dataoneTypes.Checksum)
 
@@ -177,8 +178,8 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     """CNAuthorization.setRightsHolder() returns a valid result"""
     # It is not desired to change the rights holder on an existing object,
     # so this call is made without a certificate and a 401 is expected.
-    random_existing_pid = shared_utilities.get_random_valid_pid(self.client)
-    serial_version = shared_utilities.serial_version(
+    random_existing_pid = d1_client.tests.util.get_random_valid_pid(self.client)
+    serial_version = d1_client.tests.util.serial_version(
       self.client, random_existing_pid
     )
     random_owner = 'random_owner_903824huimnocrfe'
@@ -188,7 +189,7 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 
   def test_3020(self):
     """CNAuthorization.isAuthorized() returns true or false when called with an existing PID"""
-    random_existing_pid = shared_utilities.get_random_valid_pid(self.client)
+    random_existing_pid = d1_client.tests.util.get_random_valid_pid(self.client)
     a = self.client.isAuthorized(random_existing_pid, 'read')
     self.assertIsInstance(a, bool)
 
@@ -298,8 +299,8 @@ class TestCNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   @unittest.skip("Need to set up stable test env")
   def test_5030(self):
     """CNReplication.setReplicationPolicy()"""
-    random_existing_pid = shared_utilities.get_random_valid_pid(self.client)
-    serial_version = shared_utilities.serial_version(
+    random_existing_pid = d1_client.tests.util.get_random_valid_pid(self.client)
+    serial_version = d1_client.tests.util.serial_version(
       self.client, random_existing_pid
     )
     replication_policy = d1_instance_generator.replicationpolicy.generate()

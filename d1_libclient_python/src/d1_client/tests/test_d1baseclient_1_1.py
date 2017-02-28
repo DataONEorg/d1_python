@@ -33,7 +33,7 @@ import sys
 import unittest
 
 # D1
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -41,13 +41,13 @@ import d1_common.types.exceptions
 # App
 sys.path.append('..')
 import d1_client.baseclient_1_1
-import shared_utilities
+import util
 import shared_settings
 
 
 # noinspection PyUnresolvedReferences
 class TestDataONEBaseClient(
-  d1_common.testcasewithurlcompare.TestCaseWithURLCompare
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.client = d1_client.baseclient.DataONEBaseClient(

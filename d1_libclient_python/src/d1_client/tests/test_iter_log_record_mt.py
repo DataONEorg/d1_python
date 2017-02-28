@@ -34,21 +34,18 @@ import responses # pip install responses
 import requests
 
 # D1
-sys.path.append('..')
-import d1_client.mnclient
-import d1_client.iter.objectlistmt as objectlistmt
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
+sys.path.append('..')
+import d1_client.iter.objectlist_multi as objectlistmt
+import d1_client.mnclient
 import d1_client.mnclient_2_0
-import shared_settings
-import shared_utilities
 import shared_context
+import shared_settings
+import util
 
 import mock_log_records
-
-# logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

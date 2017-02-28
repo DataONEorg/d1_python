@@ -44,11 +44,10 @@ import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 import d1_client.cnclient
-import shared_settings
-import shared_utilities
 import shared_context
+import shared_settings
+import util
 
-logging.basicConfig(level=logging.DEBUG)
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

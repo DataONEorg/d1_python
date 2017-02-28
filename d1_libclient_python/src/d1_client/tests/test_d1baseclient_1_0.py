@@ -31,7 +31,8 @@ import sys
 import unittest
 
 # D1
-import d1_common.testcasewithurlcompare
+import d1_client.tests.util
+import d1_common.test_case_with_url_compare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -42,11 +43,11 @@ sys.path.append('..')
 import d1_client.baseclient
 import shared_context
 import shared_settings
-import shared_utilities
+import util
 
 
 class TestDataONEBaseClientV1(
-  d1_common.testcasewithurlcompare.TestCaseWithURLCompare
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def test_010(self):
     """_slice_sanity_check()"""
@@ -120,7 +121,7 @@ class TestDataONEBaseClientV1(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = shared_utilities.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     response = client.get(pid)
     self.assertTrue(response.read() > 0)
 
@@ -154,7 +155,7 @@ class TestDataONEBaseClientV1(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = shared_utilities.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     sysmeta_pyxb = client.getSystemMetadata(pid)
     self.assertIsInstance(
       sysmeta_pyxb, d1_common.types.dataoneTypes_v1_1.SystemMetadata
@@ -190,7 +191,7 @@ class TestDataONEBaseClientV1(
     if invalid_pid:
       pid = '_bogus_pid_4589734958791283794565'
     else:
-      pid = shared_utilities.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     headers = client.describe(pid)
 
   @unittest.skip(
@@ -223,7 +224,7 @@ class TestDataONEBaseClientV1(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = shared_utilities.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     checksum = client.getChecksum(pid)
     self.assertTrue(
       isinstance(checksum, d1_common.types.dataoneTypes_v1_1.Checksum)
@@ -318,7 +319,7 @@ class TestDataONEBaseClientV1(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = shared_utilities.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     auth = client.isAuthorized(pid, 'read')
     self.assertIsInstance(auth, bool)
 

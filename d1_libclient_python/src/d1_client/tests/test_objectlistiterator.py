@@ -44,7 +44,7 @@ import d1_client.mnclient
 import d1_client.objectlistiterator
 import shared_context
 import shared_settings
-import shared_utilities
+import util
 
 
 class TestObjectListIterator(unittest.TestCase):

@@ -36,7 +36,7 @@ import sys
 import unittest
 
 # D1
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 
 # TODO: Update tests for new OAI-ORE library
 
@@ -52,7 +52,7 @@ import d1_common.testcasewithurlcompare
 # # App
 # sys.path.append(os.pardir)
 # import d1_client.data_package
-# import shared_utilities
+# import util
 # import shared_context
 #
 #
@@ -79,7 +79,7 @@ import d1_common.testcasewithurlcompare
 
 
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
-class TestDataPackage(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestDataPackage(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     # The example_oai_ore.xml contains one resource map that describes one
     # aggregation. The pid for the resource map is "abc". The aggregation

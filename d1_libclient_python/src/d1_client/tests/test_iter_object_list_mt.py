@@ -36,20 +36,18 @@ import requests
 # D1
 sys.path.append('..')
 import d1_client.mnclient
-import d1_client.iter.objectlistmt as objectlistmt
+import d1_client.iter.objectlist_multi as objectlistmt
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 import d1_client.mnclient_2_0
 import shared_settings
-import shared_utilities
+import util
 import shared_context
 
 import mock_object_list
 import iter.objectlistmt
 
-# logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

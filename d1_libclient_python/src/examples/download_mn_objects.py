@@ -27,6 +27,8 @@ shows how to:
 
 # Stdlib
 import codecs
+
+import d1_common.xml
 import datetime
 import hashlib
 import logging
@@ -166,7 +168,7 @@ class MemberNodeObjectDownloader(object):
       os.path.join(self._download_folder, u'{}.sysmeta.xml'.format(
         self._pid_to_filename(pid))), 'wb'
     ) as f:
-      f.write(d1_common.util.pretty_xml(sysmeta_pyxb.toxml()))
+      f.write(d1_common.xml.pretty_xml(sysmeta_pyxb.toxml()))
 
   def _download_object_bytes_to_file(self, pid):
     try:

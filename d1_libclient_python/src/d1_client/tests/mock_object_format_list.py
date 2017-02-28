@@ -65,7 +65,7 @@ def _request_callback(request):
   if 'start' in query_dict:
     n_start = int(query_dict['start'][0])
   else:
-    n_start = N_TOTAL
+    n_start = 0
 
   if 'count' in query_dict:
     n_count = int(query_dict['count'][0])

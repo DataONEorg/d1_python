@@ -35,7 +35,7 @@ import sys
 import unittest
 
 # D1
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
 sys.path.append('..')
@@ -44,8 +44,7 @@ import shared_settings
 
 
 class TestSolrClient(TestCaseWithURLCompare):
-  def setUp(self):
-    logging.basicConfig(level=logging.DEBUG)
+  # def setUp(self):
 
   def tearDown(self):
     pass

@@ -39,7 +39,7 @@ from mock import patch
 import pyxb
 
 # D1
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
 import d1_test.instance_generator.accesspolicy
@@ -54,10 +54,10 @@ import d1_test.instance_generator.systemmetadata
 import d1_client.mnclient_1_1
 import shared_context
 import shared_settings
-import shared_utilities
+import util
 
 
-class TestMNClient_1_1(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestMNClient_1_1(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
       shared_settings.MN_RESPONSES_URL

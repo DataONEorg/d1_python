@@ -33,17 +33,16 @@ import unittest
 
 # D1
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time
 import d1_common.url
-import d1_common.xmlrunner
 
 # App
 sys.path.append('..')
 # import d1_client.d1client
-# import shared_utilities
+# import util
 # import shared_context
 
 MEMBER_NODES = {
@@ -58,7 +57,7 @@ COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn',}
 
 
 class TestDataONEClient(
-  d1_common.testcasewithurlcompare.TestCaseWithURLCompare
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']
