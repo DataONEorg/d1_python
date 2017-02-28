@@ -27,13 +27,21 @@ import hashlib
 import const
 from .types import dataoneTypes
 
-
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 
 DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
   'MD5': hashlib.md5,
   'SHA-1': hashlib.sha1,
 }
+
+
+def is_checksum_correct(sysmeta_pyxb, obj_stream):
+  return checksums_are_equal(
+    create_checksum_object_from_stream(
+      obj_stream, sysmeta_pyxb.checksum.algorithm
+    ),
+    sysmeta_pyxb.checksum,
+  )
 
 
 def is_supported_algorithm(algorithm_str):
@@ -54,7 +62,7 @@ def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
 
 
 def create_checksum_object_from_stream(
-    f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+  f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_stream(f, algorithm)
   checksum_pyxb = dataoneTypes.checksum(checksum_str)
@@ -100,6 +108,18 @@ def get_default_checksum_algorithm():
   return const.DEFAULT_CHECKSUM_ALGORITHM
 
 
-def checksums_are_equal(c1, c2):
-  return c1.value().lower() == c2.value().lower() \
-    and c1.algorithm == c2.algorithm
+def checksums_are_equal(checksum_a_pyxb, checksum_b_pyxb):
+  if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
+    raise ValueError(
+      'Cannot compare checksums generated with different algorithms. '
+      'a="{}" b="{}'
+      .format(checksum_a_pyxb.algorithm, checksum_b_pyxb.algorithm)
+    )
+  return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower() \
+
+
+def format_checksum(checksum_pyxb):
+  return '{}/{}'.format(
+    checksum_pyxb.algorithm.upper().replace('-', ''),
+    checksum_pyxb.value().lower(),
+  )
