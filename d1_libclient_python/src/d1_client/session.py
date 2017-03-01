@@ -110,12 +110,20 @@ class Session(object):
     self._scheme, self._host, self._port, self._path = urlparse.urlparse(
       base_url
     )[:4]
-    self._cert_pem_path = cert_pem_path
-    self._cert_key_path = cert_key_path
+
     self._api_major = 1
     self._api_minor = 0
 
     # kwargs
+
+    # Requests wants cert path as string if single file and tuple if cert/key
+    # pair.
+    if 'cert' not in kwargs:
+      if cert_pem_path is not None:
+        if cert_key_path is not None:
+          kwargs['cert'] = self._cert_pem_path, self._cert_key_path
+        else:
+          kwargs['cert'] = self._cert_pem_path
 
     self._timeout_sec = kwargs.pop('timeout', d1_common.const.RESPONSE_TIMEOUT)
     self._n_retries = kwargs.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
@@ -268,14 +276,6 @@ class Session(object):
     if kwargs.get('headers', None) is None:
       kwargs['headers'] = {}
     kwargs['headers'].update(self._headers)
-    # Requests wants cert path as string if single file and tuple if cert/key
-    # pair.
-    if 'cert' not in kwargs:
-      if self._cert_pem_path is not None:
-        if self._cert_key_path is not None:
-          kwargs['cert'] = self._cert_pem_path, self._cert_key_path
-        else:
-          kwargs['cert'] = self._cert_pem_path
     return kwargs
 
   def _datetime_to_iso8601(self, query):
