@@ -77,7 +77,7 @@ def deserialize(dataone_exception_xml):
 
   trace = getattr(dataone_exception_pyxb, 'traceInformation', None)
 
-  return _create_exception_by_name(
+  return create_exception_by_name(
     dataone_exception_pyxb.name,
     dataone_exception_pyxb.detailCode,
     dataone_exception_pyxb.description,
@@ -91,7 +91,7 @@ def deserialize_from_headers(headers):
   """Deserialize a DataONE Exception that is stored in a map of HTTP headers
   (used in responses to HTTP HEAD requests).
   """
-  return _create_exception_by_name(
+  return create_exception_by_name(
     _get_header(headers, 'DataONE-Exception-Name'),
     _get_header(headers, 'DataONE-Exception-DetailCode'),
     _get_header(headers, 'DataONE-Exception-Description'),
@@ -114,8 +114,8 @@ def _get_header(headers, header):
   return header.replace(' / ', '\n')
 
 
-def _create_exception_by_name(
-  name, detailCode, description, traceInformation, identifier, nodeId
+def create_exception_by_name(
+  name, detailCode="0", description='', traceInformation=None, identifier=None, nodeId=None
 ):
   name_exception_map = {
     u'AuthenticationTimeout': AuthenticationTimeout,
@@ -162,10 +162,10 @@ class DataONEException(Exception):
     self.errorCode = errorCode
     self.detailCode = str(detailCode)
     self.description = description
-    # trace information is stored internally as a unicode string that may or 
+    # trace information is stored internally as a unicode string that may or
     # may not be XML. Serialization will use the XML structure if it is valid,
-    # otherwise it adds the content to the serialized structure as basically a 
-    # a blob of text.
+    # otherwise it adds the content to the serialized structure as a
+    # string.
     self._traceInformation = None
     self.traceInformation = traceInformation
     self.identifier = identifier
@@ -223,11 +223,12 @@ class DataONEException(Exception):
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
     if self._traceInformation is not None:
+      elem = None
       try:
         elem = pyxb.utils.domutils.StringToDOM(self.traceInformation)
       except:
         elem = pyxb.utils.domutils.StringToDOM(
-          "<value>" + self.traceInformation + "</value>"
+          "<x>" + self.traceInformation + "</x>"
         )
       dataone_exception_pyxb.traceInformation = elem.documentElement.firstChild
     if self.identifier is not None:
