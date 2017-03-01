@@ -153,8 +153,8 @@ def _get_all_pages(
       )
     )
     # The pool does not support a clean way to limit the number of queued tasks
-    # that, so we have to access the internals to check the queue size and
-    # wait if necessary.
+    # so we have to access the internals to check the queue size and wait if
+    # necessary.
     # noinspection PyProtectedMember
     while pool._taskqueue.qsize() > max_workers * POOL_SIZE_FACTOR:
       time.sleep(1)

@@ -121,9 +121,9 @@ class Session(object):
     if 'cert' not in kwargs:
       if cert_pem_path is not None:
         if cert_key_path is not None:
-          kwargs['cert'] = self._cert_pem_path, self._cert_key_path
+          kwargs['cert'] = cert_pem_path, cert_key_path
         else:
-          kwargs['cert'] = self._cert_pem_path
+          kwargs['cert'] = cert_pem_path
 
     self._timeout_sec = kwargs.pop('timeout', d1_common.const.RESPONSE_TIMEOUT)
     self._n_retries = kwargs.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
