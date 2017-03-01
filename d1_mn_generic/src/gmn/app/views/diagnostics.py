@@ -34,10 +34,10 @@ import shutil
 import urlparse
 
 # Django.
-from django.conf import settings
+import django.conf
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect, reverse
 import django.apps
 
 # D1.
@@ -68,7 +68,11 @@ def diagnostics(request):
   if 'clear_db' in request.GET:
     delete_all_objects()
     _clear_db()
-  return render_to_response('diag.html', d1_common.const.CONTENT_TYPE_XHTML)
+    return redirect(reverse('diag') + '?done')
+  return render_to_response(
+    'diag.html', context={'done': 1},
+    content_type=d1_common.const.CONTENT_TYPE_XHTML,
+  )
 
 # ------------------------------------------------------------------------------
 # Replication.
@@ -94,8 +98,7 @@ def clear_replication_queue(request):
     app.models.IdNamespace.objects.filter(
       did=rep_queue_model.local_replica.pid.did
     ).delete()
-  return app.views.view_util.http_response_with_boolean_true_type()
-
+  return redirect('diag')
 
 # ------------------------------------------------------------------------------
 # Access Policy.
@@ -126,16 +129,16 @@ def delete_all_access_policies(request):
 
 @app.restrict_to_verb.get
 def echo_session(request):
-  return render_to_response('echo_session.xhtml',
-                            {'subjects': sorted(request.all_subjects_set) },
-                            content_type=d1_common.const.CONTENT_TYPE_XHTML)
+  return render_to_response('echo_session.xhtml', {
+    'subjects': sorted(request.all_subjects_set)
+  }, content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 
 @app.restrict_to_verb.get
 def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
     {'subjects': sorted(app.node_registry.get_cn_subjects() |
-                        settings.DATAONE_TRUSTED_SUBJECTS) },
+                        django.conf.settings.DATAONE_TRUSTED_SUBJECTS) },
     content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 
@@ -199,9 +202,9 @@ def permissions_for_object(request, pid):
 
 
 @app.restrict_to_verb.get
-def get_setting(request, setting):
-  """Get a value from settings.py or settings_site.py"""
-  setting_obj = getattr(settings, setting, '<UNKNOWN SETTING>')
+def get_setting(request, setting_str):
+  """Get a value from django.conf.settings.py or settings_site.py"""
+  setting_obj = getattr(django.conf.settings, setting_str, '<UNKNOWN SETTING>')
   if isinstance(setting_obj, set):
     setting_obj = sorted(list(setting_obj))
   setting_json = json.dumps(setting_obj)
@@ -245,24 +248,14 @@ def _clear_db():
 
 
 def _delete_all_sciobj_files():
-  if os.path.exists(settings.OBJECT_STORE_PATH):
-    shutil.rmtree(settings.OBJECT_STORE_PATH)
-  app.util.create_missing_directories(settings.OBJECT_STORE_PATH)
+  if os.path.exists(django.conf.settings.OBJECT_STORE_PATH):
+    shutil.rmtree(django.conf.settings.OBJECT_STORE_PATH)
+  app.util.create_missing_directories(django.conf.settings.OBJECT_STORE_PATH)
 
 
 def _delete_subjects_and_permissions():
   app.models.Permission.objects.all().delete()
   app.models.Subject.objects.all().delete()
-
-
-@app.restrict_to_verb.get
-def delete_single_object(request, pid):
-  """Note: The semantics for this method are different than for the production
-  method that deletes an object. This method removes all traces that the object
-  ever existed.
-  """
-  _delete_object(pid)
-  return app.views.view_util.http_response_with_boolean_true_type()
 
 
 def _delete_object_from_filesystem(sci_obj):

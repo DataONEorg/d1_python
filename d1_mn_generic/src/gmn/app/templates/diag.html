@@ -1,3 +1,5 @@
+{% load static %}
+
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -5,6 +7,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>Diagnostics, debugging and testing</title>
+
+      <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}">
+
+      <style>
+        .isa_info, .isa_success, .isa_warning, .isa_error {
+            margin: 10px 0px;
+            padding:12px;
+        }
+        .isa_info {
+            color: #00529B;
+            background-color: #BDE5F8;
+        }
+        .isa_success {
+            color: #4F8A10;
+            background-color: #DFF2BF;
+        }
+        .isa_warning {
+            color: #9F6000;
+            background-color: #FEEFB3;
+        }
+        .isa_error {
+            color: #D8000C;
+            background-color: #FFBABA;
+        }
+        .isa_info i, .isa_success i, .isa_warning i, .isa_error i {
+            margin:10px 22px;
+            font-size:2em;
+            vertical-align:middle;
+        }
+      </style>
 
 <script type="text/javascript">
 function delete_confirmation() {
@@ -21,22 +53,34 @@ function clear_replication_queue_confirmation() {
   <body>
     <h1>Diagnostics, debugging and testing</h1>
 
-		<p>Links marked with (modify) must be manually edited in the URL address field
-		to insert the correct parameters.</p>
+        <div class="isa_info">
+            <i class="fa fa-info-circle"></i>
+                Links marked with (modify) must be manually edited in the URL address field
+		        to insert the correct parameters.
+        </div>
+
+    {{ done }}
+
+    {% if done %}
+        <div class="isa_warning">
+             <i class="fa fa-warning"></i>
+             Completed operation.
+        </div>
+    {% endif %}
 
     <h2>Replication</h2>
     <ul>
-      <li><a href="/diag/get_replication_queue">Get replication work queue</a>
-      <li><a href="/diag/get_replication_queue?excludecompleted">Get replication work queue, excluding completed</a>
-      <li><a href="/diag/clear_replication_queue" onclick="return clear_replication_queue_confirmation();">Clear replication work queue</a>
+      <li><a href="{% url 'get_replication_queue' %}">Get replication work queue</a>
+      <li><a href="{% url 'get_replication_queue' %}?excludecompleted">Get replication work queue, excluding completed</a>
+      <li><a href="{% url 'clear_replication_queue' %}" onclick="return clear_replication_queue_confirmation();">Clear replication work queue</a>
     </ul>
 
     <h2>Misc</h2>
     <ul>
-      <li><a href="/diag?clear_db" onclick="return delete_confirmation();">Clear Member Node (delete all objects, logs, subjects and replication queue)</a>
-      <li><a href="/diag/echo_session">List of active subjects for this session</a>
-      <li><a href="/diag/trusted_subjects">List of implicitly trusted subjects</a>
-      <li><a href="/diag/permissions_for_object/my_pid">List of permissions for an object (modify)</a>
+      <li><a href="{% url 'diag' %}?clear_db" onclick="return delete_confirmation();">Clear Member Node (delete all objects, logs, subjects and replication queue)</a>
+      <li><a href="{% url 'echo_session' %}">List of active subjects for this session</a>
+      <li><a href="{% url 'trusted_subjects' %}">List of implicitly trusted subjects</a>
+      <li><a href="{% url 'permissions_for_object' 'my_pid' %}">List of permissions for an object (modify)</a>
     </ul>
 
 	<h2>REST interface (v1 GET methods)</h2>
