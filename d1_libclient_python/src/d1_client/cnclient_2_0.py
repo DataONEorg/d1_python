@@ -76,7 +76,7 @@ class CoordinatingNodeClient_2_0(
   @d1_common.util.utf8_to_unicode
   def deleteObject(self, pid):
     response = self.deleteObjectResponse( pid )
-    return self._read_dataone_type_response(response, d1_common.types.dataoneTypes_v2_0.Identifier)
+    return self._read_dataone_type_response(response, 'Identifier')
 
   #=========================================================================
   # Read API
