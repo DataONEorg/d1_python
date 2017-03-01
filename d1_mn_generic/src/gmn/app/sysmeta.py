@@ -403,7 +403,8 @@ def _access_policy_model_to_pyxb(sciobj_model):
     access_rule_pyxb.permission.append(permission_pyxb)
     access_rule_pyxb.subject.append(permission_model.subject.subject)
     access_policy_pyxb.allow.append(access_rule_pyxb)
-  return access_policy_pyxb
+  if len(access_policy_pyxb.allow):
+    return access_policy_pyxb
 
 # ------------------------------------------------------------------------------
 # Replication Policy
