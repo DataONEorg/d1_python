@@ -86,7 +86,6 @@ class SystemMetadataIteratorMulti(object):
     self._client_dict = client_dict or {}
     self._listObjects_dict = listObjects_dict or {}
     self._getSysMeta_dic = getSysMeta_dict or {}
-    d1_common.type_conversions.set_default_pyxb_namespace(major_version)
 
   def __iter__(self):
     manager = multiprocessing.Manager()
@@ -106,11 +105,17 @@ class SystemMetadataIteratorMulti(object):
 
     try:
       while True:
-        sysmeta_pyxb = queue.get()
-        if sysmeta_pyxb is None:
+        error_dict_or_sysmeta_pyxb = queue.get()
+        if error_dict_or_sysmeta_pyxb is None:
           logging.debug('Received None sentinel value. Stopping iteration')
           break
-        yield sysmeta_pyxb
+        elif isinstance(error_dict_or_sysmeta_pyxb, dict):
+          yield d1_common.types.exceptions.create_exception_by_name(
+            error_dict_or_sysmeta_pyxb['error'],
+            identifier=error_dict_or_sysmeta_pyxb['pid'],
+          )
+        else:
+          yield error_dict_or_sysmeta_pyxb
     except GeneratorExit:
       # If generator is exited before exhausted, provide clean shutdown of the
       # generator by signaling processes to stop, then waiting for them.
@@ -137,7 +142,7 @@ def _get_all_pages(
 
   for page_idx in range(n_pages):
     if namespace.stop:
-      break
+      return
     logging.debug(
       'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
     )
@@ -166,6 +171,8 @@ def _get_page(
   queue, namespace, base_url, page_idx, n_pages, page_size, client_dict,
   listObjects_dict, getSysMeta_dict
 ):
+  if namespace.stop:
+    return
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
   try:
     object_list_pyxb = client.listObjects(
@@ -180,7 +187,7 @@ def _get_page(
     logging.debug('Retrieved page: {}/{}'.format(page_idx + 1, n_pages))
     for object_info_pyxb in object_list_pyxb.objectInfo:
       if namespace.stop:
-        break
+        return
       _get_sysmeta(
         client, queue, object_info_pyxb.identifier.value(), getSysMeta_dict
       )
@@ -190,12 +197,10 @@ def _get_sysmeta(client, queue, pid, getSysMeta_dict):
   try:
     sysmeta_pyxb = client.getSystemMetadata(pid, getSysMeta_dict)
   except d1_common.types.exceptions.DataONEException as e:
-    print '1'*100
-    print type(e)
     logging.debug(
       'getSystemMetadata() failed. pid="{}" error="{}"'.format(pid, str(e))
     )
-    queue.put(e)
+    queue.put({'pid': pid, 'error': e.name})
   else:
     logging.debug('getSystemMetadata() ok. pid="{}"'.format(pid))
     queue.put(sysmeta_pyxb)
