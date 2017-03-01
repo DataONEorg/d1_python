@@ -2,7 +2,6 @@
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_0_6_3/dataoneTypes.xsd">
-    -->
     <!-- <identifier>Identifier0</identifier> -->
     <objectFormat>eml://ecoinformatics.org/eml-2.0.1</objectFormat>
     <size>0</size>
