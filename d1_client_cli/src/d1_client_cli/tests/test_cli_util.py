@@ -33,7 +33,7 @@ import logging
 import sys
 
 # D1
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
 sys.path.append('..')

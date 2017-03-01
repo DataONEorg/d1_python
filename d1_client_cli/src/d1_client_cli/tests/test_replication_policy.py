@@ -37,7 +37,7 @@ sys.path.append('..')
 sys.path.append('../impl')
 
 # D1
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
 import replication_policy

@@ -37,7 +37,7 @@ import StringIO
 
 # D1
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 
 # App
 sys.path.append('..')
@@ -63,7 +63,7 @@ format_ids = format_ids.FormatIDs()
 #===============================================================================
 
 
-class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestSession(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 

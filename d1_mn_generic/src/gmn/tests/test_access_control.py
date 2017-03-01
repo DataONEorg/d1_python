@@ -107,24 +107,6 @@ class TestAccessControl(django.test.TestCase):
       """<?xml version="1.0" ?><accessPolicy><allow><subject>8920_skye_fondled</subject><subject>public</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy>"""
     )
 
-  #  @unittest.skip('TODO')
-  #  def test(self):
-  #    # Delete the test object.
-  #    client.test_delete_single_object(pid)
-  #
-  #    # Verify that the test object no longer exists.
-  #    self.assertRaises(xml.parsers.expat.ExpatError, client.describe, pid)
-  #
-  #    # Create object containing random bytes.
-  #    obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
-  #
-  #    # Create sysmeta_pyxb.
-  #    sysmeta_pyxb = self.gen_sysmeta(
-  #      pid, 1024,
-  #      hashlib.md5(obj_str).hexdigest(),
-  #      datetime.datetime.now(),
-  #      owner=test_owner_1)
-
   @unittest.skip('TODO')
   def test_020(self):
     """Set access policy"""
