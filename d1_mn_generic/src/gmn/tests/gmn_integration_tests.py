@@ -59,6 +59,7 @@ import d1_client.mnclient_2_0
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
+import d1_common.system_metadata
 import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.types.exceptions
@@ -75,9 +76,9 @@ import gmn_test_client
 # Configuration
 
 # GMN_URL = 'http://192.168.1.128:8000'
-# GMN_URL = 'http://0.0.0.0:8000'
+GMN_URL = 'http://0.0.0.0:8000'
 # GMN_URL = 'https://192.168.1.128'
-GMN_URL = 'https://gmn-s.lternet.edu/mn'
+# GMN_URL = 'https://gmn-s.lternet.edu/mn'
 
 OBJ_PATH = './test_objects'
 OBJ_URL = 'http://localhost/test_objects/'
@@ -109,6 +110,24 @@ AUTH_SPECIFIC_USER = 'singing.3369'
 AUTH_SPECIFIC_USER_OWNS = 19
 AUTH_SPECIFIC_AND_OBJ_FORMAT = 19
 
+DEFAULT_ACCESS_RULE_LIST = [
+  (
+    ['subj1',],
+    ['read'],
+  ),
+  (
+    ['subj2', 'subj3', 'subj4'],
+    ['read', 'write'],
+  ),
+  (
+    ['subj5', 'subj6', 'subj7', 'subj8'],
+    ['read', 'changePermission'],
+  ),
+  (
+    ['subj9', 'subj10', 'subj11', 'subj12'],
+    ['changePermission'],
+  ),
+]
 
 class GMNIntegrationTests(unittest.TestCase):
   def setUp(self):
@@ -199,7 +218,7 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _generate_sysmeta(
     self, binding, pid, sciobj_str, owner, obsoletes=None, obsoleted_by=None,
-    sid=None
+    sid=None, access_rule_list=None
   ):
     now = datetime.datetime.now()
     sysmeta_pyxb = binding.systemMetadata()
@@ -220,25 +239,22 @@ class GMNIntegrationTests(unittest.TestCase):
     sysmeta_pyxb.authoritativeMemberNode = 'MN1'
     sysmeta_pyxb.obsoletes = obsoletes
     sysmeta_pyxb.obsoletedBy = obsoleted_by
-    sysmeta_pyxb.accessPolicy = self._generate_access_policy(binding)
+    sysmeta_pyxb.accessPolicy = self._generate_access_policy(binding, access_rule_list)
     sysmeta_pyxb.replicationPolicy = self._create_replication_policy_pyxb(binding)
     return sysmeta_pyxb
 
   def _generate_access_policy(self, binding, access_rule_list=None):
-    if access_rule_list is None:
-      access_rule_list = [
-        ['subj1', 'read'],
-        ['subj2', 'write'],
-        # ['subj3', 'modify'],
-      ]
-    accessPolicy = binding.accessPolicy()
-    for subject, permission in access_rule_list:
-      accessRule = binding.AccessRule()
-      accessRule.subject.append(subject)
-      permission_pyxb = binding.Permission(permission)
-      accessRule.permission.append(permission_pyxb)
-      accessPolicy.append(accessRule)
-    return accessPolicy
+    access_rule_list = access_rule_list or DEFAULT_ACCESS_RULE_LIST
+    access_policy = binding.accessPolicy()
+    for subject_list, permission_list in access_rule_list:
+      access_rule_pyxb = binding.AccessRule()
+      for subject_str in subject_list:
+        access_rule_pyxb.subject.append(subject_str)
+      for permission_str in permission_list:
+        permission_pyxb = binding.Permission(permission_str)
+        access_rule_pyxb.permission.append(permission_pyxb)
+      access_policy.append(access_rule_pyxb)
+    return access_policy
 
   def _create_replication_policy_pyxb(
     self,
@@ -260,12 +276,13 @@ class GMNIntegrationTests(unittest.TestCase):
     return rep_pyxb
 
   def _generate_test_object(
-    self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None
+    self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None,
+      access_rule_list=None
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
     sysmeta_pyxb = self._generate_sysmeta(
       binding, pid, sciobj, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC, obsoletes,
-      obsoleted_by, sid
+      obsoleted_by, sid, access_rule_list
     )
     return sciobj, sysmeta_pyxb
 
@@ -299,10 +316,11 @@ class GMNIntegrationTests(unittest.TestCase):
     return '{}_{}'.format(tag_str, self._random_str())
 
   def _create(
-    self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None
+    self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
+      access_rule_list=None
   ):
     sci_obj_str, sysmeta_pyxb = self._generate_test_object(
-      binding, pid, obsoletes, obsoleted_by, sid
+      binding, pid, obsoletes, obsoleted_by, sid, access_rule_list
     )
     client.create(
       pid, sci_obj_str, sysmeta_pyxb,
@@ -357,7 +375,7 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _pyxb_to_pretty_xml(self, obj_pyxb):
     xml_str = obj_pyxb.toxml().encode('utf-8')
-    return d1_common.util.pretty_xml(xml_str)
+    return d1_common.xml.pretty_xml(xml_str)
 
   def _restore_sysmeta_mn_controlled_fields(self, sysmeta_a_pyxb, sysmeta_b_pyxb):
     """Copy values that the MN overwrites from sysmeta_b to sysmeta_a so that
@@ -2387,6 +2405,14 @@ class GMNIntegrationTests(unittest.TestCase):
       len(ver1_sysmeta_pyxb.replicationPolicy.blockedMemberNode), 3
     )
     self._restore_sysmeta_mn_controlled_fields(ver1_sysmeta_pyxb, ver2_sysmeta_pyxb)
+    # TODO: GMN only preserves a "normalized" version of the access policy,
+    # which the sysmeta comparison utility cannot check for equivalency.
+    self.assertIsNotNone(ver1_sysmeta_pyxb.accessPolicy)
+    self.assertIsNotNone(ver2_sysmeta_pyxb.accessPolicy)
+    ver1_sysmeta_pyxb.accessPolicy = None
+    ver2_sysmeta_pyxb.accessPolicy = None
+    # print self._pyxb_to_pretty_xml(ver1_sysmeta_pyxb)
+    # print self._pyxb_to_pretty_xml(ver2_sysmeta_pyxb)
     self.assertTrue(d1_common.xml.is_sysmeta_equivalent(
       ver1_sysmeta_pyxb.toxml(),
       ver2_sysmeta_pyxb.toxml(),
@@ -2427,7 +2453,23 @@ class GMNIntegrationTests(unittest.TestCase):
     ))
 
   #
-  # Test wrapped mode
+  # Access Policy
+  #
+
+  # def _pyxb_access_policy_to_effective
+
+  def test_3080(self):
+    """"""
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    in_sciobj_str, in_sysmeta_pyxb = self._create(client_v2, v2, base_pid, base_sid)
+    out_sciobj_str, out_sysmeta_pyxb = self._get(client_v2, base_pid)
+    self._restore_sysmeta_mn_controlled_fields(in_sysmeta_pyxb, out_sysmeta_pyxb)
+    self.assertTrue(d1_common.system_metadata.is_equivalent(in_sysmeta_pyxb, out_sysmeta_pyxb))
+
+  #
+  # Test proxy mode
   #
 
   def _create_and_compare(
@@ -2508,7 +2550,7 @@ class GMNIntegrationTests(unittest.TestCase):
     sysmeta_pyxb = self._generate_sysmeta(
       v1, pid, pid, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
     )
-    # self._create_wrapped_sciobj(client, url, sysmeta_pyxb, pid)
+    # self._create_proxy_sciobj(client, url, sysmeta_pyxb, pid)
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest,
       self._create_proxied_sciobj,
