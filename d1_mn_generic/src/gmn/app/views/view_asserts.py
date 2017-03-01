@@ -29,7 +29,7 @@ import contextlib
 import urlparse
 
 # Django.
-from django.conf import settings
+import django.conf
 import app.sysmeta_util
 
 # 3rd party.
@@ -306,11 +306,11 @@ def xml_document_not_too_large(flo):
   """Because the entire XML document must be in memory while being deserialized
   (and probably in several copies at that), limit the size that can be
   handled."""
-  if flo.size > settings.MAX_XML_DOCUMENT_SIZE:
+  if flo.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       u'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
-      .format(flo_size, settings.MAX_XML_DOCUMENT_SIZE)
+      .format(flo_size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
     )
 
 

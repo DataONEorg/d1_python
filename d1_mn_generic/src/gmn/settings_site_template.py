@@ -414,7 +414,7 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # on the remote server. GMN has the ability to supply credentials to the remote
 # server via simple HTTP Basic Authentication. This type of authentication is
 # secure only when it is performed over an HTTPS connection. The username and
-# password provided here must provide access to all the wrapped objects handled
+# password provided here must provide access to all the proxied objects handled
 # by this instance of GMN. Because of this, this type of authentication is ONLY
 # secure if ALL subjects that have permission to create objects on this GMN
 # instance also have full access to ALL objects on the remote server. The attack

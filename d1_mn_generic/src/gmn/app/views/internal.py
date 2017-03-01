@@ -31,7 +31,7 @@ import os
 import platform
 
 # Django.
-from django.conf import settings
+import django.conf
 from django.db.models import Avg, Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -85,7 +85,7 @@ def home(request):
 
   n_storage_used = app.models.ScienceObject.objects\
     .aggregate(Sum('size'))['size__sum'] or 0
-  n_storage_free = _get_free_space(settings.OBJECT_STORE_PATH)
+  n_storage_free = _get_free_space(django.conf.settings.OBJECT_STORE_PATH)
   storage_space = u'{} GiB / {} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3
   )
@@ -94,9 +94,9 @@ def home(request):
 
   server_time = datetime.datetime.utcnow()
 
-  node_identifier = settings.NODE_IDENTIFIER
-  node_name = settings.NODE_NAME
-  node_description = settings.NODE_DESCRIPTION
+  node_identifier = django.conf.settings.NODE_IDENTIFIER
+  node_name = django.conf.settings.NODE_NAME
+  node_description = django.conf.settings.NODE_DESCRIPTION
 
   return render_to_response(
     'home.html', locals(),

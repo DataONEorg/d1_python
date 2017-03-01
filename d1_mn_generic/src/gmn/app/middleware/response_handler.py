@@ -31,7 +31,7 @@ import datetime
 import django.db
 import django.http
 from django.db.models import Max
-from django.conf import settings
+import django.conf
 
 # DataONE APIs.
 import d1_common.type_conversions
@@ -59,14 +59,14 @@ class ResponseHandler(object):
         type(view_result), str(view_result)
       )
     self._debug_mode_responses(request, response)
-    # if settings.DEBUG_GMN:
+    # if django.conf.settings.DEBUG_GMN:
     #   self._assert_correct_return_type(request, response)
     return response
 
   def _debug_mode_responses(self, request, response):
     """Extra functionality available in debug mode.
     """
-    if settings.DEBUG_GMN:
+    if django.conf.settings.DEBUG_GMN:
       # If pretty printed output was requested, force the content type to text.
       # This causes the browser to not try to format the output in any way.
       if 'pretty' in request.GET:
@@ -129,7 +129,7 @@ class ResponseHandler(object):
       logEntry.subject = row.subject.subject
       logEntry.event = row.event.event
       logEntry.dateLogged = row.timestamp
-      logEntry.nodeIdentifier = settings.NODE_IDENTIFIER
+      logEntry.nodeIdentifier = django.conf.settings.NODE_IDENTIFIER
       log.logEntry.append(logEntry)
     log.start = start
     log.count = len(log.logEntry)

@@ -34,7 +34,7 @@ import os
 # Django.
 from django.http import HttpResponse
 import django.core.exceptions
-from django.conf import settings
+import django.conf
 
 # 3rd party.
 import hotshot
@@ -44,7 +44,7 @@ import hotshot.stats
 class ProfilingHandler(object):
   def __init__(self):
     # Disable this middleware layer if Django is not running in debug mode.
-    if settings.DEBUG == False:
+    if django.conf.settings.DEBUG == False:
       raise django.core.exceptions.MiddlewareNotUsed
 
   def process_view(self, request, view, *args, **kwargs):

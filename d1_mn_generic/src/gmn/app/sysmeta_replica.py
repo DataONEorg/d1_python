@@ -22,7 +22,7 @@
 """
 
 # Django.
-from django.conf import settings
+import django.conf
 from django.db.models import Sum
 
 # D1.
@@ -108,7 +108,7 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
 
 
 def assert_request_complies_with_replication_policy(sysmeta_pyxb):
-  if not settings.NODE_REPLICATE:
+  if not django.conf.settings.NODE_REPLICATE:
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'This node does not currently accept replicas. The replicate '
       u'attribute in the node element of the Node document is set to false '
@@ -116,33 +116,33 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
       u'Node document.'
     )
 
-  if settings.REPLICATION_MAXOBJECTSIZE != -1:
-    if sysmeta_pyxb.size > settings.REPLICATION_MAXOBJECTSIZE:
+  if django.conf.settings.REPLICATION_MAXOBJECTSIZE != -1:
+    if sysmeta_pyxb.size > django.conf.settings.REPLICATION_MAXOBJECTSIZE:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'The object is over the size limit accepted by this node. '
         u'object_size={}, max_size={}'
-        .format(settings.REPLICATION_MAXOBJECTSIZE, sysmeta_pyxb.size)
+        .format(django.conf.settings.REPLICATION_MAXOBJECTSIZE, sysmeta_pyxb.size)
       )
 
-  if settings.REPLICATION_SPACEALLOCATED != -1:
+  if django.conf.settings.REPLICATION_SPACEALLOCATED != -1:
     total = get_total_size_of_replicas()
-    if sysmeta_pyxb.size + total > settings.REPLICATION_SPACEALLOCATED:
+    if sysmeta_pyxb.size + total > django.conf.settings.REPLICATION_SPACEALLOCATED:
       raise d1_common.types.exceptions.InvalidRequest(
         0,
         u'The total size allocated for replicas on this node would be exceeded. '
         u'replica={} bytes, used={} bytes, allocated={} bytes'
-        .format(sysmeta_pyxb.size, total, settings.REPLICATION_MAXOBJECTSIZE)
+        .format(sysmeta_pyxb.size, total, django.conf.settings.REPLICATION_MAXOBJECTSIZE)
       )
 
-  if len(settings.REPLICATION_ALLOWEDNODE):
-    if sysmeta_pyxb.originMemberNode.value() not in settings.REPLICATION_ALLOWEDNODE:
+  if len(django.conf.settings.REPLICATION_ALLOWEDNODE):
+    if sysmeta_pyxb.originMemberNode.value() not in django.conf.settings.REPLICATION_ALLOWEDNODE:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept replicas from originating node. '
         u'originating_node="{}"'.format(sysmeta_pyxb.originMemberNode.value())
       )
 
-  if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
-    if sysmeta_pyxb.formatId.value() not in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
+  if len(django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
+    if sysmeta_pyxb.formatId.value() not in django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept objects of specified format. format="{}"'
         .format(sysmeta_pyxb.formatId.value())

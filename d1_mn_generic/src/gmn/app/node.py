@@ -44,7 +44,8 @@
 # </ns1:node>
 
 # Django.
-from django.conf import settings
+import d1_common.xml
+import django.conf
 
 # D1.
 import d1_common.types.dataoneTypes_v1 as v1
@@ -56,7 +57,7 @@ import d1_common.util
 
 def get_pretty_xml(major_version_int=2):
   node_xml = get_xml(major_version_int)
-  return d1_common.util.pretty_xml(node_xml)
+  return d1_common.xml.pretty_xml(node_xml)
 
 
 def get_xml(major_version_int):
@@ -72,33 +73,33 @@ def _get_pyxb(major_version_int):
   binding = v1 if major_version_int == 1 else v2
 
   node_pyxb = binding.node()
-  node_pyxb.identifier = settings.NODE_IDENTIFIER
-  node_pyxb.name = settings.NODE_NAME
-  node_pyxb.description = settings.NODE_DESCRIPTION
-  node_pyxb.baseURL = settings.NODE_BASEURL
-  node_pyxb.replicate = settings.NODE_REPLICATE
-  node_pyxb.synchronize = settings.NODE_SYNCHRONIZE
+  node_pyxb.identifier = django.conf.settings.NODE_IDENTIFIER
+  node_pyxb.name = django.conf.settings.NODE_NAME
+  node_pyxb.description = django.conf.settings.NODE_DESCRIPTION
+  node_pyxb.baseURL = django.conf.settings.NODE_BASEURL
+  node_pyxb.replicate = django.conf.settings.NODE_REPLICATE
+  node_pyxb.synchronize = django.conf.settings.NODE_SYNCHRONIZE
   node_pyxb.type = 'mn'
-  node_pyxb.state = settings.NODE_STATE
-  node_pyxb.subject.append(binding.Subject(settings.NODE_SUBJECT))
-  node_pyxb.contactSubject.append(binding.Subject(settings.NODE_CONTACT_SUBJECT))
+  node_pyxb.state = django.conf.settings.NODE_STATE
+  node_pyxb.subject.append(binding.Subject(django.conf.settings.NODE_SUBJECT))
+  node_pyxb.contactSubject.append(binding.Subject(django.conf.settings.NODE_CONTACT_SUBJECT))
   node_pyxb.services = _create_service_list_pyxb(binding, major_version_int)
-  if settings.NODE_SYNCHRONIZE:
+  if django.conf.settings.NODE_SYNCHRONIZE:
     node_pyxb.synchronization = _create_synchronization_policy_pyxb(binding)
-  if settings.NODE_REPLICATE:
+  if django.conf.settings.NODE_REPLICATE:
     node_pyxb.nodeReplicationPolicy = _create_replication_policy_pyxb(binding)
   return node_pyxb
 
 
 def _create_synchronization_policy_pyxb(binding):
   schedule_pyxb = binding.Schedule()
-  schedule_pyxb.year = settings.NODE_SYNC_SCHEDULE_YEAR
-  schedule_pyxb.mon = settings.NODE_SYNC_SCHEDULE_MONTH
-  schedule_pyxb.wday = settings.NODE_SYNC_SCHEDULE_WEEKDAY
-  schedule_pyxb.mday = settings.NODE_SYNC_SCHEDULE_MONTHDAY
-  schedule_pyxb.hour = settings.NODE_SYNC_SCHEDULE_HOUR
-  schedule_pyxb.min = settings.NODE_SYNC_SCHEDULE_MINUTE
-  schedule_pyxb.sec = settings.NODE_SYNC_SCHEDULE_SECOND
+  schedule_pyxb.year = django.conf.settings.NODE_SYNC_SCHEDULE_YEAR
+  schedule_pyxb.mon = django.conf.settings.NODE_SYNC_SCHEDULE_MONTH
+  schedule_pyxb.wday = django.conf.settings.NODE_SYNC_SCHEDULE_WEEKDAY
+  schedule_pyxb.mday = django.conf.settings.NODE_SYNC_SCHEDULE_MONTHDAY
+  schedule_pyxb.hour = django.conf.settings.NODE_SYNC_SCHEDULE_HOUR
+  schedule_pyxb.min = django.conf.settings.NODE_SYNC_SCHEDULE_MINUTE
+  schedule_pyxb.sec = django.conf.settings.NODE_SYNC_SCHEDULE_SECOND
   sync = binding.Synchronization()
   sync.schedule = schedule_pyxb
   return sync
@@ -106,13 +107,13 @@ def _create_synchronization_policy_pyxb(binding):
 
 def _create_replication_policy_pyxb(binding):
   replication_pyxb = binding.nodeReplicationPolicy()
-  if settings.REPLICATION_MAXOBJECTSIZE != -1:
-    replication_pyxb.maxObjectSize = settings.REPLICATION_MAXOBJECTSIZE
-  if settings.REPLICATION_SPACEALLOCATED != -1:
-    replication_pyxb.spaceAllocated = settings.REPLICATION_SPACEALLOCATED
-  for allowed_node in settings.REPLICATION_ALLOWEDNODE:
+  if django.conf.settings.REPLICATION_MAXOBJECTSIZE != -1:
+    replication_pyxb.maxObjectSize = django.conf.settings.REPLICATION_MAXOBJECTSIZE
+  if django.conf.settings.REPLICATION_SPACEALLOCATED != -1:
+    replication_pyxb.spaceAllocated = django.conf.settings.REPLICATION_SPACEALLOCATED
+  for allowed_node in django.conf.settings.REPLICATION_ALLOWEDNODE:
     replication_pyxb.allowedNode.append(binding.NodeReference(allowed_node))
-  for allowed_object in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
+  for allowed_object in django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
     replication_pyxb.allowedObjectFormat.append(
       binding.ObjectFormatIdentifier(allowed_object)
     )

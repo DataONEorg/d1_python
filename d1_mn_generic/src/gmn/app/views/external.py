@@ -36,8 +36,8 @@ import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
 import requests
-from django.conf import settings
-from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
+import django.conf
+import django.http
 
 import app.auth
 import app.db_filter
@@ -55,6 +55,7 @@ import app.sysmeta_validate
 import app.util
 import app.views.view_asserts
 import app.views.view_util
+
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
@@ -74,7 +75,7 @@ def dispatch_object(request, did):
   elif request.method == 'DELETE':
     return delete_object(request, did)
   else:
-    return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
+    return django.http.HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
 
 def dispatch_object_list(request):
@@ -83,7 +84,7 @@ def dispatch_object_list(request):
   elif request.method == 'POST':
     return post_object_list(request)
   else:
-    return HttpResponseNotAllowed(['GET', 'POST'])
+    return django.http.HttpResponseNotAllowed(['GET', 'POST'])
 
 # ==============================================================================
 # Public API
@@ -158,7 +159,7 @@ def get_node(request):
   """
   major_version_int = 2 if app.views.view_util.is_v2_api(request) else 1
   node_pretty_xml = app.node.get_pretty_xml(major_version_int)
-  return HttpResponse(node_pretty_xml, d1_common.const.CONTENT_TYPE_XML)
+  return django.http.HttpResponse(node_pretty_xml, d1_common.const.CONTENT_TYPE_XML)
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API
@@ -195,7 +196,7 @@ def get_object(request, pid):
   """
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
   content_type_str = _content_type_from_format(sciobj.format.format)
-  response = StreamingHttpResponse(
+  response = django.http.StreamingHttpResponse(
     _get_sciobj_iter(sciobj),
     content_type_str
   )
@@ -228,13 +229,13 @@ def _get_sciobj_iter_local(pid):
 
 def _get_sciobj_iter_remote(url):
   try:
-    response = requests.get(url, stream=True, timeout=settings.PROXY_MODE_STREAM_TIMEOUT)
+    response = requests.get(url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT)
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'Unable to open proxied object for streaming. error="{}"'.format(e.message)
     )
   else:
-    return response.iter_content(chunk_size=settings.NUM_CHUNK_BYTES)
+    return response.iter_content(chunk_size=django.conf.settings.NUM_CHUNK_BYTES)
 
 
 @app.restrict_to_verb.get
@@ -258,7 +259,7 @@ def head_object(request, pid):
   """MNRead.describe(session, did) → DescribeResponse
   """
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
-  response = HttpResponse()
+  response = django.http.HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
   app.event_log.read(pid, request)
@@ -299,7 +300,7 @@ def get_checksum(request, pid):
   # Log the access of this object.
   # TODO: look into log type other than 'read'
   app.event_log.read(pid, request)
-  return HttpResponse(checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML)
+  return django.http.HttpResponse(checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML)
 
 
 @app.restrict_to_verb.get
@@ -376,7 +377,7 @@ def get_replica(request, pid):
   """
   _assert_node_is_authorized(request, pid)
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
-  response = HttpResponse()
+  response = django.http.HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   response._container = _get_sciobj_iter(sciobj)
   response._is_str = False
@@ -387,7 +388,7 @@ def get_replica(request, pid):
 
 def _assert_node_is_authorized(request, pid):
   try:
-    client = d1_client.cnclient.CoordinatingNodeClient(settings.DATAONE_ROOT)
+    client = d1_client.cnclient.CoordinatingNodeClient(django.conf.settings.DATAONE_ROOT)
     client.isNodeAuthorized(request.primary_subject_str, pid)
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(
@@ -399,7 +400,7 @@ def _assert_node_is_authorized(request, pid):
   except Exception as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
-        settings.DATAONE_ROOT, e.message)
+        django.conf.settings.DATAONE_ROOT, e.message)
     )
 
 @app.restrict_to_verb.put
@@ -491,7 +492,7 @@ def post_refresh_system_metadata(request):
 # - Check that the submitted SysMeta does NOT include obsoletes or obsoletedBy
 #
 # update()
-# - If settings.REQUIRE_WHITELIST_FOR_UPDATE is True:
+# - If django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE is True:
 #   - Check if subject is in whitelist for creating NEW objects on MN.
 # - Obtain a write lock on the NEW pid
 # - Check that the OLD pid exists
@@ -548,7 +549,7 @@ def post_object_list(request):
 def put_object(request, old_pid):
   """MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   """
-  if settings.REQUIRE_WHITELIST_FOR_UPDATE:
+  if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
     app.auth.assert_create_update_delete_permission(request)
   app.util.coerce_put_post(request)
   app.views.view_asserts.post_has_mime_parts(

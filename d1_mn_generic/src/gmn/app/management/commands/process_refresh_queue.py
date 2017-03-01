@@ -28,7 +28,7 @@ import logging
 # Django.
 import django.core.management.base
 from django.db import transaction
-from django.conf import settings
+import django.conf
 
 # D1.
 import d1_client.cnclient
@@ -92,18 +92,18 @@ class SysMetaRefreshQueueProcessor(object):
         u'System Metadata refresh failed with exception:'
       )
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
-      if num_failed_attempts < settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
+      if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
         logging.warning(
           u'SysMeta refresh failed and will be retried during next processing. '
           u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+          format(num_failed_attempts, django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
         )
       else:
         logging.warning(
           u'SysMeta refresh failed and has reached the maximum number of '
           u'attempts. Recording the request as permanently failed and '
           u'removing from queue. failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+          format(num_failed_attempts, django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
         )
         self._update_request_status(queue_model, 'failed')
     return True
@@ -139,8 +139,8 @@ class SysMetaRefreshQueueProcessor(object):
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      base_url=django.conf.settings.DATAONE_ROOT, cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
   def _get_system_metadata(self, queue_model):

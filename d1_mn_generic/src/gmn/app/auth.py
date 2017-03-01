@@ -28,7 +28,7 @@ for performing the attempted operation.
 import functools
 
 # Django.
-from django.conf import settings
+import django.conf
 import django.core.cache
 
 # D1.
@@ -96,7 +96,7 @@ def level_to_action(level):
 def get_trusted_subjects():
   return (
     app.node_registry.get_cn_subjects() |
-    settings.DATAONE_TRUSTED_SUBJECTS |
+    django.conf.settings.DATAONE_TRUSTED_SUBJECTS |
     {_get_client_side_certificate_subject()}
   )
 
@@ -126,11 +126,11 @@ def _get_client_side_certificate_subject():
 
 def _get_client_side_certificate_pem():
   try:
-    return open(settings.CLIENT_CERT_PATH, 'rb').read()
+    return open(django.conf.settings.CLIENT_CERT_PATH, 'rb').read()
   except EnvironmentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'Error reading client side certificate. cert_path="{}", error="{}"'
-      .format(settings.CLIENT_CERT_PATH, str(e))
+      .format(django.conf.settings.CLIENT_CERT_PATH, str(e))
     )
 
 
@@ -247,7 +247,7 @@ def assert_list_objects_access(f):
   """
   functools.wraps(f)
   def wrap(request, *args, **kwargs):
-    if not settings.PUBLIC_OBJECT_LIST:
+    if not django.conf.settings.PUBLIC_OBJECT_LIST:
       assert_trusted(request)
     return f(request, *args, **kwargs)
   wrap.__doc__ = f.__doc__
@@ -260,7 +260,7 @@ def assert_get_log_records_access(f):
   """
   functools.wraps(f)
   def wrap(request, *args, **kwargs):
-    if not settings.PUBLIC_LOG_RECORDS:
+    if not django.conf.settings.PUBLIC_LOG_RECORDS:
       assert_trusted(request)
     return f(request, *args, **kwargs)
   wrap.__doc__ = f.__doc__

@@ -24,8 +24,9 @@
 import logging
 
 # Django.
+import d1_common.xml
 import django.core.management.base
-from django.conf import settings
+import django.conf
 
 # D1.
 import d1_common.util
@@ -73,7 +74,7 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, command_str):
     node_pyxb = app.node.get_pyxb()
     if command_str == 'view':
-      logging.info(d1_common.util.pretty_xml(node_pyxb.toxml()))
+      logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml()))
     elif command_str == 'register':
       self._register(node_pyxb)
     elif command_str == 'update':
@@ -94,7 +95,7 @@ class Command(django.core.management.base.BaseCommand):
     util.abort_if_stand_alone_instance()
     client = self._create_client()
     success_bool = client.updateNodeCapabilities(
-      settings.NODE_IDENTIFIER, node_pyxb
+      django.conf.settings.NODE_IDENTIFIER, node_pyxb
     )
     if not success_bool:
       raise django.core.management.base.CommandError(
@@ -103,7 +104,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      settings.DATAONE_ROOT, cert_pem_path=settings.CLIENT_CERT_PATH,
-      cert_key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      django.conf.settings.DATAONE_ROOT, cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

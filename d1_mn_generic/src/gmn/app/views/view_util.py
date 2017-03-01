@@ -27,7 +27,7 @@ import functools
 import re
 
 # Django.
-from django.conf import settings
+import django.conf
 import django.core.files.move
 from django.http import HttpResponse
 
@@ -105,8 +105,8 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
 def set_mn_controlled_values(request, sysmeta_pyxb):
   now_datetime = datetime.datetime.utcnow()
   _pyxb_set_with_override(sysmeta_pyxb, 'submitter', request.primary_subject_str)
-  _pyxb_set_with_override(sysmeta_pyxb, 'originMemberNode', settings.NODE_IDENTIFIER)
-  _pyxb_set_with_override(sysmeta_pyxb, 'authoritativeMemberNode', settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_pyxb, 'originMemberNode', django.conf.settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_pyxb, 'authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER)
   _pyxb_set_with_override(sysmeta_pyxb, 'dateSysMetadataModified', now_datetime)
   _pyxb_set_with_override(sysmeta_pyxb, 'serialVersion', 1)
   _pyxb_set_with_override(sysmeta_pyxb, 'dateUploaded', now_datetime)
@@ -116,7 +116,7 @@ def _pyxb_set_with_override(pyxb, attr_str, value):
   """See the description of TRUST_CLIENT_* in settings_site.py.
   """
   is_trusted_from_client = getattr(
-    settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
+    django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
   )
   if is_trusted_from_client:
     if app.sysmeta_util.get_value(pyxb, attr_str) is None:

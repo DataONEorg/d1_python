@@ -29,7 +29,7 @@ import sys
 import tempfile
 
 # Django
-from django.conf import settings
+import django.conf
 import django.core.management.base
 
 # App
@@ -72,7 +72,7 @@ def abort_if_other_instance_is_running():
 
 
 def abort_if_stand_alone_instance():
-  if settings.STAND_ALONE:
+  if django.conf.settings.STAND_ALONE:
     raise django.core.management.base.CommandError(
       u'Aborted: Command not applicable in stand-alone instance of GMN. '
       u'See STAND_ALONE in settings_site.py.'

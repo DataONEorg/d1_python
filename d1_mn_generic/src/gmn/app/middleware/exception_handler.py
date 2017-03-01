@@ -50,7 +50,7 @@ import d1_common.ext.mimeparser
 
 # Django.
 from django.http import HttpResponse
-from django.conf import settings
+import django.conf
 
 # D1
 import d1_common.types.exceptions
@@ -74,7 +74,7 @@ class ExceptionHandler(object):
   # DataONE exception
 
   def handle_dataone_exception(self):
-    self._exception.nodeId = settings.NODE_IDENTIFIER
+    self._exception.nodeId = django.conf.settings.NODE_IDENTIFIER
     self._exception.traceInformation = self._traceback_to_text()
     if self._request.method != 'HEAD':
       return self._serialize_dataone_exception_for_regular_request()
@@ -103,9 +103,9 @@ class ExceptionHandler(object):
   # Internal exception
 
   def _handle_internal_exception(self):
-    if settings.DEBUG_PYCHARM:
+    if django.conf.settings.DEBUG_PYCHARM:
       self._open_exception_location_in_pycharm()
-    if settings.DEBUG:
+    if django.conf.settings.DEBUG:
       return self._django_html_exception_page()
     else:
       return self._wrap_internal_exception_in_dataone_exception()
@@ -167,7 +167,7 @@ class ExceptionHandler(object):
     src_path, src_line_num = self._get_project_location()
     try:
       subprocess.call([
-        os.path.expanduser(settings.PYCHARM_BIN),
+        os.path.expanduser(django.conf.settings.PYCHARM_BIN),
         '--line', src_line_num,
         src_path]
       )
@@ -193,7 +193,7 @@ class ExceptionHandler(object):
     location_tup = ()
     while exc_traceback:
       co = exc_traceback.tb_frame.f_code
-      if co.co_filename.startswith(settings.BASE_DIR):
+      if co.co_filename.startswith(django.conf.settings.BASE_DIR):
         location_tup = co.co_filename, str(traceback.tb_lineno(exc_traceback))
       exc_traceback = exc_traceback.tb_next
     return location_tup

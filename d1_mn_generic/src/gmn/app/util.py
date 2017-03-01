@@ -31,7 +31,7 @@ import traceback
 import urlparse
 
 # Django.
-from django.conf import settings
+import django.conf
 
 
 # App.
@@ -55,7 +55,7 @@ def sciobj_file_path(pid):
   """
   hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
   return os.path.join(
-    settings.OBJECT_STORE_PATH, hash_str[:2], hash_str[2:4], hash_str,
+    django.conf.settings.OBJECT_STORE_PATH, hash_str[:2], hash_str[2:4], hash_str,
   )
 
 
@@ -133,7 +133,7 @@ def coerce_put_post(request):
 
 
 def add_basic_auth_header_if_enabled(headers):
-  if settings.PROXY_MODE_BASIC_AUTH_ENABLED:
+  if django.conf.settings.PROXY_MODE_BASIC_AUTH_ENABLED:
     headers._update((_mk_http_basic_auth_header(),))
 
 
@@ -142,8 +142,8 @@ def _mk_http_basic_auth_header():
     'Authorization', u'Basic {}'.format(
       base64.standard_b64encode(
         u'{}:{}'.format(
-          settings.PROXY_MODE_BASIC_AUTH_USERNAME,
-          settings.PROXY_MODE_BASIC_AUTH_PASSWORD
+          django.conf.settings.PROXY_MODE_BASIC_AUTH_USERNAME,
+          django.conf.settings.PROXY_MODE_BASIC_AUTH_PASSWORD
         )
       )
     )

@@ -32,7 +32,7 @@ import shutil
 # Django.
 import django.core.management.base
 import django.db
-from django.conf import settings
+import django.conf
 
 # D1.
 import d1_client.cnclient
@@ -102,18 +102,18 @@ class ReplicationQueueProcessor(object):
     except Exception as e:
       logging.exception(u'Replication failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
-      if num_failed_attempts < settings.REPLICATION_MAX_ATTEMPTS:
+      if num_failed_attempts < django.conf.settings.REPLICATION_MAX_ATTEMPTS:
         logging.warning(
           u'Replication failed and will be retried during next processing. '
           u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, settings.REPLICATION_MAX_ATTEMPTS)
+          format(num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS)
         )
       else:
         logging.warning(
           u'Replication failed and has reached the maximum number of attempts. '
           u'Recording the request as permanently failed and notifying the CN. '
           u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, settings.REPLICATION_MAX_ATTEMPTS)
+          format(num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS)
         )
         self._update_request_status(
           queue_model, 'failed', e if
@@ -157,7 +157,7 @@ class ReplicationQueueProcessor(object):
     self, queue_model, status_str, dataone_error=None
   ):
     self.cn_client.setReplicationStatus(
-      queue_model.local_replica.pid.did, settings.NODE_IDENTIFIER, status_str,
+      queue_model.local_replica.pid.did, django.conf.settings.NODE_IDENTIFIER, status_str,
       dataone_error
     )
 
@@ -168,9 +168,9 @@ class ReplicationQueueProcessor(object):
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=settings.DATAONE_ROOT,
-      cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      base_url=django.conf.settings.DATAONE_ROOT,
+      cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
 
   def _get_system_metadata(self, queue_model):
@@ -184,8 +184,8 @@ class ReplicationQueueProcessor(object):
     )
     mn_client = d1_client.mnclient.MemberNodeClient(
       base_url=source_node_base_url,
-      cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
     return self._open_sciobj_stream_on_member_node(
       mn_client, queue_model.local_replica.pid.did
@@ -239,7 +239,7 @@ class ReplicationQueueProcessor(object):
     app.models.replica_obsolescence_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_stream):
-    object_path = app.util.file_path(settings.OBJECT_STORE_PATH, pid)
+    object_path = app.util.file_path(django.conf.settings.OBJECT_STORE_PATH, pid)
     app.util.create_missing_directories(object_path)
     with open(object_path, 'wb') as f:
       shutil.copyfileobj(sciobj_stream, f)

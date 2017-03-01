@@ -29,7 +29,7 @@ import ssl
 import urlparse
 
 # Django
-from django.conf import settings
+import django.conf
 import django.core.cache
 import logging
 
@@ -47,7 +47,7 @@ import d1_common.types.exceptions
 def validate_jwt_and_get_subject_list(request):
   if not _has_jwt_header(request):
     return []
-  if settings.STAND_ALONE:
+  if django.conf.settings.STAND_ALONE:
     logging.info(
       u'Running in stand-alone mode. Skipping certificate download and '
       u'ignoring included JWT.'
@@ -197,12 +197,12 @@ def _download_and_decode_cert():
     logging.warn(
       u'Unable to get CN certificates from the DataONE environment. '
       u'If this server is being used for testing, see the STAND_ALONE setting. '
-      u'error="{}" env="{}"'.format(str(e), settings.DATAONE_ROOT))
+      u'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT))
     return None
   else:
     logging.info(
       u'CN certificates successfully retrieved from the DataONE environment. '
-      u'env="{}"'.format(settings.DATAONE_ROOT)
+      u'env="{}"'.format(django.conf.settings.DATAONE_ROOT)
     )
     return _decode_cert(cert_der)
 
@@ -215,12 +215,12 @@ def _download_cn_cert():
   # ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
   # ssl_socket = ssl_context.wrap_socket(
   #   socket.socket(),
-  #   server_hostname=settings.DATAONE_ROOT
+  #   server_hostname=django.conf.settings.DATAONE_ROOT
   # )
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(d1_common.const.RESPONSE_TIMEOUT)
   ssl_socket = ssl.SSLSocket(sock)
-  url_obj = urlparse.urlparse(settings.DATAONE_ROOT)
+  url_obj = urlparse.urlparse(django.conf.settings.DATAONE_ROOT)
   ssl_socket.connect((url_obj.netloc, 443))
   return ssl_socket.getpeercert(binary_form=True)
 

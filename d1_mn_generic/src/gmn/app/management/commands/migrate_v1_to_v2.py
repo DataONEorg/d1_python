@@ -28,7 +28,7 @@ import shutil
 import zlib
 
 # Django.
-from django.conf import settings
+import django.conf
 import app.sysmeta_util
 import django.core.management.base
 
@@ -374,9 +374,9 @@ class V2Migration(object):
 
   def _update_node_doc(self):
     if not (
-      (not settings.STAND_ALONE) and settings.NODE_IDENTIFIER and
-      settings.DATAONE_ROOT and settings.CLIENT_CERT_PATH and
-      settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      (not django.conf.settings.STAND_ALONE) and django.conf.settings.NODE_IDENTIFIER and
+      django.conf.settings.DATAONE_ROOT and django.conf.settings.CLIENT_CERT_PATH and
+      django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     ):
       self._log(
         'Skipped Node registry update on CN because this MN does not appear '
@@ -387,7 +387,7 @@ class V2Migration(object):
     node_pyxb = app.node.get_pyxb()
     try:
       success_bool = client.updateNodeCapabilities(
-        settings.NODE_IDENTIFIER, node_pyxb
+        django.conf.settings.NODE_IDENTIFIER, node_pyxb
       )
       if not success_bool:
         raise Exception('Call returned failure but did not raise exception')
@@ -399,7 +399,7 @@ class V2Migration(object):
 
   def _create_cn_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      django.conf.settings.DATAONE_ROOT, cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

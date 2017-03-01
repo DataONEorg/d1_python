@@ -32,7 +32,7 @@ import socket
 
 # Django.
 import django.core.cache
-from django.conf import settings
+import django.conf
 
 # D1.
 import d1_client.cnclient
@@ -46,11 +46,11 @@ def get_cn_subjects():
   if cn_subjects is not None:
     return cn_subjects
 
-  if settings.STAND_ALONE:
+  if django.conf.settings.STAND_ALONE:
     logging.info(u'Running in stand-alone mode. Skipping node registry download.')
     set_empty_cn_subjects_cache()
   else:
-    logging.info(u'Running in environment: {}'.format(settings.DATAONE_ROOT))
+    logging.info(u'Running in environment: {}'.format(django.conf.settings.DATAONE_ROOT))
     set_cn_subjects_for_environment()
 
   return django.core.cache.cache.get('cn_subjects')
@@ -70,7 +70,7 @@ def set_cn_subjects_for_environment():
     logging.warn(
       u'Unable to get CN Subjects from the DataONE environment. '
       u'If this server is being used for testing, see the STAND_ALONE setting. '
-      u'error="{}" env="{}"'.format(str(e), settings.DATAONE_ROOT))
+      u'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT))
     cn_subjects = []
   else:
     logging.info(
@@ -103,11 +103,11 @@ def get_cn_subjects_from_dataone_root():
 
 def download_node_registry():
   logging.info(
-    u'Downloading node registry from environment: {}'.format(settings.DATAONE_ROOT)
+    u'Downloading node registry from environment: {}'.format(django.conf.settings.DATAONE_ROOT)
   )
   client = create_root_cn_client()
   return client.listNodes()
 
 
 def create_root_cn_client():
-  return d1_client.cnclient.CoordinatingNodeClient(settings.DATAONE_ROOT)
+  return d1_client.cnclient.CoordinatingNodeClient(django.conf.settings.DATAONE_ROOT)

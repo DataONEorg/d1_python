@@ -26,7 +26,7 @@ import d1_common
 import logging
 
 # Django.
-from django.conf import settings
+import django.conf
 
 # App.
 import session_cert
@@ -56,7 +56,7 @@ class ViewHandler(object):
     # possible by providing a complete certificate.
 
     # Handle complete certificate in vendor specific extension.
-    if settings.DEBUG_GMN:
+    if django.conf.settings.DEBUG_GMN:
       if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
         request.META['SSL_CLIENT_CERT'] = \
           self.pem_in_http_header_to_pem_in_string(
@@ -87,7 +87,7 @@ class ViewHandler(object):
     request.all_subjects_set = all_subjects_set
 
     # Handle list of subjects in vendor specific extension:
-    if settings.DEBUG_GMN:
+    if django.conf.settings.DEBUG_GMN:
       # This is added to any subjects obtained from cert and/or JWT.
       if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
         request.all_subjects_set.update(

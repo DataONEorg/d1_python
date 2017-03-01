@@ -28,7 +28,7 @@ database is manipulated directly during testing.
 import logging
 
 # Django.
-from django.conf import settings
+import django.conf
 import django.core.management.base
 
 # App.
@@ -81,7 +81,7 @@ class obsoletedBy(object):
     self._events.log()
 
   def _check_debug_mode(self):
-    if not settings.DEBUG_GMN:
+    if not django.conf.settings.DEBUG_GMN:
       raise django.core.management.base.CommandError(
         'This command is only available when DEBUG_GMN is True in '
         'settings_site.py'

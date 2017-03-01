@@ -27,7 +27,6 @@ these methods.
 
 # Stdlib.
 import glob
-import json
 import logging
 import os
 import re
@@ -174,10 +173,6 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     response = self.GET('delete_all_objects', headers=headers)
     return self._read_boolean_response(response)
 
-  def test_delete_single_object(self, pid, headers=None):
-    response = self.GET(['delete_single_object', pid], headers=headers)
-    return self._read_boolean_response(response)
-
   def get_setting(self, setting, headers=None):
     response = self.GET(['get_setting', setting], headers=headers)
     return response.json()
@@ -263,7 +258,7 @@ def rest_call(self, func, python_profile=False, sql_profile=False, *args, **kwar
   vendor_specific = {}
   # When not using certificates, the subject is passed in via a vendor
   # specific extension that is supported by all the REST calls in GMN.
-  if not settings.USE_CERTS:
+  if not django.conf.settings.USE_CERTS:
     vendor_specific.update(test_utilities.gmn_vse_provide_subject(self.subject))
   # Enable python profiling if requested.
   if python_profile:
