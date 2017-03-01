@@ -99,7 +99,7 @@ def serialize(sysmeta_pyxb):
     )
 
 def serialize_pretty(sysmeta_pyxb):
-  return d1_common.util.pretty_xml(serialize(sysmeta_pyxb))
+  return d1_common.xml.pretty_xml(serialize(sysmeta_pyxb))
 
 # ------------------------------------------------------------------------------
 
@@ -111,19 +111,6 @@ def create(sysmeta_pyxb, url):
   - PID is verified not to exist. E.g., with view_asserts.is_unused(pid).
   - Any supplied SID is verified to be valid for the given operation. E.g., with
   view_asserts.is_valid_sid_for_chain_if_specified().
-
-  Postconditions:
-  - New rows are created in ScienceObject, Permission and related tables as
-  necessary to hold portions of the System Metadata XML document and
-  internal values that are required for performance when processing requests.
-
-  Notes:
-  - The authoritative location for System Metadata is the XML files that are
-  stored in the directory tree managed by the sysmeta_file module. The XML files
-  are created and updated first, then the database is updated to match.
-  - The System Metadata portions of the database are essentially a cache of the
-  actual System Metadata that enables processing of requests without having to
-  read and deserialize the XML files.
   """
   pid = sysmeta_pyxb.identifier.value()
   sci_model = app.models.ScienceObject()
@@ -135,9 +122,6 @@ def create(sysmeta_pyxb, url):
   if _has_replication_policy_pyxb(sysmeta_pyxb):
     _replication_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
   return sci_model
-  # _update_obsolescence_chain(sci_model, sysmeta_pyxb)
-  # _update_sid(sci_model, sysmeta_pyxb).
-  # _update_modified_timestamp(sci_model, sysmeta_pyxb)
 
 
 def update(sysmeta_pyxb, url=None, skip_immutable=False):
@@ -155,12 +139,6 @@ def update(sysmeta_pyxb, url=None, skip_immutable=False):
     _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
   if _has_replication_policy_pyxb(sysmeta_pyxb):
     _replication_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
-
-
-# def update_access_policy(sysmeta_pyxb):
-#   pid = sysmeta_pyxb.identifier.value()
-#   sci_model = sysmeta_util.get_sci_model(pid)
-#   _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
 
 
 def is_did(did):
@@ -194,10 +172,6 @@ def update_modified_timestamp(pid):
   _update_modified_timestamp(sci_model)
 
 
-# def pyxb_to_model(sysmeta_pyxb, url=None):
-#   return _pyxb_to_model(sysmeta_pyxb, url)
-
-
 def model_to_pyxb(pid):
   return _model_to_pyxb(pid)
 
@@ -221,21 +195,6 @@ def get_identifier_type(did):
 #
 # Private
 #
-
-
-# _update_access_policy(sci_model, sysmeta_pyxb)
-# _update_sid(sci_model, sysmeta_pyxb)
-# _update_modified_timestamp(sci_model, sysmeta_pyxb)
-
-
-# def _pyxb_to_model(sysmeta_pyxb, url=None):
-#   sciobj_model = sysmeta_util.get_sci_model(sysmeta_pyxb.identifier.value())
-#   _base_pyxb_to_model(sciobj_model, sysmeta_pyxb, url, is_replica_bool)
-#   _access_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb)
-#   _access_policy_model_to_pyxb
-#   sysmeta_pyxb.replicationPolicy = _replication_policy_model_to_pyxb(sciobj_model)
-#   sysmeta_pyxb.replica = _replica_model_to_pyxb(sciobj_model)
-#   sciobj_model.save()
 
 
 def _model_to_pyxb(pid):
@@ -339,9 +298,7 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
       each subject, for each object and this row contains the highest action
       level.
   """
-
   _delete_existing_access_policy(sysmeta_pyxb)
-
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = d1_common.types.dataoneTypes.AccessRule()
   permission = d1_common.types.dataoneTypes.Permission(
@@ -351,7 +308,6 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
   allow_rights_holder.subject.append(sysmeta_pyxb.rightsHolder.value())
   top_level = _get_highest_level_action_for_rule(allow_rights_holder)
   _insert_permission_rows(sci_model, allow_rights_holder, top_level)
-
   # Create db entries for all subjects for which permissions have been granted.
   for allow_rule in sysmeta_pyxb.accessPolicy.allow:
     top_level = _get_highest_level_action_for_rule(allow_rule)
@@ -394,7 +350,7 @@ def _insert_permission_rows(sci_model, allow_rule, top_level):
 def _access_policy_model_to_pyxb(sciobj_model):
   access_policy_pyxb = d1_common.types.dataoneTypes.AccessPolicy()
   for permission_model in app.models.Permission.objects.filter(sciobj=sciobj_model):
-    # Skip implicit permissions for rights-holder.
+    # Skip implicit permissions for rightsHolder.
     if permission_model.subject.subject == sciobj_model.rights_holder.subject:
       continue
     access_rule_pyxb = d1_common.types.dataoneTypes.AccessRule()
