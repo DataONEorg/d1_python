@@ -25,6 +25,7 @@
 """
 
 # Stdlib
+import d1_common.xml
 import datetime
 import logging
 
@@ -93,7 +94,7 @@ def serialize(sysmeta_pyxb):
     raise d1_common.types.exceptions.ServiceFailure(
       0,
       u'Unable to serialize PyXB to XML. error="{}"'.format(
-        e.details
+        e.details()
       )
     )
 
