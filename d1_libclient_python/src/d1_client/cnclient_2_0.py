@@ -83,8 +83,14 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+    self,
+    fromDate=None,
+    toDate=None,
+    objectFormat=None,
+    replicaStatus=None,
+    nodeId=None,
+    start=0,
+    count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None,
   ):
     self._slice_sanity_check(start, count)
@@ -102,8 +108,14 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def listObjects(
-    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+    self,
+    fromDate=None,
+    toDate=None,
+    objectFormat=None,
+    replicaStatus=None,
+    nodeId=None,
+    start=0,
+    count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None,
   ):
     response = self.listObjectsResponse(
