@@ -1,0 +1,6 @@
+-   repo: git://github.com/pre-commit/mirrors-yapf
+    sha: v0.16.0 
+    hooks:
+    -   id: yapf
+        args: [--in-place, --style=./yapf_style.cfg]
+
