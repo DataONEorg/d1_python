@@ -65,8 +65,12 @@ class Transaction(transaction.Transaction):
     subjects = self.get_random_subjects(PUBLIC_ACCESS_PERCENT, N_SUBJECTS)
     access_policy = self.create_access_policy(subjects)
     sys_meta = self.create_system_metadata(sci_obj, access_policy)
-    client = self.create_client_for_subject(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
-    response = client.createResponse(sys_meta.identifier.value(), sci_obj, sys_meta)
+    client = self.create_client_for_subject(
+      settings.SUBJECT_WITH_CREATE_PERMISSIONS
+    )
+    response = client.createResponse(
+      sys_meta.identifier.value(), sci_obj, sys_meta
+    )
     self.check_response(response)
 
   def create_science_object(self):
@@ -91,9 +95,9 @@ class Transaction(transaction.Transaction):
 
   def generate_random_ascii_pid(self):
     return ''.join(
-      random.choice(
-        string.ascii_uppercase + string.ascii_lowercase + string.digits
-      ) for x in range(10)
+      random.
+      choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
+      for x in range(10)
     )
 
 

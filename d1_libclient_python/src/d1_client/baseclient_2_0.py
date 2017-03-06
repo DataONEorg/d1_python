@@ -47,6 +47,7 @@ class DataONEBaseClient_2_0(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
   https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)

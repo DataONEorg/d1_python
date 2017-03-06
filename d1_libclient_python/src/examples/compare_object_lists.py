@@ -6,7 +6,6 @@ import d1_client.mnclient_2_0
 import d1_client.cnclient_2_0
 import d1_common.const
 
-
 # Check for discrepancies between MN and CN by comparing object lists
 
 #CN_BASE_URL = d1_common.const.URL_CN_BASE_URL
@@ -27,7 +26,9 @@ def main():
     return
 
   if node_pyxb.type != 'mn':
-    print 'Expected NodeID be for an MN. Found a {}'.format(node_pyxb.type.upper())
+    print 'Expected NodeID be for an MN. Found a {}'.format(
+      node_pyxb.type.upper()
+    )
     return
 
   print 'BaseURL: {}'.format(node_pyxb.baseURL)
@@ -47,13 +48,17 @@ def main():
 def dump_unique(from_dict, not_in_dict, base_url):
   only_pid_set = set(from_dict.keys()).difference(set(not_in_dict.keys()))
   print '{} only in {}:'.format(len(only_pid_set), base_url)
-  for pid_str in sorted(only_pid_set, key=lambda x: from_dict[x].dateSysMetadataModified):
+  for pid_str in sorted(
+    only_pid_set, key=lambda x: from_dict[x].dateSysMetadataModified
+  ):
     print '  {} {}'.format(pid_str, from_dict[pid_str].dateSysMetadataModified)
 
 
 def get_object_dict(client, node_id=None):
   pid_dict = {}
-  for object_info in d1_client.objectlistiterator.ObjectListIterator(client, nodeId=node_id):
+  for object_info in d1_client.objectlistiterator.ObjectListIterator(
+    client, nodeId=node_id
+  ):
     pid_dict[object_info.identifier.value()] = object_info
   return pid_dict
 

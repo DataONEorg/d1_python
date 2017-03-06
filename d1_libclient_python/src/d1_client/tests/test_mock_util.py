@@ -41,9 +41,8 @@ import d1_common.types.dataoneTypes_v2_0 as v2_0
 # App
 import mock_util
 
-class TestMockUtil(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+
+class TestMockUtil(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def test_0010(self):
     """parse_url() 1"""
     endpoint_str, param_list, query_dict, pyxb_bindings = \
@@ -69,5 +68,12 @@ class TestMockUtil(
       mock_util.parse_rel_url('v1/object/ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50')
     self.assertEqual(endpoint_str, 'object')
     self.assertEqual(param_list, ['ar//g1', 'arg2/'])
-    self.assertEqual(query_dict, {'count': ['50'], 'toDate': ['date2'], 'fromDate': ['date1'], 'start': ['500']})
+    self.assertEqual(
+      query_dict, {
+        'count': ['50'],
+        'toDate': ['date2'],
+        'fromDate': ['date1'],
+        'start': ['500']
+      }
+    )
     self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)

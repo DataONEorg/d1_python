@@ -66,7 +66,9 @@ def generate(options=None):
 
   sysmeta_pyxb = dataoneTypes.systemMetadata()
   sysmeta_pyxb.serialVersion = random.randint(1, 100)
-  sysmeta_pyxb.identifier = options.get('identifier', identifier.generate(prefix="id_"))
+  sysmeta_pyxb.identifier = options.get(
+    'identifier', identifier.generate(prefix="id_")
+  )
   sysmeta_pyxb.dateUploaded = options.get('dateUploaded', dates.now())
   sysmeta_pyxb.formatId = options.get('formatId', 'application/octet-stream')
   sysmeta_pyxb.checksum = options.get('checksum', checksum.generate())
@@ -86,14 +88,14 @@ def generate(options=None):
       random_data.random_unicode_string_no_whitespace())
   sysmeta_pyxb.accessPolicy = options.get(
     'accessPolicy',
-    accesspolicy.generate(
-      min_rules=1, max_rules=5, max_subjects=5
-    )
+    accesspolicy.generate(min_rules=1, max_rules=5, max_subjects=5)
   )
   sysmeta_pyxb.replicationPolicy = options.get(
     'replicationPolicy', replicationpolicy.generate()
   )
-  sysmeta_pyxb.dateSysMetadataModified = options.get('dateSysMetadataModified', dates.now())
+  sysmeta_pyxb.dateSysMetadataModified = options.get(
+    'dateSysMetadataModified', dates.now()
+  )
   logging.debug(str(sysmeta_pyxb.checksum.value()))
   return sysmeta_pyxb
 

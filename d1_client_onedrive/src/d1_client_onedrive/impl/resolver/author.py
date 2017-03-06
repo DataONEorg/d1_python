@@ -67,25 +67,33 @@ class Resolver(resolver_base.Resolver):
   # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
 
     if len(path) <= 2:
       return self._get_attributes(path)
 
-    return self._resource_map_resolver.get_attributes(object_tree_folder, path[1:])
+    return self._resource_map_resolver.get_attributes(
+      object_tree_folder, path[1:]
+    )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
 
     if len(path) <= 1:
       return self._get_directory(object_tree_folder, path)
 
-    return self._resource_map_resolver.get_directory(object_tree_folder, path[1:])
+    return self._resource_map_resolver.get_directory(
+      object_tree_folder, path[1:]
+    )
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(path), size, offset)
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)

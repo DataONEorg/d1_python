@@ -20,6 +20,7 @@
 """Utilities for handling the DataONE ObjectFormat and ObjectFormatList types
 """
 
+
 def pyxb_to_dict(object_format_list_pyxb):
   """Return a dict representation of {object_format_list_pyxb}, keyed on
   formatId. E.g.:

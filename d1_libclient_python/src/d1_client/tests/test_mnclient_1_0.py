@@ -59,7 +59,9 @@ import util
 
 class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
-    self.client = d1_client.mnclient.MemberNodeClient(shared_settings.MN_RESPONSES_URL)
+    self.client = d1_client.mnclient.MemberNodeClient(
+      shared_settings.MN_RESPONSES_URL
+    )
     self.sysmeta_doc = open(
       './test_docs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     ).read()

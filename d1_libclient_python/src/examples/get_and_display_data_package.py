@@ -85,8 +85,7 @@ def main():
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    MN_BASE_URL,
-    cert_path=CERTIFICATE_FOR_CREATE,
+    MN_BASE_URL, cert_path=CERTIFICATE_FOR_CREATE,
     key_path=CERTIFICATE_FOR_CREATE_KEY
   )
 
@@ -95,7 +94,9 @@ def main():
   resource_map_xml = client.get(SCIENCE_OBJECT_PID).read()
 
   # Create a resource map parser.
-  resource_map_parser = d1_client.data_package.ResourceMapParser(resource_map_xml)
+  resource_map_parser = d1_client.data_package.ResourceMapParser(
+    resource_map_xml
+  )
 
   # Use the resource map parser to parse the resource map. Then display it.
 

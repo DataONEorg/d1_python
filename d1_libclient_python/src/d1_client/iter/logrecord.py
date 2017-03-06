@@ -36,7 +36,9 @@ class LogRecordIterator(object):
     for a DataONE node.  Data is retrieved from the target only when required.
     """
 
-  def __init__(self, client, fromDate=None, toDate=None, start=0, pageSize=1000):
+  def __init__(
+    self, client, fromDate=None, toDate=None, start=0, pageSize=1000
+  ):
     """Initializes the iterator.
 
         :param client: The client that will be used for interacting with the CN or MN.
@@ -75,9 +77,7 @@ class LogRecordIterator(object):
         """
     self._log_records_idx = 0
     self._log_records = self._client.getLogRecords(
-      start=self._start,
-      count=self._page_size,
-      fromDate=self._from_date,
+      start=self._start, count=self._page_size, fromDate=self._from_date,
       toDate=self._to_date
     )
     self._n_log_records = len(self._log_records.logEntry)

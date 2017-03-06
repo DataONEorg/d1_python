@@ -40,7 +40,9 @@ def extract_subjects(cert_pem):
   """
   primary_str, subject_info_xml = x509.extract(cert_pem)
   if subject_info_xml is not None:
-    equivalent_set = subject_info.extract_subjects(subject_info_xml, primary_str)
+    equivalent_set = subject_info.extract_subjects(
+      subject_info_xml, primary_str
+    )
   else:
     equivalent_set = set()
   return primary_str, equivalent_set

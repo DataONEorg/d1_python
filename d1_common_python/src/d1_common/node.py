@@ -20,6 +20,7 @@
 """Utilities for handling the DataONE Node and NodeList types
 """
 
+
 def pyxb_to_dict(node_list_pyxb):
   """Return a dict representation of {node_list_pyxb}, keyed on
   the Node identifier (urn:node:*). E.g.:

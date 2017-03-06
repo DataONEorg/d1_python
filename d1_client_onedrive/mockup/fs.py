@@ -57,7 +57,7 @@ d = datetime.datetime(2005, 5, 23, 11, 12, 13)
 # Mockup of gradual start and end date restriction
 
 # A folder which is not meant to be opened in the mockup.
-empty_folder = (('(empty)', 0, d), )
+empty_folder = (('(empty)', 0, d),)
 
 # - Year, month and day values are not listed if there are no objects in the
 #   current set that start at that time.
@@ -119,11 +119,8 @@ start_day_facet_vals = (
   ('#30', unapplied_facets + objects_filtered_by_year_month_day, d),
 )
 
-start_day = (
-  (
-    '@StartDay', start_day_facet_vals, d
-  ),
-) + unapplied_facets + objects_filtered_by_year_month
+start_day = (('@StartDay', start_day_facet_vals, d),
+             ) + unapplied_facets + objects_filtered_by_year_month
 
 start_month_facet_vals = (
   ('#01_Jan', start_day, d),
@@ -133,11 +130,8 @@ start_month_facet_vals = (
   ('#12_Dec', start_day, d),
 )
 
-start_month = (
-  (
-    '@StartMonth', start_month_facet_vals, d
-  ),
-) + unapplied_facets + objects_filtered_by_year
+start_month = (('@StartMonth', start_month_facet_vals, d),
+               ) + unapplied_facets + objects_filtered_by_year
 
 start_year_facet_vals = (
   ('#2003', start_month, d),
@@ -194,12 +188,13 @@ def group_from_first_last(words, first_last):
 random_words = get_random_words_sorted()
 
 keyword_group = [
-  (f, group_from_first_last(random_words, f), d) for f in first_last(
-    random_words, 100
-  )
+  (f, group_from_first_last(random_words, f), d)
+  for f in first_last(random_words, 100)
 ]
 
-keyword_restriction_mockup = tuple(keyword_group) + unapplied_facets + objects_unfiltered
+keyword_restriction_mockup = tuple(
+  keyword_group
+) + unapplied_facets + objects_unfiltered
 
 ################################################################################
 # Mockup of member node restriction.
@@ -220,9 +215,7 @@ member_nodes = [
 ]
 
 member_node_restriction_mockup = tuple(
-  (
-    m, unapplied_facets + objects_unfiltered, d
-  ) for m in member_nodes
+  (m, unapplied_facets + objects_unfiltered, d) for m in member_nodes
 )
 
 ################################################################################
@@ -246,11 +239,7 @@ countries = [
 ]
 
 countries_tuple = tuple(
-  [
-    (
-      c, unapplied_facets + objects_unfiltered, d
-    ) for c in countries
-  ]
+  [(c, unapplied_facets + objects_unfiltered, d) for c in countries]
 )
 
 countries_all = [
@@ -266,14 +255,12 @@ countries_all = [
 ]
 
 countries_all_tuple = tuple(
-  [
-    (
-      c, unapplied_facets + objects_unfiltered, d
-    ) for c in countries_all
-  ]
+  [(c, unapplied_facets + objects_unfiltered, d) for c in countries_all]
 )
 
-longlat = tuple((l, empty_folder, d) for l in ('@Degrees', '@Minutes', '@Seconds'))
+longlat = tuple(
+  (l, empty_folder, d) for l in ('@Degrees', '@Minutes', '@Seconds')
+)
 
 geo_restriction_mockup = (
   ('@Continent', tuple((m, countries_tuple, d) for m in continents), d),

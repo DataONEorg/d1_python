@@ -53,10 +53,15 @@ class SolrException(Exception):
     self.body = body
 
   def __repr__(self):
-    return 'HTTP code=%s, Reason=%s, body=%s' % (self.httpcode, self.reason, self.body)
+    return 'HTTP code=%s, Reason=%s, body=%s' % (
+      self.httpcode, self.reason, self.body
+    )
 
   def __str__(self):
-    return 'HTTP code=%s, reason=%s, body=%s' % (self.httpcode, self.reason, self.body)
+    return 'HTTP code=%s, reason=%s, body=%s' % (
+      self.httpcode, self.reason, self.body
+    )
+
 
 #=========================================================================
 
@@ -66,12 +71,8 @@ class SolrConnection:
     """
 
   def __init__(
-    self,
-    host='cn.dataone.org',
-    solrBase='/cn/v1/query/solr/',
-    persistent=True,
-    postHeaders={},
-    debug=False
+    self, host='cn.dataone.org', solrBase='/cn/v1/query/solr/', persistent=True,
+    postHeaders={}, debug=False
   ):
     self.logger = logging.getLogger('solr_client.SolrConnection')
     # Describes type conversion for fields.
@@ -192,7 +193,9 @@ class SolrConnection:
     try:
       res = self.__errcheck(self.conn.getresponse())
     except httplib.BadStatusLine:
-      self.logger.exception('Received bad response from SOLR connection.  Retrying.')
+      self.logger.exception(
+        'Received bad response from SOLR connection.  Retrying.'
+      )
       self.__reconnect()
       self.conn.request('GET', url)
       res = self.__errcheck(self.conn.getresponse())
@@ -204,7 +207,8 @@ class SolrConnection:
     data = rsp.read()
     # detect old-style error response (HTTP response code of
     # 200 with a non-zero status.
-    if data.startswith('<result status="') and not data.startswith('<result status="0"'):
+    if data.startswith('<result status="'
+                       ) and not data.startswith('<result status="0"'):
       data = self.decoder(data)[0]
       parsed = parseString(data)
       status = parsed.documentElement.getAttribute('status')
@@ -309,8 +313,8 @@ class SolrConnection:
     elif ftype == 'date':
       try:
         v = datetime.datetime(
-          value['year'], value['month'], value['day'], value['hour'], value['minute'],
-          value['second']
+          value['year'], value['month'], value['day'], value['hour'],
+          value['minute'], value['second']
         )
         v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
         return v
@@ -374,7 +378,9 @@ class SolrConnection:
   def addDocs(self, docs):
     """docs is a list of fields that are a dictionary of name:value for a record
         """
-    lst = ['<add>', ]
+    lst = [
+      '<add>',
+    ]
     for fields in docs:
       self.__add(lst, fields)
     lst.append('</add>')
@@ -433,12 +439,22 @@ class SolrConnection:
 
         See also the SOLRSearchResponseIterator class.
         """
-    params = {'q': query, 'start': str(start), 'rows': str(rows), 'wt': 'python', }
+    params = {
+      'q': query,
+      'start': str(start),
+      'rows': str(rows),
+      'wt': 'python',
+    }
     if not fq is None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     data = None
-    response = {'matches': 0, 'start': start, 'failed': True, 'ids': [], }
+    response = {
+      'matches': 0,
+      'start': start,
+      'failed': True,
+      'ids': [],
+    }
     try:
       rsp = self.doPost(self.solrBase, request, self.formheaders)
       data = eval(rsp.read())
@@ -618,7 +634,9 @@ class SolrConnection:
   #    return bool
   #  return fld['type']
 
-  def fieldAlphaHistogram(self, name, q='*:*', fq=None, nbins=10, includequeries=True):
+  def fieldAlphaHistogram(
+    self, name, q='*:*', fq=None, nbins=10, includequeries=True
+  ):
     """Generates a histogram of values from a string field.
         Output is: [[low, high, count, query], ... ]
         Bin edges is determined by equal division of the fields.
@@ -948,6 +966,7 @@ class SOLRRecordTransformer(object):
   def transform(self, record):
     return record
 
+
 #=========================================================================
 
 
@@ -956,7 +975,10 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
     A transformer that returns a list of values for the sepcified columns.
     """
 
-  def __init__(self, cols=['lng', 'lat', ]):
+  def __init__(self, cols=[
+    'lng',
+    'lat',
+  ]):
     self.cols = cols
 
   def transform(self, record):
@@ -972,6 +994,7 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
         res.append(None)
     return res
 
+
 #=========================================================================
 
 
@@ -982,14 +1005,8 @@ class SOLRSearchResponseIterator(object):
     """
 
   def __init__(
-    self,
-    client,
-    q,
-    fq=None,
-    fields='*',
-    pagesize=100,
-    transformer=SOLRRecordTransformer(),
-    max_records=1000
+    self, client, q, fq=None, fields='*', pagesize=100,
+    transformer=SOLRRecordTransformer(), max_records=1000
   ):
     """
         Initialize.
@@ -1015,7 +1032,9 @@ class SOLRSearchResponseIterator(object):
     self.transformer = transformer
     self._nextPage(self.crecord)
     self._numhits = 0
-    self.logger.debug("Iterator hits=%s" % str(self.res['response']['numFound']))
+    self.logger.debug(
+      "Iterator hits=%s" % str(self.res['response']['numFound'])
+    )
 
   def _nextPage(self, offset):
     """
@@ -1067,6 +1086,7 @@ class SOLRSearchResponseIterator(object):
     self.crecord = self.crecord + 1
     return self.transformer.transform(row)
 
+
 #=========================================================================
 
 
@@ -1077,14 +1097,17 @@ class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
     of the constructor.
     """
 
-  def __init__(self, client, q, fq=None, pagesize=100, cols=['lng', 'lat', ]):
+  def __init__(self, client, q, fq=None, pagesize=100, cols=[
+    'lng',
+    'lat',
+  ]):
     transformer = SOLRArrayTransformer(cols)
     fields = ",".join(cols)
     SOLRSearchResponseIterator.__init__(
-      self, client, q, fq, fields,
-      pagesize, transformer=transformer
+      self, client, q, fq, fields, pagesize, transformer=transformer
     )
     self.logger = logging.getLogger('solr_client.SOLRArrayResponseIterator')
+
 
 #=========================================================================
 
@@ -1097,16 +1120,12 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
     """
 
   def __init__(
-    self,
-    client,
-    q,
-    fq=None,
-    fields='*',
-    pagesize=100,
-    nsamples=10000,
+    self, client, q, fq=None, fields='*', pagesize=100, nsamples=10000,
     transformer=SOLRRecordTransformer()
   ):
-    self._pagestarts = [0, ]
+    self._pagestarts = [
+      0,
+    ]
     self._cpage = 0
     SOLRSearchResponseIterator.__init__(
       self, client, q, fq, fields, pagesize, transformer
@@ -1141,6 +1160,7 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
         raise StopIteration()
     self.crecord = self.crecord + 1
     return self.processRow(row)
+
 
 #=========================================================================
 
@@ -1195,7 +1215,9 @@ class SOLRValuesResponseIterator(object):
     if not self.fq is None:
       params['fq'] = self.fq
     request = urllib.urlencode(params, doseq=True)
-    rsp = self.client.doPost(self.client.solrBase, request, self.client.formheaders)
+    rsp = self.client.doPost(
+      self.client.solrBase, request, self.client.formheaders
+    )
     data = eval(rsp.read())
     try:
       self.res = data['facet_counts']['facet_fields'][self.field]

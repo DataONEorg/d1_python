@@ -29,7 +29,6 @@ import pyasn1.codec.der
 import cryptography.hazmat.backends
 import cryptography.x509
 import cryptography.x509.oid
-
 """Map OID to short names for use when creating DataONE compliant serialization
 of the DN.
 
@@ -71,8 +70,7 @@ def extract(cert_pem):
   """
   cert_obj = _deserialize_pem(cert_pem)
   return (
-    _extract_dataone_subject_from_dn(cert_obj),
-    _extract_subject_info(cert_obj),
+    _extract_dataone_subject_from_dn(cert_obj), _extract_subject_info(cert_obj),
   )
 
 
@@ -84,15 +82,18 @@ def _deserialize_pem(cert_pem):
 
 
 def _extract_dataone_subject_from_dn(cert_obj):
-  return (','.join(reversed(
-    [
-      '{}={}'.format(
-        OID_TO_SHORT_NAME_DICT.get(v.oid.dotted_string, v.oid.dotted_string),
-        _escape(v.value)
+  return (
+    ','.join(
+      reversed(
+        [
+          '{}={}'.format(
+            OID_TO_SHORT_NAME_DICT.
+            get(v.oid.dotted_string, v.oid.dotted_string), _escape(v.value)
+          ) for v in cert_obj.subject
+        ]
       )
-      for v in cert_obj.subject
-    ]
-  )))
+    )
+  )
 
 
 def _escape(rdn_str):

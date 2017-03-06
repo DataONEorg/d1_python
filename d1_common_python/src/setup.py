@@ -40,9 +40,7 @@ def main():
       'iso8601 == 0.1.11',
       'pyxb == 1.2.5',
     ],
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    setup_requires=['setuptools_git >= 1.1'],
   )
 
 

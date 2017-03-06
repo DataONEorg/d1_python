@@ -86,8 +86,7 @@ def main():
   print u'DataONE Command Line Interface ({})'.format(d1_client_cli.__version__)
 
   parser = optparse.OptionParser(
-    usage=u'usage: %prog [command] ...',
-    option_list=option_list
+    usage=u'usage: %prog [command] ...', option_list=option_list
   )
   options, commands = parser.parse_args()
 
@@ -149,217 +148,141 @@ def log_setup(debug):
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
+
 # Command-line options.
 option_list = [
   optparse.make_option(
-    '--' + session.CHECKSUM_NAME,
-    action='store',
-    dest='algorithm',
+    '--' + session.CHECKSUM_NAME, action='store', dest='algorithm',
     help='Checksum algorithm used for a Science Data Object.'
   ),
   optparse.make_option(
-    '--' + session.ANONYMOUS_NAME,
-    action='store_true',
-    dest='anonymous',
+    '--' + session.ANONYMOUS_NAME, action='store_true', dest='anonymous',
     help='Ignore any installed certificates and connect anonymously'
   ),
   optparse.make_option(
-    '--no-' + session.ANONYMOUS_NAME,
-    action='store_false',
-    dest='anonymous',
+    '--no-' + session.ANONYMOUS_NAME, action='store_false', dest='anonymous',
     help='Use the installed certificates and do not connect anonymously'
   ),
   optparse.make_option(
-    '--' + session.AUTH_MN_NAME,
-    action='store',
-    dest='authoritative_mn',
+    '--' + session.AUTH_MN_NAME, action='store', dest='authoritative_mn',
     metavar='MN-URI',
     help='Authoritative Member Node for generating System Metadata.'
   ),
   optparse.make_option(
-    '--' + session.CERT_FILENAME_NAME,
-    action='store',
-    dest='cert_file',
-    metavar='FILE',
-    help='Path to client certificate'
+    '--' + session.CERT_FILENAME_NAME, action='store', dest='cert_file',
+    metavar='FILE', help='Path to client certificate'
   ),
   optparse.make_option(
-    '--' + session.COUNT_NAME,
-    action='store',
-    dest='count',
-    type='int',
+    '--' + session.COUNT_NAME, action='store', dest='count', type='int',
     help='Maximum number of items to display'
   ),
   optparse.make_option(
-    '--' + session.CN_URL_NAME,
-    action='store',
-    dest='cn_url',
-    metavar='URI',
+    '--' + session.CN_URL_NAME, action='store', dest='cn_url', metavar='URI',
     help='URI to use for the Coordinating Node'
   ),
   optparse.make_option(
-    '--' + session.FROM_DATE_NAME,
-    action='store',
-    dest='from_date',
+    '--' + session.FROM_DATE_NAME, action='store', dest='from_date',
     metavar='DATE',
     help='Start time used by operations that accept a date range'
   ),
   optparse.make_option(
-    '--' + session.KEY_FILENAME_NAME,
-    action='store',
-    dest='key_file',
+    '--' + session.KEY_FILENAME_NAME, action='store', dest='key_file',
     metavar='FILE',
     help='File of client private key (not required if key is in cert-file'
   ),
   optparse.make_option(
-    '--' + session.MN_URL_NAME,
-    action='store',
-    dest='mn_url',
-    metavar='URI',
+    '--' + session.MN_URL_NAME, action='store', dest='mn_url', metavar='URI',
     help='Member Node URL'
   ),
   optparse.make_option(
-    '--' + session.FORMAT_NAME,
-    action='store',
-    dest='object_format',
+    '--' + session.FORMAT_NAME, action='store', dest='object_format',
     metavar='OBJECT-FORMAT',
     help='ID for the Object Format to use when generating System Metadata'
   ),
   optparse.make_option(
-    '--formatId',
-    action='store',
-    dest='object_format',
-    metavar='OBJECT-FORMAT',
+    '--formatId', action='store', dest='object_format', metavar='OBJECT-FORMAT',
     help='ID for the Object Format to use when generating System Metadata'
   ),
   optparse.make_option(
-    '--' + session.QUERY_STRING_NAME,
-    action='store',
-    dest='query_string',
+    '--' + session.QUERY_STRING_NAME, action='store', dest='query_string',
     metavar='QUERY',
     help='Query string (SOLR or Lucene query syntax) for searches'
   ),
   optparse.make_option(
-    '--' + session.OWNER_NAME,
-    action='store',
-    dest='rights_holder',
+    '--' + session.OWNER_NAME, action='store', dest='rights_holder',
     metavar='SUBJECT',
     help='Subject of the rights holder to use when generating System Metadata'
   ),
   optparse.make_option(
-    '--' + session.SEARCH_FORMAT_NAME,
-    action='store',
-    dest='search_object_format',
-    metavar='OBJECT-FORMAT',
+    '--' + session.SEARCH_FORMAT_NAME, action='store',
+    dest='search_object_format', metavar='OBJECT-FORMAT',
     help='Include only objects of this format when searching'
   ),
   optparse.make_option(
-    '--' + session.START_NAME,
-    action='store',
-    dest='start',
-    type='int',
+    '--' + session.START_NAME, action='store', dest='start', type='int',
     help='First item to display for operations that display a list_objects of items'
   ),
   optparse.make_option(
-    '--' + session.TO_DATE_NAME,
-    action='store',
-    dest='to_date',
-    metavar='DATE',
+    '--' + session.TO_DATE_NAME, action='store', dest='to_date', metavar='DATE',
     help='End time used by operations that accept a date range'
   ),
   optparse.make_option(
-    '-v',
-    '--' + session.VERBOSE_NAME,
-    action='store_true',
-    dest='verbose',
+    '-v', '--' + session.VERBOSE_NAME, action='store_true', dest='verbose',
     help='Display more information'
   ),
   optparse.make_option(
-    '--no-' + session.VERBOSE_NAME,
-    action='store_false',
-    dest='verbose',
+    '--no-' + session.VERBOSE_NAME, action='store_false', dest='verbose',
     help='Display less information'
   ),
   optparse.make_option(
-    '--' + session.EDITOR_NAME,
-    action='store_true',
-    dest='editor',
+    '--' + session.EDITOR_NAME, action='store_true', dest='editor',
     help='Editor to use for editing operation queue'
   ),
   optparse.make_option(
-    '--no-' + session.EDITOR_NAME,
-    action='store_false',
-    dest='editor',
+    '--no-' + session.EDITOR_NAME, action='store_false', dest='editor',
     help='Use editor specified in EDITOR environment variable'
   ),
   optparse.make_option(
-    '--allow-replication',
-    action='store_true',
-    dest='action_allowReplication',
+    '--allow-replication', action='store_true', dest='action_allowReplication',
     help='Allow objects to be replicated.'
   ),
   optparse.make_option(
-    '--disallow-replication',
-    action='store_false',
+    '--disallow-replication', action='store_false',
     dest='action_allowReplication',
     help='Do not allow objects to be replicated.'
   ),
   optparse.make_option(
-    '--replicas',
-    action='store',
-    dest='action_numReplicas',
-    metavar='#replicas',
-    help='Set the preferred number of replicas.'
+    '--replicas', action='store', dest='action_numReplicas',
+    metavar='#replicas', help='Set the preferred number of replicas.'
   ),
   optparse.make_option(
-    '--add_blocked',
-    action='store',
-    dest='action_blockNode',
-    metavar='MN',
+    '--add_blocked', action='store', dest='action_blockNode', metavar='MN',
     help='Add blocked Member Node to access policy.'
   ),
   optparse.make_option(
-    '--add_preferred',
-    action='store',
-    dest='action_preferNode',
-    metavar='MN',
+    '--add_preferred', action='store', dest='action_preferNode', metavar='MN',
     help='Add Member Node to list_objects of preferred replication targets.'
   ),
   #  optparse.make_option('--configure', action='store_true', dest='action_configure',
   #              help='Perform initial configuration'),
   optparse.make_option(
-    '--cn',
-    action='store',
-    dest='cn_host',
-    metavar='HOST',
+    '--cn', action='store', dest='cn_host', metavar='HOST',
     help='Name of the host to use for the Coordinating Node'
   ),
   optparse.make_option(
-    '--mn',
-    action='store',
-    dest='mn_host',
-    metavar='HOST',
+    '--mn', action='store', dest='mn_host', metavar='HOST',
     help='Name of the host to use for the Member Node'
   ),
   optparse.make_option(
-    '--no-interactive',
-    action='store_false',
-    dest='interactive',
-    default=True,
+    '--no-interactive', action='store_false', dest='interactive', default=True,
     help='Don\'t allow interactive commands'
   ),
   optparse.make_option(
-    '-q',
-    '--quiet',
-    action='store_false',
-    dest='verbose',
+    '-q', '--quiet', action='store_false', dest='verbose',
     help='Display less information'
   ),
   optparse.make_option(
-    '--debug',
-    action='store_true',
-    dest='debug',
-    default=False,
+    '--debug', action='store_true', dest='debug', default=False,
     help='Print full stack trace and exit on errors'
   ),
 ]
@@ -372,9 +295,13 @@ def handle_options(cli, options):
     if options.anonymous:
       cli.d1.session_set_parameter(session.ANONYMOUS_NAME, options.anonymous)
     if options.authoritative_mn:
-      cli.d1.session_set_parameter(session.AUTH_MN_NAME, options.authoritative_mn)
+      cli.d1.session_set_parameter(
+        session.AUTH_MN_NAME, options.authoritative_mn
+      )
     if options.cert_file:
-      cli.d1.session_set_parameter(session.CERT_FILENAME_NAME, options.cert_file)
+      cli.d1.session_set_parameter(
+        session.CERT_FILENAME_NAME, options.cert_file
+      )
     if options.count:
       cli.d1.session_set_parameter(session.COUNT_NAME, options.count)
     if options.cn_url:
@@ -404,7 +331,9 @@ def handle_options(cli, options):
     if options.object_format:
       cli.d1.session_set_parameter(session.FORMAT_NAME, options.object_format)
     if options.query_string:
-      cli.d1.session_set_parameter(session.QUERY_STRING_NAME, options.query_string)
+      cli.d1.session_set_parameter(
+        session.QUERY_STRING_NAME, options.query_string
+      )
     if options.rights_holder:
       cli.d1.session_set_parameter(session.OWNER_NAME, options.rights_holder)
     if options.search_object_format:
@@ -429,7 +358,9 @@ def handle_options(cli, options):
       else:
         cli.d1.replication_policy_set_replication_allowed(False)
     if options.action_numReplicas:
-      cli.d1.replication_policy_set_number_of_replicas(options.action_numReplicas)
+      cli.d1.replication_policy_set_number_of_replicas(
+        options.action_numReplicas
+      )
     if options.action_blockNode:
       cli.d1.get_replication_policy().add_blocked(options.action_blockNode)
     if options.action_preferNode:

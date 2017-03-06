@@ -70,9 +70,7 @@ class OperationExecuter(object):
     path = operation[u'parameters']['science-file']
     sys_meta = self._create_system_metadata(operation)
     client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
-        operation
-      )
+      **self._mn_client_connect_params_from_operation(operation)
     )
     with open(cli_util.os.path.expanduser(path), u'r') as f:
       client.create(pid, f, sys_meta)
@@ -83,9 +81,7 @@ class OperationExecuter(object):
     path = operation[u'parameters']['science-file']
     sys_meta = self._create_system_metadata_for_update(operation)
     client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
-        operation
-      )
+      **self._mn_client_connect_params_from_operation(operation)
     )
     with open(cli_util.os.path.expanduser(path), u'r') as f:
       client.update(pid_old, f, pid_new, sys_meta)
@@ -99,18 +95,14 @@ class OperationExecuter(object):
     )
     sys_meta = self._create_system_metadata_for_package(resource_map, operation)
     client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
-        operation
-      )
+      **self._mn_client_connect_params_from_operation(operation)
     )
     client.create(pid_package, StringIO.StringIO(resource_map), sys_meta)
 
   def _execute_archive(self, operation):
     pid = operation[u'parameters']['identifier']
     client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
-        operation
-      )
+      **self._mn_client_connect_params_from_operation(operation)
     )
     client.archive(pid)
 
@@ -118,9 +110,7 @@ class OperationExecuter(object):
     pid = operation[u'parameters']['identifier']
     policy = self._create_access_policy(operation)
     client = cli_client.CLICNClient(
-      **self._cn_client_connect_params_from_operation(
-        operation
-      )
+      **self._cn_client_connect_params_from_operation(operation)
     )
     sys_meta = client.getSystemMetadata(pid)
     client.setAccessPolicy(pid, policy, sys_meta.serialVersion)
@@ -129,12 +119,12 @@ class OperationExecuter(object):
     pid = operation[u'parameters']['identifier']
     policy = self._create_replication_policy(operation)
     client = cli_client.CLICNClient(
-      **self._cn_client_connect_params_from_operation(
-        operation
-      )
+      **self._cn_client_connect_params_from_operation(operation)
     )
     sys_meta = client.getSystemMetadata(pid)
-    client.setReplicationPolicy(pid, policy, serialVersion=sys_meta.serialVersion)
+    client.setReplicationPolicy(
+      pid, policy, serialVersion=sys_meta.serialVersion
+    )
 
   def _mn_client_connect_params_from_operation(self, operation):
     return {
@@ -158,7 +148,9 @@ class OperationExecuter(object):
     c = system_metadata.SystemMetadataCreator()
     return c.create_system_metadata_for_update(operation)
 
-  def _generate_resource_map(self, operation, package_pid, pid_sci_meta, pid_sci_datas):
+  def _generate_resource_map(
+    self, operation, package_pid, pid_sci_meta, pid_sci_datas
+  ):
     resource_map_generator = d1_client.data_package.ResourceMapGenerator(
       dataone_root=operation[u'parameters']['mn-url']
     )

@@ -36,7 +36,6 @@ import d1_common.const
 from replication_error import *
 import test_object_generator
 
-
 TEST_CN_NODE_ID = 'urn:node:RepTestCN'
 TEST_MN_NODE_ID = 'urn:node:RepTestMN'
 
@@ -95,6 +94,7 @@ class TestHTTPServer(threading.Thread):
       url_components.netloc.split(':')[0], default_port
       if url_components.port is None else url_components.port
     )
+
 
 #===============================================================================
 
@@ -205,7 +205,9 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     if not m:
       return False
     pid = m.group(1)
-    self._logger.debug('Handling call: getSystemMetadata() pid="{}")'.format(pid))
+    self._logger.debug(
+      'Handling call: getSystemMetadata() pid="{}")'.format(pid)
+    )
     self._generate_response_SystemMetadata(pid)
     return True
 
@@ -314,8 +316,11 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   def _create_mn_node_obj(self):
     return self._create_node_obj(
-      node_type='mn', node_id=TEST_MN_NODE_ID, name='test_mn',
-      description='Simulated MN for replication testing', subject='public_mn',
+      node_type='mn',
+      node_id=TEST_MN_NODE_ID,
+      name='test_mn',
+      description='Simulated MN for replication testing',
+      subject='public_mn',
       service_name='MNCore',
     )
 

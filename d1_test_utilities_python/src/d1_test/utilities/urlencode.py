@@ -30,7 +30,7 @@ import optparse
 from d1_common import url
 
 
-def process_input(input,decode=False, path=False):
+def process_input(input, decode=False, path=False):
   if decode:
     #decode the provided string
     if path:
@@ -44,7 +44,7 @@ def process_input(input,decode=False, path=False):
     else:
       res = url.encodeQueryElement(input)
   return res
-  
+
 
 if __name__ == "__main__":
   usage = "usage: %prog [options]"
@@ -52,14 +52,20 @@ if __name__ == "__main__":
   parser.add_option("-l", "--loglevel", dest="llevel", default=40, type="int",
                 help="Reporting level: 10=debug, 20=Info, 30=Warning, " +\
                      "40=Error, 50=Fatal [default: %default]")
-  parser.add_option("-p", "--path", dest="path", default=False, action="store_true",
-                help="Only apply path encoding rules as per RFC3986 [default: %default]")
-  parser.add_option("-d","--decode", dest="decode", default=False, action="store_true",
-                help="URL decode the string [default: %default]")
-  parser.add_option("-s","--stdin", dest="stdin", default=False, action="store_true",
-                help="Read input from stdin instead of command line args [default: %default]")
+  parser.add_option(
+    "-p", "--path", dest="path", default=False, action="store_true",
+    help="Only apply path encoding rules as per RFC3986 [default: %default]"
+  )
+  parser.add_option(
+    "-d", "--decode", dest="decode", default=False, action="store_true",
+    help="URL decode the string [default: %default]"
+  )
+  parser.add_option(
+    "-s", "--stdin", dest="stdin", default=False, action="store_true",
+    help="Read input from stdin instead of command line args [default: %default]"
+  )
   (options, args) = parser.parse_args(sys.argv)
-  if options.llevel not in [10,20,30,40,50]:
+  if options.llevel not in [10, 20, 30, 40, 50]:
     options.llevel = 40
   logging.basicConfig(level=int(options.llevel))
   if options.stdin:
@@ -73,4 +79,3 @@ if __name__ == "__main__":
       input = arg.decode(sys.getfilesystemencoding())
       res = process_input(input, options.decode, options.path)
       print res
-

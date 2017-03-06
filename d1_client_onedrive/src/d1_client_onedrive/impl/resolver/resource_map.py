@@ -62,7 +62,9 @@ class Resolver(resolver_base.Resolver):
   # resource map, control is also handed to the d1_object resolver.
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
     is_resource_map = self._is_resource_map(path[0])
@@ -70,41 +72,50 @@ class Resolver(resolver_base.Resolver):
       return self._d1_object_resolver.get_attributes(object_tree_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self._d1_object_resolver.get_attributes(object_tree_root, path[1:])
+        return self._d1_object_resolver.get_attributes(
+          object_tree_root, path[1:]
+        )
       else:
         return self._d1_object_resolver.get_attributes(object_tree_root, path)
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
       return self._d1_object_resolver.get_directory(object_tree_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self._d1_object_resolver.get_directory(object_tree_root, path[1:])
+        return self._d1_object_resolver.get_directory(
+          object_tree_root, path[1:]
+        )
       else:
         return self._d1_object_resolver.get_directory(object_tree_root, path)
     return self._get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(
-          path
-        ), size, offset
-      )
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     if len(path) > 1 and self._is_resource_map(path[0]):
-      return self._d1_object_resolver.read_file(object_tree_root, path[1:], size, offset)
-    return self._d1_object_resolver.read_file(object_tree_root, path, size, offset)
+      return self._d1_object_resolver.read_file(
+        object_tree_root, path[1:], size, offset
+      )
+    return self._d1_object_resolver.read_file(
+      object_tree_root, path, size, offset
+    )
 
   # Private.
 
   def _get_attributes(self, object_tree_root, path):
-    return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)
+    return attributes.Attributes(
+      self._get_resource_map_size(path[0]), is_dir=True
+    )
 
   def _get_directory(self, object_tree_root, path):
     resource_map = self._object_tree.get_science_object(path[0])
@@ -130,7 +141,9 @@ class Resolver(resolver_base.Resolver):
     return package.get_aggregated_pids()
 
   def _get_total_size_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self._object_tree.get_science_object_through_cache(resource_map_pid)
+    resource_map = self._object_tree.get_science_object_through_cache(
+      resource_map_pid
+    )
     pids = self._deserialize_resource_map(resource_map)
     total = 0
     for pid in pids:
@@ -139,7 +152,9 @@ class Resolver(resolver_base.Resolver):
     return total
 
   def _get_number_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self._object_tree.get_science_object_through_cache(resource_map_pid)
+    resource_map = self._object_tree.get_science_object_through_cache(
+      resource_map_pid
+    )
     return len(self._deserialize_resource_map(resource_map))
 
   def _get_zero(self, pid):

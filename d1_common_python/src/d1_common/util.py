@@ -59,6 +59,7 @@ def utf8_to_unicode(f):
       else:
         new_kwargs[key] = arg
     return f(*new_args, **new_kwargs)
+
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
   return wrap

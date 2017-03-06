@@ -153,6 +153,7 @@ def get_node_list_from_coordinating_node():
 def is_member_node(node):
   return node.type == 'mn'
 
+
 # ==============================================================================
 
 
@@ -162,15 +163,15 @@ class MemberNodeObjectDownloader(object):
     self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(node.baseURL)
 
   def download_objects_from_member_node(self):
-    logging.info('Retrieving objects for Member Node: {0}'.format(self._node.name))
+    logging.info(
+      'Retrieving objects for Member Node: {0}'.format(self._node.name)
+    )
     current_start = 0
     while True:
       try:
         object_list = self._mn_client.listObjects(
-          start=current_start,
-          count=LIST_OBJECTS_PAGE_SIZE,
-          objectFormat=LIST_OBJECTS_FORMAT_ID,
-          replicaStatus=False
+          start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
+          objectFormat=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
         )
       except d1_common.types.exceptions.DataONEException as e:
         logging.exception('listObjects() failed with exception:')

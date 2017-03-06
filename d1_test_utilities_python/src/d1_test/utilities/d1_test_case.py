@@ -58,7 +58,9 @@ class D1TestCase(unittest.TestCase):
     self.assert_counts(object_list, 0, 0, 0)
 
   def assert_object_collection_is_populated(self):
-    object_list = client.listObjects(context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS)
+    object_list = client.listObjects(
+      context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS
+    )
     self.assert_counts(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
 
   def assert_science_object_has_event(self, pid, event):

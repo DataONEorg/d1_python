@@ -51,7 +51,9 @@ MEMBER_NODES = {
   'metacat': 'http://knb-mn.ecoinformatics.org/knb/d1',
 }
 
-COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn',}
+COORDINATING_NODES = {
+  'cn-dev': 'http://cn-dev.dataone.org/cn',
+}
 
 #=========================================================================
 

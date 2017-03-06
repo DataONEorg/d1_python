@@ -39,9 +39,8 @@ import StringIO
 # D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
-import d1_common.xmlrunner
 
 # App
 sys.path.append('../generator/')
@@ -50,7 +49,7 @@ import subject
 #===============================================================================
 
 
-class TestSubject(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestSubject(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 

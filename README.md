@@ -55,3 +55,5 @@ is included in this repository. To set up automatic formatting:
     $ sudo pip install pre-commit
     $ pre-commit autoupdate
     $ pre-commit install
+
+This will use the included YAPF configuration file.

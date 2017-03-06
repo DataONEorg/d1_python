@@ -54,72 +54,43 @@ def processDoc(fname, options={}):
   sysm = systemmetadata.generate_from_file(fname, options)
   root = etree.fromstring(sysm.toxml())
   root.insert(0, comment)
-  pxml = etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True)
+  pxml = etree.tostring(
+    root, pretty_print=True, encoding='UTF-8', xml_declaration=True
+  )
   return pxml
 
 
 if __name__ == '__main__':
   parser = optparse.OptionParser()
   parser.add_option(
-    '-f',
-    '--fname',
-    dest='fname',
-    action='store',
-    type='string',
-    default=None,
+    '-f', '--fname', dest='fname', action='store', type='string', default=None,
     help='File name of target object'
   )
   parser.add_option(
-    '-i',
-    '--id',
-    dest='identifier',
-    action='store',
-    type='string',
-    default=None,
-    help='Identifier of target object'
+    '-i', '--id', dest='identifier', action='store', type='string',
+    default=None, help='Identifier of target object'
   )
   parser.add_option(
-    '-t',
-    '--format',
-    dest='format',
-    action='store',
-    type='string',
-    default='application/octet-stream',
-    help='Object format ID of target object'
+    '-t', '--format', dest='format', action='store', type='string',
+    default='application/octet-stream', help='Object format ID of target object'
   )
   parser.add_option(
-    '-s',
-    '--submitter',
-    dest='submitter',
-    action='store',
-    type='string',
+    '-s', '--submitter', dest='submitter', action='store', type='string',
     default='dataone_integration_test_user',
     help='Subject of the submitter [default: %default].'
   )
   parser.add_option(
-    '-r',
-    '--rights',
-    dest='rightsHolder',
-    action='store',
-    type='string',
+    '-r', '--rights', dest='rightsHolder', action='store', type='string',
     default=None,
     help='Subject of the object rights holder, defaults to submitter.'
   )
   parser.add_option(
-    '-o',
-    '--origin',
-    dest='originMemberNode',
-    action='store',
-    type='string',
+    '-o', '--origin', dest='originMemberNode', action='store', type='string',
     default='test_documents',
     help='Origin member node identifier [default: %default].'
   )
   parser.add_option(
-    '-n',
-    "--replicas",
-    dest="numberReplicas",
-    type="int",
-    default=3,
+    '-n', "--replicas", dest="numberReplicas", type="int", default=3,
     help="Number of replicas requested."
   )
   parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
@@ -165,12 +136,22 @@ if __name__ == '__main__':
 
   defap = dataoneTypes.AccessPolicy()
   ar = dataoneTypes.AccessRule()
-  ar.permission = [dataoneTypes.Permission.read, ]
-  ar.subject = ["public", ]
-  defap.allow = [ar, ]
+  ar.permission = [
+    dataoneTypes.Permission.read,
+  ]
+  ar.subject = [
+    "public",
+  ]
+  defap.allow = [
+    ar,
+  ]
   ar = dataoneTypes.AccessRule()
-  ar.permission = [dataoneTypes.Permission.write, ]
-  ar.subject = [oopts['submitter'], ]
+  ar.permission = [
+    dataoneTypes.Permission.write,
+  ]
+  ar.subject = [
+    oopts['submitter'],
+  ]
   defap.allow.append(ar)
   oopts['accessPolicy'] = defap
 

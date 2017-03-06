@@ -181,7 +181,9 @@ class TestSession(TestCaseWithURLCompare):
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
     s = session.Session(shared_settings.MN_RESPONSES_URL)
     curl_str = s.get_curl_command_line(
-      'POST', 'http://some.bogus.address', query=query_dict,
+      'POST',
+      'http://some.bogus.address',
+      query=query_dict,
       headers=header_dict,
     )
     self.assertEqual(

@@ -90,19 +90,23 @@ class Resolver(resolver_base.Resolver):
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
 
     return self._get_attributes(object_tree_folder, path)
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
 
     return self._get_directory(object_tree_folder, path)
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(path), size, offset)
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
 
     return self._read_file(object_tree_folder, path, size, offset)
@@ -122,9 +126,8 @@ class Resolver(resolver_base.Resolver):
     if self._region_tree_item_is_pid(region_tree_item):
       try:
         return self._resource_map_resolver.get_attributes(
-          object_tree_folder, [
-            region_tree_item
-          ] + unconsumed_path
+          object_tree_folder,
+          [region_tree_item] + unconsumed_path
         )
       except onedrive_exceptions.NoResultException:
         pass
@@ -143,9 +146,8 @@ class Resolver(resolver_base.Resolver):
       # PID (any other exit would have raised an exception).
       #if len(unconsumed_path):
       return self._resource_map_resolver.get_directory(
-        object_tree_folder, [
-          region_tree_item
-        ] + unconsumed_path
+        object_tree_folder,
+        [region_tree_item] + unconsumed_path
       )
       #else:
       #  # The user has attempted to "dir" a PID.
@@ -176,9 +178,8 @@ class Resolver(resolver_base.Resolver):
 
     if self._region_tree_item_is_pid(region_tree_item):
       return self._resource_map_resolver.read_file(
-        object_tree_folder, [
-          region_tree_item
-        ] + unconsumed_path, size, offset
+        object_tree_folder,
+        [region_tree_item] + unconsumed_path, size, offset
       )
 
   def _get_merged_region_tree(self, object_tree_folder):
@@ -242,7 +243,9 @@ class Resolver(resolver_base.Resolver):
       if v is not None:
         self._merge_region_trees(dst_tree[k], v, pid)
 
-  def _get_region_tree_item_and_unconsumed_path(self, region_tree, path, parent_key=''):
+  def _get_region_tree_item_and_unconsumed_path(
+    self, region_tree, path, parent_key=''
+  ):
     """Return the region_tree item specified by path. An item can be a a folder
     (represented by a dictionary) or a PID (represented by None).
 

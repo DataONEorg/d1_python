@@ -37,47 +37,58 @@ import d1_common.tests.util as util
 
 class TestCert(unittest.TestCase):
   def setUp(self):
-    self.cert_simple_subject_info_pem = util.read_test_file('cert_with_simple_subject_info.pem')
-    self.cert_no_subject_info_pem = util.read_test_file('cert_without_subject_info.pem')
+    self.cert_simple_subject_info_pem = util.read_test_file(
+      'cert_with_simple_subject_info.pem'
+    )
+    self.cert_no_subject_info_pem = util.read_test_file(
+      'cert_without_subject_info.pem'
+    )
 
   def tearDown(self):
     pass
 
-
   def test_100(self):
     """Deserialize PEM to cryptography.Certificate object.
     """
-    cert_obj = d1_common.cert.x509._deserialize_pem(self.cert_simple_subject_info_pem)
+    cert_obj = d1_common.cert.x509._deserialize_pem(
+      self.cert_simple_subject_info_pem
+    )
     self.assertEqual(type(cert_obj), _Certificate)
-
 
   def test_200(self):
     """Extract primary subject from certificate and returns as
     DataONE compliant serialization.
     """
-    cert_obj = d1_common.cert.x509._deserialize_pem(self.cert_simple_subject_info_pem)
-    primary_str = d1_common.cert.x509._extract_dataone_subject_from_dn(
-      cert_obj
+    cert_obj = d1_common.cert.x509._deserialize_pem(
+      self.cert_simple_subject_info_pem
     )
-    self.assertEqual(primary_str, 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org')
-
+    primary_str = d1_common.cert.x509._extract_dataone_subject_from_dn(cert_obj)
+    self.assertEqual(
+      primary_str, 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+    )
 
   def test_300(self):
     """Extract SubjectInfo from certificate, SubjectInfo present
     """
-    cert_obj = d1_common.cert.x509._deserialize_pem(self.cert_simple_subject_info_pem)
-    expected_subject_info_xml = util.read_test_file('cert_simple_subject_info.xml')
-    extracted_subject_info_xml = d1_common.cert.x509._extract_subject_info(cert_obj)
+    cert_obj = d1_common.cert.x509._deserialize_pem(
+      self.cert_simple_subject_info_pem
+    )
+    expected_subject_info_xml = util.read_test_file(
+      'cert_simple_subject_info.xml'
+    )
+    extracted_subject_info_xml = d1_common.cert.x509._extract_subject_info(
+      cert_obj
+    )
     self.assertEqual(expected_subject_info_xml, extracted_subject_info_xml)
-
 
   def test_350(self):
     """Extract SubjectInfo from certificate, SubjectInfo missing
     """
-    cert_obj = d1_common.cert.x509._deserialize_pem(self.cert_no_subject_info_pem)
+    cert_obj = d1_common.cert.x509._deserialize_pem(
+      self.cert_no_subject_info_pem
+    )
     missing_subject_info = d1_common.cert.x509._extract_subject_info(cert_obj)
     self.assertIsNone(missing_subject_info)
-
 
   def test_400(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
@@ -97,7 +108,6 @@ class TestCert(unittest.TestCase):
         'verifiedUser',
       ],
     )
-
 
   def test_450(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo

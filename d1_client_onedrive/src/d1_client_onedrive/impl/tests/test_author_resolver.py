@@ -62,6 +62,7 @@ class TestAuthorResolver(unittest.TestCase):
     self.assertEqual(a.size(), 0)
     self.assertEqual(a.is_dir(), True)
 
+
 #===============================================================================
 
 
@@ -83,10 +84,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

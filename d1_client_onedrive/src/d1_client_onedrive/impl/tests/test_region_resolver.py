@@ -73,19 +73,126 @@ class TestRegionResolver(unittest.TestCase):
     dst = {}
     src = {'d1': {}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
-    self.assertEqual(dst, {'d2': {'d21': {'testpid': None}, 'd22': {'testpid': None, 'd31': {'testpid': None}}, 'testpid': None}, 'd1': {'testpid': None}})
+    self.assertEqual(
+      dst, {
+        'd2':
+          {
+            'd21': {
+              'testpid': None
+            },
+            'd22': {
+              'testpid': None,
+              'd31': {
+                'testpid': None
+              }
+            },
+            'testpid': None
+          },
+        'd1': {
+          'testpid': None
+        }
+      }
+    )
 
   def test_220_merge_simple_to_simple(self):
     dst = {'f1': None, 'd1': {'f21': None}}
     src = {'d1': {}, 'd2': {}, 'd3': {'d31': {'d311': {}}, 'd32': {}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
-    self.assertEqual(dst, {'f1': None, 'd2': {'testpid': None}, 'd3': {'d32': {'testpid': None}, 'testpid': None, 'd31': {'d311': {'testpid': None}, 'testpid': None}}, 'd1': {'f21': None, 'testpid': None}})
+    self.assertEqual(
+      dst, {
+        'f1': None,
+        'd2': {
+          'testpid': None
+        },
+        'd3':
+          {
+            'd32': {
+              'testpid': None
+            },
+            'testpid': None,
+            'd31': {
+              'd311': {
+                'testpid': None
+              },
+              'testpid': None
+            }
+          },
+        'd1': {
+          'f21': None,
+          'testpid': None
+        }
+      }
+    )
 
   def test_230_merge_complex_to_complex(self):
-    dst = {'f1': None, 'd1': {'d11': {}, 'd12': {'f121': None}}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
-    src = {'d1': {'f11': None}, 'd2': {}, 'd3': {'d31': {'d311': {'f3111': None}}, 'd32': {}}}
+    dst = {
+      'f1': None,
+      'd1': {
+        'd11': {},
+        'd12': {
+          'f121': None
+        }
+      },
+      'd2': {
+        'd21': {},
+        'd22': {
+          'd31': {}
+        }
+      }
+    }
+    src = {
+      'd1': {
+        'f11': None
+      },
+      'd2': {},
+      'd3': {
+        'd31': {
+          'd311': {
+            'f3111': None
+          }
+        },
+        'd32': {}
+      }
+    }
     self._resolver._merge_region_trees(dst, src, 'x')
-    self.assertEqual(dst, {'f1': None, 'd2': {'d21': {}, 'x': None, 'd22': {'d31': {}}}, 'd3': {'x': None, 'd32': {'x': None}, 'd31': {'x': None, 'd311': {'x': None, 'f3111': {'x': None}}}}, 'd1': {'x': None, 'f11': {'x': None}, 'd11': {}, 'd12': {'f121': None}}})
+    self.assertEqual(
+      dst, {
+        'f1': None,
+        'd2': {
+          'd21': {},
+          'x': None,
+          'd22': {
+            'd31': {}
+          }
+        },
+        'd3':
+          {
+            'x': None,
+            'd32': {
+              'x': None
+            },
+            'd31': {
+              'x': None,
+              'd311': {
+                'x': None,
+                'f3111': {
+                  'x': None
+                }
+              }
+            }
+          },
+        'd1': {
+          'x': None,
+          'f11': {
+            'x': None
+          },
+          'd11': {},
+          'd12': {
+            'f121': None
+          }
+        }
+      }
+    )
 
   def test_240_merge_conflict_1(self):
     dst = {'x1': {}}
@@ -104,6 +211,7 @@ class TestRegionResolver(unittest.TestCase):
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')
     self.assertEqual(dst, {'d1': {'x': None, 'y': None}})
+
 
 #===============================================================================
 
@@ -126,10 +234,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

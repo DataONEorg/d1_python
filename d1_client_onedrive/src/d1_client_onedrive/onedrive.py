@@ -62,11 +62,7 @@ def main():
 
   parser = optparse.OptionParser('%prog [options]')
   parser.add_option(
-    '-v',
-    '--version',
-    dest='version',
-    action='store_true',
-    default=False,
+    '-v', '--version', dest='version', action='store_true', default=False,
     help='Display version information and exit'
   )
 
@@ -77,28 +73,18 @@ def main():
       param_name = '--{0}'.format(k.lower().replace('_', '-'))
       if type(v) is str or type(v) is int:
         parser.add_option(
-          param_name,
-          action='store',
-          type=str(type(v).__name__),
-          dest=k.lower(),
-          default=v,
-          metavar=v
+          param_name, action='store', type=str(type(v).__name__),
+          dest=k.lower(), default=v, metavar=v
         )
       elif type(v) is bool:
         if v:
           parser.add_option(
             '--disable-{0}'.format(k.lower().replace('_', '-')),
-            action='store_false',
-            default=True,
-            dest=k.lower(),
-            metavar=v
+            action='store_false', default=True, dest=k.lower(), metavar=v
           )
         else:
           parser.add_option(
-            param_name,
-            action='store_true',
-            default=False,
-            dest=k.lower(),
+            param_name, action='store_true', default=False, dest=k.lower(),
             metavar=v
           )
 
@@ -160,7 +146,9 @@ def log_setup(options):
   )
   # Log to a file
   if options.log_file_path is not None:
-    file_logger = logging.FileHandler(options.log_file_path, 'a', encoding='UTF-8')
+    file_logger = logging.FileHandler(
+      options.log_file_path, 'a', encoding='UTF-8'
+    )
     file_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(file_logger)
   # Also log to stdout

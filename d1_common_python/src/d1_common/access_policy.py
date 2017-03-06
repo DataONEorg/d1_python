@@ -85,13 +85,16 @@ import pprint
 import d1_common.xml
 import d1_common.types.dataoneTypes
 
-
 ORDERED_PERMISSION_LIST = ['read', 'write', 'changePermission']
 
 
 def normalize(access_policy_pyxb):
-  normalized_permission_list = get_normalized_permission_list(access_policy_pyxb)
-  grouped_permission_dict = _get_grouped_permission_dict(normalized_permission_list)
+  normalized_permission_list = get_normalized_permission_list(
+    access_policy_pyxb
+  )
+  grouped_permission_dict = _get_grouped_permission_dict(
+    normalized_permission_list
+  )
   return get_access_policy_pyxb(grouped_permission_dict)
 
 
@@ -205,6 +208,7 @@ def is_equivalent_xml(a_xml, b_xml):
     d1_common.xml.deserialize(a_xml),
     d1_common.xml.deserialize(b_xml),
   )
+
 
 #
 # Private

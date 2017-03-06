@@ -94,6 +94,7 @@ def main():
   )
   member_node_object_downloader.download_all()
 
+
 # ==============================================================================
 
 
@@ -136,7 +137,9 @@ class MemberNodeObjectDownloader(object):
       for d1_object in object_list.objectInfo:
         try:
           self._download_object(d1_object)
-        except (DownloadError, d1_common.types.exceptions.DataONEException) as e:
+        except (
+          DownloadError, d1_common.types.exceptions.DataONEException
+        ) as e:
           logging.error(e)
 
       current_start += object_list.count
@@ -165,8 +168,10 @@ class MemberNodeObjectDownloader(object):
 
   def _write_system_metadata_to_file(self, sysmeta_pyxb, pid):
     with open(
-      os.path.join(self._download_folder, u'{}.sysmeta.xml'.format(
-        self._pid_to_filename(pid))), 'wb'
+      os.path.join(
+        self._download_folder,
+        u'{}.sysmeta.xml'.format(self._pid_to_filename(pid))
+      ), 'wb'
     ) as f:
       f.write(d1_common.xml.pretty_xml(sysmeta_pyxb.toxml()))
 
@@ -181,7 +186,10 @@ class MemberNodeObjectDownloader(object):
       # not valid for use as filenames (most commonly, slashes). A simple way to
       # make a PID safe for use as a filename is to "percent-encode" it.
       pid_filename = urllib.quote(pid, safe='')
-      with open(os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)), 'wb') as f:
+      with open(
+        os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)),
+        'wb'
+      ) as f:
         shutil.copyfileobj(object_stream, f)
 
   # The PID (DataONE Persistent Identifier) can contain characters that are

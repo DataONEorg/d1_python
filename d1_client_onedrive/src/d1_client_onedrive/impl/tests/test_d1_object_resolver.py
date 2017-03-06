@@ -51,6 +51,7 @@ class TestD1ObjectResolver(unittest.TestCase):
     # Test class instantiation (done in setUp())
     pass
 
+
 #===============================================================================
 
 
@@ -72,10 +73,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

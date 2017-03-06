@@ -42,9 +42,7 @@ def main():
       'multi-mechanize',
       'dataone.libclient == 1.2.5',
     ],
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    setup_requires=['setuptools_git >= 1.1'],
   )
 
 

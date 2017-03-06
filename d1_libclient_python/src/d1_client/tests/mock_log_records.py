@@ -51,7 +51,9 @@ LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
 
 
 def init(base_url):
-  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)
+  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(
+    base_url, LOG_ENDPOINT_RX
+  )
   endpoint_rx = re.compile(endpoint_rx_str)
   responses.add_callback(
     responses.GET,
@@ -66,7 +68,6 @@ def _request_callback(request):
   pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings(major_version)
   # print 'url="{}"'.format(url)
   # print 'query_dict={}'.format(query_dict)
-
 
   if 'start' in query_dict:
     n_start = int(query_dict['start'][0])
@@ -85,7 +86,6 @@ def _request_callback(request):
   body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
   headers = {}
   return 200, headers, body_str
-
 
 
 def _generate_log_records(pyxb_bindings, n_start, n_count):

@@ -29,7 +29,6 @@ import xml.dom.minidom
 # D1
 from d1_common.types import exceptions
 
-
 TRACE_SECTION = """  <traceInformation>
     <value>traceInformation0</value>
     <value>traceInformation2</value>
@@ -140,7 +139,8 @@ class TestExceptions(unittest.TestCase):
   def test_150(self):
     """deserialize() of bad document raises DataONEExceptionException"""
     self.assertRaises(
-      exceptions.DataONEExceptionException, exceptions.deserialize, INVALID_ERROR_DOC[0]
+      exceptions.DataONEExceptionException, exceptions.deserialize,
+      INVALID_ERROR_DOC[0]
     )
 
   def test_200(self):
@@ -154,8 +154,7 @@ class TestExceptions(unittest.TestCase):
     """create with only detailCode then serialize()"""
     e = exceptions.ServiceFailure(123)
     self.assertEqual(
-      e.serialize(),
-      u'<?xml version="1.0" encoding="utf-8"?>'
+      e.serialize(), u'<?xml version="1.0" encoding="utf-8"?>'
       u'<error detailCode="123" errorCode="500" name="ServiceFailure"/>'
     )
 
@@ -163,8 +162,8 @@ class TestExceptions(unittest.TestCase):
     """create with string detailCode and description, then serialize()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
     se = e.serialize()
-    self.assertEqual(se,
-      u'<?xml version="1.0" encoding="utf-8"?>'
+    self.assertEqual(
+      se, u'<?xml version="1.0" encoding="utf-8"?>'
       u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">'
       u'<description>test description</description></error>'
     )
@@ -172,13 +171,12 @@ class TestExceptions(unittest.TestCase):
   def test_270(self):
     """create with detailCode, description and traceInformation, then serialize()"""
     e = exceptions.ServiceFailure(
-      '123.456.789',
-      description='test description',
+      '123.456.789', description='test description',
       traceInformation='test traceInformation'
     )
     se = e.serialize()
-    self.assertEqual(se,
-      u'<?xml version="1.0" encoding="utf-8"?>'
+    self.assertEqual(
+      se, u'<?xml version="1.0" encoding="utf-8"?>'
       u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">'
       u'<description>test description</description>'
       u'<traceInformation>test traceInformation</traceInformation></error>'
@@ -193,11 +191,12 @@ class TestExceptions(unittest.TestCase):
     self.assertTrue(('DataONE-Exception-Name', u'ServiceFailure') in headers)
     self.assertTrue(('DataONE-Exception-ErrorCode', u'500') in headers)
     self.assertTrue(('DataONE-Exception-DetailCode', u'123.456.789') in headers)
-    self.assertTrue(('DataONE-Exception-Description', u'test description') in headers)
     self.assertTrue(
-      (
-        'DataONE-Exception-TraceInformation', u'test traceInformation'
-      ) in headers
+      ('DataONE-Exception-Description', u'test description') in headers
+    )
+    self.assertTrue(
+      ('DataONE-Exception-TraceInformation',
+       u'test traceInformation') in headers
     )
 
   def test_300(self):
@@ -205,8 +204,10 @@ class TestExceptions(unittest.TestCase):
     headers = {
       'DataONE-Exception-Name': 'IdentifierNotUnique', # required
       'DataONE-Exception-DetailCode': '123.456.789', # required
-      'DataONE-Exception-Description': 'test description', # provided but not required
-      'dataone-exception-traceinformation': 'test traceInformation', # not required but provided in lower case
+      'DataONE-Exception-Description':
+        'test description', # provided but not required
+      'dataone-exception-traceinformation':
+        'test traceInformation', # not required but provided in lower case
       #'DataONE-Exception-Identifier' not required or provided
       #'DataONE-Exception-NodeId' not required or provided
     }

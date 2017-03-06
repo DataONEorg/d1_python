@@ -50,6 +50,8 @@ def generate():
   for i in range(random.randint(1, 3)):
     person.isMemberOf.append('isMemberOf_' + random_data.random_word())
   for i in range(random.randint(1, 3)):
-    person.equivalentIdentity.append('equivalentIdentity_' + random_data.random_word())
+    person.equivalentIdentity.append(
+      'equivalentIdentity_' + random_data.random_word()
+    )
   person.verified = random_data.random_bool()
   return person

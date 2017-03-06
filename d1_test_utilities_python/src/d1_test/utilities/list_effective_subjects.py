@@ -129,6 +129,7 @@ class get_subjects_from_certificate(object):
       print 'Error deserializing SubjectInfo: {0}'.format(str(e))
       exit()
 
+
 # ==============================================================================
 
 
@@ -156,7 +157,9 @@ def print_effective_subjects(primary_subject, subjects):
 
 def main():
   parser = optparse.OptionParser()
-  parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
+  parser.add_option(
+    '--verbose', action='store_true', default=False, dest='verbose'
+  )
 
   (options, args) = parser.parse_args()
 

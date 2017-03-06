@@ -49,8 +49,10 @@ class TestObjectFormat(unittest.TestCase):
       'extension': u'html',
       'format_name': u'Hypertext Markup Language',
       'format_type': u'DATA',
-      'media_type': {'name': u'text/html', 'property_list': []}
+      'media_type': {
+        'name': u'text/html',
+        'property_list': []
+      }
     }
 
     self.assertDictEqual(ofl_dict['text/html'], expected_text_xml_dict)
-

@@ -115,7 +115,8 @@ def _get_header(headers, header):
 
 
 def create_exception_by_name(
-  name, detailCode="0", description='', traceInformation=None, identifier=None, nodeId=None
+  name, detailCode="0", description='', traceInformation=None, identifier=None,
+  nodeId=None
 ):
   name_exception_map = {
     u'AuthenticationTimeout': AuthenticationTimeout,
@@ -146,6 +147,7 @@ def create_exception_by_name(
   return dataone_exception(
     detailCode, description, traceInformation, identifier, nodeId
   )
+
 
 #===============================================================================
 
@@ -289,6 +291,7 @@ class DataONEException(Exception):
       traceInformation = re.sub(r'^<\?(.*)\?>', '', tmp)
       traceInformation = traceInformation.strip()
     self._traceInformation = traceInformation
+
 
 #===============================================================================
 

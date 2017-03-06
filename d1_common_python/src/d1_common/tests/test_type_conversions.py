@@ -114,8 +114,6 @@ class TestTypeConversions(unittest.TestCase):
   def test_0100(self):
     """SystemMetadata v2 to v1"""
     systemMetadata_v2_0_str = self._read_xml('systemMetadata_v2_0.xml')
-    systemMetadata_v1_str = c.str_to_v1_str(
-      systemMetadata_v2_0_str
-    )
+    systemMetadata_v1_str = c.str_to_v1_str(systemMetadata_v2_0_str)
     self.assertTrue(c.str_is_v1(systemMetadata_v1_str))
     self.assertFalse(c.str_is_v2(systemMetadata_v1_str))

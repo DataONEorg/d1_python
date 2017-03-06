@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Context manager that enables temporary changes in logging level.
 Note: Not created by DataONE.
 Source: https://docs.python.org/2/howto/logging-cookbook.html

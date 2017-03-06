@@ -312,9 +312,8 @@ def find_url_mismatches(a_url, b_url):
       )
     elif sorted(a_query_dict[a_key]) != sorted(b_query_dict[a_key]):
       diff_list.append(
-        u'Query values differ. key="{}" a_value="{}" b_value="{}"'.format(
-          a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key])
-        )
+        u'Query values differ. key="{}" a_value="{}" b_value="{}"'.
+        format(a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key]))
       )
   for b_key in b_query_dict:
     if b_key not in a_query_dict:

@@ -57,11 +57,11 @@ class SystemMetadataCreator():
     format_id = operation['parameters']['format-id']
     file_size = self._get_file_size(operation['parameters']['science-file'])
     checksum = dataoneTypes.checksum(
-      self._get_file_checksum(
-        operation['parameters']['science-file']
-      )
+      self._get_file_checksum(operation['parameters']['science-file'])
     )
-    return self._create_pyxb_object(operation, pid, format_id, file_size, checksum)
+    return self._create_pyxb_object(
+      operation, pid, format_id, file_size, checksum
+    )
 
   def create_system_metadata_for_update(self, operation):
     #import pyxb
@@ -71,9 +71,7 @@ class SystemMetadataCreator():
     format_id = operation['parameters']['format-id']
     file_size = self._get_file_size(operation['parameters']['science-file'])
     checksum = dataoneTypes.checksum(
-      self._get_file_checksum(
-        operation['parameters']['science-file']
-      )
+      self._get_file_checksum(operation['parameters']['science-file'])
     )
     sys_meta = self._create_pyxb_object(
       operation, pid_new, format_id, file_size, checksum
@@ -81,7 +79,9 @@ class SystemMetadataCreator():
     sys_meta.obsoletes = operation['parameters']['identifier-old']
     return sys_meta
 
-  def create_system_metadata_for_package(self, resource_map, create_package_operation):
+  def create_system_metadata_for_package(
+    self, resource_map, create_package_operation
+  ):
     pid = create_package_operation['parameters']['identifier-package']
     file_size = len(resource_map)
     checksum = self._get_string_checksum(resource_map)
@@ -113,7 +113,9 @@ class SystemMetadataCreator():
     sys_meta.dateSysMetadataModified = now
     sys_meta.authoritativemn = operation['parameters']['authoritative-mn']
     sys_meta.accessPolicy = self._create_access_policy_pyxb_object(operation)
-    sys_meta.replicationPolicy = self._create_replication_policy_pyxb_object(operation)
+    sys_meta.replicationPolicy = self._create_replication_policy_pyxb_object(
+      operation
+    )
     #print sys_meta
     #pyxb.RequireValidWhenGenerating(False)
     #print sys_meta.toxml()
@@ -148,15 +150,23 @@ class SystemMetadataCreator():
   def _get_file_size(self, path):
     return os.path.getsize(os.path.expanduser(path))
 
-  def _get_file_checksum(self, path, algorithm=u'SHA-1', block_size=1024 * 1024):
+  def _get_file_checksum(
+    self, path, algorithm=u'SHA-1', block_size=1024 * 1024
+  ):
     with open(os.path.expanduser(path), u'r') as f:
       return self._get_flo_checksum(f, algorithm, block_size)
 
-  def _get_string_checksum(self, string, algorithm=u'SHA-1', block_size=1024 * 1024):
-    return self._get_flo_checksum(StringIO.StringIO(string), algorithm, block_size)
+  def _get_string_checksum(
+    self, string, algorithm=u'SHA-1', block_size=1024 * 1024
+  ):
+    return self._get_flo_checksum(
+      StringIO.StringIO(string), algorithm, block_size
+    )
 
   def _get_flo_checksum(self, flo, algorithm=u'SHA-1', block_size=1024 * 1024):
-    h = d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
+    h = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+      algorithm
+    )
     while True:
       data = flo.read(block_size)
       if not data:

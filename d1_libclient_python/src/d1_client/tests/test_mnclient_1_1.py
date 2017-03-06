@@ -57,7 +57,9 @@ import shared_settings
 import util
 
 
-class TestMNClient_1_1(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMNClient_1_1(
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
       shared_settings.MN_RESPONSES_URL

@@ -106,6 +106,7 @@ def normalize(sysmeta_pyxb):
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
 
+
 def is_equivalent(a_pyxb, b_pyxb):
   """Normalizes then compares SystemMetadata objects for equivalency.
   """

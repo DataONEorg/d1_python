@@ -54,14 +54,14 @@ def main():
     print "Need at least three PIDs as input.\n"
     sys.exit()
   resources = {sys.argv[2]: sys.argv[3:]}
-  resource_map = generate_resource_map(resourcemap_id=sys.argv[1], relations=resources)
+  resource_map = generate_resource_map(
+    resourcemap_id=sys.argv[1], relations=resources
+  )
   print serialize_resource_map(resource_map)
 
 
 def generate_resource_map(
-  resourcemap_id="resouce_map_id",
-  aggregation_id="aggregation_id",
-  relations={}
+  resourcemap_id="resouce_map_id", aggregation_id="aggregation_id", relations={}
 ):
   """
   relations = {metaid:[data id, data id, ...], ...}
@@ -82,7 +82,9 @@ def generate_resource_map(
       meta_res._cito.documents = data_uri
       aggr.add_resource(data_res)
     aggr.add_resource(meta_res)
-  resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resourcemap_id)
+  resmap = foresite.ResourceMap(
+    "https://cn.dataone.org/object/%s" % resourcemap_id
+  )
   resmap._dcterms.identifier = resourcemap_id
   resmap.set_aggregation(aggr)
   return resmap
@@ -184,7 +186,9 @@ def example1():
   #The identifier for the resource map is treated similarly to the identifiers
   #for the data and metadata entries.
   resource_map_id = "resource_map_id"
-  resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resource_map_id)
+  resmap = foresite.ResourceMap(
+    "https://cn.dataone.org/object/%s" % resource_map_id
+  )
   resmap._dcterms.identifier = resource_map_id
   resmap.set_aggregation(aggr)
   return resmap

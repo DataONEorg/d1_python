@@ -164,11 +164,11 @@ be lost if you exit.""".format(n_remaining_operations)
     if value is None:
       self._command_processor.get_session().print_variable(session_parameter)
     else:
-      self._command_processor.get_session().set_with_conversion(session_parameter, value)
+      self._command_processor.get_session().set_with_conversion(
+        session_parameter, value
+      )
       self._print_info_if_verbose(
-        'Set session variable {} to "{}"'.format(
-          session_parameter, value
-        )
+        'Set session variable {} to "{}"'.format(session_parameter, value)
       )
 
   def do_load(self, line):
@@ -180,8 +180,11 @@ be lost if you exit.""".format(n_remaining_operations)
     config_file = self._split_args(line, 0, 1)[0]
     self._command_processor.get_session().load(config_file)
     if config_file is None:
-      config_file = self._command_processor.get_session().get_default_pickle_file_path()
-    self._print_info_if_verbose('Loaded session from file: {0}'.format(config_file))
+      config_file = self._command_processor.get_session(
+      ).get_default_pickle_file_path()
+    self._print_info_if_verbose(
+      'Loaded session from file: {0}'.format(config_file)
+    )
 
   def do_save(self, line):
     """save [config_file]
@@ -192,8 +195,11 @@ be lost if you exit.""".format(n_remaining_operations)
     config_file = self._split_args(line, 0, 1)[0]
     self._command_processor.get_session().save(config_file)
     if config_file is None:
-      config_file = self._command_processor.get_session().get_default_pickle_file_path()
-    self._print_info_if_verbose('Saved session to file: {0}'.format(config_file))
+      config_file = self._command_processor.get_session(
+      ).get_default_pickle_file_path()
+    self._print_info_if_verbose(
+      'Saved session to file: {0}'.format(config_file)
+    )
 
   def do_reset(self, line):
     """reset
@@ -222,9 +228,7 @@ be lost if you exit.""".format(n_remaining_operations)
       subject, permission
     )
     self._print_info_if_verbose(
-      'Set {0} access for subject "{1}"'.format(
-        permission, subject
-      )
+      'Set {0} access for subject "{1}"'.format(permission, subject)
     )
 
   def do_denyaccess(self, line):
@@ -232,13 +236,10 @@ be lost if you exit.""".format(n_remaining_operations)
     Remove subject from access policy
     """
     subject, = self._split_args(line, 1, 0)
-    self._command_processor.get_session().get_access_control().remove_allowed_subject(
-      subject
-    )
+    self._command_processor.get_session().get_access_control(
+    ).remove_allowed_subject(subject)
     self._print_info_if_verbose(
-      'Removed subject "{0}" from access policy'.format(
-        subject
-      )
+      'Removed subject "{0}" from access policy'.format(subject)
     )
 
   def do_clearaccess(self, line):
@@ -260,9 +261,7 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     self._split_args(line, 0, 0)
     self._command_processor.get_session().get_replication_policy(
-    ).set_replication_allowed(
-      True
-    )
+    ).set_replication_allowed(True)
     self._print_info_if_verbose('Set replication policy to allow replication')
 
   def do_denyrep(self, line):
@@ -271,9 +270,7 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     self._split_args(line, 0, 0)
     self._command_processor.get_session().get_replication_policy(
-    ).set_replication_allowed(
-      False
-    )
+    ).set_replication_allowed(False)
     self._print_info_if_verbose('Set replication policy to deny replication')
 
   def do_preferrep(self, line):
@@ -281,13 +278,10 @@ be lost if you exit.""".format(n_remaining_operations)
     Add one or more preferred Member Nodes to replication policy
     """
     mns = self._split_args(line, 1, -1)
-    self._command_processor.get_session().get_replication_policy().add_preferred(mns)
+    self._command_processor.get_session().get_replication_policy(
+    ).add_preferred(mns)
     self._print_info_if_verbose(
-      'Set {0} as preferred replication target(s)'.format(
-        ', '.join(
-          mns
-        )
-      )
+      'Set {0} as preferred replication target(s)'.format(', '.join(mns))
     )
 
   def do_blockrep(self, line):
@@ -295,13 +289,10 @@ be lost if you exit.""".format(n_remaining_operations)
     Add one or more blocked Member Node to replication policy
     """
     mns = self._split_args(line, 1, -1)
-    self._command_processor.get_session().get_replication_policy().add_blocked(mns)
+    self._command_processor.get_session().get_replication_policy(
+    ).add_blocked(mns)
     self._print_info_if_verbose(
-      'Set {0} as blocked replication target(s)'.format(
-        ', '.join(
-          mns
-        )
-      )
+      'Set {0} as blocked replication target(s)'.format(', '.join(mns))
     )
 
   def do_removerep(self, line):
@@ -311,11 +302,7 @@ be lost if you exit.""".format(n_remaining_operations)
     mns = self._split_args(line, 1, -1)
     self._command_processor.get_session().get_replication_policy().remove(mns)
     self._print_info_if_verbose(
-      'Removed {0} from replication policy'.format(
-        ', '.join(
-          mns
-        )
-      )
+      'Removed {0} from replication policy'.format(', '.join(mns))
     )
 
   def do_numberrep(self, line):
@@ -324,10 +311,11 @@ be lost if you exit.""".format(n_remaining_operations)
     If the preferred number of replicas is set to zero, replication is also disallowed.
     """
     n_replicas = self._split_args(line, 1, 0)[0]
-    self._command_processor.get_session().get_replication_policy().set_number_of_replicas(
-      n_replicas
+    self._command_processor.get_session().get_replication_policy(
+    ).set_number_of_replicas(n_replicas)
+    self._print_info_if_verbose(
+      'Set number of replicas to {0}'.format(n_replicas)
     )
-    self._print_info_if_verbose('Set number of replicas to {0}'.format(n_replicas))
 
   def do_clearrep(self, line):
     """clearrep
@@ -352,7 +340,9 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     pid, output_file = self._split_args(line, 2, 0)
     self._command_processor.science_object_get(pid, output_file)
-    self._print_info_if_verbose('Downloaded "{0}" to file: {1}'.format(pid, output_file))
+    self._print_info_if_verbose(
+      'Downloaded "{0}" to file: {1}'.format(pid, output_file)
+    )
 
   def do_meta(self, line):
     """meta <identifier> [file]
@@ -366,9 +356,8 @@ be lost if you exit.""".format(n_remaining_operations)
     self._command_processor.system_metadata_get(pid, output_file)
     if output_file is not None:
       self._print_info_if_verbose(
-        'Downloaded system metadata for "{0}" to file: {1}'.format(
-          pid, output_file
-        )
+        'Downloaded system metadata for "{0}" to file: {1}'.
+        format(pid, output_file)
       )
 
   def do_list(self, line):
@@ -419,9 +408,7 @@ be lost if you exit.""".format(n_remaining_operations)
       pid, complex_path.path, complex_path.format_id
     )
     self._print_info_if_verbose(
-      'Added create operation for identifier "{0}" to write queue'.format(
-        pid
-      )
+      'Added create operation for identifier "{0}" to write queue'.format(pid)
     )
 
   def do_update(self, line):
@@ -431,9 +418,8 @@ be lost if you exit.""".format(n_remaining_operations)
     curr_pid, pid_new, input_file = self._split_args(line, 3, 0)
     self._command_processor.science_object_update(curr_pid, input_file, pid_new)
     self._print_info_if_verbose(
-      'Added update operation for identifier "{0}" to write queue'.format(
-        curr_pid
-      )
+      'Added update operation for identifier "{0}" to write queue'.
+      format(curr_pid)
     )
 
   def do_package(self, line):
@@ -443,9 +429,8 @@ be lost if you exit.""".format(n_remaining_operations)
     pids = self._split_args(line, 3, -1, pad=False)
     self._command_processor.create_package(pids)
     self._print_info_if_verbose(
-      'Added package create operation for identifier "{0}" to write queue'.format(
-        pids[0]
-      )
+      'Added package create operation for identifier "{0}" to write queue'.
+      format(pids[0])
     )
 
   def do_archive(self, line):
@@ -455,11 +440,8 @@ be lost if you exit.""".format(n_remaining_operations)
     pids = self._split_args(line, 1, -1)
     self._command_processor.science_object_archive(pids)
     self._print_info_if_verbose(
-      'Added archive operation for identifier(s) {0} to write queue'.format(
-        ', '.join(
-          pids
-        )
-      )
+      'Added archive operation for identifier(s) {0} to write queue'.
+      format(', '.join(pids))
     )
 
   def do_updateaccess(self, line):
@@ -469,11 +451,8 @@ be lost if you exit.""".format(n_remaining_operations)
     pids = self._split_args(line, 1, -1)
     self._command_processor.update_access_policy(pids)
     self._print_info_if_verbose(
-      'Added access policy update operation for identifiers {0} to write queue'.format(
-        ', '.join(
-          pids
-        )
-      )
+      'Added access policy update operation for identifiers {0} to write queue'.
+      format(', '.join(pids))
     )
 
   def do_updatereplication(self, line):
@@ -483,11 +462,8 @@ be lost if you exit.""".format(n_remaining_operations)
     pids = self._split_args(line, 1, -1)
     self._command_processor.update_replication_policy(pids)
     self._print_info_if_verbose(
-      'Added replication policy update operation for identifiers {0} to write queue'.format(
-        ', '.join(
-          pids
-        )
-      )
+      'Added replication policy update operation for identifiers {0} to write queue'.
+      format(', '.join(pids))
     )
 
   #-----------------------------------------------------------------------------
@@ -558,7 +534,9 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().edit()
-    self._print_info_if_verbose('The write operation queue was successfully edited')
+    self._print_info_if_verbose(
+      'The write operation queue was successfully edited'
+    )
 
   def do_clearqueue(self, line):
     """clearqueue
@@ -566,7 +544,9 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().clear()
-    self._print_info_if_verbose('All operations in the write queue were cleared')
+    self._print_info_if_verbose(
+      'All operations in the write queue were cleared'
+    )
 
   #
   # Private.
@@ -577,7 +557,9 @@ be lost if you exit.""".format(n_remaining_operations)
     args = [a.decode('utf8') for a in shlex.split(line.encode('utf8'))]
     n_optional_max = 1000 if n_optional == -1 else n_optional
     if len(args) < n_required or len(args) > n_required + n_optional_max:
-      msg = self._text_description_of_required_and_optional(n_required, n_optional)
+      msg = self._text_description_of_required_and_optional(
+        n_required, n_optional
+      )
       raise cli_exceptions.InvalidArguments(msg)
     if pad:
       # Pad the list_objects out with None for any optional parameters that were

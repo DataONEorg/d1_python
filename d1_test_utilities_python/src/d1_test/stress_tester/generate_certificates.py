@@ -72,7 +72,9 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser('usage: %prog [options]')
-  parser.add_option('--verbose', dest='verbose', action='store_true', default=False)
+  parser.add_option(
+    '--verbose', dest='verbose', action='store_true', default=False
+  )
   (options, arguments) = parser.parse_args()
 
   if len(arguments) != 0:
@@ -87,13 +89,13 @@ def create_certificates():
   subjects.append(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
   subjects.append(settings.SUBJECT_WITH_CN_PERMISSIONS)
   for subject in subjects:
-    subject_dn_tuple = subject_dn.dataone_compliant_dn_serialization_to_dn_tuple(subject)
+    subject_dn_tuple = subject_dn.dataone_compliant_dn_serialization_to_dn_tuple(
+      subject
+    )
     subject_info = create_subject_info(subject)
     create_certificate(subject, subject_dn_tuple, subject_info)
   print 'Created {0} client side certificates in {1}'.format(
-    len(
-      subjects
-    ), settings.CLIENT_CERT_DIR
+    len(subjects), settings.CLIENT_CERT_DIR
   )
 
 
@@ -106,15 +108,17 @@ def create_certificate(subject, subject_dn_tuple, subject_info):
     settings.CLIENT_CERT_DIR, subject_dn.subject_to_filename(subject)
   )
   d1_x509v3_certificate_generator.generate(
-    cert_out_path, settings.CA_CERT_PATH, settings.CA_KEY_PATH, settings.CA_KEY_PW,
-    settings.CLIENT_CERT_PUBLIC_KEY_PATH, subject_info, settings.SUBJECT_ALT_NAME,
-    subject_dn_tuple, 1
+    cert_out_path, settings.CA_CERT_PATH, settings.CA_KEY_PATH,
+    settings.CA_KEY_PW, settings.CLIENT_CERT_PUBLIC_KEY_PATH, subject_info,
+    settings.SUBJECT_ALT_NAME, subject_dn_tuple, 1
   )
   assert (os.path.exists(cert_out_path))
 
 
 def create_subject_info(subject):
-  return subject_info_template.replace('%subject%', xml.sax.saxutils.escape(subject))
+  return subject_info_template.replace(
+    '%subject%', xml.sax.saxutils.escape(subject)
+  )
 
 
 def log_setup():

@@ -25,7 +25,6 @@ import os
 
 import better
 
-
 project = u'DataONE Python Products'
 copyright = u'2016 Participating institutions in DataONE'
 
@@ -66,7 +65,7 @@ html_theme_options = {
   # CSS files to include after all other CSS files
   # (refer to by relative path from conf.py directory, or link to a
   # remote file)
-  'cssfiles': [],  # default is empty list
+  'cssfiles': [], # default is empty list
 
   # show a big text header with the value of html_title
   'showheader': True,

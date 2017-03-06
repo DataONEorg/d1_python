@@ -150,7 +150,9 @@ class ObjectTree():
     cache_folder = self._get_or_create_cache_folder_recursive(path)
     self._create_cache_items(cache_folder, filtered_tree)
 
-  def _get_or_create_cache_folder_recursive(self, path, folder=None, rpath=None):
+  def _get_or_create_cache_folder_recursive(
+    self, path, folder=None, rpath=None
+  ):
     if folder is None:
       folder = self._cache['tree']
     if rpath is None:

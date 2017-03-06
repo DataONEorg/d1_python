@@ -119,6 +119,7 @@ def main():
   member_node_object_deleter = MemberNodeObjectDeleter(MEMBER_NODE_BASE_URL)
   member_node_object_deleter.delete_objects_from_member_node()
 
+
 # ==============================================================================
 
 
@@ -126,15 +127,13 @@ class MemberNodeObjectDeleter(object):
   def __init__(self, base_url):
     self._base_url = base_url
     self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      self._base_url, cert_path=CERTIFICATE,
-      key_path=CERTIFICATE_KEY
+      self._base_url, cert_path=CERTIFICATE, key_path=CERTIFICATE_KEY
     )
 
   def delete_objects_from_member_node(self):
     logging.info(
-      'Searching for objects to delete on Member Node: {0}'.format(
-        self._base_url
-      )
+      'Searching for objects to delete on Member Node: {0}'.
+      format(self._base_url)
     )
     pids_delete = self._find_objects_to_delete()
     logging.info('Found {0} objects to delete'.format(len(pids_delete)))
@@ -145,8 +144,8 @@ class MemberNodeObjectDeleter(object):
     pids_remaining = self._find_objects_to_delete()
     if len(pids_remaining):
       logging.error(
-        'Deletion failed on {0} of {1} objects'.format(
-          len(pids_remaining), len(pids_delete))
+        'Deletion failed on {0} of {1} objects'.
+        format(len(pids_remaining), len(pids_delete))
       )
     else:
       logging.info('Successfully deleted {0} objects'.format(len(pids_delete)))
@@ -157,10 +156,8 @@ class MemberNodeObjectDeleter(object):
     while True:
       try:
         object_list = self._mn_client.listObjects(
-          start=current_start,
-          count=LIST_OBJECTS_PAGE_SIZE,
-          objectFormat=LIST_OBJECTS_FORMAT_ID,
-          replicaStatus=False
+          start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
+          objectFormat=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
         )
       except d1_common.types.exceptions.DataONEException as e:
         logging.exception('listObjects() failed with exception:')

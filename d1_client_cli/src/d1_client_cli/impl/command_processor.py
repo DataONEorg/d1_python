@@ -103,7 +103,8 @@ class CommandProcessor():
     if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
-      'Unsupported query engine: {0}'.format(self._session.get(session.QUERY_ENGINE_NAME))
+      'Unsupported query engine: {0}'.
+      format(self._session.get(session.QUERY_ENGINE_NAME))
     )
 
   def list_format_ids(self):
@@ -117,7 +118,9 @@ class CommandProcessor():
   def resolve(self, pid):
     """Get Object Locations for Object.
     """
-    client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
+    client = cli_client.CLICNClient(
+      **self._cn_client_connect_params_from_session()
+    )
     object_location_list = client.resolve(pid)
     for location in object_location_list.objectLocation:
       cli_util.print_info(location.url)
@@ -141,7 +144,9 @@ class CommandProcessor():
   def science_object_get(self, pid, path):
     """First try the MN set in the session. Then try to resolve via the CN set
     in the session."""
-    mn_client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
+    mn_client = cli_client.CLIMNClient(
+      **self._mn_client_connect_params_from_session()
+    )
     try:
       response = mn_client.get(pid)
     except d1_common.types.exceptions.DataONEException:
@@ -150,7 +155,9 @@ class CommandProcessor():
       self._output(response, path)
       return
 
-    cn_client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
+    cn_client = cli_client.CLICNClient(
+      **self._cn_client_connect_params_from_session()
+    )
     object_location_list = cn_client.resolve(pid)
     for location in object_location_list.objectLocation:
       try:
@@ -169,13 +176,17 @@ class CommandProcessor():
   def system_metadata_get(self, pid, path):
     metadata = None
     try:
-      client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
+      client = cli_client.CLICNClient(
+        **self._cn_client_connect_params_from_session()
+      )
       metadata = client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException:
       pass
     if metadata is None:
       try:
-        client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
+        client = cli_client.CLIMNClient(
+          **self._mn_client_connect_params_from_session()
+        )
         metadata = client.getSystemMetadata(pid)
       except d1_common.types.exceptions.DataONEException:
         pass
@@ -184,7 +195,9 @@ class CommandProcessor():
     self._system_metadata_print(metadata, path)
 
   def log(self, path):
-    client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
+    client = cli_client.CLIMNClient(
+      **self._mn_client_connect_params_from_session()
+    )
     object_log = client.getLogRecords(
       fromDate=self._session.get(session.FROM_DATE_NAME),
       toDate=self._session.get(session.TO_DATE_NAME),
@@ -195,7 +208,9 @@ class CommandProcessor():
     self._output(StringIO.StringIO(self._pretty(object_log_xml)), path)
 
   def list_objects(self, path):
-    client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
+    client = cli_client.CLIMNClient(
+      **self._mn_client_connect_params_from_session()
+    )
     object_list = client.listObjects(
       fromDate=self._session.get(session.FROM_DATE_NAME),
       toDate=self._session.get(session.TO_DATE_NAME),
@@ -244,8 +259,7 @@ class CommandProcessor():
     abs_path = cli_util.os.path.expanduser(path)
     if os.path.exists(abs_path):
       if not cli_util.confirm(
-        'You are about to overwrite an existing file. Continue?',
-        default='yes'
+        'You are about to overwrite an existing file. Continue?', default='yes'
       ):
         cli_util.print_info('Cancelled')
     cli_util.copy_file_like_object_to_file(file_like_object, abs_path)
@@ -279,10 +293,11 @@ class CommandProcessor():
     """
     try:
       query = self._create_solr_query(line)
-      client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
+      client = cli_client.CLICNClient(
+        **self._cn_client_connect_params_from_session()
+      )
       object_list = client.search(
-        queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
-        q=query,
+        queryType=d1_common.const.DEFAULT_SEARCH_ENGINE, q=query,
         start=self._session.get(session.START_NAME),
         rows=self._session.get(session.COUNT_NAME)
       )
@@ -300,9 +315,12 @@ class CommandProcessor():
       if ((result is not None) and
           (result.group(u'error_code') == '500') and
           (result.group(u'status_code') == '400')):
-        result = re.search(r"<b>description</b> <u>(?P<description>[^<]+)</u>", e)
+        result = re.search(
+          r"<b>description</b> <u>(?P<description>[^<]+)</u>", e
+        )
         msg = re.sub(
-          u'&([^;]+);', lambda m: unichr(htmlentitydefs.name2codepoint[m.group(1)]),
+          u'&([^;]+);',
+          lambda m: unichr(htmlentitydefs.name2codepoint[m.group(1)]),
           result.group(u'description')
         )
         cli_util.print_info(u'Warning: %s' % msg)
@@ -342,7 +360,8 @@ class CommandProcessor():
     else:
       if line.find(SOLR_FORMAT_ID_NAME) >= 0:
         cli_util.print_warn(
-          u'Using query format restriction instead: {0}'.format(search_format_id)
+          u'Using query format restriction instead: {0}'.
+          format(search_format_id)
         )
       else:
         return u' %s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
@@ -356,11 +375,13 @@ class CommandProcessor():
   def _mn_cn_client_connect_params_from_session(self, url_name):
     anonymous = self._session.get(session.ANONYMOUS_NAME)
     return {
-      'base_url': self._session.get(url_name),
-      'cert_path': self._session.get(session.CERT_FILENAME_NAME)
-        if not anonymous  else None,
-      'key_path': self._session.get(session.KEY_FILENAME_NAME)
-        if not anonymous  else None,
+      'base_url':
+        self._session.get(url_name),
+      'cert_path':
+        self._session.get(session.CERT_FILENAME_NAME)
+        if not anonymous else None,
+      'key_path':
+        self._session.get(session.KEY_FILENAME_NAME) if not anonymous else None,
     }
 
   #
@@ -372,7 +393,9 @@ class CommandProcessor():
     self._operation_queue.append(create_operation)
 
   def _queue_science_object_update(self, pid_old, path, pid_new, format_id):
-    update_operation = self._operation_maker.update(pid_old, path, pid_new, format_id)
+    update_operation = self._operation_maker.update(
+      pid_old, path, pid_new, format_id
+    )
     self._operation_queue.append(update_operation)
 
   def _queue_create_package(self, pids):
@@ -384,7 +407,9 @@ class CommandProcessor():
     self._operation_queue.append(archive_operation)
 
   def _queue_update_access_policy(self, pid):
-    update_access_policy_operation = self._operation_maker.update_access_policy(pid)
+    update_access_policy_operation = self._operation_maker.update_access_policy(
+      pid
+    )
     self._operation_queue.append(update_access_policy_operation)
 
   def _queue_update_replication_policy(self, pid):
@@ -392,6 +417,7 @@ class CommandProcessor():
       pid
     )
     self._operation_queue.append(update_replication_policy_operation)
+
 
 #def get_object_by_pid(session, pid, filename=None, resolve=True):
 #  """ Create a mnclient and look for the object.  If the object is not found,

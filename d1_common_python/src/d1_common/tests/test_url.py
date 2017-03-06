@@ -65,7 +65,8 @@ class TestUrl(unittest.TestCase):
   def test_030(self):
     """urlencode()"""
     data = [
-      ('a', '"#<>[]^`{}|'), ('b', '-&=&='), ('c', 'http://example.com/data/mydata?row=24')
+      ('a', '"#<>[]^`{}|'), ('b', '-&=&='),
+      ('c', 'http://example.com/data/mydata?row=24')
     ]
     expected = 'a=%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C&b=-%26%3D%26%3D&c=http://example.com/data/mydata?row%3D24'
     test = d1_common.url.urlencode(data)
@@ -76,8 +77,12 @@ class TestUrl(unittest.TestCase):
     self.assertEqual('element', d1_common.url.stripElementSlashes('/element'))
     self.assertEqual('element', d1_common.url.stripElementSlashes('//element/'))
     self.assertEqual('element', d1_common.url.stripElementSlashes('element/'))
-    self.assertEqual('ele/ment', d1_common.url.stripElementSlashes('/ele/ment/'))
-    self.assertEqual('ele//ment', d1_common.url.stripElementSlashes('ele//ment'))
+    self.assertEqual(
+      'ele/ment', d1_common.url.stripElementSlashes('/ele/ment/')
+    )
+    self.assertEqual(
+      'ele//ment', d1_common.url.stripElementSlashes('ele//ment')
+    )
     self.assertEqual('', d1_common.url.stripElementSlashes('/'))
     self.assertEqual('', d1_common.url.stripElementSlashes('//'))
 
@@ -94,14 +99,14 @@ class TestUrl(unittest.TestCase):
     self.assertEqual('ab', d1_common.url.joinPathElementsNoStrip('ab'))
     self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a/b'))
     self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a', 'b'))
-    self.assertEqual('a/b/c', d1_common.url.joinPathElementsNoStrip('a', 'b', 'c'))
+    self.assertEqual(
+      'a/b/c', d1_common.url.joinPathElementsNoStrip('a', 'b', 'c')
+    )
     self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a/', 'b'))
     self.assertEqual('a//b', d1_common.url.joinPathElementsNoStrip('a//', 'b'))
     self.assertEqual('a/b/', d1_common.url.joinPathElementsNoStrip('a/', 'b/'))
     self.assertEqual(
-      'a//b///c', d1_common.url.joinPathElementsNoStrip(
-        'a//', 'b', '///c'
-      )
+      'a//b///c', d1_common.url.joinPathElementsNoStrip('a//', 'b', '///c')
     )
 
   def test_060(self):
@@ -117,46 +122,54 @@ class TestUrl(unittest.TestCase):
 
   def test_070(self):
     """makeCNBaseURL()"""
-    self.assertEqual(d1_common.url.makeCNBaseURL(''), 'https://cn.dataone.org/cn')
-    self.assertEqual(d1_common.url.makeCNBaseURL('test.com'), 'https://test.com/cn')
-    self.assertEqual(d1_common.url.makeCNBaseURL('test.com/cn'), 'https://test.com/cn')
     self.assertEqual(
-      d1_common.url.makeCNBaseURL(
-        'test.com/a/cn'
-      ), 'https://test.com/a/cn'
-    )
-    self.assertEqual(d1_common.url.makeCNBaseURL('http://test.com'), 'http://test.com/cn')
-    self.assertEqual(d1_common.url.makeCNBaseURL('http://test.com/'), 'http://test.com/')
-    self.assertEqual(
-      d1_common.url.makeCNBaseURL(
-        'http://test.com/cn'
-      ), 'http://test.com/cn'
+      d1_common.url.makeCNBaseURL(''), 'https://cn.dataone.org/cn'
     )
     self.assertEqual(
-      d1_common.url.makeCNBaseURL(
-        'http://test.com/a/b/c/cn'
-      ), 'http://test.com/a/b/c/cn'
+      d1_common.url.makeCNBaseURL('test.com'), 'https://test.com/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('test.com/cn'), 'https://test.com/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('test.com/a/cn'), 'https://test.com/a/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('http://test.com'), 'http://test.com/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('http://test.com/'), 'http://test.com/'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('http://test.com/cn'), 'http://test.com/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL('http://test.com/a/b/c/cn'),
+      'http://test.com/a/b/c/cn'
     )
 
   def test_080(self):
     """makeMNBaseURL()"""
     self.assertEqual(d1_common.url.makeMNBaseURL(''), 'https://localhost/mn')
-    self.assertEqual(d1_common.url.makeMNBaseURL('test.com'), 'https://test.com/mn')
-    self.assertEqual(d1_common.url.makeMNBaseURL('test.com/mn'), 'https://test.com/mn')
     self.assertEqual(
-      d1_common.url.makeMNBaseURL(
-        'test.com/a/mn'
-      ), 'https://test.com/a/mn'
-    )
-    self.assertEqual(d1_common.url.makeMNBaseURL('http://test.com'), 'http://test.com/mn')
-    self.assertEqual(d1_common.url.makeMNBaseURL('http://test.com/'), 'http://test.com/')
-    self.assertEqual(
-      d1_common.url.makeMNBaseURL(
-        'http://test.com/mn'
-      ), 'http://test.com/mn'
+      d1_common.url.makeMNBaseURL('test.com'), 'https://test.com/mn'
     )
     self.assertEqual(
-      d1_common.url.makeMNBaseURL(
-        'http://test.com/a/b/c/mn'
-      ), 'http://test.com/a/b/c/mn'
+      d1_common.url.makeMNBaseURL('test.com/mn'), 'https://test.com/mn'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL('test.com/a/mn'), 'https://test.com/a/mn'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL('http://test.com'), 'http://test.com/mn'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL('http://test.com/'), 'http://test.com/'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL('http://test.com/mn'), 'http://test.com/mn'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL('http://test.com/a/b/c/mn'),
+      'http://test.com/a/b/c/mn'
     )

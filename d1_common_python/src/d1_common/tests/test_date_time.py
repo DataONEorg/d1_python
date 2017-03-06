@@ -102,7 +102,9 @@ class TestDateTime(unittest.TestCase):
 
   def _from_http_datetime(self, that_fateful_day_in_november_94):
     dt = d1_common.date_time.from_http_datetime(that_fateful_day_in_november_94)
-    self.assertEqual(dt, d1_common.date_time.create_utc_datetime(1994, 11, 6, 8, 49, 37))
+    self.assertEqual(
+      dt, d1_common.date_time.create_utc_datetime(1994, 11, 6, 8, 49, 37)
+    )
 
   def test_200(self):
     """from_http_datetime(): RFC 822, updated by RFC 1123"""
@@ -143,7 +145,9 @@ class TestDateTime(unittest.TestCase):
   def test_400(self):
     """normalize_datetime_to_utc() raises TypeError for naive datetime and no timezone arg"""
     dt = self._test_date_naive()
-    self.assertRaises(TypeError, d1_common.date_time.normalize_datetime_to_utc, dt)
+    self.assertRaises(
+      TypeError, d1_common.date_time.normalize_datetime_to_utc, dt
+    )
 
   def test_410(self):
     """normalize_datetime_to_utc() does raise exception for non-conflicting timezones"""

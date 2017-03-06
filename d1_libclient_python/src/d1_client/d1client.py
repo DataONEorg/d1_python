@@ -53,7 +53,9 @@ def showHelp():
 
 
 class DataONEObject(object):
-  def __init__(self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, forcenew=False):
+  def __init__(
+    self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, forcenew=False
+  ):
     self._pid = pid
     self._locations = []
     self._relations = None
@@ -64,8 +66,7 @@ class DataONEObject(object):
     self._cnBaseUrl = cnBaseUrl
     if forcenew:
       self._client = DataONEClient(
-        credentials=self.getCredentials(
-        ), cnBaseUrl=self._cnBaseUrl
+        credentials=self.getCredentials(), cnBaseUrl=self._cnBaseUrl
       )
 
   def getCredentials(self):
@@ -80,8 +81,7 @@ class DataONEObject(object):
         """
     if self._client is None or forcenew:
       self._client = DataONEClient(
-        credentials=self.getCredentials(
-        ), cnBaseUrl=self._cnBaseUrl
+        credentials=self.getCredentials(), cnBaseUrl=self._cnBaseUrl
       )
     return self._client
 
@@ -142,11 +142,14 @@ class DataONEObject(object):
     cli = self._getClient()
     return self._client.get(self._pid)
 
+
 #=========================================================================
 
 
 class DataONEClient(object):
-  def __init__(self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None):
+  def __init__(
+    self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None
+  ):
     """DataONEClient, which uses CN- and MN clients to perform high level
         operations against the DataONE infrastructure.
         """
@@ -162,7 +165,9 @@ class DataONEClient(object):
 
   def _getCN(self, forcenew=False):
     if self._cn is None or forcenew:
-      self._cn = cnclient_2_0.CoordinatingNodeClient_2_0(base_url=self._cnBaseUrl)
+      self._cn = cnclient_2_0.CoordinatingNodeClient_2_0(
+        base_url=self._cnBaseUrl
+      )
     return self._cn
 
   def _getMN(self, base_url, forcenew=False):
@@ -211,7 +216,10 @@ class DataONEClient(object):
     raise Exception('Object could not be retrieved from any resolved targets')
 
   @d1_common.util.utf8_to_unicode
-  def create(self, targetNodeId=None, ):
+  def create(
+    self,
+    targetNodeId=None,
+  ):
     """
         """
     pass
@@ -280,7 +288,9 @@ class DataONEClient(object):
         PID refers to a science metadata object, then that object is returned.
         """
     if self.isScienceMetadata(pid):
-      return [pid, ]
+      return [
+        pid,
+      ]
     res = []
     sysmeta_pyxb = self.getSystemMetadata(pid)
     for id in sysmeta_pyxb.describedBy:
@@ -290,7 +300,9 @@ class DataONEClient(object):
   @d1_common.util.utf8_to_unicode
   def getData(self, pid):
     if self.isData(pid):
-      return [pid, ]
+      return [
+        pid,
+      ]
     res = []
     sysmeta_pyxb = self.getSystemMetadata(pid)
     for id in sysmeta_pyxb.describes:

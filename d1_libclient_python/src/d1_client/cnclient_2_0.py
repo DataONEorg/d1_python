@@ -44,6 +44,7 @@ class CoordinatingNodeClient_2_0(
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -67,16 +68,16 @@ class CoordinatingNodeClient_2_0(
     response = self.listFormatsResponse()
     return self._read_dataone_type_response(response, 'ObjectFormatList')
 
-
   @d1_common.util.utf8_to_unicode
   def deleteObjectResponse(self, pid):
     return self.DELETE(['object', pid])
 
-
   @d1_common.util.utf8_to_unicode
   def deleteObject(self, pid):
-    response = self.deleteObjectResponse( pid )
-    return self._read_dataone_type_response(response, d1_common.types.dataoneTypes_v2_0.Identifier)
+    response = self.deleteObjectResponse(pid)
+    return self._read_dataone_type_response(
+      response, d1_common.types.dataoneTypes_v2_0.Identifier
+    )
 
   #=========================================================================
   # Read API
@@ -84,15 +85,9 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-      self,
-      fromDate=None,
-      toDate=None,
-      objectFormat=None,
-      replicaStatus=None,
-      nodeId=None,
-      start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None
+    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+    vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -107,28 +102,15 @@ class CoordinatingNodeClient_2_0(
     }
     return self.GET('object', query=query, headers=vendorSpecific)
 
-
   @d1_common.util.utf8_to_unicode
   def listObjects(
-      self,
-      fromDate=None,
-      toDate=None,
-      objectFormat=None,
-      replicaStatus=None,
-      nodeId=None,
-      start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None
+    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+    vendorSpecific=None
   ):
     response = self.listObjectsResponse(
-      fromDate=fromDate,
-      toDate=toDate,
-      objectFormat=objectFormat,
-      replicaStatus=replicaStatus,
-      nodeId=nodeId,
-      start=start,
-      count=count,
+      fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
+      replicaStatus=replicaStatus, nodeId=nodeId, start=start, count=count,
       vendorSpecific=vendorSpecific
     )
     return self._read_dataone_type_response(response, 'ObjectList')
-

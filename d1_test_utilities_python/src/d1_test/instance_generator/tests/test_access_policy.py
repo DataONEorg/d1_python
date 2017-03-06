@@ -38,9 +38,8 @@ import StringIO
 # D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
-import d1_common.xmlrunner
 
 # App
 sys.path.append('../generator/')
@@ -49,7 +48,9 @@ import accesspolicy
 #===============================================================================
 
 
-class TestAccessPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestAccessPolicy(
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     pass
 
@@ -76,7 +77,9 @@ class TestAccessPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     """random_subjects_with_permission_labels()"""
     for i in range(100):
       permissions = accesspolicy.random_set_of_permissions()
-      subjects = accesspolicy.random_subjects_with_permission_labels(permissions)
+      subjects = accesspolicy.random_subjects_with_permission_labels(
+        permissions
+      )
       self.assertTrue(isinstance(subjects, list))
 
   def test_050(self):

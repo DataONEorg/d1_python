@@ -89,7 +89,9 @@ class Resolver(resolver_base.Resolver):
   # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
 
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
@@ -97,10 +99,14 @@ class Resolver(resolver_base.Resolver):
     if len(path) <= 2:
       return self._get_attributes(path)
 
-    return self._resource_map_resolver.get_attributes(object_tree_folder, path[2:])
+    return self._resource_map_resolver.get_attributes(
+      object_tree_folder, path[2:]
+    )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
 
     if len(path) <= 2:
       return self._get_directory(object_tree_folder, path)
@@ -109,8 +115,8 @@ class Resolver(resolver_base.Resolver):
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(path), size, offset)
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
@@ -130,7 +136,9 @@ class Resolver(resolver_base.Resolver):
     classification = path[0]
 
     if len(path) == 1 and classification in self._classifications:
-      return self._resolve_taxa_classification(classification, object_tree_folder)
+      return self._resolve_taxa_classification(
+        classification, object_tree_folder
+      )
 
     classification_value = path[1]
 
@@ -147,9 +155,13 @@ class Resolver(resolver_base.Resolver):
     return d
 
   def _resolve_taxa_classification(self, classification, object_tree_folder):
-    return self._get_unique_values_for_classification(classification, object_tree_folder)
+    return self._get_unique_values_for_classification(
+      classification, object_tree_folder
+    )
 
-  def _resolve_taxa_classification_value(self, classification, value, object_tree_folder):
+  def _resolve_taxa_classification_value(
+    self, classification, value, object_tree_folder
+  ):
     d = directory.Directory()
     for pid in object_tree_folder.get_records['items']:
       record = self._object_tree.get_object_record(pid)
@@ -161,10 +173,14 @@ class Resolver(resolver_base.Resolver):
     # As empty folders in the taxa tree are pruned in the root and first level,
     # an empty folder here can only be due to an invalid path.
     if not len(d):
-      raise onedrive_exceptions.PathException(u'Invalid taxonomic classification value')
+      raise onedrive_exceptions.PathException(
+        u'Invalid taxonomic classification value'
+      )
     return d
 
-  def _get_unique_values_for_classification(self, classification, object_tree_folder):
+  def _get_unique_values_for_classification(
+    self, classification, object_tree_folder
+  ):
     u = set()
     for pid in object_tree_folder['items']:
       record = self._object_tree.get_object_record(pid)

@@ -26,9 +26,10 @@ class Dokan(object):
   """
   "No-op" implementation of Dokan user-mode file system interface
   """
-  
-  def __init__(self, operations, mountPoint, driverOptions, serialNumber,
-               num_threads):
+
+  def __init__(
+    self, operations, mountPoint, driverOptions, serialNumber, num_threads
+  ):
     """
     Initialize Dokan instance.
     :param operations: implementations of callbacks to dokan operations
@@ -44,13 +45,15 @@ class Dokan(object):
     self.driverOptions = driverOptions
     self.serialNumber = serialNumber
     self.dokanDLL = ctypes.windll.dokan
-    
+
     # set up preferences for Dokan drive
-    self.options = DOKAN_OPTIONS(600,                # Dokan version number
-                                 num_threads,        # number of threads
-                                 self.driverOptions, # drive options
-                                 0,                  # global context
-                                 self.mountPoint)    # mount point
+    self.options = DOKAN_OPTIONS(
+      600, # Dokan version number
+      num_threads, # number of threads
+      self.driverOptions, # drive options
+      0, # global context
+      self.mountPoint
+    ) # mount point
 
     self.operations = operations
 
@@ -60,15 +63,15 @@ class Dokan(object):
       if prototype != ctypes.c_voidp and getattr(operations, name, None):
         op = partial(self._wrapper_, getattr(self, name))
         setattr(self.dokan_ops, name, prototype(op))
-    
 
   def _wrapper_(self, func, *args, **kwargs):
     # RD
     #try:
-      return func(*args, **kwargs) or 0
-    #except Exception,e:
-      #logging.error('error in wrapper: %s %s', func, e)
-      #return const.DOKAN_ERROR
+    return func(*args, **kwargs) or 0
+
+  #except Exception,e:
+  #logging.error('error in wrapper: %s %s', func, e)
+  #return const.DOKAN_ERROR
 
   def dokanMain(self, dokanOptions, dokanOperations):
     """
@@ -80,18 +83,17 @@ class Dokan(object):
     :return: error code
     :rtype: int
     """
-    return int(self.dokanDLL.DokanMain(
-      PDOKAN_OPTIONS(dokanOptions),
-      PDOKAN_OPERATIONS(dokanOperations)
-    ))
-  
-  
-  def dokanUnmount(self, driveLetter):
-      return bool(self.dokanDLL.DokanRemoveMountPoint(
-          ctypes.c_wchar_p(driveLetter)
-      ))
+    return int(
+      self.dokanDLL.DokanMain(
+        PDOKAN_OPTIONS(dokanOptions), PDOKAN_OPERATIONS(dokanOperations)
+      )
+    )
 
-  
+  def dokanUnmount(self, driveLetter):
+    return bool(
+      self.dokanDLL.DokanRemoveMountPoint(ctypes.c_wchar_p(driveLetter))
+    )
+
   """
   # DokanIsNameInExpression
   #   check whether Name can match Expression
@@ -125,9 +127,11 @@ class Dokan(object):
           PDOKAN_FILE_INFO(DokanFileInfo)
       ))
   """
-  
-  def createFile(self, fileName, desiredAccess, shareMode,
-                 creationDisposition, flagsAndAttributes, dokanFileInfo):
+
+  def createFile(
+    self, fileName, desiredAccess, shareMode, creationDisposition,
+    flagsAndAttributes, dokanFileInfo
+  ):
     """
     Creates a file.
     :param fileName: name of file to create
@@ -146,8 +150,7 @@ class Dokan(object):
     :rtype: ctypes.c_int  
     """
     return self.operations('createFile', fileName)
-  
-  
+
   def openDirectory(self, fileName, dokanFileInfo):
     """
     Opens a directory.
@@ -159,8 +162,7 @@ class Dokan(object):
     :rtype: ctypes.c_int  
     """
     return self.operations('openDirectory', fileName)
-  
-  
+
   def createDirectory(self, fileName, dokanFileInfo):
     """
     Create a directory.
@@ -172,8 +174,7 @@ class Dokan(object):
     :rtype: ctypes.c_int  
     """
     return self.operations('createDirectory', fileName)
-  
-  
+
   def cleanup(self, fileName, dokanFileInfo):
     """
     Cleanup when deleting a file or directory.
@@ -185,8 +186,7 @@ class Dokan(object):
     :rtype: ctypes.c_int  
     """
     return self.operations('cleanup', fileName)
-  
-  
+
   def closeFile(self, fileName, dokanFileInfo):
     """
     Close a file.
@@ -198,10 +198,11 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('closeFile', fileName)
-      
-      
-  def readFile(self, fileName, buffer, numberOfBytesToRead,
-               numberOfBytesRead, offset, dokanFileInfo):
+
+  def readFile(
+    self, fileName, buffer, numberOfBytesToRead, numberOfBytesRead, offset,
+    dokanFileInfo
+  ):
     """
     Read a file.
     :param fileName: name of file to read
@@ -221,20 +222,24 @@ class Dokan(object):
     """
     try:
       ret = self.operations('readFile', fileName, numberOfBytesToRead, offset)
-      data = ctypes.create_string_buffer(ret[:numberOfBytesToRead],
-                                         numberOfBytesToRead)
+      data = ctypes.create_string_buffer(
+        ret[:numberOfBytesToRead], numberOfBytesToRead
+      )
       ctypes.memmove(buffer, data, numberOfBytesToRead)
       sizeRead = ctypes.c_ulong(len(ret))
-      ctypes.memmove(numberOfBytesRead, ctypes.byref(sizeRead),
-                     ctypes.sizeof(ctypes.c_ulong))
+      ctypes.memmove(
+        numberOfBytesRead, ctypes.byref(sizeRead),
+        ctypes.sizeof(ctypes.c_ulong)
+      )
       return const.DOKAN_SUCCESS
-    except Exception,e:
+    except Exception, e:
       #logging.error('%s', e)
       return const.DOKAN_ERROR
-  
-  
-  def writeFile(self, fileName, buffer, numberOfBytesToWrite,
-                numberOfBytesWritten, offset, dokanFileInfo):
+
+  def writeFile(
+    self, fileName, buffer, numberOfBytesToWrite, numberOfBytesWritten, offset,
+    dokanFileInfo
+  ):
     """
     Read a file.
     :param fileName: name of file to write
@@ -252,10 +257,10 @@ class Dokan(object):
     :return: error code
     :rtype: ctypes.c_int
     """
-    return self.operations('writeFile', fileName, buffer, numberOfBytesToWrite,
-                           offset)
-  
-  
+    return self.operations(
+      'writeFile', fileName, buffer, numberOfBytesToWrite, offset
+    )
+
   def flushFileBuffers(self, fileName, dokanFileInfo):
     """
     Flush a file's buffer.
@@ -267,8 +272,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('flushFileBuffers', fileName)
-  
-  
+
   def getFileInformation(self, fileName, buffer, dokanFileInfo):
     #"""
     #Get information about a file.
@@ -281,35 +285,38 @@ class Dokan(object):
     #:return: error code
     #:rtype: ctypes.c_int
     #"""
-#    try:
-      ret = self.operations('getFileInformation', fileName)
-      if ret is None:
-        return -const.ERROR_FILE_NOT_FOUND
-      create_ft = self.python_timestamp_to_win32_filetime(ret['ctime'])
-      last_access_ft = self.python_timestamp_to_win32_filetime(ret['atime'])
-      last_write_ft = self.python_timestamp_to_win32_filetime(ret['wtime'])
-      cft = FILETIME(create_ft[0], create_ft[1])
-      laft = FILETIME(last_access_ft[0], last_access_ft[1])
-      lwft = FILETIME(last_write_ft[0], last_write_ft[1])
-      size = self.pyint_to_double_dwords(ret['size'])
-      _Buffer = BY_HANDLE_FILE_INFORMATION(ctypes.c_ulong(ret['attr']),       # attributes
-                                           cft,                               # creation time
-                                           laft,                              # last access time
-                                           lwft,                              # last write time
-                                           ctypes.c_ulong(self.serialNumber), # serial number
-                                           size[1],                           # size (upper bits)
-                                           size[0],                           # size (lower bits)
-                                           ctypes.c_ulong(1),                 # num links to this file
-                                           ctypes.c_ulong(0),                 # index (upper)
-                                           ctypes.c_ulong(0))                 # index (lower)
-      ctypes.memmove(buffer, ctypes.byref(_Buffer), 
-                     ctypes.sizeof(BY_HANDLE_FILE_INFORMATION))
-      return const.DOKAN_SUCCESS
-    #except Exception,e:
-    #  logging.error('%s', e)
-    #  return -const.ERROR_FILE_NOT_FOUND
-  
-  
+    #    try:
+    ret = self.operations('getFileInformation', fileName)
+    if ret is None:
+      return -const.ERROR_FILE_NOT_FOUND
+    create_ft = self.python_timestamp_to_win32_filetime(ret['ctime'])
+    last_access_ft = self.python_timestamp_to_win32_filetime(ret['atime'])
+    last_write_ft = self.python_timestamp_to_win32_filetime(ret['wtime'])
+    cft = FILETIME(create_ft[0], create_ft[1])
+    laft = FILETIME(last_access_ft[0], last_access_ft[1])
+    lwft = FILETIME(last_write_ft[0], last_write_ft[1])
+    size = self.pyint_to_double_dwords(ret['size'])
+    _Buffer = BY_HANDLE_FILE_INFORMATION(
+      ctypes.c_ulong(ret['attr']), # attributes
+      cft, # creation time
+      laft, # last access time
+      lwft, # last write time
+      ctypes.c_ulong(self.serialNumber), # serial number
+      size[1], # size (upper bits)
+      size[0], # size (lower bits)
+      ctypes.c_ulong(1), # num links to this file
+      ctypes.c_ulong(0), # index (upper)
+      ctypes.c_ulong(0)
+    ) # index (lower)
+    ctypes.memmove(
+      buffer, ctypes.byref(_Buffer), ctypes.sizeof(BY_HANDLE_FILE_INFORMATION)
+    )
+    return const.DOKAN_SUCCESS
+
+  #except Exception,e:
+  #  logging.error('%s', e)
+  #  return -const.ERROR_FILE_NOT_FOUND
+
   def findFiles(self, fileName, fillFindData, dokanFileInfo):
     """
     Find files in a certain path.
@@ -323,10 +330,10 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('findFiles', fileName)
-  
-  
-  def findFilesWithPattern(self, fileName, searchPattern, fillFindData,
-                           dokanFileInfo):
+
+  def findFilesWithPattern(
+    self, fileName, searchPattern, fillFindData, dokanFileInfo
+  ):
     """
     Find files in a certain path that match the search pattern.
     :param fileName: path to search
@@ -352,25 +359,25 @@ class Dokan(object):
         laft = FILETIME(last_access_ft[0], last_access_ft[1])
         lwft = FILETIME(last_write_ft[0], last_write_ft[1])
         size = self.pyint_to_double_dwords(r['size'])
-        File = WIN32_FIND_DATAW(ctypes.c_ulong(r['attr']), # attributes
-                                cft,                       # creation time
-                                laft,                      # last access time
-                                lwft,                      # last write time
-                                size[1],                   # upper bits of size
-                                size[0],                   # lower bits of size
-                                ctypes.c_ulong(0),         # reserved for FS
-                                ctypes.c_ulong(0),         # reserved for FS
-                                r['name'],                 # file name
-                                '')                        # alternate name
+        File = WIN32_FIND_DATAW(
+          ctypes.c_ulong(r['attr']), # attributes
+          cft, # creation time
+          laft, # last access time
+          lwft, # last write time
+          size[1], # upper bits of size
+          size[0], # lower bits of size
+          ctypes.c_ulong(0), # reserved for FS
+          ctypes.c_ulong(0), # reserved for FS
+          r['name'], # file name
+          ''
+        ) # alternate name
         pFile = PWIN32_FIND_DATAW(File)
         fillFindData(pFile, dokanFileInfo)
       return const.DOKAN_SUCCESS
-    except Exception,e:
+    except Exception, e:
       logging.error('%s', e)
       return const.DOKAN_ERROR
-      
-  
-  
+
   def setFileAttributes(self, fileName, fileAttributes, dokanFileInfo):
     """
     Set attributes for a file.
@@ -384,10 +391,10 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('setFileAttributes', fileName)
-  
-  
-  def setFileTime(self, fileName, creationTime, lastAccessTime,
-                  lastWriteTime, dokanFileInfo):
+
+  def setFileTime(
+    self, fileName, creationTime, lastAccessTime, lastWriteTime, dokanFileInfo
+  ):
     """
     Set time values for a file.
     :param fileName: name of file to set time values for
@@ -404,8 +411,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('setFileTime', fileName)
-  
-  
+
   def deleteFile(self, fileName, dokanFileInfo):
     """
     Delete a file.
@@ -417,8 +423,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('deleteFile', fileName)
-  
-  
+
   def deleteDirectory(self, fileName, dokanFileInfo):
     """
     Delete a directory.
@@ -430,10 +435,10 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('deleteDirectory', fileName)
-  
-  
-  def moveFile(self, existingFileName, newFileName, replaceExisiting,
-               dokanFileInfo):
+
+  def moveFile(
+    self, existingFileName, newFileName, replaceExisiting, dokanFileInfo
+  ):
     """
     Move a file.
     :param existingFileName: name of file to move
@@ -448,8 +453,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('moveFile', fileName)
-  
-  
+
   def setEndOfFile(self, fileName, length, dokanFileInfo):
     """
     Set end of file indicator.
@@ -463,8 +467,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('setEndOfFile', fileName)
-  
-  
+
   def setAllocationSize(self, fileName, length, dokanFileInfo):
     """
     Set allocation size for a file.
@@ -478,8 +481,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('setAllocationSize', fileName)
-  
-  
+
   def lockFile(self, fileName, byteOffset, length, dokanFileInfo):
     """
     Lock a file.
@@ -495,8 +497,7 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('lockFile', fileName, byteOffset, length)
-  
-  
+
   def unlockFile(self, fileName, byteOffset, length, dokanFileInfo):
     """
     Unlock a file.
@@ -512,10 +513,11 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('unlockFile', fileName, byteOffset, length)
-  
-  
-  def getDiskFreeSpace(self, freeBytesAvailable, totalNumberOfBytes,
-                       totalNumberOfFreeBytes, dokanFileInfo):
+
+  def getDiskFreeSpace(
+    self, freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes,
+    dokanFileInfo
+  ):
     """
     Get the amount of free space on this volume.
     :param freeBytesAvailable: pointer for free bytes available
@@ -530,22 +532,28 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     ret = self.operations('getDiskFreeSpace')
-    ctypes.memmove(freeBytesAvailable,
-                   ctypes.byref(ctypes.c_longlong(ret['freeBytesAvailable'])),
-                   ctypes.sizeof(ctypes.c_longlong))
-    ctypes.memmove(totalNumberOfBytes,
-                   ctypes.byref(ctypes.c_longlong(ret['totalNumberOfBytes'])),
-                   ctypes.sizeof(ctypes.c_longlong))
-    ctypes.memmove(totalNumberOfFreeBytes,
-                   ctypes.byref(ctypes.c_longlong(ret['totalNumberOfFreeBytes'])),
-                   ctypes.sizeof(ctypes.c_longlong))
+    ctypes.memmove(
+      freeBytesAvailable,
+      ctypes.byref(ctypes.c_longlong(ret['freeBytesAvailable'])),
+      ctypes.sizeof(ctypes.c_longlong)
+    )
+    ctypes.memmove(
+      totalNumberOfBytes,
+      ctypes.byref(ctypes.c_longlong(ret['totalNumberOfBytes'])),
+      ctypes.sizeof(ctypes.c_longlong)
+    )
+    ctypes.memmove(
+      totalNumberOfFreeBytes,
+      ctypes.byref(ctypes.c_longlong(ret['totalNumberOfFreeBytes'])),
+      ctypes.sizeof(ctypes.c_longlong)
+    )
     return const.DOKAN_SUCCESS
-  
-  
-  def getVolumeInformation(self, volumeNameBuffer, volumeNameSize,
-                           volumeSerialNumber, maximumComponentLength,
-                           fileSystemFlags, fileSystemNameBuffer,
-                           fileSystemNameSize, dokanFileInfo):
+
+  def getVolumeInformation(
+    self, volumeNameBuffer, volumeNameSize, volumeSerialNumber,
+    maximumComponentLength, fileSystemFlags, fileSystemNameBuffer,
+    fileSystemNameSize, dokanFileInfo
+  ):
     """
     Get information about the volume.
     :param volumeNameBuffer: buffer for volume name
@@ -569,35 +577,40 @@ class Dokan(object):
     """
     ret = self.operations('getVolumeInformation')
     # populate volume name buffer
-    ctypes.memmove(volumeNameBuffer, 
-                   ret['volumeNameBuffer'],
-                   min(ctypes.sizeof(ctypes.c_wchar) 
-                       * len(ret['volumeNameBuffer']),
-                       volumeNameSize))
+    ctypes.memmove(
+      volumeNameBuffer, ret['volumeNameBuffer'],
+      min(
+        ctypes.sizeof(ctypes.c_wchar) * len(ret['volumeNameBuffer']),
+        volumeNameSize
+      )
+    )
     # populate serial number buffer
     serialNum = ctypes.c_ulong(self.serialNumber)
-    ctypes.memmove(volumeSerialNumber,
-                   ctypes.byref(serialNum),
-                   ctypes.sizeof(ctypes.c_ulong))
+    ctypes.memmove(
+      volumeSerialNumber, ctypes.byref(serialNum),
+      ctypes.sizeof(ctypes.c_ulong)
+    )
     # populate max component length
     maxCompLen = ctypes.c_ulong(ret['maximumComponentLength'])
-    ctypes.memmove(maximumComponentLength,
-                   ctypes.byref(maxCompLen),
-                   ctypes.sizeof(ctypes.c_ulong))
+    ctypes.memmove(
+      maximumComponentLength,
+      ctypes.byref(maxCompLen), ctypes.sizeof(ctypes.c_ulong)
+    )
     # populate filesystem flags buffer
     fsFlags = ctypes.c_ulong(ret['fileSystemFlags'])
-    ctypes.memmove(fileSystemFlags, 
-                   ctypes.byref(fsFlags),
-                   ctypes.sizeof(ctypes.c_ulong))
+    ctypes.memmove(
+      fileSystemFlags, ctypes.byref(fsFlags), ctypes.sizeof(ctypes.c_ulong)
+    )
     # populate filesystem name
-    ctypes.memmove(fileSystemNameBuffer, 
-                   ret['fileSystemNameBuffer'],
-                   min(ctypes.sizeof(ctypes.c_wchar) 
-                       * len(ret['fileSystemNameBuffer']),
-                       fileSystemNameSize))
+    ctypes.memmove(
+      fileSystemNameBuffer, ret['fileSystemNameBuffer'],
+      min(
+        ctypes.sizeof(ctypes.c_wchar) * len(ret['fileSystemNameBuffer']),
+        fileSystemNameSize
+      )
+    )
     return const.DOKAN_SUCCESS
-      
-      
+
   def unmount(self, dokanFileInfo):
     """
     Unmount the volume.
@@ -607,11 +620,11 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('unmount', fileName)
-  
-  
-  def getFileSecurity(self, fileName, securityInformation,
-                      securityDescriptor, lengthSecurityDescriptorBuffer,
-                      lengthNeeded, dokanFileInfo):
+
+  def getFileSecurity(
+    self, fileName, securityInformation, securityDescriptor,
+    lengthSecurityDescriptorBuffer, lengthNeeded, dokanFileInfo
+  ):
     """
     Get security attributes of a file.
     :param fileName: name of file to get security for
@@ -630,11 +643,11 @@ class Dokan(object):
     :rtype: ctypes.c_int
     """
     return self.operations('getFileSecurity', fileName)
-  
-  
-  def setFileSecurity(self, fileName, securityInformation,
-                      securityDescriptor, lengthSecurityDescriptorBuffer,
-                      dokanFileInfo):
+
+  def setFileSecurity(
+    self, fileName, securityInformation, securityDescriptor,
+    lengthSecurityDescriptorBuffer, dokanFileInfo
+  ):
     """
     Set security attributes of a file.
     :param fileName: name of file to set security for
@@ -652,22 +665,19 @@ class Dokan(object):
     """
     return self.operations('setFileSecurity', fileName)
 
-
   # https://bitbucket.org/pchambon/python-rock-solid-tools/src/021bb37fedfe/rsbackends/_utilities.py
   def pyint_to_double_dwords(cls, mylong, dwordsize=32):
-    if(mylong < 0):
+    if (mylong < 0):
       raise ValueError("Positive argument required")
-    uloworder = mylong & (2 ** dwordsize - 1)
-    uhighorder = (mylong >> dwordsize) & (2 ** dwordsize - 1)
+    uloworder = mylong & (2**dwordsize - 1)
+    uhighorder = (mylong >> dwordsize) & (2**dwordsize - 1)
     return (uloworder, uhighorder)
-
 
   def python_timestamp_to_win32_filetime(cls, pytimestamp):
     win32_timestamp = int((10000000 * pytimestamp) + 116444736000000000)
     (loworder, highorder) = cls.pyint_to_double_dwords(win32_timestamp)
     return (loworder, highorder)
-  
-      
+
   def main(self):
     """
     Starts Dokan drive which dispatches events to the appropriate
@@ -676,9 +686,7 @@ class Dokan(object):
     return self.dokanMain(self.options, self.dokan_ops)
 
 
-
 class Operations(object):
-
   def __call__(self, op, *args):
     if not hasattr(self, op):
       raise AttributeError('Invalid operation')
@@ -760,181 +768,180 @@ class Operations(object):
     return const.DOKAN_SUCCESS
 
 
-
 class _DOKAN_OPTIONS(ctypes.Structure):
-  _fields_ = [("Version", ctypes.c_ushort),
-              ("ThreadCount", ctypes.c_ushort),
-              ("Options", ctypes.c_ulong),
-              ("GlobalContext", ctypes.c_ulonglong),
-              ("MountPoint", ctypes.c_wchar_p)]
+  _fields_ = [
+    ("Version", ctypes.c_ushort),
+    ("ThreadCount", ctypes.c_ushort),
+    ("Options", ctypes.c_ulong),
+    ("GlobalContext", ctypes.c_ulonglong),
+    ("MountPoint", ctypes.c_wchar_p)
+  ]
+
 
 DOKAN_OPTIONS = _DOKAN_OPTIONS
 PDOKAN_OPTIONS = ctypes.POINTER(_DOKAN_OPTIONS)
 
 
 class _DOKAN_FILE_INFO(ctypes.Structure):
-  _fields_ = [("Context", ctypes.c_ulonglong),
-              ("DokanContext", ctypes.c_ulonglong),
-              ("DokanOptions", PDOKAN_OPTIONS),
-              ("ProcessId", ctypes.c_ulong),
-              ("IsDirectory", ctypes.c_ubyte),
-              ("DeleteOnClose", ctypes.c_ubyte),
-              ("PagingIo", ctypes.c_ubyte),
-              ("SynchronousIo", ctypes.c_ubyte),
-              ("Nocache", ctypes.c_ubyte),
-              ("WriteToEndOfFile", ctypes.c_ubyte)]
+  _fields_ = [
+    ("Context", ctypes.c_ulonglong),
+    ("DokanContext", ctypes.c_ulonglong),
+    ("DokanOptions", PDOKAN_OPTIONS),
+    ("ProcessId", ctypes.c_ulong),
+    ("IsDirectory", ctypes.c_ubyte),
+    ("DeleteOnClose", ctypes.c_ubyte),
+    ("PagingIo", ctypes.c_ubyte),
+    ("SynchronousIo", ctypes.c_ubyte),
+    ("Nocache", ctypes.c_ubyte),
+    ("WriteToEndOfFile", ctypes.c_ubyte)
+  ]
+
 
 DOKAN_FILE_INFO = _DOKAN_FILE_INFO
 PDOKAN_FILE_INFO = ctypes.POINTER(_DOKAN_FILE_INFO)
-
 
 PWIN32_FIND_DATAW = ctypes.POINTER(wintypes.WIN32_FIND_DATAW)
 
 
 class _BY_HANDLE_FILE_INFORMATION(ctypes.Structure):
-  _fields_ = [("dwFileAttributes", ctypes.c_ulong),
-              ("ftCreationTime", wintypes.FILETIME),
-              ("ftLastAccessTime", wintypes.FILETIME),
-              ("ftLastWriteTime", wintypes.FILETIME),
-              ("dwVolumeSerialNumber", ctypes.c_ulong),
-              ("nFileSizeHigh", ctypes.c_ulong),
-              ("nFileSizeLow", ctypes.c_ulong),
-              ("nNumberOfLinks", ctypes.c_ulong),
-              ("nFileIndexHigh", ctypes.c_ulong),
-              ("nFileIndexLow", ctypes.c_ulong)]
+  _fields_ = [
+    ("dwFileAttributes", ctypes.c_ulong),
+    ("ftCreationTime", wintypes.FILETIME),
+    ("ftLastAccessTime", wintypes.FILETIME),
+    ("ftLastWriteTime", wintypes.FILETIME),
+    ("dwVolumeSerialNumber", ctypes.c_ulong),
+    ("nFileSizeHigh", ctypes.c_ulong),
+    ("nFileSizeLow", ctypes.c_ulong),
+    ("nNumberOfLinks", ctypes.c_ulong),
+    ("nFileIndexHigh", ctypes.c_ulong),
+    ("nFileIndexLow", ctypes.c_ulong)
+  ]
+
 
 BY_HANDLE_FILE_INFORMATION = _BY_HANDLE_FILE_INFORMATION
 PBY_HANDLE_FILE_INFORMATION = ctypes.POINTER(_BY_HANDLE_FILE_INFORMATION)
 
-
 PSECURITY_INFORMATION = ctypes.POINTER(ctypes.c_ulong)
 PSECURITY_DESCRIPTOR = ctypes.c_void_p
 
-
-PFillFindData = ctypes.WINFUNCTYPE(ctypes.c_int,
-                                   ctypes.POINTER(wintypes.WIN32_FIND_DATAW),
-                                   PDOKAN_FILE_INFO)
+PFillFindData = ctypes.WINFUNCTYPE(
+  ctypes.c_int, ctypes.POINTER(wintypes.WIN32_FIND_DATAW), PDOKAN_FILE_INFO
+)
 
 
 class dokan_operations(ctypes.Structure):
   _fields_ = [
-    ("createFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                      ctypes.c_wchar_p,
-                                      ctypes.c_ulong,
-                                      ctypes.c_ulong,
-                                      ctypes.c_ulong,
-                                      ctypes.c_ulong,
-                                      PDOKAN_FILE_INFO)),
-    ("openDirectory", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                         ctypes.c_wchar_p,
-                                         PDOKAN_FILE_INFO)),
-    ("createDirectory", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                           ctypes.c_wchar_p,
-                                           PDOKAN_FILE_INFO)),
-    ("cleanup", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                   ctypes.c_wchar_p,
-                                   PDOKAN_FILE_INFO)),
-    ("closeFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                     ctypes.c_wchar_p,
-                                     PDOKAN_FILE_INFO)),
-    ("readFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                    ctypes.c_wchar_p,
-                                    ctypes.c_void_p,
-                                    ctypes.c_ulong,
-                                    ctypes.POINTER(ctypes.c_ulong),
-                                    ctypes.c_longlong,
-                                    PDOKAN_FILE_INFO)),
-    ("writeFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                     ctypes.c_wchar_p,
-                                     ctypes.c_void_p,
-                                     ctypes.c_ulong,
-                                     ctypes.POINTER(ctypes.c_ulong),
-                                     ctypes.c_longlong,
-                                     PDOKAN_FILE_INFO)),
-    ("flushFileBuffers", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                            ctypes.c_wchar_p,
-                                            PDOKAN_FILE_INFO)),
-    ("getFileInformation", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                              ctypes.c_wchar_p,
-                                              PBY_HANDLE_FILE_INFORMATION,
-                                              PDOKAN_FILE_INFO)),
-    ("findFiles", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                     ctypes.c_wchar_p,
-                                     PFillFindData,
-                                     PDOKAN_FILE_INFO)),
-    ("findFilesWithPattern", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                                ctypes.c_wchar_p,
-                                                ctypes.c_wchar_p,
-                                                PFillFindData,
-                                                PDOKAN_FILE_INFO)),
-    ("setFileAttributes", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                             ctypes.c_wchar_p,
-                                             ctypes.c_ulong,
-                                             PDOKAN_FILE_INFO)),
-    ("setFileTime", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                       ctypes.c_wchar_p,
-                                       ctypes.POINTER(wintypes.FILETIME),
-                                       ctypes.POINTER(wintypes.FILETIME),
-                                       ctypes.POINTER(wintypes.FILETIME),
-                                       PDOKAN_FILE_INFO)),
-    ("deleteFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                      ctypes.c_wchar_p,
-                                      PDOKAN_FILE_INFO)),
-    ("deleteDirectory", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                           ctypes.c_wchar_p,
-                                           PDOKAN_FILE_INFO)),
-    ("moveFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                    ctypes.c_wchar_p,
-                                    ctypes.c_wchar_p,
-                                    ctypes.c_bool,
-                                    PDOKAN_FILE_INFO)),
-    ("setEndOfFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                        ctypes.c_wchar_p,
-                                        ctypes.c_longlong,
-                                        PDOKAN_FILE_INFO)),
-    ("setAllocationSize", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                             ctypes.c_wchar_p,
-                                             ctypes.c_longlong,
-                                             PDOKAN_FILE_INFO)),
-    ("lockFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                    ctypes.c_wchar_p,
-                                    ctypes.c_longlong,
-                                    ctypes.c_longlong,
-                                    PDOKAN_FILE_INFO)),
-    ("unlockFile", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                      ctypes.c_wchar_p,
-                                      ctypes.c_longlong,
-                                      ctypes.c_longlong,
-                                      PDOKAN_FILE_INFO)),
-    ("getDiskFreeSpace", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                            ctypes.c_void_p,
-                                            ctypes.c_void_p,
-                                            ctypes.c_void_p,
-                                            PDOKAN_FILE_INFO)),
-    ("getVolumeInformation", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                                ctypes.c_void_p,
-                                                ctypes.c_ulong,
-                                                ctypes.POINTER(ctypes.c_ulong),
-                                                ctypes.POINTER(ctypes.c_ulong),
-                                                ctypes.POINTER(ctypes.c_ulong),
-                                                ctypes.c_void_p,
-                                                ctypes.c_ulong,
-                                                PDOKAN_FILE_INFO)),
-    ("unmount", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                   PDOKAN_FILE_INFO)),
-    ("getFileSecurity", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                           ctypes.c_wchar_p,
-                                           PSECURITY_INFORMATION,
-                                           PSECURITY_DESCRIPTOR,
-                                           ctypes.c_ulong,
-                                           ctypes.POINTER(ctypes.c_ulong),
-                                           PDOKAN_FILE_INFO)),
-    ("setFileSecurity", ctypes.WINFUNCTYPE(ctypes.c_int,
-                                           ctypes.c_wchar_p,
-                                           PSECURITY_INFORMATION,
-                                           PSECURITY_DESCRIPTOR,
-                                           ctypes.c_ulong,
-                                           PDOKAN_FILE_INFO))]
+    (
+      "createFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_ulong, ctypes.c_ulong,
+        ctypes.c_ulong, ctypes.c_ulong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "openDirectory",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "createDirectory",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "cleanup",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "closeFile",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "readFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_void_p, ctypes.c_ulong,
+        ctypes.POINTER(ctypes.c_ulong), ctypes.c_longlong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "writeFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_void_p, ctypes.c_ulong,
+        ctypes.POINTER(ctypes.c_ulong), ctypes.c_longlong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "flushFileBuffers",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "getFileInformation", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, PBY_HANDLE_FILE_INFORMATION,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "findFiles", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, PFillFindData, PDOKAN_FILE_INFO
+      )
+    ), (
+      "findFilesWithPattern", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_wchar_p, PFillFindData,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "setFileAttributes", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_ulong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "setFileTime", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p,
+        ctypes.POINTER(wintypes.FILETIME),
+        ctypes.POINTER(wintypes.FILETIME),
+        ctypes.POINTER(wintypes.FILETIME), PDOKAN_FILE_INFO
+      )
+    ), (
+      "deleteFile",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "deleteDirectory",
+      ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_wchar_p, PDOKAN_FILE_INFO)
+    ), (
+      "moveFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_bool,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "setEndOfFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_longlong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "setAllocationSize", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_longlong, PDOKAN_FILE_INFO
+      )
+    ), (
+      "lockFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_longlong, ctypes.c_longlong,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "unlockFile", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, ctypes.c_longlong, ctypes.c_longlong,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "getDiskFreeSpace", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p,
+        PDOKAN_FILE_INFO
+      )
+    ), (
+      "getVolumeInformation", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_void_p, ctypes.c_ulong,
+        ctypes.POINTER(ctypes.c_ulong),
+        ctypes.POINTER(ctypes.c_ulong),
+        ctypes.POINTER(ctypes.c_ulong), ctypes.c_void_p, ctypes.c_ulong,
+        PDOKAN_FILE_INFO
+      )
+    ), ("unmount", ctypes.WINFUNCTYPE(ctypes.c_int, PDOKAN_FILE_INFO)), (
+      "getFileSecurity", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, PSECURITY_INFORMATION,
+        PSECURITY_DESCRIPTOR, ctypes.c_ulong,
+        ctypes.POINTER(ctypes.c_ulong), PDOKAN_FILE_INFO
+      )
+    ), (
+      "setFileSecurity", ctypes.WINFUNCTYPE(
+        ctypes.c_int, ctypes.c_wchar_p, PSECURITY_INFORMATION,
+        PSECURITY_DESCRIPTOR, ctypes.c_ulong, PDOKAN_FILE_INFO
+      )
+    )
+  ]
+
 
 DOKAN_OPERATIONS = dokan_operations
 PDOKAN_OPERATIONS = ctypes.POINTER(dokan_operations)

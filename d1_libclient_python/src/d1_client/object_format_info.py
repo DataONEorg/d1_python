@@ -36,6 +36,7 @@ import os
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
+
 # Config
 MIME_MAPPINGS_CSV_PATH = make_absolute('mime_mappings.csv')
 
@@ -48,6 +49,7 @@ class Singleton(object):
       class_._instances[class_] = super(Singleton, class_)\
         .__new__(class_, *args, **kwargs)
     return class_._instances[class_]
+
 
 #===============================================================================
 
@@ -83,5 +85,6 @@ class ObjectFormatInfo(Singleton):
       self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
     except (csv.Error, Exception) as e:
       raise Exception(
-        'Error in csv file. Line: {1}  Error: {2}'.format(csv_reader.line_num, e)
+        'Error in csv file. Line: {1}  Error: {2}'.
+        format(csv_reader.line_num, e)
       )

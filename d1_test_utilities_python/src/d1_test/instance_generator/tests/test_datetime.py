@@ -40,9 +40,8 @@ import StringIO
 # D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
-import d1_common.xmlrunner
 
 # App
 sys.path.append('../generator/')
@@ -51,7 +50,7 @@ import dates
 #===============================================================================
 
 
-class TestDateTime(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestDateTime(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 

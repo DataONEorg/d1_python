@@ -26,5 +26,7 @@ def run(options, root_resolver):
     fuse_args['nonempty'] = options.fuse_nonempty
 
   # Mount the drive and handle callbacks forever.
-  fuse.FUSE(callbacks.FUSECallbacks(options, root_resolver), options.mountpoint,
-            **fuse_args)
+  fuse.FUSE(
+    callbacks.FUSECallbacks(options, root_resolver), options.mountpoint,
+    **fuse_args
+  )

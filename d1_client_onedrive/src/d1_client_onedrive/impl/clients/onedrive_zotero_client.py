@@ -62,7 +62,9 @@ class ZoteroClient(object):
     self._user_id = self._get_setting('ZOTERO_USER')
     self._api_access_key = self._get_setting('ZOTERO_API_ACCESS_KEY')
     self._check_api_key()
-    self._zotero_client = zotero.Zotero(self._user_id, 'user', self._api_access_key)
+    self._zotero_client = zotero.Zotero(
+      self._user_id, 'user', self._api_access_key
+    )
 
   def __enter__(self):
     self._init_cache()
@@ -102,7 +104,9 @@ class ZoteroClient(object):
       path = []
     for collection in collection_tree['collections']:
       yield collection, path + [collection['name']]
-      for f in self.iterate_collection_tree(collection, path + [collection['name']]):
+      for f in self.iterate_collection_tree(
+        collection, path + [collection['name']]
+      ):
         yield f
 
   def iterate_filtered_tree(self, filtered_tree=None, path=None):
@@ -113,15 +117,16 @@ class ZoteroClient(object):
       path = []
     for f in filtered_tree['collections']:
       yield filtered_tree['collections'][f], path + [f]
-      for f in self.iterate_filtered_tree(filtered_tree['collections'][f], path + [f]):
+      for f in self.iterate_filtered_tree(
+        filtered_tree['collections'][f], path + [f]
+      ):
         yield f
 
   def cache_is_stale(self):
     current_library_version = self._get_current_library_version()
     logging.debug(
-      'Zotero online version: {}. Cached version: {}'.format(
-        self._cache['library_version'], current_library_version
-      )
+      'Zotero online version: {}. Cached version: {}'.
+      format(self._cache['library_version'], current_library_version)
     )
     return self._cache['library_version'] < current_library_version
 
@@ -137,11 +142,16 @@ class ZoteroClient(object):
         return os.environ[key]
       except KeyError:
         raise onedrive_exceptions.ONEDriveException(
-          'Required value must be set in settings.py or OS environment: {}'.format(key)
+          'Required value must be set in settings.py or OS environment: {}'.
+          format(key)
         )
 
   def _init_cache(self):
-    self._cache = {'filtered_tree': {}, 'collections': None, 'library_version': 0, }
+    self._cache = {
+      'filtered_tree': {},
+      'collections': None,
+      'library_version': 0,
+    }
 
   def _create_collection_trees(self):
     collections = self._zotero_client.collections()
@@ -179,7 +189,9 @@ class ZoteroClient(object):
   def _create_filtered_trees_from_collections_recursive(
     self, filtered_tree, collection_tree
   ):
-    sub_tree = {'collections': {}, }
+    sub_tree = {
+      'collections': {},
+    }
     self._add_collection_items_to_filtered_tree(sub_tree, collection_tree)
     filtered_tree.setdefault('collections', {})
     filtered_tree['collections'][collection_tree['name']] = sub_tree
@@ -189,7 +201,9 @@ class ZoteroClient(object):
   def _add_collection_items_to_filtered_tree(self, filtered_tree, collection):
     filtered_tree.setdefault('identifiers', [])
     filtered_tree.setdefault('queries', [])
-    collection_items = self._zotero_client.collection_items(collection['collectionKey'])
+    collection_items = self._zotero_client.collection_items(
+      collection['collectionKey']
+    )
     for i in collection_items:
       self._add_item_to_filtered_tree_if_dataone_pid(filtered_tree, i)
       self._add_item_to_filtered_tree_if_dataone_query(filtered_tree, i)
@@ -214,7 +228,9 @@ class ZoteroClient(object):
 
   def _add_item_to_filtered_tree_if_dataone_query(self, filtered_tree, item):
     #filtered_tree.setdefault('queries', [])
-    m = re.match(r'(https://cn.dataone.org/cn/v1/query/solr/\?)(.*)', item['url'])
+    m = re.match(
+      r'(https://cn.dataone.org/cn/v1/query/solr/\?)(.*)', item['url']
+    )
     if m:
       filtered_tree['queries'].append(m.group(2))
 
@@ -243,7 +259,9 @@ class ZoteroClient(object):
 
   def _check_api_key(self):
     host = 'api.zotero.org'
-    url = '/users/{}/items?limit=1&key={}&v=3'.format(self._user_id, self._api_access_key)
+    url = '/users/{}/items?limit=1&key={}&v=3'.format(
+      self._user_id, self._api_access_key
+    )
     connection = httplib.HTTPSConnection(host)
     connection.request('GET', url)
     if connection.getresponse().status == 403:

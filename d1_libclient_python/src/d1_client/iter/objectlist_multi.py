@@ -56,6 +56,7 @@ class ObjectListIteratorMulti(object):
 
   Fast retrieval of ObjectInfo from a DataONE Node.
   """
+
   def __init__(
     self,
     base_url,
@@ -114,11 +115,15 @@ def _get_all_pages(
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_total = _get_total_object_count(base_url, client_args_dict, listObjects_args_dict)
+  n_total = _get_total_object_count(
+    base_url, client_args_dict, listObjects_args_dict
+  )
   n_pages = (n_total - 1) / page_size + 1
 
   for page_idx in range(n_pages):
-    logging.debug('apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages))
+    logging.debug(
+      'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
+    )
     pool.apply_async(
       _get_page, args=(
         queue, base_url, page_idx, n_pages, page_size, client_args_dict,
@@ -138,7 +143,9 @@ def _get_page(
   queue, base_url, page_idx, n_pages, page_size, client_args_dict,
   listObjects_args_dict
 ):
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_args_dict)
+  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+    base_url, **client_args_dict
+  )
   try:
     object_list_pyxb = client.listObjects(
       start=page_idx * page_size, count=page_size, **listObjects_args_dict
@@ -147,6 +154,7 @@ def _get_page(
     for object_info_pyxb in object_list_pyxb.objectInfo:
       queue.put(object_info_pyxb)
   except Exception as e:
-    logging.error('Failed to retrieve page: {}/{}. Error: {}'.format(
-      page_idx + 1, n_pages, e.message)
+    logging.error(
+      'Failed to retrieve page: {}/{}. Error: {}'.
+      format(page_idx + 1, n_pages, e.message)
     )

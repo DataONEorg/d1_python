@@ -41,6 +41,7 @@ class CLIClient(object):
   def __init__(self, *args, **kwargs):
     super(CLIClient, self).__init__(*args, **kwargs)
 
+
 #===============================================================================
 
 
@@ -48,12 +49,14 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, *args, **kwargs):
     super(CLIMNClient, self).__init__(*args, **kwargs)
 
+
 #===============================================================================
 
 
 class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, *args, **kwargs):
     super(CLICNClient, self).__init__(*args, **kwargs)
+
 
 #===============================================================================
 

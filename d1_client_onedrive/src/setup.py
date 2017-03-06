@@ -40,21 +40,23 @@ import d1_client_onedrive
 # Windows executable setup
 if sys.platform == 'win32':
   opts = {
-    'py2exe': {
-      'packages': [
-        'd1_client_onedrive',
-        'd1_client_onedrive.impl',
-        'd1_client_onedrive.impl.drivers',
-        'd1_client_onedrive.impl.drivers.dokan',
-        'd1_client_onedrive.impl.drivers.fuse',
-        'd1_client_onedrive.impl.resolver',
-        'rdflib.plugins',
-        'lxml'
-      ],
-      'skip_archive': True,
-    }
+    'py2exe':
+      {
+        'packages':
+          [
+            'd1_client_onedrive', 'd1_client_onedrive.impl',
+            'd1_client_onedrive.impl.drivers',
+            'd1_client_onedrive.impl.drivers.dokan',
+            'd1_client_onedrive.impl.drivers.fuse',
+            'd1_client_onedrive.impl.resolver', 'rdflib.plugins', 'lxml'
+          ],
+        'skip_archive':
+          True,
+      }
   }
-  extra_opts = dict(console=['d1_client_onedrive/onedrive.py'],)
+  extra_opts = dict(
+    console=['d1_client_onedrive/onedrive.py'],
+  )
 # Mac App setup
 elif sys.platform == 'darwin':
   opts = dict(
@@ -101,9 +103,7 @@ def main():
       'rdflib',
       'rdfextras',
     ],
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    setup_requires=['setuptools_git >= 1.1'],
     # Options for py2exe and py2app.
     options=opts,
     **extra_opts

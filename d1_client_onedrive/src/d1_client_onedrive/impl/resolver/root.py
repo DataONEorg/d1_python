@@ -62,8 +62,10 @@ class RootResolver(resolver_base.Resolver):
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self._resolvers = {
-      u"ObjectTree": object_tree_resolver.Resolver(options, object_tree_client),
-      u"FlatSpace": flat_space.Resolver(options, object_tree_client),
+      u"ObjectTree":
+        object_tree_resolver.Resolver(options, object_tree_client),
+      u"FlatSpace":
+        flat_space.Resolver(options, object_tree_client),
     }
 
   def get_attributes(self, path):
@@ -120,11 +122,15 @@ class RootResolver(resolver_base.Resolver):
 
   def _dispatch_get_attributes(self, path):
     object_tree_folder = self._object_tree.get_folder([])
-    return self._resolver_lookup(path).get_attributes(object_tree_folder, path[1:])
+    return self._resolver_lookup(path).get_attributes(
+      object_tree_folder, path[1:]
+    )
 
   def _dispatch_get_directory(self, path):
     object_tree_folder = self._object_tree.get_folder([])
-    return self._resolver_lookup(path).get_directory(object_tree_folder, path[1:])
+    return self._resolver_lookup(path).get_directory(
+      object_tree_folder, path[1:]
+    )
 
   def _dispatch_read_file(self, path, size, offset):
     object_tree_folder = self._object_tree.get_folder([])
@@ -134,10 +140,14 @@ class RootResolver(resolver_base.Resolver):
 
   def _split_and_unescape_path(self, path):
     assert (os.path.isabs(path))
-    return [os_escape.identifier_from_filename(p) for p in path.split(os.path.sep)][1:]
+    return [
+      os_escape.identifier_from_filename(p) for p in path.split(os.path.sep)
+    ][1:]
 
   def _escape_directory_entries(self, dir):
-    return directory.Directory(os_escape.filename_from_identifier(d) for d in dir)
+    return directory.Directory(
+      os_escape.filename_from_identifier(d) for d in dir
+    )
 
   def _resolver_lookup(self, path):
     try:

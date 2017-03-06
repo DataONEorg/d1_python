@@ -37,16 +37,13 @@ import sys
 # in this tuple. It is typically not necessary to change the other fields
 # from their defaults.
 dn_tuple = (
-  ('DC', 'com'),
-  ('DC', 'd1-stress-tester'),
-  ('C', 'US'),
-  ('O', 'd1-stress-tester'),
-  ('CN', ''),
+  ('DC', 'com'), ('DC', 'd1-stress-tester'), ('C', 'US'),
+  ('O', 'd1-stress-tester'), ('CN', ''),
 )
 
 
 def get_dn_by_subject(subject):
-  return dn_tuple[:4] + (('CN', subject), )
+  return dn_tuple[:4] + (('CN', subject),)
 
 
 def get_dataone_compliant_dn_serialization(dn):

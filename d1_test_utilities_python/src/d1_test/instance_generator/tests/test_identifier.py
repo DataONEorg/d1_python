@@ -38,9 +38,8 @@ import StringIO
 
 # D1
 import d1_common.const
-import d1_common.testcasewithurlcompare
+import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
-import d1_common.xmlrunner
 
 # App
 sys.path.append('../generator/')
@@ -50,7 +49,9 @@ import random_data
 #===============================================================================
 
 
-class TestIdentifier(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestIdentifier(
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     pass
 

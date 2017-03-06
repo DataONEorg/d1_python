@@ -172,8 +172,7 @@ class Workspace(object):
       'tree': {
         'name': self._wdef.name,
       },
-      'records': {
-      },
+      'records': {},
       'workspace_timestamp': None,
     }
 
@@ -246,7 +245,9 @@ class Workspace(object):
       if f.name == path[0]:
         return self._get_wdef_folder_recursive(path[1:], f)
 
-  def _get_or_create_wcache_folder_recursive(self, path, folder=None, rpath=None):
+  def _get_or_create_wcache_folder_recursive(
+    self, path, folder=None, rpath=None
+  ):
     if folder is None:
       folder = self._wcache['tree']
     if rpath is None:
@@ -302,6 +303,8 @@ class Workspace(object):
     if not path:
       return folder
     try:
-      return self._get_wcache_folder_recursive(path[1:], folder['dirs'][path[0]])
+      return self._get_wcache_folder_recursive(
+        path[1:], folder['dirs'][path[0]]
+      )
     except KeyError:
       raise workspace_exception.WorkspaceException('Invalid path')

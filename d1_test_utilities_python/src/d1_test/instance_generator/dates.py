@@ -41,7 +41,8 @@ def random_date(earliest=0, latest=1e10):
   tstamp = random.randrange(earliest, latest)
   dt = datetime.datetime.utcfromtimestamp(tstamp)
   return d1_common.date_time.create_utc_datetime(
-    dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, random.randint(0, 1000)
+    dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second,
+    random.randint(0, 1000)
   )
 
 

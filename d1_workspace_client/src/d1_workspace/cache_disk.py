@@ -123,7 +123,9 @@ class DiskCache(dict):
     os.unlink(os.path.join(self._cache_directory_path, oldest_fname))
 
   def _path_from_key(self, key):
-    return os.path.join(self._cache_directory_path, self._filename_from_key(key))
+    return os.path.join(
+      self._cache_directory_path, self._filename_from_key(key)
+    )
 
   def _filename_from_key(self, key):
     return urllib.quote(key.encode('utf8'), safe='') # doseq=True

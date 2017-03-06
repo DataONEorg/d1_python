@@ -57,7 +57,9 @@ import shared_settings
 import util
 
 
-class TestCNClient_1_1(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestCNClient_1_1(
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     self.client = d1_client.cnclient_1_1.CoordinatingNodeClient_1_1(
       shared_settings.CN_RESPONSES_URL

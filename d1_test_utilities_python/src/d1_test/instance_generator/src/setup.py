@@ -37,7 +37,6 @@ setup(
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-
   include_package_data=True,
   package_data={
     #'': ['*.txt', '*.rst', '*.csv'],

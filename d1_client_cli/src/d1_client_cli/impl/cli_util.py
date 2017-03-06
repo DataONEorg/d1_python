@@ -93,7 +93,9 @@ def confirm(prompt, default=u'no', allow_blank=False):
     elif allow_blank:
       return def_response
     else:
-      print_error(u'Please type, "yes", "no" or press Enter to select the default')
+      print_error(
+        u'Please type, "yes", "no" or press Enter to select the default'
+      )
 
 
 def output(file_like_object, path, verbose=False):
@@ -111,7 +113,9 @@ def output(file_like_object, path, verbose=False):
       object_file.close()
     except EnvironmentError as (errno, strerror):
       error_message_lines = []
-      error_message_lines.append(u'Could not write to object_file: {0}'.format(path))
+      error_message_lines.append(
+        u'Could not write to object_file: {0}'.format(path)
+      )
       error_message_lines.append(u'I/O error({0}): {1}'.format(errno, strerror))
       error_message = u'\n'.join(error_message_lines)
       raise cli_exceptions.CLIError(error_message)
@@ -121,6 +125,7 @@ def assert_file_exists(path):
   if not os.path.isfile(os.path.expanduser(path)):
     msg = u'Invalid file: {0}'.format(path)
     raise cli_exceptions.InvalidArguments(msg)
+
 
 #def create_sys_meta(session, pid, path, formatId=None):
 #  """ Create a system meta data object.
@@ -156,7 +161,9 @@ def copy_file_like_object_to_file(file_like_object, path):
 
   except EnvironmentError as (errno, strerror):
     error_message_lines = []
-    error_message_lines.append(u'Could not write to object_file: {0}'.format(path))
+    error_message_lines.append(
+      u'Could not write to object_file: {0}'.format(path)
+    )
     error_message_lines.append(u'I/O error({0}): {1}'.format(errno, strerror))
     error_message = u'\n'.join(error_message_lines)
     raise cli_exceptions.CLIError(error_message)
@@ -172,6 +179,7 @@ def get_pid_from_url(url, action="object"):
 
 def create_complex_path(path):
   return ComplexPath(path)
+
 
 # Print functions.
 
@@ -197,6 +205,7 @@ def _print_level(level, msg):
   """
   for l in unicode(msg.rstrip()).split(u'\n'):
     print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
+
 
 #===============================================================================
 

@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """
 In the DataONE Python stack, XML docs are represented in a few different ways.
 
@@ -51,7 +50,6 @@ import d1_common.types.dataoneTypes_v1 as v1_0
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 
-
 # PyXB shares information about all known types between all imported bindings.
 PYXB_BINDING = d1_common.types.dataoneTypes_v1
 
@@ -60,7 +58,6 @@ NS_DICT = {
   'v1_1': str(v1_1.Namespace),
   'v2': str(v2_0.Namespace),
 }
-
 
 # Register global namespace prefixes for use by ElementTree when serializing.
 for prefix_str, uri_str in NS_DICT.items():
@@ -75,6 +72,7 @@ for prefix_str, uri_str in NS_DICT.items():
 # etree_replace_namespace()
 
 # Misc type related functions
+
 
 def get_pyxb_bindings(major_version):
   """Map D1 architecture version to PyXB bindings"""
@@ -104,7 +102,9 @@ def set_default_pyxb_namespace(major_version):
     pyxb_bindings.Namespace
   )
 
+
 # Convert types to v1
+
 
 def str_to_v1_str(xml_str):
   """Convert a v2 type to v1.
@@ -126,7 +126,9 @@ def pyxb_to_v1_str(pyxb_obj):
 def str_to_v1_pyxb(xml_str):
   str_to_pyxb(str_to_v1_str(xml_str))
 
+
 # Convert types to v2
+
 
 def str_to_v2_str(xml_str):
   """Convert a v1 type to v2.
@@ -147,7 +149,9 @@ def pyxb_to_v2_str(pyxb_obj):
 def str_to_v2_pyxb(xml_str):
   str_to_pyxb(str_to_v2_str(xml_str))
 
+
 # Type checks
+
 
 def str_is_v1(xml_str):
   return pyxb_is_v1(str_to_pyxb(xml_str))
@@ -189,7 +193,9 @@ def pyxb_is_v1(pyxb_obj):
 def pyxb_is_v2(pyxb_obj):
   return pyxb_obj._element().name().namespace() == v2_0.Namespace
 
+
 # Conversions between XML representations 
+
 
 def str_to_pyxb(xml_str):
   return PYXB_BINDING.CreateFromDocument(xml_str)
@@ -214,8 +220,10 @@ def pyxb_to_etree(pyxb_obj):
 def etree_to_pyxb(etree_obj):
   return pyxb_to_str(str_to_etree(etree_obj))
 
+
 # ElementTree 
 # https://docs.python.org/2/library/xml.etree.elementtree.html
+
 
 def etree_replace_namespace(etree_obj, ns_str):
   _replace_namespace_recursive(etree_obj, ns_str)
@@ -246,12 +254,12 @@ def strip_v2_elements(etree_obj):
 
 
 def strip_systemMetadata(etree_obj):
-    for series_id_el in etree_obj.findall('seriesId'):
-      etree_obj.remove(series_id_el)
-    for media_type_el in etree_obj.findall('mediaType'):
-      etree_obj.remove(media_type_el)
-    for file_name_el in etree_obj.findall('fileName'):
-      etree_obj.remove(file_name_el)
+  for series_id_el in etree_obj.findall('seriesId'):
+    etree_obj.remove(series_id_el)
+  for media_type_el in etree_obj.findall('mediaType'):
+    etree_obj.remove(media_type_el)
+  for file_name_el in etree_obj.findall('fileName'):
+    etree_obj.remove(file_name_el)
 
 
 def strip_log(etree_obj):
@@ -276,7 +284,6 @@ def strip_node(etree_obj):
 def strip_node_list(etree_obj):
   for node_el in etree_obj.findall('node'):
     strip_node(node_el)
-
 
     # if event_el.text not in
     # print event_el.text

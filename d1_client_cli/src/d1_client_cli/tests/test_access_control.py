@@ -118,6 +118,7 @@ class TestAccessControl(TestCaseWithURLCompare):
     self.assertEquals(actual[2], 'write                         "subject_2"')
     self.assertEquals(actual[3], 'changePermission              "subject_3"')
 
+
 #===============================================================================
 
 
@@ -139,10 +140,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

@@ -79,24 +79,21 @@ class Transaction(object):
     key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
     certificate.check_path(key_path)
     return d1_client.mnclient.MemberNodeClient(
-      base_url=settings.BASEURL,
-      cert_path=cert_path,
-      key_path=key_path
+      base_url=settings.BASEURL, cert_path=cert_path, key_path=key_path
     )
 
   def create_client_for_cn(self):
     return self.create_client_for_cert(
       os.path.join(
-        settings.CLIENT_CERT_DIR, subject_dn.subject_to_filename(
-          settings.SUBJECT_WITH_CN_PERMISSIONS)
+        settings.CLIENT_CERT_DIR,
+        subject_dn.subject_to_filename(settings.SUBJECT_WITH_CN_PERMISSIONS)
       )
     )
 
   def create_client_for_subject(self, subject):
     return self.create_client_for_cert(
-      certificate.get_certificate_path_for_subject(
-        subject_dn.subject_to_filename(subject)
-      )
+      certificate.
+      get_certificate_path_for_subject(subject_dn.subject_to_filename(subject))
     )
 
   def check_response(self, response):
@@ -120,14 +117,14 @@ class Transaction(object):
     return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
 
   def get_public_object_list(self):
-    return codecs.open(settings.PUBLIC_OBJECTS_PATH, 'r', 'utf8').read().splitlines()
+    return codecs.open(settings.PUBLIC_OBJECTS_PATH, 'r',
+                       'utf8').read().splitlines()
 
   def get_private_object_list(self):
     return [
       l.split('\t')
-      for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf8').read(
-      ).splitlines(
-      )
+      for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf8').read()
+      .splitlines()
     ]
 
   def get_random_subjects(self, public_access_percent, n_subjects):

@@ -156,7 +156,9 @@ def print_capabilities(client):
     caps.synchronization.schedule.year
   )
   print '  Last harvested: {0}'.format(caps.synchronization.lastHarvested)
-  print '  Last complete harvest: {0}'.format(caps.synchronization.lastCompleteHarvest)
+  print '  Last complete harvest: {0}'.format(
+    caps.synchronization.lastCompleteHarvest
+  )
 
 
 def get_gen_metrics(client, node):
@@ -166,7 +168,9 @@ def get_gen_metrics(client, node):
   print 'Ping: {0}'.format(get_ping(client))
   print 'Total number of objects: {0}'.format(get_number_of_objects(client))
   try:
-    print 'Total number of log records: {0}'.format(get_number_of_log_records(client))
+    print 'Total number of log records: {0}'.format(
+      get_number_of_log_records(client)
+    )
   except d1_common.types.exceptions.NotAuthorized:
     print 'Log records are restricted'
 

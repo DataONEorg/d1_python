@@ -74,9 +74,13 @@ class OperationValidator(object):
     self._assert_valid_path(operation, 'parameters', 'science-file')
     self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
+    self._assert_valid_member_node_urn(
+      operation, 'parameters', 'authoritative-mn'
+    )
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
+    self._assert_value_type(
+      operation, types.StringTypes, 'parameters', 'rights-holder'
+    )
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -87,21 +91,33 @@ class OperationValidator(object):
     self._assert_valid_path(operation, 'parameters', 'science-file')
     self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
+    self._assert_valid_member_node_urn(
+      operation, 'parameters', 'authoritative-mn'
+    )
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
+    self._assert_value_type(
+      operation, types.StringTypes, 'parameters', 'rights-holder'
+    )
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
   def assert_valid_create_package(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier-package')
-    self._assert_valid_identifier(operation, 'parameters', 'identifier-science-meta')
-    self._assert_valid_identifiers(operation, 'parameters', 'identifier-science-data')
+    self._assert_valid_identifier(
+      operation, 'parameters', 'identifier-science-meta'
+    )
+    self._assert_valid_identifiers(
+      operation, 'parameters', 'identifier-science-data'
+    )
     self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
+    self._assert_valid_member_node_urn(
+      operation, 'parameters', 'authoritative-mn'
+    )
+    self._assert_value_type(
+      operation, types.StringTypes, 'parameters', 'rights-holder'
+    )
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -132,7 +148,8 @@ class OperationValidator(object):
     self._assert_present(operation, *keys)
     if not self._is_value_type(operation, type_, *keys):
       raise cli_exceptions.InvalidArguments(
-        'Operation parameter "{0}" must be a {1}'.format(keys[-1], self._type_map[type_])
+        'Operation parameter "{0}" must be a {1}'.
+        format(keys[-1], self._type_map[type_])
       )
 
   def _is_value_type(self, operation, type_, *keys):
@@ -159,7 +176,9 @@ class OperationValidator(object):
 
   def _assert_operation_has_valid_operation_type(self, operation):
     if 'operation' not in operation:
-      raise cli_exceptions.InvalidArguments('Operation is missing the operation type')
+      raise cli_exceptions.InvalidArguments(
+        'Operation is missing the operation type'
+      )
     if operation['operation'] not in (
       'create', 'update', 'create_package', 'archive', 'update_access_policy',
       'update_replication_policy'
@@ -192,7 +211,9 @@ class OperationValidator(object):
       self._assert_valid_identifier_value(pid)
 
   def _assert_valid_auth_parameter_combination(self, operation):
-    self._assert_value_type(operation, types.BooleanType, 'authentication', 'anonymous')
+    self._assert_value_type(
+      operation, types.BooleanType, 'authentication', 'anonymous'
+    )
     auth = operation['authentication']
     if not auth['anonymous']:
       if not self._is_value_type(
@@ -209,7 +230,9 @@ class OperationValidator(object):
       )
 
   def _assert_authenticated_access(self, operation):
-    self._assert_value_type(operation, types.BooleanType, 'authentication', 'anonymous')
+    self._assert_value_type(
+      operation, types.BooleanType, 'authentication', 'anonymous'
+    )
     auth = operation['authentication']
     if auth['anonymous']:
       raise cli_exceptions.InvalidArguments(
@@ -218,10 +241,14 @@ class OperationValidator(object):
     cli_util.assert_file_exists(operation['authentication']['cert-file'])
 
   def _assert_valid_checksum_algorithm(self, operation):
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'algorithm')
+    self._assert_value_type(
+      operation, types.StringTypes, 'parameters', 'algorithm'
+    )
     algorithm = operation['parameters']['algorithm']
     try:
-      d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
+      d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+        algorithm
+      )
     except LookupError:
       raise cli_exceptions.InvalidArguments(
         'Invalid checksum algorithm: {0}'.format(algorithm)
@@ -247,9 +274,8 @@ class OperationValidator(object):
       operation = operation[key]
     if not operation.startswith('urn:node'):
       raise cli_exceptions.InvalidArguments(
-        'Invalid Member Node ID. Must start with "urn:node". parameter={0}, value={1}'.format(
-          key, operation
-        )
+        'Invalid Member Node ID. Must start with "urn:node". parameter={0}, value={1}'.
+        format(key, operation)
       )
 
   def _assert_valid_coordinating_node_url(self, operation):
@@ -263,9 +289,8 @@ class OperationValidator(object):
     o = urlparse.urlparse(operation)
     if o.scheme not in ('http', 'https'):
       raise cli_exceptions.InvalidArguments(
-        'Invalid BaseURL. Must use HTTP or HTTPS protocol. parameter={0}, value={1}'.format(
-          key, operation
-        )
+        'Invalid BaseURL. Must use HTTP or HTTPS protocol. parameter={0}, value={1}'.
+        format(key, operation)
       )
 
   def _assert_valid_access_control(self, operation):
@@ -283,9 +308,12 @@ class OperationValidator(object):
         )
 
   def _assert_valid_replication_policy(self, operation):
-    self._assert_value_type(operation, types.DictType, 'parameters', 'replication')
     self._assert_value_type(
-      operation, types.BooleanType, 'parameters', 'replication', 'replication-allowed'
+      operation, types.DictType, 'parameters', 'replication'
+    )
+    self._assert_value_type(
+      operation, types.BooleanType, 'parameters', 'replication',
+      'replication-allowed'
     )
     self._assert_value_type(
       operation, types.ListType, 'parameters', 'replication', 'preferred-nodes'
@@ -294,5 +322,6 @@ class OperationValidator(object):
       operation, types.ListType, 'parameters', 'replication', 'blocked-nodes'
     )
     self._assert_value_type(
-      operation, types.IntType, 'parameters', 'replication', 'number-of-replicas'
+      operation, types.IntType, 'parameters', 'replication',
+      'number-of-replicas'
     )

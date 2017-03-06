@@ -33,7 +33,6 @@ import d1_common.const
 import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
 
-
 # Defaults
 FORMAT_ID = 'application/octet-stream'
 

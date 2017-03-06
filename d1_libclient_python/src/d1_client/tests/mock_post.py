@@ -71,4 +71,3 @@ def _request_callback(request):
   else:
     body_str = 'Return code: {}'.format(status_int)
     return status_int, {}, body_str
-

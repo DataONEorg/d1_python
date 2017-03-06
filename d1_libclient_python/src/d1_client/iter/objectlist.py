@@ -40,7 +40,10 @@ class ObjectListIterator(object):
   """Implements an iterator that iterates over the entire ObjectList for a
   DataONE node. Data is retrieved from the target only when required.
   """
-  def __init__(self, client, start=0, fromDate=None, pagesize=500, max=-1, nodeId=None):
+
+  def __init__(
+    self, client, start=0, fromDate=None, pagesize=500, max=-1, nodeId=None
+  ):
     """Initializes the iterator.
 
     TODO: Extend this with date range and other restrictions
@@ -87,7 +90,8 @@ class ObjectListIterator(object):
     pages to load.
     """
     self.log.debug(
-      "%d / %d (%d)" % (self._citem, self._maxitem, len(self._object_list.objectInfo))
+      "%d / %d (%d)" %
+      (self._citem, self._maxitem, len(self._object_list.objectInfo))
     )
     if self._citem >= self._maxitem:
       raise StopIteration
@@ -109,8 +113,8 @@ class ObjectListIterator(object):
     try:
       pyxb.RequireValidWhenParsing(validation)
       self._object_list = self._client.listObjects(
-        start=start, count=self._pagesize,
-        fromDate=self._fromDate, nodeId=self._nodeId
+        start=start, count=self._pagesize, fromDate=self._fromDate,
+        nodeId=self._nodeId
       )
     except httplib.BadStatusLine as e:
       self.log.warn("Server responded with Bad Status Line. Retrying in 5sec")

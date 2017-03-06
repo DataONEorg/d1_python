@@ -51,7 +51,8 @@ class Test070GetChecksum(d1_test_case.D1TestCase):
     """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, client.get, context.TOKEN, '_invalid_pid_'
+      d1_common.types.exceptions.NotFound, client.get, context.TOKEN,
+      '_invalid_pid_'
     )
 
   def test_020_get_object_by_valid_pid(self):

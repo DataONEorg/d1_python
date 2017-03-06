@@ -45,11 +45,8 @@ def main():
       'requests[security] == 2.12.4',
       'cachecontrol == 0.11.7',
       'requests-toolbelt == 0.7.0',
-
     ],
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    setup_requires=['setuptools_git >= 1.1'],
   )
 
 

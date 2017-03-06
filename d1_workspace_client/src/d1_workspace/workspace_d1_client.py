@@ -72,7 +72,9 @@ class D1Client(object):
 
   def get_science_object(self, pid):
     try:
-      d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self._options['base_url'])
+      d1client = d1_client.d1client.DataONEClient(
+        cnBaseUrl=self._options['base_url']
+      )
       return d1client.get(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise workspace_exception.WorkspaceException(e.description)

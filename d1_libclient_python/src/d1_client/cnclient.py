@@ -40,6 +40,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -175,8 +176,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   def resolve(self, pid):
     response = self.resolveResponse(pid)
     return self._read_dataone_type_response(
-      response, 'ObjectLocationList',
-      response_is_303_redirect=True
+      response, 'ObjectLocationList', response_is_303_redirect=True
     )
 
   # CNRead.getChecksum(session, pid) → Checksum
@@ -265,8 +265,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def setAccessPolicyResponse(self, pid, accessPolicy, serialVersion):
     mmp_dict = {
-      'serialVersion': str(serialVersion),
-      'accessPolicy': ('accessPolicy.xml', accessPolicy.toxml().encode('utf-8')),
+      'serialVersion':
+        str(serialVersion),
+      'accessPolicy':
+        ('accessPolicy.xml', accessPolicy.toxml().encode('utf-8')),
     }
     return self.PUT(['accessRules', pid], fields=mmp_dict)
 
@@ -338,7 +340,12 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def listSubjectsResponse(self, query, status=None, start=None, count=None):
-    url_query = {'status': status, 'start': start, 'count': count, 'query': query}
+    url_query = {
+      'status': status,
+      'start': start,
+      'count': count,
+      'query': query
+    }
     return self.GET('accounts', query=url_query)
 
   @d1_common.util.utf8_to_unicode
@@ -409,7 +416,9 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     mmp_dict = {
       'subject': subject.value().encode('utf-8'),
     }
-    return self.PUT(['accounts', 'pendingmap', subject.value()], fields=mmp_dict)
+    return self.PUT(
+      ['accounts', 'pendingmap', subject.value()], fields=mmp_dict
+    )
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentity(self, subject):
@@ -454,7 +463,9 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationStatus
 
   @d1_common.util.utf8_to_unicode
-  def setReplicationStatusResponse(self, pid, nodeRef, status, dataone_error=None):
+  def setReplicationStatusResponse(
+    self, pid, nodeRef, status, dataone_error=None
+  ):
     mmp_dict = {
       'nodeRef': nodeRef.encode('utf-8'),
       'status': status.encode('utf-8'),
@@ -465,7 +476,9 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setReplicationStatus(self, pid, nodeRef, status, dataone_error=None):
-    response = self.setReplicationStatusResponse(pid, nodeRef, status, dataone_error)
+    response = self.setReplicationStatusResponse(
+      pid, nodeRef, status, dataone_error
+    )
     return self._read_boolean_response(response)
 
   # CNReplication.updateReplicationMetadata(session, pid, replicaMetadata, serialVersion) → boolean
@@ -477,8 +490,10 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     self, pid, replicaMetadata, serialVersion
   ):
     mmp_dict = {
-      'serialVersion': str(serialVersion),
-      'replicaMetadata': ('replicaMetadata.xml', replicaMetadata.toxml().encode('utf-8')),
+      'serialVersion':
+        str(serialVersion),
+      'replicaMetadata':
+        ('replicaMetadata.xml', replicaMetadata.toxml().encode('utf-8')),
     }
     return self.PUT(['replicaMetadata', pid], fields=mmp_dict)
 
@@ -503,8 +518,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicy(self, pid, policy, serialVersion):
     response = self.setReplicationPolicyResponse(
-      pid=pid, policy=policy,
-      serialVersion=serialVersion
+      pid=pid, policy=policy, serialVersion=serialVersion
     )
     return self._read_boolean_response(response)
 
@@ -551,9 +565,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
-    mmp_dict = {
-      'node': ('node.xml', node.toxml().encode('utf-8'))
-    }
+    mmp_dict = {'node': ('node.xml', node.toxml().encode('utf-8'))}
     return self.PUT(['node', nodeId], fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode

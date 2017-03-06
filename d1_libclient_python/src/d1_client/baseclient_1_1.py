@@ -50,6 +50,7 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
   https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -87,7 +88,7 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-    return self._read_dataone_type_response( response, 'QueryEngineDescription')
+    return self._read_dataone_type_response(response, 'QueryEngineDescription')
 
   # TODO: Implement these:
   # CNRead.listQueryEngines(session) → QueryEngineList

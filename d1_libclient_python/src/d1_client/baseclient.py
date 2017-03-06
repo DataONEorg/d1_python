@@ -67,9 +67,8 @@ class DataONEBaseClient(session.Session):
   needed in rare cases where the default handling is inadequate, e.g., for
   dealing with nodes that don't fully comply with the spec.
   """
-  def __init__(
-      self, base_url, api_major=1, api_minor=0, **kwargs
-  ):
+
+  def __init__(self, base_url, api_major=1, api_minor=0, **kwargs):
     """Create a DataONEBaseClient. See Session for parameters.
 
     :param api_major: Major version of the DataONE API
@@ -81,9 +80,8 @@ class DataONEBaseClient(session.Session):
     """
     self.logger = logging.getLogger('DataONEBaseClient')
     self.logger.debug(
-      'Creating v{}.{} client for baseURL: {}'.format(
-        api_major, api_minor, base_url
-      )
+      'Creating v{}.{} client for baseURL: {}'.
+      format(api_major, api_minor, base_url)
     )
     session.Session.__init__(self, base_url, **kwargs)
     self._api_major = api_major
@@ -100,9 +98,8 @@ class DataONEBaseClient(session.Session):
       return d1_common.types.dataoneTypes_v2_0
     else:
       raise ValueError(
-        "Unknown DataONE API version: {}.{}".format(
-          self._api_major, self._api_minor
-        )
+        "Unknown DataONE API version: {}.{}".
+        format(self._api_major, self._api_minor)
       )
 
   # ----------------------------------------------------------------------------
@@ -148,8 +145,8 @@ class DataONEBaseClient(session.Session):
     raise d1_common.types.exceptions.ServiceFailure(0, msg, trace)
 
   def _raise_service_failure_invalid_content_type(self, response):
-    self._raise_service_failure(response,
-      'Node responded with a valid status code but failed to '
+    self._raise_service_failure(
+      response, 'Node responded with a valid status code but failed to '
       'include the expected Content-Type'
     )
 
@@ -167,16 +164,16 @@ class DataONEBaseClient(session.Session):
   def _raise_service_failure_incorrect_dataone_type(
     self, response, expected_type_str, received_type_str
   ):
-    self._raise_service_failure(response,
-      'Received unexpected DataONE type. Expected: {}. Received: {}'
+    self._raise_service_failure(
+      response, 'Received unexpected DataONE type. Expected: {}. Received: {}'
       .format(expected_type_str, received_type_str)
     )
 
   def _assert_correct_dataone_type(self, response, pyxb_obj, d1_type_name):
     s = str(pyxb_obj._ExpandedName).split('}')[-1]
     if s != d1_type_name:
-      self._raise_service_failure_incorrect_dataone_type(response,
-        d1_type_name, s
+      self._raise_service_failure_incorrect_dataone_type(
+        response, d1_type_name, s
       )
 
   def _raise_dataone_exception(self, response):
@@ -259,9 +256,8 @@ class DataONEBaseClient(session.Session):
     self._error(response)
 
   def _read_boolean_404_response(self, response):
-    if self._status_is_200_ok(response) or self._status_is_404_not_found(
-      response
-    ):
+    if self._status_is_200_ok(response
+                              ) or self._status_is_404_not_found(response):
       response.content
       return self._status_is_200_ok(response)
     self._error(response)
@@ -275,8 +271,7 @@ class DataONEBaseClient(session.Session):
     self._error(response)
 
   def _read_dataone_type_response(
-    self, response, d1_type_name,
-    response_is_303_redirect=False
+    self, response, d1_type_name, response_is_303_redirect=False
   ):
     if self._status_is_ok(response, response_is_303_redirect):
       if not self._content_type_is_xml(response):
@@ -368,14 +363,8 @@ class DataONEBaseClient(session.Session):
     vendorSpecific=None
   ):
     response = self.getLogRecordsResponse(
-      fromDate=fromDate,
-      toDate=toDate,
-      event=event,
-      pidFilter=pidFilter,
-      idFilter=idFilter,
-      start=start,
-      count=count,
-      vendorSpecific=vendorSpecific
+      fromDate=fromDate, toDate=toDate, event=event, pidFilter=pidFilter,
+      idFilter=idFilter, start=start, count=count, vendorSpecific=vendorSpecific
     )
     return self._read_dataone_type_response(response, 'Log')
 
@@ -457,14 +446,8 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFormat=None,
-    replicaStatus=None,
-    nodeId=None,
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
+    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
@@ -482,24 +465,13 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def listObjects(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFormat=None,
-    replicaStatus=None,
-    nodeId=None,
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
+    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
     response = self.listObjectsResponse(
-      fromDate=fromDate,
-      toDate=toDate,
-      objectFormat=objectFormat,
-      replicaStatus=replicaStatus,
-      nodeId=nodeId,
-      start=start,
-      count=count,
+      fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
+      replicaStatus=replicaStatus, nodeId=nodeId, start=start, count=count,
       vendorSpecific=vendorSpecific
     )
     return self._read_dataone_type_response(response, 'ObjectList')
@@ -547,8 +519,12 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
-    query = {'action': action,}
-    return self.GET(['isAuthorized', action, pid], query=query, headers=vendorSpecific)
+    query = {
+      'action': action,
+    }
+    return self.GET(
+      ['isAuthorized', action, pid], query=query, headers=vendorSpecific
+    )
 
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):

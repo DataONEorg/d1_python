@@ -69,7 +69,8 @@ rdflib.plugin.register(
 )
 
 ALLOWABLE_PACKAGE_SERIALIZATIONS = (
-  'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'
+  'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt',
+  'trix'
 )
 RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
 CITO_NS = 'http://purl.org/spar/cito/'
@@ -106,16 +107,14 @@ class ResourceMapGenerator():
     # version of the Foresite library does parse it correctly though.
     relations = {science_metadata_pid: science_data_pids}
     resource_map = self._generate_resource_map(
-      self._aggregation_uri_from_pid(resource_map_pid), resource_map_pid, relations
+      self._aggregation_uri_from_pid(resource_map_pid), resource_map_pid,
+      relations
     )
     serialized_resource_map = self._serialize_resource_map(resource_map)
     return serialized_resource_map
 
   def generate_system_metadata_for_resource_map(
-    self,
-    resource_map_pid,
-    resource_map,
-    rights_holder,
+    self, resource_map_pid, resource_map, rights_holder,
     checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
   ):
     """Generate a system metadata object for a resource map. The generated
@@ -126,7 +125,9 @@ class ResourceMapGenerator():
         programmatically before use.
         """
     size = len(resource_map)
-    checksum = d1_common.checksum.create_checksum_object(resource_map, checksum_algorithm)
+    checksum = d1_common.checksum.create_checksum_object(
+      resource_map, checksum_algorithm
+    )
     return self._generate_sys_meta(
       resource_map_pid, RDFXML_FORMATID, size, checksum, rights_holder
     )
@@ -153,7 +154,9 @@ class ResourceMapGenerator():
         meta_res._cito.documents = data_uri
         aggr.add_resource(data_res)
       aggr.add_resource(meta_res)
-    resmap = foresite.ResourceMap(self._resolvable_uri_from_pid(resource_map_id))
+    resmap = foresite.ResourceMap(
+      self._resolvable_uri_from_pid(resource_map_id)
+    )
     resmap._dcterms.identifier = resource_map_id
     resmap.set_aggregation(aggr)
     return resmap
@@ -170,13 +173,14 @@ class ResourceMapGenerator():
 
   def _resolvable_uri_from_pid(self, pid):
     return rdflib.term.URIRef(
-      self.dataone_root + D1_API_RESOLVE_REST_PATH + d1_common.url.encodePathElement(pid)
+      self.dataone_root + D1_API_RESOLVE_REST_PATH +
+      d1_common.url.encodePathElement(pid)
     )
 
   def _aggregation_uri_from_pid(self, pid):
     return rdflib.term.URIRef(
-      self.dataone_root + D1_API_RESOLVE_REST_PATH + d1_common.url.encodePathElement(
-        pid) + '#aggregation'
+      self.dataone_root + D1_API_RESOLVE_REST_PATH +
+      d1_common.url.encodePathElement(pid) + '#aggregation'
     )
 
   def _append_slash(self, path):
@@ -185,9 +189,7 @@ class ResourceMapGenerator():
     return path
 
   def _generate_sys_meta(
-    self, pid, format_id,
-    size, checksum, rights_holder,
-    modified=None
+    self, pid, format_id, size, checksum, rights_holder, modified=None
   ):
     if modified is None:
       modified = datetime.datetime.now()
@@ -210,6 +212,7 @@ class ResourceMapGenerator():
     accessRule.permission.append(permission)
     accessPolicy.append(accessRule)
     return accessPolicy
+
 
 #=========================================================================
 

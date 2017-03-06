@@ -36,7 +36,6 @@ import d1_common.const
 import d1_common.url
 import d1_common.date_time
 
-
 DEFAULT_NUMBER_OF_RETRIES = 3
 
 
@@ -243,10 +242,12 @@ class Session(object):
     kwargs = self._prep_args(kwargs)
     mmp_stream = requests_toolbelt.MultipartEncoder(fields=fields)
     kwargs['data'] = mmp_stream
-    kwargs['headers'].update({
-      'Content-Type': mmp_stream.content_type,
-      'Content-Length': str(mmp_stream.len),
-    })
+    kwargs['headers'].update(
+      {
+        'Content-Type': mmp_stream.content_type,
+        'Content-Length': str(mmp_stream.len),
+      }
+    )
     return self._session.request(method, url, **kwargs)
 
   def _request(self, method, rest_path_list, **kwargs):
@@ -266,7 +267,7 @@ class Session(object):
 
   def _prep_args(self, kwargs):
     # Remove None kwargs
-    kwargs = {k:v for k, v in kwargs.items() if v is not None}
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
     # Merge default kwargs
     kwargs.update(self._default_kwargs)
     # Encode any datetime query parameters to ISO8601

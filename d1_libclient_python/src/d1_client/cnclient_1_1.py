@@ -34,8 +34,9 @@ import baseclient_1_1
 import cnclient
 
 
-class CoordinatingNodeClient_1_1(baseclient_1_1.DataONEBaseClient_1_1,
-                                 cnclient.CoordinatingNodeClient):
+class CoordinatingNodeClient_1_1(
+  baseclient_1_1.DataONEBaseClient_1_1, cnclient.CoordinatingNodeClient
+):
   """Extend DataONEBaseClient_1_1 and CoordinatingNodeClient with functionality
   for Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
 
@@ -43,6 +44,7 @@ class CoordinatingNodeClient_1_1(baseclient_1_1.DataONEBaseClient_1_1,
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)

@@ -250,9 +250,9 @@ def create_session_extension(subject, persons, groups):
 
 
 def create_certificate(
-  req, (issuer_cert, issuer_key),
-  serial, (not_before, not_after),
-  digest="md5"
+  req,
+  (issuer_cert, issuer_key), serial,
+  (not_before, not_after), digest="md5"
 ):
   """Generate a certificate given a certificate request.
 
@@ -283,7 +283,9 @@ def create_certificate(
   cert.set_subject(req.get_subject())
   cert.set_pubkey(req.get_pubkey())
   # Add DataONE session.
-  ext = create_session_extension(str(req.get_subject()), ['p1', 'p2'], ['g1', 'g2'])
+  ext = create_session_extension(
+    str(req.get_subject()), ['p1', 'p2'], ['g1', 'g2']
+  )
   cert.add_extensions([ext])
   # Sign the certificate.
   cert.sign(issuer_key, digest)
@@ -294,7 +296,9 @@ def create_certificate(
 def main():
   logging.basicConfig(level=logging.DEBUG)
 
-  test_ca_pw = raw_input('Dataone Test CA private key pass phrase (in SystemPW.txt): ')
+  test_ca_pw = raw_input(
+    'Dataone Test CA private key pass phrase (in SystemPW.txt): '
+  )
 
   # Create the destination folder.
   try:
@@ -309,7 +313,9 @@ def main():
   except IOError:
     logger.error('Must set path to CA key in config section')
     raise
-  ca_key = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, ca_key_file, test_ca_pw)
+  ca_key = OpenSSL.crypto.load_privatekey(
+    OpenSSL.crypto.FILETYPE_PEM, ca_key_file, test_ca_pw
+  )
 
   # Load the DataONE Test CA cert.
   try:
@@ -317,7 +323,9 @@ def main():
   except IOError:
     logger.error('Must set path to CA key in config section')
     raise
-  ca_cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_cert_file)
+  ca_cert = OpenSSL.crypto.load_certificate(
+    OpenSSL.crypto.FILETYPE_PEM, ca_cert_file
+  )
 
   # Generate test certs.
   for subject in subjects:
@@ -335,21 +343,27 @@ def main():
       req,
       (ca_cert, ca_key),
       1,
-      (
-        0, 60 * 60 * 24 * 365 * 10
-      ), # 10 years
+      (0, 60 * 60 * 24 * 365 * 10), # 10 years
       digest='SHA1'
     )
 
     # Write the private key to disk.
-    out_key_path = os.path.join(cert_dir, '{0}.key'.format(urllib.quote(subject, '')))
+    out_key_path = os.path.join(
+      cert_dir, '{0}.key'.format(urllib.quote(subject, ''))
+    )
     out_key_file = open(out_key_path, 'w')
-    out_key_file.write(OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, pkey))
+    out_key_file.write(
+      OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, pkey)
+    )
 
     # Write the cert to disk.
-    out_cert_path = os.path.join(cert_dir, '{0}.crt'.format(urllib.quote(subject, '')))
+    out_cert_path = os.path.join(
+      cert_dir, '{0}.crt'.format(urllib.quote(subject, ''))
+    )
     out_cert_file = open(out_cert_path, 'w')
-    out_cert_file.write(OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert))
+    out_cert_file.write(
+      OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+    )
 
 
 if __name__ == '__main__':

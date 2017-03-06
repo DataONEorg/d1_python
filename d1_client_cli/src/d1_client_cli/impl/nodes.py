@@ -60,7 +60,9 @@ class Nodes(object):
   def _update_node_cache(self, cn_base_url):
     client = cli_client.CLICNClient(base_url=cn_base_url)
     nodes = client.listNodes()
-    node_brief = sorted([(node.type, node.name, node.baseURL) for node in nodes.node])
+    node_brief = sorted(
+      [(node.type, node.name, node.baseURL) for node in nodes.node]
+    )
     self._nodes = node_brief
 
   def _cache_is_stale(self, cn_base_url):

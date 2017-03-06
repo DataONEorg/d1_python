@@ -123,13 +123,16 @@ class TestChecksum(unittest.TestCase):
 
   def test_240(self):
     """get_checksum_calculator_by_dataone_designator() returns a checksum calculator"""
-    calculator = d1_common.checksum.get_checksum_calculator_by_dataone_designator('SHA-1')
+    calculator = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+      'SHA-1'
+    )
     calculator.update('test')
     self.assertTrue(calculator.hexdigest())
 
   def test_250(self):
     """get_checksum_calculator_by_dataone_designator() raises on invalid algorithm"""
     self.assertRaises(
-      Exception, d1_common.checksum.get_checksum_calculator_by_dataone_designator,
+      Exception,
+      d1_common.checksum.get_checksum_calculator_by_dataone_designator,
       'SHA-224-bogus'
     )

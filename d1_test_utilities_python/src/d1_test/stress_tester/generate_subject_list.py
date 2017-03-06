@@ -49,8 +49,12 @@ def main():
   log_setup()
 
   # Command line opts.
-  parser = optparse.OptionParser('usage: %prog [options] <number of subjects to create>')
-  parser.add_option('--verbose', dest='verbose', action='store_true', default=False)
+  parser = optparse.OptionParser(
+    'usage: %prog [options] <number of subjects to create>'
+  )
+  parser.add_option(
+    '--verbose', dest='verbose', action='store_true', default=False
+  )
   (options, arguments) = parser.parse_args()
 
   if len(arguments) != 1 or not arguments[0].isdigit():
@@ -61,7 +65,9 @@ def main():
 
   create_subject_list(n_subjects)
 
-  print '{0} test subjects written to {1}'.format(n_subjects, settings.SUBJECTS_PATH)
+  print '{0} test subjects written to {1}'.format(
+    n_subjects, settings.SUBJECTS_PATH
+  )
 
 
 def create_subject_list(n_subjects):

@@ -47,6 +47,7 @@ options = {}
 class O():
   pass
 
+
 # Example results
 
 # GET /cn/v1/query/solr/?q=%2A%3A%2A&rows=3&indent=on&facet=true&facet.limit=3&facet.mincount=1&facet.sort=false&facet.count=sort&wt=python&facet.field=origin&facet.field=noBoundingBox&facet.field=family&facet.field=text&facet.field=abstract&facet.field=rightsHolder&facet.field=LTERSite&facet.field=site&facet.field=namedLocation&facet.field=topic&facet.field=edition&facet.field=geoform&facet.field=phylum&facet.field=gcmdKeyword&facet.field=keywords&facet.field=titlestr&facet.field=id&facet.field=decade&facet.field=size&facet.field=sku&facet.field=isSpatial&facet.field=documents&facet.field=changePermission&facet.field=authorLastName&facet.field=author&facet.field=species&facet.field=source&facet.field=formatId&facet.field=obsoletes&facet.field=fileID&facet.field=obsoletedBy&facet.field=parameter&facet.field=kingdom&facet.field=southBoundCoord&facet.field=westBoundCoord&facet.field=identifier&facet.field=northBoundCoord&facet.field=isPublic&facet.field=formatType&facet.field=resourceMap&facet.field=readPermission&facet.field=originator&facet.field=keyConcept&facet.field=writePermission&facet.field=class&facet.field=term&facet.field=genus&facet.field=eastBoundCoord&facet.field=investigator&facet.field=sensor&facet.field=contactOrganization&facet.field=title&facet.field=project&facet.field=presentationCat&facet.field=scientificName&facet.field=datasource&facet.field=placeKey&facet.field=submitter&facet.field=isDocumentedBy&facet.field=relatedOrganizations&facet.field=order&facet.field=purpose&wt=python
@@ -390,10 +391,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

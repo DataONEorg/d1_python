@@ -33,17 +33,14 @@ class SessionVariable(object):
     self.sect = sect
     self.name = name
 
+
 # REST URLs
 REST_Version = u'v1'
 REST_URL_Get = u'object'
 
 # Science Metadata types - this should be pulled from the list.
 ALLOWABLE_SCIMETA_TYPES = (
-  u'eml://ecoinformatics.org/eml-2.0.0',
-  u'eml://ecoinformatics.org/eml-2.0.1',
-  u'eml://ecoinformatics.org/eml-2.1.0',
-  u'eml://ecoinformatics.org/eml-2.1.1',
-  u'FGDC-STD-001-1998',
-  u'FGDC-STD-001.1-1999',
-  u'FGDC-STD-001.2-1999',
+  u'eml://ecoinformatics.org/eml-2.0.0', u'eml://ecoinformatics.org/eml-2.0.1',
+  u'eml://ecoinformatics.org/eml-2.1.0', u'eml://ecoinformatics.org/eml-2.1.1',
+  u'FGDC-STD-001-1998', u'FGDC-STD-001.1-1999', u'FGDC-STD-001.2-1999',
 )

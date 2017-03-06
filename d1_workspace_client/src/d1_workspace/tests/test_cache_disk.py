@@ -83,6 +83,7 @@ class TestDiskCache(unittest.TestCase):
     self.assertEqual(c['a'], 4)
     self.assertEqual(c['c'], 3)
 
+
 #===============================================================================
 
 
@@ -104,10 +105,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

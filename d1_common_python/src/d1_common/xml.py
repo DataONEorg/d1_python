@@ -43,9 +43,13 @@ def deserialize(doc_xml):
   try:
     return d1_common.types.dataoneTypes_v2_0.CreateFromDocument(doc_xml)
   except pyxb.ValidationError as e:
-    raise ValueError(u'Unable to deserialize XML to PyXB. error="{}"'.format(e.details()))
+    raise ValueError(
+      u'Unable to deserialize XML to PyXB. error="{}"'.format(e.details())
+    )
   except pyxb.PyXBException as e:
-    raise ValueError(u'Unable to deserialize XML to PyXB. error="{}"'.format(str(e)))
+    raise ValueError(
+      u'Unable to deserialize XML to PyXB. error="{}"'.format(str(e))
+    )
   except Exception:
     raise
 
@@ -54,9 +58,13 @@ def serialize(obj_pyxb):
   try:
     return obj_pyxb.toxml('utf8')
   except pyxb.ValidationError as e:
-    raise ValueError(u'Unable to serialize PyXB to XML. error="{}"'.format(e.details()))
+    raise ValueError(
+      u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
+    )
   except pyxb.PyXBException as e:
-    raise ValueError(u'Unable to serialize PyXB to XML. error="{}"'.format(str(e)))
+    raise ValueError(
+      u'Unable to serialize PyXB to XML. error="{}"'.format(str(e))
+    )
   except Exception:
     raise
 
@@ -95,17 +103,19 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
   assert isinstance(b_xml, basestring)
   parser1 = xml.etree.ElementTree.XMLParser(encoding=encoding)
   parser2 = xml.etree.ElementTree.XMLParser(encoding=encoding)
-  a_tree =  xml.etree.ElementTree.ElementTree(
+  a_tree = xml.etree.ElementTree.ElementTree(
     xml.etree.ElementTree.fromstring(a_xml, parser=parser1)
   )
-  b_tree =  xml.etree.ElementTree.ElementTree(
+  b_tree = xml.etree.ElementTree.ElementTree(
     xml.etree.ElementTree.fromstring(b_xml, parser=parser2)
   )
   return _is_equivalent(a_tree, b_tree) and _is_equivalent(b_tree, a_tree)
 
+
 #
 # Private
 #
+
 
 def _is_equivalent(a_tree, b_tree):
   try:
@@ -129,9 +139,8 @@ def _compare_text(a_tree, b_tree):
     b_el = _find_corresponding_element(a_el, a_tree, b_tree)
     if not _strip_and_compare_strings(a_el.text, b_el.text):
       raise CompareError(
-        'Text mismatch. path="{}" a="{}" b="{}"'.format(
-          _get_path(a_tree, a_el), a_el.text, b_el.text
-        )
+        'Text mismatch. path="{}" a="{}" b="{}"'.
+        format(_get_path(a_tree, a_el), a_el.text, b_el.text)
       )
 
 
@@ -140,7 +149,7 @@ def _strip_and_compare_strings(s1, s2):
 
 
 def _get_path(tree, el):
-  parents = { c: p for p in tree.iter() for c in p}
+  parents = {c: p for p in tree.iter() for c in p}
   path = []
   while True:
     path.append(el.tag)
@@ -183,8 +192,7 @@ def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
     ):
       raise CompareError(
         'Attribute contains invalid value. '
-        'path="{}" attr="{}" found="{}" expected="{}"'
-        .format(
+        'path="{}" attr="{}" found="{}" expected="{}"'.format(
           _get_path(tree, el), attr_name_expected,
           el.attrib[attr_name_expected], attr_val_expected
         ),
@@ -231,4 +239,3 @@ def sort_elements_by_child_value(obj_pyxb, child_el_name):
 
 class CompareError(Exception):
   pass
-

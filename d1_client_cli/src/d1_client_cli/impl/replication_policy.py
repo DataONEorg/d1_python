@@ -48,10 +48,14 @@ class ReplicationPolicy():
     self.__init__()
 
   def get_preferred(self):
-    return [k for k in sorted(self._member_nodes.keys()) if self._member_nodes[k]]
+    return [
+      k for k in sorted(self._member_nodes.keys()) if self._member_nodes[k]
+    ]
 
   def get_blocked(self):
-    return [k for k in sorted(self._member_nodes.keys()) if not self._member_nodes[k]]
+    return [
+      k for k in sorted(self._member_nodes.keys()) if not self._member_nodes[k]
+    ]
 
   def add_preferred(self, mns):
     for mn in mns:
@@ -71,7 +75,9 @@ class ReplicationPolicy():
       self.number_of_replicas = 0
     elif self.number_of_replicas == 0:
       self.number_of_replicas = d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
-      cli_util.print_info(u'Changed number of replicas to %d.' % self.number_of_replicas)
+      cli_util.print_info(
+        u'Changed number of replicas to %d.' % self.number_of_replicas
+      )
 
   def get_replication_allowed(self):
     return self.replication_allowed
@@ -115,8 +121,12 @@ class ReplicationPolicy():
       blocked_nodes = u'none'
     lines.append(format_str.format(u'blocked member nodes', blocked_nodes))
 
-    lines.append(format_str.format(u'number of replicas', self.number_of_replicas))
-    lines.append(format_str.format(u'replication allowed', self.replication_allowed))
+    lines.append(
+      format_str.format(u'number of replicas', self.number_of_replicas)
+    )
+    lines.append(
+      format_str.format(u'replication allowed', self.replication_allowed)
+    )
     return u'replication:\n' + '\n'.join(lines)
 
   def _set_policy(self, mn, preferred):
@@ -133,18 +143,16 @@ class ReplicationPolicy():
   def _add_preferred(self, mn):
     if self._is_blocked(mn):
       cli_util.print_warn(
-        'The Member Node, "{0}", was changed from blocked to preferred'.format(
-          mn
-        )
+        'The Member Node, "{0}", was changed from blocked to preferred'.
+        format(mn)
       )
     self._set_policy(mn, True)
 
   def _add_blocked(self, mn):
     if self._is_preferred(mn):
       cli_util.print_warn(
-        'The Member Node, "{0}", was changed from preferred to blocked'.format(
-          mn
-        )
+        'The Member Node, "{0}", was changed from preferred to blocked'.
+        format(mn)
       )
     self._set_policy(mn, False)
 

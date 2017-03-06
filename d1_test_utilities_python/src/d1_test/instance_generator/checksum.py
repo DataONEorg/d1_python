@@ -43,14 +43,18 @@ import random_data
 
 
 def random_checksum_algorithm():
-  return random.choice(d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
+  return random.choice(
+    d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+  )
 
 
 def calculate_checksum_of_flo(
   flo, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
   block_size=1024 * 1024
 ):
-  c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
+  c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+    algorithm
+  )
   while True:
     data = flo.read(block_size)
     if not data:

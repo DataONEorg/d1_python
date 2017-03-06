@@ -53,4 +53,6 @@ def check_path(path):
 def get_certificate_path_for_subject(subject):
   """Get the path to the generated certificate for a given subject.
   """
-  return os.path.join(settings.CLIENT_CERT_DIR, subject_dn.subject_to_filename(subject))
+  return os.path.join(
+    settings.CLIENT_CERT_DIR, subject_dn.subject_to_filename(subject)
+  )

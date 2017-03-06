@@ -7,9 +7,7 @@ n_words = 1000
 
 words = [
   re.sub(r'[^a-z]', '', line.strip().lower())
-  for line in open(
-    '/etc/dictionaries-common/words'
-  )
+  for line in open('/etc/dictionaries-common/words')
 ]
 words = [re.sub('\'s', '', w) for w in words]
 random.seed(1)

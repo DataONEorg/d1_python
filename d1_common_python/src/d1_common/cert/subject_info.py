@@ -50,7 +50,6 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
 
-
 def extract_subjects(subject_info_xml, primary_str):
   """Extract a set of equivalent and group membership subjects from SubjectInfo
   
@@ -88,6 +87,7 @@ def _add_subject(equivalent_set, subject_info_pyxb, subject_str):
   _add_person_subject(equivalent_set, subject_info_pyxb, subject_str)
   _add_group_subject(equivalent_set, subject_info_pyxb, subject_str)
 
+
 # Person
 
 
@@ -123,6 +123,7 @@ def _add_person_equivalent_subjects(
 def _if_person_is_verified_add_symbolic_subject(equivalent_set, person_pyxb):
   if person_pyxb.verified:
     equivalent_set.add(d1_common.const.SUBJECT_VERIFIED)
+
 
 # Group
 

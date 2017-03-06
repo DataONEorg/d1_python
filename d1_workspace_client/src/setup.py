@@ -42,9 +42,7 @@ def main():
       'dataone.libclient == 1.2.6',
       'requests == 2.2.1',
     ],
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    setup_requires=['setuptools_git >= 1.1'],
   )
 
 

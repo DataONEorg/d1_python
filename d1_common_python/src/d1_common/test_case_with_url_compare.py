@@ -33,9 +33,9 @@ class TestCaseWithURLCompare(unittest.TestCase):
     a string detailing the differences.
     """
     url_diff_list = d1_common.url.find_url_mismatches(a_url, b_url)
-    assert not url_diff_list, u'URL mismatch. {}'.format(u', '.join(
-      url_diff_list
-    ))
+    assert not url_diff_list, u'URL mismatch. {}'.format(
+      u', '.join(url_diff_list)
+    )
 
 
 if __name__ == "__main__":

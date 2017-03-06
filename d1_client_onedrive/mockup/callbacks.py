@@ -195,7 +195,8 @@ class FUSECallbacks(fuse.Operations):
     if path == '':
       return True
     for p in self.fs:
-      if p[0].startswith(path) and self._n_elements(p[0]) > self._n_elements(path):
+      if p[0].startswith(path) and self._n_elements(p[0]
+                                                    ) > self._n_elements(path):
         return True
     return False
 
@@ -209,9 +210,9 @@ class FUSECallbacks(fuse.Operations):
 
   @dbg
   def _is_direct_child(self, base, child):
-    return child.startswith(base) and self._n_elements(child) == self._n_elements(
-      base
-    ) + 1
+    return child.startswith(base) and self._n_elements(
+      child
+    ) == self._n_elements(base) + 1
 
   @dbg
   def _mk_relative(self, path):

@@ -59,24 +59,27 @@ class Resolver(resolver_base.Resolver):
     super(Resolver, self).__init__(options, object_tree)
 
     self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
-      csv_file=pkg_resources.resource_stream(d1_client.__name__, 'mime_mappings.csv')
+      csv_file=pkg_resources.resource_stream(
+        d1_client.__name__, 'mime_mappings.csv'
+      )
     )
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
     return self._get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(
-          path
-        ), size, offset
-      )
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
     return self._read_file(object_tree_root, path, size, offset)
 
@@ -113,18 +116,21 @@ class Resolver(resolver_base.Resolver):
     # filesystem dependent size).
     if len(path) == 1:
       return attributes.Attributes(
-        is_dir=True, size=record['size'],
-        date=record['dateUploaded']
+        is_dir=True, size=record['size'], date=record['dateUploaded']
       )
     elif len(path) == 2:
       filename = path[1]
       if filename == self._get_search_fields_filename():
         return self._get_search_fields_file_attributes(record)
       elif filename == self._get_pid_filename(pid, record):
-        return attributes.Attributes(size=record['size'], date=record['dateUploaded'])
+        return attributes.Attributes(
+          size=record['size'], date=record['dateUploaded']
+        )
       elif filename == u"system.xml":
         sys_meta_xml = self._object_tree.get_system_metadata(pid)
-        return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
+        return attributes.Attributes(
+          size=len(sys_meta_xml), date=record['dateUploaded']
+        )
 
     self._raise_invalid_path()
 
@@ -165,7 +171,9 @@ class Resolver(resolver_base.Resolver):
 
   def _get_pid_filename(self, pid, record):
     try:
-      ext = self._object_format_info.filename_extension_from_format_id(record['formatId'])
+      ext = self._object_format_info.filename_extension_from_format_id(
+        record['formatId']
+      )
     except KeyError:
       return pid
     if ext in (os.path.splitext(pid)[1], 'data'):
@@ -180,13 +188,10 @@ class Resolver(resolver_base.Resolver):
 
   def _get_search_fields_file_attributes(self, record):
     return attributes.Attributes(
-      size=len(self._generate_search_fields_text(record)),
-      is_dir=False
+      size=len(self._generate_search_fields_text(record)), is_dir=False
     )
 
   def _generate_search_fields_text(self, record):
     return util.os_format(
-      '\n'.join(
-        sorted([u'{0}: {1}'.format(k, v) for k, v in record.items()])
-      )
+      '\n'.join(sorted([u'{0}: {1}'.format(k, v) for k, v in record.items()]))
     )

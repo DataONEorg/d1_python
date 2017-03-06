@@ -63,9 +63,7 @@ class TestZoteroClient(unittest.TestCase):
       zotero_create_item(zotero_client, collection, pid)
     for d in object_tree_folder['dirs']:
       copy_dirs_recursive(
-        zotero_client, object_tree_client, collection, object_tree_path + [
-          d
-        ]
+        zotero_client, object_tree_client, collection, object_tree_path + [d]
       )
 
   def _zotero_create_collection(self, zotero_client, zotero_collection, name):
@@ -81,7 +79,9 @@ class TestZoteroClient(unittest.TestCase):
     template['creators'][0]['lastName'] = ''
     template['title'] = pid
     item_with_key = zotero_client.create_items([template])
-    zotero_client.addto_collection(zotero_collection['collectionKey'], item_with_key)
+    zotero_client.addto_collection(
+      zotero_collection['collectionKey'], item_with_key
+    )
 
   def _print_zotero_types(self, zotero_client):
     for i in zotero_client.item_types():
@@ -91,7 +91,10 @@ class TestZoteroClient(unittest.TestCase):
         print ' ', j['localized']
 
   def setUp(self):
-    self.options = {'zotero_cache_root': '.', 'zotero_cache_path': 'zotero.pickle', }
+    self.options = {
+      'zotero_cache_root': '.',
+      'zotero_cache_path': 'zotero.pickle',
+    }
     self.pickle_path = os.path.join(
       self.options['zotero_cache_root'], self.options['zotero_cache_path']
     )
@@ -178,10 +181,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

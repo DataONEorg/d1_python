@@ -56,14 +56,12 @@ class TestMockup(unittest.TestCase):
 
   def test_200_get_all_children(self):
     self.assertEqual(
-      self._get_paths(self.c._get_all_children('')), [
-        'd/d2/f3a', 'd/d2/f3b', 'd/f2a', 'd/f2b', 'd/f2c', 'fa', 'fb'
-      ]
+      self._get_paths(self.c._get_all_children('')),
+      ['d/d2/f3a', 'd/d2/f3b', 'd/f2a', 'd/f2b', 'd/f2c', 'fa', 'fb']
     )
     self.assertEqual(
-      self._get_paths(self.c._get_all_children('d/d2')), [
-        'd/d2/f3a', 'd/d2/f3b'
-      ]
+      self._get_paths(self.c._get_all_children('d/d2')),
+      ['d/d2/f3a', 'd/d2/f3b']
     )
 
   def test_300_get_element_n(self):
@@ -82,7 +80,9 @@ class TestMockup(unittest.TestCase):
 
   def test_400_get_direct_children(self):
     self.assertEqual(self.c._get_direct_children(''), ['d', 'fa', 'fb'])
-    self.assertEqual(self.c._get_direct_children('d'), ['d2', 'f2a', 'f2b', 'f2c'])
+    self.assertEqual(
+      self.c._get_direct_children('d'), ['d2', 'f2a', 'f2b', 'f2c']
+    )
     self.assertEqual(self.c._get_direct_children('d/d2'), ['f3a', 'f3b'])
 
   def test_500_is_dir(self):
@@ -96,19 +96,14 @@ class TestMockup(unittest.TestCase):
 
   def test_600_get_meta_file(self):
     self.assertEqual(
-      self.c._get_meta_file('fa'), (
-        50, datetime.datetime(
-          2005, 5, 23, 11, 12, 13
-        )
-      )
+      self.c._get_meta_file('fa'),
+      (50, datetime.datetime(2005, 5, 23, 11, 12, 13))
     )
     self.assertEqual(
-      self.c._get_meta_file('d/d2/f3b'), (
-        56, datetime.datetime(
-          2005, 5, 23, 11, 12, 13
-        )
-      )
+      self.c._get_meta_file('d/d2/f3b'),
+      (56, datetime.datetime(2005, 5, 23, 11, 12, 13))
     )
+
 
 # d/d2/f3a
 # d/d2/f3b
@@ -141,10 +136,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

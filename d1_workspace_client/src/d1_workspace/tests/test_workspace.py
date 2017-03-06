@@ -62,8 +62,7 @@ class TestWorkspace(unittest.TestCase):
   def test_130(self):
     """Create Workspace, unpickle default cache and refresh with single folder"""
     with workspace.Workspace(
-      workspace_def_path='workspace_single.xml',
-      automatic_refresh=True
+      workspace_def_path='workspace_single.xml', automatic_refresh=True
     ) as w:
       pass
 
@@ -115,11 +114,11 @@ class TestWorkspace(unittest.TestCase):
       pickle.dump([], f)
       f.close()
       with workspace.Workspace(
-        workspace_cache_path=f.name,
-        workspace_def_path='workspace_empty.xml'
+        workspace_cache_path=f.name, workspace_def_path='workspace_empty.xml'
       ) as w:
         w.refresh()
         self.assertEqual(w._workspace, [])
+
 
 #===============================================================================
 
@@ -142,10 +141,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

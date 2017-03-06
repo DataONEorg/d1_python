@@ -41,16 +41,16 @@ import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.const
 import d1_common.url
 
-
 # Config
 
 NUM_SCIOBJ_BYTES = 1024
 GET_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
-
 def init(base_url):
-  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)
+  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(
+    base_url, GET_ENDPOINT_RX
+  )
   endpoint_rx = re.compile(endpoint_rx_str)
   responses.add_callback(
     responses.GET,

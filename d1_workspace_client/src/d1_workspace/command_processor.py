@@ -58,16 +58,14 @@ class CommandProcessor():
     self._science_object_cache._delete_oldest_file_if_full()
     self._system_metadata_cache._delete_oldest_file_if_full()
     self._solr_client = workspace_solr_client.SolrClient(
-      base_url=options['base_url'],
-      solr_selector=options['solr_query_path'],
+      base_url=options['base_url'], solr_selector=options['solr_query_path'],
       timeout=options['solr_query_timeout'],
       max_objects_for_query=options['max_objects_for_query']
     )
 
   def run_solr_query(self, query, filter_queries=None, fields=None):
     response = self._solr_client.query(
-      query, filter_queries=filter_queries,
-      fields=fields
+      query, filter_queries=filter_queries, fields=fields
     )
     for record in response['response']['docs']:
       self._close_open_date_ranges(record)
@@ -81,9 +79,7 @@ class CommandProcessor():
       return response[0]
     except IndexError:
       raise workspace_exception.WorkspaceException(
-        'Object does not exist. pid={0}'.format(
-          pid
-        )
+        'Object does not exist. pid={0}'.format(pid)
       )
 
   def get_science_object(self, pid):
@@ -141,7 +137,7 @@ class CommandProcessor():
   def _close_open_date_ranges(self, record):
     """If a date range is missing the start or end date, close it by copying
     the date from the existing value."""
-    date_ranges = (('beginDate', 'endDate'), )
+    date_ranges = (('beginDate', 'endDate'),)
     for begin, end in date_ranges:
       if begin in record and end in record:
         return
@@ -158,6 +154,7 @@ class CommandProcessor():
     for date_field in date_fields:
       if date_field in record:
         try:
-          record[date_field] = d1_common.date_time.from_iso8601(record[date_field])
+          record[date_field
+                 ] = d1_common.date_time.from_iso8601(record[date_field])
         except Exception as e:
           log.exception(e)

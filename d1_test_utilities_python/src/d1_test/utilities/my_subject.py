@@ -88,19 +88,11 @@ if __name__ == "__main__":
                 help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
                      '40=Error, 50=Fatal [default: %default]')
   parser.add_option(
-    '-i',
-    '--info',
-    dest='info',
-    default=False,
-    action='store_true',
+    '-i', '--info', dest='info', default=False, action='store_true',
     help='Show subject info in certificate [default: %default]'
   )
   parser.add_option(
-    '-f',
-    '--format',
-    dest='format',
-    default=False,
-    action='store_true',
+    '-f', '--format', dest='format', default=False, action='store_true',
     help='Format output for people [default: %default]'
   )
 
@@ -121,9 +113,7 @@ if __name__ == "__main__":
         root = etree.fromstring(str(subject['subjectInfo']))
         print "SubjectInfo:"
         print etree.tostring(
-          root, pretty_print=True,
-          encoding='UTF-8',
-          xml_declaration=True
+          root, pretty_print=True, encoding='UTF-8', xml_declaration=True
         )
       else:
         print str(subject['subjectInfo'])

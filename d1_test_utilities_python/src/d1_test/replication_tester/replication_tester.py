@@ -149,7 +149,9 @@ def main():
     parser.print_help()
     sys.exit()
 
-  logging.getLogger('').setLevel(logging.DEBUG if options.debug else logging.INFO)
+  logging.getLogger('').setLevel(
+    logging.DEBUG if options.debug else logging.INFO
+  )
 
   # A PID that is not known on the node receiving the call.
   pid_unknown = generate_random_ascii('replication_tester_pid_unknown')
@@ -164,16 +166,10 @@ def main():
     'replication_tester_pid_known_and_authorized'
   )
 
-  src_existing_pid_approve = generate_random_ascii(
-    'src_existing_pid_approve'
-  )
-  src_existing_pid_deny = generate_random_ascii(
-    'src_existing_pid_deny'
-  )
+  src_existing_pid_approve = generate_random_ascii('src_existing_pid_approve')
+  src_existing_pid_deny = generate_random_ascii('src_existing_pid_deny')
 
-  dst_existing_pid = generate_random_ascii(
-    'dst_existing_pid'
-  )
+  dst_existing_pid = generate_random_ascii('dst_existing_pid')
 
   # Run tests
   try:
@@ -216,20 +212,21 @@ def create_test_object_on_mn(base_url, pid):
   # , cert_path=self._options.cert_get_replica, key_path=self._options.cert_get_replica_key
   mn_client.create(pid, StringIO.StringIO(sci_obj), sys_meta)
 
+
 #===============================================================================
 
 
 class ReplicationTester(object):
   def __init__(
-      self,
-      options,
-      pid_unknown,
-      pid_not_authorized,
-      pid_known_and_authorized,
-      src_existing_pid_approve,
-      src_existing_pid_deny,
-      dst_existing_pid,
-):
+    self,
+    options,
+    pid_unknown,
+    pid_not_authorized,
+    pid_known_and_authorized,
+    src_existing_pid_approve,
+    src_existing_pid_deny,
+    dst_existing_pid,
+  ):
     self._options = options
     self._pid_unknown = pid_unknown
     self._pid_not_authorized = pid_not_authorized
@@ -270,9 +267,13 @@ class ReplicationTester(object):
   def test_dst_mn(self):
     self._log_debug_header('Destination MNReplication.replicate(PID_EXISTING)')
     self._test_MNReplication_replicate_with_existing_pid()
-    self._log_debug_header('Destination MNReplication.replicate(PID_NOT_AUTHORIZED)')
+    self._log_debug_header(
+      'Destination MNReplication.replicate(PID_NOT_AUTHORIZED)'
+    )
     self._test_MNReplication_replicate_with_unauthorized_pid()
-    self._log_debug_header('Destination MNReplication.replicate(PID_KNOWN_AND_AUTHORIZED)')
+    self._log_debug_header(
+      'Destination MNReplication.replicate(PID_KNOWN_AND_AUTHORIZED)'
+    )
     self._test_MNReplication_replicate_with_authorized_pid()
     pass
 
@@ -289,8 +290,7 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.NotFound:
       pass
     except (
-      d1_common.types.exceptions.DataONEException,
-      ReplicationTesterError,
+      d1_common.types.exceptions.DataONEException, ReplicationTesterError,
     ) as e:
       raise ReplicationTesterError(
         'Source MNRead.getReplica(unknown PID): '
@@ -306,18 +306,15 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.NotAuthorized:
       pass
     except (
-      d1_common.types.exceptions.DataONEException,
-      ReplicationTesterError,
+      d1_common.types.exceptions.DataONEException, ReplicationTesterError,
     ) as e:
       raise ReplicationTesterError(
         'Source MNRead.getReplica(valid PID with replication rejected): '
         'Expected NotAuthorized exception. Received: {0}'.format(e)
       )
     self._assert_correct_mn_call_instant(
-      'isNodeAuthorized_rejected', self._src_existing_pid_deny,
-      'public'
+      'isNodeAuthorized_rejected', self._src_existing_pid_deny, 'public'
     )
-
 
   # def generate_science_object_with_sysmeta(self, pid, rights_holder):
   #   # Seeding the prng with the pid causes the same object and system metadata
@@ -343,8 +340,7 @@ class ReplicationTester(object):
         'Expected OctetStream. Received exception: {0}'.format(e)
       )
     self._assert_correct_mn_call_instant(
-      'isNodeAuthorized_approved', self._src_existing_pid_approve,
-      'public'
+      'isNodeAuthorized_approved', self._src_existing_pid_approve, 'public'
     )
 
   def _call_src_get_replica(self, pid):
@@ -481,8 +477,6 @@ class ReplicationTester(object):
 
 
 #===============================================================================
-
-
 
 if __name__ == '__main__':
   main()

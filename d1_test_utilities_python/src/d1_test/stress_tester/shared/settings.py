@@ -59,7 +59,9 @@ CA_KEY_PATH = os.path.join(CERT_ROOT, 'local_test_ca.nopassword.key')
 CA_KEY_PW = ''
 
 CLIENT_CERT_DIR = os.path.join(CERT_ROOT, 'client_side_certs')
-CLIENT_CERT_PUBLIC_KEY_PATH = os.path.join(CERT_ROOT, 'local_test_client_cert.public.key')
+CLIENT_CERT_PUBLIC_KEY_PATH = os.path.join(
+  CERT_ROOT, 'local_test_client_cert.public.key'
+)
 CLIENT_CERT_PRIVATE_KEY_PATH = os.path.join(
   CERT_ROOT, 'local_test_client_cert.nopassword.key'
 )

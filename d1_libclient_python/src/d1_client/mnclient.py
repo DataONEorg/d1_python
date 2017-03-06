@@ -40,6 +40,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -160,12 +161,16 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
   ):
     mmp_dict = {
-      'pid': pid.encode('utf-8'),
-      'serialVersion': str(serialVersion),
+      'pid':
+        pid.encode('utf-8'),
+      'serialVersion':
+        str(serialVersion),
       'dateSysMetaLastModified':
         d1_common.date_time.to_xsd_datetime(dateSysMetaLastModified),
     }
-    return self.POST('dirtySystemMetadata', fields=mmp_dict, headers=vendorSpecific)
+    return self.POST(
+      'dirtySystemMetadata', fields=mmp_dict, headers=vendorSpecific
+    )
 
   @d1_common.util.utf8_to_unicode
   def systemMetadataChanged(

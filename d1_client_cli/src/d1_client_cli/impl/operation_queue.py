@@ -82,8 +82,7 @@ class OperationQueue(object):
     self._print_operation_queue()
     if not cli_util.confirm(
       'You are about to perform {0} queued write operations. Continue?'
-      .format(len(self._operations)),
-      default='yes'
+      .format(len(self._operations)), default='yes'
     ):
       raise cli_exceptions.InvalidArguments(u'Cancelled')
     while len(self._operations):
@@ -94,8 +93,7 @@ class OperationQueue(object):
     self._assert_queue_not_empty()
     if cli_util.confirm(
       'You are about to clear the queue of {0} write operations. Continue?'
-      .format(len(self._operations)),
-      default='yes'
+      .format(len(self._operations)), default='yes'
     ):
       self._clear()
 
@@ -121,9 +119,13 @@ class OperationQueue(object):
 
   def _write_to_tmp(self):
     self._update_comments(self._operations)
-    fi, path = tempfile.mkstemp(prefix=u'dataone_cli.', suffix='.tmp', text=True)
+    fi, path = tempfile.mkstemp(
+      prefix=u'dataone_cli.', suffix='.tmp', text=True
+    )
     with os.fdopen(fi, "w") as f:
-      json.dump(self._operations, f, sort_keys=True, indent=4, separators=(u',', ': '))
+      json.dump(
+        self._operations, f, sort_keys=True, indent=4, separators=(u',', ': ')
+      )
     return path
 
   def _read_from_tmp(self, path):
@@ -163,7 +165,9 @@ class OperationQueue(object):
       if operation[u'operation'] == u'create':
         pid = operation[u'parameters']['identifier']
         path = operation[u'parameters']['science-file']
-        operation[u'_comment'] = '{0} of {1}: create({2}, {3})'.format(j, k, pid, path)
+        operation[u'_comment'] = '{0} of {1}: create({2}, {3})'.format(
+          j, k, pid, path
+        )
       elif operation[u'operation'] == u'update':
         pid_new = operation[u'parameters']['identifier-new']
         pid_old = operation[u'parameters']['identifier-old']
@@ -176,16 +180,16 @@ class OperationQueue(object):
         pid_meta = operation[u'parameters'][u'identifier-science-meta']
         pid_datas = operation[u'parameters'][u'identifier-science-data']
         operation[u'_comment'] = '{0} of {1}: create_package({2}, {3}, {4})'.format(
-          j, k, pid_package, pid_meta, ', '.join(
-            pid_datas
-          )
+          j, k, pid_package, pid_meta, ', '.join(pid_datas)
         )
       elif operation[u'operation'] == u'archive':
         pid = operation[u'parameters']['identifier']
         operation[u'_comment'] = '{0} of {1}: archive({2})'.format(j, k, pid)
       elif operation[u'operation'] == u'update_access_policy':
         pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{0} of {1}: update_access_policy({2})'.format(j, k, pid)
+        operation[u'_comment'] = '{0} of {1}: update_access_policy({2})'.format(
+          j, k, pid
+        )
       elif operation[u'operation'] == u'update_replication_policy':
         pid = operation[u'parameters']['identifier']
         operation[u'_comment'] = '{0} of {1}: update_replication_policy({2})'.format(
@@ -212,4 +216,6 @@ class OperationQueue(object):
 
   def _assert_queue_not_empty(self):
     if not len(self._operations):
-      raise cli_exceptions.InvalidArguments(u'There are no operations in the queue')
+      raise cli_exceptions.InvalidArguments(
+        u'There are no operations in the queue'
+      )

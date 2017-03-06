@@ -30,7 +30,6 @@ import pyxb
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.dataoneErrors as dataoneErrors
 
-
 # Stdlib
 import os
 

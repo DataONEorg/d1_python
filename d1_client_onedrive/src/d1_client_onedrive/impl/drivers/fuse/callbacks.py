@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """:mod:`callbacks`
 ========================
 
@@ -50,8 +49,8 @@ from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 
-
 log = logging.getLogger(__name__)
+
 #log.setLevel(logging.DEBUG)
 
 
@@ -65,7 +64,6 @@ class FUSECallbacks(fuse.Operations):
     self._uid = os.getuid()
     self._attribute_cache = cache.Cache(self._options.attribute_max_cache_items)
     self._directory_cache = cache.Cache(self._options.directory_max_cache_items)
-
 
   def getattr(self, path, fh):
     """Called by FUSE when the attributes for a file or directory are required.
@@ -84,7 +82,6 @@ class FUSECallbacks(fuse.Operations):
     #log.debug('getattr() returned attribute: {0}'.format(attribute))
     return self._stat_from_attributes(attribute)
 
-
   def readdir(self, path, fh):
     """Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
@@ -96,7 +93,6 @@ class FUSECallbacks(fuse.Operations):
       dir = self._get_directory(path)
       self._directory_cache[path] = dir
     return dir
-
 
   def open(self, path, flags):
     """Called by FUSE when a file is opened.
@@ -110,14 +106,12 @@ class FUSECallbacks(fuse.Operations):
     attribute = self._get_attributes_through_cache(path)
     return attribute.is_dir()
 
-
   def read(self, path, size, offset, fh):
     log.debug(u'read(): {0}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
     except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
-
 
   # Private.
 
@@ -130,7 +124,6 @@ class FUSECallbacks(fuse.Operations):
     except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
 
-
   def _get_attributes_through_cache(self, path):
     try:
       return self._attribute_cache[path]
@@ -139,17 +132,16 @@ class FUSECallbacks(fuse.Operations):
       self._attribute_cache[path] = attributes
       return attributes
 
-
   def _get_attributes(self, path):
     try:
       return self._root_resolver.get_attributes(path)
     except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
 
-
   def _stat_from_attributes(self, attributes):
     date_time = d1_common.date_time.to_seconds_since_epoch(
-      attributes.date()) if attributes.date() is not None else self._start_time
+      attributes.date()
+    ) if attributes.date() is not None else self._start_time
     return dict(
       st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else stat.S_IFREG | 0444,
       st_ino = 0,
@@ -163,16 +155,13 @@ class FUSECallbacks(fuse.Operations):
       st_ctime = date_time,
     )
 
-
   def _raise_error_if_os_special_file(self, path):
     if len(set(path.split(os.path.sep)) & self._options.ignore_special):
       self._raise_error_no_such_file_or_directory(path)
 
-
   def _raise_error_no_such_file_or_directory(self, path):
     log.debug(u'Error: No such file or directory: {0}'.format(path))
     raise fuse.FuseOSError(errno.ENOENT)
-
 
   def _raise_error_permission_denied(self, path):
     log.debug('Error: Permission denied: {0}'.format(path))

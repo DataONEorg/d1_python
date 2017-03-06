@@ -113,8 +113,12 @@ def windows_identifier_from_filename(filename):
   return unquote(filename)
 
 
-LINUX = ["posix", ]
-WINDOWS = ["nt", ]
+LINUX = [
+  "posix",
+]
+WINDOWS = [
+  "nt",
+]
 
 filename_from_identifier = posix_filename_from_identifier
 identifier_from_filename = posix_identifier_from_filename

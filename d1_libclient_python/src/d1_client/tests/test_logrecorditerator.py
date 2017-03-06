@@ -48,7 +48,6 @@ import shared_context
 import shared_settings
 import util
 
-
 # These tests are disabled because they require a MN that permits access to
 # log records.
 

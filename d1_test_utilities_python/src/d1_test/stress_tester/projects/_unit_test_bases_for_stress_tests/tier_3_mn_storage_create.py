@@ -52,7 +52,9 @@ class Test310Create(d1_test_case.D1TestCase):
   def test_(self):
     pass
 
-  def generate_sysmeta(self, pid, size, checksum_algorithm, checksum, create_date):
+  def generate_sysmeta(
+    self, pid, size, checksum_algorithm, checksum, create_date
+  ):
     return u"""<?xml version="1.0" encoding="UTF-8"?>
 <D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>{0}</identifier>
@@ -105,7 +107,8 @@ class Test310Create(d1_test_case.D1TestCase):
 
     context.scidata_file.seek(0)
     client.create(
-      context.TOKEN, context.pid_created, context.scidata_file, context.sysmeta_file
+      context.TOKEN, context.pid_created, context.scidata_file,
+      context.sysmeta_file
     )
 
   def test_030_object_exists(self):
@@ -115,14 +118,18 @@ class Test310Create(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     response = client.get(context.TOKEN, context.pid_created)
     # Calculate the checksum.
-    checksum = test_utilities.calculate_checksum(response, context.checksum_algorithm)
+    checksum = test_utilities.calculate_checksum(
+      response, context.checksum_algorithm
+    )
     self.assertEqual(context.checksum, checksum)
 
   def test_040_log_records_total_increased_by_one(self):
     """Total number of log records increased by one.
     """
     client = test_client.TestClient(context.node['baseurl'])
-    log_records = client.getLogRecords(context.TOKEN, datetime.datetime(1800, 1, 1), 0, 0)
+    log_records = client.getLogRecords(
+      context.TOKEN, datetime.datetime(1800, 1, 1), 0, 0
+    )
     self.assertEqual(context.log_records_total, log_records.total + 1)
 
   def test_070_describe_returns_correct_header(self):

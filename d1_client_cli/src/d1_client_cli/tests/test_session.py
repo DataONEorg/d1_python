@@ -168,6 +168,7 @@ class TestSession(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
     s2.load(tmp_pickle)
     self.assertEqual(s2.get('rights-holder'), u)
 
+
 #===============================================================================
 
 
@@ -189,10 +190,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
+    '--test', action='store', default='', dest='test', help='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

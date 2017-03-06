@@ -76,8 +76,7 @@ CERTIFICATE_KEY_PATH = None
 
 def main():
   mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    BASE_URL, cert_path=CERTIFICATE_PATH,
-    key_path=CERTIFICATE_KEY_PATH
+    BASE_URL, cert_path=CERTIFICATE_PATH, key_path=CERTIFICATE_KEY_PATH
   )
   with DataONENodeObjectValidator(mn_client, CSV_FILE_PATH) as mn_validator:
     # Validate all PIDs that are accessible with certificate on MN or CN.
@@ -121,7 +120,9 @@ class DataONENodeObjectValidator(object):
   def _validate_pid(self, pid):
     sys_meta = self._read_sys_meta_with_correction(pid)
     sci_obj = self._read_obj(pid)
-    checksum = d1_common.checksum.calculate_checksum(sci_obj, sys_meta.checksum.algorithm)
+    checksum = d1_common.checksum.calculate_checksum(
+      sci_obj, sys_meta.checksum.algorithm
+    )
     errors = []
     if checksum != sys_meta.checksum.value():
       self._inc_count('Checksum mismatches')
@@ -131,13 +132,14 @@ class DataONENodeObjectValidator(object):
       errors.append('size_mismatch')
     if errors:
       self._write_csv_row(
-        pid, '/'.join(errors), sys_meta.size, sys_meta.checksum.value(), len(sci_obj),
-        checksum
+        pid, '/'.join(errors), sys_meta.size,
+        sys_meta.checksum.value(), len(sci_obj), checksum
       )
       raise ValidationError()
     else:
       self._write_csv_row(
-        pid, 'ok', sys_meta.size, sys_meta.checksum.value(), len(sci_obj), checksum
+        pid, 'ok', sys_meta.size,
+        sys_meta.checksum.value(), len(sci_obj), checksum
       )
 
   def _read_obj(self, pid):
@@ -156,7 +158,8 @@ class DataONENodeObjectValidator(object):
       self._write_csv_row(pid, 'sys_meta_not_authorized_error')
       raise NotAuthorized()
     except (
-      d1_common.types.exceptions.DataONEException, pyxb.UnrecognizedDOMRootNodeError
+      d1_common.types.exceptions.DataONEException,
+      pyxb.UnrecognizedDOMRootNodeError
     ):
       self._inc_count('System Metadata Read errors (before correction)')
       raise ValidationError()
@@ -174,7 +177,9 @@ class DataONENodeObjectValidator(object):
       )
       sys_meta_str = sys_meta_str.replace('<accessPolicy/>', '')
       sys_meta_str = sys_meta_str.replace('<blockedMemberNode/>', '')
-      sys_meta_str = sys_meta_str.replace('<blockedMemberNode></blockedMemberNode>', '')
+      sys_meta_str = sys_meta_str.replace(
+        '<blockedMemberNode></blockedMemberNode>', ''
+      )
       try:
         return dataone_types.CreateFromDocument(sys_meta_str)
       except (d1_common.types.exceptions.DataONEException, pyxb.PyXBException):
@@ -189,17 +194,13 @@ class DataONENodeObjectValidator(object):
       self._counts[name] = 1
 
   def _write_csv_row(
-    self,
-    pid,
-    status,
-    sys_meta_size=None,
-    sys_meta_checksum=None,
-    actual_size=None,
-    actual_checksum=None
+    self, pid, status, sys_meta_size=None, sys_meta_checksum=None,
+    actual_size=None, actual_checksum=None
   ):
     self._csv_file.writerow(
       [
-        status, pid, sys_meta_size, sys_meta_checksum, actual_size, actual_checksum
+        status, pid, sys_meta_size, sys_meta_checksum, actual_size,
+        actual_checksum
       ]
     )
 

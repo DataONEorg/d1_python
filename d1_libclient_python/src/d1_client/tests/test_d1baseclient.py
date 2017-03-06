@@ -55,8 +55,12 @@ class TestDataONEBaseClient(
   def test_0010(self):
     """Able to instantiate DataONEBaseClient
     """
-    base_client = d1_client.baseclient.DataONEBaseClient(shared_settings.MN_RESPONSES_URL)
-    self.assertTrue(isinstance(base_client, d1_client.baseclient.DataONEBaseClient))
+    base_client = d1_client.baseclient.DataONEBaseClient(
+      shared_settings.MN_RESPONSES_URL
+    )
+    self.assertTrue(
+      isinstance(base_client, d1_client.baseclient.DataONEBaseClient)
+    )
 
   def test_0020(self):
     """slice_sanity_check()"""
@@ -144,16 +148,16 @@ class TestDataONEBaseClient(
     """CNRead.get()"""
     self._get(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_RESPONSES_URL,
-      True
+      d1_common.types.exceptions.NotFound, self._get,
+      shared_settings.MN_RESPONSES_URL, True
     )
 
   def test_0440(self):
     """MNRead.get()"""
     self._get(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_RESPONSES_URL,
-      True
+      d1_common.types.exceptions.NotFound, self._get,
+      shared_settings.MN_RESPONSES_URL, True
     )
 
   # CNRead.getSystemMetadata()
@@ -167,7 +171,9 @@ class TestDataONEBaseClient(
       pid = util.get_random_valid_pid(client)
     sysmeta_pyxb = client.getSystemMetadata(pid)
     self.assertTrue(
-      isinstance(sysmeta_pyxb, d1_common.types.dataoneTypes_v1_1.SystemMetadata)
+      isinstance(
+        sysmeta_pyxb, d1_common.types.dataoneTypes_v1_1.SystemMetadata
+      )
     )
 
   @unittest.skip(

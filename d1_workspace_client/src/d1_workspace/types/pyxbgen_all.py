@@ -77,27 +77,15 @@ def main():
   parser = optparse.OptionParser()
   # The default location for the schemas relative to d1_common_python if both were checked out as part of cicore.
   parser.add_option(
-    '-s',
-    '--schemas',
-    dest='schemas_path',
-    action='store',
-    type='string',
+    '-s', '--schemas', dest='schemas_path', action='store', type='string',
     default='./'
   )
   parser.add_option(
-    '-t',
-    '--bindings',
-    dest='bindings_path',
-    action='store',
-    type='string',
+    '-t', '--bindings', dest='bindings_path', action='store', type='string',
     default='./generated'
   )
   parser.add_option(
-    '-p',
-    '--process',
-    dest='process_schemas',
-    action='store',
-    type='string',
+    '-p', '--process', dest='process_schemas', action='store', type='string',
     default='workspace_types.xsd'
   )
 

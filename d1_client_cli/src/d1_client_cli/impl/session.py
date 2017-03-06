@@ -186,7 +186,9 @@ class Session(object):
     else:
       try:
         type_converter = variable_type_map[variable]
-        value_string = self._validate_variable_type(value_string, type_converter)
+        value_string = self._validate_variable_type(
+          value_string, type_converter
+        )
         value = type_converter(value_string)
         self._variables[variable] = value
       except ValueError:
@@ -208,12 +210,18 @@ class Session(object):
     f = operation_formatter.OperationFormatter()
     d = copy.deepcopy(self._variables)
     d['replication'] = {
-      u'replication-allowed': self._replication_policy.get_replication_allowed(),
-      u'preferred-nodes': self._replication_policy.get_preferred(),
-      u'blocked-nodes': self._replication_policy.get_blocked(),
-      u'number-of-replicas': self._replication_policy.get_number_of_replicas(),
+      u'replication-allowed':
+        self._replication_policy.get_replication_allowed(),
+      u'preferred-nodes':
+        self._replication_policy.get_preferred(),
+      u'blocked-nodes':
+        self._replication_policy.get_blocked(),
+      u'number-of-replicas':
+        self._replication_policy.get_number_of_replicas(),
     }
-    d['access'] = {u'allow': self._access_control.get_list(), }
+    d['access'] = {
+      u'allow': self._access_control.get_list(),
+    }
     f.print_operation(d)
 
     #return
@@ -239,9 +247,8 @@ class Session(object):
     except (NameError, IOError, ImportError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to load session from file: {0}\n{1}'.format(
-            pickle_file_path, str(e)
-          )
+          u'Unable to load session from file: {0}\n{1}'.
+          format(pickle_file_path, str(e))
         )
 
   def save(self, pickle_file_path=None, suppress_error=False):
@@ -253,9 +260,8 @@ class Session(object):
     except (NameError, IOError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to save session to file: {0}\n{1}'.format(
-            pickle_file_path, str(e)
-          )
+          u'Unable to save session to file: {0}\n{1}'.
+          format(pickle_file_path, str(e))
         )
 
   def is_verbose(self):
@@ -301,20 +307,23 @@ class Session(object):
         )
     elif variable == CN_URL_NAME:
       cn_base_url = self.get(CN_URL_NAME)
-      if value not in [n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn']:
+      if value not in [
+        n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn'
+      ]:
         if not cli_util.confirm(
-          '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.format(
-            value
-          )
+          '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.
+          format(value)
         ):
-          raise cli_exceptions.InvalidArguments(u'Coordinating Node update cancelled')
+          raise cli_exceptions.InvalidArguments(
+            u'Coordinating Node update cancelled'
+          )
     elif variable == MN_URL_NAME:
       cn_base_url = self.get(CN_URL_NAME)
-      if value not in [n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn']:
+      if value not in [
+        n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn'
+      ]:
         if not cli_util.confirm(
-          '"{0}" is not a known DataONE Member Node. Use anyway?'.format(
-            value
-          )
+          '"{0}" is not a known DataONE Member Node. Use anyway?'.format(value)
         ):
           raise cli_exceptions.InvalidArguments(u'Member Node update cancelled')
     elif variable == FORMAT_NAME:

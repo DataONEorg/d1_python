@@ -31,7 +31,6 @@ import urlparse
 import responses # pip install responses
 import requests
 
-
 # App
 import d1_common.const
 import d1_common.url
@@ -50,7 +49,9 @@ def init(base_url, major_version):
 
   responses.add_callback(
     responses.GET,
-    d1_common.url.joinPathElements(base_url, '/{}/formats'.format(version_tag_str)),
+    d1_common.url.joinPathElements(
+      base_url, '/{}/formats'.format(version_tag_str)
+    ),
     callback=_request_callback,
     content_type=d1_common.const.CONTENT_TYPE_XML,
   )

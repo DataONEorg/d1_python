@@ -65,7 +65,9 @@ class Resolver(resolver_base.Resolver):
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
     if not path:
       return attributes.Attributes(is_dir=True)
     if self._is_readme_file(path):
@@ -74,7 +76,9 @@ class Resolver(resolver_base.Resolver):
     return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
     if not path:
       return [self._get_readme_filename()] \
         + self._object_tree._get_individually_synced_object_pids()
@@ -84,16 +88,15 @@ class Resolver(resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(
-          path
-        ), size, offset
-      )
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     self._object_tree.add_object_to_cache(path[-1])
-    return self._resource_map_resolver.read_file(object_tree_root, path, size, offset)
+    return self._resource_map_resolver.read_file(
+      object_tree_root, path, size, offset
+    )
 
   #
   # Private.

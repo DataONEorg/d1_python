@@ -34,7 +34,9 @@ import baseclient_2_0
 import mnclient_1_1
 
 
-class MemberNodeClient_2_0(baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1):
+class MemberNodeClient_2_0(
+  baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1
+):
   """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
   for Member nodes that was added in v2.0 of the DataONE infrastructure.
 
@@ -42,6 +44,7 @@ class MemberNodeClient_2_0(baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.Me
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
   """
+
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -54,16 +57,16 @@ class MemberNodeClient_2_0(baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.Me
   # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
 
   @d1_common.util.utf8_to_unicode
-  def updateSystemMetadataResponse(self, pid, sysmeta_pyxb, vendorSpecific=None):
-      mmp_dict = {
-        'pid': pid.encode('utf-8'),
-        'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
-      }
-      return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
-
+  def updateSystemMetadataResponse(
+    self, pid, sysmeta_pyxb, vendorSpecific=None
+  ):
+    mmp_dict = {
+      'pid': pid.encode('utf-8'),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+    }
+    return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def updateSystemMetadata(self, pid, sysmeta_pyxb):
-      response = self.updateSystemMetadataResponse(pid, sysmeta_pyxb)
-      return self._read_boolean_response(response)
-
+    response = self.updateSystemMetadataResponse(pid, sysmeta_pyxb)
+    return self._read_boolean_response(response)

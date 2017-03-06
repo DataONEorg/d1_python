@@ -31,7 +31,6 @@ import pyxb
 # D1
 from d1_common.types import dataoneTypes
 
-
 EG_PID_GMN = (
   """<?xml version="1.0" encoding="UTF-8"?>
 <d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
@@ -41,7 +40,7 @@ EG_PID_GMN = (
 )
 
 # TODO.
-EG_PID_KNB = ("""""", '', )
+EG_PID_KNB = ("""""", '',)
 
 # Blank pid.
 EG_BAD_PID_1 = (
@@ -53,7 +52,7 @@ EG_BAD_PID_1 = (
 )
 
 # Missing identifier.
-EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid', )
+EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid',)
 
 
 class TestPID(unittest.TestCase):

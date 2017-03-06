@@ -42,53 +42,23 @@ class OperationFormatter(object):
 
   def __init__(self):
     self._template = (
-      u'comment',
-      u'operation',
-      (u'CLI',
-       u'verbose',
-       u'editor', ),
+      u'comment', u'operation', (u'CLI', u'verbose', u'editor',),
       (u'Target Nodes', u'cn-url', u'mn-url'),
-      (u'Authentication',
-       u'anonymous',
-       u'cert-file',
-       u'key-file', ),
-      (u'Slicing',
-       u'start',
-       u'count', ),
-      (
-        u'Searching',
-        u'query',
-        u'query-type',
-        u'from-date',
-        u'to-date',
-        u'search-format-id',
-      ),
-      (
-        u'Parameters',
-        u'identifier',
-        u'identifier-new',
-        u'identifier-old',
-        u'identifier-package',
-        u'identifier-science-meta',
-        u'identifier-science-data',
-        u'science-file',
-        (u'Misc',
-         u'format-id',
-         u'algorithm', ),
-        (u'Reference Nodes',
-         u'authoritative-mn', ),
-        (u'Subjects',
-         u'rights-holder', ),
-        (u'Access Control',
-         u'allow', ),
-        (
-          u'Replication',
-          u'replication-allowed',
-          u'number-of-replicas',
-          u'blocked-nodes',
-          u'preferred-nodes',
-        ),
-      ),
+      (u'Authentication', u'anonymous', u'cert-file',
+       u'key-file',), (u'Slicing', u'start', u'count',), (
+         u'Searching', u'query', u'query-type', u'from-date', u'to-date',
+         u'search-format-id',
+       ), (
+         u'Parameters', u'identifier', u'identifier-new', u'identifier-old',
+         u'identifier-package', u'identifier-science-meta',
+         u'identifier-science-data', u'science-file',
+         (u'Misc', u'format-id',
+          u'algorithm',), (u'Reference Nodes', u'authoritative-mn',),
+         (u'Subjects', u'rights-holder',), (u'Access Control', u'allow',), (
+           u'Replication', u'replication-allowed', u'number-of-replicas',
+           u'blocked-nodes', u'preferred-nodes',
+         ),
+       ),
     )
 
   def print_operation(self, operation):
@@ -102,7 +72,9 @@ class OperationFormatter(object):
       if isinstance(v, basestring):
         lines.extend(self._format_value(operation, v, indent))
       else:
-        lines_section = self._format_operation(operation, v[1:], indent + LEVEL_INDENT)
+        lines_section = self._format_operation(
+          operation, v[1:], indent + LEVEL_INDENT
+        )
         if len(lines_section):
           lines.append(' ' * indent + v[0] + ':')
           lines.extend(lines_section)
@@ -128,9 +100,8 @@ class OperationFormatter(object):
       if isinstance(s, tuple):
         s = '{0}: {1}'.format(*s)
       lines.append(
-        '{0}{1}{2}{3}'.format(
-          ' ' * indent, key, ' ' * (TAB - indent - len(key) - 1), s
-        )
+        '{0}{1}{2}{3}'.
+        format(' ' * indent, key, ' ' * (TAB - indent - len(key) - 1), s)
       )
       key = ''
     return lines

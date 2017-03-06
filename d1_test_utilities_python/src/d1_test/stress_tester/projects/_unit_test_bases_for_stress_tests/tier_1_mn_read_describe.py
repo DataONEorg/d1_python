@@ -56,7 +56,8 @@ class Test060Describe(d1_test_case.D1TestCase):
     # The exception is caused by the body being empty since describe() uses a
     # HEAD request.
     self.assertRaises(
-      xml.parsers.expat.ExpatError, client.describe, context.TOKEN, '_invalid_pid_'
+      xml.parsers.expat.ExpatError, client.describe, context.TOKEN,
+      '_invalid_pid_'
     )
 
   def test_020_describe_by_valid_pid(self):
@@ -76,7 +77,9 @@ class Test060Describe(d1_test_case.D1TestCase):
         response = client.describe(context.TOKEN, pid)
         headers = response.getheaders()
         # Build dict with lower case keys.
-        headers_lower = dict((header.lower(), value) for header, value in headers)
+        headers_lower = dict(
+          (header.lower(), value) for header, value in headers
+        )
         # Check for the required headers.
         self.assertTrue('date' in headers_lower)
         self.assertTrue('content-type' in headers_lower)

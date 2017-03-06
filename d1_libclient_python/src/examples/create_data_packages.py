@@ -136,8 +136,7 @@ def main():
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    MN_BASE_URL,
-    cert_path=CERTIFICATE_FOR_CREATE,
+    MN_BASE_URL, cert_path=CERTIFICATE_FOR_CREATE,
     key_path=CERTIFICATE_FOR_CREATE_KEY
   )
   # Iterate over the object groups and create them and their resource maps
@@ -164,7 +163,9 @@ def main():
 def create_science_object_on_member_node(client, file_path):
   pid = os.path.basename(file_path)
   sci_obj = open(file_path, 'rb').read()
-  sys_meta = generate_system_metadata_for_science_object(pid, SYSMETA_FORMATID, sci_obj)
+  sys_meta = generate_system_metadata_for_science_object(
+    pid, SYSMETA_FORMATID, sci_obj
+  )
   client.create(pid, StringIO.StringIO(sci_obj), sys_meta)
 
 
@@ -234,8 +235,8 @@ def find_file_groups(directory_path):
 def find_files_in_group(directory_path, group):
   return sorted(
     [
-      os.path.join(directory_path, p) for p in os.listdir(directory_path
-                                                          ) if p.startswith(group)
+      os.path.join(directory_path, p) for p in os.listdir(directory_path)
+      if p.startswith(group)
     ]
   )
 

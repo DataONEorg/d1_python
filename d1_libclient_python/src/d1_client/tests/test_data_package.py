@@ -79,7 +79,9 @@ import d1_common.test_case_with_url_compare
 
 
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
-class TestDataPackage(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestDataPackage(
+  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     # The example_oai_ore.xml contains one resource map that describes one
     # aggregation. The pid for the resource map is "abc". The aggregation
@@ -222,9 +224,7 @@ class TestDataPackage(d1_common.test_case_with_url_compare.TestCaseWithURLCompar
   def test_420(self):
     """generator_and_parser_1"""
     doc = self.generator.simple_generate_resource_map(
-      'abc', 'def', [
-        'ghi', 'jkl'
-      ]
+      'abc', 'def', ['ghi', 'jkl']
     )
     p = d1_client.data_package.ResourceMapParser(doc)
     self.check_triples(p.get_all_triples())
@@ -250,9 +250,7 @@ class TestDataPackage(d1_common.test_case_with_url_compare.TestCaseWithURLCompar
       (
         'https://cn.dataone.org/cn/v1/resolve/abc',
         'http://purl.org/dc/terms/modified'
-      ) in [
-        (d[0], d[1]) for d in doc
-      ]
+      ) in [(d[0], d[1]) for d in doc]
     )
     self.assertTrue(
       (
@@ -277,9 +275,7 @@ class TestDataPackage(d1_common.test_case_with_url_compare.TestCaseWithURLCompar
       (
         'https://cn.dataone.org/cn/v1/resolve/abc',
         'http://purl.org/dc/terms/created'
-      ) in [
-        (d[0], d[1]) for d in doc
-      ]
+      ) in [(d[0], d[1]) for d in doc]
     )
     self.assertTrue(
       (

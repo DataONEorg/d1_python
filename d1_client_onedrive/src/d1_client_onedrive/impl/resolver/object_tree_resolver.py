@@ -67,7 +67,9 @@ class Resolver(resolver_base.Resolver):
     }
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+    )
 
     # All items rendered by the ObjectTree Resolver are folders. Anything else is
     # deferred to one of the child resolvers.
@@ -95,7 +97,9 @@ class Resolver(resolver_base.Resolver):
       # the controlled hierarchy roots becomes the separator between the two
       # sections and determines which resolver to use for the tail section of the
       # path.
-    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(path)
+    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(
+      path
+    )
 
     # If the object_tree_path is not valid now and is not the readme file, then
     # the path is invalid.
@@ -113,13 +117,17 @@ class Resolver(resolver_base.Resolver):
     # objects in the object_tree folder and dispatching to a controlled hierarchy
     # resolver.
     #object_tree_folder = ObjectTreeFolderObjects(self._object_tree, object_tree_folder)
-    return self._resolvers[root_name].get_attributes(object_tree_folder, controlled_path)
+    return self._resolvers[root_name].get_attributes(
+      object_tree_folder, controlled_path
+    )
 
   def get_directory(self, object_tree_root, path, preconfigured_query=None):
     # the directory will typically be in the cache. already retrieved by
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
-    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+    )
 
     # To determine where the path transitions from the object_tree to the
     # controlled hierarchy, we check for the controlled hierarchy root names.
@@ -142,7 +150,9 @@ class Resolver(resolver_base.Resolver):
     # the controlled hierarchy roots becomes the separator between the two
     # sections and determines which resolver to use for the tail section of the
     # path.
-    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(path)
+    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(
+      path
+    )
 
     # If the object_tree_path is not valid now, then the path is invalid.
     try:
@@ -158,15 +168,14 @@ class Resolver(resolver_base.Resolver):
     # Now have all information required for gathering information about all the
     # objects in the object_tree folder and dispatching to a controlled hierarchy
     # resolver.
-    return self._resolvers[root_name].get_directory(object_tree_folder, controlled_path)
+    return self._resolvers[root_name].get_directory(
+      object_tree_folder, controlled_path
+    )
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
-        util.string_from_path_elements(
-          path
-        ), size, offset
-      )
+      u'read_file: {0}, {1}, {2}'.
+      format(util.string_from_path_elements(path), size, offset)
     )
 
     try:
@@ -180,7 +189,9 @@ class Resolver(resolver_base.Resolver):
           #return object_tree_folder.get_help_text(size, offset)
       raise onedrive_exceptions.PathException(u'Invalid file')
 
-    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(path)
+    object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(
+      path
+    )
 
     try:
       object_tree_folder = self._object_tree.get_folder(
@@ -258,8 +269,7 @@ class Resolver(resolver_base.Resolver):
 
   def _get_readme_file_attributes(self, object_tree_path):
     return attributes.Attributes(
-      size=len(self._generate_readme_text(object_tree_path)),
-      is_dir=False
+      size=len(self._generate_readme_text(object_tree_path)), is_dir=False
     )
 
   def _generate_readme_text(self, object_tree_path):
@@ -275,8 +285,12 @@ class Resolver(resolver_base.Resolver):
     header = u'ObjectTree Folder "{0}"'.format(folder_name)
     res.write(header + '\n')
     res.write('{0}\n\n'.format('=' * len(header)))
-    res.write(u'The content present in object_tree folders is determined by a list\n')
-    res.write(u'of specific identifiers and by queries applied against the DataONE\n')
+    res.write(
+      u'The content present in object_tree folders is determined by a list\n'
+    )
+    res.write(
+      u'of specific identifiers and by queries applied against the DataONE\n'
+    )
     res.write(u'search index.\n\n')
     res.write(u'Queries:\n\n')
     if len(wdef_folder['queries']):

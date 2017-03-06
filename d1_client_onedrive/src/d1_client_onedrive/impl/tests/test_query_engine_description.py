@@ -48,7 +48,9 @@ class TestQueryEngineDescription(unittest.TestCase):
     pass
 
   def test_110_get_query_engine_version(self):
-    self.assertEqual(self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53')
+    self.assertEqual(
+      self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53'
+    )
 
 
 if __name__ == "__main__":

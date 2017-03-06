@@ -51,11 +51,11 @@ class SolrClient(object):
   def __init__(self, options, max_retries=3):
     self._solr_endpoint = options.base_url + options.solr_query_path
     self._session = requests.Session()
-    self._session.mount('http://', requests.adapters.HTTPAdapter(max_retries=max_retries))
     self._session.mount(
-      'https://', requests.adapters.HTTPAdapter(
-        max_retries=max_retries
-      )
+      'http://', requests.adapters.HTTPAdapter(max_retries=max_retries)
+    )
+    self._session.mount(
+      'https://', requests.adapters.HTTPAdapter(max_retries=max_retries)
     )
     self._timeout = options.solr_query_timeout
     self._max_objects_for_query = options.max_objects_for_query
@@ -74,9 +74,7 @@ class SolrClient(object):
       return response[0]
     except IndexError:
       raise onedrive_exceptions.ONEDriveException(
-        'Object does not exist. pid={0}'.format(
-          pid
-        )
+        'Object does not exist. pid={0}'.format(pid)
       )
 
   #
@@ -94,7 +92,7 @@ class SolrClient(object):
   def _close_open_date_ranges(self, record):
     """If a date range is missing the start or end date, close it by copying
     the date from the existing value."""
-    date_ranges = (('beginDate', 'endDate'), )
+    date_ranges = (('beginDate', 'endDate'),)
     for begin, end in date_ranges:
       if begin in record and end in record:
         return
@@ -111,7 +109,8 @@ class SolrClient(object):
     for date_field in date_fields:
       if date_field in record:
         try:
-          record[date_field] = d1_common.date_time.from_iso8601(record[date_field])
+          record[date_field
+                 ] = d1_common.date_time.from_iso8601(record[date_field])
         except Exception as e:
           log.exception(e)
 
@@ -131,9 +130,7 @@ class SolrClient(object):
       query_params.extend(self._make_query_param_tuples('fl', filter_queries))
 
     r = requests.get(
-      self._solr_endpoint,
-      timeout=self._timeout,
-      params=query_params,
+      self._solr_endpoint, timeout=self._timeout, params=query_params,
       verify=False
     )
     return r.json()

@@ -85,7 +85,9 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.formatId = FORMAT_ID
   sysmeta_pyxb.identifier = pid
-  sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder') #dataoneTypes.subject(rights_holder)
+  sysmeta_pyxb.rightsHolder = generate_random_ascii(
+    'rights_holder'
+  ) #dataoneTypes.subject(rights_holder)
   sysmeta_pyxb.size = len(sciobj_str)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 

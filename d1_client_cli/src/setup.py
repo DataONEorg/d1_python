@@ -43,12 +43,10 @@ def main():
       # consistent, let it be included by dataone.libclient.
       'dataone.libclient == 1.2.6',
     ],
-    entry_points={
-      'console_scripts': ['dataone = d1_client_cli.dataone:main',]
-    },
-    setup_requires=[
-      'setuptools_git >= 1.1'
-    ],
+    entry_points={'console_scripts': [
+      'dataone = d1_client_cli.dataone:main',
+    ]},
+    setup_requires=['setuptools_git >= 1.1'],
   )
 
 

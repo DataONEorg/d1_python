@@ -86,13 +86,7 @@ class AccessControl():
     lines = []
     for perm, perm_list in permissions.items():
       lines.append(
-        u'  {0: <30s}{1}'.format(
-          perm, u'"' + u'", "'.join(
-            sorted(
-              perm_list
-            )
-          )
-        ) + u'"'
+        u'  {0: <30s}{1}'.format(perm, u'"' + u'", "'.join(sorted(perm_list))) + u'"'
       )
     if not len(lines):
       lines = ['  None']

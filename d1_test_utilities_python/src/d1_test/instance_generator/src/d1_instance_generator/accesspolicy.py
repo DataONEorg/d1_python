@@ -62,7 +62,9 @@ PERMISSIONS = {
 
 
 def random_set_of_permissions():
-  return random.sample(PERMISSIONS.keys(), random.randint(1, len(PERMISSIONS) - 1))
+  return random.sample(
+    PERMISSIONS.keys(), random.randint(1, len(PERMISSIONS) - 1)
+  )
 
 
 def permission_labels_to_objects(permissions):
@@ -86,7 +88,9 @@ def random_subject_with_permission_labels(permissions, group_chance=0.1):
   return subject_base + group + tags
 
 
-def random_subjects_with_permission_labels(permissions, min=1, max=100, group_chance=0.1):
+def random_subjects_with_permission_labels(
+  permissions, min=1, max=100, group_chance=0.1
+):
   subjects = []
   for i in xrange(random.randint(min, max)):
     subject = random_subject_with_permission_labels(permissions, group_chance)
@@ -103,7 +107,9 @@ def generate(min_rules=1, max_rules=5, max_subjects=5):
   for i in xrange(0, n_rules):
     ar = dataoneTypes.AccessRule()
     permissions = random_set_of_permissions()
-    ar.subject = random_subjects_with_permission_labels(permissions, max=max_subjects)
+    ar.subject = random_subjects_with_permission_labels(
+      permissions, max=max_subjects
+    )
     ar.permission = permissions
     rules.append(ar)
   ap.allow = rules

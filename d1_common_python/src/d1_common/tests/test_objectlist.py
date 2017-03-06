@@ -34,7 +34,6 @@ from d1_common.types import dataoneTypes
 # App
 import util
 
-
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="154933"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">

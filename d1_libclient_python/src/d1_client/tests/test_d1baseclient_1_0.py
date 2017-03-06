@@ -132,8 +132,8 @@ class TestDataONEBaseClientV1(
     """CNRead.get()"""
     self._get(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.CN_RESPONSES_URL,
-      True
+      d1_common.types.exceptions.NotFound, self._get,
+      shared_settings.CN_RESPONSES_URL, True
     )
 
   @unittest.skip(
@@ -143,8 +143,8 @@ class TestDataONEBaseClientV1(
     """MNRead.get()"""
     self._get(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, shared_settings.MN_RESPONSES_URL,
-      True
+      d1_common.types.exceptions.NotFound, self._get,
+      shared_settings.MN_RESPONSES_URL, True
     )
 
   # CNRead.getSystemMetadata()

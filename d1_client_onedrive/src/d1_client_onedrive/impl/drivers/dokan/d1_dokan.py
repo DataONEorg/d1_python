@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """:mod:`d1_dokan`
 ==================
 
@@ -81,20 +80,20 @@ from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import onedrive_exceptions
 #from d1_client_onedrive.impl.drivers import fs_util D1FS
 
-
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName(
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
+  log.setLevel(
+    logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__])
+  )
 except KeyError:
   pass
-
 
 import dokan
 
 THREADS = 5
+
 
 def run(options, root_resolver):
   #NOTE: mounts anywhere other than root level don't work
@@ -121,9 +120,10 @@ def run(options, root_resolver):
   DriverOption = DOKAN_OPTION_KEEP_ALIVE #| DOKAN_OPTION_NETWORK
   #if (options.stderr):
   #DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
-  d1fs = dokan.Dokan(DataONEFS(options, root_resolver),
-                     options.mount_drive_letter, DriverOption, 0x19831116L,
-                     THREADS)
+  d1fs = dokan.Dokan(
+    DataONEFS(options, root_resolver), options.mount_drive_letter, DriverOption,
+    0x19831116L, THREADS
+  )
 
   #if options.unmount:
   #  # unmount the specified drive
@@ -152,7 +152,6 @@ class DataONEFS(dokan.Operations):
     self.attribute_cache = options.attribute_cache
     self.directory_cache = options.directory_cache
 
-
   def getFileInformation(self, fileName):
     log.debug(u'getFileInformation(): fileName={0}'.format(fileName))
     if self._is_os_special_file(fileName):
@@ -163,9 +162,11 @@ class DataONEFS(dokan.Operations):
       stat['attr'] |= FILE_ATTRIBUTE_DEVICE
     return stat
 
-
   def findFilesWithPattern(self, path, searchPattern):
-    log.debug(u'findFilesWithPattern(): path={0} searchPattern={1}'.format(path, searchPattern))
+    log.debug(
+      u'findFilesWithPattern(): path={0} searchPattern={1}'.
+      format(path, searchPattern)
+    )
 
     if self._is_os_special_file(searchPattern):
       return None
@@ -188,13 +189,12 @@ class DataONEFS(dokan.Operations):
     return files
 
     # example:
-      #result.append(dict(name='systemmetadata.xml',
-      #                   attr=(FILE_ATTRIBUTE_NORMAL
-      #                         |FILE_ATTRIBUTE_READONLY),
-      #                   ctime=ctime1, atime=now, wtime=mtime1,
-      #                   size=len(xml)))
-      # science metadata
-
+  #result.append(dict(name='systemmetadata.xml',
+  #                   attr=(FILE_ATTRIBUTE_NORMAL
+  #                         |FILE_ATTRIBUTE_READONLY),
+  #                   ctime=ctime1, atime=now, wtime=mtime1,
+  #                   size=len(xml)))
+  # science metadata
 
   def readFile(self, path, size, offset):
     log.debug(u'read(): {0}'.format(path))
@@ -210,35 +210,35 @@ class DataONEFS(dokan.Operations):
     #tokens = fileName[1:].split('\\')
 
     # example
-      #if mfname == 'systemmetadata.xml':
-      #  obj = self.getSystemMetadata(pid)
-      #  xml = obj.toxml()
-      #  if offset+numberOfBytesToRead>len(xml):
-      #    numberOfBytesToRead = len(xml) - offset
-      #  return xml[offset:offset+numberOfBytesToRead]
+    #if mfname == 'systemmetadata.xml':
+    #  obj = self.getSystemMetadata(pid)
+    #  xml = obj.toxml()
+    #  if offset+numberOfBytesToRead>len(xml):
+    #    numberOfBytesToRead = len(xml) - offset
+    #  return xml[offset:offset+numberOfBytesToRead]
 
     raise IOError('Could not read specified file: %s', fileName)
-
 
   #TODO Not really sure what to do here...at the moment everything is virtual.
   # Everything is hard-coded right now just to get the idea across.  Mounting
   # as a network drive would solve this problem I think.
-  def getDiskFreeSpace(self):
-    return dict(freeBytesAvailable = 0x100000000L - 2048,
-                totalNumberOfBytes = 0x100000000L,
-                totalNumberOfFreeBytes = 0x100000000L - 2048)
 
+  def getDiskFreeSpace(self):
+    return dict(
+      freeBytesAvailable=0x100000000L - 2048, totalNumberOfBytes=0x100000000L,
+      totalNumberOfFreeBytes=0x100000000L - 2048
+    )
 
   def getVolumeInformation(self):
     #logging.error('')
-    fsFlags = (FILE_READ_ONLY_VOLUME
-               | FILE_CASE_SENSITIVE_SEARCH
-               | FILE_CASE_PRESERVED_NAMES)
-    return dict(volumeNameBuffer=u'DataONE Disk',
-                maximumComponentLength=260,
-                fileSystemFlags=fsFlags,
-                fileSystemNameBuffer=u'DataONE File System')
-
+    fsFlags = (
+      FILE_READ_ONLY_VOLUME | FILE_CASE_SENSITIVE_SEARCH |
+      FILE_CASE_PRESERVED_NAMES
+    )
+    return dict(
+      volumeNameBuffer=u'DataONE Disk', maximumComponentLength=260,
+      fileSystemFlags=fsFlags, fileSystemNameBuffer=u'DataONE File System'
+    )
 
   def _get_attributes_through_cache(self, path):
     try:
@@ -248,12 +248,12 @@ class DataONEFS(dokan.Operations):
       self.attribute_cache[path] = attribute
       return attribute
 
-
   def _stat_from_attributes(self, attributes):
     #log.debug(u'_stat_from_attributes(): attributes={0}'.format(attributes))
 
     date_time = d1_common.date_time.to_seconds_since_epoch(
-      attributes.date()) if attributes.date() is not None else self.start_time
+      attributes.date()
+    ) if attributes.date() is not None else self.start_time
 
     attrs = FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir() else FILE_ATTRIBUTE_NORMAL
     attrs |= FILE_ATTRIBUTE_READONLY
@@ -271,10 +271,8 @@ class DataONEFS(dokan.Operations):
     #log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))
     return stat
 
-
   def _is_os_special_file(self, path):
     return len(set(path.split(os.path.sep)) & self._options.ignore_special)
-
 
   def _raise_error_no_such_file_or_directory(self, path):
     log.debug(u'Error: No such file or directory: {0}'.format(path))

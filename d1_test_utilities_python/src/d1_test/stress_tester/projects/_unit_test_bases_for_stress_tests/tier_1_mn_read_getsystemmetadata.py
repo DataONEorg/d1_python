@@ -51,8 +51,8 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
     """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, client.getSystemMetadata, context.TOKEN,
-      '_invalid_pid_'
+      d1_common.types.exceptions.NotFound, client.getSystemMetadata,
+      context.TOKEN, '_invalid_pid_'
     )
 
   def test_020_get_sysmeta_by_valid_pid(self):
@@ -64,7 +64,9 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
         pid = object_info.identifier.value()
         sys_meta = client.getSystemMetadata(context.TOKEN, pid)
         # Verify that identifier in SysMeta matches the one that was retrieved.
-        self.assertEqual(object_info.identifier.value(), sys_meta.identifier.value())
+        self.assertEqual(
+          object_info.identifier.value(), sys_meta.identifier.value()
+        )
         # Verify that object format matches listObjects.
         self.assertEqual(object_info.objectFormat, sys_meta.objectFormat)
         # Verify that date matches listObjects.
@@ -74,5 +76,9 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
         # Verify that size matches listObjects.
         self.assertEqual(object_info.size, sys_meta.size)
         # Verify that checksum and checksum algorithm matches listObjects.
-        self.assertEqual(object_info.checksum.value(), sys_meta.checksum.value())
-        self.assertEqual(object_info.checksum.algorithm, sys_meta.checksum.algorithm)
+        self.assertEqual(
+          object_info.checksum.value(), sys_meta.checksum.value()
+        )
+        self.assertEqual(
+          object_info.checksum.algorithm, sys_meta.checksum.algorithm
+        )

@@ -48,7 +48,6 @@ import shared_context
 import mock_object_list
 import iter.objectlistmt
 
-
 # These tests are disabled because they require a MN that permits access to
 # log records.
 
@@ -68,7 +67,8 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
     mock_object_list.init(shared_settings.MN_RESPONSES_URL)
 
     object_list_iterator = iter.objectlistmt.multi_object_list_iterator(
-      shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2, max_queue=10
+      shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2,
+      max_queue=10
     )
 
     print '4' * 100
