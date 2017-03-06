@@ -84,14 +84,12 @@ def _deserialize_pem(cert_pem):
 def _extract_dataone_subject_from_dn(cert_obj):
   return (
     ','.join(
-      reversed(
-        [
-          '{}={}'.format(
-            OID_TO_SHORT_NAME_DICT.
-            get(v.oid.dotted_string, v.oid.dotted_string), _escape(v.value)
-          ) for v in cert_obj.subject
-        ]
-      )
+      reversed([
+        '{}={}'.format(
+          OID_TO_SHORT_NAME_DICT.get(v.oid.dotted_string, v.oid.dotted_string),
+          _escape(v.value)
+        ) for v in cert_obj.subject
+      ])
     )
   )
 

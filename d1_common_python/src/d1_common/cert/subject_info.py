@@ -20,7 +20,7 @@
 """Extract a set of subjects from a DataONE SubjectInfo structure
 
 Subjects are extracted from the SubjectInfo using the following algorithm:
- 
+
 - Start with empty set of subjects
 - Perform recursive search with detection of circular dependencies, starting
   with Subject.
@@ -38,9 +38,6 @@ Subjects are extracted from the SubjectInfo using the following algorithm:
           - Recursively add those subjects.
 """
 
-# Stdlib
-import logging
-
 # 3rd party
 import pyxb
 
@@ -52,7 +49,7 @@ import d1_common.types.exceptions
 
 def extract_subjects(subject_info_xml, primary_str):
   """Extract a set of equivalent and group membership subjects from SubjectInfo
-  
+
   {primary_str} is a DataONE subject, typically a DataONE compliant
   serialization of the DN of the DataONE X.509 v3 certificate extension from
   which the SubjectInfo was extracted.
@@ -114,7 +111,7 @@ def _add_person_is_member_of(equivalent_set, subject_info_pyxb, person_pyxb):
 
 
 def _add_person_equivalent_subjects(
-  equivalent_set, subject_info_pyxb, person_pyxb
+    equivalent_set, subject_info_pyxb, person_pyxb
 ):
   for equivalent_pyxb in person_pyxb.equivalentIdentity:
     _add_subject(equivalent_set, subject_info_pyxb, equivalent_pyxb.value())
