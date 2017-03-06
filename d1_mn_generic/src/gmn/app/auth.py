@@ -17,31 +17,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Authentication and authorization
 
 Decorators and functions that verify that a user has the permissions required
 for performing the attempted operation.
 """
 
+from __future__ import absolute_import
+
 # Stdlib
-import functools
-
-# Django.
-import django.conf
-import django.core.cache
-
-# D1.
 import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
-# App.
+# Django
+import django.conf
+import django.core.cache
+
+# App
 import app.models
 import app.node_registry
-
 
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:
@@ -100,8 +97,10 @@ def get_trusted_subjects():
     {_get_client_side_certificate_subject()}
   )
 
+
 def get_trusted_subjects_string():
   return u', '.join(sorted(get_trusted_subjects()))
+
 
 # ------------------------------------------------------------------------------
 # Check permissions.
@@ -139,7 +138,8 @@ def _extract_subject_from_pem(cert_pem):
     return d1_common.cert.subjects.extract_subjects(cert_pem)[0]
   except Exception as e:
     raise d1_common.types.exceptions.InvalidToken(
-      0, u'Could not extract session from certificate. error="{}"'.format(str(e))
+      0,
+      u'Could not extract session from certificate. error="{}"'.format(str(e))
     )
 
 
@@ -164,8 +164,7 @@ def is_allowed(request, level, pid):
   # - The permission must be for an action level that is the same or higher than
   # the requested action level.
   return app.models.Permission.objects.filter(
-    sciobj__pid__did=pid,
-    subject__subject__in=request.all_subjects_set,
+    sciobj__pid__did=pid, subject__subject__in=request.all_subjects_set,
     level__gte=level
   ).exists()
 
@@ -183,7 +182,8 @@ def assert_create_update_delete_permission(request):
   if not has_create_update_delete_permission(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, u'Access allowed only for subjects with Create/Update/Delete '
-      u'permission. active_subjects="{}"'.format(format_active_subjects(request))
+      u'permission. active_subjects="{}"'.
+      format(format_active_subjects(request))
     )
 
 
@@ -195,15 +195,13 @@ def assert_allowed(request, level, pid):
   """
   if not app.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.NotFound(
-      0,
-      u'Attempted to perform operation on non-existing object. pid="{}"'.format(pid)
+      0, u'Attempted to perform operation on non-existing object. pid="{}"'.
+      format(pid)
     )
   if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0,
-      u'Operation is denied. level="{}", pid="{}", active_subjects="{}"'
-        .format(level_to_action(level), pid, format_active_subjects(request)
-      )
+      0, u'Operation is denied. level="{}", pid="{}", active_subjects="{}"'
+      .format(level_to_action(level), pid, format_active_subjects(request))
     )
 
 
@@ -216,147 +214,3 @@ def format_active_subjects(request):
     if subject != request.primary_subject_str:
       decorated_subject_list.append(subject)
   return u', '.join(decorated_subject_list)
-
-# ------------------------------------------------------------------------------
-# Decorators.
-# ------------------------------------------------------------------------------
-
-# The following decorators check if the subject in the provided client side
-# certificate has the permissions required to perform a given action. If
-# the required permissions are not present, a NotAuthorized exception is
-# return to the client.
-#
-# The decorators require the first argument to be request and the second to
-# be PID.
-
-
-def assert_trusted_permission(f):
-  """Access only by D1 infrastructure.
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    assert_trusted(request)
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_list_objects_access(f):
-  """Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST.
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    if not django.conf.settings.PUBLIC_OBJECT_LIST:
-      assert_trusted(request)
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_get_log_records_access(f):
-  """Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS.
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    if not django.conf.settings.PUBLIC_LOG_RECORDS:
-      assert_trusted(request)
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_trusted(request):
-  if not is_trusted_subject(request):
-    raise d1_common.types.exceptions.NotAuthorized(
-      0,
-      u'Access allowed only for trusted subjects. active_subjects="{}", '
-      u'trusted_subjects="{}"'.format(
-        format_active_subjects(request), get_trusted_subjects_string()
-      )
-    )
-
-
-def decorator_assert_create_update_delete_permission(f):
-  """Access only by subjects with Create/Update/Delete permission and by
-  trusted infrastructure (CNs).
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    assert_create_update_delete_permission(request)
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-def assert_authenticated(f):
-  """Access only with a valid session.
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, u'Access allowed only for authenticated subjects. Please reconnect with '
-        u'a valid DataONE session certificate. active_subjects="{}"'.format(
-          format_active_subjects(
-            request
-          )
-        )
-      )
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_verified(f):
-  """Access only with a valid session where the primary subject is verified.
-  """
-  functools.wraps(f)
-  def wrap(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, u'Access allowed only for verified accounts. Please reconnect with a '
-        u'valid DataONE session certificate in which the identity of the '
-        u'primary subject has been verified. active_subjects="{}"'
-          .format(format_active_subjects(request))
-      )
-    return f(request, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_required_permission(f, level):
-  """Assert that subject has access at given level or higher for object.
-  """
-  functools.wraps(f)
-  def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request, level, pid)
-    return f(request, pid, *args, **kwargs)
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-def assert_changepermission_permission(f):
-  """Assert that subject has changePermission or high for object.
-  """
-  functools.wraps(f)
-  return assert_required_permission(f, CHANGEPERMISSION_LEVEL)
-
-
-def assert_write_permission(f):
-  """Assert that subject has write permission or higher for object.
-  """
-  functools.wraps(f)
-  return assert_required_permission(f, WRITE_LEVEL)
-
-
-def assert_read_permission(f):
-  """Assert that subject has read permission or higher for object.
-  """
-  functools.wraps(f)
-  return assert_required_permission(f, READ_LEVEL)
