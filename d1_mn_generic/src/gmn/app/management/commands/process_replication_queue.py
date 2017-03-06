@@ -17,7 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Process queue of replications requested by the Coordinating Nodes
 
 Coordinating Nodes call MNReplication.replicate() to request the creation of
@@ -25,13 +24,15 @@ replicas. GMN queues the requests and processes them asynchronously. This
 command iterates over the requests and attempts to create the replicas.
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import logging
 import shutil
 
 # Django.
 import django.core.management.base
-import django.db
+import django.db.transaction
 import django.conf
 
 # D1.
@@ -46,13 +47,15 @@ import d1_common.util
 
 # App.
 import app.event_log
+import app.management.commands.util
 import app.models
 import app.sysmeta
 import app.sysmeta_replica
-import app.views.view_util
-import util
+import app.util
+import app.views.util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Process the queue of replication requests'
 
@@ -65,14 +68,16 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
-    util.abort_if_other_instance_is_running()
-    util.abort_if_stand_alone_instance()
+    app.management.commands.util.abort_if_other_instance_is_running()
+    app.management.commands.util.abort_if_stand_alone_instance()
     p = ReplicationQueueProcessor()
     p.process_replication_queue()
+
 
 #===============================================================================
 
@@ -105,15 +110,17 @@ class ReplicationQueueProcessor(object):
       if num_failed_attempts < django.conf.settings.REPLICATION_MAX_ATTEMPTS:
         logging.warning(
           u'Replication failed and will be retried during next processing. '
-          u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS)
+          u'failed_attempts={}, max_attempts={}'.format(
+            num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS
+          )
         )
       else:
         logging.warning(
           u'Replication failed and has reached the maximum number of attempts. '
           u'Recording the request as permanently failed and notifying the CN. '
-          u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS)
+          u'failed_attempts={}, max_attempts={}'.format(
+            num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS
+          )
         )
         self._update_request_status(
           queue_model, 'failed', e if
@@ -157,8 +164,8 @@ class ReplicationQueueProcessor(object):
     self, queue_model, status_str, dataone_error=None
   ):
     self.cn_client.setReplicationStatus(
-      queue_model.local_replica.pid.did, django.conf.settings.NODE_IDENTIFIER, status_str,
-      dataone_error
+      queue_model.local_replica.pid.did, django.conf.settings.NODE_IDENTIFIER,
+      status_str, dataone_error
     )
 
   def _remove_completed_requests_from_queue(self):
@@ -239,9 +246,9 @@ class ReplicationQueueProcessor(object):
     app.models.replica_obsolescence_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_stream):
-    object_path = app.util.file_path(django.conf.settings.OBJECT_STORE_PATH, pid)
-    app.util.create_missing_directories(object_path)
-    with open(object_path, 'wb') as f:
+    sciobj_path = app.util.sciobj_file_path(pid)
+    app.util.create_missing_directories(sciobj_path)
+    with open(sciobj_path, 'wb') as f:
       shutil.copyfileobj(sciobj_stream, f)
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
@@ -252,11 +259,13 @@ class ReplicationQueueProcessor(object):
       )
 
   def _assert_pid_is_unknown_or_replica(self, pid):
-    if app.sysmeta.is_did(pid) and not app.sysmeta_replica.is_local_replica(pid):
+    if app.sysmeta.is_did(pid
+                          ) and not app.sysmeta_replica.is_local_replica(pid):
       raise ReplicateError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
       )
+
 
 # ==============================================================================
 

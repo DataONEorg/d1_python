@@ -17,9 +17,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Data Django model query filters
 
-"""Database query filters
+These methods add various filters to a QuerySet and return the modified
+QuerySet. If the provided parameter name is not present in the request, no
+filtering is performed.
+
+query: The query to which to add the filters
+query: QuerySet
+request: The request object from which to get parameter
+request: HttpRequest
+param_name: Name of URL parameter from which to get string
+param_name: string
+column_name: Table column name
+column_name: string
+return: Filtered query
+return: QuerySet
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import re
@@ -30,52 +46,53 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 # App.
-import app.views.view_asserts
+import app.models
+import app.views.asserts
 
 
 def add_access_policy_filter(query, request, column_name):
-  """Add access control filter to a QuerySet.
-  :param query: The query to which to add the filters.
-  :type query: QuerySet
-  :param request: The request object to get parameter from.
-  :type request: HttpRequest
-  :param column_name: Table column name.
-  :type column_name: string
-  :return: Filtered query.
-  :return type: QuerySet
-  """
   q = app.models.Subject.objects.filter(subject__in=request.all_subjects_set)\
     .values('permission__sciobj')
   filter_arg = '{}__in'.format(column_name)
   return query.filter(**{filter_arg: q})
 
 
+# def add_replica_filter(query, request, param_name):
+#   bool_val = request.GET.get(param_name, None)
+#   if bool_val is None:
+#     return query
+#   if bool_val not in (
+#     True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
+#   ):
+#     raise d1_common.types.exceptions.InvalidRequest(
+#       0,
+#       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
+#         param_name, bool_val
+#       )
+#     )
+#   filter_arg = column_name
+#   return query.filter(**{filter_arg: bool_val})
+
+
 def add_bool_filter(query, request, column_name, param_name):
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
-  if bool_val not in (True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'):
+  if bool_val not in (
+    True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
+  ):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Invalid boolean. value="{}"'.format(str(bool_val))
+      0,
+      u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
+        param_name, bool_val
+      )
     )
+  bool_val = bool_val in (True, 1, 'True', 'true', '1')
   filter_arg = column_name
   return query.filter(**{filter_arg: bool_val})
 
 
 def add_datetime_filter(query, request, column_name, param_name, operator):
-  """Add datetime filter to a QuerySet. If the provided parameter name is
-  not present in the request, no filtering is performed.
-  :param query: The query to which to add the filters.
-  :type query: QuerySet
-  :param request: The request object to get parameter from.
-  :type request: HttpRequest
-  :param param_name: Name of URL parameter to get datetime from.
-  :type param_name: string
-  :param column_name: Table column name.
-  :type column_name: string
-  :return: Filtered query.
-  :return type: QuerySet
-  """
   date_str = request.GET.get(param_name, None)
   if date_str is None:
     return query
@@ -88,28 +105,16 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
   except d1_common.date_time.iso8601.ParseError, e:
     raise d1_common.types.exceptions.InvalidRequest(
       0,
-      u'Invalid date format. date="{}", parse_error="{}"'.format(date_str, str(e))
+      u'Invalid date format for parameter. parameter="{}" date="{}", parse_error="{}"'.
+      format(param_name, date_str, str(e))
     )
-  app.views.view_asserts.date_is_utc(date)
+  app.views.asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
   filter_arg = '{}__{}'.format(column_name, operator)
   return query.filter(**{filter_arg: date})
 
 
 def add_string_filter(query, request, column_name, param_name):
-  """Add a string filter to a QuerySet. If the provided parameter name is
-  not present in the request, no filtering is performed.
-  :param query: The query to which to add the filters.
-  :type query: QuerySet
-  :param request: The request object to get parameter from.
-  :type request: HttpRequest
-  :param param_name: Name of URL parameter to get string from.
-  :type param_name: string
-  :param column_name: Table column name.
-  :type column_name: string
-  :return: Filtered query.
-  :return type: QuerySet
-  """
   value = request.GET.get(param_name, None)
   if value is None:
     return query
@@ -117,19 +122,6 @@ def add_string_filter(query, request, column_name, param_name):
 
 
 def add_string_begins_with_filter(query, request, column_name, param_name):
-  """Add a string filter to a QuerySet. If the provided parameter name is
-  not present in the request, no filtering is performed.
-  :param query: The query to which to add the filters.
-  :type query: QuerySet
-  :param request: The request object to get parameter from.
-  :type request: HttpRequest
-  :param param_name: Name of URL parameter to get string from.
-  :type param_name: string
-  :param column_name: Table column name.
-  :type column_name: string
-  :return: Filtered query.
-  :return type: QuerySet
-  """
   value = request.GET.get(param_name, None)
   if value is None:
     return query

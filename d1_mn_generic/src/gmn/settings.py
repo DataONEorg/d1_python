@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Global settings for GMN
 
 This file contains settings that do not normally need to be modified when
 installing GMN. See settings_site.py for site specific settings.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import os
@@ -33,7 +34,8 @@ import os
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
-BASE_DIR = os.path.dirname(os.path.dirname(make_absolute((''))))
+
+BASE_DIR = os.path.dirname(os.path.dirname(make_absolute('')))
 
 # Add site specific settings.
 from settings_site import *
@@ -73,34 +75,40 @@ MIDDLEWARE_CLASSES = (
   'app.middleware.startup_handler.StartupHandler',
 )
 
-TEMPLATES = [{
-  'BACKEND': 'django.template.backends.django.DjangoTemplates',
-  'DIRS': [
-    make_absolute('./app/templates'),
-  ],
-  # 'APP_DIRS': True,
-  'OPTIONS': {
-    'context_processors': [
-      'django.contrib.auth.context_processors.auth',
-      'django.template.context_processors.debug',
-      'django.template.context_processors.i18n',
-      'django.template.context_processors.media',
-      'django.template.context_processors.static',
-      'django.template.context_processors.tz',
-      'django.contrib.messages.context_processors.messages',
+TEMPLATES = [
+  {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [
+      make_absolute('./app/templates'),
     ],
-    'loaders': [
-      'django.template.loaders.filesystem.Loader',
-      # 'django.template.loaders.app_directories.Loader',
-    ],
+    # 'APP_DIRS': True,
+    'OPTIONS':
+      {
+        'context_processors':
+          [
+            'django.contrib.auth.context_processors.auth',
+            'django.template.context_processors.debug',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.media',
+            'django.template.context_processors.static',
+            'django.template.context_processors.tz',
+            'django.contrib.messages.context_processors.messages',
+          ],
+        'loaders':
+          [
+            'django.template.loaders.filesystem.Loader',
+            # 'django.template.loaders.app_directories.Loader',
+          ],
+      },
   },
-}, ]
+]
 
 CACHES = {
-  'default': {
-    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'TIMEOUT': 60 * 60,
-  }
+  'default':
+    {
+      'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+      'TIMEOUT': 60 * 60,
+    }
 }
 
 ROOT_URLCONF = 'app.urls'

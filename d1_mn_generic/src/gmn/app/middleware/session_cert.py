@@ -46,7 +46,11 @@ algorithm:
 - Add subjects from SubjectInfo.
 """
 
+from __future__ import absolute_import
+
 import d1_common.cert.subjects
+import d1_common.const
+import d1_common.types.exceptions
 
 
 def get_subjects(request):
@@ -69,7 +73,9 @@ def get_subjects(request):
 
 
 def get_authenticated_subjects(cert_pem):
-  primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(cert_pem)
+  primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
+    cert_pem
+  )
   equivalent_set |= {
     d1_common.const.SUBJECT_PUBLIC,
     d1_common.const.SUBJECT_AUTHENTICATED,

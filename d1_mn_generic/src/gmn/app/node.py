@@ -17,8 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate Node document based on the current setings for GMN.
+"""Generate Node document based on the current settings for GMN.
 """
+
+from __future__ import absolute_import
 
 # Example Node document:
 #
@@ -68,6 +70,7 @@ def get_pyxb(major_version_int=2):
   return _get_pyxb(major_version_int)
 
 
+# noinspection PyTypeChecker
 def _get_pyxb(major_version_int):
   assert major_version_int in (1, 2)
   binding = v1 if major_version_int == 1 else v2
@@ -82,7 +85,9 @@ def _get_pyxb(major_version_int):
   node_pyxb.type = 'mn'
   node_pyxb.state = django.conf.settings.NODE_STATE
   node_pyxb.subject.append(binding.Subject(django.conf.settings.NODE_SUBJECT))
-  node_pyxb.contactSubject.append(binding.Subject(django.conf.settings.NODE_CONTACT_SUBJECT))
+  node_pyxb.contactSubject.append(
+    binding.Subject(django.conf.settings.NODE_CONTACT_SUBJECT)
+  )
   node_pyxb.services = _create_service_list_pyxb(binding, major_version_int)
   if django.conf.settings.NODE_SYNCHRONIZE:
     node_pyxb.synchronization = _create_synchronization_policy_pyxb(binding)
@@ -124,18 +129,20 @@ def _create_service_list_pyxb(binding, major_version_int):
   service_list_pyxb = binding.services()
   service_list_pyxb.extend(_create_service_list_for_version_pyxb(binding, 'v1'))
   if major_version_int == 2:
-    service_list_pyxb.extend(_create_service_list_for_version_pyxb(binding, 'v2'))
+    service_list_pyxb.extend(
+      _create_service_list_for_version_pyxb(binding, 'v2')
+    )
   return service_list_pyxb
 
 
 def _create_service_list_for_version_pyxb(binding, service_version):
-  service_list = []
-  service_list.append(_create_service_pyxb(binding, 'MNCore', service_version))
-  service_list.append(_create_service_pyxb(binding, 'MNRead', service_version))
-  service_list.append(_create_service_pyxb(binding, 'MNAuthorization', service_version))
-  service_list.append(_create_service_pyxb(binding, 'MNStorage', service_version))
-  service_list.append(_create_service_pyxb(binding, 'MNReplication', service_version))
-  return service_list
+  return [
+    _create_service_pyxb(binding, 'MNCore', service_version),
+    _create_service_pyxb(binding, 'MNRead', service_version),
+    _create_service_pyxb(binding, 'MNAuthorization', service_version),
+    _create_service_pyxb(binding, 'MNStorage', service_version),
+    _create_service_pyxb(binding, 'MNReplication', service_version)
+  ]
 
 
 def _create_service_pyxb(binding, service_name, service_version):

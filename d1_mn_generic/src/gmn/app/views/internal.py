@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Views for GMN web pages
 
 Functionality that is not part of the DataONE Member Node API yet is designed to
 be available when the MN is in production.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import ctypes
@@ -51,8 +52,8 @@ import app.models
 import app.psycopg_adapter
 import app.sysmeta_validate
 import app.util
-import app.views.view_asserts
-import app.views.view_util
+import app.views.asserts
+import app.views.util
 
 
 def home(request):
@@ -99,8 +100,7 @@ def home(request):
   node_description = django.conf.settings.NODE_DESCRIPTION
 
   return render_to_response(
-    'home.html', locals(),
-    content_type=d1_common.const.CONTENT_TYPE_XHTML
+    'home.html', locals(), content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 
 
@@ -115,4 +115,3 @@ def _get_free_space(folder):
     return free_bytes.value
   else:
     return os.statvfs(folder).f_bfree * os.statvfs(folder).f_frsize
-

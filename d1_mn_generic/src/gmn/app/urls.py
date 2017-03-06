@@ -20,6 +20,8 @@
 """URL to view mapping
 """
 
+from __future__ import absolute_import
+
 # Django
 from django.conf.urls import url
 import django.conf
@@ -204,11 +206,6 @@ if django.conf.settings.DEBUG_GMN:
         name='clear_replication_queue',
       ),
       # Access Policy.
-      url(
-        r'^diag/set_access_policy/(.+?)$',
-        app.views.diagnostics.set_access_policy,
-        name='set_access_policy',
-      ),
       url(
         r'^diag/delete_all_access_policies$',
         app.views.diagnostics.delete_all_access_policies,

@@ -17,9 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """General utilities
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import base64
@@ -32,9 +33,6 @@ import urlparse
 
 # Django.
 import django.conf
-
-
-# App.
 
 
 def create_missing_directories(file_path):
@@ -55,17 +53,10 @@ def sciobj_file_path(pid):
   """
   hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
   return os.path.join(
-    django.conf.settings.OBJECT_STORE_PATH, hash_str[:2], hash_str[2:4], hash_str,
-  )
-
-
-def request_to_string(request):
-  """Pull some information about the client out from a request object.
-  """
-  return u'ip_address({}) user_agent({})'.format(
-    #request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT'])
-    request.META['REMOTE_ADDR'],
-    ''
+    django.conf.settings.OBJECT_STORE_PATH,
+    hash_str[:2],
+    hash_str[2:4],
+    hash_str,
   )
 
 
@@ -73,15 +64,16 @@ class fixed_chunk_size_iterator(object):
   """Create a file iterator that iterates through file-like object using fixed
   size chunks.
   """
-  def __init__(self, flo, chunk_size=1024**2, len=None):
+
+  def __init__(self, flo, chunk_size=1024**2, length=None):
     self.flo = flo
     self.chunk_size = chunk_size
-    self.len = len
+    self.length = length
 
   def __len__(self):
-    if self.len is None:
+    if self.length is None:
       return len(self.flo)
-    return self.len
+    return self.length
 
   def next(self):
     data = self.flo.read(self.chunk_size)
@@ -95,6 +87,7 @@ class fixed_chunk_size_iterator(object):
 
 
 # This is from django-piston/piston/utils.py
+# noinspection PyProtectedMember
 def coerce_put_post(request):
   """
   Django doesn't particularly understand REST.
@@ -102,7 +95,7 @@ def coerce_put_post(request):
   actually look at the data and load it. We need
   to twist its arm here.
 
-  The try/except abominiation here is due to a bug
+  The try/except abomination here is due to a bug
   in mod_python. This should fix it.
   """
   if request.method == "PUT":
@@ -132,6 +125,7 @@ def coerce_put_post(request):
     request.PUT = request.POST
 
 
+# noinspection PyProtectedMember
 def add_basic_auth_header_if_enabled(headers):
   if django.conf.settings.PROXY_MODE_BASIC_AUTH_ENABLED:
     headers._update((_mk_http_basic_auth_header(),))

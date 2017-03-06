@@ -17,13 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Validate Java Web Token (JWT) and extract subject
 """
 
+from __future__ import absolute_import
+
 # Stdlib
 import httplib
-import logging
 import socket
 import ssl
 import urlparse
@@ -43,6 +43,7 @@ import d1_common.const
 import d1_common.types.exceptions
 
 # App
+
 
 def validate_jwt_and_get_subject_list(request):
   if not _has_jwt_header(request):
@@ -102,11 +103,13 @@ def _validate_jwt_and_get_subject_list(jwt_base64):
 
 def _fix_base64_jwt(jwt_base64):
   header_json, payload_json, signature_str = jwt_base64.split('.')
-  return '.'.join([
-    _fix_base64_padding(_fix_base64_alphabet(header_json)),
-    _fix_base64_padding(_fix_base64_alphabet(payload_json)),
-    _fix_base64_padding(_fix_base64_alphabet(signature_str)),
-  ]).strip()
+  return '.'.join(
+    [
+      _fix_base64_padding(_fix_base64_alphabet(header_json)),
+      _fix_base64_padding(_fix_base64_alphabet(payload_json)),
+      _fix_base64_padding(_fix_base64_alphabet(signature_str)),
+    ]
+  ).strip()
 
 
 def _fix_base64_padding(base64_str):
@@ -126,39 +129,14 @@ def _decode_and_validate_jwt(jwt_base64):
   cn_cert_obj = _get_cn_cert()
   cn_public_key = cn_cert_obj.public_key()
   try:
-    return jwt.decode(_fix_base64_jwt(jwt_base64), key=cn_public_key, algorithms=['RS256'])
+    return jwt.decode(
+      _fix_base64_jwt(jwt_base64), key=cn_public_key, algorithms=['RS256']
+    )
   except jwt.InvalidTokenError as e:
-    logging.warning(u'Ignoring JWT that failed to validate. error="{}"'.format(
-      e.message
-    ))
+    logging.warning(
+      u'Ignoring JWT that failed to validate. error="{}"'.format(e.message)
+    )
     return None
-
-
-def _validate_jwt_and_get_subject_list(jwt_base64):
-  """Validate any JWT in the request and return a list of authenticated
-  subjects.
-
-  The JWT is validated by checking that it was signed with a CN certificate.
-  If validation fails for any reason, errors are logged and an empty list is
-  returned. Possible errors include:
-
-  - GMN is in stand-alone mode (settings_site.STAND_ALONE).
-  - GMN could not establish a trusted (TLS/SSL) connection to the root CN in
-  the env.
-  - The certificate could not be retrieved from the root CN.
-  - The JWT could not be decoded.
-  - The JWT signature signature was invalid.
-  - The JWT claim set contains invalid "Not Before" or "Expiration Time" claims.
-  Currently, DataONE issues JWTs with only the primary subject. Equivalent
-  identities and groups, as set up in the DataONE identity portal, are not
-  represented. So the the list will contain either a single subject or be
-  empty.
-  """
-  jwt_dict = _decode_and_validate_jwt(jwt_base64)
-  subject_list = []
-  if jwt_dict is not None:
-    subject_list.append(jwt_dict['sub'])
-  return subject_list
 
 
 def _get_subject_list_without_validate(jwt_base64):
@@ -170,7 +148,9 @@ def _get_subject_list_without_validate(jwt_base64):
 
 
 def _decode_without_validate(jwt_base64):
-  return jwt.decode(_fix_base64_jwt(jwt_base64), verify=False, algorithms=['RS256'])
+  return jwt.decode(
+    _fix_base64_jwt(jwt_base64), verify=False, algorithms=['RS256']
+  )
 
 
 def _get_cn_cert():
@@ -197,7 +177,8 @@ def _download_and_decode_cert():
     logging.warn(
       u'Unable to get CN certificates from the DataONE environment. '
       u'If this server is being used for testing, see the STAND_ALONE setting. '
-      u'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT))
+      u'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT)
+    )
     return None
   else:
     logging.info(

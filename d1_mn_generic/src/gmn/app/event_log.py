@@ -17,19 +17,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Event Log utilities
 
 The Event Log is a log of all operations performed on sciobjs. It is retrieved
 with MNCore.getLogRecords() and aggregated by CNs.
 """
 
+from __future__ import absolute_import
+
 # D1
 import d1_common.types.exceptions
 
 # App.
-import models
-import auth
+import app.models
+import app.auth
 
 
 def _log(pid, request, event, timestamp=None):
@@ -37,16 +38,16 @@ def _log(pid, request, event, timestamp=None):
   """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = auth.get_trusted_subjects_string()
+  subject = app.auth.get_trusted_subjects_string()
 
   # Support logging events that are not associated with an object.
   object_model = None
   if pid is not None:
     try:
-      object_model = models.ScienceObject.objects.filter(pid__did=pid)[0]
+      object_model = app.models.ScienceObject.objects.filter(pid__did=pid)[0]
     except IndexError:
       err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
-        .format((pid))
+        .format(pid)
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   event_log_model = create_log_entry(
@@ -63,14 +64,15 @@ def _log(pid, request, event, timestamp=None):
 
 
 def create_log_entry(object_model, event, ip_address, user_agent, subject):
-  event_log_model = models.EventLog()
+  event_log_model = app.models.EventLog()
   event_log_model.sciobj = object_model
-  event_log_model.event = models.event(event)
-  event_log_model.ip_address = models.ip_address(ip_address)
-  event_log_model.user_agent = models.user_agent(user_agent)
-  event_log_model.subject = models.subject(subject)
+  event_log_model.event = app.models.event(event)
+  event_log_model.ip_address = app.models.ip_address(ip_address)
+  event_log_model.user_agent = app.models.user_agent(user_agent)
+  event_log_model.subject = app.models.subject(subject)
   event_log_model.save()
   return event_log_model
+
 
 def create(pid, request, timestamp=None):
   return _log(pid, request, 'create', timestamp)

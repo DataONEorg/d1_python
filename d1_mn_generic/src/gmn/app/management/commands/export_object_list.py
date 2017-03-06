@@ -17,10 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Export a list of the objects that exist on the MN and, for each object, each
 subject which has access to the object.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import logging
@@ -29,10 +30,11 @@ import logging
 import django.core.management.base
 
 # App.
+import app.management.commands.util
 import app.models
-import util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Export all objects and their associated subjects'
 
@@ -49,20 +51,17 @@ class Command(django.core.management.base.BaseCommand):
       default=False,
       help='export only public subjects',
     )
-    parser.add_argument(
-      'path', type=str, help='path to export file'
-    )
+    parser.add_argument('path', type=str, help='path to export file')
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
-    util.abort_if_other_instance_is_running()
+    app.management.commands.util.abort_if_other_instance_is_running()
     self.export_object_list(options['path'], options['public'])
-    logging.info(
-      u'Exported object list to: {}'.format(options['path'])
-    )
+    logging.info(u'Exported object list to: {}'.format(options['path']))
 
   def export_object_list(self, path, public_only):
     with open(path, 'w') as f:
@@ -71,12 +70,13 @@ class Command(django.core.management.base.BaseCommand):
         # object, that permissions are guaranteed to include "read", the
         # lowest level permission.
         for permission_model in app.models.Permission.objects.filter(
-            sciobj=sciobj_model
+          sciobj=sciobj_model
         ):
           if public_only:
             if permission_model.subject.subject == 'public':
               f.write('{}\n'.format(sciobj_model.pid.did))
           else:
-            f.write('{}\t{}\n'.format(
-              sciobj_model.pid.did, permission_model.subject.subject)
+            f.write(
+              '{}\t{}\n'.
+              format(sciobj_model.pid.did, permission_model.subject.subject)
             )

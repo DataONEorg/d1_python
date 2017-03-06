@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Response handler middleware
 
 Serialize DataONE response objects according to Accept header and set header
 (Size and Content-Type) accordingly.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import datetime
@@ -34,13 +35,14 @@ from django.db.models import Max
 import django.conf
 
 # DataONE APIs.
+import d1_common.const
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 
 # App.
-import app.views.view_util
+import app.views.util
 
 
 class ResponseHandler(object):
@@ -77,7 +79,7 @@ class ResponseHandler(object):
         response_list = []
         for query in django.db.connection.queries:
           response_list.append(u'{}\n{}'.format(query['time'], query['sql']))
-          response = django.http.HttpResponse(
+          django.http.HttpResponse(
             u'\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
           )
 
@@ -87,8 +89,7 @@ class ResponseHandler(object):
       'object': (self._generate_object_list, 'modified_timestamp'),
       'log': (self._generate_log_records, 'timestamp'),
     }
-    d1_type_generator, d1_type_date_field = name_to_func_map[view_result['type']
-                                                             ]
+    d1_type_generator, d1_type_date_field = name_to_func_map[view_result['type']]
     d1_type = d1_type_generator(
       request, view_result['query'], view_result['start'], view_result['total']
     )
@@ -100,12 +101,12 @@ class ResponseHandler(object):
     return response
 
   def _generate_object_list(self, request, db_query, start, total):
-    objectList = app.views.view_util.dataoneTypes(request).objectList()
+    objectList = app.views.util.dataoneTypes(request).objectList()
     for row in db_query:
-      objectInfo = app.views.view_util.dataoneTypes(request).ObjectInfo()
+      objectInfo = app.views.util.dataoneTypes(request).ObjectInfo()
       objectInfo.identifier = row.pid.did
       objectInfo.formatId = row.format.format
-      checksum = app.views.view_util.dataoneTypes(request).Checksum(row.checksum)
+      checksum = app.views.util.dataoneTypes(request).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
       objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
@@ -119,9 +120,9 @@ class ResponseHandler(object):
     return objectList
 
   def _generate_log_records(self, request, db_query, start, total):
-    log = app.views.view_util.dataoneTypes(request).log()
+    log = app.views.util.dataoneTypes(request).log()
     for row in db_query:
-      logEntry = app.views.view_util.dataoneTypes(request).LogEntry()
+      logEntry = app.views.util.dataoneTypes(request).LogEntry()
       logEntry.entryId = str(row.id)
       logEntry.identifier = row.sciobj.pid.did
       logEntry.ipAddress = row.ip_address.ip_address
@@ -137,7 +138,7 @@ class ResponseHandler(object):
     return log
 
   def _http_response_with_identifier_type(self, request, pid):
-    pid_pyxb = app.views.view_util.dataoneTypes(request).identifier(pid)
+    pid_pyxb = app.views.util.dataoneTypes(request).identifier(pid)
     pid_xml = pid_pyxb.toxml()
     return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
@@ -159,7 +160,7 @@ class ResponseHandler(object):
   #   if response.streaming:
   #     return
   #   # Pass through: Anything from the diagnostics API
-  #   if mn.views.view_util.is_diag_api(request):
+  #   if app.views.util.is_diag_api(request):
   #     return
   #   # Pass through boolean responses
   #   api_verb_str = request.path_info.split('/')[2]
@@ -191,12 +192,12 @@ class ResponseHandler(object):
   #   #   return
   #
   #   return_type_version_match_bool = True
-  #   if mn.views.view_util.is_v1_api(request) \
+  #   if app.views.util.is_v1_api(request) \
   #       and not d1_common.type_conversions.str_is_v1(response.content):
   #     return_type_version_match_bool = False
   #
   #   # v2 returns a mix of v1 and v2
-  #   # if mn.views.view_util.is_v2_api(request) \
+  #   # if app.views.util.is_v2_api(request) \
   #   #     and not d1_common.type_conversions.str_is_v2(response.content):
   #   #   return_type_version_match_bool = False
   #

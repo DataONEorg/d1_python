@@ -17,9 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Utilities for management commands
 """
+
+from __future__ import absolute_import
 
 # Stdlib
 import fcntl
@@ -34,7 +35,6 @@ import django.core.management.base
 
 # App
 import app.models
-
 
 single_instance_lock_file = None
 
@@ -91,6 +91,7 @@ def is_subject_in_whitelist(subject_str):
 
 # ==============================================================================
 
+
 class EventCounter(object):
   def __init__(self):
     self._event_dict = {}
@@ -105,4 +106,3 @@ class EventCounter(object):
     logging.info('Counted events:')
     for event_str in sorted(self._event_dict):
       logging.info('  {}: {}'.format(event_str, self._event_dict[event_str]))
-

@@ -19,19 +19,21 @@
 # limitations under the License.
 """Test subject extraction from certificate and SubjectInfo"""
 
-# Stdlib
+from __future__ import absolute_import
 
 # Django
 import django.test
 
 # App
 import app.middleware.session_cert
-import util
+import tests.util
 
 
 class TestCert(django.test.TestCase):
   def setUp(self):
-    self.cert_simple_subject_info_pem = util.read_test_file('cert_with_simple_subject_info.pem')
+    self.cert_simple_subject_info_pem = tests.util.read_test_file(
+      'cert_with_simple_subject_info.pem'
+    )
 
   def tearDown(self):
     pass

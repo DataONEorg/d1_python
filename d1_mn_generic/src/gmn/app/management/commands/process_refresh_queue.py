@@ -17,10 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Iterate over queue of objects registered to have their System Metadata
 refreshed and refresh them by pulling the latest version from a CN.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import logging
@@ -37,11 +38,13 @@ import d1_client.mnclient
 
 # App.
 import app.auth
+import app.event_log
+import app.management.commands.util
 import app.models
 import app.sysmeta
-import util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Process the System Metadata refresh queue.'
 
@@ -54,12 +57,13 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
-    util.abort_if_other_instance_is_running()
-    util.abort_if_stand_alone_instance()
+    app.management.commands.util.abort_if_other_instance_is_running()
+    app.management.commands.util.abort_if_stand_alone_instance()
     p = SysMetaRefreshQueueProcessor()
     p.process_refresh_queue()
 
@@ -87,23 +91,25 @@ class SysMetaRefreshQueueProcessor(object):
     logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid.did))
     try:
       self._refresh(queue_model)
-    except Exception:
-      logging.exception(
-        u'System Metadata refresh failed with exception:'
-      )
+    except StandardError:
+      logging.exception(u'System Metadata refresh failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
         logging.warning(
           u'SysMeta refresh failed and will be retried during next processing. '
-          u'failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+          u'failed_attempts={}, max_attempts={}'.format(
+            num_failed_attempts,
+            django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS
+          )
         )
       else:
         logging.warning(
           u'SysMeta refresh failed and has reached the maximum number of '
           u'attempts. Recording the request as permanently failed and '
-          u'removing from queue. failed_attempts={}, max_attempts={}'.
-          format(num_failed_attempts, django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+          u'removing from queue. failed_attempts={}, max_attempts={}'.format(
+            num_failed_attempts,
+            django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS
+          )
         )
         self._update_request_status(queue_model, 'failed')
     return True
@@ -139,13 +145,15 @@ class SysMetaRefreshQueueProcessor(object):
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=django.conf.settings.DATAONE_ROOT, cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      base_url=django.conf.settings.DATAONE_ROOT,
+      cert_path=django.conf.settings.CLIENT_CERT_PATH,
       key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
   def _get_system_metadata(self, queue_model):
     logging.debug(
-      u'Calling CNRead.getSystemMetadata(pid={})'.format(queue_model.sciobj.pid)
+      u'Calling CNRead.getSystemMetadata(pid={})'.
+      format(queue_model.sciobj.pid)
     )
     return self.cn_client.getSystemMetadata(queue_model.sciobj.pid.did)
 

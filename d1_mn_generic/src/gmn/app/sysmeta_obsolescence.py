@@ -17,25 +17,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Utilities for manipulating obsolescence chains in the database
 """
+
+from __future__ import absolute_import
 
 # App.
 import app.auth
 import app.models
 import app.util
-import sysmeta_util
+import app.sysmeta_sid
+
+import app.sysmeta_util
 
 
 def is_obsoleted(pid):
-  return sysmeta_util.get_sci_model(pid).obsoleted_by is not None
+  return app.sysmeta_util.get_sci_model(pid).obsoleted_by is not None
 
 
 def set_obsolescence(pid, obsoletes_pid=None, obsoleted_by_pid=None):
-  sciobj_model = sysmeta_util.get_sci_model(pid)
-  _set_obsolescence(sciobj_model, obsoletes_pid, obsoleted_by_pid)
+  sciobj_model = app.sysmeta_util.get_sci_model(pid)
+  set_obsolescence_by_model(sciobj_model, obsoletes_pid, obsoleted_by_pid)
   sciobj_model.save()
+
+
+def set_obsolescence_by_model(sciobj_model, obsoletes_pid, obsoleted_by_pid):
+  if obsoletes_pid:
+    sciobj_model.obsoletes = app.models.did(obsoletes_pid)
+  if obsoleted_by_pid:
+    sciobj_model.obsoleted_by = app.models.did(obsoleted_by_pid)
 
 
 def cut_from_chain(pid):
@@ -45,8 +55,8 @@ def cut_from_chain(pid):
   - The object with the pid is verified to exist and to be a member of an
   obsolescence chain. E.g., with:
 
-  view_asserts.is_pid(pid)
-  view_asserts.is_in_obsolescence_chain(pid)
+  app.views.asserts.is_pid(pid)
+  app.views.asserts.is_in_obsolescence_chain(pid)
 
   - The object can be at any location in the chain, including the head or tail.
 
@@ -58,7 +68,7 @@ def cut_from_chain(pid):
   - If the object was the last object in the chain and the chain has a SID, the
   SID reference is shifted over to the new last object in the chain.
   """
-  sciobj_model = sysmeta_util.get_sci_model(pid)
+  sciobj_model = app.sysmeta_util.get_sci_model(pid)
   if is_head(sciobj_model):
     _cut_head_from_chain(sciobj_model)
   elif is_tail(sciobj_model):
@@ -69,36 +79,35 @@ def cut_from_chain(pid):
   sciobj_model.obsoleted_by = None
   sciobj_model.save()
 
+
 #
 # Private
 #
 
+
 def _cut_head_from_chain(sciobj_model):
-  new_head_model = sysmeta_util.get_sci_model(sciobj_model.obsoletes.pid_or_sid)
+  new_head_model = app.sysmeta_util.get_sci_model(
+    sciobj_model.obsoletes.pid_or_sid
+  )
   new_head_model.obsoletedBy = None
   new_head_model.save()
 
 
 def _cut_tail_from_chain(sciobj_model):
-  new_tail_model = sysmeta_util.get_sci_model(sciobj_model.obsoleted_by.pid_or_sid)
+  new_tail_model = app.sysmeta_util.get_sci_model(
+    sciobj_model.obsoleted_by.pid_or_sid
+  )
   new_tail_model.obsoletes = None
   new_tail_model.save()
 
 
 def _cut_embedded_from_chain(sciobj_model):
-  prev_model = sysmeta_util.get_sci_model(sciobj_model.obsoletes)
-  next_model = sysmeta_util.get_sci_model(sciobj_model.obsoleted_by)
+  prev_model = app.sysmeta_util.get_sci_model(sciobj_model.obsoletes)
+  next_model = app.sysmeta_util.get_sci_model(sciobj_model.obsoleted_by)
   prev_model.obsoleted_by = next_model.pid.pid_or_sid
   next_model.obsoletes = prev_model.pid.pid_or_sid
   prev_model.save()
   next_model.save()
-
-
-def _set_obsolescence(sciobj_model, obsoletes_pid, obsoleted_by_pid):
-  if obsoletes_pid:
-    sciobj_model.obsoletes = app.models.did(obsoletes_pid)
-  if obsoleted_by_pid:
-    sciobj_model.obsoleted_by = app.models.did(obsoleted_by_pid)
 
 
 # def update_obsolescence_chain(pid, obsoletes_pid, obsoleted_by_pid, sid):
@@ -108,19 +117,19 @@ def _set_obsolescence(sciobj_model, obsoletes_pid, obsoleted_by_pid):
 #     )
 #   sysmeta_db.update_obsolescence_chain(sysmeta_pyxb)
 
- #    if sysmeta.obsoletes is not None:
- # chain_pid_list = [pid]
- #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
- #  while sci_obj.obsoletes:
- #    obsoletes_pid = sysmeta_pyxb.obsoletes.value()
- #    chain_pid_list.append(obsoletes_pid)
- #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoletes_pid)
- #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
- #  while sci_obj.obsoleted_by:
- #    obsoleted_by_pid = sysmeta_pyxb.obsoleted_by.value()
- #    chain_pid_list.append(obsoleted_by_pid)
- #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoleted_by_pid)
- #  return chain_pid_list
+#    if sysmeta.obsoletes is not None:
+# chain_pid_list = [pid]
+#  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
+#  while sci_obj.obsoletes:
+#    obsoletes_pid = sysmeta_pyxb.obsoletes.value()
+#    chain_pid_list.append(obsoletes_pid)
+#    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoletes_pid)
+#  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
+#  while sci_obj.obsoleted_by:
+#    obsoleted_by_pid = sysmeta_pyxb.obsoleted_by.value()
+#    chain_pid_list.append(obsoleted_by_pid)
+#    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoleted_by_pid)
+#  return chain_pid_list
 
 
 def is_head(sciobj_model):
@@ -137,12 +146,12 @@ def get_pids_in_obsolescence_chain(pid):
   typically obtained by resolving a SID. If the given PID is not in a chain, a
   list containing the single object is returned.
   """
-  sci_model = sysmeta_util.get_sci_model(pid)
+  sci_model = app.sysmeta_util.get_sci_model(pid)
   while sci_model.obsoletes:
-    sci_model = sysmeta_util.get_sci_model(sci_model.obsoletes.pid.did)
+    sci_model = app.sysmeta_util.get_sci_model(sci_model.obsoletes.pid.did)
   chain_pid_list = [sci_model.pid.did]
   while sci_model.obsoleted_by:
-    sci_model = sysmeta_util.get_sci_model(sci_model.obsoleted_by.pid.did)
+    sci_model = app.sysmeta_util.get_sci_model(sci_model.obsoleted_by.pid.did)
     chain_pid_list.append(sci_model.pid.did)
   return chain_pid_list
 
@@ -152,10 +161,10 @@ def is_sid_in_obsolescence_chain(sid, pid):
   {pid} belongs.
 
   Preconditions:
-  - {sid} is verified to exist. E.g., with view_asserts.is_sid().
+  - {sid} is verified to exist. E.g., with app.views.asserts.is_sid().
   """
   chain_pid_list = get_pids_in_obsolescence_chain(pid)
-  resolved_pid = resolve_sid(sid)
+  resolved_pid = app.sysmeta_sid.resolve_sid(sid)
   return resolved_pid in chain_pid_list
 
 
@@ -164,7 +173,7 @@ def get_sid_by_pid(pid):
   Return None if there is no SID for the chain.
 
   Preconditions:
-  - {pid} is verified to exist. E.g., with view_asserts.is_pid().
+  - {pid} is verified to exist. E.g., with app.views.asserts.is_pid().
   """
   chain_pid_list = get_pids_in_obsolescence_chain(pid)
   for chain_pid in chain_pid_list:
@@ -174,6 +183,7 @@ def get_sid_by_pid(pid):
       ).sid.did
     except app.models.SeriesIdToScienceObject.DoesNotExist:
       pass
+
 
 # def update_chaining_info(pid, obsoletes_pid=None, obsoleted_by_pid=None, sid=None):
 #   """Update the chain related fields.

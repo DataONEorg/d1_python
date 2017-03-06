@@ -20,6 +20,8 @@
 """View handler middleware
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import StringIO
 import d1_common
@@ -28,9 +30,12 @@ import logging
 # Django.
 import django.conf
 
+# D1
+import d1_common.const
+
 # App.
-import session_cert
-import session_jwt
+import app.middleware.session_cert
+import app.middleware.session_jwt
 
 
 class ViewHandler(object):
@@ -38,8 +43,8 @@ class ViewHandler(object):
     # Log which view is about the be called.
     logging.info(
       u'View: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
-      .format(view_func.func_name, request.method, view_args, view_kwargs,
-        request.path_info
+      .format(
+        view_func.func_name, request.method, view_args, view_kwargs, request.path_info
       )
     )
     # logging.debug(request.headers)
@@ -64,10 +69,15 @@ class ViewHandler(object):
 
     # Add subjects from any provided certificate and JWT and store them in
     # the Django request obj.
-    cert_primary_str, cert_equivalent_set = session_cert.get_subjects(request)
-    jwt_subject_list = session_jwt.validate_jwt_and_get_subject_list(request)
+    cert_primary_str, cert_equivalent_set = app.middleware.session_cert.get_subjects(
+      request
+    )
+    jwt_subject_list = app.middleware.session_jwt.validate_jwt_and_get_subject_list(
+      request
+    )
     primary_subject_str = cert_primary_str
-    all_subjects_set = cert_equivalent_set | {cert_primary_str} | set(jwt_subject_list)
+    all_subjects_set = cert_equivalent_set | {cert_primary_str
+                                              } | set(jwt_subject_list)
     if len(jwt_subject_list) == 1:
       jwt_primary_str = jwt_subject_list[0]
       if jwt_primary_str != cert_primary_str:
@@ -80,8 +90,8 @@ class ViewHandler(object):
             'the JWT as equivalent.'
           )
     logging.info(u'Primary subject: {}'.format(primary_subject_str))
-    logging.info(u'All subjects: {}'.format(
-      ', '.join(sorted(all_subjects_set)))
+    logging.info(
+      u'All subjects: {}'.format(', '.join(sorted(all_subjects_set)))
     )
     request.primary_subject_str = primary_subject_str
     request.all_subjects_set = all_subjects_set

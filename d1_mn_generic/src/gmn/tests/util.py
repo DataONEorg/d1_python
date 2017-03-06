@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 # Stdlib
 import os
 
@@ -30,9 +32,7 @@ def make_absolute(p):
 
 
 def read_test_file(filename, mode_str='r'):
-  with open(
-    os.path.join(make_absolute('test_files'), filename), mode_str
-  ) as f:
+  with open(os.path.join(make_absolute('test_files'), filename), mode_str) as f:
     return f.read()
 
 
@@ -40,4 +40,3 @@ def read_test_xml(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
   xml_obj = v2.CreateFromDocument(xml_str)
   return xml_obj
-

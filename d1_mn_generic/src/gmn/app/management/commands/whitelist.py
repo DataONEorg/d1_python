@@ -20,6 +20,8 @@
 """Manage the whitelist for access to create, update and delete operations
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import logging
 
@@ -31,11 +33,12 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # App.
+import app.management.commands.util
 import app.middleware.session_cert
 import app.models
-import util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Manage the whitelist for access to create, update and delete operations'
 
@@ -66,7 +69,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     if options['command'] not in ('view', 'add', 'remove', 'bulk'):
       logging.info(self.missing_args_message)
       return
@@ -97,7 +100,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to add',
       )
-    if util.is_subject_in_whitelist(subject_str):
+    if app.management.commands.util.is_subject_in_whitelist(subject_str):
       raise django.core.management.base.CommandError(
         u'Subject already in whitelist: {}'.format(subject_str)
       )
@@ -109,16 +112,14 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to remove',
       )
-    if not util.is_subject_in_whitelist(subject_str):
+    if not app.management.commands.util.is_subject_in_whitelist(subject_str):
       raise django.core.management.base.CommandError(
         u'Subject is not in whitelist: {}'.format(subject_str)
       )
     app.models.WhitelistForCreateUpdateDelete.objects.filter(
       subject=app.models.subject(subject_str)
     ).delete()
-    logging.info(
-      u'Removed subject from whitelist: {}'.format(subject_str)
-    )
+    logging.info(u'Removed subject from whitelist: {}'.format(subject_str))
 
   def _bulk(self, whitelist_file_path):
     if whitelist_file_path is None:
@@ -134,7 +135,4 @@ class Command(django.core.management.base.BaseCommand):
           continue
         app.models.whitelist_for_create_update_delete(subject_str)
         subject_cnt += 1
-    logging.info(
-      u'Created new whitelist with {} subjects'.format(subject_cnt)
-    )
-
+    logging.info(u'Created new whitelist with {} subjects'.format(subject_cnt))

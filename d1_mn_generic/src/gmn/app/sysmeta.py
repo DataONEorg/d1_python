@@ -17,33 +17,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Utilities for manipulating System Metadata
 - Translate System Metadata between XML and PyXB.
 - Translate System Metadata between PyXB and GMN database representations.
 - Query the database for System Metadata properties.
 """
 
+from __future__ import absolute_import
+
 # Stdlib
 import d1_common.xml
 import datetime
-import logging
+
+# 3rd party
+import pyxb
 
 # D1
 import d1_common.date_time
 import d1_common.types.dataoneTypes
+import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 
 # App
 import app.auth
 import app.models
+import app.sysmeta_obsolescence
+import app.sysmeta_replica
+import app.sysmeta_sid
+import app.sysmeta_util
 import app.util
-import pyxb
-import sysmeta_obsolescence
-import sysmeta_replica
-import sysmeta_sid
-import sysmeta_util
 
 
 def archive_object(pid):
@@ -54,7 +57,7 @@ def archive_object(pid):
   - The object is not a replica.
   - The object is not archived.
   """
-  sciobj_model = sysmeta_util.get_sci_model(pid)
+  sciobj_model = app.sysmeta_util.get_sci_model(pid)
   sciobj_model.is_archived = True
   sciobj_model.save()
   _update_modified_timestamp(sciobj_model)
@@ -64,14 +67,14 @@ def archive_object(pid):
 # XML
 # ------------------------------------------------------------------------------
 
+
 def deserialize(sysmeta_xml):
   if not isinstance(sysmeta_xml, unicode):
     try:
       sysmeta_xml = sysmeta_xml.decode('utf8')
     except UnicodeDecodeError as e:
       raise d1_common.types.exceptions.InvalidRequest(
-        0,
-        u'The System Metadata XML doc is not valid UTF-8 encoded Unicode. '
+        0, u'The System Metadata XML doc is not valid UTF-8 encoded Unicode. '
         u'error="{}", xml="{}"'.format(str(e), sysmeta_xml)
       )
   try:
@@ -81,9 +84,8 @@ def deserialize(sysmeta_xml):
   except pyxb.PyXBException as e:
     err_str = str(e)
   raise d1_common.types.exceptions.InvalidSystemMetadata(
-    0,
-    u'System Metadata XML doc validation failed. error="{}", xml="{}"'
-      .format(err_str, sysmeta_xml)
+    0, u'System Metadata XML doc validation failed. error="{}", xml="{}"'
+    .format(err_str, sysmeta_xml)
   )
 
 
@@ -92,25 +94,25 @@ def serialize(sysmeta_pyxb):
     return sysmeta_pyxb.toxml().encode('utf-8')
   except pyxb.IncompleteElementContentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0,
-      u'Unable to serialize PyXB to XML. error="{}"'.format(
-        e.details()
-      )
+      0, u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
     )
+
 
 def serialize_pretty(sysmeta_pyxb):
   return d1_common.xml.pretty_xml(serialize(sysmeta_pyxb))
 
+
 # ------------------------------------------------------------------------------
+
 
 def create(sysmeta_pyxb, url):
   """Create database representation of a System Metadata object and closely
   related internal state.
 
   Preconditions:
-  - PID is verified not to exist. E.g., with view_asserts.is_unused(pid).
+  - PID is verified not to exist. E.g., with app.views.asserts.is_unused(pid).
   - Any supplied SID is verified to be valid for the given operation. E.g., with
-  view_asserts.is_valid_sid_for_chain_if_specified().
+  app.views.asserts.is_valid_sid_for_chain_if_specified().
   """
   pid = sysmeta_pyxb.identifier.value()
   sci_model = app.models.ScienceObject()
@@ -132,8 +134,10 @@ def update(sysmeta_pyxb, url=None, skip_immutable=False):
   {skip_immutable} is False for create() and update()
   """
   pid = sysmeta_pyxb.identifier.value()
-  sci_model = sysmeta_util.get_sci_model(pid)
-  _base_pyxb_to_model(sci_model, sysmeta_pyxb, url=url, skip_immutable=skip_immutable)
+  sci_model = app.sysmeta_util.get_sci_model(pid)
+  _base_pyxb_to_model(
+    sci_model, sysmeta_pyxb, url=url, skip_immutable=skip_immutable
+  )
   sci_model.save()
   if _has_access_policy_pyxb(sysmeta_pyxb):
     _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
@@ -142,8 +146,7 @@ def update(sysmeta_pyxb, url=None, skip_immutable=False):
 
 
 def is_did(did):
-  return app.models.IdNamespace.objects.filter(
-    did=did).exists()
+  return app.models.IdNamespace.objects.filter(did=did).exists()
 
 
 def is_pid(did):
@@ -158,17 +161,16 @@ def is_pid_of_existing_object(pid):
   """Excludes SIDs, unprocessed replicas and obsolescence chain placeholders for
   remote objects.
   """
-  return app.models.ScienceObject.objects.filter(
-    pid__did=pid).exists()
+  return app.models.ScienceObject.objects.filter(pid__did=pid).exists()
 
 
 def is_archived(pid):
   return is_pid_of_existing_object(pid) \
-         and sysmeta_util.get_sci_model(pid).is_archived
+         and app.sysmeta_util.get_sci_model(pid).is_archived
 
 
 def update_modified_timestamp(pid):
-  sci_model = sysmeta_util.get_sci_model(pid)
+  sci_model = app.sysmeta_util.get_sci_model(pid)
   _update_modified_timestamp(sci_model)
 
 
@@ -177,20 +179,21 @@ def model_to_pyxb(pid):
 
 
 def get_identifier_type(did):
-  if not app.sysmeta.is_did(did):
+  if not is_did(did):
     return u'unused on this Member Node'
   elif app.sysmeta_sid.is_sid(did):
     return u'a Series ID (SID)'
-  elif app.sysmeta.is_pid_of_existing_object(did):
+  elif is_pid_of_existing_object(did):
     return u'a Persistent ID (PID) of an existing local object'
-  elif app.sysmeta_re.is_local_replica(did):
+  elif app.sysmeta_replica.is_local_replica(did):
     return u'a Persistent ID (PID) of a local replica'
-  elif app.sysmeta.is_obsolescence_chain_placeholder(did):
+  elif app.sysmeta_replica.is_obsolescence_chain_placeholder(did):
     return \
       u'a Persistent ID (PID) that is reserved due to being referenced in ' \
       u'the obsolescence chain of a local replica'
   else:
     assert False, u'Unable to classify identifier'
+
 
 #
 # Private
@@ -198,17 +201,21 @@ def get_identifier_type(did):
 
 
 def _model_to_pyxb(pid):
-  sciobj_model = sysmeta_util.get_sci_model(pid)
+  sciobj_model = app.sysmeta_util.get_sci_model(pid)
   sysmeta_pyxb = _base_model_to_pyxb(sciobj_model)
   if _has_access_policy_db(sciobj_model):
     sysmeta_pyxb.accessPolicy = _access_policy_model_to_pyxb(sciobj_model)
   if _has_replication_policy_db(sciobj_model):
-    sysmeta_pyxb.replicationPolicy = _replication_policy_model_to_pyxb(sciobj_model)
-  sysmeta_pyxb.replica = sysmeta_replica.replica_model_to_pyxb(sciobj_model)
+    sysmeta_pyxb.replicationPolicy = _replication_policy_model_to_pyxb(
+      sciobj_model
+    )
+  sysmeta_pyxb.replica = app.sysmeta_replica.replica_model_to_pyxb(sciobj_model)
   return sysmeta_pyxb
 
 
-def _base_pyxb_to_model(sci_model, sysmeta_pyxb, url=None, skip_immutable=False):
+def _base_pyxb_to_model(
+  sci_model, sysmeta_pyxb, url=None, skip_immutable=False
+):
   # The PID is used for looking up the sci_model so will always match and does
   # need to be updated.
   #
@@ -230,18 +237,25 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb, url=None, skip_immutable=False)
   )
   sci_model.size = sysmeta_pyxb.size
   sci_model.submitter = app.models.subject(sysmeta_pyxb.submitter.value())
-  sci_model.rights_holder = app.models.subject(sysmeta_pyxb.rightsHolder.value())
-  sci_model.origin_member_node = app.models.node(sysmeta_pyxb.originMemberNode.value())
-  sci_model.authoritative_member_node = app.models.node(sysmeta_pyxb.authoritativeMemberNode.value())
-  sysmeta_obsolescence._set_obsolescence(
+  sci_model.rights_holder = app.models.subject(
+    sysmeta_pyxb.rightsHolder.value()
+  )
+  sci_model.origin_member_node = app.models.node(
+    sysmeta_pyxb.originMemberNode.value()
+  )
+  sci_model.authoritative_member_node = app.models.node(
+    sysmeta_pyxb.authoritativeMemberNode.value()
+  )
+  app.sysmeta_obsolescence.set_obsolescence_by_model(
     sci_model,
-    sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes'),
-    sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy'),
+    app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes'),
+    app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy'),
   )
   sci_model.is_archived = sysmeta_pyxb.archived or False
   # Internal fields
   if url is not None:
     sci_model.url = url
+
 
 def _base_model_to_pyxb(sciobj_model):
   def sub_sciobj(sub_sciobj_model):
@@ -250,12 +264,16 @@ def _base_model_to_pyxb(sciobj_model):
     return sub_sciobj_model.did
 
   base_pyxb = d1_common.types.dataoneTypes.systemMetadata()
-  base_pyxb.identifier = d1_common.types.dataoneTypes.Identifier(sciobj_model.pid.did)
+  base_pyxb.identifier = d1_common.types.dataoneTypes.Identifier(
+    sciobj_model.pid.did
+  )
   base_pyxb.serialVersion = sciobj_model.serial_version
   base_pyxb.dateSysMetadataModified = sciobj_model.modified_timestamp
   base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
   base_pyxb.formatId = sciobj_model.format.format
-  base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(sciobj_model.checksum)
+  base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(
+    sciobj_model.checksum
+  )
   base_pyxb.checksum.algorithm = sciobj_model.checksum_algorithm.checksum_algorithm
   base_pyxb.size = sciobj_model.size
   base_pyxb.submitter = sciobj_model.submitter.subject
@@ -265,9 +283,10 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.obsoletes = sub_sciobj(sciobj_model.obsoletes)
   base_pyxb.obsoletedBy = sub_sciobj(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
-  base_pyxb.seriesId = sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
+  base_pyxb.seriesId = app.sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
 
   return base_pyxb
+
 
 # ------------------------------------------------------------------------------
 # Access Policy
@@ -319,7 +338,9 @@ def _has_access_policy_db(sciobj_model):
 
 
 def _has_access_policy_pyxb(sysmeta_pyxb):
-  return hasattr(sysmeta_pyxb, 'accessPolicy') and sysmeta_pyxb.accessPolicy is not None
+  return hasattr(
+    sysmeta_pyxb, 'accessPolicy'
+  ) and sysmeta_pyxb.accessPolicy is not None
 
 
 def _delete_existing_access_policy(sysmeta_pyxb):
@@ -340,28 +361,29 @@ def _get_highest_level_action_for_rule(allow_rule):
 def _insert_permission_rows(sci_model, allow_rule, top_level):
   for s in allow_rule.subject:
     permission_model = app.models.Permission(
-      sciobj=sci_model,
-      subject=app.models.subject(s.value()),
-      level=top_level
+      sciobj=sci_model, subject=app.models.subject(s.value()), level=top_level
     )
     permission_model.save()
 
 
 def _access_policy_model_to_pyxb(sciobj_model):
   access_policy_pyxb = d1_common.types.dataoneTypes.AccessPolicy()
-  for permission_model in app.models.Permission.objects.filter(sciobj=sciobj_model):
+  for permission_model in app.models.Permission.objects.filter(
+    sciobj=sciobj_model
+  ):
     # Skip implicit permissions for rightsHolder.
     if permission_model.subject.subject == sciobj_model.rights_holder.subject:
       continue
     access_rule_pyxb = d1_common.types.dataoneTypes.AccessRule()
     permission_pyxb = d1_common.types.dataoneTypes.Permission(
-       app.auth.level_to_action(permission_model.level)
+      app.auth.level_to_action(permission_model.level)
     )
     access_rule_pyxb.permission.append(permission_pyxb)
     access_rule_pyxb.subject.append(permission_model.subject.subject)
     access_policy_pyxb.allow.append(access_rule_pyxb)
   if len(access_policy_pyxb.allow):
     return access_policy_pyxb
+
 
 # ------------------------------------------------------------------------------
 # Replication Policy
@@ -373,6 +395,7 @@ def _access_policy_model_to_pyxb(sciobj_model):
 #     <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
 #     <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
 # </replicationPolicy>
+
 
 def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
   _delete_existing_replication_policy(sciobj_model)
@@ -395,14 +418,21 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
       rep_node_obj.replication_policy = replication_policy_model
       rep_node_obj.save()
 
-  add(sysmeta_pyxb.replicationPolicy.preferredMemberNode, app.models.PreferredMemberNode)
-  add(sysmeta_pyxb.replicationPolicy.blockedMemberNode, app.models.BlockedMemberNode)
+  add(
+    sysmeta_pyxb.replicationPolicy.preferredMemberNode,
+    app.models.PreferredMemberNode
+  )
+  add(
+    sysmeta_pyxb.replicationPolicy.blockedMemberNode,
+    app.models.BlockedMemberNode
+  )
 
   return replication_policy_model
 
 
 def _has_replication_policy_db(sciobj_model):
-  return app.models.ReplicationPolicy.objects.filter(sciobj=sciobj_model).exists()
+  return app.models.ReplicationPolicy.objects.filter(sciobj=sciobj_model
+                                                     ).exists()
 
 
 def _delete_existing_replication_policy(sciobj_model):
@@ -410,20 +440,28 @@ def _delete_existing_replication_policy(sciobj_model):
 
 
 def _has_replication_policy_pyxb(sysmeta_pyxb):
-  return hasattr(sysmeta_pyxb, 'replicationPolicy') and sysmeta_pyxb.replicationPolicy is not None
+  return hasattr(
+    sysmeta_pyxb, 'replicationPolicy'
+  ) and sysmeta_pyxb.replicationPolicy is not None
 
 
 def _replication_policy_model_to_pyxb(sciobj_model):
-  replication_policy_model = app.models.ReplicationPolicy.objects.get(sciobj=sciobj_model)
+  replication_policy_model = app.models.ReplicationPolicy.objects.get(
+    sciobj=sciobj_model
+  )
   replication_policy_pyxb = d1_common.types.dataoneTypes.ReplicationPolicy()
   replication_policy_pyxb.replicationAllowed = replication_policy_model.replication_is_allowed
   replication_policy_pyxb.numberReplicas = replication_policy_model.desired_number_of_replicas
-  
+
   def add(rep_pyxb, rep_node_model):
-    for rep_node in rep_node_model.objects.filter(replication_policy=replication_policy_model):
+    for rep_node in rep_node_model.objects.filter(
+      replication_policy=replication_policy_model
+    ):
       rep_pyxb.append(rep_node.node.urn)
 
-  add(replication_policy_pyxb.preferredMemberNode, app.models.PreferredMemberNode)
+  add(
+    replication_policy_pyxb.preferredMemberNode, app.models.PreferredMemberNode
+  )
   add(replication_policy_pyxb.blockedMemberNode, app.models.BlockedMemberNode)
 
   return replication_policy_pyxb

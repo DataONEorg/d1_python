@@ -17,11 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Global settings for GMN
 
 This file contains settings that are specific for an instance of GMN.
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import os
@@ -35,8 +36,9 @@ import d1_common.const
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
+
 # ==============================================================================
-# Debuging
+# Debugging
 
 # Enable Django debug mode.
 # True:
@@ -147,7 +149,6 @@ TRUST_CLIENT_AUTHORITATIVEMEMBERNODE = False
 TRUST_CLIENT_DATESYSMETADATAMODIFIED = False
 TRUST_CLIENT_SERIALVERSION = False
 TRUST_CLIENT_DATEUPLOADED = False
-
 
 # Enable monitoring.
 # True (default):
@@ -322,7 +323,7 @@ DATAONE_TRUSTED_SUBJECTS = set(
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
-ADMINS = (('My Name', 'my_address@my_email.tld'), )
+ADMINS = (('My Name', 'my_address@my_email.tld'),)
 
 # Enable MNRead.listObjects() for public and regular authenticated users.
 #
@@ -338,7 +339,7 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # discover objects directly on the node by iterating over the object list. This
 # is disabled by default because the call can be expensive (as it must create a
 # filtered list of all objects on the node for each page that is returned).
-# These arez also the reasons that DataONE specified implementation of access
+# These are also the reasons that DataONE specified implementation of access
 # control for public and regular users to be optional for this API.
 PUBLIC_OBJECT_LIST = True
 
@@ -368,34 +369,35 @@ PUBLIC_LOG_RECORDS = True
 # - Any user that has write permission on an object can update it.
 REQUIRE_WHITELIST_FOR_UPDATE = True
 
-# PostgreSQL database connection.
+# Postgres database connection.
 DATABASES = {
-  'default': {
-    # PostgreSQL
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn2',
-    # By default, GMN uses PostgreSQL Peer authentication, which does not
-    # require a username and password.
-    'USER': '',
-    'PASSWORD': '',
-    # Set HOST to empty string for localhost.
-    'HOST': '',
-    # Set PORT to empty string for default.
-    'PORT': '',
-    # Wrap each HTTP request in an implicit transaction. The transaction is
-    # rolled back if the view does not return successfully. Upon a successful
-    # return, the transaction is committed, thus making all modifications that
-    # the view made to the database visible simultaneously, bringing the
-    # database directly from one valid state to the next.
-    #
-    # Transactions are also important for views that run only select queries and
-    # run more than a single query, as they hide any transitions between valid
-    # states that may happen between queries.
-    #
-    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
-    # the basis of concurrency control in GMN.
-    'ATOMIC_REQUESTS': True,
-  }
+  'default':
+    {
+      # Postgres
+      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+      'NAME': 'gmn2',
+      # By default, GMN uses Postgres Peer authentication, which does not
+      # require a username and password.
+      'USER': '',
+      'PASSWORD': '',
+      # Set HOST to empty string for localhost.
+      'HOST': '',
+      # Set PORT to empty string for default.
+      'PORT': '',
+      # Wrap each HTTP request in an implicit transaction. The transaction is
+      # rolled back if the view does not return successfully. Upon a successful
+      # return, the transaction is committed, thus making all modifications that
+      # the view made to the database visible simultaneously, bringing the
+      # database directly from one valid state to the next.
+      #
+      # Transactions are also important for views that run only select queries and
+      # run more than a single query, as they hide any transitions between valid
+      # states that may happen between queries.
+      #
+      # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
+      # the basis of concurrency control in GMN.
+      'ATOMIC_REQUESTS': True,
+    }
 }
 
 # Paths to the GMN object store. The bytes of all the objects handled by GMN are
@@ -442,51 +444,58 @@ else:
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': True,
-  'formatters': {
-    'verbose': {
-        'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s ' \
-                  '%(process)d %(thread)d %(message)s',
-        'datefmt': '%Y-%m-%d %H:%M:%S'
+  'formatters':
+    {
+      'verbose':
+        {
+          'format':
+            '%(asctime)s %(levelname)-8s %(name)s %(module)s '
+            '%(process)d %(thread)d %(message)s',
+          'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+      'simple': {
+        'format': '%(levelname)s %(message)s'
+      },
     },
-    'simple': {
-      'format': '%(levelname)s %(message)s'
+  'handlers':
+    {
+      'file':
+        {
+          'level': LOG_LEVEL,
+          'class': 'logging.FileHandler',
+          'filename': LOG_PATH,
+          'formatter': 'verbose'
+        },
+      'null': {
+        'level': LOG_LEVEL,
+        'class': 'logging.NullHandler',
+      },
     },
-  },
-  'handlers': {
-    'file': {
-      'level': LOG_LEVEL,
-      'class': 'logging.FileHandler',
-      'filename': LOG_PATH,
-      'formatter': 'verbose'
-    },
-    'null': {
-      'level': LOG_LEVEL,
-      'class': 'logging.NullHandler',
-    },
-  },
-  'loggers': {
-    # The "catch all" logger is denoted by ''.
-    '': {
-      'handlers': ['file'],
-      'propagate': True,
-      'level': LOG_LEVEL,
-    },
-    # Django uses this logger.
-    'django': {
-      'handlers': ['file'],
-      'propagate': False,
-      'level': LOG_LEVEL
-    },
-    # Messages relating to the interaction of code with the database. For
-    # example, every SQL statement executed by a request is logged at the DEBUG
-    # level to this logger.
-    'django.db.backends': {
-      'handlers': ['null'],
-      # Set logging level to "WARNING" to suppress logging of SQL statements.
-      'level': 'WARNING',
-      'propagate': False
-    },
-  }
+  'loggers':
+    {
+      # The "catch all" logger is denoted by ''.
+      '': {
+        'handlers': ['file'],
+        'propagate': True,
+        'level': LOG_LEVEL,
+      },
+      # Django uses this logger.
+      'django': {
+        'handlers': ['file'],
+        'propagate': False,
+        'level': LOG_LEVEL
+      },
+      # Messages relating to the interaction of code with the database. For
+      # example, every SQL statement executed by a request is logged at the DEBUG
+      # level to this logger.
+      'django.db.backends':
+        {
+          'handlers': ['null'],
+          # Set logging level to "WARNING" to suppress logging of SQL statements.
+          'level': 'WARNING',
+          'propagate': False
+        },
+    }
 }
 
 # ==============================================================================

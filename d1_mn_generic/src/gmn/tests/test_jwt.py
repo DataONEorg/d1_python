@@ -19,6 +19,8 @@
 # limitations under the License.
 """Test JSON Web Token parsing and validation"""
 
+from __future__ import absolute_import
+
 # Stdlib
 import mock
 
@@ -27,7 +29,7 @@ import django.test
 
 # App
 import app.middleware.session_jwt
-import util
+import tests.util
 
 
 class TestJwt(django.test.TestCase):
@@ -47,7 +49,7 @@ class TestJwt(django.test.TestCase):
     self.assertIn(u'*.test.dataone.org', [v.value for v in cert_obj.subject])
 
   def _parse_test_token(self):
-    jwt_base64 = util.read_test_file('test_token_2.base64')
+    jwt_base64 = tests.util.read_test_file('test_token_2.base64')
     return app.middleware.session_jwt._validate_jwt_and_get_subject_list(
       jwt_base64
     )

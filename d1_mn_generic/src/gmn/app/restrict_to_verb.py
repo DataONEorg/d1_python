@@ -17,13 +17,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Limit views to be called only with specific verbs
 
 Decorator used on views to specify which verbs they may be called with. An
 attempt to call the view with another verb causes a HttpResponseNotAllowed
 response.
 """
+
+from __future__ import absolute_import
 
 # Django
 import django.http

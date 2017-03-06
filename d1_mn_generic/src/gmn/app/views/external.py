@@ -17,9 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """REST call handlers for DataONE Member Node APIs
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import datetime
@@ -28,6 +29,7 @@ import os
 import urlparse
 import uuid
 
+# D1
 import d1_client.cnclient
 import d1_client.object_format_info
 import d1_common.checksum
@@ -35,10 +37,15 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
+
+# 3rd party
 import requests
+
+# Django
 import django.conf
 import django.http
 
+# App
 import app.auth
 import app.db_filter
 import app.event_log
@@ -53,12 +60,12 @@ import app.sysmeta_sid
 import app.sysmeta_util
 import app.sysmeta_validate
 import app.util
-import app.views.view_asserts
-import app.views.view_util
-
+import app.views.asserts
+import app.views.create
+import app.views.decorator
+import app.views.util
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
-
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP verb)
@@ -75,7 +82,9 @@ def dispatch_object(request, did):
   elif request.method == 'DELETE':
     return delete_object(request, did)
   else:
-    return django.http.HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
+    return django.http.HttpResponseNotAllowed(
+      ['GET', 'HEAD', 'POST', 'PUT', 'DELETE']
+    )
 
 
 def dispatch_object_list(request):
@@ -86,6 +95,7 @@ def dispatch_object_list(request):
   else:
     return django.http.HttpResponseNotAllowed(['GET', 'POST'])
 
+
 # ==============================================================================
 # Public API
 # ==============================================================================
@@ -94,13 +104,14 @@ def dispatch_object_list(request):
 # Public API: Tier 1: Core API
 # ------------------------------------------------------------------------------
 
+
 # Unrestricted access.
 @app.restrict_to_verb.get
 def get_monitor_ping(request):
   """MNCore.ping() → Boolean
   """
-  response = app.views.view_util.http_response_with_boolean_true_type()
-  app.views.view_util.add_http_date_to_response_header(
+  response = app.views.util.http_response_with_boolean_true_type()
+  app.views.util.add_http_date_to_response_header(
     response, datetime.datetime.utcnow()
   )
   return response
@@ -110,7 +121,7 @@ def get_monitor_ping(request):
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
 @app.restrict_to_verb.get
-@app.auth.assert_get_log_records_access
+@app.views.decorator.get_log_records_access
 def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
@@ -129,15 +140,15 @@ def get_log(request):
   )
   # Cannot use the resolve_sid decorator here since the SID/PID filter is passed
   # as a query parameter and the parameter changes names between v1 and v2.
-  if app.views.view_util.is_v1_api(request):
+  if app.views.util.is_v1_api(request):
     id_filter_str = 'pidFilter'
-  elif app.views.view_util.is_v2_api(request):
+  elif app.views.util.is_v2_api(request):
     id_filter_str = 'idFilter'
   else:
     assert False, u'Unable to determine API version'
   # did = request.GET.get('idFilter', None)
   # if did is not None:
-  #   request.GET[id_filter_str] = mn.views.view_asserts.resolve_sid_func(did)
+  #   request.GET[id_filter_str] = app.views.asserts.resolve_sid_func(did)
   query = app.db_filter.add_string_begins_with_filter(
     query, request, 'sciobj__pid__did', id_filter_str
   )
@@ -157,13 +168,17 @@ def get_log(request):
 def get_node(request):
   """MNCore.getCapabilities() → Node
   """
-  major_version_int = 2 if app.views.view_util.is_v2_api(request) else 1
+  major_version_int = 2 if app.views.util.is_v2_api(request) else 1
   node_pretty_xml = app.node.get_pretty_xml(major_version_int)
-  return django.http.HttpResponse(node_pretty_xml, d1_common.const.CONTENT_TYPE_XML)
+  return django.http.HttpResponse(
+    node_pretty_xml, d1_common.const.CONTENT_TYPE_XML
+  )
+
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API
 # ------------------------------------------------------------------------------
+
 
 def _content_type_from_format(format):
   try:
@@ -174,31 +189,30 @@ def _content_type_from_format(format):
 
 def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
-  response['Content-Type'] = _content_type_from_format(
-    sciobj.format.format
-  )
-  response['Last-Modified'] = datetime.datetime.isoformat(sciobj.modified_timestamp)
+  response['Content-Type'] = _content_type_from_format(sciobj.format.format)
+  response['Last-Modified'
+           ] = datetime.datetime.isoformat(sciobj.modified_timestamp)
   response['DataONE-formatId'] = sciobj.format.format
   response['DataONE-Checksum'] = '{},{}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
   )
   response['DataONE-SerialVersion'] = sciobj.serial_version
-  app.views.view_util.add_http_date_to_response_header(
+  app.views.util.add_http_date_to_response_header(
     response, datetime.datetime.utcnow()
   )
 
+
 @app.restrict_to_verb.get
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_read_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.read_permission
 def get_object(request, pid):
   """MNRead.get(session, did) → OctetStream
   """
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
   content_type_str = _content_type_from_format(sciobj.format.format)
   response = django.http.StreamingHttpResponse(
-    _get_sciobj_iter(sciobj),
-    content_type_str
+    _get_sciobj_iter(sciobj), content_type_str
   )
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
@@ -229,32 +243,35 @@ def _get_sciobj_iter_local(pid):
 
 def _get_sciobj_iter_remote(url):
   try:
-    response = requests.get(url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT)
+    response = requests.get(
+      url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
+    )
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unable to open proxied object for streaming. error="{}"'.format(e.message)
+      0, u'Unable to open proxied object for streaming. error="{}"'.
+      format(e.message)
     )
   else:
-    return response.iter_content(chunk_size=django.conf.settings.NUM_CHUNK_BYTES)
+    return response.iter_content(
+      chunk_size=django.conf.settings.NUM_CHUNK_BYTES
+    )
 
 
 @app.restrict_to_verb.get
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_read_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.read_permission
 def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
   app.event_log.read(pid, request)
-  return app.views.view_util.generate_sysmeta_xml_matching_api_version(
-    request, pid
-  )
+  return app.views.util.generate_sysmeta_xml_matching_api_version(request, pid)
 
 
 @app.restrict_to_verb.head
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_read_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.read_permission
 def head_object(request, pid):
   """MNRead.describe(session, did) → DescribeResponse
   """
@@ -267,9 +284,9 @@ def head_object(request, pid):
 
 
 @app.restrict_to_verb.get
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_read_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.read_permission
 def get_checksum(request, pid):
   """MNRead.getChecksum(session, did[, checksumAlgorithm]) → Checksum
   """
@@ -284,10 +301,9 @@ def get_checksum(request, pid):
 
   if not d1_common.checksum.is_supported_algorithm(algorithm):
     raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
+      0, u'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
         algorithm, u', '.join(
-          d1_common.checksum. DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+          d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
         )
       )
     )
@@ -300,11 +316,13 @@ def get_checksum(request, pid):
   # Log the access of this object.
   # TODO: look into log type other than 'read'
   app.event_log.read(pid, request)
-  return django.http.HttpResponse(checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML)
+  return django.http.HttpResponse(
+    checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML
+  )
 
 
 @app.restrict_to_verb.get
-@app.auth.assert_list_objects_access
+@app.views.decorator.list_objects_access
 def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -312,7 +330,8 @@ def get_object_list(request):
   # The ObjectList is returned ordered by modified_timestamp ascending. The order has
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
-  query = app.models.ScienceObject.objects.order_by('modified_timestamp').select_related()
+  query = app.models.ScienceObject.objects.order_by('modified_timestamp'
+                                                    ).select_related()
   if not app.auth.is_trusted_subject(request):
     query = app.db_filter.add_access_policy_filter(query, request, 'id')
   query = app.db_filter.add_datetime_filter(
@@ -324,7 +343,9 @@ def get_object_list(request):
   query = app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  app.db_filter.add_bool_filter(query, request, 'is_replica', 'replicaStatus')
+  # app.db_filter.add_bool_filter(query, request, 'is_replica', 'replicaStatus')
+  app.db_filter.add_replica_filter(query, request, 'replicaStatus')
+
   query_unsliced = query
   query, start, count = app.db_filter.add_slice_filter(query, request)
   return {
@@ -337,14 +358,14 @@ def get_object_list(request):
 
 
 @app.restrict_to_verb.post
-@app.auth.assert_trusted_permission
+@app.views.decorator.trusted_permission
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
-  app.views.view_asserts.post_has_mime_parts(request, (('file', 'message'),))
-  app.views.view_asserts.xml_document_not_too_large(request.FILES['message'])
+  app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
+  app.views.asserts.xml_document_not_too_large(request.FILES['message'])
   synchronization_failed_xml = \
-    app.views.view_util.read_utf8_xml(request.FILES['message'])
+    app.views.util.read_utf8_xml(request.FILES['message'])
   try:
     synchronization_failed = d1_common.types.exceptions.deserialize(
       synchronization_failed_xml.encode('utf-8')
@@ -362,16 +383,16 @@ def post_error(request):
     )
   else:
     logging.error(
-      u'Received notification of synchronization error from CN:\n{}'
-      .format(str(synchronization_failed))
+      u'Received notification of synchronization error from CN:\n{}'.
+      format(str(synchronization_failed))
     )
-  return app.views.view_util.http_response_with_boolean_true_type()
+  return app.views.util.http_response_with_boolean_true_type()
 
 
 # Access control is performed within function.
 @app.restrict_to_verb.get
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
 def get_replica(request, pid):
   """MNReplication.getReplica(session, did) → OctetStream
   """
@@ -388,55 +409,62 @@ def get_replica(request, pid):
 
 def _assert_node_is_authorized(request, pid):
   try:
-    client = d1_client.cnclient.CoordinatingNodeClient(django.conf.settings.DATAONE_ROOT)
+    client = d1_client.cnclient.CoordinatingNodeClient(
+      django.conf.settings.DATAONE_ROOT
+    )
     client.isNodeAuthorized(request.primary_subject_str, pid)
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(
       0,
       u'A CN has not authorized the target MN to create a replica of object. '
-      u'target_mn="{}", pid="{}", cn_error="{}"'
-        .format(request.primary_subject_str, pid, str(e))
+      u'target_mn="{}", pid="{}", cn_error="{}"'.format(
+        request.primary_subject_str, pid, str(e)
       )
+    )
   except Exception as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
-        django.conf.settings.DATAONE_ROOT, e.message)
+        django.conf.settings.DATAONE_ROOT, e.message
+      )
     )
+
 
 @app.restrict_to_verb.put
 def put_meta(request):
   """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
   """
   app.util.coerce_put_post(request)
-  app.views.view_asserts.post_has_mime_parts(
+  app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'sysmeta'))
   )
   pid = request.POST['pid']
   app.auth.assert_allowed(request, app.auth.WRITE_LEVEL, pid)
-  app.views.view_asserts.is_valid_for_update(pid)
-  app.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+  app.views.asserts.is_valid_for_update(pid)
+  app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
   new_sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
-  app.views.view_asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_pyxb, pid)
+  app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
+  app.views.asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_pyxb, pid)
   # TODO: Need to clarify desired functionality.
-  app.views.view_util.set_mn_controlled_values(request, new_sysmeta_pyxb)
+  app.views.util.set_mn_controlled_values(request, new_sysmeta_pyxb)
   if app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
     sid = app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
     if app.sysmeta_sid.is_sid(sid):
       app.sysmeta_sid.update_sid(sid, pid)
   app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
   app.event_log.update(pid, request)
-  return app.views.view_util.http_response_with_boolean_true_type()
+  return app.views.util.http_response_with_boolean_true_type()
+
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 2: Authorization API
 # ------------------------------------------------------------------------------
 
+
 # Unrestricted.
 @app.restrict_to_verb.get
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
 def get_is_authorized(request, pid):
   """MNAuthorization.isAuthorized(did, action) -> Boolean
   """
@@ -448,30 +476,30 @@ def get_is_authorized(request, pid):
   # action string is not valid.
   level = app.auth.action_to_level(request.GET['action'])
   app.auth.assert_allowed(request, level, pid)
-  return app.views.view_util.http_response_with_boolean_true_type()
+  return app.views.util.http_response_with_boolean_true_type()
 
 
 @app.restrict_to_verb.post
-@app.auth.assert_trusted_permission
+@app.views.decorator.trusted_permission
 def post_refresh_system_metadata(request):
   """MNStorage.systemMetadataChanged(session, did, serialVersion,
                                      dateSysMetaLastModified) → boolean
   """
-  app.views.view_asserts.post_has_mime_parts(
+  app.views.asserts.post_has_mime_parts(
     request, (
-      ('field', 'pid'),
-      ('field', 'serialVersion'),
+      ('field', 'pid'), ('field', 'serialVersion'),
       ('field', 'dateSysMetaLastModified'),
     )
   )
-  app.views.view_asserts.is_pid_of_existing_object(request.POST['pid'])
+  app.views.asserts.is_pid_of_existing_object(request.POST['pid'])
   app.models.sysmeta_refresh_queue(
     request.POST['pid'],
     request.POST['serialVersion'],
     request.POST['dateSysMetaLastModified'],
     'queued',
   ).save()
-  return app.views.view_util.http_response_with_boolean_true_type()
+  return app.views.util.http_response_with_boolean_true_type()
+
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 3: Storage API
@@ -522,45 +550,45 @@ def post_refresh_system_metadata(request):
 
 
 @app.restrict_to_verb.post
-@app.auth.decorator_assert_create_update_delete_permission
+@app.views.decorator.assert_create_update_delete_permission
 def post_object_list(request):
   """MNStorage.create(session, did, object, sysmeta) → Identifier
   """
-  app.views.view_asserts.post_has_mime_parts(
+  app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
   sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.obsoletes_not_specified(sysmeta_pyxb)
+  app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
-  app.views.view_asserts.is_unused(new_pid)
+  app.views.asserts.is_unused(new_pid)
   _create(request, sysmeta_pyxb, new_pid)
   if app.sysmeta_sid.has_sid(sysmeta_pyxb):
     sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
-    app.views.view_asserts.is_unused(sid)
+    app.views.asserts.is_unused(sid)
     app.sysmeta_sid.create_sid(sid, new_pid)
   return new_pid
 
 
 @app.restrict_to_verb.put
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_write_permission # OLD object
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.write_permission # OLD object
 def put_object(request, old_pid):
   """MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   """
   if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
     app.auth.assert_create_update_delete_permission(request)
   app.util.coerce_put_post(request)
-  app.views.view_asserts.post_has_mime_parts(
+  app.views.asserts.post_has_mime_parts(
     request, (('field', 'newPid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  app.views.view_asserts.is_valid_for_update(old_pid)
-  app.views.view_asserts.is_not_obsoleted(old_pid)
-  sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+  app.views.asserts.is_valid_for_update(old_pid)
+  app.views.asserts.is_not_obsoleted(old_pid)
+  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
   sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.view_asserts.obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid)
-  app.views.view_asserts.is_valid_sid_for_chain_if_specified(sysmeta_pyxb, old_pid)
+  app.views.asserts.obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid)
+  app.views.asserts.is_valid_sid_for_chain_if_specified(sysmeta_pyxb, old_pid)
   sysmeta_pyxb.obsoletes = old_pid
   new_pid = request.POST['newPid']
   _create(request, sysmeta_pyxb, new_pid)
@@ -576,15 +604,15 @@ def put_object(request, old_pid):
 
 
 def _create(request, sysmeta_pyxb, new_pid):
-  app.views.view_asserts.is_unused(new_pid)
-  # mn.views.view_asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
-  app.views.view_asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
-  app.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  app.views.view_asserts.obsoleted_by_not_specified(sysmeta_pyxb)
+  app.views.asserts.is_unused(new_pid)
+  # app.views.asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
+  app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
+  app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+  app.views.asserts.obsoleted_by_not_specified(sysmeta_pyxb)
   app.sysmeta_validate.validate_sysmeta_against_uploaded(request, sysmeta_pyxb)
-  app.views.view_util.set_mn_controlled_values(request, sysmeta_pyxb)
+  app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
   #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
-  app.views.view_util.create(request, sysmeta_pyxb)
+  app.views.create.create(request, sysmeta_pyxb)
 
 
 # No locking. Public access.
@@ -592,7 +620,7 @@ def _create(request, sysmeta_pyxb, new_pid):
 def post_generate_identifier(request):
   """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
   """
-  app.views.view_asserts.post_has_mime_parts(request, (('field', 'scheme'),))
+  app.views.asserts.post_has_mime_parts(request, (('field', 'scheme'),))
   if request.POST['scheme'] != 'UUID':
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Only the UUID scheme is currently supported'
@@ -605,9 +633,9 @@ def post_generate_identifier(request):
 
 
 @app.restrict_to_verb.delete
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.decorator_assert_create_update_delete_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.assert_create_update_delete_permission
 def delete_object(request, pid):
   """MNStorage.delete(session, did) → Identifier
   """
@@ -638,14 +666,14 @@ def _delete_object_from_database(pid):
 
 
 @app.restrict_to_verb.put
-@app.views.view_util.decode_id
-@app.views.view_util.resolve_sid
-@app.auth.assert_write_permission
+@app.views.decorator.decode_id
+@app.views.decorator.resolve_sid
+@app.views.decorator.write_permission
 def put_archive(request, pid):
   """MNStorage.archive(session, did) → Identifier
   """
-  app.views.view_asserts.is_not_replica(pid)
-  app.views.view_asserts.is_not_archived(pid)
+  app.views.asserts.is_not_replica(pid)
+  app.views.asserts.is_not_archived(pid)
   app.sysmeta.archive_object(pid)
   return pid
 
@@ -656,18 +684,22 @@ def put_archive(request, pid):
 
 
 @app.restrict_to_verb.post
-@app.auth.assert_trusted_permission
+@app.views.decorator.trusted_permission
 def post_replicate(request):
   """MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   """
-  app.views.view_asserts.post_has_mime_parts(
+  app.views.asserts.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
   sysmeta_xml = \
-    app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+    app.views.util.read_utf8_xml(request.FILES['sysmeta'])
   sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.sysmeta_replica.assert_request_complies_with_replication_policy(sysmeta_pyxb)
+  app.sysmeta_replica.assert_request_complies_with_replication_policy(
+    sysmeta_pyxb
+  )
   pid = sysmeta_pyxb.identifier.value()
-  app.views.view_asserts.is_unused(pid)
-  app.sysmeta_replica.add_to_replication_queue(request.POST['sourceNode'], sysmeta_pyxb)
-  return app.views.view_util.http_response_with_boolean_true_type()
+  app.views.asserts.is_unused(pid)
+  app.sysmeta_replica.add_to_replication_queue(
+    request.POST['sourceNode'], sysmeta_pyxb
+  )
+  return app.views.util.http_response_with_boolean_true_type()

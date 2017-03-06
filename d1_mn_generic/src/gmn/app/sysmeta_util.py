@@ -17,10 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Utilities shared between the sysmeta modules
 """
 
+from __future__ import absolute_import
 
 import app.models
 
@@ -29,7 +29,7 @@ def create_id_model(did):
   """Create a new SID or PID.
 
   Preconditions:
-  - {did} is verified to be unused. E.g., with view_asserts.is_unused().
+  - {did} is verified to be unused. E.g., with app.views.asserts.is_unused().
   """
   id_model = app.models.IdNamespace()
   id_model.did = did
@@ -49,4 +49,3 @@ def get_value(sysmeta_pyxb, sysmeta_attr):
     return getattr(sysmeta_pyxb, sysmeta_attr).value()
   except (ValueError, AttributeError):
     return None
-

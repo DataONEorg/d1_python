@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Startup handler middleware
 
 This module contains code that should run once, after Django and GMN has been
 fully loaded but before any requests have been serviced.
 """
+
+from __future__ import absolute_import
 
 # Django.
 import django.core.exceptions

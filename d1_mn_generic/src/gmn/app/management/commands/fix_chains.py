@@ -24,6 +24,8 @@ use of GMN in production, but it may happen during development or if the
 database is manipulated directly during testing.
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import logging
 
@@ -33,17 +35,18 @@ import django.core.management.base
 
 # App.
 import app.auth
+import app.management.commands.util
 import app.models
 import app.node
 import app.sysmeta
 import app.sysmeta_obsolescence
 import app.sysmeta_util
 import app.util
+import app.views.asserts
 import app.views.diagnostics
-import app.views.view_asserts
-import util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Fix any broken obsoleted and obsoletedBy references'
 
@@ -56,11 +59,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
-    util.abort_if_other_instance_is_running()
+    app.management.commands.util.abort_if_other_instance_is_running()
     fix_chains = obsoletedBy()
     fix_chains.run()
 
@@ -70,7 +74,7 @@ class Command(django.core.management.base.BaseCommand):
 
 class obsoletedBy(object):
   def __init__(self):
-    self._events = util.EventCounter()
+    self._events = app.management.commands.util.EventCounter()
 
   def run(self):
     try:
@@ -100,30 +104,34 @@ class obsoletedBy(object):
   def _set_obsoletes_if_missing(self, pid, obsoletes_pid):
     if not self._has_obsoletes(pid):
       app.sysmeta_obsolescence.set_obsolescence(
-        pid, obsoletes_pid=obsoletes_pid,
+        pid,
+        obsoletes_pid=obsoletes_pid,
       )
-      logging.debug('Added missing obsoletes ref. pid="{}" obsoletes="{}"'.format(
-        pid, obsoletes_pid
-      ))
+      logging.debug(
+        'Added missing obsoletes ref. pid="{}" obsoletes="{}"'.
+        format(pid, obsoletes_pid)
+      )
       self._events.count('Added missing obsoletes ref')
 
   def _set_obsoleted_by_if_missing(self, pid, obsoleted_by_pid):
     if not self._has_obsoleted_by(pid):
       app.sysmeta_obsolescence.set_obsolescence(
-        pid, obsoleted_by_pid=obsoleted_by_pid,
+        pid,
+        obsoleted_by_pid=obsoleted_by_pid,
       )
-      logging.debug('Added missing obsoletedBy ref. pid="{}" obsoletedBy="{}"'.format(
-        pid, obsoleted_by_pid
-      ))
+      logging.debug(
+        'Added missing obsoletedBy ref. pid="{}" obsoletedBy="{}"'.
+        format(pid, obsoleted_by_pid)
+      )
       self._events.count('Added missing obsoletedBy ref')
 
   def _has_obsoletes(self, pid):
     try:
       return app.sysmeta_util.get_sci_model(pid).obsoletes is not None
     except app.models.ScienceObject.DoesNotExist:
-      logging.debug('obsoletes ref to non-existing object. pid="{}"'.format(
-        pid
-      ))
+      logging.debug(
+        'obsoletes ref to non-existing object. pid="{}"'.format(pid)
+      )
       self._events.count('obsoletes ref to non-existing object')
       return True
 
@@ -131,8 +139,8 @@ class obsoletedBy(object):
     try:
       return app.sysmeta_util.get_sci_model(pid).obsoleted_by is not None
     except app.models.ScienceObject.DoesNotExist:
-      logging.debug('obsoletedBy ref to non-existing object. pid="{}"'.format(
-        pid
-      ))
+      logging.debug(
+        'obsoletedBy ref to non-existing object. pid="{}"'.format(pid)
+      )
       self._events.count('obsoletedBy ref to non-existing object')
       return True

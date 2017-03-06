@@ -17,15 +17,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Get Detail Code for DataONE exception based on REST call path
 """
+
+from __future__ import absolute_import
 
 # Stdlib
 import re
 
 
-class dataone_exception_to_detail_code():
+class dataone_exception_to_detail_code(object):
   def __init__(self):
     self.detail_codes_mapping = [
       (r'', 'MN_authentication', 'login', 'NotImplemented', 501, 1600),
@@ -100,12 +101,26 @@ class dataone_exception_to_detail_code():
       (r'/log/', 'MN_crud', 'log', 'InvalidRequest', 400, 1500),
       (r'/log/', 'MN_crud', 'log', 'ServiceFailure', 500, 1510),
       (r'/log/', 'MN_crud', 'log', 'NotImplemented', 501, 1501),
-      (r'/object$', 'MN_replication', 'listObjects', 'NotAuthorized', 401, 1520),
-      (r'/object$', 'MN_replication', 'listObjects', 'InvalidRequest', 400, 1540),
-      (r'/object$', 'MN_replication', 'listObjects', 'NotImplemented', 501, 1560),
-      (r'/object$', 'MN_replication', 'listObjects', 'ServiceFailure', 500, 1580),
+      (
+        r'/object$', 'MN_replication', 'listObjects', 'NotAuthorized', 401, 1520
+      ),
+      (
+        r'/object$', 'MN_replication', 'listObjects', 'InvalidRequest', 400,
+        1540
+      ),
+      (
+        r'/object$', 'MN_replication', 'listObjects', 'NotImplemented', 501,
+        1560
+      ),
+      (
+        r'/object$', 'MN_replication', 'listObjects', 'ServiceFailure', 500,
+        1580
+      ),
       (r'/object$', 'MN_replication', 'listObjects', 'InvalidToken', 401, 1530),
-      (r'/object$', 'MN_replication', 'listObjects', 'NotImplemented', 501, 1521),
+      (
+        r'/object$', 'MN_replication', 'listObjects', 'NotImplemented', 501,
+        1521
+      ),
       (r'', 'MN_replication', 'replicate', 'NotImplemented', 501, 2000),
       (r'', 'MN_replication', 'replicate', 'ServiceFailure', 500, 2001),
       (r'', 'MN_replication', 'replicate', 'NotAuthorized', 401, 2010),
@@ -119,7 +134,9 @@ class dataone_exception_to_detail_code():
       if path_rx == '':
         continue
       try:
-        if exception.name == exception_name and re.search(path_rx, request.path):
+        if exception.name == exception_name and re.search(
+          path_rx, request.path
+        ):
           return detail_code
       except AttributeError:
         pass

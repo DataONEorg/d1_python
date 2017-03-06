@@ -17,9 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Request handler middleware
 """
+
+from __future__ import absolute_import
 
 # Stdlib.
 import logging
@@ -41,7 +42,6 @@ class RequestHandler(object):
       logging.warning('django.conf.settings.ECHO_REQUEST_OBJECT=True')
       pp = pprint.PrettyPrinter(indent=2)
       return HttpResponse(
-        pp.pformat(request.read()),
-        d1_common.const.CONTENT_TYPE_TEXT
+        pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT
       )
     return None

@@ -35,10 +35,11 @@ def main():
     author_email='developers@dataone.org',
     url='http://dataone-python.readthedocs.io/en/latest/gmn/index.html',
     license='Apache License, Version 2.0',
-
     packages=setuptools.find_packages(),
     include_package_data=True,
-
+    exclude_package_data={
+      '': ['settings_site.py'],
+    },
     install_requires=[
       # GMN uses dataone.common directly but, to keep the versions consistent,
       # let it be included by dataone.libclient.
@@ -55,10 +56,7 @@ def main():
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
     ],
-
-    setup_requires=[
-      'setuptools_git == 1.1'
-    ],
+    setup_requires=['setuptools_git == 1.1'],
   )
 
 

@@ -31,6 +31,8 @@ verification on the node, the calls made through the connection are
 authenticated for the subjects.
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import logging
 
@@ -42,11 +44,12 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # App.
+import app.management.commands.util
 import app.middleware.session_cert
 import app.models
-import util
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'View or whitelist DataONE subjects in X.509 PEM certificate'
 
@@ -73,7 +76,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     if options['command'] not in ('view', 'whitelist'):
       logging.info(self.missing_args_message)
       return
@@ -104,7 +107,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _whitelist(self, primary_str):
     if app.models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject=app.models.subject(primary_str)
+      subject=app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
         u'Create, update and delete already enabled for subject: {}'.

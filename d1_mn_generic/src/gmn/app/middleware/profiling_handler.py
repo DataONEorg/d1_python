@@ -17,7 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Performance profiling middleware
 
 When this profiling middleware is enabled, a client can request a detailed
@@ -44,9 +43,10 @@ import hotshot.stats
 class ProfilingHandler(object):
   def __init__(self):
     # Disable this middleware layer if Django is not running in debug mode.
-    if django.conf.settings.DEBUG == False:
+    if not django.conf.settings.DEBUG:
       raise django.core.exceptions.MiddlewareNotUsed
 
+  # noinspection PyUnusedLocal
   def process_view(self, request, view, *args, **kwargs):
     # This middleware layer is disabled if Django is not running in debug mode
     # (see __init__()).

@@ -17,9 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Validate that System Metadata matches the corresponding science data object
 """
+
+from __future__ import absolute_import
 
 # D1.
 import d1_common.checksum
@@ -28,16 +29,16 @@ import d1_common.types.exceptions
 
 def validate_sysmeta_against_uploaded(request, sysmeta_pyxb):
   if not 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
-    _validate_sysmeta_filesize(request, sysmeta_pyxb)
+    _validate_sysmeta_file_size(request, sysmeta_pyxb)
     _validate_sysmeta_checksum(request, sysmeta_pyxb)
 
 
-def _validate_sysmeta_filesize(request, sysmeta_pyxb):
+def _validate_sysmeta_file_size(request, sysmeta_pyxb):
   if sysmeta_pyxb.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'Object size in System Metadata does not match that of the '
       u'uploaded object. sysmeta_pyxb={} bytes, uploaded={} bytes'
-        .format(sysmeta_pyxb.size, request.FILES['object'].size)
+      .format(sysmeta_pyxb.size, request.FILES['object'].size)
     )
 
 
@@ -49,7 +50,7 @@ def _validate_sysmeta_checksum(request, sysmeta_pyxb):
       0,
       u'Checksum in System Metadata does not match that of the uploaded object. '
       u'sysmeta_pyxb="{}", uploaded="{}"'
-        .format(sysmeta_pyxb.checksum.value().lower(), c.lower())
+      .format(sysmeta_pyxb.checksum.value().lower(), c.lower())
     )
 
 
@@ -60,9 +61,8 @@ def _get_checksum_calculator(sysmeta_pyxb):
     )
   except LookupError:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0,
-      u'Checksum algorithm is unsupported. algorithm="{}"'
-        .format(sysmeta_pyxb.checksum.algorithm)
+      0, u'Checksum algorithm is unsupported. algorithm="{}"'
+      .format(sysmeta_pyxb.checksum.algorithm)
     )
 
 

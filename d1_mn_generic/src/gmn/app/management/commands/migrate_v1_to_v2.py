@@ -20,6 +20,8 @@
 """Populate GMN v2 database from existing v1 database
 """
 
+from __future__ import absolute_import
+
 # Stdlib.
 import json
 import logging
@@ -43,31 +45,34 @@ import d1_client.cnclient_2_0
 
 # App.
 import app.auth
+import app.management.commands.util
 import app.models
 import app.node
 import app.sysmeta
 import app.sysmeta_obsolescence
 import app.util
+import app.views.asserts
 import app.views.diagnostics
-import app.views.view_asserts
-import util
-
 
 CONNECTION_STR = "host=''"
 
 ROOT_PATH = '/var/local/dataone'
+# noinspection PyUnresolvedReferences
 GMN_V1_SERVICE_PATH = os.path.join(
   ROOT_PATH, 'gmn/lib/python2.7/site-packages/service'
 )
 GMN_V1_SYSMETA_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/sysmeta')
 GMN_V1_OBJ_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/object')
 
+# noinspection PyUnresolvedReferences
 UNCONNECTED_CHAINS_PATH = os.path.join(
   ROOT_PATH, 'skipped_unconnected_chains.json'
 )
+# noinspection PyUnresolvedReferences
 UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 
 
+# noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   help = 'Migrate the contents of a GMN v1 instance to this v2 instance'
 
@@ -87,11 +92,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    util.log_setup(options['debug'])
+    app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
-    util.abort_if_other_instance_is_running()
+    app.management.commands.util.abort_if_other_instance_is_running()
     m = V2Migration()
     if not options['force'] and not self._db_is_empty():
       logging.error(
@@ -105,13 +111,14 @@ class Command(django.core.management.base.BaseCommand):
     q = app.models.IdNamespace.objects.all()
     return not len(q)
 
+
 #===============================================================================
 
 
 class V2Migration(object):
   def __init__(self):
     self._v1_cursor = self._create_v1_cursor()
-    self._events = util.EventCounter()
+    self._events = app.management.commands.util.EventCounter()
 
   def migrate(self):
     try:
@@ -174,6 +181,7 @@ class V2Migration(object):
 
   def _get_obsolescence_list(self):
     obsolescence_list = []
+    # noinspection SqlResolve
     self._v1_cursor.execute(
       """
       select pid, serial_version from mn_scienceobject;
@@ -196,6 +204,7 @@ class V2Migration(object):
   def _create_sciobj(self, topo_obsolescence_list):
     n = len(topo_obsolescence_list)
     for i, pid in enumerate(topo_obsolescence_list):
+      # noinspection SqlResolve
       self._v1_cursor.execute(
         """
         select * from mn_scienceobject where pid = %s;
@@ -305,6 +314,7 @@ class V2Migration(object):
   # Events
 
   def _migrate_events(self):
+    # noinspection SqlResolve
     self._v1_cursor.execute(
       """
       select *
@@ -346,6 +356,7 @@ class V2Migration(object):
 
   def _migrate_whitelist(self):
     app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
+    # noinspection SqlResolve
     self._v1_cursor.execute(
       """
       select * from mn_whitelistforcreateupdatedelete w
@@ -374,8 +385,9 @@ class V2Migration(object):
 
   def _update_node_doc(self):
     if not (
-      (not django.conf.settings.STAND_ALONE) and django.conf.settings.NODE_IDENTIFIER and
-      django.conf.settings.DATAONE_ROOT and django.conf.settings.CLIENT_CERT_PATH and
+      (not django.conf.settings.STAND_ALONE) and
+      django.conf.settings.NODE_IDENTIFIER and django.conf.settings.DATAONE_ROOT
+      and django.conf.settings.CLIENT_CERT_PATH and
       django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     ):
       self._log(
@@ -399,7 +411,8 @@ class V2Migration(object):
 
   def _create_cn_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      django.conf.settings.DATAONE_ROOT, cert_path=django.conf.settings.CLIENT_CERT_PATH,
+      django.conf.settings.DATAONE_ROOT,
+      cert_path=django.conf.settings.CLIENT_CERT_PATH,
       key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

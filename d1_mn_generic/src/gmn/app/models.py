@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Database models
 
 - Specify the GMN database schema via the Django Object Relational Model (ORM).
 - Wrappers for creating frequently used models (adding rows to tables).
 """
+
+from __future__ import absolute_import
 
 # Stdlib
 import datetime
@@ -43,11 +44,14 @@ from django.db import models
 # to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
 # related to its PID in IdNamespace.
 
+
 class IdNamespace(models.Model):
   did = models.CharField(max_length=800, unique=True)
 
+
 def did(id_str):
   return IdNamespace.objects.get_or_create(did=id_str)[0]
+
 
 # ------------------------------------------------------------------------------
 # DataONE Node
@@ -61,6 +65,7 @@ class Node(models.Model):
 def node(node_urn):
   return Node.objects.get_or_create(urn=node_urn)[0]
 
+
 # ------------------------------------------------------------------------------
 # DataONE Subject
 # ------------------------------------------------------------------------------
@@ -72,6 +77,7 @@ class Subject(models.Model):
 
 def subject(subject_str):
   return Subject.objects.get_or_create(subject=subject_str)[0]
+
 
 # ------------------------------------------------------------------------------
 # Checksum
@@ -87,6 +93,7 @@ def checksum_algorithm(checksum_algorithm_str):
     checksum_algorithm=checksum_algorithm_str
   )[0]
 
+
 # ------------------------------------------------------------------------------
 # Object format
 # ------------------------------------------------------------------------------
@@ -95,8 +102,11 @@ def checksum_algorithm(checksum_algorithm_str):
 class ScienceObjectFormat(models.Model):
   format = models.CharField(max_length=128, unique=True)
 
+
+# noinspection PyShadowingBuiltins
 def format(format_str):
   return ScienceObjectFormat.objects.get_or_create(format=format_str)[0]
+
 
 # ------------------------------------------------------------------------------
 # Science Object Base
@@ -115,24 +125,19 @@ class ScienceObject(models.Model):
   )
   size = models.BigIntegerField(db_index=True)
   submitter = models.ForeignKey(
-    Subject, models.CASCADE,
-    related_name='%(class)s_submitter'
+    Subject, models.CASCADE, related_name='%(class)s_submitter'
   )
   rights_holder = models.ForeignKey(
-    Subject, models.CASCADE,
-    related_name='%(class)s_rights_holder'
+    Subject, models.CASCADE, related_name='%(class)s_rights_holder'
   )
   origin_member_node = models.ForeignKey(
-    Node, models.CASCADE,
-    related_name='%(class)s_origin_member_node'
+    Node, models.CASCADE, related_name='%(class)s_origin_member_node'
   )
   authoritative_member_node = models.ForeignKey(
-    Node, models.CASCADE,
-    related_name='%(class)s_authoritative_member_node'
+    Node, models.CASCADE, related_name='%(class)s_authoritative_member_node'
   )
   obsoletes = models.OneToOneField(
-    IdNamespace, models.CASCADE, null=True,
-    related_name='%(class)s_obsoletes'
+    IdNamespace, models.CASCADE, null=True, related_name='%(class)s_obsoletes'
   )
   obsoleted_by = models.OneToOneField(
     IdNamespace, models.CASCADE, null=True,
@@ -142,12 +147,14 @@ class ScienceObject(models.Model):
   # Internal fields (not used in System Metadata)
   url = models.CharField(max_length=1024, unique=True)
 
+
 # ------------------------------------------------------------------------------
 # Replicas
 # ------------------------------------------------------------------------------
 
 # Reserve PIDs in the local identifier namespace for objects referenced in the
 # obsoletes and obsoletedBy fields by replicas.
+
 
 class ReplicaObsolescenceChainReference(models.Model):
   pid = models.OneToOneField(IdNamespace, models.CASCADE)
@@ -167,9 +174,7 @@ class ReplicaStatus(models.Model):
 def replica_status(status_str):
   assert status_str in ['queued', 'requested', 'completed', 'failed', 'invalidated'], \
     u'Invalid replication status. status="{}"'.format(status_str)
-  return ReplicaStatus.objects.get_or_create(
-    status=status_str
-  )[0]
+  return ReplicaStatus.objects.get_or_create(status=status_str)[0]
 
 
 class ReplicaInfo(models.Model):
@@ -179,13 +184,13 @@ class ReplicaInfo(models.Model):
 
 
 def replica_info(status_str, source_node_urn, timestamp=None):
-    replica_info_model = ReplicaInfo(
-      status=replica_status(status_str),
-      member_node=node(source_node_urn),
-      timestamp=timestamp or datetime.datetime.now(),
-    )
-    replica_info_model.save()
-    return replica_info_model
+  replica_info_model = ReplicaInfo(
+    status=replica_status(status_str),
+    member_node=node(source_node_urn),
+    timestamp=timestamp or datetime.datetime.now(),
+  )
+  replica_info_model.save()
+  return replica_info_model
 
 
 def update_replica_status(replica_info_model, status_str, timestamp=None):
@@ -238,12 +243,14 @@ def replication_queue(local_replica_model, size):
 #     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
 # </replica>
 
+
 class RemoteReplica(models.Model):
   # Relate to ScienceObject because tracking of remote replicas is only done for
   # existing local objects. The local sciobj may itself be a replica and may
   # have multiple replicas (ForeignKey, not OneToOneField).
   sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
   info = models.OneToOneField(ReplicaInfo, models.CASCADE)
+
 
 def remote_replica(sciobj_model, replica_info_model):
   remote_replica_model = RemoteReplica(
@@ -313,6 +320,7 @@ class EventLog(models.Model):
   subject = models.ForeignKey(Subject, models.CASCADE)
   timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
+
 # ------------------------------------------------------------------------------
 # System Metadata refresh queue
 # ------------------------------------------------------------------------------
@@ -343,8 +351,7 @@ class SystemMetadataRefreshQueue(models.Model):
 
 def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
   return SystemMetadataRefreshQueue.objects.get_or_create(
-    sciobj=ScienceObject.objects.get(pid__did=pid),
-    defaults={
+    sciobj=ScienceObject.objects.get(pid__did=pid), defaults={
       'status': sysmeta_refresh_status(status),
       'serial_version': serial_version,
       'sysmeta_timestamp': sysmeta_timestamp,
@@ -367,10 +374,10 @@ class Permission(models.Model):
 class WhitelistForCreateUpdateDelete(models.Model):
   subject = models.OneToOneField(Subject, models.CASCADE)
 
+
 def whitelist_for_create_update_delete(subject_str):
-  WhitelistForCreateUpdateDelete(
-    subject=subject(subject_str)
-  ).save()
+  WhitelistForCreateUpdateDelete(subject=subject(subject_str)).save()
+
 
 # ------------------------------------------------------------------------------
 # Replication Policy
@@ -398,4 +405,3 @@ class PreferredMemberNode(models.Model):
 class BlockedMemberNode(models.Model):
   node = models.ForeignKey(Node, models.CASCADE)
   replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
-
