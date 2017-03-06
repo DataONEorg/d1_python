@@ -37,3 +37,21 @@ See [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/lates
 * [DataONE ONEDrive](http://dataone-python.readthedocs.io/en/latest/onedrive/index.html)
 * [DataONE Test Utilities](http://dataone-python.readthedocs.io/en/latest/test/index.html)
 
+## Code style
+
+We try to follow [PEP8](https://www.python.org/dev/peps/pep-0008/), with the two
+main exceptions being that we use two spaces per indent and two lines between
+functions.
+
+To help keep code annotations accurate and commit diffs minimal, we use
+[YAPF](https://github.com/google/yapf) to format Python scripts before
+committing to GitHub. The style configuration file for YAPF is included in this
+repository, at `./yapf_style.cfg`.
+
+Contributors are strongly encouraged to set up automatic YAPF formatting before
+commit using a Git hook. A configuration file for [pre-commit](pre-commit.com)
+is included in this repository. To set up automatic formatting:
+
+    $ sudo pip install pre-commit
+    $ pre-commit autoupdate
+    $ pre-commit install
