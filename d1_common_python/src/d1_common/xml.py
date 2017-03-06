@@ -25,16 +25,17 @@ from __future__ import absolute_import
 
 # Stdlib
 import logging
-import StringIO
 import re
-import sys
 import xml.dom
 import xml.dom.minidom
 import xml.etree.ElementTree
 import xml.parsers.expat
 
+# 3rd party
+import pyxb
+
 # D1
-import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.types.dataoneTypes_v2_0
 
 
 def deserialize(doc_xml):
@@ -187,8 +188,8 @@ def _find_corresponding_element(a_el, a_tree, b_tree):
 def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
   try:
     if not _strip_and_compare_strings(
-      el.attrib[attr_name_expected],
-      attr_val_expected,
+        el.attrib[attr_name_expected],
+        attr_val_expected,
     ):
       raise CompareError(
         'Attribute contains invalid value. '
@@ -223,7 +224,7 @@ def is_equal_elements(a_el, b_el):
     if a_child_el.nodeType == a_child_el.TEXT_NODE and a_child_el.data != b_child_el.data:
       return False
     if a_child_el.nodeType == a_child_el.ELEMENT_NODE and not is_equal_elements(
-      a_child_el, b_child_el
+        a_child_el, b_child_el
     ):
       return False
   return True

@@ -24,7 +24,7 @@ In the DataONE Python stack, XML docs are represented in a few different ways.
 - Received and transmitted as UTF-8 text documents.
 - On the borders of the Python domain, handled as UTF-8 or Unicode strings.
 - Schema validation and manipulation in Python code as PyXB binding objects.
-- General processing as ElementTrees.  
+- General processing as ElementTrees.
 
 - PyXB provides translation to/from string and DOM.
 - ElementTree provides translation to/from string.
@@ -35,10 +35,7 @@ We select string as the "hub" representation for XML.
 from __future__ import absolute_import
 
 # Stdlib
-import codecs
-import os
 import re
-import unittest
 import xml.etree.ElementTree as etree
 
 # 3rd party
@@ -194,7 +191,7 @@ def pyxb_is_v2(pyxb_obj):
   return pyxb_obj._element().name().namespace() == v2_0.Namespace
 
 
-# Conversions between XML representations 
+# Conversions between XML representations
 
 
 def str_to_pyxb(xml_str):
@@ -221,7 +218,7 @@ def etree_to_pyxb(etree_obj):
   return pyxb_to_str(str_to_etree(etree_obj))
 
 
-# ElementTree 
+# ElementTree
 # https://docs.python.org/2/library/xml.etree.elementtree.html
 
 
@@ -270,8 +267,8 @@ def strip_log(etree_obj):
 def strip_logEntry(etree_obj):
   for event_el in etree_obj.findall('event'):
     if event_el.text not in (
-      'create', 'read', 'update', 'delete', 'replicate',
-      'synchronization_failed', 'replication_failed',
+        'create', 'read', 'update', 'delete', 'replicate',
+        'synchronization_failed', 'replication_failed',
     ):
       event_el.text = 'create'
 
@@ -285,27 +282,27 @@ def strip_node_list(etree_obj):
   for node_el in etree_obj.findall('node'):
     strip_node(node_el)
 
-    # if event_el.text not in
-    # print event_el.text
-    # if series_id_el is not None:
-    #   print '1'*100
-    #   print series_id_el
-    # for parent_el in etree_obj.find('seriesIdx/..', NS):
-    #   print '1'*100
-    # etree_obj.remove()
-    #etree_obj.remove(etree_obj.find('seriesIdx', NS))
-    # print '1'*100
-    # for el in etree_obj.findall('accessPolicy', NS):
-    #   print '2'*100
-    #   print el
-    #   for allow_el in el.findall('allow'):
-    #     print '3'*100
-    #     print allow_el
-    #     el.remove(allow_el)
-    #     # print allow_el
-    #   # el.pa
-    #   # print el.find("..")
-    #   # el.find("..").remove(el)
+    #  if event_el.text not in
+    #  print event_el.text
+    #  if series_id_el is not None:
+    #    print '1'*100
+    #    print series_id_el
+    #  for parent_el in etree_obj.find('seriesIdx/..', NS):
+    #    print '1'*100
+    #  etree_obj.remove()
+    # etree_obj.remove(etree_obj.find('seriesIdx', NS))
+    #  print '1'*100
+    #  for el in etree_obj.findall('accessPolicy', NS):
+    #    print '2'*100
+    #    print el
+    #    for allow_el in el.findall('allow'):
+    #      print '3'*100
+    #      print allow_el
+    #      el.remove(allow_el)
+    #      # print allow_el
+    #    # el.pa
+    #    # print el.find("..")
+    #    # el.find("..").remove(el)
 
 
 def v2_0_tag(element_name):

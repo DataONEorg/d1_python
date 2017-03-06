@@ -23,34 +23,30 @@
 import d1_common.const
 
 D1_ENV_DICT = {
-  'prod':
-    {
-      'name': 'Production',
-      'base_url': d1_common.const.URL_DATAONE_ROOT,
-      'host': 'cn.dataone.org',
-      'solr_base': '/cn/v1/query/solr/',
-    },
-  'stage':
-    {
-      'name': 'Stage',
-      'base_url': 'https://cn-stage.test.dataone.org/cn',
-      'host': 'cn-stage.test.dataone.org',
-      'solr_base': '/cn/v1/query/solr/',
-    },
-  'sandbox':
-    {
-      'name': 'Sandbox',
-      'base_url': 'https://cn-sandbox.test.dataone.org/cn',
-      'host': 'cn-sandbox.test.dataone.org',
-      'solr_base': '/cn/v1/query/solr/',
-    },
-  'dev':
-    {
-      'name': 'Development',
-      'base_url': 'https://cn-dev.test.dataone.org/cn',
-      'host': 'cn-dev.test.dataone.org',
-      'solr_base': '/cn/v1/query/solr/',
-    },
+  'prod': {
+    'name': 'Production',
+    'base_url': d1_common.const.URL_DATAONE_ROOT,
+    'host': 'cn.dataone.org',
+    'solr_base': '/cn/v1/query/solr/',
+  },
+  'stage': {
+    'name': 'Stage',
+    'base_url': 'https://cn-stage.test.dataone.org/cn',
+    'host': 'cn-stage.test.dataone.org',
+    'solr_base': '/cn/v1/query/solr/',
+  },
+  'sandbox': {
+    'name': 'Sandbox',
+    'base_url': 'https://cn-sandbox.test.dataone.org/cn',
+    'host': 'cn-sandbox.test.dataone.org',
+    'solr_base': '/cn/v1/query/solr/',
+  },
+  'dev': {
+    'name': 'Development',
+    'base_url': 'https://cn-dev.test.dataone.org/cn',
+    'host': 'cn-dev.test.dataone.org',
+    'solr_base': '/cn/v1/query/solr/',
+  },
 }
 
 

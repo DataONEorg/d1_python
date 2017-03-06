@@ -46,8 +46,9 @@ def encodePathElement(element):
   :return: URL encoded path element
   :return type: UTF-8 encoded string.
   """
-  return urllib.quote(element.encode('utf-8'), \
-               safe=const.URL_PATHELEMENT_SAFE_CHARS)
+  return urllib.quote(
+    element.encode('utf-8'), safe=const.URL_PATHELEMENT_SAFE_CHARS
+  )
 
 
 def decodePathElement(element):
@@ -69,8 +70,9 @@ def encodeQueryElement(element):
   :return: URL encoded query element
   :return type: UTF-8 encoded string.
   """
-  return urllib.quote(element.encode('utf-8'), \
-               safe=const.URL_QUERYELEMENT_SAFE_CHARS)
+  return urllib.quote(
+    element.encode('utf-8'), safe=const.URL_QUERYELEMENT_SAFE_CHARS
+  )
 
 
 def decodeQueryElement(element):
@@ -194,7 +196,7 @@ def urlencode(query, doseq=0):
       else:
         try:
           # is this a sufficient test for sequence-ness?
-          x = len(v)
+          len(v)
         except TypeError:
           # not a sequence
           v = encodeQueryElement(str(v))

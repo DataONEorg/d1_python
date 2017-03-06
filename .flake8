@@ -10,6 +10,8 @@ max-line-length = 100
 # E121 continuation line under-indented for hanging indent
 # E126 continuation line over-indented for hanging indent
 # E261 at least two spaces before inline comment
+# E114 indentation is not a multiple of four (comment)
+# E125 continuation line with same indent as next logical line
 
-ignore = E111,E121,E126,E261
+ignore = E111,E121,E126,E261,E114,E125
 

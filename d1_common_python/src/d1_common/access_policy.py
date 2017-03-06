@@ -78,9 +78,6 @@ and
 </accessPolicy>
 """
 
-# Stdlib
-import pprint
-
 # D1
 import d1_common.xml
 import d1_common.types.dataoneTypes
@@ -106,11 +103,9 @@ def get_normalized_permission_list(access_policy_pyxb):
     ('subj2', 'write'),
   ]
   """
-  return [
-    (s, get_normalized_permission_from_iter(p))
-    for s, p in
-    sorted(get_effective_permission_dict(access_policy_pyxb).items())
-  ]
+  return [(s, get_normalized_permission_from_iter(p))
+          for s, p in
+          sorted(get_effective_permission_dict(access_policy_pyxb).items())]
 
 
 def get_effective_permission_list(access_policy_pyxb, subject_str):
@@ -233,8 +228,7 @@ def _get_grouped_permission_dict(normalized_permission_list):
   for subj_str, perm_str in normalized_permission_list:
     perm_group_dict.setdefault(perm_str, set()).add(subj_str)
   return {
-    perm_str: sorted(subj_set)
-    for perm_str, subj_set in perm_group_dict.items()
+    perm_str: sorted(subj_set) for perm_str, subj_set in perm_group_dict.items()
   }
 
 

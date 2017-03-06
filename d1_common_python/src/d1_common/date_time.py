@@ -94,7 +94,7 @@ def from_http_datetime(http_full_datetime):
   Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
   http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
   - HTTP Full Dates are always in UTC.
-  - The returned datetime is timezone aware and fixed to UTC.  
+  - The returned datetime is timezone aware and fixed to UTC.
   """
   date_parts = list(email.utils.parsedate(http_full_datetime)[:6])
   year = date_parts[0]
@@ -132,7 +132,7 @@ def create_utc_datetime(*datetime_parts):
 def normalize_datetime_to_utc(date_time, timezone=None):
   """Adjust datetime to UTC by applying the timezone offset to the datetime and
   setting the timezone to UTC.
-  
+
   :param date_time: Datetime with or without timezone information.
   :type date_time: datetime.datetime
   :param timezone: Timezone specified as offset from UTC in minutes.
@@ -141,7 +141,7 @@ def normalize_datetime_to_utc(date_time, timezone=None):
   - Raises TypeError if datetime contains timezone, the timezone parameter is
     provided, and the two are in conflict.
   - Raises TypeError if datetime does not contain timezone information and the
-    timezone parameter is not provided.  
+    timezone parameter is not provided.
   - If datetime does not contain timezone information, the timezone parameter
     must be provided.
   - If datetime is already UTC, does nothing.
@@ -156,7 +156,7 @@ def normalize_datetime_to_utc(date_time, timezone=None):
     )
 
   if tz_dt_present and tz_arg_present and date_time.utcoffset() != \
-    datetime.timedelta(minutes=timezone):
+      datetime.timedelta(minutes=timezone):
     raise TypeError(
       'Timezone information was provided both within datetime '
       'and as timezone argument and the two were in conflict'

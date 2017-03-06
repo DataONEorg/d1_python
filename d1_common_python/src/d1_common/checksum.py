@@ -62,7 +62,7 @@ def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
 
 
 def create_checksum_object_from_stream(
-  f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+    f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_stream(f, algorithm)
   checksum_pyxb = dataoneTypes.checksum(checksum_str)
@@ -71,9 +71,9 @@ def create_checksum_object_from_stream(
 
 
 def calculate_checksum_on_stream(
-  f,
-  algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
-  chunk_size=DEFAULT_CHUNK_SIZE,
+    f,
+    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+    chunk_size=DEFAULT_CHUNK_SIZE,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
   for chunk in f.read(chunk_size):
@@ -82,7 +82,7 @@ def calculate_checksum_on_stream(
 
 
 def create_checksum_object_from_iterator(
-  itr, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+    itr, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_iterator(itr, algorithm)
   checksum_pyxb = dataoneTypes.checksum(checksum_str)
@@ -91,8 +91,8 @@ def create_checksum_object_from_iterator(
 
 
 def calculate_checksum_on_iterator(
-  itr,
-  algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+    itr,
+    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
   for chunk in itr:
@@ -115,7 +115,7 @@ def checksums_are_equal(checksum_a_pyxb, checksum_b_pyxb):
       'a="{}" b="{}'
       .format(checksum_a_pyxb.algorithm, checksum_b_pyxb.algorithm)
     )
-  return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower() \
+  return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower()
 
 
 def format_checksum(checksum_pyxb):

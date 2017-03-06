@@ -21,7 +21,6 @@
 """
 
 import unittest
-import urlparse
 
 import d1_common.url
 

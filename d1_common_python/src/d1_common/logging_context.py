@@ -3,8 +3,6 @@
 Note: Not created by DataONE.
 Source: https://docs.python.org/2/howto/logging-cookbook.html
 """
-import logging
-import sys
 
 
 class LoggingContext(object):
