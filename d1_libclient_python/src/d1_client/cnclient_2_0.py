@@ -75,9 +75,7 @@ class CoordinatingNodeClient_2_0(
   @d1_common.util.utf8_to_unicode
   def deleteObject(self, pid):
     response = self.deleteObjectResponse(pid)
-    return self._read_dataone_type_response(
-      response, d1_common.types.dataoneTypes_v2_0.Identifier
-    )
+    return self._read_dataone_type_response(response, 'Identifier')
 
   #=========================================================================
   # Read API
@@ -87,7 +85,7 @@ class CoordinatingNodeClient_2_0(
   def listObjectsResponse(
     self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
     nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+    vendorSpecific=None,
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -98,7 +96,7 @@ class CoordinatingNodeClient_2_0(
       'replicaStatus': replicaStatus,
       'nodeId': nodeId,
       'start': int(start),
-      'count': int(count)
+      'count': int(count),
     }
     return self.GET('object', query=query, headers=vendorSpecific)
 
@@ -106,7 +104,7 @@ class CoordinatingNodeClient_2_0(
   def listObjects(
     self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
     nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+    vendorSpecific=None,
   ):
     response = self.listObjectsResponse(
       fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
