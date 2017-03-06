@@ -63,11 +63,13 @@ class Command(django.core.management.base.BaseCommand):
   def handle(self, *args, **options):
     app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(app.management.commands.util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
     app.management.commands.util.abort_if_other_instance_is_running()
     fix_chains = FixSystemMetadata()
     fix_chains.run()
+
 
 #===============================================================================
 

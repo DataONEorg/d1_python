@@ -66,7 +66,8 @@ class Command(django.core.management.base.BaseCommand):
   def handle(self, *args, **options):
     app.management.commands.util.log_setup(options['debug'])
     logging.info(
-      u'Running management command: {}'.format(app.management.commands.util.get_command_name())
+      u'Running management command: {}'.
+      format(app.management.commands.util.get_command_name())
     )
     app.management.commands.util.abort_if_other_instance_is_running()
     m = UpdateAccessPolicy()
@@ -91,8 +92,7 @@ class UpdateAccessPolicy(object):
   def _assert_path_is_dir(self, dir_path):
     if not os.path.isdir(dir_path):
       raise django.core.management.base.CommandError(
-        'Invalid path. path="{}"'.
-        format(dir_path)
+        'Invalid path. path="{}"'.format(dir_path)
       )
 
   def _update_access_policies(self, sysmeta_root_path):
@@ -100,11 +100,13 @@ class UpdateAccessPolicy(object):
       for file_name in file_list:
         sysmeta_xml_path = os.path.join(dir_path, file_name)
         self._update_access_policy(sysmeta_xml_path)
-  
+
   def _update_access_policy(self, sysmeta_xml_path):
     try:
       sysmeta_pyxb = self._deserialize_sysmeta_xml_file(sysmeta_xml_path)
-      self._access_policy_to_model(sysmeta_pyxb.identifier.value(), sysmeta_pyxb)
+      self._access_policy_to_model(
+        sysmeta_pyxb.identifier.value(), sysmeta_pyxb
+      )
     except django.core.management.base.CommandError as e:
       logging.error(str(e))
       self._events.count('Failed')
