@@ -51,7 +51,7 @@ To help keep the style consistent and commit logs, blame/praise and other code a
 
 Configuration files for `YAPF` and `Flake8` are included in this repository.
 
-Contributors are encouraged to set up the hooks before creating PRs. This can be done automatically, with [pre-commit](pre-commit.com), for which a configuration file has also been included.
+Contributors are encouraged to set up the hooks before creating PRs. This can be done automagically with [pre-commit](pre-commit.com), for which a configuration file has also been included.
 
 To set up automatic validation and formatting:
 
@@ -62,11 +62,11 @@ To set up automatic validation and formatting:
 
 Notes:
 
-* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. A new commit can then be issued. If no modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
+* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. A new commit can then be issued. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
 * `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring a new commit.
 
-* If desired, the number of extra commits can be reduced with workflow adjustments:
+* If desired, the number of extra commits caused by reformatting and validation can be reduced with workflow adjustments:
 
   * **trailing whitespace**: Use an editor that can strip trailing whitespace on save. E.g., for PyCharm, this setting is at `Editor > General > Strip trailing spaces on Save`.
 
