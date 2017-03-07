@@ -53,7 +53,9 @@ def abs_path(rel_path):
   """Convert a path that is relative to the module from which this function is
   called, to an absolute path.
   """
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), rel_path)
+  return os.path.join(
+    os.path.dirname(sys._getframe(1).f_code.co_filename), rel_path
+  )
 
 
 def get_content_type(content_type):
