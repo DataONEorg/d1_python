@@ -39,7 +39,7 @@ See [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/lates
 
 ## Contributing
 
-Pull Requests (PRs) are very welcome! Before you start coding, feel free to reach out to us and let us know what you plan to implement. We might be able to point you in the right direction.
+Pull Requests (PRs) are welcome! Before you start coding, feel free to reach out to us and let us know what you plan to implement. We might be able to point you in the right direction.
 
 We try to follow [PEP8](https://www.python.org/dev/peps/pep-0008/), with the main exception being that we use two instead of four spaces per indent.
 
@@ -51,9 +51,9 @@ To help keep the style consistent and commit logs, blame/praise and other code a
 
 Configuration files for `YAPF` and `Flake8` are included in this repository.
 
-Contributors are strongly encouraged to set up the hooks before creating PRs. This can be done automatically, with [pre-commit](pre-commit.com), for which a configuration file has also been included.
+Contributors are encouraged to set up the hooks before creating PRs. This can be done automatically, with [pre-commit](pre-commit.com), for which a configuration file has also been included.
 
-To set up automatic formatting:
+To set up automatic validation and formatting:
 
     $ sudo pip install pre-commit
     $ cd <a folder in the Git working tree for the repository>
@@ -62,11 +62,11 @@ To set up automatic formatting:
 
 Notes:
 
-* If the `YAPF` or `trailing-whitespace` hooks modify the file that is being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted file and run the unit and integration tests again in order make sure the reformat did not break anything. A new commit can then be issued to commit the file. If no modifications have been made to the file, the commit then goes through, with the hooks showing a status of `Passed`.
+* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. A new commit can then be issued. If no modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
-* `Flake8` only performs validation, not formatting. If validation fails, the issues must be fixed in order to commit the file. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring a new commit.
+* `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring a new commit.
 
-* If desired, the number commits to issue can be reduced with workflow adjustments:
+* If desired, the number of extra commits can be reduced with workflow adjustments:
 
   * **trailing whitespace**: Use an editor that can strip trailing whitespace on save. E.g., for PyCharm, this setting is at `Editor > General > Strip trailing spaces on Save`.
 
