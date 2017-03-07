@@ -28,18 +28,11 @@
 """
 
 # Stdlib
-import d1_common.const
-import logging
 import os
 
 # D1
-
-
-# Create absolute path from path that is relative to the module from which
-# the function is called.
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
+import d1_common.const
+import d1_common.util
 
 ################################################################################
 # User configurable settings.
@@ -146,7 +139,7 @@ ZOTERO_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'zotero_library')
 REGION_TREE_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'region_tree')
 
 # Set the default file to log to or None for logging only to stdout
-#LOG_FILE_PATH = make_absolute('onedrive.log')
+#LOG_FILE_PATH = d1_common.util.make_absolute('onedrive.log')
 #LOG_FILE_PATH = None
 LOG_FILE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'onedrive.log')
 
@@ -217,36 +210,19 @@ FUSE_NOTHREADS = DEBUG # (enabled when running in debug mode)
 
 # Path to the file containing the icon that is displayed for ONEDrive when
 # accessing the filesystem through a GUI.
-MACFUSE_ICON = make_absolute(os.path.join('impl', 'd1.icon'))
+MACFUSE_ICON = d1_common.util.make_absolute(os.path.join('impl', 'd1.icon'))
 
 # Mount the filesystem as a local disk, not a network connected disk.
 MACFUSE_LOCAL_DISK = True
 
 # Paths that have special meaning to the operating system and that should be
 # ignored by ONEDrive.
-IGNORE_SPECIAL = set(
-  [
-    # OSX / Finder
-    '._',
-    '.DS_Store',
-    'Backups.backupdb',
-    '.Trashes',
-    '.fseventsd',
-    'MobileBackups.trash',
-    'Backups.backupdb',
-    '.hidden',
-    'Contents',
-    # KDE / Krusader
-    '.directory',
-    '.Trash',
-    'BDMV',
-    '.xdg-volume-info',
-    # Windows
-    'desktop.ini',
-    'folder.jpg',
-    'folder.gif',
-  ]
-)
+IGNORE_SPECIAL = {
+  '._', '.DS_Store', 'Backups.backupdb', '.Trashes', '.fseventsd',
+  'MobileBackups.trash', 'Backups.backupdb', '.hidden', 'Contents',
+  '.directory', '.Trash', 'BDMV', '.xdg-volume-info', 'desktop.ini',
+  'folder.jpg', 'folder.gif'
+}
 
 # Solr
 

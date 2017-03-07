@@ -30,13 +30,16 @@ Unit tests for ResourceMapGenerator and ResourceMapParser.
 """
 
 # Stdlib
-import logging
-import os
-import sys
 import unittest
+
+# 3rd party
+import rdflib
+import foresite
 
 # D1
 import d1_common.test_case_with_url_compare
+import d1_common.util
+import d1_client.data_package
 
 # TODO: Update tests for new OAI-ORE library
 
@@ -54,13 +57,6 @@ import d1_common.test_case_with_url_compare
 # import d1_client.data_package
 # import util
 # import shared_context
-#
-#
-# # Create absolute path from path that is relative to the module from which
-# # the function is called.
-# def make_absolute(p):
-#   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-#
 #
 # rdflib.plugin.register(
 #   'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'
@@ -80,7 +76,7 @@ import d1_common.test_case_with_url_compare
 
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
 class TestDataPackage(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     # The example_oai_ore.xml contains one resource map that describes one
@@ -90,7 +86,7 @@ class TestDataPackage(
     # of the aggregated resources describe their relationships. "def" documents
     # "ghi", and "jkl". The reverse relationship, "isDocumentedBy" is recorded
     # in the "ghi" and "jkl" entries.
-    self.ore_doc = open(make_absolute('./expected_oai_ore.xml')).read()
+    self.ore_doc = open(d1_common.util.abs_path('./expected_oai_ore.xml')).read()
     self.generator = d1_client.data_package.ResourceMapGenerator()
     self.parser = d1_client.data_package.ResourceMapParser(self.ore_doc)
 
@@ -232,135 +228,95 @@ class TestDataPackage(
   def check_triples(self, doc):
     # for created and modified, only subject and predicate are checked, as the
     # the datetimes are set to the current time.
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://www.openarchives.org/ore/terms/describes',
-        'https://cn.dataone.org/cn/v1/resolve/abc#aggregation'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-        'http://www.openarchives.org/ore/terms/ResourceMap'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://purl.org/dc/terms/modified'
-      ) in [(d[0], d[1]) for d in doc]
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://purl.org/dc/elements/1.1/format', 'application/rdf+xml'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://purl.org/dc/terms/identifier', 'abc'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://purl.org/dc/terms/creator',
-        'http://foresite-toolkit.googlecode.com/#pythonAgent'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc',
-        'http://purl.org/dc/terms/created'
-      ) in [(d[0], d[1]) for d in doc]
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
-        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-        'http://www.openarchives.org/ore/terms/Aggregation'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'http://www.openarchives.org/ore/terms/Aggregation',
-        'http://www.w3.org/2001/01/rdf-schema#isDefinedBy',
-        'http://www.openarchives.org/ore/terms/'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'http://www.openarchives.org/ore/terms/Aggregation',
-        'http://www.w3.org/2001/01/rdf-schema#label', 'Aggregation'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
-        'http://www.openarchives.org/ore/terms/aggregates',
-        'https://cn.dataone.org/cn/v1/resolve/def'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/def',
-        'http://purl.org/spar/cito/documents',
-        'https://cn.dataone.org/cn/v1/resolve/jkl'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/def',
-        'http://purl.org/spar/cito/documents',
-        'https://cn.dataone.org/cn/v1/resolve/ghi'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/def',
-        'http://purl.org/dc/terms/identifier', 'def'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
-        'http://www.openarchives.org/ore/terms/aggregates',
-        'https://cn.dataone.org/cn/v1/resolve/jkl'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/jkl',
-        'http://purl.org/dc/terms/identifier', 'jkl'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/jkl',
-        'http://purl.org/spar/cito/isDocumentedBy',
-        'https://cn.dataone.org/cn/v1/resolve/def'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
-        'http://www.openarchives.org/ore/terms/aggregates',
-        'https://cn.dataone.org/cn/v1/resolve/ghi'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/ghi',
-        'http://purl.org/spar/cito/isDocumentedBy',
-        'https://cn.dataone.org/cn/v1/resolve/def'
-      ) in doc
-    )
-    self.assertTrue(
-      (
-        'https://cn.dataone.org/cn/v1/resolve/ghi',
-        'http://purl.org/dc/terms/identifier', 'ghi'
-      ) in doc
-    )
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://www.openarchives.org/ore/terms/describes',
+      'https://cn.dataone.org/cn/v1/resolve/abc#aggregation'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+      'http://www.openarchives.org/ore/terms/ResourceMap'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://purl.org/dc/terms/modified'
+    ) in [(d[0], d[1]) for d in doc])
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://purl.org/dc/elements/1.1/format', 'application/rdf+xml'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://purl.org/dc/terms/identifier', 'abc'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://purl.org/dc/terms/creator',
+      'http://foresite-toolkit.googlecode.com/#pythonAgent'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc',
+      'http://purl.org/dc/terms/created'
+    ) in [(d[0], d[1]) for d in doc])
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+      'http://www.openarchives.org/ore/terms/Aggregation'
+    ) in doc)
+    self.assertTrue((
+      'http://www.openarchives.org/ore/terms/Aggregation',
+      'http://www.w3.org/2001/01/rdf-schema#isDefinedBy',
+      'http://www.openarchives.org/ore/terms/'
+    ) in doc)
+    self.assertTrue((
+      'http://www.openarchives.org/ore/terms/Aggregation',
+      'http://www.w3.org/2001/01/rdf-schema#label', 'Aggregation'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
+      'http://www.openarchives.org/ore/terms/aggregates',
+      'https://cn.dataone.org/cn/v1/resolve/def'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/def',
+      'http://purl.org/spar/cito/documents',
+      'https://cn.dataone.org/cn/v1/resolve/jkl'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/def',
+      'http://purl.org/spar/cito/documents',
+      'https://cn.dataone.org/cn/v1/resolve/ghi'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/def',
+      'http://purl.org/dc/terms/identifier', 'def'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
+      'http://www.openarchives.org/ore/terms/aggregates',
+      'https://cn.dataone.org/cn/v1/resolve/jkl'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/jkl',
+      'http://purl.org/dc/terms/identifier', 'jkl'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/jkl',
+      'http://purl.org/spar/cito/isDocumentedBy',
+      'https://cn.dataone.org/cn/v1/resolve/def'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/abc#aggregation',
+      'http://www.openarchives.org/ore/terms/aggregates',
+      'https://cn.dataone.org/cn/v1/resolve/ghi'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/ghi',
+      'http://purl.org/spar/cito/isDocumentedBy',
+      'https://cn.dataone.org/cn/v1/resolve/def'
+    ) in doc)
+    self.assertTrue((
+      'https://cn.dataone.org/cn/v1/resolve/ghi',
+      'http://purl.org/dc/terms/identifier', 'ghi'
+    ) in doc)

@@ -20,8 +20,6 @@
 # limitations under the License.
 """DataONE Command-Line Interface package
 """
-import os
-import re
 import setuptools
 
 import d1_client_cli

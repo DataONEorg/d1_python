@@ -29,8 +29,6 @@
 
 # Stdlib
 import logging
-import os
-import re
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

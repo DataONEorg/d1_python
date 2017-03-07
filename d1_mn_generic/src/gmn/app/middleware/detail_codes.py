@@ -130,12 +130,13 @@ class dataone_exception_to_detail_code(object):
     ]
 
   def detail_code(self, request, exception):
-    for path_rx, module, method, exception_name, error_code, detail_code in self.detail_codes_mapping:
+    for path_rx, module, method, exception_name, error_code, detail_code \
+        in self.detail_codes_mapping:
       if path_rx == '':
         continue
       try:
         if exception.name == exception_name and re.search(
-          path_rx, request.path
+            path_rx, request.path
         ):
           return detail_code
       except AttributeError:

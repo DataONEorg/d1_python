@@ -36,21 +36,25 @@ import d1_common.checksum
 # App
 
 EG_CHECKSUM_GMN = (
-  """<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
-  'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
+  '<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" '
+  'xmlns:ns1="http://ns.dataone.org/service/types/v1">'
+  '3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>', 'SHA-1',
+  '3f56de593b6ffc536253b799b429453e3673fc19',
 )
 
 # TODO.
 EG_CHECKSUM_KNB = ("""""", '', '')
 
 EG_BAD_CHECKSUM_1 = (
-  """<?xml version="1.0" ?><ns1:checksum invalid_attribute="invalid" algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
-  '', ''
+  '<?xml version="1.0" ?><ns1:checksum invalid_attribute="invalid" '
+  'algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">'
+  '3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>', '', ''
 )
 
 EG_BAD_CHECKSUM_2 = (
-  """<?xml version="1.0" ?><ns1:checksumINVALID algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
-  '', ''
+  '<?xml version="1.0" ?><ns1:checksumINVALID algorithm="SHA-1" '
+  'xmlns:ns1="http://ns.dataone.org/service/types/v1">'
+  '3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>', '', ''
 )
 
 

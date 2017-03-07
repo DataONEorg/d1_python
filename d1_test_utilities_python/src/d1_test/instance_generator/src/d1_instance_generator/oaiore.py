@@ -35,7 +35,6 @@ Requires:
 
 # Stdlib
 import sys
-import optparse
 import logging
 
 # 3rd party
@@ -61,12 +60,12 @@ def main():
 
 
 def generate_resource_map(
-  resourcemap_id="resouce_map_id", aggregation_id="aggregation_id", relations={}
+    resourcemap_id="resouce_map_id", aggregation_id="aggregation_id",
+    relations={}
 ):
   """
   relations = {metaid:[data id, data id, ...], ...}
   """
-  uris = {}
   foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
   aggr = foresite.Aggregation(aggregation_id)
   for sci_id in relations.keys():
@@ -170,7 +169,9 @@ def example1():
   # We could reference the science data here - but that only works for a
   # single data set
   #res_2._dcterms.references = scidata_id
-  res_2._dcterms.description = "A reference to a science metadata document using a DataONE identifier."
+  res_2._dcterms.description = (
+    "A reference to a science metadata document using a DataONE identifier."
+  )
   res_2._cito.documents = scidata_uri
 
   #create the aggregation

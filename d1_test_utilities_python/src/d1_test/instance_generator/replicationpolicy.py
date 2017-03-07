@@ -34,7 +34,6 @@ import random
 import d1_common.types.dataoneTypes
 
 # App
-import dates
 import random_data
 
 
@@ -43,14 +42,18 @@ def generate():
   n = random.randint(1, 10)
   nodes = []
   for i in xrange(0, n):
-    nodes.append(u"preferredMemberNode_" + \
-                 random_data.random_unicode_string_no_whitespace(5,10))
+    nodes.append(
+      u"preferredMemberNode_" +
+      random_data.random_unicode_string_no_whitespace(5, 10)
+    )
   res.preferredMemberNode = nodes
   n = random.randint(1, 10)
   nodes = []
   for i in xrange(0, n):
-    nodes.append(u"blockedMemberNode_" + \
-                 random_data.random_unicode_string_no_whitespace(5,10) )
+    nodes.append(
+      u"blockedMemberNode_" +
+      random_data.random_unicode_string_no_whitespace(5, 10)
+    )
   res.blockedMemberNode = nodes
   res.replicationAllowed = random_data.random_bool()
   if res.replicationAllowed:

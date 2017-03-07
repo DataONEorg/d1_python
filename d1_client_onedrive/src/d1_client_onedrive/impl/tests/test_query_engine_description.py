@@ -32,9 +32,7 @@ import unittest
 
 # D1
 sys.path.append('../..')
-import impl.clients.query_engine_description as query_engine_description
-import command_echoer
-from object_tree_test_sample import object_tree
+import impl.clients.query_engine_description as query_engine_description # noqa: E402
 
 options = {}
 

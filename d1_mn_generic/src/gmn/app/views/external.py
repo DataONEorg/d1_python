@@ -364,8 +364,9 @@ def post_error(request):
   """
   app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
   app.views.asserts.xml_document_not_too_large(request.FILES['message'])
-  synchronization_failed_xml = \
-    app.views.util.read_utf8_xml(request.FILES['message'])
+  synchronization_failed_xml = app.views.util.read_utf8_xml(
+    request.FILES['message']
+  )
   try:
     synchronization_failed = d1_common.types.exceptions.deserialize(
       synchronization_failed_xml.encode('utf-8')
@@ -486,10 +487,8 @@ def post_refresh_system_metadata(request):
                                      dateSysMetaLastModified) → boolean
   """
   app.views.asserts.post_has_mime_parts(
-    request, (
-      ('field', 'pid'), ('field', 'serialVersion'),
-      ('field', 'dateSysMetaLastModified'),
-    )
+    request, (('field', 'pid'), ('field', 'serialVersion'),
+              ('field', 'dateSysMetaLastModified'),)
   )
   app.views.asserts.is_pid_of_existing_object(request.POST['pid'])
   app.models.sysmeta_refresh_queue(
@@ -691,8 +690,7 @@ def post_replicate(request):
   app.views.asserts.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = \
-    app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
   sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
   app.sysmeta_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb

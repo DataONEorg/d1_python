@@ -28,14 +28,9 @@
 """
 
 # Stdlib
-import hashlib
 import logging
-import os
-import pprint
-import re
 
 # D1
-import d1_client.d1client
 import d1_common.date_time
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
@@ -157,4 +152,4 @@ class CommandProcessor():
           record[date_field
                  ] = d1_common.date_time.from_iso8601(record[date_field])
         except Exception as e:
-          log.exception(e)
+          logging.exception(e)

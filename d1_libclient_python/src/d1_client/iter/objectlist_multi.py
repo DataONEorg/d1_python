@@ -21,28 +21,17 @@
 """
 
 # Stdlib
-import datetime
-import json
 import logging
 import multiprocessing
 import sys
-import time
-import unittest
-import urlparse
-
-# 3rd party
-# import responses # pip install responses
-import requests
 
 # D1
 import d1_common.type_conversions
 
 # App
 sys.path.append('..')
-import d1_client.mnclient_1_1
-import d1_client.mnclient_2_0
-import d1_common.types.dataoneTypes_v1_1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_client.mnclient_1_1 # noqa: E402
+import d1_client.mnclient_2_0 # noqa: E402
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100
@@ -58,14 +47,14 @@ class ObjectListIteratorMulti(object):
   """
 
   def __init__(
-    self,
-    base_url,
-    page_size=OBJECT_LIST_PAGE_SIZE,
-    max_workers=MAX_WORKERS,
-    max_queue_size=MAX_QUEUE_SIZE,
-    major_version=MAJOR_VERSION,
-    client_args_dict=None,
-    listObjects_args_dict=None,
+      self,
+      base_url,
+      page_size=OBJECT_LIST_PAGE_SIZE,
+      max_workers=MAX_WORKERS,
+      max_queue_size=MAX_QUEUE_SIZE,
+      major_version=MAJOR_VERSION,
+      client_args_dict=None,
+      listObjects_args_dict=None,
   ):
     self._base_url = base_url
     self._page_size = page_size
@@ -110,8 +99,8 @@ def _get_total_object_count(base_url, client_args_dict, listObjects_args_dict):
 
 
 def _get_all_pages(
-  queue, base_url, page_size, max_workers, client_args_dict,
-  listObjects_args_dict
+    queue, base_url, page_size, max_workers, client_args_dict,
+    listObjects_args_dict
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
@@ -140,8 +129,8 @@ def _get_all_pages(
 
 
 def _get_page(
-  queue, base_url, page_idx, n_pages, page_size, client_args_dict,
-  listObjects_args_dict
+    queue, base_url, page_idx, n_pages, page_size, client_args_dict,
+    listObjects_args_dict
 ):
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
     base_url, **client_args_dict

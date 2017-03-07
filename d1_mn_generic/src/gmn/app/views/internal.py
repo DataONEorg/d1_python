@@ -66,8 +66,9 @@ def home(request):
 
   n_science_objects = '{:,}'.format(app.models.ScienceObject.objects.count())
 
-  avg_sci_data_size_bytes = app.models.ScienceObject.objects\
-    .aggregate(Avg('size'))['size__avg'] or 0
+  avg_sci_data_size_bytes = app.models.ScienceObject.objects.aggregate(
+    Avg('size')
+  )['size__avg'] or 0
   avg_sci_data_size = '{:,}'.format(int(avg_sci_data_size_bytes))
 
   n_objects_by_format = app.models.ScienceObject.objects.values(
@@ -84,8 +85,8 @@ def home(request):
 
   n_unique_subjects = '{:,}'.format(app.models.Subject.objects.count())
 
-  n_storage_used = app.models.ScienceObject.objects\
-    .aggregate(Sum('size'))['size__sum'] or 0
+  n_storage_used = app.models.ScienceObject.objects.aggregate(Sum('size')
+                                                              )['size__sum'] or 0
   n_storage_free = _get_free_space(django.conf.settings.OBJECT_STORE_PATH)
   storage_space = u'{} GiB / {} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3

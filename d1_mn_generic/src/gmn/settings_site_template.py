@@ -19,23 +19,11 @@
 # limitations under the License.
 """Global settings for GMN
 
-This file contains settings that are specific for an instance of GMN.
+This file contains settings that are specific to an instance of GMN.
 """
 
 from __future__ import absolute_import
-
-# Stdlib.
-import os
-
-# D1.
 import d1_common.const
-
-
-# Create absolute path from path that is relative to the module from which
-# the function is called.
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
 
 # ==============================================================================
 # Debugging
@@ -307,19 +295,17 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 # added to the ones discovered by connecting to the DataONE root CN. See the
 # DATAONE_ROOT setting. If the STAND_ALONE setting is set to True, these become
 # the only trusted subjects.
-DATAONE_TRUSTED_SUBJECTS = set(
-  [
-    # For testing and debugging, it's possible to add the public subject here.
-    # This circumvents all access control, allowing any method to be called
-    # from an unauthenticated connection.
-    #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
-    # As with the public subject, it's possible to add the authenticatedUser
-    # subject here, to let any authenticated user access any method.
-    #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
-    # Specific authenticated users can also be added.
-    #'any-authenticated-user-subject',
-  ]
-)
+DATAONE_TRUSTED_SUBJECTS = set([
+  # For testing and debugging, it's possible to add the public subject here.
+  # This circumvents all access control, allowing any method to be called
+  # from an unauthenticated connection.
+  #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
+  # As with the public subject, it's possible to add the authenticatedUser
+  # subject here, to let any authenticated user access any method.
+  #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
+  # Specific authenticated users can also be added.
+  #'any-authenticated-user-subject',
+])
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
@@ -371,33 +357,32 @@ REQUIRE_WHITELIST_FOR_UPDATE = True
 
 # Postgres database connection.
 DATABASES = {
-  'default':
-    {
-      # Postgres
-      'ENGINE': 'django.db.backends.postgresql_psycopg2',
-      'NAME': 'gmn2',
-      # By default, GMN uses Postgres Peer authentication, which does not
-      # require a username and password.
-      'USER': '',
-      'PASSWORD': '',
-      # Set HOST to empty string for localhost.
-      'HOST': '',
-      # Set PORT to empty string for default.
-      'PORT': '',
-      # Wrap each HTTP request in an implicit transaction. The transaction is
-      # rolled back if the view does not return successfully. Upon a successful
-      # return, the transaction is committed, thus making all modifications that
-      # the view made to the database visible simultaneously, bringing the
-      # database directly from one valid state to the next.
-      #
-      # Transactions are also important for views that run only select queries and
-      # run more than a single query, as they hide any transitions between valid
-      # states that may happen between queries.
-      #
-      # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
-      # the basis of concurrency control in GMN.
-      'ATOMIC_REQUESTS': True,
-    }
+  'default': {
+    # Postgres
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'gmn2',
+    # By default, GMN uses Postgres Peer authentication, which does not
+    # require a username and password.
+    'USER': '',
+    'PASSWORD': '',
+    # Set HOST to empty string for localhost.
+    'HOST': '',
+    # Set PORT to empty string for default.
+    'PORT': '',
+    # Wrap each HTTP request in an implicit transaction. The transaction is
+    # rolled back if the view does not return successfully. Upon a successful
+    # return, the transaction is committed, thus making all modifications that
+    # the view made to the database visible simultaneously, bringing the
+    # database directly from one valid state to the next.
+    #
+    # Transactions are also important for views that run only select queries and
+    # run more than a single query, as they hide any transitions between valid
+    # states that may happen between queries.
+    #
+    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
+    # the basis of concurrency control in GMN.
+    'ATOMIC_REQUESTS': True,
+  }
 }
 
 # Paths to the GMN object store. The bytes of all the objects handled by GMN are
@@ -430,7 +415,7 @@ PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
 # Path to the log file.
-LOG_PATH = make_absolute('./gmn.log')
+LOG_PATH = d1_common.util.abs_path('./gmn.log')
 
 # Set up logging.
 
@@ -444,73 +429,50 @@ else:
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': True,
-  'formatters':
-    {
-      'verbose':
-        {
-          'format':
-            '%(asctime)s %(levelname)-8s %(name)s %(module)s '
-            '%(process)d %(thread)d %(message)s',
-          'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-      'simple': {
-        'format': '%(levelname)s %(message)s'
-      },
+  'formatters': {
+    'verbose': {
+      'format':
+        '%(asctime)s %(levelname)-8s %(name)s %(module)s '
+        '%(process)d %(thread)d %(message)s',
+      'datefmt': '%Y-%m-%d %H:%M:%S'
     },
-  'handlers':
-    {
-      'file':
-        {
-          'level': LOG_LEVEL,
-          'class': 'logging.FileHandler',
-          'filename': LOG_PATH,
-          'formatter': 'verbose'
-        },
-      'null': {
-        'level': LOG_LEVEL,
-        'class': 'logging.NullHandler',
-      },
+    'simple': {
+      'format': '%(levelname)s %(message)s'
     },
-  'loggers':
-    {
-      # The "catch all" logger is denoted by ''.
-      '': {
-        'handlers': ['file'],
-        'propagate': True,
-        'level': LOG_LEVEL,
-      },
-      # Django uses this logger.
-      'django': {
-        'handlers': ['file'],
-        'propagate': False,
-        'level': LOG_LEVEL
-      },
-      # Messages relating to the interaction of code with the database. For
-      # example, every SQL statement executed by a request is logged at the DEBUG
-      # level to this logger.
-      'django.db.backends':
-        {
-          'handlers': ['null'],
-          # Set logging level to "WARNING" to suppress logging of SQL statements.
-          'level': 'WARNING',
-          'propagate': False
-        },
-    }
+  },
+  'handlers': {
+    'file': {
+      'level': LOG_LEVEL,
+      'class': 'logging.FileHandler',
+      'filename': LOG_PATH,
+      'formatter': 'verbose'
+    },
+    'null': {
+      'level': LOG_LEVEL,
+      'class': 'logging.NullHandler',
+    },
+  },
+  'loggers': {
+    # The "catch all" logger is denoted by ''.
+    '': {
+      'handlers': ['file'],
+      'propagate': True,
+      'level': LOG_LEVEL,
+    },
+    # Django uses this logger.
+    'django': {
+      'handlers': ['file'],
+      'propagate': False,
+      'level': LOG_LEVEL
+    },
+    # Messages relating to the interaction of code with the database. For
+    # example, every SQL statement executed by a request is logged at the DEBUG
+    # level to this logger.
+    'django.db.backends': {
+      'handlers': ['null'],
+      # Set logging level to "WARNING" to suppress logging of SQL statements.
+      'level': 'WARNING',
+      'propagate': False
+    },
+  }
 }
-
-# ==============================================================================
-# Validation of settings.
-
-
-def check_path(path):
-  if path is None:
-    return
-  if not os.path.exists(path):
-    raise Exception('Path does not exist. path="{}"'.format(path))
-
-
-check_path(CLIENT_CERT_PATH)
-check_path(CLIENT_CERT_PRIVATE_KEY_PATH)
-
-if SECRET_KEY == 'MySecretKey':
-  raise Exception('SECRET_KEY is unset. See install documentation.')

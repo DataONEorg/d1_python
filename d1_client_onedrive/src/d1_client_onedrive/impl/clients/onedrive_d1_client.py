@@ -29,29 +29,18 @@
 
 # Stdlib
 import logging
-try:
-  import cPickle as pickle
-except ImportError:
-  import pickle
-import os
-import pprint
-import re
 import socket
 import ssl
 
-# 3rd party
-from pyzotero import zotero
-
 # D1
-import d1_common
 import d1_client.d1client
 import d1_client.mnclient
+import d1_common
+import d1_common.types.dataoneTypes
 
 # App
-from ..log_decorator import log_func
 from .. import cache_disk
 from .. import onedrive_exceptions
-from .. import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -123,14 +112,14 @@ class DataONEClient():
   # System Metadata as PyXB object.
 
   def _get_system_metadata(self, pid):
-    return dataoneTypes.CreateFromDocument(
+    return d1_common.types.dataoneTypes.CreateFromDocument(
       self._get_system_metadata_as_string_through_cache(pid)
     )
 
   # System Metadata as string.
 
   def _get_system_metadata_through_cache(self, pid):
-    return dataoneTypes.CreateFromDocument(
+    return d1_common.types.dataoneTypes.CreateFromDocument(
       self._get_system_metadata_as_string_through_cache(pid)
     )
 

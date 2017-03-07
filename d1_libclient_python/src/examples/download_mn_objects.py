@@ -26,19 +26,11 @@ shows how to:
 """
 
 # Stdlib
-import codecs
-
 import d1_common.xml
-import datetime
-import hashlib
 import logging
 import os
 import shutil
-import sys
 import urllib
-
-# 3rd party
-import pyxb
 
 # D1
 # import d1_common.types.generated.dataoneTypes as v2
@@ -100,8 +92,8 @@ def main():
 
 class MemberNodeObjectDownloader(object):
   def __init__(
-    self, base_url, download_folder, object_id_filter_list=None,
-    max_object_size=None
+      self, base_url, download_folder, object_id_filter_list=None,
+      max_object_size=None
   ):
     # self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url)
     self._mn_client = d1_client.mnclient.MemberNodeClient(base_url)
@@ -138,7 +130,7 @@ class MemberNodeObjectDownloader(object):
         try:
           self._download_object(d1_object)
         except (
-          DownloadError, d1_common.types.exceptions.DataONEException
+            DownloadError, d1_common.types.exceptions.DataONEException
         ) as e:
           logging.error(e)
 
@@ -168,17 +160,17 @@ class MemberNodeObjectDownloader(object):
 
   def _write_system_metadata_to_file(self, sysmeta_pyxb, pid):
     with open(
-      os.path.join(
-        self._download_folder,
-        u'{}.sysmeta.xml'.format(self._pid_to_filename(pid))
-      ), 'wb'
+        os.path.join(
+          self._download_folder,
+          u'{}.sysmeta.xml'.format(self._pid_to_filename(pid))
+        ), 'wb'
     ) as f:
       f.write(d1_common.xml.pretty_xml(sysmeta_pyxb.toxml()))
 
   def _download_object_bytes_to_file(self, pid):
     try:
       object_stream = self._mn_client.get(pid)
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       logging.exception('get() failed with exception:')
       raise
     else:
@@ -187,8 +179,8 @@ class MemberNodeObjectDownloader(object):
       # make a PID safe for use as a filename is to "percent-encode" it.
       pid_filename = urllib.quote(pid, safe='')
       with open(
-        os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)),
-        'wb'
+          os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)),
+          'wb'
       ) as f:
         shutil.copyfileobj(object_stream, f)
 

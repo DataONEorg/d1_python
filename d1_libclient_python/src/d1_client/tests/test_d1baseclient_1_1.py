@@ -26,11 +26,7 @@
 """
 
 # Stdlib
-import logging
-import mock
-import StringIO
 import sys
-import unittest
 
 # D1
 import d1_common.test_case_with_url_compare
@@ -40,14 +36,12 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('..')
-import d1_client.baseclient_1_1
-import util
-import shared_settings
+import d1_client.baseclient_1_1 # noqa: E402
 
 
 # noinspection PyUnresolvedReferences
 class TestDataONEBaseClient(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.client = d1_client.baseclient.DataONEBaseClient(

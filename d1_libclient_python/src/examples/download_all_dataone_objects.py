@@ -72,20 +72,12 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
 import os
 import shutil
-import sys
 import urllib
 
-# 3rd party
-import pyxb
-
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const
 import d1_client.data_package
@@ -145,7 +137,7 @@ def get_node_list_from_coordinating_node():
   cn_client = d1_client.cnclient.CoordinatingNodeClient(base_url=DATAONE_ROOT)
   try:
     return cn_client.listNodes()
-  except d1_common.types.exceptions.DataONEException as e:
+  except d1_common.types.exceptions.DataONEException:
     logging.exception('listNodes() failed with exception:')
     raise
 
@@ -173,7 +165,7 @@ class MemberNodeObjectDownloader(object):
           start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
           objectFormat=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
         )
-      except d1_common.types.exceptions.DataONEException as e:
+      except d1_common.types.exceptions.DataONEException:
         logging.exception('listObjects() failed with exception:')
         raise
       else:
@@ -205,14 +197,14 @@ class MemberNodeObjectDownloader(object):
       return self._mn_client.getSystemMetadata(pid)
     except d1_common.types.exceptions.NotAuthorized:
       logging.info('Ignoring non-public object: {0}'.format(pid))
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       logging.exception('getSystemMetadata() failed with exception:')
       raise
 
   def download_d1_object(self, pid):
     try:
       object_stream = self._mn_client.get(pid)
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       logging.exception('get() failed with exception:')
       raise
     else:

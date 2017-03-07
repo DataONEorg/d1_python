@@ -30,287 +30,368 @@
 import logging
 import sys
 import unittest
-import pprint
-
-# D1
-import d1_client.cnclient_1_1
 
 # App
 sys.path.append('..')
-import onedrive_solr_client
+import onedrive_solr_client # noqa: E402
 
 # Example results
 
-# GET /cn/v1/query/solr/?q=%2A%3A%2A&rows=3&indent=on&facet=true&facet.limit=3&facet.mincount=1&facet.sort=false&facet.count=sort&wt=python&facet.field=origin&facet.field=noBoundingBox&facet.field=family&facet.field=text&facet.field=abstract&facet.field=rightsHolder&facet.field=LTERSite&facet.field=site&facet.field=namedLocation&facet.field=topic&facet.field=edition&facet.field=geoform&facet.field=phylum&facet.field=gcmdKeyword&facet.field=keywords&facet.field=titlestr&facet.field=id&facet.field=decade&facet.field=size&facet.field=sku&facet.field=isSpatial&facet.field=documents&facet.field=changePermission&facet.field=authorLastName&facet.field=author&facet.field=species&facet.field=source&facet.field=formatId&facet.field=obsoletes&facet.field=fileID&facet.field=obsoletedBy&facet.field=parameter&facet.field=kingdom&facet.field=southBoundCoord&facet.field=westBoundCoord&facet.field=identifier&facet.field=northBoundCoord&facet.field=isPublic&facet.field=formatType&facet.field=resourceMap&facet.field=readPermission&facet.field=originator&facet.field=keyConcept&facet.field=writePermission&facet.field=class&facet.field=term&facet.field=genus&facet.field=eastBoundCoord&facet.field=investigator&facet.field=sensor&facet.field=contactOrganization&facet.field=title&facet.field=project&facet.field=presentationCat&facet.field=scientificName&facet.field=datasource&facet.field=placeKey&facet.field=submitter&facet.field=isDocumentedBy&facet.field=relatedOrganizations&facet.field=order&facet.field=purpose&wt=python
-example_query_result_1 = \
-{'facet_counts': {'facet_dates': {},
-                  'facet_fields': {'LTERSite': [],
-                                   'abstract': [u'\x010',
-                                                20,
-                                                u'\x01000',
-                                                20,
-                                                u'\x0110',
-                                                20],
-                                   'author': ['Margaret McManus', 20],
-                                   'authorLastName': ['McManus', 20],
-                                   'changePermission': ['CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org',
-                                                        2],
-                                   'class': [],
-                                   'contactOrganization': ['Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
-                                                           20],
-                                   'datasource': ['bogusAuthoritativeNode',
-                                                  4,
-                                                  'urn:node:mnDemo5',
-                                                  5,
-                                                  'urn:node:mnDevGMN',
-                                                  1350],
-                                   'decade': [],
-                                   'documents': [],
-                                   'eastBoundCoord': ['-122.08045', 20],
-                                   'edition': [],
-                                   'family': [],
-                                   'fileID': ['https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/FunctionalTest%3AsmdChange%3Aurn%3Anode%3AmnDevGMN',
-                                              1,
-                                              'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/MNodeTierTests.gmn-dev.2012103144439129',
-                                              1,
-                                              'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/MNodeTierTests.gmn-dev.201210315540483',
-                                              1],
-                                   'formatId': ['CF-1.4',
-                                                1,
-                                                'eml://ecoinformatics.org/eml-2.0.1',
-                                                20,
-                                                'text/csv',
-                                                3],
-                                   'formatType': ['DATA',
-                                                  1339,
-                                                  'METADATA',
-                                                  20],
-                                   'gcmdKeyword': [],
-                                   'genus': [],
-                                   'geoform': [],
-                                   'id': ['FunctionalTest:smdChange:urn:node:mnDevGMN',
-                                          1,
-                                          'MNodeTierTests.20129415411786',
-                                          1,
-                                          'MNodeTierTests.gmn-dev.2012103144439129',
-                                          1],
-                                   'identifier': ['001',
-                                                  1,
-                                                  '002',
-                                                  1,
-                                                  '01',
-                                                  1],
-                                   'investigator': ['McManus', 20],
-                                   'isDocumentedBy': [],
-                                   'isPublic': ['true', 1359],
-                                   'isSpatial': [],
-                                   'keyConcept': [],
-                                   'keywords': ['California',
-                                                20,
-                                                'EARTH SCIENCE : Oceans : Ocean Temperature : Water Temperature',
-                                                20,
-                                                'IOOS',
-                                                20],
-                                   'kingdom': [],
-                                   'namedLocation': [],
-                                   'noBoundingBox': [],
-                                   'northBoundCoord': ['36.94342', 20],
-                                   'obsoletedBy': [],
-                                   'obsoletes': [],
-                                   'order': [],
-                                   'origin': ['Margaret McManus',
-                                              20,
-                                              'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
-                                              20],
-                                   'originator': [],
-                                   'parameter': [],
-                                   'phylum': [],
-                                   'placeKey': [],
-                                   'presentationCat': [],
-                                   'project': ['Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
-                                               20],
-                                   'purpose': [],
-                                   'readPermission': ['public', 1359],
-                                   'relatedOrganizations': [],
-                                   'resourceMap': [],
-                                   'rightsHolder': ['CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org',
-                                                    3,
-                                                    'CN=Yaxing Wei A1647,O=Google,C=US,DC=cilogon,DC=org',
-                                                    1,
-                                                    'CN=testPerson,DC=dataone,DC=org',
-                                                    40],
-                                   'scientificName': [],
-                                   'sensor': [],
-                                   'site': [],
-                                   'size': ['33', 2, '58', 1, '73', 2],
-                                   'sku': ['001', 1, '002', 1, '01', 1],
-                                   'source': [],
-                                   'southBoundCoord': ['36.94342', 20],
-                                   'species': [],
-                                   'submitter': ['CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org',
-                                                 3,
-                                                 'CN=Yaxing Wei A1647,O=Google,C=US,DC=cilogon,DC=org',
-                                                 1,
-                                                 'CN=testPerson,DC=dataone,DC=org',
-                                                 40],
-                                   'term': [],
-                                   'text': [u'\x010',
-                                            20,
-                                            u'\x0100',
-                                            20,
-                                            u'\x01000',
-                                            20],
-                                   'title': [u'\x01100tpt',
-                                             20,
-                                             u'\x01ainrofilac',
-                                             20,
-                                             u'\x01asu',
-                                             20],
-                                   'titlestr': ['PISCO: Physical Oceanography: moored temperature data: Terrace Point, California, USA (TPT001)',
-                                                20],
-                                   'topic': [],
-                                   'westBoundCoord': ['-122.08045', 20],
-                                   'writePermission': []},
-                  'facet_queries': {},
-                  'facet_ranges': {}},
-   'response': {'docs': [{'authoritativeMN': 'urn:node:mnDevGMN',
-                        'checksum': '4504b4dd97f2d7a4766dfaaa3f968ec2',
-                        'checksumAlgorithm': 'MD5',
-                        'dataUrl': 'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/testMNodeTier3%3A201211113474372_common-unicode-ascii-safe-%3A%40%24-_.%21*%28%29%27%2C%7E',
-                        'datasource': 'urn:node:mnDevGMN',
-                        'dateModified': '2012-08-14T22:29:33.779Z',
-                        'dateUploaded': '2012-04-20T20:47:03.48Z',
-                        'formatId': 'text/plain',
-                        'formatType': 'DATA',
-                        'id': "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
-                        'identifier': "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
-                        'isPublic': True,
-                        'readPermission': ['public'],
-                        'replicaMN': ['urn:node:mnDevGMN'],
-                        'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
-                        'replicationAllowed': False,
-                        'rightsHolder': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'size': 684336,
-                        'sku': "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
-                        'submitter': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'updateDate': '2012-04-20T20:47:03.48Z'},
-                       {'authoritativeMN': 'urn:node:mnDevGMN',
-                        'checksum': '4504b4dd97f2d7a4766dfaaa3f968ec2',
-                        'checksumAlgorithm': 'MD5',
-                        'dataUrl': 'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/testMNodeTier3%3A2012115174435840_path-ascii-doc-example-10.1000%2F182',
-                        'datasource': 'urn:node:mnDevGMN',
-                        'dateModified': '2012-08-14T22:34:06.029Z',
-                        'dateUploaded': '2012-04-25T00:44:34.993Z',
-                        'formatId': 'text/plain',
-                        'formatType': 'DATA',
-                        'id': 'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
-                        'identifier': 'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
-                        'isPublic': True,
-                        'readPermission': ['public'],
-                        'replicaMN': ['urn:node:mnDevGMN'],
-                        'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
-                        'replicationAllowed': False,
-                        'rightsHolder': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'size': 684336,
-                        'sku': 'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
-                        'submitter': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'updateDate': '2012-04-25T00:44:34.993Z'},
-                       {'authoritativeMN': 'urn:node:mnDevGMN',
-                        'checksum': '4504b4dd97f2d7a4766dfaaa3f968ec2',
-                        'checksumAlgorithm': 'MD5',
-                        'dataUrl': 'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/testMNodeTier3%3A2012111135753253_path-ascii-doc-example-10.1000%2F182',
-                        'datasource': 'urn:node:mnDevGMN',
-                        'dateModified': '2012-08-14T22:30:09.482Z',
-                        'dateUploaded': '2012-04-20T20:57:52.369Z',
-                        'formatId': 'text/plain',
-                        'formatType': 'DATA',
-                        'id': 'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
-                        'identifier': 'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
-                        'isPublic': True,
-                        'readPermission': ['public'],
-                        'replicaMN': ['urn:node:mnDevGMN'],
-                        'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
-                        'replicationAllowed': False,
-                        'rightsHolder': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'size': 684336,
-                        'sku': 'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
-                        'submitter': 'CN=testRightsHolder,DC=dataone,DC=org',
-                        'updateDate': '2012-04-20T20:57:52.369Z'}],
-              'numFound': 1359,
-              'start': 0},
-   'responseHeader': {'QTime': 264,
-                    'params': {'facet': 'true',
-                               'facet.count': 'sort',
-                               'facet.field': ['origin',
-                                               'noBoundingBox',
-                                               'family',
-                                               'text',
-                                               'abstract',
-                                               'rightsHolder',
-                                               'LTERSite',
-                                               'site',
-                                               'namedLocation',
-                                               'topic',
-                                               'edition',
-                                               'geoform',
-                                               'phylum',
-                                               'gcmdKeyword',
-                                               'keywords',
-                                               'titlestr',
-                                               'id',
-                                               'decade',
-                                               'size',
-                                               'sku',
-                                               'isSpatial',
-                                               'documents',
-                                               'changePermission',
-                                               'authorLastName',
-                                               'author',
-                                               'species',
-                                               'source',
-                                               'formatId',
-                                               'obsoletes',
-                                               'fileID',
-                                               'obsoletedBy',
-                                               'parameter',
-                                               'kingdom',
-                                               'southBoundCoord',
-                                               'westBoundCoord',
-                                               'identifier',
-                                               'northBoundCoord',
-                                               'isPublic',
-                                               'formatType',
-                                               'resourceMap',
-                                               'readPermission',
-                                               'originator',
-                                               'keyConcept',
-                                               'writePermission',
-                                               'class',
-                                               'term',
-                                               'genus',
-                                               'eastBoundCoord',
-                                               'investigator',
-                                               'sensor',
-                                               'contactOrganization',
-                                               'title',
-                                               'project',
-                                               'presentationCat',
-                                               'scientificName',
-                                               'datasource',
-                                               'placeKey',
-                                               'submitter',
-                                               'isDocumentedBy',
-                                               'relatedOrganizations',
-                                               'order',
-                                               'purpose'],
-                               'facet.limit': '3',
-                               'facet.mincount': '1',
-                               'facet.sort': 'false',
-                               'indent': 'on',
-                               'q': '*:*',
-                               'rows': '3',
-                               'wt': ['python', 'python']},
-                    'status': 0}}
+# GET
+# /cn/v1/query/solr/?q=%2A%3A%2A&
+# rows=3&
+# indent=on&
+# facet=true&
+# facet.limit=3&
+# facet.mincount=1&
+# facet.sort=false&
+# facet.count=sort&
+# wt=python&
+# facet.field=origin&
+# facet.field=noBoundingBox&
+# facet.field=family&
+# facet.field=text&
+# facet.field=abstract&
+# facet.field=rightsHolder&
+# facet.field=LTERSite&
+# facet.field=site&
+# facet.field=namedLocation&
+# facet.field=topic&
+# facet.field=edition&
+# facet.field=geoform&
+# facet.field=phylum&
+# facet.field=gcmdKeyword&
+# facet.field=keywords&
+# facet.field=titlestr&
+# facet.field=id&
+# facet.field=decade&
+# facet.field=size&
+# facet.field=sku&
+# facet.field=isSpatial&
+# facet.field=documents&
+# facet.field=changePermission&
+# facet.field=authorLastName&
+# facet.field=author&
+# facet.field=species&
+# facet.field=source&
+# facet.field=formatId&
+# facet.field=obsoletes&
+# facet.field=fileID&
+# facet.field=obsoletedBy&
+# facet.field=parameter&
+# facet.field=kingdom&
+# facet.field=southBoundCoord&
+# facet.field=westBoundCoord&
+# facet.field=identifier&
+# facet.field=northBoundCoord&
+# facet.field=isPublic&
+# facet.field=formatType&
+# facet.field=resourceMap&
+# facet.field=readPermission&
+# facet.field=originator&
+# facet.field=keyConcept&
+# facet.field=writePermission&
+# facet.field=class&
+# facet.field=term&
+# facet.field=genus&
+# facet.field=eastBoundCoord&
+# facet.field=investigator&
+# facet.field=sensor&
+# facet.field=contactOrganization&
+# facet.field=title&
+# facet.field=project&
+# facet.field=presentationCat&
+# facet.field=scientificName&
+# facet.field=datasource&
+# facet.field=placeKey&
+# facet.field=submitter&
+# facet.field=isDocumentedBy&
+# facet.field=relatedOrganizations&
+# facet.field=order&
+# facet.field=purpose&
+# wt=python
+
+example_query_result_1 = {
+  'facet_counts': {
+    'facet_dates': {},
+    'facet_fields': {
+      'LTERSite': [],
+      'abstract': [u'\x010', 20, u'\x01000', 20, u'\x0110', 20],
+      'author': ['Margaret McManus', 20],
+      'authorLastName': ['McManus', 20],
+      'changePermission':
+        ['CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org', 2],
+      'class': [],
+      'contactOrganization': [
+        'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
+        20
+      ],
+      'datasource': [
+        'bogusAuthoritativeNode', 4, 'urn:node:mnDemo5', 5, 'urn:node:mnDevGMN',
+        1350
+      ],
+      'decade': [],
+      'documents': [],
+      'eastBoundCoord': ['-122.08045', 20],
+      'edition': [],
+      'family': [],
+      'fileID': [
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'FunctionalTest%3AsmdChange%3Aurn%3Anode%3AmnDevGMN', 1,
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'MNodeTierTests.gmn-dev.2012103144439129', 1,
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'MNodeTierTests.gmn-dev.201210315540483', 1
+      ],
+      'formatId':
+        ['CF-1.4', 1, 'eml://ecoinformatics.org/eml-2.0.1', 20, 'text/csv', 3],
+      'formatType': ['DATA', 1339, 'METADATA', 20],
+      'gcmdKeyword': [],
+      'genus': [],
+      'geoform': [],
+      'id': [
+        'FunctionalTest:smdChange:urn:node:mnDevGMN', 1,
+        'MNodeTierTests.20129415411786', 1,
+        'MNodeTierTests.gmn-dev.2012103144439129', 1
+      ],
+      'identifier': ['001', 1, '002', 1, '01', 1],
+      'investigator': ['McManus', 20],
+      'isDocumentedBy': [],
+      'isPublic': ['true', 1359],
+      'isSpatial': [],
+      'keyConcept': [],
+      'keywords': [
+        'California', 20,
+        'EARTH SCIENCE : Oceans : Ocean Temperature : Water Temperature', 20,
+        'IOOS', 20
+      ],
+      'kingdom': [],
+      'namedLocation': [],
+      'noBoundingBox': [],
+      'northBoundCoord': ['36.94342', 20],
+      'obsoletedBy': [],
+      'obsoletes': [],
+      'order': [],
+      'origin': [
+        'Margaret McManus', 20,
+        'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
+        20
+      ],
+      'originator': [],
+      'parameter': [],
+      'phylum': [],
+      'placeKey': [],
+      'presentationCat': [],
+      'project': [
+        'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)',
+        20
+      ],
+      'purpose': [],
+      'readPermission': ['public', 1359],
+      'relatedOrganizations': [],
+      'resourceMap': [],
+      'rightsHolder': [
+        'CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org', 3,
+        'CN=Yaxing Wei A1647,O=Google,C=US,DC=cilogon,DC=org', 1,
+        'CN=testPerson,DC=dataone,DC=org', 40
+      ],
+      'scientificName': [],
+      'sensor': [],
+      'site': [],
+      'size': ['33', 2, '58', 1, '73', 2],
+      'sku': ['001', 1, '002', 1, '01', 1],
+      'source': [],
+      'southBoundCoord': ['36.94342', 20],
+      'species': [],
+      'submitter': [
+        'CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org', 3,
+        'CN=Yaxing Wei A1647,O=Google,C=US,DC=cilogon,DC=org', 1,
+        'CN=testPerson,DC=dataone,DC=org', 40
+      ],
+      'term': [],
+      'text': [u'\x010', 20, u'\x0100', 20, u'\x01000', 20],
+      'title': [u'\x01100tpt', 20, u'\x01ainrofilac', 20, u'\x01asu', 20],
+      'titlestr': [
+        'PISCO: Physical Oceanography: moored temperature data: Terrace Point, '
+        'California, USA (TPT001)', 20
+      ],
+      'topic': [],
+      'westBoundCoord': ['-122.08045', 20],
+      'writePermission': []
+    },
+    'facet_queries': {},
+    'facet_ranges': {}
+  },
+  'response': {
+    'docs': [{
+      'authoritativeMN':
+        'urn:node:mnDevGMN',
+      'checksum':
+        '4504b4dd97f2d7a4766dfaaa3f968ec2',
+      'checksumAlgorithm':
+        'MD5',
+      'dataUrl':
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'testMNodeTier3%3A201211113474372_common-unicode-ascii-safe-%3A%40%24-'
+        '_.%21*%28%29%27%2C%7E',
+      'datasource':
+        'urn:node:mnDevGMN',
+      'dateModified':
+        '2012-08-14T22:29:33.779Z',
+      'dateUploaded':
+        '2012-04-20T20:47:03.48Z',
+      'formatId':
+        'text/plain',
+      'formatType':
+        'DATA',
+      'id':
+        "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
+      'identifier':
+        "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
+      'isPublic':
+        True,
+      'readPermission': ['public'],
+      'replicaMN': ['urn:node:mnDevGMN'],
+      'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
+      'replicationAllowed':
+        False,
+      'rightsHolder':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'size':
+        684336,
+      'sku':
+        "testMNodeTier3:201211113474372_common-unicode-ascii-safe-:@$-_.!*()',~",
+      'submitter':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'updateDate':
+        '2012-04-20T20:47:03.48Z'
+    }, {
+      'authoritativeMN':
+        'urn:node:mnDevGMN',
+      'checksum':
+        '4504b4dd97f2d7a4766dfaaa3f968ec2',
+      'checksumAlgorithm':
+        'MD5',
+      'dataUrl':
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'testMNodeTier3%3A2012115174435840_path-ascii-doc-example-10.1000%2F182',
+      'datasource':
+        'urn:node:mnDevGMN',
+      'dateModified':
+        '2012-08-14T22:34:06.029Z',
+      'dateUploaded':
+        '2012-04-25T00:44:34.993Z',
+      'formatId':
+        'text/plain',
+      'formatType':
+        'DATA',
+      'id':
+        'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
+      'identifier':
+        'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
+      'isPublic':
+        True,
+      'readPermission': ['public'],
+      'replicaMN': ['urn:node:mnDevGMN'],
+      'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
+      'replicationAllowed':
+        False,
+      'rightsHolder':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'size':
+        684336,
+      'sku':
+        'testMNodeTier3:2012115174435840_path-ascii-doc-example-10.1000/182',
+      'submitter':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'updateDate':
+        '2012-04-25T00:44:34.993Z'
+    }, {
+      'authoritativeMN':
+        'urn:node:mnDevGMN',
+      'checksum':
+        '4504b4dd97f2d7a4766dfaaa3f968ec2',
+      'checksumAlgorithm':
+        'MD5',
+      'dataUrl':
+        'https://cn-dev-ucsb-1.test.dataone.org/cn/v1/resolve/'
+        'testMNodeTier3%3A2012111135753253_path-ascii-doc-example-10.1000%2F182',
+      'datasource':
+        'urn:node:mnDevGMN',
+      'dateModified':
+        '2012-08-14T22:30:09.482Z',
+      'dateUploaded':
+        '2012-04-20T20:57:52.369Z',
+      'formatId':
+        'text/plain',
+      'formatType':
+        'DATA',
+      'id':
+        'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
+      'identifier':
+        'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
+      'isPublic':
+        True,
+      'readPermission': ['public'],
+      'replicaMN': ['urn:node:mnDevGMN'],
+      'replicaVerifiedDate': ['2012-08-14T00:00:00Z'],
+      'replicationAllowed':
+        False,
+      'rightsHolder':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'size':
+        684336,
+      'sku':
+        'testMNodeTier3:2012111135753253_path-ascii-doc-example-10.1000/182',
+      'submitter':
+        'CN=testRightsHolder,DC=dataone,DC=org',
+      'updateDate':
+        '2012-04-20T20:57:52.369Z'
+    }],
+    'numFound':
+      1359,
+    'start':
+      0
+  },
+  'responseHeader': {
+    'QTime': 264,
+    'params': {
+      'facet':
+        'true',
+      'facet.count':
+        'sort',
+      'facet.field': [
+        'origin', 'noBoundingBox', 'family', 'text', 'abstract', 'rightsHolder',
+        'LTERSite', 'site', 'namedLocation', 'topic', 'edition', 'geoform',
+        'phylum', 'gcmdKeyword', 'keywords', 'titlestr', 'id', 'decade', 'size',
+        'sku', 'isSpatial', 'documents', 'changePermission', 'authorLastName',
+        'author', 'species', 'source', 'formatId', 'obsoletes', 'fileID',
+        'obsoletedBy', 'parameter', 'kingdom', 'southBoundCoord',
+        'westBoundCoord', 'identifier', 'northBoundCoord', 'isPublic',
+        'formatType', 'resourceMap', 'readPermission', 'originator',
+        'keyConcept', 'writePermission', 'class', 'term', 'genus',
+        'eastBoundCoord', 'investigator', 'sensor', 'contactOrganization',
+        'title', 'project', 'presentationCat', 'scientificName', 'datasource',
+        'placeKey', 'submitter', 'isDocumentedBy', 'relatedOrganizations',
+        'order', 'purpose'
+      ],
+      'facet.limit':
+        '3',
+      'facet.mincount':
+        '1',
+      'facet.sort':
+        'false',
+      'indent':
+        'on',
+      'q':
+        '*:*',
+      'rows':
+        '3',
+      'wt': ['python', 'python']
+    },
+    'status': 0
+  }
+}
 
 
 class O():

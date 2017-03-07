@@ -21,7 +21,6 @@
 
 # Stdlib
 import logging
-import sys
 
 # D1
 import d1_common.const
@@ -34,8 +33,8 @@ import cnclient_1_1
 
 
 class CoordinatingNodeClient_2_0(
-  baseclient_2_0.DataONEBaseClient_2_0,
-  cnclient_1_1.CoordinatingNodeClient_1_1,
+    baseclient_2_0.DataONEBaseClient_2_0,
+    cnclient_1_1.CoordinatingNodeClient_1_1,
 ):
   """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_1 with functionality
   for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
@@ -83,15 +82,15 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFormat=None,
-    replicaStatus=None,
-    nodeId=None,
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None,
+      self,
+      fromDate=None,
+      toDate=None,
+      objectFormat=None,
+      replicaStatus=None,
+      nodeId=None,
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None,
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -108,15 +107,15 @@ class CoordinatingNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def listObjects(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFormat=None,
-    replicaStatus=None,
-    nodeId=None,
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None,
+      self,
+      fromDate=None,
+      toDate=None,
+      objectFormat=None,
+      replicaStatus=None,
+      nodeId=None,
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None,
   ):
     response = self.listObjectsResponse(
       fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,

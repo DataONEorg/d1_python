@@ -27,14 +27,10 @@ Module d1_instance_generator.subject
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
-import random
-
 # D1
 import d1_common.types.dataoneTypes
 
 # App
-import dates
 import random_data
 
 

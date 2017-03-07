@@ -34,7 +34,6 @@ import urlparse
 
 # 3rd party
 import responses # pip install responses
-import requests
 
 # D1
 import d1_common.type_conversions
@@ -42,7 +41,6 @@ import d1_common.type_conversions
 # App
 import d1_common.const
 import d1_common.url
-import mock_util
 
 # Config
 
@@ -86,6 +84,14 @@ def _request_callback(request):
   body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
   headers = {}
   return 200, headers, body_str
+
+
+def _parse_url(url):
+  url_obj = urlparse.urlparse(url)
+  url = url_obj._replace(query=None).geturl()
+  m = re.search(LOG_ENDPOINT_RX, url)
+  assert m, 'Should always match since we\'re using the same regex as in add_callback()'
+  return m.group(1), m.group(2)
 
 
 def _generate_log_records(pyxb_bindings, n_start, n_count):

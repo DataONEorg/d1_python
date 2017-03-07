@@ -22,14 +22,7 @@
 """
 
 # Stdlib
-import pprint
 import unittest
-
-# 3rd party
-import pyxb
-
-# D1
-from d1_common.types import dataoneTypes
 
 # App
 import d1_common.object_format

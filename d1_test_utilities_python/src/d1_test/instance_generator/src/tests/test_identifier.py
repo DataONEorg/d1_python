@@ -29,12 +29,9 @@ Module d1_instance_generator.tests.test_identifier
 
 # Stdlib
 import logging
-import os
 import random
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1
 import d1_common.const
@@ -43,14 +40,14 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import identifier
-import random_data
+import identifier # noqa: E402
+import random_data # noqa: E402
 
 #===============================================================================
 
 
 class TestIdentifier(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     pass

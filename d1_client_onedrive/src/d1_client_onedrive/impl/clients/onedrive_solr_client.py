@@ -29,11 +29,7 @@
 """
 
 # Stdlib
-import httplib
 import logging
-import socket
-import urllib
-import urlparse
 
 # 3rd party
 import requests
@@ -112,7 +108,7 @@ class SolrClient(object):
           record[date_field
                  ] = d1_common.date_time.from_iso8601(record[date_field])
         except Exception as e:
-          log.exception(e)
+          logging.exception(e)
 
   def _query(self, query, filter_queries=None, fields=None):
     if fields is None:
@@ -148,23 +144,8 @@ class SolrClient(object):
 
   def _escape_query_term(self, term):
     reserved = [
-      '+',
-      '-',
-      '&',
-      '|',
-      '!',
-      '(',
-      ')',
-      '{',
-      '}',
-      '[',
-      ']',
-      '^',
-      '"',
-      '~',
-      '*',
-      '?',
-      ':',
+      '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*',
+      '?', ':'
     ]
     term = term.replace(u'\\', u'\\\\')
     for c in reserved:

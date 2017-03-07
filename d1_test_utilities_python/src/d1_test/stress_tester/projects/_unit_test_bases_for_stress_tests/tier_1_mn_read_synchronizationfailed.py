@@ -28,18 +28,8 @@
   - python 2.6
 """
 
-# Std.
-import sys
-
 # D1
-import d1_common.const
-import d1_common.types.exceptions
 import d1_test_case
-
-# App
-import context
-import test_client
-import test_utilities
 
 
 class TestSynchronizationFailed(d1_test_case.D1TestCase):

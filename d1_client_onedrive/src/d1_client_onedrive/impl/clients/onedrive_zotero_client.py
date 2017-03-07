@@ -44,15 +44,12 @@ except ImportError:
   import pickle
 import httplib
 import os
-from pprint import pprint
 import re
 
 # 3rd party
 from pyzotero import zotero
 
 # App
-from ..log_decorator import log_func
-from .. import util
 from .. import onedrive_exceptions
 
 
@@ -105,7 +102,7 @@ class ZoteroClient(object):
     for collection in collection_tree['collections']:
       yield collection, path + [collection['name']]
       for f in self.iterate_collection_tree(
-        collection, path + [collection['name']]
+          collection, path + [collection['name']]
       ):
         yield f
 
@@ -118,7 +115,7 @@ class ZoteroClient(object):
     for f in filtered_tree['collections']:
       yield filtered_tree['collections'][f], path + [f]
       for f in self.iterate_filtered_tree(
-        filtered_tree['collections'][f], path + [f]
+          filtered_tree['collections'][f], path + [f]
       ):
         yield f
 
@@ -187,7 +184,7 @@ class ZoteroClient(object):
     return filtered_tree
 
   def _create_filtered_trees_from_collections_recursive(
-    self, filtered_tree, collection_tree
+      self, filtered_tree, collection_tree
   ):
     sub_tree = {
       'collections': {},

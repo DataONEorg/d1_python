@@ -29,17 +29,10 @@
 
 # Stdlib
 import d1_common.const
-import logging
 import os
 
 # D1
-
-
-# Create absolute path from path that is relative to the module from which
-# the function is called.
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
+import d1_common.util
 
 ################################################################################
 # User configurable settings.
@@ -130,7 +123,7 @@ MAX_OBJECTS_FOR_QUERY = 50
 DEBUG = True
 
 # Set the default file to log to or None for logging to stdout
-LOG_FILE_PATH = make_absolute('workspace.log')
+LOG_FILE_PATH = d1_common.util.abs_path('workspace.log')
 
 # The maximum number of Solr query results to cache.
 MAX_SOLR_QUERY_CACHE_SIZE = 1000

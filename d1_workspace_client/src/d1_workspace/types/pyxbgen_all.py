@@ -22,7 +22,6 @@
 # Generate PyXB binding classes from schemas.
 
 import os
-import glob
 import optparse
 
 
@@ -75,7 +74,8 @@ VERSION="%s"
 def main():
   # Command line opts.
   parser = optparse.OptionParser()
-  # The default location for the schemas relative to d1_common_python if both were checked out as part of cicore.
+  # The default location for the schemas relative to d1_common_python if both
+  # were checked out as part of cicore.
   parser.add_option(
     '-s', '--schemas', dest='schemas_path', action='store', type='string',
     default='./'
@@ -119,7 +119,8 @@ def main():
     # Run pyxbgen.
     args = []
     args.append('--binding-root=\'{0}\''.format(opts.bindings_path))
-    #args.append('--location-prefix-rewrite=\'https://repository.dataone.org/software/cicore/trunk/schemas/={0}\''.format(opts.schema_path))
+    # args.append('--location-prefix-rewrite=\'https://repository.dataone.org/
+    # software/cicore/trunk/schemas/={0}\''.format(opts.schema_path))
     # Note: If we split the schema out to multiple files, pyxbgen is still
     # run only once, but with multiple sets of -u and -m.
     args.append('-u \'{0}\' -m \'{1}\''.format(schema_path, schema_name))

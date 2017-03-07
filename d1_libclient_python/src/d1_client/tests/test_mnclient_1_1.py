@@ -26,39 +26,18 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
-import logging
-import random
-import sys
-import unittest
-import uuid
-import StringIO
-from mock import patch
-
-# 3rd party
-import pyxb
-
 # D1
 import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
-import d1_test.instance_generator.accesspolicy
-import d1_test.instance_generator.identifier
-import d1_test.instance_generator.person
-import d1_test.instance_generator.random_data
-import d1_test.instance_generator.replicationpolicy
-import d1_test.instance_generator.subject
-import d1_test.instance_generator.systemmetadata
 
 # App
 import d1_client.mnclient_1_1
-import shared_context
 import shared_settings
-import util
 
 
 class TestMNClient_1_1(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(

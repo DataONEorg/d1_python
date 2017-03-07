@@ -69,7 +69,8 @@ class QueryEngineDescription(object):
   # TODO:
   #<xs:element name="querySchemaVersion" type="xs:string" minOccurs="0" maxOccurs="1">
   #  <xs:annotation>
-  #    <xs:documentation>Version of the schema in use by the query engine, e.g. &quot;1.0.1&quot;</xs:documentation>
+  #    <xs:documentation>Version of the schema in use by the query engine, e.g.
+  #    &quot;1.0.1&quot;</xs:documentation>
   #  </xs:annotation>
   #</xs:element>
   #<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1">
@@ -80,12 +81,14 @@ class QueryEngineDescription(object):
   #</xs:element>
   #<xs:element name="additionalInfo" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded">
   #  <xs:annotation>
-  #    <xs:documentation>An optional human readable description of the query engine. This can be
-  #      used to describe any special capabilities or intended uses for the query engine. For example,
-  #      a query engine may be tuned to suit a particular audience or domain as opposed to providing
-  #      a general purpose discovery mechanism.</xs:documentation>
-  #    <xs:documentation>This field may also contain links to additional information about the query engine,
-  #    such as documentation for the search syntax provided by the query engine implemntors.</xs:documentation>
+  #    <xs:documentation>An optional human readable description of the query
+  #    engine. This can be used to describe any special capabilities or intended
+  #    uses for the query engine. For example, a query engine may be tuned to
+  #    suit a particular audience or domain as opposed to providing a general
+  #    purpose discovery mechanism.</xs:documentation>
+  #    <xs:documentation>This field may also contain links to additional
+  #    information about the query engine, such as documentation for the search
+  #    syntax provided by the query engine implemntors.</xs:documentation>
   #    </xs:annotation>
   #</xs:element>
   #<xs:element name="queryField" type="d1_v1.1:QueryField" minOccurs="0" maxOccurs="unbounded">

@@ -22,6 +22,8 @@
 
 import logging
 
-logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+# flake8: noqa: F403
 
 from d1_common.types.generated.dataoneErrors import *
+
+logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)

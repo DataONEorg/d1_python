@@ -29,22 +29,22 @@ Unit tests for objectlistiterator.
   - python 2.6
 """
 
+# Stdlib
 import sys
 import unittest
 
-sys.path.append('..')
+# 3rd party
+import pyxb
+
+# D1
 import d1_common.types.dataoneTypes as dataoneTypes
 
-# 3rd party
-import pyxb.binding
-
 # App
-import d1_client.cnclient
-import d1_client.mnclient
-import d1_client.objectlistiterator
-import shared_context
-import shared_settings
-import util
+sys.path.append('..')
+import d1_client.cnclient # noqa: E402
+import d1_client.mnclient # noqa: E402
+import d1_client.objectlistiterator # noqa: E402
+import shared_settings # noqa: E402
 
 
 class TestObjectListIterator(unittest.TestCase):
@@ -54,9 +54,6 @@ class TestObjectListIterator(unittest.TestCase):
   def test_0010(self):
     """Walk over the list of log entries available from a given node.
     """
-    base_url = "https://cn.dataone.org/cn"
-    if len(sys.argv) > 1:
-      target = sys.argv[1]
     client = d1_client.mnclient.MemberNodeClient(
       base_url=shared_settings.MN_RESPONSES_URL
     )

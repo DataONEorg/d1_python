@@ -103,13 +103,11 @@ def _validate_jwt_and_get_subject_list(jwt_base64):
 
 def _fix_base64_jwt(jwt_base64):
   header_json, payload_json, signature_str = jwt_base64.split('.')
-  return '.'.join(
-    [
-      _fix_base64_padding(_fix_base64_alphabet(header_json)),
-      _fix_base64_padding(_fix_base64_alphabet(payload_json)),
-      _fix_base64_padding(_fix_base64_alphabet(signature_str)),
-    ]
-  ).strip()
+  return '.'.join([
+    _fix_base64_padding(_fix_base64_alphabet(header_json)),
+    _fix_base64_padding(_fix_base64_alphabet(payload_json)),
+    _fix_base64_padding(_fix_base64_alphabet(signature_str)),
+  ]).strip()
 
 
 def _fix_base64_padding(base64_str):

@@ -34,6 +34,8 @@ from d1_common.types import dataoneTypes
 # App
 import util
 
+# flake8: noqa: E501
+
 EG_LOG_GMN = """<?xml version="1.0" ?>
 <ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>read</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>

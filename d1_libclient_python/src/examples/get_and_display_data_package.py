@@ -42,19 +42,9 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
-import os
-import sys
-
-# 3rd party
-import pyxb
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.const
 import d1_client.data_package
 import d1_client.mnclient
 

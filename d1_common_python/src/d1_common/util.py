@@ -22,8 +22,38 @@
 
 from __future__ import absolute_import
 
+# Stdlib
 import email.message
 import email.utils
+import logging
+import os
+import sys
+
+
+def log_setup(debug_bool):
+  """Set up a standardized log format for the DataONE Python stack. All Python
+  components should use this function.
+
+  We output only to stdout and stderr.
+  """
+  formatter = logging.Formatter(
+    u'%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
+    u'%Y-%m-%d %H:%M:%S',
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+  if debug_bool:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.INFO)
+
+
+def abs_path(rel_path):
+  """Convert a path that is relative to the module from which this function is
+  called, to an absolute path.
+  """
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), rel_path)
 
 
 def get_content_type(content_type):

@@ -27,7 +27,7 @@ import os
 import sys
 
 sys.path.append('..')
-from d1_client_onedrive import onedrive
+from d1_client_onedrive import onedrive # noqa: E402
 
 
 def main():
@@ -36,15 +36,13 @@ def main():
 
 
 def start_onedrive(mount_point):
-  sys.argv.extend(
-    [
-      '--mountpoint=' + mount_point,
-      '--macfuse-icon=mac_dataone.icns',
-      #'--disable-macfuse-local-disk',
-      #'modules=volicon,iconpath=mac_dataone.icns'
-      #'volicon=mac_dataone.icns',
-    ]
-  )
+  sys.argv.extend([
+    '--mountpoint=' + mount_point,
+    '--macfuse-icon=mac_dataone.icns',
+    #'--disable-macfuse-local-disk',
+    #'modules=volicon,iconpath=mac_dataone.icns'
+    #'volicon=mac_dataone.icns',
+  ])
 
   onedrive.main()
 

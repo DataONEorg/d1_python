@@ -29,13 +29,11 @@
 # Stdlib
 import logging
 #import os
-import pprint
 import sys
 import unittest
 
 # D1
-sys.path.append('..')
-import util
+sys.path.append('..') # noqa: E402
 
 
 class TestUtil(unittest.TestCase):

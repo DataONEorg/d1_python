@@ -22,7 +22,6 @@
 """
 
 # Stdlib
-import codecs
 import os
 import unittest
 
@@ -64,11 +63,12 @@ class TestUrl(unittest.TestCase):
 
   def test_030(self):
     """urlencode()"""
-    data = [
-      ('a', '"#<>[]^`{}|'), ('b', '-&=&='),
-      ('c', 'http://example.com/data/mydata?row=24')
-    ]
-    expected = 'a=%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C&b=-%26%3D%26%3D&c=http://example.com/data/mydata?row%3D24'
+    data = [('a', '"#<>[]^`{}|'), ('b', '-&=&='),
+            ('c', 'http://example.com/data/mydata?row=24')]
+    expected = (
+      'a=%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C&b=-%26%3D%26%3D&c='
+      'http://example.com/data/mydata?row%3D24'
+    )
     test = d1_common.url.urlencode(data)
     self.assertEqual(test, expected)
 

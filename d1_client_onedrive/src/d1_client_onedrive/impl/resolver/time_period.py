@@ -28,17 +28,10 @@
 """
 
 # Stdlib
-import httplib
 import logging
-import os
-import pprint
-import sys
-
-# D1
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
@@ -131,7 +124,7 @@ class Resolver(resolver_base.Resolver):
       record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         for decade in self._decade_ranges_in_date_range(
-          record['beginDate'], record['endDate']
+            record['beginDate'], record['endDate']
         ):
           sites.add(decade)
     dir.extend(sites)
@@ -157,7 +150,7 @@ class Resolver(resolver_base.Resolver):
       record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         for year in self._years_in_date_range_within_decade(
-          first_year_in_decade, record['beginDate'], record['endDate']
+            first_year_in_decade, record['beginDate'], record['endDate']
         ):
           sites.add(str(year))
     dir.extend(sites)
@@ -170,7 +163,7 @@ class Resolver(resolver_base.Resolver):
       record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         if self._is_year_in_date_range(
-          year, record['beginDate'], record['endDate']
+            year, record['beginDate'], record['endDate']
         ):
           dir.append(record['id'])
     self._raise_exception_if_empty_directory(dir)

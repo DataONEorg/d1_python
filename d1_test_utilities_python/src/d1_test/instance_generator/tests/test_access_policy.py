@@ -29,11 +29,8 @@ Module d1_instance_generator.tests.test_access_policy
 
 # Stdlib
 import logging
-import os
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
@@ -43,13 +40,13 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import accesspolicy
+import accesspolicy # noqa: E402
 
 #===============================================================================
 
 
 class TestAccessPolicy(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     pass
@@ -71,7 +68,7 @@ class TestAccessPolicy(
     """random_subject_with_permission_labels()"""
     for i in range(10):
       permissions = accesspolicy.random_set_of_permissions()
-      subject = accesspolicy.random_subject_with_permission_labels(permissions)
+      accesspolicy.random_subject_with_permission_labels(permissions)
 
   def test_040(self):
     """random_subjects_with_permission_labels()"""

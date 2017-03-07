@@ -38,15 +38,11 @@
 # test_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
 # Stdlib
-import httplib
 import logging
 import optparse
-import os
 import re
-import sys
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_x509v3_certificate_generator
 
 
@@ -127,7 +123,8 @@ def main():
   (options, args) = parser.parse_args()
 
   if len(args) != 1:
-    print 'Need a single argument which must be the Subject DN. Example: CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+    print 'Need a single argument which must be the Subject DN. '
+    'Example: CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
     parser.print_help()
     exit()
 

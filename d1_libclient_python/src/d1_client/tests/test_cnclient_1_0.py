@@ -26,31 +26,29 @@ import unittest
 # 3rd party
 import d1_client.tests.util
 import responses # pip install responses
-import requests
 
 # D1
 sys.path.append('..')
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-import d1_common.types.dataoneTypes
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.generated.dataoneTypes_v1
-import d1_common.types.generated.dataoneTypes_v2_0
-import d1_test.instance_generator.accesspolicy
-import d1_test.instance_generator.identifier
-import d1_test.instance_generator.person
-import d1_test.instance_generator.random_data
-import d1_test.instance_generator.replicationpolicy
-import d1_test.instance_generator.subject
-import d1_test.instance_generator.systemmetadata
+import d1_common.test_case_with_url_compare # noqa: E402
+import d1_common.types.exceptions # noqa: E402
+import d1_common.types.dataoneTypes # noqa: E402
+import d1_common.types.dataoneTypes_v2_0 # noqa: E402
+import d1_common.types.generated.dataoneTypes_v1 # noqa: E402
+import d1_common.types.generated.dataoneTypes_v2_0 # noqa: E402
+import d1_test.instance_generator.accesspolicy # noqa: E402
+import d1_test.instance_generator.identifier # noqa: E402
+import d1_test.instance_generator.person # noqa: E402
+import d1_test.instance_generator.random_data # noqa: E402
+import d1_test.instance_generator.replicationpolicy # noqa: E402
+import d1_test.instance_generator.subject # noqa: E402
+import d1_test.instance_generator.systemmetadata # noqa: E402
 
 # App
-import d1_client.cnclient
-import shared_settings
-import util
-import shared_context
+import d1_client.cnclient # noqa: E402
+import shared_settings # noqa: E402
+import shared_context # noqa: E402
 
-import mock_object_format_list
+import mock_object_format_list # noqa: E402
 
 
 class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
@@ -129,7 +127,8 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
     # indicates that the call was correctly issued.
     pid = d1_client.tests.util.get_random_valid_pid(self.client)
     obsoleted_pid = d1_client.tests.util.get_random_valid_pid(self.client)
-    serial_version = d1_client.tests.util.serial_version(self.client, pid)
+    # serial_version =
+    d1_client.tests.util.serial_version(self.client, pid)
     self.client.setObsoletedBy(pid, obsoleted_pid, 1)
 
   def test_1065(self):
@@ -167,7 +166,8 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   def test_2030(self):
     """CNRead.search() returns a valid search result"""
-    search_result = self.client.search('solr', '*:*')
+    # search_result =
+    self.client.search('solr', '*:*')
 
   #=========================================================================
   # Authorization API
@@ -267,19 +267,19 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   @unittest.skip("Need to set up stable test env")
   def test_4120(self):
     """CNIdentity.addGroupMembers()"""
-    random_subject = d1_test.instance_generator.person.generate()
+    random_group_name = d1_test.instance_generator.person.generate()
     subject_list = d1_common.types.dataoneTypes.SubjectList()
     for i in range(10):
-      subject_list.append(d1_instance_generator.subject.generate())
+      subject_list.append(d1_test.instance_generator.subject.generate())
     self.client.addGroupMembers(random_group_name, subject_list)
 
   @unittest.skip("Need to set up stable test env")
   def test_4130(self):
     """CNIdentity.removeGroupMembers()"""
-    random_subject = d1_test.instance_generator.person.generate()
+    random_group_name = d1_test.instance_generator.person.generate()
     subject_list = d1_common.types.dataoneTypes.SubjectList()
     for i in range(10):
-      subject_list.append(d1_instance_generator.subject.generate())
+      subject_list.append(d1_test.instance_generator.subject.generate())
     self.client.removeGroupMembers(random_group_name, subject_list)
 
   #=========================================================================
@@ -303,7 +303,7 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
     serial_version = d1_client.tests.util.serial_version(
       self.client, random_existing_pid
     )
-    replication_policy = d1_instance_generator.replicationpolicy.generate()
+    replication_policy = d1_test.instance_generator.replicationpolicy.generate()
     self.client.setReplicationPolicy(
       random_existing_pid, replication_policy, serial_version
     )
@@ -320,8 +320,9 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   @unittest.skip("Need to set up stable test env")
   def test_6010(self):
     """CNRegister.updateNodeCapabilities()"""
-    test_node = 'test_node_' + \
-        d1_instance_generator.random_data.random_3_words()
+    test_node = (
+      'test_node_' + d1_test.instance_generator.random_data.random_3_words()
+    )
     node = d1_common.types.dataoneTypes.Node()
     node.identifier = test_node
     node.name = 'test_name'
@@ -335,8 +336,9 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def test_6020(self):
     """CNRegister.register()"""
     node = d1_common.types.dataoneTypes.Node()
-    node.identifier = 'test_node_' + \
-        d1_instance_generator.random_data.random_3_words()
+    node.identifier = (
+      'test_node_' + d1_test.instance_generator.random_data.random_3_words()
+    )
     node.name = 'test_name'
     node.description = 'test_description'
     node.baseURL = 'https://baseURL.dataone.org'

@@ -21,7 +21,6 @@
 
 # Stdlib
 import logging
-import sys
 
 # D1
 import d1_common.const
@@ -71,7 +70,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def getChecksumResponse(
-    self, pid, checksumAlgorithm=None, vendorSpecific=None
+      self, pid, checksumAlgorithm=None, vendorSpecific=None
   ):
     query = {
       'checksumAlgorithm': checksumAlgorithm,
@@ -158,7 +157,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def systemMetadataChangedResponse(
-    self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
+      self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
   ):
     mmp_dict = {
       'pid':
@@ -174,7 +173,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def systemMetadataChanged(
-    self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
+      self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
   ):
     response = self.systemMetadataChangedResponse(
       pid, serialVersion, dateSysMetaLastModified, vendorSpecific

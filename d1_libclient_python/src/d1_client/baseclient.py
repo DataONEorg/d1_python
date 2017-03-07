@@ -21,10 +21,7 @@
 
 # Stdlib
 import logging
-import re
-import urlparse
 import StringIO
-import sys
 
 # 3rd party
 import pyxb # pip install pyxb
@@ -151,7 +148,7 @@ class DataONEBaseClient(session.Session):
     )
 
   def _raise_service_failure_invalid_dataone_type(
-    self, response, deserialize_exception
+      self, response, deserialize_exception
   ):
     msg = StringIO.StringIO()
     msg.write(
@@ -162,7 +159,7 @@ class DataONEBaseClient(session.Session):
     self._raise_service_failure(response, msg.getvalue())
 
   def _raise_service_failure_incorrect_dataone_type(
-    self, response, expected_type_str, received_type_str
+      self, response, expected_type_str, received_type_str
   ):
     self._raise_service_failure(
       response, 'Received unexpected DataONE type. Expected: {}. Received: {}'
@@ -264,14 +261,14 @@ class DataONEBaseClient(session.Session):
 
   def _read_boolean_401_response(self, response):
     if self._status_is_200_ok(response) or self._status_is_401_not_authorized(
-      response
+        response
     ):
       response.content
       return self._status_is_200_ok(response)
     self._error(response)
 
   def _read_dataone_type_response(
-    self, response, d1_type_name, response_is_303_redirect=False
+      self, response, d1_type_name, response_is_303_redirect=False
   ):
     if self._status_is_ok(response, response_is_303_redirect):
       if not self._content_type_is_xml(response):
@@ -324,15 +321,15 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(
-    self,
-    fromDate=None,
-    toDate=None,
-    event=None,
-    pidFilter=None, # v1
-    idFilter=None, # v2
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+      self,
+      fromDate=None,
+      toDate=None,
+      event=None,
+      pidFilter=None, # v1
+      idFilter=None, # v2
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -352,15 +349,15 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def getLogRecords(
-    self,
-    fromDate=None,
-    toDate=None,
-    event=None,
-    pidFilter=None, # v1
-    idFilter=None, # v2
-    start=0,
-    count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+      self,
+      fromDate=None,
+      toDate=None,
+      event=None,
+      pidFilter=None, # v1
+      idFilter=None, # v2
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
   ):
     response = self.getLogRecordsResponse(
       fromDate=fromDate, toDate=toDate, event=event, pidFilter=pidFilter,
@@ -439,16 +436,18 @@ class DataONEBaseClient(session.Session):
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_header_response(response)
 
-  # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
+  # CNRead.listObjects(session[, fromDate][, toDate][, formatId]
+  #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
-  # MNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
+  # MNRead.listObjects(session[, fromDate][, toDate][, formatId]
+  #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+      self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+      nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -465,9 +464,9 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def listObjects(
-    self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-    nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-    vendorSpecific=None
+      self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
+      nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
   ):
     response = self.listObjectsResponse(
       fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
@@ -522,9 +521,8 @@ class DataONEBaseClient(session.Session):
     query = {
       'action': action,
     }
-    return self.GET(
-      ['isAuthorized', action, pid], query=query, headers=vendorSpecific
-    )
+    return self.GET(['isAuthorized', action, pid], query=query,
+                    headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):

@@ -20,9 +20,6 @@
 """Sphinx configuration for DataONE Python Products documentation
 """
 
-import sys
-import os
-
 import better
 
 project = u'DataONE Python Products'
@@ -42,7 +39,7 @@ extensions = [
   'sphinx.ext.todo',
   'sphinx.ext.graphviz',
   'sphinx.ext.autosummary',
-  #'sphinx.ext.imgmath',
+  # 'sphinx.ext.imgmath',
   'sphinx.ext.pngmath',
   'sphinx.ext.ifconfig',
   'sphinx.ext.inheritance_diagram',

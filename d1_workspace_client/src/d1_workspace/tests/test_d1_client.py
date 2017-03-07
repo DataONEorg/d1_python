@@ -33,7 +33,7 @@ import unittest
 
 # D1
 sys.path.append('..')
-import onedrive_d1_client
+import onedrive_d1_client # noqa: E402
 
 
 class O():

@@ -26,30 +26,25 @@ Run as::
 """
 
 # standard library
-import os
-import ctypes
-from ctypes.wintypes import FILETIME
-from ctypes.wintypes import WIN32_FIND_DATAW
 import optparse
-import pdb
 import sys
 import time
 import urllib
 import logging
 
-# Dokan imports
-import dokan
-from const import DOKAN_SUCCESS
-from const import DOKAN_ERROR
+# Dokan
+from d1_client_onedrive.impl.drivers import dokan
+# from const import DOKAN_SUCCESS
+# from const import DOKAN_ERROR
 from const import DOKAN_OPTION_DEBUG
 from const import DOKAN_OPTION_STDERR
 from const import DOKAN_OPTION_KEEP_ALIVE
-from const import DOKAN_OPTION_NETWORK
-from const import DOKAN_OPTION_REMOVABLE
+# from const import DOKAN_OPTION_NETWORK
+# from const import DOKAN_OPTION_REMOVABLE
 from const import FILE_ATTRIBUTE_READONLY
 from const import FILE_ATTRIBUTE_DEVICE
 from const import FILE_ATTRIBUTE_NORMAL
-from const import ERROR_FILE_NOT_FOUND
+# from const import ERROR_FILE_NOT_FOUND
 from const import FILE_ATTRIBUTE_DIRECTORY
 from const import FILE_READ_ONLY_VOLUME
 from const import FILE_CASE_SENSITIVE_SEARCH
@@ -69,7 +64,7 @@ class DataONEFS(dokan.Operations, D1FS):
   """
 
   def __init__(
-    self, baseurl=d1_common.const.URL_DATAONE_ROOT, filter_query=None
+      self, baseurl=d1_common.const.URL_DATAONE_ROOT, filter_query=None
   ):
     logging.debug('Initializing Dokan drive')
     D1FS.__init__(self, baseurl, filter_query)
@@ -82,7 +77,7 @@ class DataONEFS(dokan.Operations, D1FS):
       )
 
     tokens = fileName[1:].split('\\')
-    lastToken = tokens[len(tokens) - 1]
+    lastToken = tokens[len(tokens) - 1] # noqa: F841
 
     if (len(tokens) == 4 and tokens[3] != 'describes') or len(tokens) == 5:
       return FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_READONLY
@@ -112,7 +107,7 @@ class DataONEFS(dokan.Operations, D1FS):
     if len(tokens) == 1:
       if tokens[0] in [''] + self.facets.keys():
         if tokens[0] in self.facets.keys():
-          facet_values = self.getFacetValues(tokens[0])
+          facet_values = self.getFacetValues(tokens[0]) # noqa: F841
         return dict(
           attr=attrs, ctime=now, atime=now, wtime=now, size=0, nlinks=1
         )
@@ -152,7 +147,7 @@ class DataONEFS(dokan.Operations, D1FS):
       # describes
       elif tokens[3] == 'describes':
         obj = self.getObject(pid)
-        relations = obj.getRelatedObjects()
+        relations = obj.getRelatedObjects() # noqa: F841
         return dict(
           attr=attrs, ctime=now, atime=now, wtime=now, size=0, nlinks=1
         )
@@ -259,7 +254,7 @@ class DataONEFS(dokan.Operations, D1FS):
             ), ctime=now, atime=now, wtime=now, size=len(abstxt)
           )
         )
-      # system metadata 
+      # system metadata
       sysm = self.getSystemMetadata(pid)
       ctime1 = time.mktime(sysm.dateUploaded.timetuple())
       mtime1 = time.mktime(sysm.dateSysMetadataModified.timetuple())
@@ -381,9 +376,11 @@ def main():
     '-f', '--filter', dest='filter', action='store', type='string',
     default=None, help='Filter for limiting view'
   )
-  parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
-                    help='Reporting level: 10=Debug, 20=Info, 30=Warning, ' + \
-                          '40=Error, 50=Fatal')
+  parser.add_option(
+    '-l', '--loglevel', dest='llevel', default=20, type='int',
+    help='Reporting level: 10=Debug, 20=Info, 30=Warning, '
+    '40=Error, 50=Fatal'
+  )
   parser.add_option(
     '-d', '--debug', dest='debug', action='store_true', default=False,
     help='Start pdb for debugging purposes'
@@ -403,12 +400,12 @@ def main():
   #TODO add version option (see d1_fuse2.py)
   """parser.add_option('-v', '--version', dest='version', action='store_true',
                     help='Report current versions and exit.')"""
-  #foreground vs background - running this as "pythonw d1_dokan.pyw" should 
+  #foreground vs background - running this as "pythonw d1_dokan.pyw" should
   # take care of this problem
 
   # parse arguments
   (opts, args) = parser.parse_args()
-  debug = opts.debug
+  debug = opts.debug # noqa: F841
   if opts.llevel not in [10, 20, 30, 40, 50]:
     opts.llevel = 20
 
@@ -437,21 +434,21 @@ def main():
   logging.debug('mountpoint = %s' % mountpoint)
 
   # set up Dokan
-  #NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or 
+  # NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or
   # DOKAN_OPTION_NETWORK.  This will make the drive appear as a mounted drive
-  # like it should.  There are a few problems with this though.  The network 
+  # like it should.  There are a few problems with this though.  The network
   # approach gives an ugly icon in Windows Explorer and says that the drive is
-  # disconnected.  The removable approach gives an error when I try to eject 
-  # the drive.  There may be solutions to both of these problems, but I 
+  # disconnected.  The removable approach gives an error when I try to eject
+  # the drive.  There may be solutions to both of these problems, but I
   # haven't figure it out yet.  I'm not sure what makes the most sense.
-  #UPDATE: I was able to get rid of the ugly disconnected network icon in 
+  # UPDATE: I was able to get rid of the ugly disconnected network icon in
   # a number of ways.  First, by editing the registry you can indicate an
   # icon that you want to be used for a particular drive letter.  Second,
-  # I was able to register the network drive so that it appears connected.  
+  # I was able to register the network drive so that it appears connected.
   # There is a bug in this code though.  When you try to access the drive using
   # Windows Explorer, the first time it will always crash Explorer.  After that
   # first crash it appears to be fine.  I need to figure out how to fix this.
-  DriverOption = DOKAN_OPTION_KEEP_ALIVE #| DOKAN_OPTION_NETWORK
+  DriverOption = DOKAN_OPTION_KEEP_ALIVE # | DOKAN_OPTION_NETWORK
   if (opts.stderr):
     DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
   d1fs = dokan.Dokan(

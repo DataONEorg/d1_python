@@ -42,7 +42,7 @@ class ObjectListIterator(object):
   """
 
   def __init__(
-    self, client, start=0, fromDate=None, pagesize=500, max=-1, nodeId=None
+      self, client, start=0, fromDate=None, pagesize=500, max=-1, nodeId=None
   ):
     """Initializes the iterator.
 

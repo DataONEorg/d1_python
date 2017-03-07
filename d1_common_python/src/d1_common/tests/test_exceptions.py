@@ -244,8 +244,10 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(root.attributes['errorCode'].value, u'409')
     self.assertEqual(root.attributes['name'].value, u'IdentifierNotUnique')
     self.assertEqual(root.attributes['identifier'].value, u'test_pid')
-    self.assertEqual(root.getElementsByTagName('description')[0].childNodes[0]\
-                     .nodeValue, u'description_test')
+    self.assertEqual(
+      root.getElementsByTagName('description')[0].childNodes[0].nodeValue,
+      u'description_test'
+    )
     # Disabled until we have decided how to encode traceInformation.
     #self.assertEqual(root.getElementsByTagName('traceInformation')[0]\
     #                 .childNodes[0].nodeValue, u'test trace information')

@@ -20,8 +20,6 @@
 
 # Stdlib
 import datetime
-import hashlib
-import logging
 import random
 import string
 
@@ -48,12 +46,12 @@ def generate_random_ascii(prefix, num_chars=10):
 
 
 def generate_science_object_with_sysmeta(
-  pid,
-  num_min_bytes,
-  num_max_bytes,
-  format_id=FORMAT_ID,
-  include_obsolescence_bool=False,
-  use_v1_bool=False,
+    pid,
+    num_min_bytes,
+    num_max_bytes,
+    format_id=FORMAT_ID,
+    include_obsolescence_bool=False,
+    use_v1_bool=False,
 ):
   sci_obj = _create_science_object_bytes(pid, num_min_bytes, num_max_bytes)
   sys_meta = _generate_system_metadata_for_science_object(
@@ -75,7 +73,7 @@ def _create_science_object_bytes(pid, num_min_bytes, num_max_bytes):
 
 
 def _generate_system_metadata_for_science_object(
-  pid, sciobj_str, format_id, include_obsolescence_bool, use_v1_bool
+    pid, sciobj_str, format_id, include_obsolescence_bool, use_v1_bool
 ):
   now = datetime.datetime.now()
   if use_v1_bool:

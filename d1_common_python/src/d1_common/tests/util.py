@@ -29,6 +29,7 @@ import pyxb
 # D1
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.dataoneErrors as dataoneErrors
+import d1_common.util
 
 # Stdlib
 import os
@@ -37,12 +38,8 @@ import os
 import d1_common.types.dataoneTypes_v2_0 as v2
 
 
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
-
 def get_test_filepath(filename):
-  return os.path.join(make_absolute('test_docs'), filename)
+  return os.path.join(d1_common.util.abs_path('test_docs'), filename)
 
 
 def read_test_file(filename, mode_str='rb'):

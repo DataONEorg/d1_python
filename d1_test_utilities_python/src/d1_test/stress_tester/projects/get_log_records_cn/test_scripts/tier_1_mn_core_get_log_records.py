@@ -29,17 +29,15 @@
 """
 
 # Std.
-import os
 import random
 import sys
 
 # D1
+import d1_common.util
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-import settings
-import transaction
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import settings # noqa: E402
+import transaction # noqa: E402
 
 
 class Transaction(transaction.Transaction):

@@ -22,7 +22,6 @@
 """
 
 # Stdlib
-import logging
 import unittest
 
 # 3rd party

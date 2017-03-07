@@ -30,19 +30,13 @@
 # Stdlib
 import logging
 import optparse
-from string import join
 import sys
 import traceback
 
 # D1
 import d1_common.types.exceptions
 
-# Create absolute path from path that is relative to the module from which
-# the function is called.
-#def make_absolute(p):
-#  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-#
-#sys.path.append(make_absolute(u'./impl'))
+#sys.path.append(d1_common.util.abs_path(u'./impl'))
 
 # def module_path():
 #     """ This will get us the program's directory,
@@ -307,12 +301,10 @@ def handle_options(cli, options):
     if options.cn_url:
       cli.d1.session_set_parameter(session.CN_URL_NAME, options.cn_url)
     if options.cn_host:
-      url = u''.join(
-        (
-          d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
-          d1_common.const.DEFAULT_CN_PATH
-        )
-      )
+      url = u''.join((
+        d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
+        d1_common.const.DEFAULT_CN_PATH
+      ))
       cli.d1.session_set_parameter(session.CN_URL_NAME, url)
     if options.from_date:
       cli.d1.session_set_parameter(session.FROM_DATE_NAME, options.from_date)
@@ -321,12 +313,10 @@ def handle_options(cli, options):
     if options.mn_url:
       cli.d1.session_set_parameter(session.MN_URL_NAME, options.mn_url)
     if options.mn_host:
-      url = u''.join(
-        (
-          d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
-          d1_common.const.DEFAULT_MN_PATH
-        )
-      )
+      url = u''.join((
+        d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
+        d1_common.const.DEFAULT_MN_PATH
+      ))
       cli.d1.session_set_parameter(session.MN_URL_NAME, url)
     if options.object_format:
       cli.d1.session_set_parameter(session.FORMAT_NAME, options.object_format)

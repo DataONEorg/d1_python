@@ -33,38 +33,35 @@ import codecs
 import logging
 import optparse
 import os
-import re
 import sys
-import unittest
 import xml.sax.saxutils
 
 # D1
 import d1_x509v3_certificate_generator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-from d1_test.instance_generator import random_data
+import d1_common.util
 
 # App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('./shared/'))
-import settings
-import subject_dn
+sys.path.append(d1_common.util.abs_path('./shared/'))
+import settings # noqa: E402
+import subject_dn # noqa: E402
 
 # Get an instance of a logger.
 logger = logging.getLogger()
 
 # The SubjectInfo to include in the certificate.
-subject_info_template = \
-"""<?xml version="1.0" encoding="UTF-8"?>
-<d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
-  <person>
-    <subject>%subject%</subject>
-    <givenName>Test</givenName>
-    <familyName>Subject</familyName>
-    <email>testsubject@gmail.com</email>
-    <verified>true</verified>
-  </person>
-</d1:subjectInfo>
-"""
+subject_info_template = (
+  """<?xml version="1.0" encoding="UTF-8"?>
+  <d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
+    <person>
+      <subject>%subject%</subject>
+      <givenName>Test</givenName>
+      <familyName>Subject</familyName>
+      <email>testsubject@gmail.com</email>
+      <verified>true</verified>
+    </person>
+  </d1:subjectInfo>
+  """
+)
 
 
 def main():

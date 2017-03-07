@@ -81,8 +81,8 @@ class OperationQueue(object):
     self._assert_queue_not_empty()
     self._print_operation_queue()
     if not cli_util.confirm(
-      'You are about to perform {0} queued write operations. Continue?'
-      .format(len(self._operations)), default='yes'
+        'You are about to perform {0} queued write operations. Continue?'
+        .format(len(self._operations)), default='yes'
     ):
       raise cli_exceptions.InvalidArguments(u'Cancelled')
     while len(self._operations):
@@ -92,8 +92,8 @@ class OperationQueue(object):
   def clear(self):
     self._assert_queue_not_empty()
     if cli_util.confirm(
-      'You are about to clear the queue of {0} write operations. Continue?'
-      .format(len(self._operations)), default='yes'
+        'You are about to clear the queue of {0} write operations. Continue?'
+        .format(len(self._operations)), default='yes'
     ):
       self._clear()
 

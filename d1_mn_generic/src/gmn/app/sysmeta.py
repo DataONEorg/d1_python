@@ -214,7 +214,7 @@ def _model_to_pyxb(pid):
 
 
 def _base_pyxb_to_model(
-  sci_model, sysmeta_pyxb, url=None, skip_immutable=False
+    sci_model, sysmeta_pyxb, url=None, skip_immutable=False
 ):
   # The PID is used for looking up the sci_model so will always match and does
   # need to be updated.
@@ -369,7 +369,7 @@ def _insert_permission_rows(sci_model, allow_rule, top_level):
 def _access_policy_model_to_pyxb(sciobj_model):
   access_policy_pyxb = d1_common.types.dataoneTypes.AccessPolicy()
   for permission_model in app.models.Permission.objects.filter(
-    sciobj=sciobj_model
+      sciobj=sciobj_model
   ):
     # Skip implicit permissions for rightsHolder.
     if permission_model.subject.subject == sciobj_model.rights_holder.subject:
@@ -402,10 +402,12 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
 
   replication_policy_model = app.models.ReplicationPolicy()
   replication_policy_model.sciobj = sciobj_model
-  replication_policy_model.replication_is_allowed = \
+  replication_policy_model.replication_is_allowed = (
     sysmeta_pyxb.replicationPolicy.replicationAllowed
-  replication_policy_model.desired_number_of_replicas = \
+  )
+  replication_policy_model.desired_number_of_replicas = (
     sysmeta_pyxb.replicationPolicy.numberReplicas
+  )
   replication_policy_model.save()
 
   def add(node_ref_pyxb, rep_node_model):
@@ -455,7 +457,7 @@ def _replication_policy_model_to_pyxb(sciobj_model):
 
   def add(rep_pyxb, rep_node_model):
     for rep_node in rep_node_model.objects.filter(
-      replication_policy=replication_policy_model
+        replication_policy=replication_policy_model
     ):
       rep_pyxb.append(rep_node.node.urn)
 

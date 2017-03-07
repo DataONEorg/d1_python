@@ -28,16 +28,13 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
 
 # D1
 sys.path.append('../..')
-import command_echoer
-import impl.resolver.time_period as time_period
-from object_tree_test_sample import object_tree
+import impl.resolver.time_period as time_period # noqa: E402
+from object_tree_test_sample import object_tree # noqa: E402
 
 options = {}
 

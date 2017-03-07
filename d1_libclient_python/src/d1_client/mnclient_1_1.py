@@ -21,12 +21,6 @@
 
 # Stdlib
 import logging
-import sys
-
-# D1
-import d1_common.const
-import d1_common.date_time
-import d1_common.util
 
 # App
 import baseclient_1_1
@@ -34,8 +28,8 @@ import mnclient
 
 
 class MemberNodeClient_1_1(
-  baseclient_1_1.DataONEBaseClient_1_1,
-  mnclient.MemberNodeClient,
+    baseclient_1_1.DataONEBaseClient_1_1,
+    mnclient.MemberNodeClient,
 ):
   """Extend DataONEBaseClient_1_1 and MemberNodeClient with functionality
   for Member nodes that was added in v1.1 of the DataONE infrastructure.

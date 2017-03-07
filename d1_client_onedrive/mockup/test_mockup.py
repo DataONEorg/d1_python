@@ -28,7 +28,6 @@
 
 # Stdlib
 import logging
-import pprint
 import sys
 import unittest
 import datetime

@@ -33,7 +33,7 @@ import d1_common.types.dataoneTypes_v1 as dataoneTypes
 import d1_common.const
 
 # App
-from replication_error import *
+import replication_error
 import test_object_generator
 
 TEST_CN_NODE_ID = 'urn:node:RepTestCN'
@@ -42,14 +42,14 @@ TEST_MN_NODE_ID = 'urn:node:RepTestMN'
 
 class TestHTTPServer(threading.Thread):
   def __init__(
-    self,
-    options,
-    pid_unknown,
-    pid_not_authorized,
-    pid_known_and_authorized,
-    src_existing_pid_approve,
-    src_existing_pid_deny,
-    queue,
+      self,
+      options,
+      pid_unknown,
+      pid_not_authorized,
+      pid_known_and_authorized,
+      src_existing_pid_approve,
+      src_existing_pid_deny,
+      queue,
   ):
     threading.Thread.__init__(self)
     # Daemon mode causes the Python app to exit when the main thread exits.
@@ -118,7 +118,9 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     elif self._handle_getSystemMetadata(url):
       return
     else:
-      raise ReplicationTesterError('Unknown REST URL: {0}'.format(self.path))
+      raise replication_error.ReplicationTesterError(
+        'Unknown REST URL: {0}'.format(self.path)
+      )
 
   def do_PUT(self):
     self._logger.debug('Received HTTP PUT: {0}'.format(self.path))
@@ -126,7 +128,9 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     if self._handle_setReplicationStatus(url):
       return
     else:
-      raise ReplicationTesterError('Unknown REST URL: {0}'.format(self.path))
+      raise replication_error.ReplicationTesterError(
+        'Unknown REST URL: {0}'.format(self.path)
+      )
 
   # Request handlers.
 
@@ -155,7 +159,9 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         'isNodeAuthorized_rejected', pid, target_node_subject
       )
     else:
-      raise ReplicationTesterError('Invalid Test PID: {0}'.format(pid))
+      raise replication_error.ReplicationTesterError(
+        'Invalid Test PID: {0}'.format(pid)
+      )
     return True
 
   def _handle_getReplica(self, url):
@@ -325,7 +331,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     )
 
   def _create_node_obj(
-    self, node_type, node_id, name, description, subject, service_name
+      self, node_type, node_id, name, description, subject, service_name
   ):
     node_list = dataoneTypes.node()
     node_list.identifier = node_id

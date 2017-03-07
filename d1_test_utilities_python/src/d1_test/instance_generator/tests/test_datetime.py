@@ -28,24 +28,19 @@ Module d1_instance_generator.tests.test_date
 """
 
 # Stdlib
-import hashlib
 import logging
-import os
 import sys
 import time
 import unittest
-import uuid
-import StringIO
 
 # D1
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
 import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import dates
+import dates # noqa: E402
 
 #===============================================================================
 

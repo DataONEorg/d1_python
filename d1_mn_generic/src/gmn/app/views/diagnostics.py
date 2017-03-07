@@ -101,7 +101,7 @@ def get_replication_queue(request):
 @app.restrict_to_verb.get
 def clear_replication_queue(request):
   for rep_queue_model in app.models.ReplicationQueue.objects.filter(
-    local_replica__info__status__status='queued'
+      local_replica__info__status__status='queued'
   ):
     app.models.IdNamespace.objects.filter(
       did=rep_queue_model.local_replica.pid.did

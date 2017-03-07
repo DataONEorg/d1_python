@@ -30,15 +30,9 @@
 
 # Stdlib
 import logging
-import os
-from datetime import datetime
-
-# D1
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map

@@ -24,21 +24,23 @@ Node document.
 
 https://releases.dataone.org/online/api-documentation-v2.0/apis/Types.html#Types.Node
 """
-import d1_client.mnclient_1_1
+
+# Stdlib
+import logging
+
+# D1
 import d1_client.mnclient_2_0
-import d1_common.types.dataoneTypes_v1_1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
 
 MAJOR_VERSION = 2
 
 
 class NodeListIterator(object):
   def __init__(
-    self,
-    base_url,
-    major_version=MAJOR_VERSION,
-    client_dict=None,
-    listNodes_dict=None,
+      self,
+      base_url,
+      major_version=MAJOR_VERSION,
+      client_dict=None,
+      listNodes_dict=None,
   ):
     self._base_url = base_url
     self._major_version = major_version
@@ -54,6 +56,6 @@ class NodeListIterator(object):
       'Retrieved {} Node documents'.format(len(node_list_pyxb.node))
     )
     for node_pyxb in sorted(
-      node_list_pyxb.node, key=lambda x: x.identifier.value()
+        node_list_pyxb.node, key=lambda x: x.identifier.value()
     ):
       yield node_pyxb

@@ -28,8 +28,6 @@ with any DataONE node regardless of type and version.
 # Stdlib
 import logging
 import time
-import sys
-import objectlistiterator
 
 # D1
 import d1_common.const
@@ -54,7 +52,7 @@ def showHelp():
 
 class DataONEObject(object):
   def __init__(
-    self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, forcenew=False
+      self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, forcenew=False
   ):
     self._pid = pid
     self._locations = []
@@ -95,7 +93,7 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         """
     if len(self._locations) < 1 or forcenew:
-      cli = self._getClient()
+      self._getClient()
       self._locations = self._client.resolve(self._pid)
     return self._locations
 
@@ -108,7 +106,7 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         """
     if self._systemmetadata is None or forcenew:
-      cli = self._getClient()
+      self._getClient()
       self._systemmetadata = self._client.getSystemMetadata(self._pid)
     return self._systemmetadata
 
@@ -117,8 +115,8 @@ class DataONEObject(object):
     if t - self._relations_t > MAX_CACHE_AGE:
       forcenew = True
     if self._relations is None or forcenew:
-      cli = self._getClient()
-      self._relations = cli.getRelatedObjects(self._pid)
+      self._getClient()
+      self._relations = self._client.getRelatedObjects(self._pid)
       self._relations_t = t
     return self._relations
 
@@ -130,7 +128,7 @@ class DataONEObject(object):
         :returns: None
         :return type: NoneType
         """
-    cli = self._getClient()
+    self._getClient()
     instr = self._client.get(self._pid)
     while True:
       data = instr.read(4096)
@@ -139,7 +137,7 @@ class DataONEObject(object):
       outstr.write(data)
 
   def get(self):
-    cli = self._getClient()
+    self._getClient()
     return self._client.get(self._pid)
 
 
@@ -148,7 +146,7 @@ class DataONEObject(object):
 
 class DataONEClient(object):
   def __init__(
-    self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None
+      self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None
   ):
     """DataONEClient, which uses CN- and MN clients to perform high level
         operations against the DataONE infrastructure.
@@ -217,8 +215,8 @@ class DataONEClient(object):
 
   @d1_common.util.utf8_to_unicode
   def create(
-    self,
-    targetNodeId=None,
+      self,
+      targetNodeId=None,
   ):
     """
         """
@@ -228,7 +226,7 @@ class DataONEClient(object):
   def getSystemMetadata(self, pid):
     """
         """
-    if self._sysmetacache.has_key(pid):
+    if pid in self._sysmetacache:
       return self._sysmetacache[pid]
     cn = self._getCN()
     self._sysmetacache[pid] = cn.getSystemMetadata(pid)

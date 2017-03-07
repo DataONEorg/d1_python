@@ -27,19 +27,16 @@
 # Stdlib
 import logging
 import optparse
-import os
-import re
 import sys
-import unittest
 
 # D1
 from d1_test.instance_generator import random_data
+import d1_common.util
 
 # App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('./shared/'))
-import settings
-import subject_dn
+sys.path.append(d1_common.util.abs_path('./shared/'))
+import settings # noqa: E402
+import subject_dn # noqa: E402
 
 # Get an instance of a logger.
 logger = logging.getLogger()

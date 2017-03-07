@@ -38,7 +38,6 @@ from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 # App
 sys.path.append('..')
 sys.path.append('../impl')
-import cli_util
 
 
 class TestCLIUtil(TestCaseWithURLCompare):

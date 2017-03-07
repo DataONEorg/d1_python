@@ -21,21 +21,8 @@
 
 # Stdlib
 import logging
-import re
-import urlparse
-import StringIO
-import sys
 
-# 3rd party
-import pyxb # pip install pyxb
-
-# D1
-import d1_common.const # pip install dataone.common
-import d1_common.restclient
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.util
-import d1_common.url
-
+# App
 import baseclient
 
 #=============================================================================

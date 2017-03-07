@@ -180,8 +180,8 @@ class OperationValidator(object):
         'Operation is missing the operation type'
       )
     if operation['operation'] not in (
-      'create', 'update', 'create_package', 'archive', 'update_access_policy',
-      'update_replication_policy'
+        'create', 'update', 'create_package', 'archive', 'update_access_policy',
+        'update_replication_policy'
     ):
       raise cli_exceptions.InvalidArguments(
         'Operation is of invalid type: {0}'.format(operation['operation'])
@@ -217,14 +217,20 @@ class OperationValidator(object):
     auth = operation['authentication']
     if not auth['anonymous']:
       if not self._is_value_type(
-        operation, types.StringTypes, 'authentication', 'cert-file'
+          operation, types.StringTypes, 'authentication', 'cert-file'
       ):
         raise cli_exceptions.InvalidArguments(
           'Specified an authenticated connection without providing a certificate'
         )
       cli_util.assert_file_exists(operation['authentication']['cert-file'])
-    if self._is_value_type(operation, types.NoneType, 'authentication', 'cert-file') \
-      and not self._is_value_type(operation, types.NoneType, 'authentication', 'key-file'):
+    if (
+      self._is_value_type(
+        operation, types.NoneType, 'authentication', 'cert-file'
+      ) and not
+      self._is_value_type(
+          operation, types.NoneType, 'authentication', 'key-file'
+      )
+    ):
       raise cli_exceptions.InvalidArguments(
         'Specified a certificate private key without specifying a certificate'
       )

@@ -40,8 +40,9 @@ import random_data
 
 def generate():
   res = d1_common.types.dataoneTypes.Replica()
-  res.replicaMemberNode = u"mn_" + \
-    random_data.random_unicode_string_no_whitespace(5, 10)
+  res.replicaMemberNode = (
+    u"mn_" + random_data.random_unicode_string_no_whitespace(5, 10)
+  )
   res.replicationStatus = d1_common.types.dataoneTypes.ReplicationStatus.completed
   res.replicaVerified = dates.now()
   return res

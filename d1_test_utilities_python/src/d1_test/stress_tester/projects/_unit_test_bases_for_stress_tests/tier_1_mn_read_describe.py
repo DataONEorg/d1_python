@@ -29,8 +29,6 @@
 """
 
 # Std.
-import sys
-import re
 import xml
 
 # D1
@@ -42,7 +40,6 @@ import d1_test_case
 # App
 import context
 import test_client
-import test_utilities
 
 
 class Test060Describe(d1_test_case.D1TestCase):
@@ -77,9 +74,8 @@ class Test060Describe(d1_test_case.D1TestCase):
         response = client.describe(context.TOKEN, pid)
         headers = response.getheaders()
         # Build dict with lower case keys.
-        headers_lower = dict(
-          (header.lower(), value) for header, value in headers
-        )
+        headers_lower = dict((header.lower(), value)
+                             for header, value in headers)
         # Check for the required headers.
         self.assertTrue('date' in headers_lower)
         self.assertTrue('content-type' in headers_lower)

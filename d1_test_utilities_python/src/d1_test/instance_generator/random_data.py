@@ -28,18 +28,9 @@
 """
 
 # Stdlib
-import datetime
-import logging
-import os
 import random
 import re
 import StringIO
-
-# D1
-import d1_common.types.dataoneTypes
-
-# 3rd party
-import pyxb
 
 # App
 import words

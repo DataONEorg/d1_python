@@ -37,7 +37,7 @@ class LogRecordIterator(object):
     """
 
   def __init__(
-    self, client, fromDate=None, toDate=None, start=0, pageSize=1000
+      self, client, fromDate=None, toDate=None, start=0, pageSize=1000
   ):
     """Initializes the iterator.
 

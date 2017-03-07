@@ -26,10 +26,10 @@
 :Author: DataONE (Dahl)
 """
 
-from setuptools import setup, find_packages
+import setuptools
 import d1_client
 
-setup(
+setuptools.setup(
   name='dataone.instance_generator',
   version=d1_client.__version__,
   description='Generate randomized instances of DataONE types for testing',

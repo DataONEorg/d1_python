@@ -60,12 +60,7 @@
 import datetime
 import hashlib
 import logging
-import os
-import sys
 import StringIO
-
-# 3rd party
-import pyxb
 
 # D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes

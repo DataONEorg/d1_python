@@ -22,14 +22,15 @@
 """
 
 # Stdlib
-import os.path
 import urlparse
 
 import d1_common.type_conversions
 import d1_common.url
 
+N_TOTAL = 1000
 
-def get_slice(query_dict):
+
+def get_slice(query_dict, n_total=None):
   if 'start' in query_dict:
     n_start = int(query_dict['start'][0])
   else:
@@ -37,7 +38,7 @@ def get_slice(query_dict):
   if 'count' in query_dict:
     n_count = int(query_dict['count'][0])
   else:
-    n_count = N_TOTAL
+    n_count = n_total or N_TOTAL
   return n_start, n_count
 
 

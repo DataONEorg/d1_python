@@ -70,9 +70,12 @@ UNICODE_TEST_STRINGS = [
   u'path-ascii-doc-example-http://example.com/data/mydata?row=24',
   u'query-ascii-doc-example-http://example.com/data/mydata?row=24',
   u'fragment-ascii-doc-example-http://example.com/data/mydata?row=24',
-  u'path-ascii-doc-example-ldap://ldap1.example.net:6666/o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
-  u'query-ascii-doc-example-ldap://ldap1.example.net:6666/o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
-  u'fragment-ascii-doc-example-ldap://ldap1.example.net:6666/o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
+  u'path-ascii-doc-example-ldap://ldap1.example.net:6666/'
+  u'o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
+  u'query-ascii-doc-example-ldap://ldap1.example.net:6666/'
+  u'o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
+  u'fragment-ascii-doc-example-ldap://ldap1.example.net:6666/'
+  u'o=University%20of%20Michigan, c=US??sub?(cn=Babs%20Jensen)',
   u'common-bmp-doc-example-ฉันกินกระจกได้',
   u'common-bmp-doc-example-Is féidir liom ithe gloine',
   u'decode-space-potential-error-unescaped-plus-+',

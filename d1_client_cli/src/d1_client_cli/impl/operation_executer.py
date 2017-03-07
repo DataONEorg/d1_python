@@ -149,7 +149,7 @@ class OperationExecuter(object):
     return c.create_system_metadata_for_update(operation)
 
   def _generate_resource_map(
-    self, operation, package_pid, pid_sci_meta, pid_sci_datas
+      self, operation, package_pid, pid_sci_meta, pid_sci_datas
   ):
     resource_map_generator = d1_client.data_package.ResourceMapGenerator(
       dataone_root=operation[u'parameters']['mn-url']

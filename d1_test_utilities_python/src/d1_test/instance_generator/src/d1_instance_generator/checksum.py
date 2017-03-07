@@ -29,9 +29,7 @@
 
 # Stdlib
 import random
-import hashlib
 import StringIO
-import logging
 # D1
 import d1_common.const
 import d1_common.util
@@ -48,8 +46,8 @@ def random_checksum_algorithm():
 
 
 def calculate_checksum_of_flo(
-  flo, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
-  block_size=1024 * 1024
+    flo, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
+    block_size=1024 * 1024
 ):
   c = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
   while True:

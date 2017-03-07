@@ -29,16 +29,12 @@
 
 # Stdlib
 import logging
-import os
 import sys
 import unittest
-import uuid
 
 # App
 sys.path.append('..')
 sys.path.append('../impl')
-import dataone
-import session
 
 TEST_CN_URL = 'https://cn-dev-rr.dataone.org/cn'
 TEST_CN_HOST = 'cn-dev-rr.dataone.org'

@@ -36,12 +36,9 @@ auth.py(315)
 """
 
 # Stdlib
-import inspect
-import logging
 import re
 import string
 import StringIO
-import sys
 import traceback
 import xml.sax
 
@@ -115,8 +112,8 @@ def _get_header(headers, header):
 
 
 def create_exception_by_name(
-  name, detailCode="0", description='', traceInformation=None, identifier=None,
-  nodeId=None
+    name, detailCode="0", description='', traceInformation=None,
+    identifier=None, nodeId=None
 ):
   name_exception_map = {
     u'AuthenticationTimeout': AuthenticationTimeout,
@@ -142,8 +139,8 @@ def create_exception_by_name(
     # have a document that validates against the schema but is not a valid
     # DataONE exception.
     raise DataONEExceptionException(
-      'Attempted to deserialize unknown DataONE Exception: {0}'\
-      .format(name))
+      'Attempted to deserialize unknown DataONE Exception: {0}'.format(name)
+    )
   return dataone_exception(
     detailCode, description, traceInformation, identifier, nodeId
   )
@@ -158,8 +155,8 @@ class DataONEException(Exception):
 
   @d1_common.util.utf8_to_unicode
   def __init__(
-    self, errorCode, detailCode="0", description='', traceInformation=None,
-    identifier=None, nodeId=None
+      self, errorCode, detailCode="0", description='', traceInformation=None,
+      identifier=None, nodeId=None
   ):
     self.errorCode = errorCode
     self.detailCode = str(detailCode)
@@ -298,8 +295,8 @@ class DataONEException(Exception):
 
 class AuthenticationTimeout(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 408, detailCode, description, traceInformation, identifier, nodeId
@@ -308,8 +305,8 @@ class AuthenticationTimeout(DataONEException):
 
 class IdentifierNotUnique(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 409, detailCode, description, traceInformation, identifier, nodeId
@@ -318,8 +315,8 @@ class IdentifierNotUnique(DataONEException):
 
 class InsufficientResources(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 413, detailCode, description, traceInformation, identifier, nodeId
@@ -328,8 +325,8 @@ class InsufficientResources(DataONEException):
 
 class InvalidCredentials(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 401, detailCode, description, traceInformation, identifier, nodeId
@@ -338,8 +335,8 @@ class InvalidCredentials(DataONEException):
 
 class InvalidRequest(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 400, detailCode, description, traceInformation, identifier, nodeId
@@ -348,8 +345,8 @@ class InvalidRequest(DataONEException):
 
 class InvalidSystemMetadata(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 400, detailCode, description, traceInformation, identifier, nodeId
@@ -358,8 +355,8 @@ class InvalidSystemMetadata(DataONEException):
 
 class InvalidToken(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 401, detailCode, description, traceInformation, identifier, nodeId
@@ -368,8 +365,8 @@ class InvalidToken(DataONEException):
 
 class NotAuthorized(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 401, detailCode, description, traceInformation, identifier, nodeId
@@ -378,8 +375,8 @@ class NotAuthorized(DataONEException):
 
 class NotFound(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 404, detailCode, description, traceInformation, identifier, nodeId
@@ -389,8 +386,8 @@ class NotFound(DataONEException):
 
 class NotImplemented(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 501, detailCode, description, traceInformation, identifier, nodeId
@@ -399,8 +396,8 @@ class NotImplemented(DataONEException):
 
 class ServiceFailure(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 500, detailCode, description, traceInformation, identifier, nodeId
@@ -409,8 +406,8 @@ class ServiceFailure(DataONEException):
 
 class UnsupportedMetadataType(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 400, detailCode, description, traceInformation, identifier, nodeId
@@ -419,8 +416,8 @@ class UnsupportedMetadataType(DataONEException):
 
 class UnsupportedType(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 400, detailCode, description, traceInformation, identifier, nodeId
@@ -429,8 +426,8 @@ class UnsupportedType(DataONEException):
 
 class SynchronizationFailed(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 0, detailCode, description, traceInformation, identifier, nodeId
@@ -439,8 +436,8 @@ class SynchronizationFailed(DataONEException):
 
 class VersionMismatch(DataONEException):
   def __init__(
-    self, detailCode, description=None, traceInformation=None, identifier=None,
-    nodeId=None
+      self, detailCode, description=None, traceInformation=None,
+      identifier=None, nodeId=None
   ):
     DataONEException.__init__(
       self, 409, detailCode, description, traceInformation, identifier, nodeId

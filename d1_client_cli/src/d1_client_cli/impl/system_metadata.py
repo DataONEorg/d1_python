@@ -80,7 +80,7 @@ class SystemMetadataCreator():
     return sys_meta
 
   def create_system_metadata_for_package(
-    self, resource_map, create_package_operation
+      self, resource_map, create_package_operation
   ):
     pid = create_package_operation['parameters']['identifier-package']
     file_size = len(resource_map)
@@ -151,13 +151,13 @@ class SystemMetadataCreator():
     return os.path.getsize(os.path.expanduser(path))
 
   def _get_file_checksum(
-    self, path, algorithm=u'SHA-1', block_size=1024 * 1024
+      self, path, algorithm=u'SHA-1', block_size=1024 * 1024
   ):
     with open(os.path.expanduser(path), u'r') as f:
       return self._get_flo_checksum(f, algorithm, block_size)
 
   def _get_string_checksum(
-    self, string, algorithm=u'SHA-1', block_size=1024 * 1024
+      self, string, algorithm=u'SHA-1', block_size=1024 * 1024
   ):
     return self._get_flo_checksum(
       StringIO.StringIO(string), algorithm, block_size
@@ -175,7 +175,9 @@ class SystemMetadataCreator():
     return h.hexdigest()
 
   #def _create_system_metadata(self, pid, path, format_id=None):
-  #  checksum = self._get_file_checksum(cli_util.os.path.expanduser(path), self.session.get(CHECKSUM_NAME))
+  #  checksum = self._get_file_checksum(
+  #    cli_util.os.path.expanduser(path), self.session.get(CHECKSUM_NAME)
+  #  )
   #  size = cli_util.get_file_size(cli_util.os.path.expanduser(path))
   #  sys_meta = self.session.create_system_metadata(pid, checksum, size, format_id)
   #  return sys_meta

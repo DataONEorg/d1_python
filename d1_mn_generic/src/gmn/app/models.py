@@ -35,7 +35,7 @@ from django.db import models
 
 # Django automatically creates:
 # - "id" serial NOT NULL PRIMARY KEY
-# - Index on primary key  
+# - Index on primary key
 # - Index on ForeignKey
 # - Index on unique=True
 

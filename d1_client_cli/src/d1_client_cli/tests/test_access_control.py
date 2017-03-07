@@ -38,8 +38,8 @@ from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 # App
 sys.path.append('../')
 sys.path.append('../impl')
-import access_control
-import cli_exceptions
+import access_control # noqa: E402
+import cli_exceptions # noqa: E402
 
 #===============================================================================
 

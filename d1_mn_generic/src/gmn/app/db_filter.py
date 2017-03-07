@@ -79,7 +79,7 @@ def add_bool_filter(query, request, column_name, param_name):
   if bool_val is None:
     return query
   if bool_val not in (
-    True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
+      True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
   ):
     raise d1_common.types.exceptions.InvalidRequest(
       0,

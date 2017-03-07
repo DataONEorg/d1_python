@@ -30,13 +30,9 @@
 import datetime
 import errno
 import fuse
-import logging
 import os
 import stat
-import sys
 import time
-import urllib
-import urlparse
 
 # D1
 import fs
@@ -109,16 +105,16 @@ class FUSECallbacks(fuse.Operations):
     #date_time = int(time.time(date_time))
 
     return dict(
-      st_mode = stat.S_IFDIR | 0555 if is_dir else stat.S_IFREG | 0444,
-      st_ino = 0,
-      st_dev = 0,
-      st_nlink = 2,
-      st_uid = 0, #self.uid,
-      st_gid = 0, #self.gid,
-      st_size = size,
-      st_atime = seconds_since_epoch ,
-      st_mtime = seconds_since_epoch ,
-      st_ctime = seconds_since_epoch ,
+      st_mode=stat.S_IFDIR | 0555 if is_dir else stat.S_IFREG | 0444,
+      st_ino=0,
+      st_dev=0,
+      st_nlink=2,
+      st_uid=0, # self.uid,
+      st_gid=0, # self.gid,
+      st_size=size,
+      st_atime=seconds_since_epoch,
+      st_mtime=seconds_since_epoch,
+      st_ctime=seconds_since_epoch,
     )
 
   #@dbg
@@ -174,7 +170,7 @@ class FUSECallbacks(fuse.Operations):
 
   @dbg
   def _get_meta_dir(self, path):
-    c = self._get_direct_children(path)
+    self._get_direct_children(path)
     size = 0
     date = datetime.datetime.now()
     #for f in c:

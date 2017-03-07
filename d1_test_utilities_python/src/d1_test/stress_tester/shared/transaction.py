@@ -39,13 +39,12 @@ import time
 # D1
 import d1_client.mnclient
 import d1_common.const
+import d1_common.util
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-import certificate
-import settings
-import subject_dn
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import certificate # noqa: E402
+import settings # noqa: E402
+import subject_dn # noqa: E402
 
 
 class Transaction(object):
@@ -105,7 +104,7 @@ class Transaction(object):
         .format(response.status_code, settings.ERROR_PATH)
       )
 
-  def capture_response_and_raise_exception(self, e):
+  def capture_response_and_raise_exception(self, response, e):
     with open(settings.ERROR_PATH, 'w') as f:
       f.write(str(e))
     raise Exception(

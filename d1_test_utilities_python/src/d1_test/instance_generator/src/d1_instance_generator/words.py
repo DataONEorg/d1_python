@@ -29,6 +29,10 @@ Module d1_instance_generator.words
 :Author: DataONE (Vieglais, Dahl)
 """
 
+# Stdlib
+import codecs
+import random
+
 WORDS_1K = [
   u'untrimmed', u'Hydriote', u'burnish', u'tsia', u'petiolary', u'vocative',
   u'incensement', u'periodic', u'Klikitat', u'stipendiarian', u'witchwood',
@@ -245,7 +249,7 @@ def countlines(source):
 
 def randomWords(count=100, source='/usr/share/dict/words'):
   """Returns a random selection of count words from WORDS_1K or by reading
-  from source if the number of words requested is more than available in 
+  from source if the number of words requested is more than available in
   WORDS_1K.
   """
   if len(WORDS_1K) > count:

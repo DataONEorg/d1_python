@@ -33,7 +33,7 @@ import unittest
 # D1
 sys.path.append('..')
 sys.path.append('../..')
-import query_engine_description
+import query_engine_description # noqa: E402
 
 
 class TestQueryEngineDescription(unittest.TestCase):

@@ -33,20 +33,17 @@ Unit tests for LogRecordIterator.
 import datetime
 import logging
 import unittest
-import urlparse
 import sys
 
 # D1
-sys.path.append('..')
-import d1_client.mnclient
-import d1_client.logrecorditerator
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
-import d1_client.cnclient
-import shared_context
-import shared_settings
-import util
+sys.path.append('..')
+import d1_client.mnclient # noqa: E402
+import d1_client.logrecorditerator # noqa: E402
+import d1_client.cnclient # noqa: E402
+import shared_settings # noqa: E402
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -75,7 +72,7 @@ class TestLogRecordIterator(unittest.TestCase):
     )
 
   def _log_record_iterator_test(
-    self, page_size, start, from_date=None, to_date=None
+      self, page_size, start, from_date=None, to_date=None
   ):
     client = d1_client.mnclient.MemberNodeClient(
       base_url=shared_settings.MN_RESPONSES_URL

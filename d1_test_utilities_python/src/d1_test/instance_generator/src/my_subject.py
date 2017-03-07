@@ -1,5 +1,5 @@
 """Given a certificate, show the subject in DataONE format and optionally
-display included subject information such as mapped identities and group 
+display included subject information such as mapped identities and group
 memberships.
 """
 
@@ -10,14 +10,13 @@ from OpenSSL import crypto
 from pyasn1.error import PyAsn1Error
 from pyasn1.codec.ber import decoder
 from lxml import etree
-from d1_common.types.generated import dataoneTypes
 
 
 def getSubjectFromName(xName):
   """Given a DN, returns a DataONE subject
   TODO: This assumes that RDNs are in reverse order...
-  
-  @param 
+
+  @param
   """
   parts = xName.get_components()
   res = []
@@ -46,9 +45,9 @@ def dumpExtensions(x509):
 def getSubjectInfoFromCert(x509):
   """Retrieve the SubjectInfo xml from the certificate, if present
   """
-  #This is a huge hack - iterate through the extensions looking for a UTF8 
-  #object that contains the string "subjectInfo". The extension has no name, and 
-  #the OpenSSL lib currently has no way to retrieve the extension by OID 
+  #This is a huge hack - iterate through the extensions looking for a UTF8
+  #object that contains the string "subjectInfo". The extension has no name, and
+  #the OpenSSL lib currently has no way to retrieve the extension by OID
   #which is 1.3.6.1.4.1.34998.2.1 for the DataONE SubjectInfo extension
   decoder.decode.defaultErrorState = decoder.stDumpRawValue
   nExt = x509.get_extension_count()
@@ -85,9 +84,11 @@ def getSubjectFromCertFile(certFileName):
 if __name__ == "__main__":
   usage = "usage: %prog [options] cert_file_name"
   parser = optparse.OptionParser(usage=usage)
-  parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
-                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
-                     '40=Error, 50=Fatal [default: %default]')
+  parser.add_option(
+    '-l', '--loglevel', dest='llevel', default=20, type='int',
+    help='Reporting level: 10=debug, 20=Info, 30=Warning, '
+    '40=Error, 50=Fatal [default: %default]'
+  )
   parser.add_option(
     '-i', '--info', dest='info', default=False, action='store_true',
     help='Show subject info in certificate [default: %default]'

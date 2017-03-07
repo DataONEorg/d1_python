@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -32,9 +33,6 @@
 # Stdlib
 import logging
 import optparse
-import os
-import re
-import sys
 
 # D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
@@ -93,8 +91,10 @@ class get_subjects_from_certificate(object):
     for person in self.subject_info.person:
       if person.subject.value() == subject:
         return person
-    print 'SubjectInfo does not have any Person records matching Subject: {0}'\
+    print(
+      'SubjectInfo does not have any Person records matching Subject: {0}'
       .format(person.subject.value())
+    )
     exit()
 
   def _add_person_is_member_of(self, person):
@@ -164,7 +164,10 @@ def main():
   (options, args) = parser.parse_args()
 
   if len(args) != 1:
-    print 'Need a single argument which must be the PEM formatted X.509 v3 DataONE certificate to examine'
+    print(
+      'Need a single argument which must be the PEM formatted X.509 v3 '
+      'DataONE certificate to examine'
+    )
     exit()
 
   if options.verbose:

@@ -20,8 +20,6 @@
 # limitations under the License.
 """DataONE Test Utilities package
 """
-import os
-import re
 import setuptools
 
 import d1_test

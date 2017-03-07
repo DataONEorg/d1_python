@@ -1,9 +1,9 @@
 """
 DataONE file system utilities
 
-TODO: This file should be merged with the equivalent used in the FUSE 
-implementation.  The main difference between the two is the caching 
-mechanism.  
+TODO: This file should be merged with the equivalent used in the FUSE
+implementation.  The main difference between the two is the caching
+mechanism.
 """
 
 # standard
@@ -25,7 +25,7 @@ import d1_client.d1client
 # Config
 PATHELEMENT_SAFE_CHARS = ' @$,~*&'
 ITERATOR_PER_FETCH = 400
-FACET_REFRESH = 20 #seconds between cache refresh for facet values
+FACET_REFRESH = 20 # seconds between cache refresh for facet values
 PERSIST_SOLR_CLIENT = True
 
 ## set up caching ##
@@ -44,10 +44,10 @@ if not os.path.exists(lock_dir):
 cache_opts = {
   'cache.data_dir': data_dir,
   'cache.lock_dir': lock_dir,
-  'cache.regions': 'mem_cache', #'mem_cache, file_cache',
-  #'cache.file_cache.type':'file',
-  #'cache.file_cache.enabled':'True',
-  #'cache.file_cache.expire':'60',
+  'cache.regions': 'mem_cache', # 'mem_cache, file_cache',
+  # 'cache.file_cache.type':'file',
+  # 'cache.file_cache.enabled':'True',
+  # 'cache.file_cache.expire':'60',
   'cache.mem_cache.type': 'memory',
   'cache.mem_cache.enabled': 'True',
   'cache.mem_cache.expire': '300'
@@ -58,7 +58,7 @@ cache = CacheManager(**parse_cache_config_options(cache_opts))
 
 class D1FS():
   def __init__(
-    self, baseurl=d1_common.const.URL_DATAONE_ROOT, filter_query=None
+      self, baseurl=d1_common.const.URL_DATAONE_ROOT, filter_query=None
   ):
     self.logger = logging.getLogger('DataOneFS')
     self.baseurl = baseurl
@@ -195,7 +195,7 @@ class D1FS():
     )
     return records
 
-  #This is a helper method to extract the identifiers from the records 
+  #This is a helper method to extract the identifiers from the records
   # returned by get records.  It mainly exists because the records themselves
   # are not cachable ("picklable").
   def getIdentifiers(self, facet, term, refresh=False):

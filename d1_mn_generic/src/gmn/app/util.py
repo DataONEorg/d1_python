@@ -35,6 +35,18 @@ import urlparse
 import django.conf
 
 
+def assert_readable_file(file_path):
+  if not os.path.isfile(file_path):
+    raise ValueError('Not a valid file path. path="{}"'.format(file_path))
+  try:
+    with open(file_path, 'r') as f:
+      f.read(1)
+  except EnvironmentError as e:
+    raise ValueError(
+      'Unable to read file. path="{}" error="{}"'.format(file_path, e.message)
+    )
+
+
 def create_missing_directories(file_path):
   try:
     os.makedirs(os.path.dirname(file_path))

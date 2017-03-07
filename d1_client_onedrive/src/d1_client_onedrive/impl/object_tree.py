@@ -32,8 +32,6 @@
 # Stdlib
 import logging
 import pickle
-from pprint import pprint
-import util
 
 # App
 import clients.onedrive_solr_client as onedrive_solr_client
@@ -151,7 +149,7 @@ class ObjectTree():
     self._create_cache_items(cache_folder, filtered_tree)
 
   def _get_or_create_cache_folder_recursive(
-    self, path, folder=None, rpath=None
+      self, path, folder=None, rpath=None
   ):
     if folder is None:
       folder = self._cache['tree']

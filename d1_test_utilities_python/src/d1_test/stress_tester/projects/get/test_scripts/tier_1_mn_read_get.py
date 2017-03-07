@@ -29,28 +29,13 @@
 """
 
 # Std.
-import codecs
-import datetime
-import os
-import random
 import sys
-import time
-import uuid
-import xml.sax.saxutils
-import StringIO
 
 # D1
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.util
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-#import certificate
-#import settings
-#import pem_in_http_header
-import transaction
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import transaction # noqa: E402
 
 
 class Transaction(transaction.Transaction):

@@ -31,7 +31,6 @@
 # Std.
 import datetime
 import random
-import sys
 import StringIO
 import uuid
 import xml.sax.saxutils
@@ -53,7 +52,7 @@ class Test310Create(d1_test_case.D1TestCase):
     pass
 
   def generate_sysmeta(
-    self, pid, size, checksum_algorithm, checksum, create_date
+      self, pid, size, checksum_algorithm, checksum, create_date
   ):
     return u"""<?xml version="1.0" encoding="UTF-8"?>
 <D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">

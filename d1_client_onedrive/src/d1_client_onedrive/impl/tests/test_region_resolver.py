@@ -29,17 +29,13 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
 
 # D1
 sys.path.append('../..')
-import command_echoer
-import impl.resolver.region as region
-import command_echoer
-from object_tree_test_sample import object_tree
+import impl.resolver.region as region # noqa: E402
+from object_tree_test_sample import object_tree # noqa: E402
 
 options = {}
 
@@ -75,19 +71,18 @@ class TestRegionResolver(unittest.TestCase):
     self._resolver._merge_region_trees(dst, src, 'testpid')
     self.assertEqual(
       dst, {
-        'd2':
-          {
-            'd21': {
-              'testpid': None
-            },
-            'd22': {
-              'testpid': None,
-              'd31': {
-                'testpid': None
-              }
-            },
+        'd2': {
+          'd21': {
             'testpid': None
           },
+          'd22': {
+            'testpid': None,
+            'd31': {
+              'testpid': None
+            }
+          },
+          'testpid': None
+        },
         'd1': {
           'testpid': None
         }
@@ -104,19 +99,18 @@ class TestRegionResolver(unittest.TestCase):
         'd2': {
           'testpid': None
         },
-        'd3':
-          {
-            'd32': {
+        'd3': {
+          'd32': {
+            'testpid': None
+          },
+          'testpid': None,
+          'd31': {
+            'd311': {
               'testpid': None
             },
-            'testpid': None,
-            'd31': {
-              'd311': {
-                'testpid': None
-              },
-              'testpid': None
-            }
-          },
+            'testpid': None
+          }
+        },
         'd1': {
           'f21': None,
           'testpid': None
@@ -165,22 +159,21 @@ class TestRegionResolver(unittest.TestCase):
             'd31': {}
           }
         },
-        'd3':
-          {
+        'd3': {
+          'x': None,
+          'd32': {
+            'x': None
+          },
+          'd31': {
             'x': None,
-            'd32': {
-              'x': None
-            },
-            'd31': {
+            'd311': {
               'x': None,
-              'd311': {
-                'x': None,
-                'f3111': {
-                  'x': None
-                }
+              'f3111': {
+                'x': None
               }
             }
-          },
+          }
+        },
         'd1': {
           'x': None,
           'f11': {

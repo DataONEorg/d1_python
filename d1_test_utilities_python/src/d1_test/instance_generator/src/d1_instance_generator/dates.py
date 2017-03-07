@@ -33,6 +33,7 @@ import datetime
 
 # D1
 import d1_common.date_time
+import d1_common.types.dataoneTypes
 
 
 def random_date(earliest=0, latest=1e10):
@@ -53,4 +54,4 @@ def now():
 
 def generate():
   """Generate a dataoneTypes.DateTime with a random datetime"""
-  dt = dataoneTypes.DateTime(random_date())
+  d1_common.types.dataoneTypes.DateTime(random_date())

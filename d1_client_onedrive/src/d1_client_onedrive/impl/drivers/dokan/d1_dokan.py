@@ -36,34 +36,21 @@ import errno
 import fnmatch
 import logging
 import os
-import sys
 import time
-import urllib
-import urlparse
-
-#import ctypes
-#from ctypes.wintypes import FILETIME
-#from ctypes.wintypes import WIN32_FIND_DATAW
-import optparse
-import pdb
-import sys
-import time
-import urllib
-import logging
 
 # Dokan
 from d1_client_onedrive.impl.drivers import dokan
-from const import DOKAN_SUCCESS
-from const import DOKAN_ERROR
+# from const import DOKAN_SUCCESS
+# from const import DOKAN_ERROR
 from const import DOKAN_OPTION_DEBUG
 from const import DOKAN_OPTION_STDERR
 from const import DOKAN_OPTION_KEEP_ALIVE
-from const import DOKAN_OPTION_NETWORK
-from const import DOKAN_OPTION_REMOVABLE
+# from const import DOKAN_OPTION_NETWORK
+# from const import DOKAN_OPTION_REMOVABLE
 from const import FILE_ATTRIBUTE_READONLY
 from const import FILE_ATTRIBUTE_DEVICE
 from const import FILE_ATTRIBUTE_NORMAL
-from const import ERROR_FILE_NOT_FOUND
+# from const import ERROR_FILE_NOT_FOUND
 from const import FILE_ATTRIBUTE_DIRECTORY
 from const import FILE_READ_ONLY_VOLUME
 from const import FILE_CASE_SENSITIVE_SEARCH
@@ -74,11 +61,7 @@ import d1_common.const
 import d1_common.date_time
 
 # App
-from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import onedrive_exceptions
-#from d1_client_onedrive.impl.drivers import fs_util D1FS
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -89,8 +72,6 @@ try:
   )
 except KeyError:
   pass
-
-import dokan
 
 THREADS = 5
 
@@ -117,9 +98,11 @@ def run(options, root_resolver):
   # There is a bug in this code though.  When you try to access the drive using
   # Windows Explorer, the first time it will always crash Explorer.  After that
   # first crash it appears to be fine.  I need to figure out how to fix this.
-  DriverOption = DOKAN_OPTION_KEEP_ALIVE #| DOKAN_OPTION_NETWORK
-  #if (options.stderr):
-  #DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
+
+  DriverOption = DOKAN_OPTION_KEEP_ALIVE # | DOKAN_OPTION_NETWORK
+  if (options.stderr):
+    DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
+
   d1fs = dokan.Dokan(
     DataONEFS(options, root_resolver), options.mount_drive_letter, DriverOption,
     0x19831116L, THREADS
@@ -200,9 +183,9 @@ class DataONEFS(dokan.Operations):
     log.debug(u'read(): {0}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
-    except onedrive_exceptions.PathException as e:
+    except onedrive_exceptions.PathException:
       #raise OSError(errno.ENOENT, e) FUSE
-      raise IOError('Could not read specified file: %s', fileName)
+      raise IOError('Could not read specified file: %s', path)
 
     #logging.debug('%s %s %s', fileName, numberOfBytesToRead, offset)
     #
@@ -217,7 +200,7 @@ class DataONEFS(dokan.Operations):
     #    numberOfBytesToRead = len(xml) - offset
     #  return xml[offset:offset+numberOfBytesToRead]
 
-    raise IOError('Could not read specified file: %s', fileName)
+    raise IOError('Could not read specified file: %s', path)
 
   #TODO Not really sure what to do here...at the moment everything is virtual.
   # Everything is hard-coded right now just to get the idea across.  Mounting
@@ -259,13 +242,13 @@ class DataONEFS(dokan.Operations):
     attrs |= FILE_ATTRIBUTE_READONLY
 
     stat = dict(
-      attr = attrs,
-      nlinks = 2, # TODO
-      size = attributes.size(),
-      atime = date_time,
-      mtime = date_time, #in use?
-      ctime = date_time,
-      wtime = date_time,
+      attr=attrs,
+      nlinks=2, # TODO
+      size=attributes.size(),
+      atime=date_time,
+      mtime=date_time, # in use?
+      ctime=date_time,
+      wtime=date_time,
     )
 
     #log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))
@@ -283,7 +266,7 @@ class DataONEFS(dokan.Operations):
 #    log.debug('Error: Permission denied: {0}'.format(path))
 #    raise OSError(errno.EACCES, '')
 
-###########################################################################################################################
+################################################################################
 #
 #class FUSECallbacks():
 #  def __init__(self, options, root_resolver):

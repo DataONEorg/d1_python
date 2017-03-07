@@ -32,10 +32,7 @@ import hashlib
 import httplib
 import json
 import logging
-import os
-import pprint
 import socket
-import sys
 
 # D1
 
@@ -244,7 +241,7 @@ class Resolver(resolver_base.Resolver):
         self._merge_region_trees(dst_tree[k], v, pid)
 
   def _get_region_tree_item_and_unconsumed_path(
-    self, region_tree, path, parent_key=''
+      self, region_tree, path, parent_key=''
   ):
     """Return the region_tree item specified by path. An item can be a a folder
     (represented by a dictionary) or a PID (represented by None).

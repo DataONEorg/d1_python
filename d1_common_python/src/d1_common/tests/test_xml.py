@@ -23,7 +23,6 @@
 
 # Stdlib
 import unittest
-import StringIO
 
 # D1
 import d1_common.xml

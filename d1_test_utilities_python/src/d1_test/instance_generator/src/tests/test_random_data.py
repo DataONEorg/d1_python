@@ -30,11 +30,8 @@ Module d1_instance_generator.tests.test_random_data
 # Stdlib
 import unittest
 import logging
-import os
 import random
 import sys
-import uuid
-import StringIO
 
 # D1
 import d1_common.const
@@ -43,13 +40,13 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import random_data
+import random_data # noqa: E402
 
 #===============================================================================
 
 
 class TestRandomData(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     pass

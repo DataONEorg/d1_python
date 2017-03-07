@@ -84,7 +84,7 @@ class ResourceMapGenerator():
     self.dataone_root = self._append_slash(dataone_root)
 
   def simple_generate_resource_map(
-    self, resource_map_pid, science_metadata_pid, science_data_pids
+      self, resource_map_pid, science_metadata_pid, science_data_pids
   ):
     """Generate an OAI-ORE resource map for the common scenario where one
         resource map describes an aggregation containing a single Science Metadata
@@ -114,8 +114,8 @@ class ResourceMapGenerator():
     return serialized_resource_map
 
   def generate_system_metadata_for_resource_map(
-    self, resource_map_pid, resource_map, rights_holder,
-    checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+      self, resource_map_pid, resource_map, rights_holder,
+      checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
   ):
     """Generate a system metadata object for a resource map. The generated
         system metadata object is intended for use in DataONE API methods such as
@@ -189,7 +189,7 @@ class ResourceMapGenerator():
     return path
 
   def _generate_sys_meta(
-    self, pid, format_id, size, checksum, rights_holder, modified=None
+      self, pid, format_id, size, checksum, rights_holder, modified=None
   ):
     if modified is None:
       modified = datetime.datetime.now()

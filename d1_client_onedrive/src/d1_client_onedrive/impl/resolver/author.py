@@ -28,17 +28,12 @@
 """
 
 # Stdlib
-import httplib
 import logging
-import os
-import pprint
-import sys
 
 # D1
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util

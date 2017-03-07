@@ -52,10 +52,7 @@
 from __future__ import print_function
 
 # Stdlib
-import StringIO
 import csv
-import hashlib
-import re
 import sys
 
 # 3rd party
@@ -92,12 +89,10 @@ class DataONENodeObjectValidator(object):
     self._counts = {}
 
   def __enter__(self):
-    self._csv_file.writerow(
-      [
-        'status', 'pid', 'sys_meta_size', 'sys_meta_checksum', 'actual_size',
-        'actual_checksum'
-      ]
-    )
+    self._csv_file.writerow([
+      'status', 'pid', 'sys_meta_size', 'sys_meta_checksum', 'actual_size',
+      'actual_checksum'
+    ])
     return self
 
   def __exit__(self, type, value, traceback):
@@ -158,8 +153,8 @@ class DataONENodeObjectValidator(object):
       self._write_csv_row(pid, 'sys_meta_not_authorized_error')
       raise NotAuthorized()
     except (
-      d1_common.types.exceptions.DataONEException,
-      pyxb.UnrecognizedDOMRootNodeError
+        d1_common.types.exceptions.DataONEException,
+        pyxb.UnrecognizedDOMRootNodeError
     ):
       self._inc_count('System Metadata Read errors (before correction)')
       raise ValidationError()
@@ -194,15 +189,13 @@ class DataONENodeObjectValidator(object):
       self._counts[name] = 1
 
   def _write_csv_row(
-    self, pid, status, sys_meta_size=None, sys_meta_checksum=None,
-    actual_size=None, actual_checksum=None
+      self, pid, status, sys_meta_size=None, sys_meta_checksum=None,
+      actual_size=None, actual_checksum=None
   ):
-    self._csv_file.writerow(
-      [
-        status, pid, sys_meta_size, sys_meta_checksum, actual_size,
-        actual_checksum
-      ]
-    )
+    self._csv_file.writerow([
+      status, pid, sys_meta_size, sys_meta_checksum, actual_size,
+      actual_checksum
+    ])
 
   def _print_status(self):
     for c in sorted(self._counts):

@@ -34,6 +34,8 @@ import os
 import operation_validator
 import session
 
+# flake8: noqa: E122
+
 
 class OperationMaker(object):
   def __init__(self, session):
@@ -43,44 +45,40 @@ class OperationMaker(object):
   def create(self, pid, path, format_id=None):
     operation = {
       u'operation': 'create',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier':
+          pid,
+        u'science-file':
+          path,
+        u'mn-url':
+          self._session.get(session.MN_URL_NAME),
+        u'algorithm':
+          self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn':
+          self._session.get(session.AUTH_MN_NAME),
+        u'format-id':
+          format_id
+          if format_id is not None else self._session.get(session.FORMAT_NAME),
+        u'rights-holder':
+          self._session.get(session.OWNER_NAME),
+        u'allow':
+          self._session.get_access_control().get_list(),
+        u'replication': {
+          u'replication-allowed':
+            self._session.get_replication_policy().get_replication_allowed(),
+          u'preferred-nodes':
+            self._session.get_replication_policy().get_preferred(),
+          u'blocked-nodes':
+            self._session.get_replication_policy().get_blocked(),
+          u'number-of-replicas':
+            self._session.get_replication_policy().get_number_of_replicas(),
         },
-      u'parameters':
-        {
-          u'identifier':
-            pid,
-          u'science-file':
-            path,
-          u'mn-url':
-            self._session.get(session.MN_URL_NAME),
-          u'algorithm':
-            self._session.get(session.CHECKSUM_NAME),
-          u'authoritative-mn':
-            self._session.get(session.AUTH_MN_NAME),
-          u'format-id':
-            format_id if format_id is not None else
-            self._session.get(session.FORMAT_NAME),
-          u'rights-holder':
-            self._session.get(session.OWNER_NAME),
-          u'allow':
-            self._session.get_access_control().get_list(),
-          u'replication':
-            {
-              u'replication-allowed':
-                self._session.get_replication_policy()
-                .get_replication_allowed(),
-              u'preferred-nodes':
-                self._session.get_replication_policy().get_preferred(),
-              u'blocked-nodes':
-                self._session.get_replication_policy().get_blocked(),
-              u'number-of-replicas':
-                self._session.get_replication_policy().get_number_of_replicas(),
-            },
-        }
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation
@@ -88,46 +86,42 @@ class OperationMaker(object):
   def update(self, pid, path, pid_new, format_id=None):
     operation = {
       u'operation': 'update',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier-new':
+          pid_new,
+        u'identifier-old':
+          pid,
+        u'science-file':
+          path,
+        u'mn-url':
+          self._session.get(session.MN_URL_NAME),
+        u'algorithm':
+          self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn':
+          self._session.get(session.AUTH_MN_NAME),
+        u'format-id':
+          format_id
+          if format_id is not None else self._session.get(session.FORMAT_NAME),
+        u'rights-holder':
+          self._session.get(session.OWNER_NAME),
+        u'allow':
+          self._session.get_access_control().get_list(),
+        u'replication': {
+          u'replication-allowed':
+            self._session.get_replication_policy().get_replication_allowed(),
+          u'preferred-nodes':
+            self._session.get_replication_policy().get_preferred(),
+          u'blocked-nodes':
+            self._session.get_replication_policy().get_blocked(),
+          u'number-of-replicas':
+            self._session.get_replication_policy().get_number_of_replicas(),
         },
-      u'parameters':
-        {
-          u'identifier-new':
-            pid_new,
-          u'identifier-old':
-            pid,
-          u'science-file':
-            path,
-          u'mn-url':
-            self._session.get(session.MN_URL_NAME),
-          u'algorithm':
-            self._session.get(session.CHECKSUM_NAME),
-          u'authoritative-mn':
-            self._session.get(session.AUTH_MN_NAME),
-          u'format-id':
-            format_id if format_id is not None else
-            self._session.get(session.FORMAT_NAME),
-          u'rights-holder':
-            self._session.get(session.OWNER_NAME),
-          u'allow':
-            self._session.get_access_control().get_list(),
-          u'replication':
-            {
-              u'replication-allowed':
-                self._session.get_replication_policy()
-                .get_replication_allowed(),
-              u'preferred-nodes':
-                self._session.get_replication_policy().get_preferred(),
-              u'blocked-nodes':
-                self._session.get_replication_policy().get_blocked(),
-              u'number-of-replicas':
-                self._session.get_replication_policy().get_number_of_replicas(),
-            },
-        }
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation
@@ -135,35 +129,31 @@ class OperationMaker(object):
   def create_package(self, pids):
     operation = {
       u'operation': 'create_package',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier-package': pids[0],
+        u'identifier-science-meta': pids[1],
+        u'identifier-science-data': pids[2:],
+        u'mn-url': self._session.get(session.MN_URL_NAME),
+        u'algorithm': self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
+        u'rights-holder': self._session.get(session.OWNER_NAME),
+        u'allow': self._session.get_access_control().get_list(),
+        u'replication': {
+          u'replication-allowed':
+            self._session.get_replication_policy().get_replication_allowed(),
+          u'preferred-nodes':
+            self._session.get_replication_policy().get_preferred(),
+          u'blocked-nodes':
+            self._session.get_replication_policy().get_blocked(),
+          u'number-of-replicas':
+            self._session.get_replication_policy().get_number_of_replicas(),
         },
-      u'parameters':
-        {
-          u'identifier-package': pids[0],
-          u'identifier-science-meta': pids[1],
-          u'identifier-science-data': pids[2:],
-          u'mn-url': self._session.get(session.MN_URL_NAME),
-          u'algorithm': self._session.get(session.CHECKSUM_NAME),
-          u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
-          u'rights-holder': self._session.get(session.OWNER_NAME),
-          u'allow': self._session.get_access_control().get_list(),
-          u'replication':
-            {
-              u'replication-allowed':
-                self._session.get_replication_policy()
-                .get_replication_allowed(),
-              u'preferred-nodes':
-                self._session.get_replication_policy().get_preferred(),
-              u'blocked-nodes':
-                self._session.get_replication_policy().get_blocked(),
-              u'number-of-replicas':
-                self._session.get_replication_policy().get_number_of_replicas(),
-            },
-        }
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation
@@ -171,17 +161,15 @@ class OperationMaker(object):
   def archive(self, pid):
     operation = {
       u'operation': 'archive',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
-        },
-      u'parameters':
-        {
-          u'identifier': pid,
-          u'mn-url': self._session.get(session.MN_URL_NAME),
-        }
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier': pid,
+        u'mn-url': self._session.get(session.MN_URL_NAME),
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation
@@ -189,18 +177,16 @@ class OperationMaker(object):
   def update_access_policy(self, pid):
     operation = {
       u'operation': 'update_access_policy',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
-        },
-      u'parameters':
-        {
-          u'identifier': pid,
-          u'cn-url': self._session.get(session.CN_URL_NAME),
-          u'allow': self._session.get_access_control().get_list(),
-        }
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier': pid,
+        u'cn-url': self._session.get(session.CN_URL_NAME),
+        u'allow': self._session.get_access_control().get_list(),
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation
@@ -208,29 +194,25 @@ class OperationMaker(object):
   def update_replication_policy(self, pid):
     operation = {
       u'operation': 'update_replication_policy',
-      u'authentication':
-        {
-          u'anonymous': self._session.get(session.ANONYMOUS_NAME),
-          u'cert-file': self._get_certificate(),
-          u'key-file': self._get_certificate_key(),
+      u'authentication': {
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
+        u'cert-file': self._get_certificate(),
+        u'key-file': self._get_certificate_key(),
+      },
+      u'parameters': {
+        u'identifier': pid,
+        u'cn-url': self._session.get(session.CN_URL_NAME),
+        u'replication': {
+          u'replication-allowed':
+            self._session.get_replication_policy().get_replication_allowed(),
+          u'preferred-nodes':
+            self._session.get_replication_policy().get_preferred(),
+          u'blocked-nodes':
+            self._session.get_replication_policy().get_blocked(),
+          u'number-of-replicas':
+            self._session.get_replication_policy().get_number_of_replicas(),
         },
-      u'parameters':
-        {
-          u'identifier': pid,
-          u'cn-url': self._session.get(session.CN_URL_NAME),
-          u'replication':
-            {
-              u'replication-allowed':
-                self._session.get_replication_policy()
-                .get_replication_allowed(),
-              u'preferred-nodes':
-                self._session.get_replication_policy().get_preferred(),
-              u'blocked-nodes':
-                self._session.get_replication_policy().get_blocked(),
-              u'number-of-replicas':
-                self._session.get_replication_policy().get_number_of_replicas(),
-            },
-        }
+      }
     }
     self._operation_validator.assert_valid(operation)
     return operation

@@ -22,6 +22,12 @@
 
 import logging
 
+# flake8: noqa: F403
+
+from d1_common.types.generated.dataoneTypes_v1 import *
+from d1_common.types.generated.dataoneTypes_v1_1 import *
+from d1_common.types.generated.dataoneTypes_v2_0 import *
+
 # Suppress PyXB warnings, such as the following:
 #
 # WARNING:pyxb.binding.basis:Unable to convert DOM node value at
@@ -30,9 +36,5 @@ import logging
 # This warning occurs because traceInformation is an xs:anyType, which can
 # hold any XML structure so no bindings can be generated.
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
-
-from d1_common.types.generated.dataoneTypes_v1 import *
-from d1_common.types.generated.dataoneTypes_v1_1 import *
-from d1_common.types.generated.dataoneTypes_v2_0 import *
 
 # TODO: Add a replacement for CreateFromDocument() that raises DataONEExceptions.

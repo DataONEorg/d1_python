@@ -22,19 +22,14 @@
 """
 
 # Stdlib
-import codecs
 import os
-import re
 import unittest
 
 # 3rd party
 import d1_common.xml
-import pyxb.utils.domutils
 
 # App
 import d1_common.type_conversions as c
-import d1_common.types.dataoneTypes_v1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 
 

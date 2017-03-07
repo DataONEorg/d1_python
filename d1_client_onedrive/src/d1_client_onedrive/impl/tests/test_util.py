@@ -28,14 +28,8 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
-
-# D1
-sys.path.append('..')
-import util
 
 
 class TestUtil(unittest.TestCase):

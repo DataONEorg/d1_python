@@ -109,7 +109,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _whitelist(self, primary_str):
     if app.models.WhitelistForCreateUpdateDelete.objects.filter(
-      subject=app.models.subject(primary_str)
+        subject=app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
         u'Create, update and delete already enabled for subject: {}'.

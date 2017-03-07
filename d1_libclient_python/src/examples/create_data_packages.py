@@ -69,16 +69,11 @@
 """
 
 # Stdlib
-import codecs
 import datetime
 import hashlib
 import logging
 import os
-import sys
 import StringIO
-
-# 3rd party
-import pyxb
 
 # D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -233,12 +228,10 @@ def find_file_groups(directory_path):
 
 
 def find_files_in_group(directory_path, group):
-  return sorted(
-    [
-      os.path.join(directory_path, p) for p in os.listdir(directory_path)
-      if p.startswith(group)
-    ]
-  )
+  return sorted([
+    os.path.join(directory_path, p)
+    for p in os.listdir(directory_path) if p.startswith(group)
+  ])
 
 
 def group_name(file_path):

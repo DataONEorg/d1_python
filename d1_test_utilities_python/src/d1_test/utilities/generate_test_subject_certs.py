@@ -27,7 +27,6 @@
 # Stdlib
 import logging
 import os
-import sys
 import urllib
 
 # 3rd party
@@ -202,7 +201,7 @@ def create_cert_request(pkey, digest="md5", **name):
 def create_session_extension(subject, persons, groups):
   """Create the custom X.509 extension object in which DataONE passes session
   information.
-  
+
   :param subjects: Subjects to store in session.
   :type subjects: list
   :returns: X.509 v3 certificate extension.
@@ -233,7 +232,8 @@ def create_session_extension(subject, persons, groups):
   # recognized, but MUST be processed if it is recognized.
 
   #Create a NID for the extension
-  #nid = OBJ_create([OID for your extension], [short name for your extension], [long name for your extension]);
+  #nid = OBJ_create([OID for your extension], [short name for your extension],
+  # [long name for your extension]);
 
   # adding the alias
   #X509V3_EXT_add_alias(nid, NID_netscape_comment);
@@ -250,7 +250,7 @@ def create_session_extension(subject, persons, groups):
 
 
 def create_certificate(
-  req,
+    req,
   (issuer_cert, issuer_key), serial,
   (not_before, not_after), digest="md5"
 ):
@@ -259,7 +259,7 @@ def create_certificate(
   :param req: Certificate reqeust.
   :type req: X509Req
   :param issuer_cert: Certificate of the issuer.
-  :type issuer_cert: 
+  :type issuer_cert:
   :param issuer_key: Private key of the issuer.
   :type issuer_key:
   :param serial: Serial number for certificate.
@@ -273,7 +273,7 @@ def create_certificate(
   :param digest: Digest method to use for signing.
   :type digest: str
   :returns: The signed certificate.
-  :return type: X509  
+  :return type: X509
   """
   cert = OpenSSL.crypto.X509()
   cert.set_serial_number(serial)

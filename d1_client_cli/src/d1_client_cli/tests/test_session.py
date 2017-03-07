@@ -42,10 +42,10 @@ import d1_common.test_case_with_url_compare
 # App
 sys.path.append('..')
 sys.path.append('../impl')
-import session
-import nodes
-import format_ids
-import cli_exceptions
+import session # noqa: E402
+import nodes # noqa: E402
+import format_ids # noqa: E402
+import cli_exceptions # noqa: E402
 
 nodes = nodes.Nodes()
 #  'node_a',

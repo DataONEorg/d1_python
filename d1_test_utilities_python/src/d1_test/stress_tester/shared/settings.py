@@ -71,5 +71,11 @@ SUBJECT_ALT_NAME = 'DNS:dataone.org'
 # A DataONE subject that has permissions for creating objects on the MN
 # being tested. For GMN, this means that the subject must be in the
 # update / delete / create whitelist.
-SUBJECT_WITH_CREATE_PERMISSIONS = 'CN=subject_with_create_permissions,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
-SUBJECT_WITH_CN_PERMISSIONS = 'CN=subject_with_cn_permissions,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+SUBJECT_WITH_CREATE_PERMISSIONS = (
+  'CN=subject_with_create_permissions,O=d1-stress-tester,'
+  'C=US,DC=d1-stress-tester,DC=com'
+)
+SUBJECT_WITH_CN_PERMISSIONS = (
+  'CN=subject_with_cn_permissions,O=d1-stress-tester,'
+  'C=US,DC=d1-stress-tester,DC=com'
+)

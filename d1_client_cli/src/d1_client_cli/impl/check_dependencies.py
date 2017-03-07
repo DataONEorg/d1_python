@@ -38,9 +38,9 @@ def check_dependencies():
   messages = []
 
   try:
-    import d1_client
-    import d1_common
-    import pyxb
+    import d1_client # noqa: F401
+    import d1_common # noqa: F401
+    import pyxb # noqa: F401
   except ImportError as e:
     exceptions.append(e)
     messages.append(

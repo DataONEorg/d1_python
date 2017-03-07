@@ -28,17 +28,10 @@
 """
 
 # Stdlib
-import httplib
 import logging
-import os
-import pprint
-import sys
-
-# D1
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
@@ -160,7 +153,7 @@ class Resolver(resolver_base.Resolver):
     )
 
   def _resolve_taxa_classification_value(
-    self, classification, value, object_tree_folder
+      self, classification, value, object_tree_folder
   ):
     d = directory.Directory()
     for pid in object_tree_folder.get_records['items']:
@@ -179,7 +172,7 @@ class Resolver(resolver_base.Resolver):
     return d
 
   def _get_unique_values_for_classification(
-    self, classification, object_tree_folder
+      self, classification, object_tree_folder
   ):
     u = set()
     for pid in object_tree_folder['items']:

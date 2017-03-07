@@ -27,9 +27,7 @@
 """
 
 # Stdlib
-import logging
 import sys
-import unittest
 
 # D1
 import d1_common.const
@@ -59,7 +57,7 @@ COORDINATING_NODES = {
 
 
 class TestDataONEClient(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']

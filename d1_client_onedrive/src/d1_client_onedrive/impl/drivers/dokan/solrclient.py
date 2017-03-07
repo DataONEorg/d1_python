@@ -73,8 +73,8 @@ class SolrConnection:
   """
 
   def __init__(
-    self, host='localhost:8080', solrBase='/v1/solr', persistent=True,
-    postHeaders={}
+      self, host='localhost:8080', solrBase='/v1/solr', persistent=True,
+      postHeaders={}
   ):
     self.logger = logging.getLogger('solrclient.SolrConnection')
     ## Describes type conversion for fields.
@@ -238,12 +238,12 @@ class SolrConnection:
     val = val.replace(u"&", u"&amp;")
     val = val.replace(u"<", u"&lt;")
     val = val.replace(u"]]>", u"]]&gt;")
-    return self.encoder(val)[0] #to utf8
+    return self.encoder(val)[0] # to utf8
 
   def escapeKey(self, key):
     key = key.replace(u"&", u"&amp;")
     key = key.replace(u'"', u"&quot;")
-    return self.encoder(key)[0] #to utf8
+    return self.encoder(key)[0] # to utf8
 
   def delete(self, id):
     xstr = u'<delete><id>' + self.escapeVal(unicode(id)) + u'</id></delete>'
@@ -317,7 +317,7 @@ class SolrConnection:
       if isinstance(v, list):
         for vi in v:
           vi = self.coerceType(ftype, vi)
-          if not vi is None:
+          if vi is not None:
             lst.append('<field name="')
             lst.append(self.escapeKey(unicode(f)))
             lst.append('">')
@@ -325,7 +325,7 @@ class SolrConnection:
             lst.append('</field>')
       else:
         v = self.coerceType(ftype, v)
-        if not v is None:
+        if v is not None:
           lst.append('<field name="')
           lst.append(self.escapeKey(unicode(f)))
           lst.append('">')
@@ -364,7 +364,7 @@ class SolrConnection:
     xstr = '<commit'
     if optimize:
       xstr = '<optimize'
-    if not waitSearcher: #just handle deviations from the default
+    if not waitSearcher: # just handle deviations from the default
       if not waitFlush:
         xstr += ' waitFlush="false" waitSearcher="false"'
       else:
@@ -384,7 +384,7 @@ class SolrConnection:
     Return the number of entries that match query
     """
     params = {'q': q, 'rows': '0'}
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     res = self.search(params)
     hits = res['response']['numFound']
@@ -405,7 +405,7 @@ class SolrConnection:
       'rows': str(rows),
       'wt': 'python',
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     data = None
@@ -481,7 +481,7 @@ class SolrConnection:
       'histogram':['2',34,'4',34,'8',16,'16',13,'32',6,'64',3,'128',1,
        '256',2,'512',2]},
     """
-    if not self._fields is None:
+    if self._fields is not None:
       return self._fields
     params = {'numTerms': str(numTerms), 'wt': 'python'}
     request = urllib.urlencode(params, doseq=True)
@@ -512,12 +512,12 @@ class SolrConnection:
       'wt': 'python',
       'facet.sort': 'false'
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.doPost(self.solrBase + '', request, self.formheaders)
     data = eval(rsp.read())
-    return data['facet_counts']['facet_fields'] #, data['response']['numFound']
+    return data['facet_counts']['facet_fields'] # , data['response']['numFound']
 
   def fieldMinMax(self, name, q='*:*', fq=None):
     """
@@ -541,7 +541,7 @@ class SolrConnection:
       'sort': '%s asc' % name,
       'wt': 'python',
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     try:
       data = self.search(params)
@@ -582,7 +582,7 @@ class SolrConnection:
     return fld['type']
 
   def fieldAlphaHistogram(
-    self, name, q='*:*', fq=None, nbins=10, includequeries=True
+      self, name, q='*:*', fq=None, nbins=10, includequeries=True
   ):
     """
     Generates a histogram of values from a string field.
@@ -669,11 +669,9 @@ class SolrConnection:
       request = urllib.urlencode(params, doseq=True)
       for sq in qbin:
         try:
-          request = request + '&%s' % urllib.urlencode(
-            {
-              'facet.query': self.encoder(sq)[0],
-            }
-          )
+          request = request + '&%s' % urllib.urlencode({
+            'facet.query': self.encoder(sq)[0],
+          })
         except:
           self.logger.exception('Exception 2 in fieldAlphaHistogram')
       rsp = self.doPost(self.solrBase + '', request, self.formheaders)
@@ -692,7 +690,7 @@ class SolrConnection:
     return bins
 
   def fieldHistogram(
-    self, name, q="*:*", fq=None, nbins=10, minmax=None, includequeries=True
+      self, name, q="*:*", fq=None, nbins=10, minmax=None, includequeries=True
   ):
     """
     Generates a histogram of values.
@@ -790,7 +788,7 @@ class SolrConnection:
     return bins
 
   def fieldHistogram2d(
-    self, colname, rowname, q="*:*", fq=None, ncols=10, nrows=10
+      self, colname, rowname, q="*:*", fq=None, ncols=10, nrows=10
   ):
     """
     Generates a 2d histogram of values.
@@ -845,9 +843,9 @@ class SolrConnection:
     minoffsetcol = 1
     minoffsetrow = 1
     if ftype_col == float:
-      minoffsetcol = 0.00001
+      minoffsetcol = 0.00001 # noqa: F841
     if ftype_row == float:
-      minoffsetrow = 0.00001
+      minoffsetrow = 0.00001 # noqa: F841
     try:
       rowminmax = self.fieldMinMax(rowname, q=q, fq=fq)
       rowminmax[0] = float(rowminmax[0])
@@ -890,15 +888,13 @@ class SolrConnection:
           'facet.mincount': 1,
           'wt': 'python'
         }
-        if not fq is None:
+        if fq is not None:
           params['fq'] = fq
         request = urllib.urlencode(params, doseq=True)
         for bin in bins:
-          request = request + '&%s' % urllib.urlencode(
-            {
-              'facet.query': bin[7],
-            }
-          )
+          request = request + '&%s' % urllib.urlencode({
+            'facet.query': bin[7],
+          })
         rsp = self.doPost(self.solrBase + '', request, self.formheaders)
         data = eval(rsp.read())
         for bin in bins:
@@ -939,8 +935,8 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
   """
 
   def __init__(self, cols=[
-    'lng',
-    'lat',
+      'lng',
+      'lat',
   ]):
     self.cols = cols
 
@@ -968,8 +964,8 @@ class SOLRSearchResponseIterator(object):
   """
 
   def __init__(
-    self, client, q, fq=None, fields='*', pagesize=100,
-    transformer=SOLRRecordTransformer()
+      self, client, q, fq=None, fields='*', pagesize=100,
+      transformer=SOLRRecordTransformer()
   ):
     """
     Initialize.
@@ -1009,7 +1005,7 @@ class SOLRSearchResponseIterator(object):
       'explainOther': '',
       'hl.fl': ''
     }
-    if not self.fq is None:
+    if self.fq is not None:
       params['fq'] = self.fq
     self.res = self.client.search(params)
     self._numhits = int(self.res['response']['numFound'])
@@ -1052,8 +1048,8 @@ class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
   """
 
   def __init__(self, client, q, fq=None, pagesize=100, cols=[
-    'lng',
-    'lat',
+      'lng',
+      'lat',
   ]):
     transformer = SOLRArrayTransformer(cols)
     fields = ",".join(cols)
@@ -1074,8 +1070,8 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
   """
 
   def __init__(
-    self, client, q, fq=None, fields='*', pagesize=100, nsamples=10000,
-    transformer=SOLRRecordTransformer()
+      self, client, q, fq=None, fields='*', pagesize=100, nsamples=10000,
+      transformer=SOLRRecordTransformer()
   ):
     self._pagestarts = [
       0,
@@ -1166,7 +1162,7 @@ class SOLRValuesResponseIterator(object):
       'facet.zeros': 'false',
       'wt': 'python'
     }
-    if not self.fq is None:
+    if self.fq is not None:
       params['fq'] = self.fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.client.doPost(

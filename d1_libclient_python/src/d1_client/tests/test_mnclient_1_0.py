@@ -27,34 +27,16 @@
 """
 
 # Stdlib
-import logging
-import random
-import sys
 import unittest
-import uuid
-import StringIO
 from mock import patch
-
-# 3rd party
-import pyxb
 
 # D1
 import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
-import d1_test.instance_generator.accesspolicy
-import d1_test.instance_generator.identifier
-import d1_test.instance_generator.person
-import d1_test.instance_generator.random_data
-import d1_test.instance_generator.replicationpolicy
-import d1_test.instance_generator.subject
-import d1_test.instance_generator.systemmetadata
 
 # App
 import d1_client.mnclient
-import shared_context
 import shared_settings
-import util
 
 
 class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
@@ -80,7 +62,7 @@ class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   def test_createResponse(self):
     with patch.object(
-      d1_client.mnclient.MemberNodeClient, 'createResponse'
+        d1_client.mnclient.MemberNodeClient, 'createResponse'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.createResponse(
@@ -90,7 +72,7 @@ class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   def test_create(self):
     with patch.object(
-      d1_client.mnclient.MemberNodeClient, 'create'
+        d1_client.mnclient.MemberNodeClient, 'create'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.create(
@@ -100,7 +82,7 @@ class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   def test_getCapabilities(self):
     with patch.object(
-      d1_client.mnclient.MemberNodeClient, 'getCapabilities'
+        d1_client.mnclient.MemberNodeClient, 'getCapabilities'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.getCapabilities()

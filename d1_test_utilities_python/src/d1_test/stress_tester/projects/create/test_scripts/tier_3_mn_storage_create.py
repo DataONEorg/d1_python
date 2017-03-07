@@ -27,7 +27,6 @@
 """
 
 # Std.
-import os
 import random
 import string
 import sys
@@ -35,13 +34,11 @@ import sys
 # D1
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 from d1_test.instance_generator import random_data, systemmetadata
+import d1_common.util
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-import settings
-import subject_dn
-import transaction
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import settings # noqa: E402
+import transaction # noqa: E402
 
 # Config
 

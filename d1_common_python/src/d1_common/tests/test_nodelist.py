@@ -34,6 +34,8 @@ from d1_common.types import dataoneTypes
 # App
 import util
 
+# flake8: noqa: E501
+
 EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

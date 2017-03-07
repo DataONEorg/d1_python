@@ -27,10 +27,7 @@
 """
 
 # Stdlib
-import datetime
 import logging
-#import os
-import pprint
 import pickle
 import sys
 import tempfile
@@ -38,7 +35,7 @@ import unittest
 
 # D1
 sys.path.append('..')
-import workspace
+import workspace # noqa: E402
 
 
 class TestWorkspace(unittest.TestCase):
@@ -47,11 +44,11 @@ class TestWorkspace(unittest.TestCase):
 
   def test_100(self):
     """Create Workspace with defaults"""
-    a = workspace.Workspace()
+    workspace.Workspace()
 
   def test_110(self):
     """Create Workspace and unpickle default cache"""
-    with workspace.Workspace() as w:
+    with workspace.Workspace():
       pass
 
   def test_120(self):
@@ -62,8 +59,8 @@ class TestWorkspace(unittest.TestCase):
   def test_130(self):
     """Create Workspace, unpickle default cache and refresh with single folder"""
     with workspace.Workspace(
-      workspace_def_path='workspace_single.xml', automatic_refresh=True
-    ) as w:
+        workspace_def_path='workspace_single.xml', automatic_refresh=True
+    ):
       pass
 
   #def test_140(self):
@@ -114,7 +111,7 @@ class TestWorkspace(unittest.TestCase):
       pickle.dump([], f)
       f.close()
       with workspace.Workspace(
-        workspace_cache_path=f.name, workspace_def_path='workspace_empty.xml'
+          workspace_cache_path=f.name, workspace_def_path='workspace_empty.xml'
       ) as w:
         w.refresh()
         self.assertEqual(w._workspace, [])

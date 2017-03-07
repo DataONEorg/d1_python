@@ -27,8 +27,6 @@
 """
 
 import datetime
-import pprint
-import random
 import itertools
 import re
 
@@ -67,34 +65,28 @@ empty_folder = (('(empty)', 0, d),)
 ################################################################################
 # Mockup of start date restriction.
 
-unapplied_facets = (
-  ('@StartDate', empty_folder, d),
-  ('@EndDate', empty_folder, d),
-  ('@Keyword', empty_folder, d),
-  ('@MemberNode', empty_folder, d),
-  ('@GeographicalArea', empty_folder, d),
-  ('@Field', empty_folder, d),
-)
+unapplied_facets = (('@StartDate', empty_folder, d),
+                    ('@EndDate', empty_folder, d),
+                    ('@Keyword', empty_folder, d),
+                    ('@MemberNode', empty_folder, d),
+                    ('@GeographicalArea', empty_folder, d),
+                    ('@Field', empty_folder, d),)
 
-objects_unfiltered = (
-  ('science_object_1', empty_folder, d),
-  ('science_object_2', empty_folder, d),
-  ('science_object_3', empty_folder, d),
-  ('science_object_4', empty_folder, d),
-  ('science_object_5', empty_folder, d),
-  ('science_object_6', empty_folder, d),
-  ('science_object_7', empty_folder, d),
-  ('science_object_8', empty_folder, d),
-  ('science_object_9', empty_folder, d),
-)
+objects_unfiltered = (('science_object_1', empty_folder, d),
+                      ('science_object_2', empty_folder, d),
+                      ('science_object_3', empty_folder, d),
+                      ('science_object_4', empty_folder, d),
+                      ('science_object_5', empty_folder, d),
+                      ('science_object_6', empty_folder, d),
+                      ('science_object_7', empty_folder, d),
+                      ('science_object_8', empty_folder, d),
+                      ('science_object_9', empty_folder, d),)
 
-objects_filtered_by_year = (
-  ('obj_start_date_year_filtered_1', empty_folder, d),
-  ('obj_start_date_year_filtered_2', empty_folder, d),
-  ('obj_start_date_year_filtered_3', empty_folder, d),
-  ('obj_start_date_year_filtered_4', empty_folder, d),
-  ('obj_start_date_year_filtered_5', empty_folder, d),
-)
+objects_filtered_by_year = (('obj_start_date_year_filtered_1', empty_folder, d),
+                            ('obj_start_date_year_filtered_2', empty_folder, d),
+                            ('obj_start_date_year_filtered_3', empty_folder, d),
+                            ('obj_start_date_year_filtered_4', empty_folder, d),
+                            ('obj_start_date_year_filtered_5', empty_folder, d),)
 
 objects_filtered_by_year_month = (
   ('obj_start_date_year_month_filtered_1', empty_folder, d),
@@ -122,24 +114,20 @@ start_day_facet_vals = (
 start_day = (('@StartDay', start_day_facet_vals, d),
              ) + unapplied_facets + objects_filtered_by_year_month
 
-start_month_facet_vals = (
-  ('#01_Jan', start_day, d),
-  ('#02_Feb', start_day, d),
-  ('#03_Mar', start_day, d),
-  ('#10_Oct', start_day, d),
-  ('#12_Dec', start_day, d),
-)
+start_month_facet_vals = (('#01_Jan', start_day, d),
+                          ('#02_Feb', start_day, d),
+                          ('#03_Mar', start_day, d),
+                          ('#10_Oct', start_day, d),
+                          ('#12_Dec', start_day, d),)
 
 start_month = (('@StartMonth', start_month_facet_vals, d),
                ) + unapplied_facets + objects_filtered_by_year
 
-start_year_facet_vals = (
-  ('#2003', start_month, d),
-  ('#2004', start_month, d),
-  ('#2005', start_month, d),
-  ('#2007', start_month, d),
-  ('#2010', start_month, d),
-)
+start_year_facet_vals = (('#2003', start_month, d),
+                         ('#2004', start_month, d),
+                         ('#2005', start_month, d),
+                         ('#2007', start_month, d),
+                         ('#2010', start_month, d),)
 
 start_date_mockup = start_year_facet_vals + unapplied_facets + objects_unfiltered
 
@@ -187,10 +175,8 @@ def group_from_first_last(words, first_last):
 
 random_words = get_random_words_sorted()
 
-keyword_group = [
-  (f, group_from_first_last(random_words, f), d)
-  for f in first_last(random_words, 100)
-]
+keyword_group = [(f, group_from_first_last(random_words, f), d)
+                 for f in first_last(random_words, 100)]
 
 keyword_restriction_mockup = tuple(
   keyword_group
@@ -258,9 +244,8 @@ countries_all_tuple = tuple(
   [(c, unapplied_facets + objects_unfiltered, d) for c in countries_all]
 )
 
-longlat = tuple(
-  (l, empty_folder, d) for l in ('@Degrees', '@Minutes', '@Seconds')
-)
+longlat = tuple((l, empty_folder, d)
+                for l in ('@Degrees', '@Minutes', '@Seconds'))
 
 geo_restriction_mockup = (
   ('@Continent', tuple((m, countries_tuple, d) for m in continents), d),
@@ -275,30 +260,24 @@ geo_restriction_mockup = (
 ################################################################################
 # Mockup of data package
 
-data_package_1 = (
-  (
-    'data_package_1', (
-      ('data_package_1.bagit.zip', 48321, d),
-      ('pid_abc.jpg', 483, d),
-      ('pid_def.csv', 4833, d),
-      ('pid_ghi.csv', 6553, d),
-      ('pid_jkl.eml', 46553, d),
-      ('pid_jkl.html', 32522, d),
-      (
-        'system', (
-          ('pid_abc.jpg.xml', 483, d),
-          ('pid_abc.jpg.html', 821, d),
-          ('pid_def.xml', 4833, d),
-          ('pid_def.html', 8222, d),
-          ('pid_ghi.csv.xml', 6553, d),
-          ('pid_ghi.csv.html', 12964, d),
-          ('pid_jkl.eml.xml', 46553, d),
-          ('pid_jkl.eml.html', 83212, d),
-        ), d
-      ),
-    ), d
-  ),
-)
+data_package_1 = ((
+  'data_package_1', (('data_package_1.bagit.zip', 48321, d),
+                     ('pid_abc.jpg', 483, d),
+                     ('pid_def.csv', 4833, d),
+                     ('pid_ghi.csv', 6553, d),
+                     ('pid_jkl.eml', 46553, d),
+                     ('pid_jkl.html', 32522, d),
+                     (
+                       'system', (('pid_abc.jpg.xml', 483, d),
+                                  ('pid_abc.jpg.html', 821, d),
+                                  ('pid_def.xml', 4833, d),
+                                  ('pid_def.html', 8222, d),
+                                  ('pid_ghi.csv.xml', 6553, d),
+                                  ('pid_ghi.csv.html', 12964, d),
+                                  ('pid_jkl.eml.xml', 46553, d),
+                                  ('pid_jkl.eml.html', 83212, d),), d
+                     ),), d
+),)
 
 ################################################################################
 # Mockup of ONEMercury integration
@@ -317,14 +296,12 @@ data_package_1 = (
 
 ################################################################################
 
-fs = (
-  ('@StartDate', start_date_mockup, d),
-  ('@EndDate', empty_folder, d),
-  ('@Keyword', keyword_restriction_mockup, d),
-  ('@MemberNode', member_node_restriction_mockup, d),
-  ('@GeographicalArea', geo_restriction_mockup, d),
-  ('@Field', empty_folder, d),
-) + objects_unfiltered + data_package_1
+fs = (('@StartDate', start_date_mockup, d),
+      ('@EndDate', empty_folder, d),
+      ('@Keyword', keyword_restriction_mockup, d),
+      ('@MemberNode', member_node_restriction_mockup, d),
+      ('@GeographicalArea', geo_restriction_mockup, d),
+      ('@Field', empty_folder, d),) + objects_unfiltered + data_package_1
 
 #pprint.pprint(fs)
 #exit()

@@ -31,9 +31,7 @@
 
 # Stdlib
 import cmd
-import os
 import platform
-import re
 import shlex
 import sys
 
@@ -71,7 +69,7 @@ class CLI(cmd.Cmd):
     """Take care of any unfinished business.
     Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
     """
-    cmd.Cmd.postloop(self) ## Clean up command completion
+    cmd.Cmd.postloop(self) # Clean up command completion
     cli_util.print_info(u'Exiting...')
 
   def precmd(self, line):

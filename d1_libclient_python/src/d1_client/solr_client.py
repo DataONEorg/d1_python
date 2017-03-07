@@ -71,8 +71,8 @@ class SolrConnection:
     """
 
   def __init__(
-    self, host='cn.dataone.org', solrBase='/cn/v1/query/solr/', persistent=True,
-    postHeaders={}, debug=False
+      self, host='cn.dataone.org', solrBase='/cn/v1/query/solr/',
+      persistent=True, postHeaders={}, debug=False
   ):
     self.logger = logging.getLogger('solr_client.SolrConnection')
     # Describes type conversion for fields.
@@ -352,7 +352,7 @@ class SolrConnection:
       if isinstance(v, list):
         for vi in v:
           vi = self.coerceType(ftype, vi)
-          if not vi is None:
+          if vi is not None:
             lst.append('<field name="')
             lst.append(self.escapeKey(unicode(f)))
             lst.append('">')
@@ -360,7 +360,7 @@ class SolrConnection:
             lst.append('</field>')
       else:
         v = self.coerceType(ftype, v)
-        if not v is None:
+        if v is not None:
           lst.append('<field name="')
           lst.append(self.escapeKey(unicode(f)))
           lst.append('">')
@@ -420,7 +420,7 @@ class SolrConnection:
         Return the number of entries that match query
         """
     params = {'q': q, 'rows': '0'}
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     res = self.search(params)
     hits = res['response']['numFound']
@@ -445,7 +445,7 @@ class SolrConnection:
       'rows': str(rows),
       'wt': 'python',
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     data = None
@@ -560,7 +560,7 @@ class SolrConnection:
       'wt': 'python',
       'facet.sort': str(sort).lower()
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.doPost(self.solrBase, request, self.formheaders)
@@ -593,7 +593,7 @@ class SolrConnection:
       'sort': '%s asc' % name,
       'wt': 'python',
     }
-    if not fq is None:
+    if fq is not None:
       params['fq'] = fq
     try:
       data = self.search(params)
@@ -635,7 +635,7 @@ class SolrConnection:
   #  return fld['type']
 
   def fieldAlphaHistogram(
-    self, name, q='*:*', fq=None, nbins=10, includequeries=True
+      self, name, q='*:*', fq=None, nbins=10, includequeries=True
   ):
     """Generates a histogram of values from a string field.
         Output is: [[low, high, count, query], ... ]
@@ -976,8 +976,8 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
     """
 
   def __init__(self, cols=[
-    'lng',
-    'lat',
+      'lng',
+      'lat',
   ]):
     self.cols = cols
 
@@ -1005,8 +1005,8 @@ class SOLRSearchResponseIterator(object):
     """
 
   def __init__(
-    self, client, q, fq=None, fields='*', pagesize=100,
-    transformer=SOLRRecordTransformer(), max_records=1000
+      self, client, q, fq=None, fields='*', pagesize=100,
+      transformer=SOLRRecordTransformer(), max_records=1000
   ):
     """
         Initialize.
@@ -1052,7 +1052,7 @@ class SOLRSearchResponseIterator(object):
       'explainOther': '',
       'hl.fl': ''
     }
-    if not self.fq is None:
+    if self.fq is not None:
       params['fq'] = self.fq
     self.res = self.client.search(params)
     self._numhits = int(self.res['response']['numFound'])
@@ -1098,8 +1098,8 @@ class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
     """
 
   def __init__(self, client, q, fq=None, pagesize=100, cols=[
-    'lng',
-    'lat',
+      'lng',
+      'lat',
   ]):
     transformer = SOLRArrayTransformer(cols)
     fields = ",".join(cols)
@@ -1120,8 +1120,8 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
     """
 
   def __init__(
-    self, client, q, fq=None, fields='*', pagesize=100, nsamples=10000,
-    transformer=SOLRRecordTransformer()
+      self, client, q, fq=None, fields='*', pagesize=100, nsamples=10000,
+      transformer=SOLRRecordTransformer()
   ):
     self._pagestarts = [
       0,
@@ -1212,7 +1212,7 @@ class SOLRValuesResponseIterator(object):
       'facet.zeros': 'false',
       'wt': 'python'
     }
-    if not self.fq is None:
+    if self.fq is not None:
       params['fq'] = self.fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.client.doPost(

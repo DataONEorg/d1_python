@@ -20,12 +20,8 @@
 # limitations under the License.
 """DataONE ONEDrive Client package
 """
-import os
-import re
 import setuptools
 import sys
-
-import setuptools
 
 import d1_client_onedrive
 
@@ -40,19 +36,17 @@ import d1_client_onedrive
 # Windows executable setup
 if sys.platform == 'win32':
   opts = {
-    'py2exe':
-      {
-        'packages':
-          [
-            'd1_client_onedrive', 'd1_client_onedrive.impl',
-            'd1_client_onedrive.impl.drivers',
-            'd1_client_onedrive.impl.drivers.dokan',
-            'd1_client_onedrive.impl.drivers.fuse',
-            'd1_client_onedrive.impl.resolver', 'rdflib.plugins', 'lxml'
-          ],
-        'skip_archive':
-          True,
-      }
+    'py2exe': {
+      'packages': [
+        'd1_client_onedrive', 'd1_client_onedrive.impl',
+        'd1_client_onedrive.impl.drivers',
+        'd1_client_onedrive.impl.drivers.dokan',
+        'd1_client_onedrive.impl.drivers.fuse',
+        'd1_client_onedrive.impl.resolver', 'rdflib.plugins', 'lxml'
+      ],
+      'skip_archive':
+        True,
+    }
   }
   extra_opts = dict(
     console=['d1_client_onedrive/onedrive.py'],

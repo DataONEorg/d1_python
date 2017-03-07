@@ -77,7 +77,6 @@ import d1_common.const
 import access_control
 import cli_exceptions
 import cli_util
-from const import * #@UnusedWildImport
 import replication_policy
 import operation_formatter
 
@@ -287,7 +286,7 @@ class Session(object):
 
   def _validate_variable_type(self, value, type_converter):
     # Make sure booleans are "sane"
-    if type_converter is types.BooleanType:
+    if isinstance(type_converter, types.BooleanType):
       if value in (u'true', u'True', u't', u'T', 1, u'1', u'yes', u'Yes'):
         return True
       elif value in (u'false', u'False', u'f', u'F', 0, u'0', u'no', u'No'):
@@ -308,11 +307,11 @@ class Session(object):
     elif variable == CN_URL_NAME:
       cn_base_url = self.get(CN_URL_NAME)
       if value not in [
-        n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn'
+          n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn'
       ]:
         if not cli_util.confirm(
-          '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.
-          format(value)
+            '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.
+            format(value)
         ):
           raise cli_exceptions.InvalidArguments(
             u'Coordinating Node update cancelled'
@@ -320,10 +319,11 @@ class Session(object):
     elif variable == MN_URL_NAME:
       cn_base_url = self.get(CN_URL_NAME)
       if value not in [
-        n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn'
+          n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn'
       ]:
         if not cli_util.confirm(
-          '"{0}" is not a known DataONE Member Node. Use anyway?'.format(value)
+            '"{0}" is not a known DataONE Member Node. Use anyway?'.
+            format(value)
         ):
           raise cli_exceptions.InvalidArguments(u'Member Node update cancelled')
     elif variable == FORMAT_NAME:

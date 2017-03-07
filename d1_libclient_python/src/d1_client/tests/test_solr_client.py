@@ -30,17 +30,15 @@ Unit tests for solr_client.
 """
 
 # Stdlib
-import logging
 import sys
-import unittest
 
 # D1
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
 sys.path.append('..')
-from d1_client import solr_client
-import shared_settings
+import d1_client # noqa: E402
+import shared_settings # noqa: E402
 
 
 class TestSolrClient(TestCaseWithURLCompare):
@@ -57,48 +55,44 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_100(self):
     """SOLRSearchResponseIterator()"""
-    # Orig host, solrBase:
-    #client = solr_client.SolrConnection(host="cn-dev-unm-1.test.dataone.org", solrBase="/solr/d1-cn-index")
-
     # Working in browser, now.
     # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
 
-    client = solr_client.SolrConnection(
+    client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
     fields = 'abstract,author,date'
     pagesize = 5
-    rows = solr_client.SOLRSearchResponseIterator(
+    rows = d1_client.solr_client.SOLRSearchResponseIterator(
       client, q, fq=fq, fields=fields, pagesize=pagesize
     )
     self._assert_at_least_one_row_populated(rows)
 
   def test_110(self):
     """SOLRArrayResponseIterator()"""
-    client = solr_client.SolrConnection(
+    client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
-    fields = 'lat,lng'
     pagesize = 5
-    rows = solr_client.SOLRArrayResponseIterator(
+    rows = d1_client.solr_client.SOLRArrayResponseIterator(
       client, q, fq=fq, pagesize=pagesize
     )
     self._assert_at_least_one_row_populated(rows)
 
   def test_200(self):
     """SOLRValuesResponseIterator()"""
-    client = solr_client.SolrConnection(
+    client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     q = '*:*'
     fq = None
     field = 'size'
     pagesize = 5
-    rows = solr_client.SOLRValuesResponseIterator(
+    rows = d1_client.solr_client.SOLRValuesResponseIterator(
       client, field, q, fq, pagesize=pagesize
     )
     self._assert_at_least_one_row_populated(rows)
@@ -108,7 +102,7 @@ class TestSolrClient(TestCaseWithURLCompare):
   # get the list of fields.
   def _test_300(self):
     """listFields()"""
-    client = solr_client.SolrConnection(
+    client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )
     flds = client.getFields()

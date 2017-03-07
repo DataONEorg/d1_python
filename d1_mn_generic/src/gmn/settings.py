@@ -25,25 +25,16 @@ installing GMN. See settings_site.py for site specific settings.
 
 from __future__ import absolute_import
 
-# Stdlib.
-import os
-
-
-# Create absolute path from path that is relative to the module from which
-# the function is called.
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(make_absolute('')))
+# D1
+import d1_common.util
 
 # Add site specific settings.
-from settings_site import *
+from settings_site import * # noqa: F403
 
 # Only set cookies when running through SSL.
 SESSION_COOKIE_SECURE = True
 
-MANAGERS = ADMINS
+MANAGERS = ADMINS # noqa: F405
 
 # GMN MUST run in the UTC time zone. Under Windows, the system time zone must
 # also be set to UTC.
@@ -79,36 +70,32 @@ TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': [
-      make_absolute('./app/templates'),
+      d1_common.util.abs_path('./app/templates'),
     ],
     # 'APP_DIRS': True,
-    'OPTIONS':
-      {
-        'context_processors':
-          [
-            'django.contrib.auth.context_processors.auth',
-            'django.template.context_processors.debug',
-            'django.template.context_processors.i18n',
-            'django.template.context_processors.media',
-            'django.template.context_processors.static',
-            'django.template.context_processors.tz',
-            'django.contrib.messages.context_processors.messages',
-          ],
-        'loaders':
-          [
-            'django.template.loaders.filesystem.Loader',
-            # 'django.template.loaders.app_directories.Loader',
-          ],
-      },
+    'OPTIONS': {
+      'context_processors': [
+        'django.contrib.auth.context_processors.auth',
+        'django.template.context_processors.debug',
+        'django.template.context_processors.i18n',
+        'django.template.context_processors.media',
+        'django.template.context_processors.static',
+        'django.template.context_processors.tz',
+        'django.contrib.messages.context_processors.messages',
+      ],
+      'loaders': [
+        'django.template.loaders.filesystem.Loader',
+        # 'django.template.loaders.app_directories.Loader',
+      ],
+    },
   },
 ]
 
 CACHES = {
-  'default':
-    {
-      'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-      'TIMEOUT': 60 * 60,
-    }
+  'default': {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'TIMEOUT': 60 * 60,
+  }
 }
 
 ROOT_URLCONF = 'app.urls'

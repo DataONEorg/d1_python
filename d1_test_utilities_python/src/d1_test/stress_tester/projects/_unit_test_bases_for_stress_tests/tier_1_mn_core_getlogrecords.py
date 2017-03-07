@@ -30,15 +30,15 @@
 
 # Std.
 import datetime
-import sys
 
 # D1
-import d1_common.const
 import d1_test_case
 
 # App
 import context
 import test_client
+
+EVENTS_TOTAL = 123
 
 
 class Test040GetLogRecords(d1_test_case.D1TestCase):
@@ -66,11 +66,13 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
     )
     context.log_records_total = log_records.total
 
+  @d1_test_case.skip('TODO')
   def xevent_log_contains_create_events(self):
     """Event log contains create events for all objects that are
     currently known.
     Timestamp slicing includes the correct object.
     """
+    dates = []
     for object_list in context.slices:
       for object_info in object_list.objectInfo:
         dates.append(object_info.dateSysMetadataModified)

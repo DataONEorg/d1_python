@@ -32,7 +32,6 @@ import htmlentitydefs
 import os
 import re
 import StringIO
-from string import join
 import xml.dom.minidom
 
 # D1
@@ -259,7 +258,8 @@ class CommandProcessor():
     abs_path = cli_util.os.path.expanduser(path)
     if os.path.exists(abs_path):
       if not cli_util.confirm(
-        'You are about to overwrite an existing file. Continue?', default='yes'
+          'You are about to overwrite an existing file. Continue?',
+          default='yes'
       ):
         cli_util.print_info('Cancelled')
     cli_util.copy_file_like_object_to_file(file_like_object, abs_path)
@@ -312,15 +312,14 @@ class CommandProcessor():
         r"errorCode: (?P<error_code>\d+)%.*%Status code: (?P<status_code>\d+)"
       )
       result = regexp.search(e)
-      if ((result is not None) and
-          (result.group(u'error_code') == '500') and
-          (result.group(u'status_code') == '400')):
+      if ((result is not None) and (result.group(u'error_code') == '500') and
+          (result.group(u'status_code') == '400')): # noqa: E129
         result = re.search(
           r"<b>description</b> <u>(?P<description>[^<]+)</u>", e
         )
         msg = re.sub(
-          u'&([^;]+);',
-          lambda m: unichr(htmlentitydefs.name2codepoint[m.group(1)]),
+          u'&([^;]+);', lambda m:
+          unichr(htmlentitydefs.name2codepoint[m.group(1)]),
           result.group(u'description')
         )
         cli_util.print_info(u'Warning: %s' % msg)

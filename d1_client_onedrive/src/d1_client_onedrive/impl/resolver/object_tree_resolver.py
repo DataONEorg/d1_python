@@ -29,15 +29,12 @@
 """
 
 # Stdlib
-import pprint
 import logging
-import os
 from StringIO import StringIO
 
 # App
 from ..onedrive_exceptions import ONEDriveException
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl.resolver import author
@@ -244,7 +241,7 @@ class Resolver(resolver_base.Resolver):
 
   def _create_object_tree_from_xml_doc(self, xml_doc_path):
     xml_doc = open(xml_doc_path, 'rb').read()
-    return object_tree_types.CreateFromDocument(xml_doc)
+    return object_tree_types.CreateFromDocument(xml_doc) # noqa: F821
 
   def _split_path_by_reserved_name(self, path):
     """Return: object_tree_path, resolver, controlled_path

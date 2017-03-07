@@ -27,12 +27,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
-import sys
-
-# D1
-import d1_common.const
-
 # App
 import cli_exceptions
 import cli_util
@@ -59,8 +53,9 @@ class AccessControl():
     try:
       del self.allow[subject]
     except KeyError:
-      raise cli_exceptions.InvalidArguments(u'Subject not in access control list: {}'\
-        .format(subject))
+      raise cli_exceptions.InvalidArguments(
+        u'Subject not in access control list: {}'.format(subject)
+      )
 
   def clear(self):
     self.allow.clear()
@@ -100,10 +95,10 @@ class AccessControl():
 
   def _confirm_special_subject_write(self, subject, permission):
     if subject in (
-      'public', 'authenticatedUser', 'verifiedUser'
+        'public', 'authenticatedUser', 'verifiedUser'
     ) and permission != 'read':
       if not cli_util.confirm(
-        'It is not recommended to give {} access to {}. Continue?'
-        .format(permission, subject)
+          'It is not recommended to give {} access to {}. Continue?'
+          .format(permission, subject)
       ):
         raise cli_exceptions.InvalidArguments('Cancelled')

@@ -66,20 +66,9 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
-import os
-import shutil
-import sys
-import urllib
-
-# 3rd party
-import pyxb
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const
 import d1_client.data_package
@@ -159,7 +148,7 @@ class MemberNodeObjectDeleter(object):
           start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
           objectFormat=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
         )
-      except d1_common.types.exceptions.DataONEException as e:
+      except d1_common.types.exceptions.DataONEException:
         logging.exception('listObjects() failed with exception:')
         raise
 
@@ -186,7 +175,7 @@ class MemberNodeObjectDeleter(object):
   def _delete_object(self, pid):
     try:
       return self._mn_client.delete(pid)
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       logging.exception('MNStorage.delete() failed with exception:')
       raise
     else:

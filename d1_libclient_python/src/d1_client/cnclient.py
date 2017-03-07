@@ -21,11 +21,9 @@
 
 # Stdlib
 import logging
-import sys
 
 # D1
-import d1_common.const # pip install dataone.common
-import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+import d1_common.const
 import d1_common.util
 
 # App
@@ -416,9 +414,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     mmp_dict = {
       'subject': subject.value().encode('utf-8'),
     }
-    return self.PUT(
-      ['accounts', 'pendingmap', subject.value()], fields=mmp_dict
-    )
+    return self.PUT(['accounts', 'pendingmap', subject.value()],
+                    fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentity(self, subject):
@@ -464,7 +461,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def setReplicationStatusResponse(
-    self, pid, nodeRef, status, dataone_error=None
+      self, pid, nodeRef, status, dataone_error=None
   ):
     mmp_dict = {
       'nodeRef': nodeRef.encode('utf-8'),
@@ -487,7 +484,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateReplicationMetadataResponse(
-    self, pid, replicaMetadata, serialVersion
+      self, pid, replicaMetadata, serialVersion
   ):
     mmp_dict = {
       'serialVersion':

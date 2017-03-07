@@ -34,10 +34,7 @@ import fuse
 import logging
 import os
 import stat
-import sys
 import time
-import urllib
-import urlparse
 
 # 3rd party
 
@@ -46,7 +43,6 @@ import d1_common.date_time
 
 # App
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 
 log = logging.getLogger(__name__)
@@ -110,7 +106,7 @@ class FUSECallbacks(fuse.Operations):
     log.debug(u'read(): {0}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
-    except onedrive_exceptions.PathException as e:
+    except onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   # Private.
@@ -121,7 +117,7 @@ class FUSECallbacks(fuse.Operations):
       d.append('.')
       d.append('..')
       return d
-    except onedrive_exceptions.PathException as e:
+    except onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   def _get_attributes_through_cache(self, path):
@@ -135,7 +131,7 @@ class FUSECallbacks(fuse.Operations):
   def _get_attributes(self, path):
     try:
       return self._root_resolver.get_attributes(path)
-    except onedrive_exceptions.PathException as e:
+    except onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   def _stat_from_attributes(self, attributes):
@@ -143,16 +139,16 @@ class FUSECallbacks(fuse.Operations):
       attributes.date()
     ) if attributes.date() is not None else self._start_time
     return dict(
-      st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else stat.S_IFREG | 0444,
-      st_ino = 0,
-      st_dev = 0,
-      st_nlink = 2, # TODO
-      st_uid = self._uid,
-      st_gid = self._gid,
-      st_size = attributes.size(),
-      st_atime = date_time,
-      st_mtime = date_time,
-      st_ctime = date_time,
+      st_mode=stat.S_IFDIR | 0555 if attributes.is_dir() else stat.S_IFREG | 0444,
+      st_ino=0,
+      st_dev=0,
+      st_nlink=2, # TODO
+      st_uid=self._uid,
+      st_gid=self._gid,
+      st_size=attributes.size(),
+      st_atime=date_time,
+      st_mtime=date_time,
+      st_ctime=date_time,
     )
 
   def _raise_error_if_os_special_file(self, path):

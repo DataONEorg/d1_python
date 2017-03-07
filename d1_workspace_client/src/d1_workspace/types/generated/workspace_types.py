@@ -151,13 +151,11 @@ class Folder(pyxb.binding.basis.complexTypeDefinition):
 
   name = property(__name.value, __name.set, None, None)
 
-  _ElementMap.update(
-    {
-      __folder.name(): __folder,
-      __identifier.name(): __identifier,
-      __query.name(): __query
-    }
-  )
+  _ElementMap.update({
+    __folder.name(): __folder,
+    __identifier.name(): __identifier,
+    __query.name(): __query
+  })
   _AttributeMap.update({__name.name(): __name})
 
 

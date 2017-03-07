@@ -28,9 +28,6 @@
   - python 2.6
 """
 
-# Std.
-import sys
-
 # D1
 import d1_common.const
 import d1_common.types.exceptions

@@ -182,21 +182,14 @@ def recurse_tree(path, excludes, opts):
     subs = sorted([sub for sub in subs if sub[0] not in ['.', '_']])
     # check if there are valid files to process
     # TODO: could add check for windows hidden files
-    if "/." in root or "/_" in root \
-    or not py_files \
-    or is_excluded(root, excludes):
+    if "/." in root or "/_" in root or not py_files or is_excluded(
+        root, excludes
+    ):
       continue
     if INIT in py_files:
-      # we are in package ...
-      if (# ... with subpackage(s)
-          subs
-          or
-          # ... with some module(s)
-          len(py_files) > 1
-          or
-          # ... with a not-to-be-skipped INIT file
-          not shall_skip(os.path.join(root, INIT))
-         ):
+      # we are in package with subpackage(s), with some module(s), with a
+      # not-to-be-skipped INIT file
+      if (subs or len(py_files) > 1 or not shall_skip(os.path.join(root, INIT))):
         subroot = root[len(path):].lstrip(os.path.sep).replace(os.path.sep, '.')
         create_package_file(root, package_name, subroot, py_files, opts, subs)
         toc.append(makename(package_name, subroot))

@@ -27,19 +27,14 @@
 """
 
 # Std.
-import datetime
-import os
 import random
 import sys
-import time
-import uuid
-import xml.sax.saxutils
-import StringIO
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-import transaction
+# D1
+import d1_common.util
+
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import transaction # noqa: E402
 
 # Config
 page_size = 1000

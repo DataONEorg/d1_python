@@ -155,112 +155,108 @@ urlpatterns.extend([url(r'^home/?$', app.views.internal.home, name='home')])
 # Diagnostic APIs that can be made available in production.
 
 if django.conf.settings.DEBUG_GMN or django.conf.settings.MONITOR:
-  urlpatterns.extend(
-    [
-      # Replication.
-      url(
-        r'^diag/get_replication_queue/?$',
-        app.views.diagnostics.get_replication_queue,
-        name='get_replication_queue',
-      ),
-      # Authentication.
-      url(
-        r'^diag/echo_session/?$',
-        app.views.diagnostics.echo_session,
-        name='echo_session',
-      ),
-      # Misc.
-      url(
-        r'^diag/echo_request_object/?$',
-        app.views.diagnostics.echo_request_object,
-        name='echo_request_object',
-      ),
-      url(
-        r'^diag/echo_raw_post_data/?$',
-        app.views.diagnostics.echo_raw_post_data,
-        name='echo_raw_post_data',
-      ),
-    ]
-  )
+  urlpatterns.extend([
+    # Replication.
+    url(
+      r'^diag/get_replication_queue/?$',
+      app.views.diagnostics.get_replication_queue,
+      name='get_replication_queue',
+    ),
+    # Authentication.
+    url(
+      r'^diag/echo_session/?$',
+      app.views.diagnostics.echo_session,
+      name='echo_session',
+    ),
+    # Misc.
+    url(
+      r'^diag/echo_request_object/?$',
+      app.views.diagnostics.echo_request_object,
+      name='echo_request_object',
+    ),
+    url(
+      r'^diag/echo_raw_post_data/?$',
+      app.views.diagnostics.echo_raw_post_data,
+      name='echo_raw_post_data',
+    ),
+  ])
 
 # Diagnostic APIs that should only be available in debug mode.
 
 if django.conf.settings.DEBUG_GMN:
-  urlpatterns.extend(
-    [
-      # Diagnostics portal
-      url(
-        r'^diag$',
-        app.views.diagnostics.diagnostics,
-        name='diag',
-      ),
-      # Replication.
-      url(
-        r'^diag/get_replication_queue$',
-        app.views.diagnostics.get_replication_queue,
-        name='get_replication_queue',
-      ),
-      url(
-        r'^diag/clear_replication_queue$',
-        app.views.diagnostics.clear_replication_queue,
-        name='clear_replication_queue',
-      ),
-      # Access Policy.
-      url(
-        r'^diag/delete_all_access_policies$',
-        app.views.diagnostics.delete_all_access_policies,
-        name='delete_all_access_policies',
-      ),
-      # Misc.
-      url(
-        r'^diag/create/(.+)$',
-        app.views.diagnostics.create,
-        name='create',
-      ),
-      url(
-        r'^diag/slash/(.+?)/(.+?)/(.+?)$',
-        app.views.diagnostics.slash,
-        name='slash',
-      ),
-      url(
-        r'^diag/exception/(.+?)$', app.views.diagnostics.exception,
-        name='exception'
-      ),
-      url(
-        r'^diag/delete_all_objects$',
-        app.views.diagnostics.delete_all_objects_view,
-        name='delete_all_objects_view',
-      ),
-      url(
-        r'^diag/trusted_subjects$',
-        app.views.diagnostics.trusted_subjects,
-        name='trusted_subjects',
-      ),
-      url(
-        r'^diag/whitelist_subject$',
-        app.views.diagnostics.whitelist_subject,
-        name='whitelist_subject',
-      ),
-      url(
-        r'^diag/permissions_for_object/(.+?)$',
-        app.views.diagnostics.permissions_for_object,
-        name='permissions_for_object',
-      ),
-      url(
-        r'^diag/get_setting/(.+)$',
-        app.views.diagnostics.get_setting,
-        name='get_setting',
-      ),
-      # Event Log.
-      url(
-        r'^diag/delete_event_log$',
-        app.views.diagnostics.delete_event_log,
-        name='delete_event_log',
-      ),
-      url(
-        r'^diag/inject_fictional_event_log$',
-        app.views.diagnostics.inject_fictional_event_log,
-        name='inject_fictional_event_log',
-      ),
-    ]
-  )
+  urlpatterns.extend([
+    # Diagnostics portal
+    url(
+      r'^diag$',
+      app.views.diagnostics.diagnostics,
+      name='diag',
+    ),
+    # Replication.
+    url(
+      r'^diag/get_replication_queue$',
+      app.views.diagnostics.get_replication_queue,
+      name='get_replication_queue',
+    ),
+    url(
+      r'^diag/clear_replication_queue$',
+      app.views.diagnostics.clear_replication_queue,
+      name='clear_replication_queue',
+    ),
+    # Access Policy.
+    url(
+      r'^diag/delete_all_access_policies$',
+      app.views.diagnostics.delete_all_access_policies,
+      name='delete_all_access_policies',
+    ),
+    # Misc.
+    url(
+      r'^diag/create/(.+)$',
+      app.views.diagnostics.create,
+      name='create',
+    ),
+    url(
+      r'^diag/slash/(.+?)/(.+?)/(.+?)$',
+      app.views.diagnostics.slash,
+      name='slash',
+    ),
+    url(
+      r'^diag/exception/(.+?)$', app.views.diagnostics.exception,
+      name='exception'
+    ),
+    url(
+      r'^diag/delete_all_objects$',
+      app.views.diagnostics.delete_all_objects_view,
+      name='delete_all_objects_view',
+    ),
+    url(
+      r'^diag/trusted_subjects$',
+      app.views.diagnostics.trusted_subjects,
+      name='trusted_subjects',
+    ),
+    url(
+      r'^diag/whitelist_subject$',
+      app.views.diagnostics.whitelist_subject,
+      name='whitelist_subject',
+    ),
+    url(
+      r'^diag/permissions_for_object/(.+?)$',
+      app.views.diagnostics.permissions_for_object,
+      name='permissions_for_object',
+    ),
+    url(
+      r'^diag/get_setting/(.+)$',
+      app.views.diagnostics.get_setting,
+      name='get_setting',
+    ),
+    # Event Log.
+    url(
+      r'^diag/delete_event_log$',
+      app.views.diagnostics.delete_event_log,
+      name='delete_event_log',
+    ),
+    url(
+      r'^diag/inject_fictional_event_log$',
+      app.views.diagnostics.inject_fictional_event_log,
+      name='inject_fictional_event_log',
+    ),
+  ])

@@ -29,16 +29,13 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
 
 # D1
 sys.path.append('../..')
-import impl.directory
-import impl.resolver.flat_space as flat_space
-from object_tree_test_sample import object_tree
+import impl.resolver.flat_space as flat_space # noqa: E402
+from object_tree_test_sample import object_tree # noqa: E402
 
 options = {}
 

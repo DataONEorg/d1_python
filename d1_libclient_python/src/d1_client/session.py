@@ -21,7 +21,6 @@
 # Stdlib
 import datetime
 import logging
-import pprint
 import urlparse
 
 # 3rd party
@@ -41,7 +40,7 @@ DEFAULT_NUMBER_OF_RETRIES = 3
 
 class Session(object):
   def __init__(
-    self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs
+      self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs
   ):
     """The Session improves performance by keeping connection related state and
     allowing it to be reused in multiple API calls to a DataONE Coordinating
@@ -60,10 +59,10 @@ class Session(object):
 
     :param base_url: DataONE Node REST service BaseURL.
     :type host: string
-    
+
     :param cert_pem_path: Path to a PEM formatted certificate file.
     :type cert_pem_path: string
-    
+
     :param cert_key_path: Path to a PEM formatted file that contains the private
       key for the certificate file. Only required if the certificate file does
       not itself contain the private key.
@@ -76,10 +75,10 @@ class Session(object):
       set, retries are still performed, using the default number of retries. To
       disable retries, set to 1.
     :type retries: int
-    
+
     :param headers: headers that will be included with all connections.
     :type headers: dictionary
-    
+
     :param query: URL query parameters that will be included with all
       connections.
     :type query: dictionary
@@ -242,12 +241,10 @@ class Session(object):
     kwargs = self._prep_args(kwargs)
     mmp_stream = requests_toolbelt.MultipartEncoder(fields=fields)
     kwargs['data'] = mmp_stream
-    kwargs['headers'].update(
-      {
-        'Content-Type': mmp_stream.content_type,
-        'Content-Length': str(mmp_stream.len),
-      }
-    )
+    kwargs['headers'].update({
+      'Content-Type': mmp_stream.content_type,
+      'Content-Length': str(mmp_stream.len),
+    })
     return self._session.request(method, url, **kwargs)
 
   def _request(self, method, rest_path_list, **kwargs):

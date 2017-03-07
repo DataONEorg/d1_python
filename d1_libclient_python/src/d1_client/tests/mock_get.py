@@ -24,7 +24,6 @@ Will always return the same bytes for a given PID.
 """
 
 # Stdlib
-import datetime
 import hashlib
 import random
 import re
@@ -32,10 +31,6 @@ import urlparse
 
 # 3rd party
 import responses # pip install responses
-import requests
-
-# D1
-import d1_common.types.dataoneTypes_v2_0 as v2
 
 # App
 import d1_common.const

@@ -9,9 +9,6 @@ Module d1_instance_generator.identifier
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
-import random
-
 # D1
 from d1_common.types.generated import dataoneTypes
 

@@ -28,13 +28,9 @@ Module d1_instance_generator.tests.test_replication_policy
 """
 
 # Stdlib
-import hashlib
 import logging
-import os
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1
 import d1_common.const
@@ -43,13 +39,13 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import replicationpolicy
+import replicationpolicy # noqa: E402
 
 #===============================================================================
 
 
 class TestReplicationPolicy(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     pass

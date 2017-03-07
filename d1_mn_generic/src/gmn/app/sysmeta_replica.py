@@ -185,7 +185,7 @@ def _register_remote_replica(sciobj_model, replica_pyxb):
 def replica_model_to_pyxb(sciobj_model):
   replica_pyxb_list = []
   for replica_model in app.models.RemoteReplica.objects.filter(
-    sciobj=sciobj_model
+      sciobj=sciobj_model
   ):
     replica_pyxb = d1_common.types.dataoneTypes.Replica()
     replica_pyxb.replicaMemberNode = replica_model.info.member_node.urn

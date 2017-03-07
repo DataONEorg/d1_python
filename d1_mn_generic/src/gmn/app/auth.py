@@ -29,7 +29,6 @@ from __future__ import absolute_import
 import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
 # Django

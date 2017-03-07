@@ -35,13 +35,11 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_090(self):
     """_get_grouped_permission_dict()"""
-    perm_dict = d1_common.access_policy._get_grouped_permission_dict(
-      [
-        ('subj1', 'write'),
-        ('subj2', 'read'),
-        ('subj3', 'write'),
-      ]
-    )
+    perm_dict = d1_common.access_policy._get_grouped_permission_dict([
+      ('subj1', 'write'),
+      ('subj2', 'read'),
+      ('subj3', 'write'),
+    ])
     self.assertDictEqual(
       perm_dict, {
         'read': ['subj2'],
@@ -83,9 +81,8 @@ class TestAccessPolicy(unittest.TestCase):
   def test_111(self):
     """get_effective_permission_list_from_iter()"""
     self.assertListEqual(
-      d1_common.access_policy.get_effective_permission_list_from_iter(
-        ['write']
-      ),
+      d1_common.access_policy.get_effective_permission_list_from_iter(['write']
+                                                                      ),
       ['read', 'write'],
     )
 

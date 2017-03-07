@@ -25,8 +25,7 @@ Created on Jan 11, 2013
 @author: brumgard
 """
 import sys
-import tarfile
-from setuptools import setup, find_packages
+from setuptools import setup
 
 sys.argv = [sys.argv[0], 'bdist_egg']
 
@@ -57,12 +56,11 @@ setup(
       'eggsecutable = main:entrypoint0',
     ]
   }, package_data={
-    'lxml':
-      [
-        'resources/macosx/*.dylib',
-        'resources/linux/x86_64/*.so',
-        'resources/windows/amd64/*.pyd',
-      ],
+    'lxml': [
+      'resources/macosx/*.dylib',
+      'resources/linux/x86_64/*.so',
+      'resources/windows/amd64/*.pyd',
+    ],
     'd1_client': [
       'mime_mappings.csv',
     ],

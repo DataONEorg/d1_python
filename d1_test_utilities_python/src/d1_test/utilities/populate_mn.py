@@ -22,12 +22,8 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
 import optparse
-import os
 import sys
 import StringIO
 
@@ -154,10 +150,13 @@ def main():
 
   for _ in range(options.num_objects):
     pid = test_object_generator.generate_random_ascii('pid')
-    sysmeta_pyxb, sciobj_str = test_object_generator \
-      .generate_science_object_with_sysmeta(
-        pid, options.num_min_bytes, options.num_max_bytes,
+    sysmeta_pyxb, sciobj_str = (
+      test_object_generator.generate_science_object_with_sysmeta(
+        pid,
+        options.num_min_bytes,
+        options.num_max_bytes,
         use_v1_bool=options.use_v1,
+      )
     )
     try:
       mn_client.create(

@@ -22,31 +22,17 @@
 """
 
 # Stdlib
-import datetime
-import json
-import logging
 import sys
 import unittest
-import urlparse
 
 # 3rd party
 import responses # pip install responses
-import requests
-
-# D1
-sys.path.append('..')
-import d1_client.mnclient
-import d1_client.iter.objectlist_multi as objectlistmt
-import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
-import d1_client.mnclient_2_0
-import shared_settings
-import util
-import shared_context
-
-import mock_object_list
-import iter.objectlistmt
+sys.path.append('..')
+import shared_settings # noqa: E402
+import mock_object_list # noqa: E402
+import iter.objectlistmt # noqa: E402
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -74,7 +60,7 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
     print '4' * 100
     for object_info_pyxb in object_list_iterator:
       print '5' * 100
-      print object_info_pyxb #.toxml()
+      print object_info_pyxb # .toxml()
 
     # client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=shared_settings.MN_URL)
     # object_list_pyxb = client.listObjects(start=30, count=100)

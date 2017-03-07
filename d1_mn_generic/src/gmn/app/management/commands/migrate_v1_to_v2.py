@@ -149,7 +149,7 @@ class V2Migration(object):
 
   def _migrate_filesystem(self):
     for dir_path, dir_list, file_list in os.walk(
-      GMN_V1_OBJ_PATH, topdown=False
+        GMN_V1_OBJ_PATH, topdown=False
     ):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
@@ -384,12 +384,11 @@ class V2Migration(object):
   # Update CN registration to show new v2 services
 
   def _update_node_doc(self):
-    if not (
-      (not django.conf.settings.STAND_ALONE) and
-      django.conf.settings.NODE_IDENTIFIER and django.conf.settings.DATAONE_ROOT
-      and django.conf.settings.CLIENT_CERT_PATH and
-      django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
-    ):
+    if not ((not django.conf.settings.STAND_ALONE) and
+            django.conf.settings.NODE_IDENTIFIER and
+            django.conf.settings.DATAONE_ROOT and
+            django.conf.settings.CLIENT_CERT_PATH and
+            django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH):
       self._log(
         'Skipped Node registry update on CN because this MN does not appear '
         'to be registered in a DataONE environment yet.'

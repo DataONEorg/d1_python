@@ -46,20 +46,9 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
-import os
-import shutil
-import sys
-import urllib
-
-# 3rd party
-import pyxb
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const
 import d1_client.data_package
@@ -115,7 +104,7 @@ def get_node_list_from_coordinating_node():
   cn_client = d1_client.cnclient.CoordinatingNodeClient(base_url=DATAONE_ROOT)
   try:
     return cn_client.listNodes()
-  except d1_common.types.exceptions.DataONEException as e:
+  except d1_common.types.exceptions.DataONEException:
     logging.exception('listNodes() failed with exception:')
     raise
 
@@ -182,7 +171,7 @@ def get_ping(client):
 def get_number_of_objects(client):
   try:
     return client.listObjects(start=0, count=0).total
-  except d1_common.types.exceptions.DataONEException as e:
+  except d1_common.types.exceptions.DataONEException:
     logging.exception('listObjects() failed with exception:')
     raise
 

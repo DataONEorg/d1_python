@@ -42,20 +42,10 @@
 """
 
 # Stdlib
-import codecs
-import datetime
-import hashlib
 import logging
-import os
-import sys
 import pprint
 
-# 3rd party
-import pyxb
-
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.const
 import d1_client.solr_client
 import d1_client.mnclient
 
@@ -67,13 +57,11 @@ def main():
   # Connect to the DataONE Coordinating Nodes in the default (production) environment.
   c = d1_client.solr_client.SolrConnection()
 
-  search_result = c.search(
-    {
-      'q': 'id:[* TO *]', # Filter for search
-      'rows': 10, # Number of results to return
-      'fl': 'formatId', # List of fields to return for each result
-    }
-  )
+  search_result = c.search({
+    'q': 'id:[* TO *]', # Filter for search
+    'rows': 10, # Number of results to return
+    'fl': 'formatId', # List of fields to return for each result
+  })
 
   pprint.pprint(search_result)
 

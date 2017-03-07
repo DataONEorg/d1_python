@@ -22,14 +22,11 @@
 """
 
 # Stdlib
-import datetime
-import hashlib
 import re
 import urlparse
 
 # 3rd party
 import responses # pip install responses
-import requests
 
 # App
 import d1_common.const
@@ -60,7 +57,7 @@ def init(base_url, major_version):
 def _request_callback(request):
   url, query_dict = _parse_url(request.url)
 
-  version_tag_str = get_version_tag_from_url(url)
+  version_tag_str = _get_version_tag_from_url(url)
   pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings(version_tag_str)
 
   if 'start' in query_dict:
@@ -84,6 +81,13 @@ def _parse_url(url):
   query_dict = urlparse.parse_qs(url_obj.query)
   url = url_obj._replace(query=None).geturl()
   return url, query_dict
+
+
+def _get_version_tag_from_url(url):
+  m = re.match(r'(/|^)(v\d)(/|$)', url)
+  if not m:
+    return None
+  return m.group(2)
 
 
 def _generate_object_format_list(pyxb_bindings, n_start, n_count):

@@ -23,12 +23,8 @@
 
 # Stdlib
 import hashlib
-import json
 import logging
-import pprint
-import StringIO
 import sys
-import unittest
 
 # 3rd party
 import responses # pip install responses
@@ -41,10 +37,10 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('..')
-import mock_get
-import mock_post
-import session
-import shared_settings
+import mock_get # noqa: E402
+import mock_post # noqa: E402
+import session # noqa: E402
+import shared_settings # noqa: E402
 
 
 class TestSession(TestCaseWithURLCompare):

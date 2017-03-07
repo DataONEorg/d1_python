@@ -3,19 +3,11 @@
 # Stdlib
 import logging
 import os
-from pprint import pprint
-import shutil
 import sys
 import unittest
 
-# 3rd party
-from pyzotero import zotero
-
 # D1
 sys.path.append('../..')
-import command_echoer
-import impl.clients.onedrive_zotero_client as onedrive_zotero_client
-from object_tree_test_sample import object_tree
 
 options = {}
 
@@ -27,9 +19,10 @@ options = {}
 
 class TestZoteroClient(unittest.TestCase):
   def _show_object_tree(self, zotero_client):
-    #pprint.pprint(zotero_client.collections())
-    #pprint.pprint(zotero_client.collections_sub(''))
-    pprint.pprint(arrange_collections_into_tree(zotero_client))
+    # pprint.pprint(zotero_client.collections())
+    # pprint.pprint(zotero_client.collections_sub(''))
+    # pprint.pprint(arrange_collections_into_tree(zotero_client))
+    pass
 
   def _arrange_collections_into_tree(self, zotero_client):
     # Since Python creates references instead of copies when objects are appended
@@ -48,23 +41,25 @@ class TestZoteroClient(unittest.TestCase):
         return e
 
   def _copy_object_tree_to_zotero(self, zotero_client):
-    with object_tree.ObjectTree() as object_tree_client:
-      copy_dirs_recursive(zotero_client, object_tree_client, None, [])
+    # with object_tree.ObjectTree() as object_tree_client:
+    #   copy_dirs_recursive(zotero_client, object_tree_client, None, [])
+    pass
 
   def _copy_dirs_recursive(
-    self, zotero_client, object_tree_client, zotero_collection, object_tree_path
+      self, zotero_client, object_tree_client, zotero_collection,
+      object_tree_path
   ):
     object_tree_folder = object_tree_client.get_folder(object_tree_path)
     print object_tree_folder['name']
-    collection = zotero_create_collection(
-      zotero_client, zotero_collection, object_tree_folder['name']
-    )
-    for pid in object_tree_folder['items']:
-      zotero_create_item(zotero_client, collection, pid)
-    for d in object_tree_folder['dirs']:
-      copy_dirs_recursive(
-        zotero_client, object_tree_client, collection, object_tree_path + [d]
-      )
+    # collection = zotero_create_collection(
+    #   zotero_client, zotero_collection, object_tree_folder['name']
+    # )
+    # for pid in object_tree_folder['items']:
+    #   zotero_create_item(zotero_client, collection, pid)
+    # for d in object_tree_folder['dirs']:
+    #   copy_dirs_recursive(
+    #     zotero_client, object_tree_client, collection, object_tree_path + [d]
+    #   )
 
   def _zotero_create_collection(self, zotero_client, zotero_collection, name):
     params = {'name': name}

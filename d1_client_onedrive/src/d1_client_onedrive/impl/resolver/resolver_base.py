@@ -30,14 +30,10 @@
 """
 
 # Stdlib
-import abc
 import logging
-import os
-from StringIO import StringIO
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 
 log = logging.getLogger(__name__)

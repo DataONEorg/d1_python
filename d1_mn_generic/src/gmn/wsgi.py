@@ -30,18 +30,14 @@ from django.utils import datastructures
 import django
 import django.core.handlers.wsgi
 
-# Discover the path of this module
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+# D1
+import d1_common.util
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 # Add the service folder to the search path.
-sys.path.append(_here('.'))
-sys.path.append(_here('..'))
-
-# Default for Django 1.10.
-# from django.core.wsgi import get_wsgi_application
-# application = get_wsgi_application()
+sys.path.append(d1_common.util.abs_path('.'))
+sys.path.append(d1_common.util.abs_path('..'))
 
 
 class D1WSGIRequest(django.core.handlers.wsgi.WSGIRequest):

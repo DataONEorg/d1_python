@@ -30,12 +30,11 @@
 import errno
 import logging
 import os
-import platform
 import pprint
 
 
 def log_dump(s):
-  log.debug(pprint.pformat(s))
+  logging.debug(pprint.pformat(s))
 
 
 def ensure_dir_exists(path):

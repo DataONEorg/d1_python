@@ -20,31 +20,30 @@
 # limitations under the License.
 
 # Stdlib
-import logging
-import mock
-import StringIO
 import sys
 import unittest
 
 # 3rd party
 import responses # pip install responses
-import requests
 
 # D1
 import d1_common.test_case_with_url_compare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
+import d1_test.instance_generator
 
 # App
 sys.path.append('..')
-import d1_client.baseclient
-import mock_log_records
-import shared_settings
+import d1_client.baseclient # noqa: E402
+import mock_log_records # noqa: E402
+import shared_settings # noqa: E402
+import d1_client.tests.util # noqa: E402
+import shared_context # noqa: E402
 
 
 class TestDataONEBaseClient(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     mock_log_records.init(shared_settings.MN_RESPONSES_URL)
@@ -102,7 +101,7 @@ class TestDataONEBaseClient(
   def _getLogRecords(self):
     """getLogRecords() returns a valid Log."""
     # getLogRecords() verifies that the returned type is Log.
-    return client.getLogRecords()
+    return self.client.getLogRecords()
 
   def test_0550(self):
     """getLogRecords()"""
@@ -140,7 +139,7 @@ class TestDataONEBaseClient(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = util.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     response = client.get(pid)
     self.assertTrue(response.read() > 0)
 
@@ -168,7 +167,7 @@ class TestDataONEBaseClient(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = util.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     sysmeta_pyxb = client.getSystemMetadata(pid)
     self.assertTrue(
       isinstance(
@@ -206,8 +205,9 @@ class TestDataONEBaseClient(
     if invalid_pid:
       pid = '_bogus_pid_4589734958791283794565'
     else:
-      pid = util.get_random_valid_pid(client)
-    headers = client.describe(pid)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
+    # headers =
+    client.describe(pid)
 
   @unittest.skip(
     "TODO: Skipped due to waiting for test env. Should set up test env or remove"
@@ -272,8 +272,10 @@ class TestDataONEBaseClient(
   @unittest.skip("TODO: Check why this is skipped")
   def test_1050_A(self):
     """generateIdentifier(): Returns a valid identifier that matches scheme and fragment"""
-    shared_context.test_fragment = 'test_reserve_identifier_' + \
-        d1_instance_generator.random_data.random_3_words()
+    shared_context.test_fragment = (
+      'test_reserve_identifier_' +
+      d1_test.instance_generator.random_data.random_3_words()
+    )
     client = d1_client.baseclient.DataONEBaseClient(self.options.gmn_url)
     identifier = client.generateIdentifier('UUID', shared_context.test_fragment)
     shared_context.generated_identifier = identifier.value()
@@ -281,8 +283,10 @@ class TestDataONEBaseClient(
   @unittest.skip("TODO: Check why this is skipped")
   def test_1050_B(self):
     """generateIdentifier(): Returns a different, valid identifier when called second time"""
-    shared_context.test_fragment = 'test_reserve_identifier_' + \
-        d1_instance_generator.random_data.random_3_words()
+    shared_context.test_fragment = (
+      'test_reserve_identifier_' +
+      d1_test.instance_generator.random_data.random_3_words()
+    )
     identifier = self.client.generateIdentifier(
       'UUID', shared_context.test_fragment
     )
@@ -296,7 +300,7 @@ class TestDataONEBaseClient(
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
-      pid = util.get_random_valid_pid(client)
+      pid = d1_client.tests.util.get_random_valid_pid(client)
     auth = client.isAuthorized(pid, 'read')
     self.assertIsInstance(auth, bool)
 

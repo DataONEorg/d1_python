@@ -28,7 +28,7 @@ import d1_common.types.exceptions
 
 
 def validate_sysmeta_against_uploaded(request, sysmeta_pyxb):
-  if not 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' not in request.META:
     _validate_sysmeta_file_size(request, sysmeta_pyxb)
     _validate_sysmeta_checksum(request, sysmeta_pyxb)
 

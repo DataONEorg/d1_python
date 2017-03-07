@@ -74,7 +74,7 @@ import requests
 
 # App
 sys.path.append('..')
-import tests.gmn_test_client
+import tests.gmn_test_client # noqa: E402
 
 # Configuration
 
@@ -212,8 +212,8 @@ class GMNIntegrationTests(unittest.TestCase):
     return object_list.objectInfo[0].identifier.value()
 
   def _generate_sysmeta(
-    self, binding, pid, sciobj_str, owner, obsoletes=None, obsoleted_by=None,
-    sid=None, access_rule_list=None
+      self, binding, pid, sciobj_str, owner, obsoletes=None, obsoleted_by=None,
+      sid=None, access_rule_list=None
   ):
     now = datetime.datetime.now()
     sysmeta_pyxb = binding.systemMetadata()
@@ -256,12 +256,12 @@ class GMNIntegrationTests(unittest.TestCase):
     return access_policy
 
   def _create_replication_policy_pyxb(
-    self,
-    binding,
-    preferred_node_list=None,
-    blocked_node_list=None,
-    is_replication_allowed=True,
-    num_replicas=None,
+      self,
+      binding,
+      preferred_node_list=None,
+      blocked_node_list=None,
+      is_replication_allowed=True,
+      num_replicas=None,
   ):
     if preferred_node_list is None:
       preferred_node_list = [
@@ -277,8 +277,8 @@ class GMNIntegrationTests(unittest.TestCase):
     return rep_pyxb
 
   def _generate_test_object(
-    self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None,
-    access_rule_list=None
+      self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None,
+      access_rule_list=None
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
     sysmeta_pyxb = self._generate_sysmeta(
@@ -317,8 +317,8 @@ class GMNIntegrationTests(unittest.TestCase):
     return '{}_{}'.format(tag_str, self._random_str())
 
   def _create(
-    self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
-    access_rule_list=None
+      self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
+      access_rule_list=None
   ):
     sci_obj_str, sysmeta_pyxb = self._generate_test_object(
       binding, pid, obsoletes, obsoleted_by, sid, access_rule_list
@@ -333,8 +333,8 @@ class GMNIntegrationTests(unittest.TestCase):
     return sci_obj_str, sysmeta_pyxb
 
   def _update(
-    self, client, binding, old_pid, new_pid, sid=None, obsoletes=None,
-    obsoleted_by=None
+      self, client, binding, old_pid, new_pid, sid=None, obsoletes=None,
+      obsoleted_by=None
   ):
     sci_obj_str, sysmeta_pyxb = self._generate_test_object(
       binding, new_pid, obsoletes, obsoleted_by, sid
@@ -384,7 +384,7 @@ class GMNIntegrationTests(unittest.TestCase):
     return d1_common.xml.pretty_xml(xml_str)
 
   def _restore_sysmeta_mn_controlled_fields(
-    self, sysmeta_a_pyxb, sysmeta_b_pyxb
+      self, sysmeta_a_pyxb, sysmeta_b_pyxb
   ):
     """Copy values that the MN overwrites from sysmeta_b to sysmeta_a so that
     the sysmeta used in create() can be compared with sysmeta retrieved in
@@ -1937,8 +1937,9 @@ class GMNIntegrationTests(unittest.TestCase):
       )
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
-      self.assertEqual(sysmeta_pyxb_retrieved.identifier.value()\
-                       .encode('utf-8'), scidata)
+      self.assertEqual(
+        sysmeta_pyxb_retrieved.identifier.value().encode('utf-8'), scidata
+      )
 
   # ----------------------------------------------------------------------------
   # Chains and SIDs
@@ -2523,7 +2524,7 @@ class GMNIntegrationTests(unittest.TestCase):
   #
 
   def _create_and_compare(
-    self, client, binding, num_sciobj_bytes, redirect_bool
+      self, client, binding, num_sciobj_bytes, redirect_bool
   ):
     pid = self._random_pid()
     created_sciobj_str, created_sysmeta_pyxb = self._create_proxied_sciobj_httpbin(
@@ -2548,7 +2549,7 @@ class GMNIntegrationTests(unittest.TestCase):
     # self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
 
   def _create_proxied_sciobj_httpbin(
-    self, client, binding, pid, num_sciobj_bytes, redirect_bool
+      self, client, binding, pid, num_sciobj_bytes, redirect_bool
   ):
     """GMN can handle storage of the object bytes itself, or it can defer
     storage of the object bytes to another web server (proxy mode). The mode is
@@ -2572,7 +2573,7 @@ class GMNIntegrationTests(unittest.TestCase):
     return sciobj_str, sysmeta_pyxb
 
   def _create_proxied_sciobj(
-    self, client, object_stream_url, sysmeta_pyxb, pid
+      self, client, object_stream_url, sysmeta_pyxb, pid
   ):
     headers = self._include_subjects(
       tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED

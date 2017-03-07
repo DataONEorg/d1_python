@@ -35,16 +35,12 @@
 # Stdlib
 import logging
 import os
-import sys
 
 # D1
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import os_escape
 from d1_client_onedrive.impl import onedrive_exceptions
-from d1_client_onedrive.impl import onedrive_exceptions
-from d1_client_onedrive.impl import util
 import flat_space
 import resolver_base
 import object_tree_resolver

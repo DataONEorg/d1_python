@@ -20,19 +20,16 @@
 
 # Stdlib
 import datetime
-import hashlib
-import logging
 import random
 import string
 
 # D1
-from d1_test.instance_generator import random_data, systemmetadata
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes_v1 as dataoneTypes
 
 # App
-from replication_error import *
+import d1_test.instance_generator.random_data
 
 # Values used in the generated System Metadata
 
@@ -70,11 +67,11 @@ def _create_science_object_bytes(pid):
   # Seeding the PRNG with the PID causes the same sequence to be generated each
   # time.
   random.seed(pid)
-  return random_data.random_bytes(N_SCI_OBJ_BYTES)
+  return d1_test.instance_generator.random_data.random_bytes(N_SCI_OBJ_BYTES)
 
 
 def _generate_system_metadata_for_science_object(
-  pid, sciobj_str, include_obsolescence_bool=False
+    pid, sciobj_str, include_obsolescence_bool=False
 ):
   now = datetime.datetime.now()
 
@@ -85,9 +82,8 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.formatId = FORMAT_ID
   sysmeta_pyxb.identifier = pid
-  sysmeta_pyxb.rightsHolder = generate_random_ascii(
-    'rights_holder'
-  ) #dataoneTypes.subject(rights_holder)
+  sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
+  # dataoneTypes.subject(rights_holder)
   sysmeta_pyxb.size = len(sciobj_str)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 

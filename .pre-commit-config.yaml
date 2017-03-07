@@ -2,13 +2,13 @@
     sha: a11d9314b22d8f8c7556443875b731ef05965464
     hooks:
     -   id: trailing-whitespace
+        exclude: '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)'
+    -   id: flake8
+        exclude: '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)'
 -   repo: git://github.com/pre-commit/mirrors-yapf
     sha: v0.16.0
     hooks:
     -   id: yapf
         args:
         - --in-place
--   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: a11d9314b22d8f8c7556443875b731ef05965464
-    hooks:
-    -   id: flake8
+        exclude: '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)'

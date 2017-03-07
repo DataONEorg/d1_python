@@ -21,7 +21,7 @@ Examples:
 
   $ python urlencode.py "ฉันกินกระจกได้"
   %E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%81%E0%B8%B4%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%81%E0%B9%84%E0%B8%94%E0%B9%89
-  
+
 """
 
 import sys
@@ -49,9 +49,11 @@ def process_input(input, decode=False, path=False):
 if __name__ == "__main__":
   usage = "usage: %prog [options]"
   parser = optparse.OptionParser(usage=usage)
-  parser.add_option("-l", "--loglevel", dest="llevel", default=40, type="int",
-                help="Reporting level: 10=debug, 20=Info, 30=Warning, " +\
-                     "40=Error, 50=Fatal [default: %default]")
+  parser.add_option(
+    "-l", "--loglevel", dest="llevel", default=40, type="int",
+    help="Reporting level: 10=debug, 20=Info, 30=Warning, " +
+    "40=Error, 50=Fatal [default: %default]"
+  )
   parser.add_option(
     "-p", "--path", dest="path", default=False, action="store_true",
     help="Only apply path encoding rules as per RFC3986 [default: %default]"

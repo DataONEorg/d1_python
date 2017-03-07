@@ -21,11 +21,9 @@
 
 # Stdlib
 import logging
-import sys
 
 # D1
 import d1_common.const
-import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 import d1_common.util
 import d1_common.date_time
 
@@ -35,7 +33,7 @@ import mnclient_1_1
 
 
 class MemberNodeClient_2_0(
-  baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1
+    baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1
 ):
   """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
   for Member nodes that was added in v2.0 of the DataONE infrastructure.
@@ -58,7 +56,7 @@ class MemberNodeClient_2_0(
 
   @d1_common.util.utf8_to_unicode
   def updateSystemMetadataResponse(
-    self, pid, sysmeta_pyxb, vendorSpecific=None
+      self, pid, sysmeta_pyxb, vendorSpecific=None
   ):
     mmp_dict = {
       'pid': pid.encode('utf-8'),

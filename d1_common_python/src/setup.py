@@ -29,7 +29,10 @@ def main():
   setuptools.setup(
     name='dataone.common',
     version=d1_common.__version__,
-    description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
+    description=(
+      'Contains functionality common to projects that interact with '
+      'the DataONE infrastructure via Python'
+    ),
     author='DataONE Project',
     author_email='developers@dataone.org',
     url='http://dataone.org',

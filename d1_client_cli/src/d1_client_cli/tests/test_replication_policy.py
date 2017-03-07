@@ -37,11 +37,10 @@ sys.path.append('..')
 sys.path.append('../impl')
 
 # D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
+from d1_common.test_case_with_url_compare import TestCaseWithURLCompare # noqa: E402
 
 # App
-import replication_policy
-import cli_exceptions
+import replication_policy # noqa: E402
 
 #===============================================================================
 

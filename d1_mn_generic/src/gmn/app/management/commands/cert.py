@@ -56,7 +56,8 @@ class Command(django.core.management.base.BaseCommand):
   missing_args_message = (
     '<command> must be one of:\n'
     'view <cert-path>: View DataONE subjects in X.509 PEM certificate\n'
-    'whitelist <cert-path>: Add primary DataONE subject in X.509 PEM certificate to whitelist for create, update and delete\n'
+    'whitelist <cert-path>: Add primary DataONE subject in X.509 PEM '
+    'certificate to whitelist for create, update and delete\n'
   )
 
   def add_arguments(self, parser):
@@ -87,8 +88,9 @@ class Command(django.core.management.base.BaseCommand):
 
   def _handle(self, command_str, pem_cert_path):
     cert_pem = self._read_pem_cert(pem_cert_path)
-    primary_str, equivalent_set = app.middleware.session_cert\
-      .get_authenticated_subjects(cert_pem)
+    primary_str, equivalent_set = (
+      app.middleware.session_cert.get_authenticated_subjects(cert_pem)
+    )
     if command_str == 'view':
       self._view(primary_str, equivalent_set)
     elif command_str == 'whitelist':
@@ -107,7 +109,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _whitelist(self, primary_str):
     if app.models.WhitelistForCreateUpdateDelete.objects.filter(
-      subject=app.models.subject(primary_str)
+        subject=app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
         u'Create, update and delete already enabled for subject: {}'.

@@ -32,12 +32,12 @@
 import os
 import sys
 
-# App
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../../../shared/'))
-import settings
-import subject_dn
-import pem_in_http_header
+# D1
+import d1_common.util
+
+sys.path.append(d1_common.util.abs_path('../../../shared/'))
+import settings # noqa: E402
+import subject_dn # noqa: E402
 
 
 def check_path(path):

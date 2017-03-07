@@ -30,15 +30,12 @@
 
 # Stdlib
 import csv
-import os
 
-
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
-
+# D1
+import d1_common.util
 
 # Config
-MIME_MAPPINGS_CSV_PATH = make_absolute('mime_mappings.csv')
+MIME_MAPPINGS_CSV_PATH = d1_common.util.abs_path('mime_mappings.csv')
 
 
 class Singleton(object):

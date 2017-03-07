@@ -26,7 +26,7 @@ import d1_common.test_case_with_url_compare
 
 
 class TestURLCompare(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def test_010(self):
     """Equivalent

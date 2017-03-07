@@ -37,7 +37,6 @@ import sys
 import urlparse
 
 # DataONE
-import d1_common.const
 import cli_exceptions
 
 
@@ -80,7 +79,7 @@ def confirm(prompt, default=u'no', allow_blank=False):
     response = None
     try:
       response = raw_input('{0:<9s}{1}{2}'.format('WARN', prompt, p))
-    except (KeyboardInterrupt, EOFError) as e:
+    except (KeyboardInterrupt, EOFError):
       pass
     if ((response is None) or (len(response) == 0)):
       response = string.lower(default)

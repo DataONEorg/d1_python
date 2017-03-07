@@ -32,11 +32,12 @@ import pyxb
 from d1_common.types import dataoneTypes
 
 EG_PID_GMN = (
-  """<?xml version="1.0" encoding="UTF-8"?>
-<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">testpid</d1:identifier>""",
-  'testpid',
+  '<?xml version="1.0" encoding="UTF-8"?>\n'
+  '<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"\n'
+  ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
+  ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
+  'file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">'
+  'testpid</d1:identifier>', 'testpid',
 )
 
 # TODO.
@@ -44,11 +45,12 @@ EG_PID_KNB = ("""""", '',)
 
 # Blank pid.
 EG_BAD_PID_1 = (
-  """<?xml version="1.0" encoding="UTF-8"?>
-<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd"></d1:identifier>""",
-  'testpid',
+  '<?xml version="1.0" encoding="UTF-8"?>\n'
+  '<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"\n'
+  ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
+  ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
+  'file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">'
+  '</d1:identifier>', 'testpid',
 )
 
 # Missing identifier.

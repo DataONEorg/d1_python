@@ -161,7 +161,7 @@ class ReplicationQueueProcessor(object):
     app.models.update_replica_status(queue_model.local_replica.info, status_str)
 
   def _update_cn_request_status(
-    self, queue_model, status_str, dataone_error=None
+      self, queue_model, status_str, dataone_error=None
   ):
     self.cn_client.setReplicationStatus(
       queue_model.local_replica.pid.did, django.conf.settings.NODE_IDENTIFIER,

@@ -28,9 +28,6 @@
   - python 2.6
 """
 
-# Std.
-import sys
-
 # D1
 import d1_common.const
 import d1_common.types.exceptions
@@ -39,7 +36,6 @@ import d1_test_case
 # App
 import context
 import test_client
-import test_utilities
 
 
 class Test030ListObjects(d1_test_case.D1TestCase):
@@ -74,11 +70,12 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # Get a slice that contains the last object.
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
-      context.TOKEN,
-      start=context.object_total - 1,
+      context.TOKEN, start=context.object_total - 1,
       count=d1_common.const.MAX_LISTOBJECTS
     )
-    self.assert_counts(object_list, context.object_total - 1, 1, object_list.total)
+    self.assert_counts(
+      object_list, context.object_total - 1, 1, object_list.total
+    )
 
   def test_020_validate_object_count_2(self):
     """Provided object count is correct (2).
@@ -89,8 +86,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # of objects are requsted.
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
-      context.TOKEN,
-      start=context.object_total,
+      context.TOKEN, start=context.object_total,
       count=d1_common.const.MAX_LISTOBJECTS
     )
     self.assert_counts(object_list, context.object_total, 0, object_list.total)
@@ -118,22 +114,17 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # indexes.
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest,
-      client.listObjects,
-      context.TOKEN,
-      start=-1,
-      count=d1_common.const.MAX_LISTOBJECTS
+      d1_common.types.exceptions.InvalidRequest, client.listObjects,
+      context.TOKEN, start=-1, count=d1_common.const.MAX_LISTOBJECTS
     )
 
   def test_050_invalid_request_invalid_count(self):
-    ''''count' parameter higher than MAX_LISTOBJECTS returns InvalidRequest.
+    """count parameter higher than MAX_LISTOBJECTS returns InvalidRequest.
     """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest,
-      client.listObjects,
-      context.TOKEN,
-      count=d1_common.const.MAX_LISTOBJECTS + 1
+      d1_common.types.exceptions.InvalidRequest, client.listObjects,
+      context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS + 1
     )
 
   def test_060_invalid_request_negative_count(self):
@@ -141,10 +132,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     """
     client = test_client.TestClient(context.node['baseurl'])
     self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest,
-      client.listObjects,
-      context.TOKEN,
-      count=-1
+      d1_common.types.exceptions.InvalidRequest, client.listObjects,
+      context.TOKEN, count=-1
     )
 
   def test_070_date_range_1(self):
@@ -211,9 +200,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # slices.
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
-      context.TOKEN,
-      fromDate=dates[0],
-      toDate=dates[-1],
+      context.TOKEN, fromDate=dates[0], toDate=dates[-1],
       count=d1_common.const.MAX_LISTOBJECTS
     )
     self.assertTrue(object_list.count >= len(dates))

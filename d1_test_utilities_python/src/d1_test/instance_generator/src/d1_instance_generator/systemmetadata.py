@@ -28,14 +28,9 @@ Module d1_instance_generator.systemmetadata
 """
 
 # Stdlib
-import codecs
-import hashlib
 import os
 import random
 import logging
-
-# 3rd party
-from lxml import etree
 
 # D1
 from d1_common.types.generated import dataoneTypes
@@ -46,7 +41,6 @@ import checksum
 import dates
 import identifier
 import random_data
-import replica
 import replicationpolicy
 
 
@@ -76,16 +70,17 @@ def generate(options=None):
   sysmeta_pyxb.submitter = options.get(
     'submitter', u'submitter_' + random_data.random_3_words()
   )
-  sysmeta_pyxb.rightsHolder = options.get('rightsHolder',
-                                     u'rightsHolder_' + \
-                                     random_data.random_3_words())
+  sysmeta_pyxb.rightsHolder = options.get(
+    'rightsHolder', u'rightsHolder_' + random_data.random_3_words()
+  )
   sysmeta_pyxb.originMemberNode = options.get(
     'originMemberNode',
     u"originMemberNode_" + random_data.random_unicode_string_no_whitespace()
   )
-  sysmeta_pyxb.authoritativeMemberNode = options.get('authoritativeMemberNode',
-                                                u"authoritativeMemberNode_" + \
-      random_data.random_unicode_string_no_whitespace())
+  sysmeta_pyxb.authoritativeMemberNode = options.get(
+    'authoritativeMemberNode', u"authoritativeMemberNode_" +
+    random_data.random_unicode_string_no_whitespace()
+  )
   sysmeta_pyxb.accessPolicy = options.get(
     'accessPolicy',
     accesspolicy.generate(min_rules=1, max_rules=5, max_subjects=5)

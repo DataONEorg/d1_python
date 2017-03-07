@@ -21,13 +21,6 @@
 
 # Stdlib
 import logging
-import sys
-
-# D1
-import d1_common.const
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.util
-import d1_common.date_time
 
 # App
 import baseclient_1_1
@@ -35,7 +28,7 @@ import cnclient
 
 
 class CoordinatingNodeClient_1_1(
-  baseclient_1_1.DataONEBaseClient_1_1, cnclient.CoordinatingNodeClient
+    baseclient_1_1.DataONEBaseClient_1_1, cnclient.CoordinatingNodeClient
 ):
   """Extend DataONEBaseClient_1_1 and CoordinatingNodeClient with functionality
   for Coordinating nodes that was added in v1.1 of the DataONE infrastructure.

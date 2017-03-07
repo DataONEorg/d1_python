@@ -28,11 +28,7 @@
 """
 
 # Stdlib
-import httplib
 import logging
-import os
-import pprint
-import sys
 
 # D1
 import d1_client.data_package
@@ -40,9 +36,6 @@ from ..onedrive_exceptions import ONEDriveException
 
 # App
 from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import d1_object
 import resolver_base

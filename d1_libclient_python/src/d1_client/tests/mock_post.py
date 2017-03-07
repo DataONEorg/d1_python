@@ -23,20 +23,12 @@ Echo the posted body.
 """
 
 # Stdlib
-import datetime
-import hashlib
 import json
-import random
-import re
 import urlparse
 
 # 3rd party
-import requests
 import requests_toolbelt
 import responses
-
-# D1
-import d1_common.types.dataoneTypes_v2_0 as v2
 
 # App
 import d1_common.const

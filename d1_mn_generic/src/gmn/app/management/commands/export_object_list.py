@@ -70,7 +70,7 @@ class Command(django.core.management.base.BaseCommand):
         # object, that permissions are guaranteed to include "read", the
         # lowest level permission.
         for permission_model in app.models.Permission.objects.filter(
-          sciobj=sciobj_model
+            sciobj=sciobj_model
         ):
           if public_only:
             if permission_model.subject.subject == 'public':

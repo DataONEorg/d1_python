@@ -29,17 +29,13 @@
 """
 
 # Std.
-import os
 import re
-import sys
 
 # A DN is created by inserting a randomly generated string in the CN field
 # in this tuple. It is typically not necessary to change the other fields
 # from their defaults.
-dn_tuple = (
-  ('DC', 'com'), ('DC', 'd1-stress-tester'), ('C', 'US'),
-  ('O', 'd1-stress-tester'), ('CN', ''),
-)
+dn_tuple = (('DC', 'com'), ('DC', 'd1-stress-tester'), ('C', 'US'),
+            ('O', 'd1-stress-tester'), ('CN', ''),)
 
 
 def get_dn_by_subject(subject):

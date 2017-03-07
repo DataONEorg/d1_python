@@ -30,11 +30,8 @@ Module d1_instance_generator.tests.test_systemmetadata
 # Stdlib
 import hashlib
 import logging
-import os
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1
 import d1_common.const
@@ -44,13 +41,13 @@ import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
 sys.path.append('../generator/')
-import systemmetadata
+import systemmetadata # noqa: E402
 
 #===============================================================================
 
 
 class TestSystemMetadata(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     pass

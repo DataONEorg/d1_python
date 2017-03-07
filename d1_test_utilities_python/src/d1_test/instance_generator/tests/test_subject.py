@@ -28,13 +28,9 @@ Module d1_instance_generator.tests.test_subject
 """
 
 # Stdlib
-import hashlib
 import logging
-import os
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
@@ -44,7 +40,7 @@ import d1_common.types.exceptions
 
 # App
 sys.path.append('../generator/')
-import subject
+import subject # noqa: E402
 
 #===============================================================================
 

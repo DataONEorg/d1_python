@@ -27,8 +27,7 @@
   and refresh the cache. Keep a pickled version of the cache on disk.
 :Author:
   DataONE (Dahl)
-"""
-"""
+
 TERMS
 
 wdef: The in-memory representation of the workspace definition as a PyXB object.
@@ -74,12 +73,10 @@ try:
 except ImportError:
   import pickle
 import os
-import pprint
 
 # App
 import check_dependencies
 import command_processor
-from log_decorator import log_func
 import settings
 import util
 import workspace_definition
@@ -246,7 +243,7 @@ class Workspace(object):
         return self._get_wdef_folder_recursive(path[1:], f)
 
   def _get_or_create_wcache_folder_recursive(
-    self, path, folder=None, rpath=None
+      self, path, folder=None, rpath=None
   ):
     if folder is None:
       folder = self._wcache['tree']

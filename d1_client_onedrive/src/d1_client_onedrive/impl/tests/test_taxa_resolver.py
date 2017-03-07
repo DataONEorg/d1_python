@@ -29,17 +29,13 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
 
 # D1
 sys.path.append('../..')
-import command_echoer
-import impl.resolver.taxa as taxa
-import command_echoer
-from object_tree_test_sample import object_tree
+import impl.resolver.taxa as taxa # noqa: E402
+from object_tree_test_sample import object_tree # noqa: E402
 
 options = {}
 

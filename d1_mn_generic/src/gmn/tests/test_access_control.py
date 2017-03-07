@@ -24,13 +24,7 @@
 from __future__ import absolute_import
 
 # Stdlib.
-import datetime
-import hashlib
-import logging
-import random
-import sys
 import unittest
-import xml.parsers.expat
 
 # Django
 import django.test
@@ -39,7 +33,6 @@ import django.test
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.const
-import d1_client
 import d1_common.xml
 
 # App.
@@ -104,18 +97,18 @@ class TestAccessControl(django.test.TestCase):
     client = tests.gmn_test_client.GMNTestClient(GMN_URL)
     response = client.get_access_policy(pid)
     self.assertEqual(
-      response,
-      """<?xml version="1.0" ?><accessPolicy><allow><subject>8920_skye_fondled</subject><subject>public</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy>"""
+      response, '<?xml version="1.0" ?><accessPolicy><allow>'
+      '<subject>8920_skye_fondled</subject><subject>public</subject>'
+      '<subject>folding_5087</subject>'
+      '<permission>read</permission></allow></accessPolicy>'
     )
 
   @unittest.skip('TODO')
   def test_020(self):
     """Set access policy"""
     pid = 'AnserMatrix.htm'
-    rules = (
-      (('test_perm_1', 'test_perm_2'), ('read',)),
-      (('test_perm_3', 'test_perm_4'), ('write', 'changePermission')),
-    )
+    rules = ((('test_perm_1', 'test_perm_2'), ('read',)),
+             (('test_perm_3', 'test_perm_4'), ('write', 'changePermission')),)
     self._set_access_policy(pid, rules)
 
   #  @unittest.skip('TODO')
@@ -135,143 +128,142 @@ class TestAccessControl(django.test.TestCase):
   @unittest.skip('TODO')
   def test_030(self):
     """Access is allowed for owner."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    obj = client.get(pid, vendorSpecific=self.session(test_owner_1))
-    self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # obj = client.get(pid, vendorSpecific=self.session(test_owner_1))
+    # self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_040(self):
     """Access is allowed for SUBJECT_TRUSTED."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    obj = client.get(
-      pid, vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED)
-    )
-    self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # obj = client.get(
+    #   pid, vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED)
+    # )
+    # self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_050(self):
     """Read access is allowed for subject with exact allow rule."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    obj = client.get(pid, vendorSpecific=self.session('test_perm_2'))
-    self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # obj = client.get(pid, vendorSpecific=self.session('test_perm_2'))
+    # self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_060(self):
     """Read access is allowed for subject with higher level access (1)."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    obj = client.get(pid, vendorSpecific=self.session('test_perm_3'))
-    self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # obj = client.get(pid, vendorSpecific=self.session('test_perm_3'))
+    # self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_070(self):
     """Read access is allowed for subject with higher level access (2)."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    obj = client.get(pid, vendorSpecific=self.session('test_perm_5'))
-    self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # obj = client.get(pid, vendorSpecific=self.session('test_perm_5'))
+    # self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_080(self):
     """Read access is denied for SUBJECT_PUBLIC."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, client.get, pid,
-      vendorSpecific=self.session(d1_common.const.SUBJECT_PUBLIC)
-    )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # self.assertRaises(
+    #   d1_common.types.exceptions.NotAuthorized, client.get, pid,
+    #   vendorSpecific=self.session(d1_common.const.SUBJECT_PUBLIC)
+    # )
 
   @unittest.skip('TODO')
   def test_090(self):
     """Read access is denied for regular subject.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, client.get, pid,
-      vendorSpecific=self.session('other_subject')
-    )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # self.assertRaises(
+    #   d1_common.types.exceptions.NotAuthorized, client.get, pid,
+    #   vendorSpecific=self.session('other_subject')
+    # )
 
   @unittest.skip('TODO')
   def test_200(self):
     """Update access policy, denying access for old subjects and allowing
     access to new subjects."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-
-    access_policy = self.gen_access_policy(
-      ((('test_perm_7', 'test_perm_8'), ('changePermission',)),)
-    )
-
-    client.setAccessPolicy(
-      pid, access_policy, vendorSpecific=self.session(test_owner_1)
-    )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    #
+    # access_policy = self.gen_access_policy(((('test_perm_7', 'test_perm_8'),
+    #                                          ('changePermission',)),))
+    #
+    # client.setAccessPolicy(
+    #   pid, access_policy, vendorSpecific=self.session(test_owner_1)
+    # )
 
   @unittest.skip('TODO')
   def test_210(self):
     """Access policy is correctly reflected in SysMeta."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-
-    sysmeta_pyxb = client.getSystemMetadata(
-      pid, vendorSpecific=self.session(test_owner_1)
-    )
-
-    self.assertEqual(
-      sysmeta_pyxb.accessPolicy.allow[0].subject[0].value(), 'test_perm_7'
-    )
-    self.assertEqual(
-      sysmeta_pyxb.accessPolicy.allow[0].subject[1].value(), 'test_perm_8'
-    )
-    self.assertEqual(
-      sysmeta_pyxb.accessPolicy.allow[0].permission[0], 'changePermission'
-    )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    #
+    # sysmeta_pyxb = client.getSystemMetadata(
+    #   pid, vendorSpecific=self.session(test_owner_1)
+    # )
+    #
+    # self.assertEqual(
+    #   sysmeta_pyxb.accessPolicy.allow[0].subject[0].value(), 'test_perm_7'
+    # )
+    # self.assertEqual(
+    #   sysmeta_pyxb.accessPolicy.allow[0].subject[1].value(), 'test_perm_8'
+    # )
+    # self.assertEqual(
+    #   sysmeta_pyxb.accessPolicy.allow[0].permission[0], 'changePermission'
+    # )
 
   @unittest.skip('TODO')
   def test_220(self):
     """Access now denied for previous subjects."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    for subject in (
-      'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4', 'test_perm_5',
-      'test_perm_6'
-    ):
-      self.assertRaises(
-        d1_common.types.exceptions.NotAuthorized, client.get, pid,
-        vendorSpecific=self.session(subject)
-      )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # for subject in (
+    #     'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4',
+    #     'test_perm_5', 'test_perm_6'
+    # ):
+    #   self.assertRaises(
+    #     d1_common.types.exceptions.NotAuthorized, client.get, pid,
+    #     vendorSpecific=self.session(subject)
+    #   )
 
   @unittest.skip('TODO')
-  def test_220(self):
+  def test_230(self):
     """Access allowed for current subjects."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    for subject in ('test_perm_7', 'test_perm_8'):
-      obj = client.get(pid, vendorSpecific=self.session(subject))
-      self.assertEqual(obj_str, obj.read())
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # for subject in ('test_perm_7', 'test_perm_8'):
+    #   obj = client.get(pid, vendorSpecific=self.session(subject))
+    #   self.assertEqual(obj_str, obj.read())
 
   @unittest.skip('TODO')
   def test_300(self):
     """isAuthorized returns access denied for previous subjects."""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    for subject in (
-      'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4', 'test_perm_5',
-      'test_perm_6'
-    ):
-      self.assertRaises(
-        d1_common.types.exceptions.NotAuthorized, client.isAuthorized, pid,
-        'read', vendorSpecific=self.session(subject)
-      )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # for subject in (
+    #     'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4',
+    #     'test_perm_5', 'test_perm_6'
+    # ):
+    #   self.assertRaises(
+    #     d1_common.types.exceptions.NotAuthorized, client.isAuthorized, pid,
+    #     'read', vendorSpecific=self.session(subject)
+    #   )
 
   @unittest.skip('TODO')
   def test_310(self):
     """isAuthorized returns access allowed for current subjects.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    for subject in ('test_perm_7', 'test_perm_8'):
-      obj = client.isAuthorized(
-        pid, 'read', vendorSpecific=self.session(subject)
-      )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # for subject in ('test_perm_7', 'test_perm_8'):
+    #   obj = client.isAuthorized(
+    #     pid, 'read', vendorSpecific=self.session(subject)
+    #   )
 
   @unittest.skip('TODO')
   def test_320(self):
     """isAuthorized returns access denied for levels higher than allowed.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
-    for subject in ('test_perm_7', 'test_perm_8'):
-      self.assertRaises(
-        d1_common.types.exceptions.NotAuthorized, client.isAuthorized, pid,
-        'execute', vendorSpecific=self.session(subject)
-      )
+    # client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    # for subject in ('test_perm_7', 'test_perm_8'):
+    #   self.assertRaises(
+    #     d1_common.types.exceptions.NotAuthorized, client.isAuthorized, pid,
+    #     'execute', vendorSpecific=self.session(subject)
+    #   )

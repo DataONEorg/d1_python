@@ -89,16 +89,15 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self._read_boolean_response(response)
 
   def create_replication_queue(
-    self, pid, sysmeta_pyxb, sourceNode, vendorSpecific=None
+      self, pid, sysmeta_pyxb, sourceNode, vendorSpecific=None
   ):
     mmp_fields = {
       'pid': pid.encode('utf-8'),
       'sourceNode': sourceNode,
       'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
     }
-    response = self.POST(
-      ['replicate', pid], fields=mmp_fields, headers=vendorSpecific
-    )
+    response = self.POST(['replicate', pid], fields=mmp_fields,
+                         headers=vendorSpecific)
     return self._read_boolean_response(response)
 
   # ----------------------------------------------------------------------------
@@ -143,9 +142,8 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
       'object': ('content.bin', obj),
       'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
     }
-    response = self.POST(
-      ['create', pid], fields=mmp_fields, headers=vendorSpecific
-    )
+    response = self.POST(['create', pid], fields=mmp_fields,
+                         headers=vendorSpecific)
     return self._read_boolean_response(response)
 
   def slash(self, arg1, arg2, arg3, headers=None):
@@ -205,12 +203,11 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
     """Test PID read locking.
     """
-    return self.GET(
-      ['concurrency_read_lock', key, sleep_before, sleep_after], headers=headers
-    )
+    return self.GET(['concurrency_read_lock', key, sleep_before, sleep_after],
+                    headers=headers)
 
   def concurrency_write_lock(
-    self, key, val, sleep_before, sleep_after, headers=None
+      self, key, val, sleep_before, sleep_after, headers=None
   ):
     """Test PID write locking.
     """

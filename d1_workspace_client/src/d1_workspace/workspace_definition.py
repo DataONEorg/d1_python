@@ -27,8 +27,6 @@
   DataONE (Dahl)
 """
 
-from log_decorator import log_func
-import settings
 from d1_workspace.types.generated import workspace_types
 
 

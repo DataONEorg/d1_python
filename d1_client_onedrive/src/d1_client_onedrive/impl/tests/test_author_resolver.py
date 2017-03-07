@@ -29,17 +29,13 @@
 
 # Stdlib
 import logging
-#import os
-import pprint
 import sys
 import unittest
 
 # D1
 sys.path.append('../..')
-#sys.path.append('../resolver')
-import impl.resolver.author as author
-import impl.tests.command_echoer as command_echoer
-from object_tree_test_sample import object_tree
+import impl.resolver.author as author # noqa: E402
+from object_tree_test_sample import object_tree # noqa: E402
 
 options = {}
 

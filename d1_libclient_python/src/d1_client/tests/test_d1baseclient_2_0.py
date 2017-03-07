@@ -28,18 +28,18 @@ import unittest
 
 # D1
 import d1_client.tests.util
-import d1_common.test_case_with_url_compare
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
+import d1_common.test_case_with_url_compare
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_test.instance_generator
 
 # App
 sys.path.append('..')
-import d1_client.baseclient_2_0
-import shared_context
-import shared_settings
-import util
+import d1_client.baseclient_2_0 # noqa: E402
+import shared_context # noqa: E402
+import shared_settings # noqa: E402
 
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # d1baseself.client_2_0 = imp.load_source(
@@ -56,14 +56,14 @@ import util
 # import d1_common.date_time
 # import d1_common.types.exceptions
 # import util
-# 
+#
 # # App
 # import shared_settings
 #
 
 
 class TestDataONEBaseclientV2(
-  d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     self.base_url = 'www.example.com'
@@ -80,8 +80,8 @@ class TestDataONEBaseclientV2(
     host = 'bogus.target'
     fragment = 'test_frag'
     query = 'test_query'
-    return_scheme, return_host, return_port, return_path, return_query, return_frag = self.client._parse_url(
-      url
+    return_scheme, return_host, return_port, return_path, return_query, return_frag = (
+      self.client._parse_url(url)
     )
     self.assertEqual(port, return_port)
     self.assertEqual(scheme, return_scheme)
@@ -92,10 +92,11 @@ class TestDataONEBaseclientV2(
 
   #     def test_clear_cache(self):
   #         url = "http://bogus.target/mn?test_query#test_frag"
-  #         mock_d1baseself.client = Mock(spec=d1baseself.client_2_0.DataONEBaseself.client_2_0) 
+  #         mock_d1baseself.client = Mock(spec=d1baseself.client_2_0.DataONEBaseself.client_2_0)
   #         self.client = d1baseself.client_2_0.DataONEBaseself.client_2_0(
   #             url)
-  #         return_scheme,return_host,return_port,return_path,return_query,return_frag = mock_d1baseself.client._parse_url(url,clear_cache=True)
+  #         return_scheme,return_host,return_port,return_path,return_query,return_frag =
+  # mock_d1baseself.client._parse_url(url,clear_cache=True)
 
   def test_010(self):
     """_slice_sanity_check()"""
@@ -245,12 +246,12 @@ class TestDataONEBaseclientV2(
   # MNRead.describe()
 
   def _describe(self, invalid_pid=False):
-    client = d1_client.baseclient_2_0.DataONEBaseClient_2_0(base_url)
-    #         if invalid_pid:
-    pid = '_bogus_pid_4589734958791283794565'
-    #         else:
-    #             pid = util.get_random_valid_pid(self.client)
-    headers = self.client.describe(pid)
+    if invalid_pid:
+      pid = '_bogus_pid_4589734958791283794565'
+    else:
+      pid = d1_client.tests.util.get_random_valid_pid(self.client)
+    # headers =
+    self.client.describe(pid)
 
   @unittest.skip(
     "TODO: Skipped due to waiting for test env. Should set up test env or remove"
@@ -345,8 +346,10 @@ class TestDataONEBaseclientV2(
   @unittest.skip("TODO: Check why disabled")
   def test_1050_A(self):
     """generateIdentifier(): Returns a valid identifier that matches scheme and fragment"""
-    shared_context.test_fragment = 'test_reserve_identifier_' + \
-        d1_instance_generator.random_data.random_3_words()
+    shared_context.test_fragment = (
+      'test_reserve_identifier_' +
+      d1_test.instance_generator.random_data.random_3_words()
+    )
     identifier = self.client.generateIdentifier(
       'UUID', shared_context.test_fragment
     )
@@ -355,8 +358,10 @@ class TestDataONEBaseclientV2(
   @unittest.skip("TODO: Check why disabled")
   def test_1050_B(self):
     """generateIdentifier(): Returns a different, valid identifier when called second time"""
-    shared_context.test_fragment = 'test_reserve_identifier_' + \
-        d1_instance_generator.random_data.random_3_words()
+    shared_context.test_fragment = (
+      'test_reserve_identifier_' +
+      d1_test.instance_generator.random_data.random_3_words()
+    )
     identifier = self.client.generateIdentifier(
       'UUID', shared_context.test_fragment
     )

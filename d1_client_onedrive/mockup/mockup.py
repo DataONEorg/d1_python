@@ -29,8 +29,6 @@
 # Std.
 import logging
 import os
-import sys
-import optparse
 
 # 3rd party
 import fuse

@@ -169,12 +169,10 @@ class ExceptionHandler(object):
   def _open_exception_location_in_pycharm(self):
     src_path, src_line_num = self._get_project_location()
     try:
-      subprocess.call(
-        [
-          os.path.expanduser(django.conf.settings.PYCHARM_BIN), '--line',
-          src_line_num, src_path
-        ]
-      )
+      subprocess.call([
+        os.path.expanduser(django.conf.settings.PYCHARM_BIN), '--line',
+        src_line_num, src_path
+      ])
     except subprocess.CalledProcessError as e:
       logging.warning(
         'PyCharm debugging is enabled but opening the location of the exception '
