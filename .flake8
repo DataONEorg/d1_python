@@ -8,6 +8,7 @@ max-line-length = 100
 
 # E111 indentation is not a multiple of four
 # E121 continuation line under-indented for hanging indent
+# E122 continuation line missing indentation or outdented
 # E126 continuation line over-indented for hanging indent
 # E261 at least two spaces before inline comment
 # E114 indentation is not a multiple of four (comment)
@@ -23,5 +24,5 @@ max-line-length = 100
 # E127 continuation line over-indented for visual indent
 
 
-ignore = E111,E121,E126,E261,E114,E125,E266,E265,E131
+ignore = E111,E121,E122,E126,E261,E114,E125,E266,E265,E131
 # ,E127
