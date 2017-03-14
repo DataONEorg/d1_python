@@ -49,17 +49,17 @@ def _request_callback(request):
     body_str = request.body.read()
   else:
     body_str = request.body
-
   try:
     status_int = int(body_str)
   except ValueError:
     url_obj = urlparse.urlparse(request.url)
+    headers_dict = {}
     body_dict = {
       'body_str': body_str,
       'query_dict': urlparse.parse_qs(url_obj.query),
       'header_dict': dict(request.headers),
     }
-    return 200, {}, json.dumps(body_dict)
+    return 200, headers_dict, json.dumps(body_dict)
   else:
     body_str = 'Return code: {}'.format(status_int)
     return status_int, {}, body_str

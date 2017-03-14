@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -25,40 +24,40 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v1_1 as v1_1
+import d1_common.types.dataoneTypes_v2_0 as v2_0
+import d1_common.util
 
 # App
-import mock_util
+import d1_test.mock_api.util
 
 
 class TestMockUtil(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+  def setUp(self):
+    d1_common.util.log_setup(debug_bool=True)
+
   def test_0010(self):
-    """parse_url() 1"""
-    endpoint_str, param_list, query_dict, pyxb_bindings = (
-      mock_util.parse_rel_url('/v1/log')
+    """parse_rest_url() 1"""
+    version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+      d1_test.mock_api.util.parse_rest_url('/v1/log')
     )
+    self.assertEqual(version_tag, 'v1')
     self.assertEqual(endpoint_str, 'log')
     self.assertEqual(param_list, [])
     self.assertEqual(query_dict, {})
     self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)
 
   def test_0011(self):
-    """parse_url() 2"""
-    endpoint_str, param_list, query_dict, pyxb_bindings = (
-      mock_util.parse_rel_url('v1/log/%2ftest')
-    )
-    self.assertEqual(endpoint_str, 'log')
-    self.assertEqual(param_list, ['/test'])
-    self.assertEqual(query_dict, {})
-    self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)
-
-  def test_0012(self):
-    """parse_url() 3"""
+    """parse_rest_url() 2"""
     # GET /object[?fromDate={fromDate}&toDate={toDate}&
     # identifier={identifier}&formatId={formatId}&replicaStatus={replicaStatus}
     # &start={start}&count={count}]
-    endpoint_str, param_list, query_dict, pyxb_bindings = mock_util.parse_rel_url(
-      'v1/object/ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50'
+    version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+      d1_test.mock_api.util.parse_rest_url(
+        'http://dataone.server.edu/dataone/mn/v2/object/'
+        'ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50'
+      )
     )
+    self.assertEqual(version_tag, 'v2')
     self.assertEqual(endpoint_str, 'object')
     self.assertEqual(param_list, ['ar//g1', 'arg2/'])
     self.assertEqual(
@@ -69,4 +68,4 @@ class TestMockUtil(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
         'start': ['500']
       }
     )
-    self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)
+    self.assertEqual(pyxb_bindings.Namespace, v2_0.Namespace)

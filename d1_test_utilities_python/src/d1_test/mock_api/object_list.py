@@ -18,26 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock listObjects() response
-"""
-
-# Stdlib
-import datetime
-import hashlib
-import urlparse
-
-# 3rd party
-import responses # pip install responses
-
-# D1
-import d1_common.types.dataoneTypes_v2_0 as v2
-
-# App
-import d1_common.const
-import d1_common.url
-
-# Config
-N_TOTAL = 1000
+"""Mock listObjects() → ObjectList
 
 # MNRead.listObjects(session[, fromDate][, toDate][, formatId][,
 # replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -45,70 +26,62 @@ N_TOTAL = 1000
 # GET /object[?fromDate={fromDate}&toDate={toDate}
 # &formatId={formatId}&replicaStatus={replicaStatus}
 # &start={start}&count={count}]
+"""
+
+# Stdlib
+import datetime
+import hashlib
+import re
+
+import d1_common.const
+import d1_common.url
+import d1_test.mock_api.util
+import responses
+
+# Config
+N_TOTAL = 100
+OBJECT_LIST_ENDPOINT_RX = r'v([123])/object'
 
 
 def init(base_url):
-  # url_re = re.compile(r'https?://twitter.com/api/\d+/foobar')
-  # responses.add(responses.GET, url_re,
-  #               body='{"error": "not found"}', status=404,
-  #               content_type='application/json')
-
   responses.add_callback(
     responses.GET,
-    d1_common.url.joinPathElements(base_url, '/v2/object'),
+    re.compile(
+      r'^' + d1_common.url.joinPathElements(base_url, OBJECT_LIST_ENDPOINT_RX)
+    ),
     callback=_request_callback,
     content_type=d1_common.const.CONTENT_TYPE_XML,
   )
 
 
 def _request_callback(request):
-  url, query_dict = _parse_url(request.url)
-
-  # print 'url="{}"'.format(url)
-  # print 'query_dict={}'.format(query_dict)
-
-  if 'start' in query_dict:
-    n_start = int(query_dict['start'][0])
-  else:
-    n_start = 0
-
-  if 'count' in query_dict:
-    n_count = int(query_dict['count'][0])
-  else:
-    n_count = N_TOTAL
-
-  # fromDate
-  # toDate
-  # formatId
-  # replicaStatus
-
-  # payload = json.loads(request.body)
-
-  body_str = _generate_object_list(n_start, n_count)
-  headers = {}
-
-  return 200, headers, body_str
+  query_dict, pyxb_bindings = _parse_object_list_url(request.url)
+  n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
+  # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
+  return (
+    200, # status code
+    {}, # headers
+    _generate_object_list(pyxb_bindings, n_start, n_count),
+  )
 
 
-def _parse_url(url):
-  url_obj = urlparse.urlparse(url)
-  query_dict = urlparse.parse_qs(url_obj.query)
-  url = url_obj._replace(query=None).geturl()
-  return url, query_dict
+def _parse_object_list_url(url):
+  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+    d1_test.mock_api.util.parse_rest_url(url)
+  )
+  assert endpoint_str == 'object'
+  return query_dict, pyxb_bindings
 
 
-def _generate_object_list(n_start, n_count):
-  if n_start + n_count > N_TOTAL:
-    n_count = N_TOTAL - n_start
-
-  objectList = v2.objectList()
+def _generate_object_list(pyxb_bindings, n_start, n_count):
+  objectList = pyxb_bindings.objectList()
 
   for i in range(n_count):
-    objectInfo = v2.ObjectInfo()
+    objectInfo = pyxb_bindings.ObjectInfo()
 
     objectInfo.identifier = 'object#{}'.format(n_start + i)
     objectInfo.formatId = 'text/plain'
-    checksum = v2.Checksum(
+    checksum = pyxb_bindings.Checksum(
       hashlib.sha1(objectInfo.identifier.value()).hexdigest()
     )
     checksum.algorithm = 'SHA-1'

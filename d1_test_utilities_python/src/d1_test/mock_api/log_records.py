@@ -30,68 +30,50 @@
 # Stdlib
 import datetime
 import re
-import urlparse
 
 # 3rd party
-import responses # pip install responses
+import responses
 
 # D1
 import d1_common.type_conversions
-
-# App
 import d1_common.const
 import d1_common.url
 
+# App
+import d1_test.mock_api.util
+
 # Config
 
-N_TOTAL = 1000
+N_TOTAL = 100
 LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
 
 
 def init(base_url):
-  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(
-    base_url, LOG_ENDPOINT_RX
-  )
-  endpoint_rx = re.compile(endpoint_rx_str)
   responses.add_callback(
     responses.GET,
-    endpoint_rx,
+    re.
+    compile(r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
     callback=_request_callback,
     content_type=d1_common.const.CONTENT_TYPE_XML,
   )
 
 
 def _request_callback(request):
-  major_version, pid, query_dict = _parse_url(request.url)
-  pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings(major_version)
-  # print 'url="{}"'.format(url)
-  # print 'query_dict={}'.format(query_dict)
-
-  if 'start' in query_dict:
-    n_start = int(query_dict['start'][0])
-  else:
-    n_start = 0
-  if 'count' in query_dict:
-    n_count = int(query_dict['count'][0])
-  else:
-    n_count = N_TOTAL
-
-  # fromDate
-  # toDate
-  # pidFilter
-  # payload = json.loads(request.body)
-
+  query_dict, pyxb_bindings = _parse_log_url(request.url)
+  n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
+  # TODO: Add support for filters: fromDate, toDate, pidFilter
   body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
-  headers = {}
-  return 200, headers, body_str
+  headers_dict = {}
+  return 200, headers_dict, body_str
 
 
-def _parse_url(url):
-  url_obj = urlparse.urlparse(url)
-  url = url_obj._replace(query=None).geturl()
-  m = re.search(LOG_ENDPOINT_RX, url)
-  assert m, 'Should always match since we\'re using the same regex as in add_callback()'
-  return m.group(1), m.group(2)
+def _parse_log_url(url):
+  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+    d1_test.mock_api.util.parse_rest_url(url)
+  )
+  assert endpoint_str == 'log'
+  assert len(param_list) == 0, 'log() does not accept any parameters'
+  return query_dict, pyxb_bindings
 
 
 def _generate_log_records(pyxb_bindings, n_start, n_count):

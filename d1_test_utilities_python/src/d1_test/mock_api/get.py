@@ -20,21 +20,25 @@
 # limitations under the License.
 """Mock MNRead.get() → OctetStream
 GET /object/{id}
-Will always return the same bytes for a given PID.
+
+- Will always return the same bytes for a given PID.
+- If the PID is as an integer, it is returned as a status code.
 """
 
 # Stdlib
 import hashlib
 import random
 import re
-import urlparse
 
 # 3rd party
-import responses # pip install responses
+import responses
 
-# App
+# D1
 import d1_common.const
 import d1_common.url
+
+# App
+import d1_test.mock_api.util
 
 # Config
 
@@ -43,20 +47,17 @@ GET_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
 def init(base_url):
-  endpoint_rx_str = r'^' + d1_common.url.joinPathElements(
-    base_url, GET_ENDPOINT_RX
-  )
-  endpoint_rx = re.compile(endpoint_rx_str)
   responses.add_callback(
     responses.GET,
-    endpoint_rx,
+    re.
+    compile(r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)),
     callback=_request_callback,
     content_type=d1_common.const.CONTENT_TYPE_OCTETSTREAM,
   )
 
 
 def _request_callback(request):
-  major_version, pid = _parse_url(request.url)
+  pid, pyxb_bindings = _parse_get_url(request.url)
   try:
     status_int = int(pid)
   except ValueError:
@@ -67,12 +68,14 @@ def _request_callback(request):
     return status_int, {}, body_str
 
 
-def _parse_url(url):
-  url_obj = urlparse.urlparse(url)
-  url = url_obj._replace(query=None).geturl()
-  m = re.search(GET_ENDPOINT_RX, url)
-  assert m, 'Should always match since we\'re using the same regex as in add_callback()'
-  return m.group(1), m.group(2)
+def _parse_get_url(url):
+  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+    d1_test.mock_api.util.parse_rest_url(url)
+  )
+  assert endpoint_str == 'object'
+  assert len(param_list) == 1, 'get() accepts a single parameter, the PID'
+  assert query_dict == {}, 'get() does not accept any query parameters'
+  return param_list[0], pyxb_bindings
 
 
 def _generate_sciobj_bytes(pid, n_count):
