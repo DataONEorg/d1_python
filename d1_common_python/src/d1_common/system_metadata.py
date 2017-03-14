@@ -84,9 +84,10 @@ Example v2 SystemMetadata XML document with all optional values included:
 """
 
 # D1
-import d1_common.xml
-import d1_common.types.dataoneTypes
 import d1_common.access_policy
+import d1_common.date_time
+import d1_common.types.dataoneTypes
+import d1_common.xml
 
 
 def normalize(sysmeta_pyxb):
@@ -95,16 +96,23 @@ def normalize(sysmeta_pyxb):
   sysmeta_pyxb.accessPolicy = d1_common.access_policy.normalize(
     sysmeta_pyxb.accessPolicy
   )
-  d1_common.xml.sort_value_list_pyxb(
-    sysmeta_pyxb.replicationPolicy.preferredMemberNode
-  )
-  d1_common.xml.sort_value_list_pyxb(
-    sysmeta_pyxb.replicationPolicy.blockedMemberNode
-  )
+  if sysmeta_pyxb.replicationPolicy is not None:
+    d1_common.xml.sort_value_list_pyxb(
+      sysmeta_pyxb.replicationPolicy.preferredMemberNode
+    )
+    d1_common.xml.sort_value_list_pyxb(
+      sysmeta_pyxb.replicationPolicy.blockedMemberNode
+    )
   d1_common.xml.sort_elements_by_child_value(
     sysmeta_pyxb.replica, 'replicaMemberNode'
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
+  sysmeta_pyxb.dateUploaded = d1_common.date_time.round_date_time(
+    sysmeta_pyxb.dateUploaded
+  )
+  sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_date_time(
+    sysmeta_pyxb.dateSysMetadataModified
+  )
 
 
 def is_equivalent(a_pyxb, b_pyxb):
@@ -124,3 +132,19 @@ def is_equivalent_xml(a_xml, b_xml):
     d1_common.xml.deserialize(a_xml),
     d1_common.xml.deserialize(b_xml),
   )
+
+
+def clear_elements(
+    sysmeta_pyxb,
+    clear_replica=True,
+    clear_serial_version=True,
+):
+  """{clear_replica} causes any replica information to be removed from the
+  object. {clear_replica} ignores any differences in replica information, as
+  this information is often different between MN and CN. """
+  if clear_replica:
+    sysmeta_pyxb.replica = None
+  if clear_serial_version:
+    sysmeta_pyxb.serialVersion = None
+
+  sysmeta_pyxb.replicationPolicy = None

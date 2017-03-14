@@ -42,9 +42,6 @@ EG_CHECKSUM_GMN = (
   '3f56de593b6ffc536253b799b429453e3673fc19',
 )
 
-# TODO.
-EG_CHECKSUM_KNB = ("""""", '', '')
-
 EG_BAD_CHECKSUM_1 = (
   '<?xml version="1.0" ?><ns1:checksum invalid_attribute="invalid" '
   'algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">'
@@ -107,7 +104,9 @@ class TestChecksum(unittest.TestCase):
     c1.algorithm = 'SHA-1'
     c2 = dataoneTypes.Checksum('BAADF00D')
     c2.algorithm = 'MD5'
-    self.assertFalse(d1_common.checksum.checksums_are_equal(c1, c2))
+    self.assertRaises(
+      ValueError, d1_common.checksum.checksums_are_equal, c1, c2
+    )
 
   def test_220(self):
     """checksums_are_equal(): Different checksum, same algorithm"""
