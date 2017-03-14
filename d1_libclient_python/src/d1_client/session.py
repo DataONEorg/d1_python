@@ -36,11 +36,14 @@ import d1_common.url
 import d1_common.date_time
 
 DEFAULT_NUMBER_OF_RETRIES = 3
+DEFAULT_USE_CACHE = True
+DEFAULT_USE_STREAM = False
+DEFAULT_VERIFY_TLS = True
 
 
 class Session(object):
   def __init__(
-      self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs
+      self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs_dict
   ):
     """The Session improves performance by keeping connection related state and
     allowing it to be reused in multiple API calls to a DataONE Coordinating
@@ -68,8 +71,8 @@ class Session(object):
       not itself contain the private key.
     :type cert_key_path: string
 
-    :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: float or int
+    :param timeout_sec: Time in seconds that requests will wait for a response.
+    :type timeout_sec: float or int
 
     :param retries: Set number of times to try a request before failing. If not
       set, retries are still performed, using the default number of retries. To
@@ -112,34 +115,37 @@ class Session(object):
     self._api_major = 1
     self._api_minor = 0
 
-    # kwargs
+    # Adapter
+    self._use_cache = kwargs_dict.pop('use_cache', DEFAULT_USE_CACHE)
+    self._max_retries = kwargs_dict.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
 
+    # Default parameters for requests
+    self._default_request_arg_dict = {
+      'params':
+        self._datetime_to_iso8601(kwargs_dict.pop('query', {})),
+      'timeout':
+        kwargs_dict.pop('timeout_sec', d1_common.const.RESPONSE_TIMEOUT),
+      'stream':
+        kwargs_dict.pop('use_stream', DEFAULT_USE_STREAM),
+      'verify':
+        kwargs_dict.pop('verify_tls', DEFAULT_VERIFY_TLS),
+      'headers': {
+        'User-Agent':
+          kwargs_dict.pop('user_agent', d1_common.const.USER_AGENT),
+        'Charset':
+          kwargs_dict.pop('charset', d1_common.const.DEFAULT_CHARSET),
+      },
+    }
+    self._default_request_arg_dict['headers'
+                                   ].update(kwargs_dict.pop('headers', {}))
+    self._default_request_arg_dict.update(kwargs_dict)
     # Requests wants cert path as string if single file and tuple if cert/key
     # pair.
-    if 'cert' not in kwargs:
-      if cert_pem_path is not None:
-        if cert_key_path is not None:
-          kwargs['cert'] = cert_pem_path, cert_key_path
-        else:
-          kwargs['cert'] = cert_pem_path
-
-    self._timeout_sec = kwargs.pop('timeout', d1_common.const.RESPONSE_TIMEOUT)
-    self._n_retries = kwargs.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
-
-    self._headers = kwargs.pop('headers', {})
-    self._headers.setdefault(
-      u'User-Agent', kwargs.pop('user_agent', d1_common.const.USER_AGENT)
-    )
-    self._headers.setdefault(
-      u'Charset', kwargs.pop('charset', d1_common.const.DEFAULT_CHARSET)
-    )
-
-    self._query_params = kwargs.pop('query', {})
-    self._use_cache = kwargs.pop('use_cache', True)
-    self._use_stream = kwargs.pop('use_stream', False)
-    self._verify_tls = kwargs.pop('verify_tls', False)
-
-    self._default_kwargs = kwargs
+    if cert_pem_path is not None:
+      self._default_request_arg_dict['cert'] = (
+        cert_pem_path, cert_key_path
+        if cert_key_path is not None else cert_pem_path
+      )
 
     self._create_requests_session()
 
@@ -207,15 +213,11 @@ class Session(object):
     """
     if kwargs.get('query'):
       url = u'{0}?{1}'.format(url, d1_common.url.urlencode(kwargs['query']))
-    curl_cmd = []
-    curl_cmd.append(u'curl -X {0}'.format(method))
+    curl_cmd = [u'curl -X {0}'.format(method)]
     for k, v in kwargs['headers'].items():
       curl_cmd.append(u'-H "{0}: {1}"'.format(k, v))
     curl_cmd.append(u'{0}'.format(url))
     return ' '.join(curl_cmd)
-
-  def dump_request_and_response(self, response):
-    return requests_toolbelt.utils.dump.dump_response(response)
 
   #
   # Private
@@ -223,22 +225,17 @@ class Session(object):
 
   def _create_requests_session(self):
     self._session = requests.Session()
-    self._session.stream = self._use_stream
-    self._session.params = self._query_params
-
     if self._use_cache:
       adapter_cls = cachecontrol.CacheControlAdapter
     else:
       adapter_cls = requests.adapters.HTTPAdapter
-
-    adapter = adapter_cls(max_retries=self._n_retries)
-
+    adapter = adapter_cls(max_retries=self._max_retries)
     self._session.mount('http://', adapter)
     self._session.mount('https://', adapter)
 
   def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
     url = self._prep_url(rest_path_list)
-    kwargs = self._prep_args(kwargs)
+    kwargs = self._prep_request_kwargs(kwargs)
     mmp_stream = requests_toolbelt.MultipartEncoder(fields=fields)
     kwargs['data'] = mmp_stream
     kwargs['headers'].update({
@@ -249,7 +246,7 @@ class Session(object):
 
   def _request(self, method, rest_path_list, **kwargs):
     url = self._prep_url(rest_path_list)
-    kwargs = self._prep_args(kwargs)
+    kwargs = self._prep_request_kwargs(kwargs)
     logging.debug(self.get_curl_command_line(method, url, **kwargs))
     return self._session.request(method, url, **kwargs)
 
@@ -262,25 +259,29 @@ class Session(object):
       *self._encode_path_elements(rest_path_list)
     )
 
-  def _prep_args(self, kwargs):
-    # Remove None kwargs
-    kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    # Merge default kwargs
-    kwargs.update(self._default_kwargs)
-    # Encode any datetime query parameters to ISO8601
-    kwargs['params'] = kwargs.pop('query', {})
-    self._datetime_to_iso8601(kwargs['params'])
-    # Merge default headers
-    if kwargs.get('headers', None) is None:
-      kwargs['headers'] = {}
-    kwargs['headers'].update(self._headers)
-    return kwargs
+  def _prep_request_kwargs(self, kwargs_in_dict):
+    # kwargs that require translation
+    kwargs_dict = {
+      'timeout': kwargs_in_dict.pop('timeout_sec', None),
+      'stream': kwargs_in_dict.pop('use_stream', None),
+      'verify': kwargs_in_dict.pop('verify_tls', None),
+      'params': self._datetime_to_iso8601(kwargs_in_dict.pop('query', {})),
+    }
+    kwargs_dict.update(kwargs_in_dict)
+    kwargs_dict = self._remove_none_value_items(kwargs_dict)
+    result_dict = self._default_request_arg_dict.copy()
+    result_dict.update(kwargs_dict)
+    return result_dict
 
-  def _datetime_to_iso8601(self, query):
+  def _datetime_to_iso8601(self, query_dict):
     """Encode any datetime query parameters to ISO8601."""
-    for k, v in query.items():
-      if isinstance(v, datetime.datetime):
-        query[k] = v.isoformat()
+    return {
+      k: v if not isinstance(v, datetime.datetime) else v.isoformat()
+      for k, v in query_dict.items()
+    }
+
+  def _remove_none_value_items(self, d):
+    return {k: v for k, v in d.items() if v is not None}
 
   def _encode_path_elements(self, path_element_list):
     return [d1_common.url.encodePathElement(v) for v in path_element_list]
