@@ -5,6 +5,10 @@ settings_site.py
 stores/
 d1_objects/
 
+# Coverage
+.coverage
+cover/
+
 # IntelliJ / PyCharm
 .idea/
  
