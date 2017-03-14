@@ -62,7 +62,7 @@ import app.sysmeta_validate
 import app.util
 import app.views.asserts
 import app.views.create
-import app.views.decorator
+import app.views.decorators
 import app.views.util
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
@@ -121,7 +121,7 @@ def get_monitor_ping(request):
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
 @app.restrict_to_verb.get
-@app.views.decorator.get_log_records_access
+@app.views.decorators.get_log_records_access
 def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
@@ -203,9 +203,9 @@ def _add_object_properties_to_response_header(response, sciobj):
 
 
 @app.restrict_to_verb.get
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.read_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.read_permission
 def get_object(request, pid):
   """MNRead.get(session, did) → OctetStream
   """
@@ -244,7 +244,8 @@ def _get_sciobj_iter_local(pid):
 def _get_sciobj_iter_remote(url):
   try:
     response = requests.get(
-      url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
+      url, stream=True,
+      timeout_sec=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
     )
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
@@ -258,9 +259,9 @@ def _get_sciobj_iter_remote(url):
 
 
 @app.restrict_to_verb.get
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.read_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.read_permission
 def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
@@ -269,9 +270,9 @@ def get_meta(request, pid):
 
 
 @app.restrict_to_verb.head
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.read_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.read_permission
 def head_object(request, pid):
   """MNRead.describe(session, did) → DescribeResponse
   """
@@ -284,9 +285,9 @@ def head_object(request, pid):
 
 
 @app.restrict_to_verb.get
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.read_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.read_permission
 def get_checksum(request, pid):
   """MNRead.getChecksum(session, did[, checksumAlgorithm]) → Checksum
   """
@@ -322,7 +323,7 @@ def get_checksum(request, pid):
 
 
 @app.restrict_to_verb.get
-@app.views.decorator.list_objects_access
+@app.views.decorators.list_objects_access
 def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -343,9 +344,7 @@ def get_object_list(request):
   query = app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  # app.db_filter.add_bool_filter(query, request, 'is_replica', 'replicaStatus')
   app.db_filter.add_replica_filter(query, request, 'replicaStatus')
-
   query_unsliced = query
   query, start, count = app.db_filter.add_slice_filter(query, request)
   return {
@@ -358,7 +357,7 @@ def get_object_list(request):
 
 
 @app.restrict_to_verb.post
-@app.views.decorator.trusted_permission
+@app.views.decorators.trusted_permission
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
@@ -392,8 +391,8 @@ def post_error(request):
 
 # Access control is performed within function.
 @app.restrict_to_verb.get
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
 def get_replica(request, pid):
   """MNReplication.getReplica(session, did) → OctetStream
   """
@@ -464,8 +463,8 @@ def put_meta(request):
 
 # Unrestricted.
 @app.restrict_to_verb.get
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
 def get_is_authorized(request, pid):
   """MNAuthorization.isAuthorized(did, action) -> Boolean
   """
@@ -481,7 +480,7 @@ def get_is_authorized(request, pid):
 
 
 @app.restrict_to_verb.post
-@app.views.decorator.trusted_permission
+@app.views.decorators.trusted_permission
 def post_refresh_system_metadata(request):
   """MNStorage.systemMetadataChanged(session, did, serialVersion,
                                      dateSysMetaLastModified) → boolean
@@ -549,7 +548,7 @@ def post_refresh_system_metadata(request):
 
 
 @app.restrict_to_verb.post
-@app.views.decorator.assert_create_update_delete_permission
+@app.views.decorators.assert_create_update_delete_permission
 def post_object_list(request):
   """MNStorage.create(session, did, object, sysmeta) → Identifier
   """
@@ -570,9 +569,9 @@ def post_object_list(request):
 
 
 @app.restrict_to_verb.put
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.write_permission # OLD object
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.write_permission # OLD object
 def put_object(request, old_pid):
   """MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   """
@@ -632,9 +631,9 @@ def post_generate_identifier(request):
 
 
 @app.restrict_to_verb.delete
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.assert_create_update_delete_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.assert_create_update_delete_permission
 def delete_object(request, pid):
   """MNStorage.delete(session, did) → Identifier
   """
@@ -665,9 +664,9 @@ def _delete_object_from_database(pid):
 
 
 @app.restrict_to_verb.put
-@app.views.decorator.decode_id
-@app.views.decorator.resolve_sid
-@app.views.decorator.write_permission
+@app.views.decorators.decode_id
+@app.views.decorators.resolve_sid
+@app.views.decorators.write_permission
 def put_archive(request, pid):
   """MNStorage.archive(session, did) → Identifier
   """
@@ -683,7 +682,7 @@ def put_archive(request, pid):
 
 
 @app.restrict_to_verb.post
-@app.views.decorator.trusted_permission
+@app.views.decorators.trusted_permission
 def post_replicate(request):
   """MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   """
