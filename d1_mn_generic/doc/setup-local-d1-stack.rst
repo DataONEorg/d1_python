@@ -42,17 +42,25 @@ the Foresite Toolkit, which handles parsing of OAI-ORE Resource Maps.
   Set up packages::
 
     $ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
+    libxslt1-dev libffi-dev postgresql-server-dev-9.5 openssl curl
+
+    $ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
     libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl curl
 
   Install the GMN software stack from PyPI into a Python virtual environment::
 
-    $ sudo apt-get --yes install python-pip; sudo pip install pip; \
-    sudo pip install virtualenv; sudo mkdir -p /var/local/dataone/gmn_venv; \
-    sudo mkdir -p /var/local/dataone/gmn_object_store; \
-    cd /var/local/dataone; sudo chown gmn:www-data gmn_venv; sudo su gmn
+    $ sudo apt-get --yes install python-pip; \
+    sudo pip install --upgrade pip; \
+    sudo pip install virtualenv; \
+    sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}; \
+    cd /var/local/dataone; \
+    sudo chown gmn:www-data gmn_venv; \
+    sudo su gmn
 
-    $ virtualenv --distribute gmn_venv; . ./gmn_venv/bin/activate; \
-    pip install --upgrade setuptools==33.1.1; pip install cachecontrol==0.11.7; \
+    $ virtualenv gmn_venv; \
+    . ./gmn_venv/bin/activate; \
+    pip install --upgrade setuptools==33.1.1; \
+    pip install cachecontrol==0.11.7; \
     pip install dataone.gmn
 
     $ exit
