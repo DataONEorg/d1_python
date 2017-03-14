@@ -244,8 +244,7 @@ def _get_sciobj_iter_local(pid):
 def _get_sciobj_iter_remote(url):
   try:
     response = requests.get(
-      url, stream=True,
-      timeout_sec=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
+      url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
     )
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
