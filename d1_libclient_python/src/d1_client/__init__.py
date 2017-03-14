@@ -19,4 +19,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "2.1.0"
+__version__ = "2.1.0rc1"
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+
+try:
+  from logging import NullHandler
+except ImportError:
+
+  class NullHandler(logging.Handler):
+    def emit(self, record):
+      pass
+
+
+logging.getLogger(__name__).addHandler(NullHandler())
