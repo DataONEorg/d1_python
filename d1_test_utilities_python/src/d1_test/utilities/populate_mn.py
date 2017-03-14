@@ -77,7 +77,7 @@ def main():
   )
   parser.add_option(
     '--timeout',
-    dest='timeout',
+    dest='timeout_sec',
     action='store',
     type='float',
     default=TIMEOUT_SEC,

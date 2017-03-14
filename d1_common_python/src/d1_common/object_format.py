@@ -50,9 +50,9 @@ def pyxb_to_dict(object_format_list_pyxb):
       'format_name': f_pyxb.formatName,
       'format_type': f_pyxb.formatType,
     }
-    if hasattr(f_pyxb, 'extension'):
+    if getattr(f_pyxb, 'extension', False):
       d_dict['extension'] = f_pyxb.extension
-    if hasattr(f_pyxb, 'mediaType'):
+    if getattr(f_pyxb, 'mediaType', False):
       d_dict['media_type'] = {
         'name': f_pyxb.mediaType.name,
         'property_list': [p for p in f_pyxb.mediaType.property_],

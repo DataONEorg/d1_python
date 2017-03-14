@@ -407,7 +407,7 @@ class TestSolrClient(unittest.TestCase):
     options = O()
     options.base_url = 'https://localhost/'
     options.solr_query_path = ''
-    options.solr_query_timeout = 30
+    options.solr_query_timeout_sec = 30
     options.max_objects_for_query = 10
     self.c = onedrive_solr_client.SolrClient(options)
 

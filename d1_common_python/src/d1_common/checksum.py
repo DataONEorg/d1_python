@@ -112,8 +112,9 @@ def checksums_are_equal(checksum_a_pyxb, checksum_b_pyxb):
   if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
     raise ValueError(
       'Cannot compare checksums generated with different algorithms. '
-      'a="{}" b="{}'
-      .format(checksum_a_pyxb.algorithm, checksum_b_pyxb.algorithm)
+      'a="{}" b="{}"'.format(
+        checksum_a_pyxb.algorithm, checksum_b_pyxb.algorithm
+      )
     )
   return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower()
 

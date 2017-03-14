@@ -37,7 +37,7 @@ import requests
 class SolrClient(object):
   def __init__(
       self, base_url, solr_selector='/v1/query/solr/', max_retries=3,
-      timeout=30, max_objects_for_query=50
+      timeout_sec=30, max_objects_for_query=50
   ):
     self._solr_endpoint = base_url + solr_selector
     self._session = requests.Session()
@@ -47,7 +47,7 @@ class SolrClient(object):
     self._session.mount(
       'https://', requests.adapters.HTTPAdapter(max_retries=max_retries)
     )
-    self._timeout = timeout
+    self._timeout_sec = timeout_sec
     self._max_objects_for_query = max_objects_for_query
 
   def query(self, query, filter_queries=None, fields=None):
@@ -66,7 +66,7 @@ class SolrClient(object):
       query_params.extend(self._make_query_param_tuples('fl', filter_queries))
 
     r = requests.get(
-      self._solr_endpoint, timeout=self._timeout, params=query_params,
+      self._solr_endpoint, timeout_sec=self._timeout_sec, params=query_params,
       verify=False
     )
     return r.json()
