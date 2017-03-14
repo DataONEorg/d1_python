@@ -24,7 +24,7 @@ import sys
 import unittest
 
 # 3rd party
-import responses # pip install responses
+import responses
 
 # D1
 import d1_common.test_case_with_url_compare
@@ -32,11 +32,11 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_test.instance_generator
-
+import d1_common.types.dataoneTypes_v1_1
 # App
 sys.path.append('..')
 import d1_client.baseclient # noqa: E402
-import mock_log_records # noqa: E402
+import d1_test.mock_api.log_records # noqa: E402
 import shared_settings # noqa: E402
 import d1_client.tests.util # noqa: E402
 import shared_context # noqa: E402
@@ -46,7 +46,7 @@ class TestDataONEBaseClient(
     d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
-    mock_log_records.init(shared_settings.MN_RESPONSES_URL)
+    d1_test.mock_api.log_records.init(shared_settings.MN_RESPONSES_URL)
     self.client = d1_client.baseclient.DataONEBaseClient(
       shared_settings.MN_RESPONSES_URL
     )
@@ -95,8 +95,10 @@ class TestDataONEBaseClient(
 
   @responses.activate
   def test_0100(self):
-    log_records_pyxb = self.client.getLogRecords()
-    print log_records_pyxb.toxml()
+    self.assertIsInstance(
+      self.client.getLogRecords(),
+      d1_common.types.dataoneTypes_v1_1.Log,
+    )
 
   def _getLogRecords(self):
     """getLogRecords() returns a valid Log."""

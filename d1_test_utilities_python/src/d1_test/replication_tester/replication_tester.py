@@ -119,7 +119,8 @@ def main():
   # Adjust RepTest behavior.
 
   parser.add_option(
-    '--timeout', dest='timeout', action='store', type='float', default=TIMEOUT,
+    '--timeout', dest='timeout_sec', action='store', type='float',
+    default=TIMEOUT,
     help='Amount of time to wait for expected calls from MNs, in seconds'
   )
 
@@ -457,7 +458,7 @@ class ReplicationTester(object):
     if block:
       self._logger.debug('Waiting for call from MN: {0}'.format(expected_call))
     try:
-      call = self._queue.get(block, self._options.timeout)
+      call = self._queue.get(block, self._options.timeout_sec)
     except Queue.Empty:
       raise replication_error.ReplicationTesterError(
         'MN did not make expected call: {0}'.format(expected_call)

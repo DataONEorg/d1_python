@@ -319,7 +319,7 @@ def url_is_http_or_https(url):
 
 def url_is_retrievable(url):
   try:
-    with contextlib.closing(requests.get(url, stream=True, timeout=10)) as r:
+    with contextlib.closing(requests.get(url, stream=True, timeout_sec=10)) as r:
       r.raw.read(1)
       r.raise_for_status()
   except requests.RequestException as e:

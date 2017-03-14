@@ -20,7 +20,7 @@ Prepare dependencies::
 
 Create virtual environment for GMN v2::
 
-    $ sudo -u gmn virtualenv --distribute /var/local/dataone/gmn_venv
+    $ sudo -u gmn virtualenv /var/local/dataone/gmn_venv
 
 Install GMN v2 from PyPI::
 

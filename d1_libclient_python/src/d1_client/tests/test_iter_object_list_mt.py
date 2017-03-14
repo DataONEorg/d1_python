@@ -26,7 +26,7 @@ import sys
 import unittest
 
 # 3rd party
-import responses # pip install responses
+import responses
 
 # App
 sys.path.append('..')

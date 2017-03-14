@@ -27,7 +27,7 @@ import logging
 import sys
 
 # 3rd party
-import responses # pip install responses
+import responses
 import requests
 
 # D1
