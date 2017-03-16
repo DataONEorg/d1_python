@@ -73,59 +73,59 @@ class ExceptionHandler(object):
 
   # DataONE exception
 
-  def handle_dataone_exception(self):
-    self._exception.nodeId = django.conf.settings.NODE_IDENTIFIER
-    self._exception.traceInformation = self._traceback_to_text()
-    if self._request.method != 'HEAD':
-      return self._serialize_dataone_exception_for_regular_request()
+  def _handle_dataone_exception(self, request, e):
+    e.nodeId = django.conf.settings.NODE_IDENTIFIER
+    if request.method != 'HEAD':
+      return self._serialize_dataone_exception_for_regular_request(e)
     else:
-      return self._serialize_dataone_exception_for_head_request()
+      return self._serialize_dataone_exception_for_head_request(e)
 
-  def _serialize_dataone_exception_for_regular_request(self):
-    exception_xml = self._exception.serialize()
+  def _serialize_dataone_exception_for_regular_request(self, e):
+    exception_xml = e.serialize()
     return HttpResponse(
-      exception_xml, status=self._exception.errorCode,
+      exception_xml, status=e.errorCode,
       content_type=d1_common.const.CONTENT_TYPE_XML
     )
 
-  def _serialize_dataone_exception_for_head_request(self):
-    exception_headers = self._exception.serialize_to_headers()
+  def _serialize_dataone_exception_for_head_request(self, e):
+    exception_headers = e.serialize_to_headers()
     http_response = HttpResponse(
-      '', status=self._exception.errorCode,
-      content_type=d1_common.const.CONTENT_TYPE_XML
+      '', status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
     )
     for k, v in exception_headers:
       http_response[k] = v.encode('utf8')
     return http_response
 
+  def _log_dataone_exception(self, e):
+    logging.info(e.friendly_format())
+
   # Internal exception
 
-  def _handle_internal_exception(self):
+  def _handle_internal_exception(self, request):
+    self._log_internal_exception()
     if django.conf.settings.DEBUG_PYCHARM:
       self._open_exception_location_in_pycharm()
     if django.conf.settings.DEBUG:
       return self._django_html_exception_page()
     else:
-      return self._wrap_internal_exception_in_dataone_exception()
+      return self._wrap_internal_exception_in_dataone_exception(request)
 
   def _django_html_exception_page(self):
     # Returning None from the exception handler causes Django to generate
     # an HTML exception page.
     return None
 
-  def _wrap_internal_exception_in_dataone_exception(self):
-    exception = d1_common.types.exceptions.ServiceFailure(
-      0, traceback.format_exc(), ''
-    )
-    exception.detailCode = str(
+  def _wrap_internal_exception_in_dataone_exception(self, request):
+    e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
+    e.detailCode = str(
       app.middleware.detail_codes.dataone_exception_to_detail_code()
-      .detail_code(self._request, self._exception)
+      .detail_code(request, e)
     )
-    exception.traceInformation = self._traceback_to_text()
-    return exception
+    e.traceInformation = self._traceback_to_text()
+    return e
 
-  def _log_exception(self):
-    logging.error('Exception:')
+  def _log_internal_exception(self):
+    logging.error('Internal exception:')
     exc_class, exc_msgs, exc_traceback = sys.exc_info()
     logging.error(u'  Name: {}'.format(exc_class.__name__))
     logging.error(u'  Value: {}'.format(exc_msgs))

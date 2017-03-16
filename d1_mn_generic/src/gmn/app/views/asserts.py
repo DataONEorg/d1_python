@@ -76,11 +76,6 @@ def is_unused(pid):
 def is_valid_for_update(pid):
   """Assert that the System Metadata for the object with the given {pid} can be
   updated.
-
-  To be valid for update, the object:
-  - Must exist on the local MN.
-  - Must not be a replica.
-  - Must not be archived.
   """
   app.sysmeta.is_pid_of_existing_object(pid)
   is_not_replica(pid)
