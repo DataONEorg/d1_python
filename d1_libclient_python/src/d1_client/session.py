@@ -147,7 +147,7 @@ class Session(object):
         if cert_key_path is not None else cert_pem_path
       )
 
-    self._create_requests_session()
+    self._session = self._create_requests_session()
 
   @property
   def base_url(self):
@@ -224,14 +224,15 @@ class Session(object):
   #
 
   def _create_requests_session(self):
-    self._session = requests.Session()
+    session = requests.Session()
     if self._use_cache:
       adapter_cls = cachecontrol.CacheControlAdapter
     else:
       adapter_cls = requests.adapters.HTTPAdapter
     adapter = adapter_cls(max_retries=self._max_retries)
-    self._session.mount('http://', adapter)
-    self._session.mount('https://', adapter)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
   def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
     url = self._prep_url(rest_path_list)
