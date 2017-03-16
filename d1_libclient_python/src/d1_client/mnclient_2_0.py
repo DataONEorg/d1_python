@@ -65,6 +65,8 @@ class MemberNodeClient_2_0(
     return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
-  def updateSystemMetadata(self, pid, sysmeta_pyxb):
-    response = self.updateSystemMetadataResponse(pid, sysmeta_pyxb)
+  def updateSystemMetadata(self, pid, sysmeta_pyxb, vendorSpecific=None):
+    response = self.updateSystemMetadataResponse(
+      pid, sysmeta_pyxb, vendorSpecific
+    )
     return self._read_boolean_response(response)
