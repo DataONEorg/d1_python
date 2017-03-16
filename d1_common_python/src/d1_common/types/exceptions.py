@@ -259,7 +259,7 @@ class DataONEException(Exception):
     )
     self._append_header(
       headers, 'DataONE-Exception-TraceInformation',
-      self.traceInformation[:1024]
+      self.traceInformation[:1024] if self.traceInformation else None
     )
     self._append_header(
       headers, 'DataONE-Exception-Identifier', self.identifier
