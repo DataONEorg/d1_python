@@ -157,8 +157,13 @@ class GMNIntegrationTests(unittest.TestCase):
         file_path = os.path.join(
           tempfile.gettempdir(), u'traceInformation_{}'.format(func_name)
         )
+        in_html = False
         with open(file_path, 'w') as f:
-          f.write(exc_value.traceInformation)
+          for line_str in exc_value.traceInformation.splitlines(keepends=True):
+            if '<!DOCTYPE' in line_str or '<html' in line_str:
+              in_html = True
+            if in_html:
+              f.write(line_str)
         link_path = os.path.join(
           tempfile.gettempdir(), u'traceInformation.html'
         )
@@ -2395,9 +2400,9 @@ class GMNIntegrationTests(unittest.TestCase):
     """
     # Create base object with SID
     base_pid = self._random_pid()
-    # base_sid = self._random_sid()
+    base_sid = self._random_sid()
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-    # ver1_sciobj_str, ver1_sysmeta_pyxb = self._create(client_v2, v2, base_pid, base_sid)
+    self._create(client_v2, v2, base_pid, base_sid)
     ver2_sciobj_str, ver2_sysmeta_pyxb = self._get(client_v2, base_pid)
     ver2_sysmeta_pyxb.formatId = 'new_format_id'
     is_ok = client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
