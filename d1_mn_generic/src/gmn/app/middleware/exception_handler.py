@@ -63,19 +63,13 @@ import app.middleware.detail_codes
 
 class ExceptionHandler(object):
   def __init__(self):
-    self._request = None
-    self._exception = None
+    pass
 
-  def process_exception(self, request, exception):
-    self._request = request
-    self._exception = exception
-
-    self._log_exception()
-
-    if isinstance(exception, d1_common.types.exceptions.DataONEException):
-      return self.handle_dataone_exception()
+  def process_exception(self, request, e):
+    if isinstance(e, d1_common.types.exceptions.DataONEException):
+      return self._handle_dataone_exception(request, e)
     else:
-      return self._handle_internal_exception()
+      return self._handle_internal_exception(request)
 
   # DataONE exception
 

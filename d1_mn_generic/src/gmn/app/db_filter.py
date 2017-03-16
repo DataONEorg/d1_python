@@ -104,9 +104,8 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     date = d1_common.date_time.from_iso8601(date_str)
   except d1_common.date_time.iso8601.ParseError, e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'Invalid date format for parameter. parameter="{}" date="{}", parse_error="{}"'.
-      format(param_name, date_str, str(e))
+      0, u'Invalid date format for parameter. parameter="{}" date="{}", '
+      u'parse_error="{}"'.format(param_name, date_str, str(e))
     )
   app.views.asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
