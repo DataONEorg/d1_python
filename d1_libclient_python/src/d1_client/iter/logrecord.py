@@ -18,69 +18,46 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_client.logrecorditerator
-==================================
+"""LogRecordIterator
 
-Implements an iterator that iterates over the entire set of LogRecords
-for a DataONE node. Data is retrieved from the target only when required.
-:Created: 2010-07-24
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
+An iterator that provides a convenient way to retrieve log records from a
+DataONE node and iterate over the results. Log records are retrieved from the
+node in batches as required. The returned log records can be filtered by
+providing arguments to getLogRecords() via the getlogRecords_dict parameter.
 """
 
 
 class LogRecordIterator(object):
-  """Implements an iterator that iterates over the entire set of LogRecords
-    for a DataONE node.  Data is retrieved from the target only when required.
-    """
-
   def __init__(
-      self, client, fromDate=None, toDate=None, start=0, pageSize=1000
+      self,
+      client,
+      getlogRecords_dict=None,
+      start=0,
+      count=100,
   ):
-    """Initializes the iterator.
-
-        :param client: The client that will be used for interacting with the CN or MN.
-        :type client: cnclient.CoordinatingNodeClient or mnclient.MemberNodeClient
-        :param fromDate: The earliest date for which to retrieve log records.
-        :type fromDate: datetime.datetime()
-        :param toDate: The latest date for which to retrieve log records.
-        :type toDate: datetime.datetime()
-        :param timeSlice: The time period for which to .
-        :type toDate: datetime.datetime()
-        """
-    self._log_records = None
+    """
+    :param client: The client that will be used for calling getlogRecords()
+    :param getlogRecords_dict: Parameters for getLogRecords()
+    :param start: Index of first record to retrieve, default 0
+    :param pageSize: Number of records to retrieve in each batch, default 1000
+    """
+    self._getLogRecords_dict = getlogRecords_dict or {}
     self._client = client
-    self._from_date = fromDate
-    self._to_date = toDate
     self._start = start
-    self._page_size = pageSize
-    self._log_records_idx = 0
-    self._n_log_records = 0
+    self._count = count
+    assert 'start' not in self._getLogRecords_dict
+    assert 'count' not in self._getLogRecords_dict
 
   def __iter__(self):
-    return self
+    start = self._start
+    while True:
+      log_pyxb = self._client.getLogRecords(
+        start=start, count=self._count, **self._getLogRecords_dict
+      )
+      for log_entry_pyxb in log_pyxb.logEntry:
+        yield log_entry_pyxb
 
-  def next(self):
-    """Implements the next() method for the iterator. Returns the next
-        logEntry instance.
-        """
-    if self._log_records_idx == self._n_log_records:
-      self._load_more()
-    log_entry = self._log_records.logEntry[self._log_records_idx]
-    self._log_records_idx += 1
-    return log_entry
+      start += log_pyxb.count
 
-  def _load_more(self):
-    """Retrieves the next page of results.
-        """
-    self._log_records_idx = 0
-    self._log_records = self._client.getLogRecords(
-      start=self._start, count=self._page_size, fromDate=self._from_date,
-      toDate=self._to_date
-    )
-    self._n_log_records = len(self._log_records.logEntry)
-    if not self._n_log_records:
-      raise StopIteration
-    self._start += self._n_log_records
+      if start >= log_pyxb.total:
+        break
