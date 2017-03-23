@@ -36,7 +36,6 @@ the results are compared with the known correct responses.
 from __future__ import absolute_import
 
 # Stdlib
-import StringIO
 import codecs
 import datetime
 import errno
@@ -47,8 +46,10 @@ import os
 import random
 import re
 import string
+import StringIO
 import sys
 import tempfile
+import time
 import traceback
 import unittest
 import urllib
@@ -57,6 +58,7 @@ import urlparse
 # D1
 import d1_client.mnclient
 import d1_client.mnclient_2_0
+import d1_client.session
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
@@ -82,6 +84,8 @@ import tests.gmn_test_client # noqa: E402
 GMN_URL = 'http://0.0.0.0:8000'
 # GMN_URL = 'https://192.168.1.128'
 # GMN_URL = 'https://gmn-s.lternet.edu/mn'
+# GMN_URL = 'https://gmn1/mn'
+# GMN_URL = 'https://dataone.tamucc.edu/mn'
 
 OBJ_PATH = './test_objects'
 OBJ_URL = 'http://localhost/test_objects/'
@@ -126,7 +130,11 @@ DEFAULT_ACCESS_RULE_LIST = [
 # noinspection PyTypeChecker,PyUnresolvedReferences
 class GMNIntegrationTests(unittest.TestCase):
   def setUp(self):
-    pass
+    self._disable_server_cert_validation()
+
+  def _disable_server_cert_validation(self):
+    requests.packages.urllib3.disable_warnings()
+    d1_client.session.DEFAULT_VERIFY_TLS = False
 
   def tearDown(self):
     """The integration tests typically target a local instance of GMN where
@@ -159,7 +167,7 @@ class GMNIntegrationTests(unittest.TestCase):
         )
         in_html = False
         with open(file_path, 'w') as f:
-          for line_str in exc_value.traceInformation.splitlines(keepends=True):
+          for line_str in exc_value.traceInformation.splitlines():
             if '<!DOCTYPE' in line_str or '<html' in line_str:
               in_html = True
             if in_html:
@@ -548,13 +556,10 @@ class GMNIntegrationTests(unittest.TestCase):
       _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
-    found = False
-    for o in logRecords.logEntry:
-      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' \
-                                 and o.event == 'create':
-        found = True
-        break
-    self.assertTrue(found)
+    self.assertIn(
+      ('hdl:10255/dryad.654/mets.xml', 'create'),
+      [(o.identifier.value(), o.event) for o in logRecords.logEntry],
+    )
 
   # ============================================================================
   # Read API
@@ -581,6 +586,10 @@ class GMNIntegrationTests(unittest.TestCase):
       '10Dappend2.txt', vendorSpecific=self.
       _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
+    # With MNRead.get(), the response is returned as a stream. Accessing
+    # response.content implicitly reads the full stream.
+    print response.headers
+    self.assertEqual(len(response.content), 1982)
     self.assertEqual(response.headers['content-length'], '1982')
     self.assertEqual(
       response.headers['dataone-checksum'],
@@ -589,7 +598,9 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEqual(
       response.headers['dataone-formatid'], 'eml://ecoinformatics.org/eml-2.0.0'
     )
-    self.assertEqual(response.headers['last-modified'], '1977-03-09T00:12:05')
+    self.assertEqual(
+      response.headers['last-modified'], 'Wed, 09 Mar 1977 00:12:05 GMT'
+    )
     self.assertEqual(response.headers['content-type'], 'text/xml')
 
   def test_1210_v1(self):
@@ -1293,15 +1304,19 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEqual(log.logEntry[0].event, 'create')
     self.assertEqual(log.logEntry[0].identifier.value(), pid)
 
+  # ----------------------------------------------------------------------------
+  # update()
+  # ----------------------------------------------------------------------------
+
   def test_1592_v1(self):
-    """v1 update() of object records an update event on the old object and a
+    """v1 update() of object records an update event on the obsoleted object and a
     create event on the new object
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     self._test_1592(client, v1)
 
   def test_1592_v2(self):
-    """v2 update() of object records an update event on the old object and a
+    """v2 update() of object records an update event on the obsoleted object and a
     create event on the new object
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
@@ -1312,7 +1327,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._create(client, binding, pid_create)
     pid_update = self._random_pid()
     self._update(client, binding, pid_create, pid_update)
-    # Old object has a create and an update event
+    # Obsoleted object has a create and an update event
     log = client.getLogRecords(
       pidFilter=pid_create, vendorSpecific=self.
       _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
@@ -1331,6 +1346,44 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEqual(len(log.logEntry), 1)
     self.assertEqual(log.logEntry[0].event, 'create')
     self.assertEqual(log.logEntry[0].identifier.value(), pid_update)
+
+  def test_1593_v1(self):
+    """v1 update() correctly adjusts sysmeta on obsoleted object
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_1593(client, v1)
+
+  def test_1593_v2(self):
+    """v2 update() correctly adjusts sysmeta on obsoleted object
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_1593(client, v2)
+
+  def _test_1593(self, client, binding):
+    pid_create = self._random_pid()
+    self._create(client, binding, pid_create)
+    sysmeta_before_update_pyxb = client.getSystemMetadata(
+      pid_create, vendorSpecific=self.
+      _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    # Make sure that datetime.now() changes between create() and update().
+    time.sleep(1.0)
+    pid_update = self._random_pid()
+    self._update(client, binding, pid_create, pid_update)
+    sysmeta_after_update_pyxb = client.getSystemMetadata(
+      pid_create, vendorSpecific=self.
+      _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    # dateSysMetadataModified is updated on obsoleted object
+    self.assertGreater((
+      sysmeta_after_update_pyxb.dateSysMetadataModified -
+      sysmeta_before_update_pyxb.dateSysMetadataModified
+    ).total_seconds, 1.0)
+    # dateUploaded remains unchanged on obsoleted object
+    self.assertEqual(
+      sysmeta_after_update_pyxb.dateUploaded,
+      sysmeta_before_update_pyxb.dateUploaded,
+    )
 
   # ----------------------------------------------------------------------------
   # getChecksum()
@@ -2417,6 +2470,43 @@ class GMNIntegrationTests(unittest.TestCase):
       ver2_sysmeta_pyxb.dateSysMetadataModified
     )
 
+  def test_3060_v2_4(self):
+    """v2 MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata()
+    A series of updates and downloads using the same client and network
+    connection correctly frees up the connection.
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, base_pid, base_sid)
+    for i in range(1000):
+      print i
+      random_subject_str = self._random_tag('subject')
+      print random_subject_str
+      sysmeta_pyxb = client_v2.getSystemMetadata(
+        base_pid,
+        vendorSpecific=self.
+        _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      )
+      sysmeta_pyxb.rightsHolder = random_subject_str
+      # sysmeta_pyxb.obsoletes = random_subject_str
+      is_ok = client_v2.updateSystemMetadata(
+        base_pid,
+        sysmeta_pyxb,
+        vendorSpecific=self.
+        _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      )
+      self.assertTrue(is_ok)
+      new_sysmeta_pyxb = client_v2.getSystemMetadata(
+        base_pid,
+        vendorSpecific=self.
+        _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      )
+      self.assertEqual(
+        new_sysmeta_pyxb.rightsHolder.value(), random_subject_str
+      )
+
   #
   # Replication policy
   #
@@ -2443,18 +2533,12 @@ class GMNIntegrationTests(unittest.TestCase):
     self._restore_sysmeta_mn_controlled_fields(
       ver1_sysmeta_pyxb, ver2_sysmeta_pyxb
     )
-    # TODO: GMN only preserves a "normalized" version of the access policy,
-    # which the sysmeta comparison utility cannot check for equivalency.
-    self.assertIsNotNone(ver1_sysmeta_pyxb.accessPolicy)
-    self.assertIsNotNone(ver2_sysmeta_pyxb.accessPolicy)
-    ver1_sysmeta_pyxb.accessPolicy = None
-    ver2_sysmeta_pyxb.accessPolicy = None
     # print self._pyxb_to_pretty_xml(ver1_sysmeta_pyxb)
     # print self._pyxb_to_pretty_xml(ver2_sysmeta_pyxb)
     self.assertTrue(
-      d1_common.xml.is_sysmeta_equivalent(
-        ver1_sysmeta_pyxb.toxml(),
-        ver2_sysmeta_pyxb.toxml(),
+      d1_common.system_metadata.is_equivalent(
+        ver1_sysmeta_pyxb,
+        ver2_sysmeta_pyxb,
       )
     )
 
@@ -2495,9 +2579,9 @@ class GMNIntegrationTests(unittest.TestCase):
       ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
     )
     self.assertTrue(
-      d1_common.xml.is_sysmeta_equivalent(
-        ver3_sysmeta_pyxb.toxml(),
-        ver4_sysmeta_pyxb.toxml(),
+      d1_common.system_metadata.is_equivalent(
+        ver3_sysmeta_pyxb,
+        ver4_sysmeta_pyxb,
       )
     )
 
