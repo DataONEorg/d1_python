@@ -30,20 +30,23 @@ import os
 import sys
 
 
-def log_setup(debug_bool):
+def log_setup(is_debug, is_multiprocess=False):
   """Set up a standardized log format for the DataONE Python stack. All Python
-  components should use this function.
+  components should use this function. If {is_multiprocess} is True, include
+  process ID in the log so that logs can be separated for each process.
 
-  We output only to stdout and stderr.
+  Output only to stdout and stderr.
   """
-  formatter = logging.Formatter(
-    u'%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
-    u'%Y-%m-%d %H:%M:%S',
+  format_str = (
+    u'%(asctime)s %(name)s %(module)s %(process)4d %(levelname)-8s %(message)s'
+    if is_multiprocess else
+    u'%(asctime)s %(name)s %(module)s %(levelname)-8s %(message)s'
   )
+  formatter = logging.Formatter(format_str, u'%Y-%m-%d %H:%M:%S')
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
-  if debug_bool:
+  if is_debug:
     logging.getLogger('').setLevel(logging.DEBUG)
   else:
     logging.getLogger('').setLevel(logging.INFO)
