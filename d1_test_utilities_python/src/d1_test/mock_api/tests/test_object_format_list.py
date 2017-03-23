@@ -41,7 +41,7 @@ class TestMockObjectFormatList(
     d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
-    d1_common.util.log_setup(debug_bool=True)
+    d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       base_url=settings.CN_RESPONSES_BASE_URL
     )

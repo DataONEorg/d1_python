@@ -41,7 +41,7 @@ class TestMockObjectList(
     d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
-    d1_common.util.log_setup(debug_bool=True)
+    d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       base_url=settings.MN_RESPONSES_BASE_URL
     )

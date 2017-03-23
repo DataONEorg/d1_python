@@ -33,7 +33,7 @@ import d1_test.mock_api.util
 
 class TestMockUtil(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
-    d1_common.util.log_setup(debug_bool=True)
+    d1_common.util.log_setup(is_debug=True)
 
   def test_0010(self):
     """parse_rest_url() 1"""

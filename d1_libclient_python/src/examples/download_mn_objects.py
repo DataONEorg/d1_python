@@ -29,7 +29,6 @@ shows how to:
 import d1_common.xml
 import logging
 import os
-import shutil
 import urllib
 
 # D1
@@ -173,16 +172,16 @@ class MemberNodeObjectDownloader(object):
     except d1_common.types.exceptions.DataONEException:
       logging.exception('get() failed with exception:')
       raise
-    else:
-      # The PID (DataONE Persistent Identifier) can contain characters that are
-      # not valid for use as filenames (most commonly, slashes). A simple way to
-      # make a PID safe for use as a filename is to "percent-encode" it.
-      pid_filename = urllib.quote(pid, safe='')
-      with open(
-          os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)),
-          'wb'
-      ) as f:
-        shutil.copyfileobj(object_stream, f)
+    # The PID (DataONE Persistent Identifier) can contain characters that are
+    # not valid for use as filenames (most commonly, slashes). A simple way to
+    # make a PID safe for use as a filename is to "percent-encode" it.
+    pid_filename = urllib.quote(pid, safe='')
+    with open(
+        os.path.join(self._download_folder, u'{}.bin'.format(pid_filename)),
+        'wb'
+    ) as f:
+      for chunk_str in object_stream.iter_content(chunk_size=4096):
+        f.write(chunk_str)
 
   # The PID (DataONE Persistent Identifier) can contain characters that are
   # not valid for use as filenames (most commonly, slashes). A simple way to
