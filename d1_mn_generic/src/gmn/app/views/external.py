@@ -44,6 +44,7 @@ import requests
 # Django
 import django.conf
 import django.http
+import django.utils.http
 
 # App
 import app.auth
@@ -191,8 +192,8 @@ def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
   response['Content-Type'] = _content_type_from_format(sciobj.format.format)
   response['Last-Modified'
-           ] = datetime.datetime.isoformat(sciobj.modified_timestamp)
-  response['DataONE-formatId'] = sciobj.format.format
+           ] = d1_common.date_time.to_http_datetime(sciobj.modified_timestamp)
+  response['DataONE-FormatId'] = sciobj.format.format
   response['DataONE-Checksum'] = '{},{}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
   )
@@ -593,6 +594,7 @@ def put_object(request, old_pid):
   # on the old object is added here.
   app.event_log.update(old_pid, request)
   app.sysmeta_obsolescence.set_obsolescence(old_pid, obsoleted_by_pid=new_pid)
+  app.sysmeta.update_modified_timestamp(old_pid)
   if app.sysmeta_sid.has_sid(sysmeta_pyxb):
     sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
     if app.sysmeta_sid.is_sid(sid):
