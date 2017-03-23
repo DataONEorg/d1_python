@@ -24,6 +24,7 @@ Check if two XML documents are semantically equivalent.
 from __future__ import absolute_import
 
 # Stdlib
+import difflib
 import logging
 import re
 import xml.dom
@@ -236,6 +237,24 @@ def sort_value_list_pyxb(obj_pyxb):
 
 def sort_elements_by_child_value(obj_pyxb, child_el_name):
   obj_pyxb.sort(key=lambda x: getattr(x, child_el_name).value())
+
+
+def format_diff_pyxb(a_pyxb, b_pyxb):
+  return '\n'.join(
+    difflib.ndiff(
+      pretty_pyxb(a_pyxb).splitlines(),
+      pretty_pyxb(b_pyxb).splitlines(),
+    )
+  )
+
+
+def format_diff_xml(a_xml, b_xml):
+  return '\n'.join(
+    difflib.ndiff(
+      pretty_xml(a_xml).splitlines(),
+      pretty_xml(b_xml).splitlines(),
+    )
+  )
 
 
 class CompareError(Exception):
