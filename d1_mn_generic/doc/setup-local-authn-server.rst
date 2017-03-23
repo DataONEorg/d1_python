@@ -28,7 +28,7 @@ The snakeoil server side certificate is automatically generated when the
 
   Ensure that the ``ssl-cert`` package is installed::
 
-    $ sudo apt-get install --yes ssl-cert
+    $ sudo apt install --yes ssl-cert
 
   Copy the certificate and key to the GMN standard locations::
 

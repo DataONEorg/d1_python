@@ -10,7 +10,7 @@ The default peer authentication is used for the superuser and GMN users.
 
   Install the PostgreSQL server and client::
 
-    $ sudo apt-get install postgresql
+    $ sudo apt install --yes postgresql
 
   Set the password of the postgres superuser account::
 

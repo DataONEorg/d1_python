@@ -26,7 +26,7 @@ GMN is distributed via `PyPI`_, the Python Package Index.
 
   Make sure the system is up to date::
 
-    $ sudo apt-get --yes update; sudo apt-get --yes dist-upgrade
+    $ sudo apt update --yes; sudo apt dist-upgrade --yes
 
   Reboot if necessary.
 
@@ -41,27 +41,26 @@ the Foresite Toolkit, which handles parsing of OAI-ORE Resource Maps.
 
   Set up packages::
 
-    $ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
+    $ sudo apt install --yes build-essential python-dev libssl-dev libxml2-dev \
     libxslt1-dev libffi-dev postgresql-server-dev-9.5 openssl curl
 
-    $ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
-    libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl curl
+  Prepare pip from PyPI::
+
+    $ sudo apt install --yes python-pip; \
+    sudo pip install --upgrade pip; \
+    sudo apt remove --yes python-pip;
 
   Install the GMN software stack from PyPI into a Python virtual environment::
 
-    $ sudo apt-get --yes install python-pip; \
-    sudo pip install --upgrade pip; \
-    sudo pip install virtualenv; \
+    $ sudo pip install --upgrade virtualenv; \
     sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}; \
     cd /var/local/dataone; \
     sudo chown gmn:www-data gmn_venv; \
     sudo su gmn
 
     $ virtualenv gmn_venv; \
-    . ./gmn_venv/bin/activate; \
-    pip install --upgrade setuptools==33.1.1; \
-    pip install cachecontrol==0.11.7; \
-    pip install dataone.gmn
+    source ./gmn_venv/bin/activate; \
+    pip install --upgrade dataone.gmn
 
     $ exit
 
@@ -70,7 +69,7 @@ the Foresite Toolkit, which handles parsing of OAI-ORE Resource Maps.
 
     $ sudo nano /home/gmn/.bashrc
 
-  Close to the top, just after the section that aborts if not running
+  Close to the top, just after the section that exits if not running
   interactively, add::
 
     PATH=/var/local/dataone/gmn_venv/bin/:$PATH

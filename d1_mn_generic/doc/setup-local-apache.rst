@@ -12,11 +12,11 @@ and GMN.
 
   Install Apache2 and required modules::
 
-    $ sudo apt-get --yes install apache2 libapache2-mod-wsgi
+    $ sudo apt install --yes apache2 libapache2-mod-wsgi
 
   Enable modules::
 
-    $ sudo a2enmod wsgi ssl rewrite
+    $ sudo a2enmod --quiet wsgi ssl rewrite
 
   Install the GMN virtual host file and custom apache2.conf file::
 
@@ -26,9 +26,9 @@ and GMN.
 
   Enable the HTTP forwarding configuration::
 
-    $ sudo a2enconf forward_http_to_https
+    $ sudo a2enconf --quiet forward_http_to_https
 
   Enable the GMN Virtual Host::
 
-    $ sudo a2ensite gmn2-ssl
+    $ sudo a2ensite --quiet gmn2-ssl
 

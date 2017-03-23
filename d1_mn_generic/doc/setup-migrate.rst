@@ -13,10 +13,16 @@ The existing v1 instance is not modified by this procedure, so it is possible to
 Install GMN v2 and migrate settings and contents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Prepare pip from PyPI::
+
+    $ sudo apt install --yes python-pip; \
+    sudo pip install --upgrade pip; \
+    sudo apt remove --yes python-pip;
+
 Prepare dependencies::
 
     $ sudo pip install --upgrade pip virtualenv
-    $ sudo apt-get install libffi-dev
+    $ sudo apt install --yes libffi-dev
 
 Create virtual environment for GMN v2::
 
