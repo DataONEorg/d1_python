@@ -46,9 +46,11 @@ GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def __init__(self, *args, **kwargs):
     """Extend MemberNodeClient with GMN specific diagnostics wrappers.
-    See d1baseclient.DataONEBaseClient for args.
-    """
+      See d1baseclient.DataONEBaseClient for args.
+      """
     self.logger = logging.getLogger(__file__)
+    # Turn off server certificate validation by default when running unit tests
+    kwargs.setdefault('verify_tls', False)
     d1_client.mnclient.MemberNodeClient.__init__(self, *args, **kwargs)
 
   def _get_api_version_path_element(self):
