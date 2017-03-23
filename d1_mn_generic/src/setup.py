@@ -56,7 +56,9 @@ def main():
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
     ],
-    setup_requires=['setuptools_git == 1.1'],
+    setup_requires=[
+      'setuptools_git >= 1.1',
+    ],
   )
 
 

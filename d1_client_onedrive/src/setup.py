@@ -97,7 +97,9 @@ def main():
       'rdflib',
       'rdfextras',
     ],
-    setup_requires=['setuptools_git >= 1.1'],
+    setup_requires=[
+      'setuptools_git >= 1.1',
+    ],
     # Options for py2exe and py2app.
     options=opts,
     **extra_opts

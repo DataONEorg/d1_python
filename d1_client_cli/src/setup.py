@@ -44,7 +44,9 @@ def main():
     entry_points={'console_scripts': [
       'dataone = d1_client_cli.dataone:main',
     ]},
-    setup_requires=['setuptools_git >= 1.1'],
+    setup_requires=[
+      'setuptools_git >= 1.1',
+    ],
   )
 
 
