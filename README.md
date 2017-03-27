@@ -27,22 +27,29 @@ See the [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/l
 ### v1 API
 
 * DataONE Command Line Client (CLI):
-[PyPI](https://pypi.python.org/pypi/dataone.cli)
+[![PyPI version](https://badge.fury.io/py/dataone.cli.svg)](https://badge.fury.io/py/dataone.cli)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.cli)
 &ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/cli/index.html)
 * DataONE ONEDrive:
-[PyPI](https://pypi.python.org/pypi/dataone.onedrive)
+[![PyPI version](https://badge.fury.io/py/dataone.onedrive.svg)](https://badge.fury.io/py/dataone.onedrive)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.onedrive)
 &ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/onedrive/index.html)
 * DataONE Test Utilities:
-[PyPI](https://pypi.python.org/pypi/dataone.test_utilities)
+[![PyPI version](https://badge.fury.io/py/dataone.test_utilities.svg)](https://badge.fury.io/py/dataone.test_utilities)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.test_utilities)
 &ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/test/index.html)
 * DataONE Certificate Extensions:
-[PyPI](https://pypi.python.org/pypi/dataone.certificate_extensions)
+[![PyPI version](https://badge.fury.io/py/dataone.certificate_extensions.svg)](https://badge.fury.io/py/dataone.certificate_extensions)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.certificate_extensions)
 * DataONE Gazetteer:
-[PyPI](https://pypi.python.org/pypi/dataone.gazetteer)
+[![PyPI version](https://badge.fury.io/py/dataone.gazetteer.svg)](https://badge.fury.io/py/dataone.gazetteer)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.gazetteer)
 * DataONE Ticket Generator:
-[PyPI](https://pypi.python.org/pypi/dataone.ticket_generator)
+[![PyPI version](https://badge.fury.io/py/dataone.ticket_generator.svg)](https://badge.fury.io/py/dataone.ticket_generator)
+&ndash; [PyPI](https://pypi.python.org/pypi/dataone.ticket_generator)
 * Google Foresite Toolkit:
-[PyPI](https://pypi.python.org/pypi/google.foresite-toolkit)
+[![PyPI version](https://badge.fury.io/py/google.foresite-toolkit.svg)](https://badge.fury.io/py/google.foresite-toolkit)
+&ndash; [PyPI](https://pypi.python.org/pypi/google.foresite-toolkit)
 
 ## Contributing
 
