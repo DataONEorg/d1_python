@@ -2,11 +2,12 @@
 
 Python components for DataONE clients and servers.
 
-| | [DataONE Python](http://dataone-python.readthedocs.io/en/latest/) | |
-:---: | :---: | :---:
-| | [![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python) [![Coverage Status](https://coveralls.io/repos/github/DataONEorg/d1_python/badge.svg?branch=master)](https://coveralls.io/github/DataONEorg/d1_python?branch=master) | |
-[Common Library](https://badge.fury.io/py/dataone.common) | [Client Library](https://badge.fury.io/py/dataone.libclient) | [Generic Member Node](https://badge.fury.io/py/dataone.gmn)
-![PyPI d1_common][common-ver] | ![PyPI d1_client][libclient-ver] | ![PyPI d1_gmn][gmn-ver]
+| | |
+:--- | :---
+[DataONE Python](http://dataone-python.readthedocs.io/en/latest/) | [![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python) [![Coverage Status](https://coveralls.io/repos/github/DataONEorg/d1_python/badge.svg?branch=master)](https://coveralls.io/github/DataONEorg/d1_python?branch=master)
+[Common Library](https://badge.fury.io/py/dataone.common) | ![PyPI d1_common][common-ver]
+[Client Library](https://badge.fury.io/py/dataone.libclient) | ![PyPI d1_client][libclient-ver]
+[Generic Member Node](https://badge.fury.io/py/dataone.gmn) | ![PyPI d1_gmn][gmn-ver]
 
 [common-ver]: https://badge.fury.io/py/dataone.common.svg
 [libclient-ver]: https://badge.fury.io/py/dataone.libclient.svg
