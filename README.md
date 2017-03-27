@@ -2,6 +2,8 @@
 
 Python components for DataONE clients and servers.
 
+[![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python)
+
 ## Releases on the Python Package Index (PyPI)
 
 ### v2 and v1 API
