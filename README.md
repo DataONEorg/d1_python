@@ -3,6 +3,7 @@
 Python components for DataONE clients and servers.
 
 [![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python)
+[![Coverage Status](https://coveralls.io/repos/github/DataONEorg/d1_python/badge.svg?branch=master)](https://coveralls.io/github/DataONEorg/d1_python?branch=master)
 
 ## Releases on the Python Package Index (PyPI)
 
