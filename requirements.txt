@@ -2,10 +2,6 @@ appdirs==1.4.3
 CacheControl==0.11.7
 cffi==1.9.1
 cryptography==1.5.2
-dataone.cli==1.2.5
-dataone.common==2.1.0rc2
-dataone.gmn==2.0.7rc2
-dataone.libclient==2.1.0rc2
 Django==1.10.1
 enum34==1.1.6
 google.foresite-toolkit==1.3

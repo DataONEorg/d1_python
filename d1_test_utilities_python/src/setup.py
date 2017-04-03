@@ -38,7 +38,7 @@ def main():
     include_package_data=True,
     install_requires=[
       'multi-mechanize',
-      'dataone.libclient == 1.2.5',
+      'dataone.libclient == 2.1.0rc2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

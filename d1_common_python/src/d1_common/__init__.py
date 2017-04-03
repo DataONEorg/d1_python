@@ -21,7 +21,7 @@
 Shared code for DataONE Python libraries
 """
 
-__version__ = "2.1.0rc1"
+__version__ = "2.1.0rc2"
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging

@@ -37,9 +37,9 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.1.0rc1',
-      'rdflib == 4.0.1',
-      'google.foresite-toolkit == 1.3',
+      'dataone.common == 2.1.0rc2',
+      'rdflib == 4.2.2',
+      'google.foresite-toolkit == 1.3.3',
       'python-dateutil == 2.1',
       # Requests
       'requests[security] == 2.12.4',

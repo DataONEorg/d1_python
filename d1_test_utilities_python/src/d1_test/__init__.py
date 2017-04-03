@@ -20,4 +20,4 @@
 # limitations under the License.
 """d1_test_utilities_python"""
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
