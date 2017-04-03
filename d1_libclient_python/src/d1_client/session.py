@@ -219,6 +219,11 @@ class Session(object):
     curl_cmd.append(u'{0}'.format(url))
     return ' '.join(curl_cmd)
 
+  def dump_request_and_response(self, response):
+    if response.reason is None:
+      response.reason = '<unknown>'
+    return requests_toolbelt.utils.dump.dump_response(response)
+
   #
   # Private
   #
