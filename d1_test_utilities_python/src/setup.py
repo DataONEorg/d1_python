@@ -37,8 +37,9 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'multi-mechanize',
+      'multi-mechanize == 1.2.0',
       'dataone.libclient == 2.1.0rc2',
+      'responses == 0.5.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
