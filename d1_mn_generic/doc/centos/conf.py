@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Test'
+project = u'CentOS 7.3 GMN Installation'
 copyright = u'2017, Monica'
 author = u'Monica'
 
