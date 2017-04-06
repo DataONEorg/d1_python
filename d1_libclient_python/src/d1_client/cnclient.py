@@ -51,15 +51,15 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNCore.ping() → null
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.ping
   # Implemented in baseclient.py
 
   # CNCore.create(session, pid, object, sysmeta) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.create
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.create
   # CN INTERNAL
 
   # CNCore.listFormats() → ObjectFormatList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listFormats
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listFormats
 
   def listFormatsResponse(self):
     return self.GET('formats')
@@ -69,7 +69,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'ObjectFormatList')
 
   # CNCore.getFormat(formatId) → ObjectFormat
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getFormat
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getFormat
 
   @d1_common.util.utf8_to_unicode
   def getFormatResponse(self, formatId):
@@ -81,11 +81,11 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'ObjectFormat')
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords
   # Implemented in baseclient.py
 
   # CNCore.reserveIdentifier(session, pid) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.reserveIdentifier
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.reserveIdentifier
 
   @d1_common.util.utf8_to_unicode
   def reserveIdentifierResponse(self, pid):
@@ -100,7 +100,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Identifier')
 
   # CNCore.listChecksumAlgorithms() → ChecksumAlgorithmList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listChecksumAlgorithms
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listChecksumAlgorithms
 
   @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithmsResponse(self):
@@ -112,7 +112,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'ChecksumAlgorithmList')
 
   # CNCore.setObsoletedBy(session, pid, obsoletedByPid, serialVersion) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.setObsoletedBy
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.setObsoletedBy
 
   @d1_common.util.utf8_to_unicode
   def setObsoletedByResponse(self, pid, obsoletedByPid, serialVersion):
@@ -128,7 +128,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNCore.listNodes() → NodeList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listNodes
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listNodes
 
   def listNodesResponse(self):
     response = self.GET('node')
@@ -142,7 +142,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   # CN INTERNAL
 
   # CNCore.hasReservation(session, pid) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.hasReservation
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.hasReservation
 
   @d1_common.util.utf8_to_unicode
   def hasReservationResponse(self, pid, subject):
@@ -164,7 +164,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   # Implemented in baseclient.py
 
   # CNRead.resolve(session, pid) → ObjectLocationList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.resolve
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.resolve
 
   @d1_common.util.utf8_to_unicode
   def resolveResponse(self, pid):
@@ -178,7 +178,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     )
 
   # CNRead.getChecksum(session, pid) → Checksum
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getChecksum
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getChecksum
 
   @d1_common.util.utf8_to_unicode
   def getChecksumResponse(self, pid):
@@ -190,7 +190,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Checksum')
 
   # CNRead.search(session, queryType, query) → ObjectList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.search
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.search
 
   #@d1_common.util.utf8_to_unicode
   def searchResponse(self, queryType, **kwargs):
@@ -202,7 +202,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'ObjectList')
 
   # CNRead.query(session, queryEngine, query) → OctetStream
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.query
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
 
   #@d1_common.util.utf8_to_unicode
   def queryResponse(self, queryEngine, query=None, **kwargs):
@@ -214,7 +214,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_stream_response(response)
 
   # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
 
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
@@ -230,7 +230,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNAuthorization.setRightsHolder(session, pid, userId, serialVersion) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.setRightsHolder
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.setRightsHolder
 
   @d1_common.util.utf8_to_unicode
   def setRightsHolderResponse(self, pid, userId, serialVersion):
@@ -246,7 +246,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNAuthorization.isAuthorized(session, pid, action) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.isAuthorized
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action):
@@ -258,7 +258,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_401_response(response)
 
   # CNAuthorization.setAccessPolicy(session, pid, accessPolicy, serialVersion) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.setAccessPolicy
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.setAccessPolicy
 
   @d1_common.util.utf8_to_unicode
   def setAccessPolicyResponse(self, pid, accessPolicy, serialVersion):
@@ -280,7 +280,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNIdentity.registerAccount(session, person) → Subject
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.registerAccount
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.registerAccount
 
   @d1_common.util.utf8_to_unicode
   def registerAccountResponse(self, person):
@@ -295,7 +295,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.updateAccount(session, person) → Subject
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.updateAccount
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.updateAccount
 
   @d1_common.util.utf8_to_unicode
   def updateAccountResponse(self, person):
@@ -310,7 +310,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.verifyAccount(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.verifyAccount
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.verifyAccount
 
   @d1_common.util.utf8_to_unicode
   def verifyAccountResponse(self, subject):
@@ -322,7 +322,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.getSubjectInfo(session, subject) → SubjectList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.getSubjectInfo
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.getSubjectInfo
 
   @d1_common.util.utf8_to_unicode
   def getSubjectInfoResponse(self, subject):
@@ -334,7 +334,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'SubjectInfo')
 
   # CNIdentity.listSubjects(session, query, status, start, count) → SubjectList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.listSubjects
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.listSubjects
 
   @d1_common.util.utf8_to_unicode
   def listSubjectsResponse(self, query, status=None, start=None, count=None):
@@ -352,7 +352,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'SubjectInfo')
 
   # CNIdentity.mapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.mapIdentity
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.mapIdentity
 
   @d1_common.util.utf8_to_unicode
   def mapIdentityResponse(self, primary_subject, secondary_subject):
@@ -368,7 +368,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.removeMapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.removeMapIdentity
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.removeMapIdentity
 
   @d1_common.util.utf8_to_unicode
   def removeMapIdentityResponse(self, subject):
@@ -380,7 +380,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.denyMapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.denyMapIdentity
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.denyMapIdentity
 
   @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject):
@@ -392,7 +392,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.requestMapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.requestMapIdentity
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.requestMapIdentity
 
   @d1_common.util.utf8_to_unicode
   def requestMapIdentityResponse(self, subject):
@@ -407,7 +407,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.confirmMapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.confirmMapIdentity
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.confirmMapIdentity
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentityResponse(self, subject):
@@ -423,7 +423,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.createGroup(session, groupName) → Subject
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.createGroup
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.createGroup
 
   @d1_common.util.utf8_to_unicode
   def createGroupResponse(self, group):
@@ -438,7 +438,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNIdentity.addGroupMembers(session, groupName, members) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.addGroupMembers
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.addGroupMembers
 
   @d1_common.util.utf8_to_unicode
   def updateGroupResponse(self, group):
@@ -457,7 +457,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNReplication.setReplicationStatus(session, pid, nodeRef, status, failure) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationStatus
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNReplication.setReplicationStatus
 
   @d1_common.util.utf8_to_unicode
   def setReplicationStatusResponse(
@@ -479,7 +479,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNReplication.updateReplicationMetadata(session, pid, replicaMetadata, serialVersion) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.updateReplicationMetadata
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNReplication.updateReplicationMetadata
   # Not implemented.
 
   @d1_common.util.utf8_to_unicode
@@ -502,7 +502,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNReplication.setReplicationPolicy(session, pid, policy, serialVersion) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationPolicy
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNReplication.setReplicationPolicy
 
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
@@ -520,7 +520,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNReplication.isNodeAuthorized(session, targetNodeSubject, pid, replicatePermission) → boolean()
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.isNodeAuthorized
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNReplication.isNodeAuthorized
   # TODO. Spec unclear.
 
   @d1_common.util.utf8_to_unicode
@@ -536,7 +536,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_401_response(response)
 
   # CNReplication.deleteReplicationMetadata(session, pid, policy, serialVersion) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.deleteReplicationMetadata
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNReplication.deleteReplicationMetadata
 
   @d1_common.util.utf8_to_unicode
   def deleteReplicationMetadataResponse(self, pid, nodeId, serialVersion):
@@ -558,7 +558,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   #=========================================================================
 
   # CNRegister.updateNodeCapabilities(session, nodeId, node) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRegister.updateNodeCapabilities
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRegister.updateNodeCapabilities
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
@@ -571,7 +571,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # CNRegister.register(session, node) → NodeReference
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRegister.register
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRegister.register
 
   @d1_common.util.utf8_to_unicode
   def registerResponse(self, node):

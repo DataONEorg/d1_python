@@ -28,7 +28,8 @@
   Includes convenience functions to perform the most common parsing and
   generating tasks for Resource Maps.
 
-  See `Data Packaging <http://mule1.dataone.org/ArchitectureDocs-current/design/DataPackage.html>`_
+  See `Data Packaging
+  <https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html>`_
   for more information about how Resource Maps are used in DataONE.
 :Created: 2012-03-29
 :Author: DataONE (Vieglais, Dahl)
@@ -38,7 +39,8 @@
 """
 
 # https://groups.google.com/forum/#!msg/foresite/3vS3_ZZ8Aj0/8tr_SgjbTAUJ
-# http://code.google.com/p/foresite-toolkit/source/browse/foresite-python/trunk/foresite/README.txt?r=85
+# http://code.google.com/p/foresite-toolkit/source/browse/
+# foresite-python/trunk/foresite/README.txt?r=85
 
 # Stdlib
 #import xml.dom.minidom.parse

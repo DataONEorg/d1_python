@@ -9,7 +9,7 @@ requirements.
 This section outlines the main aspects of how authentication and authorization
 is implemented in GMN and how to configure GMN and clients. In-depth coverage
 of these topics is provided in the `DataONE architecture documentation
-<http://mule1.dataone.org/ArchitectureDocs-current/index.html>`_.
+<https://releases.dataone.org/online/api-documentation-v2.0.1/index.html>`_.
 
 
 Authentication

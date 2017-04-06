@@ -116,11 +116,11 @@ To authenticate to the target Node, provide a valid CILogon signed certificate
 when creating the CoordinatingNodeClient or MemberNodeClient.
 
 See the `CNCore.getLogRecords()
-<http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords>`_
+<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords>`_
 and `MNCore.getLogRecords()
-<http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords>`_
+<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords>`_
 specifications in the `DataONE Architecture Documentation
-<http://mule1.dataone.org/ArchitectureDocs-current/index.html>`_ for more
+<https://releases.dataone.org/online/api-documentation-v2.0.1/index.html>`_ for more
 information.
 
 Example

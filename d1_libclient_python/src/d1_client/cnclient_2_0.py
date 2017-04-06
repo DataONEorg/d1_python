@@ -57,7 +57,7 @@ class CoordinatingNodeClient_2_0(
   #=========================================================================
 
   # CNCore.listFormats() → ObjectFormatList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listFormats
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listFormats
   # v2.0: The structure of v2_0.Types.ObjectFormat has changed.
 
   def listFormatsResponse(self):

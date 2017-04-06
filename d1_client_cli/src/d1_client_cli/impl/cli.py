@@ -486,7 +486,7 @@ be lost if you exit.""".format(n_remaining_operations)
     """search [query]
     Comprehensive search for Science Data Objects across all available MNs
 
-    See http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
+    See https://releases.dataone.org/online/api-documentation-v2.0.1/design/SearchMetadata.html
     for the available search terms.
     """
     args = self._split_args(line, 0, -1)

@@ -78,7 +78,7 @@ Configure the Member Node information
 
 Most of the values that are set up in this section are described in the `Node
 document section in the architecture documentation
-<http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node>`_.
+<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/Types.html#Types.Node>`_.
 
 The Node document is a set of values that describe a MN or CN, its internet
 location, and the services it supports.
@@ -169,7 +169,7 @@ the previous step.
 
   If the Node document is successfully generated, an XML document will be
   displayed. For more information about this document, refer to
-  http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
+  https://releases.dataone.org/online/api-documentation-v2.0.1/apis/Types.html#Types.Node
 
   When the Node document is successfully generated and displayed, register the
   MN by submitting the Node document to DataONE. The Node document is

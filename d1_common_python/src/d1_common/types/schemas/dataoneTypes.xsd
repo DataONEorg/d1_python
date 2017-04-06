@@ -5,7 +5,7 @@
     version="1.0.3"
     elementFormDefault="unqualified" attributeFormDefault="unqualified">
 
-<!-- 
+<!--
 $HeadURL$
 $Id$
 
@@ -36,7 +36,7 @@ License:
   See the License for the specific language governing permissions and
   limitations under the License.
 
-Formatting: 
+Formatting:
 
   - This document should be saved as a UTF-8 encoded file.
 
@@ -52,7 +52,7 @@ Formatting:
 -->
 
 <!-- ************************************
-        DEFINE REUSABLE SIMPLE TYPES HERE 
+        DEFINE REUSABLE SIMPLE TYPES HERE
         ************************************ -->
 
   <!-- ChecksumAlgorithm -->
@@ -72,13 +72,13 @@ Formatting:
     </xs:annotation>
     <xs:restriction base="xs:string">
     </xs:restriction>
-  </xs:simpleType> 
+  </xs:simpleType>
 
   <!-- CrontabEntry -->
   <xs:simpleType name="CrontabEntry">
     <xs:annotation>
-      <xs:documentation>A single value in the series of values that together 
-      form a single crontab entry. The format follows the syntax conventions 
+      <xs:documentation>A single value in the series of values that together
+      form a single crontab entry. The format follows the syntax conventions
       defined by the `Quartz Scheduler`_, as excerpted here under the Apache 2 license:</xs:documentation>
       <xs:documentation>.. _Quartz Scheduler: http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html</xs:documentation>
       <xs:documentation>.. include:: Types_crontabentry.txt</xs:documentation>
@@ -89,7 +89,7 @@ Formatting:
   <!-- CrontabEntrySeconds -->
   <xs:simpleType name="CrontabEntrySeconds">
     <xs:annotation>
-      <xs:documentation>A restriction on the seconds field in a single 
+      <xs:documentation>A restriction on the seconds field in a single
       Schedule entry, following the syntax conventions defined by the `Quartz
       Scheduler`_.</xs:documentation>
       <xs:documentation>The wildcard character value is not allowed in this
@@ -100,7 +100,7 @@ Formatting:
     <xs:restriction base="xs:token">
       <xs:pattern value="[0-5]?\d"/>
     </xs:restriction>
-  </xs:simpleType> 
+  </xs:simpleType>
 
   <!-- Event Enumeration -->
   <xs:simpleType name="Event">
@@ -232,7 +232,7 @@ Formatting:
       either inaccessible or invalid then it marks it as *invalidated*, which
       indicates that the object replication needs to be invoked
       again.</xs:documentation>
-      <xs:documentation>The replication process is described in Use Case 09 
+      <xs:documentation>The replication process is described in Use Case 09
       (:doc:`/design/UseCases/09_uc`).</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
@@ -265,7 +265,7 @@ Formatting:
   </xs:simpleType>
 
   <!-- ***************************************
-          DEFINE REUSABLE COMPLEX  TYPES HERE 
+          DEFINE REUSABLE COMPLEX  TYPES HERE
           *************************************** -->
 
   <!-- NOTE THAT ALL SERIALIZEABLE ROOT ELEMENTS FOR MESSAGES SHOULD BE OF A
@@ -282,7 +282,7 @@ Formatting:
       users, symbolic users, or systems and services.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="allow" type="d1:AccessRule" minOccurs="1" 
+      <xs:element name="allow" type="d1:AccessRule" minOccurs="1"
         maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
@@ -306,9 +306,9 @@ Formatting:
       write, or otherwise) is the :term:`Rights Holder`.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="subject" type="d1:Subject" 
+      <xs:element name="subject" type="d1:Subject"
                   minOccurs="1" maxOccurs="unbounded" />
-      <xs:element name="permission" type="d1:Permission" 
+      <xs:element name="permission" type="d1:Permission"
                   minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
@@ -340,7 +340,7 @@ Formatting:
       algorithms.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name ="algorithm" type="d1:ChecksumAlgorithm" 
+      <xs:element name ="algorithm" type="d1:ChecksumAlgorithm"
                   minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -363,7 +363,7 @@ Formatting:
           system.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="groupName" type="d1:NonEmptyString" 
+      <xs:element name="groupName" type="d1:NonEmptyString"
           minOccurs="1" maxOccurs="1" >
           <xs:annotation>
             <xs:documentation>The name of the Group.</xs:documentation>
@@ -377,7 +377,7 @@ Formatting:
             Subject.</xs:documentation>
           </xs:annotation>
       </xs:element>
-    <xs:element name="rightsHolder" type="d1:Subject" minOccurs="1" 
+    <xs:element name="rightsHolder" type="d1:Subject" minOccurs="1"
                 maxOccurs="unbounded">
       <xs:annotation>
         <xs:documentation>Represents the list of owners of this :term:`group`.
@@ -397,10 +397,10 @@ Formatting:
     <xs:annotation>
       <xs:documentation>An :term:`identifier` (:term:`PID`) in the DataONE
       system that is used to uniquely and globally identify an object.
-      Identifiers can not be reused once assigned. Identifiers can not be 
-      deleted from the DataONE system.Identifiers are represented by a Unicode 
-      string of printable characters, excluding :term:`whitespace`. All 
-      representations of identifiers must be encoded in 7-bit ASCII or 
+      Identifiers can not be reused once assigned. Identifiers can not be
+      deleted from the DataONE system.Identifiers are represented by a Unicode
+      string of printable characters, excluding :term:`whitespace`. All
+      representations of identifiers must be encoded in 7-bit ASCII or
       UTF-8.</xs:documentation>
       <xs:documentation>Identifiers have a maximum length of 800 characters,
       and a variety of other properties designed for preservation and
@@ -408,7 +408,7 @@ Formatting:
       documentation`_ and in decision `ticket 577`_. </xs:documentation>
       <xs:documentation>.. _ticket 577: https://redmine.dataone.org/issues/577
       </xs:documentation>
-      <xs:documentation>.. _PID documentation: http://mule1.dataone.org/ArchitectureDocs-current/design/PIDs.html
+      <xs:documentation>.. _PID documentation: https://releases.dataone.org/online/api-documentation-v2.0.1/design/PIDs.html
       </xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
@@ -441,7 +441,7 @@ Formatting:
       :func:`CNCore.getLogRecords` methods.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="entryId" type="d1:NonEmptyString" 
+      <xs:element name="entryId" type="d1:NonEmptyString"
           minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>A unique identifier for this log entry. The
@@ -450,7 +450,7 @@ Formatting:
           not subjec to the same restrictions.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="identifier" type="d1:Identifier" 
+      <xs:element name="identifier" type="d1:Identifier"
           minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>The :term:`identifier` of the object that was the
@@ -513,13 +513,13 @@ Formatting:
       may exist on a single physical device or hostname. </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="identifier" type="d1:NodeReference" minOccurs="1" 
+      <xs:element name="identifier" type="d1:NodeReference" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
-          <xs:documentation>A unique identifier for the node of the form 
-          ``urn:node:NODEID`` where NODEID is the node specific identifier. 
-          This value MUST NOT change for future implementations of the 
-          same node, whereas the *baseURL* may change in the future. 
+          <xs:documentation>A unique identifier for the node of the form
+          ``urn:node:NODEID`` where NODEID is the node specific identifier.
+          This value MUST NOT change for future implementations of the
+          same node, whereas the *baseURL* may change in the future.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -530,7 +530,7 @@ Formatting:
           should be short, but understandable. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="description" type="d1:NonEmptyString" minOccurs="1" 
+      <xs:element name="description" type="d1:NonEmptyString" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>Description of a Node, explaining the community it
@@ -539,22 +539,22 @@ Formatting:
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="baseURL" type="xs:anyURI" minOccurs="1" maxOccurs="1">        
+      <xs:element name="baseURL" type="xs:anyURI" minOccurs="1" maxOccurs="1">
         <xs:annotation>
            <xs:documentation>The base URL of the node, indicating the
            protocol, fully qualified domain name, and path to the implementing
            service, excluding the version of the API. e.g.
            ``https://server.example.edu/app/d1/mn`` rather than
            ``https://server.example.edu/app/d1/mn/v1``</xs:documentation>
-        </xs:annotation>                        
+        </xs:annotation>
       </xs:element>
       <xs:element name="services" type="d1:Services" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>A list of services that are provided by this node.
           Used in node descriptions so that nodes can provide metadata about
           each service they implement and support.</xs:documentation>
-        </xs:annotation>      
-      </xs:element>            
+        </xs:annotation>
+      </xs:element>
       <xs:element name="synchronization" type="d1:Synchronization" minOccurs="0"
         maxOccurs="1">
         <xs:annotation>
@@ -582,7 +582,7 @@ Formatting:
            :func:`CNCore.ping` methods.</xs:documentation>
          </xs:annotation>
       </xs:element>
-      <xs:element name="subject" type="d1:Subject" minOccurs="0" 
+      <xs:element name="subject" type="d1:Subject" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The :term:`Subject` of this node, which can be
@@ -596,7 +596,7 @@ Formatting:
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="contactSubject" type="d1:Subject" minOccurs="1" 
+      <xs:element name="contactSubject" type="d1:Subject" minOccurs="1"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The appropriate person or group to contact
@@ -629,7 +629,7 @@ Formatting:
     </xs:attribute>
     <xs:attribute name="type" use="required" type="d1:NodeType">
       <xs:annotation>
-        <xs:documentation>The type of the node (Coordinating, Member), chosen 
+        <xs:documentation>The type of the node (Coordinating, Member), chosen
         from the :class:`Types.NodeType` type.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -652,15 +652,15 @@ Formatting:
       domain-specific object formats.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="maxObjectSize" type="xs:unsignedLong" minOccurs="0" 
+      <xs:element name="maxObjectSize" type="xs:unsignedLong" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
-          <xs:documentation>An optional statement of the maximum size in octets 
+          <xs:documentation>An optional statement of the maximum size in octets
           (8-bit bytes) of objects this node is willing to accept for
           replication.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="spaceAllocated" type="xs:unsignedLong" minOccurs="0" 
+      <xs:element name="spaceAllocated" type="xs:unsignedLong" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>An optional statement of the total space in bytes
@@ -668,7 +668,7 @@ Formatting:
           node.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allowedNode" type="d1:NodeReference" minOccurs="0" 
+      <xs:element name="allowedNode" type="d1:NodeReference" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>An optional, repeatable statement of a peer source
@@ -676,7 +676,7 @@ Formatting:
           as a :class:`Types.NodeReference`.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allowedObjectFormat" type="d1:ObjectFormatIdentifier" 
+      <xs:element name="allowedObjectFormat" type="d1:ObjectFormatIdentifier"
                   minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>An optional, repeatable statement of an object
@@ -687,7 +687,7 @@ Formatting:
     </xs:sequence>
   </xs:complexType>
 
-  <!-- Node List -->  
+  <!-- Node List -->
   <xs:complexType name="NodeList">
     <xs:annotation>
       <xs:documentation> A list of :class:`Types.Node` entries returned by
@@ -696,7 +696,7 @@ Formatting:
        :mod:`NodeList`.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" name="node" type="d1:Node" 
+      <xs:element maxOccurs="unbounded" name="node" type="d1:Node"
                   minOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
@@ -706,7 +706,7 @@ Formatting:
     <xs:annotation>
       <xs:documentation>A unique identifier for a DataONE Node. The
       *NodeReference* must be unique across nodes, and must always be
-      assigned to one Member or Coordinating Node instance even in the event of 
+      assigned to one Member or Coordinating Node instance even in the event of
       the *BaseURL* or other characteristics changing.</xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
@@ -727,7 +727,7 @@ Formatting:
       common typing systems. </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="formatId" type="d1:ObjectFormatIdentifier" 
+      <xs:element name="formatId" type="d1:ObjectFormatIdentifier"
                   minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation> The unique identifier of the object format in the
@@ -736,7 +736,7 @@ Formatting:
           printable characters.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="formatName" type="xs:string" minOccurs="1" 
+      <xs:element name="formatName" type="xs:string" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>For objects that are typed using a Document Type
@@ -745,7 +745,7 @@ Formatting:
           name should be chosen.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="formatType" type="xs:string" minOccurs="1" 
+      <xs:element name="formatType" type="xs:string" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>A string field indicating whether or not this
@@ -761,7 +761,7 @@ Formatting:
 
   <!--  ObjectFormatList -->
   <xs:complexType name="ObjectFormatList">
-    <xs:annotation>  
+    <xs:annotation>
       <xs:documentation>An ObjectFormatList is the structure returned from the
       :func:`CNCore.listFormats()` method of the CN REST interface. It
       provides a list of named object formats defined in the DataONE system.
@@ -773,7 +773,7 @@ Formatting:
     <xs:complexContent>
       <xs:extension base="d1:Slice">
         <xs:sequence>
-          <xs:element name="objectFormat" type="d1:ObjectFormat" minOccurs="1" 
+          <xs:element name="objectFormat" type="d1:ObjectFormat" minOccurs="1"
                       maxOccurs="unbounded" />
         </xs:sequence>
       </xs:extension>
@@ -787,10 +787,10 @@ Formatting:
       metadata found in :class:`Types.SystemMetadata`.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-        <xs:element name="identifier"  type="d1:Identifier" minOccurs="1" 
+        <xs:element name="identifier"  type="d1:Identifier" minOccurs="1"
                     maxOccurs="1"/>
         <xs:element name="formatId" type="d1:ObjectFormatIdentifier"/>
-        <xs:element name="checksum" type="d1:Checksum" minOccurs="1" 
+        <xs:element name="checksum" type="d1:Checksum" minOccurs="1"
                     maxOccurs="1" />
         <xs:element name="dateSysMetadataModified" type="xs:dateTime"/>
         <xs:element name="size" type="xs:unsignedLong"/>
@@ -806,7 +806,7 @@ Formatting:
     <xs:complexContent>
       <xs:extension base="d1:Slice">
         <xs:sequence>
-          <xs:element name="objectInfo" type="d1:ObjectInfo" minOccurs="0" 
+          <xs:element name="objectInfo" type="d1:ObjectInfo" minOccurs="0"
                       maxOccurs="unbounded" />
         </xs:sequence>
       </xs:extension>
@@ -820,7 +820,7 @@ Formatting:
       indicating the node from which the object can be retrieved. The
       principal information on each location is found in the *nodeIdentifier*,
       all other fields are provided for convenience, but could also be looked
-      up from the :class:`Types.NodeList` information obtained from 
+      up from the :class:`Types.NodeList` information obtained from
       :func:`CNCore.listNodes`.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
@@ -842,7 +842,7 @@ Formatting:
           :func:`CNCore.listNodes` service. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="version" type="d1:ServiceVersion" minOccurs="1" 
+      <xs:element name="version" type="d1:ServiceVersion" minOccurs="1"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The version of services implemented on the node.
@@ -859,7 +859,7 @@ Formatting:
           interface.</xs:documentation>
           <xs:documentation>For example, if identifier was "ABX154", and the
           node had a base URL of ``http://mn1.dataone.org/mn`` then the value
-          would be 
+          would be
           ``http://mn1.dataone.org/mn/v1/object/ABX154``</xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -883,14 +883,14 @@ Formatting:
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-    <xs:element name="identifier" type="d1:Identifier" minOccurs="1" 
+    <xs:element name="identifier" type="d1:Identifier" minOccurs="1"
                 maxOccurs="1">
       <xs:annotation>
         <xs:documentation>The :term:`identifier` of the object being
         resolved.</xs:documentation>
       </xs:annotation>
     </xs:element>
-    <xs:element name="objectLocation" type="d1:ObjectLocation" minOccurs="0" 
+    <xs:element name="objectLocation" type="d1:ObjectLocation" minOccurs="0"
                 maxOccurs="unbounded">
       <xs:annotation>
         <xs:documentation>List of nodes from which the object can be
@@ -919,27 +919,27 @@ Formatting:
           *Person*.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="givenName" type="d1:NonEmptyString" minOccurs="1" 
+      <xs:element name="givenName" type="d1:NonEmptyString" minOccurs="1"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The given name of the *Person*, repeatable if they
           have more than one given name.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="familyName" type="d1:NonEmptyString" minOccurs="1" 
+      <xs:element name="familyName" type="d1:NonEmptyString" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>The family name of the *Person*.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="email" type="d1:NonEmptyString" minOccurs="0" 
+      <xs:element name="email" type="d1:NonEmptyString" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The email address of the *Person*, repeatable if
           they have more than one email address. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="isMemberOf" type="d1:Subject" minOccurs="0" 
+      <xs:element name="isMemberOf" type="d1:Subject" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>A *group* or role in which the *Person* is a member,
@@ -948,7 +948,7 @@ Formatting:
           more than one group. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="equivalentIdentity" type="d1:Subject" minOccurs="0" 
+      <xs:element name="equivalentIdentity" type="d1:Subject" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>An alternative but equivalent identity for the
@@ -971,13 +971,13 @@ Formatting:
           established process. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <!-- Do we need further Person metadata? <xs:element name="institution" 
-        type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> <xs:element 
-        name="department" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> 
-        <xs:element name="address1" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> 
-        <xs:element name="address2" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> 
-        <xs:element name="city" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> 
-        <xs:element name="state" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> 
+      <!-- Do we need further Person metadata? <xs:element name="institution"
+        type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> <xs:element
+        name="department" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="address1" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="address2" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="city" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="state" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="zip" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded"/> -->
     </xs:sequence>
   </xs:complexType>
@@ -1007,7 +1007,7 @@ Formatting:
   <xs:complexType name="Replica">
     <xs:annotation>
       <xs:documentation>Replica information that describes the existence of a
-      replica of some object managed by the DataONE infrastructure, and its 
+      replica of some object managed by the DataONE infrastructure, and its
       status.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
@@ -1034,7 +1034,7 @@ Formatting:
           checksum recorded for the object in the system
           metadata.</xs:documentation>
         </xs:annotation>
-      </xs:element> 
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -1057,7 +1057,7 @@ Formatting:
           as preferred to meet the requested number of replicas, then the
           Coordinating Nodes will pick additional replica nodes for the
           content. </xs:documentation>
-        </xs:annotation>    
+        </xs:annotation>
       </xs:element>
       <xs:element name="blockedMemberNode" type="d1:NodeReference"
                   minOccurs="0" maxOccurs="unbounded">
@@ -1066,7 +1066,7 @@ Formatting:
           listed as *blockedMemberNodes*. Where there is a conflict between a
           *preferredMemberNode* and a *blockedMemberNode* entry, the
           *blockedMemberNode* entry prevails. </xs:documentation>
-        </xs:annotation>                
+        </xs:annotation>
       </xs:element>
     </xs:sequence>
     <xs:attribute name="replicationAllowed" type="xs:boolean">
@@ -1094,14 +1094,14 @@ Formatting:
       implementation.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="restriction" type="d1:ServiceMethodRestriction" 
+      <xs:element name="restriction" type="d1:ServiceMethodRestriction"
                   minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>A list of method names and :term:`Subjects` with
           permission to invoke those methods.</xs:documentation>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>    
+    </xs:sequence>
     <xs:attribute name="name" type="d1:ServiceName" use="required">
       <xs:annotation>
         <xs:documentation>The name of the service. The valid list of entries
@@ -1157,7 +1157,7 @@ Formatting:
       service they implement and support. </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="service" type="d1:Service" minOccurs="1" 
+      <xs:element name="service" type="d1:Service" minOccurs="1"
                   maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
@@ -1176,13 +1176,13 @@ Formatting:
       that was authenticated.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="subject" type="d1:Subject" minOccurs="1" 
+      <xs:element name="subject" type="d1:Subject" minOccurs="1"
                   maxOccurs="1" />
-      <xs:element name="subjectInfo" type="d1:SubjectInfo" minOccurs="0" 
+      <xs:element name="subjectInfo" type="d1:SubjectInfo" minOccurs="0"
                   maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-    
+
   <!-- Schedule -->
   <xs:complexType name="Schedule">
     <xs:annotation>
@@ -1227,10 +1227,10 @@ Formatting:
       <xs:annotation>
         <xs:documentation>The total number of entries in the source list from
         which the slice was extracted.</xs:documentation>
-      </xs:annotation>        
+      </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-    
+
   <!-- Synchronization -->
   <xs:complexType name="Synchronization">
     <xs:annotation>
@@ -1243,7 +1243,7 @@ Formatting:
       and *lastCompleteHarvest* fields.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="schedule" type="d1:Schedule" minOccurs="1" 
+      <xs:element name="schedule" type="d1:Schedule" minOccurs="1"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>An entry set by the Member Node indicating the
@@ -1253,14 +1253,14 @@ Formatting:
           processing of new content.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="lastHarvested" type="xs:dateTime" minOccurs="0" 
+      <xs:element name="lastHarvested" type="xs:dateTime" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>The most recent modification date (UTC) of objects
           checked during the last harvest of the node.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="lastCompleteHarvest" type="xs:dateTime" minOccurs="0" 
+      <xs:element name="lastCompleteHarvest" type="xs:dateTime" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation>The last time (UTC) all the data from a node was
@@ -1280,7 +1280,7 @@ Formatting:
       name to identify a user or group in the DataONE Identity Management
       Service. The *subject* is represented by a unique, persistent,
       non-reassignable identifier string that follows the same constraints as
-      :class:`Types.Identifier`. Subjects are immutable and can not be 
+      :class:`Types.Identifier`. Subjects are immutable and can not be
       deleted.</xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
@@ -1307,14 +1307,14 @@ Formatting:
     </xs:sequence>
   </xs:complexType>
 
-  <!-- SubjectList -->  
+  <!-- SubjectList -->
   <xs:complexType name="SubjectList">
     <xs:annotation>
       <xs:documentation> A list of :term:`Subjects` used for identity/group
       management</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="subject" type="d1:Subject" minOccurs="0" 
+      <xs:element name="subject" type="d1:Subject" minOccurs="0"
                   maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -1551,7 +1551,7 @@ Formatting:
           necessary. </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="replica" type="d1:Replica" minOccurs="0" 
+      <xs:element name="replica" type="d1:Replica" minOccurs="0"
                   maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation> A container field used to repeatedly provide
@@ -1563,11 +1563,11 @@ Formatting:
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-    
+
   <!-- ******************************************
-          DEFINE ROOT ELEMENTS OF MESSAGES HERE 
+          DEFINE ROOT ELEMENTS OF MESSAGES HERE
           ****************************************** -->
-  <!-- NOTE THAT ALL SERIALIZEABLE ROOT ELEMENTS FOR MESSAGES SHOULD BE OF A 
+  <!-- NOTE THAT ALL SERIALIZEABLE ROOT ELEMENTS FOR MESSAGES SHOULD BE OF A
        COMPLEX TYPE -->
 
   <!-- These root-level element definitions are provided for selected types so

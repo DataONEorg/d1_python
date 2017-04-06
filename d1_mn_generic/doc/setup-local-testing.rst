@@ -5,7 +5,7 @@ The new stand-alone GMN instance is now ready to be tested.
 
 After a successful installation, GMN exposes
 the `complete REST interface that DataONE has defined for Member Nodes
-<http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_.
+<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html>`_.
 
 The default installation makes GMN accessible both on the server's loopback
 (localhost) and external interface(s). So the tests outlined below can be

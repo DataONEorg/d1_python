@@ -71,7 +71,7 @@ DataONE Terms
     categories, which are further developed here, with examples of potential
     applications that would fit into each category.
 
-    http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html
+    https://releases.dataone.org/online/api-documentation-v2.0.1/design/itk-overview.html
 
 
   MN

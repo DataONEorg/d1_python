@@ -3,7 +3,7 @@
   <queryEngineVersion>3.4.0.2011.09.20.17.19.53</queryEngineVersion>
   <querySchemaVersion>1</querySchemaVersion>
   <name>solr</name>
-  <additionalInfo>http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html</additionalInfo>
+  <additionalInfo>https://releases.dataone.org/online/api-documentation-v2.0.1/design/SearchMetadata.html</additionalInfo>
   <queryField>
     <name>abstract</name>
     <description>The full text of the abstract as provided in the science metadata

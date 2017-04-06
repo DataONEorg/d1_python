@@ -11,7 +11,7 @@ This module provides functionality for the most common use cases when
 parsing and generating Resource Maps for use in DataONE.
 
 See `Data Packaging
-<http://mule1.dataone.org/ArchitectureDocs-current/design/DataPackage.html>`_
+<https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html>`_
 for more information about how Resource Maps are used in DataONE.
 
 

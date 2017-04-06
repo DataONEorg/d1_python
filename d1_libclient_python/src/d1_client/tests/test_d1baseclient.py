@@ -89,9 +89,9 @@ class TestDataONEBaseClient(
     self.assertEqual(None, client._date_span_sanity_check(old_date, new_date))
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords
   # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords
 
   @responses.activate
   def test_0100(self):

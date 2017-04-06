@@ -348,18 +348,18 @@ class AccessPolicy (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element allow uses Python identifier allow
     __allow = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'allow'), 'allow', '__httpns_dataone_orgservicetypesv1_AccessPolicy_allow', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 285, 6), )
 
-    
+
     allow = property(__allow.value, __allow.set, None, None)
 
     _ElementMap.update({
         __allow.name() : __allow
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.AccessPolicy = AccessPolicy
 Namespace.addCategoryObject('typeBinding', 'AccessPolicy', AccessPolicy)
@@ -388,18 +388,18 @@ class AccessRule (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_AccessRule_subject', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 309, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, None)
 
-    
+
     # Element permission uses Python identifier permission
     __permission = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'permission'), 'permission', '__httpns_dataone_orgservicetypesv1_AccessRule_permission', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 311, 6), )
 
-    
+
     permission = property(__permission.value, __permission.set, None, None)
 
     _ElementMap.update({
@@ -407,7 +407,7 @@ class AccessRule (pyxb.binding.basis.complexTypeDefinition):
         __permission.name() : __permission
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.AccessRule = AccessRule
 Namespace.addCategoryObject('typeBinding', 'AccessRule', AccessRule)
@@ -425,18 +425,18 @@ class ChecksumAlgorithmList (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element algorithm uses Python identifier algorithm
     __algorithm = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_ChecksumAlgorithmList_algorithm', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 343, 6), )
 
-    
+
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 
     _ElementMap.update({
         __algorithm.name() : __algorithm
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ChecksumAlgorithmList = ChecksumAlgorithmList
 Namespace.addCategoryObject('typeBinding', 'ChecksumAlgorithmList', ChecksumAlgorithmList)
@@ -457,32 +457,32 @@ class Group (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Group_subject', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 358, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, 'The unique, immutable identifier of the\n          :term:`group`. Group subjects must not be reused, and so they are\n          both immutable and can not be deleted from the DataONE\n          system.')
 
-    
+
     # Element groupName uses Python identifier groupName
     __groupName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'groupName'), 'groupName', '__httpns_dataone_orgservicetypesv1_Group_groupName', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 366, 6), )
 
-    
+
     groupName = property(__groupName.value, __groupName.set, None, 'The name of the Group.')
 
-    
+
     # Element hasMember uses Python identifier hasMember
     __hasMember = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'hasMember'), 'hasMember', '__httpns_dataone_orgservicetypesv1_Group_hasMember', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 372, 6), )
 
-    
+
     hasMember = property(__hasMember.value, __hasMember.set, None, 'A :term:`Subject` that is a member of this\n            group, expressed using the unique identifier for that\n            Subject.')
 
-    
+
     # Element rightsHolder uses Python identifier rightsHolder
     __rightsHolder = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'rightsHolder'), 'rightsHolder', '__httpns_dataone_orgservicetypesv1_Group_rightsHolder', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 380, 4), )
 
-    
+
     rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, 'Represents the list of owners of this :term:`group`.\n        All groups are readable by anyone in the DataONE system, but can only\n        be modified by subjects listed in *rightsHolder* fields. Designation\n        as a :term:`rightsHolder` allows the subject, or their equivalent\n        identities, to make changes to the mutable properties of the group,\n        including its name, membership list and rights holder list. The\n        subject of the group itself is immutable. ')
 
     _ElementMap.update({
@@ -492,7 +492,7 @@ class Group (pyxb.binding.basis.complexTypeDefinition):
         __rightsHolder.name() : __rightsHolder
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Group = Group
 Namespace.addCategoryObject('typeBinding', 'Group', Group)
@@ -511,60 +511,60 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element entryId uses Python identifier entryId
     __entryId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'entryId'), 'entryId', '__httpns_dataone_orgservicetypesv1_LogEntry_entryId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 444, 6), )
 
-    
+
     entryId = property(__entryId.value, __entryId.set, None, 'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subjec to the same restrictions.')
 
-    
+
     # Element identifier uses Python identifier identifier
     __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_LogEntry_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 453, 6), )
 
-    
+
     identifier = property(__identifier.value, __identifier.set, None, 'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.')
 
-    
+
     # Element ipAddress uses Python identifier ipAddress
     __ipAddress = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'ipAddress'), 'ipAddress', '__httpns_dataone_orgservicetypesv1_LogEntry_ipAddress', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 460, 6), )
 
-    
+
     ipAddress = property(__ipAddress.value, __ipAddress.set, None, 'The IP address, as reported by the service receiving\n          the request, of the request origin.')
 
-    
+
     # Element userAgent uses Python identifier userAgent
     __userAgent = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'userAgent'), 'userAgent', '__httpns_dataone_orgservicetypesv1_LogEntry_userAgent', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 467, 6), )
 
-    
+
     userAgent = property(__userAgent.value, __userAgent.set, None, 'The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.')
 
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_LogEntry_subject', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 474, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, 'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *Subject* of the certificate\n          used for authenticating the request.')
 
-    
+
     # Element event uses Python identifier event
     __event = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'event'), 'event', '__httpns_dataone_orgservicetypesv1_LogEntry_event', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 483, 6), )
 
-    
+
     event = property(__event.value, __event.set, None, 'An entry from the :class:`Types.Event` enumeration\n          indicating the type of operation that triggered the log message.')
 
-    
+
     # Element dateLogged uses Python identifier dateLogged
     __dateLogged = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateLogged'), 'dateLogged', '__httpns_dataone_orgservicetypesv1_LogEntry_dateLogged', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 490, 6), )
 
-    
+
     dateLogged = property(__dateLogged.value, __dateLogged.set, None, 'A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.')
 
-    
+
     # Element nodeIdentifier uses Python identifier nodeIdentifier
     __nodeIdentifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv1_LogEntry_nodeIdentifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 498, 6), )
 
-    
+
     nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, 'The unique identifier for the node where the log\n          message was generated.')
 
     _ElementMap.update({
@@ -578,7 +578,7 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
         __nodeIdentifier.name() : __nodeIdentifier
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.LogEntry = LogEntry
 Namespace.addCategoryObject('typeBinding', 'LogEntry', LogEntry)
@@ -600,32 +600,32 @@ class NodeReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element maxObjectSize uses Python identifier maxObjectSize
     __maxObjectSize = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'maxObjectSize'), 'maxObjectSize', '__httpns_dataone_orgservicetypesv1_NodeReplicationPolicy_maxObjectSize', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 655, 6), )
 
-    
+
     maxObjectSize = property(__maxObjectSize.value, __maxObjectSize.set, None, 'An optional statement of the maximum size in octets \n          (8-bit bytes) of objects this node is willing to accept for\n          replication.')
 
-    
+
     # Element spaceAllocated uses Python identifier spaceAllocated
     __spaceAllocated = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'spaceAllocated'), 'spaceAllocated', '__httpns_dataone_orgservicetypesv1_NodeReplicationPolicy_spaceAllocated', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 663, 6), )
 
-    
+
     spaceAllocated = property(__spaceAllocated.value, __spaceAllocated.set, None, 'An optional statement of the total space in bytes\n          allocated for replication object storage on this\n          node.')
 
-    
+
     # Element allowedNode uses Python identifier allowedNode
     __allowedNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'allowedNode'), 'allowedNode', '__httpns_dataone_orgservicetypesv1_NodeReplicationPolicy_allowedNode', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 671, 6), )
 
-    
+
     allowedNode = property(__allowedNode.value, __allowedNode.set, None, 'An optional, repeatable statement of a peer source\n          node from which this node is willing to replicate content, expressed\n          as a :class:`Types.NodeReference`.')
 
-    
+
     # Element allowedObjectFormat uses Python identifier allowedObjectFormat
     __allowedObjectFormat = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'allowedObjectFormat'), 'allowedObjectFormat', '__httpns_dataone_orgservicetypesv1_NodeReplicationPolicy_allowedObjectFormat', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 679, 6), )
 
-    
+
     allowedObjectFormat = property(__allowedObjectFormat.value, __allowedObjectFormat.set, None, 'An optional, repeatable statement of an object\n          format that this node is willing to replicate, expressed as a\n          :class:`Types.ObjectFormatIdentifier`.')
 
     _ElementMap.update({
@@ -635,7 +635,7 @@ class NodeReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
         __allowedObjectFormat.name() : __allowedObjectFormat
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.NodeReplicationPolicy = NodeReplicationPolicy
 Namespace.addCategoryObject('typeBinding', 'NodeReplicationPolicy', NodeReplicationPolicy)
@@ -654,18 +654,18 @@ class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element node uses Python identifier node
     __node = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'node'), 'node', '__httpns_dataone_orgservicetypesv1_NodeList_node', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 699, 6), )
 
-    
+
     node = property(__node.value, __node.set, None, None)
 
     _ElementMap.update({
         __node.name() : __node
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.NodeList = NodeList
 Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
@@ -687,25 +687,25 @@ class ObjectFormat (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element formatId uses Python identifier formatId
     __formatId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'formatId'), 'formatId', '__httpns_dataone_orgservicetypesv1_ObjectFormat_formatId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 730, 6), )
 
-    
+
     formatId = property(__formatId.value, __formatId.set, None, ' The unique identifier of the object format in the\n          DataONE Object Format Vocabulary. The identifier should comply with\n          DataONE Identifier rules, i.e. no whitespace, only UTF-8 or US-ASCII\n          printable characters.')
 
-    
+
     # Element formatName uses Python identifier formatName
     __formatName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'formatName'), 'formatName', '__httpns_dataone_orgservicetypesv1_ObjectFormat_formatName', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 739, 6), )
 
-    
+
     formatName = property(__formatName.value, __formatName.set, None, 'For objects that are typed using a Document Type\n          Definition, this lists the well-known and accepted named version of\n          the DTD. In other cases, an appropriately unambiguous descriptive\n          name should be chosen.')
 
-    
+
     # Element formatType uses Python identifier formatType
     __formatType = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'formatType'), 'formatType', '__httpns_dataone_orgservicetypesv1_ObjectFormat_formatType', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 748, 6), )
 
-    
+
     formatType = property(__formatType.value, __formatType.set, None, 'A string field indicating whether or not this\n          format is :term:`science data` (*DATA*), :term:`science metadata`\n          (*METADATA*) or a :term:`resource map` (*RESOURCE*). If the format\n          is a self-describing data format that includes science metadata,\n          then the field should also be set to science metadata.\n          ')
 
     _ElementMap.update({
@@ -714,7 +714,7 @@ class ObjectFormat (pyxb.binding.basis.complexTypeDefinition):
         __formatType.name() : __formatType
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectFormat = ObjectFormat
 Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
@@ -732,39 +732,39 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element identifier uses Python identifier identifier
     __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_ObjectInfo_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 790, 8), )
 
-    
+
     identifier = property(__identifier.value, __identifier.set, None, None)
 
-    
+
     # Element formatId uses Python identifier formatId
     __formatId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'formatId'), 'formatId', '__httpns_dataone_orgservicetypesv1_ObjectInfo_formatId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 792, 8), )
 
-    
+
     formatId = property(__formatId.value, __formatId.set, None, None)
 
-    
+
     # Element checksum uses Python identifier checksum
     __checksum = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_ObjectInfo_checksum', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 793, 8), )
 
-    
+
     checksum = property(__checksum.value, __checksum.set, None, None)
 
-    
+
     # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
     __dateSysMetadataModified = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_ObjectInfo_dateSysMetadataModified', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 795, 8), )
 
-    
+
     dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
 
-    
+
     # Element size uses Python identifier size
     __size = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'size'), 'size', '__httpns_dataone_orgservicetypesv1_ObjectInfo_size', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 796, 8), )
 
-    
+
     size = property(__size.value, __size.set, None, None)
 
     _ElementMap.update({
@@ -775,7 +775,7 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
         __size.name() : __size
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectInfo = ObjectInfo
 Namespace.addCategoryObject('typeBinding', 'ObjectInfo', ObjectInfo)
@@ -797,39 +797,39 @@ class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element nodeIdentifier uses Python identifier nodeIdentifier
     __nodeIdentifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv1_ObjectLocation_nodeIdentifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 827, 6), )
 
-    
+
     nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, 'Identifier of the :class:`Types.Node` (the same\n          identifier used in the node registry for identifying the node).\n          ')
 
-    
+
     # Element baseURL uses Python identifier baseURL
     __baseURL = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_ObjectLocation_baseURL', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 835, 6), )
 
-    
+
     baseURL = property(__baseURL.value, __baseURL.set, None, 'The current base URL (the *baseURL* element from\n          the :class:`Types.Node` record) for services implemented on the\n          target node. Used with service version to construct a URL for\n          service calls to this node. Note that complete information on\n          services available on a Node is available from the\n          :func:`CNCore.listNodes` service. ')
 
-    
+
     # Element version uses Python identifier version
     __version = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'version'), 'version', '__httpns_dataone_orgservicetypesv1_ObjectLocation_version', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 845, 6), )
 
-    
+
     version = property(__version.value, __version.set, None, 'The version of services implemented on the node.\n          Used with base url to construct a URL for service calls to this\n          node. Note that complete information on services available on a Node\n          is available from the :func:`CNCore.listNodes` service.\n          ')
 
-    
+
     # Element url uses Python identifier url
     __url = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'url'), 'url', '__httpns_dataone_orgservicetypesv1_ObjectLocation_url', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 855, 6), )
 
-    
+
     url = property(__url.value, __url.set, None, 'The full (absolute) URL that can be used to\n          retrieve the object using the get() method of the rest\n          interface.For example, if identifier was "ABX154", and the\n          node had a base URL of ``http://mn1.dataone.org/mn`` then the value\n          would be \n          ``http://mn1.dataone.org/mn/v1/object/ABX154``')
 
-    
+
     # Element preference uses Python identifier preference
     __preference = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'preference'), 'preference', '__httpns_dataone_orgservicetypesv1_ObjectLocation_preference', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 866, 6), )
 
-    
+
     preference = property(__preference.value, __preference.set, None, 'A weighting parameter that provides a hint to the\n          caller for the relative preference for nodes from which the content\n          should be retrieved. Higher values have higher preference.\n          ')
 
     _ElementMap.update({
@@ -840,7 +840,7 @@ class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
         __preference.name() : __preference
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectLocation = ObjectLocation
 Namespace.addCategoryObject('typeBinding', 'ObjectLocation', ObjectLocation)
@@ -860,18 +860,18 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element identifier uses Python identifier identifier
     __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_ObjectLocationList_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 886, 4), )
 
-    
+
     identifier = property(__identifier.value, __identifier.set, None, 'The :term:`identifier` of the object being\n        resolved.')
 
-    
+
     # Element objectLocation uses Python identifier objectLocation
     __objectLocation = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'objectLocation'), 'objectLocation', '__httpns_dataone_orgservicetypesv1_ObjectLocationList_objectLocation', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 893, 4), )
 
-    
+
     objectLocation = property(__objectLocation.value, __objectLocation.set, None, 'List of nodes from which the object can be\n        retrieved')
 
     _ElementMap.update({
@@ -879,7 +879,7 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
         __objectLocation.name() : __objectLocation
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectLocationList = ObjectLocationList
 Namespace.addCategoryObject('typeBinding', 'ObjectLocationList', ObjectLocationList)
@@ -902,53 +902,53 @@ class Person (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Person_subject', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 915, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, 'The unique, immutable identifier for the\n          *Person*.')
 
-    
+
     # Element givenName uses Python identifier givenName
     __givenName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'givenName'), 'givenName', '__httpns_dataone_orgservicetypesv1_Person_givenName', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 922, 6), )
 
-    
+
     givenName = property(__givenName.value, __givenName.set, None, 'The given name of the *Person*, repeatable if they\n          have more than one given name.')
 
-    
+
     # Element familyName uses Python identifier familyName
     __familyName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'familyName'), 'familyName', '__httpns_dataone_orgservicetypesv1_Person_familyName', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 929, 6), )
 
-    
+
     familyName = property(__familyName.value, __familyName.set, None, 'The family name of the *Person*.')
 
-    
+
     # Element email uses Python identifier email
     __email = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'email'), 'email', '__httpns_dataone_orgservicetypesv1_Person_email', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 935, 6), )
 
-    
+
     email = property(__email.value, __email.set, None, 'The email address of the *Person*, repeatable if\n          they have more than one email address. ')
 
-    
+
     # Element isMemberOf uses Python identifier isMemberOf
     __isMemberOf = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'isMemberOf'), 'isMemberOf', '__httpns_dataone_orgservicetypesv1_Person_isMemberOf', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 942, 6), )
 
-    
+
     isMemberOf = property(__isMemberOf.value, __isMemberOf.set, None, 'A *group* or role in which the *Person* is a member,\n          expressed using the unique :class:`Types.Subject` identifier for\n          that :class:`Types.Group`, and repeatable if they are a member of\n          more than one group. ')
 
-    
+
     # Element equivalentIdentity uses Python identifier equivalentIdentity
     __equivalentIdentity = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'equivalentIdentity'), 'equivalentIdentity', '__httpns_dataone_orgservicetypesv1_Person_equivalentIdentity', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 951, 6), )
 
-    
+
     equivalentIdentity = property(__equivalentIdentity.value, __equivalentIdentity.set, None, 'An alternative but equivalent identity for the\n          :term:`principal` that has been used in alternate identity systems,\n          repeatable if more than one equivalent identity applies.\n          ')
 
-    
+
     # Element verified uses Python identifier verified
     __verified = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'verified'), 'verified', '__httpns_dataone_orgservicetypesv1_Person_verified', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 960, 6), )
 
-    
+
     verified = property(__verified.value, __verified.set, None, "*true* if the name and email address of the\n          *Person* have been :term:`verified` to ensure that the *givenName*\n          and *familyName* represent the real person's legal name, and that\n          the email address is correct for that person and is in the control\n          of the indicated individual. Verification occurs through an\n          established procedure within DataONE as part of the Identity\n          Management system. A Person can not change their own *verified*\n          field, but rather must be verified and changed through this DataONE\n          established process. ")
 
     _ElementMap.update({
@@ -961,7 +961,7 @@ class Person (pyxb.binding.basis.complexTypeDefinition):
         __verified.name() : __verified
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Person = Person
 Namespace.addCategoryObject('typeBinding', 'Person', Person)
@@ -979,24 +979,24 @@ class Ping (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Attribute success uses Python identifier success
     __success = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'success'), 'success', '__httpns_dataone_orgservicetypesv1_Ping_success', pyxb.binding.datatypes.boolean)
     __success._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 991, 4)
     __success._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 991, 4)
-    
+
     success = property(__success.value, __success.set, None, 'A boolean flag indicating *true* if the node was\n        reached by the last :func:`MNCore.ping` or :func:`CNCore.ping` call,\n        otherwise *false*.')
 
-    
+
     # Attribute lastSuccess uses Python identifier lastSuccess
     __lastSuccess = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'lastSuccess'), 'lastSuccess', '__httpns_dataone_orgservicetypesv1_Ping_lastSuccess', pyxb.binding.datatypes.dateTime)
     __lastSuccess._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 998, 4)
     __lastSuccess._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 998, 4)
-    
+
     lastSuccess = property(__lastSuccess.value, __lastSuccess.set, None, 'The date time value (UTC) of the last time a\n        successful ping was performed.')
 
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
         __success.name() : __success,
@@ -1019,25 +1019,25 @@ class Replica (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element replicaMemberNode uses Python identifier replicaMemberNode
     __replicaMemberNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'replicaMemberNode'), 'replicaMemberNode', '__httpns_dataone_orgservicetypesv1_Replica_replicaMemberNode', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1014, 6), )
 
-    
+
     replicaMemberNode = property(__replicaMemberNode.value, __replicaMemberNode.set, None, 'A reference to the Member Node that houses this\n          replica, regardless of whether it has arrived at the Member Node or\n          not. See *replicationStatus* to determine if the replica is\n          completely transferred. ')
 
-    
+
     # Element replicationStatus uses Python identifier replicationStatus
     __replicationStatus = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'replicationStatus'), 'replicationStatus', '__httpns_dataone_orgservicetypesv1_Replica_replicationStatus', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1022, 6), )
 
-    
+
     replicationStatus = property(__replicationStatus.value, __replicationStatus.set, None, ' The current status of this replica, indicating\n          the stage of replication process for the object. Only *completed*\n          replicas should be considered as available. ')
 
-    
+
     # Element replicaVerified uses Python identifier replicaVerified
     __replicaVerified = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'replicaVerified'), 'replicaVerified', '__httpns_dataone_orgservicetypesv1_Replica_replicaVerified', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1029, 6), )
 
-    
+
     replicaVerified = property(__replicaVerified.value, __replicaVerified.set, None, ' The last date and time on which the integrity of\n          a replica was verified by the coordinating node. Verification occurs\n          by checking that the checksum of the stored object matches the\n          checksum recorded for the object in the system\n          metadata.')
 
     _ElementMap.update({
@@ -1046,7 +1046,7 @@ class Replica (pyxb.binding.basis.complexTypeDefinition):
         __replicaVerified.name() : __replicaVerified
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Replica = Replica
 Namespace.addCategoryObject('typeBinding', 'Replica', Replica)
@@ -1067,34 +1067,34 @@ class ReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element preferredMemberNode uses Python identifier preferredMemberNode
     __preferredMemberNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'preferredMemberNode'), 'preferredMemberNode', '__httpns_dataone_orgservicetypesv1_ReplicationPolicy_preferredMemberNode', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1051, 6), )
 
-    
+
     preferredMemberNode = property(__preferredMemberNode.value, __preferredMemberNode.set, None, 'Preferred Nodes are utilized over other nodes as\n          replication targets, up to the number of replicas requested. If\n          preferred nodes are unavailable, or if insufficient nodes are listed\n          as preferred to meet the requested number of replicas, then the\n          Coordinating Nodes will pick additional replica nodes for the\n          content. ')
 
-    
+
     # Element blockedMemberNode uses Python identifier blockedMemberNode
     __blockedMemberNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'blockedMemberNode'), 'blockedMemberNode', '__httpns_dataone_orgservicetypesv1_ReplicationPolicy_blockedMemberNode', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1062, 6), )
 
-    
+
     blockedMemberNode = property(__blockedMemberNode.value, __blockedMemberNode.set, None, 'The object MUST never be replicated to nodes\n          listed as *blockedMemberNodes*. Where there is a conflict between a\n          *preferredMemberNode* and a *blockedMemberNode* entry, the\n          *blockedMemberNode* entry prevails. ')
 
-    
+
     # Attribute replicationAllowed uses Python identifier replicationAllowed
     __replicationAllowed = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'replicationAllowed'), 'replicationAllowed', '__httpns_dataone_orgservicetypesv1_ReplicationPolicy_replicationAllowed', pyxb.binding.datatypes.boolean)
     __replicationAllowed._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1072, 4)
     __replicationAllowed._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1072, 4)
-    
+
     replicationAllowed = property(__replicationAllowed.value, __replicationAllowed.set, None, 'A boolean flag indicating if the object should be\n        replicated (*true*, default) or not (*false*).')
 
-    
+
     # Attribute numberReplicas uses Python identifier numberReplicas
     __numberReplicas = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'numberReplicas'), 'numberReplicas', '__httpns_dataone_orgservicetypesv1_ReplicationPolicy_numberReplicas', pyxb.binding.datatypes.int)
     __numberReplicas._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1078, 4)
     __numberReplicas._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1078, 4)
-    
+
     numberReplicas = property(__numberReplicas.value, __numberReplicas.set, None, 'An integer indicating the number of replicas\n        targeted for this object. Defaults to 3.')
 
     _ElementMap.update({
@@ -1122,18 +1122,18 @@ class Services (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element service uses Python identifier service
     __service = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'service'), 'service', '__httpns_dataone_orgservicetypesv1_Services_service', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1160, 6), )
 
-    
+
     service = property(__service.value, __service.set, None, None)
 
     _ElementMap.update({
         __service.name() : __service
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Services = Services
 Namespace.addCategoryObject('typeBinding', 'Services', Services)
@@ -1158,18 +1158,18 @@ class Session (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Session_subject', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1179, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, None)
 
-    
+
     # Element subjectInfo uses Python identifier subjectInfo
     __subjectInfo = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subjectInfo'), 'subjectInfo', '__httpns_dataone_orgservicetypesv1_Session_subjectInfo', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1181, 6), )
 
-    
+
     subjectInfo = property(__subjectInfo.value, __subjectInfo.set, None, None)
 
     _ElementMap.update({
@@ -1177,7 +1177,7 @@ class Session (pyxb.binding.basis.complexTypeDefinition):
         __subjectInfo.name() : __subjectInfo
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Session = Session
 Namespace.addCategoryObject('typeBinding', 'Session', Session)
@@ -1198,32 +1198,32 @@ class Slice (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Attribute count uses Python identifier count
     __count = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'count'), 'count', '__httpns_dataone_orgservicetypesv1_Slice_count', pyxb.binding.datatypes.int, required=True)
     __count._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1214, 4)
     __count._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1214, 4)
-    
+
     count = property(__count.value, __count.set, None, 'The number of entries in the\n        slice.')
 
-    
+
     # Attribute start uses Python identifier start
     __start = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'start'), 'start', '__httpns_dataone_orgservicetypesv1_Slice_start', pyxb.binding.datatypes.int, required=True)
     __start._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1220, 4)
     __start._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1220, 4)
-    
+
     start = property(__start.value, __start.set, None, 'The zero-based index of the first element in the\n        slice.')
 
-    
+
     # Attribute total uses Python identifier total
     __total = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'total'), 'total', '__httpns_dataone_orgservicetypesv1_Slice_total', pyxb.binding.datatypes.int, required=True)
     __total._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1226, 4)
     __total._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1226, 4)
-    
+
     total = property(__total.value, __total.set, None, 'The total number of entries in the source list from\n        which the slice was extracted.')
 
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
         __count.name() : __count,
@@ -1251,25 +1251,25 @@ class Synchronization (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element schedule uses Python identifier schedule
     __schedule = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'schedule'), 'schedule', '__httpns_dataone_orgservicetypesv1_Synchronization_schedule', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1246, 6), )
 
-    
+
     schedule = property(__schedule.value, __schedule.set, None, 'An entry set by the Member Node indicating the\n          frequency for which synchronization should occur. This setting will\n          be influenced by the frequency with which content is updated on the\n          Member Node and the acceptable latency for detection and subsequent\n          processing of new content.')
 
-    
+
     # Element lastHarvested uses Python identifier lastHarvested
     __lastHarvested = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'lastHarvested'), 'lastHarvested', '__httpns_dataone_orgservicetypesv1_Synchronization_lastHarvested', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1256, 6), )
 
-    
+
     lastHarvested = property(__lastHarvested.value, __lastHarvested.set, None, 'The most recent modification date (UTC) of objects\n          checked during the last harvest of the node.')
 
-    
+
     # Element lastCompleteHarvest uses Python identifier lastCompleteHarvest
     __lastCompleteHarvest = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'lastCompleteHarvest'), 'lastCompleteHarvest', '__httpns_dataone_orgservicetypesv1_Synchronization_lastCompleteHarvest', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1263, 6), )
 
-    
+
     lastCompleteHarvest = property(__lastCompleteHarvest.value, __lastCompleteHarvest.set, None, 'The last time (UTC) all the data from a node was\n          pulled from a member node during a complete synchronization\n          process.')
 
     _ElementMap.update({
@@ -1278,7 +1278,7 @@ class Synchronization (pyxb.binding.basis.complexTypeDefinition):
         __lastCompleteHarvest.name() : __lastCompleteHarvest
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Synchronization = Synchronization
 Namespace.addCategoryObject('typeBinding', 'Synchronization', Synchronization)
@@ -1298,18 +1298,18 @@ class SubjectInfo (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element person uses Python identifier person
     __person = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'person'), 'person', '__httpns_dataone_orgservicetypesv1_SubjectInfo_person', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1305, 6), )
 
-    
+
     person = property(__person.value, __person.set, None, None)
 
-    
+
     # Element group uses Python identifier group
     __group = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'group'), 'group', '__httpns_dataone_orgservicetypesv1_SubjectInfo_group', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1306, 6), )
 
-    
+
     group = property(__group.value, __group.set, None, None)
 
     _ElementMap.update({
@@ -1317,7 +1317,7 @@ class SubjectInfo (pyxb.binding.basis.complexTypeDefinition):
         __group.name() : __group
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.SubjectInfo = SubjectInfo
 Namespace.addCategoryObject('typeBinding', 'SubjectInfo', SubjectInfo)
@@ -1335,18 +1335,18 @@ class SubjectList (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_SubjectList_subject', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1317, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, None)
 
     _ElementMap.update({
         __subject.name() : __subject
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.SubjectList = SubjectList
 Namespace.addCategoryObject('typeBinding', 'SubjectList', SubjectList)
@@ -1385,123 +1385,123 @@ class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element serialVersion uses Python identifier serialVersion
     __serialVersion = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'serialVersion'), 'serialVersion', '__httpns_dataone_orgservicetypesv1_SystemMetadata_serialVersion', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1354, 6), )
 
-    
+
     serialVersion = property(__serialVersion.value, __serialVersion.set, None, ' A serial number maintained by the coordinating node\n            to indicate when changes have occurred to *SystemMetadata* to avoid\n            update conflicts. Clients should ensure that they have the most\n            recent version of a *SystemMetadata* document before attempting to\n            update, otherwise an error will be thrown to prevent conflicts. The\n            Coordinating Node must set this optional field when it receives the\n            system metadata document. ')
 
-    
+
     # Element identifier uses Python identifier identifier
     __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_SystemMetadata_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1366, 6), )
 
-    
+
     identifier = property(__identifier.value, __identifier.set, None, 'The :term:`identifier` is a unique Unicode string\n          that is used to canonically name and identify the object in DataONE.\n          Each object in DataONE is immutable, and therefore all objects must\n          have a unique Identifier. If two objects are related to one another\n          (such as one object is a more recent version of another object),\n          each of these two objects will have unique identifiers. The\n          relationship among the objects is specified in other metadata fields\n          (see *Obsoletes* and *ObsoletedBy*), but this does not preclude the\n          inclusion of version information in the identifier string. However,\n          DataONE treats all Identifiers as opaque and will not try to infer\n          versioning semantics based on the content of the Identifiers --\n          rather, this information is found in the *Obsoletes* and\n          *ObsoletedBy* fields. Note that identifiers are used in a number of\n          REST API calls as parts of the URL path. As such, all special\n          characters such as "/", " ", "+", "\\", "%" must be properly encoded,\n          e.g. "%2F", "%20", "%2B", "%5C", "%25" respectively when used in\n          REST method calls. See RFC3896_ for more details. For example, the\n          :func:`MNRead.get()` call for an object with identifier:``http://some.location.name/mydata.cgi?id=2088``would be:``http://mn1.server.name/mn/v1/object/http:%2F%2Fsome.location.name%2Fmydata.cgi%3Fid%3D2088``.. _RFC3896: http://www.ietf.org/rfc/rfc3896.txt ')
 
-    
+
     # Element formatId uses Python identifier formatId
     __formatId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'formatId'), 'formatId', '__httpns_dataone_orgservicetypesv1_SystemMetadata_formatId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1392, 6), )
 
-    
+
     formatId = property(__formatId.value, __formatId.set, None, ' Designation of the standard or format that should\n          be used to interpret the contents of the object, drawn from\n          controlled list of formats that are provided by the DataONE\n          :class:`Types.ObjectFormat` service. DataONE maintains a list of\n          formats in use and their canonical FormatIdentifiers. The format\n          identifier for an object should imply its mime type for data objects\n          and metadata type and serialization format for metadata objects.\n          Examples include the namespace of the EML 2.1 metadata\n          specification, the DOCTYPE of the Biological Data Profile, the mime\n          type of ``text/csv`` files, and the canonical name of the NetCDF\n          specification. ')
 
-    
+
     # Element size uses Python identifier size
     __size = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'size'), 'size', '__httpns_dataone_orgservicetypesv1_SystemMetadata_size', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1407, 6), )
 
-    
+
     size = property(__size.value, __size.set, None, ' The size of the object in octets (8-bit bytes).\n          ')
 
-    
+
     # Element checksum uses Python identifier checksum
     __checksum = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_SystemMetadata_checksum', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1413, 6), )
 
-    
+
     checksum = property(__checksum.value, __checksum.set, None, ' A calculated hash value used to validate object\n          integrity over time and after network transfers. The value is\n          calculated using a standard hashing algorithm that is accepted by\n          DataONE and that is indicated in the included *ChecksumAlgorithm*\n          attribute. ')
 
-    
+
     # Element submitter uses Python identifier submitter
     __submitter = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'submitter'), 'submitter', '__httpns_dataone_orgservicetypesv1_SystemMetadata_submitter', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1422, 6), )
 
-    
+
     submitter = property(__submitter.value, __submitter.set, None, ':term:`Subject` who submitted the associated\n          abject to the DataONE Member Node. The Member Node must set this\n          field when it receives the system metadata document from a client\n          (the field is optional from the client perspective, but is required\n          when a MN creates an object). By default, the submitter lacks any\n          rights to modify an object, so care must be taken to set\n          *rightsHolder* and *accessPolicy* correctly with a reference to the\n          subject of the submitter if the submitter is to be able to make\n          further changes to the object.')
 
-    
+
     # Element rightsHolder uses Python identifier rightsHolder
     __rightsHolder = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'rightsHolder'), 'rightsHolder', '__httpns_dataone_orgservicetypesv1_SystemMetadata_rightsHolder', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1435, 6), )
 
-    
+
     rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, ':term:`Subject` that has ultimate authority for\n          the object and is authorized to make all decisions regarding the\n          disposition and accessibility of the object. The *rightsHolder* has\n          all rights to access the object, update the object, and grant\n          permissions for the object, even if additional access control rules\n          are not specified for the object. Typically, the *rightsHolder*\n          field would be set to the name of the subject submitting an object,\n          so that the person can make further changes later. By default, the\n          *submitter* lacks any rights to modify an object, so care must be\n          taken to set *rightsHolder* and *accessPolicy* correctly with a\n          reference to the subject of the *submitter* if the *submitter* is to\n          be able to make further changes to the object. ')
 
-    
+
     # Element accessPolicy uses Python identifier accessPolicy
     __accessPolicy = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'accessPolicy'), 'accessPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_accessPolicy', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1451, 6), )
 
-    
+
     accessPolicy = property(__accessPolicy.value, __accessPolicy.set, None, 'The *accessPolicy* determines which\n          :term:`Subjects` are allowed to make changes to an object in\n          addition to the *rightsHolder* and *authoritativeMemberNode*. The\n          *accessPolicy* is set for an object during a\n          :func:`MNStorage.create` or :func:`MNStorage.update` call, or when\n          *SystemMetadata* is updated on the Coordinating Node via various\n          mechanisms. This policy replaces any existing policies that might\n          exist for the object. Member Nodes that house an object are\n          obligated to enforce the *accessPolicy* for that\n          object.')
 
-    
+
     # Element replicationPolicy uses Python identifier replicationPolicy
     __replicationPolicy = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'replicationPolicy'), 'replicationPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replicationPolicy', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1466, 6), )
 
-    
+
     replicationPolicy = property(__replicationPolicy.value, __replicationPolicy.set, None, 'A controlled list of policy choices that determine\n          how many replicas should be maintained for a given object and any\n          preferences or requirements as to which Member Nodes should be\n          allowed to house the replicas. The policy determines whether\n          replication is allowed, the number of replicas desired, the list of\n          preferred nodes to hold the replicas, and a list of blocked nodes on\n          which replicas must not exist.')
 
-    
+
     # Element obsoletes uses Python identifier obsoletes
     __obsoletes = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'obsoletes'), 'obsoletes', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletes', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1478, 6), )
 
-    
+
     obsoletes = property(__obsoletes.value, __obsoletes.set, None, 'The :term:`Identifier` of an object that is a\n          prior version of the object described in this system metadata record\n          and that is obsoleted by this object. When an object is obsoleted,\n          it is removed from all DataONE search indices but is still\n          accessible from the :func:`CNRead.get` service. ')
 
-    
+
     # Element obsoletedBy uses Python identifier obsoletedBy
     __obsoletedBy = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'obsoletedBy'), 'obsoletedBy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletedBy', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1488, 6), )
 
-    
+
     obsoletedBy = property(__obsoletedBy.value, __obsoletedBy.set, None, 'The :term:`Identifier` of an object that is a\n          subsequent version of the object described in this system metadata\n          record and that therefore obsoletes this object. When an object is\n          obsoleted, it is removed from all DataONE search indices but is\n          still accessible from the :func:`CNRead.get` service.\n          ')
 
-    
+
     # Element archived uses Python identifier archived
     __archived = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'archived'), 'archived', '__httpns_dataone_orgservicetypesv1_SystemMetadata_archived', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1499, 6), )
 
-    
+
     archived = property(__archived.value, __archived.set, None, 'A boolean flag, set to *true* if the object has\n          been classified as archived. An archived object does not show up in\n          search indexes in DataONE, but is still accessible via the CNRead\n          and MNRead services if associated access polices allow. The field is\n          optional, and if absent, then objects are implied to not be\n          archived, which is the same as setting archived to\n          *false*.')
 
-    
+
     # Element dateUploaded uses Python identifier dateUploaded
     __dateUploaded = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateUploaded'), 'dateUploaded', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateUploaded', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1510, 6), )
 
-    
+
     dateUploaded = property(__dateUploaded.value, __dateUploaded.set, None, 'Date and time (UTC) that the object was uploaded\n          into the DataONE system, which is typically the time that the object\n          is first created on a Member Node using the :func:`MNStorage.create`\n          operation. Note this is independent of the publication or release\n          date of the object. The Member Node must set this optional field\n          when it receives the system metadata document from a\n          client.')
 
-    
+
     # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
     __dateSysMetadataModified = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateSysMetadataModified', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1522, 6), )
 
-    
+
     dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, ' Date and time (UTC) that this system metadata\n          record was last modified in the DataONE system. This is the same\n          timestamp as *dateUploaded* until the system metadata is further\n          modified. The Member Node must set this optional field when it\n          receives the system metadata document from a\n          client.')
 
-    
+
     # Element originMemberNode uses Python identifier originMemberNode
     __originMemberNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'originMemberNode'), 'originMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_originMemberNode', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1533, 6), )
 
-    
+
     originMemberNode = property(__originMemberNode.value, __originMemberNode.set, None, 'A reference to the Member Node that originally\n          uploaded the associated object. This value should never change, even\n          if the Member Node ceases to exist. ')
 
-    
+
     # Element authoritativeMemberNode uses Python identifier authoritativeMemberNode
     __authoritativeMemberNode = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'authoritativeMemberNode'), 'authoritativeMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_authoritativeMemberNode', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1541, 6), )
 
-    
+
     authoritativeMemberNode = property(__authoritativeMemberNode.value, __authoritativeMemberNode.set, None, ' A reference to the Member Node that acts as the\n          authoritative source for an object in the system. The\n          *authoritativeMemberNode* will often also be the *originMemberNode*,\n          unless there has been a need to transfer authority for an object to\n          a new node, such as when a Member Node becomes defunct. The\n          *authoritativeMemberNode* has all the rights of the *rightsHolder*\n          to maintain and curate the object, including making any changes\n          necessary. ')
 
-    
+
     # Element replica uses Python identifier replica
     __replica = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'replica'), 'replica', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replica', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1554, 6), )
 
-    
+
     replica = property(__replica.value, __replica.set, None, ' A container field used to repeatedly provide\n          several metadata fields about each replica that exists in the\n          system, or is being replicated. Note that a *replica* field exists\n          even for the Authoritative/Origin Member Nodes so that the status of\n          those objects can be tracked. ')
 
     _ElementMap.update({
@@ -1524,7 +1524,7 @@ class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
         __replica.name() : __replica
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.SystemMetadata = SystemMetadata
 Namespace.addCategoryObject('typeBinding', 'SystemMetadata', SystemMetadata)
@@ -1548,16 +1548,16 @@ class Checksum (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.string
-    
+
     # Attribute algorithm uses Python identifier algorithm
     __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_Checksum_algorithm', _module_typeBindings.ChecksumAlgorithm, required=True)
     __algorithm._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 330, 8)
     __algorithm._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 330, 8)
-    
+
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
         __algorithm.name() : __algorithm
@@ -1579,24 +1579,24 @@ class Log (Slice):
     _ElementMap = Slice._ElementMap.copy()
     _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
-    
+
     # Element logEntry uses Python identifier logEntry
     __logEntry = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'logEntry'), 'logEntry', '__httpns_dataone_orgservicetypesv1_Log_logEntry', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 429, 10), )
 
-    
+
     logEntry = property(__logEntry.value, __logEntry.set, None, None)
 
-    
+
     # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
     _ElementMap.update({
         __logEntry.name() : __logEntry
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Log = Log
 Namespace.addCategoryObject('typeBinding', 'Log', Log)
@@ -1615,106 +1615,106 @@ class Node (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element identifier uses Python identifier identifier
     __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_Node_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 516, 6), )
 
-    
+
     identifier = property(__identifier.value, __identifier.set, None, 'A unique identifier for the node of the form \n          ``urn:node:NODEID`` where NODEID is the node specific identifier. \n          This value MUST NOT change for future implementations of the \n          same node, whereas the *baseURL* may change in the future. \n          ')
 
-    
+
     # Element name uses Python identifier name
     __name = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'name'), 'name', '__httpns_dataone_orgservicetypesv1_Node_name', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 526, 6), )
 
-    
+
     name = property(__name.value, __name.set, None, 'A human readable name of the Node. This name can\n          be used as a label in many systems to represent the node, and thus\n          should be short, but understandable. ')
 
-    
+
     # Element description uses Python identifier description
     __description = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'description'), 'description', '__httpns_dataone_orgservicetypesv1_Node_description', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 533, 6), )
 
-    
+
     description = property(__description.value, __description.set, None, 'Description of a Node, explaining the community it\n          serves and other relevant information about the node, such as what\n          content is maintained by this node and any other free style notes.\n          ')
 
-    
+
     # Element baseURL uses Python identifier baseURL
     __baseURL = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_Node_baseURL', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 542, 6), )
 
-    
+
     baseURL = property(__baseURL.value, __baseURL.set, None, 'The base URL of the node, indicating the\n           protocol, fully qualified domain name, and path to the implementing\n           service, excluding the version of the API. e.g.\n           ``https://server.example.edu/app/d1/mn`` rather than\n           ``https://server.example.edu/app/d1/mn/v1``')
 
-    
+
     # Element services uses Python identifier services
     __services = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'services'), 'services', '__httpns_dataone_orgservicetypesv1_Node_services', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 551, 6), )
 
-    
+
     services = property(__services.value, __services.set, None, 'A list of services that are provided by this node.\n          Used in node descriptions so that nodes can provide metadata about\n          each service they implement and support.')
 
-    
+
     # Element synchronization uses Python identifier synchronization
     __synchronization = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'synchronization'), 'synchronization', '__httpns_dataone_orgservicetypesv1_Node_synchronization', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 558, 6), )
 
-    
+
     synchronization = property(__synchronization.value, __synchronization.set, None, 'Configuration information for the process by which\n            content is harvested from Member Nodes to Coordinating Nodes. This\n            includes the schedule on which harvesting should occur, and metadata\n            about the last synchronization attempts for the\n            node.')
 
-    
+
     # Element nodeReplicationPolicy uses Python identifier nodeReplicationPolicy
     __nodeReplicationPolicy = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'nodeReplicationPolicy'), 'nodeReplicationPolicy', '__httpns_dataone_orgservicetypesv1_Node_nodeReplicationPolicy', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 568, 6), )
 
-    
+
     nodeReplicationPolicy = property(__nodeReplicationPolicy.value, __nodeReplicationPolicy.set, None, 'The replication policy for this node that expresses\n            constraints on object size, total objects, source nodes, and object\n            format types. A node may want to restrict replication from only\n            certain peer nodes, may have file size limits, total allocated size\n            limits, or may want to focus on being a replica target for\n            domain-specific object formats.')
 
-    
+
     # Element ping uses Python identifier ping
     __ping = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'ping'), 'ping', '__httpns_dataone_orgservicetypesv1_Node_ping', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 579, 6), )
 
-    
+
     ping = property(__ping.value, __ping.set, None, 'Stored results from the :func:`MNCore.ping` and\n           :func:`CNCore.ping` methods.')
 
-    
+
     # Element subject uses Python identifier subject
     __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Node_subject', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 585, 6), )
 
-    
+
     subject = property(__subject.value, __subject.set, None, 'The :term:`Subject` of this node, which can be\n          repeated as needed. The *Node.subject* represents the identifier of\n          the node that would be found in X.509 certificates used to securely\n          communicate with this node. Thus, it is an :term:`X.509\n          Distinguished Name` that applies to the host on which the Node is\n          operating. When (and if) this hostname changes the new subject for\n          the node would be added to the Node to track the subject that has\n          been used in various access control rules over time.\n          ')
 
-    
+
     # Element contactSubject uses Python identifier contactSubject
     __contactSubject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'contactSubject'), 'contactSubject', '__httpns_dataone_orgservicetypesv1_Node_contactSubject', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 599, 6), )
 
-    
+
     contactSubject = property(__contactSubject.value, __contactSubject.set, None, 'The appropriate person or group to contact\n          regarding the disposition, management, and status of this Member\n          Node. The *Node.contactSubject* is an :term:`X.509 Distinguished\n          Name` for a person or group that can be used to look up current\n          contact details (e.g., name, email address) for the contact in the\n          DataONE Identity service. DataONE uses the *contactSubject* to\n          provide notices of interest to DataONE nodes, including information\n          such as policy changes, maintenance updates, node outage\n          notifications, among other information useful for administering a\n          node. Each node that is registered with DataONE must provide at\n          least one *contactSubject* that has been :term:`verified` with\n          DataONE. ')
 
-    
+
     # Attribute replicate uses Python identifier replicate
     __replicate = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'replicate'), 'replicate', '__httpns_dataone_orgservicetypesv1_Node_replicate', pyxb.binding.datatypes.boolean, required=True)
     __replicate._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 617, 4)
     __replicate._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 617, 4)
-    
+
     replicate = property(__replicate.value, __replicate.set, None, 'Set to *true* if the node is willing to be a\n        :term:`replication target`, otherwise *false*.')
 
-    
+
     # Attribute synchronize uses Python identifier synchronize
     __synchronize = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'synchronize'), 'synchronize', '__httpns_dataone_orgservicetypesv1_Node_synchronize', pyxb.binding.datatypes.boolean, required=True)
     __synchronize._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 623, 4)
     __synchronize._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 623, 4)
-    
+
     synchronize = property(__synchronize.value, __synchronize.set, None, 'Set to *true* if the node should be\n        :term:`synchronized` by a Coordinating Node, otherwise\n        *false*.')
 
-    
+
     # Attribute type uses Python identifier type
     __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'type'), 'type', '__httpns_dataone_orgservicetypesv1_Node_type', _module_typeBindings.NodeType, required=True)
     __type._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 630, 4)
     __type._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 630, 4)
-    
+
     type = property(__type.value, __type.set, None, 'The type of the node (Coordinating, Member), chosen \n        from the :class:`Types.NodeType` type.')
 
-    
+
     # Attribute state uses Python identifier state
     __state = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'state'), 'state', '__httpns_dataone_orgservicetypesv1_Node_state', _module_typeBindings.NodeState, required=True)
     __state._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 636, 4)
     __state._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 636, 4)
-    
+
     state = property(__state.value, __state.set, None, 'The state of the node (*up*, *down*), chosen from\n        the :class:`Types.NodeState` type.')
 
     _ElementMap.update({
@@ -1754,10 +1754,10 @@ class NodeReference (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is NonEmptyString
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.NodeReference = NodeReference
 Namespace.addCategoryObject('typeBinding', 'NodeReference', NodeReference)
@@ -1780,24 +1780,24 @@ class ObjectFormatList (Slice):
     _ElementMap = Slice._ElementMap.copy()
     _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
-    
+
     # Element objectFormat uses Python identifier objectFormat
     __objectFormat = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'objectFormat'), 'objectFormat', '__httpns_dataone_orgservicetypesv1_ObjectFormatList_objectFormat', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 776, 10), )
 
-    
+
     objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
 
-    
+
     # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
     _ElementMap.update({
         __objectFormat.name() : __objectFormat
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectFormatList = ObjectFormatList
 Namespace.addCategoryObject('typeBinding', 'ObjectFormatList', ObjectFormatList)
@@ -1815,24 +1815,24 @@ class ObjectList (Slice):
     _ElementMap = Slice._ElementMap.copy()
     _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
-    
+
     # Element objectInfo uses Python identifier objectInfo
     __objectInfo = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'objectInfo'), 'objectInfo', '__httpns_dataone_orgservicetypesv1_ObjectList_objectInfo', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 809, 10), )
 
-    
+
     objectInfo = property(__objectInfo.value, __objectInfo.set, None, None)
 
-    
+
     # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
+
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
     _ElementMap.update({
         __objectInfo.name() : __objectInfo
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.ObjectList = ObjectList
 Namespace.addCategoryObject('typeBinding', 'ObjectList', ObjectList)
@@ -1853,18 +1853,18 @@ class ServiceMethodRestriction (SubjectList):
     _ElementMap = SubjectList._ElementMap.copy()
     _AttributeMap = SubjectList._AttributeMap.copy()
     # Base type is SubjectList
-    
+
     # Element subject (subject) inherited from {http://ns.dataone.org/service/types/v1}SubjectList
-    
+
     # Attribute methodName uses Python identifier methodName
     __methodName = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'methodName'), 'methodName', '__httpns_dataone_orgservicetypesv1_ServiceMethodRestriction_methodName', pyxb.binding.datatypes.string, required=True)
     __methodName._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1142, 6)
     __methodName._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1142, 6)
-    
+
     methodName = property(__methodName.value, __methodName.set, None, 'The formal name of the method in this *Service*\n          which is to be restricted.')
 
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
         __methodName.name() : __methodName
@@ -1888,64 +1888,64 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Attribute hour uses Python identifier hour
     __hour = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'hour'), 'hour', '__httpns_dataone_orgservicetypesv1_Schedule_hour', _module_typeBindings.CrontabEntry, required=True)
     __hour._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1195, 4)
     __hour._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1195, 4)
-    
+
     hour = property(__hour.value, __hour.set, None, None)
 
-    
+
     # Attribute mday uses Python identifier mday
     __mday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'mday'), 'mday', '__httpns_dataone_orgservicetypesv1_Schedule_mday', _module_typeBindings.CrontabEntry, required=True)
     __mday._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1196, 4)
     __mday._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1196, 4)
-    
+
     mday = property(__mday.value, __mday.set, None, None)
 
-    
+
     # Attribute min uses Python identifier min
     __min = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'min'), 'min', '__httpns_dataone_orgservicetypesv1_Schedule_min', _module_typeBindings.CrontabEntry, required=True)
     __min._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1197, 4)
     __min._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1197, 4)
-    
+
     min = property(__min.value, __min.set, None, None)
 
-    
+
     # Attribute mon uses Python identifier mon
     __mon = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'mon'), 'mon', '__httpns_dataone_orgservicetypesv1_Schedule_mon', _module_typeBindings.CrontabEntry, required=True)
     __mon._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1198, 4)
     __mon._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1198, 4)
-    
+
     mon = property(__mon.value, __mon.set, None, None)
 
-    
+
     # Attribute sec uses Python identifier sec
     __sec = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'sec'), 'sec', '__httpns_dataone_orgservicetypesv1_Schedule_sec', _module_typeBindings.CrontabEntrySeconds, required=True)
     __sec._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1199, 4)
     __sec._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1199, 4)
-    
+
     sec = property(__sec.value, __sec.set, None, None)
 
-    
+
     # Attribute wday uses Python identifier wday
     __wday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'wday'), 'wday', '__httpns_dataone_orgservicetypesv1_Schedule_wday', _module_typeBindings.CrontabEntry, required=True)
     __wday._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1200, 4)
     __wday._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1200, 4)
-    
+
     wday = property(__wday.value, __wday.set, None, None)
 
-    
+
     # Attribute year uses Python identifier year
     __year = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'year'), 'year', '__httpns_dataone_orgservicetypesv1_Schedule_year', _module_typeBindings.CrontabEntry, required=True)
     __year._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1201, 4)
     __year._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1201, 4)
-    
+
     year = property(__year.value, __year.set, None, None)
 
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
         __hour.name() : __hour,
@@ -1978,10 +1978,10 @@ class Subject (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is NonEmptyString
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Subject = Subject
 Namespace.addCategoryObject('typeBinding', 'Subject', Subject)
@@ -2003,35 +2003,35 @@ class Service (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
-    
+
     # Element restriction uses Python identifier restriction
     __restriction = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'restriction'), 'restriction', '__httpns_dataone_orgservicetypesv1_Service_restriction', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1097, 6), )
 
-    
+
     restriction = property(__restriction.value, __restriction.set, None, 'A list of method names and :term:`Subjects` with\n          permission to invoke those methods.')
 
-    
+
     # Attribute name uses Python identifier name
     __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'name'), 'name', '__httpns_dataone_orgservicetypesv1_Service_name', _module_typeBindings.ServiceName, required=True)
     __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1105, 4)
     __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1105, 4)
-    
+
     name = property(__name.value, __name.set, None, 'The name of the service. The valid list of entries\n        for Member Nodes includes: *MNCore*, *MNRead*, *MNAuthorization*,\n        *MNStorage*, and *MNReplication*. The valid list of entries for\n        Coordinating Nodes includes: *CNCore*, *CNRead*, *CNAuthorization*,\n        *CNIdentity*, *CNReplication*, and *CNRegister*.')
 
-    
+
     # Attribute version uses Python identifier version
     __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'version'), 'version', '__httpns_dataone_orgservicetypesv1_Service_version', _module_typeBindings.ServiceVersion, required=True)
     __version._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1114, 4)
     __version._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1114, 4)
-    
+
     version = property(__version.value, __version.set, None, 'Version of the service supported by the node.\n        Version is expressed in whole steps, no minor version identifiers are\n        used. For example, the version 1.0.0 API would be indicated by the\n        value "v1"')
 
-    
+
     # Attribute available uses Python identifier available
     __available = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'available'), 'available', '__httpns_dataone_orgservicetypesv1_Service_available', pyxb.binding.datatypes.boolean)
     __available._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1122, 4)
     __available._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1122, 4)
-    
+
     available = property(__available.value, __available.set, None, 'A boolean flag indicating if the service is\n        available (*true*, default) or otherwise (*false*).\n        ')
 
     _ElementMap.update({
@@ -2058,7 +2058,7 @@ class Identifier (pyxb.binding.basis.complexTypeDefinition):
       and a variety of other properties designed for preservation and
       longevity. Some discussion on this is described in the `PID
       documentation`_ and in decision `ticket 577`_. .. _ticket 577: https://redmine.dataone.org/issues/577
-      .. _PID documentation: http://mule1.dataone.org/ArchitectureDocs-current/design/PIDs.html
+      .. _PID documentation: https://releases.dataone.org/online/api-documentation-v2.0.1/design/PIDs.html
       """
     _TypeDefinition = NonEmptyNoWhitespaceString800
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
@@ -2069,10 +2069,10 @@ class Identifier (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is NonEmptyNoWhitespaceString800
     _ElementMap.update({
-        
+
     })
     _AttributeMap.update({
-        
+
     })
 _module_typeBindings.Identifier = Identifier
 Namespace.addCategoryObject('typeBinding', 'Identifier', Identifier)
