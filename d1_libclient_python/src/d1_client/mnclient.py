@@ -52,7 +52,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
   # ============================================================================
 
   # MNCore.getCapabilities() → Node
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getCapabilities
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getCapabilities
 
   def getCapabilitiesResponse(self, vendorSpecific=None):
     return self.GET('node', headers=vendorSpecific)
@@ -66,7 +66,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
   # ============================================================================
 
   # MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getChecksum
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getChecksum
 
   @d1_common.util.utf8_to_unicode
   def getChecksumResponse(
@@ -83,7 +83,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Checksum')
 
   # MNRead.synchronizationFailed(session, message) → Boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.synchronizationFailed
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.synchronizationFailed
 
   @d1_common.util.utf8_to_unicode
   def synchronizationFailedResponse(self, message, vendorSpecific=None):
@@ -102,7 +102,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
   # ============================================================================
 
   # MNStorage.create(session, pid, object, sysmeta) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.create
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.create
 
   @d1_common.util.utf8_to_unicode
   def createResponse(self, pid, obj, sysmeta_pyxb, vendorSpecific=None):
@@ -121,7 +121,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Identifier')
 
   # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.update
 
   @d1_common.util.utf8_to_unicode
   def updateResponse(self, pid, obj, newPid, sysmeta_pyxb, vendorSpecific=None):
@@ -140,7 +140,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Identifier')
 
   # MNStorage.delete(session, pid) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.delete
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.delete
 
   @d1_common.util.utf8_to_unicode
   def deleteResponse(self, pid, vendorSpecific=None):
@@ -153,7 +153,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response, 'Identifier')
 
   # MNStorage.systemMetadataChanged(session, pid, serialVersion, dateSysMetaLastModified) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.systemMetadataChanged
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.systemMetadataChanged
 
   @d1_common.util.utf8_to_unicode
   def systemMetadataChangedResponse(
@@ -185,7 +185,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
   # ============================================================================
 
   # MNReplication.replicate(session, sysmeta, sourceNode) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.replicate
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNReplication.replicate
 
   @d1_common.util.utf8_to_unicode
   def replicateResponse(self, sysmeta_pyxb, sourceNode, vendorSpecific=None):
@@ -201,7 +201,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   # MNReplication.getReplica(session) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.getReplica
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNReplication.getReplica
 
   @d1_common.util.utf8_to_unicode
   def getReplicaResponse(self, pid, vendorSpecific=None):

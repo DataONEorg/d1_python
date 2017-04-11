@@ -28,7 +28,8 @@
   Includes convenience functions to perform the most common parsing and
   generating tasks for Resource Maps.
 
-  See `Data Packaging <http://mule1.dataone.org/ArchitectureDocs-current/design/DataPackage.html>`_
+  See `Data Packaging
+  <https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html>`_
   for more information about how Resource Maps are used in DataONE.
 :Created: 2012-03-29
 :Author: DataONE (Vieglais, Dahl)

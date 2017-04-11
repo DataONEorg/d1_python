@@ -50,7 +50,7 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
   #=============================================================================
 
   # CNRead.query(session, queryEngine, query) → OctetStream
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.query
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
   # MNQuery.query(session, queryEngine, query) → OctetStream
   # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
 
@@ -64,7 +64,7 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
     return self._read_stream_response(response)
 
   # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
   # MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
   # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.getQueryEngineDescription
 
