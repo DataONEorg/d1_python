@@ -28,6 +28,7 @@ import d1_test.mock_api.create
 import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.generate_identifier
 import d1_test.mock_api.is_authorized
+import d1_test.mock_api.query
 
 
 def init(base_url):
@@ -41,3 +42,4 @@ def init(base_url):
   d1_test.mock_api.get_system_metadata.init(base_url)
   d1_test.mock_api.generate_identifier.init(base_url)
   d1_test.mock_api.is_authorized.init(base_url)
+  d1_test.mock_api.query.init(base_url)

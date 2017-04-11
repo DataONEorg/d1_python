@@ -27,11 +27,13 @@ import hashlib
 import random
 import re
 import urlparse
+import json
 
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.url
 import d1_test.mock_api
+import d1_test.mock_api.d1_exception
 
 N_TOTAL = 100
 NUM_SCIOBJ_BYTES = 1024
@@ -97,6 +99,30 @@ def generate_sysmeta(pyxb_bindings, pid):
     pyxb_bindings, pid, sciobj_str
   )
   return sciobj_str, sysmeta_pyxb
+
+
+def echo_get_callback(request):
+  """Generic callback that echoes GET requests"""
+  # Return DataONEException if triggered
+  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+  if exc_response_tup:
+    return exc_response_tup
+  # Return regular response
+  url_obj = urlparse.urlparse(request.url)
+  header_dict = {
+    'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
+  }
+  body_dict = {
+    'body_str': request.body,
+    'query_dict': urlparse.parse_qs(url_obj.query),
+    'header_dict': dict(request.headers),
+  }
+  return 200, header_dict, json.dumps(body_dict)
+
+
+#
+# Private
+#
 
 
 def _generate_system_metadata_for_sciobj_str(pyxb_bindings, pid, sciobj_str):
