@@ -1,3 +1,7 @@
 [report]
 omit =
     */dist-packages/*
+    */generated/*
+    */tests/*
+
+
