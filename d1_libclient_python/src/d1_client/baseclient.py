@@ -380,7 +380,7 @@ class DataONEBaseClient(session.Session):
     try:
       response = self.pingResponse(vendorSpecific=vendorSpecific)
       return self._read_boolean_response(response)
-    except:
+    except d1_common.types.exceptions.DataONEExceptionException:
       return False
 
   # ----------------------------------------------------------------------------
@@ -429,9 +429,9 @@ class DataONEBaseClient(session.Session):
   @d1_common.util.utf8_to_unicode
   def describe(self, pid, vendorSpecific=None):
     """Note: If the server returns a status code other than 200 OK, a
-        ServiceFailure will be raised, as this method is based on a HEAD request,
-        which cannot carry exception information.
-        """
+    ServiceFailure will be raised, as this method is based on a HEAD request,
+    which cannot carry exception information.
+    """
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_header_response(response)
 
@@ -485,10 +485,11 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def generateIdentifierResponse(self, scheme, fragment=None):
-    mmp_dict = [
-      ('scheme', scheme.encode('utf-8')),
-      ('fragment', fragment.encode('utf-8')),
-    ]
+    mmp_dict = {
+      'scheme': scheme.encode('utf-8'),
+    }
+    if fragment is not None:
+      mmp_dict['fragment'] = fragment.encode('utf-8')
     return self.POST('generate', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
