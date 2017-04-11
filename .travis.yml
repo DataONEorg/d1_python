@@ -17,17 +17,18 @@ script:
   - cd $TRAVIS_BUILD_DIR/d1_common_python/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_libclient_python/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_client_cli/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_test_utilities_python/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src/gmn && python ../setup.py develop
   # Debug
   - python -c "import sys; print '\n'.join(sys.path)"
   #- ls -l /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
   # Run the tests
   - nosetests --with-coverage
-    --cover-package d1_common
-    --cover-package d1_client
-    --cover-package d1_test
-    $TRAVIS_BUILD_DIR
+    $TRAVIS_BUILD_DIR/d1_common_python/src
+    $TRAVIS_BUILD_DIR/d1_libclient_python/src
+    $TRAVIS_BUILD_DIR/d1_client_cli/src
+    $TRAVIS_BUILD_DIR/d1_test_utilities_python/src
+    $TRAVIS_BUILD_DIR/d1_mn_generic/src
 after_success:
   # coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
