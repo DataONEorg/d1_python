@@ -121,9 +121,23 @@ def create_exception_by_name(
     # The defined types are not enumerated in the schema so it is possible to
     # have a document that validates against the schema but is not a valid
     # DataONE exception.
-    raise DataONEExceptionException(
-      'Attempted to deserialize unknown DataONE Exception: {0}'.format(name)
-    )
+    dataone_exception = ServiceFailure
+  return dataone_exception(
+    detailCode, description, traceInformation, identifier, nodeId
+  )
+
+
+def create_exception_by_error_code(
+    errorCode, detailCode="0", description='', traceInformation=None,
+    identifier=None, nodeId=None
+):
+  try:
+    dataone_exception = ERROR_CODE_TO_EXCEPTION_DICT[errorCode]
+  except LookupError:
+    # The defined types are not enumerated in the schema so it is possible to
+    # have a document that validates against the schema but is not a valid
+    # DataONE exception. In this case, we create a ServiceFailure.
+    dataone_exception = ServiceFailure
   return dataone_exception(
     detailCode, description, traceInformation, identifier, nodeId
   )
@@ -224,35 +238,31 @@ class DataONEException(Exception):
     return self.serialize()
 
   def serialize_to_headers(self):
-    """Serialize to a list of HTTP headers (used in responses to HTTP HEAD
-    requests).
+    """Serialize to a list of HTTP headers
+    Used in responses to HTTP HEAD requests.
     """
-    headers = []
-    self._append_header(
-      headers, 'DataONE-Exception-Name', self.__class__.__name__
-    )
-    self._append_header(
-      headers, 'DataONE-Exception-ErrorCode', str(self.errorCode)
-    )
-    self._append_header(
-      headers, 'DataONE-Exception-DetailCode', str(self.detailCode)
-    )
-    self._append_header(
-      headers, 'DataONE-Exception-Description', self.description
-    )
-    self._append_header(
-      headers, 'DataONE-Exception-TraceInformation',
-      self.traceInformation[:1024] if self.traceInformation else None
-    )
-    self._append_header(
-      headers, 'DataONE-Exception-Identifier', self.identifier
-    )
-    self._append_header(headers, 'DataONE-Exception-NodeID', self.nodeId)
-    return headers
+    return {
+      'DataONE-Exception-Name':
+        self.__class__.__name__,
+      'DataONE-Exception-ErrorCode':
+        self._format_header(self.errorCode),
+      'DataONE-Exception-DetailCode':
+        self._format_header(self.detailCode),
+      'DataONE-Exception-Description':
+        self._format_header(self.description),
+      'DataONE-Exception-TraceInformation':
+        self._format_header(self.traceInformation),
+      'DataONE-Exception-Identifier':
+        self._format_header(self.identifier),
+      'DataONE-Exception-NodeID':
+        self._format_header(self.nodeId),
+    }
 
-  def _append_header(self, headers, k, v):
-    if v is not None:
-      headers.append((k, v.replace(u'\n', u' / ')))
+  def _format_header(self, v):
+    if v is None:
+      return ''
+    else:
+      return str(v)[:1024].replace(u'\n', u' / ')
 
   @property
   def name(self):
@@ -362,12 +372,13 @@ class NotFound(DataONEException):
       self, detailCode, description=None, traceInformation=None,
       identifier=None, nodeId=None
   ):
+    # TODO: add link to resolve()
     DataONEException.__init__(
       self, 404, detailCode, description, traceInformation, identifier, nodeId
     )
-    #TODO: add link to resolve()
 
 
+# noinspection PyShadowingBuiltins
 class NotImplemented(DataONEException):
   def __init__(
       self, detailCode, description=None, traceInformation=None,
@@ -431,3 +442,39 @@ class VersionMismatch(DataONEException):
 class DataONEExceptionException(Exception):
   """Hold exceptions raised when processing DataONEExceptions."""
   pass
+
+
+ERROR_CODE_TO_EXCEPTION_DICT = {
+  # 400: InvalidRequest,
+  400: InvalidSystemMetadata,
+  # 400: UnsupportedMetadataType,
+  # 400: UnsupportedType,
+  # 401: InvalidCredentials,
+  # 401: InvalidToken,
+  401: NotAuthorized,
+  404: NotFound,
+  408: AuthenticationTimeout,
+  409: IdentifierNotUnique,
+  # 409: VersionMismatch,
+  413: InsufficientResources,
+  500: ServiceFailure,
+  501: NotImplemented,
+}
+
+NAME_TO_EXCEPTION_DICT = {
+  u'AuthenticationTimeout': AuthenticationTimeout,
+  u'IdentifierNotUnique': IdentifierNotUnique,
+  u'InsufficientResources': InsufficientResources,
+  u'InvalidCredentials': InvalidCredentials,
+  u'InvalidRequest': InvalidRequest,
+  u'InvalidSystemMetadata': InvalidSystemMetadata,
+  u'InvalidToken': InvalidToken,
+  u'NotAuthorized': NotAuthorized,
+  u'NotFound': NotFound,
+  u'NotImplemented': NotImplemented,
+  u'ServiceFailure': ServiceFailure,
+  u'UnsupportedMetadataType': UnsupportedMetadataType,
+  u'UnsupportedType': UnsupportedType,
+  u'SynchronizationFailed': SynchronizationFailed,
+  u'VersionMismatch': VersionMismatch,
+}
