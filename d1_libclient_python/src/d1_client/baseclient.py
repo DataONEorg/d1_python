@@ -372,8 +372,7 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def pingResponse(self, vendorSpecific=None):
-    url = 'monitor/ping'
-    response = self.GET(url, headers=vendorSpecific)
+    response = self.GET(['monitor', 'ping'], headers=vendorSpecific)
     return response
 
   @d1_common.util.utf8_to_unicode
