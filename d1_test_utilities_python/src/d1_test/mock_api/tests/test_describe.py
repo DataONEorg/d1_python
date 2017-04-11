@@ -18,26 +18,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes_v2_0
 import d1_common.util
+import d1_common.xml
 
-# 3rd party
+import d1_test.mock_api.describe as mock_describe
+import d1_test.mock_api.tests.settings as settings
 import responses
 
-# D1
-import d1_common.types.generated.dataoneTypes_v2_0
 
-# App
-import d1_test.mock_api.log_records as mock_log_records
-import d1_test.mock_api.tests.settings as settings
-
-
-class TestMockLogRecords(
+class TestMockDescribe(
     d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
@@ -48,9 +43,16 @@ class TestMockLogRecords(
 
   @responses.activate
   def test_0010(self):
-    """mock_api.getLogRecords() returns a DataONE Log PyXB object"""
-    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.getLogRecords(),
-      d1_common.types.generated.dataoneTypes_v2_0.Log,
-    )
+    """mock_api.describe(): Returns a dict with the expected headers"""
+    mock_describe.init(settings.MN_RESPONSES_BASE_URL)
+    header_dict = self.client.describe('test_pid')
+    self.assertIn('Last-Modified', header_dict)
+    del header_dict['Last-Modified']
+    expected_header_dict = {
+      'Content-Length': '1024',
+      'DataONE-SerialVersion': '3',
+      'DataONE-Checksum': 'SHA-1,8982dcc9ac4b2ae603392d85cb30be3c1fe4f964',
+      'DataONE-FormatId': u'application/octet-stream',
+      u'Content-Type': 'application/octet-stream',
+    }
+    self.assertDictEqual(expected_header_dict, dict(header_dict))

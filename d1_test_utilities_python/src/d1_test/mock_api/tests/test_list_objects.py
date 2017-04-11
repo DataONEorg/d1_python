@@ -19,7 +19,7 @@
 # limitations under the License.
 
 # D1
-import d1_client.cnclient_2_0
+import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.test_case_with_url_compare
@@ -30,39 +30,47 @@ import d1_common.util
 import responses
 
 # D1
-import d1_common.types.generated.dataoneTypes_v2_0
+import d1_common.types.dataoneTypes_v2_0
 
 # App
-import d1_test.mock_api.object_format_list as mock_object_format_list
+import d1_test.mock_api.list_objects as mock_object_list
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockObjectFormatList(
+class TestMockObjectList(
     d1_common.test_case_with_url_compare.TestCaseWithURLCompare
 ):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+      base_url=settings.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
-    """mock_api.listFormats() returns a objectFormatList PyXB object"""
-    mock_object_format_list.init(settings.CN_RESPONSES_BASE_URL)
+    """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
+    mock_object_list.init(settings.MN_RESPONSES_BASE_URL)
     self.assertIsInstance(
-      self.client.listFormats(),
-      d1_common.types.generated.dataoneTypes_v2_0.ObjectFormatList,
+      self.client.listObjects(), d1_common.types.dataoneTypes_v2_0.ObjectList
     )
 
   @responses.activate
   def test_0011(self):
-    """mock_api.listFormats() returns a populated objectFormatList"""
-    mock_object_format_list.init(settings.CN_RESPONSES_BASE_URL)
-    object_format_list = self.client.listFormats()
-    self.assertEqual(len(object_format_list.objectFormat), 100)
-    for object_format in object_format_list.objectFormat:
-      self.assertEqual(object_format.formatId, 'format_id_0')
+    """mock_api.listObjects() returns a populated ObjectList"""
+    mock_object_list.init(settings.MN_RESPONSES_BASE_URL)
+    object_list = self.client.listObjects()
+    self.assertEqual(len(object_list.objectInfo), 100)
+    for object_info in object_list.objectInfo:
+      self.assertEqual(object_info.formatId, 'text/plain')
       break
+
+  @responses.activate
+  def test_0012(self):
+    """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
+    mock_object_list.init(settings.MN_RESPONSES_BASE_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.ServiceFailure, self.client.listObjects,
+      vendorSpecific={'trigger': '500'}
+    )
 
   # TODO: More tests

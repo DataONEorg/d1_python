@@ -30,7 +30,6 @@ Module d1_instance_generator.tests.test_systemmetadata
 # Stdlib
 import hashlib
 import logging
-import sys
 import unittest
 
 # D1
@@ -40,8 +39,7 @@ import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
-sys.path.append('../generator/')
-import systemmetadata # noqa: E402
+import d1_test.instance_generator.systemmetadata as systemmetadata
 
 #===============================================================================
 

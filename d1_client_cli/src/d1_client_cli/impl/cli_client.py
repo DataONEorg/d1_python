@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`cli_client`
-=================
-
-:Synopsis: CN and MN clients of the DataONE Command Line Interface
-:Created: 2012-03-21
-:Author: DataONE (Pippin)
+"""CN and MN clients of the DataONE Command Line Interface
 
 The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
@@ -34,7 +28,7 @@ This is just a placeholder for now. May remove.
 import d1_client
 import d1_client.mnclient
 import d1_client.cnclient
-import d1_client.d1baseclient
+import d1_client.baseclient
 
 
 class CLIClient(object):
@@ -61,6 +55,6 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
 #===============================================================================
 
 
-class CLIBaseClient(d1_client.d1baseclient.DataONEBaseClient):
+class CLIBaseClient(d1_client.baseclient.DataONEBaseClient):
   def __init__(self, *args, **kwargs):
     super(CLIBaseClient, self).__init__(*args, **kwargs)

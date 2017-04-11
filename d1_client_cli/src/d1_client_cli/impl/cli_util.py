@@ -18,14 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`cli_util`
-===============
-
-:Synopsis: Utilities shared between components of the DataONE Command Line
-  Interface
-:Created: 2012-03-07
-:Author: DataONE (Dahl)
+"""Utilities shared between components of the DataONE Command Line
 """
 
 # Stdlib
@@ -37,7 +30,7 @@ import sys
 import urlparse
 
 # DataONE
-import cli_exceptions
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 
 def get_host(url):

@@ -1,4 +1,7 @@
 [report]
 omit =
-    */python?.?/*
-    */site-packages/*
+    */dist-packages/*
+    */generated/*
+    */tests/*
+
+

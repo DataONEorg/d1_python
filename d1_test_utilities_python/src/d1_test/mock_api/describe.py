@@ -18,46 +18,42 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock MNRead.get() → OctetStream
-GET /object/{id}
+"""Mock:
 
-- Will always return the same bytes for a given PID.
-- If the PID is as an integer, it is returned as a status code.
+CNRead.describe(session, pid) → DescribeResponse
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.describe
+MNRead.describe(session, pid) → DescribeResponse
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
 A DataONEException can be triggered by adding a custom header named "trigger"
 with the status code of the error to trigger, using vendorSpecific parameter.
 E.g.:
 
-client.get(..., vendorSpecific={'trigger': '404'})
-
-A NotFound exception can be triggered by passing a pid that starts with
-"unknown_". E.g.:
-
-client.get('unknown_pid')
+client.describe(..., vendorSpecific={'trigger': '404'})
 """
 
-# Stdlib
 import re
 
-# D1
+import d1_common.checksum
 import d1_common.const
-import d1_common.types.exceptions
+import d1_common.date_time
+import d1_common.type_conversions
 import d1_common.url
 import d1_test.mock_api.d1_exception
-# App
 import d1_test.mock_api.util
-# 3rd party
 import responses
+
 # Config
 
-GET_ENDPOINT_RX = r'v([123])/object/(.*)'
+DESCRIBE_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
 def init(base_url):
   responses.add_callback(
-    responses.GET,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)),
+    responses.HEAD,
+    re.compile(
+      r'^' + d1_common.url.joinPathElements(base_url, DESCRIBE_ENDPOINT_RX)
+    ),
     callback=_request_callback,
     content_type='',
   )
@@ -69,22 +65,39 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid, pyxb_bindings = _parse_get_url(request.url)
+  pid, pyxb_bindings = _parse_meta_url(request.url)
   if pid.startswith('unknown_'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  body_str = d1_test.mock_api.util.generate_sciobj_bytes(pid)
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
-  }
-  return 200, header_dict, body_str
+  sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(
+    pyxb_bindings, pid
+  )
+  header_dict = _create_headers(sciobj_str, sysmeta_pyxb)
+  return 200, header_dict, ''
 
 
-def _parse_get_url(url):
+def _parse_meta_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'object'
-  assert len(param_list) == 1, 'get() accepts a single parameter, the PID'
-  assert query_dict == {}, 'get() does not accept any query parameters'
+  assert len(param_list) == 1, 'describe() accepts a single parameter, the PID'
   return param_list[0], pyxb_bindings
+
+
+def _create_headers(sciobj_str, sysmeta_pyxb):
+  checksum_pyxb = d1_common.checksum.create_checksum_object(sciobj_str)
+  return {
+    'Content-Length':
+      str(sysmeta_pyxb.size),
+    'Content-Type':
+      d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    'Last-Modified':
+      str(d1_common.date_time.utc_now()),
+    'DataONE-FormatId':
+      sysmeta_pyxb.formatId,
+    'DataONE-Checksum':
+      '{},{}'.format(checksum_pyxb.algorithm, checksum_pyxb.value()),
+    'DataONE-SerialVersion':
+      '3',
+  }

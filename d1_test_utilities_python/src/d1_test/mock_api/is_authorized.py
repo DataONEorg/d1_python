@@ -18,46 +18,44 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock MNRead.get() → OctetStream
-GET /object/{id}
+"""Mock:
 
-- Will always return the same bytes for a given PID.
-- If the PID is as an integer, it is returned as a status code.
+MNAuthorization.isAuthorized(session, id, action) → boolean
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNAuthorization.isAuthorized
+CNAuthorization.isAuthorized(session, id, action) → boolean
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
 A DataONEException can be triggered by adding a custom header named "trigger"
 with the status code of the error to trigger, using vendorSpecific parameter.
 E.g.:
 
-client.get(..., vendorSpecific={'trigger': '404'})
-
-A NotFound exception can be triggered by passing a pid that starts with
-"unknown_". E.g.:
-
-client.get('unknown_pid')
+client.isAuthorized(..., vendorSpecific={'trigger': '404'})
 """
 
 # Stdlib
 import re
 
-# D1
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.url
-import d1_test.mock_api.d1_exception
-# App
-import d1_test.mock_api.util
 # 3rd party
 import responses
-# Config
 
-GET_ENDPOINT_RX = r'v([123])/object/(.*)'
+# D1
+import d1_common.const
+import d1_common.url
+
+# App
+import d1_test.mock_api.util
+import d1_test.mock_api.d1_exception
+
+IS_AUTHORIZED_ENDPOINT_RX = r'v([123])/isAuthorized/(.*)'
 
 
 def init(base_url):
   responses.add_callback(
     responses.GET,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)),
+    re.compile(
+      r'^' +
+      d1_common.url.joinPathElements(base_url, IS_AUTHORIZED_ENDPOINT_RX)
+    ),
     callback=_request_callback,
     content_type='',
   )
@@ -70,21 +68,18 @@ def _request_callback(request):
     return exc_response_tup
   # Return NotFound
   pid, pyxb_bindings = _parse_get_url(request.url)
-  if pid.startswith('unknown_'):
-    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
+  if pid == 'unauthorized_pid':
+    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
   # Return regular response
-  body_str = d1_test.mock_api.util.generate_sciobj_bytes(pid)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
   }
-  return 200, header_dict, body_str
+  return 200, header_dict, 'OK'
 
 
 def _parse_get_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
-  assert endpoint_str == 'object'
-  assert len(param_list) == 1, 'get() accepts a single parameter, the PID'
-  assert query_dict == {}, 'get() does not accept any query parameters'
+  assert endpoint_str == 'isAuthorized'
   return param_list[0], pyxb_bindings

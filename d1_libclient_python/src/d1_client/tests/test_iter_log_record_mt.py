@@ -22,18 +22,16 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # 3rd party
 import responses
 
 # App
-sys.path.append('..')
 import d1_client.mnclient # noqa: E402
 import d1_client.mnclient_2_0 # noqa: E402
 import shared_settings # noqa: E402
-import mock_log_records # noqa: E402
+import d1_test.mock_api.get_log_records as mock_log_records # noqa: E402
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

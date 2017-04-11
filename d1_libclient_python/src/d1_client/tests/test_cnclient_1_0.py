@@ -48,7 +48,7 @@ import d1_client.cnclient # noqa: E402
 import shared_settings # noqa: E402
 import shared_context # noqa: E402
 
-import d1_test.mock_api.object_format_list # noqa: E402
+import d1_test.mock_api.list_formats # noqa: E402
 
 
 class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
@@ -74,7 +74,7 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def test_1010(self):
     """CNCore.listFormats() returns a valid ObjectFormatList with at least 3
     entries"""
-    d1_test.mock_api.object_format_list.init(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.list_formats.init(shared_settings.CN_RESPONSES_URL)
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
@@ -85,7 +85,7 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   @unittest.skip('In process of converting to Responses')
   def test_1020(self):
     """CNCore.getFormat() returns a valid ObjectFormat for known formatIds"""
-    d1_test.mock_api.object_format_list.init(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.list_formats.init(shared_settings.CN_RESPONSES_URL)
     formats = self.client.listFormats()
     for format_ in formats.objectFormat:
       f = self.client.getFormat(format_.formatId)

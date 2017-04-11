@@ -60,11 +60,11 @@ class CoordinatingNodeClient_2_0(
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listFormats
   # v2.0: The structure of v2_0.Types.ObjectFormat has changed.
 
-  def listFormatsResponse(self):
-    return self.GET('formats')
+  def listFormatsResponse(self, vendorSpecific=None):
+    return self.GET('formats', headers=vendorSpecific)
 
-  def listFormats(self):
-    response = self.listFormatsResponse()
+  def listFormats(self, vendorSpecific=None):
+    response = self.listFormatsResponse(vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response, 'ObjectFormatList')
 
   @d1_common.util.utf8_to_unicode

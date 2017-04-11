@@ -31,7 +31,6 @@ Module d1_instance_generator.tests.test_random_data
 import unittest
 import logging
 import random
-import sys
 
 # D1
 import d1_common.const
@@ -39,8 +38,7 @@ import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 
 # App
-sys.path.append('../generator/')
-import random_data # noqa: E402
+import d1_test.instance_generator.random_data as random_data
 
 #===============================================================================
 

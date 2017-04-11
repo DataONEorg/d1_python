@@ -27,15 +27,20 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # 3rd party
-import requests
 import responses
 
+# D1
+import d1_common.types.generated.dataoneTypes_v2_0
+import d1_common.xml
+
 # App
-import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.get_system_metadata as mock_sysmeta
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMockSystemMetadata(
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
@@ -44,33 +49,26 @@ class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   @responses.activate
   def test_0010(self):
-    """mock_api.get() returns a Requests Response object"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(self.client.get('test_pid_1'), requests.Response)
+    """mock_api.getSystemMetadata() returns a System Metadata PyXB object"""
+    mock_sysmeta.init(settings.MN_RESPONSES_BASE_URL)
+    self.assertIsInstance(
+      self.client.getSystemMetadata('test_pid'),
+      d1_common.types.generated.dataoneTypes_v2_0.SystemMetadata,
+    )
 
   @responses.activate
   def test_0011(self):
-    """mock_api.get() returns the same content each time for a given PID"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    obj_1a_str = self.client.get('test_pid_1').content
-    obj_2a_str = self.client.get('test_pid_2').content
-    obj_1b_str = self.client.get('test_pid_1').content
-    obj_2b_str = self.client.get('test_pid_2').content
-    self.assertEqual(obj_1a_str, obj_1b_str)
-    self.assertEqual(obj_2a_str, obj_2b_str)
+    """mock_api.getSystemMetadata(): Passing a trigger header triggers a DataONEException"""
+    mock_sysmeta.init(settings.MN_RESPONSES_BASE_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.getSystemMetadata,
+      'test_pid', vendorSpecific={'trigger': '404'}
+    )
 
   @responses.activate
   def test_0012(self):
-    """mock_api.get() returns 1024 bytes"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    obj_str = self.client.get('test_pid_1').content
-    self.assertEqual(len(obj_str), 1024)
-
-  @responses.activate
-  def test_0013(self):
-    """mock_api.get(): Passing a trigger header triggers a DataONEException"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, self.client.get, 'test_pid',
-      vendorSpecific={'trigger': '401'}
-    )
+    """mock_api.getSystemMetadata() returns expected SysMeta values"""
+    mock_sysmeta.init(settings.MN_RESPONSES_BASE_URL)
+    sysmeta_pyxb = self.client.getSystemMetadata('test_pid')
+    sysmeta_xml = sysmeta_pyxb.toxml('utf8')
+    self.assertIn('http://ns.dataone.org/service/types/v2.0', sysmeta_xml)

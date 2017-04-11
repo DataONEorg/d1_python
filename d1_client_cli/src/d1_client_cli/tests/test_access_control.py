@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_client_cli.tests.test_access_control
-==============================================
-
-:Synopsis: Unit tests for access control.
-:Created: 2011-11-10
-:Author: DataONE (Dahl)
-"""
 
 # Stdlib
 import unittest
@@ -36,10 +28,8 @@ import sys
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
-sys.path.append('../')
-sys.path.append('../impl')
-import access_control # noqa: E402
-import cli_exceptions # noqa: E402
+import d1_client_cli.impl.access_control as access_control
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 #===============================================================================
 

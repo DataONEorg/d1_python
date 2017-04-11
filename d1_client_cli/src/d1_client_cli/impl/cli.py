@@ -19,14 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-:mod:`cli`
-==========
-
-:Synopsis:
-  * Generic boiler plate for Python CLI apps.
-  * Simple command tokenizing and validation.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+- Generic boiler plate for Python CLI apps.
+- Simple command tokenizing and validation.
 """
 
 # Stdlib
@@ -36,10 +30,10 @@ import shlex
 import sys
 
 # App
-import cli_util
-import cli_exceptions
-import command_processor
-import session
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.command_processor as command_processor
+import d1_client_cli.impl.session as session
 
 
 class CLI(cmd.Cmd):

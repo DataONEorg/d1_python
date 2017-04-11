@@ -18,17 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_formatter`
-==========================
-
-:Synopsis: Pretty print an operation.
-:Created: 2013-07-24
-:Author: DataONE (Dahl)
+"""Pretty print an operation.
 """
 
 # App
-import cli_util
+import d1_client_cli.impl.cli_util as cli_util
 
 LEVEL_INDENT = 2
 TAB = 30

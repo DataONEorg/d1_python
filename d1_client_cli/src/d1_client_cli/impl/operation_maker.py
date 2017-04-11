@@ -18,21 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_maker`
-====================
-
-:Synopsis: Put together all the information required for executing a given operation.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Put together all the information required for executing a given operation.
 """
 
 # Stdlib
 import os
 
 # App
-import operation_validator
-import session
+import d1_client_cli.impl.operation_validator as operation_validator
+import d1_client_cli.impl.session as session
 
 # flake8: noqa: E122
 

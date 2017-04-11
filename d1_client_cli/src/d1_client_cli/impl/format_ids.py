@@ -18,21 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`format_ids`
-=================
-
-:Synopsis: Retrieve, cache, manipulate list of known Object Format IDs.
-  Automatically update when stale.
-:Created: 2013-07-26
-:Author: DataONE (Dahl)
+"""Retrieve, cache, manipulate list of known Object Format IDs.
 """
 
 # Stdlib
 import datetime
 
 # App
-import cli_client
+import d1_client_cli.impl.cli_client as cli_client
 
 CACHE_MINUTES = 60
 

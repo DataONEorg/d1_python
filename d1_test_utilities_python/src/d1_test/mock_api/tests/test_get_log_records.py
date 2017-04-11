@@ -27,15 +27,19 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # 3rd party
-import requests
 import responses
 
+# D1
+import d1_common.types.generated.dataoneTypes_v2_0
+
 # App
-import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.get_log_records as mock_log_records
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMockLogRecords(
+    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
+):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
@@ -44,33 +48,18 @@ class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   @responses.activate
   def test_0010(self):
-    """mock_api.get() returns a Requests Response object"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(self.client.get('test_pid_1'), requests.Response)
+    """mock_api.getLogRecords() returns a DataONE Log PyXB object"""
+    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
+    self.assertIsInstance(
+      self.client.getLogRecords(),
+      d1_common.types.generated.dataoneTypes_v2_0.Log,
+    )
 
   @responses.activate
   def test_0011(self):
-    """mock_api.get() returns the same content each time for a given PID"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    obj_1a_str = self.client.get('test_pid_1').content
-    obj_2a_str = self.client.get('test_pid_2').content
-    obj_1b_str = self.client.get('test_pid_1').content
-    obj_2b_str = self.client.get('test_pid_2').content
-    self.assertEqual(obj_1a_str, obj_1b_str)
-    self.assertEqual(obj_2a_str, obj_2b_str)
-
-  @responses.activate
-  def test_0012(self):
-    """mock_api.get() returns 1024 bytes"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
-    obj_str = self.client.get('test_pid_1').content
-    self.assertEqual(len(obj_str), 1024)
-
-  @responses.activate
-  def test_0013(self):
-    """mock_api.get(): Passing a trigger header triggers a DataONEException"""
-    mock_get.init(settings.MN_RESPONSES_BASE_URL)
+    """mock_api.getLogRecords(): Passing a trigger header triggers a DataONEException"""
+    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, self.client.get, 'test_pid',
-      vendorSpecific={'trigger': '401'}
+      d1_common.types.exceptions.NotFound, self.client.getLogRecords,
+      'test_pid', vendorSpecific={'trigger': '404'}
     )

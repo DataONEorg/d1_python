@@ -372,8 +372,7 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def pingResponse(self, vendorSpecific=None):
-    url = 'monitor/ping'
-    response = self.GET(url, headers=vendorSpecific)
+    response = self.GET(['monitor', 'ping'], headers=vendorSpecific)
     return response
 
   @d1_common.util.utf8_to_unicode
@@ -381,7 +380,7 @@ class DataONEBaseClient(session.Session):
     try:
       response = self.pingResponse(vendorSpecific=vendorSpecific)
       return self._read_boolean_response(response)
-    except:
+    except d1_common.types.exceptions.DataONEExceptionException:
       return False
 
   # ----------------------------------------------------------------------------
@@ -430,9 +429,9 @@ class DataONEBaseClient(session.Session):
   @d1_common.util.utf8_to_unicode
   def describe(self, pid, vendorSpecific=None):
     """Note: If the server returns a status code other than 200 OK, a
-        ServiceFailure will be raised, as this method is based on a HEAD request,
-        which cannot carry exception information.
-        """
+    ServiceFailure will be raised, as this method is based on a HEAD request,
+    which cannot carry exception information.
+    """
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_header_response(response)
 
@@ -486,10 +485,11 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def generateIdentifierResponse(self, scheme, fragment=None):
-    mmp_dict = [
-      ('scheme', scheme.encode('utf-8')),
-      ('fragment', fragment.encode('utf-8')),
-    ]
+    mmp_dict = {
+      'scheme': scheme.encode('utf-8'),
+    }
+    if fragment is not None:
+      mmp_dict['fragment'] = fragment.encode('utf-8')
     return self.POST('generate', fields=mmp_dict)
 
   @d1_common.util.utf8_to_unicode
@@ -516,13 +516,17 @@ class DataONEBaseClient(session.Session):
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
 
+  # MNAuthorization.isAuthorized(session, id, action) → boolean
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNAuthorization.isAuthorized
+  # CNAuthorization.isAuthorized(session, id, action) → boolean
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
+
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
     query = {
       'action': action,
     }
-    return self.GET(['isAuthorized', action, pid], query=query,
-                    headers=vendorSpecific)
+    return self.GET(['isAuthorized', pid], query=query, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):

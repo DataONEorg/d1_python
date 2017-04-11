@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_validator`
-==========================
-
-:Synopsis: Sanity checking of the values which are required by a given operation.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Sanity checking of the values which are required by a given operation.
 """
 
 # Stdlib
@@ -35,8 +29,8 @@ import urlparse
 import d1_common.checksum
 
 # App
-import cli_util
-import cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 
 class OperationValidator(object):

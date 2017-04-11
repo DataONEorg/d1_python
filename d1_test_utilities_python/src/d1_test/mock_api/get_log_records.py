@@ -25,6 +25,13 @@
 
 # GET /log?[fromDate={fromDate}][&toDate={toDate}][&event={event}]
 # [&pidFilter={pidFilter}][&start={start}][&count={count}]
+
+A DataONEException can be triggered by adding a custom header named "trigger"
+with the status code of the error to trigger, using vendorSpecific parameter.
+E.g.:
+
+client.getLogRecords(..., vendorSpecific={'trigger': '404'})
+
 """
 
 # Stdlib
@@ -41,6 +48,7 @@ import d1_common.url
 
 # App
 import d1_test.mock_api.util
+import d1_test.mock_api.d1_exception
 
 # Config
 
@@ -54,17 +62,24 @@ def init(base_url):
     re.
     compile(r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
     callback=_request_callback,
-    content_type=d1_common.const.CONTENT_TYPE_XML,
+    content_type='',
   )
 
 
 def _request_callback(request):
+  # Return DataONEException if triggered
+  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+  if exc_response_tup:
+    return exc_response_tup
+  # Return regular response
   query_dict, pyxb_bindings = _parse_log_url(request.url)
   n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
   # TODO: Add support for filters: fromDate, toDate, pidFilter
   body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
-  headers_dict = {}
-  return 200, headers_dict, body_str
+  header_dict = {
+    'Content-Type': d1_common.const.CONTENT_TYPE_XML,
+  }
+  return 200, header_dict, body_str
 
 
 def _parse_log_url(url):

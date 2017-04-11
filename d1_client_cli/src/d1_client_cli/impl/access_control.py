@@ -18,18 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`access_control`
-=====================
-
-:Synopsis: Create and manipulate access control objects.
-:Created: 2011-11-20
-:Author: DataONE (Dahl)
+"""Create and manipulate access control objects.
 """
 
 # App
-import cli_exceptions
-import cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
 
 
 class AccessControl():

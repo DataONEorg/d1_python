@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_queue`
-====================
-
-:Synopsis: Hold a queue of operations and perform commands on the queue.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Hold a queue of operations and perform commands on the queue.
 """
 
 # Stdlib
@@ -34,12 +28,12 @@ import subprocess
 import tempfile
 
 # App
-import cli_exceptions
-import cli_util
-import operation_executer
-import operation_validator
-import operation_formatter
-import session
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.operation_executer as operation_executer
+import d1_client_cli.impl.operation_validator as operation_validator
+import d1_client_cli.impl.operation_formatter as operation_formatter
+import d1_client_cli.impl.session as session
 
 DEFAULT_EDITOR = 'nano'
 

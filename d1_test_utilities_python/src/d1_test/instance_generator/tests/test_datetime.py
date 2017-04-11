@@ -29,7 +29,6 @@ Module d1_instance_generator.tests.test_date
 
 # Stdlib
 import logging
-import sys
 import time
 import unittest
 
@@ -39,8 +38,7 @@ import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 
 # App
-sys.path.append('../generator/')
-import dates # noqa: E402
+import d1_test.instance_generator.dates as dates
 
 #===============================================================================
 

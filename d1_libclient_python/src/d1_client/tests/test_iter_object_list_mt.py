@@ -22,17 +22,15 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # 3rd party
 import responses
 
 # App
-sys.path.append('..')
 import shared_settings # noqa: E402
-import mock_object_list # noqa: E402
-import iter.objectlistmt # noqa: E402
+import d1_test.mock_api.list_objects as mock_object_list # noqa: E402
+import d1_client.iter.objectlist_multi # noqa: E402
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -52,7 +50,7 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
   def test_100(self):
     mock_object_list.init(shared_settings.MN_RESPONSES_URL)
 
-    object_list_iterator = iter.objectlistmt.multi_object_list_iterator(
+    object_list_iterator = d1_client.iter.objectlist_multi.multi_object_list_iterator(
       shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2,
       max_queue=10
     )

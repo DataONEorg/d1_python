@@ -18,21 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`replication_policy`
-=========================
-
-:Synopsis: Create and manipulate replication policies.
-:Created: 2011-11-20
-:Author: DataONE (Dahl)
+"""Create and manipulate replication policies.
 """
 
 # D1
 import d1_common.const
 
 # App
-import cli_exceptions
-import cli_util
+import d1_client_cli.impl.cli_exceptions
+import d1_client_cli.impl.cli_util
 
 
 class ReplicationPolicy():
@@ -75,7 +69,7 @@ class ReplicationPolicy():
       self.number_of_replicas = 0
     elif self.number_of_replicas == 0:
       self.number_of_replicas = d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
-      cli_util.print_info(
+      d1_client_cli.impl.cli_util.print_info(
         u'Changed number of replicas to %d.' % self.number_of_replicas
       )
 
@@ -92,13 +86,13 @@ class ReplicationPolicy():
       try:
         int(number_of_replicas)
       except ValueError:
-        raise cli_exceptions.InvalidArguments(
+        raise d1_client_cli.impl.cli_exceptions.InvalidArguments(
           u'"Invalid number: {0}'.format(number_of_replicas)
         )
     self.number_of_replicas = int(number_of_replicas)
 
   def print_replication_policy(self):
-    cli_util.print_info(self._pretty_format())
+    d1_client_cli.impl.cli_util.print_info(self._pretty_format())
 
   #
   # Private.
@@ -136,13 +130,13 @@ class ReplicationPolicy():
     try:
       del self._member_nodes[mn]
     except KeyError:
-      raise cli_exceptions.InvalidArguments(
+      raise d1_client_cli.impl.cli_exceptions.InvalidArguments(
         u'Replication policy not set for MN: {0}'.format(mn)
       )
 
   def _add_preferred(self, mn):
     if self._is_blocked(mn):
-      cli_util.print_warn(
+      d1_client_cli.impl.cli_util.print_warn(
         'The Member Node, "{0}", was changed from blocked to preferred'.
         format(mn)
       )
@@ -150,7 +144,7 @@ class ReplicationPolicy():
 
   def _add_blocked(self, mn):
     if self._is_preferred(mn):
-      cli_util.print_warn(
+      d1_client_cli.impl.cli_util.print_warn(
         'The Member Node, "{0}", was changed from preferred to blocked'.
         format(mn)
       )

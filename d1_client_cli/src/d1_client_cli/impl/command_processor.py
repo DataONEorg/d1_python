@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`command_processor`
-==================
-
-:Synopsis: Process and execute CLI operations.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Process and execute CLI operations.
 """
 
 # Stdlib
@@ -42,14 +36,14 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 # App
-import cli_client
-import cli_exceptions
-import cli_util
-import session
-import operation_queue
-import operation_maker
-import nodes
-import format_ids
+import d1_client_cli.impl.cli_client as cli_client
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.session as session
+import d1_client_cli.impl.operation_queue as operation_queue
+import d1_client_cli.impl.operation_maker as operation_maker
+import d1_client_cli.impl.nodes as nodes
+import d1_client_cli.impl.format_ids as format_ids
 
 DEFAULT_PREFIX = u''
 DEFAULT_PROMPT = u'> '

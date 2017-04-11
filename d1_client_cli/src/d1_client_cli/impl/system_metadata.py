@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`system_metadata`
-======================
-
-:Synopsis: Create System Metadata documents based on session variables.
-:Created: 2011-11-20
-:Author: DataONE (Dahl)
+"""Create System Metadata documents based on session variables.
 """
 
 # Stdlib
@@ -35,12 +29,12 @@ import StringIO
 # D1
 import d1_common.checksum
 import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # 3rd party
 
 # App
-import cli_util
+import d1_client_cli.impl.cli_util as cli_util
 
 RESOURCE_MAP_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
 

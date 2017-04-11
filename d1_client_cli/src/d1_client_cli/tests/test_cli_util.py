@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_client_cli.tests.test_session
-=======================================
-
-:Synopsis: Unit tests for session parameters.
-:Created: 2011-11-10
-:Author: DataONE (Dahl)
-"""
 
 # Stdlib
 import unittest
@@ -36,8 +28,6 @@ import sys
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
-sys.path.append('..')
-sys.path.append('../impl')
 
 
 class TestCLIUtil(TestCaseWithURLCompare):

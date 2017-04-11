@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,44 +17,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.tests.test_person
-==============================================
-
-:Synopsis: Unit tests for random Person generator.
-:Created: 2011-12-08
-:Author: DataONE (Dahl)
-"""
-
-# Stdlib
-import logging
-import sys
-import unittest
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_client.mnclient_2_0
 import d1_common.const
+import d1_common.date_time
 import d1_common.test_case_with_url_compare
+import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.util
+
+# 3rd party
+import responses
 
 # App
-sys.path.append('../generator/')
-import person # noqa: E402
-
-#===============================================================================
+import d1_test.mock_api.generate_identifier as mock_generate_identifier
+import d1_test.mock_api.tests.settings as settings
 
 
-class TestPerson(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMockPost(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def setUp(self):
-    pass
+    d1_common.util.log_setup(is_debug=True)
+    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+      base_url=settings.MN_RESPONSES_BASE_URL
+    )
 
-  def test_010(self):
-    """generate()"""
-    person_obj = person.generate()
-    self.assertTrue(isinstance(person_obj, dataoneTypes.Person))
-    self.assertTrue(person_obj.toxml())
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+  @responses.activate
+  def test_0010(self):
+    """mock_api.generateIdentifier(): Returns an Identifier D1 XML doc"""
+    mock_generate_identifier.init(settings.MN_RESPONSES_BASE_URL)
+    identifier_pyxb = self.client.generateIdentifier('UUID')
+    self.assertIsInstance(
+      identifier_pyxb, d1_common.types.dataoneTypes.Identifier
+    )
+    self.assertEqual(identifier_pyxb.value(), 'test_id')

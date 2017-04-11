@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_client_cli.tests.test_replication_policy
-==================================================
-
-:Synopsis: Unit tests for replication_policy.
-:Created: 2011-11-10
-:Author: DataONE (Dahl)
-"""
 
 # Stdlib
 import unittest
@@ -33,14 +25,11 @@ import logging
 import sys
 import StringIO
 
-sys.path.append('..')
-sys.path.append('../impl')
-
 # D1
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare # noqa: E402
 
 # App
-import replication_policy # noqa: E402
+import d1_client_cli.impl.replication_policy as replication_policy
 
 #===============================================================================
 
