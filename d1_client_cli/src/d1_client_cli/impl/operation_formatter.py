@@ -22,7 +22,7 @@
 """
 
 # App
-import cli_util
+import d1_client_cli.impl.cli_util as cli_util
 
 LEVEL_INDENT = 2
 TAB = 30

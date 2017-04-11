@@ -28,10 +28,8 @@ import sys
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
-sys.path.append('../')
-sys.path.append('../impl')
-import access_control # noqa: E402
-import cli_exceptions # noqa: E402
+import d1_client_cli.impl.access_control as access_control
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 #===============================================================================
 

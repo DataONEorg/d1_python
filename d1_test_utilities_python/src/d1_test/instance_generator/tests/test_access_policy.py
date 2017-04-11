@@ -29,7 +29,6 @@ Module d1_instance_generator.tests.test_access_policy
 
 # Stdlib
 import logging
-import sys
 import unittest
 
 # D1
@@ -39,8 +38,7 @@ import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 
 # App
-sys.path.append('../generator/')
-import accesspolicy # noqa: E402
+import d1_test.instance_generator.accesspolicy as accesspolicy # noqa: E402
 
 #===============================================================================
 

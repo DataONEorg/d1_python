@@ -25,13 +25,13 @@ from __future__ import absolute_import
 import django.test
 
 # App
-import app.middleware.session_cert
-import tests.util
+import gmn.app.middleware.session_cert
+import gmn.tests.util
 
 
 class TestCert(django.test.TestCase):
   def setUp(self):
-    self.cert_simple_subject_info_pem = tests.util.read_test_file(
+    self.cert_simple_subject_info_pem = gmn.tests.util.read_test_file(
       'cert_with_simple_subject_info.pem'
     )
 
@@ -42,7 +42,7 @@ class TestCert(django.test.TestCase):
     """Extract primary and equivalent subjects from certificate. This does not
     perform validation.
     """
-    primary_str, equivalent_set = app.middleware.session_cert.get_authenticated_subjects(
+    primary_str, equivalent_set = gmn.app.middleware.session_cert.get_authenticated_subjects(
       self.cert_simple_subject_info_pem
     )
     self.assertEqual(

@@ -30,7 +30,7 @@ import sys
 import urlparse
 
 # DataONE
-import cli_exceptions
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 
 def get_host(url):

@@ -30,7 +30,6 @@ Module d1_instance_generator.tests.test_identifier
 # Stdlib
 import logging
 import random
-import sys
 import unittest
 
 # D1
@@ -39,9 +38,8 @@ import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 
 # App
-sys.path.append('../generator/')
-import identifier # noqa: E402
-import random_data # noqa: E402
+import d1_test.instance_generator.identifier as identifier
+import d1_test.instance_generator.random_data as random_data
 
 #===============================================================================
 

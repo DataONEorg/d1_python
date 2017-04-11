@@ -68,11 +68,11 @@ import d1_common.checksum
 import d1_common.const
 
 # App
-import access_control
-import cli_exceptions
-import cli_util
-import replication_policy
-import operation_formatter
+import d1_client_cli.impl.access_control as access_control
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.replication_policy as replication_policy
+import d1_client_cli.impl.operation_formatter as operation_formatter
 
 # Names for variables.
 VERBOSE_NAME = u'verbose'

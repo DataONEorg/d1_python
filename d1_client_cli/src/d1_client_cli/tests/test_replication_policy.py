@@ -25,14 +25,11 @@ import logging
 import sys
 import StringIO
 
-sys.path.append('..')
-sys.path.append('../impl')
-
 # D1
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare # noqa: E402
 
 # App
-import replication_policy # noqa: E402
+import d1_client_cli.impl.replication_policy as replication_policy
 
 #===============================================================================
 

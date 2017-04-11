@@ -29,8 +29,8 @@ import urlparse
 import d1_common.checksum
 
 # App
-import cli_util
-import cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 
 class OperationValidator(object):

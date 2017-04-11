@@ -29,11 +29,11 @@ import datetime
 import django.test
 
 # App
-import app.models
-import app.sysmeta
-import app.sysmeta_replica
-import app.sysmeta_util
-import tests.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_replica
+import gmn.app.sysmeta_util
+import gmn.tests.util
 
 
 class TestSysMeta(django.test.TestCase):
@@ -44,20 +44,20 @@ class TestSysMeta(django.test.TestCase):
     pass
 
   def _create_sci_obj_base(self):
-    sciobj_model = app.models.ScienceObject()
-    sciobj_model.checksum_algorithm = app.models.checksum_algorithm('SHA-1')
-    sciobj_model.format = app.models.format('test')
+    sciobj_model = gmn.app.models.ScienceObject()
+    sciobj_model.checksum_algorithm = gmn.app.models.checksum_algorithm('SHA-1')
+    sciobj_model.format = gmn.app.models.format('test')
     sciobj_model.is_archived = False
     sciobj_model.modified_timestamp = datetime.datetime.now()
     sciobj_model.uploaded_timestamp = datetime.datetime.now()
-    sciobj_model.pid = app.sysmeta_util.create_id_model('test')
+    sciobj_model.pid = gmn.app.sysmeta_util.create_id_model('test')
     sciobj_model.serial_version = 1
     sciobj_model.size = 1
 
-    sciobj_model.submitter = app.models.subject('test_submitter')
-    sciobj_model.rights_holder = app.models.subject('rightsHolder0')
-    sciobj_model.origin_member_node = app.models.node('test_origin_mn')
-    sciobj_model.authoritative_member_node = app.models.node('test_auth_mn')
+    sciobj_model.submitter = gmn.app.models.subject('test_submitter')
+    sciobj_model.rights_holder = gmn.app.models.subject('rightsHolder0')
+    sciobj_model.origin_member_node = gmn.app.models.node('test_origin_mn')
+    sciobj_model.authoritative_member_node = gmn.app.models.node('test_auth_mn')
 
     sciobj_model.save()
     return sciobj_model
@@ -90,17 +90,17 @@ class TestSysMeta(django.test.TestCase):
   # Base
 
   def test_050(self):
-    orig_sysmeta_pyxb = tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
-    sciobj_model = app.models.ScienceObject()
-    sciobj_model.pid = app.sysmeta_util.create_id_model(
+    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
+    sciobj_model = gmn.app.models.ScienceObject()
+    sciobj_model.pid = gmn.app.sysmeta_util.create_id_model(
       orig_sysmeta_pyxb.identifier.value()
     )
-    app.sysmeta._base_pyxb_to_model(
+    gmn.app.sysmeta._base_pyxb_to_model(
       sciobj_model,
       orig_sysmeta_pyxb,
       url='file://test',
     )
-    gen_sciobj_pyxb = app.sysmeta._base_model_to_pyxb(sciobj_model)
+    gen_sciobj_pyxb = gmn.app.sysmeta._base_model_to_pyxb(sciobj_model)
     self._compare_base_pyxb(orig_sysmeta_pyxb, gen_sciobj_pyxb)
 
   # Access Policy
@@ -120,10 +120,12 @@ class TestSysMeta(django.test.TestCase):
   # </accessPolicy>
 
   def test_100(self):
-    orig_sysmeta_pyxb = tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
+    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
-    app.sysmeta._access_policy_pyxb_to_model(sciobj_model, orig_sysmeta_pyxb)
-    gen_access_policy_pyxb = app.sysmeta._access_policy_model_to_pyxb(
+    gmn.app.sysmeta._access_policy_pyxb_to_model(
+      sciobj_model, orig_sysmeta_pyxb
+    )
+    gen_access_policy_pyxb = gmn.app.sysmeta._access_policy_model_to_pyxb(
       sciobj_model
     )
     self.assertEqual(len(gen_access_policy_pyxb.allow), 4)
@@ -146,12 +148,12 @@ class TestSysMeta(django.test.TestCase):
   # </replicationPolicy>
 
   def test_200(self):
-    orig_sysmeta_pyxb = tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
+    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
-    app.sysmeta._replication_policy_pyxb_to_model(
+    gmn.app.sysmeta._replication_policy_pyxb_to_model(
       sciobj_model, orig_sysmeta_pyxb
     )
-    gen_replication_policy_pyxb = app.sysmeta._replication_policy_model_to_pyxb(
+    gen_replication_policy_pyxb = gmn.app.sysmeta._replication_policy_model_to_pyxb(
       sciobj_model
     )
     self.assertEqual(len(gen_replication_policy_pyxb.blockedMemberNode), 2)
@@ -181,10 +183,12 @@ class TestSysMeta(django.test.TestCase):
   # </replica>
 
   def test_300(self):
-    orig_sysmeta_pyxb = tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
+    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
-    app.sysmeta_replica.replica_pyxb_to_model(sciobj_model, orig_sysmeta_pyxb)
-    gen_replica_pyxb_list = app.sysmeta_replica.replica_model_to_pyxb(
+    gmn.app.sysmeta_replica.replica_pyxb_to_model(
+      sciobj_model, orig_sysmeta_pyxb
+    )
+    gen_replica_pyxb_list = gmn.app.sysmeta_replica.replica_model_to_pyxb(
       sciobj_model
     )
     self.assertEqual(len(gen_replica_pyxb_list), 2)

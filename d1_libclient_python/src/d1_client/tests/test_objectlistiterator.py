@@ -18,15 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_objectlistiterator
-=================================================
-
-Unit tests for objectlistiterator.
-
-:Created:
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
+"""Unit tests for objectlistiterator.
 """
 
 # Stdlib
@@ -43,7 +35,6 @@ import d1_common.types.dataoneTypes as dataoneTypes
 sys.path.append('..')
 import d1_client.cnclient # noqa: E402
 import d1_client.mnclient # noqa: E402
-import d1_client.objectlistiterator # noqa: E402
 import shared_settings # noqa: E402
 
 

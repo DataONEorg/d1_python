@@ -25,8 +25,8 @@
 import os
 
 # App
-import operation_validator
-import session
+import d1_client_cli.impl.operation_validator as operation_validator
+import d1_client_cli.impl.session as session
 
 # flake8: noqa: E122
 

@@ -28,8 +28,8 @@ import mock
 import django.test
 
 # App
-import app.middleware.session_jwt
-import tests.util
+import gmn.app.middleware.session_jwt
+import gmn.tests.util
 
 
 class TestJwt(django.test.TestCase):
@@ -45,12 +45,12 @@ class TestJwt(django.test.TestCase):
   )
   def test_100(self):
     """_get_cn_cert() successfully retrieves CN server cert from cn-stage"""
-    cert_obj = app.middleware.session_jwt._get_cn_cert()
+    cert_obj = gmn.app.middleware.session_jwt._get_cn_cert()
     self.assertIn(u'*.test.dataone.org', [v.value for v in cert_obj.subject])
 
   def _parse_test_token(self):
-    jwt_base64 = tests.util.read_test_file('test_token_2.base64')
-    return app.middleware.session_jwt._validate_jwt_and_get_subject_list(
+    jwt_base64 = gmn.tests.util.read_test_file('test_token_2.base64')
+    return gmn.app.middleware.session_jwt._validate_jwt_and_get_subject_list(
       jwt_base64
     )
 
@@ -77,7 +77,7 @@ class TestJwt(django.test.TestCase):
     time just before the token expired.
     """
     with mock.patch(
-        'app.middleware.session_jwt.jwt.api_jwt.timegm'
+        'gmn.app.middleware.session_jwt.jwt.api_jwt.timegm'
     ) as mock_date:
       awt_exp_ts = 1475786896
       mock_date.return_value = awt_exp_ts - 1

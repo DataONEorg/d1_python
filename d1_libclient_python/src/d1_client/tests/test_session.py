@@ -24,7 +24,6 @@
 # Stdlib
 import hashlib
 import logging
-import sys
 
 # 3rd party
 import responses
@@ -36,10 +35,9 @@ from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 
 # App
-sys.path.append('..')
-import mock_get # noqa: E402
-import mock_post # noqa: E402
-import session # noqa: E402
+import d1_test.mock_api.get as mock_get # noqa: E402
+import d1_test.mock_api.create as mock_post # noqa: E402
+import d1_client.session as session # noqa: E402
 import shared_settings # noqa: E402
 
 

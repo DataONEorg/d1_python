@@ -33,8 +33,8 @@ import sys
 import unittest
 
 # App
-sys.path.append('..')
-sys.path.append('../impl')
+
+# Config
 
 TEST_CN_URL = 'https://cn-dev-rr.dataone.org/cn'
 TEST_CN_HOST = 'cn-dev-rr.dataone.org'

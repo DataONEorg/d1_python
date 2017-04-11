@@ -30,10 +30,10 @@ import shlex
 import sys
 
 # App
-import cli_util
-import cli_exceptions
-import command_processor
-import session
+import d1_client_cli.impl.cli_util as cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.command_processor as command_processor
+import d1_client_cli.impl.session as session
 
 
 class CLI(cmd.Cmd):
@@ -480,7 +480,7 @@ be lost if you exit.""".format(n_remaining_operations)
     """search [query]
     Comprehensive search for Science Data Objects across all available MNs
 
-    See http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
+    See https://releases.dataone.org/online/api-documentation-v2.0.1/design/SearchMetadata.html
     for the available search terms.
     """
     args = self._split_args(line, 0, -1)

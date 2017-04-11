@@ -22,8 +22,8 @@
 """
 
 # App
-import cli_exceptions
-import cli_util
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
 
 
 class AccessControl():

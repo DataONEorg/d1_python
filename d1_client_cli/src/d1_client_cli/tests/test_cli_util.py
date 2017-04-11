@@ -28,8 +28,6 @@ import sys
 from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 
 # App
-sys.path.append('..')
-sys.path.append('../impl')
 
 
 class TestCLIUtil(TestCaseWithURLCompare):
