@@ -26,3 +26,6 @@ max-line-length = 100
 
 ignore = E111,E121,E122,E126,E261,E114,E125,E266,E265,E131
 # ,E127
+
+
+[pytest]

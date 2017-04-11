@@ -187,17 +187,17 @@ class TestExceptions(unittest.TestCase):
     e = exceptions.ServiceFailure(
       '123.456.789', 'test description', 'test traceInformation'
     )
-    headers = e.serialize_to_headers()
-    self.assertTrue(('DataONE-Exception-Name', u'ServiceFailure') in headers)
-    self.assertTrue(('DataONE-Exception-ErrorCode', u'500') in headers)
-    self.assertTrue(('DataONE-Exception-DetailCode', u'123.456.789') in headers)
-    self.assertTrue(
-      ('DataONE-Exception-Description', u'test description') in headers
-    )
-    self.assertTrue(
-      ('DataONE-Exception-TraceInformation',
-       u'test traceInformation') in headers
-    )
+    header_dict = e.serialize_to_headers()
+    expected_dict = {
+      'DataONE-Exception-TraceInformation': u'test traceInformation',
+      'DataONE-Exception-DetailCode': u'123.456.789',
+      'DataONE-Exception-Name': 'ServiceFailure',
+      'DataONE-Exception-Description': u'test description',
+      'DataONE-Exception-NodeID': '',
+      'DataONE-Exception-Identifier': '',
+      'DataONE-Exception-ErrorCode': u'500'
+    }
+    self.assertDictEqual(header_dict, expected_dict)
 
   def test_300(self):
     """deserialize_from_headers()"""
