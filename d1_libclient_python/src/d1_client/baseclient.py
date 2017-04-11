@@ -315,9 +315,9 @@ class DataONEBaseClient(session.Session):
   # ----------------------------------------------------------------------------
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords
   # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords
 
   @d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(
@@ -366,9 +366,9 @@ class DataONEBaseClient(session.Session):
     return self._read_dataone_type_response(response, 'Log')
 
   # CNCore.ping() → null
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.ping
   # MNRead.ping() → null
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.ping
 
   @d1_common.util.utf8_to_unicode
   def pingResponse(self, vendorSpecific=None):
@@ -389,9 +389,9 @@ class DataONEBaseClient(session.Session):
   # ----------------------------------------------------------------------------
 
   # CNRead.get(session, pid) → OctetStream
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.get
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.get
   # MNRead.get(session, pid) → OctetStream
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.get
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.get
 
   @d1_common.util.utf8_to_unicode
   def getResponse(self, pid, vendorSpecific=None):
@@ -402,9 +402,9 @@ class DataONEBaseClient(session.Session):
     return self._read_stream_response(response)
 
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getSystemMetadata
   # MNRead.getSystemMetadata(session, pid) → SystemMetadata
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getSystemMetadata
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getSystemMetadata
 
   @d1_common.util.utf8_to_unicode
   def getSystemMetadataResponse(self, pid, vendorSpecific=None):
@@ -418,9 +418,9 @@ class DataONEBaseClient(session.Session):
     return self._read_dataone_type_response(response, 'SystemMetadata')
 
   # CNRead.describe(session, pid) → DescribeResponse
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.describe
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.describe
   # MNRead.describe(session, pid) → DescribeResponse
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.describe
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
   @d1_common.util.utf8_to_unicode
   def describeResponse(self, pid, vendorSpecific=None):
@@ -438,10 +438,10 @@ class DataONEBaseClient(session.Session):
 
   # CNRead.listObjects(session[, fromDate][, toDate][, formatId]
   #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.listObjects
   # MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.listObjects
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
@@ -480,9 +480,9 @@ class DataONEBaseClient(session.Session):
   # ----------------------------------------------------------------------------
 
   # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.generateIdentifier
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.generateIdentifier
   # MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.generateIdentifier
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
   @d1_common.util.utf8_to_unicode
   def generateIdentifierResponse(self, scheme, fragment=None):
@@ -498,9 +498,9 @@ class DataONEBaseClient(session.Session):
     return self._read_dataone_type_response(response, 'Identifier')
 
   # CNStorage.delete(session, pid) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNStorage.archive
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNStorage.archive
   # MNStorage.delete(session, pid) → Identifier
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.archive
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.archive
 
   @d1_common.util.utf8_to_unicode
   def archiveResponse(self, pid, vendorSpecific=None):
@@ -515,6 +515,11 @@ class DataONEBaseClient(session.Session):
   # ----------------------------------------------------------------------------
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
+
+  # MNAuthorization.isAuthorized(session, id, action) → boolean
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNAuthorization.isAuthorized
+  # CNAuthorization.isAuthorized(session, id, action) → boolean
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
