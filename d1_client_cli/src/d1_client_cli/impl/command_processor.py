@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`command_processor`
-==================
-
-:Synopsis: Process and execute CLI operations.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Process and execute CLI operations.
 """
 
 # Stdlib

@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_validator`
-==========================
-
-:Synopsis: Sanity checking of the values which are required by a given operation.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+"""Sanity checking of the values which are required by a given operation.
 """
 
 # Stdlib

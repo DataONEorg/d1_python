@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`operation_executer`
-=========================
-
-:Synopsis: Execute queued write operations.
-:Created: 2013-07-17
-:Author: DataONE (Dahl)
+"""Execute queued write operations.
 """
 
 # Stdlib

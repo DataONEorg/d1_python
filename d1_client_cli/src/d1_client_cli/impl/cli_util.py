@@ -18,14 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`cli_util`
-===============
-
-:Synopsis: Utilities shared between components of the DataONE Command Line
-  Interface
-:Created: 2012-03-07
-:Author: DataONE (Dahl)
+"""Utilities shared between components of the DataONE Command Line
 """
 
 # Stdlib

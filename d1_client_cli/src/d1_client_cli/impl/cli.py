@@ -19,14 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-:mod:`cli`
-==========
-
-:Synopsis:
-  * Generic boiler plate for Python CLI apps.
-  * Simple command tokenizing and validation.
-:Created: 2013-07-16
-:Author: DataONE (Dahl)
+- Generic boiler plate for Python CLI apps.
+- Simple command tokenizing and validation.
 """
 
 # Stdlib
