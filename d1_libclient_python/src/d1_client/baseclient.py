@@ -526,8 +526,7 @@ class DataONEBaseClient(session.Session):
     query = {
       'action': action,
     }
-    return self.GET(['isAuthorized', action, pid], query=query,
-                    headers=vendorSpecific)
+    return self.GET(['isAuthorized', pid], query=query, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):
