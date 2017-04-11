@@ -23,26 +23,33 @@ GET /object/{id}
 
 - Will always return the same bytes for a given PID.
 - If the PID is as an integer, it is returned as a status code.
+
+A DataONEException can be triggered by adding a custom header named "trigger"
+with the status code of the error to trigger, using vendorSpecific parameter.
+E.g.:
+
+client.get(..., vendorSpecific={'trigger': '404'})
+
+A NotFound exception can be triggered by passing a pid that starts with
+"unknown_". E.g.:
+
+client.get('unknown_pid')
 """
 
 # Stdlib
-import hashlib
-import random
 import re
-
-# 3rd party
-import responses
 
 # D1
 import d1_common.const
+import d1_common.types.exceptions
 import d1_common.url
-
+import d1_test.mock_api.d1_exception
 # App
 import d1_test.mock_api.util
-
+# 3rd party
+import responses
 # Config
 
-NUM_SCIOBJ_BYTES = 1024
 GET_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
@@ -52,20 +59,25 @@ def init(base_url):
     re.
     compile(r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)),
     callback=_request_callback,
-    content_type=d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    content_type='',
   )
 
 
 def _request_callback(request):
+  # Return DataONEException if triggered
+  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+  if exc_response_tup:
+    return exc_response_tup
+  # Return NotFound
   pid, pyxb_bindings = _parse_get_url(request.url)
-  try:
-    status_int = int(pid)
-  except ValueError:
-    body_str = _generate_sciobj_bytes(pid, NUM_SCIOBJ_BYTES)
-    return 200, {}, body_str
-  else:
-    body_str = 'Return code: {}'.format(status_int)
-    return status_int, {}, body_str
+  if pid.startswith('unknown_'):
+    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
+  # Return regular response
+  body_str = d1_test.mock_api.util.generate_sciobj_bytes(pid)
+  header_dict = {
+    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+  }
+  return 200, header_dict, body_str
 
 
 def _parse_get_url(url):
@@ -76,9 +88,3 @@ def _parse_get_url(url):
   assert len(param_list) == 1, 'get() accepts a single parameter, the PID'
   assert query_dict == {}, 'get() does not accept any query parameters'
   return param_list[0], pyxb_bindings
-
-
-def _generate_sciobj_bytes(pid, n_count):
-  pid_hash_int = int(hashlib.md5(pid).hexdigest(), 16)
-  random.seed(pid_hash_int)
-  return bytearray(random.getrandbits(8) for _ in xrange(n_count))

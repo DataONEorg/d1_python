@@ -50,7 +50,7 @@ class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   @responses.activate
   def test_0011(self):
-    """mock_api.get() returns the same each time for a given PID"""
+    """mock_api.get() returns the same content each time for a given PID"""
     mock_get.init(settings.MN_RESPONSES_BASE_URL)
     obj_1a_str = self.client.get('test_pid_1').content
     obj_2a_str = self.client.get('test_pid_2').content
@@ -68,8 +68,9 @@ class TestMockGet(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
 
   @responses.activate
   def test_0013(self):
-    """mock_api.get() An integer PID is returned as a HTTP status code"""
+    """mock_api.get(): Passing a trigger header triggers a DataONEException"""
     mock_get.init(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure, self.client.get, '401'
+      d1_common.types.exceptions.NotAuthorized, self.client.get, 'test_pid',
+      vendorSpecific={'trigger': '401'}
     )
