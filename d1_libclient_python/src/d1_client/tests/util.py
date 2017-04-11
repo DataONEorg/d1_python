@@ -26,6 +26,7 @@ import random
 
 # D1
 import d1_common.util
+import d1_common.types.dataoneTypes
 
 
 def get_test_filepath(filename):
@@ -45,8 +46,14 @@ def read_utf8_to_unicode(filename):
 
 def read_test_xml(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
-  # xml_obj = v2.CreateFromDocument(xml_str)
   return xml_str
+
+
+def read_test_pyxb(filename, mode_str='r'):
+  xml_str = read_test_file(filename, mode_str)
+  print xml_str
+  print type(xml_str)
+  return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
 
 def get_total_number_of_objects(client):

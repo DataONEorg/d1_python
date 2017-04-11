@@ -37,6 +37,7 @@ import d1_common.types.dataoneTypes
 # App
 import d1_client.mnclient
 import shared_settings
+import d1_client.tests.util
 
 
 class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
@@ -44,11 +45,8 @@ class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
     self.client = d1_client.mnclient.MemberNodeClient(
       shared_settings.MN_RESPONSES_URL
     )
-    self.sysmeta_doc = open(
-      './test_docs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-    ).read()
-    self.sysmeta_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
-      self.sysmeta_doc
+    self.sysmeta_pyxb = d1_client.tests.util.read_test_pyxb(
+      'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     )
     self.obj = 'test'
     self.pid = '1234'

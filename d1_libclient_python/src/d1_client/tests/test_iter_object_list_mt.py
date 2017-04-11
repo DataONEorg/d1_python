@@ -29,7 +29,7 @@ import responses
 
 # App
 import shared_settings # noqa: E402
-import d1_test.mock_api.list_objects as mock_object_list # noqa: E402
+import d1_test.mock_api.list_objects as mock_list_objects # noqa: E402
 import d1_client.iter.objectlist_multi # noqa: E402
 
 # These tests are disabled because they require a MN that permits access to
@@ -48,11 +48,11 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
 
   @responses.activate
   def test_100(self):
-    mock_object_list.init(shared_settings.MN_RESPONSES_URL)
+    mock_list_objects.init(shared_settings.MN_RESPONSES_URL)
 
-    object_list_iterator = d1_client.iter.objectlist_multi.multi_object_list_iterator(
+    object_list_iterator = d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
       shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2,
-      max_queue=10
+      max_queue_size=10
     )
 
     print '4' * 100
