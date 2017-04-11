@@ -52,8 +52,7 @@ class TestDataONEBaseClient(
     )
 
   def test_0010(self):
-    """Able to instantiate DataONEBaseClient
-    """
+    """Able to instantiate DataONEBaseClient"""
     base_client = d1_client.baseclient.DataONEBaseClient(
       shared_settings.MN_RESPONSES_URL
     )
@@ -94,20 +93,20 @@ class TestDataONEBaseClient(
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords
 
   @responses.activate
-  def test_0100(self):
+  def test_0040(self):
     self.assertIsInstance(
       self.client.getLogRecords(),
       d1_common.types.dataoneTypes_v1_1.Log,
     )
 
   @responses.activate
-  def test_0550(self):
+  def test_0050(self):
     """MNRead.getLogRecords(): Returned type is Log"""
     # getLogRecords() verifies that the returned type is Log.
     return self.client.getLogRecords()
 
   @responses.activate
-  def test_0700(self):
+  def test_0060(self):
     """MNRead.getLogRecords(): Log has at least two entries"""
     log = self.client.getLogRecords()
     self.assertTrue(len(log.logEntry) >= 2)
@@ -116,12 +115,12 @@ class TestDataONEBaseClient(
   # MNCore.ping()
 
   @responses.activate
-  def test_0710(self):
+  def test_0070(self):
     """ping(): Returns True"""
     self.assertTrue(self.client.ping())
 
   @responses.activate
-  def test_0711(self):
+  def test_0080(self):
     """ping(): Passing a trigger header triggers a DataONEException"""
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.ping,
@@ -132,14 +131,14 @@ class TestDataONEBaseClient(
   # MNRead.get()
 
   @responses.activate
-  def test_0730(self):
+  def test_0090(self):
     """CNRead.get(): Unknown PID raises NotFound"""
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.get, 'unknown_pid'
     )
 
   @responses.activate
-  def test_0440(self):
+  def test_0100(self):
     """MNRead.get(): Returns valid response on valid PID"""
     self.client.get('valid_pid')
 
@@ -147,7 +146,7 @@ class TestDataONEBaseClient(
   # MNRead.getSystemMetadata()
 
   @responses.activate
-  def test_0510(self):
+  def test_0110(self):
     """CNRead.getSystemMetadata(): Returns SystemMetadata type"""
     sysmeta_pyxb = self.client.getSystemMetadata('valid_pid')
     self.assertTrue(
@@ -157,7 +156,7 @@ class TestDataONEBaseClient(
     )
 
   @responses.activate
-  def test_0800(self):
+  def test_0120(self):
     """MNRead.getSystemMetadata(): Unknown PID raises NotFound"""
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getSystemMetadata,
@@ -168,7 +167,7 @@ class TestDataONEBaseClient(
   # MNRead.describe()
 
   @responses.activate
-  def test_0605(self):
+  def test_0130(self):
     """CNRead.describe(): GET request returns dict of D1 custom headers"""
     description_dict = self.client.describe('good_pid')
     self.assertIsInstance(
@@ -186,7 +185,7 @@ class TestDataONEBaseClient(
     self.assertEqual(dict(description_dict), expected_dict)
 
   @responses.activate
-  def test_0610(self):
+  def test_0140(self):
     """CNRead.describe(): HEAD request for unknown PID raises NotFound"""
     # describe() is a HEAD request, which can't return a body, so we use a
     # header representation of the DataONEException. This checks that
@@ -200,7 +199,7 @@ class TestDataONEBaseClient(
   # MNCore.listObjects()
 
   @responses.activate
-  def test_0810(self):
+  def test_0150(self):
     """listObjects(): Returns a valid ObjectList that contains at least 3 entries"""
     object_list_pyxb = self.client.listObjects()
     self.assertIsInstance(
@@ -219,7 +218,7 @@ class TestDataONEBaseClient(
   # MNStorage.generateIdentifier()
 
   @responses.activate
-  def test_1050_A(self):
+  def test_0160(self):
     """generateIdentifier(): Returns a valid identifier that matches scheme and fragment"""
     # TODO: Add support for fragment in mock
     shared_context.test_fragment = (
@@ -235,12 +234,12 @@ class TestDataONEBaseClient(
   # MNAuthorization.isAuthorized()
 
   @responses.activate
-  def test_0910(self):
+  def test_0170(self):
     """isAuthorized(): Returns 200 for a readable PID"""
     self.assertTrue(self.client.isAuthorized('authorized_pid', 'read'))
 
   @responses.activate
-  def test_0911(self):
+  def test_0180(self):
     """isAuthorized(): Raises NotAuthorized for unauthorized PID"""
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.isAuthorized,
