@@ -115,25 +115,8 @@ def create_exception_by_name(
     name, detailCode="0", description='', traceInformation=None,
     identifier=None, nodeId=None
 ):
-  name_exception_map = {
-    u'AuthenticationTimeout': AuthenticationTimeout,
-    u'IdentifierNotUnique': IdentifierNotUnique,
-    u'InsufficientResources': InsufficientResources,
-    u'InvalidCredentials': InvalidCredentials,
-    u'InvalidRequest': InvalidRequest,
-    u'InvalidSystemMetadata': InvalidSystemMetadata,
-    u'InvalidToken': InvalidToken,
-    u'NotAuthorized': NotAuthorized,
-    u'NotFound': NotFound,
-    u'NotImplemented': NotImplemented,
-    u'ServiceFailure': ServiceFailure,
-    u'UnsupportedMetadataType': UnsupportedMetadataType,
-    u'UnsupportedType': UnsupportedType,
-    u'SynchronizationFailed': SynchronizationFailed,
-    u'VersionMismatch': VersionMismatch,
-  }
   try:
-    dataone_exception = name_exception_map[name]
+    dataone_exception = globals()[name]
   except LookupError:
     # The defined types are not enumerated in the schema so it is possible to
     # have a document that validates against the schema but is not a valid
