@@ -22,13 +22,21 @@
 """
 
 # Stdlib
+import datetime
+import hashlib
+import random
 import re
 import urlparse
 
+import d1_common.const
 import d1_common.type_conversions
 import d1_common.url
+import d1_test.mock_api
 
 N_TOTAL = 100
+NUM_SCIOBJ_BYTES = 1024
+SYSMETA_FORMATID = 'application/octet-stream'
+SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 
 
 def parse_rest_url(rest_url):
@@ -75,3 +83,49 @@ def get_page(query_dict, n_total):
   if n_start + n_count > n_total:
     n_count = N_TOTAL - n_start
   return n_start, n_count
+
+
+def generate_sciobj_bytes(pid, n_count=NUM_SCIOBJ_BYTES):
+  pid_hash_int = int(hashlib.md5(pid).hexdigest(), 16)
+  random.seed(pid_hash_int)
+  return bytearray(random.getrandbits(8) for _ in xrange(n_count))
+
+
+def generate_sysmeta(pyxb_bindings, pid):
+  sciobj_str = d1_test.mock_api.util.generate_sciobj_bytes(pid)
+  sysmeta_pyxb = _generate_system_metadata_for_sciobj_str(
+    pyxb_bindings, pid, sciobj_str
+  )
+  return sciobj_str, sysmeta_pyxb
+
+
+def _generate_system_metadata_for_sciobj_str(pyxb_bindings, pid, sciobj_str):
+  size = len(sciobj_str)
+  md5 = hashlib.md5(sciobj_str).hexdigest()
+  now = datetime.datetime.now()
+  sysmeta_pyxb = _generate_sysmeta_pyxb(pyxb_bindings, pid, size, md5, now)
+  return sysmeta_pyxb
+
+
+def _generate_sysmeta_pyxb(pyxb_bindings, pid, size, md5, now):
+  sysmeta_pyxb = pyxb_bindings.systemMetadata()
+  sysmeta_pyxb.identifier = pid
+  sysmeta_pyxb.formatId = SYSMETA_FORMATID
+  sysmeta_pyxb.size = size
+  sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
+  sysmeta_pyxb.checksum = pyxb_bindings.checksum(md5)
+  sysmeta_pyxb.checksum.algorithm = 'MD5'
+  sysmeta_pyxb.dateUploaded = now
+  sysmeta_pyxb.dateSysMetadataModified = now
+  sysmeta_pyxb.accessPolicy = _generate_public_access_policy(pyxb_bindings)
+  return sysmeta_pyxb
+
+
+def _generate_public_access_policy(pyxb_bindings):
+  accessPolicy = pyxb_bindings.accessPolicy()
+  accessRule = pyxb_bindings.AccessRule()
+  accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
+  permission = pyxb_bindings.Permission('read')
+  accessRule.permission.append(permission)
+  accessPolicy.append(accessRule)
+  return accessPolicy
