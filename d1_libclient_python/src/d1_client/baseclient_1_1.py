@@ -55,12 +55,17 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
   # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
 
   #@d1_common.util.utf8_to_unicode
-  def queryResponse(self, queryEngine, query=None, **kwargs):
-    return self.GET(['query', queryEngine], query=kwargs)
+  def queryResponse(
+      self, queryEngine, query_str, vendorSpecific=None, **kwargs
+  ):
+    return self.GET(['query', queryEngine, query_str], headers=vendorSpecific,
+                    query=kwargs)
 
   #@d1_common.util.utf8_to_unicode
-  def query(self, queryEngine, query=None, **kwargs):
-    response = self.queryResponse(queryEngine, query, **kwargs)
+  def query(self, queryEngine, query_str, vendorSpecific=None, **kwargs):
+    response = self.queryResponse(
+      queryEngine, query_str, vendorSpecific, **kwargs
+    )
     return self._read_stream_response(response)
 
   # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
