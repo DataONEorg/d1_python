@@ -55,10 +55,11 @@ class TestMockPost(unittest.TestCase):
       u'query_dict': {},
       u'header_dict': {
         u'Connection': u'keep-alive',
-        u'User-Agent': u'python-requests/2.13.0',
         u'Content-Length': u'0',
         u'Accept': u'*/*',
         u'Accept-Encoding': u'gzip, deflate'
       }
     }
+    self.assertIn('User-Agent', body_dict['header_dict'])
+    del body_dict['header_dict']['User-Agent']
     self.assertDictEqual(body_dict, expected_dict)
