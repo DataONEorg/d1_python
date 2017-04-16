@@ -85,7 +85,7 @@ class TestExceptions(unittest.TestCase):
   def test_100(self):
     """deserialize()"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
-    self.assertTrue(isinstance(d1_exception, exceptions.IdentifierNotUnique))
+    self.assertIsInstance(d1_exception, exceptions.IdentifierNotUnique)
     self.assertEqual(d1_exception.detailCode, '123.456.789')
     self.assertEqual(d1_exception.errorCode, 409)
     self.assertEqual(d1_exception.name, 'IdentifierNotUnique')
@@ -99,7 +99,7 @@ class TestExceptions(unittest.TestCase):
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertTrue(isinstance(x2, exceptions.NotFound))
+    self.assertIsInstance(x2, exceptions.NotFound)
     self.assertEqual(x1.errorCode, x2.errorCode)
     self.assertEqual(x1.detailCode, x2.detailCode)
     self.assertEqual(x1.name, x2.name)
@@ -113,7 +113,7 @@ class TestExceptions(unittest.TestCase):
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertTrue(isinstance(x2, exceptions.NotFound))
+    self.assertIsInstance(x2, exceptions.NotFound)
     self.assertEqual(x1.errorCode, x2.errorCode)
     self.assertEqual(x1.detailCode, x2.detailCode)
     self.assertEqual(x1.name, x2.name)
@@ -127,7 +127,7 @@ class TestExceptions(unittest.TestCase):
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertTrue(isinstance(x2, exceptions.NotFound))
+    self.assertIsInstance(x2, exceptions.NotFound)
     self.assertEqual(x1.errorCode, x2.errorCode)
     self.assertEqual(x1.detailCode, x2.detailCode)
     self.assertEqual(x1.name, x2.name)
@@ -137,10 +137,9 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(x1.traceInformation, x2.traceInformation)
 
   def test_150(self):
-    """deserialize() of bad document raises DataONEExceptionException"""
+    """deserialize() of bad document raises ServiceFailure"""
     self.assertRaises(
-      exceptions.DataONEExceptionException, exceptions.deserialize,
-      INVALID_ERROR_DOC[0]
+      exceptions.ServiceFailure, exceptions.deserialize, INVALID_ERROR_DOC[0]
     )
 
   def test_200(self):
