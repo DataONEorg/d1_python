@@ -22,8 +22,10 @@
 """
 
 # Stdlib
+import base64
 import hashlib
 import logging
+import unittest
 
 # 3rd party
 import responses
@@ -31,20 +33,17 @@ import requests
 
 # D1
 import d1_common.logging_context
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 
 # App
-import d1_test.mock_api.get as mock_get # noqa: E402
-import d1_test.mock_api.create as mock_post # noqa: E402
+import d1_test.mock_api.all as mock_all # noqa: E402
 import d1_client.session as session # noqa: E402
 import shared_settings # noqa: E402
 
 
-class TestSession(TestCaseWithURLCompare):
+class TestSession(unittest.TestCase):
   def setUp(self):
-    mock_get.init(shared_settings.MN_RESPONSES_URL)
-    mock_post.init(shared_settings.MN_RESPONSES_URL)
+    mock_all.init(shared_settings.MN_RESPONSES_URL)
 
   def tearDown(self):
     pass
@@ -54,9 +53,10 @@ class TestSession(TestCaseWithURLCompare):
     response = s.GET(['object', pid])
     return hashlib.sha1(response.content).hexdigest()
 
-  def _get_response(self, pid):
+  def _get_response(self, pid, header_dict=None):
+    header_dict = header_dict or {}
     s = session.Session(shared_settings.MN_RESPONSES_URL)
-    return s.GET(['object', pid])
+    return s.GET(['object', pid], headers=header_dict)
 
   def _post(self, query_dict, header_dict, body):
     s = session.Session(
@@ -102,9 +102,14 @@ class TestSession(TestCaseWithURLCompare):
   @responses.activate
   def test_020(self):
     """HTTP GET 404"""
-    response = self._get_response('404')
+    response = self._get_response('valid_pid', header_dict={'trigger': '404'})
     self.assertEqual(response.status_code, 404)
-    self.assertEqual(response.text, 'Return code: 404')
+    expected_response_body_str = (
+      u'<?xml version="1.0" encoding="utf-8"?><error detailCode="0" '
+      u'errorCode="404" name="NotFound">'
+      u'<description></description></error>'
+    )
+    self.assertEqual(response.text, expected_response_body_str)
 
   def test_050(self):
     """HTTP GET against http://some.bogus.address/ raises ConnectionError"""
@@ -119,12 +124,12 @@ class TestSession(TestCaseWithURLCompare):
     """HTTP POST is successful
     Roundtrip for body, headers and query params.
     """
-    body_str = 'body_abc'
+    body_str = 'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
     response = self._post(query_dict, header_dict, body_str)
     r_dict = response.json()
-    self.assertEqual(r_dict['body_str'], body_str)
+    self.assertEqual(base64.b64decode(r_dict['body_str']), body_str)
     self.assertIn('abcd', r_dict['query_dict'])
     self.assertEqual(r_dict['query_dict']['abcd'], ['1234'])
     self.assertIn('ijkl', r_dict['header_dict'])
@@ -140,12 +145,12 @@ class TestSession(TestCaseWithURLCompare):
   def test_102(self):
     """Query params passed to Session() and individual POST are combined
     """
-    body_str = 'body_abc'
+    body_str = 'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
     response = self._post(query_dict, header_dict, body_str)
     r_dict = response.json()
-    self.assertEqual(r_dict['body_str'], body_str)
+    self.assertEqual(base64.b64decode(r_dict['body_str']), body_str)
     self.assertIn('abcd', r_dict['query_dict'])
     self.assertEqual(r_dict['query_dict']['abcd'], ['1234'])
     self.assertIn('default_query', r_dict['query_dict'])
@@ -160,13 +165,13 @@ class TestSession(TestCaseWithURLCompare):
     }
     response = self._post_fields(field_dict)
     r_dict = response.json()
-    # pprint.pprint(r_dict)
+    body_str = base64.b64decode(r_dict['body_str'])
     self.assertIn('Content-Type', r_dict['header_dict'])
     self.assertIn('multipart/form-data', r_dict['header_dict']['Content-Type'])
-    self.assertIn('post_data_1', r_dict['body_str'])
-    self.assertIn('post_data_2', r_dict['body_str'])
-    self.assertIn('1234', r_dict['body_str'])
-    self.assertIn('5678', r_dict['body_str'])
+    self.assertIn('post_data_1', body_str)
+    self.assertIn('post_data_2', body_str)
+    self.assertIn('1234', body_str)
+    self.assertIn('5678', body_str)
 
   @responses.activate
   def test_200(self):
