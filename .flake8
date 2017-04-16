@@ -16,5 +16,5 @@ max-line-length = 100
 ignore = E111,E114,E121,E122,E125,E126,E131,E261,E265,E266
 
 [pytest]
-#addopts = -rsxX -q
+addopts = --failed-first
 testpaths = ./d1_common_python ./d1_libclient_python ./d1_client_cli ./d1_test_utilities_python

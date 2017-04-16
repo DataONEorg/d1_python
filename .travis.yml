@@ -12,7 +12,7 @@ before_install:
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
-  - pip install coverage
+  - pip install coverage pytest-cov
 script:
   - cd $TRAVIS_BUILD_DIR/d1_common_python/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_libclient_python/src && python setup.py develop
@@ -23,12 +23,7 @@ script:
   - python -c "import sys; print '\n'.join(sys.path)"
   #- ls -l /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
   # Run the tests
-  - nosetests --with-coverage
-    $TRAVIS_BUILD_DIR/d1_common_python/src
-    $TRAVIS_BUILD_DIR/d1_libclient_python/src
-    $TRAVIS_BUILD_DIR/d1_client_cli/src
-    $TRAVIS_BUILD_DIR/d1_test_utilities_python/src
-    $TRAVIS_BUILD_DIR/d1_mn_generic/src
+  - pytest --cov=$TRAVIS_BUILD_DIR
 after_success:
   # coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
