@@ -26,19 +26,14 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# D1
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-import d1_common.types.dataoneTypes
+import unittest
 
 # App
 import d1_client.mnclient_1_1
 import shared_settings
 
 
-class TestMNClient_1_1(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestMNClient_1_1(unittest.TestCase):
   def setUp(self):
     self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
       shared_settings.MN_RESPONSES_URL

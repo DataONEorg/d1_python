@@ -24,23 +24,17 @@
 
 # Stdlib
 import sys
+import unittest
 
 # D1
 import d1_client.tests.util
-import d1_common.const
-import d1_common.date_time
-import d1_common.test_case_with_url_compare
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
 
 # App
 sys.path.append('..')
 import d1_client.baseclient_2_0 # noqa: E402
 
 
-class TestDataONEBaseclientV2(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestDataONEBaseclientV2(unittest.TestCase):
   def setUp(self):
     self.base_url = 'www.example.com'
     self.client = d1_client.baseclient_2_0.DataONEBaseClient_2_0(

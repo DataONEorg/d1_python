@@ -45,7 +45,7 @@ import d1_test.instance_generator.checksum as checksum
 #===============================================================================
 
 
-class TestChecksum(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestChecksum(unittest.TestCase):
   def setUp(self):
     pass
 

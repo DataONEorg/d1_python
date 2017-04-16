@@ -24,13 +24,10 @@ import unittest
 import logging
 import sys
 
-# D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
-
 # App
 
 
-class TestCLIUtil(TestCaseWithURLCompare):
+class TestCLIUtil(unittest.TestCase):
   def setUp(self):
     pass
 

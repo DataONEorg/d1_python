@@ -174,7 +174,6 @@ class FUSECallbacks(fuse.Operations):
     size = 0
     date = datetime.datetime.now()
     #for f in c:
-    #  print '1'*100
     #  print f
     #  size += f[1]
     #  date = f[2]

@@ -32,11 +32,6 @@ import logging
 import random
 import unittest
 
-# D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-
 # App
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.random_data as random_data
@@ -44,9 +39,7 @@ import d1_test.instance_generator.random_data as random_data
 #===============================================================================
 
 
-class TestIdentifier(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestIdentifier(unittest.TestCase):
   def setUp(self):
     pass
 

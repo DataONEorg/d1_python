@@ -28,14 +28,9 @@
 
 # Stdlib
 import sys
+import unittest
 
 # D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
 
 # App
 sys.path.append('..')
@@ -56,8 +51,6 @@ COORDINATING_NODES = {
 #=========================================================================
 
 
-class TestDataONEClient(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestDataONEClient(unittest.TestCase):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']

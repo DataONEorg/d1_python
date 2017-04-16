@@ -32,18 +32,13 @@ import logging
 import time
 import unittest
 
-# D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-
 # App
 import d1_test.instance_generator.dates as dates
 
 #===============================================================================
 
 
-class TestDateTime(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestDateTime(unittest.TestCase):
   def setUp(self):
     pass
 

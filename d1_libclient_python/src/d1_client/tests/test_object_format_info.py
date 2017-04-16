@@ -32,9 +32,7 @@ Unit tests for ObjectFormatInfo.
 # Stdlib
 import StringIO
 import sys
-
-# D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
+import unittest
 
 # App
 sys.path.append('..')
@@ -53,7 +51,7 @@ Blank line above.
 """
 
 
-class TestObjectFormatInfo(TestCaseWithURLCompare):
+class TestObjectFormatInfo(unittest.TestCase):
   def setUp(self):
     self.i = d1_client.object_format_info.ObjectFormatInfo()
 

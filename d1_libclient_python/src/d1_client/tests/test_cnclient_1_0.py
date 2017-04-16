@@ -29,19 +29,17 @@ import responses
 
 # D1
 sys.path.append('..')
-import d1_common.test_case_with_url_compare # noqa: E402
 import d1_common.types.exceptions # noqa: E402
 import d1_common.types.dataoneTypes # noqa: E402
 import d1_common.types.dataoneTypes_v2_0 # noqa: E402
-import d1_common.types.generated.dataoneTypes_v1 # noqa: E402
-import d1_common.types.generated.dataoneTypes_v2_0 # noqa: E402
-import d1_test.instance_generator.accesspolicy # noqa: E402
+import d1_common.types.dataoneTypes_v1 # noqa: E402
+import d1_test.instance_generator.access_policy # noqa: E402
 import d1_test.instance_generator.identifier # noqa: E402
 import d1_test.instance_generator.person # noqa: E402
 import d1_test.instance_generator.random_data # noqa: E402
-import d1_test.instance_generator.replicationpolicy # noqa: E402
+import d1_test.instance_generator.replication_policy # noqa: E402
 import d1_test.instance_generator.subject # noqa: E402
-import d1_test.instance_generator.systemmetadata # noqa: E402
+import d1_test.instance_generator.system_metadata # noqa: E402
 
 # App
 import d1_client.cnclient # noqa: E402
@@ -51,7 +49,7 @@ import shared_context # noqa: E402
 import d1_test.mock_api.list_formats # noqa: E402
 
 
-class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestCNClient(unittest.TestCase):
   def setUp(self):
     self.client = d1_client.cnclient.CoordinatingNodeClient(
       shared_settings.CN_RESPONSES_URL
@@ -138,9 +136,7 @@ class TestCNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
   def test_1065(self):
     """CNCore.listNodes() returns a valid NodeList that contains at least 3 entries"""
     nodes = self.client.listNodes()
-    self.assertIsInstance(
-      nodes, d1_common.types.generated.dataoneTypes_v1.NodeList
-    )
+    self.assertIsInstance(nodes, d1_common.types.dataoneTypes_v1.NodeList)
     self.assertTrue(len(nodes.node) >= 1)
 
   #=========================================================================

@@ -32,10 +32,7 @@ import logging
 import unittest
 
 # D1
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
 import d1_test.instance_generator.person as person
@@ -43,14 +40,14 @@ import d1_test.instance_generator.person as person
 #===============================================================================
 
 
-class TestPerson(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestPerson(unittest.TestCase):
   def setUp(self):
     pass
 
   def test_010(self):
     """generate()"""
     person_obj = person.generate()
-    self.assertTrue(isinstance(person_obj, dataoneTypes_v1.Person))
+    self.assertIsInstance(person_obj, dataoneTypes_v1.Person)
     self.assertTrue(person_obj.toxml())
 
 

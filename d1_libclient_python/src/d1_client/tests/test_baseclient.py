@@ -19,12 +19,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import unittest
+
 # 3rd party
 import responses
 import requests.structures
 
 # D1
-import d1_common.test_case_with_url_compare
+
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -41,9 +43,7 @@ import shared_context # noqa: E402
 import shared_settings # noqa: E402
 
 
-class TestDataONEBaseClient(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestDataONEBaseClient(unittest.TestCase):
   def setUp(self):
     # d1_test.mock_api.log_records.init(shared_settings.MN_RESPONSES_URL)
     d1_test.mock_api.all.init(shared_settings.MN_RESPONSES_URL)

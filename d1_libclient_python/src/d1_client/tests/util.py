@@ -51,8 +51,6 @@ def read_test_xml(filename, mode_str='r'):
 
 def read_test_pyxb(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
-  print xml_str
-  print type(xml_str)
   return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
 

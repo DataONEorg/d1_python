@@ -26,17 +26,14 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# D1
-import d1_common.test_case_with_url_compare
+import unittest
 
 # App
 import d1_client.cnclient_1_1
 import shared_settings
 
 
-class TestCNClient_1_1(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestCNClient_1_1(unittest.TestCase):
   def setUp(self):
     self.client = d1_client.cnclient_1_1.CoordinatingNodeClient_1_1(
       shared_settings.CN_RESPONSES_URL

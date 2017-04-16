@@ -37,7 +37,6 @@ import rdflib
 import foresite
 
 # D1
-import d1_common.test_case_with_url_compare
 import d1_common.util
 import d1_client.data_package
 
@@ -75,9 +74,7 @@ import d1_client.data_package
 
 
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
-class TestDataPackage(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestDataPackage(unittest.TestCase):
   def setUp(self):
     # The example_oai_ore.xml contains one resource map that describes one
     # aggregation. The pid for the resource map is "abc". The aggregation

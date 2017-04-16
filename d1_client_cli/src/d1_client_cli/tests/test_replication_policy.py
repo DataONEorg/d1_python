@@ -25,16 +25,13 @@ import logging
 import sys
 import StringIO
 
-# D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare # noqa: E402
-
 # App
 import d1_client_cli.impl.replication_policy as replication_policy
 
 #===============================================================================
 
 
-class TestReplicationPolicy(TestCaseWithURLCompare):
+class TestReplicationPolicy(unittest.TestCase):
   def setUp(self):
     pass
 

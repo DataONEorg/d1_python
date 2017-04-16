@@ -24,9 +24,6 @@ import unittest
 import logging
 import sys
 
-# D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
-
 # App
 import d1_client_cli.impl.access_control as access_control
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
@@ -34,7 +31,7 @@ import d1_client_cli.impl.cli_exceptions as cli_exceptions
 #===============================================================================
 
 
-class TestAccessControl(TestCaseWithURLCompare):
+class TestAccessControl(unittest.TestCase):
   def setUp(self):
     pass
 
