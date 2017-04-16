@@ -40,10 +40,10 @@ class TestUrl(unittest.TestCase):
       'testUnicodeStrings.utf8.txt'
     )
 
-  def test_010(self):
+  def test_0010(self):
     """encodePathElement()"""
     for row in self._unicode_strings.splitlines():
-      self.assertTrue(isinstance(row, unicode))
+      self.assertIsInstance(row, unicode)
       parts = row.split('\t')
       if len(parts) > 1:
         v = parts[0]
@@ -51,7 +51,7 @@ class TestUrl(unittest.TestCase):
           e = parts[1].strip()
           self.assertEqual(e, d1_common.url.encodePathElement(v))
 
-  def test_020(self):
+  def test_0020(self):
     """encodeQueryElement()"""
     for row in self._unicode_strings.splitlines():
       parts = row.split('\t')
@@ -61,7 +61,7 @@ class TestUrl(unittest.TestCase):
           e = parts[1].strip()
           self.assertEqual(e, d1_common.url.encodeQueryElement(v))
 
-  def test_030(self):
+  def test_0030(self):
     """urlencode()"""
     data = [('a', '"#<>[]^`{}|'), ('b', '-&=&='),
             ('c', 'http://example.com/data/mydata?row=24')]
@@ -72,7 +72,7 @@ class TestUrl(unittest.TestCase):
     test = d1_common.url.urlencode(data)
     self.assertEqual(test, expected)
 
-  def test_040(self):
+  def test_0040(self):
     """stripElementSlashes()"""
     self.assertEqual('element', d1_common.url.stripElementSlashes('/element'))
     self.assertEqual('element', d1_common.url.stripElementSlashes('//element/'))
@@ -86,12 +86,12 @@ class TestUrl(unittest.TestCase):
     self.assertEqual('', d1_common.url.stripElementSlashes('/'))
     self.assertEqual('', d1_common.url.stripElementSlashes('//'))
 
-  def test_050(self):
+  def test_0050(self):
     """joinPathElements()"""
     self.assertEqual('a/b', d1_common.url.joinPathElements('a', 'b'))
     self.assertEqual('a/b/c', d1_common.url.joinPathElements('a/', '/b', 'c'))
 
-  def test_055(self):
+  def test_0060(self):
     """joinPathElementsNoStrip()"""
     self.assertEqual('', d1_common.url.joinPathElementsNoStrip(''))
     self.assertEqual('/', d1_common.url.joinPathElementsNoStrip('/'))
@@ -109,7 +109,7 @@ class TestUrl(unittest.TestCase):
       'a//b///c', d1_common.url.joinPathElementsNoStrip('a//', 'b', '///c')
     )
 
-  def test_060(self):
+  def test_0070(self):
     """normalizeTarget()"""
     u0 = "http://some.server/base/mn/"
     u1 = "http://some.server/base/mn"
@@ -120,7 +120,7 @@ class TestUrl(unittest.TestCase):
     self.assertEqual(u0, d1_common.url.normalizeTarget(u2))
     self.assertEqual(u0, d1_common.url.normalizeTarget(u3))
 
-  def test_070(self):
+  def test_0080(self):
     """makeCNBaseURL()"""
     self.assertEqual(
       d1_common.url.makeCNBaseURL(''), 'https://cn.dataone.org/cn'
@@ -148,7 +148,7 @@ class TestUrl(unittest.TestCase):
       'http://test.com/a/b/c/cn'
     )
 
-  def test_080(self):
+  def test_0090(self):
     """makeMNBaseURL()"""
     self.assertEqual(d1_common.url.makeMNBaseURL(''), 'https://localhost/mn')
     self.assertEqual(
@@ -172,4 +172,64 @@ class TestUrl(unittest.TestCase):
     self.assertEqual(
       d1_common.url.makeMNBaseURL('http://test.com/a/b/c/mn'),
       'http://test.com/a/b/c/mn'
+    )
+
+  def test_0100(self):
+    """Equivalent
+    """
+    a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
+    b = "Http://www.SOME.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10&k1=11#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(url_diff_list, [])
+
+  def test_0110(self):
+    """Equivalent, k2 moved
+    """
+    a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
+    b = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k2=abc&k3=def&k1=10&k1=11#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(url_diff_list, [])
+
+  def test_0120(self):
+    """Different params, p1 replaced with p4
+    """
+    a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
+    b = "http://www.some.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(
+      url_diff_list, [u'Parameters differ. a="p1, p2, p3" b="p2, p3, p4"']
+    )
+
+  def test_0130(self):
+    """Different params, p3 missing
+    """
+    a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
+    b = "http://www.some.host:999/a/b/c/;p1;p2?k1=10&k2=abc#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(
+      url_diff_list, [u'Parameters differ. a="p1, p2, p3" b="p1, p2"']
+    )
+
+  def test_0140(self):
+    """Different query, second k11 key missing
+    """
+    a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
+    b = "http://www.some.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(
+      url_diff_list, [
+        u'Query values differ. key="k1" a_value="[\'10\', \'11\']" b_value="[\'10\']"'
+      ]
+    )
+
+  def test_0150(self):
+    """Different query, value for k2 different
+    """
+    a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
+    b = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k3=dex&k1=10&k1=11&k2=abc#frag"
+    url_diff_list = d1_common.url.find_url_mismatches(a, b)
+    self.assertListEqual(
+      url_diff_list, [
+        u'Query values differ. key="k3" a_value="[\'def\']" b_value="[\'dex\']"'
+      ]
     )
