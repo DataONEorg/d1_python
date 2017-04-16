@@ -19,6 +19,7 @@
 # limitations under the License.
 
 # Stdlib
+import collections
 import datetime
 import logging
 import urlparse
@@ -146,7 +147,6 @@ class Session(object):
         cert_pem_path, cert_key_path
         if cert_key_path is not None else cert_pem_path
       )
-
     self._session = self._create_requests_session()
 
   @property
@@ -276,8 +276,18 @@ class Session(object):
     kwargs_dict.update(kwargs_in_dict)
     kwargs_dict = self._remove_none_value_items(kwargs_dict)
     result_dict = self._default_request_arg_dict.copy()
-    result_dict.update(kwargs_dict)
+    # result_dict.update(kwargs_dict)
+    self.nested_update(result_dict, kwargs_dict)
     return result_dict
+
+  def nested_update(self, d, u):
+    for k, v in u.iteritems():
+      if isinstance(v, collections.Mapping):
+        r = self.nested_update(d.get(k, {}), v)
+        d[k] = r
+      else:
+        d[k] = u[k]
+    return d
 
   def _datetime_to_iso8601(self, query_dict):
     """Encode any datetime query parameters to ISO8601."""
