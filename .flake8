@@ -1,31 +1,20 @@
 [flake8]
-
 # We have YAPF set to wrap at 80, but that's not always possible, so we set the
 # limit a bit higher here.
 max-line-length = 100
-
-# Ignore
-
+# Ignore:
 # E111 indentation is not a multiple of four
+# E114 indentation is not a multiple of four (comment)
 # E121 continuation line under-indented for hanging indent
 # E122 continuation line missing indentation or outdented
-# E126 continuation line over-indented for hanging indent
-# E261 at least two spaces before inline comment
-# E114 indentation is not a multiple of four (comment)
 # E125 continuation line with same indent as next logical line
-
-# E266 too many leading '#' for block comment
-# -> removing this because it triggers on script that is commented out
-
-# E265 block comment should start with '# '
-
+# E126 continuation line over-indented for hanging indent
 # E131 continuation line unaligned for hanging indent
-
-# E127 continuation line over-indented for visual indent
-
-
-ignore = E111,E121,E122,E126,E261,E114,E125,E266,E265,E131
-# ,E127
-
+# E261 at least two spaces before inline comment
+# E265 block comment should start with '# '
+# E266 too many leading '#' for block comment - removing this because it triggers on script that is commented out
+ignore = E111,E114,E121,E122,E125,E126,E131,E261,E265,E266
 
 [pytest]
+#addopts = -rsxX -q
+testpaths = ./d1_common_python ./d1_libclient_python ./d1_client_cli ./d1_test_utilities_python
