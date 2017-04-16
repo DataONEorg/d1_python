@@ -176,11 +176,13 @@ class DataONEBaseClient(session.Session):
   def _raise_dataone_exception(self, response):
     response_body = response.content
     try:
-      raise d1_common.types.exceptions.deserialize(response_body)
-    except d1_common.types.exceptions.DataONEExceptionException as e:
+      d1_exception = d1_common.types.exceptions.deserialize(response_body)
+    except d1_common.types.exceptions.DataONEException as e:
       self._raise_service_failure(
-        response, 'Node returned an invalid response: '.format(str(e))
+        response, 'Node returned an invalid response:\n{}\n'.format(str(e))
       )
+    else:
+      raise d1_exception
 
   def _content_type_is_xml(self, response):
     if 'Content-Type' not in response.headers:
@@ -377,11 +379,8 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def ping(self, vendorSpecific=None):
-    try:
-      response = self.pingResponse(vendorSpecific=vendorSpecific)
-      return self._read_boolean_response(response)
-    except d1_common.types.exceptions.DataONEExceptionException:
-      return False
+    response = self.pingResponse(vendorSpecific=vendorSpecific)
+    return self._read_boolean_response(response)
 
   # ----------------------------------------------------------------------------
   # CNRead / MNRead

@@ -81,16 +81,12 @@ def deserialize(dataone_exception_xml):
       description=msg.getvalue(),
       traceInformation=traceback.format_exc(),
     )
-    # original exception in TraceInformation.
-    raise DataONEExceptionException(msg.getvalue())
-
-  trace = getattr(dataone_exception_pyxb, 'traceInformation', None)
 
   return create_exception_by_name(
     dataone_exception_pyxb.name,
     dataone_exception_pyxb.detailCode,
     dataone_exception_pyxb.description,
-    trace,
+    getattr(dataone_exception_pyxb, 'traceInformation', None),
     dataone_exception_pyxb.identifier,
     dataone_exception_pyxb.nodeId,
   )
@@ -224,6 +220,7 @@ class DataONEException(Exception):
       return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
 
   def serialize(self):
+    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
     dataone_exception_pyxb = dataoneErrors.error()
     dataone_exception_pyxb.name = self.__class__.__name__
     dataone_exception_pyxb.errorCode = self.errorCode
@@ -449,11 +446,6 @@ class VersionMismatch(DataONEException):
     DataONEException.__init__(
       self, 409, detailCode, description, traceInformation, identifier, nodeId
     )
-
-
-class DataONEExceptionException(Exception):
-  """Hold exceptions raised when processing DataONEExceptions."""
-  pass
 
 
 ERROR_CODE_TO_EXCEPTION_DICT = {
