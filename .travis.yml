@@ -23,7 +23,7 @@ script:
   - python -c "import sys; print '\n'.join(sys.path)"
   #- ls -l /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
   # Run the tests
-  - pytest --cov=$TRAVIS_BUILD_DIR
+  - cd $TRAVIS_BUILD_DIR && pytest --cov=.
 after_success:
   # coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
