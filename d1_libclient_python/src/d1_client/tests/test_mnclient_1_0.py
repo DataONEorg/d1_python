@@ -27,12 +27,18 @@
 """
 
 # Stdlib
+import base64
+import json
 import unittest
-from mock import patch
+
+import requests_toolbelt
+import responses
+import d1_test.mock_api.all
 
 # D1
-import d1_common.test_case_with_url_compare
+import d1_client.mnclient_1_1
 import d1_common.types.dataoneTypes
+import d1_common.const
 
 # App
 import d1_client.mnclient
@@ -40,83 +46,133 @@ import shared_settings
 import d1_client.tests.util
 
 
-class TestMNClient(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMNClient(unittest.TestCase):
   def setUp(self):
+    d1_test.mock_api.all.init(shared_settings.MN_RESPONSES_URL)
     self.client = d1_client.mnclient.MemberNodeClient(
       shared_settings.MN_RESPONSES_URL
     )
     self.sysmeta_pyxb = d1_client.tests.util.read_test_pyxb(
       'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     )
+    self.sysmeta_xml = d1_client.tests.util.read_test_xml(
+      'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+    )
     self.obj = 'test'
     self.pid = '1234'
-
-  def tearDown(self):
-    pass
 
   #=========================================================================
   # MNCore
   #=========================================================================
 
-  def test_createResponse(self):
-    with patch.object(
-        d1_client.mnclient.MemberNodeClient, 'createResponse'
-    ) as mocked_method:
-      mocked_method.return_value = 200
-      response = self.client.createResponse(
-        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
-      )
-      self.assertEqual(200, response)
+  @responses.activate
+  def test_0010(self):
+    """MNCore.createResponse(): Generates a correctly encoded Multipart document
+    and Content-Type header
+    """
+    response = self.client.createResponse(
+      '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
+    )
+    self.assertEqual(response.status_code, 200)
 
-  def test_create(self):
-    with patch.object(
-        d1_client.mnclient.MemberNodeClient, 'create'
-    ) as mocked_method:
-      mocked_method.return_value = 200
-      response = self.client.create(
-        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
-      )
-      self.assertEqual(200, response)
+    identifier_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
+      response.content
+    )
+    self.assertEqual(identifier_pyxb.value(), 'echo-post')
+    echo_body_str = base64.b64decode(response.headers['Echo-Body-Base64'])
+    echo_query_dict = json.loads(
+      base64.b64decode(response.headers['Echo-Query-Base64'])
+    )
+    echo_header_dict = json.loads(
+      base64.b64decode(response.headers['Echo-Header-Base64'])
+    )
+    self.assertIsInstance(echo_body_str, basestring)
+    self.assertIsInstance(echo_query_dict, dict)
+    self.assertIsInstance(echo_header_dict, dict)
 
-  def test_getCapabilities(self):
-    with patch.object(
-        d1_client.mnclient.MemberNodeClient, 'getCapabilities'
-    ) as mocked_method:
-      mocked_method.return_value = 200
-      response = self.client.getCapabilities()
-      self.assertEqual(200, response)
+    multipart_decoder = requests_toolbelt.MultipartDecoder(
+      echo_body_str, echo_header_dict['Content-Type']
+    )
 
-  @unittest.skip(
-    "TODO: Skipped due to waiting for test env. Should set up test env or remove"
-  )
-  def test_1010(self):
-    """MNCore.ping() returns True"""
-    ping = self.client.ping()
-    self.assertIsInstance(ping, bool)
-    self.assertTrue(ping)
+    self.assertEqual(len(multipart_decoder.parts), 3)
 
-  @unittest.skip(
-    "TODO: Skipped due to waiting for test env. Should set up test env or remove"
-  )
-  def test_1020(self):
-    """MNCore.getCapabilities() returns a valid Node"""
-    node = self.client.getCapabilities()
-    self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
+    self.assertDictEqual(
+      dict(multipart_decoder.parts[0].headers),
+      {
+        'Content-Disposition':
+          'form-data; name="sysmeta"; filename="sysmeta.xml"'
+      },
+    )
+    self.assertIn('<?xml', multipart_decoder.parts[0].content)
+    self.assertIn(
+      '<identifier>BAYXXX_015ADCP015R00_20051215.50.9</identifier>',
+      multipart_decoder.parts[0].content
+    )
 
-  # ============================================================================
-  # MNRead
-  # ============================================================================
+    self.assertDictEqual(
+      dict(multipart_decoder.parts[1].headers),
+      {
+        'Content-Disposition':
+          'form-data; name="object"; filename="content.bin"'
+      },
+    )
+    self.assertEqual(
+      multipart_decoder.parts[1].content, 'BAYXXX_015ADCP015R00_20051215.50.9'
+    )
 
-  # Only tested through GMN integration tests for now.
+    self.assertDictEqual(
+      dict(multipart_decoder.parts[2].headers),
+      {'Content-Disposition': 'form-data; name="pid"'},
+    )
+    self.assertEqual(multipart_decoder.parts[2].content, '1234')
 
-  #=========================================================================
-  # MNStorage
-  #=========================================================================
+  @responses.activate
+  def test_0020(self):
+    """MNCore.create(): Returned Identifier object is correctly parsed"""
+    identifier_pyxb = self.client.create(
+      '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
+    )
+    self.assertEqual(identifier_pyxb.value(), 'echo-post')
 
-  # Only tested through GMN integration tests for now.
+  @responses.activate
+  def test_0030(self):
+    """MNCore.getCapabilities(): """
 
-  #=========================================================================
-  # MNReplication
-  #=========================================================================
-
-  # Only tested through GMN integration tests for now.
+  # @unittest.skip(
+  #   "TODO: Skipped due to waiting for test env. Should set up test env or remove"
+  # )
+  # @responses.activate
+  # def test_0040(self):
+  #   """"""
+  #   """MNCore.ping() returns True"""
+  #   ping = self.client.ping()
+  #   self.assertIsInstance(ping, bool)
+  #   self.assertTrue(ping)
+  #
+  # @unittest.skip(
+  #   "TODO: Skipped due to waiting for test env. Should set up test env or remove"
+  # )
+  # @responses.activate
+  # def test_0050(self):
+  #   """"""
+  #   """MNCore.getCapabilities() returns a valid Node"""
+  #   node = self.client.getCapabilities()
+  #   self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
+  #
+  # # ============================================================================
+  # # MNRead
+  # # ============================================================================
+  #
+  # # Only tested through GMN integration tests for now.
+  #
+  # #=========================================================================
+  # # MNStorage
+  # #=========================================================================
+  #
+  # # Only tested through GMN integration tests for now.
+  #
+  # #=========================================================================
+  # # MNReplication
+  # #=========================================================================
+  #
+  # # Only tested through GMN integration tests for now.
