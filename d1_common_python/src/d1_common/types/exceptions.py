@@ -55,20 +55,32 @@ import d1_common.util
 def deserialize(dataone_exception_xml):
   """Deserialize a DataONE Exception.
   """
+  error_str = None
   try:
     # Deserialize XML to a native Python object.
     dataone_exception_pyxb = dataoneErrors.CreateFromDocument(
       dataone_exception_xml
     )
-  except (pyxb.PyXBException, xml.sax.SAXParseException):
+  except pyxb.ValidationError as e:
+    error_str = e.details()
+  except pyxb.PyXBException as e:
+    error_str = e.message
+  except xml.sax.SAXParseException as e:
+    error_str = str(e)
+  if error_str is not None:
     msg = StringIO.StringIO()
-    msg.write('Deserialization failed with exception:\n')
-    msg.write(traceback.format_exc() + '\n')
-    msg.write('On input:\n')
+    msg.write('Deserialization failed.\n')
+    msg.write('Error: {}\n'.format(error_str))
     msg.write(
-      '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
+      'Input: {}\n'.format(
+        '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
+      )
     )
-    # TODO: Instead raise a DataONE ServerFailure exception and put the
+    raise ServiceFailure(
+      detailCode=0,
+      description=msg.getvalue(),
+      traceInformation=traceback.format_exc(),
+    )
     # original exception in TraceInformation.
     raise DataONEExceptionException(msg.getvalue())
 
