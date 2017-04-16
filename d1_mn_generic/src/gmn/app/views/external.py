@@ -370,7 +370,7 @@ def post_error(request):
     synchronization_failed = d1_common.types.exceptions.deserialize(
       synchronization_failed_xml.encode('utf-8')
     )
-  except d1_common.types.exceptions.DataONEExceptionException as e:
+  except d1_common.types.exceptions.DataONEException as e:
     # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
     # to the CN. Can only log the issue and return a 200 OK.
     logging.error(

@@ -32,57 +32,52 @@ import logging
 import unittest
 
 # D1
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
-import d1_test.instance_generator.accesspolicy as accesspolicy # noqa: E402
+import d1_test.instance_generator.access_policy as access_policy # noqa: E402
 
 #===============================================================================
 
 
-class TestAccessPolicy(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestAccessPolicy(unittest.TestCase):
   def setUp(self):
     pass
 
   def test_010(self):
     """select_random_set_of_permissions()"""
     for i in range(10):
-      permissions = accesspolicy.random_set_of_permissions()
-      self.assertTrue(accesspolicy.permission_labels_to_objects(permissions))
+      permissions = access_policy.random_set_of_permissions()
+      self.assertTrue(access_policy.permission_labels_to_objects(permissions))
 
   def test_020(self):
     """permissions_to_tag_string()"""
     for i in range(10):
-      permissions = accesspolicy.random_set_of_permissions()
-      s = accesspolicy.permissions_to_tag_string(permissions)
-      self.assertTrue(isinstance(s, unicode))
+      permissions = access_policy.random_set_of_permissions()
+      s = access_policy.permissions_to_tag_string(permissions)
+      self.assertIsInstance(s, unicode)
 
   def test_030(self):
     """random_subject_with_permission_labels()"""
     for i in range(10):
-      permissions = accesspolicy.random_set_of_permissions()
-      accesspolicy.random_subject_with_permission_labels(permissions)
+      permissions = access_policy.random_set_of_permissions()
+      access_policy.random_subject_with_permission_labels(permissions)
 
   def test_040(self):
     """random_subjects_with_permission_labels()"""
     for i in range(100):
-      permissions = accesspolicy.random_set_of_permissions()
-      subjects = accesspolicy.random_subjects_with_permission_labels(
+      permissions = access_policy.random_set_of_permissions()
+      subjects = access_policy.random_subjects_with_permission_labels(
         permissions
       )
-      self.assertTrue(isinstance(subjects, list))
+      self.assertIsInstance(subjects, list)
 
   def test_050(self):
     """generate()"""
     for i in range(10):
-      access_policy = accesspolicy.generate()
-      self.assertTrue(isinstance(access_policy, dataoneTypes_v1.AccessPolicy))
-      self.assertTrue(access_policy.toxml())
+      access_policy_pyxb = access_policy.generate()
+      self.assertIsInstance(access_policy_pyxb, dataoneTypes_v1.AccessPolicy)
+      self.assertTrue(access_policy_pyxb.toxml())
 
 
 if __name__ == "__main__":

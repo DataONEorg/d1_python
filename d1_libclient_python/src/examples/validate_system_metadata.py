@@ -62,7 +62,7 @@ import pyxb
 import d1_client.mnclient
 import d1_client.objectlistiterator
 import d1_common.checksum
-import d1_common.types.generated.dataoneTypes as dataone_types
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 
 CSV_FILE_PATH = './validation_results.csv'
@@ -176,7 +176,7 @@ class DataONENodeObjectValidator(object):
         '<blockedMemberNode></blockedMemberNode>', ''
       )
       try:
-        return dataone_types.CreateFromDocument(sys_meta_str)
+        return dataoneTypes.CreateFromDocument(sys_meta_str)
       except (d1_common.types.exceptions.DataONEException, pyxb.PyXBException):
         self._inc_count('System Metadata Read errors (after correction)')
         self._write_csv_row(pid, 'sys_meta_read_error')

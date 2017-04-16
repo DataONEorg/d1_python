@@ -32,20 +32,13 @@ import unittest
 import logging
 import random
 
-# D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-
 # App
 import d1_test.instance_generator.random_data as random_data
 
 #===============================================================================
 
 
-class TestRandomData(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestRandomData(unittest.TestCase):
   def setUp(self):
     pass
 
@@ -69,7 +62,7 @@ class TestRandomData(
     """random_unicode_name()"""
     name = random_data.random_unicode_name()
     self.assertTrue(len(name) > 0)
-    self.assertTrue(isinstance(name, unicode))
+    self.assertIsInstance(name, unicode)
 
   def test_020(self):
     """random_unicode_name_list()"""
@@ -77,27 +70,27 @@ class TestRandomData(
     self.assertEqual(len(names), 10)
     for name in names:
       self.assertTrue(len(names) > 0)
-      self.assertTrue(isinstance(name, unicode))
+      self.assertIsInstance(name, unicode)
 
   def test_030(self):
     """random_unicode_name_unique_list()"""
     for i in range(10):
       names = random_data.random_unicode_name_unique_list(30)
       self.assertEqual(len(names), 30)
-      self.assertTrue(isinstance(names[0], unicode))
+      self.assertIsInstance(names[0], unicode)
       self._assert_unique(names)
 
   def test_040(self):
     """random_word()"""
     word = random_data.random_word()
     self.assertTrue(len(word) > 0)
-    self.assertTrue(isinstance(word, unicode))
+    self.assertIsInstance(word, unicode)
 
   def test_045(self):
     """random_3_words()"""
     words = random_data.random_3_words()
     self.assertTrue(len(words) > 0)
-    self.assertTrue(isinstance(words, unicode))
+    self.assertIsInstance(words, unicode)
 
   def test_050(self):
     """random_word_list()"""
@@ -105,14 +98,14 @@ class TestRandomData(
     self.assertEqual(len(words), 10)
     for word in words:
       self.assertTrue(len(words) > 0)
-      self.assertTrue(isinstance(word, unicode))
+      self.assertIsInstance(word, unicode)
 
   def test_060(self):
     """random_word_unique_list()"""
     for i in range(10):
       names = random_data.random_word_unique_list(30)
       self.assertEqual(len(names), 30)
-      self.assertTrue(isinstance(names[0], unicode))
+      self.assertIsInstance(names[0], unicode)
       self._assert_unique(names)
 
   def test_070(self):
@@ -134,7 +127,7 @@ class TestRandomData(
     """random_bool()"""
     for i in range(10):
       b = random_data.random_bool()
-      self.assertTrue(isinstance(b, bool))
+      self.assertIsInstance(b, bool)
 
 
 if __name__ == "__main__":

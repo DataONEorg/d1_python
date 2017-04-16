@@ -34,7 +34,7 @@ import urllib
 #import pyxb
 
 # D1
-import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes
+import d1_common.types.dataoneTypes_1_1 as dataoneTypes
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

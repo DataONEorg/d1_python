@@ -32,7 +32,7 @@ import logging
 
 # D1
 import d1_common.date_time
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 import cache_disk

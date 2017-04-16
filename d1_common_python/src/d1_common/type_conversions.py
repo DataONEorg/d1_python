@@ -285,13 +285,10 @@ def strip_node_list(etree_obj):
     #  if event_el.text not in
     #  print event_el.text
     #  if series_id_el is not None:
-    #    print '1'*100
     #    print series_id_el
     #  for parent_el in etree_obj.find('seriesIdx/..', NS):
-    #    print '1'*100
     #  etree_obj.remove()
     # etree_obj.remove(etree_obj.find('seriesIdx', NS))
-    #  print '1'*100
     #  for el in etree_obj.findall('accessPolicy', NS):
     #    print '2'*100
     #    print el

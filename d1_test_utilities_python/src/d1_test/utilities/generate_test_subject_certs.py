@@ -33,7 +33,7 @@ import urllib
 import OpenSSL
 
 # D1
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # Get an instance of a logger.
 logger = logging.getLogger()

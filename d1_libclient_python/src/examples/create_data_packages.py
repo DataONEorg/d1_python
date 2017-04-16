@@ -76,7 +76,7 @@ import os
 import StringIO
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_client.data_package
 import d1_client.mnclient

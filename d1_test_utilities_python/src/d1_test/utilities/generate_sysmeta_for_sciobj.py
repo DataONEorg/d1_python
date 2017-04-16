@@ -18,7 +18,7 @@ import urllib2
 import sys
 from lxml import etree
 import datetime
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 from d1_instance_generator import systemmetadata
 
 

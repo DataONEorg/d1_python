@@ -31,18 +31,13 @@ Module d1_instance_generator.tests.test_replica
 import logging
 import unittest
 
-# D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-
 # App
 import d1_test.instance_generator.replica as replica
 
 #===============================================================================
 
 
-class TestReplica(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestReplica(unittest.TestCase):
   def setUp(self):
     pass
 

@@ -33,33 +33,28 @@ import logging
 import unittest
 
 # D1
-import d1_common.const
-import d1_common.test_case_with_url_compare
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
-import d1_test.instance_generator.systemmetadata as systemmetadata
+import d1_test.instance_generator.system_metadata as sysmeta
 
 #===============================================================================
 
 
-class TestSystemMetadata(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestSystemMetadata(unittest.TestCase):
   def setUp(self):
     pass
 
   def test_010(self):
     """generate()"""
-    s = systemmetadata.generate()
-    self.assertTrue(isinstance(s, dataoneTypes_v1.SystemMetadata))
+    s = sysmeta.generate()
+    self.assertIsInstance(s, dataoneTypes_v1.SystemMetadata)
     self.assertTrue(s.toxml())
 
   def ztest_020(self):
     """generate_from_file()"""
-    s = systemmetadata.generate_from_file(__file__)
-    self.assertTrue(isinstance(s, dataoneTypes_v1.SystemMetadata))
+    s = sysmeta.generate_from_file(__file__)
+    self.assertIsInstance(s, dataoneTypes_v1.SystemMetadata)
     self.assertTrue(s.toxml())
     checksum_calculator = hashlib.sha1()
     with open(__file__, 'rb') as f:

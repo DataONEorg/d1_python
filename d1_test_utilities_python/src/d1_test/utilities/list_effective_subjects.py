@@ -35,7 +35,7 @@ import logging
 import optparse
 
 # D1
-import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time
