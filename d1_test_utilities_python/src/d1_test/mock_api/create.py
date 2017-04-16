@@ -28,50 +28,61 @@ client.create(..., vendorSpecific={'trigger': '404'})
 """
 
 # Stdlib
+import json
 import re
 import urlparse
+import base64
 
 # 3rd party
-import requests_toolbelt
 import responses
 
 # D1
 import d1_common.const
 import d1_common.url
+import d1_common.types.dataoneTypes
 
 # App
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
-POST_ENDPOINT_RX = r'v([123])/object'
+CREATE_ENDPOINT_RX = r'v([123])/object'
 
 
 def init(base_url):
   responses.add_callback(
     responses.POST,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, POST_ENDPOINT_RX)),
+    re.compile(
+      r'^' + d1_common.url.joinPathElements(base_url, CREATE_ENDPOINT_RX)
+    ),
     callback=_request_callback,
     content_type='',
   )
 
 
 def _request_callback(request):
+  """Echo an MN.create() POST. Return a valid Identifier XML doc in the
+  body to satisfy the requirements for create() and echo of the POSTed
+  information in headers (serialized to Base64 encoded JSON).
+  """
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
-  if isinstance(request.body, requests_toolbelt.MultipartEncoder):
+  try:
     body_str = request.body.read()
-  else:
+  except AttributeError:
     body_str = request.body
   url_obj = urlparse.urlparse(request.url)
   header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    'Content-Type':
+      d1_common.const.CONTENT_TYPE_XML,
+    'Echo-Body-Base64':
+      base64.b64encode(body_str),
+    'Echo-Query-Base64':
+      base64.b64encode(json.dumps(urlparse.parse_qs(url_obj.query))),
+    'Echo-Header-Base64':
+      base64.b64encode(json.dumps(dict(request.headers))),
   }
-  body_dict = {
-    'body_str': body_str,
-    'query_dict': urlparse.parse_qs(url_obj.query),
-    'header_dict': dict(request.headers),
-  }
-  return 200, header_dict, body_dict
+  body_str = d1_common.types.dataoneTypes.identifier('echo-post').toxml()
+  return 200, header_dict, body_str
