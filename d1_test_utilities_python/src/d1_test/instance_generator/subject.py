@@ -35,7 +35,7 @@ import random_data
 
 
 def generate():
-  return d1_common.types.dataoneTypes.Subject(generate_bare())
+  return d1_common.types.dataoneTypes.subject(generate_bare())
 
 
 def generate_bare():

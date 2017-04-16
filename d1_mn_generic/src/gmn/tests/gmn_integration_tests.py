@@ -1394,7 +1394,7 @@ class GMNIntegrationTests(unittest.TestCase):
       pid, checksumAlgorithm=algorithm, vendorSpecific=self.
       _include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    self.assertTrue(isinstance(checksum_obj, binding.Checksum))
+    self.assertIsInstance(checksum_obj, binding.Checksum)
     self.assertEqual(checksum, checksum_obj.value())
     self.assertEqual(algorithm, checksum_obj.algorithm)
 
@@ -1652,7 +1652,7 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_1850(self, client, binding):
     node = client.getCapabilities()
-    self.assertTrue(isinstance(node, binding.Node))
+    self.assertIsInstance(node, binding.Node)
 
   def _generate_identifier(self, client):
     fragment = 'test_fragment'

@@ -29,7 +29,6 @@
 
 # Stdlib
 import random
-import StringIO
 
 # D1
 import d1_common.checksum
@@ -47,44 +46,9 @@ def random_checksum_algorithm():
   )
 
 
-def calculate_checksum_of_flo(
-    flo, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
-    block_size=1024 * 1024
-):
-  c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
-    algorithm
-  )
-  while True:
-    data = flo.read(block_size)
-    if not data:
-      break
-    c.update(data)
-  return c.hexdigest()
-
-
-def calculate_checksum_of_string(s, algorithm='SHA-1'):
-  return calculate_checksum_of_flo(StringIO.StringIO(s), algorithm)
-
-
-def generate_from_flo(flo, algorithm=None):
-  """Generate a Checksum object for a file-like-object, using random
-  algorithm.
-  """
-  if algorithm is None:
-    algorithm = random_checksum_algorithm()
-  hexdigest = calculate_checksum_of_flo(flo, algorithm)
-  checksum = d1_common.types.dataoneTypes.checksum(hexdigest)
-  checksum.algorithm = algorithm
-  return checksum
-
-
-def generate_from_string(s, algorithm=None):
-  """Generate a Checksum object for a string, using random algorithm.
-  """
-  return generate_from_flo(StringIO.StringIO(s), algorithm)
-
-
 def generate():
   """Generate a Checksum object for a random string, using random algorithm."""
-  s = random_data.random_bytes(100)
-  return generate_from_string(s)
+  return d1_common.checksum.create_checksum_object(
+    random_data.random_bytes(10),
+    random_checksum_algorithm(),
+  )

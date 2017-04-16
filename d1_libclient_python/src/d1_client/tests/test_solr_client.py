@@ -30,18 +30,15 @@ Unit tests for solr_client.
 """
 
 # Stdlib
-import sys
-
-# D1
-from d1_common.test_case_with_url_compare import TestCaseWithURLCompare
+import unittest
 
 # App
-sys.path.append('..')
-import d1_client # noqa: E402
+import d1_client.solr_client # noqa: E402
 import shared_settings # noqa: E402
 
 
-class TestSolrClient(TestCaseWithURLCompare):
+@unittest.skip('Testing the Solr client still requires a Solr server')
+class TestSolrClient(unittest.TestCase):
   # def setUp(self):
 
   def tearDown(self):
@@ -55,9 +52,6 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_100(self):
     """SOLRSearchResponseIterator()"""
-    # Working in browser, now.
-    # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
-
     client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
     )

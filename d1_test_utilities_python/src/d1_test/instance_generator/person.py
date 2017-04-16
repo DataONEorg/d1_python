@@ -39,7 +39,7 @@ import subject
 
 
 def generate():
-  person = d1_common.types.dataoneTypes_v1.Person()
+  person = d1_common.types.dataoneTypes_v1.person()
   person.subject = subject.generate()
   for i in range(random.randint(1, 3)):
     person.givenName.append('givenName_' + random_data.random_word())
