@@ -18,11 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import unittest
+
 # D1
 import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
-import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.util
 
@@ -30,16 +31,14 @@ import d1_common.util
 import responses
 
 # D1
-import d1_common.types.generated.dataoneTypes_v2_0
+import d1_common.types.dataoneTypes_v2_0
 
 # App
 import d1_test.mock_api.list_formats as mock_object_format_list
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockObjectFormatList(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestMockObjectFormatList(unittest.TestCase):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
@@ -52,7 +51,7 @@ class TestMockObjectFormatList(
     mock_object_format_list.init(settings.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.listFormats(),
-      d1_common.types.generated.dataoneTypes_v2_0.ObjectFormatList,
+      d1_common.types.dataoneTypes_v2_0.ObjectFormatList,
     )
 
   @responses.activate

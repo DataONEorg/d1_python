@@ -18,30 +18,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# D1
+import unittest
+
 import d1_client.mnclient_2_0
+
 import d1_common.const
 import d1_common.date_time
-import d1_common.test_case_with_url_compare
+import d1_common.types.dataoneTypes_v1
+import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 
-# 3rd party
-import responses
-
-# D1
-import d1_common.types.generated.dataoneTypes_v2_0
-
-# App
 import d1_test.mock_api.get_log_records as mock_log_records
 import d1_test.mock_api.tests.settings as settings
 
+import pyxb.namespace.utility
+import pyxb.utils.domutils
+import responses
 
-class TestMockLogRecords(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+
+class TestMockLogRecords(unittest.TestCase):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
+    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
+
+    # print 'Namespaces:'
+    # for ns in pyxb.namespace.utility.AvailableNamespaces():
+    #   print '  {}'.format(ns.uri())
+    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       base_url=settings.MN_RESPONSES_BASE_URL
     )
@@ -49,16 +53,14 @@ class TestMockLogRecords(
   @responses.activate
   def test_0010(self):
     """mock_api.getLogRecords() returns a DataONE Log PyXB object"""
-    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.getLogRecords(),
-      d1_common.types.generated.dataoneTypes_v2_0.Log,
+      d1_common.types.dataoneTypes_v2_0.Log,
     )
 
   @responses.activate
   def test_0011(self):
     """mock_api.getLogRecords(): Passing a trigger header triggers a DataONEException"""
-    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getLogRecords,
       'test_pid', vendorSpecific={'trigger': '404'}

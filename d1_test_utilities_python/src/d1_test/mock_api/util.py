@@ -22,6 +22,7 @@
 """
 
 # Stdlib
+import base64
 import datetime
 import hashlib
 import random
@@ -108,17 +109,43 @@ def echo_get_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
+  try:
+    body_str = request.body.read()
+  except AttributeError:
+    body_str = request.body
   url_obj = urlparse.urlparse(request.url)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
   }
   body_dict = {
-    'body_str': request.body,
+    'body_base64': base64.b64encode(body_str or '<no body>'),
     'query_dict': urlparse.parse_qs(url_obj.query),
     'header_dict': dict(request.headers),
   }
   return 200, header_dict, json.dumps(body_dict)
 
+
+# def echo_post_callback(request):
+#   """Generic callback that echoes POST requests"""
+#   # Return DataONEException if triggered
+#   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+#   if exc_response_tup:
+#     return exc_response_tup
+#   # Return regular response
+#   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
+#     body_str = request.body.read()
+#   else:
+#     body_str = request.body
+#   url_obj = urlparse.urlparse(request.url)
+#   header_dict = {
+#     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
+#   }
+#   body_dict = {
+#     'body_base64': base64.b64encode(body_str),
+#     'query_dict': urlparse.parse_qs(url_obj.query),
+#     'header_dict': dict(request.headers),
+#   }
+#   return 200, header_dict, json.dumps(body_dict)
 
 #
 # Private

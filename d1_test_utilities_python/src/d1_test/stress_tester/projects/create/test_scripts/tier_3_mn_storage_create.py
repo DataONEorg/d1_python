@@ -32,8 +32,8 @@ import string
 import sys
 
 # D1
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-from d1_test.instance_generator import random_data, systemmetadata
+import d1_common.types.dataoneTypes as dataoneTypes
+from d1_test.instance_generator import random_data, system_metadata
 import d1_common.util
 
 sys.path.append(d1_common.util.abs_path('../../../shared/'))
@@ -74,7 +74,7 @@ class Transaction(transaction.Transaction):
     return random_data.random_bytes_flo(N_SCI_OBJ_BYTES)
 
   def create_system_metadata(self, sci_obj, access_policy):
-    return systemmetadata.generate_from_flo(
+    return system_metadata.generate_from_flo(
       sci_obj, {
         'identifier': self.generate_random_ascii_pid(),
         'accessPolicy': access_policy,

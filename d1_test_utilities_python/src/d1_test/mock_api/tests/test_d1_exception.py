@@ -18,8 +18,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import unittest
+
 # D1
-import d1_common.test_case_with_url_compare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -30,9 +31,7 @@ import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
 
 
-class TestMockD1Exception(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestMockD1Exception(unittest.TestCase):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
 

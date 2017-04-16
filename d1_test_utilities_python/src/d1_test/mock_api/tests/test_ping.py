@@ -18,11 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import unittest
+
 # D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
-import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.util
 
@@ -34,7 +35,7 @@ import d1_test.mock_api.ping as mock_ping
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockPing(d1_common.test_case_with_url_compare.TestCaseWithURLCompare):
+class TestMockPing(unittest.TestCase):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(

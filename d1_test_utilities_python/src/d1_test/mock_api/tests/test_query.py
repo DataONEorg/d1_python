@@ -18,11 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import unittest
+
 # D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
-import d1_common.test_case_with_url_compare
 import d1_common.types.exceptions
 import d1_common.util
 
@@ -35,9 +36,7 @@ import d1_test.mock_api.query as mock_query
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockQuery(
-    d1_common.test_case_with_url_compare.TestCaseWithURLCompare
-):
+class TestMockQuery(unittest.TestCase):
   def setUp(self):
     d1_common.util.log_setup(is_debug=True)
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
@@ -48,14 +47,14 @@ class TestMockQuery(
   def test_0010(self):
     """mock_api.query() returns a JSON doc with expected structure"""
     mock_query.init(settings.MN_RESPONSES_BASE_URL)
-    response = self.client.query('test_query')
+    response = self.client.query('query_engine', 'query_string')
     self.assertIsInstance(response, requests.Response)
     self.assertEqual(response.headers['Content-Type'], 'application/json')
     response_dict = response.json()
     self.assertIn(u'User-Agent', response_dict['header_dict'])
     del response_dict['header_dict']['User-Agent']
     expected_dict = {
-      u'body_str': None,
+      u'body_base64': u'PG5vIGJvZHk+',
       u'query_dict': {},
       u'header_dict': {
         u'Connection': u'keep-alive',
