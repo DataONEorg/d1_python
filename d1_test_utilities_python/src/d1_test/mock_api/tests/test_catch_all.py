@@ -54,25 +54,20 @@ class TestMockCatchAll(unittest.TestCase):
     echo_dict = self.client.getFormat('valid_format_id')
     expected_dict = {
       'request': {
-        u'body_base64': u'',
-        u'endpoint_str': u'formats',
-        u'header_dict': {
-          u'Accept': u'*/*',
-          u'Accept-Encoding': u'gzip, deflate',
-          u'Charset': u'utf-8',
-          u'Connection': u'keep-alive',
-        },
-        u'param_list': [u'valid_format_id'],
-        u'pyxb_namespace': u'http://ns.dataone.org/service/types/v2.0',
-        u'query_dict': {},
-        u'version_tag': u'v2'
+        'endpoint_str': 'formats',
+        'param_list': ['valid_format_id'],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v2.0',
+        'query_dict': {},
+        'version_tag': 'v2'
       },
       'wrapper': {
         'class_name': 'CoordinatingNodeClient_2_0',
         'expected_type': 'ObjectFormat',
-        'received_303_redirect': False
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
       }
     }
+
     mock_catch_all.assert_expected_echo(echo_dict, expected_dict)
 
   @mock_catch_all.activate
