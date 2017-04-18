@@ -217,6 +217,8 @@ class DataONEBaseClient(session.Session):
     return value will be either an instance of a type or a DataONE exception.
     """
     response_body = response.content
+    # TODO: Update this to automatically remove empty elements (probably using
+    # ElementTree)
     try:
       return self._types.CreateFromDocument(response_body)
     except pyxb.SimpleFacetValueError as e:
@@ -227,6 +229,8 @@ class DataONEBaseClient(session.Session):
           response, response_body, str(e)
         )
     except pyxb.IncompleteElementContentError as e:
+      # TODO: Update this to extract the error details. See implementation in
+      # DataONEException.
       # example: <accessPolicy/> is not allowed since it requires 1..n
       # AccessRule entries
       if not self.retry_IncompleteElementContentError:
