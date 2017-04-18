@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock MNCore.getLogRecords() → Log
+"""Moc:
 
 # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, pidFilter][,
 # start=0][, count=1000]) → Log
@@ -26,12 +26,8 @@
 # GET /log?[fromDate={fromDate}][&toDate={toDate}][&event={event}]
 # [&pidFilter={pidFilter}][&start={start}][&count={count}]
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.getLogRecords(..., vendorSpecific={'trigger': '404'})
-
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -40,6 +36,8 @@ import re
 
 # 3rd party
 import responses
+import pyxb.namespace.utility
+import pyxb.utils.domutils
 
 # D1
 import d1_common.type_conversions
@@ -56,7 +54,7 @@ N_TOTAL = 100
 LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.
@@ -115,4 +113,5 @@ def _generate_log_records(pyxb_bindings, n_start, n_count):
   log.count = len(log.logEntry)
   log.total = N_TOTAL
 
+  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return log.toxml()

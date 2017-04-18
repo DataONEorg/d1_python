@@ -20,18 +20,15 @@
 # limitations under the License.
 """Mock listObjects() → ObjectList
 
-# MNRead.listObjects(session[, fromDate][, toDate][, formatId][,
-# replicaStatus][, start=0][, count=1000]) → ObjectList
+MNRead.listObjects(session[, fromDate][, toDate][, formatId][,replicaStatus]
+  [, start=0][, count=1000]) → ObjectList
 
-# GET /object[?fromDate={fromDate}&toDate={toDate}
-# &formatId={formatId}&replicaStatus={replicaStatus}
-# &start={start}&count={count}]
+GET /object[?fromDate={fromDate}&toDate={toDate}
+  &formatId={formatId}&replicaStatus={replicaStatus}
+  &start={start}&count={count}]
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.listObjects(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -51,7 +48,7 @@ N_TOTAL = 100
 OBJECT_LIST_ENDPOINT_RX = r'v([123])/object'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.compile(
@@ -68,7 +65,7 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
-  query_dict, pyxb_bindings = _parse_object_list_url(request.url)
+  query_dict, pyxb_bindings = _parse_url(request.url)
   n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
   # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
   header_dict = {
@@ -79,7 +76,7 @@ def _request_callback(request):
   )
 
 
-def _parse_object_list_url(url):
+def _parse_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )

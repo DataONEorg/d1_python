@@ -49,7 +49,7 @@ class TestLogRecordIterator(unittest.TestCase):
   """"""
 
   def setUp(self):
-    mock_get_log_records.init(shared_settings.MN_RESPONSES_URL)
+    mock_get_log_records.add_callback(shared_settings.MN_RESPONSES_URL)
 
   @responses.activate
   def test_100(self):

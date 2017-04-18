@@ -28,17 +28,16 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # 3rd party
-import responses
 
 # D1
 import d1_common.types.dataoneTypes_v2_0
 
 # App
-import d1_test.mock_api.list_formats as mock_object_format_list
+import d1_test.mock_api.catch_all as mock_catch_all
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockObjectFormatList(unittest.TestCase):
+class TestMockCatchAll(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
@@ -48,30 +47,39 @@ class TestMockObjectFormatList(unittest.TestCase):
       base_url=settings.CN_RESPONSES_BASE_URL
     )
 
-  @responses.activate
+  @mock_catch_all.activate
   def test_0010(self):
-    """mock_api.listFormats() returns a objectFormatList PyXB object"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.listFormats(),
-      d1_common.types.dataoneTypes_v2_0.ObjectFormatList,
-    )
+    """mock_api.catch_all: Returns a dict correctly echoing the request"""
+    mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
+    echo_dict = self.client.getFormat('valid_format_id')
+    expected_dict = {
+      'request': {
+        u'body_base64': u'',
+        u'endpoint_str': u'formats',
+        u'header_dict': {
+          u'Accept': u'*/*',
+          u'Accept-Encoding': u'gzip, deflate',
+          u'Charset': u'utf-8',
+          u'Connection': u'keep-alive',
+        },
+        u'param_list': [u'valid_format_id'],
+        u'pyxb_namespace': u'http://ns.dataone.org/service/types/v2.0',
+        u'query_dict': {},
+        u'version_tag': u'v2'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient_2_0',
+        'expected_type': 'ObjectFormat',
+        'received_303_redirect': False
+      }
+    }
+    mock_catch_all.assert_expected_echo(echo_dict, expected_dict)
 
-  @responses.activate
-  def test_0011(self):
-    """mock_api.listFormats() returns a populated objectFormatList"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
-    object_format_list = self.client.listFormats()
-    self.assertEqual(len(object_format_list.objectFormat), 100)
-    for object_format in object_format_list.objectFormat:
-      self.assertEqual(object_format.formatId, 'format_id_0')
-      break
-
-  @responses.activate
+  @mock_catch_all.activate
   def test_0012(self):
-    """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+    """mock_api.catch_all(): Passing a trigger header triggers a DataONEException"""
+    mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.listFormats,
-      vendorSpecific={'trigger': '404'}
+      d1_common.types.exceptions.NotFound, self.client.getFormat,
+      'valid_format_id', vendorSpecific={'trigger': '404'}
     )

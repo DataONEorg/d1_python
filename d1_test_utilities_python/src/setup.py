@@ -40,6 +40,7 @@ def main():
       'multi-mechanize == 1.2.0',
       'dataone.libclient == 2.1.0rc2',
       'responses == 0.5.1',
+      'mock == 2.0.0',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

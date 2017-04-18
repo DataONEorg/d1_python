@@ -18,7 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock DataONEExceptions
+"""Mock DataONEException
+
+A DataONEException can be triggered in any of the mock APIs by adding a custom
+header named "trigger" with the status code of the error to trigger, using
+the vendorSpecific parameter.
+
+E.g.:
+
+client.create(..., vendorSpecific={'trigger': '401'})
 """
 
 import re

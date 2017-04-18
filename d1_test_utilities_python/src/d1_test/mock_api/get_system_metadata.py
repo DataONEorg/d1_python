@@ -25,11 +25,8 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 MNRead.getSystemMetadata(session, pid) → SystemMetadata
 https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getSystemMetadata
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.getSystemMetadata(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -48,7 +45,7 @@ N_TOTAL = 100
 META_ENDPOINT_RX = r'v([123])/meta/(.*)'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.
@@ -64,7 +61,7 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid, pyxb_bindings = _parse_meta_url(request.url)
+  pid, pyxb_bindings = _parse_url(request.url)
   if pid.startswith('unknown_'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
@@ -75,7 +72,7 @@ def _request_callback(request):
   return 200, header_dict, sysmeta_pyxb.toxml('utf8')
 
 
-def _parse_meta_url(url):
+def _parse_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )

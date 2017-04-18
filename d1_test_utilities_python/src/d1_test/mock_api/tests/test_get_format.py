@@ -21,7 +21,7 @@
 import unittest
 
 # D1
-import d1_client.mnclient_2_0
+import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -34,45 +34,43 @@ import responses
 import d1_common.types.dataoneTypes_v2_0
 
 # App
-import d1_test.mock_api.list_objects as mock_object_list
+import d1_test.mock_api.get_format as mock_get_format
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockObjectList(unittest.TestCase):
+class TestMockGetFormat(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+      base_url=settings.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
-    """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
+    """mock_api.getFormat(): Valid formatId returns ObjectFormat PyXB object"""
+    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
-      self.client.listObjects(), d1_common.types.dataoneTypes_v2_0.ObjectList
+      self.client.getFormat('valid_format_id'),
+      d1_common.types.dataoneTypes_v2_0.ObjectFormat,
     )
 
   @responses.activate
   def test_0011(self):
-    """mock_api.listObjects() returns a populated ObjectList"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
-    object_list = self.client.listObjects()
-    self.assertEqual(len(object_list.objectInfo), 100)
-    for object_info in object_list.objectInfo:
-      self.assertEqual(object_info.formatId, 'text/plain')
-      break
+    """mock_api.getFormat(): Unknown formatId returns D1 NotFound"""
+    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.getFormat,
+      'unknown_format_id'
+    )
 
   @responses.activate
   def test_0012(self):
-    """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
+    """mock_api.getFormat(): Passing a trigger header triggers a DataONEException"""
+    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure, self.client.listObjects,
-      vendorSpecific={'trigger': '500'}
+      d1_common.types.exceptions.NotFound, self.client.getFormat,
+      'valid_format_id', vendorSpecific={'trigger': '404'}
     )
-
-  # TODO: More tests

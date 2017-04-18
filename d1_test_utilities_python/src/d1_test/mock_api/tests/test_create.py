@@ -42,8 +42,11 @@ import d1_test.mock_api.util
 
 
 class TestMockPost(unittest.TestCase):
-  def setUp(self):
+  @classmethod
+  def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
+
+  def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       base_url=settings.MN_RESPONSES_BASE_URL
     )
@@ -51,7 +54,7 @@ class TestMockPost(unittest.TestCase):
   @responses.activate
   def test_0010(self):
     """mock_api.create(): Echoes the request"""
-    mock_create.init(settings.MN_RESPONSES_BASE_URL)
+    mock_create.add_callback(settings.MN_RESPONSES_BASE_URL)
     sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(
       v2, 'post_pid'
     )

@@ -48,7 +48,7 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
 
   @responses.activate
   def test_100(self):
-    mock_list_objects.init(shared_settings.MN_RESPONSES_URL)
+    mock_list_objects.add_callback(shared_settings.MN_RESPONSES_URL)
 
     object_list_iterator = d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
       shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2,

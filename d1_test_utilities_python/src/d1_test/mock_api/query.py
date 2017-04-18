@@ -25,11 +25,8 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 MNQuery.query(session, queryEngine, query) → OctetStream
 http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.query(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -49,7 +46,7 @@ import responses
 QUERY_ENDPOINT_RX = r'v([123])/query(/(.*))?'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.
