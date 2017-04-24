@@ -176,8 +176,8 @@ class ReplicationQueueProcessor(object):
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=django.conf.settings.DATAONE_ROOT,
-      cert_path=django.conf.settings.CLIENT_CERT_PATH,
-      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
 
   def _get_system_metadata(self, queue_model):
@@ -191,8 +191,8 @@ class ReplicationQueueProcessor(object):
     )
     mn_client = d1_client.mnclient.MemberNodeClient(
       base_url=source_node_base_url,
-      cert_path=django.conf.settings.CLIENT_CERT_PATH,
-      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
     return self._open_sciobj_stream_on_member_node(
       mn_client, queue_model.local_replica.pid.did

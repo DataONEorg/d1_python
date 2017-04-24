@@ -72,7 +72,7 @@ class Command(django.core.management.base.BaseCommand):
       help='valid commands: view, whitelist',
     )
     parser.add_argument(
-      'pem_cert_path',
+      'cert_pem_path',
       help='path to DataONE X.509 PEM certificate',
     )
 
@@ -82,12 +82,12 @@ class Command(django.core.management.base.BaseCommand):
       logging.info(self.missing_args_message)
       return
     try:
-      self._handle(options['command'], options['pem_cert_path'])
+      self._handle(options['command'], options['cert_pem_path'])
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
 
-  def _handle(self, command_str, pem_cert_path):
-    cert_pem = self._read_pem_cert(pem_cert_path)
+  def _handle(self, command_str, cert_pem_path):
+    cert_pem = self._read_pem_cert(cert_pem_path)
     primary_str, equivalent_set = (
       app.middleware.session_cert.get_authenticated_subjects(cert_pem)
     )
@@ -120,9 +120,9 @@ class Command(django.core.management.base.BaseCommand):
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 
-  def _read_pem_cert(self, pem_cert_path):
+  def _read_pem_cert(self, cert_pem_path):
     try:
-      with open(pem_cert_path, 'r') as f:
+      with open(cert_pem_path, 'r') as f:
         return f.read()
     except EnvironmentError as e:
       raise django.core.management.base.CommandError(

@@ -82,6 +82,9 @@ def activate(fun):
     ), mock.patch(
         'd1_client.baseclient.DataONEBaseClient._read_boolean_401_response',
         mock_read_response
+    ), mock.patch(
+        'd1_client.baseclient.DataONEBaseClient._read_stream_response',
+        mock_read_response
     ):
       return fun(*args, **kwargs)
 
@@ -126,30 +129,36 @@ def assert_expected_echo(received_echo_dict, expected_echo_dict):
   test_case.assertDictEqual(received_echo_dict, expected_echo_dict)
 
 
-def _delete_keys(test_case, echo_dict, key_path_list):
+def _delete_keys(test_case, echo_dict, cert_key_path_list):
   """Take a list of paths to nested dictionary keys and delete those keys
   """
-  for key_path in key_path_list:
+  for cert_key_path in cert_key_path_list:
     d = echo_dict
-    for key in key_path[:-1]:
+    for key in cert_key_path[:-1]:
       d = d[key]
     # if not isinstance(d, dict):
-    #   test_case.assertTrue(d[key_path[-1]])
+    #   test_case.assertTrue(d[cert_key_path[-1]])
     try:
-      del d[key_path[-1]]
+      del d[cert_key_path[-1]]
     except KeyError:
       pass
 
 
 def _dict_key_val_to_unicode(d):
   if isinstance(d, dict):
-    return {k.decode('utf8'): _dict_key_val_to_unicode(v) for k, v in d.items()}
+    return {
+      _str_to_unicode(k): _dict_key_val_to_unicode(v) for k, v in d.items()
+    }
   elif isinstance(d, list):
-    return [v.decode('utf8') for v in d]
+    return [_str_to_unicode(v) for v in d]
   elif isinstance(d, basestring):
-    return d.decode('utf8')
+    return _str_to_unicode(d)
   else:
     return d
+
+
+def _str_to_unicode(s):
+  return s if isinstance(s, unicode) else s.decode('utf8')
 
 
 @classmethod

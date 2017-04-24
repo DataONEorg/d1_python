@@ -40,6 +40,8 @@ import unicode_names
 unicode_characters = u''.join(set(u''.join(unicode_names.UNICODE_NAMES)))
 unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
 
+random.seed()
+
 
 def random_bytes(n_bytes):
   """Return a string containing random bytes"""

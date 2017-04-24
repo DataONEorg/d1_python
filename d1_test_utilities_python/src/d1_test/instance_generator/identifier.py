@@ -36,7 +36,7 @@ import random_data
 def generate(prefix=u'', min_len=5, max_len=20):
   """Generate instance of Identifier holding a random unicode string"""
   s = generate_bare(prefix, min_len, max_len)
-  return d1_common.types.dataoneTypes.Identifier(s)
+  return d1_common.types.dataoneTypes.identifier(s)
 
 
 def generate_bare(prefix=u'', min_len=5, max_len=20):

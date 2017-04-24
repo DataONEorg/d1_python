@@ -75,8 +75,7 @@ import d1_common.xml
 import requests
 
 # App
-sys.path.append('..')
-import tests.gmn_test_client # noqa: E402
+import tests.gmn_test_client
 
 # Configuration
 

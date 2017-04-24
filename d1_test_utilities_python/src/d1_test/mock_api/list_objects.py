@@ -41,6 +41,7 @@ import d1_common.url
 import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
 
+import pyxb.utils.domutils
 import responses
 
 # Config
@@ -106,4 +107,5 @@ def _generate_object_list(pyxb_bindings, n_start, n_count):
   objectList.count = len(objectList.objectInfo)
   objectList.total = N_TOTAL
 
+  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return objectList.toxml()
