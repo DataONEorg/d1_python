@@ -34,8 +34,7 @@ import tempfile
 import unittest
 
 # D1
-sys.path.append('..')
-import workspace # noqa: E402
+import workspace
 
 
 class TestWorkspace(unittest.TestCase):

@@ -210,7 +210,7 @@ def create_test_object_on_mn(base_url, pid):
     pid
   )
   mn_client = d1_client.mnclient.MemberNodeClient(base_url)
-  # , cert_path=self._options.cert_get_replica, key_path=self._options.cert_get_replica_key
+  # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
   mn_client.create(pid, StringIO.StringIO(sci_obj), sys_meta)
 
 
@@ -235,7 +235,7 @@ class ReplicationTester(object):
     self._src_existing_pid_approve = src_existing_pid_approve
     self._src_existing_pid_deny = src_existing_pid_deny
     self._dst_existing_pid = dst_existing_pid
-    self._validate_cert_paths()
+    self._validate_cert_pem_paths()
     self._queue = Queue.Queue()
     self._http_server = replication_server.TestHTTPServer(
       self._options,
@@ -357,8 +357,8 @@ class ReplicationTester(object):
 
   def _create_mn_client_for_get_replica(self):
     return d1_client.mnclient.MemberNodeClient(
-      self._options.src_base_url, cert_path=self._options.cert_get_replica,
-      key_path=self._options.cert_get_replica_key
+      self._options.src_base_url, cert_pem_path=self._options.cert_get_replica,
+      cert_key_path=self._options.cert_get_replica_key
     )
 
   #
@@ -436,8 +436,8 @@ class ReplicationTester(object):
 
   def _create_mn_client_for_replicate(self):
     return d1_client.mnclient.MemberNodeClient(
-      self._options.dst_base_url, cert_path=self._options.cert_replicate,
-      key_path=self._options.cert_replicate_key
+      self._options.dst_base_url, cert_pem_path=self._options.cert_replicate,
+      cert_key_path=self._options.cert_replicate_key
     )
 
   #

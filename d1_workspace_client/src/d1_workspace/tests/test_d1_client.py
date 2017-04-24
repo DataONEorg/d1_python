@@ -31,9 +31,7 @@ import logging
 import sys
 import unittest
 
-# D1
-sys.path.append('..')
-import onedrive_d1_client # noqa: E402
+import onedrive_d1_client
 
 
 class O():

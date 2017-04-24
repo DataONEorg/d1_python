@@ -78,8 +78,8 @@ def create_cert(options, args):
   basename = make_base_name_from_dn(dn)
   crt_name = basename + '.crt'
   d1_x509v3_certificate_generator.generate(
-    crt_name, options.ca_path, options.ca_key_path, options.ca_key_pw,
-    options.public_key_path, subject_info, options.subject_alt_name, dn, 1
+    crt_name, options.ca_path, options.ca_cert_key_path, options.ca_key_pw,
+    options.public_cert_key_path, subject_info, options.subject_alt_name, dn, 1
     if options.long_term else 0
   )
 
@@ -103,7 +103,7 @@ def main():
     '--ca-path', dest='ca_path', action='store', type='string', default='ca.crt'
   )
   parser.add_option(
-    '--ca-key-path', dest='ca_key_path', action='store', type='string',
+    '--ca-key-path', dest='ca_cert_key_path', action='store', type='string',
     default='ca.key'
   )
   parser.add_option(
@@ -112,8 +112,8 @@ def main():
   )
 
   parser.add_option(
-    '--public-key-path', dest='public_key_path', action='store', type='string',
-    default='pubkey.pem'
+    '--public-key-path', dest='public_cert_key_path', action='store',
+    type='string', default='pubkey.pem'
   )
 
   parser.add_option(

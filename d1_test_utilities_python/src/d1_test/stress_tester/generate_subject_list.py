@@ -31,12 +31,10 @@ import sys
 
 # D1
 from d1_test.instance_generator import random_data
-import d1_common.util
 
 # App
-sys.path.append(d1_common.util.abs_path('./shared/'))
-import settings # noqa: E402
-import subject_dn # noqa: E402
+import settings
+import subject_dn
 
 # Get an instance of a logger.
 logger = logging.getLogger()

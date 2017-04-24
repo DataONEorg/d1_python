@@ -30,14 +30,9 @@
 
 # Std.
 import os
-import sys
 
-# D1
-import d1_common.util
-
-sys.path.append(d1_common.util.abs_path('../../../shared/'))
-import settings # noqa: E402
-import subject_dn # noqa: E402
+import settings
+import subject_dn
 
 
 def check_path(path):

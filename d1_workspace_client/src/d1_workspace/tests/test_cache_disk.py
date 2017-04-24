@@ -35,8 +35,7 @@ import time
 import unittest
 
 # D1
-sys.path.append('..')
-import cache_disk # noqa: E402
+import cache_disk
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

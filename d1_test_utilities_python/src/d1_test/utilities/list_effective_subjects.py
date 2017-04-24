@@ -133,15 +133,15 @@ class get_subjects_from_certificate(object):
 # ==============================================================================
 
 
-def read_cert_from_file_and_print_subjects(options, cert_path):
-  cert = read_certificate_from_file(cert_path)
+def read_cert_from_file_and_print_subjects(options, cert_pem_path):
+  cert = read_certificate_from_file(cert_pem_path)
   primary_subject, subjects = get_subjects_from_certificate().get(cert)
   print_effective_subjects(primary_subject, subjects)
 
 
-def read_certificate_from_file(cert_path):
+def read_certificate_from_file(cert_pem_path):
   try:
-    with open(cert_path) as f:
+    with open(cert_pem_path) as f:
       return f.read()
   except EnvironmentError as e:
     print 'Error reading certificate file: {0}'.format(str(e))
@@ -175,8 +175,8 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  cert_path = args[0]
-  read_cert_from_file_and_print_subjects(options, cert_path)
+  cert_pem_path = args[0]
+  read_cert_from_file_and_print_subjects(options, cert_pem_path)
 
 
 if __name__ == '__main__':

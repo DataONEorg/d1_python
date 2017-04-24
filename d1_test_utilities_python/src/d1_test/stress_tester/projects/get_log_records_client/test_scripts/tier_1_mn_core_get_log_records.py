@@ -26,14 +26,7 @@
 :Author: DataONE (Dahl)
 """
 
-# Std.
-import sys
-
-# D1
-import d1_common.util
-
-sys.path.append(d1_common.util.abs_path('../../../shared/'))
-import transaction # noqa: E402
+import transaction
 
 
 class Transaction(transaction.Transaction):
