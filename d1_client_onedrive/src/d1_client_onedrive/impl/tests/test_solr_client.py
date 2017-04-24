@@ -32,9 +32,7 @@ import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-
-import impl.clients.onedrive_solr_client as onedrive_solr_client # noqa: E402
+import d1_client_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
 
 options = {}
 

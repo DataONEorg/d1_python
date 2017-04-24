@@ -213,10 +213,10 @@ class OperationMaker(object):
 
   def _get_certificate(self):
     if not self._session.get(session.ANONYMOUS_NAME):
-      cert_path = self._session.get(session.CERT_FILENAME_NAME)
-      if not cert_path:
-        cert_path = self._get_cilogon_certificate_path()
-      return cert_path
+      cert_pem_path = self._session.get(session.CERT_FILENAME_NAME)
+      if not cert_pem_path:
+        cert_pem_path = self._get_cilogon_certificate_path()
+      return cert_pem_path
     else:
       return None
 

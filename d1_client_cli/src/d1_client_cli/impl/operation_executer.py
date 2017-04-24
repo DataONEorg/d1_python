@@ -123,15 +123,15 @@ class OperationExecuter(object):
   def _mn_client_connect_params_from_operation(self, operation):
     return {
       'base_url': operation['parameters']['mn-url'],
-      'cert_path': operation['authentication']['cert-file'],
-      'key_path': operation['authentication']['key-file'],
+      'cert_pem_path': operation['authentication']['cert-file'],
+      'cert_key_path': operation['authentication']['key-file'],
     }
 
   def _cn_client_connect_params_from_operation(self, operation):
     return {
       'base_url': operation['parameters']['cn-url'],
-      'cert_path': operation['authentication']['cert-file'],
-      'key_path': operation['authentication']['key-file'],
+      'cert_pem_path': operation['authentication']['cert-file'],
+      'cert_key_path': operation['authentication']['key-file'],
     }
 
   def _create_system_metadata(self, operation):

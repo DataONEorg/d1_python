@@ -33,9 +33,8 @@ import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-import impl.resolver.region as region # noqa: E402
-from object_tree_test_sample import object_tree # noqa: E402
+import d1_client_onedrive.impl.resolver.region as region
+import object_tree_test_sample
 
 options = {}
 
@@ -53,7 +52,9 @@ class TestRegionResolver(unittest.TestCase):
     options.max_solr_query_cache_size = 1000
     options.region_tree_max_cache_items = 1000
     options.region_tree_cache_path = './region_tree_cache'
-    self._resolver = region.Resolver(options, object_tree)
+    self._resolver = region.Resolver(
+      options, object_tree_test_sample.object_tree
+    )
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())
