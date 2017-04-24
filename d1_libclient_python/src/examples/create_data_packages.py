@@ -131,8 +131,8 @@ def main():
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    MN_BASE_URL, cert_path=CERTIFICATE_FOR_CREATE,
-    key_path=CERTIFICATE_FOR_CREATE_KEY
+    MN_BASE_URL, cert_pem_path=CERTIFICATE_FOR_CREATE,
+    cert_key_path=CERTIFICATE_FOR_CREATE_KEY
   )
   # Iterate over the object groups and create them and their resource maps
   # on the Member Node.

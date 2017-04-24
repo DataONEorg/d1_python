@@ -73,7 +73,7 @@ CERTIFICATE_KEY_PATH = None
 
 def main():
   mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    BASE_URL, cert_path=CERTIFICATE_PATH, key_path=CERTIFICATE_KEY_PATH
+    BASE_URL, cert_pem_path=CERTIFICATE_PATH, cert_key_path=CERTIFICATE_KEY_PATH
   )
   with DataONENodeObjectValidator(mn_client, CSV_FILE_PATH) as mn_validator:
     # Validate all PIDs that are accessible with certificate on MN or CN.

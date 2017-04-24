@@ -90,7 +90,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def reserveIdentifierResponse(self, pid, vendorSpecific=None):
     mmp_dict = {
-      'pid': pid.encode('utf-8'),
+      'pid': pid,
     }
     return self.POST(['reserve', pid], fields=mmp_dict, headers=vendorSpecific)
 
@@ -121,7 +121,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, obsoletedByPid, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      'obsoletedByPid': obsoletedByPid.encode('utf-8'),
+      'obsoletedByPid': obsoletedByPid,
       'serialVersion': str(serialVersion),
     }
     return self.PUT(['obsoletedBy', pid], fields=mmp_dict,
@@ -232,7 +232,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   def getQueryEngineDescriptionResponse(
       self, queryEngine, vendorSpecific=None, **kwargs
   ):
-    return self.GET(['query', queryEngine], headers=vendorSpecific, query=kwargs)
+    return self.GET(['query', queryEngine], headers=vendorSpecific,
+                    query=kwargs)
 
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(
@@ -255,7 +256,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, userId, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      'userId': userId.encode('utf-8'),
+      'userId': userId,
       'serialVersion': str(serialVersion),
     }
     return self.PUT(['owner', pid], headers=vendorSpecific, fields=mmp_dict)
@@ -287,10 +288,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, accessPolicy, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      'serialVersion':
-        str(serialVersion),
-      'accessPolicy':
-        ('accessPolicy.xml', accessPolicy.toxml().encode('utf-8')),
+      'serialVersion': str(serialVersion),
+      'accessPolicy': ('accessPolicy.xml', accessPolicy.toxml()),
     }
     return self.PUT(['accessRules', pid], fields=mmp_dict,
                     headers=vendorSpecific)
@@ -314,7 +313,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def registerAccountResponse(self, person, vendorSpecific=None):
     mmp_dict = {
-      'person': ('person.xml', person.toxml().encode('utf-8')),
+      'person': ('person.xml', person.toxml()),
     }
     return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
 
@@ -327,16 +326,16 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.updateAccount
 
   @d1_common.util.utf8_to_unicode
-  def updateAccountResponse(self, person, vendorSpecific=None):
+  def updateAccountResponse(self, subject, person, vendorSpecific=None):
     mmp_dict = {
-      'person': ('person.xml', person.toxml().encode('utf-8')),
+      'person': ('person.xml', person.toxml()),
     }
-    return self.PUT(['accounts', person.value()], fields=mmp_dict,
+    return self.PUT(['accounts', subject], fields=mmp_dict,
                     headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
-  def updateAccount(self, person, vendorSpecific=None):
-    response = self.updateAccountResponse(person, vendorSpecific)
+  def updateAccount(self, subject, person, vendorSpecific=None):
+    response = self.updateAccountResponse(subject, person, vendorSpecific)
     return self._read_boolean_response(response)
 
   # CNIdentity.verifyAccount(session, subject) → boolean
@@ -344,7 +343,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def verifyAccountResponse(self, subject, vendorSpecific=None):
-    return self.PUT(['accounts', subject.value()], headers=vendorSpecific)
+    return self.PUT(['accounts', subject], headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def verifyAccount(self, subject, vendorSpecific=None):
@@ -356,7 +355,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def getSubjectInfoResponse(self, subject, vendorSpecific=None):
-    return self.GET(['accounts', subject.value()], headers=vendorSpecific)
+    return self.GET(['accounts', subject], headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def getSubjectInfo(self, subject, vendorSpecific=None):
@@ -395,18 +394,16 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, primarySubject, secondarySubject, vendorSpecific=None
   ):
     mmp_dict = {
-      'primarySubject': primarySubject.value().encode('utf-8'),
-      'secondarySubject': secondarySubject.value().encode('utf-8'),
+      'primarySubject': primarySubject.toxml(),
+      'secondarySubject': secondarySubject.toxml(),
     }
     return self.POST(['accounts', 'map'], fields=mmp_dict,
                      headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
-  def mapIdentity(
-      self, primary_subject, secondary_subject, vendorSpecific=None
-  ):
+  def mapIdentity(self, primarySubject, secondarySubject, vendorSpecific=None):
     response = self.mapIdentityResponse(
-      primary_subject, secondary_subject, vendorSpecific
+      primarySubject, secondarySubject, vendorSpecific
     )
     return self._read_boolean_response(response)
 
@@ -415,8 +412,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def removeMapIdentityResponse(self, subject, vendorSpecific=None):
-    return self.DELETE(['accounts', 'map', subject.value()],
-                       headers=vendorSpecific)
+    return self.DELETE(['accounts', 'map', subject], headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def removeMapIdentity(self, subject, vendorSpecific=None):
@@ -428,7 +424,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject, vendorSpecific=None):
-    return self.DELETE(['accounts', 'pendingmap', subject.value()],
+    return self.DELETE(['accounts', 'pendingmap', subject],
                        headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
@@ -442,7 +438,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def requestMapIdentityResponse(self, subject, vendorSpecific=None):
     mmp_dict = {
-      'subject': subject.value().encode('utf-8'),
+      'subject': subject.toxml(),
     }
     return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
 
@@ -456,11 +452,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentityResponse(self, subject, vendorSpecific=None):
-    mmp_dict = {
-      'subject': subject.value().encode('utf-8'),
-    }
-    return self.PUT(['accounts', 'pendingmap', subject.value()],
-                    fields=mmp_dict, headers=vendorSpecific)
+    return self.PUT(['accounts', 'pendingmap', subject], headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
   def confirmMapIdentity(self, subject, vendorSpecific=None):
@@ -473,7 +465,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def createGroupResponse(self, group, vendorSpecific=None):
     mmp_dict = {
-      'group': ('group.xml', group.toxml().encode('utf-8')),
+      'group': ('group.xml', group.toxml()),
     }
     return self.POST('groups', fields=mmp_dict, headers=vendorSpecific)
 
@@ -488,7 +480,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def updateGroupResponse(self, group, vendorSpecific=None):
     mmp_dict = {
-      'group': ('group.xml', group.toxml().encode('utf-8')),
+      'group': ('group.xml', group.toxml()),
     }
     return self.PUT('groups', fields=mmp_dict, headers=vendorSpecific)
 
@@ -509,8 +501,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, nodeRef, status, dataoneError=None, vendorSpecific=None
   ):
     mmp_dict = {
-      'nodeRef': nodeRef.encode('utf-8'),
-      'status': status.encode('utf-8'),
+      'nodeRef': nodeRef.toxml(),
+      'status': status,
     }
     if dataoneError is not None:
       mmp_dict['failure'] = ('failure.xml', dataoneError.serialize())
@@ -535,10 +527,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, replicaMetadata, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      'serialVersion':
-        str(serialVersion),
-      'replicaMetadata':
-        ('replicaMetadata.xml', replicaMetadata.toxml().encode('utf-8')),
+      'replicaMetadata': ('replicaMetadata.xml', replicaMetadata.toxml()),
+      'serialVersion': str(serialVersion),
     }
     return self.PUT(['replicaMetadata', pid], fields=mmp_dict,
                     headers=vendorSpecific)
@@ -560,8 +550,8 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, policy, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      ('serialVersion', str(serialVersion)),
-      ('policy', 'policy.xml', policy.toxml().encode('utf-8')),
+      'policy': ('policy.xml', policy.toxml()),
+      'serialVersion': (str(serialVersion)),
     }
     return self.PUT(['replicaPolicies', pid], fields=mmp_dict,
                     headers=vendorSpecific)
@@ -584,7 +574,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, targetNodeSubject, pid, vendorSpecific=None
   ):
     query_dict = {
-      'targetNodeSubject': targetNodeSubject,
+      'targetNodeSubject': targetNodeSubject.value(),
     }
     return self.GET(['replicaAuthorizations', pid], query=query_dict,
                     headers=vendorSpecific)
@@ -604,7 +594,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       self, pid, nodeId, serialVersion, vendorSpecific=None
   ):
     mmp_dict = {
-      'nodeId': nodeId.encode('utf-8'),
+      'nodeId': nodeId,
       'serialVersion': str(serialVersion),
     }
     return self.PUT(['removeReplicaMetadata', pid], fields=mmp_dict,
@@ -628,7 +618,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node, vendorSpecific=None):
-    mmp_dict = {'node': ('node.xml', node.toxml().encode('utf-8'))}
+    mmp_dict = {'node': ('node.xml', node.toxml())}
     return self.PUT(['node', nodeId], fields=mmp_dict, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
@@ -642,7 +632,7 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def registerResponse(self, node, vendorSpecific=None):
     mmp_dict = {
-      'node': ('node.xml', node.toxml().encode('utf-8')),
+      'node': ('node.xml', node.toxml()),
     }
     return self.POST('node', fields=mmp_dict, headers=vendorSpecific)
 

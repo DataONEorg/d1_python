@@ -34,9 +34,9 @@ import d1_test.instance_generator
 import d1_common.types.dataoneTypes_v1_1
 import d1_test.instance_generator.random_data
 # App
-import d1_client.baseclient # noqa: E402
-import d1_client.tests.util # noqa: E402
-# import d1_test.mock_api.log_records # noqa: E402
+import d1_client.baseclient
+import d1_client.tests.util
+# import d1_test.mock_api.log_records
 import d1_test.mock_api.get_log_records
 import d1_test.mock_api.ping
 import d1_test.mock_api.get
@@ -45,12 +45,16 @@ import d1_test.mock_api.describe
 import d1_test.mock_api.list_objects
 import d1_test.mock_api.generate_identifier
 import d1_test.mock_api.is_authorized
+import d1_test.mock_api.catch_all
 
-import shared_context # noqa: E402
-import shared_settings # noqa: E402
+import shared_settings
 
 
 class TestDataONEBaseClient(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     self.client = d1_client.baseclient.DataONEBaseClient(
       shared_settings.MN_RESPONSES_URL
@@ -244,21 +248,54 @@ class TestDataONEBaseClient(unittest.TestCase):
   # CNCore.generateIdentifier()
   # MNStorage.generateIdentifier()
 
-  @responses.activate
+  @d1_test.mock_api.catch_all.activate
   def test_0160(self):
-    """generateIdentifier(): Returns a valid identifier that matches scheme and fragment"""
-    d1_test.mock_api.generate_identifier.add_callback(
-      shared_settings.MN_RESPONSES_URL
+    """CNRegister.generateIdentifier(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.MN_RESPONSES_URL)
+    scheme_str = (
+      'scheme_' + d1_test.instance_generator.random_data.random_3_words()
     )
-    # TODO: Add support for fragment in mock
-    shared_context.test_fragment = (
-      'test_reserve_identifier_' +
-      d1_test.instance_generator.random_data.random_3_words()
+    fragment_str = (
+      'fragment_' + d1_test.instance_generator.random_data.random_3_words()
     )
-    identifier = self.client.generateIdentifier(
-      'UUID', shared_context.test_fragment
+    received_echo_dict = self.client.generateIdentifier(
+      scheme_str, fragment_str
     )
-    identifier.value()
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'generate',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'DataONEBaseClient',
+        'expected_type': 'Identifier',
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
+
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_0161(self):
+    """CNgenerateIdentifier.generateIdentifier(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.MN_RESPONSES_URL)
+    scheme_str = (
+      'scheme_' + d1_test.instance_generator.random_data.random_3_words()
+    )
+    fragment_str = (
+      'fragment_' + d1_test.instance_generator.random_data.random_3_words()
+    )
+
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.generateIdentifier,
+      scheme_str, fragment_str, vendorSpecific={'trigger': '404'}
+    )
 
   # CNAuthorization.isAuthorized()
   # MNAuthorization.isAuthorized()

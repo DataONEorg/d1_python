@@ -24,13 +24,15 @@
 # Stdlib
 import unittest
 
+import d1_common.util
+
 # 3rd party
 import responses
 
 # App
-import shared_settings # noqa: E402
-import d1_test.mock_api.list_objects as mock_list_objects # noqa: E402
-import d1_client.iter.objectlist_multi # noqa: E402
+import shared_settings
+import d1_test.mock_api.list_objects as mock_list_objects
+import d1_client.iter.objectlist_multi
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -39,9 +41,9 @@ MAX_OBJECTS = 20
 
 
 class TestIterLogRecordMultithreaded(unittest.TestCase):
-  """
-
-  """
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     pass
@@ -55,10 +57,8 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
       max_queue_size=10
     )
 
-    print '4' * 100
     for object_info_pyxb in object_list_iterator:
-      print '5' * 100
-      print object_info_pyxb # .toxml()
+      pass
 
     # client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=shared_settings.MN_URL)
     # object_list_pyxb = client.listObjects(start=30, count=100)

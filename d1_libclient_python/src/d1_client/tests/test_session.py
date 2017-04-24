@@ -34,19 +34,17 @@ import requests
 # D1
 import d1_common.logging_context
 import d1_common.types.exceptions
+import d1_common.util
 
 # App
-import d1_client.session as session # noqa: E402
-import shared_settings # noqa: E402
+import d1_client.session as session
+import shared_settings
 
 
 class TestSession(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
-
-  def tearDown(self):
-    pass
 
   def _get_hash(self, pid):
     s = session.Session(shared_settings.MN_RESPONSES_URL)

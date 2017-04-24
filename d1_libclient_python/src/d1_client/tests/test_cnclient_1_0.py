@@ -27,25 +27,28 @@ import d1_client.tests.util
 import responses
 
 # D1
-import d1_common.types.dataoneTypes # noqa: E402
-import d1_common.types.dataoneTypes_v1 # noqa: E402
-import d1_common.types.dataoneTypes_v2_0 # noqa: E402
-import d1_common.types.exceptions # noqa: E402
-import d1_test.instance_generator.access_policy # noqa: E402
-import d1_test.instance_generator.identifier # noqa: E402
-import d1_test.instance_generator.person # noqa: E402
-import d1_test.instance_generator.random_data # noqa: E402
-import d1_test.instance_generator.replication_policy # noqa: E402
-import d1_test.instance_generator.subject # noqa: E402
-import d1_test.instance_generator.system_metadata # noqa: E402
-import d1_test.mock_api.catch_all
+import d1_common.types.dataoneTypes
+import d1_common.types.dataoneTypes_v1
+import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
 import d1_common.util
+import d1_test.instance_generator.replication_status
+import d1_test.instance_generator.access_policy
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.node_ref
+import d1_test.instance_generator.person
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.replica
+import d1_test.instance_generator.replication_policy
+import d1_test.instance_generator.subject
+import d1_test.instance_generator.system_metadata
+import d1_test.mock_api.catch_all
 
 # App
-import d1_client.cnclient # noqa: E402
-import shared_settings # noqa: E402
+import d1_client.cnclient
+import shared_settings
 
-import d1_test.mock_api.list_formats # noqa: E402
+import d1_test.mock_api.list_formats
 import d1_test.mock_api.get_format
 
 
@@ -466,170 +469,690 @@ class TestCNClient(unittest.TestCase):
   # Identity API
   #=========================================================================
 
-  @unittest.skip("Need to set up stable test env")
+  # CNIdentity.registerAccount()
+
   @d1_test.mock_api.catch_all.activate
   def test_4010(self):
-    """CNIdentity.registerAccount(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.registerAccount(random_subject)
+    """CNAuthorization.registerAccount(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    person_pyxb = d1_test.instance_generator.person.generate()
+    received_echo_dict = self.client.registerAccount(person_pyxb)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4011(self):
+    """CNAuthorization.registerAccount(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    person_pyxb = d1_test.instance_generator.person.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.registerAccount,
+      person_pyxb, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.updateAccount()
+
   @d1_test.mock_api.catch_all.activate
   def test_4020(self):
-    """CNIdentity.updateAccount(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.updateAccount(random_subject)
+    """CNAuthorization.updateAccount(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    person_pyxb = d1_test.instance_generator.person.generate()
+    received_echo_dict = self.client.updateAccount('valid_subject', person_pyxb)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['valid_subject'],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4021(self):
+    """CNAuthorization.updateAccount(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    person_pyxb = d1_test.instance_generator.person.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.updateAccount,
+      'valid_subject', person_pyxb, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.verifyAccount()
+
   @d1_test.mock_api.catch_all.activate
   def test_4030(self):
-    """CNIdentity.verifyAccount(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.verifyAccount(random_subject)
+    """CNAuthorization.verifyAccount(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    received_echo_dict = self.client.verifyAccount('valid_subject')
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['valid_subject'],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4031(self):
+    """CNAuthorization.verifyAccount(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.verifyAccount,
+      'valid_subject', vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.getSubjectInfo()
+
   @d1_test.mock_api.catch_all.activate
   def test_4040(self):
     """CNIdentity.getSubjectInfo(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    subject = self.client.getSubjectInfo(random_subject)
-    print subject.toxml()
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    received_echo_dict = self.client.getSubjectInfo('valid_subject')
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['valid_subject'],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': 'SubjectInfo',
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4041(self):
+    """CNIdentity.getSubjectInfo(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.getSubjectInfo,
+      'valid_subject', vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.listSubjects()
+
   @d1_test.mock_api.catch_all.activate
   def test_4050(self):
     """CNIdentity.listSubjects(): Generates expected REST query"""
-    subjects = self.client.listSubjects(query='test')
-    print subjects.toxml()
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    received_echo_dict = self.client.listSubjects('valid_subject')
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {
+          'query': ['valid_subject']
+        },
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': 'SubjectInfo',
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4051(self):
+    """CNIdentity.listSubjects(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.listSubjects,
+      'valid_subject', vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.mapIdentity()
+
   @d1_test.mock_api.catch_all.activate
   def test_4060(self):
     """CNIdentity.mapIdentity(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.mapIdentity(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    primary_subject = d1_test.instance_generator.person.generate()
+    secondary_subject = d1_test.instance_generator.person.generate()
+    received_echo_dict = self.client.mapIdentity(
+      primary_subject, secondary_subject
+    )
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['map'],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4061(self):
+    """CNIdentity.mapIdentity(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    primary_subject = d1_test.instance_generator.subject.generate()
+    secondary_subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.mapIdentity,
+      primary_subject, secondary_subject, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.removeMapIdentity()
+
   @d1_test.mock_api.catch_all.activate
   def test_4070(self):
     """CNIdentity.removeMapIdentity(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.removeMapIdentity(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    received_echo_dict = self.client.removeMapIdentity(subject)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['map', subject.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4071(self):
+    """CNIdentity.removeMapIdentity(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.removeMapIdentity,
+      subject, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.requestMapIdentity()
+
   @d1_test.mock_api.catch_all.activate
   def test_4080(self):
     """CNIdentity.requestMapIdentity(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.requestMapIdentity(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    received_echo_dict = self.client.requestMapIdentity(subject)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4081(self):
+    """CNIdentity.requestMapIdentity(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.requestMapIdentity,
+      subject, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.confirmMapIdentity()
+
   @d1_test.mock_api.catch_all.activate
   def test_4090(self):
     """CNIdentity.confirmMapIdentity(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.confirmMapIdentity(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    received_echo_dict = self.client.confirmMapIdentity(subject)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['pendingmap', subject.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4091(self):
+    """CNIdentity.confirmMapIdentity(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.confirmMapIdentity,
+      subject, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.denyMapIdentity()
+
   @d1_test.mock_api.catch_all.activate
   def test_4100(self):
     """CNIdentity.denyMapIdentity(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.denyMapIdentity(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    received_echo_dict = self.client.denyMapIdentity(subject)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'accounts',
+        'param_list': ['pendingmap', subject.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4101(self):
+    """CNIdentity.denyMapIdentity(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.denyMapIdentity, subject,
+      vendorSpecific={'trigger': '404'}
+    )
+
+  # CNIdentity.createGroup()
+
   @d1_test.mock_api.catch_all.activate
   def test_4110(self):
     """CNIdentity.createGroup(): Generates expected REST query"""
-    random_subject = d1_test.instance_generator.person.generate()
-    self.client.createGroup(random_subject)
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    received_echo_dict = self.client.createGroup(subject)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'groups',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
-  @d1_test.mock_api.catch_all.activate
-  def test_4120(self):
-    """CNIdentity.addGroupMembers(): Generates expected REST query"""
-    random_group_name = d1_test.instance_generator.person.generate()
-    subject_list = d1_common.types.dataoneTypes.SubjectList()
-    for i in range(10):
-      subject_list.append(d1_test.instance_generator.subject.generate())
-    self.client.addGroupMembers(random_group_name, subject_list)
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
 
-  @unittest.skip("Need to set up stable test env")
   @d1_test.mock_api.catch_all.activate
-  def test_4130(self):
-    """CNIdentity.removeGroupMembers(): Generates expected REST query"""
-    random_group_name = d1_test.instance_generator.person.generate()
-    subject_list = d1_common.types.dataoneTypes.SubjectList()
-    for i in range(10):
-      subject_list.append(d1_test.instance_generator.subject.generate())
-    self.client.removeGroupMembers(random_group_name, subject_list)
+  def test_4111(self):
+    """CNIdentity.createGroup(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    subject = d1_test.instance_generator.subject.generate()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.createGroup, subject,
+      vendorSpecific={'trigger': '404'}
+    )
 
   #=========================================================================
   # Replication API
   #=========================================================================
 
-  @unittest.skip("Need to set up stable test env")
+  # CNReplication.setReplicationStatus()
+
   @d1_test.mock_api.catch_all.activate
-  def test_5010(self):
+  def test_4120(self):
     """CNReplication.setReplicationStatus(): Generates expected REST query"""
-    # TODO: Waiting for SetReplication modification.
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    replication_status_pyxb = d1_test.instance_generator.replication_status.generate()
+    failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
+    received_echo_dict = self.client.setReplicationStatus(
+      pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb
+    )
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'replicaNotifications',
+        'param_list': [pid_pyxb.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
   @d1_test.mock_api.catch_all.activate
-  def test_5020(self):
+  def test_4121(self):
+    """CNReplication.setReplicationStatus(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    replication_status_pyxb = d1_test.instance_generator.replication_status.generate()
+    failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.setReplicationStatus,
+      pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb,
+      vendorSpecific={'trigger': '404'}
+    )
+
+  # CNReplication.updateReplicationMetadata()
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4130(self):
     """CNReplication.updateReplicationMetadata(): Generates expected REST query"""
-    # Not implemented.
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate()
+    serial_version_int = 3
+    received_echo_dict = self.client.updateReplicationMetadata(
+      pid_pyxb, replica_pyxb, serial_version_int
+    )
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'replicaMetadata',
+        'param_list': [pid_pyxb.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
 
-  @unittest.skip("Need to set up stable test env")
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
   @d1_test.mock_api.catch_all.activate
-  def test_5030(self):
+  def test_4131(self):
+    """CNReplication.updateReplicationMetadata(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate()
+    serial_version_int = 3
+
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound,
+      self.client.updateReplicationMetadata, pid_pyxb, replica_pyxb,
+      serial_version_int, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNReplication.setReplicationPolicy()
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4140(self):
     """CNReplication.setReplicationPolicy(): Generates expected REST query"""
-    random_existing_pid = d1_client.tests.util.get_random_valid_pid(self.client)
-    serial_version = d1_client.tests.util.serial_version(
-      self.client, random_existing_pid
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate()
+    serial_version_int = 3
+    received_echo_dict = self.client.setReplicationPolicy(
+      pid_pyxb, replica_pyxb, serial_version_int
     )
-    replication_policy = d1_test.instance_generator.replicationpolicy.generate()
-    self.client.setReplicationPolicy(
-      random_existing_pid, replication_policy, serial_version
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'replicaPolicies',
+        'param_list': [pid_pyxb.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
+
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
     )
 
-  @unittest.skip("Need to set up stable test env")
   @d1_test.mock_api.catch_all.activate
-  def test_5040(self):
+  def test_4141(self):
+    """CNReplication.setReplicationPolicy(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate()
+    serial_version_int = 3
+
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.setReplicationPolicy,
+      pid_pyxb, replica_pyxb, serial_version_int,
+      vendorSpecific={'trigger': '404'}
+    )
+
+  # CNReplication.isNodeAuthorized()
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4150(self):
     """CNReplication.isNodeAuthorized(): Generates expected REST query"""
-    # TODO. Spec unclear.
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    received_echo_dict = self.client.isNodeAuthorized(node_ref_pyxb, pid_pyxb)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'replicaAuthorizations',
+        'param_list': [pid_pyxb.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {
+          'targetNodeSubject': [node_ref_pyxb.value()]
+        },
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
+
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4151(self):
+    """CNReplication.isNodeAuthorized(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    pid_pyxb = d1_test.instance_generator.identifier.generate()
+
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.isNodeAuthorized,
+      node_ref_pyxb, pid_pyxb, vendorSpecific={'trigger': '404'}
+    )
 
     #=========================================================================
     # Register API
     #=========================================================================
 
-  @unittest.skip("Need to set up stable test env")
-  @d1_test.mock_api.catch_all.activate
-  def test_6010(self):
-    """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
-    test_node = (
-      'test_node_' + d1_test.instance_generator.random_data.random_3_words()
-    )
-    node = d1_common.types.dataoneTypes.Node()
-    node.identifier = test_node
-    node.name = 'test_name'
-    node.description = 'test_description'
-    node.baseURL = 'https://baseURL.dataone.org'
-    node.contactSubject.append('test_subject_1')
-    node.contactSubject.append('test_subject_2')
-    self.client.updateNodeCapabilities(test_node, node)
+  # CNRegister.updateNodeCapabilities()
 
-  @unittest.skip("Need to set up stable test env")
   @d1_test.mock_api.catch_all.activate
-  def test_6020(self):
-    """CNRegister.register(): Generates expected REST query"""
-    node = d1_common.types.dataoneTypes.Node()
-    node.identifier = (
-      'test_node_' + d1_test.instance_generator.random_data.random_3_words()
+  def test_4160(self):
+    """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    received_echo_dict = self.client.updateNodeCapabilities(
+      node_ref_pyxb, node_pyxb
     )
-    node.name = 'test_name'
-    node.description = 'test_description'
-    node.baseURL = 'https://baseURL.dataone.org'
-    node.contactSubject.append('test_subject_1')
-    node.contactSubject.append('test_subject_2')
-    self.client.register(node)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'node',
+        'param_list': [node_ref_pyxb.value()],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
+
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4161(self):
+    """CNRegister.updateNodeCapabilities(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
+    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.updateNodeCapabilities,
+      node_ref_pyxb, node_pyxb, vendorSpecific={'trigger': '404'}
+    )
+
+  # CNRegister.register()
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4170(self):
+    """CNRegister.register(): Generates expected REST query"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    received_echo_dict = self.client.register(node_pyxb)
+    expected_echo_dict = {
+      'request': {
+        'endpoint_str': 'node',
+        'param_list': [],
+        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
+        'query_dict': {},
+        'version_tag': 'v1'
+      },
+      'wrapper': {
+        'class_name': 'CoordinatingNodeClient',
+        'expected_type': None,
+        'received_303_redirect': False,
+        'vendor_specific_dict': None
+      }
+    }
+
+    d1_test.mock_api.catch_all.assert_expected_echo(
+      received_echo_dict, expected_echo_dict
+    )
+
+  @d1_test.mock_api.catch_all.activate
+  def test_4171(self):
+    """CNRegister.register(): Converts DataONEException XML doc to exception"""
+    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.register, node_pyxb,
+      vendorSpecific={'trigger': '404'}
+    )

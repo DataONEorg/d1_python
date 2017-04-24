@@ -31,12 +31,11 @@ Unit tests for ObjectFormatInfo.
 
 # Stdlib
 import StringIO
-import sys
 import unittest
 
 # App
-sys.path.append('..')
-import d1_client.object_format_info # noqa: E402
+import d1_client.object_format_info
+import d1_common.util
 
 # Typical mapping (format id, mimetype, extension):
 # netCDF-3,application/netcdf,.nc
@@ -52,6 +51,10 @@ Blank line above.
 
 
 class TestObjectFormatInfo(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     self.i = d1_client.object_format_info.ObjectFormatInfo()
 

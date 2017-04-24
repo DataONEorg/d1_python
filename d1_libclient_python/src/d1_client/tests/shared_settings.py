@@ -19,7 +19,7 @@ MN_RESPONSES_URL = 'http://responses/mn'
 #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
 #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
 #self.baseurl = 'https://dev-testing.dataone.org/testsvc/echomm'
-#cert_path = None
+#cert_pem_path = None
 
 # echo
 #self.baseurl = 'http://foobar3000.com'

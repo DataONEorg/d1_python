@@ -28,12 +28,18 @@
 
 import unittest
 
+import d1_common.util
+
 # App
 import d1_client.mnclient_1_1
 import shared_settings
 
 
 class TestMNClient_1_1(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
       shared_settings.MN_RESPONSES_URL

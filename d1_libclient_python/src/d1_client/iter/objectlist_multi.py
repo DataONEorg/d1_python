@@ -23,15 +23,13 @@
 # Stdlib
 import logging
 import multiprocessing
-import sys
 
 # D1
 import d1_common.type_conversions
 
 # App
-sys.path.append('..')
-import d1_client.mnclient_1_1 # noqa: E402
-import d1_client.mnclient_2_0 # noqa: E402
+import d1_client.mnclient_1_1
+import d1_client.mnclient_2_0
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100

@@ -116,7 +116,7 @@ class MemberNodeObjectDeleter(object):
   def __init__(self, base_url):
     self._base_url = base_url
     self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      self._base_url, cert_path=CERTIFICATE, key_path=CERTIFICATE_KEY
+      self._base_url, cert_pem_path=CERTIFICATE, cert_key_path=CERTIFICATE_KEY
     )
 
   def delete_objects_from_member_node(self):
