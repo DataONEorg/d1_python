@@ -21,9 +21,11 @@ script:
   - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src/gmn && python ../setup.py develop
   # Debug
   - python -c "import sys; print '\n'.join(sys.path)"
+  - pip freeze
+  - pip check
   #- ls -l /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
   # Run the tests
-  - cd $TRAVIS_BUILD_DIR && pytest --cov=.
+  - cd $TRAVIS_BUILD_DIR && pytest
 after_success:
   # coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
