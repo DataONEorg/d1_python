@@ -50,7 +50,7 @@ def main():
       'iso8601 == 0.1.11',
       'psycopg2 == 2.5.2',
       'pyjwt == 1.4.2',
-      'cryptography == 1.5.2',
+      'cryptography', # Use version pulled in by requests[security]
       # GMN does not use the CLI programmatically -- it's just included because
       # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
