@@ -19,10 +19,11 @@ script:
   - cd $TRAVIS_BUILD_DIR/d1_client_cli/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_test_utilities_python/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src/gmn && python ../setup.py develop
+  - cd $TRAVIS_BUILD_DIR
   # Debug
-  - python -c "import sys; print '\n'.join(sys.path)"
   - pip freeze
   - pip check
+  - python -c "import sys; print '\n'.join(sys.path)"
   #- ls -l /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
   # Run the tests
   - cd $TRAVIS_BUILD_DIR && pytest
