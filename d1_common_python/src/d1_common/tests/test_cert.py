@@ -36,6 +36,10 @@ import d1_common.tests.util as util
 
 
 class TestCert(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     self.cert_simple_subject_info_pem = util.read_test_file(
       'cert_with_simple_subject_info.pem'
