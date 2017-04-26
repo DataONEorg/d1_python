@@ -79,12 +79,12 @@ import StringIO
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_client.data_package
-import d1_client.mnclient
+import d1_client.mnclient_2_0
 
 # Config.
 
 # The path to the files that will be uploaded as science objects.
-SCIENCE_OBJECTS_DIR_PATH = './testfiles'
+SCIENCE_OBJECTS_DIR_PATH = './d1_objects'
 
 # The identifier (PID) to use for the Science Object.
 SCIENCE_OBJECT_PID = 'dataone_test_object_pid'
@@ -131,8 +131,8 @@ def main():
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    MN_BASE_URL, cert_path=CERTIFICATE_FOR_CREATE,
-    key_path=CERTIFICATE_FOR_CREATE_KEY
+    MN_BASE_URL, cert_pem_path=CERTIFICATE_FOR_CREATE,
+    cert_key_path=CERTIFICATE_FOR_CREATE_KEY
   )
   # Iterate over the object groups and create them and their resource maps
   # on the Member Node.
