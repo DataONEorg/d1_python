@@ -1,7 +1,6 @@
-[report]
+[run]
 omit =
-    */dist-packages/*
-    */generated/*
-    */tests/*
-
-
+  */dist-packages/*
+  */generated/*
+  */tests/*
+  */setup.py
