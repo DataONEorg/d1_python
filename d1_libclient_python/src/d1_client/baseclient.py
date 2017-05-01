@@ -217,6 +217,8 @@ class DataONEBaseClient(session.Session):
     return value will be either an instance of a type or a DataONE exception.
     """
     response_body = response.content
+    # TODO: Update this to automatically remove empty elements (probably using
+    # ElementTree)
     try:
       return self._types.CreateFromDocument(response_body)
     except pyxb.SimpleFacetValueError as e:
@@ -227,6 +229,8 @@ class DataONEBaseClient(session.Session):
           response, response_body, str(e)
         )
     except pyxb.IncompleteElementContentError as e:
+      # TODO: Update this to extract the error details. See implementation in
+      # DataONEException.
       # example: <accessPolicy/> is not allowed since it requires 1..n
       # AccessRule entries
       if not self.retry_IncompleteElementContentError:
@@ -483,17 +487,19 @@ class DataONEBaseClient(session.Session):
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
   @d1_common.util.utf8_to_unicode
-  def generateIdentifierResponse(self, scheme, fragment=None):
+  def generateIdentifierResponse(
+      self, scheme, fragment=None, vendorSpecific=None
+  ):
     mmp_dict = {
       'scheme': scheme.encode('utf-8'),
     }
     if fragment is not None:
       mmp_dict['fragment'] = fragment.encode('utf-8')
-    return self.POST('generate', fields=mmp_dict)
+    return self.POST('generate', fields=mmp_dict, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
-  def generateIdentifier(self, scheme, fragment=None):
-    response = self.generateIdentifierResponse(scheme, fragment)
+  def generateIdentifier(self, scheme, fragment=None, vendorSpecific=None):
+    response = self.generateIdentifierResponse(scheme, fragment, vendorSpecific)
     return self._read_dataone_type_response(response, 'Identifier')
 
   # CNStorage.delete(session, pid) → Identifier

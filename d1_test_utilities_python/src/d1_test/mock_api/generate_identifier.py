@@ -25,11 +25,8 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
 https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.generateIdentifier(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -49,7 +46,7 @@ import d1_test.mock_api.d1_exception
 POST_ENDPOINT_RX = r'v([123])/generate'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.POST,
     re.

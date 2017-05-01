@@ -20,11 +20,8 @@
 # limitations under the License.
 """Mock a generic POST request by echoing the posted body.
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.create(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 """
 
 # Stdlib
@@ -48,7 +45,7 @@ import d1_test.mock_api.util
 CREATE_ENDPOINT_RX = r'v([123])/object'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.POST,
     re.compile(

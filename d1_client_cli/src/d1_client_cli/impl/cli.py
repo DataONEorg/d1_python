@@ -67,7 +67,7 @@ class CLI(cmd.Cmd):
     cli_util.print_info(u'Exiting...')
 
   def precmd(self, line):
-    """ This method is called after the line has been input but before
+    """This method is called after the line has been input but before
     it has been interpreted. If you want to modify the input line
     before execution (for example, variable substitution) do it here.
     """
@@ -91,9 +91,9 @@ class CLI(cmd.Cmd):
     args = self._split_args(line, 0, 99)
     cli_util.print_error(u'Unknown command: {}'.format(args[0]))
 
-  def run_command_line_arguments(self, commands):
-    for command in commands:
-      self.onecmd(command)
+  def run_command_line_arguments(self, cmd_line_list):
+    for cmd_line_str in cmd_line_list:
+      self.onecmd(cmd_line_str)
 
   #-----------------------------------------------------------------------------
   # CLI
@@ -137,7 +137,7 @@ be lost if you exit.""".format(n_remaining_operations)
     """
     self.do_exit(line)
 
-  def do_EOF(self, line):
+  def do_eof(self, line):
     """Exit on system EOF character"""
     cli_util.print_info('')
     self.do_exit(line)
@@ -292,7 +292,8 @@ be lost if you exit.""".format(n_remaining_operations)
     Remove one or more Member Nodes from replication policy
     """
     mns = self._split_args(line, 1, -1)
-    self._command_processor.get_session().get_replication_policy().remove(mns)
+    self._command_processor.get_session().get_replication_policy(
+    ).repremove(mns)
     self._print_info_if_verbose(
       'Removed {0} from replication policy'.format(', '.join(mns))
     )

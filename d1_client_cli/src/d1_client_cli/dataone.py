@@ -74,7 +74,7 @@ else:
 def main():
   log_setup(True)
 
-  if not check_dependencies.check_dependencies():
+  if not check_dependencies.are_modules_importable():
     raise Exception(u'Dependency check failed')
 
   print u'DataONE Command Line Interface ({})'.format(d1_client_cli.__version__)

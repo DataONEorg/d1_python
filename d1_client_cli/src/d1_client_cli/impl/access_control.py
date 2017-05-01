@@ -60,7 +60,7 @@ class AccessControl():
 
   def _get_valid_permissions(self):
     """List of permissions, in increasing order."""
-    return (u'read', 'write', 'changePermission')
+    return 'read', 'write', 'changePermission'
 
   def _add_allowed_subject(self, subject, permission):
     self.allow[subject] = permission

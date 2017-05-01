@@ -27,30 +27,13 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # D1
-
-# App
-sys.path.append('..')
-# import d1_client.d1client
-# import util
-# import shared_context
-
-MEMBER_NODES = {
-  'dryad': 'http://dev-dryad-mn.dataone.org/mn',
-  'daac': 'http://daacmn.dataone.utk.edu/mn',
-  'metacat': 'http://knb-mn.ecoinformatics.org/knb/d1',
-}
-
-COORDINATING_NODES = {
-  'cn-dev': 'http://cn-dev.dataone.org/cn',
-}
-
-#=========================================================================
+import d1_common.util
 
 
 class TestDataONEClient(unittest.TestCase):
-  def setUp(self):
-    self.target = MEMBER_NODES['dryad']
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)

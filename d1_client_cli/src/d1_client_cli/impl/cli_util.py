@@ -56,7 +56,6 @@ def clear_None_from_list(obj_list):
 
 
 def confirm(prompt, default=u'no', allow_blank=False):
-  def_response = None
   if default == u'no':
     p = u' [yes/NO] '
     def_response = False
@@ -104,12 +103,11 @@ def output(file_like_object, path, verbose=False):
       shutil.copyfileobj(file_like_object, object_file)
       object_file.close()
     except EnvironmentError as (errno, strerror):
-      error_message_lines = []
-      error_message_lines.append(
-        u'Could not write to object_file: {0}'.format(path)
-      )
-      error_message_lines.append(u'I/O error({0}): {1}'.format(errno, strerror))
-      error_message = u'\n'.join(error_message_lines)
+      error_line_list = [
+        u'Could not write to object_file: {0}'.format(path),
+        u'I/O error({0}): {1}'.format(errno, strerror),
+      ]
+      error_message = u'\n'.join(error_line_list)
       raise cli_exceptions.CLIError(error_message)
 
 
@@ -152,12 +150,25 @@ def copy_file_like_object_to_file(file_like_object, path):
       shutil.copyfileobj(fsrc, sys.stdout)
 
   except EnvironmentError as (errno, strerror):
-    error_message_lines = []
-    error_message_lines.append(
-      u'Could not write to object_file: {0}'.format(path)
-    )
-    error_message_lines.append(u'I/O error({0}): {1}'.format(errno, strerror))
-    error_message = u'\n'.join(error_message_lines)
+    error_line_list = [
+      u'Could not write to object_file: {0}'.format(path),
+      u'I/O error({0}): {1}'.format(errno, strerror),
+    ]
+    error_message = u'\n'.join(error_line_list)
+    raise cli_exceptions.CLIError(error_message)
+
+
+def copy_requests_stream_to_file(response, path):
+  try:
+    with open(os.path.expanduser(path), u'wb') as f:
+      for chunk_str in response.iter_content():
+        f.write(chunk_str)
+  except EnvironmentError as (errno, strerror):
+    error_line_list = [
+      u'Could not write to object_file: {0}'.format(path),
+      u'I/O error({0}): {1}'.format(errno, strerror),
+    ]
+    error_message = u'\n'.join(error_line_list)
     raise cli_exceptions.CLIError(error_message)
 
 

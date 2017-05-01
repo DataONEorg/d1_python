@@ -33,7 +33,6 @@
 import codecs
 import os
 import random
-import sys
 import time
 
 # D1
@@ -41,10 +40,9 @@ import d1_client.mnclient
 import d1_common.const
 import d1_common.util
 
-sys.path.append(d1_common.util.abs_path('../../../shared/'))
-import certificate # noqa: E402
-import settings # noqa: E402
-import subject_dn # noqa: E402
+import certificate
+import settings
+import subject_dn
 
 
 class Transaction(object):
@@ -73,12 +71,13 @@ class Transaction(object):
   def create_public_client(self):
     return d1_client.mnclient.MemberNodeClient(base_url=settings.BASEURL)
 
-  def create_client_for_cert(self, cert_path):
-    certificate.check_path(cert_path)
-    key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
-    certificate.check_path(key_path)
+  def create_client_for_cert(self, cert_pem_path):
+    certificate.check_path(cert_pem_path)
+    cert_key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    certificate.check_path(cert_key_path)
     return d1_client.mnclient.MemberNodeClient(
-      base_url=settings.BASEURL, cert_path=cert_path, key_path=key_path
+      base_url=settings.BASEURL, cert_pem_path=cert_pem_path,
+      cert_key_path=cert_key_path
     )
 
   def create_client_for_cn(self):

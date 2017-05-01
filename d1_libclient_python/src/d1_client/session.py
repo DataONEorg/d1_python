@@ -300,7 +300,10 @@ class Session(object):
     return {k: v for k, v in d.items() if v is not None}
 
   def _encode_path_elements(self, path_element_list):
-    return [d1_common.url.encodePathElement(v) for v in path_element_list]
+    return [
+      d1_common.url.encodePathElement(v) if isinstance(v, basestring) else
+      d1_common.url.encodePathElement(v.value()) for v in path_element_list
+    ]
 
   def _get_api_version_path_element(self):
     return 'v{}'.format(self._api_major)

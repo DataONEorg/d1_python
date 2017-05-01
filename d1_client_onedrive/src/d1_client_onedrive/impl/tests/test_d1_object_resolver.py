@@ -33,16 +33,17 @@ import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-import impl.resolver.d1_object as d1_object # noqa: E402
-from object_tree_test_sample import object_tree # noqa: E402
+import d1_client_onedrive.impl.resolver.d1_object as d1_object
+import object_tree_test_sample
 
 options = {}
 
 
 class TestD1ObjectResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = d1_object.Resolver(options, object_tree)
+    self._resolver = d1_object.Resolver(
+      options, object_tree_test_sample.object_tree
+    )
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())

@@ -40,6 +40,7 @@ import xml.etree.ElementTree as etree
 
 # 3rd party
 import pyxb.utils.domutils
+import pyxb.namespace.utility
 
 # App
 import d1_common.util
@@ -100,7 +101,14 @@ def set_default_pyxb_namespace(major_version):
   )
 
 
+def get_pyxb_namespaces():
+  """Return a list of the namespaces currently known to PyXB"""
+  return pyxb.namespace.utility.AvailableNamespaces()
+
+
+#
 # Convert types to v1
+#
 
 
 def str_to_v1_str(xml_str):
@@ -124,7 +132,9 @@ def str_to_v1_pyxb(xml_str):
   str_to_pyxb(str_to_v1_str(xml_str))
 
 
+#
 # Convert types to v2
+#
 
 
 def str_to_v2_str(xml_str):

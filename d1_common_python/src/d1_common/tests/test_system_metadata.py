@@ -52,13 +52,13 @@ class TestSystemMetadata(unittest.TestCase):
     modified_pyxb = util.read_test_xml('systemMetadata_v2_0.xml')
     modified_pyxb.identifier = 'modifiedIdentifier'
     self.assertFalse(
-      d1_common.system_metadata.is_equivalent(self.sm_pyxb, modified_pyxb)
+      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, modified_pyxb)
     )
 
   def test_110(self):
     """is_equivalent() Returns True for duplicated sysmeta"""
     self.assertTrue(
-      d1_common.system_metadata.is_equivalent(self.sm_pyxb, self.sm_pyxb)
+      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb)
     )
 
   def test_120(self):
@@ -68,5 +68,5 @@ class TestSystemMetadata(unittest.TestCase):
     """
     swizzled_pyxb = util.read_test_xml('systemMetadata_v2_0.swizzled.xml')
     self.assertTrue(
-      d1_common.system_metadata.is_equivalent(self.sm_pyxb, swizzled_pyxb)
+      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, swizzled_pyxb)
     )

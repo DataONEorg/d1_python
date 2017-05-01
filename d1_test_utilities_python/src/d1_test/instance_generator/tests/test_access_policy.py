@@ -35,7 +35,7 @@ import unittest
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # App
-import d1_test.instance_generator.access_policy as access_policy # noqa: E402
+import d1_test.instance_generator.access_policy as access_policy
 
 #===============================================================================
 

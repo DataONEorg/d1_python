@@ -33,9 +33,8 @@ import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-import impl.resolver.flat_space as flat_space # noqa: E402
-from object_tree_test_sample import object_tree # noqa: E402
+import d1_client_onedrive.impl.resolver.flat_space as flat_space
+import object_tree_test_sample
 
 options = {}
 
@@ -52,7 +51,7 @@ class TestFlatSpaceResolver(unittest.TestCase):
     options.object_tree_xml = './test_flat_space.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
-    self._w = flat_space.Resolver(options, object_tree)
+    self._w = flat_space.Resolver(options, object_tree_test_sample.object_tree)
 
   def test_100(self):
     pass

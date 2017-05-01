@@ -127,7 +127,8 @@ def _get_client_side_certificate_pem():
     return open(django.conf.settings.CLIENT_CERT_PATH, 'rb').read()
   except EnvironmentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Error reading client side certificate. cert_path="{}", error="{}"'
+      0,
+      u'Error reading client side certificate. cert_pem_path="{}", error="{}"'
       .format(django.conf.settings.CLIENT_CERT_PATH, str(e))
     )
 

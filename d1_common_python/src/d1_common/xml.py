@@ -212,6 +212,10 @@ def is_equal_xml(a_xml, b_xml):
   return is_equal_elements(a_dom.documentElement, b_dom.documentElement)
 
 
+def is_equal_pyxb(a_pyxb, b_pyxb):
+  return is_equal_xml(a_pyxb.toxml(), b_pyxb.toxml())
+
+
 def is_equal_elements(a_el, b_el):
   if a_el.tagName != b_el.tagName:
     return False

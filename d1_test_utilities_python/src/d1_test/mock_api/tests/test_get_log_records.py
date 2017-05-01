@@ -32,20 +32,15 @@ import d1_common.util
 import d1_test.mock_api.get_log_records as mock_log_records
 import d1_test.mock_api.tests.settings as settings
 
-import pyxb.namespace.utility
-import pyxb.utils.domutils
 import responses
 
 
 class TestMockLogRecords(unittest.TestCase):
-  def setUp(self):
+  @classmethod
+  def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
-    mock_log_records.init(settings.MN_RESPONSES_BASE_URL)
 
-    # print 'Namespaces:'
-    # for ns in pyxb.namespace.utility.AvailableNamespaces():
-    #   print '  {}'.format(ns.uri())
-    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
+  def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       base_url=settings.MN_RESPONSES_BASE_URL
     )
@@ -53,6 +48,7 @@ class TestMockLogRecords(unittest.TestCase):
   @responses.activate
   def test_0010(self):
     """mock_api.getLogRecords() returns a DataONE Log PyXB object"""
+    mock_log_records.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.getLogRecords(),
       d1_common.types.dataoneTypes_v2_0.Log,
@@ -61,6 +57,7 @@ class TestMockLogRecords(unittest.TestCase):
   @responses.activate
   def test_0011(self):
     """mock_api.getLogRecords(): Passing a trigger header triggers a DataONEException"""
+    mock_log_records.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getLogRecords,
       'test_pid', vendorSpecific={'trigger': '404'}

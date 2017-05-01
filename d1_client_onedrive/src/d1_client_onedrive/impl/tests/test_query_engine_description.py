@@ -27,12 +27,10 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-import impl.clients.query_engine_description as query_engine_description # noqa: E402
+import d1_client_onedrive.impl.clients.query_engine_description as query_engine_description
 
 options = {}
 

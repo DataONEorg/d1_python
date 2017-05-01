@@ -35,8 +35,7 @@ import unittest
 # D1
 
 # App
-sys.path.append('..')
-import command_processor # noqa: E402
+import command_processor
 
 
 class O():

@@ -32,8 +32,7 @@ import sys
 import unittest
 
 # App
-sys.path.append('..')
-import onedrive_solr_client # noqa: E402
+import onedrive_solr_client
 
 # Example results
 

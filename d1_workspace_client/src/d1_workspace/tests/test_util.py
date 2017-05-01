@@ -33,7 +33,7 @@ import sys
 import unittest
 
 # D1
-sys.path.append('..') # noqa: E402
+sys.path.append('..')
 
 
 class TestUtil(unittest.TestCase):

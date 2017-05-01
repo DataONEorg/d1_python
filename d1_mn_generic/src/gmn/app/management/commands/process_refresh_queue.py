@@ -146,8 +146,8 @@ class SysMetaRefreshQueueProcessor(object):
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=django.conf.settings.DATAONE_ROOT,
-      cert_path=django.conf.settings.CLIENT_CERT_PATH,
-      key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
   def _get_system_metadata(self, queue_model):

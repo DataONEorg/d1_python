@@ -26,8 +26,7 @@ OS X specific options to ONEDrive.
 import os
 import sys
 
-sys.path.append('..')
-from d1_client_onedrive import onedrive # noqa: E402
+import d1_client_onedrive
 
 
 def main():
@@ -44,7 +43,7 @@ def start_onedrive(mount_point):
     #'volicon=mac_dataone.icns',
   ])
 
-  onedrive.main()
+  d1_client_onedrive.onedrive.main()
 
 
 class MountPoint():

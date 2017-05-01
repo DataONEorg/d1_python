@@ -37,8 +37,11 @@ import d1_test.mock_api.tests.settings as settings
 
 
 class TestMockQuery(unittest.TestCase):
-  def setUp(self):
+  @classmethod
+  def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
+
+  def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       base_url=settings.MN_RESPONSES_BASE_URL
     )
@@ -46,7 +49,7 @@ class TestMockQuery(unittest.TestCase):
   @responses.activate
   def test_0010(self):
     """mock_api.query() returns a JSON doc with expected structure"""
-    mock_query.init(settings.MN_RESPONSES_BASE_URL)
+    mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
     response = self.client.query('query_engine', 'query_string')
     self.assertIsInstance(response, requests.Response)
     self.assertEqual(response.headers['Content-Type'], 'application/json')
@@ -68,7 +71,7 @@ class TestMockQuery(unittest.TestCase):
   @responses.activate
   def test_0011(self):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
-    mock_query.init(settings.MN_RESPONSES_BASE_URL)
+    mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.query,
       'query_engine', 'query_string', vendorSpecific={'trigger': '401'}

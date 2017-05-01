@@ -27,13 +27,10 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # D1
-sys.path.append('..')
-sys.path.append('../..')
-import query_engine_description # noqa: E402
+import query_engine_description
 
 
 class TestQueryEngineDescription(unittest.TestCase):

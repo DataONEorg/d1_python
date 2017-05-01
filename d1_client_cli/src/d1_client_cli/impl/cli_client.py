@@ -24,7 +24,6 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 """
 
-# DataONE
 import d1_client
 import d1_client.mnclient
 import d1_client.cnclient

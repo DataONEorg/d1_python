@@ -33,7 +33,7 @@ import unittest
 
 import requests_toolbelt
 import responses
-import d1_test.mock_api.all
+import d1_test.mock_api.create
 
 # D1
 import d1_client.mnclient_1_1
@@ -44,11 +44,16 @@ import d1_common.const
 import d1_client.mnclient
 import shared_settings
 import d1_client.tests.util
+import d1_common.util
 
 
 class TestMNClient(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
-    d1_test.mock_api.all.init(shared_settings.MN_RESPONSES_URL)
+    d1_test.mock_api.create.add_callback(shared_settings.MN_RESPONSES_URL)
     self.client = d1_client.mnclient.MemberNodeClient(
       shared_settings.MN_RESPONSES_URL
     )

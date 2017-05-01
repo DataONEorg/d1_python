@@ -23,33 +23,32 @@
 
 # Stdlib
 import logging
-
-# Set up logger for this module.
-log = logging.getLogger(__name__)
+import importlib
 
 
-def check_dependencies():
-  exceptions = []
-  messages = []
+def are_modules_importable(module_list=None):
+  module_list = module_list or [
+    'd1_client',
+    'd1_common',
+    'pyxb',
+  ]
 
+  failed_import_list = []
+  for module_str in module_list:
+    if not _try_import(module_str):
+      failed_import_list.append(module_str)
+
+  if failed_import_list:
+    logging.critical(u'Importing of the following dependencies failed:')
+    logging.critical(', '.join(failed_import_list))
+
+  return not bool(failed_import_list)
+
+
+def _try_import(abs_module_str):
   try:
-    import d1_client # noqa: F401
-    import d1_common # noqa: F401
-    import pyxb # noqa: F401
-  except ImportError as e:
-    exceptions.append(e)
-    messages.append(
-      u'DataONE Client Library for Python: Try: pip install dataone.libclient'
-    )
-
-  if len(exceptions):
-    log.critical(u'Importing of the following dependencies failed.')
-    for msg in messages:
-      log.critical(msg)
-    log.critical(u'Import errors:')
-    for e in exceptions:
-      log.critical(str(e))
-
+    importlib.import_module(abs_module_str)
+  except ImportError:
+    logging.exception('Dependency check failed with exception:')
     return False
-
   return True

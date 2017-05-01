@@ -18,17 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock MNRead.get() → OctetStream
+"""Mock:
+
+MNRead.get() → OctetStream
 GET /object/{id}
 
-- Will always return the same bytes for a given PID.
-- If the PID is as an integer, it is returned as a status code.
+Will always return the same bytes for a given PID.
 
-A DataONEException can be triggered by adding a custom header named "trigger"
-with the status code of the error to trigger, using vendorSpecific parameter.
-E.g.:
-
-client.get(..., vendorSpecific={'trigger': '404'})
+A DataONEException can be triggered by adding a custom header. See
+d1_exception.py
 
 A NotFound exception can be triggered by passing a pid that starts with
 "unknown_". E.g.:
@@ -53,7 +51,7 @@ import responses
 GET_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
-def init(base_url):
+def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.
@@ -69,7 +67,7 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid, pyxb_bindings = _parse_get_url(request.url)
+  pid, pyxb_bindings = _parse_url(request.url)
   if pid.startswith('unknown_'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
@@ -80,7 +78,7 @@ def _request_callback(request):
   return 200, header_dict, body_str
 
 
-def _parse_get_url(url):
+def _parse_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )

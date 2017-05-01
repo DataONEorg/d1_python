@@ -23,18 +23,21 @@
 """
 
 # Stdlib
-import sys
 import unittest
 
 # D1
 import d1_client.tests.util
+import d1_common.util
 
 # App
-sys.path.append('..')
-import d1_client.baseclient_2_0 # noqa: E402
+import d1_client.baseclient_2_0
 
 
 class TestDataONEBaseclientV2(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     self.base_url = 'www.example.com'
     self.client = d1_client.baseclient_2_0.DataONEBaseClient_2_0(

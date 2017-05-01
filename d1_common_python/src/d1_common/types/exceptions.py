@@ -55,9 +55,7 @@ import d1_common.util
 def deserialize(dataone_exception_xml):
   """Deserialize a DataONE Exception.
   """
-  error_str = None
   try:
-    # Deserialize XML to a native Python object.
     dataone_exception_pyxb = dataoneErrors.CreateFromDocument(
       dataone_exception_xml
     )
@@ -67,28 +65,28 @@ def deserialize(dataone_exception_xml):
     error_str = e.message
   except xml.sax.SAXParseException as e:
     error_str = str(e)
-  if error_str is not None:
-    msg = StringIO.StringIO()
-    msg.write('Deserialization failed.\n')
-    msg.write('Error: {}\n'.format(error_str))
-    msg.write(
-      'Input: {}\n'.format(
-        '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
-      )
-    )
-    raise ServiceFailure(
-      detailCode=0,
-      description=msg.getvalue(),
-      traceInformation=traceback.format_exc(),
+  else:
+    return create_exception_by_name(
+      dataone_exception_pyxb.name,
+      dataone_exception_pyxb.detailCode,
+      dataone_exception_pyxb.description,
+      getattr(dataone_exception_pyxb, 'traceInformation', None),
+      dataone_exception_pyxb.identifier,
+      dataone_exception_pyxb.nodeId,
     )
 
-  return create_exception_by_name(
-    dataone_exception_pyxb.name,
-    dataone_exception_pyxb.detailCode,
-    dataone_exception_pyxb.description,
-    getattr(dataone_exception_pyxb, 'traceInformation', None),
-    dataone_exception_pyxb.identifier,
-    dataone_exception_pyxb.nodeId,
+  msg = StringIO.StringIO()
+  msg.write('Deserialization failed.\n')
+  msg.write('Error: {}\n'.format(error_str))
+  msg.write(
+    'Input: {}\n'.format(
+      '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
+    )
+  )
+  raise ServiceFailure(
+    detailCode=0,
+    description=msg.getvalue(),
+    traceInformation=traceback.format_exc(),
   )
 
 
@@ -220,7 +218,6 @@ class DataONEException(Exception):
       return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
 
   def serialize(self):
-    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
     dataone_exception_pyxb = dataoneErrors.error()
     dataone_exception_pyxb.name = self.__class__.__name__
     dataone_exception_pyxb.errorCode = self.errorCode
@@ -241,6 +238,7 @@ class DataONEException(Exception):
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
+    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
     return dataone_exception_pyxb.toxml(encoding='utf-8')
 
   def toxml(self):
@@ -463,22 +461,4 @@ ERROR_CODE_TO_EXCEPTION_DICT = {
   413: InsufficientResources,
   500: ServiceFailure,
   501: NotImplemented,
-}
-
-NAME_TO_EXCEPTION_DICT = {
-  u'AuthenticationTimeout': AuthenticationTimeout,
-  u'IdentifierNotUnique': IdentifierNotUnique,
-  u'InsufficientResources': InsufficientResources,
-  u'InvalidCredentials': InvalidCredentials,
-  u'InvalidRequest': InvalidRequest,
-  u'InvalidSystemMetadata': InvalidSystemMetadata,
-  u'InvalidToken': InvalidToken,
-  u'NotAuthorized': NotAuthorized,
-  u'NotFound': NotFound,
-  u'NotImplemented': NotImplemented,
-  u'ServiceFailure': ServiceFailure,
-  u'UnsupportedMetadataType': UnsupportedMetadataType,
-  u'UnsupportedType': UnsupportedType,
-  u'SynchronizationFailed': SynchronizationFailed,
-  u'VersionMismatch': VersionMismatch,
 }

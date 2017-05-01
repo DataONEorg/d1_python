@@ -28,6 +28,8 @@ import re
 import StringIO
 import xml.dom.minidom
 
+import requests
+
 # D1
 import d1_common.util
 import d1_common.url
@@ -240,11 +242,11 @@ class CommandProcessor():
   def _output(self, file_like_object, path=None):
     """Display or save file like object"""
     if not path:
-      self._output_to_dislay(file_like_object)
+      self._output_to_display(file_like_object)
     else:
       self._output_to_file(file_like_object, path)
 
-  def _output_to_dislay(self, file_like_object):
+  def _output_to_display(self, file_like_object):
     for line in file_like_object:
       cli_util.print_info(line.rstrip())
 
@@ -252,11 +254,14 @@ class CommandProcessor():
     abs_path = cli_util.os.path.expanduser(path)
     if os.path.exists(abs_path):
       if not cli_util.confirm(
-          'You are about to overwrite an existing file. Continue?',
-          default='yes'
+          'You are about to overwrite an existing file at "{}". Continue? '
+          .format(abs_path), default='yes'
       ):
         cli_util.print_info('Cancelled')
-    cli_util.copy_file_like_object_to_file(file_like_object, abs_path)
+    if isinstance(file_like_object, requests.Response):
+      cli_util.copy_requests_stream_to_file(file_like_object, path)
+    else:
+      cli_util.copy_file_like_object_to_file(file_like_object, abs_path)
     cli_util.print_info('Created file: {0}'.format(abs_path))
 
   def _pretty(self, xml_doc):
@@ -370,10 +375,10 @@ class CommandProcessor():
     return {
       'base_url':
         self._session.get(url_name),
-      'cert_path':
+      'cert_pem_path':
         self._session.get(session.CERT_FILENAME_NAME)
         if not anonymous else None,
-      'key_path':
+      'cert_key_path':
         self._session.get(session.KEY_FILENAME_NAME) if not anonymous else None,
     }
 

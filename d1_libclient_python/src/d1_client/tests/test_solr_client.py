@@ -32,17 +32,18 @@ Unit tests for solr_client.
 # Stdlib
 import unittest
 
+import d1_common.util
+
 # App
-import d1_client.solr_client # noqa: E402
-import shared_settings # noqa: E402
+import d1_client.solr_client
+import shared_settings
 
 
 @unittest.skip('Testing the Solr client still requires a Solr server')
 class TestSolrClient(unittest.TestCase):
-  # def setUp(self):
-
-  def tearDown(self):
-    pass
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
 
   def _assert_at_least_one_row_populated(self, rows):
     for row in rows:

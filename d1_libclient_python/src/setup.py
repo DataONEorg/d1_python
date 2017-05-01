@@ -42,7 +42,7 @@ def main():
       'google.foresite-toolkit == 1.3.3',
       'python-dateutil == 2.1',
       # Requests
-      'requests[security] == 2.12.4',
+      'requests[security] == 2.12.4', # Pulls in PyOpenSSL and cryptography
       'cachecontrol == 0.11.7',
       'requests-toolbelt == 0.7.0',
     ],

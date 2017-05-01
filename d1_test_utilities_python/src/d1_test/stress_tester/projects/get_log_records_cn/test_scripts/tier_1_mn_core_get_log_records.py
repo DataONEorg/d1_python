@@ -30,14 +30,9 @@
 
 # Std.
 import random
-import sys
 
-# D1
-import d1_common.util
-
-sys.path.append(d1_common.util.abs_path('../../../shared/'))
-import settings # noqa: E402
-import transaction # noqa: E402
+import transaction
+import settings
 
 
 class Transaction(transaction.Transaction):

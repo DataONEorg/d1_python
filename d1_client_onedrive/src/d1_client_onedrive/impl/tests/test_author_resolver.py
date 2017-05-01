@@ -33,9 +33,8 @@ import sys
 import unittest
 
 # D1
-sys.path.append('../..')
-import impl.resolver.author as author # noqa: E402
-from object_tree_test_sample import object_tree # noqa: E402
+import d1_client_onedrive.impl.resolver.author as author
+import object_tree_test_sample
 
 options = {}
 
@@ -45,7 +44,9 @@ options = {}
 
 class TestAuthorResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = author.Resolver(options, object_tree)
+    self._resolver = author.Resolver(
+      options, object_tree_test_sample.object_tree
+    )
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())

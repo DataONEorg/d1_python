@@ -23,15 +23,10 @@
 # Stdlib
 import logging
 import multiprocessing
-import sys
-
-# D1
-import d1_common.type_conversions
 
 # App
-sys.path.append('..')
-import d1_client.mnclient_1_1 # noqa: E402
-import d1_client.mnclient_2_0 # noqa: E402
+import d1_client.mnclient_1_1
+import d1_client.mnclient_2_0
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100
@@ -63,7 +58,7 @@ class ObjectListIteratorMulti(object):
     self._major_version = major_version
     self._client_args_dict = client_args_dict or {}
     self._listObjects_args_dict = listObjects_args_dict or {}
-    d1_common.type_conversions.set_default_pyxb_namespace(major_version)
+    # d1_common.type_conversions.set_default_pyxb_namespace(major_version)
 
   def __iter__(self):
     manager = multiprocessing.Manager()

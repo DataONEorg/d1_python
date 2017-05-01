@@ -49,8 +49,8 @@ def resolve_sid(f):
     resolve it as a SID and, if successful, return the new PID. Else, raise
     NotFound exception.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, did, *args, **kwargs):
     pid = resolve_sid_func(request, did)
     return f(request, pid, *args, **kwargs)
@@ -85,8 +85,7 @@ def decode_id(f):
   # were extracted from URL path segments by the Django URL regex parser and
   # dispatcher. IMO, that's a bug and I'm working with Django devs to see if
   # this can be fixed. Update this accordingly.
-  functools.wraps(f)
-
+  @functools.wraps(f)
   def wrap(request, did, *args, **kwargs):
     return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
 
@@ -111,8 +110,8 @@ def decode_id(f):
 def trusted_permission(f):
   """Access only by D1 infrastructure.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     trusted(request)
     return f(request, *args, **kwargs)
@@ -125,8 +124,8 @@ def trusted_permission(f):
 def list_objects_access(f):
   """Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if not django.conf.settings.PUBLIC_OBJECT_LIST:
       trusted(request)
@@ -140,8 +139,8 @@ def list_objects_access(f):
 def get_log_records_access(f):
   """Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if not django.conf.settings.PUBLIC_LOG_RECORDS:
       trusted(request)
@@ -167,8 +166,8 @@ def assert_create_update_delete_permission(f):
   """Access only by subjects with Create/Update/Delete permission and by
   trusted infrastructure (CNs).
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     app.auth.assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
@@ -181,8 +180,8 @@ def assert_create_update_delete_permission(f):
 def authenticated(f):
   """Access only with a valid session.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
@@ -201,8 +200,8 @@ def authenticated(f):
 def verified(f):
   """Access only with a valid session where the primary subject is verified.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
@@ -222,8 +221,8 @@ def verified(f):
 def required_permission(f, level):
   """Assert that subject has access at given level or higher for object.
   """
-  functools.wraps(f)
 
+  @functools.wraps(f)
   def wrap(request, pid, *args, **kwargs):
     app.auth.assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
@@ -236,19 +235,16 @@ def required_permission(f, level):
 def changepermission_permission(f):
   """Assert that subject has changePermission or high for object.
   """
-  functools.wraps(f)
   return required_permission(f, app.auth.CHANGEPERMISSION_LEVEL)
 
 
 def write_permission(f):
   """Assert that subject has write permission or higher for object.
   """
-  functools.wraps(f)
   return required_permission(f, app.auth.WRITE_LEVEL)
 
 
 def read_permission(f):
   """Assert that subject has read permission or higher for object.
   """
-  functools.wraps(f)
   return required_permission(f, app.auth.READ_LEVEL)

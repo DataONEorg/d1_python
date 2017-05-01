@@ -38,12 +38,10 @@ import xml.sax.saxutils
 
 # D1
 import d1_x509v3_certificate_generator
-import d1_common.util
 
 # App
-sys.path.append(d1_common.util.abs_path('./shared/'))
-import settings # noqa: E402
-import subject_dn # noqa: E402
+import settings
+import subject_dn
 
 # Get an instance of a logger.
 logger = logging.getLogger()

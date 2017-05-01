@@ -75,6 +75,10 @@ import d1_client.data_package
 
 @unittest.skip("TODO: Update tests for new OAI-ORE library")
 class TestDataPackage(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
     # The example_oai_ore.xml contains one resource map that describes one
     # aggregation. The pid for the resource map is "abc". The aggregation
