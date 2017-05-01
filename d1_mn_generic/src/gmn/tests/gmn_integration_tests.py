@@ -2535,7 +2535,7 @@ class GMNIntegrationTests(unittest.TestCase):
     # print self._pyxb_to_pretty_xml(ver1_sysmeta_pyxb)
     # print self._pyxb_to_pretty_xml(ver2_sysmeta_pyxb)
     self.assertTrue(
-      d1_common.system_metadata.is_equivalent(
+      d1_common.system_metadata.is_equivalent_pyxb(
         ver1_sysmeta_pyxb,
         ver2_sysmeta_pyxb,
       )
@@ -2578,7 +2578,7 @@ class GMNIntegrationTests(unittest.TestCase):
       ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
     )
     self.assertTrue(
-      d1_common.system_metadata.is_equivalent(
+      d1_common.system_metadata.is_equivalent_pyxb(
         ver3_sysmeta_pyxb,
         ver4_sysmeta_pyxb,
       )
@@ -2604,7 +2604,7 @@ class GMNIntegrationTests(unittest.TestCase):
     )
     self.assertTrue(
       d1_common.system_metadata.
-      is_equivalent(in_sysmeta_pyxb, out_sysmeta_pyxb)
+      is_equivalent_pyxb(in_sysmeta_pyxb, out_sysmeta_pyxb)
     )
 
   #

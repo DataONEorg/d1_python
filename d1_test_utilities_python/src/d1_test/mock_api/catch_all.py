@@ -66,8 +66,7 @@ import d1_test.mock_api.util
 
 
 def activate(fun):
-  functools.wraps(fun)
-
+  @functools.wraps(fun)
   @responses.activate
   def wrap(*args, **kwargs):
     with mock.patch(

@@ -20,13 +20,16 @@
 # limitations under the License.
 """Utilities for unit- and integration tests"""
 
-import contextlib
 import StringIO
+import contextlib
+import logging
 import sys
+
+import mock
 
 
 @contextlib.contextmanager
-def capture_output():
+def capture_std():
   new_out, new_err = StringIO.StringIO(), StringIO.StringIO()
   old_out, old_err = sys.stdout, sys.stderr
   try:
@@ -34,3 +37,31 @@ def capture_output():
     yield sys.stdout, sys.stderr
   finally:
     sys.stdout, sys.stderr = old_out, old_err
+
+
+@contextlib.contextmanager
+def capture_log():
+  stream = StringIO.StringIO()
+  try:
+    logger = logging.getLogger()
+    logger.level = logging.DEBUG
+    stream_handler = logging.StreamHandler(stream)
+    logger.addHandler(stream_handler)
+    yield stream
+  finally:
+    logger.removeHandler(stream_handler)
+
+
+@contextlib.contextmanager
+def mock_raw_input(answer_str):
+  with mock.patch(
+      '__builtin__.raw_input',
+      side_effect=_mock_raw_input_side_effect,
+      return_value=answer_str,
+  ):
+    yield
+
+
+def _mock_raw_input_side_effect(prompt_str):
+  sys.stdout.write(prompt_str)
+  return mock.DEFAULT

@@ -83,14 +83,16 @@ Example v2 SystemMetadata XML document with all optional values included:
 </v2:systemMetadata>
 """
 
-# D1
+import datetime
+import logging
+
 import d1_common.access_policy
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
 
-def normalize(sysmeta_pyxb):
+def normalize(sysmeta_pyxb, reset_timestamps=False):
   """Normalizes {sysmeta_pyxb} in place.
   """
   sysmeta_pyxb.accessPolicy = d1_common.access_policy.normalize(
@@ -107,31 +109,42 @@ def normalize(sysmeta_pyxb):
     sysmeta_pyxb.replica, 'replicaMemberNode'
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
-  sysmeta_pyxb.dateUploaded = d1_common.date_time.round_date_time(
-    sysmeta_pyxb.dateUploaded
-  )
-  sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_date_time(
-    sysmeta_pyxb.dateSysMetadataModified
-  )
+  if reset_timestamps:
+    unix_epoch_dt = datetime.datetime(
+      1970, 1, 1, tzinfo=d1_common.date_time.UTC()
+    )
+    sysmeta_pyxb.dateUploaded = unix_epoch_dt
+    sysmeta_pyxb.dateSysMetadataModified = unix_epoch_dt
+  else:
+    sysmeta_pyxb.dateUploaded = d1_common.date_time.round_date_time(
+      sysmeta_pyxb.dateUploaded
+    )
+    sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_date_time(
+      sysmeta_pyxb.dateSysMetadataModified
+    )
 
 
-def is_equivalent(a_pyxb, b_pyxb):
+def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
   """Normalizes then compares SystemMetadata objects for equivalency.
   """
-  normalize(a_pyxb)
-  normalize(b_pyxb)
+  normalize(a_pyxb, ignore_timestamps)
+  normalize(b_pyxb, ignore_timestamps)
   return d1_common.xml.is_equivalent(a_pyxb.toxml(), b_pyxb.toxml())
 
 
-def is_equivalent_xml(a_xml, b_xml):
+def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
   """Normalizes then compares SystemMetadata XML docs for equivalency.
   {a_xml} and {b_xml} should be UTF-8 encoded DataONE System Metadata XML
   documents.
   """
-  return is_equivalent(
+  is_equivalent = is_equivalent_pyxb(
     d1_common.xml.deserialize(a_xml),
-    d1_common.xml.deserialize(b_xml),
+    d1_common.xml.deserialize(b_xml), ignore_timestamps
   )
+  if not is_equivalent:
+    logging.debug('XML documents not equivalent:')
+    logging.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
+  return is_equivalent
 
 
 def clear_elements(

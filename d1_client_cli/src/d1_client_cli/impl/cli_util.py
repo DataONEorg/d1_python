@@ -56,7 +56,6 @@ def clear_None_from_list(obj_list):
 
 
 def confirm(prompt, default=u'no', allow_blank=False):
-  def_response = None
   if default == u'no':
     p = u' [yes/NO] '
     def_response = False

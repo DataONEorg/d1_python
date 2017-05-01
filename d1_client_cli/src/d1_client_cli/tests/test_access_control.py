@@ -25,21 +25,19 @@ import unittest
 # App
 import d1_client_cli.impl.access_control as access_control
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_test.util
 
 #===============================================================================
 
 
 class TestAccessControl(unittest.TestCase):
-  def setUp(self):
-    pass
-
   def test_010(self):
-    """The access_control object can be instantiated"""
+    """AccessControl(): The access_control object can be instantiated"""
     a = access_control.AccessControl()
     self.assertEqual(len(a.allow), 0)
 
   def test_015(self):
-    """clear() removes all allowed subjects"""
+    """clear(): Removes all allowed subjects"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', None)
@@ -48,7 +46,8 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(len(a.allow), 0)
 
   def test_020(self):
-    """Single subject added without specified permission is retained and defaults to read"""
+    """add_allowed_subject(): Single subject added without specified permission
+    is retained and defaults to read"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     self.assertEqual(len(a.allow), 1)
@@ -68,7 +67,8 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(a.allow['subject_1'], 'write')
 
   def test_040(self):
-    """Subject added with invalid permission raises exception InvalidArguments"""
+    """add_allowed_subject(): Subject added with invalid permission raises
+    exception InvalidArguments"""
     a = access_control.AccessControl()
     self.assertRaises(
       cli_exceptions.InvalidArguments, a.add_allowed_subject, 'subject_1',
@@ -77,7 +77,8 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(len(a.allow), 0)
 
   def test_050(self):
-    """Multiple subjects with different permissions are correctly retained"""
+    """add_allowed_subject(): Multiple subjects with different permissions are
+    correctly retained"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
@@ -89,6 +90,16 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(a.allow['subject_2'], 'write')
     self.assertTrue('subject_3' in a.allow)
     self.assertEqual(a.allow['subject_3'], 'changePermission')
+
+  def test_100(self):
+    """remove_allowed_subject()"""
+    a = access_control.AccessControl()
+    a.add_allowed_subject('subject_1', None)
+    a.add_allowed_subject('subject_2', 'write')
+    a.add_allowed_subject('subject_3', 'changePermission')
+    a.remove_allowed_subject('subject_3')
+    self.assertEqual(len(a.allow), 2)
+    self.assertFalse('subject_3' in a.allow)
 
   def test_200(self):
     """str() returns formatted string representation"""
@@ -102,3 +113,29 @@ class TestAccessControl(unittest.TestCase):
     self.assertEquals(actual[1], 'read                          "subject_1"')
     self.assertEquals(actual[2], 'write                         "subject_2"')
     self.assertEquals(actual[3], 'changePermission              "subject_3"')
+
+  def test_300(self):
+    """_confirm_special_subject_write(): Allows setting if user answers 'yes'"""
+    a = access_control.AccessControl()
+    with d1_test.util.capture_std() as (out_stream, err_stream):
+      with d1_test.util.mock_raw_input('yes'):
+        a._confirm_special_subject_write('public', 'write')
+    prompt_str = out_stream.getvalue()
+    self.assertEqual(
+      'WARN     It is not recommended to give write access to public. '
+      'Continue? [yes/NO] ',
+      prompt_str,
+    )
+
+  def test_310(self):
+    """_confirm_special_subject_write(): Raises InvalidArguments if user answers
+    'no'"""
+    a = access_control.AccessControl()
+    with d1_test.util.capture_std():
+      with d1_test.util.mock_raw_input('no'):
+        self.assertRaises(
+          cli_exceptions.InvalidArguments,
+          a._confirm_special_subject_write,
+          'public',
+          'write',
+        )
