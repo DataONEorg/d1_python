@@ -42,18 +42,21 @@ class TestMockup(unittest.TestCase):
   def _get_paths(self, d):
     return [f[0] for f in d]
 
-  def test_050_n_elements(self):
+  def test_0010(self):
+    """n elements: """
     self.assertEqual(self.c._n_elements(''), 0)
     self.assertEqual(self.c._n_elements('a'), 1)
     self.assertEqual(self.c._n_elements('a/b'), 2)
 
-  def test_100_get_first_n_elements(self):
+  def test_0020(self):
+    """get first n elements: """
     self.assertEqual(self.c._get_first_n_elements('a', 1), 'a')
     self.assertEqual(self.c._get_first_n_elements('a/b', 1), 'a')
     self.assertEqual(self.c._get_first_n_elements('a/b/c', 2), 'a/b')
     self.assertEqual(self.c._get_first_n_elements('a/b/c', 10), 'a/b/c')
 
-  def test_200_get_all_children(self):
+  def test_0030(self):
+    """get all children: """
     self.assertEqual(
       self._get_paths(self.c._get_all_children('')),
       ['d/d2/f3a', 'd/d2/f3b', 'd/f2a', 'd/f2b', 'd/f2c', 'fa', 'fb']
@@ -63,28 +66,32 @@ class TestMockup(unittest.TestCase):
       ['d/d2/f3a', 'd/d2/f3b']
     )
 
-  def test_300_get_element_n(self):
+  def test_0040(self):
+    """get element n: """
     self.assertEqual(self.c._get_element_n('', 0), '')
     self.assertEqual(self.c._get_element_n('a', 0), 'a')
     self.assertEqual(self.c._get_element_n('a/b', 0), 'a')
     self.assertEqual(self.c._get_element_n('a/b/c', 1), 'b')
     self.assertEqual(self.c._get_element_n('a/b/c', 2), 'c')
 
-  def test_350_is_direct_child(self):
+  def test_0050(self):
+    """is direct child: """
     self.assertTrue(self.c._is_direct_child('', 'a'))
     self.assertTrue(self.c._is_direct_child('a/b', 'a/b/c'))
     self.assertFalse(self.c._is_direct_child('a/b', 'a/b/c/d'))
     self.assertFalse(self.c._is_direct_child('a/b', 'a/b'))
     self.assertFalse(self.c._is_direct_child('a/b', 'a'))
 
-  def test_400_get_direct_children(self):
+  def test_0060(self):
+    """get direct children: """
     self.assertEqual(self.c._get_direct_children(''), ['d', 'fa', 'fb'])
     self.assertEqual(
       self.c._get_direct_children('d'), ['d2', 'f2a', 'f2b', 'f2c']
     )
     self.assertEqual(self.c._get_direct_children('d/d2'), ['f3a', 'f3b'])
 
-  def test_500_is_dir(self):
+  def test_0070(self):
+    """is dir: """
     self.assertTrue(self.c._is_dir(''))
     self.assertTrue(self.c._is_dir('d'))
     self.assertTrue(self.c._is_dir('d/d2'))
@@ -93,7 +100,8 @@ class TestMockup(unittest.TestCase):
     self.assertFalse(self.c._is_dir('fa'))
     self.assertFalse(self.c._is_dir('d/f2a'))
 
-  def test_600_get_meta_file(self):
+  def test_0080(self):
+    """get meta file: """
     self.assertEqual(
       self.c._get_meta_file('fa'),
       (50, datetime.datetime(2005, 5, 23, 11, 12, 13))

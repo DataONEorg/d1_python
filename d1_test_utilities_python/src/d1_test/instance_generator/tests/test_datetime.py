@@ -42,21 +42,21 @@ class TestDateTime(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """generate(), random"""
     for i in range(10):
       t1 = dates.random_date()
       t2 = dates.random_date()
       self.assertTrue(t1 != t2)
 
-  def test_011(self):
+  def test_0020(self):
     """generate(), random, restricted"""
     for i in range(10):
       t1 = dates.random_date(100, 200)
       t2 = dates.random_date(50, 60)
       self.assertTrue(t2 < t1)
 
-  def test_020(self):
+  def test_0030(self):
     for i in range(10):
       now_1 = dates.now()
       time.sleep(0.01)

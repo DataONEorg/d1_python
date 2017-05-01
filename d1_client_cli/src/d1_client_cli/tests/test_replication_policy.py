@@ -35,21 +35,21 @@ class TestReplicationPolicy(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """The replication policy object can be instantiated"""
     self.assertNotEquals(None, replication_policy.ReplicationPolicy())
 
-  def test_020(self):
+  def test_0020(self):
     """After instatiation, get_preferred() returns empty list."""
     s = replication_policy.ReplicationPolicy()
     self.assertFalse(len(s.get_preferred()))
 
-  def test_022(self):
+  def test_0030(self):
     """After instatiation, get_blocked() returns empty list."""
     s = replication_policy.ReplicationPolicy()
     self.assertFalse(len(s.get_blocked()))
 
-  def test_030(self):
+  def test_0040(self):
     """add_preferred() retains added MN"""
     s = replication_policy.ReplicationPolicy()
     s.add_preferred(['preferred_mn_1', 'preferred_mn_2', 'preferred_mn_3'])
@@ -58,7 +58,7 @@ class TestReplicationPolicy(unittest.TestCase):
     self.assertTrue('preferred_mn_2' in s.get_preferred())
     self.assertTrue('preferred_mn_3' in s.get_preferred())
 
-  def test_032(self):
+  def test_0050(self):
     """add_blocked() retains added MN"""
     s = replication_policy.ReplicationPolicy()
     s.add_blocked(['blocked_mn_1', 'blocked_mn_2', 'blocked_mn_3'])
@@ -67,7 +67,7 @@ class TestReplicationPolicy(unittest.TestCase):
     self.assertTrue('blocked_mn_2' in s.get_blocked())
     self.assertTrue('blocked_mn_3' in s.get_blocked())
 
-  def test_040(self):
+  def test_0060(self):
     """add_preferred() followed by add_blocked() switches item from preferred to blocked"""
     s = replication_policy.ReplicationPolicy()
     s.add_preferred(['preferred_mn'])
@@ -75,7 +75,7 @@ class TestReplicationPolicy(unittest.TestCase):
     s.add_blocked(['preferred_mn'])
     self.assertTrue('preferred_mn' in s.get_blocked())
 
-  def test_045(self):
+  def test_0070(self):
     """add_blocked() followed by add_preferred() switches item from blocked to preferred"""
     s = replication_policy.ReplicationPolicy()
     s.add_preferred(['blocked_mn'])
@@ -83,12 +83,12 @@ class TestReplicationPolicy(unittest.TestCase):
     s.add_blocked(['blocked_mn'])
     self.assertTrue('blocked_mn' in s.get_blocked())
 
-  def test_060(self):
+  def test_0080(self):
     """Replication is allowed by default."""
     s = replication_policy.ReplicationPolicy()
     self.assertTrue(s.get_replication_allowed())
 
-  def test_070(self):
+  def test_0090(self):
     """set_replication_allowed() is retained and can be retrieved with get_replication_policy()"""
     s = replication_policy.ReplicationPolicy()
     s.set_replication_allowed(True)
@@ -96,12 +96,12 @@ class TestReplicationPolicy(unittest.TestCase):
     s.set_replication_allowed(False)
     self.assertFalse(s.get_replication_allowed())
 
-  def test_080(self):
+  def test_0100(self):
     """number_of_replicas can be retrieved and is 0 by default"""
     s = replication_policy.ReplicationPolicy()
     self.assertEqual(3, s.get_number_of_replicas()) # 3 by default
 
-  def test_090(self):
+  def test_0110(self):
     """set_number_of_replicas() is retained and can be retrieved with get_number_of_replicas()"""
     s = replication_policy.ReplicationPolicy()
     s.set_number_of_replicas(5)
@@ -109,7 +109,7 @@ class TestReplicationPolicy(unittest.TestCase):
     s.set_number_of_replicas(10)
     self.assertEqual(10, s.get_number_of_replicas())
 
-  def test_100(self):
+  def test_0120(self):
     """set_replication_allowed(False) implicitly sets number_of_replicas to 0"""
     s = replication_policy.ReplicationPolicy()
     s.set_number_of_replicas(5)
@@ -117,7 +117,7 @@ class TestReplicationPolicy(unittest.TestCase):
     s.set_replication_allowed(False)
     self.assertEqual(0, s.get_number_of_replicas())
 
-  def test_110(self):
+  def test_0130(self):
     """set_number_of_replicas(0) implicitly sets replication_allowed to False"""
     s = replication_policy.ReplicationPolicy()
     s.set_replication_allowed(True)
@@ -125,7 +125,7 @@ class TestReplicationPolicy(unittest.TestCase):
     s.set_number_of_replicas(0)
     self.assertFalse(s.get_replication_allowed())
 
-  def test_120(self):
+  def test_0140(self):
     """print_replication_policy() is available and appears to work"""
     s = replication_policy.ReplicationPolicy()
     s.add_preferred(['preferred_mn_1'])
@@ -148,7 +148,7 @@ class TestReplicationPolicy(unittest.TestCase):
     self.assertTrue('preferred member nodes' in out)
     self.assertTrue('blocked member nodes' in out)
 
-  def test_130(self):
+  def test_0150(self):
     """clear() sets everything to default"""
     s = replication_policy.ReplicationPolicy()
     s.add_preferred(['preferred_mn_1'])

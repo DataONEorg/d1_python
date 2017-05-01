@@ -45,7 +45,8 @@ class TestResourceMapResolver(unittest.TestCase):
       options, object_tree_test_sample.object_tree
     )
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     # Test class instantiation (done in setUp())
     pass
 

@@ -51,7 +51,7 @@ class TestCert(unittest.TestCase):
   def tearDown(self):
     pass
 
-  def test_100(self):
+  def test_0010(self):
     """Deserialize PEM to cryptography.Certificate object.
     """
     cert_obj = d1_common.cert.x509._deserialize_pem(
@@ -59,7 +59,7 @@ class TestCert(unittest.TestCase):
     )
     self.assertEqual(type(cert_obj), _Certificate)
 
-  def test_200(self):
+  def test_0020(self):
     """Extract primary subject from certificate and returns as
     DataONE compliant serialization.
     """
@@ -71,7 +71,7 @@ class TestCert(unittest.TestCase):
       primary_str, 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
     )
 
-  def test_300(self):
+  def test_0030(self):
     """Extract SubjectInfo from certificate, SubjectInfo present
     """
     cert_obj = d1_common.cert.x509._deserialize_pem(
@@ -85,7 +85,7 @@ class TestCert(unittest.TestCase):
     )
     self.assertEqual(expected_subject_info_xml, extracted_subject_info_xml)
 
-  def test_350(self):
+  def test_0040(self):
     """Extract SubjectInfo from certificate, SubjectInfo missing
     """
     cert_obj = d1_common.cert.x509._deserialize_pem(
@@ -94,7 +94,7 @@ class TestCert(unittest.TestCase):
     missing_subject_info = d1_common.cert.x509._extract_subject_info(cert_obj)
     self.assertIsNone(missing_subject_info)
 
-  def test_400(self):
+  def test_0050(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     present
     """
@@ -113,7 +113,7 @@ class TestCert(unittest.TestCase):
       ],
     )
 
-  def test_450(self):
+  def test_0060(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     missing
     """

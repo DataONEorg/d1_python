@@ -27,7 +27,7 @@ import d1_test.util
 
 
 class TestTestUtils(unittest.TestCase):
-  def test_010(self):
+  def test_0010(self):
     """capture_output():"""
     expected_output_str = 'test_output'
     with d1_test.util.capture_std() as (out_stream, err_stream):
@@ -35,7 +35,7 @@ class TestTestUtils(unittest.TestCase):
     received_output_str = out_stream.getvalue()
     self.assertEqual(expected_output_str, received_output_str)
 
-  def test_020(self):
+  def test_0020(self):
     """capture_log():"""
     expected_log_str = 'test_log'
     with d1_test.util.capture_log() as log_stream:
@@ -43,7 +43,7 @@ class TestTestUtils(unittest.TestCase):
     received_log_str = log_stream.getvalue()
     self.assertEqual(expected_log_str + '\n', received_log_str)
 
-  def test_050(self):
+  def test_0030(self):
     """mock_raw_input():"""
     expected_prompt_str = 'user prompt'
     expected_answer_str = 'user answer'

@@ -93,25 +93,25 @@ class TestObjectList(unittest.TestCase):
       else:
         raise
 
-  def test_serialization_gmn(self):
-    """Deserialize: XML -> Log (GMN)"""
+  def test_0010(self):
+    """serialization gmn: Deserialize: XML -> Log (GMN)"""
     try:
       util.deserialize_and_check(EG_LOG_GMN)
     except Exception as e:
       print e
 
-  def test_serialization_knb(self):
-    """Deserialize: XML -> Log (KNB)"""
+  def test_0020(self):
+    """serialization knb: Deserialize: XML -> Log (KNB)"""
     self.deserialize_and_check(EG_LOG_KNB)
 
-  def test_serialization_bad_1(self):
-    """Deserialize: XML -> Log (bad 1)"""
+  def test_0030(self):
+    """serialization bad 1: Deserialize: XML -> Log (bad 1)"""
     util.deserialize_and_check(EG_BAD_LOG_1, shouldfail=True)
 
-  def test_serialization_bad_2(self):
-    """Deserialize: XML -> Log (bad 2)"""
+  def test_0040(self):
+    """serialization bad 2: Deserialize: XML -> Log (bad 2)"""
     util.deserialize_and_check(EG_BAD_LOG_2, shouldfail=True)
 
-  def test_serialization_bad_3(self):
-    """Deserialize: XML -> Log (bad 3)"""
+  def test_0050(self):
+    """serialization bad 3: Deserialize: XML -> Log (bad 3)"""
     util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)

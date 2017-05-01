@@ -51,7 +51,7 @@ class TestMockD1Exception(unittest.TestCase):
     self.assertDictEqual(header_dict, {'Content-Type': 'application/xml'})
     self.assertIn('?xml', body_str)
 
-  def test_0011(self):
+  def test_0020(self):
     """trigger_by_status_code(): HEAD request returns DataONEException headers"""
 
     def fake_request():
@@ -78,7 +78,7 @@ class TestMockD1Exception(unittest.TestCase):
     }
     self.assertDictEqual(header_dict, expected_header_dict)
 
-  def test_0012(self):
+  def test_0030(self):
     """trigger_by_pid()"""
 
     def fake_request():

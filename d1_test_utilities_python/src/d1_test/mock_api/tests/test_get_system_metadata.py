@@ -59,7 +59,7 @@ class TestMockSystemMetadata(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.getSystemMetadata(): Passing a trigger header triggers a DataONEException"""
     mock_sysmeta.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
@@ -68,7 +68,7 @@ class TestMockSystemMetadata(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0012(self):
+  def test_0030(self):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
     mock_sysmeta.add_callback(settings.MN_RESPONSES_BASE_URL)
     sysmeta_pyxb = self.client.getSystemMetadata('test_pid')

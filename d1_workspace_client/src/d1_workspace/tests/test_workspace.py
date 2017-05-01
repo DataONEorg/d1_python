@@ -41,21 +41,21 @@ class TestWorkspace(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_100(self):
+  def test_0010(self):
     """Create Workspace with defaults"""
     workspace.Workspace()
 
-  def test_110(self):
+  def test_0020(self):
     """Create Workspace and unpickle default cache"""
     with workspace.Workspace():
       pass
 
-  def test_120(self):
+  def test_0030(self):
     """Create Workspace, unpickle default cache and refresh with empty def"""
     with workspace.Workspace(workspace_def_path='workspace_empty.xml') as w:
       w.refresh()
 
-  def test_130(self):
+  def test_0040(self):
     """Create Workspace, unpickle default cache and refresh with single folder"""
     with workspace.Workspace(
         workspace_def_path='workspace_single.xml', automatic_refresh=True
@@ -80,14 +80,14 @@ class TestWorkspace(unittest.TestCase):
   #    #self._print_folder_items(folder)
   #
 
-  def test_140(self):
+  def test_0050(self):
     """Create Workspace, unpickle default cache and refresh with all folders"""
     #with workspace.Workspace(workspace_def_path='workspace_tiny_two_levels.xml') as w:
     with workspace.Workspace(workspace_def_path='workspace_all.xml') as w:
       w.refresh()
       #pprint.pprint(w.get_cache())
 
-  def test_150(self):
+  def test_0060(self):
     """Retrieve folder"""
     with workspace.Workspace() as w:
       #folder = w.get_folder([])

@@ -55,7 +55,8 @@ class TestRootResolver(unittest.TestCase):
     options.ignore_special = []
     self._r = root.RootResolver(options, object_tree_test_sample.object_tree)
 
-  def test_050_instantiate(self):
+  def test_0010(self):
+    """instantiate: """
     pass
 
   # To enable these tests, the test object_tree class must be expanded to match

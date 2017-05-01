@@ -47,13 +47,13 @@ class TestMockIsAuthorized(unittest.TestCase):
 
   @responses.activate
   def test_0010(self):
-    """mock_api.isAuthorized(): Returns 200 for 'authorized_pid'"""
+    """mock_api.isAuthorized(): Returns 200 for 'authorized_pid"""
     mock_is_authorized.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertTrue(self.client.isAuthorized('authorized_pid', 'read'))
 
   @responses.activate
-  def test_0011(self):
-    """mock_api.isAuthorized(): Raises NotAuthorized for 'unauthorized_pid'"""
+  def test_0020(self):
+    """mock_api.isAuthorized(): Raises NotAuthorized for 'unauthorized_pid"""
     mock_is_authorized.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.isAuthorized,

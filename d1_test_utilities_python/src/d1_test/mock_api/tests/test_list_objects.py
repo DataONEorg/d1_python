@@ -57,7 +57,7 @@ class TestMockObjectList(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.listObjects() returns a populated ObjectList"""
     mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
     object_list = self.client.listObjects()
@@ -67,7 +67,7 @@ class TestMockObjectList(unittest.TestCase):
       break
 
   @responses.activate
-  def test_0012(self):
+  def test_0030(self):
     """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
     mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(

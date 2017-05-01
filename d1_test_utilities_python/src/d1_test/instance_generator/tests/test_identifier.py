@@ -43,7 +43,7 @@ class TestIdentifier(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """generate()"""
     for i in range(10):
       min_len = random.randint(1, 100)

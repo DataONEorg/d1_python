@@ -119,18 +119,18 @@ class TestObjectLocationList(unittest.TestCase):
       else:
         raise
 
-  def test_deserialize_gmn(self):
-    """Deserialize: XML -> ObjectLocationList (GMN)"""
+  def test_0010(self):
+    """deserialize gmn: Deserialize: XML -> ObjectLocationList (GMN)"""
     util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
 
-  def test_deserialize_knb(self):
-    """Deserialize: XML -> ObjectLocationList (KNB)"""
+  def test_0020(self):
+    """deserialize knb: Deserialize: XML -> ObjectLocationList (KNB)"""
     #util.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
 
-  def test_deserialize_bad_1(self):
-    """Deserialize: XML -> ObjectLocationList (bad 1)"""
+  def test_0030(self):
+    """deserialize bad 1: Deserialize: XML -> ObjectLocationList (bad 1)"""
     util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
 
-  def test_deserialize_bad_2(self):
-    """Deserialize: XML -> ObjectLocationList (bad 2)"""
+  def test_0040(self):
+    """deserialize bad 2: Deserialize: XML -> ObjectLocationList (bad 2)"""
     util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)

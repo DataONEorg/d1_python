@@ -51,7 +51,7 @@ class TestSolrClient(unittest.TestCase):
         return
     self.assertTrue(False, 'Expected at least one row in results')
 
-  def test_100(self):
+  def test_0010(self):
     """SOLRSearchResponseIterator()"""
     client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
@@ -65,7 +65,7 @@ class TestSolrClient(unittest.TestCase):
     )
     self._assert_at_least_one_row_populated(rows)
 
-  def test_110(self):
+  def test_0020(self):
     """SOLRArrayResponseIterator()"""
     client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT
@@ -78,7 +78,7 @@ class TestSolrClient(unittest.TestCase):
     )
     self._assert_at_least_one_row_populated(rows)
 
-  def test_200(self):
+  def test_0030(self):
     """SOLRValuesResponseIterator()"""
     client = d1_client.solr_client.SolrConnection(
       host=shared_settings.CN_HOST, solrBase=shared_settings.SOLR_QUERY_ENDPOINT

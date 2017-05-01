@@ -71,7 +71,7 @@ class TestMockCatchAll(unittest.TestCase):
     mock_catch_all.assert_expected_echo(echo_dict, expected_dict)
 
   @mock_catch_all.activate
-  def test_0012(self):
+  def test_0020(self):
     """mock_api.catch_all(): Passing a trigger header triggers a DataONEException"""
     mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(

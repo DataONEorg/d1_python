@@ -56,17 +56,20 @@ class TestRegionResolver(unittest.TestCase):
       options, object_tree_test_sample.object_tree
     )
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     # Test class instantiation (done in setUp())
     pass
 
-  def test_200_merge_empty(self):
+  def test_0020(self):
+    """merge empty: """
     dst = {}
     src = {}
     self._resolver._merge_region_trees(dst, src, 'testpid')
     self.assertEqual(dst, {})
 
-  def test_210_merge_simple_to_empty(self):
+  def test_0030(self):
+    """merge simple to empty: """
     dst = {}
     src = {'d1': {}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -90,7 +93,8 @@ class TestRegionResolver(unittest.TestCase):
       }
     )
 
-  def test_220_merge_simple_to_simple(self):
+  def test_0040(self):
+    """merge simple to simple: """
     dst = {'f1': None, 'd1': {'f21': None}}
     src = {'d1': {}, 'd2': {}, 'd3': {'d31': {'d311': {}}, 'd32': {}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -119,7 +123,8 @@ class TestRegionResolver(unittest.TestCase):
       }
     )
 
-  def test_230_merge_complex_to_complex(self):
+  def test_0050(self):
+    """merge complex to complex: """
     dst = {
       'f1': None,
       'd1': {
@@ -188,19 +193,22 @@ class TestRegionResolver(unittest.TestCase):
       }
     )
 
-  def test_240_merge_conflict_1(self):
+  def test_0060(self):
+    """merge conflict 1: """
     dst = {'x1': {}}
     src = {'x1': None}
     self._resolver._merge_region_trees(dst, src, 'x')
     self.assertEqual(dst, {'x1': {'x': None}})
 
-  def test_250_merge_conflict_2(self):
+  def test_0070(self):
+    """merge conflict 2: """
     dst = {'x1': {'x': None}}
     src = {'x1': {'x': {}}}
     self._resolver._merge_region_trees(dst, src, 'x')
     self.assertEqual(dst, {'x1': {'x': {'x': None}}})
 
-  def test_260_merge_build(self):
+  def test_0080(self):
+    """merge build: """
     dst = {}
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')

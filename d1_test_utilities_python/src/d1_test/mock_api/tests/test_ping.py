@@ -52,7 +52,7 @@ class TestMockPing(unittest.TestCase):
     self.assertTrue(self.client.ping())
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.ping(): Passing a trigger header triggers a DataONEException"""
     mock_ping.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(

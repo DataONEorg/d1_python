@@ -53,18 +53,18 @@ class TestRandomData(unittest.TestCase):
     for name, count in count.items():
       self.assertEqual(count, 1)
 
-  def test_005(self):
+  def test_0010(self):
     """random_bytes()"""
     s = random_data.random_bytes(1000)
     self.assertEqual(len(s), 1000)
 
-  def test_010(self):
+  def test_0020(self):
     """random_unicode_name()"""
     name = random_data.random_unicode_name()
     self.assertTrue(len(name) > 0)
     self.assertIsInstance(name, unicode)
 
-  def test_020(self):
+  def test_0030(self):
     """random_unicode_name_list()"""
     names = random_data.random_unicode_name_list(10)
     self.assertEqual(len(names), 10)
@@ -72,7 +72,7 @@ class TestRandomData(unittest.TestCase):
       self.assertTrue(len(names) > 0)
       self.assertIsInstance(name, unicode)
 
-  def test_030(self):
+  def test_0040(self):
     """random_unicode_name_unique_list()"""
     for i in range(10):
       names = random_data.random_unicode_name_unique_list(30)
@@ -80,19 +80,19 @@ class TestRandomData(unittest.TestCase):
       self.assertIsInstance(names[0], unicode)
       self._assert_unique(names)
 
-  def test_040(self):
+  def test_0050(self):
     """random_word()"""
     word = random_data.random_word()
     self.assertTrue(len(word) > 0)
     self.assertIsInstance(word, unicode)
 
-  def test_045(self):
+  def test_0060(self):
     """random_3_words()"""
     words = random_data.random_3_words()
     self.assertTrue(len(words) > 0)
     self.assertIsInstance(words, unicode)
 
-  def test_050(self):
+  def test_0070(self):
     """random_word_list()"""
     words = random_data.random_word_list(10)
     self.assertEqual(len(words), 10)
@@ -100,7 +100,7 @@ class TestRandomData(unittest.TestCase):
       self.assertTrue(len(words) > 0)
       self.assertIsInstance(word, unicode)
 
-  def test_060(self):
+  def test_0080(self):
     """random_word_unique_list()"""
     for i in range(10):
       names = random_data.random_word_unique_list(30)
@@ -108,7 +108,7 @@ class TestRandomData(unittest.TestCase):
       self.assertIsInstance(names[0], unicode)
       self._assert_unique(names)
 
-  def test_070(self):
+  def test_0090(self):
     """random_unicode_string()"""
     for i in range(10):
       min_len = random.randint(0, 100)
@@ -117,13 +117,13 @@ class TestRandomData(unittest.TestCase):
       self.assertTrue(len(s) >= min_len)
       self.assertTrue(len(s) <= max_len)
 
-  def test_080(self):
+  def test_0100(self):
     """random_email()"""
     for i in range(10):
       s = random_data.random_email()
       self.assertTrue(s)
 
-  def test_090(self):
+  def test_0110(self):
     """random_bool()"""
     for i in range(10):
       b = random_data.random_bool()

@@ -58,7 +58,7 @@ class TestMockGetFormat(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.getFormat(): Unknown formatId returns D1 NotFound"""
     mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(
@@ -67,7 +67,7 @@ class TestMockGetFormat(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0012(self):
+  def test_0030(self):
     """mock_api.getFormat(): Passing a trigger header triggers a DataONEException"""
     mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(

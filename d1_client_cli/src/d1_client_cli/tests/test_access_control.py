@@ -31,12 +31,12 @@ import d1_test.util
 
 
 class TestAccessControl(unittest.TestCase):
-  def test_010(self):
+  def test_0010(self):
     """AccessControl(): The access_control object can be instantiated"""
     a = access_control.AccessControl()
     self.assertEqual(len(a.allow), 0)
 
-  def test_015(self):
+  def test_0020(self):
     """clear(): Removes all allowed subjects"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -45,7 +45,7 @@ class TestAccessControl(unittest.TestCase):
     a.clear()
     self.assertEqual(len(a.allow), 0)
 
-  def test_020(self):
+  def test_0030(self):
     """add_allowed_subject(): Single subject added without specified permission
     is retained and defaults to read"""
     a = access_control.AccessControl()
@@ -54,7 +54,7 @@ class TestAccessControl(unittest.TestCase):
     self.assertTrue('subject_1' in a.allow)
     self.assertEqual(a.allow['subject_1'], 'read')
 
-  def test_030(self):
+  def test_0040(self):
     """Adding subject that already exists updates its permission"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -66,7 +66,7 @@ class TestAccessControl(unittest.TestCase):
     self.assertTrue('subject_1' in a.allow)
     self.assertEqual(a.allow['subject_1'], 'write')
 
-  def test_040(self):
+  def test_0050(self):
     """add_allowed_subject(): Subject added with invalid permission raises
     exception InvalidArguments"""
     a = access_control.AccessControl()
@@ -76,7 +76,7 @@ class TestAccessControl(unittest.TestCase):
     )
     self.assertEqual(len(a.allow), 0)
 
-  def test_050(self):
+  def test_0060(self):
     """add_allowed_subject(): Multiple subjects with different permissions are
     correctly retained"""
     a = access_control.AccessControl()
@@ -91,7 +91,7 @@ class TestAccessControl(unittest.TestCase):
     self.assertTrue('subject_3' in a.allow)
     self.assertEqual(a.allow['subject_3'], 'changePermission')
 
-  def test_100(self):
+  def test_0070(self):
     """remove_allowed_subject()"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -101,7 +101,7 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(len(a.allow), 2)
     self.assertFalse('subject_3' in a.allow)
 
-  def test_200(self):
+  def test_0080(self):
     """str() returns formatted string representation"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -114,8 +114,8 @@ class TestAccessControl(unittest.TestCase):
     self.assertEquals(actual[2], 'write                         "subject_2"')
     self.assertEquals(actual[3], 'changePermission              "subject_3"')
 
-  def test_300(self):
-    """_confirm_special_subject_write(): Allows setting if user answers 'yes'"""
+  def test_0090(self):
+    """_confirm_special_subject_write(): Allows setting if user answers 'yes"""
     a = access_control.AccessControl()
     with d1_test.util.capture_std() as (out_stream, err_stream):
       with d1_test.util.mock_raw_input('yes'):
@@ -127,9 +127,9 @@ class TestAccessControl(unittest.TestCase):
       prompt_str,
     )
 
-  def test_310(self):
+  def test_0100(self):
     """_confirm_special_subject_write(): Raises InvalidArguments if user answers
-    'no'"""
+    'no"""
     a = access_control.AccessControl()
     with d1_test.util.capture_std():
       with d1_test.util.mock_raw_input('no'):

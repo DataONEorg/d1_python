@@ -188,23 +188,25 @@ class TestObjectList(unittest.TestCase):
       else:
         raise
 
-  def test_deserialize_xml_gmn(self):
+  def test_0010(self):
+    """deserialize xml gmn: """
     util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
 #  def test_deserialize_xml_knb(self):
 #    util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
-  def test_deserialize_xml_bad(self):
+  def test_0020(self):
+    """deserialize xml bad: """
     util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
-  def test_serialization_gmn(self):
-    """Deserialize: XML -> ObjectList (GMN)"""
+  def test_0030(self):
+    """serialization gmn: Deserialize: XML -> ObjectList (GMN)"""
     util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
-  def test_serialization_knb(self):
-    """Deserialize: XML -> ObjectList (KNB)"""
+  def test_0040(self):
+    """serialization knb: Deserialize: XML -> ObjectList (KNB)"""
     #util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
-  def test_serialization_bad(self):
-    """Deserialize: XML -> ObjectList (bad)"""
+  def test_0050(self):
+    """serialization bad: Deserialize: XML -> ObjectList (bad)"""
     util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)

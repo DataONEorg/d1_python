@@ -38,7 +38,7 @@ class TestCert(django.test.TestCase):
   def tearDown(self):
     pass
 
-  def test_100(self):
+  def test_0010(self):
     """Extract primary and equivalent subjects from certificate. This does not
     perform validation.
     """

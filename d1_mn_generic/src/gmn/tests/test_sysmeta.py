@@ -89,7 +89,7 @@ class TestSysMeta(django.test.TestCase):
 
   # Base
 
-  def test_050(self):
+  def test_0010(self):
     orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = gmn.app.models.ScienceObject()
     sciobj_model.pid = gmn.app.sysmeta_util.create_id_model(
@@ -119,7 +119,7 @@ class TestSysMeta(django.test.TestCase):
   #         </allow>
   # </accessPolicy>
 
-  def test_100(self):
+  def test_0020(self):
     orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
     gmn.app.sysmeta._access_policy_pyxb_to_model(
@@ -147,7 +147,7 @@ class TestSysMeta(django.test.TestCase):
   #     <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
   # </replicationPolicy>
 
-  def test_200(self):
+  def test_0030(self):
     orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
     gmn.app.sysmeta._replication_policy_pyxb_to_model(
@@ -182,7 +182,7 @@ class TestSysMeta(django.test.TestCase):
   #     <replicaVerified>2007-05-04T18:13:51.0</replicaVerified>
   # </replica>
 
-  def test_300(self):
+  def test_0040(self):
     orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
     gmn.app.sysmeta_replica.replica_pyxb_to_model(

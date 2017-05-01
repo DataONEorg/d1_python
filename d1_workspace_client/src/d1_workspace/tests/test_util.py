@@ -40,7 +40,7 @@ class TestUtil(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_100(self):
+  def test_0010(self):
     pass
 
 

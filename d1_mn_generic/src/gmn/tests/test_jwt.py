@@ -43,7 +43,7 @@ class TestJwt(django.test.TestCase):
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
-  def test_100(self):
+  def test_0010(self):
     """_get_cn_cert() successfully retrieves CN server cert from cn-stage"""
     cert_obj = gmn.app.middleware.session_jwt._get_cn_cert()
     self.assertIn(u'*.test.dataone.org', [v.value for v in cert_obj.subject])
@@ -58,7 +58,7 @@ class TestJwt(django.test.TestCase):
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
-  def test_200(self):
+  def test_0020(self):
     """_validate_jwt_and_get_subject_list() silently returns an empty subject
     list when parsing the token fails to failed validation. The token expired on
     2016-10-06.
@@ -71,7 +71,7 @@ class TestJwt(django.test.TestCase):
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
-  def test_210(self):
+  def test_0030(self):
     """_validate_jwt_and_get_subject_list() successfully returns the expected
     subject list when PyJWS' call to calendar.timegm() is mocked to return a
     time just before the token expired.

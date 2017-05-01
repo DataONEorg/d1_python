@@ -53,7 +53,7 @@ class TestFlatSpaceResolver(unittest.TestCase):
     options.max_solr_query_cache_size = 1000
     self._w = flat_space.Resolver(options, object_tree_test_sample.object_tree)
 
-  def test_100(self):
+  def test_0010(self):
     pass
 
 

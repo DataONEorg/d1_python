@@ -40,7 +40,7 @@ class TestChecksum(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
     self.assertIn(algorithm_str, ('MD5', 'SHA-1'))

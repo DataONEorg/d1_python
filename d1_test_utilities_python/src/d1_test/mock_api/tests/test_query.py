@@ -69,7 +69,7 @@ class TestMockQuery(unittest.TestCase):
     self.assertDictEqual(response_dict, expected_dict)
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
     mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(

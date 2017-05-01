@@ -409,7 +409,8 @@ class TestSolrClient(unittest.TestCase):
     options.max_objects_for_query = 10
     self.c = onedrive_solr_client.SolrClient(options)
 
-  def test_050_instantiate(self):
+  def test_0010(self):
+    """instantiate: """
     pass
 
   #  r = self.c.parse_result_dict(example_query_result_1)

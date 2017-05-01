@@ -53,7 +53,7 @@ class TestMockGet(unittest.TestCase):
     self.assertIsInstance(self.client.get('test_pid_1'), requests.Response)
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.get() returns the same content each time for a given PID"""
     mock_get.add_callback(settings.MN_RESPONSES_BASE_URL)
     obj_1a_str = self.client.get('test_pid_1').content

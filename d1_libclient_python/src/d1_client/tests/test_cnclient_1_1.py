@@ -44,7 +44,7 @@ class TestCNClient_1_1(unittest.TestCase):
       shared_settings.CN_RESPONSES_URL
     )
 
-  def test_1000(self):
+  def test_0010(self):
     """Initialize CoordinatingNodeClient_1_1"""
     # Completion means that the client was successfully instantiated in
     # setUp().

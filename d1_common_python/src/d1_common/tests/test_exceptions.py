@@ -82,7 +82,7 @@ INVALID_ERROR_DOC = (
 
 
 class TestExceptions(unittest.TestCase):
-  def test_100(self):
+  def test_0010(self):
     """deserialize()"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
     self.assertIsInstance(d1_exception, exceptions.IdentifierNotUnique)
@@ -94,7 +94,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(d1_exception.description, 'description0')
     self.assertEqual(d1_exception.traceInformation, TRACE_SECTION.strip())
 
-  def test_110(self):
+  def test_0020(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
     sxml = x1.serialize()
@@ -108,7 +108,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(x1.identifier, x2.identifier)
     self.assertEqual(x1.traceInformation, x2.traceInformation)
 
-  def test_120(self):
+  def test_0030(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
     sxml = x1.serialize()
@@ -122,7 +122,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(x1.identifier, x2.identifier)
     self.assertEqual(x1.traceInformation, x2.traceInformation)
 
-  def test_121(self):
+  def test_0040(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
     sxml = x1.serialize()
@@ -136,20 +136,20 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(x1.identifier, x2.identifier)
     self.assertEqual(x1.traceInformation, x2.traceInformation)
 
-  def test_150(self):
+  def test_0050(self):
     """deserialize() of bad document raises ServiceFailure"""
     self.assertRaises(
       exceptions.ServiceFailure, exceptions.deserialize, INVALID_ERROR_DOC[0]
     )
 
-  def test_200(self):
+  def test_0060(self):
     """String representation"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
     self.assertTrue('name: IdentifierNotUnique' in str(d1_exception))
     self.assertTrue('errorCode: 409' in str(d1_exception))
     self.assertTrue('detailCode: 123.456.789' in str(d1_exception))
 
-  def test_250(self):
+  def test_0070(self):
     """create with only detailCode then serialize()"""
     e = exceptions.ServiceFailure(123)
     self.assertEqual(
@@ -157,7 +157,7 @@ class TestExceptions(unittest.TestCase):
       u'<error detailCode="123" errorCode="500" name="ServiceFailure"/>'
     )
 
-  def test_260(self):
+  def test_0080(self):
     """create with string detailCode and description, then serialize()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
     se = e.serialize()
@@ -167,7 +167,7 @@ class TestExceptions(unittest.TestCase):
       u'<description>test description</description></error>'
     )
 
-  def test_270(self):
+  def test_0090(self):
     """create with detailCode, description and traceInformation, then serialize()"""
     e = exceptions.ServiceFailure(
       '123.456.789', description='test description',
@@ -181,7 +181,7 @@ class TestExceptions(unittest.TestCase):
       u'<traceInformation>test traceInformation</traceInformation></error>'
     )
 
-  def test_280(self):
+  def test_0100(self):
     """serialize_to_headers()"""
     e = exceptions.ServiceFailure(
       '123.456.789', 'test description', 'test traceInformation'
@@ -198,7 +198,7 @@ class TestExceptions(unittest.TestCase):
     }
     self.assertDictEqual(header_dict, expected_dict)
 
-  def test_300(self):
+  def test_0110(self):
     """deserialize_from_headers()"""
     headers = {
       'DataONE-Exception-Name': 'IdentifierNotUnique', # required
@@ -217,7 +217,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e.description, 'test description')
     self.assertEqual(e.traceInformation, 'test traceInformation')
 
-  def test_400(self):
+  def test_0120(self):
     """Test serialization and deserialization of DataONE Exceptions
 
     Test serialization and deserialization of DataONE Exceptions by performing

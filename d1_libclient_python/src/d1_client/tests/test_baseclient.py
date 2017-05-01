@@ -282,7 +282,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0161(self):
+  def test_0170(self):
     """CNgenerateIdentifier.generateIdentifier(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.MN_RESPONSES_URL)
     scheme_str = (
@@ -301,7 +301,7 @@ class TestDataONEBaseClient(unittest.TestCase):
   # MNAuthorization.isAuthorized()
 
   @responses.activate
-  def test_0170(self):
+  def test_0180(self):
     """isAuthorized(): Returns 200 for a readable PID"""
     d1_test.mock_api.is_authorized.add_callback(
       shared_settings.MN_RESPONSES_URL
@@ -309,7 +309,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     self.assertTrue(self.client.isAuthorized('authorized_pid', 'read'))
 
   @responses.activate
-  def test_0180(self):
+  def test_0190(self):
     """isAuthorized(): Raises NotAuthorized for unauthorized PID"""
     d1_test.mock_api.is_authorized.add_callback(
       shared_settings.MN_RESPONSES_URL

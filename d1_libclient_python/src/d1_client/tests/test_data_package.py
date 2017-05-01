@@ -91,7 +91,7 @@ class TestDataPackage(unittest.TestCase):
     self.generator = d1_client.data_package.ResourceMapGenerator()
     self.parser = d1_client.data_package.ResourceMapParser(self.ore_doc)
 
-  def test_100(self):
+  def test_0010(self):
     """init()"""
     pass # Successful setup of the test means that the parser and generator
     # initialized successfully.
@@ -100,7 +100,7 @@ class TestDataPackage(unittest.TestCase):
     # Generator.
     #
 
-  def test_200(self):
+  def test_0020(self):
     """simple_generate_resource_map()"""
     doc = self.generator.simple_generate_resource_map(
       'MAP_PID', 'SCIMETA_PID', ['SCIDATA_PID_1', 'SCIDATA_PID_2']
@@ -115,7 +115,7 @@ class TestDataPackage(unittest.TestCase):
       '<dcterms:identifier>SCIMETA_PID</dcterms:identifier>' in doc
     )
 
-  def test_210(self):
+  def test_0030(self):
     """generate_system_metadata_for_resource_map()"""
     sys_meta = self.generator.generate_system_metadata_for_resource_map(
       'test_pid', 'test_object', 'rights_holder'
@@ -129,19 +129,19 @@ class TestDataPackage(unittest.TestCase):
   # Parser.
   #
 
-  def test_300(self):
+  def test_0040(self):
     """get_resource_map()"""
     self.assertIsInstance(
       self.parser.get_resource_map(), foresite.ore.ResourceMap
     )
 
-  def test_310(self):
+  def test_0050(self):
     """get_resource_map_graph()"""
     self.assertIsInstance(
       self.parser.get_resource_map_graph(), rdflib.graph.Graph
     )
 
-  def test_320(self):
+  def test_0060(self):
     """get_aggregation()"""
     aggr = self.parser.get_aggregation()
     self.assertIsInstance(aggr, foresite.ore.Aggregation)
@@ -149,28 +149,28 @@ class TestDataPackage(unittest.TestCase):
       str(aggr), 'https://cn.dataone.org/cn/v1/resolve/abc#aggregation'
     )
 
-  def test_330(self):
+  def test_0070(self):
     """get_aggregation_graph()"""
     self.assertIsInstance(
       self.parser.get_aggregation_graph(), rdflib.graph.Graph
     )
 
-  def test_340(self):
+  def test_0080(self):
     """get_resource_map_pid()"""
     self.assertEqual(self.parser.get_resource_map_pid(), 'abc')
 
-  def test_350(self):
+  def test_0090(self):
     """get_merged_graph()"""
     g = self.parser.get_merged_graph()
     self.assertIsInstance(g, rdflib.graph.Graph)
     self.assertEqual(len(g), 20)
 
-  def test_360(self):
+  def test_0100(self):
     """get_all_triples()"""
     triples = self.parser.get_all_triples()
     self.check_triples(triples)
 
-  def test_370(self):
+  def test_0110(self):
     """get_all_predicates()"""
     preds = self.parser.get_all_predicates()
     expected_preds = [
@@ -190,14 +190,14 @@ class TestDataPackage(unittest.TestCase):
     for p in preds:
       self.assertTrue(p in expected_preds)
 
-  def test_380(self):
+  def test_0120(self):
     """get_subject_objects_by_predicate()"""
     subject_objects = self.parser.get_subject_objects_by_predicate(
       'ore:aggregates'
     )
     self.assertEqual(len(subject_objects), 3)
 
-  def test_390(self):
+  def test_0130(self):
     """get_aggregated_pids()"""
     pids = self.parser.get_aggregated_pids()
     self.assertEqual(len(pids), 3)
@@ -205,20 +205,20 @@ class TestDataPackage(unittest.TestCase):
     self.assertTrue('ghi' in pids)
     self.assertTrue('jkl' in pids)
 
-  def test_400(self):
+  def test_0140(self):
     """get_aggregated_science_metadata_pids()"""
     pids = self.parser.get_aggregated_science_metadata_pids()
     self.assertEqual(len(pids), 1)
     self.assertTrue('def' in pids)
 
-  def test_410(self):
+  def test_0150(self):
     """get_aggregated_science_data_pids()"""
     pids = self.parser.get_aggregated_science_data_pids()
     self.assertEqual(len(pids), 2)
     self.assertTrue('ghi' in pids)
     self.assertTrue('jkl' in pids)
 
-  def test_420(self):
+  def test_0160(self):
     """generator_and_parser_1"""
     doc = self.generator.simple_generate_resource_map(
       'abc', 'def', ['ghi', 'jkl']

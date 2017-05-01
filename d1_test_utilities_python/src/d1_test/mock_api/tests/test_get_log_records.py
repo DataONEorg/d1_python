@@ -55,7 +55,7 @@ class TestMockLogRecords(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.getLogRecords(): Passing a trigger header triggers a DataONEException"""
     mock_log_records.add_callback(settings.MN_RESPONSES_BASE_URL)
     self.assertRaises(

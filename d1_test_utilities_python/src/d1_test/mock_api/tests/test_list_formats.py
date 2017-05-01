@@ -58,7 +58,7 @@ class TestMockObjectFormatList(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0011(self):
+  def test_0020(self):
     """mock_api.listFormats() returns a populated objectFormatList"""
     mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
     object_format_list = self.client.listFormats()
@@ -68,7 +68,7 @@ class TestMockObjectFormatList(unittest.TestCase):
       break
 
   @responses.activate
-  def test_0012(self):
+  def test_0030(self):
     """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
     mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(

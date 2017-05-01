@@ -44,26 +44,26 @@ class TestAccessPolicy(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """select_random_set_of_permissions()"""
     for i in range(10):
       permissions = access_policy.random_set_of_permissions()
       self.assertTrue(access_policy.permission_labels_to_objects(permissions))
 
-  def test_020(self):
+  def test_0020(self):
     """permissions_to_tag_string()"""
     for i in range(10):
       permissions = access_policy.random_set_of_permissions()
       s = access_policy.permissions_to_tag_string(permissions)
       self.assertIsInstance(s, unicode)
 
-  def test_030(self):
+  def test_0030(self):
     """random_subject_with_permission_labels()"""
     for i in range(10):
       permissions = access_policy.random_set_of_permissions()
       access_policy.random_subject_with_permission_labels(permissions)
 
-  def test_040(self):
+  def test_0040(self):
     """random_subjects_with_permission_labels()"""
     for i in range(100):
       permissions = access_policy.random_set_of_permissions()
@@ -72,7 +72,7 @@ class TestAccessPolicy(unittest.TestCase):
       )
       self.assertIsInstance(subjects, list)
 
-  def test_050(self):
+  def test_0050(self):
     """generate()"""
     for i in range(10):
       access_policy_pyxb = access_policy.generate()

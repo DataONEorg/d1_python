@@ -44,7 +44,8 @@ class TestD1Client(unittest.TestCase):
     options.BASE_URL = 'https://localhost/'
     self.d1 = onedrive_d1_client.D1Client(options)
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     # Test class instantiation (done in setUp())
     pass
 

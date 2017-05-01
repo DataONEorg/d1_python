@@ -66,7 +66,7 @@ class TestDataONEBaseClient_1_1(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0021(self):
+  def test_0030(self):
     """MNRead.query(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.MN_RESPONSES_URL)
     query_engine_str = (

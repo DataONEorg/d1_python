@@ -52,17 +52,20 @@ class TestDiskCache(unittest.TestCase):
     for f in os.listdir(TEST_CACHE_PATH):
       os.unlink(os.path.join(TEST_CACHE_PATH, f))
 
-  def test_100_cache(self):
+  def test_0010(self):
+    """cache: """
     c = cache_disk.DiskCache(10, TEST_CACHE_PATH)
     c['a'] = 1
     self.assertEqual(len(c), 1)
     self.assertEqual(c['a'], 1)
     self.assertEqual(len(c), 1)
 
-  def test_110_cache(self):
+  def test_0020(self):
+    """cache: """
     c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
     c['a'] = 1
-    time.sleep(1.1) # see comment in _delete_oldest_file()
+    time.sleep(1.1)
+    # see comment in _delete_oldest_file()
     c['b'] = 2
     time.sleep(1.1)
     c['c'] = 3
@@ -71,7 +74,8 @@ class TestDiskCache(unittest.TestCase):
     self.assertEqual(c['b'], 2)
     self.assertEqual(c['c'], 3)
 
-  def test_120_cache(self):
+  def test_0030(self):
+    """cache: """
     c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
     c['a'] = 1
     c['b'] = 2

@@ -39,7 +39,7 @@ class TestSystemMetadata(unittest.TestCase):
   def setUp(self):
     self.sm_pyxb = util.read_test_xml('systemMetadata_v2_0.xml')
 
-  def test_050(self):
+  def test_0010(self):
     """PyXB performs schema validation on sysmeta object and raises
     pyxb.PyXBException on invalid XML doc.
     """
@@ -47,7 +47,7 @@ class TestSystemMetadata(unittest.TestCase):
       pyxb.PyXBException, util.read_test_xml, 'systemMetadata_v1_0.invalid.xml'
     )
 
-  def test_100(self):
+  def test_0020(self):
     """is_equivalent() Returns False for modified sysmeta"""
     modified_pyxb = util.read_test_xml('systemMetadata_v2_0.xml')
     modified_pyxb.identifier = 'modifiedIdentifier'
@@ -55,13 +55,13 @@ class TestSystemMetadata(unittest.TestCase):
       d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, modified_pyxb)
     )
 
-  def test_110(self):
+  def test_0030(self):
     """is_equivalent() Returns True for duplicated sysmeta"""
     self.assertTrue(
       d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb)
     )
 
-  def test_120(self):
+  def test_0040(self):
     """is_equivalent() Returns True for sysmeta where elements that can occur in
     any order without changing the meaning of the doc have been shuffled
     around.

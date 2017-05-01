@@ -33,7 +33,7 @@ class TestObjectFormat(unittest.TestCase):
   def setUp(self):
     self.ofl_pyxb = util.read_test_xml('objectFormatList_v2_0.xml')
 
-  def test_010(self):
+  def test_0010(self):
     """pyxb_to_dict()"""
     ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
     self.assertEqual(len(ofl_dict), 117)

@@ -43,7 +43,8 @@ class TestTaxaResolver(unittest.TestCase):
   def setUp(self):
     self._resolver = taxa.Resolver(options, object_tree_test_sample.object_tree)
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     # Test class instantiation (done in setUp())
     pass
 

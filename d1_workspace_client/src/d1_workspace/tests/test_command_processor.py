@@ -49,7 +49,8 @@ class TestCommandProcessor(unittest.TestCase):
     options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
     self.c = command_processor.CommandProcessor(options)
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     # Test class instantiation (done in setUp())
     pass
 

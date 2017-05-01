@@ -45,7 +45,7 @@ class TestSystemMetadata(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """generate()"""
     s = sysmeta.generate()
     self.assertIsInstance(s, dataoneTypes_v1.SystemMetadata)

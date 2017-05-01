@@ -70,7 +70,7 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_005(self):
+  def test_0010(self):
     """HTTP GET is successful
     Mocked GET returns object bytes uniquely tied to given PID.
     """
@@ -94,14 +94,14 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_010(self):
+  def test_0020(self):
     """Successful HTTP GET returns 200 OK"""
     response = self._get_response('pid1')
     self.assertEqual(response.status_code, 200)
 
   @unittest.skip('')
   @responses.activate
-  def test_020(self):
+  def test_0030(self):
     """HTTP GET 404"""
     response = self._get_response('valid_pid', header_dict={'trigger': '404'})
     self.assertEqual(response.status_code, 404)
@@ -113,7 +113,7 @@ class TestSession(unittest.TestCase):
     self.assertEqual(response.text, expected_response_body_str)
 
   @unittest.skip('')
-  def test_050(self):
+  def test_0040(self):
     """HTTP GET against http://some.bogus.address/ raises ConnectionError"""
     s = session.Session('http://some.bogus.address')
     logger = logging.getLogger()
@@ -123,7 +123,7 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_100(self):
+  def test_0050(self):
     """HTTP POST is successful
     Roundtrip for body, headers and query params.
     """
@@ -146,7 +146,7 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_102(self):
+  def test_0060(self):
     """Query params passed to Session() and individual POST are combined
     """
     body_str = 'test_body'
@@ -162,7 +162,7 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_103(self):
+  def test_0070(self):
     """Roundtrip for HTML Form fields"""
     field_dict = {
       'post_data_1': '1234',
@@ -180,7 +180,7 @@ class TestSession(unittest.TestCase):
 
   @unittest.skip('')
   @responses.activate
-  def test_200(self):
+  def test_0080(self):
     """cURL command line retains query parameters and headers"""
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}

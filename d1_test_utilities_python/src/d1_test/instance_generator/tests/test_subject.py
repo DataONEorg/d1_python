@@ -44,7 +44,7 @@ class TestSubject(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_010(self):
+  def test_0010(self):
     """generate()"""
     subject_obj = subject.generate()
     self.assertIsInstance(subject_obj, dataoneTypes_v1.Subject)

@@ -40,10 +40,12 @@ class TestQueryEngineDescription(unittest.TestCase):
     self.q = query_engine_description.QueryEngineDescription()
     self.q.load('test_index/query_engine_description.xml')
 
-  def test_100_init(self):
+  def test_0010(self):
+    """init: """
     pass
 
-  def test_110_get_query_engine_version(self):
+  def test_0020(self):
+    """get query engine version: """
     self.assertEqual(
       self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53'
     )

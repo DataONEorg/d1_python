@@ -66,14 +66,14 @@ class TestCNClient(unittest.TestCase):
   # Core API
   #=========================================================================
 
-  def test_1000(self):
+  def test_0010(self):
     """Initialize CoordinatingNodeClient"""
     # Completion means that the client was successfully instantiated in
     # setUp().
     pass
 
   @responses.activate
-  def test_1010(self):
+  def test_0020(self):
     """CNCore.listFormats(): Returns valid ObjectFormatList with at least 3
     entries"""
     d1_test.mock_api.list_formats.add_callback(shared_settings.CN_RESPONSES_URL)
@@ -86,7 +86,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @responses.activate
-  def test_1020(self):
+  def test_0030(self):
     """CNCore.getFormat(): Returns valid ObjectFormat for known formatId"""
     d1_test.mock_api.get_format.add_callback(shared_settings.CN_RESPONSES_URL)
     object_format_pyxb = self.client.getFormat('valid_format_id')
@@ -98,7 +98,7 @@ class TestCNClient(unittest.TestCase):
   # CNCore.reserveIdentifier()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1040(self):
+  def test_0040(self):
     """CNCore.reserveIdentifier(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.reserveIdentifier('unused_pid')
@@ -122,7 +122,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1041(self):
+  def test_0050(self):
     """CNCore.reserveIdentifier(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -133,7 +133,7 @@ class TestCNClient(unittest.TestCase):
   # CNCore.hasReservation()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1050(self):
+  def test_0060(self):
     """CNCore.hasReservation(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.hasReservation('test_pid', 'test_subject')
@@ -157,7 +157,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1051(self):
+  def test_0070(self):
     """CNCore.hasReservation(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -168,7 +168,7 @@ class TestCNClient(unittest.TestCase):
   # CNCore.listChecksumAlgorithms()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1060(self):
+  def test_0080(self):
     """CNCore.listChecksumAlgorithms(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.listChecksumAlgorithms()
@@ -193,7 +193,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1061(self):
+  def test_0090(self):
     """CNCore.listChecksumAlgorithms(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -204,7 +204,7 @@ class TestCNClient(unittest.TestCase):
   # CNCore.setObsoletedBy()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1070(self):
+  def test_0100(self):
     """CNCore.setObsoletedBy(): Generates expected REST query"""
     # TODO: Check if spec is correct re. serialVersion:
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/
@@ -233,7 +233,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1071(self):
+  def test_0110(self):
     """CNCore.setObsoletedBy(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -244,7 +244,7 @@ class TestCNClient(unittest.TestCase):
   # CNCore.listNodes()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1080(self):
+  def test_0120(self):
     """CNCore.listNodes(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.listNodes()
@@ -268,7 +268,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1081(self):
+  def test_0130(self):
     """CNCore.listNodes(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -283,7 +283,7 @@ class TestCNClient(unittest.TestCase):
   # CNRead.resolve()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1090(self):
+  def test_0140(self):
     """CNRead.resolve(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.resolve('valid_pid')
@@ -307,7 +307,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1091(self):
+  def test_0150(self):
     """CNRead.resolve(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -318,7 +318,7 @@ class TestCNClient(unittest.TestCase):
   # CNRead.getChecksum()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1100(self):
+  def test_0160(self):
     """CNRead.getChecksum(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.getChecksum('valid_pid')
@@ -342,7 +342,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1101(self):
+  def test_0170(self):
     """CNRead.getChecksum(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -353,7 +353,7 @@ class TestCNClient(unittest.TestCase):
   # CNRead.search()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1110(self):
+  def test_0180(self):
     """CNRead.search(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.search('query_type', 'query_string')
@@ -378,7 +378,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1111(self):
+  def test_0190(self):
     """CNRead.search(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -393,7 +393,7 @@ class TestCNClient(unittest.TestCase):
   # CNAuthorization.setRightsHolder()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1120(self):
+  def test_0200(self):
     """CNAuthorization.setRightsHolder(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.setRightsHolder(
@@ -420,7 +420,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1121(self):
+  def test_0210(self):
     """CNAuthorization.setRightsHolder(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -432,7 +432,7 @@ class TestCNClient(unittest.TestCase):
   # CNAuthorization.isAuthorized()
 
   @d1_test.mock_api.catch_all.activate
-  def test_1130(self):
+  def test_0220(self):
     """CNAuthorization.isAuthorized(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.isAuthorized('valid_pid', 'read')
@@ -457,7 +457,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_1131(self):
+  def test_0230(self):
     """CNAuthorization.isAuthorized(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -472,7 +472,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.registerAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4010(self):
+  def test_0240(self):
     """CNAuthorization.registerAccount(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
@@ -498,7 +498,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4011(self):
+  def test_0250(self):
     """CNAuthorization.registerAccount(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
@@ -510,7 +510,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.updateAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4020(self):
+  def test_0260(self):
     """CNAuthorization.updateAccount(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
@@ -536,7 +536,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4021(self):
+  def test_0270(self):
     """CNAuthorization.updateAccount(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
@@ -548,7 +548,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.verifyAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4030(self):
+  def test_0280(self):
     """CNAuthorization.verifyAccount(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.verifyAccount('valid_subject')
@@ -573,7 +573,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4031(self):
+  def test_0290(self):
     """CNAuthorization.verifyAccount(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -584,7 +584,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.getSubjectInfo()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4040(self):
+  def test_0300(self):
     """CNIdentity.getSubjectInfo(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.getSubjectInfo('valid_subject')
@@ -609,7 +609,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4041(self):
+  def test_0310(self):
     """CNIdentity.getSubjectInfo(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -620,7 +620,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.listSubjects()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4050(self):
+  def test_0320(self):
     """CNIdentity.listSubjects(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     received_echo_dict = self.client.listSubjects('valid_subject')
@@ -647,7 +647,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4051(self):
+  def test_0330(self):
     """CNIdentity.listSubjects(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     self.assertRaises(
@@ -658,7 +658,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.mapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4060(self):
+  def test_0340(self):
     """CNIdentity.mapIdentity(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     primary_subject = d1_test.instance_generator.person.generate()
@@ -687,7 +687,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4061(self):
+  def test_0350(self):
     """CNIdentity.mapIdentity(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     primary_subject = d1_test.instance_generator.subject.generate()
@@ -700,7 +700,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.removeMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4070(self):
+  def test_0360(self):
     """CNIdentity.removeMapIdentity(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -726,7 +726,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4071(self):
+  def test_0370(self):
     """CNIdentity.removeMapIdentity(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -738,7 +738,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.requestMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4080(self):
+  def test_0380(self):
     """CNIdentity.requestMapIdentity(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -764,7 +764,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4081(self):
+  def test_0390(self):
     """CNIdentity.requestMapIdentity(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -776,7 +776,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.confirmMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4090(self):
+  def test_0400(self):
     """CNIdentity.confirmMapIdentity(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -802,7 +802,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4091(self):
+  def test_0410(self):
     """CNIdentity.confirmMapIdentity(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -814,7 +814,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.denyMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4100(self):
+  def test_0420(self):
     """CNIdentity.denyMapIdentity(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -840,7 +840,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4101(self):
+  def test_0430(self):
     """CNIdentity.denyMapIdentity(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -852,7 +852,7 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.createGroup()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4110(self):
+  def test_0440(self):
     """CNIdentity.createGroup(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -878,7 +878,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4111(self):
+  def test_0450(self):
     """CNIdentity.createGroup(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     subject = d1_test.instance_generator.subject.generate()
@@ -894,7 +894,7 @@ class TestCNClient(unittest.TestCase):
   # CNReplication.setReplicationStatus()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4120(self):
+  def test_0460(self):
     """CNReplication.setReplicationStatus(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -925,7 +925,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4121(self):
+  def test_0470(self):
     """CNReplication.setReplicationStatus(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -941,7 +941,7 @@ class TestCNClient(unittest.TestCase):
   # CNReplication.updateReplicationMetadata()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4130(self):
+  def test_0480(self):
     """CNReplication.updateReplicationMetadata(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -971,7 +971,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4131(self):
+  def test_0490(self):
     """CNReplication.updateReplicationMetadata(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -987,7 +987,7 @@ class TestCNClient(unittest.TestCase):
   # CNReplication.setReplicationPolicy()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4140(self):
+  def test_0500(self):
     """CNReplication.setReplicationPolicy(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -1017,7 +1017,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4141(self):
+  def test_0510(self):
     """CNReplication.setReplicationPolicy(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
@@ -1033,7 +1033,7 @@ class TestCNClient(unittest.TestCase):
   # CNReplication.isNodeAuthorized()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4150(self):
+  def test_0520(self):
     """CNReplication.isNodeAuthorized(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
@@ -1062,7 +1062,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4151(self):
+  def test_0530(self):
     """CNReplication.isNodeAuthorized(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
@@ -1080,7 +1080,7 @@ class TestCNClient(unittest.TestCase):
   # CNRegister.updateNodeCapabilities()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4160(self):
+  def test_0540(self):
     """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
@@ -1109,7 +1109,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4161(self):
+  def test_0550(self):
     """CNRegister.updateNodeCapabilities(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
@@ -1122,7 +1122,7 @@ class TestCNClient(unittest.TestCase):
   # CNRegister.register()
 
   @d1_test.mock_api.catch_all.activate
-  def test_4170(self):
+  def test_0560(self):
     """CNRegister.register(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
@@ -1148,7 +1148,7 @@ class TestCNClient(unittest.TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_4171(self):
+  def test_0570(self):
     """CNRegister.register(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')

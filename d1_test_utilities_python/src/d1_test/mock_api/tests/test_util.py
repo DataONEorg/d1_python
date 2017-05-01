@@ -47,7 +47,7 @@ class TestMockUtil(unittest.TestCase):
     self.assertEqual(query_dict, {})
     self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)
 
-  def test_0011(self):
+  def test_0020(self):
     """parse_rest_url() 2"""
     # GET /object[?fromDate={fromDate}&toDate={toDate}&
     # identifier={identifier}&formatId={formatId}&replicaStatus={replicaStatus}

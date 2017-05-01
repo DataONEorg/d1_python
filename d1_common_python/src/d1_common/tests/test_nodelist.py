@@ -303,18 +303,18 @@ class TestNodeList(unittest.TestCase):
     if shouldfail:
       raise Exception('Did not receive expected exception')
 
-  def test_serialization_gmn(self):
-    """Deserialize: XML -> NodeList (GMN)"""
+  def test_0010(self):
+    """serialization gmn: Deserialize: XML -> NodeList (GMN)"""
     util.deserialize_and_check(EG_NODELIST_GMN)
 
-  def test_serialization_knb(self):
-    """Deserialize: XML -> NodeList (KNB)"""
+  def test_0020(self):
+    """serialization knb: Deserialize: XML -> NodeList (KNB)"""
     #util.deserialize_and_check(EG_NODELIST_KNB)
 
-  def test_serialization_bad_1(self):
-    """Deserialize: XML -> NodeList (bad 1)"""
+  def test_0030(self):
+    """serialization bad 1: Deserialize: XML -> NodeList (bad 1)"""
     util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
 
-  def test_serialization_bad_2(self):
-    """Deserialize: XML -> NodeList (bad 2)"""
+  def test_0040(self):
+    """serialization bad 2: Deserialize: XML -> NodeList (bad 2)"""
     util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)

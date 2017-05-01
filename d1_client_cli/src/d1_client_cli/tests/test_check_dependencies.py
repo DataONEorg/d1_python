@@ -34,14 +34,14 @@ class TestCheckDependencies(unittest.TestCase):
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
 
-  def test_010(self):
+  def test_0010(self):
     """check_dependencies(): Returns True given modules known to be present"""
     self.assertTrue(
       d1_client_cli.impl.check_dependencies.
       are_modules_importable(['os', 'sys'])
     )
 
-  def test_020(self):
+  def test_0020(self):
     """check_dependencies(): Returns false and logs error on invalid module"""
     with d1_test.util.capture_log() as log_stream:
       self.assertFalse(

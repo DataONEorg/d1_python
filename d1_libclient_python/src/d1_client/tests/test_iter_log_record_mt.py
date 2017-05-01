@@ -55,7 +55,7 @@ class TestLogRecordIterator(unittest.TestCase):
     mock_get_log_records.add_callback(shared_settings.MN_RESPONSES_URL)
 
   @responses.activate
-  def test_100(self):
+  def test_0010(self):
     """PageSize=5, start=0"""
     self._log_record_iterator_test(5, 0)
 
