@@ -39,7 +39,14 @@ class CoordinatingNodeClient_2_0(
   """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_1 with functionality
   for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
 
-  For details on how to use these methods, see:
+  Updated in v2:
+
+  - CNCore.listFormats() → ObjectFormatList
+  - CNRead.listObjects(session[, fromDate][, toDate][, formatId]
+  - MNRead.listObjects(session[, fromDate][, toDate][, formatId]
+
+  The base implementations of listFormats() and listObjects() handle v2 when
+  called through this class.
 
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
@@ -56,17 +63,6 @@ class CoordinatingNodeClient_2_0(
   # Core API
   #=========================================================================
 
-  # CNCore.listFormats() → ObjectFormatList
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listFormats
-  # v2.0: The structure of v2_0.Types.ObjectFormat has changed.
-
-  def listFormatsResponse(self, vendorSpecific=None):
-    return self.GET('formats', headers=vendorSpecific)
-
-  def listFormats(self, vendorSpecific=None):
-    response = self.listFormatsResponse(vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response, 'ObjectFormatList')
-
   @d1_common.util.utf8_to_unicode
   def deleteObjectResponse(self, pid):
     return self.DELETE(['object', pid])
@@ -75,51 +71,3 @@ class CoordinatingNodeClient_2_0(
   def deleteObject(self, pid):
     response = self.deleteObjectResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')
-
-  #=========================================================================
-  # Read API
-  #=========================================================================
-
-  @d1_common.util.utf8_to_unicode
-  def listObjectsResponse(
-      self,
-      fromDate=None,
-      toDate=None,
-      objectFormat=None,
-      replicaStatus=None,
-      nodeId=None,
-      start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None,
-  ):
-    self._slice_sanity_check(start, count)
-    self._date_span_sanity_check(fromDate, toDate)
-    query = {
-      'fromDate': fromDate,
-      'toDate': toDate,
-      'formatId': objectFormat,
-      'replicaStatus': replicaStatus,
-      'nodeId': nodeId,
-      'start': int(start),
-      'count': int(count),
-    }
-    return self.GET('object', query=query, headers=vendorSpecific)
-
-  @d1_common.util.utf8_to_unicode
-  def listObjects(
-      self,
-      fromDate=None,
-      toDate=None,
-      objectFormat=None,
-      replicaStatus=None,
-      nodeId=None,
-      start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None,
-  ):
-    response = self.listObjectsResponse(
-      fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
-      replicaStatus=replicaStatus, nodeId=nodeId, start=start, count=count,
-      vendorSpecific=vendorSpecific
-    )
-    return self._read_dataone_type_response(response, 'ObjectList')

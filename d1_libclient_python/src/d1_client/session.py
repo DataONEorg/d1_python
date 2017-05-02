@@ -301,7 +301,8 @@ class Session(object):
 
   def _encode_path_elements(self, path_element_list):
     return [
-      d1_common.url.encodePathElement(v) if isinstance(v, basestring) else
+      d1_common.url.encodePathElement(v) if isinstance(v,
+                                                       (int, basestring)) else
       d1_common.url.encodePathElement(v.value()) for v in path_element_list
     ]
 

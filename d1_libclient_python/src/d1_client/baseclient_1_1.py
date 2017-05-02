@@ -56,17 +56,23 @@ class DataONEBaseClient_1_1(baseclient.DataONEBaseClient):
 
   #@d1_common.util.utf8_to_unicode
   def queryResponse(
-      self, queryEngine, query_str, vendorSpecific=None, **kwargs
+      self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
-    return self.GET(['query', queryEngine, query_str], headers=vendorSpecific,
-                    query=kwargs)
+    return (self.POST
+            if do_post else self.GET)(['query', queryEngine, query_str],
+                                      headers=vendorSpecific, **kwargs)
 
   #@d1_common.util.utf8_to_unicode
-  def query(self, queryEngine, query_str, vendorSpecific=None, **kwargs):
+  def query(
+      self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
+  ):
     response = self.queryResponse(
-      queryEngine, query_str, vendorSpecific, **kwargs
+      queryEngine, query_str, vendorSpecific, do_post, **kwargs
     )
-    return self._read_stream_response(response)
+    if self._content_type_is_json(response):
+      return self._read_json_response(response)
+    else:
+      return self._read_stream_response(response)
 
   # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription

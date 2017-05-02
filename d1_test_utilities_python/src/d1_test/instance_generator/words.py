@@ -234,33 +234,32 @@ WORDS_1K = [
 ]
 
 
-def countlines(source):
+def _count_lines(source):
   f = file(source, 'r')
   bufsize = 8192
   buf = f.read(bufsize)
-  lc = buf.count("\n")
+  lc = buf.count('\n')
   while len(buf) == bufsize:
     buf = f.read(bufsize)
-    lc += buf.count("\n")
+    lc += buf.count('\n')
   f.close()
   return lc
 
 
-def randomWords(count=100, source='/usr/share/dict/words'):
+def random_words(count=100, source='/usr/share/dict/words'):
   """Returns a random selection of count words from WORDS_1K or by reading
   from source if the number of words requested is more than available in
   WORDS_1K.
   """
   if len(WORDS_1K) > count:
     return random.sample(WORDS_1K, count)
-  nlines = countlines(source)
+  nlines = _count_lines(source)
   linenos = random.sample(xrange(0, nlines - 1), count)
   linenos.sort()
   words = []
   fsrc = codecs.open(source, 'r', 'utf-8')
   cline = 0
   cpos = 0
-  print linenos
   while cpos < count:
     while cline < linenos[cpos]:
       line = fsrc.readline()
