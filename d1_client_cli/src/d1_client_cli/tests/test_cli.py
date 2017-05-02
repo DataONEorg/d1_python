@@ -67,7 +67,7 @@ class TestCLI(unittest.TestCase):
     cli.preloop()
 
   def test_0020(self):
-    """stuffhere: preloop(): Successful deinitialization"""
+    """preloop(): Successful deinitialization"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
     with d1_test.util.capture_std() as (out_stream, err_stream):

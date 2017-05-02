@@ -291,14 +291,15 @@ class CommandProcessor():
     """Perform a SOLR search.
     """
     try:
-      query = self._create_solr_query(line)
+      query_str = self._create_solr_query(line)
       client = cli_client.CLICNClient(
         **self._cn_client_connect_params_from_session()
       )
       object_list = client.search(
-        queryType=d1_common.const.DEFAULT_SEARCH_ENGINE, q=query,
+        queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
+        query=query_str,
         start=self._session.get(session.START_NAME),
-        rows=self._session.get(session.COUNT_NAME)
+        rows=self._session.get(session.COUNT_NAME),
       )
       cli_util.print_info(self._pretty(object_list.toxml()))
     #

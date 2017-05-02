@@ -395,11 +395,8 @@ be lost if you exit.""".format(n_remaining_operations)
     The System Metadata that becomes associated with the new Science Object is
     generated from the session variables.
     """
-    pid, input_file = self._split_args(line, 2, 0)
-    complex_path = cli_util.create_complex_path(input_file)
-    self._command_processor.science_object_create(
-      pid, complex_path.path, complex_path.format_id
-    )
+    pid, sciobj_path = self._split_args(line, 2, 0)
+    self._command_processor.science_object_create(pid, sciobj_path)
     self._print_info_if_verbose(
       'Added create operation for identifier "{0}" to write queue'.format(pid)
     )

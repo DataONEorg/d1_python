@@ -25,34 +25,10 @@
 import os
 import shutil
 import string
-from string import strip
 import sys
-import urlparse
 
 # DataONE
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
-
-
-def get_host(url):
-  """Get the host component without the port number.
-  """
-  url_dict = urlparse.urlparse(url)
-  if url_dict.netloc is not None:
-    host = url_dict.netloc
-    ndx = host.find(":")
-    if ndx > 0:
-      host = host[:ndx]
-    return host
-
-
-def clear_None_from_list(obj_list):
-  result_list = []
-  for q in obj_list:
-    if q is not None:
-      result_list.append(q)
-    else:
-      break
-  return result_list
 
 
 def confirm(prompt, default=u'no', allow_blank=False):
@@ -73,7 +49,7 @@ def confirm(prompt, default=u'no', allow_blank=False):
       response = raw_input('{0:<9s}{1}{2}'.format('WARN', prompt, p))
     except (KeyboardInterrupt, EOFError):
       pass
-    if ((response is None) or (len(response) == 0)):
+    if (response is None) or (len(response) == 0):
       response = string.lower(default)
     else:
       response = string.lower(response)
@@ -117,25 +93,6 @@ def assert_file_exists(path):
     raise cli_exceptions.InvalidArguments(msg)
 
 
-#def create_sys_meta(session, pid, path, formatId=None):
-#  """ Create a system meta data object.
-#  """
-#  if session is None:
-#    raise cli_exceptions.InvalidArguments(u'Missing session')
-#  if pid is None:
-#    raise cli_exceptions.InvalidArguments(u'Missing pid')
-#  if path is None:
-#    raise cli_exceptions.InvalidArguments(u'Missing filename')
-#  algorithm = session.get(CHECKSUM_NAME)
-#  if algorithm is None:
-#    raise cli_exceptions.InvalidArguments(u'Checksum algorithm is not defined.')
-#
-#  path = os.path.expanduser(path)
-#  checksum = get_file_checksum(path, algorithm)
-#  size = get_file_size(path)
-#  return session.create_system_metadata(pid, checksum, size, formatId)
-
-
 def copy_file_like_object_to_file(file_like_object, path):
   try:
     fsrc = sys.stdin
@@ -172,18 +129,6 @@ def copy_requests_stream_to_file(response, path):
     raise cli_exceptions.CLIError(error_message)
 
 
-def get_pid_from_url(url, action="object"):
-  if url:
-    ndx = url.find(u'/' + action + '/')
-    if ndx != -1:
-      return url[(ndx + 2 + len(action)):]
-  return None
-
-
-def create_complex_path(path):
-  return ComplexPath(path)
-
-
 # Print functions.
 
 
@@ -208,27 +153,3 @@ def _print_level(level, msg):
   """
   for l in unicode(msg.rstrip()).split(u'\n'):
     print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
-
-
-#===============================================================================
-
-
-class ComplexPath(object):
-  def __init__(self, path):
-    self.path = None
-    self.format_id = None
-    #
-    if not path:
-      return
-    parts = string.split(strip(path), u';')
-    for part in parts:
-      keyval = string.split(part, u'=', 1)
-      if len(keyval) == 1:
-        if keyval[0] != u'':
-          self.path = keyval[0]
-      else:
-        key = strip(keyval[0]).lower()
-        if key.find(u'format') == 0:
-          self.format_id = strip(keyval[1])
-        else:
-          print_warn(u'Unknown keyword: "%s"' % strip(keyval[0]))

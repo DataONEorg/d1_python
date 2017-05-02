@@ -299,17 +299,8 @@ class Session(object):
           u'Invalid checksum algorithm: {0}'.format(value)
         )
     elif variable == CN_URL_NAME:
-      cn_base_url = self.get(CN_URL_NAME)
-      if value not in [
-          n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn'
-      ]:
-        if not cli_util.confirm(
-            '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.
-            format(value)
-        ):
-          raise cli_exceptions.InvalidArguments(
-            u'Coordinating Node update cancelled'
-          )
+      # TODO: Add warning if URL is not a known CN / environment
+      pass
     elif variable == MN_URL_NAME:
       cn_base_url = self.get(CN_URL_NAME)
       if value not in [
