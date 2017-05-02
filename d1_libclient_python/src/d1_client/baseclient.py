@@ -187,9 +187,15 @@ class DataONEBaseClient(session.Session):
   def _content_type_is_xml(self, response):
     if 'Content-Type' not in response.headers:
       return False
+    # TODO: get_content_type() not needed with Requests
     return d1_common.util.get_content_type(
         response.headers['Content-Type']) \
         in d1_common.const.CONTENT_TYPE_XML_MEDIA_TYPES
+
+  def _content_type_is_json(self, response):
+    return d1_common.const.CONTENT_TYPE_JSON in response.headers.get(
+      'Content-Type', ''
+    )
 
   def _status_is_200_ok(self, response):
     return response.status_code == 200
@@ -204,10 +210,12 @@ class DataONEBaseClient(session.Session):
     return response.status_code == 303
 
   def _status_is_ok(self, response, response_is_303_redirect):
-    return self._status_is_200_ok(response) if not \
-        response_is_303_redirect else self._status_is_303_redirect(response)
+    return (
+      self._status_is_200_ok(response) if not response_is_303_redirect else
+      self._status_is_303_redirect(response)
+    )
 
-  def _error(self, response):
+  def _raise_exception(self, response):
     if self._content_type_is_xml(response):
       self._raise_dataone_exception(response)
     self._raise_service_failure_invalid_content_type(response)
@@ -256,14 +264,14 @@ class DataONEBaseClient(session.Session):
     if self._status_is_200_ok(response):
       response.content
       return True
-    self._error(response)
+    self._raise_exception(response)
 
   def _read_boolean_404_response(self, response):
     if self._status_is_200_ok(response
                               ) or self._status_is_404_not_found(response):
       response.content
       return self._status_is_200_ok(response)
-    self._error(response)
+    self._raise_exception(response)
 
   def _read_boolean_401_response(self, response):
     if self._status_is_200_ok(response) or self._status_is_401_not_authorized(
@@ -271,7 +279,7 @@ class DataONEBaseClient(session.Session):
     ):
       response.content
       return self._status_is_200_ok(response)
-    self._error(response)
+    self._raise_exception(response)
 
   def _read_dataone_type_response(
       self, response, d1_type_name, response_is_303_redirect=False
@@ -282,12 +290,23 @@ class DataONEBaseClient(session.Session):
       d1_pyxb_obj = self._read_and_deserialize_dataone_type(response)
       self._assert_correct_dataone_type(response, d1_pyxb_obj, d1_type_name)
       return d1_pyxb_obj
-    self._error(response)
+    self._raise_exception(response)
+
+  def _read_json_response(self, response):
+    if (
+      self._status_is_ok(response, False) and
+      self._content_type_is_json(response)
+    ):
+      try:
+        return response.json()
+      except ValueError:
+        self._raise_service_failure_invalid_content_type(response)
+    self._raise_exception(response)
 
   def _read_stream_response(self, response):
     if self._status_is_200_ok(response):
       return response
-    self._error(response)
+    self._raise_exception(response)
 
   def _read_header_response(self, response):
     if self._status_is_200_ok(response):

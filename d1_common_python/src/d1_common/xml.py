@@ -17,13 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Check if two XML documents are semantically equivalent.
+"""Utilities for handling XML docs
 """
 
 from __future__ import absolute_import
 
-# Stdlib
 import difflib
 import logging
 import re
@@ -31,12 +29,10 @@ import xml.dom
 import xml.dom.minidom
 import xml.etree.ElementTree
 import xml.parsers.expat
+import xml.sax
 
-# 3rd party
-import pyxb
-
-# D1
 import d1_common.types.dataoneTypes_v2_0
+import pyxb
 
 
 def deserialize(doc_xml):
@@ -46,14 +42,14 @@ def deserialize(doc_xml):
     return d1_common.types.dataoneTypes_v2_0.CreateFromDocument(doc_xml)
   except pyxb.ValidationError as e:
     raise ValueError(
-      u'Unable to deserialize XML to PyXB. error="{}"'.format(e.details())
+      u'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
+      format(e.details(), doc_xml)
     )
-  except pyxb.PyXBException as e:
+  except (pyxb.PyXBException, xml.sax.SAXParseException, Exception) as e:
     raise ValueError(
-      u'Unable to deserialize XML to PyXB. error="{}"'.format(str(e))
+      u'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
+      format(str(e), doc_xml)
     )
-  except Exception:
-    raise
 
 
 def serialize(obj_pyxb):

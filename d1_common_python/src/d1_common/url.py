@@ -39,49 +39,31 @@ import const
 
 
 def encodePathElement(element):
-  """Encodes a URL path element according to RFC3986.
-
-  :param element: The path element to encode for transmission in a URL.
-  :type element: Unicode
-  :return: URL encoded path element
-  :return type: UTF-8 encoded string.
+  """Encode a URL path element according to RFC3986.
   """
-  return urllib.quote(
-    element.encode('utf-8'), safe=const.URL_PATHELEMENT_SAFE_CHARS
-  )
+  return urllib.quote((
+    element.encode('utf-8') if isinstance(element, unicode) else str(element)
+    if isinstance(element, int) else element
+  ), safe=const.URL_PATHELEMENT_SAFE_CHARS)
 
 
 def decodePathElement(element):
-  """Decodes a URL path element according to RFC3986.
-
-  :param element: The URL path element to decode.
-  :type element: Unicode
-  :return: decoded URL path element
-  :return type: UTF-8 encoded string.
+  """Decode a URL path element according to RFC3986.
   """
   return urllib.unquote(element).decode('utf-8')
 
 
 def encodeQueryElement(element):
-  """Encodes a URL query element according to RFC3986.
-
-  :param element: The query element to encode for transmission in a URL.
-  :type element: Unicode
-  :return: URL encoded query element
-  :return type: UTF-8 encoded string.
+  """Encode a URL query element according to RFC3986.
   """
-  return urllib.quote(
-    element.encode('utf-8'), safe=const.URL_QUERYELEMENT_SAFE_CHARS
-  )
+  return urllib.quote((
+    element.encode('utf-8') if isinstance(element, unicode) else str(element)
+    if isinstance(element, int) else element
+  ), safe=const.URL_QUERYELEMENT_SAFE_CHARS)
 
 
 def decodeQueryElement(element):
-  """Decodes a URL query element according to RFC3986.
-
-  :param element: The query element to decode.
-  :type element: Unicode
-  :return: Decoded query element
-  :return type: UTF-8 encoded string.
+  """Decode a URL query element according to RFC3986.
   """
   return urllib.unquote(element).decode('utf-8')
 
@@ -95,13 +77,12 @@ def stripElementSlashes(element):
 
 def joinPathElements(*elements):
   """Join two or more URL elements, inserting '/' as needed. Note: Any leading
-  and trailing slashes are stripped from the resulting URL.
+  and trailing slashes are stripped from the resulting URL. An empty element
+  ('') causes an empty spot in the path ('//').
   """
   url = []
   for element in elements:
     element = stripElementSlashes(element)
-    if element == '':
-      continue
     url.append(element)
   return '/'.join(url)
 
