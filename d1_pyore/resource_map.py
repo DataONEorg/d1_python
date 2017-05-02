@@ -21,12 +21,12 @@ import rdflib
 from rdflib import URIRef, RDF, RDFS
 
 try:
-  from d1_common.url import urlencode
+  from d1_common.url import encodePathElement
 except:
   #Approximate the URLPath encoder used in DataONE. The urllib version should
   #provide equivalent functionality for the purposes of the ORE documents.
   import urllib
-  def urlencode(s):
+  def encodePathElement(s):
     return urllib.quote(s.encode('utf-8'))
 
 # A tag that will be added to the resource map
@@ -79,7 +79,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     '''
     return u"{0}/v{1}/resolve/{2}".format( self._base_url, 
                                            self._dataone_api_version, 
-                                           urlencode(pid) )
+                                           encodePathElement(pid) )
 
 
   def oreInitialize(self, pid):
