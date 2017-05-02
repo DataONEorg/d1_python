@@ -35,8 +35,9 @@ import d1_common.type_conversions
 import d1_common.url
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
+import pyxb.utils
+from d1_test.mock_api.list_objects import N_TOTAL
 
-N_TOTAL = 100
 NUM_SCIOBJ_BYTES = 1024
 SYSMETA_FORMATID = 'application/octet-stream'
 SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
@@ -123,6 +124,32 @@ def echo_get_callback(request):
     'header_dict': dict(request.headers),
   }
   return 200, header_dict, json.dumps(body_dict)
+
+
+def generate_object_list(pyxb_bindings, n_start, n_count):
+  objectList = pyxb_bindings.objectList()
+
+  for i in range(n_count):
+    objectInfo = pyxb_bindings.ObjectInfo()
+
+    objectInfo.identifier = 'object#{}'.format(n_start + i)
+    objectInfo.formatId = 'text/plain'
+    checksum = pyxb_bindings.Checksum(
+      hashlib.sha1(objectInfo.identifier.value()).hexdigest()
+    )
+    checksum.algorithm = 'SHA-1'
+    objectInfo.checksum = checksum
+    objectInfo.dateSysMetadataModified = datetime.datetime.now()
+    objectInfo.size = 1234
+
+    objectList.objectInfo.append(objectInfo)
+
+  objectList.start = n_start
+  objectList.count = len(objectList.objectInfo)
+  objectList.total = N_TOTAL
+
+  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
+  return objectList.toxml()
 
 
 # def echo_post_callback(request):

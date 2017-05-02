@@ -21,7 +21,7 @@
 import unittest
 
 # D1
-import d1_client.mnclient_2_0
+import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -34,45 +34,42 @@ import responses
 import d1_common.types.dataoneTypes_v2_0
 
 # App
-import d1_test.mock_api.list_objects as mock_object_list
+import d1_test.mock_api.resolve as mock_resolve
 import d1_test.mock_api.tests.settings as settings
 
 
-class TestMockListObjects(unittest.TestCase):
+class TestMockResolve(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+      base_url=settings.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
-    """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
+    """mock_api.resolve(): Returns a valid ObjectLocationList"""
+    mock_resolve.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
-      self.client.listObjects(), d1_common.types.dataoneTypes_v2_0.ObjectList
+      self.client.resolve('valid_pid'),
+      d1_common.types.dataoneTypes_v2_0.ObjectLocationList,
     )
 
   @responses.activate
   def test_0020(self):
-    """mock_api.listObjects() returns a populated ObjectList"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
-    object_list = self.client.listObjects()
-    self.assertEqual(len(object_list.objectInfo), 100)
-    for object_info in object_list.objectInfo:
-      self.assertEqual(object_info.formatId, 'text/plain')
-      break
+    """mock_api.resolve(): Unknown PID returns D1 NotFound"""
+    mock_resolve.add_callback(settings.CN_RESPONSES_BASE_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self.client.resolve, 'unknown_pid'
+    )
 
   @responses.activate
   def test_0030(self):
-    """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
-    mock_object_list.add_callback(settings.MN_RESPONSES_BASE_URL)
+    """mock_api.resolve(): Passing a trigger header triggers a DataONEException"""
+    mock_resolve.add_callback(settings.CN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure, self.client.listObjects,
-      vendorSpecific={'trigger': '500'}
+      d1_common.types.exceptions.NotFound, self.client.resolve, 'valid_pid',
+      vendorSpecific={'trigger': '404'}
     )
-
-  # TODO: More tests

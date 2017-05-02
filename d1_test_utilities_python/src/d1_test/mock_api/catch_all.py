@@ -25,7 +25,11 @@ writing specific mock handlers. It disables PyXB deserialization in the client
 and returns a dict with an echo of the request.
 
 If the echoed information is not checked, only the presence of the wrapper and
-being able to call it without error is tested.
+being able to call it without error is will be tested.
+
+Note: The catch_all handler cannot be used together with the mock APIs as it
+patches the _read_dataone_* methods that the other APIs rely on, and redirects
+them to mock_read_response() in this module.
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
@@ -84,6 +88,9 @@ def activate(fun):
     ), mock.patch(
         'd1_client.baseclient.DataONEBaseClient._read_stream_response',
         mock_read_response
+    ), mock.patch(
+        'd1_client.baseclient.DataONEBaseClient._read_json_response',
+        mock_read_response
     ):
       return fun(*args, **kwargs)
 
@@ -106,20 +113,8 @@ def assert_expected_echo(received_echo_dict, expected_echo_dict):
   test_case = unittest.TestCase('__init__')
   _dict_key_val_to_unicode(received_echo_dict)
   _dict_key_val_to_unicode(expected_echo_dict)
-  # Delete keys that have values that differ between calls
-  _delete_keys(
-    test_case, received_echo_dict, [
-      ['request', 'body_base64'],
-      ['request', 'header_dict', 'Accept'],
-      ['request', 'header_dict', 'Accept-Encoding'],
-      ['request', 'header_dict', 'User-Agent'],
-      ['request', 'header_dict', 'Charset'],
-      ['request', 'header_dict', 'Connection'],
-      ['request', 'header_dict', 'Content-Length'],
-      ['request', 'header_dict', 'Content-Type'],
-      ['request', 'header_dict'],
-    ]
-  )
+  _delete_volatile_keys(received_echo_dict)
+  _delete_volatile_keys(expected_echo_dict)
   logging.debug(
     'received_echo_dict: {}'.format(pprint.pformat(received_echo_dict))
   )
@@ -128,19 +123,33 @@ def assert_expected_echo(received_echo_dict, expected_echo_dict):
   test_case.assertDictEqual(received_echo_dict, expected_echo_dict)
 
 
-def _delete_keys(test_case, echo_dict, cert_key_path_list):
-  """Take a list of paths to nested dictionary keys and delete those keys
-  """
-  for cert_key_path in cert_key_path_list:
-    d = echo_dict
-    for key in cert_key_path[:-1]:
-      d = d[key]
-    # if not isinstance(d, dict):
-    #   test_case.assertTrue(d[cert_key_path[-1]])
+def _delete_volatile_keys(echo_dict):
+  """Delete keys that have values that may differ between calls"""
+  for key_path in [
+    ['request', 'body_base64'],
+    ['request', 'header_dict', 'Accept'],
+    ['request', 'header_dict', 'Accept-Encoding'],
+    ['request', 'header_dict', 'User-Agent'],
+    ['request', 'header_dict', 'Charset'],
+    ['request', 'header_dict', 'Connection'],
+    ['request', 'header_dict', 'Content-Length'],
+    ['request', 'header_dict', 'Content-Type'],
+    ['request', 'header_dict'],
+  ]:
+    _delete_key(echo_dict, key_path)
+
+
+def _delete_key(echo_dict, key_path):
+  d = echo_dict
+  for key in key_path[:-1]:
     try:
-      del d[cert_key_path[-1]]
+      d = d[key]
     except KeyError:
-      pass
+      return
+  try:
+    del d[key_path[-1]]
+  except KeyError:
+    pass
 
 
 def _dict_key_val_to_unicode(d):

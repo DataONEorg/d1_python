@@ -28,11 +28,10 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # 3rd party
-import requests
 import responses
 
 # App
-import d1_test.mock_api.query as mock_query
+import d1_test.mock_api.solr_query as mock_query
 import d1_test.mock_api.tests.settings as settings
 
 
@@ -50,10 +49,8 @@ class TestMockQuery(unittest.TestCase):
   def test_0010(self):
     """mock_api.query() returns a JSON doc with expected structure"""
     mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
-    response = self.client.query('query_engine', 'query_string')
-    self.assertIsInstance(response, requests.Response)
-    self.assertEqual(response.headers['Content-Type'], 'application/json')
-    response_dict = response.json()
+    response_dict = self.client.query('query_engine', 'query_string')
+    self.assertIsInstance(response_dict, dict)
     self.assertIn(u'User-Agent', response_dict['header_dict'])
     del response_dict['header_dict']['User-Agent']
     expected_dict = {

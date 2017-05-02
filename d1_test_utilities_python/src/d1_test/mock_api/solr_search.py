@@ -18,23 +18,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock listObjects() → ObjectList
+"""Mock:
 
-MNRead.listObjects(session[, fromDate][, toDate][, formatId][,replicaStatus]
-  [, start=0][, count=1000]) → ObjectList
-
-GET /object[?fromDate={fromDate}&toDate={toDate}
-  &formatId={formatId}&replicaStatus={replicaStatus}
-  &start={start}&count={count}]
+CNRead.search(session, queryType, query) → ObjectList
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.search
+GET /search/{queryType}/{query}
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-# Stdlib
 import re
 
 import d1_common.const
+import d1_common.types.exceptions
 import d1_common.url
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
@@ -42,14 +39,14 @@ import responses
 
 # Config
 N_TOTAL = 100
-OBJECT_LIST_ENDPOINT_RX = r'v([123])/object'
+SEARCH_ENDPOINT_RX = r'v([123])/search/.*'
 
 
 def add_callback(base_url):
   responses.add_callback(
     responses.GET,
     re.compile(
-      r'^' + d1_common.url.joinPathElements(base_url, OBJECT_LIST_ENDPOINT_RX)
+      r'^' + d1_common.url.joinPathElements(base_url, SEARCH_ENDPOINT_RX)
     ),
     callback=_request_callback,
     content_type='',
@@ -61,8 +58,8 @@ def _request_callback(request):
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
     return exc_response_tup
+  query_type, query, query_dict, pyxb_bindings = _parse_url(request.url)
   # Return regular response
-  query_dict, pyxb_bindings = _parse_url(request.url)
   n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
   # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
   header_dict = {
@@ -78,5 +75,8 @@ def _parse_url(url):
   version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
-  assert endpoint_str == 'object'
-  return query_dict, pyxb_bindings
+  assert endpoint_str == 'search'
+  assert len(
+    param_list
+  ) == 2, 'search() accept 2 parameters, the queryType and query'
+  return param_list[0], param_list[1], query_dict, pyxb_bindings
