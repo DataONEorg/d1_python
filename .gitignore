@@ -11,7 +11,11 @@ cover/
 
 # IntelliJ / PyCharm
 .idea/
- 
+
+# IDEs
+.project
+.pydevproject
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -51,8 +55,6 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
-.coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
@@ -73,5 +75,5 @@ docutils/
 # PyBuilder
 target/
 
-#Ipython Notebook
+# Ipython Notebook
 .ipynb_checkpoints
