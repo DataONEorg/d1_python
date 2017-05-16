@@ -19,5 +19,3 @@
 # limitations under the License.
 """DataONE Command-line Client
 """
-
-__all__ = []

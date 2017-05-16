@@ -19,5 +19,3 @@
 # limitations under the License.
 """DataONE ONEDrive
 """
-
-__version__ = "3.0.0RC4"
