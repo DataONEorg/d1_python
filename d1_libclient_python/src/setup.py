@@ -26,7 +26,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.libclient',
-    version='x',
+    version='2.3.0rc1',
     description='A DataONE client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',

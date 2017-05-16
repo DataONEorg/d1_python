@@ -26,7 +26,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.cli',
-    version='x',
+    version='2.3.0rc1',
     description='Command-Line Interface (CLI) for DataONE',
     author='DataONE Project',
     author_email='developers@dataone.org',
