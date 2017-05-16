@@ -92,28 +92,30 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
-    update_deps_on_file(setup_path, args.diff_only, args.d1_version)
+    update_deps_on_file(args, setup_path, args.diff_only, args.d1_version)
 
   update_common_version_const(args.d1_version, args.diff_only)
 
 
-def update_deps_on_file(setup_path, diff_only, d1_version):
+def update_deps_on_file(args, setup_path, diff_only, d1_version):
   logging.info('Updating setup.py... path="{}"'.format(setup_path))
   try:
     r = util.redbaron_module_path_to_tree(setup_path)
     r = update_deps_on_tree(r, d1_version)
   except Exception as e:
     logging.error(
-      'Dependency update failed. error="{}" path="{}"'.
-      format(str(e), setup_path)
+      'Update failed. error="{}" path="{}"'.format(str(e), setup_path)
     )
-    return
-  util.update_module_file(r, setup_path, diff_only)
+    if args.debug:
+      raise
+  else:
+    util.update_module_file(r, setup_path, diff_only)
 
 
 def update_deps_on_tree(r, d1_version):
   dep_node = find_install_requires_node(r)
   for str_node in dep_node.value:
+    # logging.debug(str_node.help(True))
     update_dep_str(str_node, d1_version)
   return r
 
