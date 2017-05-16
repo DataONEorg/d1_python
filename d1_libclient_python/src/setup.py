@@ -32,23 +32,36 @@ def main():
     description='A DataONE client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone.org',
+    url='https://github.com/DataONEorg/d1_python',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
       'dataone.common == 2.1.0rc2',
-      'rdflib == 4.2.2',
+      #
+      'cachecontrol == 0.11.7',
       'google.foresite-toolkit == 1.3.3',
       'python-dateutil == 2.1',
-      # Requests
-      'requests[security] == 2.12.4', # Pulls in PyOpenSSL and cryptography
-      'cachecontrol == 0.11.7',
+      'pyxb = x',
+      'rdflib == 4.2.2',
+      'rdflib-jsonld == x'
       'requests-toolbelt == 0.7.0',
+      'requests[security] == 2.12.4',
+      'responses = x',
+      'setuptools = x',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
     ],
+    classifiers=[
+      'Development Status :: 5 - Production/Stable',
+      'Intended Audience :: Developers',
+      'Topic :: Scientific/Engineering',
+      'License :: OSI Approved :: Apache 2.0 License',
+      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 2.7',
+    ],
+    keywords='DataONE client upload download member-node coordinating-node',
   )
 
 

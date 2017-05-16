@@ -29,17 +29,20 @@ def main():
   setuptools.setup(
     name='dataone.cli',
     version=d1_client_cli.__version__,
-    description='A DataONE Command-line interface',
+    description='Command-Line Interface (CLI) for DataONE',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone.org',
+    url='https://github.com/DataONEorg/d1_python',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      # The CLI uses dataone.common directly but, to keep the versions
-      # consistent, let it be included by dataone.libclient.
-      'dataone.libclient == 2.1.0rc2',
+      'dataone.common == 2.3.0rc1',
+      'dataone.libclient == 2.3.0rc1',
+      #
+      'mock = x',
+      'responses = x',
+      'setuptools = x',
     ],
     entry_points={'console_scripts': [
       'dataone = d1_client_cli.dataone:main',
@@ -47,6 +50,15 @@ def main():
     setup_requires=[
       'setuptools_git >= 1.1',
     ],
+    classifiers=[
+      'Development Status :: 5 - Production/Stable',
+      'Intended Audience :: Developers',
+      'Topic :: Scientific/Engineering',
+      'License :: OSI Approved :: Apache 2.0 License',
+      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 2.7',
+    ],
+    keywords='DataONE cli command line member-node coordinating-node',
   )
 
 

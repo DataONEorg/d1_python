@@ -33,7 +33,7 @@ def main():
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone-python.readthedocs.io/en/latest/gmn/index.html',
+    url='https://github.com/DataONEorg/d1_python',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -41,24 +41,31 @@ def main():
       '': ['settings_site.py'],
     },
     install_requires=[
-      # GMN uses dataone.common directly but, to keep the versions consistent,
-      # let it be included by dataone.libclient.
-      #'dataone.common',
-      'dataone.libclient == 2.1.0rc2',
-      'django == 1.10.1',
-      'pyxb == 1.2.5',
+      'dataone.cli == 2.3.0rc1',
+      'dataone.common == 2.3.0rc1',
+      'dataone.libclient == 2.3.0rc1',
+      #
+      'cryptography == 1.8.1',
+      'django == 1.11.1',
       'iso8601 == 0.1.11',
-      'psycopg2 == 2.5.2',
-      'pyjwt == 1.4.2',
-      'cryptography', # Use version pulled in by requests[security]
-      # GMN does not use the CLI programmatically -- it's just included because
-      # the CLI is a convenient way to interact with GMN. So the latest version
-      # is installed instead of a specific version.
-      'dataone.cli >= 1.0.0',
+      'mock = x',
+      'psycopg2 == 2.7.1',
+      'pyjwt == 1.5.0',
+      'pyxb == 1.2.5',
+      'setuptools = x',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
     ],
+    classifiers=[
+      'Development Status :: 5 - Production/Stable',
+      'Intended Audience :: Developers',
+      'Topic :: Scientific/Engineering',
+      'License :: OSI Approved :: Apache 2.0 License',
+      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 2.7',
+    ],
+    keywords='DataONE server member-node coordinating-node'
   )
 
 

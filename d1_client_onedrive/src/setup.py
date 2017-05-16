@@ -51,8 +51,8 @@ if sys.platform == 'win32':
   extra_opts = dict(
     console=['d1_client_onedrive/onedrive.py'],
   )
-# Mac App setup
 elif sys.platform == 'darwin':
+  # Mac App setup
   opts = dict(
     py2app=dict(
       argv_emulation=True,
@@ -71,8 +71,8 @@ elif sys.platform == 'darwin':
     app=['mac/start_app.py'],
     setup_requires=['py2app'],
   )
-# Normal setup
 else:
+  # Normal setup
   opts = dict()
   extra_opts = dict()
 
@@ -84,22 +84,35 @@ def main():
     description='Filesystem access to the DataONE Workspace',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone.org',
+    url='https://github.com/DataONEorg/d1_python',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      # ONEDrive uses dataone.common and dataone.libclient directly but these
-      # are also dependencies of dataone.workspace_client, so they are not
-      # installed directly here, to avoid the chance of mismatched versions.
-      'dataone.workspace_client == 0.0.7',
-      'fusepy',
-      'rdflib',
-      'rdfextras',
+      'dataone.common == 2.3.0rc1',
+      'dataone.libclient == 2.3.0rc1',
+      'dataone.workspace_client == 2.3.0rc1',
+      #
+      'fusepy == 2.0.4',
+      'pyxb == 1.2.5',
+      'pyzotero == 1.2.10',
+      'rdfextras == 0.4',
+      'rdflib == 4.2.2',
+      'requests == 2.14.2',
+      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
     ],
+    classifiers=[
+      'Development Status :: 5 - Production/Stable',
+      'Intended Audience :: Developers',
+      'Topic :: Scientific/Engineering',
+      'License :: OSI Approved :: Apache 2.0 License',
+      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 2.7',
+    ],
+    keywords='DataONE client upload download member-node coordinating-node',
     # Options for py2exe and py2app.
     options=opts,
     **extra_opts

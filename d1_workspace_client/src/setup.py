@@ -32,17 +32,21 @@ def main():
     description='A DataONE Workspace client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone.org',
+    url='https://github.com/DataONEorg/d1_python',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
       'dataone.libclient == 1.2.6',
-      'requests == 2.2.1',
+      #
+      'pyxb == 2.2.1'
+      'requests == 2.2.1'
+      'setuptools == 2.2.1'
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
     ],
+    keywords='DataONE workspace cli command line member-node coordinating-node',
   )
 
 

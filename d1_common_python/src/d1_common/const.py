@@ -21,9 +21,6 @@
 """System wide constants for the Python DataONE stack
 """
 
-# Make contents of __init__ available.
-import d1_common
-
 # The root of all DataONE.  Used to perform introspection on the system when
 # no other node information is provided.
 DEFAULT_CN_PROTOCOL = 'https'
@@ -39,8 +36,8 @@ DEFAULT_MN_BASEURL = ''.join(
   (DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH)
 )
 
-# Version of this software.
-VERSION = d1_common.__version__
+# Version of the DataONE Python stack
+VERSION = '2.3.0rc1'
 
 # Maximum number of entries per list objects request.
 MAX_LISTOBJECTS = 1000
