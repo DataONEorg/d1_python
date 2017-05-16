@@ -4,6 +4,7 @@ certs/
 settings_site.py
 stores/
 d1_objects/
+/dev_tools/devpi-env.sh
 
 # Coverage
 .coverage
@@ -77,3 +78,4 @@ target/
 
 # Ipython Notebook
 .ipynb_checkpoints
+
