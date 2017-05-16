@@ -4,3 +4,4 @@ omit =
   */generated/*
   */tests/*
   */setup.py
+  */dev_tools/*
