@@ -38,9 +38,9 @@ def main():
       'dataone.common == 2.3.0rc1',
       'dataone.libclient == 2.3.0rc1',
       #
-      'mock = x',
-      'responses = x',
-      'setuptools = x',
+      'mock == 2.0.0',
+      'responses == 0.5.1',
+      'setuptools == 35.0.2',
     ],
     entry_points={'console_scripts': [
       'dataone = d1_client_cli.dataone:main',
