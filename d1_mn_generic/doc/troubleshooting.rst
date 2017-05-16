@@ -6,8 +6,7 @@ Psycopg2 gives "can't adapt" errors
 
 The version of Psycopg2 that was installed by default was not compatible.
 
-Try uninstalling the default version and installing a specific version. The
-version referenced below had been found to work well with PostgreSQL 8.4.10.
+Try uninstalling the default version and installing a specific version. The version referenced below had been found to work well with PostgreSQL 8.4.10.
 
 ::
 

@@ -33,8 +33,7 @@ Add DataONE test certificate to system wide trusted CA store
 Integration testing using certificates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create two test certificates signed by the local CA. We simulate valid and
-invalid sessions by using "valid" and "invalid" strings in the Common Names.
+Create two test certificates signed by the local CA. We simulate valid and invalid sessions by using "valid" and "invalid" strings in the Common Names.
 
   ::
 

@@ -13,8 +13,7 @@ Microsoft Windows
 
 #. See :doc:`run` for notes on how to customize and access ONEDrive.
 
-By default, ONEDrive uses the drive letter "O:". If this drive letter is already
-in use, it can be changed in the ``settings.py`` file.
+By default, ONEDrive uses the drive letter "O:". If this drive letter is already in use, it can be changed in the ``settings.py`` file.
 
 
 Mac OS X
@@ -22,14 +21,11 @@ Mac OS X
 
 1. Install FUSE
 
-Development of ONEDrive on OS X has been done using the `Fuse for OS X`_
-distribution. Download the latest installer (currently 2.5.4) and follow the
-instructions to install.
+Development of ONEDrive on OS X has been done using the `Fuse for OS X`_ distribution. Download the latest installer (currently 2.5.4) and follow the instructions to install.
 
 #. Install Python dependencies
 
-fusepy_ provides the Python bindings to the FUSE library. To install fusepy,
-use the commands::
+fusepy_ provides the Python bindings to the FUSE library. To install fusepy, use the commands::
 
   $ cd Downloads
   $ git clone git://github.com/terencehonles/fusepy.git fusepy
@@ -39,8 +35,7 @@ use the commands::
 
 #. Install ONEDrive
 
-There is currently no setup script for ONEDrive, so installation means simply
-downloading to a local folder::
+There is currently no setup script for ONEDrive, so installation means simply downloading to a local folder::
 
   $ cd ~/opt
   $ svn co https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive
@@ -53,8 +48,7 @@ downloading to a local folder::
 
 * Make sure option 'user_allow_other' is set in /etc/fuse.conf.
 
-If the library search path is incomplete, an exception such as the following
-may occur::
+If the library search path is incomplete, an exception such as the following may occur::
 
   OSError: dlopen(/opt/local/lib/libfuse.dylib, 6): Symbol not found: _iconv
     Referenced from: /opt/local/lib/libfuse.dylib
@@ -92,9 +86,7 @@ Install pip::
 
   $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
 
-Install ONEDrive, and its dependencies from PyPI, into a Python virtual
-environment. The virtual environment is set up under onedrive_bin in the user's
-home folder.
+Install ONEDrive, and its dependencies from PyPI, into a Python virtual environment. The virtual environment is set up under onedrive_bin in the user's home folder.
 
 ::
 
@@ -104,13 +96,11 @@ home folder.
 
 * Press ctrl-d to exit the virtualenv.
 
-ONEDrive expects to find a workspace.xml file in your home folder. Copy one
-of the example workspaces there::
+ONEDrive expects to find a workspace.xml file in your home folder. Copy one of the example workspaces there::
 
   $ cp onedrive_bin/workspace.xml ~
 
-By default, ONEDrive uses a folder named "one" in your home folder as the
-mount point. Create it::
+By default, ONEDrive uses a folder named "one" in your home folder as the mount point. Create it::
 
   $ mkdir ~/one
 

@@ -28,11 +28,9 @@ Commands that relate to the operation of the Command Line Interface itself.
 .. _help:
 
 help
-----
-Get help on commands
+---- Get help on commands
 
-``help`` or ``?`` with no arguments displays a list of commands for which help is
-available
+``help`` or ``?`` with no arguments displays a list of commands for which help is available
 
 ``help <command>`` or ``? <command>`` gives help on <command>
 
@@ -75,11 +73,9 @@ set [variable [value]]
 
 ``set <session variable> <value>``: Set the value of a session variable.
 
-See :ref:`access_policy` and :ref:`replication_policy` for information about how
-to set the Access Policy and Replication Policy session variables.
+See :ref:`access_policy` and :ref:`replication_policy` for information about how to set the Access Policy and Replication Policy session variables.
 
-An unset session variable has its value displayed as None. A session variable
-can either be a Boolean (True / False), numeric or string value. See :ref:`set`
+An unset session variable has its value displayed as None. A session variable can either be a Boolean (True / False), numeric or string value. See :ref:`set`
 for more information on how to set session variables.
 
 
@@ -114,8 +110,7 @@ reset
 -----
 Set all session variables to their default values
 
-The defaults are listed in the ``Default`` column in the :ref:`overview of
-session variables <session_variables>`.
+The defaults are listed in the ``Default`` column in the :ref:`overview of session variables <session_variables>`.
 
 
 .. _commands_access_control:
@@ -123,13 +118,10 @@ session variables <session_variables>`.
 Session, Access Control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Access Policy is a list of subjects and their associated access levels. The
-Access Policy is applied to new objects as they are :ref:`created <create>`. The
-Access Policy can also be updated on existing Science Data Objects with
+The Access Policy is a list of subjects and their associated access levels. The Access Policy is applied to new objects as they are :ref:`created <create>`. The Access Policy can also be updated on existing Science Data Objects with
 :ref:`updateaccess`.
 
-Use the :ref:`set` command without any parameters to view the current Access
-Policy.
+Use the :ref:`set` command without any parameters to view the current Access Policy.
 
 
 .. _allowaccess:
@@ -154,12 +146,7 @@ Any access level implicitly includes less permissive levels. E.g., giving
 ``changePermission`` to a subject implicitly gives ``read`` and ``write``
 permissions as well.
 
-To make objects accessible to the general public, give ``read`` access to the
-public user. In some cases, it is desirable to obtain log records that include
-information about who accessed a given object while still making the object
-publicly accessible. This can be accomplished by giving ``read`` access only to
-authenticatedUser. Access higher than ``read`` should not be given to any of the
-special subjects.
+To make objects accessible to the general public, give ``read`` access to the public user. In some cases, it is desirable to obtain log records that include information about who accessed a given object while still making the object publicly accessible. This can be accomplished by giving ``read`` access only to authenticatedUser. Access higher than ``read`` should not be given to any of the special subjects.
 
 
 .. _denyaccess:
@@ -225,8 +212,7 @@ numberrep <number of replicas>
 ------------------------------
 Set preferred number of replicas for new objects
 
-If the preferred number of replicas is set to zero, replication is also
-disallowed.
+If the preferred number of replicas is set to zero, replication is also disallowed.
 
 
 .. _clearrep:
@@ -235,8 +221,7 @@ clearrep
 --------
 Set the replication policy to default
 
-The default replication policy has no preferred or blocked member nodes, allows
-replication and sets the preferred number of replicas to 3.
+The default replication policy has no preferred or blocked member nodes, allows replication and sets the preferred number of replicas to 3.
 
 
 .. _commands_read_operations:
@@ -244,11 +229,9 @@ replication and sets the preferred number of replicas to 3.
 Read Operations
 ~~~~~~~~~~~~~~~
 
-Commands that cause read operations to be issued against Coordinating Nodes and
-Member Nodes.
+Commands that cause read operations to be issued against Coordinating Nodes and Member Nodes.
 
-Commands for retrieving :term:`Science Data Objects <Science Data
-Object>`, :term:`System Metadata` and related information.
+Commands for retrieving :term:`Science Data Objects <Science Data Object>`, :term:`System Metadata` and related information.
 
 
 .. _get:
@@ -281,8 +264,7 @@ list
 ----
 Retrieve a list of available Science Data Objects from Member Node
 
-The response is filtered by the from-date, to-date, search, start and count
-session variables.
+The response is filtered by the from-date, to-date, search, start and count session variables.
 
 Active session variables: :ref:`mn-url <mn-url>`, :ref:`start <start>`,
 :ref:`count <count>`, :ref:`from-date <from-date>`, :ref:`to-date <to-date>`,
@@ -297,8 +279,7 @@ log
 ---
 Retrieve event log from Member Node
 
-The response is filtered by the from-date, to-date, start and count session
-parameters.
+The response is filtered by the from-date, to-date, start and count session parameters.
 
 Active session variables: :ref:`mn-url <mn-url>`, :ref:`start <start>`,
 :ref:`count <count>`, :ref:`from-date <from-date>`, :ref:`to-date <to-date>`,
@@ -319,8 +300,7 @@ Active session variables: :ref:`cn-url <cn-url>`, :ref:`authentication`
 Write Operations
 ~~~~~~~~~~~~~~~~
 
-Commands that cause write operations to be issued against Coordinating Nodes and
-Member Nodes.
+Commands that cause write operations to be issued against Coordinating Nodes and Member Nodes.
 
 .. _create:
 
@@ -328,12 +308,9 @@ create <:term:`pid`> <file>
 ---------------------------
 Create a new Science Object on a Member Node.
 
-The System Metadata that becomes associated with the new Science Object is
-generated from the session variables.
+The System Metadata that becomes associated with the new Science Object is generated from the session variables.
 
-The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the checksum
-for the new object. If the value is unset, it defaults to the DataONE system
-wide default, which is currently SHA1.
+The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the checksum for the new object. If the value is unset, it defaults to the DataONE system wide default, which is currently SHA1.
 
 Active session variables: :ref:`mn-url <mn-url>`, :ref:`format-id
 <format-id>`, :ref:`submitter <submitter>`, :ref:`rights-holder
@@ -348,13 +325,10 @@ update <old-pid> <new-pid> <file>
 ---------------------------------
 Replace an existing Science Object in a :term:`MN` with another.
 
-The existing Science Object becomes obsoleted by the new Science Object.
-obsoleted by the new values in the :ref:`System Metadata <session_variables>`,
+The existing Science Object becomes obsoleted by the new Science Object. obsoleted by the new values in the :ref:`System Metadata <session_variables>`,
 :ref:`access_policy` and :ref:`replication_policy` session variables.
 
-The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the
-checksum for the new object. If the value is unset, it defaults to the DataONE
-system wide default, which is currently SHA1.
+The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the checksum for the new object. If the value is unset, it defaults to the DataONE system wide default, which is currently SHA1.
 
 Active session variables: :ref:`mn-url <mn-url>`, :ref:`format-id <format-id>`,
 :ref:`submitter <submitter>`, :ref:`rights-holder <rights-holder>`,
@@ -383,9 +357,7 @@ updateaccess <identifier> [identifier ...]
 ------------------------------------------
 Update the Access Policy on one or more existing Science Data Objects
 
-Requires that the calling subject has :ref:`authenticated <Authentication>` and
-has changePermission access level on the object for which Access Policy is to be
-updated.
+Requires that the calling subject has :ref:`authenticated <Authentication>` and has changePermission access level on the object for which Access Policy is to be updated.
 
 Active session variables: :ref:`cn-url <cn-url>`, :ref:`authentication`,
 :ref:`access_policy`
@@ -397,9 +369,7 @@ updatereplication <identifier> [identifier ...]
 -----------------------------------------------
 Update the Replication Policy on one or more existing Science Data Objects
 
-Requires that the calling subject has :ref:`authenticated <Authentication>` and
-has changePermission access level on the object for which Replication Policy is
-to be updated.
+Requires that the calling subject has :ref:`authenticated <Authentication>` and has changePermission access level on the object for which Replication Policy is to be updated.
 
 Active session variables: :ref:`cn-url <cn-url>`, :ref:`replication_policy`,
 :ref:`authentication`
@@ -428,8 +398,7 @@ Display all known DataONE Nodes
 search [query]
 Comprehensive search for Science Data Objects across all available MNs
 
-See https://releases.dataone.org/online/api-documentation-v2.0.1/design/SearchMetadata.html
-for the available search terms.
+See https://releases.dataone.org/online/api-documentation-v2.0.1/design/SearchMetadata.html for the available search terms.
 
 .. _ping:
 
@@ -439,8 +408,7 @@ Check if a server responds to the DataONE ping() API method ping (no arguments):
 Ping the CN and MN that is specified in the session ping <base-url> [base-url
 ...]: Ping each CN or MN
 
-If an incomplete base-url is provided, default CN and MN base URLs at the given
-url are pinged.
+If an incomplete base-url is provided, default CN and MN base URLs at the given url are pinged.
 
 
 .. _commands_write_operation_queue:

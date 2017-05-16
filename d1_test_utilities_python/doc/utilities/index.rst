@@ -1,8 +1,7 @@
 DataONE Test Utilities
 ======================
 
-See :doc:`/index` for an overview of the DataONE libraries and
-other products implemented in Python.
+See :doc:`/index` for an overview of the DataONE libraries and other products implemented in Python.
 
 Various utilities useful for testing within the DataONE infrastructure.
 

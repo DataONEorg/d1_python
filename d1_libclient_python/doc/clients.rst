@@ -1,16 +1,11 @@
 Clients
 =======
 
-The client classes wrap all the DataONE API methods, hiding the many details
-related to interacting with the DataONE API, such as creating MIME multipart
-messages, encoding parameters into URLs and handling Unicode.
+The client classes wrap all the DataONE API methods, hiding the many details related to interacting with the DataONE API, such as creating MIME multipart messages, encoding parameters into URLs and handling Unicode.
 
-The clients allow the developer to communicate with nodes by calling native
-Python methods which take and return native Python objects.
+The clients allow the developer to communicate with nodes by calling native Python methods which take and return native Python objects.
 
-The clients also convert any errors received from the nodes into native
-exceptions, enabling clients to use Python’s concise exception handling system
-to handle errors.
+The clients also convert any errors received from the nodes into native exceptions, enabling clients to use Python’s concise exception handling system to handle errors.
 
 The clients are arranged into the following class hierarchy:
 
@@ -49,9 +44,7 @@ The clients are arranged into the following class hierarchy:
     CoordinatingNodeClient_2_0 -> DataONEClient;
   }
 
-The classes without version designators implement functionality defined in v1.0
-of the DataONE service specifications. The classes with version designators
-implement support for the corresponding DataONE service specifications.
+The classes without version designators implement functionality defined in v1.0 of the DataONE service specifications. The classes with version designators implement support for the corresponding DataONE service specifications.
 
 DataONEBaseClient
 

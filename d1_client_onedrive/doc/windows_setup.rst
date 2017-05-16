@@ -1,17 +1,11 @@
 Creating the installer for Windows
 ==================================
 
-ONEDrive supports Microsoft Windows. The Windows distribution installs ONEDrive
-as a regular application, independent of any existing Python environment on the
-computer. These instructions detail how to create the installer and is intended
-as a reference for DataONE and 3rd party developers.
+ONEDrive supports Microsoft Windows. The Windows distribution installs ONEDrive as a regular application, independent of any existing Python environment on the computer. These instructions detail how to create the installer and is intended as a reference for DataONE and 3rd party developers.
 
-The regular distribution channel for DataONE's Python products is PyPI, but the
-PyPI distribution does not include various files needed for building the
-installer.
+The regular distribution channel for DataONE's Python products is PyPI, but the PyPI distribution does not include various files needed for building the installer.
 
-To create the ONEDrive installer for Windows, ONEDrive is first installed from
-the DataONE Subversion repository into a regular Python environment.
+To create the ONEDrive installer for Windows, ONEDrive is first installed from the DataONE Subversion repository into a regular Python environment.
 
 Then, a stand-alone, executable version of ONEDrive is created with py2exe.
 
@@ -74,8 +68,7 @@ Finally, an installer is built for the executable and all dependencies.
 
    > src\d1_client_onedrive\onedrive.py
 
-Access the ONEDrive filesystem and check that the folder hierarchy can be
-traversed and that the DataONE objects can be accessed.
+Access the ONEDrive filesystem and check that the folder hierarchy can be traversed and that the DataONE objects can be accessed.
 
 Exit with ctrl-break.
 
@@ -91,8 +84,7 @@ A list of missing modules will be printed. These are not used by ONEDrive.
    > cd dist
    > onedrive.exe
 
-Access the ONEDrive filesystem and check that the folder hierarchy can be
-traversed and that the DataONE objects can be accessed.
+Access the ONEDrive filesystem and check that the folder hierarchy can be traversed and that the DataONE objects can be accessed.
 
 Exit with ctrl-break.
 
@@ -103,8 +95,7 @@ Open the Inno Setup script::
   > cd \onedrive
   > onedrive-setup.iss
 
-In the script, update the version number so that it matches the version number
-displayed when ONEDrive was started in a previous step.
+In the script, update the version number so that it matches the version number displayed when ONEDrive was started in a previous step.
 
 Build the installer by selecting ``Compile`` and ``Build`` in the main menu.
 

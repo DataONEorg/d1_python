@@ -2,7 +2,6 @@ API
 ===
 
 .. toctree::
-  :numbered:
   :maxdepth: 2
 
   clients
@@ -11,4 +10,3 @@ API
   system_metadata
   data_package
   object_format_info
-  generated

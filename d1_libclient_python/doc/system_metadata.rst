@@ -3,8 +3,7 @@
 SystemMetadata
 ==============
 
-This class simplifies access to the individual values in a SystemMetadata
-object.
+This class simplifies access to the individual values in a SystemMetadata object.
 
 Example
 ~~~~~~~

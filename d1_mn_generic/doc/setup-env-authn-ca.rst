@@ -1,29 +1,18 @@
 Install CILogon and DataONE root CA certificates
 ================================================
 
-For a client side certificate to be considered valid by GMN, GMN must trust the
-CA that signed the client side certificate. This step sets up the CAs to be
-trusted.
+For a client side certificate to be considered valid by GMN, GMN must trust the CA that signed the client side certificate. This step sets up the CAs to be trusted.
 
-Two basic types of client side certificates are used in the DataONE
-infrastructure. The first type is issued by the :term:`CILogon` CA and is used
-for authenticating users. The second type is issued by the DataONE CA and is
-used for authenticating Nodes.
+Two basic types of client side certificates are used in the DataONE infrastructure. The first type is issued by the :term:`CILogon` CA and is used for authenticating users. The second type is issued by the DataONE CA and is used for authenticating Nodes.
 
 CILogon is the identity provider for DataONE. CILogon provides three
 :term:`LOA`\ s. These instructions set GMN up to accept all three.
 
-DataONE issues certificates that let Nodes communite securely in the DataONE
-infrastructure. The DataONE :term:`CA` root certificates must be trusted by all
-Nodes.
+DataONE issues certificates that let Nodes communite securely in the DataONE infrastructure. The DataONE :term:`CA` root certificates must be trusted by all Nodes.
 
-The OS typically comes with a complete set of commonly trusted CA root
-certificates. However, DataONE Nodes should not accept certificates signed by
-these, so a separate CA store is used for the CILogon and DataONE root CAs.
+The OS typically comes with a complete set of commonly trusted CA root certificates. However, DataONE Nodes should not accept certificates signed by these, so a separate CA store is used for the CILogon and DataONE root CAs.
 
-Two separate certificate chains are available. One is used for the DataONE
-production environment and one is used for all the testing and development
-environments. Only the DataONE CA differs between the chains.
+Two separate certificate chains are available. One is used for the DataONE production environment and one is used for all the testing and development environments. Only the DataONE CA differs between the chains.
 
   Create a folder for the CA certificates::
 

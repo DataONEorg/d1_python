@@ -1,8 +1,7 @@
 Build and install
 =================
 
-The :term:`DataONE Test Utilities for Python` are distributed via PyPI, the
-Python Package Index.
+The :term:`DataONE Test Utilities for Python` are distributed via PyPI, the Python Package Index.
 
   Set up server packages:
 

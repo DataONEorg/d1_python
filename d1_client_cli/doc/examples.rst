@@ -8,18 +8,13 @@ Examples
 Viewing and manipulating the session variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Viewing and manipulating the :ref:`session variables <session_variables>`
-used when performing operations against the :term:`DataONE` infrastructure
-via the DataONE Command Line Interface (CLI).
+Viewing and manipulating the :ref:`session variables <session_variables>` used when performing operations against the :term:`DataONE` infrastructure via the DataONE Command Line Interface (CLI).
 
-If desired, the session variables can be :ref:`reset` back to their defaults
-(useful if they were modified by an existing ``.dataone_cli.conf`` file at
-startup)::
+If desired, the session variables can be :ref:`reset` back to their defaults (useful if they were modified by an existing ``.dataone_cli.conf`` file at startup)::
 
   > reset
 
-Set the authentication session variables for authenticated access using a
-certificate from CILogon (downloaded to the default location in /tmp)::
+Set the authentication session variables for authenticated access using a certificate from CILogon (downloaded to the default location in /tmp)::
 
   > set anonymous false
   > set cert-file none
@@ -45,8 +40,7 @@ Exit the CLI::
 Searching for Science Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A scientist can discover and download Science Data to leverage them in
-their own research.
+A scientist can discover and download Science Data to leverage them in their own research.
 
 Load the session variables from the file created in the previous step::
 
@@ -66,8 +60,7 @@ Restrict the search to a specific time or later::
   > set from-date 1998-01-01T05:00:00
   > search
 
-Modify the search parameters to find only Science Data that originated from
-the "DEMO3" :term:`MN` and search::
+Modify the search parameters to find only Science Data that originated from the "DEMO3" :term:`MN` and search::
 
   > set query origin_mn:DEMO3
   > search
@@ -76,8 +69,7 @@ The search terms can also be specified after the "search" command::
 
   > search barnacle
 
-Modify the search parameters to find only Science Data that are of type
-text/csv and search again::
+Modify the search parameters to find only Science Data that are of type text/csv and search again::
 
   > set format-id text/csv
   > search barnacle
@@ -103,8 +95,7 @@ Download Science Data Object and save to local file::
 Downloading System Metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-System Metadata is an XML document that contains additional information about
-a Science Data Object.
+System Metadata is an XML document that contains additional information about a Science Data Object.
 
 Retrieve the System Metadata and display it::
 
@@ -136,8 +127,7 @@ See :ref:`authentication` for more information.
 Uploading Science Data Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A scientist can upload a set of Science Data to benefit from the services
-provided by DataONE.
+A scientist can upload a set of Science Data to benefit from the services provided by DataONE.
 
 Select :term:`MN` to which to upload the Science Data Object::
 
@@ -170,8 +160,7 @@ Perform all operations in the queue::
 
   > run
 
-Store the settings in ``.dataone_cli.conf`` for use when creating similar
-Science Data Objects later::
+Store the settings in ``.dataone_cli.conf`` for use when creating similar Science Data Objects later::
 
   > save
 

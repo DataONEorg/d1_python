@@ -1,17 +1,11 @@
 Obtain and install the server side certificate
 ==============================================
 
-GMN authenticates to incoming connections from :term:`DataONE` :term:`client`\ s
-and other parts of the DataONE infrastructure, such as :term:`CN`\ s by
-providing a :term:`server side certificate` during the SSL/TLS handshake.
+GMN authenticates to incoming connections from :term:`DataONE` :term:`client`\ s and other parts of the DataONE infrastructure, such as :term:`CN`\ s by providing a :term:`server side certificate` during the SSL/TLS handshake.
 
-All nodes that are registered with DataONE must have a valid server side
-certificate, issued by a publicly trusted :term:`CA` such as VeriSign or Thawte.
+All nodes that are registered with DataONE must have a valid server side certificate, issued by a publicly trusted :term:`CA` such as VeriSign or Thawte.
 
-The trusted certificate is purchased through the same procedure as for any
-secure web site. Organizations typically have established procedures for
-obtaining these certificates or may be using wildcard certificates. The
-procedure below assumes that a valid certificate has already been obtained.
+The trusted certificate is purchased through the same procedure as for any secure web site. Organizations typically have established procedures for obtaining these certificates or may be using wildcard certificates. The procedure below assumes that a valid certificate has already been obtained.
 
 
 Setup the server side certificate and private key

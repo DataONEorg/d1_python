@@ -8,8 +8,7 @@ Name                      Default                   Type     Description
 ========================= ========================= ======== ======================================================================================
 **CLI configuration**
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-_`verbose`                False                     Boolean  Display more information
-_`editor`                 nano                      String   Editor to use when editing the queue
+_`verbose`                False                     Boolean  Display more information _`editor`                 nano                      String   Editor to use when editing the queue
 ------------------------- ------------------------- -------- --------------------------------------------------------------------------------------
 **Target Nodes**
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -18,8 +17,7 @@ _`mn-url`                 https://localhost/mn/     String   Node to which to co
 ------------------------- ------------------------- -------- --------------------------------------------------------------------------------------
 **Authentication**
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-_`anonymous`              True                      Boolean  Ignore any installed certificates and connect anonymously
-_`cert-file`              None                      String   Filesystem path to client certificate
+_`anonymous`              True                      Boolean  Ignore any installed certificates and connect anonymously _`cert-file`              None                      String   Filesystem path to client certificate
 _`key-file`               None                      String   Filesystem path to the client certificate private key. Not required if the certificate
                                                              provided with ``certpath`` contains both the public and private keys
 ------------------------- ------------------------- -------- --------------------------------------------------------------------------------------

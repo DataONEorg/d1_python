@@ -1,9 +1,7 @@
 ONEMercury Integration
 ======================
 
-Search/discovery for ONEDrive can be exposed in a web interface based on
-ONEMercury. The interface would let users search for and discover objects. After
-finding the objects, they would be accessed through ONEDrive.
+Search/discovery for ONEDrive can be exposed in a web interface based on ONEMercury. The interface would let users search for and discover objects. After finding the objects, they would be accessed through ONEDrive.
 
 
 ONEMercury

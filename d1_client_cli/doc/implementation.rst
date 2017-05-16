@@ -92,8 +92,7 @@ OperationExecuter:
 Utility classes
 ---------------
 
-These are used throughout the main classes and so are kept out of main hierarchy
-for readability.
+These are used throughout the main classes and so are kept out of main hierarchy for readability.
 
 .. graphviz::
 

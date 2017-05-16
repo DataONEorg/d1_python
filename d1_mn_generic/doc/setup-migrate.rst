@@ -1,7 +1,7 @@
 GMN v2 migration
 ================
 
-This section describes how to migrate to GMN v2 from an existing, operational instance of GMN v1. If you are working on a fresh install, start at :doc:`setup-local`.
+This section describes how to migrate to GMN v2 from an existing, operational instance of GMN v1. If you are working on a fresh install, start at :doc:`setup`.
 
 Because of differences in how GMN v1 and GMN v2 store System Metadata and Science Objects, there is no direct `pip` based upgrade path from v1 to v2. Instead, v2 is installed side by side with v1 and an automatic process migrates settings and contents from v1 to v2 and switches Apache over to the new version.
 

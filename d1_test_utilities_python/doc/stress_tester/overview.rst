@@ -1,7 +1,5 @@
-The Member Node Stress Tester is a system that generates synthetic queries for
-Member Nodes. It can perform load testing on DataONE Member Node APIs such as
-`MNCore.getLogRecords()`, `MNRead.listObjects()` and `MNStorage.create()` and
-combinations of these.
+The Member Node Stress Tester is a system that generates synthetic queries for Member Nodes. It can perform load testing on DataONE Member Node APIs such as
+`MNCore.getLogRecords()`, `MNRead.listObjects()` and `MNStorage.create()` and combinations of these.
 
 
 .. graphviz::

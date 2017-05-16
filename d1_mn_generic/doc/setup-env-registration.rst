@@ -1,15 +1,9 @@
 Register the new Member Node with DataONE
 =========================================
 
-A Member Node (MN) integrates itself into DataONE through a process called Node
-Registration. Registering the MN allows the Coordinating Nodes (CNs) to
-synchronize content, index the metadata and resource maps, and replicate its
-content to other MNs.
+A Member Node (MN) integrates itself into DataONE through a process called Node Registration. Registering the MN allows the Coordinating Nodes (CNs) to synchronize content, index the metadata and resource maps, and replicate its content to other MNs.
 
-MNs go through a testing phase before being registered in the DataONE production
-environment used by the public. This document describes how to register the
-new MN in a test environment. When the MN is ready to be registered in the
-production environment, the same procedure is used.
+MNs go through a testing phase before being registered in the DataONE production environment used by the public. This document describes how to register the new MN in a test environment. When the MN is ready to be registered in the production environment, the same procedure is used.
 
 Registering the MN in a testing environment involves the following steps:
 
@@ -28,17 +22,11 @@ Perform the steps in order, as each step depends on earlier steps.
 Create a DataONE identity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This step must be performed by the person who will be the contact for the new
-MN. The contact person is often also the administrator for the MN.
+This step must be performed by the person who will be the contact for the new MN. The contact person is often also the administrator for the MN.
 
-Each DataONE environment has a web-based Identity Manager where DataONE
-identities are created and maintained. To create a DataONE identity, you will
-use the Identity Manager to authenticate with a :term:`CILogon`-recognized
-identity, and then attach your name and contact email. At this point, DataONE
-will validate the information manually.
+Each DataONE environment has a web-based Identity Manager where DataONE identities are created and maintained. To create a DataONE identity, you will use the Identity Manager to authenticate with a :term:`CILogon`-recognized identity, and then attach your name and contact email. At this point, DataONE will validate the information manually.
 
-To register the administrative contact's DataONE identity in the target
-environment, perform the following steps:
+To register the administrative contact's DataONE identity in the target environment, perform the following steps:
 
 #. Navigate to the Identity Manager of the target environment:
 
@@ -67,7 +55,7 @@ environment, perform the following steps:
 #. DataONE requires that DataONE subjects that are to be used as contacts for
    MNs be verified. To verify the account, send an email to support@dataone.org.
    In the email, include the identity string obtained in the step above and request
-   that the account be verified.  You do not need to wait for a reply to continue
+   that the account be verified. You do not need to wait for a reply to continue
    to the next step.
 
 
@@ -76,12 +64,10 @@ environment, perform the following steps:
 Configure the Member Node information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most of the values that are set up in this section are described in the `Node
-document section in the architecture documentation
+Most of the values that are set up in this section are described in the `Node document section in the architecture documentation
 <https://releases.dataone.org/online/api-documentation-v2.0.1/apis/Types.html#Types.Node>`_.
 
-The Node document is a set of values that describe a MN or CN, its internet
-location, and the services it supports.
+The Node document is a set of values that describe a MN or CN, its internet location, and the services it supports.
 
   Modify the following settings:
 
@@ -157,9 +143,7 @@ location, and the services it supports.
 Submit Member Node information to DataONE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Member Node information is submitted to DataONE in a Node document. GMN
-automatically generates the Node document based on the settings configured in
-the previous step.
+The Member Node information is submitted to DataONE in a Node document. GMN automatically generates the Node document based on the settings configured in the previous step.
 
   After editing ``settings_site.py``, check if the Node document is successfully
   generated::
@@ -183,15 +167,11 @@ the previous step.
 
   * Check for a message saying that the registration was successful.
 
-After running the script or running an automated registration, the Member Node
-should email support@dataone.org to notify of the registration request.
+After running the script or running an automated registration, the Member Node should email support@dataone.org to notify of the registration request.
 
 
 DataONE evaluates the submission
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 DataONE evaluates the submitted Node document and contacts the person listed as
-*contactSubject* in the Node document by email with the outcome of the approval
-process. After the node has been approved, the MN is part of the infrastructure
-environment in which it has been registered, and the CNs in that environment will
-start processing the information on the node.
+*contactSubject* in the Node document by email with the outcome of the approval process. After the node has been approved, the MN is part of the infrastructure environment in which it has been registered, and the CNs in that environment will start processing the information on the node.

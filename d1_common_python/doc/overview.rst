@@ -1,9 +1,7 @@
-The :doc:`/common/index` provides functionality commonly needed by clients,
-servers and other applications that interact with the :term:`DataONE`
-infrastructure via Python. This includes handling of the DataONE XML types,
-X.509 v3 certificates with DataONE extension and Multipart documents as used by
-DataONE.
+The :doc:`/common/index` is a component of the DataONE Investigator Toolkit (ITK). It forms the foundation on which higher level components in the DataONE Python stack are built. It provides functionality commonly needed by clients, servers and other applications that interact with the :term:`DataONE` infrastructure, including:
 
-This library forms the basis on which the higher level clients and servers in
-:doc:`/client/index` are built. Before building directly on top of this library,
-check if what you need is available there.
+* Serializing, deserializing, validating and type conversions for the DataONE XML types
+* Parsing and generating X.509 v3 certificates with DataONE extension
+* Parsing and generating OAI-ORE Resource Maps as used by DataONE
+* Utilities for working with XML documents, URLs, date-times, etc, in the context of DataONE
+

@@ -1,25 +1,19 @@
 Select the DataONE Tier
 =======================
 
-DataONE has defined several tiers, each of which designates a certain level of
-functionality exposed by the Member Node. The tiers enable Member Nodes to
-implement only the functionality for the level at which they wish to participate
-in the DataONE infrastructure.
+DataONE has defined several tiers, each of which designates a certain level of functionality exposed by the Member Node. The tiers enable Member Nodes to implement only the functionality for the level at which they wish to participate in the DataONE infrastructure.
 
 The tiers are as follows:
 
 ======= ========================================================================
-Tier 1  Read, public objects
-Tier 2  Access controlled objects (authentication and authorization)
+Tier 1  Read, public objects Tier 2 Access controlled objects (authentication and authorization)
 Tier 3  Write (create, update and delete objects)
 Tier 4  Replication target
 ======= ========================================================================
 
-Each tier implicitly includes all lower numbered tiers. For instance, a Tier 3
-Node must implement tiers 1, 2 and 3.
+Each tier implicitly includes all lower numbered tiers. For instance, a Tier 3 Node must implement tiers 1, 2 and 3.
 
-GMN supports all tiers. To select the tier for your Member Node, take the
-following into account:
+GMN supports all tiers. To select the tier for your Member Node, take the following into account:
 
 * A Tier 1 Node is typically used for exposing existing data to DataONE. As
   there is no support for manipulating the data through DataONE interfaces in

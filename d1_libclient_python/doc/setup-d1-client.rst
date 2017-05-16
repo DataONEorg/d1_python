@@ -1,8 +1,7 @@
 Installing DataONE Client Library for Python
 ============================================
 
-:term:`DataONE Common Library for Python` is distributed via PyPI, the Python
-Package Index.
+:term:`DataONE Common Library for Python` is distributed via PyPI, the Python Package Index.
 
   Set up server packages:
 
@@ -24,7 +23,6 @@ Package Index.
     $ sudo pip install dataone.libclient
 
 
-The library can be tested by running one of the included usage examples. The
-examples can be found in the `dist-packages` folder, for instance::
+The library can be tested by running one of the included usage examples. The examples can be found in the `dist-packages` folder, for instance::
 
   /usr/local/lib/python2.6/dist-packages/examples/

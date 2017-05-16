@@ -1,10 +1,3 @@
-The :doc:`/test/index` package contains various utilities for testing DataONE
-infrastructure components and clients. These include the :doc:`Instance
-Generator </test/instance_generator/index>`, used for creating randomized System
-Metadata documents, and the :doc:`Stress Tester </test/stress_tester/index>`,
-used for stress testing of Member Node implementations. The stress_tester can
-create many concurrent connections to a Member Node and simultaneously create
-any number of randomly generated objects while running queries and object
-retrievals. There are also various :doc:`Utilities </test/utilities/index>`.
+The :doc:`/test/index` package contains various utilities for testing DataONE infrastructure components and clients. These include the :doc:`Instance Generator </test/instance_generator/index>`, used for creating randomized System Metadata documents, and the :doc:`Stress Tester </test/stress_tester/index>`, used for stress testing of Member Node implementations. The stress_tester can create many concurrent connections to a Member Node and simultaneously create any number of randomly generated objects while running queries and object retrievals. There are also various :doc:`Utilities </test/utilities/index>`.
 
 

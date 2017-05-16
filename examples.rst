@@ -1,7 +1,6 @@
 d1_pyore Examples
 =================
 
-
 A. Create an OAI-ORE document from a list of PIDs
 -------------------------------------------------
 
@@ -27,7 +26,7 @@ Generate an OAI-ORE document by::
   cat pids.txt | pids2ore
 
 
-The rdf-xml ORE document will be sent to stdout. Different formats (e.g. n3, turtle, json-ld) may be specified with the ``--format`` parameter. 
+The rdf-xml ORE document will be sent to stdout. Different formats (e.g. n3, turtle, json-ld) may be specified with the ``--format`` parameter.
 
 RDF-xml output from the above example:
 

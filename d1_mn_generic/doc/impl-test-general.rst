@@ -1,10 +1,7 @@
 Testing and debugging
 =====================
 
-In production, GMN is always served over SSL with an optional :term:`client side
-certificate`. For testing and debugging, GMN must be served over HTTP because
-the Django development server does not support HTTPS. In that scenario, it is
-not possible for the client to provide a certificate.
+In production, GMN is always served over SSL with an optional :term:`client side certificate`. For testing and debugging, GMN must be served over HTTP because the Django development server does not support HTTPS. In that scenario, it is not possible for the client to provide a certificate.
 
 .. graphviz::
 
@@ -57,28 +54,21 @@ Figure: The various scenarios that GMN can be served under.
 Integration tests against production instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-<TODO: Add instructions on how to run the integration tests with a valid
-certificate signed by CILogon>
+<TODO: Add instructions on how to run the integration tests with a valid certificate signed by CILogon>
 
 
 Integration tests against debug instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The integration tests are by deafult set up to assume that the GMN instance they
-connect to is in debug mode and they should all pass without any additional
-configuration.
+The integration tests are by deafult set up to assume that the GMN instance they connect to is in debug mode and they should all pass without any additional configuration.
 
 
 Browser testing against production instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In some cases, it's convenient to test GMN via a browser though only the GET
-based REST calls are conveniently reproducible from a browser. These
-instructions focus on `Firefox <http://www.mozilla.com/firefox>`_.
+In some cases, it's convenient to test GMN via a browser though only the GET based REST calls are conveniently reproducible from a browser. These instructions focus on `Firefox <http://www.mozilla.com/firefox>`_.
 
-GMN will authenticate with a :term:`server side certificate` signed by CILogon.
-Set the browser up to accept this certificate by adding the CILogon CA
-certificates to the browser's trusted CA store:
+GMN will authenticate with a :term:`server side certificate` signed by CILogon. Set the browser up to accept this certificate by adding the CILogon CA certificates to the browser's trusted CA store:
 
 * Open the Certificate Manager (Edit | Preferences | Advanced | Encryption |
   View Certificates)
@@ -88,33 +78,23 @@ certificates to the browser's trusted CA store:
 
 Repeat with the ``cilogon-openid.pem`` and ``cilogon-silver.pem`` certificates.
 
-The functionality accessible by the Public principal through GET based REST
-calls can now be tested.
+The functionality accessible by the Public principal through GET based REST calls can now be tested.
 
-To test functionality accessible only to authenticated users, the browser must
-be set up to provide a valid certificate signed by CILogon.
+To test functionality accessible only to authenticated users, the browser must be set up to provide a valid certificate signed by CILogon.
 
-<TODO: Add instructions on how to obtain a certificate from CILogon and install
-it in Firefox>
+<TODO: Add instructions on how to obtain a certificate from CILogon and install it in Firefox>
 
 
 Browser testing against debug instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In debug mode, GMN supports providing a simulated certificate via :term:`vendor
-specific extensions`. In this mode, the session object that a certificate would
-normally contain is passed to GMN via a custom HTTP header. To enable Firefox to
-provide the header, install a Firefox extension such as `Modify Headers
+In debug mode, GMN supports providing a simulated certificate via :term:`vendor specific extensions`. In this mode, the session object that a certificate would normally contain is passed to GMN via a custom HTTP header. To enable Firefox to provide the header, install a Firefox extension such as `Modify Headers
 <https://addons.mozilla.org/en-us/firefox/addon/modify-headers/>`_.
 
-<TODO: Add instructions on how to use the Modify Headers extension to add a
-simulated certificate>
+<TODO: Add instructions on how to use the Modify Headers extension to add a simulated certificate>
 
 
 Uploading test objects
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The create() call accept a :term:`vendor specific extensions` called
-VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for
-the object is accepted without any information being added or overwritten by
-the MN.
+The create() call accept a :term:`vendor specific extensions` called VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for the object is accepted without any information being added or overwritten by the MN.
