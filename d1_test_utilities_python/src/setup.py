@@ -22,13 +22,11 @@
 """
 import setuptools
 
-import d1_test
-
 
 def main():
   setuptools.setup(
     name='dataone.test_utilities',
-    version=d1_test.__version__,
+    version='x',
     description='Utilities for testing DataONE infrastructure components',
     author='DataONE Project',
     author_email='developers@dataone.org',

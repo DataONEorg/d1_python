@@ -22,13 +22,11 @@
 """
 import setuptools
 
-import d1_client_cli
-
 
 def main():
   setuptools.setup(
     name='dataone.cli',
-    version=d1_client_cli.__version__,
+    version='x',
     description='Command-Line Interface (CLI) for DataONE',
     author='DataONE Project',
     author_email='developers@dataone.org',

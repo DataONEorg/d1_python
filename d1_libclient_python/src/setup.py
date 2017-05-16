@@ -22,13 +22,11 @@
 """
 import setuptools
 
-import d1_client
-
 
 def main():
   setuptools.setup(
     name='dataone.libclient',
-    version=d1_client.__version__,
+    version='x',
     description='A DataONE client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -37,16 +35,16 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.1.0rc2',
+      'dataone.common == 2.3.0rc1',
       #
-      'cachecontrol == 0.11.7',
+      'cachecontrol == 0.12.2',
       'google.foresite-toolkit == 1.3.3',
-      'python-dateutil == 2.1',
+      'python-dateutil == 2.6.0',
       'pyxb = x',
       'rdflib == 4.2.2',
-      'rdflib-jsonld == x'
-      'requests-toolbelt == 0.7.0',
-      'requests[security] == 2.12.4',
+      'rdflib-jsonld == 0.4.0',
+      'requests-toolbelt == 0.7.1',
+      'requests[security] == 2.14.2',
       'responses = x',
       'setuptools = x',
     ],

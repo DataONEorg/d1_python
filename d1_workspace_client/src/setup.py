@@ -22,13 +22,11 @@
 """
 import setuptools
 
-import d1_workspace
-
 
 def main():
   setuptools.setup(
     name='dataone.workspace_client',
-    version=d1_workspace.__version__,
+    version='x',
     description='A DataONE Workspace client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -37,11 +35,10 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.libclient == 1.2.6',
-      #
-      'pyxb == 2.2.1'
-      'requests == 2.2.1'
-      'setuptools == 2.2.1'
+      'dataone.libclient == 2.3.0rc1',
+      'pyxb == 1.2.5',
+      'requests == 2.14.2',
+      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

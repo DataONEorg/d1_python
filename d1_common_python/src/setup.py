@@ -22,13 +22,11 @@
 """
 import setuptools
 
-import d1_common
-
 
 def main():
   setuptools.setup(
     name='dataone.common',
-    version=d1_common.__version__,
+    version='x',
     description=(
       'Contains functionality common to projects that interact with '
       'the DataONE infrastructure via Python'

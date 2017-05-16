@@ -23,8 +23,6 @@
 import setuptools
 import sys
 
-import d1_client_onedrive
-
 # http://www.py2exe.org/index.cgi/WorkingWithVariousPackagesAndModules
 #
 # lxml
@@ -80,7 +78,7 @@ else:
 def main():
   setuptools.setup(
     name='dataone.onedrive',
-    version=d1_client_onedrive.__version__,
+    version='x',
     description='Filesystem access to the DataONE Workspace',
     author='DataONE Project',
     author_email='developers@dataone.org',
