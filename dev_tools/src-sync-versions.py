@@ -113,19 +113,33 @@ def update_deps_on_file(args, setup_path, diff_only, d1_version):
 
 
 def update_deps_on_tree(r, d1_version):
-  dep_node = find_install_requires_node(r)
+  r = update_install_requires(r, d1_version)
+  r = update_version(r, d1_version)
+  return r
+
+
+def update_install_requires(r, d1_version):
+  dep_node = find_call_argument_node(r, 'install_requires')
   for str_node in dep_node.value:
     # logging.debug(str_node.help(True))
     update_dep_str(str_node, d1_version)
   return r
 
 
-def find_install_requires_node(r):
+def update_version(r, d1_version):
+  n = find_call_argument_node(r, 'version')
+  n.value = '\'{}\''.format(d1_version)
+  return r
+
+
+def find_call_argument_node(r, value_str):
   node_list = r('CallArgumentNode')
   for n in node_list:
-    if hasattr(n.target, 'value') and n.target.value == 'install_requires':
+    if hasattr(n.target, 'value') and n.target.value == value_str:
       return n
-  raise UpdateException('install_requires node not found')
+  raise UpdateException(
+    'CallArgumentNode not found. value="{}"'.format(value_str)
+  )
 
 
 def update_dep_str(str_node, d1_version):
