@@ -45,16 +45,16 @@ The GMN stack contains binary components that are built automatically during the
 
   Install the GMN software stack from PyPI into a Python virtual environment::
 
-    $ sudo pip install --upgrade virtualenv; \
-    sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}; \
-    cd /var/local/dataone; \
-    sudo chown gmn:www-data gmn_venv; \
-    sudo su gmn
+    $ sudo pip install --upgrade virtualenv
+    $ sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}
+    $ cd /var/local/dataone
+    $ sudo chown gmn:www-data gmn_venv
+    $ sudo su gmn
 
-    $ virtualenv gmn_venv; \
-    source ./gmn_venv/bin/activate; \
-    pip install --upgrade dataone.gmn
-
+    $ virtualenv --distribute gmn_venv
+    $ . ./gmn_venv/bin/activate
+    $ pip install --upgrade setuptools==33.1.1
+    $ pip install dataone.gmn
     $ exit
 
 
@@ -66,3 +66,7 @@ The GMN stack contains binary components that are built automatically during the
   interactively, add::
 
     PATH=/var/local/dataone/gmn_venv/bin/:$PATH
+
+
+
+
