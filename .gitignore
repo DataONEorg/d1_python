@@ -4,11 +4,7 @@ certs/
 settings_site.py
 stores/
 d1_objects/
-/dev_tools/devpi-env.sh
-
-# Coverage
-.coverage
-cover/
+/dev_tools/devpi-settings.sh
 
 # IntelliJ / PyCharm
 .idea/
@@ -54,13 +50,15 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
-htmlcov/
-.tox/
-.cache
-nosetests.xml
-coverage.xml
 *,cover
+.cache
+.coverage
 .hypothesis/
+.tox/
+cover/
+coverage.xml
+htmlcov/
+nosetests.xml
 
 # Translations
 *.mo
@@ -79,3 +77,4 @@ target/
 # Ipython Notebook
 .ipynb_checkpoints
 
+/htmlcov/

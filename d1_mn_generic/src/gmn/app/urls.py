@@ -140,7 +140,6 @@ urlpatterns = [
     app.views.external.put_archive,
     name='put_archive',
   ),
-
   # Tier 4: Replication API (MNReplication)
   # MNReplication.replicate() - POST /replicate
   url(
