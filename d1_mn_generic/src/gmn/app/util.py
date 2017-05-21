@@ -140,7 +140,7 @@ def coerce_put_post(request):
 # noinspection PyProtectedMember
 def add_basic_auth_header_if_enabled(headers):
   if django.conf.settings.PROXY_MODE_BASIC_AUTH_ENABLED:
-    headers._update((_mk_http_basic_auth_header(),))
+    headers.update((_mk_http_basic_auth_header(),))
 
 
 def _mk_http_basic_auth_header():

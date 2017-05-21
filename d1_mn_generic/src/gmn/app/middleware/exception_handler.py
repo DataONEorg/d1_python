@@ -164,8 +164,8 @@ class ExceptionHandler(object):
     src_path, src_line_num = self._get_project_location()
     try:
       subprocess.call([
-        os.path.expanduser(django.conf.settings.PYCHARM_BIN), '--line',
-        src_line_num, src_path
+        os.path.expanduser(django.conf.settings.DEBUG_PYCHARM_BIN_PATH),
+        '--line', src_line_num, src_path
       ])
     except subprocess.CalledProcessError as e:
       logging.warning(

@@ -107,6 +107,30 @@ def is_valid_sid_for_chain_if_specified(sysmeta_pyxb, pid):
       )
 
 
+def does_not_contain_replica_sections(sysmeta_pyxb):
+  """Assert that {sysmeta_pyxb} does not contain any replica information. A new
+  object created via create() or update() cannot already have replicas.
+  """
+  if len(getattr(sysmeta_pyxb, 'replica', [])):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, u'Object cannot contain a replica section. pid="{}"'.
+      format(sysmeta_pyxb.identifier.value()),
+      identifier=sysmeta_pyxb.identifier.value()
+    )
+
+
+def sysmeta_is_not_archived(sysmeta_pyxb):
+  """Assert that {sysmeta_pyxb} does not have have the archived flag set. A new
+  object created via create() or update() cannot already be archived.
+  """
+  if getattr(sysmeta_pyxb, 'archived', False):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, u'Object cannot have the archived flag set. pid="{}"'.
+      format(sysmeta_pyxb.identifier.value()),
+      identifier=sysmeta_pyxb.identifier.value()
+    )
+
+
 def is_did(did):
   if app.sysmeta.is_did(did):
     raise d1_common.types.exceptions.NotFound(
@@ -158,8 +182,8 @@ def has_matching_modified_timestamp(new_sysmeta_pyxb):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'dateSysMetadataModified of updated System Metadata must match existing. '
-      u'pid="{}" old_ts="{}" new_ts="{}"'.format(pid, old_ts, new_ts),
-      identifier=pid
+      u'pid="{}" old_ts="{}" new_ts="{}"'.format(pid, old_ts,
+                                                 new_ts), identifier=pid
     )
 
 
@@ -319,13 +343,15 @@ def url_is_retrievable(url):
           url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
         )
     ) as r:
-      r.raw.read(1)
       r.raise_for_status()
-  except requests.RequestException as e:
+      for _ in r.iter_content(chunk_size=1):
+        return True
+    raise IOError(u'Object appears to be empty')
+  except Exception as e:
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Invalid URL specified for remote storage. The referenced object is not '
-      u'retrievable. url="{}", error="{}"'.format(url, e.message)
+      u'retrievable. url="{}", error="{}"'.format(url, str(e))
     )
 
 

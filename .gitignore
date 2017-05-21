@@ -1,9 +1,12 @@
-# DataONE
+# GMN
 certificates/
 certs/
+d1_objects/
+secret_key.txt
 settings_site.py
 stores/
-d1_objects/
+
+# DataONE dev tools
 /dev_tools/devpi-settings.sh
 
 # IntelliJ / PyCharm
