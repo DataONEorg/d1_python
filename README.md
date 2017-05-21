@@ -6,52 +6,41 @@ See the [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/l
 
 [![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python)
 [![Coverage Status](https://coveralls.io/repos/github/DataONEorg/d1_python/badge.svg?branch=master)](https://coveralls.io/github/DataONEorg/d1_python?branch=master)
+[![PyPI version](https://badge.fury.io/py/dataone.common.svg)](https://badge.fury.io/py/dataone.common)
 
-## Releases on the Python Package Index (PyPI)
-
-### v2 and v1 API
+#### v2 and v1 API
 
 * DataONE Generic Member Node:
-[![PyPI version](https://badge.fury.io/py/dataone.gmn.svg)](https://badge.fury.io/py/dataone.gmn)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.gmn)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/gmn/index.html)
+[PyPI](https://pypi.python.org/pypi/dataone.gmn) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/gmn/index.html)
 * DataONE Client Library for Python:
-[![PyPI version](https://badge.fury.io/py/dataone.libclient.svg)](https://badge.fury.io/py/dataone.libclient)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.libclient)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/client/index.html)
-* DataONE Common Library for Python:
-[![PyPI version](https://badge.fury.io/py/dataone.common.svg)](https://badge.fury.io/py/dataone.common)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.common)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/common/index.html)
+[PyPI](https://pypi.python.org/pypi/dataone.libclient) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/client/index.html)
+* DataONE Common Library for Python: &ndash;
+[PyPI](https://pypi.python.org/pypi/dataone.common) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/common/index.html)
+* DataONE Test Utilities:
+[PyPI](https://pypi.python.org/pypi/dataone.test_utilities) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/test/index.html)
 
-### v1 API
+#### v1 API
 
 * DataONE Command Line Client (CLI):
-[![PyPI version](https://badge.fury.io/py/dataone.cli.svg)](https://badge.fury.io/py/dataone.cli)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.cli)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/cli/index.html)
+[PyPI](https://pypi.python.org/pypi/dataone.cli) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/cli/index.html)
 * DataONE ONEDrive:
-[![PyPI version](https://badge.fury.io/py/dataone.onedrive.svg)](https://badge.fury.io/py/dataone.onedrive)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.onedrive)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/onedrive/index.html)
-* DataONE Test Utilities:
-[![PyPI version](https://badge.fury.io/py/dataone.test_utilities.svg)](https://badge.fury.io/py/dataone.test_utilities)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.test_utilities)
-&ndash; [Docs](http://dataone-python.readthedocs.io/en/latest/test/index.html)
+[PyPI](https://pypi.python.org/pypi/dataone.onedrive) &ndash;
+[Docs](http://dataone-python.readthedocs.io/en/latest/onedrive/index.html)
 * DataONE Certificate Extensions:
-[![PyPI version](https://badge.fury.io/py/dataone.certificate_extensions.svg)](https://badge.fury.io/py/dataone.certificate_extensions)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.certificate_extensions)
+[PyPI](https://pypi.python.org/pypi/dataone.certificate_extensions)
 * DataONE Gazetteer:
-[![PyPI version](https://badge.fury.io/py/dataone.gazetteer.svg)](https://badge.fury.io/py/dataone.gazetteer)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.gazetteer)
+[PyPI](https://pypi.python.org/pypi/dataone.gazetteer)
 * DataONE Ticket Generator:
-[![PyPI version](https://badge.fury.io/py/dataone.ticket_generator.svg)](https://badge.fury.io/py/dataone.ticket_generator)
-&ndash; [PyPI](https://pypi.python.org/pypi/dataone.ticket_generator)
+[PyPI](https://pypi.python.org/pypi/dataone.ticket_generator)
 * Google Foresite Toolkit:
-[![PyPI version](https://badge.fury.io/py/google.foresite-toolkit.svg)](https://badge.fury.io/py/google.foresite-toolkit)
-&ndash; [PyPI](https://pypi.python.org/pypi/google.foresite-toolkit)
+[PyPI](https://pypi.python.org/pypi/google.foresite-toolkit)
 
-## Contributing
+#### Contributing
 
 Pull Requests (PRs) are welcome! Before you start coding, feel free to reach out to us and let us know what you plan to implement. We might be able to point you in the right direction.
 
@@ -76,11 +65,11 @@ To set up automatic validation and formatting:
 
 Notes:
 
-* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. A new commit can then be issued. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
+* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. Then, the modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
-* `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring a new commit.
+* `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring the files to be staged and commited again.
 
-* If desired, the number of extra commits caused by reformatting and validation can be reduced with workflow adjustments:
+* If desired, the number of extra staging and commits caused by reformatting and validation can be reduced with workflow adjustments:
 
   * **trailing whitespace**: Use an editor that can strip trailing whitespace on save. E.g., for PyCharm, this setting is at `Editor > General > Strip trailing spaces on Save`.
 
