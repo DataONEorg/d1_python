@@ -48,48 +48,50 @@ import d1_common.types.exceptions
 # App.
 import app.models
 import app.views.asserts
+import app.views.util
 
 
 def add_access_policy_filter(query, request, column_name):
-  q = app.models.Subject.objects.filter(subject__in=request.all_subjects_set)\
+  q = (
+    app.models.Subject.objects.filter(subject__in=request.all_subjects_set)
     .values('permission__sciobj')
+  )
   filter_arg = '{}__in'.format(column_name)
   return query.filter(**{filter_arg: q})
 
 
-# def add_replica_filter(query, request, param_name):
-#   bool_val = request.GET.get(param_name, None)
-#   if bool_val is None:
-#     return query
-#   if bool_val not in (
-#     True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
-#   ):
-#     raise d1_common.types.exceptions.InvalidRequest(
-#       0,
-#       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
-#         param_name, bool_val
-#       )
-#     )
-#   filter_arg = column_name
-#   return query.filter(**{filter_arg: bool_val})
-
-
-def add_bool_filter(query, request, column_name, param_name):
+def add_replica_filter(query, request):
+  param_name = 'replicaStatus'
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
-  if bool_val not in (
-      True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'
-  ):
+  if app.views.util.is_bool_param(bool_val):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
         param_name, bool_val
       )
     )
-  bool_val = bool_val in (True, 1, 'True', 'true', '1')
+  local_replicas_qs = app.models.LocalReplica.objects.all().values('pid__did')
+  if app.views.util.is_true_param(bool_val):
+    return query.filter(**{'pid__did__in': local_replicas_qs})
+  else:
+    return query.exclude(**{'pid__did__in': local_replicas_qs})
+
+
+def add_bool_filter(query, request, column_name, param_name):
+  bool_val = request.GET.get(param_name, None)
+  if bool_val is None:
+    return query
+  if app.views.util.is_bool_param(bool_val):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0,
+      u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
+        param_name, bool_val
+      )
+    )
   filter_arg = column_name
-  return query.filter(**{filter_arg: bool_val})
+  return query.filter(**{filter_arg: app.views.util.is_true_param(bool_val)})
 
 
 def add_datetime_filter(query, request, column_name, param_name, operator):
