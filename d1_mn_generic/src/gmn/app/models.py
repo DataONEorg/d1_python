@@ -119,6 +119,7 @@ class ScienceObject(models.Model):
   modified_timestamp = models.DateTimeField(db_index=True)
   uploaded_timestamp = models.DateTimeField(db_index=True)
   format = models.ForeignKey(ScienceObjectFormat, models.CASCADE)
+  filename = models.CharField(max_length=256, db_index=True, null=True)
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(
     ScienceObjectChecksumAlgorithm, models.CASCADE
@@ -146,6 +147,22 @@ class ScienceObject(models.Model):
   is_archived = models.BooleanField(db_index=True)
   # Internal fields (not used in System Metadata)
   url = models.CharField(max_length=1024, unique=True)
+
+
+# ------------------------------------------------------------------------------
+# MediaType
+# ------------------------------------------------------------------------------
+
+
+class MediaType(models.Model):
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  name = models.CharField(max_length=256, db_index=True)
+
+
+class MediaTypeProperty(models.Model):
+  media_type = models.ForeignKey(MediaType, models.CASCADE)
+  name = models.CharField(max_length=256, db_index=True)
+  value = models.CharField(max_length=256, db_index=True)
 
 
 # ------------------------------------------------------------------------------

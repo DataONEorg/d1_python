@@ -119,6 +119,8 @@ def create(sysmeta_pyxb, url):
   sci_model.pid = app.models.did(pid)
   _base_pyxb_to_model(sci_model, sysmeta_pyxb, url)
   sci_model.save()
+  if _has_media_type_pyxb(sysmeta_pyxb):
+    _media_type_pyxb_to_model(sci_model, sysmeta_pyxb)
   if _has_access_policy_pyxb(sysmeta_pyxb):
     _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
   if _has_replication_policy_pyxb(sysmeta_pyxb):
@@ -139,6 +141,8 @@ def update(sysmeta_pyxb, url=None, skip_immutable=False):
     sci_model, sysmeta_pyxb, url=url, skip_immutable=skip_immutable
   )
   sci_model.save()
+  if _has_media_type_pyxb(sysmeta_pyxb):
+    _media_type_pyxb_to_model(sci_model, sysmeta_pyxb)
   if _has_access_policy_pyxb(sysmeta_pyxb):
     _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
   if _has_replication_policy_pyxb(sysmeta_pyxb):
@@ -203,6 +207,8 @@ def get_identifier_type(did):
 def _model_to_pyxb(pid):
   sciobj_model = app.sysmeta_util.get_sci_model(pid)
   sysmeta_pyxb = _base_model_to_pyxb(sciobj_model)
+  if _has_media_type_db(sciobj_model):
+    sysmeta_pyxb.mediaType = _media_type_model_to_pyxb(sciobj_model)
   if _has_access_policy_db(sciobj_model):
     sysmeta_pyxb.accessPolicy = _access_policy_model_to_pyxb(sciobj_model)
   if _has_replication_policy_db(sciobj_model):
@@ -231,6 +237,7 @@ def _base_pyxb_to_model(
     sci_model.serial_version = sysmeta_pyxb.serialVersion
     sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
   sci_model.format = app.models.format(sysmeta_pyxb.formatId)
+  sci_model.filename = sysmeta_pyxb.fileName
   sci_model.checksum = sysmeta_pyxb.checksum.value()
   sci_model.checksum_algorithm = app.models.checksum_algorithm(
     sysmeta_pyxb.checksum.algorithm
@@ -271,6 +278,7 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.dateSysMetadataModified = sciobj_model.modified_timestamp
   base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
   base_pyxb.formatId = sciobj_model.format.format
+  base_pyxb.fileName = sciobj_model.filename
   base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(
     sciobj_model.checksum
   )
@@ -286,6 +294,75 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.seriesId = app.sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
 
   return base_pyxb
+
+
+# ------------------------------------------------------------------------------
+# Media Type
+# ------------------------------------------------------------------------------
+
+# <!--Optional:-->
+# <mediaType name="string">
+#   <!--Zero or more repetitions:-->
+#   <property name="string">string1</property>
+#   <property name="string">string3</property>
+#   <property name="string">string4</property>
+# </mediaType>
+
+
+def _has_media_type_pyxb(sysmeta_pyxb):
+  return hasattr(
+    sysmeta_pyxb, 'mediaType'
+  ) and sysmeta_pyxb.mediaType is not None
+
+
+def _media_type_pyxb_to_model(sci_model, sysmeta_pyxb):
+  _delete_existing_media_type(sysmeta_pyxb)
+  media_type_model = _insert_media_type_name_row(
+    sci_model, sysmeta_pyxb.mediaType
+  )
+  _insert_media_type_property_rows(media_type_model, sysmeta_pyxb.mediaType)
+
+
+def _delete_existing_media_type(sysmeta_pyxb):
+  app.models.MediaType.objects.filter(
+    sciobj__pid__did=sysmeta_pyxb.identifier.value()
+  ).delete()
+
+
+def _insert_media_type_name_row(sci_model, media_type_pyxb):
+  media_type_model = app.models.MediaType(
+    sciobj=sci_model, name=media_type_pyxb.name
+  )
+  media_type_model.save()
+  return media_type_model
+
+
+def _insert_media_type_property_rows(media_type_model, media_type_pyxb):
+  for p in media_type_pyxb.property_:
+    media_type_property_model = app.models.MediaTypeProperty(
+      media_type=media_type_model, name=p.name, value=p.value()
+    )
+    media_type_property_model.save()
+
+
+def _has_media_type_db(sciobj_model):
+  return app.models.MediaType.objects.filter(sciobj=sciobj_model).exists()
+
+
+def _media_type_model_to_pyxb(sciobj_model):
+  media_type_model = app.models.MediaType.objects.get(sciobj=sciobj_model)
+  media_type_pyxb = d1_common.types.dataoneTypes.MediaType()
+  media_type_pyxb.name = media_type_model.name
+
+  for media_type_property_model in app.models.MediaTypeProperty.objects.filter(
+      media_type=media_type_model
+  ):
+    media_type_property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
+      media_type_property_model.value, name=media_type_property_model.name
+    )
+    media_type_pyxb.property_.append(media_type_property_pyxb)
+
+  return media_type_pyxb
 
 
 # ------------------------------------------------------------------------------

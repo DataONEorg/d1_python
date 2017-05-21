@@ -89,6 +89,7 @@ def _validate_jwt_and_get_subject_list(jwt_base64):
   - The JWT could not be decoded.
   - The JWT signature signature was invalid.
   - The JWT claim set contains invalid "Not Before" or "Expiration Time" claims.
+
   Currently, DataONE issues JWTs with only the primary subject. Equivalent
   identities and groups, as set up in the DataONE identity portal, are not
   represented. So the the list will contain either a single subject or be

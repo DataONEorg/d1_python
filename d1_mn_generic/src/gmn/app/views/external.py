@@ -344,7 +344,7 @@ def get_object_list(request):
   query = app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  app.db_filter.add_replica_filter(query, request, 'replicaStatus')
+  app.db_filter.add_replica_filter(query, request)
   query_unsliced = query
   query, start, count = app.db_filter.add_slice_filter(query, request)
   return {
@@ -604,6 +604,8 @@ def put_object(request, old_pid):
 
 def _create(request, sysmeta_pyxb, new_pid):
   app.views.asserts.is_unused(new_pid)
+  app.views.asserts.does_not_contain_replica_sections(sysmeta_pyxb)
+  app.views.asserts.sysmeta_is_not_archived(sysmeta_pyxb)
   # app.views.asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
   app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
   app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])

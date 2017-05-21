@@ -63,7 +63,6 @@ MIDDLEWARE_CLASSES = (
   'app.middleware.response_handler.ResponseHandler',
   'app.middleware.profiling_handler.ProfilingHandler',
   'app.middleware.view_handler.ViewHandler',
-  'app.middleware.startup_handler.StartupHandler',
 )
 
 TEMPLATES = [
@@ -102,8 +101,11 @@ ROOT_URLCONF = 'app.urls'
 
 INSTALLED_APPS = [
   'django.contrib.staticfiles',
+  'app.startup.GMNStartupChecks',
   'app',
 ]
+
+SECRET_KEY = '<Placeholder value. See app.startup.GMNStartupChecks()>'
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.

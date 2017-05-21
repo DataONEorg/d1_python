@@ -71,7 +71,7 @@ DEBUG_PYCHARM = False
 # - If PyCharm is in the path, can typically left at 'pycharm.sh'
 # - If PyCharm is not in path, can be set to an absolute path. E.g.
 #   '~/JetBrains/pycharm'
-PYCHARM_BIN = 'pycharm.sh'
+DEBUG_PYCHARM_BIN = 'pycharm.sh'
 
 # Enable request echo.
 # True:
@@ -221,9 +221,6 @@ NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 # 'up: This node is operating as normal.
 # 'down': This node is currently not in operation.
 NODE_STATE = 'up'
-
-# Create a unique string for this node and do not share it.
-SECRET_KEY = 'MySecretKey'
 
 # Path to the client side certificate that GMN uses when initiating TLS/SSL
 # connections to Coordinating Nodes. The certificate must be in PEM format.

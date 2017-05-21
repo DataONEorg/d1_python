@@ -98,6 +98,8 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
   sysmeta_pyxb.accessPolicy = d1_common.access_policy.normalize(
     sysmeta_pyxb.accessPolicy
   )
+  if sysmeta_pyxb.mediaType is not None:
+    d1_common.xml.sort_value_list_pyxb(sysmeta_pyxb.mediaType.property_)
   if sysmeta_pyxb.replicationPolicy is not None:
     d1_common.xml.sort_value_list_pyxb(
       sysmeta_pyxb.replicationPolicy.preferredMemberNode
