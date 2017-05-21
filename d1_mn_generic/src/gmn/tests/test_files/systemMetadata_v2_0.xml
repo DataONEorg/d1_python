@@ -1,0 +1,85 @@
+<v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <!--Optional:-->
+  <serialVersion>11</serialVersion>
+  <identifier>test_pid</identifier>
+  <formatId>test_format_id</formatId>
+  <size>11</size>
+  <checksum algorithm="SHA1">SHA1</checksum>
+  <!--Optional:-->
+  <submitter>test_submitter</submitter>
+  <rightsHolder>test_rights_holder</rightsHolder>
+  <!--Optional:-->
+  <accessPolicy>
+    <!--1 or more repetitions:-->
+    <allow>
+      <!--1 or more repetitions:-->
+      <subject>subj1</subject>
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj4</subject>
+      <!--1 or more repetitions:-->
+      <permission>read</permission>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <!--1 or more repetitions:-->
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj5</subject>
+      <subject>subj6</subject>
+      <!--1 or more repetitions:-->
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <!--Optional:-->
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
+    <!--Zero or more repetitions:-->
+    <preferredMemberNode>node1</preferredMemberNode>
+    <preferredMemberNode>node2</preferredMemberNode>
+    <preferredMemberNode>node3</preferredMemberNode>
+    <!--Zero or more repetitions:-->
+    <blockedMemberNode>node4</blockedMemberNode>
+    <blockedMemberNode>node5</blockedMemberNode>
+  </replicationPolicy>
+  <!--Optional:-->
+  <obsoletes>test_obsoletes_pid</obsoletes>
+  <!--Optional:-->
+  <obsoletedBy>test_obsoleted_by</obsoletedBy>
+  <!--Optional:-->
+  <archived>true</archived>
+  <!--Optional:-->
+  <dateUploaded>2014-09-18T17:18:33</dateUploaded>
+  <!--Optional:-->
+  <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
+  <!--Optional:-->
+  <originMemberNode>test_originating_mn</originMemberNode>
+  <!--Optional:-->
+  <authoritativeMemberNode>test_authoritative_mn</authoritativeMemberNode>
+  <!--Zero or more repetitions:-->
+  <replica>
+    <replicaMemberNode>node1</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>node2</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2014-05-21T19:02:49-06:00</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>node3</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2015-05-21T19:02:49-06:00</replicaVerified>
+  </replica>
+  <!--Optional:-->
+  <seriesId>test_series_id</seriesId>
+  <!--Optional:-->
+  <mediaType name="test_media_type">
+    <!--Zero or more repetitions:-->
+    <property name="property_name_1">property_value_1</property>
+    <property name="property_name_2">property_value_2</property>
+    <property name="property_name_3">property_value_3</property>
+  </mediaType>
+  <!--Optional:-->
+  <fileName>string</fileName>
+</v2:systemMetadata>
