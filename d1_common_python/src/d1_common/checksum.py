@@ -31,6 +31,7 @@ DEFAULT_CHUNK_SIZE = 1024 * 1024
 
 DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
   'MD5': hashlib.md5,
+  'SHA1': hashlib.sha1,
   'SHA-1': hashlib.sha1,
 }
 
