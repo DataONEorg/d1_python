@@ -52,7 +52,7 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 *,cover
 .cache
-.coverage
+.coverage.*
 .hypothesis/
 .tox/
 cover/
@@ -77,4 +77,3 @@ target/
 # Ipython Notebook
 .ipynb_checkpoints
 
-/htmlcov/
