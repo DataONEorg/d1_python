@@ -57,6 +57,10 @@ def main():
     '--diff', dest='diff_only', action='store_true', default=False,
     help='Show diff and do not modify any files'
   )
+  parser.add_argument(
+    '--move', action='store_true', default=False,
+    help='Move remaining part of test function name to the test\'s docstring'
+  )
 
   args = parser.parse_args()
 
@@ -80,7 +84,7 @@ def main():
       default_excludes=args.default_excludes,
   ):
     try:
-      reindex(module_path, args.diff_only)
+      reindex(module_path, args.diff_only, args.move)
     except Exception as e:
       print 'Operation failed. error="{}" path="{}"'.format(
         module_path, e.message
@@ -89,7 +93,7 @@ def main():
         raise
 
 
-def reindex(module_path, diff_only):
+def reindex(module_path, diff_only, do_move):
   print 'Reindexing: {}'.format(module_path)
   r = util.redbaron_module_path_to_tree(module_path)
   if not has_test_class(r):
@@ -97,31 +101,35 @@ def reindex(module_path, diff_only):
       'Skipped: No Test class in module. path="{}"'.format(module_path)
     )
     return False
-  reindex_test_method(r)
+  reindex_test_method(r, do_move)
   util.update_module_file(r, module_path, diff_only)
 
 
-def reindex_test_method(r):
+def reindex_test_method(r, do_move):
   test_idx = 0
   for node in r('DefNode'):
     if is_test_func(node.name):
       test_idx += 10
-      rename_method(node, test_idx)
+      rename_method(node, test_idx, do_move)
 
 
-def rename_method(node, test_idx):
+def rename_method(node, test_idx, do_move):
   print 'Method: {}'.format(node.name)
-  node.name, post_name_str = gen_func_name(node.name, test_idx)
-  old_doc_str = get_doc_str(node)
-  new_doc_str = gen_doc_str(post_name_str, old_doc_str)
-  if new_doc_str != u'""""""':
-    if has_doc_str(node):
-      node.value[0].value = new_doc_str
-    else:
-      node.value.insert(0, new_doc_str)
+  test_name, test_trailing = split_func_name(node.name)
+  if not do_move:
+    node.name = u'test_{:04d}{}'.format(test_idx, test_trailing)
   else:
-    if has_doc_str(node):
-      node.value.pop(0)
+    node.name = u'test_{:04d}'.format(test_idx)
+    old_doc_str = get_doc_str(node)
+    new_doc_str = gen_doc_str(test_trailing, old_doc_str)
+    if new_doc_str != u'""""""':
+      if has_doc_str(node):
+        node.value[0].value = new_doc_str
+      else:
+        node.value.insert(0, new_doc_str)
+    else:
+      if has_doc_str(node):
+        node.value.pop(0)
 
 
 def is_test_func(func_name):
@@ -150,10 +158,9 @@ def get_doc_str(node):
   return node.value[0].value if has_doc_str(node) else u''
 
 
-def gen_func_name(func_name, test_idx):
-  m = re.match(r'test(_\d*)?_?(.*)', func_name)
-  post_name_str = m.group(2)
-  return u'test_{:04d}'.format(test_idx), post_name_str
+def split_func_name(func_name):
+  m = re.match(r'(test_\D*)\d*_?(.*)', func_name)
+  return m.group(1), m.group(2)
 
 
 def gen_doc_str(post_name_str, old_doc_str):

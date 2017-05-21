@@ -35,6 +35,7 @@ client.get('unknown_pid')
 """
 
 # Stdlib
+import logging
 import re
 
 # D1
@@ -52,13 +53,14 @@ GET_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
 def add_callback(base_url):
+  url_rx = r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)
   responses.add_callback(
     responses.GET,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, GET_ENDPOINT_RX)),
+    re.compile(url_rx),
     callback=_request_callback,
     content_type='',
   )
+  logging.debug('Added callback. method="GET" url_rx="{}"'.format(url_rx))
 
 
 def _request_callback(request):

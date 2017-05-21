@@ -25,7 +25,7 @@ writing specific mock handlers. It disables PyXB deserialization in the client
 and returns a dict with an echo of the request.
 
 If the echoed information is not checked, only the presence of the wrapper and
-being able to call it without error is will be tested.
+being able to call it without error is tested.
 
 Note: The catch_all handler cannot be used together with the mock APIs as it
 patches the _read_dataone_* methods that the other APIs rely on, and redirects

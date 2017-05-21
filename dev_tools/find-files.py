@@ -35,7 +35,8 @@ import file_iterator
 
 def main():
   parser = argparse.ArgumentParser(
-    description='Find files in dir tree with filtering'
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
   )
   parser.add_argument('path', nargs='+', help='File or directory path')
   parser.add_argument('--include', nargs='+', help='Include glob patterns')
