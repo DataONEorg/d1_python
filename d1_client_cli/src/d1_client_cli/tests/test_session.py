@@ -27,22 +27,19 @@ Module d1_client_cli.tests.test_session
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
-import unittest
+import StringIO
 import logging
 import os
 import sys
+import unittest
 import uuid
-import StringIO
 
-# D1
-import d1_common.const
-
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.format_ids as format_ids
+import d1_client_cli.impl.nodes as nodes
 # App
 import d1_client_cli.impl.session as session
-import d1_client_cli.impl.nodes as nodes
-import d1_client_cli.impl.format_ids as format_ids
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_common.const
 
 nodes = nodes.Nodes()
 #  'node_a',

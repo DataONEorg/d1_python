@@ -26,12 +26,10 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import sys
 import unittest
 
-# App
 import onedrive_solr_client
 
 # Example results

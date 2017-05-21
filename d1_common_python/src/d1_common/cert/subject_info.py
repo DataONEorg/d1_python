@@ -38,10 +38,8 @@ Subjects are extracted from the SubjectInfo using the following algorithm:
           - Recursively add those subjects.
 """
 
-# 3rd party
 import pyxb
 
-# D1
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions

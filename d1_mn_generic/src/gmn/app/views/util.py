@@ -22,11 +22,9 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import datetime
 import re
 
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions

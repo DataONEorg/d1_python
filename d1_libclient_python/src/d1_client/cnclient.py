@@ -22,12 +22,11 @@
 # Stdlib
 import logging
 
+# App
+import baseclient
 # D1
 import d1_common.const
 import d1_common.util
-
-# App
-import baseclient
 
 
 class CoordinatingNodeClient(baseclient.DataONEBaseClient):

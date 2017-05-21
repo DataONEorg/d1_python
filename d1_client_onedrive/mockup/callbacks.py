@@ -29,10 +29,11 @@
 # Std.
 import datetime
 import errno
-import fuse
 import os
 import stat
 import time
+
+import fuse
 
 # D1
 import fs

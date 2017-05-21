@@ -22,11 +22,9 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 import os
 
-# Django.
 import django.conf
 import app.sysmeta_util
 import django.core.management.base

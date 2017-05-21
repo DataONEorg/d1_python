@@ -24,9 +24,6 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 """
 
-import d1_client
-import d1_client.mnclient
-import d1_client.cnclient
 import d1_client.baseclient
 
 

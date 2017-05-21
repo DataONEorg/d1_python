@@ -21,9 +21,9 @@
 """Check the dependencies by attempting to import them.
 """
 
+import importlib
 # Stdlib
 import logging
-import importlib
 
 
 def are_modules_importable(module_list=None):

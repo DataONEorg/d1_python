@@ -23,6 +23,7 @@ This file contains settings that are specific to an instance of GMN.
 """
 
 from __future__ import absolute_import
+
 import d1_common.const
 
 # ==============================================================================

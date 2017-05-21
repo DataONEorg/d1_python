@@ -22,9 +22,9 @@
 
 from __future__ import absolute_import
 
+import django.conf
 # Django
 from django.conf.urls import url
-import django.conf
 
 # App
 import app.views.diagnostics

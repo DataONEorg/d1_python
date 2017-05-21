@@ -24,12 +24,11 @@
 :Synopsis: Create set of test certificates signed by the DataONE Test CA.
 :Author: DataONE (Dahl)
 """
-# Stdlib
+
 import logging
 import os
 import urllib
 
-# 3rd party
 import OpenSSL
 
 # D1

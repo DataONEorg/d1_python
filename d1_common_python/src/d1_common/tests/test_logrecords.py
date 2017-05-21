@@ -21,7 +21,6 @@
 """Test serialization and de-serialization of the LogRecords type.
 """
 
-# Stdlib
 import unittest
 import xml.sax
 

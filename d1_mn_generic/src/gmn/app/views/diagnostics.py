@@ -25,7 +25,6 @@ is unrestricted in debug mode. Disabled in production.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import cgi
 import csv
 import json
@@ -34,20 +33,17 @@ import pprint
 import shutil
 import urlparse
 
-# Django.
 import django.conf
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect, reverse
 import django.apps
 
-# D1.
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
-# App.
 import app.auth
 import app.db_filter
 import app.event_log

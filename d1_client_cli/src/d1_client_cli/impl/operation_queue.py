@@ -31,8 +31,8 @@ import tempfile
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.operation_executer as operation_executer
-import d1_client_cli.impl.operation_validator as operation_validator
 import d1_client_cli.impl.operation_formatter as operation_formatter
+import d1_client_cli.impl.operation_validator as operation_validator
 import d1_client_cli.impl.session as session
 
 DEFAULT_EDITOR = 'nano'

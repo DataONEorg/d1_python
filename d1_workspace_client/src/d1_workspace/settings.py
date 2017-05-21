@@ -27,11 +27,8 @@
   DataONE (Dahl)
 """
 
-# Stdlib
-import d1_common.const
 import os
 
-# D1
 import d1_common.util
 
 ################################################################################

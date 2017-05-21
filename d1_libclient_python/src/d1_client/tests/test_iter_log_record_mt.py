@@ -21,7 +21,6 @@
 """Unit tests for LogRecordIterator.
 """
 
-# Stdlib
 import datetime
 import logging
 import unittest

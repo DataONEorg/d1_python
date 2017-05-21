@@ -8,7 +8,6 @@ Exported classes:
 Dokan -- "no-op" Dokan implementation
 """
 
-# standard library
 import ctypes
 import ctypes.wintypes as wintypes
 from functools import partial
@@ -16,7 +15,6 @@ from ctypes.wintypes import FILETIME
 from ctypes.wintypes import WIN32_FIND_DATAW
 import logging
 
-# Dokan imports
 import const
 
 

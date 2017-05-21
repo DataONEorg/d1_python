@@ -22,14 +22,12 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import datetime
 import logging
 import os
 import urlparse
 import uuid
 
-# D1
 import d1_client.cnclient
 import d1_client.object_format_info
 import d1_common.checksum
@@ -38,15 +36,12 @@ import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
 
-# 3rd party
 import requests
 
-# Django
 import django.conf
 import django.http
 import django.utils.http
 
-# App
 import app.auth
 import app.db_filter
 import app.event_log

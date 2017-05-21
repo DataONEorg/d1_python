@@ -55,14 +55,15 @@ def redbaron_tree_to_module_str(baron_tree, strict=False):
 
 
 def update_module_file(redbaron_tree, module_path, diff_only=True):
-  """Set diff_only to False to overwrite module_path with a new tree
+  """Set diff_only to False to overwrite module_path with a new tree.
+  Returns True if tree is different from source (was modified).
   """
   with tempfile.NamedTemporaryFile() as tmp_file:
     tmp_file.write(redbaron_tree_to_module_str(redbaron_tree))
     tmp_file.seek(0)
     if not are_files_different(module_path, tmp_file.name):
       logging.debug('Source unchanged')
-      return
+      return False
     logging.debug('Source modified')
     if diff_only:
       try:
@@ -72,6 +73,7 @@ def update_module_file(redbaron_tree, module_path, diff_only=True):
         pass
     else:
       shutil.copy2(tmp_file.name, module_path)
+  return True
 
 
 # Modified version of the class at baron/dumper.py which seems to fix handling

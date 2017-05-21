@@ -22,18 +22,15 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import httplib
 import socket
 import ssl
 import urlparse
 
-# Django
 import django.conf
 import django.core.cache
 import logging
 
-# 3rd party
 import cryptography.hazmat.backends
 import cryptography.x509
 import jwt

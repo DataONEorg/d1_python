@@ -19,11 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
-import unittest
+import StringIO
 import logging
 import sys
-import StringIO
+# Stdlib
+import unittest
 
 # App
 import d1_client_cli.impl.replication_policy as replication_policy

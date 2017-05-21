@@ -22,6 +22,13 @@
 
 from __future__ import absolute_import
 
+import d1_common.types.dataoneTypes_v1 as v1
+import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.util
+
+import d1_common.xml
+import django.conf
+
 # Example Node document:
 #
 # <?xml version="1.0" ?>
@@ -44,15 +51,6 @@ from __future__ import absolute_import
 #   <subject>CN=urn:node:mnDevGMN,DC=dataone,DC=org</subject>
 #   <contactSubject>CN=MyName,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
 # </ns1:node>
-
-# Django.
-import d1_common.xml
-import django.conf
-
-# D1.
-import d1_common.types.dataoneTypes_v1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_common.util
 
 # App
 

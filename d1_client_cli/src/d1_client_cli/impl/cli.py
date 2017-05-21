@@ -29,9 +29,9 @@ import platform
 import shlex
 import sys
 
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 # App
 import d1_client_cli.impl.cli_util as cli_util
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.command_processor as command_processor
 import d1_client_cli.impl.session as session
 

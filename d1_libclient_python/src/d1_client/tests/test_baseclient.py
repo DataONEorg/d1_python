@@ -21,11 +21,8 @@
 
 import unittest
 
-# 3rd party
 import responses
 import requests.structures
-
-# D1
 
 import d1_common.const
 import d1_common.date_time

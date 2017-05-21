@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import logging
 
-import d1_client.objectlistiterator
-import d1_client.mnclient_2_0
 import d1_client.cnclient_2_0
+import d1_client.mnclient_2_0
+import d1_client.objectlistiterator
 
 # Check for discrepancies between MN and CN by comparing object lists
 

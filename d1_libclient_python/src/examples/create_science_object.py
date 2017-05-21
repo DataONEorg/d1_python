@@ -56,16 +56,14 @@
   Any other errors will also be returned as DataONE exceptions.
 """
 
-# Stdlib
+import StringIO
 import datetime
 import hashlib
 import logging
-import StringIO
 
-# D1
-import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
-import d1_common.const
 import d1_client.mnclient
+import d1_common.const
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 
 # Config.
 

@@ -5,19 +5,16 @@ implementation.  The main difference between the two is the caching
 mechanism.
 """
 
-# standard
 import logging
 import os
 import time
 import urllib
 import urlparse
 
-# third party
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 import solrclient
 
-# DataONE
 import d1_common.const
 import d1_client.d1client
 

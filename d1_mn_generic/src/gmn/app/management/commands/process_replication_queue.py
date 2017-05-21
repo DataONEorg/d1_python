@@ -26,16 +26,13 @@ command iterates over the requests and attempts to create the replicas.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 import shutil
 
-# Django.
 import django.core.management.base
 import django.db.transaction
 import django.conf
 
-# D1.
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient

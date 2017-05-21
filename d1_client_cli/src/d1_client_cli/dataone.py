@@ -27,13 +27,11 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import optparse
 import sys
 import traceback
 
-# D1
 import d1_common.types.exceptions
 
 #sys.path.append(d1_common.util.abs_path(u'./impl'))

@@ -29,14 +29,11 @@ Unit tests for ResourceMapGenerator and ResourceMapParser.
   - python 2.6
 """
 
-# Stdlib
 import unittest
 
-# 3rd party
 import rdflib
 import foresite
 
-# D1
 import d1_common.util
 import d1_client.data_package
 

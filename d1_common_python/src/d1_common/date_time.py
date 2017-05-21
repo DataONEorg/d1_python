@@ -20,7 +20,6 @@
 """Utilities for handling date-times in DataONE
 """
 
-# Stdlib
 import calendar
 import datetime
 import email.utils

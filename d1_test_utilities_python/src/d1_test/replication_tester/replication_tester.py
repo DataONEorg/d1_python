@@ -29,7 +29,6 @@ package on PyPI.
 # and target nodes. In this code, source/src and destination/dst is used
 # instead.
 
-# Stdlib
 import Queue
 import StringIO
 import logging

@@ -26,7 +26,6 @@ database is manipulated directly during testing.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
 # Django.

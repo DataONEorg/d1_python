@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import base64
 import hashlib
 import inspect

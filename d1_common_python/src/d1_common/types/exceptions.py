@@ -35,19 +35,16 @@ auth.py(315)
 </error>
 """
 
-# Stdlib
 import re
 import string
 import StringIO
 import traceback
 import xml.sax
 
-# 3rd party
 import pyxb
 import pyxb.binding.datatypes as XS
 import pyxb.utils.domutils
 
-# D1
 from d1_common.types import dataoneErrors
 import d1_common.util
 

@@ -65,15 +65,13 @@
   - DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
-# Stdlib
 import logging
 
-# D1
-import d1_common.types.exceptions
-import d1_common.const
-import d1_client.data_package
 import d1_client.cnclient
+import d1_client.data_package
 import d1_client.mnclient
+import d1_common.const
+import d1_common.types.exceptions
 
 # Config.
 

@@ -31,14 +31,12 @@
   DataONE (Kroiss, Dahl)
 """
 
-# Std.
 import errno
 import fnmatch
 import logging
 import os
 import time
 
-# Dokan
 from d1_client_onedrive.impl.drivers import dokan
 # from const import DOKAN_SUCCESS
 # from const import DOKAN_ERROR
@@ -50,13 +48,12 @@ from const import DOKAN_OPTION_KEEP_ALIVE
 from const import FILE_ATTRIBUTE_READONLY
 from const import FILE_ATTRIBUTE_DEVICE
 from const import FILE_ATTRIBUTE_NORMAL
-# from const import ERROR_FILE_NOT_FOUND
+
 from const import FILE_ATTRIBUTE_DIRECTORY
 from const import FILE_READ_ONLY_VOLUME
 from const import FILE_CASE_SENSITIVE_SEARCH
 from const import FILE_CASE_PRESERVED_NAMES
 
-# D1
 import d1_common.const
 import d1_common.date_time
 

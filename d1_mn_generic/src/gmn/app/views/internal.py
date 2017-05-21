@@ -25,13 +25,11 @@ be available when the MN is in production.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import ctypes
 import datetime
 import os
 import platform
 
-# Django.
 import django.conf
 from django.db.models import Avg, Count, Sum
 from django.http import HttpResponseRedirect

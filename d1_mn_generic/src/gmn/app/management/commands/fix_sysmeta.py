@@ -24,10 +24,8 @@ be needed and cannot be safely used on a production node.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
 import django.conf
 import django.core.management.base
 

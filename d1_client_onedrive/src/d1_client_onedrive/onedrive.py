@@ -30,13 +30,11 @@
   DataONE (Dahl)
 """
 
-# Std.
 import logging
-#import logging.config # Needs 2.7.
-import os
-import sys
 import optparse
+import os
 import platform
+import sys
 
 # App
 if not hasattr(sys, 'frozen'):

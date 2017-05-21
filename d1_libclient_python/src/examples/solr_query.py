@@ -45,9 +45,9 @@
 import logging
 import pprint
 
+import d1_client.mnclient
 # D1
 import d1_client.solr_client
-import d1_client.mnclient
 
 
 def main():

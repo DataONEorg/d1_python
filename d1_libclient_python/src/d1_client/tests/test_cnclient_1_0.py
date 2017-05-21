@@ -19,14 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import unittest
 
-# 3rd party
 import d1_client.tests.util
 import responses
 
-# D1
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0

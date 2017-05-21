@@ -22,13 +22,12 @@
 # Stdlib
 import logging
 
+# App
+import baseclient
 # D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.util
-
-# App
-import baseclient
 
 
 class MemberNodeClient(baseclient.DataONEBaseClient):

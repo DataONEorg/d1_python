@@ -25,21 +25,16 @@
 
 from __future__ import absolute_import
 
-# Stdlib
-import d1_common.xml
 import datetime
 
-# 3rd party
-import pyxb
-
-# D1
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.xml
+import pyxb
 
-# App
 import app.auth
 import app.models
 import app.sysmeta_obsolescence

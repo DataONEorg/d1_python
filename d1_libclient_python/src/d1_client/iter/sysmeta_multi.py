@@ -34,7 +34,6 @@ the number of workers. A single connection is reused, first for retrieving a
 page of results, then all System Metadata objects in the result.
 """
 
-# Stdlib
 import logging
 import multiprocessing
 import time

@@ -25,7 +25,6 @@ installing GMN. See settings_site.py for site specific settings.
 
 from __future__ import absolute_import
 
-# D1
 import d1_common.util
 
 # Add site specific settings.

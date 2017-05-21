@@ -21,7 +21,6 @@
 """Test serialization and de-serialization of the NodeList
 """
 
-# Stdlib
 import unittest
 import xml.sax
 

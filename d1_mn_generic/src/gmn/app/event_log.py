@@ -28,9 +28,9 @@ from __future__ import absolute_import
 # D1
 import d1_common.types.exceptions
 
+import app.auth
 # App.
 import app.models
-import app.auth
 
 
 def _log(pid, request, event, timestamp=None):

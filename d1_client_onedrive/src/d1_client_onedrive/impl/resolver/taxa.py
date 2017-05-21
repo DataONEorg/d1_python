@@ -27,10 +27,8 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
-# App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions

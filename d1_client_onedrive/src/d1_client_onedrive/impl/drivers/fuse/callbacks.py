@@ -28,7 +28,6 @@
   DataONE (Dahl)
 """
 
-# Std.
 import errno
 import fuse
 import logging

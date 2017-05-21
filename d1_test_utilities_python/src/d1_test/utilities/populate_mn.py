@@ -21,7 +21,6 @@
 """Populate a Member Node with randomly generated objects
 """
 
-# Stdlib
 import logging
 import optparse
 import sys

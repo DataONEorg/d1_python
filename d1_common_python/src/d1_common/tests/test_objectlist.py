@@ -21,17 +21,13 @@
 """Test serialization and de-serialization of the ObjectList type
 """
 
-# Stdlib
 import unittest
 import xml.sax
 
-# 3rd party
 import pyxb
 
-# D1
 from d1_common.types import dataoneTypes
 
-# App
 import util
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>

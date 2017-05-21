@@ -23,10 +23,8 @@ refreshed and refresh them by pulling the latest version from a CN.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
 import django.core.management.base
 from django.db import transaction
 import django.conf

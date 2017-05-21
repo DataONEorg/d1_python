@@ -28,7 +28,6 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 from StringIO import StringIO
 

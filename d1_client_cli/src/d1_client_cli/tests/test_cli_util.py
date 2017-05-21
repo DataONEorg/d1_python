@@ -27,6 +27,7 @@ import StringIO
 import tempfile
 import unittest
 
+import d1_client.mnclient_2_0
 import d1_client_cli.impl.cli
 import d1_client_cli.impl.cli_client
 import d1_client_cli.impl.cli_exceptions
@@ -39,7 +40,6 @@ import d1_test.mock_api.get as mock_get
 import d1_test.mock_api.util as mock_util
 import d1_test.util
 import responses
-import d1_client.mnclient_2_0
 
 
 class TestCLIUtil(unittest.TestCase):

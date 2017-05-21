@@ -34,19 +34,15 @@ We select string as the "hub" representation for XML.
 
 from __future__ import absolute_import
 
-# Stdlib
 import re
 import xml.etree.ElementTree as etree
 
-# 3rd party
-import pyxb.utils.domutils
-import pyxb.namespace.utility
-
-# App
-import d1_common.util
 import d1_common.types.dataoneTypes_v1 as v1_0
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
+import d1_common.util
+import pyxb.namespace.utility
+import pyxb.utils.domutils
 
 # PyXB shares information about all known types between all imported bindings.
 PYXB_BINDING = d1_common.types.dataoneTypes_v1

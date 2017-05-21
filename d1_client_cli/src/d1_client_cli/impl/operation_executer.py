@@ -26,12 +26,11 @@ import StringIO
 
 # D1
 import d1_client.data_package
-
 # App
 import d1_client_cli.impl.cli_client as cli_client
 import d1_client_cli.impl.cli_util as cli_util
-import d1_client_cli.impl.system_metadata as system_metadata
 import d1_client_cli.impl.operation_validator as operation_validator
+import d1_client_cli.impl.system_metadata as system_metadata
 
 
 class OperationExecuter(object):

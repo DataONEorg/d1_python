@@ -43,25 +43,23 @@
 # foresite-python/trunk/foresite/README.txt?r=85
 
 # Stdlib
-#import xml.dom.minidom.parse
-#import xml.dom.minidom
+# import xml.dom.minidom.parse
+# import xml.dom.minidom
 import datetime
 
-# 3rd party
+import d1_common.checksum
+import d1_common.const
+# D1
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+import d1_common.url
+import d1_common.util
 import foresite
 import foresite.utils
 import rdflib
-import rdflib.namespace
-import rdflib.term
-import rdflib.plugin
 import rdflib.graph
-
-# D1
-import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
-import d1_common.checksum
-import d1_common.const
-import d1_common.url
-import d1_common.util
+import rdflib.namespace
+import rdflib.plugin
+import rdflib.term
 
 rdflib.plugin.register(
   'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'

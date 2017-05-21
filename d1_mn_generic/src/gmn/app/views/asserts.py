@@ -25,23 +25,18 @@ not true.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import contextlib
 import urlparse
 
-# Django.
 import django.conf
 import app.sysmeta_util
 
-# 3rd party.
 import requests
 
-# DataONE APIs.
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
-# App.
 import app.db_filter
 import app.event_log
 import app.models

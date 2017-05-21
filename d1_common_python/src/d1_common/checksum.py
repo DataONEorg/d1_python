@@ -20,11 +20,11 @@
 """Utilities for handling checksums
 """
 
-# Stdlib
 import hashlib
 
 # App
 import const
+
 from .types import dataoneTypes
 
 DEFAULT_CHUNK_SIZE = 1024 * 1024

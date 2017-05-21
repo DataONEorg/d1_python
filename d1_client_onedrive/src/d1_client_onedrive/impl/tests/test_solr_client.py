@@ -26,12 +26,10 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import sys
 import unittest
 
-# D1
 import d1_client_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
 
 options = {}

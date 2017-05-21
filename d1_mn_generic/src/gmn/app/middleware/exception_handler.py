@@ -39,7 +39,6 @@ serialized to a set of HTTP headers for HEAD requests.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 import os
 import subprocess

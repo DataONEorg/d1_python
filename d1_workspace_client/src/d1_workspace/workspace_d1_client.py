@@ -32,14 +32,13 @@ import logging
 import socket
 import ssl
 
-# D1
-import d1_common
 import d1_client.cnclient_1_1
 import d1_client.d1client
 import d1_client.mnclient
-
+# D1
+import d1_common
 # App
-#import settings
+# import settings
 import workspace_exception
 
 # Set up logger for this module.

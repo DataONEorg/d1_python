@@ -25,17 +25,13 @@ for performing the attempted operation.
 
 from __future__ import absolute_import
 
-# Stdlib
 import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-
-# Django
 import django.conf
 import django.core.cache
 
-# App
 import app.models
 import app.node_registry
 

@@ -21,7 +21,6 @@
 """Utilities shared between components of the DataONE Command Line
 """
 
-# Stdlib
 import os
 import shutil
 import string

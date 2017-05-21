@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -25,6 +23,7 @@ Created on Jan 11, 2013
 @author: brumgard
 """
 import sys
+
 from setuptools import setup
 
 sys.argv = [sys.argv[0], 'bdist_egg']

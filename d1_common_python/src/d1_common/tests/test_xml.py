@@ -21,7 +21,6 @@
 """Test XML document comparison utility.
 """
 
-# Stdlib
 import unittest
 
 # D1

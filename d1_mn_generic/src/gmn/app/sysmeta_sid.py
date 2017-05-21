@@ -22,11 +22,10 @@
 
 from __future__ import absolute_import
 
-# App.
 import app.auth
 import app.models
-import app.util
 import app.sysmeta_util
+import app.util
 
 
 def is_sid(did):

@@ -27,7 +27,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import random
 import re
 import StringIO

@@ -27,7 +27,6 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import hashlib
 import httplib
 import json

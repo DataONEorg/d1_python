@@ -26,7 +26,6 @@ Module d1_common.url
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
 import re
 import sys
 import urllib

@@ -22,23 +22,19 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import json
 import logging
 import os
 import shutil
 import zlib
 
-# Django.
 import django.conf
 import app.sysmeta_util
 import django.core.management.base
 
-# 3rd party.
 import psycopg2
 import psycopg2.extras
 
-# D1.
 import d1_common.url
 import d1_common.types.exceptions
 import d1_client.cnclient_2_0

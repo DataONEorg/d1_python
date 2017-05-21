@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import re
 import random
+import re
 
 n_words = 1000
 

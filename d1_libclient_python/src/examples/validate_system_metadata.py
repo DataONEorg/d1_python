@@ -48,15 +48,10 @@
   - A client side certificate that is trusted by the target Member Node.
 """
 
-# Future
 from __future__ import print_function
 
-# Stdlib
 import csv
 import sys
-
-# 3rd party
-import pyxb
 
 # DataONE.
 import d1_client.mnclient
@@ -64,6 +59,8 @@ import d1_client.objectlistiterator
 import d1_common.checksum
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
+# 3rd party
+import pyxb
 
 CSV_FILE_PATH = './validation_results.csv'
 BASE_URL = None # e.g., https://tropical.lternet.edu/knb/d1/mn/

@@ -68,18 +68,16 @@
   for the package, and the package is uploaded to the Member Node.
 """
 
-# Stdlib
+import StringIO
 import datetime
 import hashlib
 import logging
 import os
-import StringIO
 
-# D1
-import d1_common.types.dataoneTypes as dataoneTypes
-import d1_common.const
 import d1_client.data_package
 import d1_client.mnclient_2_0
+import d1_common.const
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # Config.
 

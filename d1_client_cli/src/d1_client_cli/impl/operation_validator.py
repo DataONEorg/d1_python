@@ -25,12 +25,11 @@
 import types
 import urlparse
 
-# D1
-import d1_common.checksum
-
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 # App
 import d1_client_cli.impl.cli_util as cli_util
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
+# D1
+import d1_common.checksum
 
 
 class OperationValidator(object):

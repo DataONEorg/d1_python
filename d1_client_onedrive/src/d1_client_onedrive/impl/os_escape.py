@@ -45,7 +45,6 @@ The current implementation simply uses URL percent-encoding of an UTF-8
 encoding of the Unicode strings.
 """
 
-# Stdlib
 import os
 import logging
 

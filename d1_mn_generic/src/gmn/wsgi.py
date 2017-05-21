@@ -20,18 +20,15 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import os
 import sys
 
+# D1
+import d1_common.util
+import django.core.handlers.wsgi
 # Django
 from django import http
 from django.utils import datastructures
-import django
-import django.core.handlers.wsgi
-
-# D1
-import d1_common.util
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 

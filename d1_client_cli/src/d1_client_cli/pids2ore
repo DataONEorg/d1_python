@@ -110,9 +110,10 @@ ore:Aggregation rdfs:label "Aggregation" ;
     ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/a#aggregation> .
 """
 
-import sys
-import logging
 import argparse
+import logging
+import sys
+
 import d1_pyore
 
 parser = argparse.ArgumentParser(description="stdin to OAI-ORE")

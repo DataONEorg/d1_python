@@ -22,16 +22,13 @@
 
 from __future__ import absolute_import
 
-# Django.
 import django.conf
 from django.db.models import Sum
 
-# D1.
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
-# App
 import app.models
 
 # ------------------------------------------------------------------------------

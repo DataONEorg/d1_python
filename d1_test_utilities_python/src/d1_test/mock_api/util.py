@@ -21,7 +21,6 @@
 """Utilities for mocking up DataONE API endpoints with Responses
 """
 
-# Stdlib
 import base64
 import datetime
 import hashlib

@@ -20,8 +20,9 @@
 # limitations under the License.
 """DataONE ONEDrive Client package
 """
-import setuptools
 import sys
+
+import setuptools
 
 # http://www.py2exe.org/index.cgi/WorkingWithVariousPackagesAndModules
 #

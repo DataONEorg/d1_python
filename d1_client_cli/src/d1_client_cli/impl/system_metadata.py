@@ -21,20 +21,19 @@
 """Create System Metadata documents based on session variables.
 """
 
+import StringIO
 # Stdlib
 import datetime
 import os
-import StringIO
 
+# App
+import d1_client_cli.impl.cli_util as cli_util
 # D1
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # 3rd party
-
-# App
-import d1_client_cli.impl.cli_util as cli_util
 
 RESOURCE_MAP_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
 

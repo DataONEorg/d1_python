@@ -20,8 +20,8 @@
 # limitations under the License.
 """Unit tests for test utils"""
 
-import unittest
 import logging
+import unittest
 
 import d1_test.util
 

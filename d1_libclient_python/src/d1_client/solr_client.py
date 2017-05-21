@@ -24,10 +24,9 @@ client/python/solr.py
 import datetime
 import logging
 import random
-
-# D1
-import d1_client.baseclient_1_1
 from xml.sax.saxutils import quoteattr
+
+import d1_client.baseclient_1_1
 
 FIELD_TYPE_CONVERSION_MAP = {
   't': 'text',

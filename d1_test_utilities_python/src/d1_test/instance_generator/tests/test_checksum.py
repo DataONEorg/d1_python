@@ -29,6 +29,7 @@ Module d1_instance_generator.tests.test_systemmetadata
 
 # Stdlib
 import unittest
+import d1_common.checksum
 
 # App
 import d1_test.instance_generator.checksum as checksum
@@ -43,4 +44,4 @@ class TestChecksum(unittest.TestCase):
   def test_0010(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
-    self.assertIn(algorithm_str, ('MD5', 'SHA-1'))
+    self.assertTrue(d1_common.checksum.is_supported_algorithm(algorithm_str))

@@ -20,12 +20,13 @@
 
 """Script to do a simple text dump of an ORE document."""
 
-import sys
+import argparse
 import codecs
 import logging
-import argparse
-import requests
+import sys
+
 import d1_pyore
+import requests
 
 
 def downloadDocument(url):

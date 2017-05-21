@@ -25,7 +25,6 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import datetime
 
 # Django

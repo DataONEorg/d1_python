@@ -22,7 +22,6 @@
 type.
 """
 
-# Stdlib
 import unittest
 import xml.dom.minidom
 

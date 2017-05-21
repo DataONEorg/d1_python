@@ -78,19 +78,24 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
+    modified_cnt = 0
     try:
-      clean_module(module_path, args.diff_only)
+      is_modified = clean_module(module_path, args.diff_only)
+      if is_modified:
+        modified_cnt += 1
     except Exception as e:
       print 'Cleaning failed. error="{}" path="{}"'.format(module_path, str(e))
       if args.debug:
         raise
+
+  logging.info('Files modified: {}'.format(modified_cnt))
 
 
 def clean_module(module_path, diff_only):
   logging.info('Cleaning module... path="{}"'.format(module_path))
   r = util.redbaron_module_path_to_tree(module_path)
   r = clean_all(r)
-  util.update_module_file(r, module_path, diff_only)
+  return util.update_module_file(r, module_path, diff_only)
 
 
 def clean_all(r):

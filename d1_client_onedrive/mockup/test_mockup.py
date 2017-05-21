@@ -26,11 +26,10 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
+import datetime
 import logging
 import sys
 import unittest
-import datetime
 
 import callbacks
 

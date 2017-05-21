@@ -78,9 +78,8 @@ and
 </accessPolicy>
 """
 
-# D1
-import d1_common.xml
 import d1_common.types.dataoneTypes
+import d1_common.xml
 
 ORDERED_PERMISSION_LIST = ['read', 'write', 'changePermission']
 

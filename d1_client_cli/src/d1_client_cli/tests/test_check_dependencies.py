@@ -23,9 +23,8 @@
 
 import unittest
 
-import d1_common.util
-
 import d1_client_cli.impl.check_dependencies
+import d1_common.util
 import d1_test.util
 
 

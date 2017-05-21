@@ -28,7 +28,7 @@
   permissions.
 :Author: DataONE (Dahl)
 """
-# Stdlib
+
 import codecs
 import logging
 import optparse

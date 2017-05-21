@@ -17,6 +17,7 @@
 # limitations under the License.
 
 import logging
+
 import rdflib
 
 try:
