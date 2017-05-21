@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 
 # Stdlib
+import errno
 import os
 
 # D1
@@ -39,3 +40,12 @@ def read_test_xml(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
   xml_obj = v2.CreateFromDocument(xml_str)
   return xml_obj
+
+
+def _force_hardlink(file_path, link_path):
+  try:
+    os.remove(link_path)
+  except OSError as e:
+    if e.errno != errno.ENOENT:
+      raise
+  os.link(file_path, link_path)
