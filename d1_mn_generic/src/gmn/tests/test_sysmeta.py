@@ -22,196 +22,72 @@
 
 from __future__ import absolute_import
 
-# Stdlib
-import datetime
+import d1_client.mnclient_2_0
+import d1_common.system_metadata
+import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
+import d1_test.mock_api.django_client
+import d1_test.mock_api.get
+import responses
 
-# Django
-import django.test
+import tests.d1_test_case
+import tests.util
 
-# App
-import gmn.app.models
-import gmn.app.sysmeta
-import gmn.app.sysmeta_replica
-import gmn.app.sysmeta_util
-import gmn.tests.util
+BASE_URL = 'http://mock/mn'
+# Mocked 3rd party server for object byte streams
+REMOTE_URL = 'http://remote/'
+INVALID_URL = 'http://invalid/'
 
 
-class TestSysMeta(django.test.TestCase):
+class TestSysMeta(tests.d1_test_case.D1TestCase):
   def setUp(self):
-    pass
+    d1_common.util.log_setup(is_debug=True)
+    d1_test.mock_api.django_client.add_callback(BASE_URL)
+    d1_test.mock_api.get.add_callback(REMOTE_URL)
 
-  def tearDown(self):
-    pass
-
-  def _create_sci_obj_base(self):
-    sciobj_model = gmn.app.models.ScienceObject()
-    sciobj_model.checksum_algorithm = gmn.app.models.checksum_algorithm('SHA-1')
-    sciobj_model.format = gmn.app.models.format('test')
-    sciobj_model.is_archived = False
-    sciobj_model.modified_timestamp = datetime.datetime.now()
-    sciobj_model.uploaded_timestamp = datetime.datetime.now()
-    sciobj_model.pid = gmn.app.sysmeta_util.create_id_model('test')
-    sciobj_model.serial_version = 1
-    sciobj_model.size = 1
-
-    sciobj_model.submitter = gmn.app.models.subject('test_submitter')
-    sciobj_model.rights_holder = gmn.app.models.subject('rightsHolder0')
-    sciobj_model.origin_member_node = gmn.app.models.node('test_origin_mn')
-    sciobj_model.authoritative_member_node = gmn.app.models.node('test_auth_mn')
-
-    sciobj_model.save()
-    return sciobj_model
-
-  def _compare_base_pyxb(self, a_pyxb, b_pyxb):
-    element_list = [
-      'serialVersion',
-      'identifier',
-      'formatId',
-      'size',
-      'checksum', # algorithm
-      'submitter',
-      'rightsHolder',
-      'obsoletes',
-      'obsoletedBy',
-      'archived',
-      'dateUploaded',
-      'dateSysMetadataModified',
-      'originMemberNode',
-      'authoritativeMemberNode',
-    ]
-    for element_str in element_list:
-      a_el = getattr(a_pyxb, element_str)
-      b_el = getattr(b_pyxb, element_str)
-      if hasattr(a_el, 'value'):
-        self.assertEqual(a_el.value(), b_el.value())
-      else:
-        self.assertEqual(a_el, b_el)
-
-  # Base
-
+  @responses.activate
   def test_0010(self):
-    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
-    sciobj_model = gmn.app.models.ScienceObject()
-    sciobj_model.pid = gmn.app.sysmeta_util.create_id_model(
-      orig_sysmeta_pyxb.identifier.value()
+    """v2 SysMeta: Roundtrip of fully populated System Metadata"""
+    # Prepare fully populated sysmeta
+    orig_sysmeta_pyxb = tests.util.read_test_xml('systemMetadata_v2_0.xml')
+    #print d1_common.xml.pretty_pyxb(orig_sysmeta_pyxb)
+    pid = self.random_pid()
+    sciobj_str = 'sciobj bytes for pid="{}"'.format(pid)
+    orig_sysmeta_pyxb.checksum = self.create_checksum_object_from_string(
+      sciobj_str
     )
-    gmn.app.sysmeta._base_pyxb_to_model(
-      sciobj_model,
-      orig_sysmeta_pyxb,
-      url='file://test',
+    orig_sysmeta_pyxb.size = len(sciobj_str)
+    orig_sysmeta_pyxb.obsoletes = None
+    orig_sysmeta_pyxb.obsoletedBy = None
+    orig_sysmeta_pyxb.identifier = pid
+    orig_sysmeta_pyxb.replica = None
+    orig_sysmeta_pyxb.submitter = 'public'
+    orig_sysmeta_pyxb.serialVersion = 1
+    orig_sysmeta_pyxb.originMemberNode = 'urn:node:mnDevGMN'
+    orig_sysmeta_pyxb.authoritativeMemberNode = 'urn:node:mnDevGMN'
+    orig_sysmeta_pyxb.archived = False
+    # Create
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
+    client.create(
+      pid, sciobj_str, orig_sysmeta_pyxb, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    gen_sciobj_pyxb = gmn.app.sysmeta._base_model_to_pyxb(sciobj_model)
-    self._compare_base_pyxb(orig_sysmeta_pyxb, gen_sciobj_pyxb)
-
-  # Access Policy
-
-  # <accessPolicy>
-  #         <allow>
-  #                 <subject>subject0</subject>
-  #                 <subject>subject1</subject>
-  #                 <permission>read</permission>
-  #                 <permission>changePermission</permission>
-  #         </allow>
-  #         <allow>
-  #                 <subject>subject2</subject>
-  #                 <subject>subject3</subject>
-  #                 <permission>write</permission>
-  #         </allow>
-  # </accessPolicy>
-
-  def test_0020(self):
-    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
-    sciobj_model = self._create_sci_obj_base()
-    gmn.app.sysmeta._access_policy_pyxb_to_model(
-      sciobj_model, orig_sysmeta_pyxb
+    # Retrieve
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
+    retrieved_sysmeta_pyxb = client.getSystemMetadata(
+      pid, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    gen_access_policy_pyxb = gmn.app.sysmeta._access_policy_model_to_pyxb(
-      sciobj_model
+    # Compare
+    d1_common.system_metadata.normalize(
+      orig_sysmeta_pyxb, reset_timestamps=True
     )
-    self.assertEqual(len(gen_access_policy_pyxb.allow), 4)
-    for allow_pyxb in gen_access_policy_pyxb.allow:
-      self.assertIn(allow_pyxb.permission[0], ['changePermission', 'write'])
-      self.assertEqual(len(allow_pyxb.subject), 1)
-      for subject in allow_pyxb.subject:
-        if allow_pyxb.permission[0] == 'changePermission':
-          self.assertIn(subject.value(), ['subject0', 'subject1'])
-        if allow_pyxb.permission[0] == 'write':
-          self.assertIn(subject.value(), ['subject2', 'subject3'])
-
-  # Replication Policy
-
-  # <replicationPolicy xmlns="" replicationAllowed="true" numberReplicas="42">
-  #     <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
-  #     <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
-  #     <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
-  #     <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
-  # </replicationPolicy>
-
-  def test_0030(self):
-    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
-    sciobj_model = self._create_sci_obj_base()
-    gmn.app.sysmeta._replication_policy_pyxb_to_model(
-      sciobj_model, orig_sysmeta_pyxb
+    d1_common.system_metadata.normalize(
+      retrieved_sysmeta_pyxb, reset_timestamps=True
     )
-    gen_replication_policy_pyxb = gmn.app.sysmeta._replication_policy_model_to_pyxb(
-      sciobj_model
+    # self.kdiff_pyxb(orig_sysmeta_pyxb, retrieved_sysmeta_pyxb)
+    self.assertTrue(
+      d1_common.system_metadata.
+      is_equivalent_pyxb(orig_sysmeta_pyxb, retrieved_sysmeta_pyxb)
     )
-    self.assertEqual(len(gen_replication_policy_pyxb.blockedMemberNode), 2)
-    for blocked_member_node in gen_replication_policy_pyxb.blockedMemberNode:
-      self.assertIn(
-        blocked_member_node.value(),
-        ['blockedMemberNode0', 'blockedMemberNode1']
-      )
-    self.assertEqual(len(gen_replication_policy_pyxb.preferredMemberNode), 2)
-    for preferred_member_node in gen_replication_policy_pyxb.preferredMemberNode:
-      self.assertIn(
-        preferred_member_node.value(),
-        ['preferredMemberNode0', 'preferredMemberNode1']
-      )
-
-  # Replica
-
-  # <replica xmlns="">
-  #     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
-  #     <replicationStatus>queued</replicationStatus>
-  #     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
-  # </replica>
-  # <replica xmlns="">
-  #     <replicaMemberNode>replicaMemberNode1</replicaMemberNode>
-  #     <replicationStatus>queued</replicationStatus>
-  #     <replicaVerified>2007-05-04T18:13:51.0</replicaVerified>
-  # </replica>
-
-  def test_0040(self):
-    orig_sysmeta_pyxb = gmn.tests.util.read_test_xml('sysmeta_v2_0_sample.xml')
-    sciobj_model = self._create_sci_obj_base()
-    gmn.app.sysmeta_replica.replica_pyxb_to_model(
-      sciobj_model, orig_sysmeta_pyxb
-    )
-    gen_replica_pyxb_list = gmn.app.sysmeta_replica.replica_model_to_pyxb(
-      sciobj_model
-    )
-    self.assertEqual(len(gen_replica_pyxb_list), 2)
-    for replica_pyxb in gen_replica_pyxb_list:
-      self.assertIn(
-        replica_pyxb.replicaMemberNode.value(),
-        ['replicaMemberNode0', 'replicaMemberNode1'],
-      )
-      if replica_pyxb.replicaMemberNode.value() == 'replicaMemberNode0':
-        self.assertEqual(
-          replica_pyxb.replicationStatus,
-          'queued',
-        )
-        self.assertEqual(
-          replica_pyxb.replicaVerified,
-          datetime.datetime(2006, 5, 4, 18, 13, 51),
-        )
-      if replica_pyxb.replicaMemberNode.value() == 'replicaMemberNode1':
-        self.assertEqual(
-          replica_pyxb.replicationStatus,
-          'completed',
-        )
-        self.assertEqual(
-          replica_pyxb.replicaVerified,
-          datetime.datetime(2007, 5, 4, 18, 13, 51),
-        )
