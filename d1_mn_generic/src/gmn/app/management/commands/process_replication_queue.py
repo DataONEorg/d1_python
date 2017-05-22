@@ -29,10 +29,6 @@ from __future__ import absolute_import
 import logging
 import shutil
 
-import django.core.management.base
-import django.db.transaction
-import django.conf
-
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
@@ -41,8 +37,10 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
+import django.conf
+import django.core.management.base
+import django.db.transaction
 
-# App.
 import app.event_log
 import app.management.commands.util
 import app.models

@@ -269,12 +269,11 @@ class Session(object):
       'timeout': kwargs_in_dict.pop('timeout_sec', None),
       'stream': kwargs_in_dict.pop('use_stream', None),
       'verify': kwargs_in_dict.pop('verify_tls', None),
-      'params': self._datetime_to_iso8601(kwargs_in_dict.pop('query', {})),
+      'params': self._format_query_values(kwargs_in_dict.pop('query', {})),
     }
     kwargs_dict.update(kwargs_in_dict)
     kwargs_dict = self._remove_none_value_items(kwargs_dict)
     result_dict = self._default_request_arg_dict.copy()
-    # result_dict.update(kwargs_dict)
     self.nested_update(result_dict, kwargs_dict)
     return result_dict
 
@@ -287,6 +286,14 @@ class Session(object):
         d[k] = u[k]
     return d
 
+  def _format_query_values(self, query_dict):
+    return self._bool_to_string(
+      self._datetime_to_iso8601(self._remove_none_value_items(query_dict))
+    )
+
+  def _remove_none_value_items(self, query_dict):
+    return {k: v for k, v in query_dict.items() if v is not None}
+
   def _datetime_to_iso8601(self, query_dict):
     """Encode any datetime query parameters to ISO8601."""
     return {
@@ -294,8 +301,11 @@ class Session(object):
       for k, v in query_dict.items()
     }
 
-  def _remove_none_value_items(self, d):
-    return {k: v for k, v in d.items() if v is not None}
+  def _bool_to_string(self, query_dict):
+    return {
+      k: 'true' if v is True else 'false' if v is False else v
+      for k, v in query_dict.items()
+    }
 
   def _encode_path_elements(self, path_element_list):
     return [
