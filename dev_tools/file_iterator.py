@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -20,7 +19,9 @@
 # limitations under the License.
 
 import fnmatch
+import logging
 import os
+
 
 DEFAULT_EXCLUDE_GLOB_LIST = [
   # Dirs
@@ -108,6 +109,15 @@ def file_iter(
 
   if default_excludes:
     exclude_glob_list += DEFAULT_EXCLUDE_GLOB_LIST
+
+  logging.debug('file_iter():')
+  logging.debug('  paths: {}'.format(', '.join(path_list)))
+  logging.debug('  include: {}'.format(', '.join(include_glob_list)))
+  logging.debug('  exclude: {}'.format(', '.join(exclude_glob_list)))
+  logging.debug('  recursive: {}'.format(recursive))
+  logging.debug('  ignore_invalid: {}'.format(ignore_invalid))
+  logging.debug('  default_excludes: {}'.format(default_excludes))
+  logging.debug('')
 
   include_file_glob_list = [
     p for p in include_glob_list if not p.endswith(os.path.sep)

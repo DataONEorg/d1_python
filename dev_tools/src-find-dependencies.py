@@ -68,15 +68,6 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  logging.debug('Args:')
-  logging.debug('  paths: {}'.format(args.path))
-  logging.debug('  exclude: {}'.format(args.exclude))
-  logging.debug('  recursive: {}'.format(args.recursive))
-  logging.debug('  ignore_invalid: {}'.format(args.ignore_invalid))
-  logging.debug('  default_excludes: {}'.format(args.default_excludes))
-  logging.debug('  debug: {}'.format(args.debug))
-  logging.debug('')
-
   pkg_name_list = find_pkg_names(args)
 
   print u'Dependent on packages:'

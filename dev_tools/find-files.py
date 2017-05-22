@@ -26,7 +26,6 @@ See the file_iterator module for details on the arguments.
 """
 
 import argparse
-import logging
 
 import d1_common.util
 
@@ -60,16 +59,6 @@ def main():
   args = parser.parse_args()
 
   d1_common.util.log_setup(args.debug)
-
-  logging.debug('Args:')
-  logging.debug('  paths: {}'.format(args.path))
-  logging.debug('  include: {}'.format(args.include))
-  logging.debug('  exclude: {}'.format(args.exclude))
-  logging.debug('  recursive: {}'.format(args.recursive))
-  logging.debug('  ignore_invalid: {}'.format(args.ignore_invalid))
-  logging.debug('  default_excludes: {}'.format(args.default_excludes))
-  logging.debug('  debug: {}'.format(args.debug))
-  logging.debug('')
 
   for file_path in file_iterator.file_iter(
       path_list=args.path,
