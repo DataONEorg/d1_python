@@ -66,7 +66,6 @@ SYNC:
       - if there's a mismatch, rerun query
 """
 
-# Stdlib
 import logging
 try:
   import cPickle as pickle
@@ -74,7 +73,6 @@ except ImportError:
   import pickle
 import os
 
-# App
 import check_dependencies
 import command_processor
 import settings

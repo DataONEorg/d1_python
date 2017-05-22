@@ -33,16 +33,16 @@ import json
 import logging
 import socket
 
-# D1
-
+import resolver_base
+import resource_map
 # App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_disk
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
-import resolver_base
-import resource_map
+
+# D1
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)

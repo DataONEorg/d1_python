@@ -27,18 +27,16 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
-# D1
 import d1_client.data_package
-from ..onedrive_exceptions import ONEDriveException
-
+import d1_object
+import resolver_base
 # App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import util
-import d1_object
-import resolver_base
+
+from ..onedrive_exceptions import ONEDriveException
 
 log = logging.getLogger(__name__)
 

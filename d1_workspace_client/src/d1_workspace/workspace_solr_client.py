@@ -27,10 +27,8 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import HTMLParser
 
-# 3rd party
 import requests
 
 

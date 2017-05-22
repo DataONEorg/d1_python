@@ -53,13 +53,11 @@ from __future__ import print_function
 import csv
 import sys
 
-# DataONE.
 import d1_client.mnclient
 import d1_client.objectlistiterator
 import d1_common.checksum
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
-# 3rd party
 import pyxb
 
 CSV_FILE_PATH = './validation_results.csv'

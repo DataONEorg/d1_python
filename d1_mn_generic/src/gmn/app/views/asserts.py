@@ -28,15 +28,6 @@ from __future__ import absolute_import
 import contextlib
 import urlparse
 
-import django.conf
-import app.sysmeta_util
-
-import requests
-
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
-
 import app.db_filter
 import app.event_log
 import app.models
@@ -45,7 +36,13 @@ import app.sysmeta
 import app.sysmeta_obsolescence
 import app.sysmeta_replica
 import app.sysmeta_sid
+import app.sysmeta_util
 import app.util
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import django.conf
+import requests
 
 # ------------------------------------------------------------------------------
 # Identifier

@@ -21,14 +21,10 @@
 """Test URL utilities
 """
 
-# Stdlib
 import os
 import unittest
 
-# D1
 import d1_common.url
-
-# App
 import util
 
 HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))

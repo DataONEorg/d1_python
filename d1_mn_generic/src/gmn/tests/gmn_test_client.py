@@ -27,13 +27,11 @@ these methods.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import glob
 import logging
 import os
 import re
 
-# D1
 import d1_client.mnclient
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions

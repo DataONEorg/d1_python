@@ -25,8 +25,8 @@ session contains the primary identity, a list of equivalent identities and group
 memberships of the caller.
 """
 
-import x509
 import subject_info
+import x509
 
 
 def extract_subjects(cert_pem):

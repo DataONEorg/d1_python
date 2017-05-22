@@ -21,10 +21,8 @@
 """Test serialization and de-serialization of the ObjectList type
 """
 
-# Stdlib
 import unittest
 
-# App
 import d1_common.object_format
 import util
 

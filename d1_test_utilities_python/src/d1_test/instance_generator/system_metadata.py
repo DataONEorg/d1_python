@@ -27,17 +27,13 @@ Module d1_instance_generator.systemmetadata
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
+import logging
 import os
 import random
-import logging
 
-# D1
-import d1_common.types.dataoneTypes
-
-# App
 import access_policy
 import checksum
+import d1_common.types.dataoneTypes
 import dates
 import identifier
 import random_data

@@ -20,22 +20,15 @@
 
 import unittest
 
-# D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
+import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
-
-# 3rd party
-import responses
-
-# D1
-import d1_common.types.dataoneTypes_v2_0
-
-# App
 import d1_test.mock_api.list_objects as mock_object_list
 import d1_test.mock_api.tests.settings as settings
+import responses
 
 
 class TestMockListObjects(unittest.TestCase):

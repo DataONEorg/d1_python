@@ -21,17 +21,13 @@
 """Test serialization and de-serialization of the Checksum type.
 """
 
-# Stdlib
 import unittest
 import xml.sax
 
-# 3rd party
-import pyxb
-
-# D1
+import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes
-import d1_common.checksum
+import pyxb
 
 # App
 

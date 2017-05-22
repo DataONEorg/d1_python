@@ -29,18 +29,12 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-# Stdlib
 import re
 
-# 3rd party
-import responses
-
-# D1
 import d1_common.const
 import d1_common.url
-
-# App
 import d1_test.mock_api.d1_exception
+import responses
 
 PING_ENDPOINT_RX = r'v([123])/monitor/ping'
 

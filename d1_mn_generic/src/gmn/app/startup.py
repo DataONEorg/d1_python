@@ -26,12 +26,11 @@ import logging
 import random
 import string
 
+import app.util
 import d1_common.util
 import django.apps
 import django.conf
 import django.core.exceptions
-
-import app.util
 
 
 class GMNStartupChecks(django.apps.AppConfig):

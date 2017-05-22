@@ -20,20 +20,15 @@
 
 import unittest
 
-# D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
-
-# 3rd party
-import responses
-
-# App
 import d1_test.mock_api.generate_identifier as mock_generate_identifier
 import d1_test.mock_api.tests.settings as settings
+import responses
 
 
 class TestMockPost(unittest.TestCase):

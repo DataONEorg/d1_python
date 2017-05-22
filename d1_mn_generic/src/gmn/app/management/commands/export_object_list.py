@@ -23,15 +23,11 @@ subject which has access to the object.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
-import django.core.management.base
-
-# App.
 import app.management.commands.util
 import app.models
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit

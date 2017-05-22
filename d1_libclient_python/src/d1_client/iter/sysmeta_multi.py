@@ -38,13 +38,10 @@ import logging
 import multiprocessing
 import time
 
-# D1
-import d1_common.type_conversions
-import d1_common.types.exceptions
-
-# App
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
+import d1_common.type_conversions
+import d1_common.types.exceptions
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100

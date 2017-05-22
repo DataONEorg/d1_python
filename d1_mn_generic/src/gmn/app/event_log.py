@@ -25,12 +25,9 @@ with MNCore.getLogRecords() and aggregated by CNs.
 
 from __future__ import absolute_import
 
-# D1
-import d1_common.types.exceptions
-
 import app.auth
-# App.
 import app.models
+import d1_common.types.exceptions
 
 
 def _log(pid, request, event, timestamp=None):

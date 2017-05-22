@@ -49,7 +49,6 @@ import datetime
 
 import d1_common.checksum
 import d1_common.const
-# D1
 import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 import d1_common.url
 import d1_common.util

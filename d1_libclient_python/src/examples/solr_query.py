@@ -41,12 +41,10 @@
   - DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
-# Stdlib
 import logging
 import pprint
 
 import d1_client.mnclient
-# D1
 import d1_client.solr_client
 
 

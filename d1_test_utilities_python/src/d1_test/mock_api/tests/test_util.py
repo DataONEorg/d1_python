@@ -20,15 +20,12 @@
 
 import unittest
 
-# D1
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
+import d1_common.types.exceptions
 import d1_common.util
-
-# App
 import d1_test.mock_api.util
 
 

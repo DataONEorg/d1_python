@@ -28,21 +28,17 @@
   - python 2.6
 """
 
-# Std.
+import StringIO
 import datetime
 import random
-import StringIO
 import uuid
 import xml.sax.saxutils
 
-# D1
+import context
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_test_case
-
-# App
-import context
 import test_client
 import test_utilities
 

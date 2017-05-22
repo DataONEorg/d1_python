@@ -26,11 +26,10 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import unittest
 
-# D1
-import d1_client_onedrive.impl.clients.query_engine_description as query_engine_description
+import \
+  d1_client_onedrive.impl.clients.query_engine_description as query_engine_description
 
 options = {}
 

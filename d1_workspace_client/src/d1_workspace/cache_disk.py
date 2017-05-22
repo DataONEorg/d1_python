@@ -30,7 +30,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import os
 import pickle

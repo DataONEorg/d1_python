@@ -26,7 +26,6 @@ response.
 
 from __future__ import absolute_import
 
-# Django
 import django.http
 
 

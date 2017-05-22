@@ -26,11 +26,9 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import urllib
 
-# D1
 import d1_common.types.dataoneTypes_1_1 as dataoneTypes
 
 # 3rd party

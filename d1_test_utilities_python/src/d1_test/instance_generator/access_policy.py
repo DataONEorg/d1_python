@@ -44,13 +44,9 @@ Module d1_instance_generator.accesspolicy
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
 import random
 
-# D1
 import d1_common.types.dataoneTypes
-
-# App
 import random_data
 
 # Map between permission labels and permissions.

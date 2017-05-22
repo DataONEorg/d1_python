@@ -26,10 +26,8 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
 import unittest
 
-# D1
 import d1_common.util
 
 

@@ -25,35 +25,31 @@ Serialize DataONE response objects according to Accept header and set header
 
 from __future__ import absolute_import
 
-# Stdlib.
 import datetime
 
-# Django.
-import django.db
-import django.http
-from django.db.models import Max
-import django.conf
-
-# DataONE APIs.
+import app.views.util
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-
-# App.
-import app.views.util
+import django.conf
+import django.db
+import django.http
+from django.db.models import Max
 
 
 class ResponseHandler(object):
   def process_response(self, request, view_result):
-    # If view_result is a HttpResponse, return it unprocessed.
+    """Process return values from views
+    - If view_result is a HttpResponse, return it unprocessed.
+    - If response is a database query, run the query and create a response.
+    - If response is a plain or Unicode string, assume that it is a PID.
+    """
     if isinstance(view_result, django.http.response.HttpResponseBase):
       response = view_result
-    # If response is a database query, run the query and create a response.
     elif isinstance(view_result, dict):
       response = self._serialize_object(request, view_result)
-    # If response is a plain or Unicode string, assume that it is a PID.
     elif isinstance(view_result, basestring):
       response = self._http_response_with_identifier_type(request, view_result)
     else:
@@ -61,20 +57,18 @@ class ResponseHandler(object):
         type(view_result), str(view_result)
       )
     self._debug_mode_responses(request, response)
-    # if django.conf.settings.DEBUG_GMN:
-    #   self._assert_correct_return_type(request, response)
     return response
 
   def _debug_mode_responses(self, request, response):
     """Extra functionality available in debug mode.
+    - If pretty printed output was requested, force the content type to text.
+    This causes the browser to not try to format the output in any way.
+    - If SQL profiling is turned on, return a page with SQL query timing
+    information instead of the actual response.
     """
     if django.conf.settings.DEBUG_GMN:
-      # If pretty printed output was requested, force the content type to text.
-      # This causes the browser to not try to format the output in any way.
       if 'pretty' in request.GET:
         response['Content-Type'] = d1_common.const.CONTENT_TYPE_TEXT
-      # If SQL profiling is turned on, return a page with SQL query timing
-      # information instead of the actual response.
       if 'HTTP_VENDOR_PROFILE_SQL' in request.META:
         response_list = []
         for query in django.db.connection.queries:

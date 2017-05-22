@@ -22,13 +22,11 @@
 """
 
 import StringIO
-# Stdlib
 import htmlentitydefs
 import os
 import re
 import xml.dom.minidom
 
-# App
 import d1_client_cli.impl.cli_client as cli_client
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.cli_util as cli_util
@@ -41,7 +39,6 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.url
-# D1
 import d1_common.util
 import requests
 
@@ -300,10 +297,6 @@ class CommandProcessor():
         rows=self._session.get(session.COUNT_NAME),
       )
       cli_util.print_info(self._pretty(object_list.toxml()))
-    #
-    # SOLR returns HTML instead of XML when there's a problem.  See:
-    #   https://issues.apache.org/jira/browse/SOLR-141
-    # TODO: Use the exception members instead of parsing string.
     except d1_common.types.exceptions.ServiceFailure as e:
       e = "%".join(str(e).splitlines()) # Flatten line
       regexp = re.compile(

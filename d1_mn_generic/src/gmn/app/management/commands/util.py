@@ -28,12 +28,9 @@ import os
 import sys
 import tempfile
 
-# Django
+import app.models
 import django.conf
 import django.core.management.base
-
-# App
-import app.models
 
 single_instance_lock_file = None
 

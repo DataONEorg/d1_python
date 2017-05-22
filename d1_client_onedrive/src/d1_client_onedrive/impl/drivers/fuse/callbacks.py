@@ -29,20 +29,18 @@
 """
 
 import errno
-import fuse
 import logging
 import os
 import stat
 import time
 
-# 3rd party
-
-# D1
 import d1_common.date_time
-
+import fuse
 # App
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import onedrive_exceptions
+
+# 3rd party
 
 log = logging.getLogger(__name__)
 

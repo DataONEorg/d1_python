@@ -24,17 +24,15 @@
 :Synopsis: Generate a list of test subjects.
 :Author: DataONE (Dahl)
 """
-# Stdlib
+
 import logging
 import optparse
 import sys
 
-# D1
-from d1_test.instance_generator import random_data
-
-# App
 import settings
 import subject_dn
+# D1
+from d1_test.instance_generator import random_data
 
 # Get an instance of a logger.
 logger = logging.getLogger()

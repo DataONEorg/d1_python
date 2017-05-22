@@ -37,12 +37,10 @@
 # test_files/new_cert_public_key.pem --subject-info-path
 # test_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
-# Stdlib
 import logging
 import optparse
 import re
 
-# D1
 import d1_x509v3_certificate_generator
 
 

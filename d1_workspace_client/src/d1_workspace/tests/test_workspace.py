@@ -26,14 +26,12 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import pickle
 import sys
 import tempfile
 import unittest
 
-# D1
 import workspace
 
 

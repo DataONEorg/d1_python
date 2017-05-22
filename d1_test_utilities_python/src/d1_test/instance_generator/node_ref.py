@@ -20,10 +20,8 @@
 """Generate NodeReference PyXB objects
 """
 
-# D1
 import d1_common.types.dataoneTypes
 
-# App
 import random_data
 
 

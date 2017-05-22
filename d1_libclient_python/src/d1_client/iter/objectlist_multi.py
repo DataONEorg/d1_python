@@ -20,11 +20,9 @@
 """Multithreaded ObjectList iterator
 """
 
-# Stdlib
 import logging
 import multiprocessing
 
-# App
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 

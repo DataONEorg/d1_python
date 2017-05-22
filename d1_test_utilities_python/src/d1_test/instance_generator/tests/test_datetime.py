@@ -27,12 +27,10 @@ Module d1_instance_generator.tests.test_date
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import time
 import unittest
 
-# App
 import d1_test.instance_generator.dates as dates
 
 #===============================================================================

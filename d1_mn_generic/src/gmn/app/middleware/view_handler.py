@@ -22,20 +22,14 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import StringIO
-import d1_common
 import logging
 
-# Django.
-import django.conf
-
-# D1
-import d1_common.const
-
-# App.
 import app.middleware.session_cert
 import app.middleware.session_jwt
+import d1_common
+import d1_common.const
+import django.conf
 
 
 class ViewHandler(object):

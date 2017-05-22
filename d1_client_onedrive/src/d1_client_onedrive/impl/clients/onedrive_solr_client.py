@@ -28,16 +28,12 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
-# 3rd party
-import requests
-
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.url
+import requests
 
 # App
 from .. import onedrive_exceptions

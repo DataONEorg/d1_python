@@ -21,7 +21,6 @@
 """Pretty print an operation.
 """
 
-# App
 import d1_client_cli.impl.cli_util as cli_util
 
 LEVEL_INDENT = 2

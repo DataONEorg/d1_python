@@ -24,14 +24,10 @@
 import unittest
 import xml.sax
 
-# 3rd party
 import pyxb
-
+import util
 # D1
 from d1_common.types import dataoneTypes
-
-# App
-import util
 
 EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"

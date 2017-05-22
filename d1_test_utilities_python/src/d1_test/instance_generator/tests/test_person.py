@@ -27,14 +27,10 @@ Module d1_instance_generator.tests.test_person
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import unittest
 
-# D1
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-
-# App
 import d1_test.instance_generator.person as person
 
 #===============================================================================

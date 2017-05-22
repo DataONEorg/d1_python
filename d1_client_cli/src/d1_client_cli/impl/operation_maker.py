@@ -21,10 +21,8 @@
 """Put together all the information required for executing a given operation.
 """
 
-# Stdlib
 import os
 
-# App
 import d1_client_cli.impl.operation_validator as operation_validator
 import d1_client_cli.impl.session as session
 

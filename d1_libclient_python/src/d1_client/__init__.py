@@ -19,7 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Set default logging handler to avoid "No handler found" warnings.
 import logging
 
 try:

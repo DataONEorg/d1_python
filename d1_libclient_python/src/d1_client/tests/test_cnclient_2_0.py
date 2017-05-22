@@ -21,12 +21,10 @@
 
 import unittest
 
-import d1_common.util
-
 import d1_client.cnclient_2_0
-import shared_settings
-
+import d1_common.util
 import d1_test.mock_api.catch_all
+import shared_settings
 
 
 class TestCNClient_2_0(unittest.TestCase):

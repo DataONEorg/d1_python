@@ -26,15 +26,11 @@ environment in which this MN is registered.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
-import django.core.cache
-import django.conf
-
-# D1.
 import d1_client.cnclient
+import django.conf
+import django.core.cache
 
 
 def get_cn_subjects():

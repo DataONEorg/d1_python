@@ -23,18 +23,16 @@ from __future__ import absolute_import
 
 import functools
 
-import d1_common.const
-import d1_common.types
-import d1_common.url
-import d1_common.types.exceptions
-
-import django.conf
-
 import app.auth
-import app.views.util
-import app.views.asserts
 import app.sysmeta
 import app.sysmeta_sid
+import app.views.asserts
+import app.views.util
+import d1_common.const
+import d1_common.types
+import d1_common.types.exceptions
+import d1_common.url
+import django.conf
 
 # ------------------------------------------------------------------------------
 # Series ID (SID)

@@ -24,14 +24,10 @@
 import unittest
 import xml.sax
 
-# 3rd party
 import pyxb
-
+import util
 # D1
 from d1_common.types import dataoneTypes
-
-# App
-import util
 
 # flake8: noqa: E501
 

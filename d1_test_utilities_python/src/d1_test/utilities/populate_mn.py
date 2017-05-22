@@ -21,17 +21,14 @@
 """Populate a Member Node with randomly generated objects
 """
 
+import StringIO
 import logging
 import optparse
 import sys
-import StringIO
 
-# D1
 import d1_client.mnclient
 import d1_client.mnclient_2_0
 import d1_common.types.exceptions
-
-# App
 import test_object_generator
 
 # Defaults

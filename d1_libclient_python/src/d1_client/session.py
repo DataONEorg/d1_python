@@ -28,10 +28,9 @@ import cachecontrol # pip install cachecontrol
 import d1_common.const
 import d1_common.date_time
 import d1_common.url
-# 3rd party
-import requests # pip install requests[security]
+import requests
 import requests.adapters
-import requests_toolbelt # pip install requests-toolbelt
+import requests_toolbelt
 import requests_toolbelt.utils.dump
 
 DEFAULT_NUMBER_OF_RETRIES = 3

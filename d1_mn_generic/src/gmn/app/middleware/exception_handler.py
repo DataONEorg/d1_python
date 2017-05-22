@@ -45,19 +45,13 @@ import subprocess
 import sys
 import traceback
 
-# 3rd party.
+import app.middleware.detail_codes
+import d1_common.const
 import d1_common.ext.mimeparser
-
+import d1_common.types.exceptions
+import django.conf
 # Django.
 from django.http import HttpResponse
-import django.conf
-
-# D1
-import d1_common.const
-import d1_common.types.exceptions
-
-# App.
-import app.middleware.detail_codes
 
 
 class ExceptionHandler(object):

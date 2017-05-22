@@ -20,22 +20,16 @@
 """View Node doc, register or update Member Node
 """
 
-# Stdlib.
 import logging
 
-# Django.
-import d1_common.xml
-import django.core.management.base
-import django.conf
-
-# D1.
-import d1_common.util
-import d1_common.types.exceptions
-import d1_client.cnclient_2_0
-
-# App.
 import app.models
 import app.node
+import d1_client.cnclient_2_0
+import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
+import django.conf
+import django.core.management.base
 import util
 
 

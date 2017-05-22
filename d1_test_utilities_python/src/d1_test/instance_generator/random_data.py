@@ -27,13 +27,12 @@
 :Author: DataONE (Dahl)
 """
 
+import StringIO
 import random
 import re
-import StringIO
 
-# App
-import words
 import unicode_names
+import words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
 unicode_characters = u''.join(set(u''.join(unicode_names.UNICODE_NAMES)))

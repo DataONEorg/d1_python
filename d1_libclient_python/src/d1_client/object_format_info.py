@@ -28,10 +28,8 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import csv
 
-# D1
 import d1_common.util
 
 # Config

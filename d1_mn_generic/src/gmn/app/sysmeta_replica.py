@@ -22,14 +22,12 @@
 
 from __future__ import absolute_import
 
-import django.conf
-from django.db.models import Sum
-
+import app.models
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-
-import app.models
+import django.conf
+from django.db.models import Sum
 
 # ------------------------------------------------------------------------------
 # Local Replica / Replication Queue

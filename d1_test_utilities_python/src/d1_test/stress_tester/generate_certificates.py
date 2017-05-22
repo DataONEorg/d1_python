@@ -36,10 +36,7 @@ import os
 import sys
 import xml.sax.saxutils
 
-# D1
 import d1_x509v3_certificate_generator
-
-# App
 import settings
 import subject_dn
 

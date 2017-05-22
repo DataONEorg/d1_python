@@ -20,10 +20,8 @@
 """Test the access_policy module
 """
 
-# Stdlib
 import unittest
 
-# App
 import d1_common.access_policy
 import d1_common.xml
 import util

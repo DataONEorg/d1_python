@@ -28,7 +28,6 @@
   - python 2.6
 """
 
-# Std.
 import re
 
 # A DN is created by inserting a randomly generated string in the CN field

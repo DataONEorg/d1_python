@@ -27,12 +27,10 @@ Module d1_instance_generator.tests.test_random_data
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
-import unittest
 import logging
 import random
+import unittest
 
-# App
 import d1_test.instance_generator.random_data as random_data
 
 #===============================================================================

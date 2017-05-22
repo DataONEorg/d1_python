@@ -37,7 +37,6 @@ import uuid
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.format_ids as format_ids
 import d1_client_cli.impl.nodes as nodes
-# App
 import d1_client_cli.impl.session as session
 import d1_common.const
 

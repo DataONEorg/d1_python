@@ -19,10 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Generate PyXB binding classes from schemas.
-
-import os
 import optparse
+import os
 
 
 def generateVersion(schema_path, binding_path):

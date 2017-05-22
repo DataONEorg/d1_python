@@ -21,23 +21,17 @@
 """Unit tests for Session.
 """
 
-# Stdlib
 import base64
 import hashlib
 import logging
 import unittest
 
-# 3rd party
-import responses
-import requests
-
-# D1
+import d1_client.session as session
 import d1_common.logging_context
 import d1_common.types.exceptions
 import d1_common.util
-
-# App
-import d1_client.session as session
+import requests
+import responses
 import shared_settings
 
 

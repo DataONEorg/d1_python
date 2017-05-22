@@ -28,11 +28,6 @@ from __future__ import absolute_import
 
 import logging
 
-# Django.
-import django.conf
-import django.core.management.base
-
-# App.
 import app.auth
 import app.management.commands.util
 import app.models
@@ -43,6 +38,8 @@ import app.sysmeta_util
 import app.util
 import app.views.asserts
 import app.views.diagnostics
+import django.conf
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit

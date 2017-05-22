@@ -26,10 +26,8 @@ Module d1_instance_generator.identifier
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# D1
 import d1_common.types.dataoneTypes
 
-# App
 import random_data
 
 

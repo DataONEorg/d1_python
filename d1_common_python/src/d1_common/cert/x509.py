@@ -23,13 +23,13 @@
 import logging
 import re
 
+import cryptography.hazmat.backends
+import cryptography.x509
+import cryptography.x509.oid
 # 3rd party
 # pyasn1 is pulled in by cryptography
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
-import cryptography.hazmat.backends
-import cryptography.x509
-import cryptography.x509.oid
 """Map OID to short names for use when creating DataONE compliant serialization
 of the DN.
 

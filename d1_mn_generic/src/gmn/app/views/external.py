@@ -28,20 +28,6 @@ import os
 import urlparse
 import uuid
 
-import d1_client.cnclient
-import d1_client.object_format_info
-import d1_common.checksum
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.types.exceptions
-
-import requests
-
-import django.conf
-import django.http
-import django.utils.http
-
 import app.auth
 import app.db_filter
 import app.event_log
@@ -60,6 +46,17 @@ import app.views.asserts
 import app.views.create
 import app.views.decorators
 import app.views.util
+import d1_client.cnclient
+import d1_client.object_format_info
+import d1_common.checksum
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.dataoneTypes_v1_1
+import d1_common.types.exceptions
+import django.conf
+import django.http
+import django.utils.http
+import requests
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 

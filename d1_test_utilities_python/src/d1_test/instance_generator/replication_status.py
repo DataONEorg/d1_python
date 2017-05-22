@@ -22,7 +22,6 @@
 
 import random
 
-# D1
 import d1_common.types.dataoneTypes
 
 

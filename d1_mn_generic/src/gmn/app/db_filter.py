@@ -37,18 +37,14 @@ return: QuerySet
 
 from __future__ import absolute_import
 
-# Stdlib.
 import re
 
-# D1.
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
-
-# App.
 import app.models
 import app.views.asserts
 import app.views.util
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
 
 
 def add_access_policy_filter(query, request, column_name):
@@ -131,30 +127,20 @@ def add_string_begins_with_filter(query, request, column_name, param_name):
 def add_slice_filter(query, request):
   """Create a slice of a query based on request start and count parameters.
   """
-  # Get and validate the 'start' argument, used for setting the first
-  # record to retrieve. Silently set invalid value to 0.
   try:
     start = int(request.GET['start'])
     if start < 0:
       raise ValueError
   except (KeyError, ValueError):
     start = 0
-  # Get and validate the 'count' argument, used for setting the number of
-  # records to retrieve. Silently set invalid value to MAX_LISTOBJECTS.
   try:
     count = int(request.GET['count'])
     if count < 0:
       raise ValueError
   except (KeyError, ValueError):
     count = d1_common.const.MAX_LISTOBJECTS
-  # If both start and count are present but set to 0, we just tweak the query
-  # so that it won't return any results.
   if start == 0 and count == 0:
     query = query.none()
-  # Handle variations of start and count. We need these because Python does not
-  # support three valued logic in expressions(which would cause an expression
-  # that includes None to be valid and evaluate to None). Note that a slice such
-  # as [value : None] is valid and equivalent to [value:]
   elif start and count:
     query = query[start:start + count]
   elif start:

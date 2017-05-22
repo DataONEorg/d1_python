@@ -11,15 +11,16 @@ generate_sysmeta.py -f $OBJECT \
 
 """
 
+import datetime
 import logging
 import optparse
 import os.path
-import urllib2
 import sys
-from lxml import etree
-import datetime
+import urllib2
+
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 from d1_instance_generator import systemmetadata
+from lxml import etree
 
 
 def getObjectFormatFromID(fmtid, default='application/octet-stream'):

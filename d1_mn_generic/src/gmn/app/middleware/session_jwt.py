@@ -23,21 +23,18 @@
 from __future__ import absolute_import
 
 import httplib
+import logging
 import socket
 import ssl
 import urlparse
 
-import django.conf
-import django.core.cache
-import logging
-
 import cryptography.hazmat.backends
 import cryptography.x509
-import jwt
-
-# D1
 import d1_common.const
 import d1_common.types.exceptions
+import django.conf
+import django.core.cache
+import jwt
 
 # App
 

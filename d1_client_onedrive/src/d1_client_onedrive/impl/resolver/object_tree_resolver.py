@@ -31,19 +31,20 @@
 import logging
 from StringIO import StringIO
 
-# App
-from ..onedrive_exceptions import ONEDriveException
+import resolver_base
+import resource_map
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import onedrive_exceptions
-from d1_client_onedrive.impl.resolver import author
-from d1_client_onedrive.impl.resolver import taxa
-from d1_client_onedrive.impl.resolver import region
-from d1_client_onedrive.impl.resolver import time_period
-from d1_client_onedrive.impl.resolver import single
 from d1_client_onedrive.impl import util
-import resolver_base
-import resource_map
+from d1_client_onedrive.impl.resolver import author
+from d1_client_onedrive.impl.resolver import region
+from d1_client_onedrive.impl.resolver import single
+from d1_client_onedrive.impl.resolver import taxa
+from d1_client_onedrive.impl.resolver import time_period
+
+# App
+from ..onedrive_exceptions import ONEDriveException
 
 log = logging.getLogger(__name__)
 

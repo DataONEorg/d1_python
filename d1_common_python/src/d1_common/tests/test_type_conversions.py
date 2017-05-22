@@ -21,16 +21,12 @@
 """Test DataONE type conversions
 """
 
-# Stdlib
 import os
 import unittest
 
-# 3rd party
-import d1_common.xml
-
-# App
 import d1_common.type_conversions as c
 import d1_common.util
+import d1_common.xml
 
 
 class TestTypeConversions(unittest.TestCase):

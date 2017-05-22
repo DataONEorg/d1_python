@@ -33,20 +33,14 @@ authenticated for the subjects.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
-import django.core.management.base
-
-# D1.
-import d1_common.types.exceptions
-import d1_common.util
-
-# App.
 import app.management.commands.util
 import app.middleware.session_cert
 import app.models
+import d1_common.types.exceptions
+import d1_common.util
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit

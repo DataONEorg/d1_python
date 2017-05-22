@@ -31,11 +31,10 @@ Unit tests for ResourceMapGenerator and ResourceMapParser.
 
 import unittest
 
-import rdflib
-import foresite
-
-import d1_common.util
 import d1_client.data_package
+import d1_common.util
+import foresite
+import rdflib
 
 # TODO: Update tests for new OAI-ORE library
 

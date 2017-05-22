@@ -27,12 +27,10 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import socket
 import ssl
 
-# D1
 import d1_client.d1client
 import d1_client.mnclient
 import d1_common

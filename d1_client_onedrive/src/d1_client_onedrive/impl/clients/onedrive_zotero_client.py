@@ -36,7 +36,6 @@
 # For syncing with finer granularity in the future:
 # https://www.zotero.org/support/dev/web_api/v3/syncing
 
-# Stdlib
 import logging
 try:
   import cPickle as pickle

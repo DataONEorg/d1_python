@@ -20,21 +20,16 @@
 
 import unittest
 
-# D1
 import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
+import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
-
-# 3rd party
-
-# D1
-import d1_common.types.dataoneTypes_v2_0
-
-# App
 import d1_test.mock_api.catch_all as mock_catch_all
 import d1_test.mock_api.tests.settings as settings
+
+# 3rd party
 
 
 class TestMockCatchAll(unittest.TestCase):

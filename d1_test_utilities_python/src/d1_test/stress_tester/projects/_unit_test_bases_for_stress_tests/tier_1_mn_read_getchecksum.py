@@ -28,13 +28,11 @@
   - python 2.6
 """
 
-# D1
+import context
+
 import d1_common.const
 import d1_common.types.exceptions
 import d1_test_case
-
-# App
-import context
 import test_client
 
 

@@ -30,7 +30,6 @@ import d1_common.xml
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
 import responses
-
 import tests.d1_test_case
 import tests.util
 

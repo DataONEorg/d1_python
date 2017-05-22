@@ -18,26 +18,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import StringIO
 import base64
 import json
-import StringIO
 import unittest
 
-# D1
 import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.types.exceptions
 import d1_common.util
-
-# 3rd party
-import responses
-
-# App
 import d1_test.mock_api.create as mock_create
 import d1_test.mock_api.tests.settings as settings
 import d1_test.mock_api.util
+import responses
 
 
 class TestMockPost(unittest.TestCase):

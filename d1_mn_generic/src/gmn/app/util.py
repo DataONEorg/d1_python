@@ -30,7 +30,6 @@ import os
 import traceback
 import urlparse
 
-# Django.
 import django.conf
 
 

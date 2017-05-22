@@ -27,12 +27,10 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import sys
 import unittest
 
-# D1
 import d1_client_onedrive.impl.resolver.author as author
 import object_tree_test_sample
 

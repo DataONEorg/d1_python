@@ -22,17 +22,14 @@
 This does not test certificate validation.
 """
 
-# Stdlib
 import unittest
 
-# 3rd party
-from cryptography.hazmat.backends.openssl.x509 import _Certificate
-
-# App
 import d1_common.cert.subject_info
 import d1_common.cert.subjects
 import d1_common.cert.x509
 import d1_common.tests.util as util
+# 3rd party
+from cryptography.hazmat.backends.openssl.x509 import _Certificate
 
 
 class TestCert(unittest.TestCase):

@@ -28,14 +28,10 @@
   - python 2.6
 """
 
-# Stdlib
 import os
 
-# D1
-import d1_test_case
-
-# App
 import context
+import d1_test_case
 import test_client
 
 

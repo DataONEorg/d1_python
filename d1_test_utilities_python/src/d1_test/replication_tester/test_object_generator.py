@@ -25,8 +25,6 @@ import string
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes_v1 as dataoneTypes
-
-# App
 import d1_test.instance_generator.random_data
 
 # Values used in the generated System Metadata

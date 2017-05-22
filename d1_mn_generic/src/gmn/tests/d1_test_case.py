@@ -26,6 +26,7 @@ import string
 import subprocess
 import tempfile
 
+import app.models
 import d1_client.mnclient
 import d1_client.session
 import d1_common.checksum
@@ -33,9 +34,7 @@ import d1_common.types
 import d1_common.xml
 import django.test
 import requests
-
 import tests.gmn_test_client
-import app.models
 
 DEFAULT_ACCESS_RULE_LIST = [
   ([

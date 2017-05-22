@@ -6,7 +6,6 @@ import d1_client.mnclient_2_0
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_test.mock_api.django_client as mock_django_client
 import responses
-
 import tests.d1_test_case
 
 BASE_URL = 'http://mock/mn'

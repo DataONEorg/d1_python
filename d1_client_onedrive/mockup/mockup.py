@@ -26,11 +26,9 @@
 :Author: DataONE (Dahl)
 """
 
-# Std.
 import logging
 import os
 
-# 3rd party
 import fuse
 
 import callbacks
@@ -39,7 +37,6 @@ import callbacks
 def main():
   logging.getLogger().setLevel(logging.DEBUG)
 
-  # FUSE settings common to FUSE and MacFUSE.
   fuse_args = {
     'foreground': True,
     'fsname': 'ONEDrive',
@@ -48,15 +45,12 @@ def main():
     # Requires user_allow_other in /etc/fuse.conf
     'allow_other': True,
   }
-  # FUSE settings specific to MacFUSE.
   if os.uname()[0] == 'Darwin':
     fuse_args['volicon'] = 'd1.icon'
     fuse_args['local'] = True
-  # FUSE settings specific to regular FUSE.
   else:
     fuse_args['nonempty'] = True
 
-  # Mount the drive and handle callbacks forever.
   fuse.FUSE(callbacks.FUSECallbacks(), 'fs', **fuse_args)
 
 

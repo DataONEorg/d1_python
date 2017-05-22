@@ -33,17 +33,6 @@ import pprint
 import shutil
 import urlparse
 
-import django.conf
-from django.db.models import Q
-from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect, reverse
-import django.apps
-
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-
 import app.auth
 import app.db_filter
 import app.event_log
@@ -56,6 +45,15 @@ import app.util
 import app.views.asserts
 import app.views.create
 import app.views.util
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
+import django.apps
+import django.conf
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, redirect, reverse
 
 # ------------------------------------------------------------------------------
 # Diagnostics portal.

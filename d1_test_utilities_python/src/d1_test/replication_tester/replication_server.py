@@ -18,20 +18,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cgi
-import threading
 import SimpleHTTPServer
 import SocketServer
+import cgi
 import logging
-import urlparse
-import urllib
 import re
+import threading
+import urllib
+import urlparse
 
-# D1
-import d1_common.types.dataoneTypes_v1 as dataoneTypes
 import d1_common.const
-
-# App
+import d1_common.types.dataoneTypes_v1 as dataoneTypes
 import replication_error
 import test_object_generator
 

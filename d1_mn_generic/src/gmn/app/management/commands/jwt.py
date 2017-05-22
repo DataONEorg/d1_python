@@ -28,23 +28,15 @@ authenticated for the subject.
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 
-# Django.
-import django.core.management.base
-
-# 3rd party.
-import jwt
-
-# D1.
-import d1_common.types.exceptions
-import d1_common.util
-
-# App.
 import app.management.commands.util
 import app.middleware.session_jwt
 import app.models
+import d1_common.types.exceptions
+import d1_common.util
+import django.core.management.base
+import jwt
 
 
 # noinspection PyClassHasNoInit

@@ -21,14 +21,12 @@
 """
 from __future__ import absolute_import
 
-import d1_common.url
-
-import django.core.files.move
-
 import app.event_log
 import app.sysmeta
 import app.util
 import app.views.asserts
+import d1_common.url
+import django.core.files.move
 
 
 def create(request, sysmeta_pyxb):

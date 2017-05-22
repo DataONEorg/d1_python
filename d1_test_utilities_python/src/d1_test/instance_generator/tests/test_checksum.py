@@ -27,11 +27,9 @@ Module d1_instance_generator.tests.test_systemmetadata
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import unittest
-import d1_common.checksum
 
-# App
+import d1_common.checksum
 import d1_test.instance_generator.checksum as checksum
 
 #===============================================================================

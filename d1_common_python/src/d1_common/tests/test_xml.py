@@ -23,7 +23,6 @@
 
 import unittest
 
-# D1
 import d1_common.xml
 
 XML_CORRECT = """<?xml version="1.0" ?>

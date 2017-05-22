@@ -26,25 +26,20 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
 import base64
 import json
 import unittest
 
+import d1_client.mnclient
+import d1_client.mnclient_1_1
+import d1_client.tests.util
+import d1_common.const
+import d1_common.types.dataoneTypes
+import d1_common.util
+import d1_test.mock_api.create
 import requests_toolbelt
 import responses
-import d1_test.mock_api.create
-
-# D1
-import d1_client.mnclient_1_1
-import d1_common.types.dataoneTypes
-import d1_common.const
-
-# App
-import d1_client.mnclient
 import shared_settings
-import d1_client.tests.util
-import d1_common.util
 
 
 class TestMNClient(unittest.TestCase):

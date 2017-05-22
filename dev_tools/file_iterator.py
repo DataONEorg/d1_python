@@ -26,6 +26,7 @@ import os
 DEFAULT_EXCLUDE_GLOB_LIST = [
   # Dirs
   'dist/', '*egg-info/', 'build/', 'generated/', '.git/', 'doc/', '.idea/',
+  'migrations/',
   # Files
   '*~', '*.bak', '*.tmp', '*.pyc'
 ] # yapf: disable

@@ -28,7 +28,6 @@
   - python 2.6
 """
 
-# D1
 import d1_test_case
 
 

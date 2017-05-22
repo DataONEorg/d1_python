@@ -27,14 +27,6 @@ from __future__ import absolute_import
 
 import datetime
 
-import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.xml
-import pyxb
-
 import app.auth
 import app.models
 import app.sysmeta_obsolescence
@@ -42,6 +34,13 @@ import app.sysmeta_replica
 import app.sysmeta_sid
 import app.sysmeta_util
 import app.util
+import d1_common.date_time
+import d1_common.types.dataoneTypes
+import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
+import pyxb
 
 
 def archive_object(pid):

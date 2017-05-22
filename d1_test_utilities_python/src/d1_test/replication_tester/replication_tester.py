@@ -41,11 +41,11 @@ import time
 import d1_client.mnclient
 import d1_common.const
 import d1_common.types.exceptions
+import replication_error
 import replication_server
 import test_object_generator
 from d1_test.replication_tester.test_object_generator import \
   generate_random_ascii
-import replication_error
 
 # Defaults. These can be modified on the command line.
 

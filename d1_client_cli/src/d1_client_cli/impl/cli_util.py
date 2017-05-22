@@ -26,7 +26,6 @@ import shutil
 import string
 import sys
 
-# DataONE
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 

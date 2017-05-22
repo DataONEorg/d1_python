@@ -22,14 +22,12 @@
 
 from __future__ import absolute_import
 
-import django.conf
-# Django
-from django.conf.urls import url
-
-# App
 import app.views.diagnostics
 import app.views.external
 import app.views.internal
+import django.conf
+# Django
+from django.conf.urls import url
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP verb into account, so in the

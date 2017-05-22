@@ -26,12 +26,10 @@
 :TimePeriod: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import sys
 import unittest
 
-# D1
 import impl.resolver.time_period as time_period
 from object_tree_test_sample import object_tree
 

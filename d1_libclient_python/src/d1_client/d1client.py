@@ -28,9 +28,7 @@ with any DataONE node regardless of type and version.
 import logging
 import time
 
-# App
 import cnclient_2_0
-# D1
 import d1_common.const
 import d1_common.util
 import mnclient_2_0

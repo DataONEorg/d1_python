@@ -25,21 +25,17 @@ from __future__ import absolute_import
 
 import logging
 
-import django.core.management.base
-from django.db import transaction
-import django.conf
-
-# D1.
-import d1_client.cnclient
-import d1_client.d1client
-import d1_client.mnclient
-
-# App.
 import app.auth
 import app.event_log
 import app.management.commands.util
 import app.models
 import app.sysmeta
+import d1_client.cnclient
+import d1_client.d1client
+import d1_client.mnclient
+import django.conf
+import django.core.management.base
+from django.db import transaction
 
 
 # noinspection PyClassHasNoInit

@@ -31,14 +31,13 @@
 import logging
 import optparse
 
-# D1
+import d1_certificate.certificate_extractor
+import d1_common.const
+import d1_common.date_time
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
 import d1_common.url
-import d1_common.const
-import d1_certificate.certificate_extractor
+import d1_common.util
 
 
 class get_subjects_from_certificate(object):

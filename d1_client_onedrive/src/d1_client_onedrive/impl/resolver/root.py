@@ -32,18 +32,17 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import os
 
+import flat_space
+import object_tree_resolver
+import resolver_base
 # D1
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import os_escape
 from d1_client_onedrive.impl import onedrive_exceptions
-import flat_space
-import resolver_base
-import object_tree_resolver
+from d1_client_onedrive.impl import os_escape
 
 log = logging.getLogger(__name__)
 

@@ -26,7 +26,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
 log = logging.getLogger(__name__)

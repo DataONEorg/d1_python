@@ -22,10 +22,8 @@
 import StringIO
 import logging
 import sys
-# Stdlib
 import unittest
 
-# App
 import d1_client_cli.impl.replication_policy as replication_policy
 
 #===============================================================================

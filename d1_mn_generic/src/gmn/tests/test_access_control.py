@@ -23,19 +23,13 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import unittest
 
-# Django
-import django.test
-
-# D1.
+import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import d1_common.const
 import d1_common.xml
-
-# App.
+import django.test
 import gmn.tests.gmn_test_client
 
 GMN_URL = 'http://127.0.0.1:8000'

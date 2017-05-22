@@ -20,11 +20,9 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import errno
 import os
 
-# D1
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 

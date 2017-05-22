@@ -25,19 +25,16 @@ GMN will then process the request as normal, but return the profiling report
 instead of the actual result.
 """
 
-# Stdlib.
-import sys
 import StringIO
-import os
-
-# Django.
-from django.http import HttpResponse
-import django.core.exceptions
-import django.conf
-
-# 3rd party.
 import hotshot
 import hotshot.stats
+import os
+import sys
+
+import django.conf
+import django.core.exceptions
+# Django.
+from django.http import HttpResponse
 
 
 class ProfilingHandler(object):

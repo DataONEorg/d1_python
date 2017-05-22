@@ -27,15 +27,14 @@
 """
 
 # Stdlib
-#import os
+# import os
 import logging
 import sys
 import unittest
 
-# D1
-
-# App
 import command_processor
+
+# D1
 
 
 class O():

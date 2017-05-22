@@ -21,15 +21,12 @@
 """Sanity checking of the values which are required by a given operation.
 """
 
-# Stdlib
-import types
 import urlparse
 
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
-# App
 import d1_client_cli.impl.cli_util as cli_util
-# D1
 import d1_common.checksum
+import types
 
 
 class OperationValidator(object):

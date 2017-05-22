@@ -19,14 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import codecs
 import os
 import random
 
-# D1
-import d1_common.util
 import d1_common.types.dataoneTypes
+import d1_common.util
 
 
 def get_test_filepath(filename):

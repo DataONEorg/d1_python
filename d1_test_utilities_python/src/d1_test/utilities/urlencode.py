@@ -24,9 +24,10 @@ Examples:
 
 """
 
-import sys
 import logging
 import optparse
+import sys
+
 from d1_common import url
 
 

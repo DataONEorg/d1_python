@@ -39,19 +39,19 @@ import StringIO
 import codecs
 import datetime
 import glob
+import hashlib
 import logging
 import os
+import random
 import re
+import string
 import sys
 import tempfile
 import time
 import traceback
 import unittest
-import urlparse
-import random
-import string
-import hashlib
 import urllib
+import urlparse
 
 import d1_client.mnclient
 import d1_client.mnclient_2_0
@@ -68,7 +68,6 @@ import d1_common.url
 import d1_common.util
 import d1_common.xml
 import requests
-
 import tests.d1_test_case
 import tests.gmn_test_client
 import tests.util

@@ -21,15 +21,13 @@
 
 import unittest
 
+import d1_client.cnclient
 import d1_client.tests.util
-import responses
-
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
-import d1_test.instance_generator.replication_status
 import d1_test.instance_generator.access_policy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.node_ref
@@ -37,16 +35,14 @@ import d1_test.instance_generator.person
 import d1_test.instance_generator.random_data
 import d1_test.instance_generator.replica
 import d1_test.instance_generator.replication_policy
+import d1_test.instance_generator.replication_status
 import d1_test.instance_generator.subject
 import d1_test.instance_generator.system_metadata
 import d1_test.mock_api.catch_all
-
-# App
-import d1_client.cnclient
-import shared_settings
-
-import d1_test.mock_api.list_formats
 import d1_test.mock_api.get_format
+import d1_test.mock_api.list_formats
+import responses
+import shared_settings
 
 
 class TestCNClient(unittest.TestCase):

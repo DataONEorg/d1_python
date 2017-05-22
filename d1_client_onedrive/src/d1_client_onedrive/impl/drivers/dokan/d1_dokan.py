@@ -37,28 +37,25 @@ import logging
 import os
 import time
 
-from d1_client_onedrive.impl.drivers import dokan
+import d1_common.const
+import d1_common.date_time
 # from const import DOKAN_SUCCESS
 # from const import DOKAN_ERROR
 from const import DOKAN_OPTION_DEBUG
-from const import DOKAN_OPTION_STDERR
 from const import DOKAN_OPTION_KEEP_ALIVE
+from const import DOKAN_OPTION_STDERR
+from const import FILE_ATTRIBUTE_DEVICE
+from const import FILE_ATTRIBUTE_DIRECTORY
+from const import FILE_ATTRIBUTE_NORMAL
 # from const import DOKAN_OPTION_NETWORK
 # from const import DOKAN_OPTION_REMOVABLE
 from const import FILE_ATTRIBUTE_READONLY
-from const import FILE_ATTRIBUTE_DEVICE
-from const import FILE_ATTRIBUTE_NORMAL
-
-from const import FILE_ATTRIBUTE_DIRECTORY
-from const import FILE_READ_ONLY_VOLUME
-from const import FILE_CASE_SENSITIVE_SEARCH
 from const import FILE_CASE_PRESERVED_NAMES
-
-import d1_common.const
-import d1_common.date_time
-
+from const import FILE_CASE_SENSITIVE_SEARCH
+from const import FILE_READ_ONLY_VOLUME
 # App
 from d1_client_onedrive.impl import onedrive_exceptions
+from d1_client_onedrive.impl.drivers import dokan
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

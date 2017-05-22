@@ -30,7 +30,8 @@ import logging
 import sys
 import unittest
 
-import d1_client_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
+import \
+  d1_client_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
 
 options = {}
 

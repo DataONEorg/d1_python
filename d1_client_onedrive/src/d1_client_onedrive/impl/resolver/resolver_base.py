@@ -29,7 +29,6 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
 # App

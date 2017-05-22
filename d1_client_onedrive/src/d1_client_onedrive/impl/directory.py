@@ -26,7 +26,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import collections
 import logging
 

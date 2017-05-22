@@ -21,7 +21,6 @@
 """Create and manipulate access control objects.
 """
 
-# App
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.cli_util as cli_util
 

@@ -29,18 +29,13 @@ d1_exception.py
 
 import re
 
-# 3rd party
-import responses
-
-# D1
-import d1_common.type_conversions
 import d1_common.const
+import d1_common.type_conversions
 import d1_common.url
 import d1_common.util
-
-# App
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
+import responses
 
 # Config
 

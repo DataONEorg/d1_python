@@ -31,10 +31,8 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
-# App
 import util
 
 log = logging.getLogger(__name__)

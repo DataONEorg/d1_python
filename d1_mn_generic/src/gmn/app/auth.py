@@ -25,15 +25,14 @@ for performing the attempted operation.
 
 from __future__ import absolute_import
 
+import app.models
+import app.node_registry
 import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import django.conf
 import django.core.cache
-
-import app.models
-import app.node_registry
 
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:

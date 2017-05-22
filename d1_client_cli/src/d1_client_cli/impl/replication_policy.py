@@ -21,10 +21,9 @@
 """Create and manipulate replication policies.
 """
 
-# App
 import d1_client_cli.impl.cli_exceptions
 import d1_client_cli.impl.cli_util
-# D1
+
 import d1_common.const
 
 

@@ -21,15 +21,10 @@
 
 from __future__ import absolute_import
 
-# Stdlib
-import mock
-
-# Django
 import django.test
-
-# App
 import gmn.app.middleware.session_jwt
 import gmn.tests.util
+import mock
 
 
 class TestJwt(django.test.TestCase):

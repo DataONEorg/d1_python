@@ -33,14 +33,13 @@ Requires:
     https://foresite-toolkit.googlecode.com/svn/foresite-python/trunk
 """
 
-# Stdlib
-import sys
 import logging
+import sys
 
-# 3rd party
-from rdflib import Namespace, URIRef
 import foresite
 import foresite.utils
+# 3rd party
+from rdflib import Namespace, URIRef
 
 #----------------------------------------------------------------------
 

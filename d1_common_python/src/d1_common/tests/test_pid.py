@@ -24,9 +24,7 @@
 import unittest
 import xml.sax
 
-# 3rd party
 import pyxb
-
 # D1
 from d1_common.types import dataoneTypes
 

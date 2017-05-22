@@ -10,10 +10,10 @@ Dokan -- "no-op" Dokan implementation
 
 import ctypes
 import ctypes.wintypes as wintypes
-from functools import partial
+import logging
 from ctypes.wintypes import FILETIME
 from ctypes.wintypes import WIN32_FIND_DATAW
-import logging
+from functools import partial
 
 import const
 

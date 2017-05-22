@@ -11,12 +11,11 @@ import time
 import urllib
 import urlparse
 
+import d1_client.d1client
+import d1_common.const
+import solrclient
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
-import solrclient
-
-import d1_common.const
-import d1_client.d1client
 
 # Config
 PATHELEMENT_SAFE_CHARS = ' @$,~*&'

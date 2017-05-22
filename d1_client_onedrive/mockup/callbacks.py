@@ -26,7 +26,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Std.
 import datetime
 import errno
 import os
@@ -35,7 +34,6 @@ import time
 
 import fuse
 
-# D1
 import fs
 
 

@@ -25,8 +25,6 @@ installing GMN. See settings_site.py for site specific settings.
 
 from __future__ import absolute_import
 
-import d1_common.util
-
 # Add site specific settings.
 from settings_site import * # noqa: F403
 
@@ -68,7 +66,7 @@ TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': [
-      d1_common.util.abs_path('./app/templates'),
+      d1_common.util.abs_path('./app/templates'), # noqa: F405
     ],
     # 'APP_DIRS': True,
     'OPTIONS': {

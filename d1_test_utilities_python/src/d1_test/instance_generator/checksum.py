@@ -27,16 +27,12 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import random
 
-# D1
 import d1_common.checksum
 import d1_common.const
-import d1_common.util
 import d1_common.types.dataoneTypes
-
-# App
+import d1_common.util
 import random_data
 
 

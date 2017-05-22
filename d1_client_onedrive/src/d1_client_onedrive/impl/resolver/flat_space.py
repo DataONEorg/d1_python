@@ -28,14 +28,13 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
+import resolver_base
+import resource_map
 # App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import util
-import resolver_base
-import resource_map
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)

@@ -29,11 +29,9 @@ Unit tests for ObjectFormatInfo.
   - python 2.6
 """
 
-# Stdlib
 import StringIO
 import unittest
 
-# App
 import d1_client.object_format_info
 import d1_common.util
 

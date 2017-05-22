@@ -27,13 +27,9 @@ Module d1_instance_generator.person
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import random
 
-# D1
 import d1_common.types.dataoneTypes_v1
-
-# App
 import random_data
 import subject
 

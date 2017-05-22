@@ -22,18 +22,15 @@
 
 from __future__ import absolute_import
 
-# Stdlib.
 import logging
 import pprint
 
-# Django.
-from django.http import HttpResponse
-import django.conf
-
-# D1.
 import d1_common
 import d1_common.const
 import d1_common.types.exceptions
+import django.conf
+# Django.
+from django.http import HttpResponse
 
 
 class RequestHandler(object):

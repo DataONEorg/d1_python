@@ -21,13 +21,11 @@
 """Hold a queue of operations and perform commands on the queue.
 """
 
-# Stdlib
 import json
 import os
 import subprocess
 import tempfile
 
-# App
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.operation_executer as operation_executer

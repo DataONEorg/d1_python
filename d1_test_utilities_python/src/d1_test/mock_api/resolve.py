@@ -31,16 +31,14 @@ A NotFound exception can be triggered by passing a formatId that starts with
 "unknown_".
 """
 
-# Stdlib
 import re
-
-import responses
 
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.url
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
+import responses
 
 # Config
 N_TOTAL = 100

@@ -53,19 +53,14 @@ import pprint
 import re
 import unittest
 
-# 3rd party
-import mock
-import responses
-
-# D1
 import d1_common.const
-import d1_common.url
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-
-# App
+import d1_common.url
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
+import mock
+import responses
 
 
 def activate(fun):

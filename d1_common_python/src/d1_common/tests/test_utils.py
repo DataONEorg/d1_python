@@ -21,7 +21,6 @@
 """Test general utilities
 """
 
-# Stdlib
 import unittest
 
 

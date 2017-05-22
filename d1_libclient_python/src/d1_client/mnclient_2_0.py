@@ -19,12 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import logging
 
-# App
 import baseclient_2_0
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.util

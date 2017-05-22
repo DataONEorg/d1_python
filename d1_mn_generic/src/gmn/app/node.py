@@ -25,7 +25,6 @@ from __future__ import absolute_import
 import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
-
 import d1_common.xml
 import django.conf
 

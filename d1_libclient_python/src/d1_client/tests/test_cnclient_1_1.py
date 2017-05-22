@@ -28,9 +28,8 @@
 
 import unittest
 
-import d1_common.util
-
 import d1_client.cnclient_1_1
+import d1_common.util
 import shared_settings
 
 

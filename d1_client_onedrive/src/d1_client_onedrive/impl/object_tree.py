@@ -29,13 +29,11 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import pickle
 
-# App
-import clients.onedrive_solr_client as onedrive_solr_client
 import clients.onedrive_d1_client as onedrive_d1_client
+import clients.onedrive_solr_client as onedrive_solr_client
 import onedrive_exceptions
 
 

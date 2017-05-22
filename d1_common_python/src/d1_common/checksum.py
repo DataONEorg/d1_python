@@ -22,7 +22,6 @@
 
 import hashlib
 
-# App
 import const
 
 from .types import dataoneTypes

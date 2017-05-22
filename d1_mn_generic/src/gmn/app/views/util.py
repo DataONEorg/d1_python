@@ -25,21 +25,6 @@ from __future__ import absolute_import
 import datetime
 import re
 
-import d1_common.const
-import d1_common.date_time
-import d1_common.type_conversions
-import d1_common.types.dataoneTypes
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
-import d1_common.url
-
-# Django
-import django.http
-import django.conf
-import django.core.files.move
-
-# App
 import app.auth
 import app.db_filter
 import app.event_log
@@ -49,6 +34,17 @@ import app.sysmeta
 import app.sysmeta_sid
 import app.sysmeta_util
 import app.util
+import d1_common.const
+import d1_common.date_time
+import d1_common.type_conversions
+import d1_common.types.dataoneTypes
+import d1_common.types.dataoneTypes_v1_1
+import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.url
+import django.conf
+import django.core.files.move
+import django.http
 
 
 def dataoneTypes(request):

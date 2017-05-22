@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import
 
-# Stdlib
 import email.message
 import email.utils
 import logging

@@ -28,12 +28,10 @@
   - python 2.6
 """
 
-# Std.
 import random
 
-import transaction
-
 import settings
+import transaction
 
 
 class Transaction(transaction.Transaction):

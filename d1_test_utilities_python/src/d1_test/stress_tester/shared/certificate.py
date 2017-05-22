@@ -28,7 +28,6 @@
   - python 2.6
 """
 
-# Std.
 import os
 
 import settings

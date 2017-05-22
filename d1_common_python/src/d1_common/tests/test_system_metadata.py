@@ -21,15 +21,11 @@
 """Test the system_metadata module
 """
 
-# Stdlib
 import unittest
 
-# 3rd party
-import pyxb
-
-# App
 import d1_common.system_metadata
 import d1_common.xml
+import pyxb
 import util
 
 # logging.basicConfig(level=logging.DEBUG)

@@ -26,10 +26,8 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import unittest
 
-# D1
 import query_engine_description
 
 

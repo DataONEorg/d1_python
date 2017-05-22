@@ -45,8 +45,8 @@ The current implementation simply uses URL percent-encoding of an UTF-8
 encoding of the Unicode strings.
 """
 
-import os
 import logging
+import os
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)

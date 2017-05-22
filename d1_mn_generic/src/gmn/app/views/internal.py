@@ -30,19 +30,6 @@ import datetime
 import os
 import platform
 
-import django.conf
-from django.db.models import Avg, Count, Sum
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-import django
-
-# DataONE APIs.
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-
-# App.
 import app.auth
 import app.db_filter
 import app.event_log
@@ -52,6 +39,15 @@ import app.sysmeta_validate
 import app.util
 import app.views.asserts
 import app.views.util
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
+import django
+import django.conf
+from django.db.models import Avg, Count, Sum
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
 
 
 def home(request):

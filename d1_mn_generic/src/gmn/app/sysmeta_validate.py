@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import
 
-# D1.
 import d1_common.checksum
 import d1_common.types.exceptions
 

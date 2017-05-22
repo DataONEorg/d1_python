@@ -27,11 +27,9 @@ Module d1_instance_generator.tests.test_replication_policy
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import unittest
 
-# App
 import d1_test.instance_generator.replication_policy as replicationpolicy
 
 #===============================================================================

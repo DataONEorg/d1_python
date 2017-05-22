@@ -31,7 +31,6 @@ import sys
 import urllib
 import urlparse
 
-# D1
 import const
 
 # ==============================================================================

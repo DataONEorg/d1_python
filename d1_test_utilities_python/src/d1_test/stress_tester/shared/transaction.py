@@ -29,18 +29,15 @@
   - python 2.6
 """
 
-# Std.
 import codecs
 import os
 import random
 import time
 
-# D1
+import certificate
 import d1_client.mnclient
 import d1_common.const
 import d1_common.util
-
-import certificate
 import settings
 import subject_dn
 

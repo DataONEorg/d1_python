@@ -25,33 +25,29 @@ Run as::
 
 """
 
-# standard library
+import logging
 import optparse
 import sys
 import time
 import urllib
-import logging
 
-# Dokan
-from d1_client_onedrive.impl.drivers import dokan
+import d1_common.const
 # from const import DOKAN_SUCCESS
 # from const import DOKAN_ERROR
 from const import DOKAN_OPTION_DEBUG
-from const import DOKAN_OPTION_STDERR
 from const import DOKAN_OPTION_KEEP_ALIVE
+from const import DOKAN_OPTION_STDERR
+from const import FILE_ATTRIBUTE_DEVICE
+# from const import ERROR_FILE_NOT_FOUND
+from const import FILE_ATTRIBUTE_DIRECTORY
+from const import FILE_ATTRIBUTE_NORMAL
 # from const import DOKAN_OPTION_NETWORK
 # from const import DOKAN_OPTION_REMOVABLE
 from const import FILE_ATTRIBUTE_READONLY
-from const import FILE_ATTRIBUTE_DEVICE
-from const import FILE_ATTRIBUTE_NORMAL
-# from const import ERROR_FILE_NOT_FOUND
-from const import FILE_ATTRIBUTE_DIRECTORY
-from const import FILE_READ_ONLY_VOLUME
-from const import FILE_CASE_SENSITIVE_SEARCH
 from const import FILE_CASE_PRESERVED_NAMES
-
-# DataONE imports
-import d1_common.const
+from const import FILE_CASE_SENSITIVE_SEARCH
+from const import FILE_READ_ONLY_VOLUME
+from d1_client_onedrive.impl.drivers import dokan
 from fs_util import D1FS
 
 # debugging flags
@@ -85,7 +81,7 @@ class DataONEFS(dokan.Operations, D1FS):
       return FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_READONLY
 
   def getFileInformation(self, fileName):
-    # constuct filetime structure from current time
+    # construct filetime structure from current time
     now = time.time()
 
     # get file attributes
@@ -115,21 +111,19 @@ class DataONEFS(dokan.Operations, D1FS):
         #raise IOError('specified facet does not exist')
         return None
 
-    # identifier level, subdirs of the facet = identifier
     elif len(tokens) == 2:
+      # identifier level, subdirs of the facet = identifier
       return dict(attr=attrs, ctime=now, atime=now, wtime=now, size=0, nlinks=1)
 
-    # data package level
     elif len(tokens) == 3:
+      # data package level
       return dict(attr=attrs, ctime=now, atime=now, wtime=now, size=0, nlinks=1)
 
-    # related items
     elif len(tokens) == 4:
       pid = urllib.unquote(tokens[2]).decode('utf-8')
       mfname = urllib.unquote(tokens[3]).decode('utf-8')
       mfid = self.getObjectPid(mfname)
 
-      # system metadata
       if tokens[3] == 'systemmetadata.xml':
         sysm = self.getSystemMetadata(pid)
         ctime1 = time.mktime(sysm.dateUploaded.timetuple())
@@ -144,14 +138,12 @@ class DataONEFS(dokan.Operations, D1FS):
         return dict(
           attr=attrs, ctime=now, atime=now, wtime=now, size=sysm.size, nlinks=1
         )
-      # describes
       elif tokens[3] == 'describes':
         obj = self.getObject(pid)
         relations = obj.getRelatedObjects() # noqa: F841
         return dict(
           attr=attrs, ctime=now, atime=now, wtime=now, size=0, nlinks=1
         )
-      # abstract.txt
       elif tokens[3] == 'abstract.txt':
         abstxt = self.getAbstract(pid)
         return dict(
@@ -213,8 +205,8 @@ class DataONEFS(dokan.Operations, D1FS):
       else:
         raise IOError('facet does not exist')
 
-    # identifier level - contains data packages
     elif (len(pathTokens) == 2):
+      # identifier level - contains data packages
       facetkey = urllib.unquote(pathTokens[0]).decode('utf-8')
       facetval = urllib.unquote(pathTokens[1]).decode('utf-8')
       entries = self.getIdentifiers(facetkey, facetval)
@@ -228,8 +220,8 @@ class DataONEFS(dokan.Operations, D1FS):
         )
       return result
 
-    # data package level
     elif (len(pathTokens) == 3):
+      # data package level
       pid = urllib.unquote(pathTokens[2]).decode('utf-8')
       obj = self.getObject(pid)
       fname = self.getObjectFileName(pid)
@@ -276,8 +268,8 @@ class DataONEFS(dokan.Operations, D1FS):
       )
       return result
 
-    # related objects
     elif (len(pathTokens) == 4):
+      # related objects
       pid = urllib.unquote(pathTokens[2]).decode('utf-8')
       if (pathTokens[3] == 'describes'):
         obj = self.getObject(pid)

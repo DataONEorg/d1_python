@@ -3,13 +3,14 @@ display included subject information such as mapped identities and group
 memberships.
 """
 
-import sys
 import logging
 import optparse
+import sys
+
 from OpenSSL import crypto
-from pyasn1.error import PyAsn1Error
-from pyasn1.codec.ber import decoder
 from lxml import etree
+from pyasn1.codec.ber import decoder
+from pyasn1.error import PyAsn1Error
 
 
 def getSubjectFromName(xName):

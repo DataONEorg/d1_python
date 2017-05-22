@@ -25,24 +25,20 @@ from __future__ import absolute_import
 import logging
 import os
 
-import django.conf
-import app.sysmeta_util
-import django.core.management.base
-
-# D1.
-import d1_common.url
-import d1_common.types.exceptions
-
-# App.
 import app.auth
 import app.management.commands.util
 import app.models
 import app.node
 import app.sysmeta
 import app.sysmeta_obsolescence
+import app.sysmeta_util
 import app.util
 import app.views.asserts
 import app.views.diagnostics
+import d1_common.types.exceptions
+import d1_common.url
+import django.conf
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit

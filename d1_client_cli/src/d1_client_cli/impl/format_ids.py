@@ -21,10 +21,8 @@
 """Retrieve, cache, manipulate list of known Object Format IDs.
 """
 
-# Stdlib
 import datetime
 
-# App
 import d1_client_cli.impl.cli_client as cli_client
 
 CACHE_MINUTES = 60

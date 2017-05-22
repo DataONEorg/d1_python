@@ -25,10 +25,11 @@ import argparse
 import logging
 
 import d1_common.util
-import file_iterator
 import redbaron
 import redbaron.nodes
 import util
+
+import file_iterator
 
 
 def main():
@@ -101,7 +102,7 @@ def _remove_single_line_import_comments(r):
   import_r, remaining_r = split_by_last_import(r)
   new_import_r = redbaron.NodeList()
   for i, v in enumerate(import_r):
-    if 1 < i < len(r) - 2:
+    if 1 < i < len(import_r) - 2:
       if not (
           import_r[i - 2].type != 'comment' and v.type == 'comment' and
           import_r[i + 2].type != 'comment'

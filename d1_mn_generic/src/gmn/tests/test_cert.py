@@ -21,10 +21,7 @@
 
 from __future__ import absolute_import
 
-# Django
 import django.test
-
-# App
 import gmn.app.middleware.session_cert
 import gmn.tests.util
 

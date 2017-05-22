@@ -29,6 +29,13 @@ from __future__ import absolute_import
 import logging
 import shutil
 
+import app.event_log
+import app.management.commands.util
+import app.models
+import app.sysmeta
+import app.sysmeta_replica
+import app.util
+import app.views.util
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
@@ -40,14 +47,6 @@ import d1_common.util
 import django.conf
 import django.core.management.base
 import django.db.transaction
-
-import app.event_log
-import app.management.commands.util
-import app.models
-import app.sysmeta
-import app.sysmeta_replica
-import app.util
-import app.views.util
 
 
 # noinspection PyClassHasNoInit

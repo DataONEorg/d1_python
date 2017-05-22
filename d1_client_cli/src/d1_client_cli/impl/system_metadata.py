@@ -22,13 +22,10 @@
 """
 
 import StringIO
-# Stdlib
 import datetime
 import os
 
-# App
 import d1_client_cli.impl.cli_util as cli_util
-# D1
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes

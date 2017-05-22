@@ -25,11 +25,9 @@ and writing custom DataONE PyXB types to/from database models.
 
 from __future__ import absolute_import
 
+import d1_common.types.dataoneTypes
 import psycopg2.extensions
 import pyxb.binding.datatypes
-
-# D1
-import d1_common.types.dataoneTypes
 
 # noinspection PyArgumentList
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)

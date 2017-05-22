@@ -19,10 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import unittest
 
-# App
 import d1_client_cli.impl.access_control as access_control
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
 import d1_test.util

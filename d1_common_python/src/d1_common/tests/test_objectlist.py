@@ -25,10 +25,8 @@ import unittest
 import xml.sax
 
 import pyxb
-
-from d1_common.types import dataoneTypes
-
 import util
+from d1_common.types import dataoneTypes
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="154933"

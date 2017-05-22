@@ -21,18 +21,13 @@
 """Unit tests for iter/objectlistmt
 """
 
-# Stdlib
 import unittest
 
-import d1_common.util
-
-# 3rd party
-import responses
-
-# App
-import shared_settings
-import d1_test.mock_api.list_objects as mock_list_objects
 import d1_client.iter.objectlist_multi
+import d1_common.util
+import d1_test.mock_api.list_objects as mock_list_objects
+import responses
+import shared_settings
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

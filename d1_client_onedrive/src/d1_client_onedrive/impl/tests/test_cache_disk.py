@@ -27,14 +27,13 @@
 """
 
 # Stdlib
-#import os
+# import os
 import logging
 import os
 import sys
 import time
 import unittest
 
-# D1
 import d1_client_onedrive.impl.cache_disk as cache_disk
 
 # Set up logger for this module.

@@ -22,15 +22,13 @@
 import StringIO
 import logging
 
-# D1
-import d1_common.const # pip install dataone.common
+import d1_common.const
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
-# 3rd party
 import pyxb # pip install pyxb
 # App
 import session

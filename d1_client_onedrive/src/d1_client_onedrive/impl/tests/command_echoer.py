@@ -27,7 +27,6 @@
  - DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 
 # Set up logger for this module.

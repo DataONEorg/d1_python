@@ -36,10 +36,11 @@ import os
 import platform
 import sys
 
-# App
+# flake8: noqa: F402
+
 if not hasattr(sys, 'frozen'):
   sys.path.append(os.path.abspath(os.path.join('__file__', '../..')))
-# flake8: noqa: E402
+
 from d1_client_onedrive import settings
 from d1_client_onedrive.impl import check_dependencies
 from d1_client_onedrive.impl.resolver import root

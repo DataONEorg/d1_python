@@ -27,7 +27,6 @@
   DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import socket
 import ssl
@@ -35,7 +34,6 @@ import ssl
 import d1_client.cnclient_1_1
 import d1_client.d1client
 import d1_client.mnclient
-# D1
 import d1_common
 # App
 # import settings

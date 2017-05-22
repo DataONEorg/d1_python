@@ -26,7 +26,6 @@
 :Author: DataONE (Dahl)
 """
 
-# Std.
 import random
 
 import transaction

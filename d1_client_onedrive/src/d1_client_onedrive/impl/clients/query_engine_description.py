@@ -26,15 +26,13 @@
 :Author: DataONE (Dahl)
 """
 
-# Stdlib
 import logging
 import urllib
 
-# 3rd party
-#import pyxb
-
-# D1
 import d1_common.types.dataoneTypes_v1_1 as dataoneTypes
+
+# 3rd party
+# import pyxb
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

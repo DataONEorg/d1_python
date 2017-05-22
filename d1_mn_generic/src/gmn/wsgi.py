@@ -23,7 +23,6 @@ from __future__ import absolute_import
 import os
 import sys
 
-# D1
 import d1_common.util
 import django.core.handlers.wsgi
 # Django

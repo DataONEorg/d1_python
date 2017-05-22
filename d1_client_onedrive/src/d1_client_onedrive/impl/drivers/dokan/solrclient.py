@@ -34,15 +34,15 @@ though has been modified in many respects.
 # data = c.search(q='id:500', wt='python')
 # print 'first match=', eval(data)['response']['docs'][0]
 
-# Stdlib
-import logging
-import httplib
-import socket
-from xml.dom.minidom import parseString
 import codecs
-import urllib
-from mx import DateTime
+import httplib
+import logging
 import random
+import socket
+import urllib
+from xml.dom.minidom import parseString
+
+from mx import DateTime
 
 #===============================================================================
 
@@ -77,7 +77,6 @@ class SolrConnection:
       postHeaders={}
   ):
     self.logger = logging.getLogger('solrclient.SolrConnection')
-    ## Describes type conversion for fields.
     self.fieldtypes = {
       't': 'text',
       's': 'string',
@@ -96,8 +95,6 @@ class SolrConnection:
       'modified': 'date',
       'created': 'date',
     }
-    print host
-    print solrBase
     self.host = host
     self.solrBase = solrBase
     self.persistent = persistent
@@ -681,8 +678,6 @@ class SolrConnection:
         bins[i][2] = v
         if includequeries:
           bins[i].append(qbin[i])
-    #except Exception,e:
-    #  logging.error('fieldAlphaHistogram: %s' % str(e))
     finally:
       self.persistent = oldpersist
       if not self.persistent:

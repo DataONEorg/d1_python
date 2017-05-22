@@ -20,15 +20,12 @@
 
 import unittest
 
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
-
-# App
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 
 class TestMockD1Exception(unittest.TestCase):

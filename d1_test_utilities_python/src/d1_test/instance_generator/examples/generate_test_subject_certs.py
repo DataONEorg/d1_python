@@ -30,8 +30,6 @@ import os
 import urllib
 
 import OpenSSL
-
-# D1
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # Get an instance of a logger.

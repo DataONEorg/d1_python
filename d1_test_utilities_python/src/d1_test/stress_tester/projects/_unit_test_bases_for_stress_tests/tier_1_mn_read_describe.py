@@ -28,18 +28,15 @@
   - python 2.6
 """
 
-# Std.
-import xml
+import context
 
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_test_case
-
-# App
-import context
 import test_client
+
+import xml
 
 
 class Test060Describe(d1_test_case.D1TestCase):

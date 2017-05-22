@@ -19,10 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import logging
 
-# App
 import baseclient_1_1
 import mnclient
 

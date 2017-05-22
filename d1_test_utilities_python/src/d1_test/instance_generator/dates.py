@@ -27,11 +27,9 @@
 :Author: DataONE (Vieglais, Dahl)
 """
 
-# Stdlib
-import random
 import datetime
+import random
 
-# D1
 import d1_common.date_time
 
 

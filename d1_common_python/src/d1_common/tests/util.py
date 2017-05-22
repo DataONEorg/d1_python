@@ -20,21 +20,14 @@
 # limitations under the License.
 
 import codecs
-import xml
-
-# 3rd party
-import pyxb
-
-# D1
-import d1_common.types.dataoneTypes as dataoneTypes
-import d1_common.types.dataoneErrors as dataoneErrors
-import d1_common.util
-
-# Stdlib
 import os
 
-# D1
+import d1_common.types.dataoneErrors as dataoneErrors
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.util
+import pyxb
+import xml
 
 
 def get_test_filepath(filename):

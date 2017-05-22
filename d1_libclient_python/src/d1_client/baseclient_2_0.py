@@ -19,7 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib
 import logging
 
 import d1_client.baseclient_1_1
