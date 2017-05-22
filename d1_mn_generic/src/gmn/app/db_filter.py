@@ -62,21 +62,19 @@ def add_access_policy_filter(query, request, column_name):
 
 def add_replica_filter(query, request):
   param_name = 'replicaStatus'
-  bool_val = request.GET.get(param_name, None)
-  if bool_val is None:
-    return query
-  if app.views.util.is_bool_param(bool_val):
+  bool_val = request.GET.get(param_name, True)
+  if not app.views.util.is_bool_param(bool_val):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
         param_name, bool_val
       )
     )
-  local_replicas_qs = app.models.LocalReplica.objects.all().values('pid__did')
   if app.views.util.is_true_param(bool_val):
-    return query.filter(**{'pid__did__in': local_replicas_qs})
+    return query
   else:
-    return query.exclude(**{'pid__did__in': local_replicas_qs})
+    local_replicas_queryset = app.models.LocalReplica.objects.all()
+    return query.exclude(pid__id__in=local_replicas_queryset)
 
 
 def add_bool_filter(query, request, column_name, param_name):

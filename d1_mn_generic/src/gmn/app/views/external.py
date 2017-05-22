@@ -339,7 +339,7 @@ def get_object_list(request):
   query = app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  app.db_filter.add_replica_filter(query, request)
+  query = app.db_filter.add_replica_filter(query, request)
   query_unsliced = query
   query, start, count = app.db_filter.add_slice_filter(query, request)
   return {

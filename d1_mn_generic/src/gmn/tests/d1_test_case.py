@@ -35,6 +35,7 @@ import django.test
 import requests
 
 import tests.gmn_test_client
+import app.models
 
 DEFAULT_ACCESS_RULE_LIST = [
   ([
@@ -305,3 +306,14 @@ class D1TestCase(django.test.TestCase):
         a_f.seek(0)
         b_f.seek(0)
         subprocess.call(['kdiff3', a_f.name, b_f.name])
+
+  def convert_to_replica(self, pid):
+    """Convert a local sciobj to a replica by adding a LocalReplica model to it
+    """
+    replica_info_model = app.models.replica_info(
+      'completed', 'urn:node:testReplicaSource'
+    )
+    app.models.local_replica(pid, replica_info_model)
+
+  def object_list_to_pid_list(self, object_list_pyxb):
+    return sorted([v.identifier.value() for v in object_list_pyxb.objectInfo])
