@@ -21,26 +21,41 @@
 
 from __future__ import absolute_import
 
-import django.test
+import d1_client.mnclient_1_1
+import d1_client.mnclient_2_0
+import d1_common.util
+import d1_test.mock_api.django_client as mock_django_client
+import responses
+
 import gmn.app.middleware.session_cert
-import gmn.tests.util
+import gmn.tests.gmn_test_case
+
+BASE_URL = 'http://mock/mn'
 
 
-class TestCert(django.test.TestCase):
-  def setUp(self):
-    self.cert_simple_subject_info_pem = gmn.tests.util.read_test_file(
+class TestCert(gmn.tests.gmn_test_case.D1TestCase):
+  def __init__(self, *args, **kwargs):
+    super(TestCert, self).__init__(*args, **kwargs)
+    d1_common.util.log_setup(is_debug=True)
+    self.client_v1 = None
+    self.client_v2 = None
+    self.cert_simple_subject_info_pem = self.read_test_file(
       'cert_with_simple_subject_info.pem'
     )
 
-  def tearDown(self):
-    pass
+  def setUp(self):
+    mock_django_client.add_callback(BASE_URL)
+    self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(BASE_URL)
+    self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
 
+  @responses.activate
   def test_0010(self):
     """Extract primary and equivalent subjects from certificate. This does not
     perform validation.
     """
-    primary_str, equivalent_set = gmn.app.middleware.session_cert.get_authenticated_subjects(
-      self.cert_simple_subject_info_pem
+    primary_str, equivalent_set = (
+      gmn.app.middleware.session_cert.
+      get_authenticated_subjects(self.cert_simple_subject_info_pem)
     )
     self.assertEqual(
       primary_str,

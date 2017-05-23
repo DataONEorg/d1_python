@@ -29,7 +29,7 @@ import django.core.handlers.wsgi
 from django import http
 from django.utils import datastructures
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'gmn.settings'
 
 # Add the service folder to the search path.
 sys.path.append(d1_common.util.abs_path('.'))

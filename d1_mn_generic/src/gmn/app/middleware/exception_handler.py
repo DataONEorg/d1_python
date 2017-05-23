@@ -45,13 +45,14 @@ import subprocess
 import sys
 import traceback
 
-import app.middleware.detail_codes
 import d1_common.const
 import d1_common.ext.mimeparser
 import d1_common.types.exceptions
 import django.conf
 # Django.
 from django.http import HttpResponse
+
+import gmn.app.middleware.detail_codes
 
 
 class ExceptionHandler(object):
@@ -111,7 +112,7 @@ class ExceptionHandler(object):
   def _wrap_internal_exception_in_dataone_exception(self, request):
     e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
     e.detailCode = str(
-      app.middleware.detail_codes.dataone_exception_to_detail_code()
+      gmn.app.middleware.detail_codes.dataone_exception_to_detail_code()
       .detail_code(request, e)
     )
     e.traceInformation = self._traceback_to_text()

@@ -22,23 +22,23 @@
 
 from __future__ import absolute_import
 
-import app.models
+import gmn.app.models
 
 
 def create_id_model(did):
   """Create a new SID or PID.
 
   Preconditions:
-  - {did} is verified to be unused. E.g., with app.views.asserts.is_unused().
+  - {did} is verified to be unused. E.g., with gmn.app.views.asserts.is_unused().
   """
-  id_model = app.models.IdNamespace()
+  id_model = gmn.app.models.IdNamespace()
   id_model.did = did
   id_model.save()
   return id_model
 
 
 def get_sci_model(pid):
-  return app.models.ScienceObject.objects.get(pid__did=pid)
+  return gmn.app.models.ScienceObject.objects.get(pid__did=pid)
 
 
 def get_value(sysmeta_pyxb, sysmeta_attr):

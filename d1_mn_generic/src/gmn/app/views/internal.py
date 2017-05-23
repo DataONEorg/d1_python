@@ -30,15 +30,6 @@ import datetime
 import os
 import platform
 
-import app.auth
-import app.db_filter
-import app.event_log
-import app.models
-import app.psycopg_adapter
-import app.sysmeta_validate
-import app.util
-import app.views.asserts
-import app.views.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
@@ -49,44 +40,57 @@ from django.db.models import Avg, Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 
+import gmn.app.auth
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.models
+import gmn.app.psycopg_adapter
+import gmn.app.sysmeta_validate
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.util
+
 
 def home(request):
   """Home page. Root of web server should redirect to here."""
   if request.path.endswith('/'):
     return HttpResponseRedirect(request.path[:-1])
 
-  gmn_version = app.__version__
+  gmn_version = gmn.app.__version__
   django_version = ', '.join(map(str, django.VERSION))
 
-  n_science_objects = '{:,}'.format(app.models.ScienceObject.objects.count())
+  n_science_objects = '{:,}'.format(
+    gmn.app.models.ScienceObject.objects.count()
+  )
 
-  avg_sci_data_size_bytes = app.models.ScienceObject.objects.aggregate(
+  avg_sci_data_size_bytes = gmn.app.models.ScienceObject.objects.aggregate(
     Avg('size')
   )['size__avg'] or 0
   avg_sci_data_size = '{:,}'.format(int(avg_sci_data_size_bytes))
 
-  n_objects_by_format = app.models.ScienceObject.objects.values(
+  n_objects_by_format = gmn.app.models.ScienceObject.objects.values(
     'format', 'format__format'
   ).annotate(dcount=Count('format'))
 
-  n_connections_total = '{:,}'.format(app.models.EventLog.objects.count())
+  n_connections_total = '{:,}'.format(gmn.app.models.EventLog.objects.count())
 
   n_connections_in_last_hour = '{:,}'.format(
-    app.models.EventLog.objects.filter(
+    gmn.app.models.EventLog.objects.filter(
       timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     ).count()
   )
 
-  n_unique_subjects = '{:,}'.format(app.models.Subject.objects.count())
+  n_unique_subjects = '{:,}'.format(gmn.app.models.Subject.objects.count())
 
-  n_storage_used = app.models.ScienceObject.objects.aggregate(Sum('size')
-                                                              )['size__sum'] or 0
+  n_storage_used = gmn.app.models.ScienceObject.objects.aggregate(
+    Sum('size')
+  )['size__sum'] or 0
   n_storage_free = _get_free_space(django.conf.settings.OBJECT_STORE_PATH)
   storage_space = u'{} GiB / {} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3
   )
 
-  n_permissions = '{:,}'.format(app.models.Permission.objects.count())
+  n_permissions = '{:,}'.format(gmn.app.models.Permission.objects.count())
 
   server_time = datetime.datetime.utcnow()
 

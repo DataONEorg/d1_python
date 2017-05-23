@@ -25,9 +25,10 @@ from __future__ import absolute_import
 
 import logging
 
-import app.management.commands.util
-import app.models
 import django.core.management.base
+
+import gmn.app.management.commands.util
+import gmn.app.models
 
 
 # noinspection PyClassHasNoInit
@@ -50,22 +51,22 @@ class Command(django.core.management.base.BaseCommand):
     parser.add_argument('path', type=str, help='path to export file')
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
     self.export_object_list(options['path'], options['public'])
     logging.info(u'Exported object list to: {}'.format(options['path']))
 
   def export_object_list(self, path, public_only):
     with open(path, 'w') as f:
-      for sciobj_model in app.models.ScienceObject.objects.all():
+      for sciobj_model in gmn.app.models.ScienceObject.objects.all():
         # Permissions are cumulative, so if a subject has permissions for an
         # object, that permissions are guaranteed to include "read", the
         # lowest level permission.
-        for permission_model in app.models.Permission.objects.filter(
+        for permission_model in gmn.app.models.Permission.objects.filter(
             sciobj=sciobj_model
         ):
           if public_only:

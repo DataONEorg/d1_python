@@ -30,13 +30,14 @@ from __future__ import absolute_import
 
 import logging
 
-import app.management.commands.util
-import app.middleware.session_jwt
-import app.models
 import d1_common.types.exceptions
 import d1_common.util
 import django.core.management.base
 import jwt
+
+import gmn.app.management.commands.util
+import gmn.app.middleware.session_jwt
+import gmn.app.models
 
 
 # noinspection PyClassHasNoInit
@@ -66,7 +67,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     if options['command'] not in ('view', 'whitelist'):
       logging.info(self.missing_args_message)
       return
@@ -78,7 +79,7 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, command_str, jwt_path):
     jwt_base64 = self._read_jwt(jwt_path)
     try:
-      primary_list = app.middleware.session_jwt.get_subject_list_without_validate(
+      primary_list = gmn.app.middleware.session_jwt.get_subject_list_without_validate(
         jwt_base64
       )
       if not primary_list:
@@ -100,14 +101,14 @@ class Command(django.core.management.base.BaseCommand):
     logging.info(u'  {}'.format(primary_str))
 
   def _whitelist(self, primary_str):
-    if app.models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject=app.models.subject(primary_str)
+    if gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
+        subject=gmn.app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
         u'Create, update and delete already enabled for subject: {}'.
         format(primary_str)
       )
-    app.models.whitelist_for_create_update_delete(primary_str)
+    gmn.app.models.whitelist_for_create_update_delete(primary_str)
     logging.info(
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )

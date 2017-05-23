@@ -27,7 +27,6 @@ from __future__ import absolute_import
 
 import datetime
 
-import app.views.util
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1_1
@@ -37,6 +36,8 @@ import django.conf
 import django.db
 import django.http
 from django.db.models import Max
+
+import gmn.app.views.util
 
 
 class ResponseHandler(object):
@@ -95,12 +96,12 @@ class ResponseHandler(object):
     return response
 
   def _generate_object_list(self, request, db_query, start, total):
-    objectList = app.views.util.dataoneTypes(request).objectList()
+    objectList = gmn.app.views.util.dataoneTypes(request).objectList()
     for row in db_query:
-      objectInfo = app.views.util.dataoneTypes(request).ObjectInfo()
+      objectInfo = gmn.app.views.util.dataoneTypes(request).ObjectInfo()
       objectInfo.identifier = row.pid.did
       objectInfo.formatId = row.format.format
-      checksum = app.views.util.dataoneTypes(request).Checksum(row.checksum)
+      checksum = gmn.app.views.util.dataoneTypes(request).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
       objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
@@ -114,9 +115,9 @@ class ResponseHandler(object):
     return objectList
 
   def _generate_log_records(self, request, db_query, start, total):
-    log = app.views.util.dataoneTypes(request).log()
+    log = gmn.app.views.util.dataoneTypes(request).log()
     for row in db_query:
-      logEntry = app.views.util.dataoneTypes(request).LogEntry()
+      logEntry = gmn.app.views.util.dataoneTypes(request).LogEntry()
       logEntry.entryId = str(row.id)
       logEntry.identifier = row.sciobj.pid.did
       logEntry.ipAddress = row.ip_address.ip_address
@@ -132,7 +133,7 @@ class ResponseHandler(object):
     return log
 
   def _http_response_with_identifier_type(self, request, pid):
-    pid_pyxb = app.views.util.dataoneTypes(request).identifier(pid)
+    pid_pyxb = gmn.app.views.util.dataoneTypes(request).identifier(pid)
     pid_xml = pid_pyxb.toxml()
     return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
@@ -154,7 +155,7 @@ class ResponseHandler(object):
   #   if response.streaming:
   #     return
   #   # Pass through: Anything from the diagnostics API
-  #   if app.views.util.is_diag_api(request):
+  #   if gmn.app.views.util.is_diag_api(request):
   #     return
   #   # Pass through boolean responses
   #   api_verb_str = request.path_info.split('/')[2]
@@ -186,12 +187,12 @@ class ResponseHandler(object):
   #   #   return
   #
   #   return_type_version_match_bool = True
-  #   if app.views.util.is_v1_api(request) \
+  #   if gmn.app.views.util.is_v1_api(request) \
   #       and not d1_common.type_conversions.str_is_v1(response.content):
   #     return_type_version_match_bool = False
   #
   #   # v2 returns a mix of v1 and v2
-  #   # if app.views.util.is_v2_api(request) \
+  #   # if gmn.app.views.util.is_v2_api(request) \
   #   #     and not d1_common.type_conversions.str_is_v2(response.content):
   #   #   return_type_version_match_bool = False
   #

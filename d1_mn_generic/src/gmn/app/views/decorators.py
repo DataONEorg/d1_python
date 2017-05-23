@@ -23,16 +23,17 @@ from __future__ import absolute_import
 
 import functools
 
-import app.auth
-import app.sysmeta
-import app.sysmeta_sid
-import app.views.asserts
-import app.views.util
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.url
 import django.conf
+
+import gmn.app.auth
+import gmn.app.sysmeta
+import gmn.app.sysmeta_sid
+import gmn.app.views.asserts
+import gmn.app.views.util
 
 # ------------------------------------------------------------------------------
 # Series ID (SID)
@@ -59,14 +60,14 @@ def resolve_sid(f):
 
 
 def resolve_sid_func(request, did):
-  if app.views.util.is_v1_api(request):
-    app.views.asserts.is_pid_of_existing_object(did)
+  if gmn.app.views.util.is_v1_api(request):
+    gmn.app.views.asserts.is_pid_of_existing_object(did)
     return did
-  elif app.views.util.is_v2_api(request):
-    if app.sysmeta.is_pid(did):
+  elif gmn.app.views.util.is_v2_api(request):
+    if gmn.app.sysmeta.is_pid(did):
       return did
-    elif app.sysmeta_sid.is_sid(did):
-      return app.sysmeta_sid.resolve_sid(did)
+    elif gmn.app.sysmeta_sid.is_sid(did):
+      return gmn.app.sysmeta_sid.resolve_sid(did)
     else:
       raise d1_common.types.exceptions.NotFound(
         0, u'Unknown identifier. id="{}"'.format(did), identifier=did
@@ -150,12 +151,12 @@ def get_log_records_access(f):
 
 
 def trusted(request):
-  if not app.auth.is_trusted_subject(request):
+  if not gmn.app.auth.is_trusted_subject(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, u'Access allowed only for trusted subjects. active_subjects="{}", '
       u'trusted_subjects="{}"'.format(
-        app.auth.format_active_subjects(request),
-        app.auth.get_trusted_subjects_string()
+        gmn.app.auth.format_active_subjects(request),
+        gmn.app.auth.get_trusted_subjects_string()
       )
     )
 
@@ -167,7 +168,7 @@ def assert_create_update_delete_permission(f):
 
   @functools.wraps(f)
   def wrap(request, *args, **kwargs):
-    app.auth.assert_create_update_delete_permission(request)
+    gmn.app.auth.assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -186,7 +187,7 @@ def authenticated(f):
         0,
         u'Access allowed only for authenticated subjects. Please reconnect with '
         u'a valid DataONE session certificate. active_subjects="{}"'.
-        format(app.auth.format_active_subjects(request))
+        format(gmn.app.auth.format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -207,7 +208,7 @@ def verified(f):
         u'Access allowed only for verified accounts. Please reconnect with a '
         u'valid DataONE session certificate in which the identity of the '
         u'primary subject has been verified. active_subjects="{}"'
-        .format(app.auth.format_active_subjects(request))
+        .format(gmn.app.auth.format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -222,7 +223,7 @@ def required_permission(f, level):
 
   @functools.wraps(f)
   def wrap(request, pid, *args, **kwargs):
-    app.auth.assert_allowed(request, level, pid)
+    gmn.app.auth.assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -233,16 +234,16 @@ def required_permission(f, level):
 def changepermission_permission(f):
   """Assert that subject has changePermission or high for object.
   """
-  return required_permission(f, app.auth.CHANGEPERMISSION_LEVEL)
+  return required_permission(f, gmn.app.auth.CHANGEPERMISSION_LEVEL)
 
 
 def write_permission(f):
   """Assert that subject has write permission or higher for object.
   """
-  return required_permission(f, app.auth.WRITE_LEVEL)
+  return required_permission(f, gmn.app.auth.WRITE_LEVEL)
 
 
 def read_permission(f):
   """Assert that subject has read permission or higher for object.
   """
-  return required_permission(f, app.auth.READ_LEVEL)
+  return required_permission(f, gmn.app.auth.READ_LEVEL)

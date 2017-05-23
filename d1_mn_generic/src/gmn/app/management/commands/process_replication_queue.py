@@ -29,13 +29,6 @@ from __future__ import absolute_import
 import logging
 import shutil
 
-import app.event_log
-import app.management.commands.util
-import app.models
-import app.sysmeta
-import app.sysmeta_replica
-import app.util
-import app.views.util
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
@@ -47,6 +40,14 @@ import d1_common.util
 import django.conf
 import django.core.management.base
 import django.db.transaction
+
+import gmn.app.event_log
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_replica
+import gmn.app.util
+import gmn.app.views.util
 
 
 # noinspection PyClassHasNoInit
@@ -62,13 +63,13 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
-    app.management.commands.util.abort_if_stand_alone_instance()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_stand_alone_instance()
     p = ReplicationQueueProcessor()
     p.process_replication_queue()
 
@@ -81,7 +82,7 @@ class ReplicationQueueProcessor(object):
     self.cn_client = self._create_cn_client()
 
   def process_replication_queue(self):
-    queue_queryset = app.models.ReplicationQueue.objects.filter(
+    queue_queryset = gmn.app.models.ReplicationQueue.objects.filter(
       local_replica__info__status__status='queued'
     )
     if not len(queue_queryset):
@@ -140,7 +141,7 @@ class ReplicationQueueProcessor(object):
       sysmeta_pyxb.serialVersion = 1
 
   def _inc_and_get_failed_attempts(self, queue_model):
-    replication_queue_model = app.models.ReplicationQueue.objects.get(
+    replication_queue_model = gmn.app.models.ReplicationQueue.objects.get(
       local_replica=queue_model.local_replica
     )
     replication_queue_model.failed_attempts += 1
@@ -152,7 +153,9 @@ class ReplicationQueueProcessor(object):
     self._update_cn_request_status(queue_model, status_str, dataone_error)
 
   def _update_local_request_status(self, queue_model, status_str):
-    app.models.update_replica_status(queue_model.local_replica.info, status_str)
+    gmn.app.models.update_replica_status(
+      queue_model.local_replica.info, status_str
+    )
 
   def _update_cn_request_status(
       self, queue_model, status_str, dataone_error=None
@@ -163,7 +166,7 @@ class ReplicationQueueProcessor(object):
     )
 
   def _remove_completed_requests_from_queue(self):
-    app.models.ReplicationQueue.objects.filter(
+    gmn.app.models.ReplicationQueue.objects.filter(
       local_replica__info__status__status='completed'
     ).delete()
 
@@ -223,9 +226,9 @@ class ReplicationQueueProcessor(object):
     self._check_and_create_replica_obsolescence(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_obsolescence(sysmeta_pyxb, 'obsoletedBy')
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
-    sciobj_model = app.sysmeta.create(sysmeta_pyxb, url)
+    sciobj_model = gmn.app.sysmeta.create(sysmeta_pyxb, url)
     self._store_science_object_bytes(pid, sciobj_stream)
-    app.event_log.create_log_entry(
+    gmn.app.event_log.create_log_entry(
       sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
     )
 
@@ -237,24 +240,25 @@ class ReplicationQueueProcessor(object):
       self._create_replica_obsolescence_reference(pid)
 
   def _create_replica_obsolescence_reference(self, pid):
-    app.models.replica_obsolescence_chain_reference(pid)
+    gmn.app.models.replica_obsolescence_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_stream):
-    sciobj_path = app.util.sciobj_file_path(pid)
-    app.util.create_missing_directories(sciobj_path)
+    sciobj_path = gmn.app.util.sciobj_file_path(pid)
+    gmn.app.util.create_missing_directories(sciobj_path)
     with open(sciobj_path, 'wb') as f:
       shutil.copyfileobj(sciobj_stream, f)
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
-    if not app.sysmeta_replica.is_unprocessed_local_replica(pid):
+    if not gmn.app.sysmeta_replica.is_unprocessed_local_replica(pid):
       raise ReplicateError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
       )
 
   def _assert_pid_is_unknown_or_replica(self, pid):
-    if app.sysmeta.is_did(pid
-                          ) and not app.sysmeta_replica.is_local_replica(pid):
+    if gmn.app.sysmeta.is_did(
+        pid
+    ) and not gmn.app.sysmeta_replica.is_local_replica(pid):
       raise ReplicateError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)

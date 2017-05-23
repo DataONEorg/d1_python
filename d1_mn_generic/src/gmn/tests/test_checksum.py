@@ -17,30 +17,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNRead.listObjects()
+"""Test MNRead.getChecksum()
 
-MNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus]
-[, start=0][, count=1000]) → ObjectList
+MNRead.getChecksum(session, did[, checksumAlgorithm]) → Checksum
 """
-
 from __future__ import absolute_import
 
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
+import d1_common.checksum
+import d1_common.types.dataoneTypes_v1_1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.django_client as mock_django_client
 import responses
-
-import gmn.tests.gmn_test_case
+import tests.gmn_test_case
 
 BASE_URL = 'http://mock/mn'
 
 
-class TestListObjects(gmn.tests.gmn_test_case.D1TestCase):
+class TestChecksum(tests.gmn_test_case.D1TestCase):
   def __init__(self, *args, **kwargs):
-    super(TestListObjects, self).__init__(*args, **kwargs)
+    super(TestChecksum, self).__init__(*args, **kwargs)
     d1_common.util.log_setup(is_debug=True)
     self.client_v1 = None
     self.client_v2 = None
@@ -50,24 +48,25 @@ class TestListObjects(gmn.tests.gmn_test_case.D1TestCase):
     self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(BASE_URL)
     self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
 
-  @responses.activate
-  def test_0010(self):
-    """listObjects(): replicaStatus filter"""
-    # Create two objects, one local and one replica
+  def _assert_matching_checksum(self, client, binding):
     local_pid = self.random_pid()
-    self.create(self.client_v2, v2, local_pid)
-    replica_pid = self.random_pid()
-    self.create(self.client_v2, v2, replica_pid)
-    self.convert_to_replica(replica_pid)
-    # No replicationStatus filter returns both objects
-    object_list_pyxb = self.client_v2.listObjects()
-    self.assertListEqual(
-      self.object_list_to_pid_list(object_list_pyxb),
-      sorted([replica_pid, local_pid]),
+    sci_obj_str, sysmeta_pyxb = self.create(client, binding, local_pid)
+    retrieved_checksum_pyxb = client.getChecksum(
+      local_pid, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    # replicationStatus=False returns only the local object
-    object_list_pyxb = self.client_v2.listObjects(replicaStatus=False)
-    self.assertListEqual(
-      self.object_list_to_pid_list(object_list_pyxb),
-      [local_pid]
+    self.assertIsInstance(retrieved_checksum_pyxb, binding.Checksum)
+    created_checksum_pyxb = d1_common.checksum.create_checksum_object(
+      sci_obj_str, retrieved_checksum_pyxb.algorithm
     )
+    self.assert_checksums_equal(created_checksum_pyxb, retrieved_checksum_pyxb)
+
+  @responses.activate
+  def test_0010_v1(self):
+    """getChecksum()"""
+    self._assert_matching_checksum(self.client_v1, v1)
+
+  @responses.activate
+  def test_0010_v2(self):
+    """getChecksum()"""
+    self._assert_matching_checksum(self.client_v2, v2)

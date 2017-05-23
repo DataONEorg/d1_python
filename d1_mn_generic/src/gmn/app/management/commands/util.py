@@ -28,9 +28,10 @@ import os
 import sys
 import tempfile
 
-import app.models
 import django.conf
 import django.core.management.base
+
+import gmn.app.models
 
 single_instance_lock_file = None
 
@@ -80,8 +81,8 @@ def get_command_name():
 
 
 def is_subject_in_whitelist(subject_str):
-  return app.models.WhitelistForCreateUpdateDelete.objects.filter(
-    subject=app.models.subject(subject_str)
+  return gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
+    subject=gmn.app.models.subject(subject_str)
   ).exists()
 
 

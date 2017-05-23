@@ -21,12 +21,13 @@
 """
 from __future__ import absolute_import
 
-import app.event_log
-import app.sysmeta
-import app.util
-import app.views.asserts
 import d1_common.url
 import django.core.files.move
+
+import gmn.app.event_log
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
 
 
 def create(request, sysmeta_pyxb):
@@ -34,7 +35,7 @@ def create(request, sysmeta_pyxb):
 
   Preconditions:
   - PID is verified not to be unused, E.g., with
-  app.views.asserts.is_unused().
+  gmn.app.views.asserts.is_unused().
 
   Postconditions:
   - Files and database rows are added as necessary to add a new object.
@@ -42,16 +43,16 @@ def create(request, sysmeta_pyxb):
   # Proxy object vendor specific extension.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    app.views.asserts.url_is_http_or_https(url)
-    app.views.asserts.url_is_retrievable(url)
+    gmn.app.views.asserts.url_is_http_or_https(url)
+    gmn.app.views.asserts.url_is_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     pid = sysmeta_pyxb.identifier.value()
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     _object_pid_post_store_local(request, pid)
-  app.sysmeta.create(sysmeta_pyxb, url)
+  gmn.app.sysmeta.create(sysmeta_pyxb, url)
   # Log the create event for this object.
-  app.event_log.create(sysmeta_pyxb.identifier.value(), request)
+  gmn.app.event_log.create(sysmeta_pyxb.identifier.value(), request)
 
 
 def _object_pid_post_store_local(request, pid):
@@ -62,8 +63,8 @@ def _object_pid_post_store_local(request, pid):
   temporary to the final location. Django automatically handles this when using
   the file related fields in the models.
   """
-  sciobj_path = app.util.sciobj_file_path(pid)
-  app.util.create_missing_directories(sciobj_path)
+  sciobj_path = gmn.app.util.sciobj_file_path(pid)
+  gmn.app.util.create_missing_directories(sciobj_path)
   try:
     django.core.files.move.file_move_safe(
       request.FILES['object'].temporary_file_path(), sciobj_path

@@ -25,15 +25,6 @@ from __future__ import absolute_import
 import datetime
 import re
 
-import app.auth
-import app.db_filter
-import app.event_log
-import app.models
-import app.psycopg_adapter
-import app.sysmeta
-import app.sysmeta_sid
-import app.sysmeta_util
-import app.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
@@ -45,6 +36,16 @@ import d1_common.url
 import django.conf
 import django.core.files.move
 import django.http
+
+import gmn.app.auth
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.models
+import gmn.app.psycopg_adapter
+import gmn.app.sysmeta
+import gmn.app.sysmeta_sid
+import gmn.app.sysmeta_util
+import gmn.app.util
 
 
 def dataoneTypes(request):
@@ -96,8 +97,8 @@ def read_utf8_xml(stream_obj):
 
 
 def generate_sysmeta_xml_matching_api_version(request, pid):
-  sysmeta_pyxb = app.sysmeta.model_to_pyxb(pid)
-  sysmeta_xml_str = app.sysmeta.serialize(sysmeta_pyxb)
+  sysmeta_pyxb = gmn.app.sysmeta.model_to_pyxb(pid)
+  sysmeta_xml_str = gmn.app.sysmeta.serialize(sysmeta_pyxb)
   if is_v1_api(request):
     sysmeta_xml_str = d1_common.type_conversions.str_to_v1_str(sysmeta_xml_str)
   elif is_v2_api(request):
@@ -133,7 +134,7 @@ def _pyxb_set_with_override(pyxb, attr_str, value):
     django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
   )
   if is_trusted_from_client:
-    if app.sysmeta_util.get_value(pyxb, attr_str) is None:
+    if gmn.app.sysmeta_util.get_value(pyxb, attr_str) is None:
       setattr(pyxb, attr_str, value)
   else:
     setattr(pyxb, attr_str, value)

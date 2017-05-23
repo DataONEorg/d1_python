@@ -25,14 +25,15 @@ for performing the attempted operation.
 
 from __future__ import absolute_import
 
-import app.models
-import app.node_registry
 import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import django.conf
 import django.core.cache
+
+import gmn.app.models
+import gmn.app.node_registry
 
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:
@@ -86,7 +87,7 @@ def level_to_action(level):
 
 def get_trusted_subjects():
   return (
-    app.node_registry.get_cn_subjects() |
+    gmn.app.node_registry.get_cn_subjects() |
     django.conf.settings.DATAONE_TRUSTED_SUBJECTS |
     {_get_client_side_certificate_subject()}
   )
@@ -158,14 +159,14 @@ def is_allowed(request, level, pid):
   # and when the ACL is updated.
   # - The permission must be for an action level that is the same or higher than
   # the requested action level.
-  return app.models.Permission.objects.filter(
+  return gmn.app.models.Permission.objects.filter(
     sciobj__pid__did=pid, subject__subject__in=request.all_subjects_set,
     level__gte=level
   ).exists()
 
 
 def has_create_update_delete_permission(request):
-  return app.models.WhitelistForCreateUpdateDelete.objects.filter(
+  return gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
     subject__subject__in=request.all_subjects_set).exists() \
          or is_trusted_subject(request)
 
@@ -188,7 +189,7 @@ def assert_allowed(request, level, pid):
   Raise NotFound if object does not exist.
   Return NoneType if subject is allowed.
   """
-  if not app.models.ScienceObject.objects.filter(pid__did=pid).exists():
+  if not gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.NotFound(
       0, u'Attempted to perform operation on non-existing object. pid="{}"'.
       format(pid)

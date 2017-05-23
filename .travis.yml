@@ -18,7 +18,7 @@ script:
   - cd $TRAVIS_BUILD_DIR/d1_libclient_python/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_client_cli/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/d1_test_utilities_python/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src/gmn && python ../setup.py develop
+  - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR
   # Debug
   - pip freeze

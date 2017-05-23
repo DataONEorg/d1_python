@@ -29,7 +29,6 @@
 :Author:
   DataONE (Dahl)
 """
-
 import logging
 import optparse
 import os

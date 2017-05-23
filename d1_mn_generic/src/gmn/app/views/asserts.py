@@ -28,21 +28,22 @@ from __future__ import absolute_import
 import contextlib
 import urlparse
 
-import app.db_filter
-import app.event_log
-import app.models
-import app.psycopg_adapter
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_replica
-import app.sysmeta_sid
-import app.sysmeta_util
-import app.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import django.conf
 import requests
+
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.models
+import gmn.app.psycopg_adapter
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_replica
+import gmn.app.sysmeta_sid
+import gmn.app.sysmeta_util
+import gmn.app.util
 
 # ------------------------------------------------------------------------------
 # Identifier
@@ -58,10 +59,10 @@ def is_unused(pid):
   - Must not have been accepted for replication.
   - Must not be referenced as obsoletes or obsoleted_by a replica.
   """
-  if app.sysmeta.is_did(pid):
+  if gmn.app.sysmeta.is_did(pid):
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, u'Identifier is already in use as {}. id="{}"'
-      .format(app.sysmeta.get_identifier_type(pid), pid), identifier=pid
+      .format(gmn.app.sysmeta.get_identifier_type(pid), pid), identifier=pid
     )
 
 
@@ -69,7 +70,7 @@ def is_valid_for_update(pid):
   """Assert that the System Metadata for the object with the given {pid} can be
   updated.
   """
-  app.sysmeta.is_pid_of_existing_object(pid)
+  gmn.app.sysmeta.is_pid_of_existing_object(pid)
   is_not_replica(pid)
   is_not_archived(pid)
 
@@ -81,10 +82,10 @@ def is_valid_sid_for_chain_if_specified(sysmeta_pyxb, pid):
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
   """
-  sid = app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
+  sid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
   if sid is None:
     return
-  existing_sid = app.sysmeta_sid.get_sid_by_pid(pid)
+  existing_sid = gmn.app.sysmeta_sid.get_sid_by_pid(pid)
   if existing_sid is None:
     is_unused(sid)
   else:
@@ -124,32 +125,32 @@ def sysmeta_is_not_archived(sysmeta_pyxb):
 
 
 def is_did(did):
-  if app.sysmeta.is_did(did):
+  if gmn.app.sysmeta.is_did(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Unknown identifier. id="{}"'.format(did), identifier=did
     )
 
 
 def is_pid_of_existing_object(did):
-  if not app.sysmeta.is_pid_of_existing_object(did):
+  if not gmn.app.sysmeta.is_pid_of_existing_object(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Identifier is {}. Expected a Persistent ID (PID) for an existing '
-      u'object. id="{}"'.format(app.sysmeta.get_identifier_type(did), did),
+      u'object. id="{}"'.format(gmn.app.sysmeta.get_identifier_type(did), did),
       identifier=did
     )
 
 
 def is_sid(did):
-  if not app.sysmeta_sid.is_sid(did):
+  if not gmn.app.sysmeta_sid.is_sid(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Identifier is {}. Expected a Series ID (SID). id="{}"'.format(
-        app.sysmeta.get_identifier_type(did), did
+        gmn.app.sysmeta.get_identifier_type(did), did
       ), identifier=did
     )
 
 
 def is_not_replica(pid):
-  if app.sysmeta_replica.is_local_replica(pid):
+  if gmn.app.sysmeta_replica.is_local_replica(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Object is a replica and cannot be updated on this Member Node. '
       u'The operation must be performed on the authoritative Member Node. '
@@ -158,7 +159,7 @@ def is_not_replica(pid):
 
 
 def is_not_archived(pid):
-  if app.sysmeta.is_archived(pid):
+  if gmn.app.sysmeta.is_archived(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'The object has been archived and cannot be updated. '
       u'pid="{}"'.format(pid), identifier=pid
@@ -167,7 +168,7 @@ def is_not_archived(pid):
 
 def has_matching_modified_timestamp(new_sysmeta_pyxb):
   pid = new_sysmeta_pyxb.identifier.value()
-  old_sysmeta_model = app.sysmeta_util.get_sci_model(pid)
+  old_sysmeta_model = gmn.app.sysmeta_util.get_sci_model(pid)
   old_ts = old_sysmeta_model.modified_timestamp
   new_ts = new_sysmeta_pyxb.dateSysMetadataModified
   if old_ts != new_ts:
@@ -216,7 +217,7 @@ def obsolescence_references_existing_objects_if_specified(sysmeta_pyxb):
 
 
 def is_in_obsolescence_chain(pid):
-  sci_obj = app.models.ScienceObject.objects.get(pid__did=pid)
+  sci_obj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   if not (sci_obj.obsoletes or sci_obj.obsoleted_by):
     raise d1_common.types.exceptions.InvalidRequest(
       0, "Object is not in an obsolescence chain. pid={}".format(pid),
@@ -229,7 +230,7 @@ def _check_pid_exists_if_specified(sysmeta_pyxb, sysmeta_attr):
     pid = getattr(sysmeta_pyxb, sysmeta_attr).value()
   except (ValueError, AttributeError):
     return
-  if not app.models.ScienceObject.objects.filter(pid__did=pid).exists():
+  if not gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'System Metadata field references non-existing object. '
       u'field="{}", pid="{}"'.format(sysmeta_attr, pid)
@@ -237,7 +238,7 @@ def _check_pid_exists_if_specified(sysmeta_pyxb, sysmeta_attr):
 
 
 def is_not_obsoleted(pid):
-  if app.sysmeta_obsolescence.is_obsoleted(pid):
+  if gmn.app.sysmeta_obsolescence.is_obsoleted(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Object has already been obsoleted. pid="{}"'.format(pid),
       identifier=pid

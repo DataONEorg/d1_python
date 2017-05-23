@@ -35,12 +35,13 @@ from __future__ import absolute_import
 
 import logging
 
-import app.management.commands.util
-import app.middleware.session_cert
-import app.models
 import d1_common.types.exceptions
 import d1_common.util
 import django.core.management.base
+
+import gmn.app.management.commands.util
+import gmn.app.middleware.session_cert
+import gmn.app.models
 
 
 # noinspection PyClassHasNoInit
@@ -71,7 +72,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     if options['command'] not in ('view', 'whitelist'):
       logging.info(self.missing_args_message)
       return
@@ -83,7 +84,7 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, command_str, cert_pem_path):
     cert_pem = self._read_pem_cert(cert_pem_path)
     primary_str, equivalent_set = (
-      app.middleware.session_cert.get_authenticated_subjects(cert_pem)
+      gmn.app.middleware.session_cert.get_authenticated_subjects(cert_pem)
     )
     if command_str == 'view':
       self._view(primary_str, equivalent_set)
@@ -102,14 +103,14 @@ class Command(django.core.management.base.BaseCommand):
           logging.info(u'  {}'.format(subject_str))
 
   def _whitelist(self, primary_str):
-    if app.models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject=app.models.subject(primary_str)
+    if gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
+        subject=gmn.app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
         u'Create, update and delete already enabled for subject: {}'.
         format(primary_str)
       )
-    app.models.whitelist_for_create_update_delete(primary_str)
+    gmn.app.models.whitelist_for_create_update_delete(primary_str)
     logging.info(
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )

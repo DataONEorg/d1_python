@@ -26,20 +26,21 @@ from __future__ import absolute_import
 
 import logging
 
-import app.auth
-import app.management.commands.util
-import app.models
-import app.node
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_util
-import app.util
-import app.views.asserts
-import app.views.diagnostics
 import d1_client.cnclient
 import d1_client.iter.sysmeta_multi
 import django.conf
 import django.core.management.base
+
+import gmn.app.auth
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_util
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 
 # noinspection PyClassHasNoInit
@@ -55,12 +56,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
     fix_chains = FixSystemMetadata()
     fix_chains.run()
 
@@ -70,7 +71,7 @@ class Command(django.core.management.base.BaseCommand):
 
 class FixSystemMetadata(object):
   def __init__(self):
-    self._events = app.management.commands.util.EventCounter()
+    self._events = gmn.app.management.commands.util.EventCounter()
 
   def run(self):
     try:
@@ -99,14 +100,14 @@ class FixSystemMetadata(object):
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
       pid = sysmeta_pyxb.identifier.value()
       cn_submitter = sysmeta_pyxb.submitter.value()
-      if not app.sysmeta.is_pid(pid):
+      if not gmn.app.sysmeta.is_pid(pid):
         logging.warn(u'CN PID not on MN. pid="{}"'.format(pid))
         self._events.count(u'CN PID not on MN')
         continue
-      sciobj_model = app.sysmeta_util.get_sci_model(pid)
+      sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
       mn_submitter = sciobj_model.submitter.subject
       if cn_submitter != mn_submitter:
-        sciobj_model.submitter = app.models.subject(cn_submitter)
+        sciobj_model.submitter = gmn.app.models.subject(cn_submitter)
         sciobj_model.save()
         logging.info(
           u'Updated submitter. pid="{}" cn_submitter="{}" mn_submitter="{}"'.
@@ -120,9 +121,9 @@ class FixSystemMetadata(object):
         )
         self._events.count(u'Submitter already matches')
 
-  #   num_total = app.models.ScienceObject.objects.count()
+  #   num_total = gmn.app.models.ScienceObject.objects.count()
   #   num_checked = 0
-  #   for sciobj_model in app.models.ScienceObject.objects.all():
+  #   for sciobj_model in gmn.app.models.ScienceObject.objects.all():
   #     num_checked += 1
   #     pid = sciobj_model.pid.did
   #     logging.info(
@@ -136,7 +137,7 @@ class FixSystemMetadata(object):
   #       self._events.count('Failed')
   #
   # def _fix_system_metadata(self, pid):
-  #   sciobj_model = app.sysmeta_util.get_sci_model(pid)
+  #   sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
   #   if not self._is_recent_system_metadata(sciobj_model.uploaded_timestamp):
   #     logging.info('Skipped not recent dateUploaded. pid="{}"'.format(pid))
   #     self._events.count('Skipped not recent dateUploaded')

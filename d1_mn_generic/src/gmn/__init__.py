@@ -18,4 +18,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default_app_config = 'app.startup.GMNStartupChecks'
+default_app_config = 'gmn.app.startup.GMNStartupChecks'

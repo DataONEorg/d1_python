@@ -18,23 +18,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
 import datetime
 import hashlib
+import os
 import random
 import string
 import subprocess
 import tempfile
 
-import app.models
 import d1_client.mnclient
 import d1_client.session
 import d1_common.checksum
 import d1_common.types
+import d1_common.util
 import d1_common.xml
 import django.test
 import requests
 import tests.gmn_test_client
+from d1_common.types import dataoneTypes_v2_0 as v2
+
+import gmn.app.models
 
 DEFAULT_ACCESS_RULE_LIST = [
   ([
@@ -52,6 +55,10 @@ class D1TestCase(django.test.TestCase):
   def disable_server_cert_validation(self):
     requests.packages.urllib3.disable_warnings()
     d1_client.session.DEFAULT_VERIFY_TLS = False
+
+  #
+  # assert
+  #
 
   def assert_object_list_slice(self, object_list, start, count, total):
     self.assertEqual(object_list.start, start)
@@ -79,17 +86,115 @@ class D1TestCase(django.test.TestCase):
   def assert_valid_date(self, date_str):
     self.assertTrue(datetime.datetime(*map(int, date_str.split('-'))))
 
-  def find_valid_pid(self, client):
-    """Find the PID of an object that exists on the server.
-    """
-    # Verify that there's at least one object on server.
-    object_list = client.listObjects(
-      vendorSpecific=self.
+  def assert_sci_obj_size_matches_sysmeta(self, response, sysmeta_pyxb):
+    self.assertEqual(sysmeta_pyxb.size, len(response.content))
+
+  def assert_sci_obj_checksum_matches_sysmeta(self, response, sysmeta_pyxb):
+    self.assertTrue(
+      d1_common.checksum.
+      is_checksum_correct_on_string(sysmeta_pyxb, response.content)
+    )
+
+  def assert_has_public_object_list(self, gmn_url):
+    client = tests.gmn_test_client.GMNTestClient(gmn_url)
+    self.assertTrue(
+      client.get_setting('PUBLIC_OBJECT_LIST'),
+      'This test requires that public access has been enabled for listObjects.',
+    )
+
+  def assert_checksums_equal(self, a_pyxb, b_pyxb):
+    self.assertTrue(d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb))
+
+  def assert_valid_chain(self, client, pid_chain_list, base_sid):
+    pad_pid_chain_list = [None] + pid_chain_list + [None]
+    for prev_pid, cur_pid, next_pid in zip(
+        pad_pid_chain_list, pad_pid_chain_list[1:], pad_pid_chain_list[2:]
+    ):
+      obj_str, sysmeta_pyxb = self.get(client, cur_pid)
+      self.assertEqual(self.get_pyxb_value(sysmeta_pyxb, 'obsoletes'), prev_pid)
+      self.assertEqual(self.get_pyxb_value(sysmeta_pyxb, 'identifier'), cur_pid)
+      self.assertEqual(
+        self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy'), next_pid
+      )
+      if base_sid:
+        self.assertEqual(
+          self.get_pyxb_value(sysmeta_pyxb, 'seriesId'), base_sid
+        )
+
+  #
+  # CRUD
+  #
+
+  def create(
+      self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
+      access_rule_list=None
+  ):
+    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
+      binding, pid, obsoletes, obsoleted_by, sid, access_rule_list
+    )
+    client.create(
+      pid, sci_obj_str, sysmeta_pyxb, vendorSpecific=self.
       include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
-    self.assertTrue(object_list.count > 0, 'No objects to perform test on')
-    # Get the first PID listed. The list is in random order.
-    return object_list.objectInfo[0].identifier.value()
+    return sci_obj_str, sysmeta_pyxb
+
+  def update(
+      self, client, binding, old_pid, new_pid, sid=None, obsoletes=None,
+      obsoleted_by=None
+  ):
+    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
+      binding, new_pid, obsoletes, obsoleted_by, sid
+    )
+    client.update(
+      old_pid, sci_obj_str, new_pid, sysmeta_pyxb, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    return sci_obj_str, sysmeta_pyxb
+
+  def get(self, client, did):
+    sysmeta_pyxb = client.getSystemMetadata(
+      did, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    response = client.get(
+      did, vendorSpecific=self.
+      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    self.assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
+    self.assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
+    return response.content, sysmeta_pyxb
+
+  def convert_to_replica(self, pid):
+    """Convert a local sciobj to a replica by adding a LocalReplica model to it
+    """
+    replica_info_model = gmn.app.models.replica_info(
+      'completed', 'urn:node:testReplicaSource'
+    )
+    gmn.app.models.local_replica(pid, replica_info_model)
+
+  def create_chain(self, client, binding, chain_len):
+    """Create an obsolescence chain with a total of {chain_len} objects. If
+    client is v2, assign a SID to the chain. Return the SID (None for v1)
+    and a list of the PIDs in the chain. The first PID in the list is the
+    tail and the last is the head.
+    """
+    base_pid = self.random_pid()
+    base_sid = self.random_sid() if binding is v2 else None
+    self.create(
+      client, binding, base_pid, **{'sid': base_sid} if base_sid else {}
+    )
+    chain_base_pid = base_pid
+    pid_chain_list = [chain_base_pid]
+    for i in range(chain_len - 1):
+      update_pid = self.random_pid()
+      self.update(client, binding, base_pid, update_pid)
+      pid_chain_list.append(update_pid)
+      base_pid = update_pid
+    return base_sid, pid_chain_list
+
+  #
+  # SysMeta
+  #
 
   def generate_sysmeta(
       self, binding, pid, sciobj_str, owner, obsoletes=None, obsoleted_by=None,
@@ -172,9 +277,9 @@ class D1TestCase(django.test.TestCase):
       subjects = [subjects]
     return {'VENDOR-INCLUDE-SUBJECTS': u'\t'.join(subjects)}
 
-  def has_public_object_list(self, gmn_url):
-    client = tests.gmn_test_client.GMNTestClient(gmn_url)
-    return client.get_setting('PUBLIC_OBJECT_LIST')
+  #
+  # Misc
+  #
 
   def now_str(self):
     return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -196,106 +301,25 @@ class D1TestCase(django.test.TestCase):
   def random_tag(self, tag_str):
     return '{}_{}'.format(tag_str, self.random_str())
 
-  def create(
-      self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
-      access_rule_list=None
-  ):
-    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, pid, obsoletes, obsoleted_by, sid, access_rule_list
-    )
-    client.create(
-      pid,
-      sci_obj_str,
-      sysmeta_pyxb,
-      vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
-    )
-    return sci_obj_str, sysmeta_pyxb
+  def read_test_file(self, filename, mode_str='r'):
+    with open(
+        os.path.join(d1_common.util.abs_path('test_files'), filename), mode_str
+    ) as f:
+      return f.read()
 
-  def update(
-      self, client, binding, old_pid, new_pid, sid=None, obsoletes=None,
-      obsoleted_by=None
-  ):
-    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, new_pid, obsoletes, obsoleted_by, sid
-    )
-    client.update(
-      old_pid,
-      sci_obj_str,
-      new_pid,
-      sysmeta_pyxb,
-      vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
-    )
-    return sci_obj_str, sysmeta_pyxb
+  def read_test_xml(self, filename, mode_str='r'):
+    xml_str = self.read_test_file(filename, mode_str)
+    xml_obj = v2.CreateFromDocument(xml_str)
+    return xml_obj
 
-  def get(self, client, did):
-    sysmeta_pyxb = client.getSystemMetadata(
-      did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
-    response = client.get(
-      did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
-    self.assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
-    self.assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
-    return response.content, sysmeta_pyxb
+  def get_pyxb_value(self, inst_pyxb, inst_attr):
+    try:
+      return getattr(inst_pyxb, inst_attr).value()
+    except (ValueError, AttributeError):
+      return None
 
-  def assert_sci_obj_size_matches_sysmeta(self, response, sysmeta_pyxb):
-    self.assertEqual(sysmeta_pyxb.size, len(response.content))
-
-  def get_checksum_calculator(self, sysmeta_pyxb):
-    return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
-      sysmeta_pyxb.checksum.algorithm
-    )
-
-  def calculate_object_checksum(self, response, checksum_calculator):
-    checksum_calculator.update(response.content)
-    return checksum_calculator.hexdigest()
-
-  def create_checksum_object_from_string(self, sciobj_str, checksum_pyxb=None):
-    return (
-      d1_common.checksum.create_checksum_object_from_stream(
-        StringIO.StringIO(sciobj_str), checksum_pyxb.algorithm
-        if checksum_pyxb else 'SHA-1'
-      )
-    )
-
-  def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
-    self.assertTrue(
-      d1_common.checksum.checksums_are_equal(
-        self.create_checksum_object_from_string(
-          sciobj_str, sysmeta_pyxb.checksum
-        ), sysmeta_pyxb.checksum
-      )
-    )
-
-  def pyxb_to_pretty_xml(self, obj_pyxb):
-    xml_str = obj_pyxb.toxml().encode('utf-8')
-    return d1_common.xml.pretty_xml(xml_str)
-
-  def restore_sysmeta_mn_controlled_fields(
-      self, sysmeta_a_pyxb, sysmeta_b_pyxb
-  ):
-    """Copy values that the MN overwrites from sysmeta_b to sysmeta_a so that
-    the sysmeta used in create() can be compared with sysmeta retrieved in
-    get().
-    """
-    sysmeta_a_pyxb.archived = sysmeta_b_pyxb.archived
-    sysmeta_b_pyxb.dateSysMetadataModified = sysmeta_a_pyxb.dateSysMetadataModified
-    sysmeta_b_pyxb.originMemberNode = sysmeta_a_pyxb.originMemberNode
-    sysmeta_b_pyxb.authoritativeMemberNode = sysmeta_a_pyxb.authoritativeMemberNode
-    sysmeta_b_pyxb.dateUploaded = sysmeta_a_pyxb.dateUploaded
-
-  def get_checksum_test(self, client, binding, pid, checksum, algorithm):
-    checksum_obj = client.getChecksum(
-      pid, checksumAlgorithm=algorithm, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
-    self.assertIsInstance(checksum_obj, binding.Checksum)
-    self.assertEqual(checksum, checksum_obj.value())
-    self.assertEqual(algorithm, checksum_obj.algorithm)
+  def object_list_to_pid_list(self, object_list_pyxb):
+    return sorted([v.identifier.value() for v in object_list_pyxb.objectInfo])
 
   def kdiff_pyxb(self, a_pyxb, b_pyxb):
     with tempfile.NamedTemporaryFile() as a_f:
@@ -305,14 +329,3 @@ class D1TestCase(django.test.TestCase):
         a_f.seek(0)
         b_f.seek(0)
         subprocess.call(['kdiff3', a_f.name, b_f.name])
-
-  def convert_to_replica(self, pid):
-    """Convert a local sciobj to a replica by adding a LocalReplica model to it
-    """
-    replica_info_model = app.models.replica_info(
-      'completed', 'urn:node:testReplicaSource'
-    )
-    app.models.local_replica(pid, replica_info_model)
-
-  def object_list_to_pid_list(self, object_list_pyxb):
-    return sorted([v.identifier.value() for v in object_list_pyxb.objectInfo])

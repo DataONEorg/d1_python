@@ -25,9 +25,10 @@ with MNCore.getLogRecords() and aggregated by CNs.
 
 from __future__ import absolute_import
 
-import app.auth
-import app.models
 import d1_common.types.exceptions
+
+import gmn.app.auth
+import gmn.app.models
 
 
 def _log(pid, request, event, timestamp=None):
@@ -35,13 +36,13 @@ def _log(pid, request, event, timestamp=None):
   """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = app.auth.get_trusted_subjects_string()
+  subject = gmn.app.auth.get_trusted_subjects_string()
 
   # Support logging events that are not associated with an object.
   object_model = None
   if pid is not None:
     try:
-      object_model = app.models.ScienceObject.objects.filter(pid__did=pid)[0]
+      object_model = gmn.app.models.ScienceObject.objects.filter(pid__did=pid)[0]
     except IndexError:
       err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
         .format(pid)
@@ -61,12 +62,12 @@ def _log(pid, request, event, timestamp=None):
 
 
 def create_log_entry(object_model, event, ip_address, user_agent, subject):
-  event_log_model = app.models.EventLog()
+  event_log_model = gmn.app.models.EventLog()
   event_log_model.sciobj = object_model
-  event_log_model.event = app.models.event(event)
-  event_log_model.ip_address = app.models.ip_address(ip_address)
-  event_log_model.user_agent = app.models.user_agent(user_agent)
-  event_log_model.subject = app.models.subject(subject)
+  event_log_model.event = gmn.app.models.event(event)
+  event_log_model.ip_address = gmn.app.models.ip_address(ip_address)
+  event_log_model.user_agent = gmn.app.models.user_agent(user_agent)
+  event_log_model.subject = gmn.app.models.subject(subject)
   event_log_model.save()
   return event_log_model
 

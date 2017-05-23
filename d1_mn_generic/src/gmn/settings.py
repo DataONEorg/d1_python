@@ -26,7 +26,7 @@ installing GMN. See settings_site.py for site specific settings.
 from __future__ import absolute_import
 
 # Add site specific settings.
-from settings_site import * # noqa: F403
+from gmn.settings_site import * # noqa: F403
 
 # Only set cookies when running through SSL.
 SESSION_COOKIE_SECURE = True
@@ -55,11 +55,11 @@ STATIC_URL = '/static/'
 
 MIDDLEWARE_CLASSES = (
   # Custom GMN middleware.
-  'app.middleware.request_handler.RequestHandler',
-  'app.middleware.exception_handler.ExceptionHandler',
-  'app.middleware.response_handler.ResponseHandler',
-  'app.middleware.profiling_handler.ProfilingHandler',
-  'app.middleware.view_handler.ViewHandler',
+  'gmn.app.middleware.request_handler.RequestHandler',
+  'gmn.app.middleware.exception_handler.ExceptionHandler',
+  'gmn.app.middleware.response_handler.ResponseHandler',
+  'gmn.app.middleware.profiling_handler.ProfilingHandler',
+  'gmn.app.middleware.view_handler.ViewHandler',
 )
 
 TEMPLATES = [
@@ -94,15 +94,15 @@ CACHES = {
   }
 }
 
-ROOT_URLCONF = 'app.urls'
+ROOT_URLCONF = 'gmn.app.urls'
 
 INSTALLED_APPS = [
   'django.contrib.staticfiles',
-  'app.startup.GMNStartupChecks',
-  'app',
+  'gmn.app.startup.GMNStartupChecks',
+  'gmn.app',
 ]
 
-SECRET_KEY = '<Placeholder value. See app.startup.GMNStartupChecks()>'
+SECRET_KEY = '<Placeholder value. See gmn.app.startup.GMNStartupChecks()>'
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.

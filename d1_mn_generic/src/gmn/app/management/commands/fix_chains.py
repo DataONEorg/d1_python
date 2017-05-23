@@ -28,18 +28,19 @@ from __future__ import absolute_import
 
 import logging
 
-import app.auth
-import app.management.commands.util
-import app.models
-import app.node
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_util
-import app.util
-import app.views.asserts
-import app.views.diagnostics
 import django.conf
 import django.core.management.base
+
+import gmn.app.auth
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_util
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 
 # noinspection PyClassHasNoInit
@@ -55,12 +56,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
     fix_chains = obsoletedBy()
     fix_chains.run()
 
@@ -70,7 +71,7 @@ class Command(django.core.management.base.BaseCommand):
 
 class obsoletedBy(object):
   def __init__(self):
-    self._events = app.management.commands.util.EventCounter()
+    self._events = gmn.app.management.commands.util.EventCounter()
 
   def run(self):
     try:
@@ -88,7 +89,7 @@ class obsoletedBy(object):
       )
 
   def _add_obsolescence_refs(self):
-    for sciobj_model in app.models.ScienceObject.objects.all():
+    for sciobj_model in gmn.app.models.ScienceObject.objects.all():
       pid = sciobj_model.pid.did
       logging.debug('Checking. pid="{}"'.format(pid))
       self._events.count('Total')
@@ -99,7 +100,7 @@ class obsoletedBy(object):
 
   def _set_obsoletes_if_missing(self, pid, obsoletes_pid):
     if not self._has_obsoletes(pid):
-      app.sysmeta_obsolescence.set_obsolescence(
+      gmn.app.sysmeta_obsolescence.set_obsolescence(
         pid,
         obsoletes_pid=obsoletes_pid,
       )
@@ -111,7 +112,7 @@ class obsoletedBy(object):
 
   def _set_obsoleted_by_if_missing(self, pid, obsoleted_by_pid):
     if not self._has_obsoleted_by(pid):
-      app.sysmeta_obsolescence.set_obsolescence(
+      gmn.app.sysmeta_obsolescence.set_obsolescence(
         pid,
         obsoleted_by_pid=obsoleted_by_pid,
       )
@@ -123,8 +124,8 @@ class obsoletedBy(object):
 
   def _has_obsoletes(self, pid):
     try:
-      return app.sysmeta_util.get_sci_model(pid).obsoletes is not None
-    except app.models.ScienceObject.DoesNotExist:
+      return gmn.app.sysmeta_util.get_sci_model(pid).obsoletes is not None
+    except gmn.app.models.ScienceObject.DoesNotExist:
       logging.debug(
         'obsoletes ref to non-existing object. pid="{}"'.format(pid)
       )
@@ -133,8 +134,8 @@ class obsoletedBy(object):
 
   def _has_obsoleted_by(self, pid):
     try:
-      return app.sysmeta_util.get_sci_model(pid).obsoleted_by is not None
-    except app.models.ScienceObject.DoesNotExist:
+      return gmn.app.sysmeta_util.get_sci_model(pid).obsoleted_by is not None
+    except gmn.app.models.ScienceObject.DoesNotExist:
       logging.debug(
         'obsoletedBy ref to non-existing object. pid="{}"'.format(pid)
       )

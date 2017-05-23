@@ -24,12 +24,13 @@ from __future__ import absolute_import
 
 import logging
 
-import app.management.commands.util
-import app.middleware.session_cert
-import app.models
 import d1_common.types.exceptions
 import d1_common.util
 import django.core.management.base
+
+import gmn.app.management.commands.util
+import gmn.app.middleware.session_cert
+import gmn.app.models
 
 
 # noinspection PyClassHasNoInit
@@ -63,7 +64,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     if options['command'] not in ('view', 'add', 'remove', 'bulk'):
       logging.info(self.missing_args_message)
       return
@@ -86,7 +87,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _view(self):
     logging.info(u'Subjects in whitelist:')
-    for whitelist_model in app.models.WhitelistForCreateUpdateDelete.objects.all():
+    for whitelist_model in gmn.app.models.WhitelistForCreateUpdateDelete.objects.all():
       logging.info('  {}'.format(whitelist_model.subject.subject))
 
   def _add(self, subject_str):
@@ -94,11 +95,11 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to add',
       )
-    if app.management.commands.util.is_subject_in_whitelist(subject_str):
+    if gmn.app.management.commands.util.is_subject_in_whitelist(subject_str):
       raise django.core.management.base.CommandError(
         u'Subject already in whitelist: {}'.format(subject_str)
       )
-    app.models.whitelist_for_create_update_delete(subject_str)
+    gmn.app.models.whitelist_for_create_update_delete(subject_str)
     logging.info(u'Added subject to whitelist: {}'.format(subject_str))
 
   def _remove(self, subject_str):
@@ -106,12 +107,14 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to remove',
       )
-    if not app.management.commands.util.is_subject_in_whitelist(subject_str):
+    if not gmn.app.management.commands.util.is_subject_in_whitelist(
+        subject_str
+    ):
       raise django.core.management.base.CommandError(
         u'Subject is not in whitelist: {}'.format(subject_str)
       )
-    app.models.WhitelistForCreateUpdateDelete.objects.filter(
-      subject=app.models.subject(subject_str)
+    gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
+      subject=gmn.app.models.subject(subject_str)
     ).delete()
     logging.info(u'Removed subject from whitelist: {}'.format(subject_str))
 
@@ -122,11 +125,11 @@ class Command(django.core.management.base.BaseCommand):
       )
     subject_cnt = 0
     with open(whitelist_file_path) as f:
-      app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
+      gmn.app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
       for subject_str in f:
         subject_str = subject_str.strip()
         if subject_str == '' or subject_str.startswith('#'):
           continue
-        app.models.whitelist_for_create_update_delete(subject_str)
+        gmn.app.models.whitelist_for_create_update_delete(subject_str)
         subject_cnt += 1
     logging.info(u'Created new whitelist with {} subjects'.format(subject_cnt))

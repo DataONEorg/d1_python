@@ -38,6 +38,7 @@ from __future__ import absolute_import
 import StringIO
 import codecs
 import datetime
+import errno
 import glob
 import hashlib
 import logging
@@ -68,9 +69,19 @@ import d1_common.url
 import d1_common.util
 import d1_common.xml
 import requests
-import tests.d1_test_case
-import tests.gmn_test_client
-import tests.util
+
+import gmn.tests.gmn_test_client
+"""
+These require a running GMN instance:
+
+./manage.py runserver
+
+And are then run with pytest:
+$ export DJANGO_SETTINGS_MODULE="gmn.settings"
+$ pytest test_gmn.py
+
+TODO: In the process of moving these to the Django test framework.
+"""
 
 # Configuration
 
@@ -153,7 +164,7 @@ class RunserverTestCase(unittest.TestCase):
     # Verify that there's at least one object on server.
     object_list = client.listObjects(
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertTrue(object_list.count > 0, 'No objects to perform test on')
     # Get the first PID listed. The list is in random order.
@@ -230,7 +241,7 @@ class RunserverTestCase(unittest.TestCase):
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sciobj, tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC,
+      binding, pid, sciobj, gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC,
       obsoletes, obsoleted_by, sid, access_rule_list
     )
     return sciobj, sysmeta_pyxb
@@ -241,7 +252,7 @@ class RunserverTestCase(unittest.TestCase):
     return {'VENDOR-INCLUDE-SUBJECTS': u'\t'.join(subjects)}
 
   def has_public_object_list(self, gmn_url):
-    client = tests.gmn_test_client.GMNTestClient(gmn_url)
+    client = gmn.tests.gmn_test_client.GMNTestClient(gmn_url)
     return client.get_setting('PUBLIC_OBJECT_LIST')
 
   def now_str(self):
@@ -276,7 +287,7 @@ class RunserverTestCase(unittest.TestCase):
       sci_obj_str,
       sysmeta_pyxb,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     return sci_obj_str, sysmeta_pyxb
 
@@ -293,18 +304,18 @@ class RunserverTestCase(unittest.TestCase):
       new_pid,
       sysmeta_pyxb,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     return sci_obj_str, sysmeta_pyxb
 
   def get(self, client, did):
     sysmeta_pyxb = client.getSystemMetadata(
       did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     response = client.get(
       did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
     self.assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
@@ -347,7 +358,7 @@ class RunserverTestCase(unittest.TestCase):
   def get_checksum_test(self, client, binding, pid, checksum, algorithm):
     checksum_obj = client.getChecksum(
       pid, checksumAlgorithm=algorithm, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertIsInstance(checksum_obj, binding.Checksum)
     self.assertEqual(checksum, checksum_obj.value())
@@ -363,12 +374,12 @@ class RunserverTestCase(unittest.TestCase):
     retrieved_sciobj_str = client.get(
       pid,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     ).content
     retrieved_sysmeta_pyxb = client.getSystemMetadata(
       pid,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(retrieved_sciobj_str), num_sciobj_bytes)
     self.assertEqual(created_sciobj_str, retrieved_sciobj_str)
@@ -397,14 +408,15 @@ class RunserverTestCase(unittest.TestCase):
     )
     sciobj_str = self.get_remote_sciobj_bytes(object_stream_url)
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sciobj_str, tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
+      binding, pid, sciobj_str,
+      gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
     )
     self.create_proxied_sciobj(client, object_stream_url, sysmeta_pyxb, pid)
     return sciobj_str, sysmeta_pyxb
 
   def create_proxied_sciobj(self, client, object_stream_url, sysmeta_pyxb, pid):
     headers = self.include_subjects(
-      tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
+      gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
     )
     headers['VENDOR-GMN-REMOTE-URL'] = object_stream_url
     client.create(pid, '', sysmeta_pyxb, vendorSpecific=headers)
@@ -433,7 +445,7 @@ class RunserverTestCase(unittest.TestCase):
     pid = self.random_pid()
     client = d1_client.mnclient.MemberNodeClient(gmn_url)
     sysmeta_pyxb = self.generate_sysmeta(
-      v1, pid, pid, tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
+      v1, pid, pid, gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
     )
     # self._create_proxy_sciobj(client, url, sysmeta_pyxb, pid)
     self.assertRaises(
@@ -444,6 +456,14 @@ class RunserverTestCase(unittest.TestCase):
       sysmeta_pyxb,
       pid,
     )
+
+  def hardlink(self, file_path, link_path):
+    try:
+      os.remove(link_path)
+    except OSError as e:
+      if e.errno != errno.ENOENT:
+        raise
+    os.link(file_path, link_path)
 
 
 # noinspection PyTypeChecker,PyUnresolvedReferences
@@ -491,7 +511,7 @@ class GMNIntegrationTests(RunserverTestCase):
         link_path = os.path.join(
           tempfile.gettempdir(), u'traceInformation.html'
         )
-        tests.util._force_hardlink(file_path, link_path)
+        self.hardlink(file_path, link_path)
         logging.warning(u'Wrote traceInformation to {}'.format(file_path))
 
   # ============================================================================
@@ -502,26 +522,26 @@ class GMNIntegrationTests(RunserverTestCase):
   def test_1000_A(self):
     """GMN must be in debug mode when running the integration tests.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     self.assertTrue(client.get_setting('DEBUG_GMN'))
 
   #@responses.activate
   def test_1000_B(self):
     """GMN must be set to allow running destructive integration tests.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     self.assertTrue(client.get_setting('ALLOW_INTEGRATION_TESTS'))
 
   #@responses.activate
   def test_1000_C(self):
     """GMN must be set to trust GMN_TEST_SUBJECT_TRUSTED.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     trusted_subject_set = client.get_setting('DATAONE_TRUSTED_SUBJECTS')
     self.assertIn(
-      tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED, trusted_subject_set,
+      gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED, trusted_subject_set,
       'Add the {} subject to GMN_TEST_SUBJECT_TRUSTED in settings_site.py'
-      .format(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      .format(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -530,10 +550,10 @@ class GMNIntegrationTests(RunserverTestCase):
     Use a GMN diagnostics API to clear the database and remove all objects in
     preparation for populating the GMN instance with a known set of objects.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     client.delete_all_objects(
       headers=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -543,7 +563,7 @@ class GMNIntegrationTests(RunserverTestCase):
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     object_list = client.listObjects(
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(object_list, 0, 0, 0)
 
@@ -551,16 +571,16 @@ class GMNIntegrationTests(RunserverTestCase):
   def test_1020_C(self):
     """Delete all replication requests.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     client.clear_replication_queue(
       headers=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
   def test_1020_D(self):
     """Add test subject to the GMN whitelist for Create/Update/Delete"""
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     client.whitelist_subject('test_user_1')
 
   # ----------------------------------------------------------------------------
@@ -573,7 +593,7 @@ class GMNIntegrationTests(RunserverTestCase):
     Uses the internal diagnostics create(), which skips checks and implicit
     System Metadata updates that are performed by the external create() method.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     for sysmeta_path in sorted(glob.glob(os.path.join(OBJ_PATH, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -600,7 +620,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Get object collection.
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     # Check header.
     self.assert_object_list_slice(
@@ -615,10 +635,10 @@ class GMNIntegrationTests(RunserverTestCase):
   def test_1100_A(self):
     """Clear event log.
     """
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     client.delete_event_log(
       headers=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -628,7 +648,7 @@ class GMNIntegrationTests(RunserverTestCase):
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     logRecords = client.getLogRecords(
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(logRecords.logEntry), 0)
 
@@ -637,10 +657,10 @@ class GMNIntegrationTests(RunserverTestCase):
     """Inject a set of fictitious events for each object.
     """
     csv_file = open('./test_files/access_log.csv', 'rb')
-    client = tests.gmn_test_client.GMNTestClient(GMN_URL)
+    client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
     client.inject_fictional_event_log(
       csv_file, headers=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -651,7 +671,7 @@ class GMNIntegrationTests(RunserverTestCase):
     logRecords = client.getLogRecords(
       count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
     self.assertIn(
@@ -684,7 +704,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1200(self, client):
     response = client.get(
       '10Dappend2.txt', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     # With MNRead.get(), the response is returned as a stream. Accessing
     # response.content implicitly reads the full stream.
@@ -742,7 +762,7 @@ class GMNIntegrationTests(RunserverTestCase):
       object_str_disk = open(object_path, 'rb').read()
       sciobj_str = client.get(
         pid, vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       ).content
       self.assertEqual(object_str_disk, sciobj_str)
 
@@ -767,7 +787,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1250(self, client):
     response = client.getSystemMetadata(
       '10Dappend2.txt', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertTrue(response)
 
@@ -791,7 +811,7 @@ class GMNIntegrationTests(RunserverTestCase):
     self.assertRaises(
       d1_common.types.exceptions.NotFound, client.getSystemMetadata,
       '_invalid_pid_', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   # ----------------------------------------------------------------------------
@@ -818,7 +838,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Get header information for object.
     info = client.describe(
       pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertIn('dataone-formatid', info)
     self.assertIn('content-length', info)
@@ -849,7 +869,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Get object collection.
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
     # Loop through our local test objects.
@@ -910,7 +930,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1310(self, client):
     object_list = client.listObjects(
       start=0, count=0, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(object_list, 0, 0, OBJECTS_TOTAL_DATA)
 
@@ -935,7 +955,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Starting at 0 and getting half of the available objects.
     object_list = client.listObjects(
       start=0, count=object_cnt_half, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(
       object_list, 0, object_cnt_half, OBJECTS_TOTAL_DATA
@@ -962,7 +982,7 @@ class GMNIntegrationTests(RunserverTestCase):
     object_list = client.listObjects(
       start=object_cnt_half, count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(
       object_list, object_cnt_half, object_cnt_half, OBJECTS_TOTAL_DATA
@@ -985,7 +1005,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1340(self, client):
     object_list = client.listObjects(
       start=OBJECTS_TOTAL_DATA * 2, count=1, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(
       object_list, OBJECTS_TOTAL_DATA * 2, 0, OBJECTS_TOTAL_DATA
@@ -1010,7 +1030,7 @@ class GMNIntegrationTests(RunserverTestCase):
       count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(
       object_list, 0, OBJECTS_CREATED_IN_90S, OBJECTS_CREATED_IN_90S
@@ -1034,7 +1054,7 @@ class GMNIntegrationTests(RunserverTestCase):
     object_list = client.listObjects(
       start=0, count=10, fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
 
@@ -1059,7 +1079,7 @@ class GMNIntegrationTests(RunserverTestCase):
       start=0, count=10, fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31),
       objectFormat='eml://ecoinformatics.org/eml-2.0.0', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
 
@@ -1084,7 +1104,7 @@ class GMNIntegrationTests(RunserverTestCase):
       start=0, count=10, fromDate=datetime.datetime(2500, 1, 1),
       toDate=datetime.datetime(2500, 12, 31),
       objectFormat='eml://ecoinformatics.org/eml-2.0.0', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_object_list_slice(object_list, 0, 0, 0)
 
@@ -1105,7 +1125,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1400(self, client):
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(object_list.count, OBJECTS_TOTAL_DATA)
 
@@ -1129,7 +1149,7 @@ class GMNIntegrationTests(RunserverTestCase):
       return
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
     )
     self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
 
@@ -1253,7 +1273,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1500(self, client):
     log = client.getLogRecords(
       start=0, count=0, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, 0, 0, EVENTS_TOTAL_1500)
 
@@ -1278,7 +1298,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Starting at 0 and getting half of the available objects.
     log = client.getLogRecords(
       start=0, count=object_cnt_half, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, 0, object_cnt_half, EVENTS_TOTAL_1500)
 
@@ -1301,7 +1321,7 @@ class GMNIntegrationTests(RunserverTestCase):
     log = client.getLogRecords(
       start=object_cnt_half, count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(
       log, object_cnt_half, EVENTS_TOTAL_1500 - object_cnt_half,
@@ -1327,7 +1347,7 @@ class GMNIntegrationTests(RunserverTestCase):
   def _test_1530(self, client):
     log = client.getLogRecords(
       start=EVENTS_TOTAL_1500 * 2, count=1, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, EVENTS_TOTAL_1500 * 2, 0, EVENTS_TOTAL_1500)
 
@@ -1350,7 +1370,7 @@ class GMNIntegrationTests(RunserverTestCase):
       count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(
       log, 0, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S,
@@ -1377,7 +1397,7 @@ class GMNIntegrationTests(RunserverTestCase):
     log = client.getLogRecords(
       start=0, count=10, fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, 0, 10, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S)
 
@@ -1403,7 +1423,7 @@ class GMNIntegrationTests(RunserverTestCase):
       fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31), event='delete',
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(
       log, 0, EVENTS_DELETES_UNI_TIME_IN_1990S, EVENTS_DELETES_UNI_TIME_IN_1990S
@@ -1430,7 +1450,7 @@ class GMNIntegrationTests(RunserverTestCase):
       start=0, count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(2500, 1, 1),
       toDate=datetime.datetime(2500, 12, 31), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, 0, 0, 0)
 
@@ -1455,7 +1475,7 @@ class GMNIntegrationTests(RunserverTestCase):
     self.create(client, binding, pid)
     log = client.getLogRecords(
       pidFilter=pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(len(log.logEntry), 1)
     self.assertEqual(log.logEntry[0].event, 'create')
@@ -1489,7 +1509,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Obsoleted object has a create and an update event
     log = client.getLogRecords(
       pidFilter=pid_create, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(len(log.logEntry), 2)
     # Events are sorted with newest event first.
@@ -1500,7 +1520,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # New object has only a update event
     log = client.getLogRecords(
       pidFilter=pid_update, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(len(log.logEntry), 1)
     self.assertEqual(log.logEntry[0].event, 'create')
@@ -1525,7 +1545,7 @@ class GMNIntegrationTests(RunserverTestCase):
     self.create(client, binding, pid_create)
     sysmeta_before_update_pyxb = client.getSystemMetadata(
       pid_create, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     # Make sure that datetime.now() changes between create() and update().
     time.sleep(1.0)
@@ -1533,7 +1553,7 @@ class GMNIntegrationTests(RunserverTestCase):
     self.update(client, binding, pid_create, pid_update)
     sysmeta_after_update_pyxb = client.getSystemMetadata(
       pid_create, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     # dateSysMetadataModified is updated on obsoleted object
     self.assertGreater((
@@ -1657,7 +1677,7 @@ class GMNIntegrationTests(RunserverTestCase):
       d1_common.types.exceptions.NotFound, client.systemMetadataChanged,
       '_bogus_pid_', 1,
       d1_common.date_time.utc_now(), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -1678,7 +1698,7 @@ class GMNIntegrationTests(RunserverTestCase):
     client.systemMetadataChanged(
       'fitch2.mc', 1,
       d1_common.date_time.utc_now(), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -1700,7 +1720,7 @@ class GMNIntegrationTests(RunserverTestCase):
       d1_common.types.exceptions.NotAuthorized, client.systemMetadataChanged,
       'fitch2.mc', 1,
       d1_common.date_time.utc_now(), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
     )
 
   # ----------------------------------------------------------------------------
@@ -1730,7 +1750,7 @@ class GMNIntegrationTests(RunserverTestCase):
     exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
     client.synchronizationFailed(
       exception, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -1799,7 +1819,7 @@ class GMNIntegrationTests(RunserverTestCase):
 
     result_bool = client.synchronizationFailed(
       InvalidException(), vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertTrue(result_bool)
 
@@ -1904,7 +1924,7 @@ class GMNIntegrationTests(RunserverTestCase):
     scidata, sysmeta_pyxb = self.generate_test_object(binding, pid)
     client.replicate(
       sysmeta_pyxb, 'test_source_node', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -1931,7 +1951,7 @@ class GMNIntegrationTests(RunserverTestCase):
     self.assertRaises(
       d1_common.types.exceptions.IdentifierNotUnique, client.replicate,
       sysmeta_pyxb, 'test_source_node', vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
   #@responses.activate
@@ -2100,7 +2120,7 @@ class GMNIntegrationTests(RunserverTestCase):
     # Delete the object on GMN.
     pid_deleted = client.delete(
       pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
@@ -2131,18 +2151,18 @@ class GMNIntegrationTests(RunserverTestCase):
     self.create(client, binding, pid)
     sysmeta_before_archive_pyxb = client.getSystemMetadata(
       pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertFalse(sysmeta_before_archive_pyxb.archived)
     # Archive the object
     pid_archived = client.archive(
       pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(pid, pid_archived.value())
     sysmeta_after_archive_pyxb = client.getSystemMetadata(
       pid, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertTrue(sysmeta_after_archive_pyxb.archived)
 
@@ -2189,16 +2209,16 @@ class GMNIntegrationTests(RunserverTestCase):
       client.create(
         pid_unescaped,
         StringIO.StringIO(scidata), sysmeta_pyxb, vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       )
       # Retrieve the object from GMN.
       scidata_retrieved = client.get(
         pid_unescaped, vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       ).read()
       sysmeta_pyxb_retrieved = client.getSystemMetadata(
         pid_unescaped, vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
       )
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
@@ -2497,7 +2517,7 @@ class GMNIntegrationTests(RunserverTestCase):
       d1_common.types.exceptions.InvalidSystemMetadata, client.update, base_pid,
       StringIO.StringIO(sci_obj_str), update_pid, sysmeta_pyxb,
       vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     return sci_obj_str, sysmeta_pyxb
 
@@ -2722,7 +2742,7 @@ class GMNIntegrationTests(RunserverTestCase):
       sysmeta_pyxb = client_v2.getSystemMetadata(
         base_pid,
         vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
       )
       sysmeta_pyxb.rightsHolder = random_subject_str
       # sysmeta_pyxb.obsoletes = random_subject_str
@@ -2730,13 +2750,13 @@ class GMNIntegrationTests(RunserverTestCase):
         base_pid,
         sysmeta_pyxb,
         vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
       )
       self.assertTrue(is_ok)
       new_sysmeta_pyxb = client_v2.getSystemMetadata(
         base_pid,
         vendorSpecific=self.
-        include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+        include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
       )
       self.assertEqual(
         new_sysmeta_pyxb.rightsHolder.value(), random_subject_str

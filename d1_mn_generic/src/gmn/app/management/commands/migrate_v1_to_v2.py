@@ -28,16 +28,6 @@ import os
 import shutil
 import zlib
 
-import app.auth
-import app.management.commands.util
-import app.models
-import app.node
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_util
-import app.util
-import app.views.asserts
-import app.views.diagnostics
 import d1_client.cnclient_2_0
 import d1_common.types.exceptions
 import d1_common.url
@@ -45,6 +35,17 @@ import django.conf
 import django.core.management.base
 import psycopg2
 import psycopg2.extras
+
+import gmn.app.auth
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_util
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 CONNECTION_STR = "host=''"
 
@@ -84,23 +85,23 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
     m = V2Migration()
     if not options['force'] and not self._db_is_empty():
       logging.error(
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
-    app.views.diagnostics.delete_all_objects()
+    gmn.app.views.diagnostics.delete_all_objects()
     m.migrate()
 
   def _db_is_empty(self):
-    q = app.models.IdNamespace.objects.all()
+    q = gmn.app.models.IdNamespace.objects.all()
     return not len(q)
 
 
@@ -110,7 +111,7 @@ class Command(django.core.management.base.BaseCommand):
 class V2Migration(object):
   def __init__(self):
     self._v1_cursor = self._create_v1_cursor()
-    self._events = app.management.commands.util.EventCounter()
+    self._events = gmn.app.management.commands.util.EventCounter()
 
   def migrate(self):
     try:
@@ -146,8 +147,8 @@ class V2Migration(object):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
-        new_file_path = app.util.sciobj_file_path(pid)
-        app.util.create_missing_directories(new_file_path)
+        new_file_path = gmn.app.util.sciobj_file_path(pid)
+        gmn.app.util.create_missing_directories(new_file_path)
         new_dir_path = os.path.dirname(new_file_path)
         if self._are_on_same_disk(old_file_path, new_dir_path):
           self._log('Creating SciObj hard link')
@@ -211,23 +212,27 @@ class V2Migration(object):
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_pyxb.obsoletedBy = None
       self._log_pid_info('Creating SciObj DB representation', i, n, pid)
-      app.sysmeta.create(sysmeta_pyxb, sciobj_row['url'])
+      gmn.app.sysmeta.create(sysmeta_pyxb, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
     for i, pid_tup in enumerate(obsoleted_by_pid_list):
       pid, obsoleted_by_pid = pid_tup
       if obsoleted_by_pid is not None:
-        if app.sysmeta.is_did(pid) and app.sysmeta.is_did(obsoleted_by_pid):
+        if gmn.app.sysmeta.is_did(pid) and gmn.app.sysmeta.is_did(
+            obsoleted_by_pid
+        ):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
-          app.sysmeta_obsolescence.set_obsolescence(
+          gmn.app.sysmeta_obsolescence.set_obsolescence(
             pid, obsoleted_by_pid=obsoleted_by_pid
           )
 
   def _identifiers(self, sysmeta_pyxb):
-    pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'identifier')
-    obsoletes_pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy')
+    pid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'identifier')
+    obsoletes_pid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes')
+    obsoleted_by_pid = gmn.app.sysmeta_util.get_value(
+      sysmeta_pyxb, 'obsoletedBy'
+    )
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
@@ -286,7 +291,7 @@ class V2Migration(object):
     )
     try:
       with open(sysmeta_xml_ver_path, 'rb') as f:
-        return app.sysmeta.deserialize(f.read())
+        return gmn.app.sysmeta.deserialize(f.read())
     except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
       raise django.core.management.base.CommandError(
         'Unable to read SysMeta. error="{}"'.format(str(e))
@@ -325,20 +330,20 @@ class V2Migration(object):
         'Processing event logs', i, self._v1_cursor.rowcount,
         '{} {}'.format(event_row['event'], event_row['pid'])
       )
-      if app.sysmeta.is_did(event_row['pid']):
-        sciobj_model = app.models.ScienceObject.objects.get(
+      if gmn.app.sysmeta.is_did(event_row['pid']):
+        sciobj_model = gmn.app.models.ScienceObject.objects.get(
           pid__did=event_row['pid']
         )
-        event_log_model = app.models.EventLog()
+        event_log_model = gmn.app.models.EventLog()
         event_log_model.sciobj = sciobj_model
-        event_log_model.event = app.models.event(event_row['event'])
-        event_log_model.ip_address = app.models.ip_address(
+        event_log_model.event = gmn.app.models.event(event_row['event'])
+        event_log_model.ip_address = gmn.app.models.ip_address(
           event_row['ip_address']
         )
-        event_log_model.user_agent = app.models.user_agent(
+        event_log_model.user_agent = gmn.app.models.user_agent(
           event_row['user_agent']
         )
-        event_log_model.subject = app.models.subject(event_row['subject'])
+        event_log_model.subject = gmn.app.models.subject(event_row['subject'])
         event_log_model.save()
         # Must update timestamp separately due to auto_now_add=True
         event_log_model.timestamp = event_row['date_logged']
@@ -347,7 +352,7 @@ class V2Migration(object):
   # Whitelist
 
   def _migrate_whitelist(self):
-    app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
+    gmn.app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
     # noinspection SqlResolve
     self._v1_cursor.execute(
       """
@@ -361,8 +366,8 @@ class V2Migration(object):
       logging.info(
         'Migrating whitelist subject: {}'.format(whitelist_row['subject'])
       )
-      w = app.models.WhitelistForCreateUpdateDelete()
-      w.subject = app.models.subject(whitelist_row['subject'])
+      w = gmn.app.models.WhitelistForCreateUpdateDelete()
+      w.subject = gmn.app.models.subject(whitelist_row['subject'])
       w.save()
       self._events.count('Whitelisted subject')
 
@@ -387,7 +392,7 @@ class V2Migration(object):
       )
       return
     client = self._create_cn_client()
-    node_pyxb = app.node.get_pyxb()
+    node_pyxb = gmn.app.node.get_pyxb()
     try:
       success_bool = client.updateNodeCapabilities(
         django.conf.settings.NODE_IDENTIFIER, node_pyxb

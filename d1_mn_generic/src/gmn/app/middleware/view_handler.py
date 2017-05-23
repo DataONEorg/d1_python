@@ -25,11 +25,12 @@ from __future__ import absolute_import
 import StringIO
 import logging
 
-import app.middleware.session_cert
-import app.middleware.session_jwt
 import d1_common
 import d1_common.const
 import django.conf
+
+import gmn.app.middleware.session_cert
+import gmn.app.middleware.session_jwt
 
 
 class ViewHandler(object):
@@ -63,10 +64,10 @@ class ViewHandler(object):
 
     # Add subjects from any provided certificate and JWT and store them in
     # the Django request obj.
-    cert_primary_str, cert_equivalent_set = app.middleware.session_cert.get_subjects(
+    cert_primary_str, cert_equivalent_set = gmn.app.middleware.session_cert.get_subjects(
       request
     )
-    jwt_subject_list = app.middleware.session_jwt.validate_jwt_and_get_subject_list(
+    jwt_subject_list = gmn.app.middleware.session_jwt.validate_jwt_and_get_subject_list(
       request
     )
     primary_subject_str = cert_primary_str

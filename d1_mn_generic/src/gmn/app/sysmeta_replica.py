@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import
 
-import app.models
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import django.conf
 from django.db.models import Sum
+
+import gmn.app.models
 
 # ------------------------------------------------------------------------------
 # Local Replica / Replication Queue
@@ -36,12 +37,12 @@ from django.db.models import Sum
 
 def is_local_replica(pid):
   """Includes unprocessed replication requests."""
-  return app.models.LocalReplica.objects.filter(pid__did=pid).exists()
+  return gmn.app.models.LocalReplica.objects.filter(pid__did=pid).exists()
 
 
 def is_unprocessed_local_replica(pid):
   """Is local replica with status "queued"."""
-  return app.models.LocalReplica.objects.filter(
+  return gmn.app.models.LocalReplica.objects.filter(
     pid__did=pid,
     info__status__status='queued',
   ).exists()
@@ -50,7 +51,7 @@ def is_unprocessed_local_replica(pid):
 def is_obsolescence_chain_placeholder(pid):
   """For replicas, the PIDs referenced in obsolescence chains are reserved for
   use by other replicas."""
-  return app.models.ReplicaObsolescenceChainReference.objects.filter(
+  return gmn.app.models.ReplicaObsolescenceChainReference.objects.filter(
     pid__did=pid
   ).exists()
 
@@ -63,14 +64,14 @@ def get_total_size_of_replicas():
 def get_total_size_of_completed_replicas():
   """Return the total number of bytes of successfully processed replicas.
   """
-  return app.models.LocalReplica.objects.aggregate(
+  return gmn.app.models.LocalReplica.objects.aggregate(
     Sum('pid__scienceobject__size')
   )['pid__scienceobject__size__sum'] or 0
 
 
 def get_total_size_of_queued_replicas():
   """Return the total number of bytes of requested, unprocessed replicas."""
-  return app.models.ReplicationQueue.objects.filter(
+  return gmn.app.models.ReplicationQueue.objects.filter(
     local_replica__info__status__status='queued'
   ).aggregate(Sum('size'))['size__sum'] or 0
 
@@ -81,22 +82,22 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
 
   Preconditions:
   - sysmeta_pyxb.identifier is verified not to exist. E.g., with
-  app.views.asserts.is_unused(pid).
+  gmn.app.views.asserts.is_unused(pid).
 
   Postconditions:
   - The database is set up to track a new replica, with initial status,
   "queued".
   - The PID provided in the sysmeta_pyxb is reserved for the replica.
   """
-  replica_info_model = app.models.replica_info(
+  replica_info_model = gmn.app.models.replica_info(
     status_str='queued',
     source_node_urn=source_node_urn,
   )
-  local_replica_model = app.models.local_replica(
+  local_replica_model = gmn.app.models.local_replica(
     pid=sysmeta_pyxb.identifier.value(),
     replica_info_model=replica_info_model,
   )
-  app.models.replication_queue(
+  gmn.app.models.replication_queue(
     local_replica_model=local_replica_model,
     size=sysmeta_pyxb.size,
   )
@@ -166,12 +167,12 @@ def replica_pyxb_to_model(sciobj_model, sysmeta_pyxb):
 
 
 def _register_remote_replica(sciobj_model, replica_pyxb):
-  replica_info_model = app.models.replica_info(
+  replica_info_model = gmn.app.models.replica_info(
     status_str=replica_pyxb.replicationStatus,
     source_node_urn=replica_pyxb.replicaMemberNode.value(),
     timestamp=replica_pyxb.replicaVerified,
   )
-  app.models.remote_replica(
+  gmn.app.models.remote_replica(
     sciobj_model=sciobj_model,
     replica_info_model=replica_info_model,
   )
@@ -179,7 +180,7 @@ def _register_remote_replica(sciobj_model, replica_pyxb):
 
 def replica_model_to_pyxb(sciobj_model):
   replica_pyxb_list = []
-  for replica_model in app.models.RemoteReplica.objects.filter(
+  for replica_model in gmn.app.models.RemoteReplica.objects.filter(
       sciobj=sciobj_model
   ):
     replica_pyxb = d1_common.types.dataoneTypes.Replica()

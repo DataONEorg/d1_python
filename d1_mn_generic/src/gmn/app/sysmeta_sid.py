@@ -22,15 +22,15 @@
 
 from __future__ import absolute_import
 
-import app.auth
-import app.models
-import app.sysmeta_util
-import app.util
+import gmn.app.auth
+import gmn.app.models
+import gmn.app.sysmeta_util
+import gmn.app.util
 
 
 def is_sid(did):
-  return app.models.SeriesIdToScienceObject.objects.filter(sid__did=did
-                                                           ).exists()
+  return gmn.app.models.SeriesIdToScienceObject.objects.filter(sid__did=did
+                                                               ).exists()
 
 
 def has_sid(sysmeta_pyxb):
@@ -38,17 +38,17 @@ def has_sid(sysmeta_pyxb):
 
 
 def get_sid(sysmeta_pyxb):
-  return app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
+  return gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
 
 
 def create_sid(sid, pid):
   """Create a new {sid} that resolves to {pid}.
 
   Preconditions:
-  - {sid} is verified to be unused. E.g., with app.views.asserts.is_unused().
-  - {pid} is verified to exist. E.g., with app.views.asserts.is_pid().
+  - {sid} is verified to be unused. E.g., with gmn.app.views.asserts.is_unused().
+  - {pid} is verified to exist. E.g., with gmn.app.views.asserts.is_pid().
   """
-  sci_model = app.sysmeta_util.get_sci_model(pid)
+  sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
   _create_sid(sid, sci_model)
 
 
@@ -56,12 +56,12 @@ def update_sid(sid, pid):
   """Change the existing {sid} to resolve to {pid}.
 
   Preconditions:
-  - SID is verified to exist. E.g., with app.views.asserts.is_sid().
+  - SID is verified to exist. E.g., with gmn.app.views.asserts.is_sid().
 
   Postconditions:
   - The SID maps to the object specified by pid.
   """
-  sci_model = app.sysmeta_util.get_sci_model(pid)
+  sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
   _update_sid(sid, sci_model)
 
 
@@ -69,9 +69,9 @@ def resolve_sid(sid):
   """Get the PID to which the {sid} currently maps.
 
   Preconditions:
-  - {sid} is verified to exist. E.g., with app.views.asserts.is_sid().
+  - {sid} is verified to exist. E.g., with gmn.app.views.asserts.is_sid().
   """
-  return app.models.SeriesIdToScienceObject.objects.get(
+  return gmn.app.models.SeriesIdToScienceObject.objects.get(
     sid__did=sid
   ).sciobj.pid.did
 
@@ -82,13 +82,13 @@ def get_sid_by_pid(pid):
   Return None if there is no SID that currently maps to {pid}.
 
   Preconditions:
-  - {pid} is verified to exist. E.g., with app.views.asserts.is_pid().
+  - {pid} is verified to exist. E.g., with gmn.app.views.asserts.is_pid().
   """
   try:
-    return app.models.SeriesIdToScienceObject.objects.get(
+    return gmn.app.models.SeriesIdToScienceObject.objects.get(
       sciobj__pid__did=pid
     ).sid.did
-  except app.models.SeriesIdToScienceObject.DoesNotExist:
+  except gmn.app.models.SeriesIdToScienceObject.DoesNotExist:
     return None
 
 
@@ -99,15 +99,15 @@ def get_sid_by_pid(pid):
 
 def _create_sid(sid, sci_model):
   """Create a new {sid} that resolves to {sci_model}."""
-  sid_model = app.models.SeriesIdToScienceObject()
+  sid_model = gmn.app.models.SeriesIdToScienceObject()
   sid_model.sciobj = sci_model
-  sid_model.sid = app.models.did(sid)
+  sid_model.sid = gmn.app.models.did(sid)
   sid_model.save()
 
 
 def _update_sid(sid, sci_model):
   """Change an existing {sid} to resolve to {sci_model}"""
-  sid_model = app.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
+  sid_model = gmn.app.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
   sid_model.sciobj = sci_model
   sid_model.save()
 
@@ -129,7 +129,7 @@ def _update_sid(sid, sci_model):
 #   database maintains the current mapping going forward.
 #
 #   Preconditions:
-#   - PID is verified to exist. E.g., with app.views.asserts.is_pid().
+#   - PID is verified to exist. E.g., with gmn.app.views.asserts.is_pid().
 #
 #   Postconditions:
 #   - The SID maps to the last object in the chain.

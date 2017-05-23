@@ -26,15 +26,16 @@ import logging
 import random
 import string
 
-import app.util
 import d1_common.util
 import django.apps
 import django.conf
 import django.core.exceptions
 
+import gmn.app.util
+
 
 class GMNStartupChecks(django.apps.AppConfig):
-  name = 'app.startup'
+  name = 'gmn.app.startup'
 
   def ready(self):
     self._check_cert_file(django.conf.settings.CLIENT_CERT_PATH)
@@ -62,7 +63,7 @@ class GMNStartupChecks(django.apps.AppConfig):
     if cert_pem_path is None:
       return
     try:
-      app.util.assert_readable_file(cert_pem_path)
+      gmn.app.util.assert_readable_file(cert_pem_path)
     except ValueError as e:
       raise django.core.exceptions.ImproperlyConfigured(
         u'Configuration error: Invalid certificate: {}'.format(str(e))

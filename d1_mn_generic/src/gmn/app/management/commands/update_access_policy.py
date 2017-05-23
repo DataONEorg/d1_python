@@ -25,20 +25,21 @@ from __future__ import absolute_import
 import logging
 import os
 
-import app.auth
-import app.management.commands.util
-import app.models
-import app.node
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_util
-import app.util
-import app.views.asserts
-import app.views.diagnostics
 import d1_common.types.exceptions
 import d1_common.url
 import django.conf
 import django.core.management.base
+
+import gmn.app.auth
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_util
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 
 # noinspection PyClassHasNoInit
@@ -58,12 +59,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
     m = UpdateAccessPolicy()
     m.run(options['sysmeta_root_path'])
 
@@ -73,7 +74,7 @@ class Command(django.core.management.base.BaseCommand):
 
 class UpdateAccessPolicy(object):
   def __init__(self):
-    self._events = app.management.commands.util.EventCounter()
+    self._events = gmn.app.management.commands.util.EventCounter()
 
   def run(self, sysmeta_root_path):
     try:
@@ -111,16 +112,16 @@ class UpdateAccessPolicy(object):
   def _deserialize_sysmeta_xml_file(self, sysmeta_xml_path):
     try:
       with open(sysmeta_xml_path, 'rb') as f:
-        return app.sysmeta.deserialize(f.read())
+        return gmn.app.sysmeta.deserialize(f.read())
     except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
       raise django.core.management.base.CommandError(
         'Unable to read SysMeta. error="{}"'.format(str(e))
       )
 
   def _access_policy_to_model(self, pid, sysmeta_pyxb):
-    if not app.sysmeta._has_access_policy_pyxb(sysmeta_pyxb):
+    if not gmn.app.sysmeta._has_access_policy_pyxb(sysmeta_pyxb):
       return
-    if not app.sysmeta.is_pid(pid):
+    if not gmn.app.sysmeta.is_pid(pid):
       return
-    sci_model = app.sysmeta_util.get_sci_model(pid)
-    app.sysmeta._access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
+    sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
+    gmn.app.sysmeta._access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)

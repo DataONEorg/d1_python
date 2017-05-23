@@ -34,18 +34,7 @@ DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
   'SHA-1': hashlib.sha1,
 }
 
-
-def is_checksum_correct(sysmeta_pyxb, obj_stream):
-  return checksums_are_equal(
-    create_checksum_object_from_stream(
-      obj_stream, sysmeta_pyxb.checksum.algorithm
-    ),
-    sysmeta_pyxb.checksum,
-  )
-
-
-def is_supported_algorithm(algorithm_str):
-  return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP
+# Checksum PyXB object creation
 
 
 def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
@@ -55,12 +44,6 @@ def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
   return checksum_pyxb
 
 
-def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
-  checksum_calculator = get_checksum_calculator_by_dataone_designator(algorithm)
-  checksum_calculator.update(o)
-  return checksum_calculator.hexdigest()
-
-
 def create_checksum_object_from_stream(
     f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
 ):
@@ -68,6 +51,33 @@ def create_checksum_object_from_stream(
   checksum_pyxb = dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
+
+
+def create_checksum_object_from_iterator(
+    itr, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+):
+  checksum_str = calculate_checksum_on_iterator(itr, algorithm)
+  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb.algorithm = algorithm
+  return checksum_pyxb
+
+
+def create_checksum_object_from_string(
+    s, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+):
+  checksum_str = calculate_checksum_on_string(s, algorithm)
+  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb.algorithm = algorithm
+  return checksum_pyxb
+
+
+# Calculate checksum
+
+
+def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
+  checksum_calculator = get_checksum_calculator_by_dataone_designator(algorithm)
+  checksum_calculator.update(o)
+  return checksum_calculator.hexdigest()
 
 
 def calculate_checksum_on_stream(
@@ -81,15 +91,6 @@ def calculate_checksum_on_stream(
   return checksum_calc.hexdigest()
 
 
-def create_checksum_object_from_iterator(
-    itr, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
-):
-  checksum_str = calculate_checksum_on_iterator(itr, algorithm)
-  checksum_pyxb = dataoneTypes.checksum(checksum_str)
-  checksum_pyxb.algorithm = algorithm
-  return checksum_pyxb
-
-
 def calculate_checksum_on_iterator(
     itr,
     algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
@@ -100,15 +101,38 @@ def calculate_checksum_on_iterator(
   return checksum_calc.hexdigest()
 
 
-def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
-  return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP[dataone_algorithm_name]()
+def calculate_checksum_on_string(
+    s,
+    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+):
+  checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
+  for chunk in s:
+    checksum_calc.update(chunk)
+  return checksum_calc.hexdigest()
 
 
-def get_default_checksum_algorithm():
-  return const.DEFAULT_CHECKSUM_ALGORITHM
+# Checksum validation
 
 
-def checksums_are_equal(checksum_a_pyxb, checksum_b_pyxb):
+def is_checksum_correct(sysmeta_pyxb, obj_stream):
+  return are_checksums_equal(
+    create_checksum_object_from_stream(
+      obj_stream, sysmeta_pyxb.checksum.algorithm
+    ),
+    sysmeta_pyxb.checksum,
+  )
+
+
+def is_checksum_correct_on_string(sysmeta_pyxb, obj_str):
+  return are_checksums_equal(
+    create_checksum_object_from_string(
+      obj_str, sysmeta_pyxb.checksum.algorithm
+    ),
+    sysmeta_pyxb.checksum,
+  )
+
+
+def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
   if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
     raise ValueError(
       'Cannot compare checksums generated with different algorithms. '
@@ -117,6 +141,24 @@ def checksums_are_equal(checksum_a_pyxb, checksum_b_pyxb):
       )
     )
   return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower()
+
+
+# Algorithm
+
+
+def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
+  return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP[dataone_algorithm_name]()
+
+
+def get_default_checksum_algorithm():
+  return const.DEFAULT_CHECKSUM_ALGORITHM
+
+
+def is_supported_algorithm(algorithm_str):
+  return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP
+
+
+# Format
 
 
 def format_checksum(checksum_pyxb):

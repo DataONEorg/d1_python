@@ -22,14 +22,15 @@
 
 import logging
 
-import app.models
-import app.node
 import d1_client.cnclient_2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 import django.conf
 import django.core.management.base
+
+import gmn.app.models
+import gmn.app.node
 import util
 
 
@@ -67,7 +68,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(str(e))
 
   def _handle(self, command_str):
-    node_pyxb = app.node.get_pyxb()
+    node_pyxb = gmn.app.node.get_pyxb()
     if command_str == 'view':
       logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml()))
     elif command_str == 'register':

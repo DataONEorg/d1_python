@@ -33,18 +33,6 @@ import pprint
 import shutil
 import urlparse
 
-import app.auth
-import app.db_filter
-import app.event_log
-import app.models
-import app.node_registry
-import app.psycopg_adapter
-import app.restrict_to_verb
-import app.sysmeta
-import app.util
-import app.views.asserts
-import app.views.create
-import app.views.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
@@ -55,12 +43,25 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect, reverse
 
+import gmn.app.auth
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.models
+import gmn.app.node_registry
+import gmn.app.psycopg_adapter
+import gmn.app.restrict_to_verb
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.create
+import gmn.app.views.util
+
 # ------------------------------------------------------------------------------
 # Diagnostics portal.
 # ------------------------------------------------------------------------------
 
 
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def diagnostics(request):
   if 'clear_db' in request.GET:
     delete_all_objects()
@@ -78,11 +79,11 @@ def diagnostics(request):
 # ------------------------------------------------------------------------------
 
 
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def get_replication_queue(request):
-  q = app.models.ReplicationQueue.objects.all()
+  q = gmn.app.models.ReplicationQueue.objects.all()
   if 'excludecompleted' in request.GET:
-    q = app.models.ReplicationQueue.objects.filter(
+    q = gmn.app.models.ReplicationQueue.objects.filter(
       ~Q(local_replica__info__status__status='completed')
     )
   return render_to_response(
@@ -92,12 +93,12 @@ def get_replication_queue(request):
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def clear_replication_queue(request):
-  for rep_queue_model in app.models.ReplicationQueue.objects.filter(
+  for rep_queue_model in gmn.app.models.ReplicationQueue.objects.filter(
       local_replica__info__status__status='queued'
   ):
-    app.models.IdNamespace.objects.filter(
+    gmn.app.models.IdNamespace.objects.filter(
       did=rep_queue_model.local_replica.pid.did
     ).delete()
   return redirect('diag')
@@ -109,12 +110,12 @@ def clear_replication_queue(request):
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def delete_all_access_policies(request):
   # The models.CASCADE property is set on all ForeignKey fields, so deletes
   # on Permission are cascaded to subjects.
-  app.models.Permission.objects.all().delete()
-  return app.views.util.http_response_with_boolean_true_type()
+  gmn.app.models.Permission.objects.all().delete()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # ------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ def delete_all_access_policies(request):
 # ------------------------------------------------------------------------------
 
 
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def echo_session(request):
   return render_to_response(
     'echo_session.xhtml', {'subjects': sorted(request.all_subjects_set)},
@@ -131,27 +132,27 @@ def echo_session(request):
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def trusted_subjects(request):
   return render_to_response(
     'trusted_subjects.xhtml', {
       'subjects':
         sorted(
-          app.node_registry.get_cn_subjects() |
+          gmn.app.node_registry.get_cn_subjects() |
           django.conf.settings.DATAONE_TRUSTED_SUBJECTS
         )
     }, content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 
 
-@app.restrict_to_verb.post
+@gmn.app.restrict_to_verb.post
 def whitelist_subject(request):
   """Add a subject to the whitelist"""
-  subject_model = app.models.subject(request.POST['subject'])
-  whitelist_model = app.models.WhitelistForCreateUpdateDelete()
+  subject_model = gmn.app.models.subject(request.POST['subject'])
+  whitelist_model = gmn.app.models.WhitelistForCreateUpdateDelete()
   whitelist_model.subject = subject_model
   whitelist_model.save()
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # ------------------------------------------------------------------------------
@@ -161,43 +162,43 @@ def whitelist_subject(request):
 
 def create(request, pid):
   """Minimal version of create() used for inserting test objects."""
-  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.create.create(request, sysmeta_pyxb)
-  return app.views.util.http_response_with_boolean_true_type()
+  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  gmn.app.views.create.create(request, sysmeta_pyxb)
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def slash(request, p1, p2, p3):
   """Test that GMN correctly handles three arguments separated by slashes"""
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def exception(request, exception_type):
   """Test that GMN correctly catches and serializes exceptions raised by views"""
   if exception_type == 'python':
     raise Exception("Test Python Exception")
   elif exception_type == 'dataone':
     raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def echo_request_object(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse(u'<pre>{}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def permissions_for_object(request, pid):
-  app.views.asserts.is_pid_of_existing_object(pid)
+  gmn.app.views.asserts.is_pid_of_existing_object(pid)
   subjects = []
-  permissions = app.models.Permission.objects.filter(sciobj__pid__did=pid)
+  permissions = gmn.app.models.Permission.objects.filter(sciobj__pid__did=pid)
   for permission in permissions:
-    action = app.auth.LEVEL_ACTION_MAP[permission.level]
+    action = gmn.app.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))
   return render_to_response(
     'permissions_for_object.xhtml',
@@ -206,7 +207,7 @@ def permissions_for_object(request, pid):
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def get_setting(request, setting_str):
   """Get a value from django.conf.settings.py or settings_site.py"""
   setting_obj = getattr(django.conf.settings, setting_str, '<UNKNOWN SETTING>')
@@ -227,10 +228,10 @@ def echo_raw_post_data(request):
 
 
 # noinspection PyUnusedLocal
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def delete_all_objects_view(request):
   delete_all_objects()
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 def delete_all_objects():
@@ -259,12 +260,14 @@ def _clear_db():
 def _delete_all_sciobj_files():
   if os.path.exists(django.conf.settings.OBJECT_STORE_PATH):
     shutil.rmtree(django.conf.settings.OBJECT_STORE_PATH)
-  app.util.create_missing_directories(django.conf.settings.OBJECT_STORE_PATH)
+  gmn.app.util.create_missing_directories(
+    django.conf.settings.OBJECT_STORE_PATH
+  )
 
 
 def _delete_subjects_and_permissions():
-  app.models.Permission.objects.all().delete()
-  app.models.Subject.objects.all().delete()
+  gmn.app.models.Permission.objects.all().delete()
+  gmn.app.models.Subject.objects.all().delete()
 
 
 def _delete_object_from_filesystem(sci_obj):
@@ -272,7 +275,7 @@ def _delete_object_from_filesystem(sci_obj):
   pid = sci_obj.pid.did
   url_split = urlparse.urlparse(sci_obj.url)
   if url_split.scheme == 'file':
-    sci_obj_path = app.util.sciobj_file_path(pid)
+    sci_obj_path = gmn.app.util.sciobj_file_path(pid)
     try:
       os.unlink(sci_obj_path)
     except EnvironmentError:
@@ -287,16 +290,16 @@ def _delete_object_from_filesystem(sci_obj):
 
 # noinspection PyUnusedLocal
 def delete_event_log(request):
-  app.models.Event.objects.all().delete()
-  app.models.IpAddress.objects.all().delete()
-  app.models.UserAgent.objects.all().delete()
-  app.models.EventLog.objects.all().delete()
-  return app.views.util.http_response_with_boolean_true_type()
+  gmn.app.models.Event.objects.all().delete()
+  gmn.app.models.IpAddress.objects.all().delete()
+  gmn.app.models.UserAgent.objects.all().delete()
+  gmn.app.models.EventLog.objects.all().delete()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
-@app.restrict_to_verb.post
+@gmn.app.restrict_to_verb.post
 def inject_fictional_event_log(request):
-  app.views.asserts.post_has_mime_parts(request, (('file', 'csv'),))
+  gmn.app.views.asserts.post_has_mime_parts(request, (('file', 'csv'),))
 
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
@@ -319,8 +322,8 @@ def inject_fictional_event_log(request):
     }
 
     # noinspection PyProtectedMember
-    app.event_log._log(
+    gmn.app.event_log._log(
       pid, request, event, d1_common.date_time.strip_timezone(timestamp)
     )
 
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()

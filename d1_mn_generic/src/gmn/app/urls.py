@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import
 
-import app.views.diagnostics
-import app.views.external
-import app.views.internal
 import django.conf
 # Django
 from django.conf.urls import url
+
+import gmn.app.views.diagnostics
+import gmn.app.views.external
+import gmn.app.views.internal
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP verb into account, so in the
@@ -39,43 +40,43 @@ urlpatterns = [
   # MNCore.ping() - GET /monitor/ping
   url(
     r'^v[12]/monitor/ping/?$',
-    app.views.external.get_monitor_ping,
+    gmn.app.views.external.get_monitor_ping,
     name='get_monitor_ping',
   ),
   # MNCore.getLogRecords() - GET /log
   url(
     r'^v[12]/log/?$',
-    app.views.external.get_log,
+    gmn.app.views.external.get_log,
     name='get_log',
   ),
   # MNCore.getCapabilities() - GET / and GET /node
   url(
     r'^v[12]/?$',
-    app.views.external.get_node,
+    gmn.app.views.external.get_node,
     name='get_node',
   ),
   url(
     r'^v[12]/node/?$',
-    app.views.external.get_node,
+    gmn.app.views.external.get_node,
   ),
 
   # Tier 1: Read API (MNRead)
   # MNRead.get() - GET /object/{did}
   url(
     r'^v[12]/object/(.+)$',
-    app.views.external.dispatch_object,
+    gmn.app.views.external.dispatch_object,
     name='dispatch_object',
   ),
   # MNRead.getSystemMetadata() - GET /meta/{did}
   url(
     r'^v[12]/meta/(.+)$',
-    app.views.external.get_meta,
+    gmn.app.views.external.get_meta,
     name='get_meta',
   ),
   # MNStorage.updateSystemMetadata() - PUT /meta
   url(
     r'^v2/meta$',
-    app.views.external.put_meta,
+    gmn.app.views.external.put_meta,
     name='put_meta',
   ),
   # MNRead.describe() - HEAD /object/{did}
@@ -83,25 +84,25 @@ urlpatterns = [
   # MNRead.getChecksum() - GET /checksum/{did}
   url(
     r'^v[12]/checksum/(.+)$',
-    app.views.external.get_checksum,
+    gmn.app.views.external.get_checksum,
     name='get_checksum',
   ),
   # MNRead.listObjects() - GET /object
   url(
     r'^v[12]/object/?$',
-    app.views.external.dispatch_object_list,
+    gmn.app.views.external.dispatch_object_list,
     name='dispatch_object_list',
   ),
   # MNRead.synchronizationFailed() - POST /error
   url(
     r'^v[12]/error/?$',
-    app.views.external.post_error,
+    gmn.app.views.external.post_error,
     name='post_error',
   ),
   # MNRead.getReplica() - GET /replica/{did}
   url(
     r'^v[12]/replica/(.+)/?$',
-    app.views.external.get_replica,
+    gmn.app.views.external.get_replica,
     name='get_replica',
   ),
 
@@ -109,13 +110,13 @@ urlpatterns = [
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{did}
   url(
     r'^v[12]/isAuthorized/(.+)/?$',
-    app.views.external.get_is_authorized,
+    gmn.app.views.external.get_is_authorized,
     name='get_is_authorized',
   ),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{did}
   url(
     r'^v[12]/dirtySystemMetadata/?$',
-    app.views.external.post_refresh_system_metadata,
+    gmn.app.views.external.post_refresh_system_metadata,
     name='post_refresh_system_metadata',
   ),
 
@@ -127,7 +128,7 @@ urlpatterns = [
   # MNStorage.generateIdentifier()
   url(
     r'^v[12]/generate/?$',
-    app.views.external.post_generate_identifier,
+    gmn.app.views.external.post_generate_identifier,
     name='post_generate_identifier',
   ),
   # MNStorage.delete() - DELETE /object/{did}
@@ -135,19 +136,19 @@ urlpatterns = [
   # MNStorage.archive() - PUT /archive/{did}
   url(
     r'^v[12]/archive/(.+)/?$',
-    app.views.external.put_archive,
+    gmn.app.views.external.put_archive,
     name='put_archive',
   ),
   # Tier 4: Replication API (MNReplication)
   # MNReplication.replicate() - POST /replicate
   url(
     r'^v[12]/replicate/?$',
-    app.views.external.post_replicate,
+    gmn.app.views.external.post_replicate,
     name='post_replicate',
   ),
 ]
 
-urlpatterns.extend([url(r'^home/?$', app.views.internal.home, name='home')])
+urlpatterns.extend([url(r'^home/?$', gmn.app.views.internal.home, name='home')])
 
 # Diagnostic APIs that can be made available in production.
 
@@ -156,24 +157,24 @@ if django.conf.settings.DEBUG_GMN or django.conf.settings.MONITOR:
     # Replication.
     url(
       r'^diag/get_replication_queue/?$',
-      app.views.diagnostics.get_replication_queue,
+      gmn.app.views.diagnostics.get_replication_queue,
       name='get_replication_queue',
     ),
     # Authentication.
     url(
       r'^diag/echo_session/?$',
-      app.views.diagnostics.echo_session,
+      gmn.app.views.diagnostics.echo_session,
       name='echo_session',
     ),
     # Misc.
     url(
       r'^diag/echo_request_object/?$',
-      app.views.diagnostics.echo_request_object,
+      gmn.app.views.diagnostics.echo_request_object,
       name='echo_request_object',
     ),
     url(
       r'^diag/echo_raw_post_data/?$',
-      app.views.diagnostics.echo_raw_post_data,
+      gmn.app.views.diagnostics.echo_raw_post_data,
       name='echo_raw_post_data',
     ),
   ])
@@ -185,75 +186,75 @@ if django.conf.settings.DEBUG_GMN:
     # Diagnostics portal
     url(
       r'^diag$',
-      app.views.diagnostics.diagnostics,
+      gmn.app.views.diagnostics.diagnostics,
       name='diag',
     ),
     # Replication.
     url(
       r'^diag/get_replication_queue$',
-      app.views.diagnostics.get_replication_queue,
+      gmn.app.views.diagnostics.get_replication_queue,
       name='get_replication_queue',
     ),
     url(
       r'^diag/clear_replication_queue$',
-      app.views.diagnostics.clear_replication_queue,
+      gmn.app.views.diagnostics.clear_replication_queue,
       name='clear_replication_queue',
     ),
     # Access Policy.
     url(
       r'^diag/delete_all_access_policies$',
-      app.views.diagnostics.delete_all_access_policies,
+      gmn.app.views.diagnostics.delete_all_access_policies,
       name='delete_all_access_policies',
     ),
     # Misc.
     url(
       r'^diag/create/(.+)$',
-      app.views.diagnostics.create,
+      gmn.app.views.diagnostics.create,
       name='create',
     ),
     url(
       r'^diag/slash/(.+?)/(.+?)/(.+?)$',
-      app.views.diagnostics.slash,
+      gmn.app.views.diagnostics.slash,
       name='slash',
     ),
     url(
-      r'^diag/exception/(.+?)$', app.views.diagnostics.exception,
+      r'^diag/exception/(.+?)$', gmn.app.views.diagnostics.exception,
       name='exception'
     ),
     url(
       r'^diag/delete_all_objects$',
-      app.views.diagnostics.delete_all_objects_view,
+      gmn.app.views.diagnostics.delete_all_objects_view,
       name='delete_all_objects_view',
     ),
     url(
       r'^diag/trusted_subjects$',
-      app.views.diagnostics.trusted_subjects,
+      gmn.app.views.diagnostics.trusted_subjects,
       name='trusted_subjects',
     ),
     url(
       r'^diag/whitelist_subject$',
-      app.views.diagnostics.whitelist_subject,
+      gmn.app.views.diagnostics.whitelist_subject,
       name='whitelist_subject',
     ),
     url(
       r'^diag/permissions_for_object/(.+?)$',
-      app.views.diagnostics.permissions_for_object,
+      gmn.app.views.diagnostics.permissions_for_object,
       name='permissions_for_object',
     ),
     url(
       r'^diag/get_setting/(.+)$',
-      app.views.diagnostics.get_setting,
+      gmn.app.views.diagnostics.get_setting,
       name='get_setting',
     ),
     # Event Log.
     url(
       r'^diag/delete_event_log$',
-      app.views.diagnostics.delete_event_log,
+      gmn.app.views.diagnostics.delete_event_log,
       name='delete_event_log',
     ),
     url(
       r'^diag/inject_fictional_event_log$',
-      app.views.diagnostics.inject_fictional_event_log,
+      gmn.app.views.diagnostics.inject_fictional_event_log,
       name='inject_fictional_event_log',
     ),
   ])

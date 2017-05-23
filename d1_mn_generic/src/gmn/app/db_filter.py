@@ -39,17 +39,18 @@ from __future__ import absolute_import
 
 import re
 
-import app.models
-import app.views.asserts
-import app.views.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
+import gmn.app.models
+import gmn.app.views.asserts
+import gmn.app.views.util
+
 
 def add_access_policy_filter(query, request, column_name):
   q = (
-    app.models.Subject.objects.filter(subject__in=request.all_subjects_set)
+    gmn.app.models.Subject.objects.filter(subject__in=request.all_subjects_set)
     .values('permission__sciobj')
   )
   filter_arg = '{}__in'.format(column_name)
@@ -59,25 +60,25 @@ def add_access_policy_filter(query, request, column_name):
 def add_replica_filter(query, request):
   param_name = 'replicaStatus'
   bool_val = request.GET.get(param_name, True)
-  if not app.views.util.is_bool_param(bool_val):
+  if not gmn.app.views.util.is_bool_param(bool_val):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
         param_name, bool_val
       )
     )
-  if app.views.util.is_true_param(bool_val):
+  if gmn.app.views.util.is_true_param(bool_val):
     return query
   else:
-    local_replicas_queryset = app.models.LocalReplica.objects.all()
-    return query.exclude(pid__id__in=local_replicas_queryset)
+    local_replicas_queryset = gmn.app.models.LocalReplica.objects.all()
+    return query.filter(pid__id__in=local_replicas_queryset)
 
 
 def add_bool_filter(query, request, column_name, param_name):
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
-  if app.views.util.is_bool_param(bool_val):
+  if gmn.app.views.util.is_bool_param(bool_val):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
@@ -85,7 +86,9 @@ def add_bool_filter(query, request, column_name, param_name):
       )
     )
   filter_arg = column_name
-  return query.filter(**{filter_arg: app.views.util.is_true_param(bool_val)})
+  return query.filter(
+    **{filter_arg: gmn.app.views.util.is_true_param(bool_val)}
+  )
 
 
 def add_datetime_filter(query, request, column_name, param_name, operator):
@@ -103,7 +106,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
       0, u'Invalid date format for parameter. parameter="{}" date="{}", '
       u'parse_error="{}"'.format(param_name, date_str, str(e))
     )
-  app.views.asserts.date_is_utc(date)
+  gmn.app.views.asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
   filter_arg = '{}__{}'.format(column_name, operator)
   return query.filter(**{filter_arg: date})

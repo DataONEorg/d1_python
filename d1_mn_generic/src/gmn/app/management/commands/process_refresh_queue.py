@@ -25,17 +25,18 @@ from __future__ import absolute_import
 
 import logging
 
-import app.auth
-import app.event_log
-import app.management.commands.util
-import app.models
-import app.sysmeta
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
 import django.conf
 import django.core.management.base
 from django.db import transaction
+
+import gmn.app.auth
+import gmn.app.event_log
+import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.sysmeta
 
 
 # noinspection PyClassHasNoInit
@@ -51,13 +52,13 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    app.management.commands.util.log_setup(options['debug'])
+    gmn.app.management.commands.util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(app.management.commands.util.get_command_name())
+      format(gmn.app.management.commands.util.get_command_name())
     )
-    app.management.commands.util.abort_if_other_instance_is_running()
-    app.management.commands.util.abort_if_stand_alone_instance()
+    gmn.app.management.commands.util.abort_if_other_instance_is_running()
+    gmn.app.management.commands.util.abort_if_stand_alone_instance()
     p = SysMetaRefreshQueueProcessor()
     p.process_refresh_queue()
 
@@ -70,7 +71,7 @@ class SysMetaRefreshQueueProcessor(object):
     self.cn_client = self._create_cn_client()
 
   def process_refresh_queue(self):
-    queue_queryset = app.models.SystemMetadataRefreshQueue.objects.filter(
+    queue_queryset = gmn.app.models.SystemMetadataRefreshQueue.objects.filter(
       status__status='queued'
     )
     if not len(queue_queryset):
@@ -116,12 +117,12 @@ class SysMetaRefreshQueueProcessor(object):
     with transaction.atomic():
       self._update_sysmeta(sysmeta_pyxb)
       self._update_request_status(queue_model, 'completed')
-      app.event_log.create_log_entry(
+      gmn.app.event_log.create_log_entry(
         queue_model.sciobj, 'update', '0.0.0.0', '[refresh]', '[refresh]'
       )
 
   def _update_request_status(self, queue_model, status_str):
-    queue_model.status = app.models.sysmeta_refresh_status(status_str)
+    queue_model.status = gmn.app.models.sysmeta_refresh_status(status_str)
     queue_model.save()
 
   def _inc_and_get_failed_attempts(self, queue_model):
@@ -133,7 +134,7 @@ class SysMetaRefreshQueueProcessor(object):
     return queue_model.failed_attempts
 
   def _remove_completed_requests_from_queue(self):
-    app.models.SystemMetadataRefreshQueue.objects.filter(
+    gmn.app.models.SystemMetadataRefreshQueue.objects.filter(
       status__status__in=('completed', 'failed')
     ).delete()
 
@@ -157,10 +158,10 @@ class SysMetaRefreshQueueProcessor(object):
     No sanity checking is done on the provided System Metadata. It comes from a
     CN and is implicitly trusted.
     """
-    app.sysmeta.update(sysmeta_pyxb)
+    gmn.app.sysmeta.update(sysmeta_pyxb)
 
   def _assert_is_pid_of_native_object(self, pid):
-    if not app.sysmeta.is_pid_of_existing_object(pid):
+    if not gmn.app.sysmeta.is_pid_of_existing_object(pid):
       raise RefreshError(
         u'Object referenced by PID does not exist or is not valid target for'
         u'System Metadata refresh. pid="{}"'.format(pid)

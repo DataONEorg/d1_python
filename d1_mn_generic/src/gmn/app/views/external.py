@@ -28,24 +28,6 @@ import os
 import urlparse
 import uuid
 
-import app.auth
-import app.db_filter
-import app.event_log
-import app.models
-import app.node
-import app.psycopg_adapter
-import app.restrict_to_verb
-import app.sysmeta
-import app.sysmeta_obsolescence
-import app.sysmeta_replica
-import app.sysmeta_sid
-import app.sysmeta_util
-import app.sysmeta_validate
-import app.util
-import app.views.asserts
-import app.views.create
-import app.views.decorators
-import app.views.util
 import d1_client.cnclient
 import d1_client.object_format_info
 import d1_common.checksum
@@ -57,6 +39,25 @@ import django.conf
 import django.http
 import django.utils.http
 import requests
+
+import gmn.app.auth
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.models
+import gmn.app.node
+import gmn.app.psycopg_adapter
+import gmn.app.restrict_to_verb
+import gmn.app.sysmeta
+import gmn.app.sysmeta_obsolescence
+import gmn.app.sysmeta_replica
+import gmn.app.sysmeta_sid
+import gmn.app.sysmeta_util
+import gmn.app.sysmeta_validate
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.create
+import gmn.app.views.decorators
+import gmn.app.views.util
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
@@ -99,12 +100,12 @@ def dispatch_object_list(request):
 
 
 # Unrestricted access.
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def get_monitor_ping(request):
   """MNCore.ping() → Boolean
   """
-  response = app.views.util.http_response_with_boolean_true_type()
-  app.views.util.add_http_date_to_response_header(
+  response = gmn.app.views.util.http_response_with_boolean_true_type()
+  gmn.app.views.util.add_http_date_to_response_header(
     response, datetime.datetime.utcnow()
   )
   return response
@@ -113,40 +114,42 @@ def get_monitor_ping(request):
 # Anyone can call getLogRecords but only objects to which they have read access
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
-@app.restrict_to_verb.get
-@app.views.decorators.get_log_records_access
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.get_log_records_access
 def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
   """
-  query = app.models.EventLog.objects.order_by('-timestamp').select_related()
-  if not app.auth.is_trusted_subject(request):
-    query = app.db_filter.add_access_policy_filter(query, request, 'sciobj__id')
-  query = app.db_filter.add_datetime_filter(
+  query = gmn.app.models.EventLog.objects.order_by('-timestamp').select_related()
+  if not gmn.app.auth.is_trusted_subject(request):
+    query = gmn.app.db_filter.add_access_policy_filter(
+      query, request, 'sciobj__id'
+    )
+  query = gmn.app.db_filter.add_datetime_filter(
     query, request, 'timestamp', 'fromDate', 'gte'
   )
-  query = app.db_filter.add_datetime_filter(
+  query = gmn.app.db_filter.add_datetime_filter(
     query, request, 'timestamp', 'toDate', 'lt'
   )
-  query = app.db_filter.add_string_filter(
+  query = gmn.app.db_filter.add_string_filter(
     query, request, 'event__event', 'event'
   )
   # Cannot use the resolve_sid decorator here since the SID/PID filter is passed
   # as a query parameter and the parameter changes names between v1 and v2.
-  if app.views.util.is_v1_api(request):
+  if gmn.app.views.util.is_v1_api(request):
     id_filter_str = 'pidFilter'
-  elif app.views.util.is_v2_api(request):
+  elif gmn.app.views.util.is_v2_api(request):
     id_filter_str = 'idFilter'
   else:
     assert False, u'Unable to determine API version'
   # did = request.GET.get('idFilter', None)
   # if did is not None:
-  #   request.GET[id_filter_str] = app.views.asserts.resolve_sid_func(did)
-  query = app.db_filter.add_string_begins_with_filter(
+  #   request.GET[id_filter_str] = gmn.app.views.asserts.resolve_sid_func(did)
+  query = gmn.app.db_filter.add_string_begins_with_filter(
     query, request, 'sciobj__pid__did', id_filter_str
   )
   query_unsliced = query
-  query, start, count = app.db_filter.add_slice_filter(query, request)
+  query, start, count = gmn.app.db_filter.add_slice_filter(query, request)
   return {
     'query': query,
     'start': start,
@@ -157,12 +160,12 @@ def get_log(request):
 
 
 # Unrestricted access.
-@app.restrict_to_verb.get
+@gmn.app.restrict_to_verb.get
 def get_node(request):
   """MNCore.getCapabilities() → Node
   """
-  major_version_int = 2 if app.views.util.is_v2_api(request) else 1
-  node_pretty_xml = app.node.get_pretty_xml(major_version_int)
+  major_version_int = 2 if gmn.app.views.util.is_v2_api(request) else 1
+  node_pretty_xml = gmn.app.node.get_pretty_xml(major_version_int)
   return django.http.HttpResponse(
     node_pretty_xml, d1_common.const.CONTENT_TYPE_XML
   )
@@ -190,26 +193,26 @@ def _add_object_properties_to_response_header(response, sciobj):
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
   )
   response['DataONE-SerialVersion'] = sciobj.serial_version
-  app.views.util.add_http_date_to_response_header(
+  gmn.app.views.util.add_http_date_to_response_header(
     response, datetime.datetime.utcnow()
   )
 
 
-@app.restrict_to_verb.get
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.read_permission
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.read_permission
 def get_object(request, pid):
   """MNRead.get(session, did) → OctetStream
   """
-  sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   content_type_str = _content_type_from_format(sciobj.format.format)
   response = django.http.StreamingHttpResponse(
     _get_sciobj_iter(sciobj), content_type_str
   )
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
-  app.event_log.read(pid, request)
+  gmn.app.event_log.read(pid, request)
   # Since the iterator that generates data for StreamingHttpResponse runs
   # after the view has returned, it is not protected by the implicit transaction
   # around a request. However, in the unlikely event that a request is made to
@@ -220,18 +223,18 @@ def get_object(request, pid):
 
 
 def _get_sciobj_iter(sciobj):
-  if app.util.is_proxy_url(sciobj.url):
+  if gmn.app.util.is_proxy_url(sciobj.url):
     return _get_sciobj_iter_remote(sciobj.url)
   else:
     return _get_sciobj_iter_local(sciobj.pid.did)
 
 
 def _get_sciobj_iter_local(pid):
-  file_in_path = app.util.sciobj_file_path(pid)
+  file_in_path = gmn.app.util.sciobj_file_path(pid)
   # Can't use "with".
   sciobj_file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
-  return app.util.fixed_chunk_size_iterator(sciobj_file)
+  return gmn.app.util.fixed_chunk_size_iterator(sciobj_file)
 
 
 def _get_sciobj_iter_remote(url):
@@ -250,36 +253,38 @@ def _get_sciobj_iter_remote(url):
     )
 
 
-@app.restrict_to_verb.get
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.read_permission
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.read_permission
 def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
-  app.event_log.read(pid, request)
-  return app.views.util.generate_sysmeta_xml_matching_api_version(request, pid)
+  gmn.app.event_log.read(pid, request)
+  return gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
+    request, pid
+  )
 
 
-@app.restrict_to_verb.head
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.read_permission
+@gmn.app.restrict_to_verb.head
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.read_permission
 def head_object(request, pid):
   """MNRead.describe(session, did) → DescribeResponse
   """
-  sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   response = django.http.HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
-  app.event_log.read(pid, request)
+  gmn.app.event_log.read(pid, request)
   return response
 
 
-@app.restrict_to_verb.get
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.read_permission
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.read_permission
 def get_checksum(request, pid):
   """MNRead.getChecksum(session, did[, checksumAlgorithm]) → Checksum
   """
@@ -301,21 +306,21 @@ def get_checksum(request, pid):
       )
     )
 
-  sciobj_model = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj_model = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   sciobj_iter = _get_sciobj_iter(sciobj_model)
   checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
     sciobj_iter, algorithm
   )
   # Log the access of this object.
   # TODO: look into log type other than 'read'
-  app.event_log.read(pid, request)
+  gmn.app.event_log.read(pid, request)
   return django.http.HttpResponse(
     checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML
   )
 
 
-@app.restrict_to_verb.get
-@app.views.decorators.list_objects_access
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.list_objects_access
 def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -323,22 +328,22 @@ def get_object_list(request):
   # The ObjectList is returned ordered by modified_timestamp ascending. The order has
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
-  query = app.models.ScienceObject.objects.order_by('modified_timestamp'
-                                                    ).select_related()
-  if not app.auth.is_trusted_subject(request):
-    query = app.db_filter.add_access_policy_filter(query, request, 'id')
-  query = app.db_filter.add_datetime_filter(
+  query = gmn.app.models.ScienceObject.objects.order_by('modified_timestamp'
+                                                        ).select_related()
+  if not gmn.app.auth.is_trusted_subject(request):
+    query = gmn.app.db_filter.add_access_policy_filter(query, request, 'id')
+  query = gmn.app.db_filter.add_datetime_filter(
     query, request, 'modified_timestamp', 'fromDate', 'gte'
   )
-  query = app.db_filter.add_datetime_filter(
+  query = gmn.app.db_filter.add_datetime_filter(
     query, request, 'modified_timestamp', 'toDate', 'lt'
   )
-  query = app.db_filter.add_string_filter(
+  query = gmn.app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  query = app.db_filter.add_replica_filter(query, request)
+  query = gmn.app.db_filter.add_replica_filter(query, request)
   query_unsliced = query
-  query, start, count = app.db_filter.add_slice_filter(query, request)
+  query, start, count = gmn.app.db_filter.add_slice_filter(query, request)
   return {
     'query': query,
     'start': start,
@@ -348,14 +353,14 @@ def get_object_list(request):
   }
 
 
-@app.restrict_to_verb.post
-@app.views.decorators.trusted_permission
+@gmn.app.restrict_to_verb.post
+@gmn.app.views.decorators.trusted_permission
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
-  app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
-  app.views.asserts.xml_document_not_too_large(request.FILES['message'])
-  synchronization_failed_xml = app.views.util.read_utf8_xml(
+  gmn.app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
+  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['message'])
+  synchronization_failed_xml = gmn.app.views.util.read_utf8_xml(
     request.FILES['message']
   )
   try:
@@ -378,24 +383,24 @@ def post_error(request):
       u'Received notification of synchronization error from CN:\n{}'.
       format(str(synchronization_failed))
     )
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # Access control is performed within function.
-@app.restrict_to_verb.get
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
 def get_replica(request, pid):
   """MNReplication.getReplica(session, did) → OctetStream
   """
   _assert_node_is_authorized(request, pid)
-  sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   response = django.http.HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   response._container = _get_sciobj_iter(sciobj)
   response._is_str = False
   # Log the replication of this object.
-  app.event_log.replicate(pid, request)
+  gmn.app.event_log.replicate(pid, request)
   return response
 
 
@@ -421,31 +426,33 @@ def _assert_node_is_authorized(request, pid):
     )
 
 
-@app.restrict_to_verb.put
+@gmn.app.restrict_to_verb.put
 def put_meta(request):
   """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
   """
-  app.util.coerce_put_post(request)
-  app.views.asserts.post_has_mime_parts(
+  gmn.app.util.coerce_put_post(request)
+  gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'sysmeta'))
   )
   pid = request.POST['pid']
-  app.auth.assert_allowed(request, app.auth.WRITE_LEVEL, pid)
-  app.views.asserts.is_valid_for_update(pid)
-  app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  new_sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
-  app.views.asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_pyxb, pid)
+  gmn.app.auth.assert_allowed(request, gmn.app.auth.WRITE_LEVEL, pid)
+  gmn.app.views.asserts.is_valid_for_update(pid)
+  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  new_sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  gmn.app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
+  gmn.app.views.asserts.is_valid_sid_for_chain_if_specified(
+    new_sysmeta_pyxb, pid
+  )
   # TODO: Need to clarify desired functionality.
-  app.views.util.set_mn_controlled_values(request, new_sysmeta_pyxb)
-  if app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
-    sid = app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
-    if app.sysmeta_sid.is_sid(sid):
-      app.sysmeta_sid.update_sid(sid, pid)
-  app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
-  app.event_log.update(pid, request)
-  return app.views.util.http_response_with_boolean_true_type()
+  gmn.app.views.util.set_mn_controlled_values(request, new_sysmeta_pyxb)
+  if gmn.app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
+    sid = gmn.app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
+    if gmn.app.sysmeta_sid.is_sid(sid):
+      gmn.app.sysmeta_sid.update_sid(sid, pid)
+  gmn.app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
+  gmn.app.event_log.update(pid, request)
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # ------------------------------------------------------------------------------
@@ -454,9 +461,9 @@ def put_meta(request):
 
 
 # Unrestricted.
-@app.restrict_to_verb.get
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
+@gmn.app.restrict_to_verb.get
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
 def get_is_authorized(request, pid):
   """MNAuthorization.isAuthorized(did, action) -> Boolean
   """
@@ -466,29 +473,29 @@ def get_is_authorized(request, pid):
     )
   # Convert action string to action level. Raises InvalidRequest if the
   # action string is not valid.
-  level = app.auth.action_to_level(request.GET['action'])
-  app.auth.assert_allowed(request, level, pid)
-  return app.views.util.http_response_with_boolean_true_type()
+  level = gmn.app.auth.action_to_level(request.GET['action'])
+  gmn.app.auth.assert_allowed(request, level, pid)
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
-@app.restrict_to_verb.post
-@app.views.decorators.trusted_permission
+@gmn.app.restrict_to_verb.post
+@gmn.app.views.decorators.trusted_permission
 def post_refresh_system_metadata(request):
   """MNStorage.systemMetadataChanged(session, did, serialVersion,
                                      dateSysMetaLastModified) → boolean
   """
-  app.views.asserts.post_has_mime_parts(
+  gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('field', 'serialVersion'),
               ('field', 'dateSysMetaLastModified'),)
   )
-  app.views.asserts.is_pid_of_existing_object(request.POST['pid'])
-  app.models.sysmeta_refresh_queue(
+  gmn.app.views.asserts.is_pid_of_existing_object(request.POST['pid'])
+  gmn.app.models.sysmeta_refresh_queue(
     request.POST['pid'],
     request.POST['serialVersion'],
     request.POST['dateSysMetaLastModified'],
     'queued',
   ).save()
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # ------------------------------------------------------------------------------
@@ -539,81 +546,89 @@ def post_refresh_system_metadata(request):
 # actual exception is not included.
 
 
-@app.restrict_to_verb.post
-@app.views.decorators.assert_create_update_delete_permission
+@gmn.app.restrict_to_verb.post
+@gmn.app.views.decorators.assert_create_update_delete_permission
 def post_object_list(request):
   """MNStorage.create(session, did, object, sysmeta) → Identifier
   """
-  app.views.asserts.post_has_mime_parts(
+  gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
+  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  gmn.app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
-  app.views.asserts.is_unused(new_pid)
+  gmn.app.views.asserts.is_unused(new_pid)
   _create(request, sysmeta_pyxb, new_pid)
-  if app.sysmeta_sid.has_sid(sysmeta_pyxb):
-    sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
-    app.views.asserts.is_unused(sid)
-    app.sysmeta_sid.create_sid(sid, new_pid)
+  if gmn.app.sysmeta_sid.has_sid(sysmeta_pyxb):
+    sid = gmn.app.sysmeta_sid.get_sid(sysmeta_pyxb)
+    gmn.app.views.asserts.is_unused(sid)
+    gmn.app.sysmeta_sid.create_sid(sid, new_pid)
   return new_pid
 
 
-@app.restrict_to_verb.put
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.write_permission # OLD object
+@gmn.app.restrict_to_verb.put
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.write_permission # OLD object
 def put_object(request, old_pid):
   """MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   """
   if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
-    app.auth.assert_create_update_delete_permission(request)
-  app.util.coerce_put_post(request)
-  app.views.asserts.post_has_mime_parts(
+    gmn.app.auth.assert_create_update_delete_permission(request)
+  gmn.app.util.coerce_put_post(request)
+  gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'newPid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  app.views.asserts.is_valid_for_update(old_pid)
-  app.views.asserts.is_not_obsoleted(old_pid)
-  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.views.asserts.obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid)
-  app.views.asserts.is_valid_sid_for_chain_if_specified(sysmeta_pyxb, old_pid)
+  gmn.app.views.asserts.is_valid_for_update(old_pid)
+  gmn.app.views.asserts.is_not_obsoleted(old_pid)
+  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  gmn.app.views.asserts.obsoletes_matches_pid_if_specified(
+    sysmeta_pyxb, old_pid
+  )
+  gmn.app.views.asserts.is_valid_sid_for_chain_if_specified(
+    sysmeta_pyxb, old_pid
+  )
   sysmeta_pyxb.obsoletes = old_pid
   new_pid = request.POST['newPid']
   _create(request, sysmeta_pyxb, new_pid)
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
-  app.event_log.update(old_pid, request)
-  app.sysmeta_obsolescence.set_obsolescence(old_pid, obsoleted_by_pid=new_pid)
-  app.sysmeta.update_modified_timestamp(old_pid)
-  if app.sysmeta_sid.has_sid(sysmeta_pyxb):
-    sid = app.sysmeta_sid.get_sid(sysmeta_pyxb)
-    if app.sysmeta_sid.is_sid(sid):
-      app.sysmeta_sid.update_sid(sid, new_pid)
+  gmn.app.event_log.update(old_pid, request)
+  gmn.app.sysmeta_obsolescence.set_obsolescence(
+    old_pid, obsoleted_by_pid=new_pid
+  )
+  gmn.app.sysmeta.update_modified_timestamp(old_pid)
+  if gmn.app.sysmeta_sid.has_sid(sysmeta_pyxb):
+    sid = gmn.app.sysmeta_sid.get_sid(sysmeta_pyxb)
+    if gmn.app.sysmeta_sid.is_sid(sid):
+      gmn.app.sysmeta_sid.update_sid(sid, new_pid)
   return new_pid
 
 
 def _create(request, sysmeta_pyxb, new_pid):
-  app.views.asserts.is_unused(new_pid)
-  app.views.asserts.does_not_contain_replica_sections(sysmeta_pyxb)
-  app.views.asserts.sysmeta_is_not_archived(sysmeta_pyxb)
-  # app.views.asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
-  app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
-  app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  app.views.asserts.obsoleted_by_not_specified(sysmeta_pyxb)
-  app.sysmeta_validate.validate_sysmeta_against_uploaded(request, sysmeta_pyxb)
-  app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
+  gmn.app.views.asserts.is_unused(new_pid)
+  gmn.app.views.asserts.does_not_contain_replica_sections(sysmeta_pyxb)
+  gmn.app.views.asserts.sysmeta_is_not_archived(sysmeta_pyxb)
+  # gmn.app.views.asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
+  gmn.app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
+  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+  gmn.app.views.asserts.obsoleted_by_not_specified(sysmeta_pyxb)
+  gmn.app.sysmeta_validate.validate_sysmeta_against_uploaded(
+    request, sysmeta_pyxb
+  )
+  gmn.app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
   #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
-  app.views.create.create(request, sysmeta_pyxb)
+  gmn.app.views.create.create(request, sysmeta_pyxb)
 
 
 # No locking. Public access.
-@app.restrict_to_verb.post
+@gmn.app.restrict_to_verb.post
 def post_generate_identifier(request):
   """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
   """
-  app.views.asserts.post_has_mime_parts(request, (('field', 'scheme'),))
+  gmn.app.views.asserts.post_has_mime_parts(request, (('field', 'scheme'),))
   if request.POST['scheme'] != 'UUID':
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Only the UUID scheme is currently supported'
@@ -621,18 +636,18 @@ def post_generate_identifier(request):
   fragment = request.POST.get('fragment', None)
   while True:
     pid = (fragment if fragment else u'') + uuid.uuid4().hex
-    if not app.models.ScienceObject.objects.filter(pid__did=pid).exists():
+    if not gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
       return pid
 
 
-@app.restrict_to_verb.delete
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.assert_create_update_delete_permission
+@gmn.app.restrict_to_verb.delete
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.assert_create_update_delete_permission
 def delete_object(request, pid):
   """MNStorage.delete(session, did) → Identifier
   """
-  sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
+  sciobj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   url_split = urlparse.urlparse(sciobj.url)
   _delete_object_from_filesystem(url_split, pid)
   _delete_object_from_database(pid)
@@ -641,7 +656,7 @@ def delete_object(request, pid):
 
 def _delete_object_from_filesystem(url_split, pid):
   if url_split.scheme == 'file':
-    sciobj_path = app.util.sciobj_file_path(pid)
+    sciobj_path = gmn.app.util.sciobj_file_path(pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:
@@ -655,19 +670,19 @@ def _delete_object_from_database(pid):
   # TODO: This causes associated permissions to be deleted, but any subjects
   # that are no longer needed are not deleted. The orphaned subjects should not
   # cause any issues and will be reused if they are needed again.
-  app.models.IdNamespace.objects.filter(did=pid).delete()
+  gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
 
 
-@app.restrict_to_verb.put
-@app.views.decorators.decode_id
-@app.views.decorators.resolve_sid
-@app.views.decorators.write_permission
+@gmn.app.restrict_to_verb.put
+@gmn.app.views.decorators.decode_id
+@gmn.app.views.decorators.resolve_sid
+@gmn.app.views.decorators.write_permission
 def put_archive(request, pid):
   """MNStorage.archive(session, did) → Identifier
   """
-  app.views.asserts.is_not_replica(pid)
-  app.views.asserts.is_not_archived(pid)
-  app.sysmeta.archive_object(pid)
+  gmn.app.views.asserts.is_not_replica(pid)
+  gmn.app.views.asserts.is_not_archived(pid)
+  gmn.app.sysmeta.archive_object(pid)
   return pid
 
 
@@ -676,22 +691,22 @@ def put_archive(request, pid):
 # ------------------------------------------------------------------------------
 
 
-@app.restrict_to_verb.post
-@app.views.decorators.trusted_permission
+@gmn.app.restrict_to_verb.post
+@gmn.app.views.decorators.trusted_permission
 def post_replicate(request):
   """MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   """
-  app.views.asserts.post_has_mime_parts(
+  gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = app.sysmeta.deserialize(sysmeta_xml)
-  app.sysmeta_replica.assert_request_complies_with_replication_policy(
+  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  gmn.app.sysmeta_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )
   pid = sysmeta_pyxb.identifier.value()
-  app.views.asserts.is_unused(pid)
-  app.sysmeta_replica.add_to_replication_queue(
+  gmn.app.views.asserts.is_unused(pid)
+  gmn.app.sysmeta_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb
   )
-  return app.views.util.http_response_with_boolean_true_type()
+  return gmn.app.views.util.http_response_with_boolean_true_type()
