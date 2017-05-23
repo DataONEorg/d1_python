@@ -30,14 +30,14 @@ import d1_client.mnclient
 import d1_client.session
 import d1_common.checksum
 import d1_common.types
+import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 import d1_common.xml
 import django.test
 import requests
-import tests.gmn_test_client
-from d1_common.types import dataoneTypes_v2_0 as v2
 
 import gmn.app.models
+import gmn.tests.gmn_test_client
 
 DEFAULT_ACCESS_RULE_LIST = [
   ([
@@ -96,7 +96,7 @@ class D1TestCase(django.test.TestCase):
     )
 
   def assert_has_public_object_list(self, gmn_url):
-    client = tests.gmn_test_client.GMNTestClient(gmn_url)
+    client = gmn.tests.gmn_test_client.GMNTestClient(gmn_url)
     self.assertTrue(
       client.get_setting('PUBLIC_OBJECT_LIST'),
       'This test requires that public access has been enabled for listObjects.',
@@ -125,40 +125,36 @@ class D1TestCase(django.test.TestCase):
   # CRUD
   #
 
-  def create(
-      self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None,
-      access_rule_list=None
-  ):
+  def create(self, client, binding, pid, sid=None, access_rule_list=None):
     sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, pid, obsoletes, obsoleted_by, sid, access_rule_list
+      binding, pid, sid=sid, access_rule_list=access_rule_list
     )
     client.create(
       pid, sci_obj_str, sysmeta_pyxb, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     return sci_obj_str, sysmeta_pyxb
 
   def update(
-      self, client, binding, old_pid, new_pid, sid=None, obsoletes=None,
-      obsoleted_by=None
+      self, client, binding, old_pid, new_pid, sid=None, access_rule_list=None
   ):
     sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, new_pid, obsoletes, obsoleted_by, sid
+      binding, new_pid, sid=sid, access_rule_list=access_rule_list
     )
     client.update(
       old_pid, sci_obj_str, new_pid, sysmeta_pyxb, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     return sci_obj_str, sysmeta_pyxb
 
   def get(self, client, did):
     sysmeta_pyxb = client.getSystemMetadata(
       did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     response = client.get(
       did, vendorSpecific=self.
-      include_subjects(tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
     self.assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
@@ -183,11 +179,13 @@ class D1TestCase(django.test.TestCase):
     self.create(
       client, binding, base_pid, **{'sid': base_sid} if base_sid else {}
     )
-    chain_base_pid = base_pid
-    pid_chain_list = [chain_base_pid]
+    pid_chain_list = [base_pid]
     for i in range(chain_len - 1):
       update_pid = self.random_pid()
-      self.update(client, binding, base_pid, update_pid)
+      self.update(
+        client, binding, base_pid, update_pid, **{'sid': base_sid}
+        if base_sid else {}
+      )
       pid_chain_list.append(update_pid)
       base_pid = update_pid
     return base_sid, pid_chain_list
@@ -267,7 +265,7 @@ class D1TestCase(django.test.TestCase):
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sciobj, tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC,
+      binding, pid, sciobj, gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC,
       obsoletes, obsoleted_by, sid, access_rule_list
     )
     return sciobj, sysmeta_pyxb

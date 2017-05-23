@@ -282,12 +282,40 @@ def remote_replica(sciobj_model, replica_info_model):
 # ------------------------------------------------------------------------------
 
 
-class SeriesIdToScienceObject(models.Model):
-  # Relate to ScienceObject because SID mapping is only done for existing local
-  # objects. OneToOneField because a SID can only resolve to a single object and
-  # an object can only have one SID resolving to it.
-  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
-  sid = models.OneToOneField(IdNamespace, models.CASCADE)
+class SeriesIdToPersistentId(models.Model):
+  sid = models.ForeignKey(
+    IdNamespace, models.CASCADE, related_name='%(class)s_sid'
+  )
+  pid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  )
+
+
+def sid_to_pid(sid, pid):
+  return SeriesIdToPersistentId.objects.get_or_create(
+    sid=did(sid), pid=did(pid)
+  )[0]
+
+
+class SeriesIdToHeadPersistentId(models.Model):
+  # For fast resolve of SID to the current head of a chain.
+  sid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_sid'
+  )
+  pid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  )
+
+
+def sid_to_head_pid(sid, pid):
+  sid_to_head_pid_model, was_created = (
+    SeriesIdToHeadPersistentId.objects.get_or_create(
+      sid=did(sid), defaults={'pid': did(pid)}
+    )
+  )
+  if not was_created:
+    sid_to_head_pid_model.pid = did(pid)
+    sid_to_head_pid_model.save()
 
 
 # ------------------------------------------------------------------------------

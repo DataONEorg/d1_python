@@ -63,10 +63,10 @@ class TestChecksum(tests.gmn_test_case.D1TestCase):
 
   @responses.activate
   def test_0010_v1(self):
-    """getChecksum()"""
+    """MNRead.getChecksum()"""
     self._assert_matching_checksum(self.client_v1, v1)
 
   @responses.activate
   def test_0010_v2(self):
-    """getChecksum()"""
+    """MNRead.getChecksum()"""
     self._assert_matching_checksum(self.client_v2, v2)

@@ -57,7 +57,7 @@ def is_unused(pid):
   To be unused, the PID:
   - Must not exist as a PID or SID.
   - Must not have been accepted for replication.
-  - Must not be referenced as obsoletes or obsoleted_by a replica.
+  - Must not be referenced as obsoletes or obsoleted_by in any object
   """
   if gmn.app.sysmeta.is_did(pid):
     raise d1_common.types.exceptions.IdentifierNotUnique(

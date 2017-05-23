@@ -449,7 +449,7 @@ def put_meta(request):
   if gmn.app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
     sid = gmn.app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
     if gmn.app.sysmeta_sid.is_sid(sid):
-      gmn.app.sysmeta_sid.update_sid(sid, pid)
+      gmn.app.sysmeta_sid.update_or_create_sid_to_pid_map(sid, pid)
   gmn.app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
   gmn.app.event_log.update(pid, request)
   return gmn.app.views.util.http_response_with_boolean_true_type()
@@ -559,11 +559,10 @@ def post_object_list(request):
   gmn.app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
   gmn.app.views.asserts.is_unused(new_pid)
-  _create(request, sysmeta_pyxb, new_pid)
   if gmn.app.sysmeta_sid.has_sid(sysmeta_pyxb):
     sid = gmn.app.sysmeta_sid.get_sid(sysmeta_pyxb)
     gmn.app.views.asserts.is_unused(sid)
-    gmn.app.sysmeta_sid.create_sid(sid, new_pid)
+  _create(request, sysmeta_pyxb, new_pid)
   return new_pid
 
 
@@ -600,10 +599,6 @@ def put_object(request, old_pid):
     old_pid, obsoleted_by_pid=new_pid
   )
   gmn.app.sysmeta.update_modified_timestamp(old_pid)
-  if gmn.app.sysmeta_sid.has_sid(sysmeta_pyxb):
-    sid = gmn.app.sysmeta_sid.get_sid(sysmeta_pyxb)
-    if gmn.app.sysmeta_sid.is_sid(sid):
-      gmn.app.sysmeta_sid.update_sid(sid, new_pid)
   return new_pid
 
 

@@ -2789,8 +2789,6 @@ class GMNIntegrationTests(RunserverTestCase):
     self.restore_sysmeta_mn_controlled_fields(
       ver1_sysmeta_pyxb, ver2_sysmeta_pyxb
     )
-    # print self._pyxb_to_pretty_xml(ver1_sysmeta_pyxb)
-    # print self._pyxb_to_pretty_xml(ver2_sysmeta_pyxb)
     self.assertTrue(
       d1_common.system_metadata.is_equivalent_pyxb(
         ver1_sysmeta_pyxb,

@@ -52,7 +52,7 @@ class TestListObjects(gmn.tests.gmn_test_case.D1TestCase):
 
   @responses.activate
   def test_0010(self):
-    """listObjects(): replicaStatus filter"""
+    """MNRead.listObjects(): replicaStatus filter"""
     # Create two objects, one local and one replica
     local_pid = self.random_pid()
     self.create(self.client_v2, v2, local_pid)

@@ -256,9 +256,13 @@ def _base_pyxb_to_model(
     gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy'),
   )
   sci_model.is_archived = sysmeta_pyxb.archived or False
+  series_id = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
+  if series_id:
+    gmn.app.sysmeta_sid.update_or_create_sid_to_pid_map(
+      series_id, sysmeta_pyxb.identifier.value()
+    )
   # Internal fields
-  if url is not None:
-    sci_model.url = url
+  sci_model.url = url
 
 
 def _base_model_to_pyxb(sciobj_model):
@@ -289,7 +293,6 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.obsoletedBy = sub_sciobj(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
   base_pyxb.seriesId = gmn.app.sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
-
   return base_pyxb
 
 

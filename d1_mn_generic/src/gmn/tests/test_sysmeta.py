@@ -52,7 +52,6 @@ class TestSysMeta(gmn.tests.gmn_test_case.D1TestCase):
     """v2 SysMeta: Roundtrip of fully populated System Metadata"""
     # Prepare fully populated sysmeta
     orig_sysmeta_pyxb = self.read_test_xml('systemMetadata_v2_0.xml')
-    #print d1_common.xml.pretty_pyxb(orig_sysmeta_pyxb)
     pid = self.random_pid()
     sciobj_str = 'sciobj bytes for pid="{}"'.format(pid)
     orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(

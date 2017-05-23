@@ -29,8 +29,8 @@ import gmn.app.util
 
 
 def is_sid(did):
-  return gmn.app.models.SeriesIdToScienceObject.objects.filter(sid__did=did
-                                                               ).exists()
+  return gmn.app.models.SeriesIdToPersistentId.objects.filter(sid__did=did
+                                                              ).exists()
 
 
 def has_sid(sysmeta_pyxb):
@@ -41,28 +41,18 @@ def get_sid(sysmeta_pyxb):
   return gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
 
 
-def create_sid(sid, pid):
-  """Create a new {sid} that resolves to {pid}.
+def update_or_create_sid_to_pid_map(sid, pid):
+  """Update existing or create a new {sid} to {pid} association. Then create
+  or update the {sid} to resolve to the {pid}.
 
   Preconditions:
-  - {sid} is verified to be unused. E.g., with gmn.app.views.asserts.is_unused().
+  - {sid} is verified to be unused if creating a standalone object (that may later become
+  the first object in a chain).
+  - {sid} is verified to belong to the given chain updating.
   - {pid} is verified to exist. E.g., with gmn.app.views.asserts.is_pid().
   """
-  sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
-  _create_sid(sid, sci_model)
-
-
-def update_sid(sid, pid):
-  """Change the existing {sid} to resolve to {pid}.
-
-  Preconditions:
-  - SID is verified to exist. E.g., with gmn.app.views.asserts.is_sid().
-
-  Postconditions:
-  - The SID maps to the object specified by pid.
-  """
-  sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
-  _update_sid(sid, sci_model)
+  gmn.app.models.sid_to_pid(sid, pid)
+  gmn.app.models.sid_to_head_pid(sid, pid)
 
 
 def resolve_sid(sid):
@@ -71,52 +61,26 @@ def resolve_sid(sid):
   Preconditions:
   - {sid} is verified to exist. E.g., with gmn.app.views.asserts.is_sid().
   """
-  return gmn.app.models.SeriesIdToScienceObject.objects.get(
+  return gmn.app.models.SeriesIdToHeadPersistentId.objects.get(
     sid__did=sid
-  ).sciobj.pid.did
+  ).pid.did
 
 
 def get_sid_by_pid(pid):
   """Get the SID to which the {pid} currently maps.
-
   Return None if there is no SID that currently maps to {pid}.
-
-  Preconditions:
-  - {pid} is verified to exist. E.g., with gmn.app.views.asserts.is_pid().
   """
   try:
-    return gmn.app.models.SeriesIdToScienceObject.objects.get(
-      sciobj__pid__did=pid
+    return gmn.app.models.SeriesIdToPersistentId.objects.get(
+      pid__did=pid
     ).sid.did
-  except gmn.app.models.SeriesIdToScienceObject.DoesNotExist:
+  except gmn.app.models.SeriesIdToPersistentId.DoesNotExist:
     return None
 
 
 #
 # Private
 #
-
-
-def _create_sid(sid, sci_model):
-  """Create a new {sid} that resolves to {sci_model}."""
-  sid_model = gmn.app.models.SeriesIdToScienceObject()
-  sid_model.sciobj = sci_model
-  sid_model.sid = gmn.app.models.did(sid)
-  sid_model.save()
-
-
-def _update_sid(sid, sci_model):
-  """Change an existing {sid} to resolve to {sci_model}"""
-  sid_model = gmn.app.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
-  sid_model.sciobj = sci_model
-  sid_model.save()
-
-
-# def update_sid(sysmeta_pyxb):
-#   pid = sysmeta_pyxb.identifier.value()
-#   sci_model = sysmeta_util.get_sci_model(pid)
-#   _update_sid(sci_model, sysmeta_pyxb)
-#   sci_model.save()
 
 # def move_sid_to_last_object_in_chain(pid):
 #   """Move SID to the last object in a chain to which {pid} belongs.

@@ -23,6 +23,9 @@ MNStorage.delete(session, did) → Identifier
 """
 from __future__ import absolute_import
 
+import django.test
+import responses
+
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 import d1_common.types.dataoneTypes_v1_1 as v1
@@ -30,13 +33,12 @@ import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.django_client as mock_django_client
-import responses
-
 import gmn.tests.gmn_test_case
 
 BASE_URL = 'http://mock/mn'
 
 
+@django.test.override_settings(DEBUG=True)
 class TestDelete(gmn.tests.gmn_test_case.D1TestCase):
   def __init__(self, *args, **kwargs):
     super(TestDelete, self).__init__(*args, **kwargs)
@@ -64,36 +66,35 @@ class TestDelete(gmn.tests.gmn_test_case.D1TestCase):
     self.assertRaises(
       d1_common.types.exceptions.NotFound, client.delete, local_pid
     )
-    # Pid can now be reused
+    # PID can now be reused
     self.create(client, binding, local_pid)
-    # Is retrievable
+    # Is again retrievable
     client.getSystemMetadata(local_pid)
 
   @responses.activate
   def test_0010_v1(self):
-    """delete(): Standalone object without SID"""
+    """MNStorage.delete(): Standalone object without SID"""
     self._test_0010(self.client_v1, v1, local_sid=None)
 
   @responses.activate
   def test_0010_v2(self):
-    """delete(): Standalone object without SID"""
+    """MNStorage.delete(): Standalone object without SID"""
     self._test_0010(self.client_v2, v2, local_sid=None)
 
   @responses.activate
   def test_0011_v1(self):
-    """delete(): Standalone object with SID"""
+    """MNStorage.delete(): Standalone object with SID"""
     self._test_0010(self.client_v1, v1, local_sid=self.random_sid())
 
   @responses.activate
   def test_0011_v2(self):
-    """delete(): Standalone object with SID"""
+    """MNStorage.delete(): Standalone object with SID"""
     self._test_0010(self.client_v2, v2, local_sid=self.random_sid())
 
   # delete(): Obsolescence chain
 
   @responses.activate
   def test_0020_v2(self):
-    """delete(): Obsolescence chain without SID, delete head"""
+    """MNStorage.delete(): Obsolescence chain without SID, delete head"""
     base_sid, pid_chain_list = self.create_chain(self.client_v2, v2, 10)
-    print base_sid, pid_chain_list
     self.assert_valid_chain(self.client_v2, pid_chain_list, base_sid)
