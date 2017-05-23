@@ -18,7 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Test the Solr client
 
+Note:
+"""
 import unittest
 
 import d1_client.solr_client
@@ -72,10 +75,13 @@ class TestSolrClientReal(unittest.TestCase):
       },
       u'response': {
         u'start': 0,
+        # u'maxScore': 0.0,
         u'numFound': 0,
         u'docs': []
       }
     }
+    if 'maxScore' in response_dict['response']:
+      del response_dict['response']['maxScore']
     self.assertIn('QTime', response_dict['responseHeader'])
     del response_dict['responseHeader']['QTime']
     self.assertDictEqual(response_dict, expected_dict)
