@@ -14,8 +14,8 @@ install:
   - pip install --upgrade setuptools
   - pip install coverage pytest-cov pytest-django
 script:
-  - cd $TRAVIS_BUILD_DIR/common/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/client_lib/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/lib_common/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/lib_client/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/client_cli/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/test_utilities/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR/gmn/src && python setup.py develop
