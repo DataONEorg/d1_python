@@ -531,7 +531,7 @@ class GMNIntegrationTests(RunserverTestCase):
     """GMN must be set to allow running destructive integration tests.
     """
     client = gmn.tests.gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertTrue(client.get_setting('ALLOW_INTEGRATION_TESTS'))
+    self.assertTrue(client.get_setting('DEBUG_ALLOW_INTEGRATION_TESTS'))
 
   #@responses.activate
   def test_1000_C(self):

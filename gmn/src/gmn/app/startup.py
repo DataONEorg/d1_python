@@ -48,7 +48,7 @@ class GMNStartupChecks(django.apps.AppConfig):
       ('DEBUG', False),
       ('DEBUG_GMN', False),
       ('DEBUG_PYCHARM', False),
-      ('ALLOW_INTEGRATION_TESTS', False),
+      ('DEBUG_ALLOW_INTEGRATION_TESTS', False),
       ('STAND_ALONE', True),
     ]
     for setting_str, setting_safe in safe_settings_list:
@@ -70,12 +70,6 @@ class GMNStartupChecks(django.apps.AppConfig):
       )
 
   def _set_secret_key(self):
-    """Django uses SECRET_KEY for a number of security related features, such as
-    salting passwords, signing cookies and securing sessions. Since D1 uses a
-    different security model based on certs, tokens and subjects, GMN handles
-    all security independently, so SECRET_KEY is probably unused. But just to be
-    safe, we automatically generate a persistent SECRET_KEY.
-    """
     secret_file_path = d1_common.util.abs_path('../secret_key.txt')
     try:
       with open(secret_file_path, 'rb') as f:

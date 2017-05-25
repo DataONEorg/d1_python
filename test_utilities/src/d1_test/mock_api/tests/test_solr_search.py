@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.solr_search as mock_solr_search
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -38,13 +38,13 @@ class TestMockSolrSearch(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+      base_url=config.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.search() returns a DataONE ObjectList PyXB object"""
-    mock_solr_search.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_solr_search.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.search(queryType='solr', query='query-string'),
       d1_common.types.dataoneTypes_v2_0.ObjectList
@@ -53,7 +53,7 @@ class TestMockSolrSearch(unittest.TestCase):
   @responses.activate
   def test_0020(self):
     """mock_api.search(): Passing a trigger header triggers a DataONEException"""
-    mock_solr_search.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_solr_search.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.ServiceFailure, self.client.search, 'solr',
       'query-string', vendorSpecific={'trigger': '500'}

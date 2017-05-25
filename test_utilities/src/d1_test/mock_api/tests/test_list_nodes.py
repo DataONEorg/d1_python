@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.list_nodes as list_nodes
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -38,13 +38,13 @@ class TestMockObjectList(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+      base_url=config.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.listNodes() returns a DataONE ObjectList PyXB object"""
-    list_nodes.add_callback(settings.CN_RESPONSES_BASE_URL)
+    list_nodes.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.listNodes(), d1_common.types.dataoneTypes_v2_0.NodeList
     )
@@ -52,7 +52,7 @@ class TestMockObjectList(unittest.TestCase):
   # @responses.activate
   # def test_0011(self):
   #   """mock_api.listNodes() returns a populated ObjectList"""
-  #   mock_object_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+  #   mock_object_list.add_callback(config.CN_RESPONSES_BASE_URL)
   #   object_list = self.client.listNodes()
   #   self.assertEqual(len(object_list.objectInfo), 100)
   #   for object_info in object_list.objectInfo:
@@ -62,7 +62,7 @@ class TestMockObjectList(unittest.TestCase):
   # @responses.activate
   # def test_0012(self):
   #   """mock_api.listNodes(): Passing a trigger header triggers a DataONEException"""
-  #   mock_object_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+  #   mock_object_list.add_callback(config.CN_RESPONSES_BASE_URL)
   #   self.assertRaises(
   #     d1_common.types.exceptions.ServiceFailure, self.client.listNodes,
   #     vendorSpecific={'trigger': '500'}

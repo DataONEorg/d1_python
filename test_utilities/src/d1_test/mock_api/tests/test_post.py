@@ -22,7 +22,7 @@ import unittest
 
 import d1_client.mnclient_2_0
 import d1_test.mock_api.post as mock_post
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import requests
 import responses
 
@@ -34,14 +34,14 @@ class TestMockPost(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.post(): Echoes the request"""
-    mock_post.add_callback(settings.MN_RESPONSES_BASE_URL)
-    response = requests.post(settings.MN_RESPONSES_BASE_URL + '/v1/post')
+    mock_post.add_callback(config.MN_RESPONSES_BASE_URL)
+    response = requests.post(config.MN_RESPONSES_BASE_URL + '/v1/post')
     body_dict = response.json()
     expected_dict = {
       u'body_str': u'',

@@ -3,7 +3,7 @@ certificates/
 certs/
 d1_objects/
 secret_key.txt
-settings_site.py
+settings.py
 stores/
 
 # DataONE dev tools

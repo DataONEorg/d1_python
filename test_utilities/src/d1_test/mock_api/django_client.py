@@ -93,6 +93,9 @@ def _request_callback(request):
   else:
     assert False
 
+  logging.debug('base_url="{}"'.format(base_url))
+  logging.debug('url_path="{}"'.format(url_path))
+
   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
     data = request.body.read()
   else:

@@ -26,7 +26,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.ping as mock_ping
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -37,19 +37,19 @@ class TestMockPing(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.ping() returns 200"""
-    mock_ping.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_ping.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertTrue(self.client.ping())
 
   @responses.activate
   def test_0020(self):
     """mock_api.ping(): Passing a trigger header triggers a DataONEException"""
-    mock_ping.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_ping.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.ping,
       vendorSpecific={'trigger': '404'}

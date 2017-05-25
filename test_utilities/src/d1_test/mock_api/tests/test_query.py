@@ -26,7 +26,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.solr_query as mock_query
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -37,13 +37,13 @@ class TestMockQuery(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.query() returns a JSON doc with expected structure"""
-    mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_query.add_callback(config.MN_RESPONSES_BASE_URL)
     response_dict = self.client.query('query_engine', 'query_string')
     self.assertIsInstance(response_dict, dict)
     self.assertIn(u'User-Agent', response_dict['header_dict'])
@@ -63,7 +63,7 @@ class TestMockQuery(unittest.TestCase):
   @responses.activate
   def test_0020(self):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
-    mock_query.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_query.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.query,
       'query_engine', 'query_string', vendorSpecific={'trigger': '401'}

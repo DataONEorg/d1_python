@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.list_formats as mock_object_format_list
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -38,13 +38,13 @@ class TestMockObjectFormatList(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+      base_url=config.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.listFormats() returns a objectFormatList PyXB object"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_object_format_list.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.listFormats(),
       d1_common.types.dataoneTypes_v2_0.ObjectFormatList,
@@ -53,7 +53,7 @@ class TestMockObjectFormatList(unittest.TestCase):
   @responses.activate
   def test_0020(self):
     """mock_api.listFormats() returns a populated objectFormatList"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_object_format_list.add_callback(config.CN_RESPONSES_BASE_URL)
     object_format_list = self.client.listFormats()
     self.assertEqual(len(object_format_list.objectFormat), 100)
     for object_format in object_format_list.objectFormat:
@@ -63,7 +63,7 @@ class TestMockObjectFormatList(unittest.TestCase):
   @responses.activate
   def test_0030(self):
     """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
-    mock_object_format_list.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_object_format_list.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.listFormats,
       vendorSpecific={'trigger': '404'}

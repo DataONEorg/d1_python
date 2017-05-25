@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.generate_identifier as mock_generate_identifier
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -38,13 +38,13 @@ class TestMockPost(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.generateIdentifier(): Returns an Identifier D1 XML doc"""
-    mock_generate_identifier.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_generate_identifier.add_callback(config.MN_RESPONSES_BASE_URL)
     identifier_pyxb = self.client.generateIdentifier('UUID')
     self.assertIsInstance(
       identifier_pyxb, d1_common.types.dataoneTypes.Identifier

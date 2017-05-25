@@ -29,16 +29,16 @@ import d1_common
 import d1_common.const
 import d1_common.types.exceptions
 import django.conf
-# Django.
-from django.http import HttpResponse
+
+import django.http
 
 
 class RequestHandler(object):
   def process_request(self, request):
-    if django.conf.settings.DEBUG_GMN and django.conf.settings.ECHO_REQUEST_OBJECT:
-      logging.warning('django.conf.settings.ECHO_REQUEST_OBJECT=True')
+    if django.conf.settings.DEBUG_GMN and django.conf.settings.DEBUG_ECHO_REQUEST:
+      logging.warning('django.conf.settings.DEBUG_ECHO_REQUEST=True')
       pp = pprint.PrettyPrinter(indent=2)
-      return HttpResponse(
+      return django.http.HttpResponse(
         pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT
       )
     return None

@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.get_format as mock_get_format
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -38,13 +38,13 @@ class TestMockGetFormat(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+      base_url=config.CN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.getFormat(): Valid formatId returns ObjectFormat PyXB object"""
-    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_get_format.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.getFormat('valid_format_id'),
       d1_common.types.dataoneTypes_v2_0.ObjectFormat,
@@ -53,7 +53,7 @@ class TestMockGetFormat(unittest.TestCase):
   @responses.activate
   def test_0020(self):
     """mock_api.getFormat(): Unknown formatId returns D1 NotFound"""
-    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_get_format.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getFormat,
       'unknown_format_id'
@@ -62,7 +62,7 @@ class TestMockGetFormat(unittest.TestCase):
   @responses.activate
   def test_0030(self):
     """mock_api.getFormat(): Passing a trigger header triggers a DataONEException"""
-    mock_get_format.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_get_format.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getFormat,
       'valid_format_id', vendorSpecific={'trigger': '404'}

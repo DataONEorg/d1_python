@@ -25,6 +25,7 @@ This file contains settings that are specific to an instance of GMN.
 from __future__ import absolute_import
 
 import d1_common.const
+import d1_common.util
 
 # ==============================================================================
 # Debugging
@@ -53,7 +54,7 @@ DEBUG = False
 # - Clients can override all access control rules and authentication checks, and
 #   retrieve, delete or replace any object on the MN.
 # - Required for running the integration tests (gmn_integration_tests.py). Also
-#   see ALLOW_INTEGRATION_TESTS.
+#   see DEBUG_ALLOW_INTEGRATION_TESTS.
 # False (default):
 # - Use for production.
 DEBUG_GMN = False
@@ -84,7 +85,7 @@ DEBUG_PYCHARM_BIN = 'pycharm.sh'
 # False (default):
 # - GMN processes all requests as normal.
 # Only available when DEBUG_GMN is set to True.
-ECHO_REQUEST_OBJECT = False
+DEBUG_ECHO_REQUEST = False
 
 # Allow integration tests.
 # True:
@@ -98,7 +99,7 @@ ECHO_REQUEST_OBJECT = False
 # This helps prevent accidental deletion of objects on a MN that is in the
 # process of being deployed, and still has DEBUG_GMN set to True while also
 # holding objects that are intended to be used in production.
-ALLOW_INTEGRATION_TESTS = False
+DEBUG_ALLOW_INTEGRATION_TESTS = False
 
 # Enable stand-alone mode.
 # True (default):
@@ -415,7 +416,50 @@ PROXY_MODE_STREAM_TIMEOUT = 30
 # Path to the log file.
 LOG_PATH = d1_common.util.abs_path('./gmn.log')
 
-# Set up logging.
+# As the XML documents holding the DataONE types, such as SystemMetadata, must
+# be in memory while being deserialized and parsed, we limit the size that can
+# be handled. The default limit is set much higher than the expected size of any
+# valid DataONE types and is intended to guard against invalid or malicious
+# documents that may exhaust the server's memory. The limit does not apply to
+# XML documents submitted as science objects.
+# E.g.: 10 MiB = 10 * 1024**2 (default)
+MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
+
+# Chunk size for stream iterators.
+# E.g.: 1 MiB = 1024**2 (default)
+NUM_CHUNK_BYTES = 1024**2
+
+# Only set cookies when running through SSL.
+# Default: True
+SESSION_COOKIE_SECURE = True
+
+# GMN must run in the UTC time zone. Under Windows, the system time zone must
+# also be set to UTC. Do not change this setting from its default of UTC.
+TIME_ZONE = 'UTC'
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-us'
+
+# Enable Django's internationalization support.
+# Internationalization is not used by GMN.
+# to load the internationalization machinery
+# False (default):
+# - Django will skip loading some of the internationalization machinery.
+# True:
+# - Internationalization is supported.
+USE_I18N = False
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash if there is a path component (optional in other cases).
+# Not used by GMN.
+# Default: ''
+MEDIA_URL = ''
+
+# Static files (served directly by Apache).
+STATIC_URL = '/static/'
+
+# Logging
 
 # Set the level of logging that GMN should perform. Choices are:
 # DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
@@ -474,3 +518,61 @@ LOGGING = {
     },
   }
 }
+
+MIDDLEWARE_CLASSES = (
+  # Custom GMN middleware.
+  'gmn.app.middleware.request_handler.RequestHandler',
+  'gmn.app.middleware.exception_handler.ExceptionHandler',
+  'gmn.app.middleware.response_handler.ResponseHandler',
+  'gmn.app.middleware.profiling_handler.ProfilingHandler',
+  'gmn.app.middleware.view_handler.ViewHandler',
+)
+
+TEMPLATES = [
+  {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [
+      d1_common.util.abs_path('./app/templates'), # noqa: F405
+    ],
+    # 'APP_DIRS': True,
+    'OPTIONS': {
+      'context_processors': [
+        'django.contrib.auth.context_processors.auth',
+        'django.template.context_processors.debug',
+        'django.template.context_processors.i18n',
+        'django.template.context_processors.media',
+        'django.template.context_processors.static',
+        'django.template.context_processors.tz',
+        'django.contrib.messages.context_processors.messages',
+      ],
+      'loaders': [
+        'django.template.loaders.filesystem.Loader',
+        # 'django.template.loaders.app_directories.Loader',
+      ],
+    },
+  },
+]
+
+CACHES = {
+  'default': {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'TIMEOUT': 60 * 60,
+  }
+}
+
+ROOT_URLCONF = 'gmn.app.urls'
+
+INSTALLED_APPS = [
+  'django.contrib.staticfiles',
+  'gmn.app.startup.GMNStartupChecks',
+  'gmn.app',
+]
+
+# Django uses SECRET_KEY for a number of security related features, such as
+# salting passwords, signing cookies and securing sessions. DataONE uses a
+# different security model based on X.509 certificates and JSON Web Tokens, so
+# SECRET_KEY is currently unused. However, to guard against future changes in
+# Django that may cause this setting to be used, GMN automatically generates a
+# persistent SECRET_KEY, which is used instead of the placeholder value
+# specified here. The key is stored in secret_key.txt.
+SECRET_KEY = '<Do not modify this placeholder value>'

@@ -22,7 +22,7 @@ import unittest
 
 import d1_client.mnclient_2_0
 import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import requests
 import responses
 
@@ -34,19 +34,19 @@ class TestMockGet(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.get() returns a Requests Response object"""
-    mock_get.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertIsInstance(self.client.get('test_pid_1'), requests.Response)
 
   @responses.activate
   def test_0020(self):
     """mock_api.get() returns the same content each time for a given PID"""
-    mock_get.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
     obj_1a_str = self.client.get('test_pid_1').content
     obj_2a_str = self.client.get('test_pid_2').content
     obj_1b_str = self.client.get('test_pid_1').content

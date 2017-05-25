@@ -26,7 +26,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.is_authorized as mock_is_authorized
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -37,19 +37,19 @@ class TestMockIsAuthorized(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.isAuthorized(): Returns 200 for 'authorized_pid"""
-    mock_is_authorized.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_is_authorized.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertTrue(self.client.isAuthorized('authorized_pid', 'read'))
 
   @responses.activate
   def test_0020(self):
     """mock_api.isAuthorized(): Raises NotAuthorized for 'unauthorized_pid"""
-    mock_is_authorized.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_is_authorized.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized, self.client.isAuthorized,
       'unauthorized_pid', 'read'

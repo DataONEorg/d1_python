@@ -22,7 +22,7 @@ import unittest
 
 import d1_client.mnclient_2_0
 import d1_test.mock_api.describe as mock_describe
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -33,13 +33,13 @@ class TestMockDescribe(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.describe(): Returns a dict with the expected headers"""
-    mock_describe.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_describe.add_callback(config.MN_RESPONSES_BASE_URL)
     header_dict = self.client.describe('test_pid')
     self.assertIn('Last-Modified', header_dict)
     del header_dict['Last-Modified']

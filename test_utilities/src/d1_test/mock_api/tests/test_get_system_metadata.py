@@ -28,7 +28,7 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 import d1_test.mock_api.get_system_metadata as mock_sysmeta
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 import responses
 
 
@@ -39,13 +39,13 @@ class TestMockSystemMetadata(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=settings.MN_RESPONSES_BASE_URL
+      base_url=config.MN_RESPONSES_BASE_URL
     )
 
   @responses.activate
   def test_0010(self):
     """mock_api.getSystemMetadata() returns a System Metadata PyXB object"""
-    mock_sysmeta.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertIsInstance(
       self.client.getSystemMetadata('test_pid'),
       d1_common.types.dataoneTypes_v2_0.SystemMetadata,
@@ -54,7 +54,7 @@ class TestMockSystemMetadata(unittest.TestCase):
   @responses.activate
   def test_0020(self):
     """mock_api.getSystemMetadata(): Passing a trigger header triggers a DataONEException"""
-    mock_sysmeta.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getSystemMetadata,
       'test_pid', vendorSpecific={'trigger': '404'}
@@ -63,7 +63,7 @@ class TestMockSystemMetadata(unittest.TestCase):
   @responses.activate
   def test_0030(self):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
-    mock_sysmeta.add_callback(settings.MN_RESPONSES_BASE_URL)
+    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
     sysmeta_pyxb = self.client.getSystemMetadata('test_pid')
     sysmeta_xml = sysmeta_pyxb.toxml('utf8')
     self.assertIn('http://ns.dataone.org/service/types/v2.0', sysmeta_xml)

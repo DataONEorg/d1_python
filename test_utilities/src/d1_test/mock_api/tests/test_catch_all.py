@@ -27,7 +27,7 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.catch_all as mock_catch_all
-import d1_test.mock_api.tests.settings as settings
+import d1_test.mock_api.tests.config as config
 
 # 3rd party
 
@@ -39,13 +39,13 @@ class TestMockCatchAll(unittest.TestCase):
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=settings.CN_RESPONSES_BASE_URL
+      base_url=config.CN_RESPONSES_BASE_URL
     )
 
   @mock_catch_all.activate
   def test_0010(self):
     """mock_api.catch_all: Returns a dict correctly echoing the request"""
-    mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
     echo_dict = self.client.getFormat('valid_format_id')
     expected_dict = {
       'request': {
@@ -68,7 +68,7 @@ class TestMockCatchAll(unittest.TestCase):
   @mock_catch_all.activate
   def test_0020(self):
     """mock_api.catch_all(): Passing a trigger header triggers a DataONEException"""
-    mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
+    mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getFormat,
       'valid_format_id', vendorSpecific={'trigger': '404'}

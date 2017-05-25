@@ -40,7 +40,7 @@ import d1_test.mock_api.catch_all as mock_catch_all
 
 @mock_catch_all.activate
 def test_0010(self):
-  mock_catch_all.add_callback(settings.CN_RESPONSES_BASE_URL)
+  mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
   echo_dict = self.client.getFormat('valid_format_id')
   ...
 """
