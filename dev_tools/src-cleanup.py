@@ -37,6 +37,7 @@ def main():
     description='Perform various small source cleanup tasks on modules'
   )
   parser.add_argument('path', nargs='+', help='File or directory path')
+  parser.add_argument('--include', nargs='+', help='Include glob patterns')
   parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
   parser.add_argument(
     '--no-recursive', dest='recursive', action='store_false', default=True,
@@ -51,7 +52,7 @@ def main():
     default=True, help='Don\'t add default glob exclude patterns'
   )
   parser.add_argument(
-    '--diff', dest='diff_only', action='store_true', default=False,
+    '--diff', dest='diff_only', action='store_false', default=True,
     help='Show diff and do not modify any files'
   )
   parser.add_argument(
@@ -64,7 +65,7 @@ def main():
 
   for module_path in file_iterator.file_iter(
       path_list=args.path,
-      include_glob_list=['*.py'],
+      include_glob_list=['*.py'] if not args.include else args.include,
       exclude_glob_list=args.exclude,
       recursive=args.recursive,
       ignore_invalid=args.ignore_invalid,
@@ -92,6 +93,7 @@ def clean_module(module_path, diff_only):
 
 def clean_all(r):
   r = _remove_single_line_import_comments(r)
+  r = _remove_module_level_docstrs_in_unit_tests(r)
   return r
 
 
@@ -111,6 +113,20 @@ def _remove_single_line_import_comments(r):
     else:
       new_import_r.append(v)
   return new_import_r + remaining_r
+
+
+def _remove_module_level_docstrs_in_unit_tests(r):
+  """We previously used more groups for the import statements and named each
+  group"""
+  logging.info('Removing module level docstrs in tests')
+  new_r = redbaron.NodeList()
+  first = True
+  for v in r.node_list:
+    if v.type == 'string' and first:
+      first = False
+    else:
+      new_r.append(v)
+  return new_r
 
 
 def split_by_last_import(r):
