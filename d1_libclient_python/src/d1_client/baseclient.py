@@ -22,14 +22,16 @@
 import StringIO
 import logging
 
+import pyxb # pip install pyxb
+
 import d1_common.const
+import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
-import pyxb # pip install pyxb
 # App
 import session
 
@@ -78,21 +80,9 @@ class DataONEBaseClient(session.Session):
     session.Session.__init__(self, base_url, **kwargs)
     self._api_major = api_major
     self._api_minor = api_minor
-    self._types = self._select_type_bindings()
-
-  def _select_type_bindings(self):
-    version_tup = self._api_major, self._api_minor
-    if version_tup == (1, 0):
-      return d1_common.types.dataoneTypes_v1
-    elif version_tup == (1, 1):
-      return d1_common.types.dataoneTypes_v1_1
-    elif version_tup == (2, 0):
-      return d1_common.types.dataoneTypes_v2_0
-    else:
-      raise ValueError(
-        "Unknown DataONE API version: {}.{}".
-        format(self._api_major, self._api_minor)
-      )
+    self._bindings = d1_common.type_conversions.get_pyxb_bindings_by_api_version(
+      api_major, api_minor
+    )
 
   # ----------------------------------------------------------------------------
   # Response handling.
@@ -223,7 +213,7 @@ class DataONEBaseClient(session.Session):
     # TODO: Update this to automatically remove empty elements (probably using
     # ElementTree)
     try:
-      return self._types.CreateFromDocument(response_body)
+      return self._bindings.CreateFromDocument(response_body)
     except pyxb.SimpleFacetValueError as e:
       # example: <blockedMemberNode/> is not allowed since it is a zero length
       # string
@@ -245,7 +235,7 @@ class DataONEBaseClient(session.Session):
     validation_setting = pyxb.RequireValidWhenParsing()
     try:
       pyxb.RequireValidWhenParsing(False)
-      return self._types.CreateFromDocument(response_body)
+      return self._bindings.CreateFromDocument(response_body)
     except pyxb.PyXBException as e:
       pyxb.RequireValidWhenParsing(validation_setting)
       self._raise_service_failure_invalid_dataone_type(

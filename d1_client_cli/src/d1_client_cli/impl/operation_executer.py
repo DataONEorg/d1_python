@@ -23,11 +23,11 @@
 
 import StringIO
 
-import d1_client.data_package
 import d1_client_cli.impl.cli_client as cli_client
 import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.operation_validator as operation_validator
 import d1_client_cli.impl.system_metadata as system_metadata
+import d1_common.resource_map
 
 
 class OperationExecuter(object):
@@ -141,7 +141,7 @@ class OperationExecuter(object):
   def _generate_resource_map(
       self, operation, package_pid, pid_sci_meta, pid_sci_datas
   ):
-    resource_map_generator = d1_client.data_package.ResourceMapGenerator(
+    resource_map_generator = d1_common.resource_map.ResourceMapGenerator(
       dataone_root=operation[u'parameters']['mn-url']
     )
     return resource_map_generator.simple_generate_resource_map(

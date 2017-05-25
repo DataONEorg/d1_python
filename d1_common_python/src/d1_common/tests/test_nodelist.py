@@ -25,7 +25,8 @@ import unittest
 import xml.sax
 
 import pyxb
-import util
+
+import d1_test.util
 # D1
 from d1_common.types import dataoneTypes
 
@@ -300,7 +301,7 @@ class TestNodeList(unittest.TestCase):
 
   def test_0010(self):
     """serialization gmn: Deserialize: XML -> NodeList (GMN)"""
-    util.deserialize_and_check(EG_NODELIST_GMN)
+    d1_test.util.deserialize_and_check(EG_NODELIST_GMN)
 
   def test_0020(self):
     """serialization knb: Deserialize: XML -> NodeList (KNB)"""
@@ -308,8 +309,8 @@ class TestNodeList(unittest.TestCase):
 
   def test_0030(self):
     """serialization bad 1: Deserialize: XML -> NodeList (bad 1)"""
-    util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
 
   def test_0040(self):
     """serialization bad 2: Deserialize: XML -> NodeList (bad 2)"""
-    util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)

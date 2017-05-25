@@ -24,12 +24,12 @@ import unittest
 
 import d1_common.access_policy
 import d1_common.xml
-import util
+import d1_test.util
 
 
 class TestAccessPolicy(unittest.TestCase):
   def setUp(self):
-    self.ap_pyxb = util.read_test_xml('accessPolicy_v1_0.redundant.xml')
+    self.ap_pyxb = d1_test.util.read_test_xml('accessPolicy_v1_0.redundant.xml')
 
   def test_0010(self):
     """_get_grouped_permission_dict()"""
@@ -137,7 +137,7 @@ class TestAccessPolicy(unittest.TestCase):
       'write': ['subj1', 'subj3'],
     }
     ap_pyxb = d1_common.access_policy.get_access_policy_pyxb(ap_dict)
-    ap_xml = util.read_utf8_to_unicode('accessPolicy_v1_0.basic.xml')
+    ap_xml = d1_test.util.read_utf8_to_unicode('accessPolicy_v1_0.basic.xml')
     self.assertEqual(ap_pyxb.toxml(), ap_xml)
 
   def test_0150(self):

@@ -31,14 +31,13 @@
 import logging
 import os
 
-import d1_client.data_package
-import d1_client.object_format_info
 import pkg_resources
+
+import d1_client.object_format_info
 import resolver_base
 # App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import util
-
 from .. import onedrive_exceptions
 
 log = logging.getLogger(__name__)

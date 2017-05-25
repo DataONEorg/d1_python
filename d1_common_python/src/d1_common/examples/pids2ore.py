@@ -41,4 +41,4 @@ def pids2ore(in_stream, fmt='xml', base_url=u'https://cn.dataone.org/cn'):
   ore.addMetadataDocument(pids[1])
 
   ore.addDataDocuments(pids[2:], pids[1])
-  return ore.serialize(format=fmt)
+  return ore.serialize(doc_format=fmt)

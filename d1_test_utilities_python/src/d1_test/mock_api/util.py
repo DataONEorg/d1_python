@@ -29,12 +29,13 @@ import random
 import re
 import urlparse
 
+import pyxb.utils
+
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.url
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
-import pyxb.utils
 from d1_test.mock_api.list_objects import N_TOTAL
 
 NUM_SCIOBJ_BYTES = 1024
@@ -57,7 +58,9 @@ def parse_rest_url(rest_url):
   param_list = _decode_path_elements(url_obj.path)
   endpoint_str = param_list.pop(0)
   query_dict = urlparse.parse_qs(url_obj.query) if url_obj.query else {}
-  pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings(version_tag)
+  pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings_by_version_tag(
+    version_tag
+  )
   return version_tag, endpoint_str, param_list, query_dict, pyxb_bindings
 
 

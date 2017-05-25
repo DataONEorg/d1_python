@@ -28,12 +28,12 @@ from __future__ import absolute_import
 import contextlib
 import urlparse
 
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
 import django.conf
 import requests
 
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
 import gmn.app.db_filter
 import gmn.app.event_log
 import gmn.app.models
@@ -101,26 +101,27 @@ def is_valid_sid_for_chain_if_specified(sysmeta_pyxb, pid):
 
 
 def does_not_contain_replica_sections(sysmeta_pyxb):
-  """Assert that {sysmeta_pyxb} does not contain any replica information. A new
-  object created via create() or update() cannot already have replicas.
+  """Assert that {sysmeta_pyxb} does not contain any replica information.
   """
   if len(getattr(sysmeta_pyxb, 'replica', [])):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Object cannot contain a replica section. pid="{}"'.
+      0, u'A replica section was included. A new object object created via '
+      u'create() or update() cannot already have replicas. pid="{}"'.
       format(sysmeta_pyxb.identifier.value()),
       identifier=sysmeta_pyxb.identifier.value()
     )
 
 
 def sysmeta_is_not_archived(sysmeta_pyxb):
-  """Assert that {sysmeta_pyxb} does not have have the archived flag set. A new
-  object created via create() or update() cannot already be archived.
+  """Assert that {sysmeta_pyxb} does not have have the archived flag set.
   """
   if getattr(sysmeta_pyxb, 'archived', False):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Object cannot have the archived flag set. pid="{}"'.
-      format(sysmeta_pyxb.identifier.value()),
-      identifier=sysmeta_pyxb.identifier.value()
+      0,
+      u'Archived flag was set. A new object created via create() or update() '
+      u'cannot already be archived. pid="{}"'.format(
+        sysmeta_pyxb.identifier.value()
+      ), identifier=sysmeta_pyxb.identifier.value()
     )
 
 

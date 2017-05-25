@@ -37,12 +37,13 @@ from __future__ import absolute_import
 import re
 import xml.etree.ElementTree as etree
 
+import pyxb.namespace.utility
+import pyxb.utils.domutils
+
 import d1_common.types.dataoneTypes_v1 as v1_0
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 import d1_common.util
-import pyxb.namespace.utility
-import pyxb.utils.domutils
 
 # PyXB shares information about all known types between all imported bindings.
 PYXB_BINDING = d1_common.types.dataoneTypes_v1
@@ -68,19 +69,38 @@ for prefix_str, uri_str in NS_DICT.items():
 # Misc type related functions
 
 
-def get_pyxb_bindings(major_version):
-  """Map D1 architecture version to PyXB bindings"""
-  major_version = str(major_version)
-  if major_version in ('v1', '1'):
+def get_pyxb_bindings_by_version_tag(api_major):
+  """Map D1 architecture version tag to PyXB bindings
+  E.g.,: api_major="v1" returns d1_common.types.dataoneTypes_v1_1
+  """
+  api_major = str(api_major)
+  if api_major in ('v1', '1'):
     return v1_1
-  elif major_version in ('v2', '2'):
+  elif api_major in ('v2', '2'):
     return v2_0
   else:
-    assert False, u'Unknown version. major_version="{}"'.format(major_version)
+    raise ValueError('Unknown DataONE API version tag: {}'.format(api_major))
 
 
-def get_version_tag(major_version):
-  return u'v{}'.format(major_version)
+def get_pyxb_bindings_by_api_version(api_major, api_minor=0):
+  """Map D1 architecture version tag to PyXB bindings
+  E.g.,: api_major=1,api_minor=1 returns d1_common.types.dataoneTypes_v1_1
+  """
+  version_tup = api_major, api_minor
+  if version_tup == (1, 0):
+    return d1_common.types.dataoneTypes_v1
+  elif version_tup == (1, 1):
+    return d1_common.types.dataoneTypes_v1_1
+  elif version_tup == (2, 0):
+    return d1_common.types.dataoneTypes_v2_0
+  else:
+    raise ValueError(
+      'Unknown DataONE API version: {}.{}'.format(api_major, api_minor)
+    )
+
+
+def get_version_tag(api_major):
+  return u'v{}'.format(api_major)
 
 
 def get_version_tag_from_url(url):
@@ -90,8 +110,8 @@ def get_version_tag_from_url(url):
   return m.group(2)
 
 
-def set_default_pyxb_namespace(major_version):
-  pyxb_bindings = get_pyxb_bindings(major_version)
+def set_default_pyxb_namespace(api_major):
+  pyxb_bindings = get_pyxb_bindings_by_version_tag(api_major)
   pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(
     pyxb_bindings.Namespace
   )

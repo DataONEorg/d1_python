@@ -25,7 +25,8 @@ import unittest
 import xml.sax
 
 import pyxb
-import util
+
+import d1_test.util
 # D1
 from d1_common.types import dataoneTypes
 
@@ -91,7 +92,7 @@ class TestObjectList(unittest.TestCase):
   def test_0010(self):
     """serialization gmn: Deserialize: XML -> Log (GMN)"""
     try:
-      util.deserialize_and_check(EG_LOG_GMN)
+      d1_test.util.deserialize_and_check(EG_LOG_GMN)
     except Exception as e:
       print e
 
@@ -101,12 +102,12 @@ class TestObjectList(unittest.TestCase):
 
   def test_0030(self):
     """serialization bad 1: Deserialize: XML -> Log (bad 1)"""
-    util.deserialize_and_check(EG_BAD_LOG_1, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_LOG_1, shouldfail=True)
 
   def test_0040(self):
     """serialization bad 2: Deserialize: XML -> Log (bad 2)"""
-    util.deserialize_and_check(EG_BAD_LOG_2, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_LOG_2, shouldfail=True)
 
   def test_0050(self):
     """serialization bad 3: Deserialize: XML -> Log (bad 3)"""
-    util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)

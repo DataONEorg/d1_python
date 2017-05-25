@@ -28,6 +28,11 @@ import os
 import urlparse
 import uuid
 
+import django.conf
+import django.http
+import django.utils.http
+import requests
+
 import d1_client.cnclient
 import d1_client.object_format_info
 import d1_common.checksum
@@ -35,11 +40,6 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
-import django.conf
-import django.http
-import django.utils.http
-import requests
-
 import gmn.app.auth
 import gmn.app.db_filter
 import gmn.app.event_log
@@ -445,7 +445,9 @@ def put_meta(request):
     new_sysmeta_pyxb, pid
   )
   # TODO: Need to clarify desired functionality.
-  gmn.app.views.util.set_mn_controlled_values(request, new_sysmeta_pyxb)
+  gmn.app.views.util.set_mn_controlled_values(
+    request, new_sysmeta_pyxb, update_submitter=False
+  )
   if gmn.app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
     sid = gmn.app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
     if gmn.app.sysmeta_sid.is_sid(sid):

@@ -24,12 +24,13 @@ This does not test certificate validation.
 
 import unittest
 
+# 3rd party
+from cryptography.hazmat.backends.openssl.x509 import _Certificate
+
 import d1_common.cert.subject_info
 import d1_common.cert.subjects
 import d1_common.cert.x509
-import d1_common.tests.util as util
-# 3rd party
-from cryptography.hazmat.backends.openssl.x509 import _Certificate
+import d1_test.util
 
 
 class TestCert(unittest.TestCase):
@@ -38,10 +39,10 @@ class TestCert(unittest.TestCase):
     d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
-    self.cert_simple_subject_info_pem = util.read_test_file(
+    self.cert_simple_subject_info_pem = d1_test.util.read_test_file(
       'cert_with_simple_subject_info.pem'
     )
-    self.cert_no_subject_info_pem = util.read_test_file(
+    self.cert_no_subject_info_pem = d1_test.util.read_test_file(
       'cert_without_subject_info.pem'
     )
 
@@ -74,7 +75,7 @@ class TestCert(unittest.TestCase):
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    expected_subject_info_xml = util.read_test_file(
+    expected_subject_info_xml = d1_test.util.read_test_file(
       'cert_simple_subject_info.xml'
     )
     extracted_subject_info_xml = d1_common.cert.x509._extract_subject_info(

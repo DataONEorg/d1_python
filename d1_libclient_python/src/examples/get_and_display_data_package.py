@@ -43,8 +43,8 @@
 
 import logging
 
-import d1_client.data_package
 import d1_client.mnclient
+import d1_common.resource_map
 
 # Config.
 
@@ -82,7 +82,7 @@ def main():
   resource_map_xml = client.get(SCIENCE_OBJECT_PID).read()
 
   # Create a resource map parser.
-  resource_map_parser = d1_client.data_package.ResourceMapParser(
+  resource_map_parser = d1_common.resource_map.ResourceMapParser(
     resource_map_xml
   )
 

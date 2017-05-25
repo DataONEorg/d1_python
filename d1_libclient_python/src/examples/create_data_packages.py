@@ -74,9 +74,9 @@ import hashlib
 import logging
 import os
 
-import d1_client.data_package
 import d1_client.mnclient_2_0
 import d1_common.const
+import d1_common.resource_map
 import d1_common.types.dataoneTypes as dataoneTypes
 
 # Config.
@@ -177,7 +177,7 @@ def create_resource_map_for_pids(package_pid, pids):
   # default, use the DataONE production environment for resolving the object
   # URIs. To use the resource map generator in a test environment, pass the base
   # url to the root CN in that environment in the dataone_root parameter.
-  resource_map_generator = d1_client.data_package.ResourceMapGenerator()
+  resource_map_generator = d1_common.resource_map.ResourceMapGenerator()
   return resource_map_generator.simple_generate_resource_map(
     package_pid, pids[0], pids[1:]
   )

@@ -25,7 +25,8 @@ import unittest
 import xml.sax
 
 import pyxb
-import util
+
+import d1_test.util
 # D1
 from d1_common.types import dataoneTypes
 
@@ -116,7 +117,7 @@ class TestObjectLocationList(unittest.TestCase):
 
   def test_0010(self):
     """deserialize gmn: Deserialize: XML -> ObjectLocationList (GMN)"""
-    util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
+    d1_test.util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
 
   def test_0020(self):
     """deserialize knb: Deserialize: XML -> ObjectLocationList (KNB)"""
@@ -124,8 +125,12 @@ class TestObjectLocationList(unittest.TestCase):
 
   def test_0030(self):
     """deserialize bad 1: Deserialize: XML -> ObjectLocationList (bad 1)"""
-    util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
+    d1_test.util.deserialize_and_check(
+      EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True
+    )
 
   def test_0040(self):
     """deserialize bad 2: Deserialize: XML -> ObjectLocationList (bad 2)"""
-    util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
+    d1_test.util.deserialize_and_check(
+      EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True
+    )

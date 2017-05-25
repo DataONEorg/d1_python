@@ -30,15 +30,16 @@ import base64
 import json
 import unittest
 
+import requests_toolbelt
+import responses
+
 import d1_client.mnclient
 import d1_client.mnclient_1_1
-import d1_client.tests.util
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_test.mock_api.create
-import requests_toolbelt
-import responses
+import d1_test.util
 import shared_settings
 
 
@@ -52,10 +53,10 @@ class TestMNClient(unittest.TestCase):
     self.client = d1_client.mnclient.MemberNodeClient(
       shared_settings.MN_RESPONSES_URL
     )
-    self.sysmeta_pyxb = d1_client.tests.util.read_test_pyxb(
+    self.sysmeta_pyxb = d1_test.util.read_test_pyxb(
       'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     )
-    self.sysmeta_xml = d1_client.tests.util.read_test_xml(
+    self.sysmeta_xml = d1_test.util.read_test_xml(
       'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     )
     self.obj = 'test'

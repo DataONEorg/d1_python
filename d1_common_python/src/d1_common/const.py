@@ -49,7 +49,7 @@ DEFAULT_LISTOBJECTS = 100
 RESPONSE_TIMEOUT = 30.0
 
 # HTTP User Agent that this software is known as.
-USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
+USER_AGENT = 'pyd1/%s +http://dataone.org/{}'.format(VERSION)
 
 # The system wide default checksum algorithm.
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
@@ -84,3 +84,15 @@ SUBJECT_PUBLIC = 'public'
 
 # Search
 DEFAULT_SEARCH_ENGINE = 'solr'
+
+# OAI-ORE Resource Maps
+
+ORE_NAMESPACE_DICT = {
+  u'cito': u'http://purl.org/spar/cito/',
+  u'dc': u'http://purl.org/dc/elements/1.1/',
+  u'dcterms': u'http://purl.org/dc/terms/',
+  u'ore': u'http://www.openarchives.org/ore/terms/',
+  u'foaf': u'http://xmlns.com/foaf/0.1/',
+}
+
+ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)

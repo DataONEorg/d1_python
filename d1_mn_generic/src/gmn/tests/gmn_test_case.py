@@ -23,8 +23,9 @@ import hashlib
 import os
 import random
 import string
-import subprocess
-import tempfile
+
+import django.test
+import requests
 
 import d1_client.mnclient
 import d1_client.session
@@ -33,9 +34,6 @@ import d1_common.types
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 import d1_common.xml
-import django.test
-import requests
-
 import gmn.app.models
 import gmn.tests.gmn_test_client
 
@@ -318,12 +316,3 @@ class D1TestCase(django.test.TestCase):
 
   def object_list_to_pid_list(self, object_list_pyxb):
     return sorted([v.identifier.value() for v in object_list_pyxb.objectInfo])
-
-  def kdiff_pyxb(self, a_pyxb, b_pyxb):
-    with tempfile.NamedTemporaryFile() as a_f:
-      with tempfile.NamedTemporaryFile() as b_f:
-        a_f.write(d1_common.xml.pretty_pyxb(a_pyxb))
-        b_f.write(d1_common.xml.pretty_pyxb(b_pyxb))
-        a_f.seek(0)
-        b_f.seek(0)
-        subprocess.call(['kdiff3', a_f.name, b_f.name])

@@ -31,8 +31,9 @@ import xml.etree.ElementTree
 import xml.parsers.expat
 import xml.sax
 
-import d1_common.types.dataoneTypes_v2_0
 import pyxb
+
+import d1_common.types.dataoneTypes_v2_0
 
 
 def deserialize(doc_xml):
@@ -167,9 +168,9 @@ def _find_instance(tree, path, find_i):
 
 def _find_instance_idx(tree, find_el):
   path = _get_path(tree, find_el)
-  logging.debug("element=%s, path=%s" % (find_el.tag, path))
+  # logging.debug("element=%s, path=%s" % (find_el.tag, path))
   elements = tree.findall(path)
-  logging.debug("ELEMENTS=%s" % str(elements))
+  # logging.debug("ELEMENTS=%s" % str(elements))
   for i, el in enumerate(elements):
     if el is find_el:
       return i

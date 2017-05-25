@@ -25,6 +25,10 @@ from __future__ import absolute_import
 import datetime
 import re
 
+import django.conf
+import django.core.files.move
+import django.http
+
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
@@ -33,10 +37,6 @@ import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.url
-import django.conf
-import django.core.files.move
-import django.http
-
 import gmn.app.auth
 import gmn.app.db_filter
 import gmn.app.event_log
@@ -110,11 +110,14 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   )
 
 
-def set_mn_controlled_values(request, sysmeta_pyxb):
+def set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
   now_datetime = datetime.datetime.utcnow()
-  _pyxb_set_with_override(
-    sysmeta_pyxb, 'submitter', request.primary_subject_str
-  )
+  if not update_submitter:
+    sysmeta_pyxb.submitter = None
+  else:
+    _pyxb_set_with_override(
+      sysmeta_pyxb, 'submitter', request.primary_subject_str
+    )
   _pyxb_set_with_override(
     sysmeta_pyxb, 'originMemberNode', django.conf.settings.NODE_IDENTIFIER
   )

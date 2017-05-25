@@ -21,8 +21,10 @@
 
 import unittest
 
+import requests.structures
+import responses
+
 import d1_client.baseclient
-import d1_client.tests.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
@@ -38,8 +40,7 @@ import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.is_authorized
 import d1_test.mock_api.list_objects
 import d1_test.mock_api.ping
-import requests.structures
-import responses
+import d1_test.util
 import shared_settings
 
 

@@ -25,14 +25,14 @@ import os
 import unittest
 
 import d1_common.url
-import util
+import d1_test.util
 
 HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestUrl(unittest.TestCase):
   def setUp(self):
-    self._unicode_strings = util.read_utf8_to_unicode(
+    self._unicode_strings = d1_test.util.read_utf8_to_unicode(
       'testUnicodeStrings.utf8.txt'
     )
 

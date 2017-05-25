@@ -25,7 +25,8 @@ import unittest
 import xml.sax
 
 import pyxb
-import util
+
+import d1_test.util
 from d1_common.types import dataoneTypes
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
@@ -184,18 +185,18 @@ class TestObjectList(unittest.TestCase):
 
   def test_0010(self):
     """deserialize xml gmn: """
-    util.deserialize_and_check(EG_OBJECTLIST_GMN)
+    d1_test.util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
 #  def test_deserialize_xml_knb(self):
 #    util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_0020(self):
     """deserialize xml bad: """
-    util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
   def test_0030(self):
     """serialization gmn: Deserialize: XML -> ObjectList (GMN)"""
-    util.deserialize_and_check(EG_OBJECTLIST_GMN)
+    d1_test.util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
   def test_0040(self):
     """serialization knb: Deserialize: XML -> ObjectList (KNB)"""
@@ -203,4 +204,4 @@ class TestObjectList(unittest.TestCase):
 
   def test_0050(self):
     """serialization bad: Deserialize: XML -> ObjectList (bad)"""
-    util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
+    d1_test.util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)

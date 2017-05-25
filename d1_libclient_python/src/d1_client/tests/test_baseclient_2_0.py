@@ -25,7 +25,6 @@
 import unittest
 
 import d1_client.baseclient_2_0
-import d1_client.tests.util
 import d1_common.util
 
 

@@ -27,14 +27,14 @@ from __future__ import absolute_import
 
 import datetime
 
+import pyxb
+
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
-import pyxb
-
 import gmn.app.auth
 import gmn.app.models
 import gmn.app.sysmeta_obsolescence
@@ -219,16 +219,6 @@ def _model_to_pyxb(pid):
 def _base_pyxb_to_model(
     sci_model, sysmeta_pyxb, url=None, skip_immutable=False
 ):
-  # The PID is used for looking up the sci_model so will always match and does
-  # need to be updated.
-  #
-  # Any SID in the sysmeta is not updated in the DB here because the DB version
-  # of the SID is used for mapping directly to the last PID in the chain. Since
-  # any number of objects in a chain may specify (the same) SID for the chain,
-  # updating the SID here would cause it to map to the object with the most
-  # recently modified sysmeta in the chain.
-  #
-  # System Metadata fields
   sci_model.modified_timestamp = sysmeta_pyxb.dateSysMetadataModified
   if not skip_immutable:
     sci_model.serial_version = sysmeta_pyxb.serialVersion
@@ -240,7 +230,8 @@ def _base_pyxb_to_model(
     sysmeta_pyxb.checksum.algorithm
   )
   sci_model.size = sysmeta_pyxb.size
-  sci_model.submitter = gmn.app.models.subject(sysmeta_pyxb.submitter.value())
+  if sysmeta_pyxb.submitter:
+    sci_model.submitter = gmn.app.models.subject(sysmeta_pyxb.submitter.value())
   sci_model.rights_holder = gmn.app.models.subject(
     sysmeta_pyxb.rightsHolder.value()
   )

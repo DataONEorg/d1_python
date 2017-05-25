@@ -32,7 +32,8 @@ import d1_common.xml
 class TestTypeConversions(unittest.TestCase):
   def _read_xml(self, file_name):
     test_docs_path = os.path.join(
-      os.path.abspath(os.path.dirname(__file__)), 'test_docs'
+      os.path.abspath(os.path.dirname(__file__)),
+      '../../../../d1_test_utilities_python/src/d1_test/test_docs'
     )
     return open(os.path.join(test_docs_path, file_name)).read()
 

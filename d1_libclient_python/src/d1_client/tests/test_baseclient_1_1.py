@@ -2,10 +2,10 @@
 import unittest
 
 import d1_client.baseclient_1_1
-import d1_client.tests.util
 import d1_common.util
 import d1_test.instance_generator.random_data
 import d1_test.mock_api.catch_all
+import d1_test.util
 import shared_settings
 
 # import d1_test.mock_api.log_records

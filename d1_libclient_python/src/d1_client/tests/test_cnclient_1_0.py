@@ -21,8 +21,9 @@
 
 import unittest
 
+import responses
+
 import d1_client.cnclient
-import d1_client.tests.util
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0
@@ -41,7 +42,7 @@ import d1_test.instance_generator.system_metadata
 import d1_test.mock_api.catch_all
 import d1_test.mock_api.get_format
 import d1_test.mock_api.list_formats
-import responses
+import d1_test.util
 import shared_settings
 
 
@@ -1077,7 +1078,7 @@ class TestCNClient(unittest.TestCase):
     """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
     received_echo_dict = self.client.updateNodeCapabilities(
       node_ref_pyxb, node_pyxb
     )
@@ -1106,7 +1107,7 @@ class TestCNClient(unittest.TestCase):
     """CNRegister.updateNodeCapabilities(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.updateNodeCapabilities,
       node_ref_pyxb, node_pyxb, vendorSpecific={'trigger': '404'}
@@ -1118,7 +1119,7 @@ class TestCNClient(unittest.TestCase):
   def test_0560(self):
     """CNRegister.register(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
     received_echo_dict = self.client.register(node_pyxb)
     expected_echo_dict = {
       'request': {
@@ -1144,7 +1145,7 @@ class TestCNClient(unittest.TestCase):
   def test_0570(self):
     """CNRegister.register(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    node_pyxb = d1_client.tests.util.read_test_pyxb('node_v1_0.xml')
+    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.register, node_pyxb,
       vendorSpecific={'trigger': '404'}

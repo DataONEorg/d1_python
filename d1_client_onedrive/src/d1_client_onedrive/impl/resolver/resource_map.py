@@ -29,13 +29,12 @@
 
 import logging
 
-import d1_client.data_package
+import d1_common.resource_map
 import d1_object
 import resolver_base
 # App
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import util
-
 from ..onedrive_exceptions import ONEDriveException
 
 log = logging.getLogger(__name__)
@@ -125,10 +124,10 @@ class Resolver(resolver_base.Resolver):
       record = self._object_tree.get_object_record(pid)
     except ONEDriveException:
       self._raise_invalid_pid(pid)
-    return record['formatId'] == d1_client.data_package.RDFXML_FORMATID
+    return record['formatId'] == d1_common.resource_map.RDFXML_FORMATID
 
   def _deserialize_resource_map(self, resource_map):
-    package = d1_client.data_package.ResourceMapParser(resource_map)
+    package = d1_common.resource_map.ResourceMapParser(resource_map)
     return package.get_aggregated_pids()
 
   def _get_total_size_of_objects_in_resource_map(self, resource_map_pid):
