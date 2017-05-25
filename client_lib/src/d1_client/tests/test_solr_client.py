@@ -27,7 +27,6 @@ TODO: Create Solr mockup.
 import unittest
 
 import d1_client.solr_client
-import d1_common.const
 import d1_common.util
 
 # CN_RESPONSES_BASE_URL = 'http://responses/cn'
@@ -37,7 +36,7 @@ CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
 class TestSolrClientReal(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def _assert_at_least_one_populated_row(self, rows):
     self.assertTrue(any(rows), 'Expected at least one populated row in results')

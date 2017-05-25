@@ -24,11 +24,7 @@ import json
 import unittest
 
 import d1_client.mnclient_2_0
-import d1_common.const
-import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_common.types.exceptions
-import d1_common.util
 import d1_test.mock_api.create as mock_create
 import d1_test.mock_api.tests.settings as settings
 import d1_test.mock_api.util
@@ -38,7 +34,7 @@ import responses
 class TestMockPost(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(

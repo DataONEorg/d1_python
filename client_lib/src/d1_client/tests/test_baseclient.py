@@ -21,9 +21,6 @@
 
 import unittest
 
-import requests.structures
-import responses
-
 import d1_client.baseclient
 import d1_common.const
 import d1_common.date_time
@@ -41,13 +38,15 @@ import d1_test.mock_api.is_authorized
 import d1_test.mock_api.list_objects
 import d1_test.mock_api.ping
 import d1_test.util
+import requests.structures
+import responses
 import shared_settings
 
 
 class TestDataONEBaseClient(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.client = d1_client.baseclient.DataONEBaseClient(

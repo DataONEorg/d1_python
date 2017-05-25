@@ -20,12 +20,8 @@
 
 import datetime
 import hashlib
-import os
 import random
 import string
-
-import django.test
-import requests
 
 import d1_client.mnclient
 import d1_client.session
@@ -34,8 +30,10 @@ import d1_common.types
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 import d1_common.xml
+import django.test
 import gmn.app.models
 import gmn.tests.gmn_test_client
+import requests
 
 DEFAULT_ACCESS_RULE_LIST = [
   ([
@@ -47,6 +45,9 @@ DEFAULT_ACCESS_RULE_LIST = [
 ]
 
 HTTPBIN_SERVER_STR = 'http://httpbin.org'
+
+GMN_TEST_SUBJECT_PUBLIC = 'public'
+GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
 
 
 class D1TestCase(django.test.TestCase):
@@ -123,36 +124,40 @@ class D1TestCase(django.test.TestCase):
   # CRUD
   #
 
-  def create(self, client, binding, pid, sid=None, access_rule_list=None):
-    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, pid, sid=sid, access_rule_list=access_rule_list
+  def create(
+      self, client, binding, pid, sid=None, submitter=None, rights_holder=None,
+      access_rule_list=None, active_subject_list=None
+  ):
+    sci_obj_str, sysmeta_pyxb = self.generate_sciobj(
+      binding, pid, sid=sid, submitter=submitter, rights_holder=rights_holder,
+      access_rule_list=access_rule_list
     )
     client.create(
-      pid, sci_obj_str, sysmeta_pyxb, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      pid, sci_obj_str, sysmeta_pyxb,
+      vendorSpecific=self.include_subjects(active_subject_list)
     )
     return sci_obj_str, sysmeta_pyxb
 
   def update(
-      self, client, binding, old_pid, new_pid, sid=None, access_rule_list=None
+      self, client, binding, old_pid, new_pid, sid=None, submitter=None,
+      rights_holder=None, access_rule_list=None, active_subject_list=None
   ):
-    sci_obj_str, sysmeta_pyxb = self.generate_test_object(
-      binding, new_pid, sid=sid, access_rule_list=access_rule_list
+    sci_obj_str, sysmeta_pyxb = self.generate_sciobj(
+      binding, new_pid, sid=sid, submitter=submitter,
+      rights_holder=rights_holder, access_rule_list=access_rule_list
     )
     client.update(
-      old_pid, sci_obj_str, new_pid, sysmeta_pyxb, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      old_pid, sci_obj_str, new_pid, sysmeta_pyxb,
+      vendorSpecific=self.include_subjects(active_subject_list)
     )
     return sci_obj_str, sysmeta_pyxb
 
-  def get(self, client, did):
+  def get(self, client, did, active_subject_list=None):
     sysmeta_pyxb = client.getSystemMetadata(
-      did, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      did, vendorSpecific=self.include_subjects(active_subject_list)
     )
     response = client.get(
-      did, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      did, vendorSpecific=self.include_subjects(active_subject_list)
     )
     self.assert_sci_obj_size_matches_sysmeta(response, sysmeta_pyxb)
     self.assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_pyxb)
@@ -193,8 +198,8 @@ class D1TestCase(django.test.TestCase):
   #
 
   def generate_sysmeta(
-      self, binding, pid, sciobj_str, owner, obsoletes=None, obsoleted_by=None,
-      sid=None, access_rule_list=None
+      self, binding, pid, sciobj_str, submitter, rights_holder, obsoletes=None,
+      obsoleted_by=None, sid=None, access_rule_list=None
   ):
     now = datetime.datetime.now()
     sysmeta_pyxb = binding.systemMetadata()
@@ -203,8 +208,8 @@ class D1TestCase(django.test.TestCase):
     sysmeta_pyxb.seriesId = sid
     sysmeta_pyxb.formatId = 'application/octet-stream'
     sysmeta_pyxb.size = len(sciobj_str)
-    sysmeta_pyxb.submitter = owner
-    sysmeta_pyxb.rightsHolder = owner
+    sysmeta_pyxb.submitter = submitter
+    sysmeta_pyxb.rightsHolder = rights_holder
     sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(
       hashlib.md5(sciobj_str).hexdigest()
     )
@@ -224,7 +229,10 @@ class D1TestCase(django.test.TestCase):
     return sysmeta_pyxb
 
   def generate_access_policy(self, binding, access_rule_list=None):
-    access_rule_list = access_rule_list or DEFAULT_ACCESS_RULE_LIST
+    if access_rule_list is None:
+      return None
+    elif access_rule_list == 'default':
+      access_rule_list = DEFAULT_ACCESS_RULE_LIST
     access_policy = binding.accessPolicy()
     for subject_list, permission_list in access_rule_list:
       access_rule_pyxb = binding.AccessRule()
@@ -257,21 +265,26 @@ class D1TestCase(django.test.TestCase):
     rep_pyxb.numberReplicas = num_replicas or random.randint(10, 100)
     return rep_pyxb
 
-  def generate_test_object(
-      self, binding, pid, obsoletes=None, obsoleted_by=None, sid=None,
-      access_rule_list=None
+  def generate_sciobj(
+      self, binding, pid, submitter=None, rights_holder=None, obsoletes=None,
+      obsoleted_by=None, sid=None, access_rule_list=None
   ):
     sciobj = 'Science Object Bytes for pid="{}"'.format(pid.encode('utf-8'))
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sciobj, gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC,
-      obsoletes, obsoleted_by, sid, access_rule_list
+      binding, pid, sciobj, submitter or GMN_TEST_SUBJECT_PUBLIC,
+      rights_holder or GMN_TEST_SUBJECT_PUBLIC, obsoletes, obsoleted_by, sid,
+      access_rule_list
     )
     return sciobj, sysmeta_pyxb
 
-  def include_subjects(self, subjects):
-    if isinstance(subjects, basestring):
-      subjects = [subjects]
-    return {'VENDOR-INCLUDE-SUBJECTS': u'\t'.join(subjects)}
+  def include_subjects(self, active_subject_list):
+    if active_subject_list is None:
+      return {}
+    elif active_subject_list == 'trusted':
+      active_subject_list = [GMN_TEST_SUBJECT_TRUSTED]
+    elif isinstance(active_subject_list, basestring):
+      active_subject_list = [active_subject_list]
+    return {'VENDOR-INCLUDE-SUBJECTS': u'\t'.join(active_subject_list)}
 
   #
   # Misc
@@ -296,17 +309,6 @@ class D1TestCase(django.test.TestCase):
 
   def random_tag(self, tag_str):
     return '{}_{}'.format(tag_str, self.random_str())
-
-  def read_test_file(self, filename, mode_str='r'):
-    with open(
-        os.path.join(d1_common.util.abs_path('test_files'), filename), mode_str
-    ) as f:
-      return f.read()
-
-  def read_test_xml(self, filename, mode_str='r'):
-    xml_str = self.read_test_file(filename, mode_str)
-    xml_obj = v2.CreateFromDocument(xml_str)
-    return xml_obj
 
   def get_pyxb_value(self, inst_pyxb, inst_attr):
     try:

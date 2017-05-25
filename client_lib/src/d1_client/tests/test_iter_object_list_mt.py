@@ -22,7 +22,6 @@
 import unittest
 
 import d1_client.iter.objectlist_multi
-import d1_common.util
 import d1_test.mock_api.list_objects as mock_list_objects
 import responses
 import shared_settings
@@ -36,7 +35,7 @@ MAX_OBJECTS = 20
 class TestIterLogRecordMultithreaded(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     pass

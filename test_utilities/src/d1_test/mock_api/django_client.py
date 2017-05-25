@@ -56,14 +56,16 @@ Responses.
 import logging
 import re
 
-import d1_test.mock_api.d1_exception
-import d1_test.mock_api.util
 import django.test
 import requests_toolbelt
 import responses
 
+base_url_list = []
+
 
 def add_callback(base_url):
+  base_url_list.append(base_url)
+
   for method in [
       responses.DELETE, responses.GET, responses.HEAD, responses.OPTIONS,
       responses.PATCH, responses.POST, responses.PUT
@@ -80,18 +82,24 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
-  method = request.method
-  url_path = u'/{}/{}'.format(
-    *d1_test.mock_api.util.split_url_at_version_tag(request.url)[1:]
-  )
-  django_client = django.test.Client()
+  # url_path = u'/{}/{}'.format(
+  #   *d1_test.mock_api.util.split_url_at_version_tag(request.url)[1:]
+  # )
+
+  for base_url in base_url_list:
+    if request.url.startswith(base_url):
+      url_path = request.url[len(base_url):]
+      break
+  else:
+    assert False
 
   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
     data = request.body.read()
   else:
     data = request.body
 
-  django_response = getattr(django_client, method.lower())(
+  django_client = django.test.Client()
+  django_response = getattr(django_client, request.method.lower())(
     url_path, data=data, content_type=request.headers.get('Content-Type'),
     **_headers_to_wsgi_env(request.headers or {})
   )
@@ -99,7 +107,7 @@ def _request_callback(request):
   return (
     django_response.status_code, django_response.items(),
     ''.join(django_response.streaming_content)
-    if django_response.streaming else django_response.content,
+    if django_response.streaming else django_response.content
   )
 
 

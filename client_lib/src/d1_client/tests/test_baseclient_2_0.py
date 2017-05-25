@@ -22,13 +22,12 @@
 import unittest
 
 import d1_client.baseclient_2_0
-import d1_common.util
 
 
 class TestDataONEBaseclientV2(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.base_url = 'www.example.com'

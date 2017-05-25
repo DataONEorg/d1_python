@@ -23,7 +23,6 @@ import StringIO
 import unittest
 
 import d1_client.object_format_info
-import d1_common.util
 
 # Typical mapping (format id, mimetype, extension):
 # netCDF-3,application/netcdf,.nc
@@ -41,7 +40,7 @@ Blank line above.
 class TestObjectFormatInfo(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.i = d1_client.object_format_info.ObjectFormatInfo()

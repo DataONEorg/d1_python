@@ -53,7 +53,7 @@ import responses
 class TestCLI(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     cli = d1_client_cli.impl.cli.CLI()

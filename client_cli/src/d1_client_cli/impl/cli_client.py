@@ -24,12 +24,11 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 """
 
-import d1_client.baseclient
+import d1_client.cnclient
 
 
 class CLIClient(object):
-  def __init__(self, *args, **kwargs):
-    super(CLIClient, self).__init__(*args, **kwargs)
+  pass
 
 
 #===============================================================================

@@ -24,22 +24,21 @@ import hashlib
 import logging
 import unittest
 
-import requests
-import responses
-
 import d1_client.session as session
 import d1_common.logging_context
 import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.get as mock_get
 import d1_test.mock_api.post as mock_post
+import requests
+import responses
 import shared_settings
 
 
 class TestSession(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     mock_get.add_callback(shared_settings.MN_RESPONSES_URL)

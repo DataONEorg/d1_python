@@ -20,19 +20,18 @@
 
 import unittest
 
-# 3rd party
-from cryptography.hazmat.backends.openssl.x509 import _Certificate
-
 import d1_common.cert.subject_info
 import d1_common.cert.subjects
 import d1_common.cert.x509
 import d1_test.util
+# 3rd party
+from cryptography.hazmat.backends.openssl.x509 import _Certificate
 
 
 class TestCert(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.cert_simple_subject_info_pem = d1_test.util.read_test_file(
@@ -41,9 +40,6 @@ class TestCert(unittest.TestCase):
     self.cert_no_subject_info_pem = d1_test.util.read_test_file(
       'cert_without_subject_info.pem'
     )
-
-  def tearDown(self):
-    pass
 
   def test_0010(self):
     """Deserialize PEM to cryptography.Certificate object.

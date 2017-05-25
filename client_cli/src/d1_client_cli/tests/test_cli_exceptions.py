@@ -27,15 +27,12 @@ import d1_client_cli.impl.cli
 import d1_client_cli.impl.cli_client
 import d1_client_cli.impl.cli_exceptions
 import d1_client_cli.impl.operation_validator
-import d1_common.system_metadata
-import d1_common.util
-import d1_common.xml
 
 
 class TestCLIExceptions(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     cli = d1_client_cli.impl.cli.CLI()

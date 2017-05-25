@@ -27,18 +27,10 @@ these methods.
 
 from __future__ import absolute_import
 
-import glob
 import logging
 import os
-import re
 
 import d1_client.mnclient
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-
-# Constants.
-GMN_TEST_SUBJECT_PUBLIC = 'public'
-GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
 
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
@@ -220,33 +212,3 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     """Get dictionary ID.
     """
     return self.GET('concurrency_get_dictionary_id', headers=headers)
-
-
-# ==============================================================================
-
-
-def include_subjects(subjects):
-  if isinstance(subjects, basestring):
-    subjects = [subjects]
-  return {'VENDOR_INCLUDE_SUBJECTS': '\t'.join(subjects)}
-
-
-def populate_mn(client, dir_path):
-  for sysmeta_path in sorted(glob.glob(os.path.join(dir_path, '*.sysmeta'))):
-    # Get name of corresponding object and open it.
-    object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-    object_file = open(object_path, 'r')
-
-    # The pid is stored in the sysmeta.
-    sysmeta_file = open(sysmeta_path, 'r')
-    sysmeta_xml = sysmeta_file.read()
-    sysmeta_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
-    sysmeta_pyxb.rightsHolder = 'test_user_1'
-
-    headers = include_subjects('test_user_1')
-    headers['VENDOR_TEST_OBJECT'] = 1
-
-    client.create(
-      sysmeta_pyxb.identifier.value(), object_file, sysmeta_pyxb,
-      vendorSpecific=headers
-    )

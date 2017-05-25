@@ -27,11 +27,10 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
-import requests
-import responses
-
 import gmn.tests.gmn_test_case
 import gmn.tests.gmn_test_client
+import requests
+import responses
 
 BASE_URL = 'http://mock/mn'
 # Mocked 3rd party server for object byte streams
@@ -44,7 +43,6 @@ class TestProxyMode(gmn.tests.gmn_test_case.D1TestCase):
   storage of the object bytes to another web server (proxy mode). The mode is
   selectable on a per object basis.
 
-
   Create a sciobj that wraps object bytes stored on a 3rd party server. We use
   Responses to simulate the 3rd party server.
 
@@ -52,11 +50,13 @@ class TestProxyMode(gmn.tests.gmn_test_case.D1TestCase):
   object bytes, the client must follow the redirect.
   """
 
+  # @classmethod
+  # def setUpClass(cls):
+  #   pass # d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
-    d1_common.util.log_setup(is_debug=True)
     d1_test.mock_api.django_client.add_callback(BASE_URL)
     d1_test.mock_api.get.add_callback(REMOTE_URL)
-    # self.d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
 
   def create_and_compare(
       self, client, binding, redirect_bool, use_invalid_url=False
@@ -68,12 +68,12 @@ class TestProxyMode(gmn.tests.gmn_test_case.D1TestCase):
     response = client.get(
       pid,
       vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_TRUSTED),
     )
     retrieved_sysmeta_pyxb = client.getSystemMetadata(
       pid,
       vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+      include_subjects(gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(response.content), 1024)
     self.assertEqual(created_sciobj_str, response.content)
@@ -90,8 +90,7 @@ class TestProxyMode(gmn.tests.gmn_test_case.D1TestCase):
   ):
     sciobj_str = self.get_remote_sciobj_bytes(pid)
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sciobj_str,
-      gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
+      binding, pid, sciobj_str, gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_PUBLIC
     )
     object_stream_url = (
       'http://invalid/v2/object/{}'.format(pid)
@@ -102,7 +101,7 @@ class TestProxyMode(gmn.tests.gmn_test_case.D1TestCase):
 
   def create_proxied_sciobj(self, client, object_stream_url, sysmeta_pyxb, pid):
     headers = self.include_subjects(
-      gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
+      gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_TRUSTED
     )
     headers['VENDOR-GMN-REMOTE-URL'] = object_stream_url
     client.create(pid, '', sysmeta_pyxb, vendorSpecific=headers)

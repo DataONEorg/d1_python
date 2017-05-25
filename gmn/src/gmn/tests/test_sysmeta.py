@@ -30,10 +30,10 @@ import d1_common.util
 import d1_common.xml
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
-import responses
-
+import d1_test.util
 import gmn.tests.gmn_test_case
 import gmn.tests.gmn_test_client
+import responses
 
 BASE_URL = 'http://mock/mn'
 # Mocked 3rd party server for object byte streams
@@ -42,8 +42,11 @@ INVALID_URL = 'http://invalid/'
 
 
 class TestSysMeta(gmn.tests.gmn_test_case.D1TestCase):
+  # @classmethod
+  # def setUpClass(cls):
+  #   pass # d1_common.util.log_setup(is_debug=True)
+
   def setUp(self):
-    d1_common.util.log_setup(is_debug=True)
     d1_test.mock_api.django_client.add_callback(BASE_URL)
     d1_test.mock_api.get.add_callback(REMOTE_URL)
 
@@ -51,7 +54,9 @@ class TestSysMeta(gmn.tests.gmn_test_case.D1TestCase):
   def test_0010(self):
     """v2 SysMeta: Roundtrip of fully populated System Metadata"""
     # Prepare fully populated sysmeta
-    orig_sysmeta_pyxb = self.read_test_xml('systemMetadata_v2_0.xml')
+    orig_sysmeta_pyxb = d1_test.util.read_xml_file_to_pyxb(
+      'systemMetadata_v2_0.xml'
+    )
     pid = self.random_pid()
     sciobj_str = 'sciobj bytes for pid="{}"'.format(pid)
     orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
@@ -71,13 +76,13 @@ class TestSysMeta(gmn.tests.gmn_test_case.D1TestCase):
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
     client.create(
       pid, sciobj_str, orig_sysmeta_pyxb, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_TRUSTED)
     )
     # Retrieve
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
     retrieved_sysmeta_pyxb = client.getSystemMetadata(
       pid, vendorSpecific=self.
-      include_subjects(gmn.tests.gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      include_subjects(gmn.tests.gmn_test_case.GMN_TEST_SUBJECT_TRUSTED)
     )
     # Compare
     d1_common.system_metadata.normalize(
@@ -86,7 +91,7 @@ class TestSysMeta(gmn.tests.gmn_test_case.D1TestCase):
     d1_common.system_metadata.normalize(
       retrieved_sysmeta_pyxb, reset_timestamps=True
     )
-    self.kdiff_pyxb(orig_sysmeta_pyxb, retrieved_sysmeta_pyxb)
+    # self.kdiff_pyxb(orig_sysmeta_pyxb, retrieved_sysmeta_pyxb)
     self.assertTrue(
       d1_common.system_metadata.
       is_equivalent_pyxb(orig_sysmeta_pyxb, retrieved_sysmeta_pyxb)

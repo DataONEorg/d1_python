@@ -70,8 +70,6 @@ else:
 
 
 def main():
-  log_setup(True)
-
   if not check_dependencies.are_modules_importable():
     raise Exception(u'Dependency check failed')
 
@@ -86,8 +84,6 @@ def main():
   handle_options(d1_cli, options)
 
   log_setup(options.debug)
-
-  logging.getLogger('').setLevel(logging.INFO)
 
   # If the user passed commands on the command line, run them.
   for command in commands:

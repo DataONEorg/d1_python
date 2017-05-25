@@ -27,7 +27,6 @@ import d1_client.cnclient
 import d1_client.iter.logrecord
 import d1_client.mnclient
 import d1_common.types.dataoneTypes as dataoneTypes
-import d1_common.util
 import d1_test.mock_api.get_log_records as mock_get_log_records
 import responses
 import shared_settings
@@ -41,7 +40,7 @@ MAX_OBJECTS = 20
 class TestLogRecordIterator(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     mock_get_log_records.add_callback(shared_settings.MN_RESPONSES_URL)

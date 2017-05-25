@@ -21,31 +21,32 @@
 
 import unittest
 
-import pyxb
-
 import d1_common.system_metadata
 import d1_common.xml
 import d1_test.util
+import pyxb
 
 # logging.basicConfig(level=logging.DEBUG)
 
 
 class TestSystemMetadata(unittest.TestCase):
   def setUp(self):
-    self.sm_pyxb = d1_test.util.read_test_xml('systemMetadata_v2_0.xml')
+    self.sm_pyxb = d1_test.util.read_xml_file_to_pyxb('systemMetadata_v2_0.xml')
 
   def test_0010(self):
     """PyXB performs schema validation on sysmeta object and raises
     pyxb.PyXBException on invalid XML doc.
     """
     self.assertRaises(
-      pyxb.PyXBException, d1_test.util.read_test_xml,
+      pyxb.PyXBException, d1_test.util.read_xml_file_to_pyxb,
       'systemMetadata_v1_0.invalid.xml'
     )
 
   def test_0020(self):
     """is_equivalent() Returns False for modified sysmeta"""
-    modified_pyxb = d1_test.util.read_test_xml('systemMetadata_v2_0.xml')
+    modified_pyxb = d1_test.util.read_xml_file_to_pyxb(
+      'systemMetadata_v2_0.xml'
+    )
     modified_pyxb.identifier = 'modifiedIdentifier'
     self.assertFalse(
       d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, modified_pyxb)
@@ -62,7 +63,7 @@ class TestSystemMetadata(unittest.TestCase):
     any order without changing the meaning of the doc have been shuffled
     around.
     """
-    swizzled_pyxb = d1_test.util.read_test_xml(
+    swizzled_pyxb = d1_test.util.read_xml_file_to_pyxb(
       'systemMetadata_v2_0.swizzled.xml'
     )
     self.assertTrue(

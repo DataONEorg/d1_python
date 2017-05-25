@@ -22,14 +22,13 @@
 import unittest
 
 import d1_client.cnclient_1_1
-import d1_common.util
 import shared_settings
 
 
 class TestCNClient_1_1(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.client = d1_client.cnclient_1_1.CoordinatingNodeClient_1_1(

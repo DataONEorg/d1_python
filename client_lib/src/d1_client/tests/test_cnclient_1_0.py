@@ -21,8 +21,6 @@
 
 import unittest
 
-import responses
-
 import d1_client.cnclient
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1
@@ -43,13 +41,14 @@ import d1_test.mock_api.catch_all
 import d1_test.mock_api.get_format
 import d1_test.mock_api.list_formats
 import d1_test.util
+import responses
 import shared_settings
 
 
 class TestCNClient(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.client = d1_client.cnclient.CoordinatingNodeClient(

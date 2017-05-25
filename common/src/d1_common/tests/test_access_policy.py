@@ -27,7 +27,9 @@ import d1_test.util
 
 class TestAccessPolicy(unittest.TestCase):
   def setUp(self):
-    self.ap_pyxb = d1_test.util.read_test_xml('accessPolicy_v1_0.redundant.xml')
+    self.ap_pyxb = d1_test.util.read_xml_file_to_pyxb(
+      'accessPolicy_v1_0.redundant.xml'
+    )
 
   def test_0010(self):
     """_get_grouped_permission_dict()"""

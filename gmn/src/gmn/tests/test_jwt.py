@@ -25,25 +25,21 @@ import unittest
 
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
-import d1_common.types.exceptions
-import d1_common.util
 import d1_test.mock_api.django_client as mock_django_client
+import d1_test.util
 import django.test
-import mock
-
 import gmn.app.middleware.session_jwt
 import gmn.tests.gmn_test_case
+import mock
 
 BASE_URL = 'http://mock/mn'
 
 
 @unittest.skip('TODO: Seems like mocking timegm is suddenly not working')
 class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
-  def __init__(self, *args, **kwargs):
-    super(TestJwt, self).__init__(*args, **kwargs)
-    d1_common.util.log_setup(is_debug=True)
-    self.client_v1 = None
-    self.client_v2 = None
+  # @classmethod
+  # def setUpClass(cls):
+  #   pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     mock_django_client.add_callback(BASE_URL)
@@ -63,7 +59,7 @@ class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
     )
 
   def _parse_test_token(self):
-    jwt_base64 = self.read_test_file('test_token_2.base64')
+    jwt_base64 = d1_test.util.read_test_file('test_token_2.base64')
     return gmn.app.middleware.session_jwt._validate_jwt_and_get_subject_list(
       jwt_base64
     )

@@ -31,15 +31,14 @@ import sys
 import tempfile
 import xml
 
-import mock
-import pyxb
-
 import d1_common.types
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0 as v2
 import d1_common.util
 import d1_common.xml
+import mock
+import pyxb
 
 
 @contextlib.contextmanager
@@ -107,7 +106,7 @@ def read_utf8_to_unicode(filename):
   return unicode_file.read()
 
 
-def read_test_xml(filename, mode_str='r'):
+def read_xml_file_to_pyxb(filename, mode_str='r'):
   xml_str = read_test_file(filename, mode_str)
   return v2.CreateFromDocument(xml_str)
 

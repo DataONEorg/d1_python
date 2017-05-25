@@ -24,14 +24,13 @@
 import unittest
 
 import d1_client_cli.impl.check_dependencies
-import d1_common.util
 import d1_test.util
 
 
 class TestCheckDependencies(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def test_0010(self):
     """check_dependencies(): Returns True given modules known to be present"""

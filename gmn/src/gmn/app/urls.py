@@ -23,12 +23,11 @@
 from __future__ import absolute_import
 
 import django.conf
-# Django
-from django.conf.urls import url
-
 import gmn.app.views.diagnostics
 import gmn.app.views.external
 import gmn.app.views.internal
+# Django
+from django.conf.urls import url
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP verb into account, so in the
@@ -200,12 +199,6 @@ if django.conf.settings.DEBUG_GMN:
       gmn.app.views.diagnostics.clear_replication_queue,
       name='clear_replication_queue',
     ),
-    # Access Policy.
-    url(
-      r'^diag/delete_all_access_policies$',
-      gmn.app.views.diagnostics.delete_all_access_policies,
-      name='delete_all_access_policies',
-    ),
     # Misc.
     url(
       r'^diag/create/(.+)$',
@@ -237,9 +230,9 @@ if django.conf.settings.DEBUG_GMN:
       name='whitelist_subject',
     ),
     url(
-      r'^diag/permissions_for_object/(.+?)$',
-      gmn.app.views.diagnostics.permissions_for_object,
-      name='permissions_for_object',
+      r'^diag/object_permissions/(.+?)$',
+      gmn.app.views.diagnostics.object_permissions,
+      name='object_permissions',
     ),
     url(
       r'^diag/get_setting/(.+)$',

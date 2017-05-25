@@ -28,22 +28,17 @@ from __future__ import absolute_import
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_common.types.exceptions
-import d1_common.util
 import d1_test.mock_api.django_client as mock_django_client
-import responses
-
 import gmn.tests.gmn_test_case
+import responses
 
 BASE_URL = 'http://mock/mn'
 
 
 class TestListObjects(gmn.tests.gmn_test_case.D1TestCase):
-  def __init__(self, *args, **kwargs):
-    super(TestListObjects, self).__init__(*args, **kwargs)
-    d1_common.util.log_setup(is_debug=True)
-    self.client_v1 = None
-    self.client_v2 = None
+  # @classmethod
+  # def setUpClass(cls):
+  #   pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     mock_django_client.add_callback(BASE_URL)

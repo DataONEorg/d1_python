@@ -19,24 +19,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import cStringIO as StringIO
 import json
+import logging
 import pprint
 import unittest
-import cStringIO as StringIO
-import logging
-
-import rdflib
-import rdflib.compare
 
 import d1_common.resource_map
 import d1_common.util
 import d1_test.util
+import rdflib
+import rdflib.compare
 
 
 class TestResourceMap(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.maxDiff = None
@@ -212,4 +211,4 @@ class TestResourceMap(unittest.TestCase):
     ore = self._create()
     stream = StringIO.StringIO()
     ore.asGraphvizDot(stream)
-    self.assertIn('node0 -> node1', stream.getvalue())
+    self.assertIn('node1 -> node2', stream.getvalue())

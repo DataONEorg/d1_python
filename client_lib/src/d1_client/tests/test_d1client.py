@@ -21,10 +21,8 @@
 
 import unittest
 
-import d1_common.util
-
 
 class TestDataONEClient(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)

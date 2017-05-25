@@ -20,18 +20,15 @@
 
 import unittest
 
-import d1_common.const
-import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
-import d1_common.types.exceptions
-import d1_common.util
 import d1_test.mock_api.util
 
 
 class TestMockUtil(unittest.TestCase):
-  def setUp(self):
-    d1_common.util.log_setup(is_debug=True)
+  @classmethod
+  def setUpClass(cls):
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def test_0010(self):
     """parse_rest_url() 1"""

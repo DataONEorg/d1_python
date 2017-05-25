@@ -39,10 +39,6 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import django.apps
 import django.conf
-from django.db.models import Q
-from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect, reverse
-
 import gmn.app.auth
 import gmn.app.db_filter
 import gmn.app.event_log
@@ -55,6 +51,9 @@ import gmn.app.util
 import gmn.app.views.asserts
 import gmn.app.views.create
 import gmn.app.views.util
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, redirect, reverse
 
 # ------------------------------------------------------------------------------
 # Diagnostics portal.
@@ -102,20 +101,6 @@ def clear_replication_queue(request):
       did=rep_queue_model.local_replica.pid.did
     ).delete()
   return redirect('diag')
-
-
-# ------------------------------------------------------------------------------
-# Access Policy.
-# ------------------------------------------------------------------------------
-
-
-# noinspection PyUnusedLocal
-@gmn.app.restrict_to_verb.get
-def delete_all_access_policies(request):
-  # The models.CASCADE property is set on all ForeignKey fields, so deletes
-  # on Permission are cascaded to subjects.
-  gmn.app.models.Permission.objects.all().delete()
-  return gmn.app.views.util.http_response_with_boolean_true_type()
 
 
 # ------------------------------------------------------------------------------
@@ -193,7 +178,7 @@ def echo_request_object(request):
 
 
 @gmn.app.restrict_to_verb.get
-def permissions_for_object(request, pid):
+def object_permissions(request, pid):
   gmn.app.views.asserts.is_pid_of_existing_object(pid)
   subjects = []
   permissions = gmn.app.models.Permission.objects.filter(sciobj__pid__did=pid)
@@ -201,7 +186,7 @@ def permissions_for_object(request, pid):
     action = gmn.app.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))
   return render_to_response(
-    'permissions_for_object.xhtml',
+    'object_permissions.xhtml',
     locals(), content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 

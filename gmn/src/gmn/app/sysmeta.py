@@ -27,8 +27,6 @@ from __future__ import absolute_import
 
 import datetime
 
-import pyxb
-
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
@@ -42,6 +40,7 @@ import gmn.app.sysmeta_replica
 import gmn.app.sysmeta_sid
 import gmn.app.sysmeta_util
 import gmn.app.util
+import pyxb
 
 
 def archive_object(pid):
@@ -224,7 +223,7 @@ def _base_pyxb_to_model(
     sci_model.serial_version = sysmeta_pyxb.serialVersion
     sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
   sci_model.format = gmn.app.models.format(sysmeta_pyxb.formatId)
-  sci_model.filename = getattr(sysmeta_pyxb, 'fileName')
+  sci_model.filename = getattr(sysmeta_pyxb, 'fileName', None)
   sci_model.checksum = sysmeta_pyxb.checksum.value()
   sci_model.checksum_algorithm = gmn.app.models.checksum_algorithm(
     sysmeta_pyxb.checksum.algorithm

@@ -31,10 +31,7 @@ import d1_client_cli.impl.nodes as nodes
 import d1_client_cli.impl.operation_queue as operation_queue
 import d1_client_cli.impl.operation_validator
 import d1_client_cli.impl.session as session
-import d1_common.system_metadata
 import d1_common.types.dataoneTypes as v2
-import d1_common.util
-import d1_common.xml
 import d1_test.instance_generator.random_data
 import d1_test.mock_api.catch_all
 import d1_test.mock_api.get as mock_get
@@ -53,7 +50,7 @@ CN_RESPONSES_BASE_URL = 'http://responses/cn'
 class TestCommandProcessor(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.cp = d1_client_cli.impl.command_processor.CommandProcessor()

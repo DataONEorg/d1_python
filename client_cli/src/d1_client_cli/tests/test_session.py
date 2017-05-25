@@ -20,7 +20,6 @@
 # limitations under the License.
 
 import StringIO
-import logging
 import os
 import sys
 import unittest
@@ -70,13 +69,6 @@ class TestSession(unittest.TestCase):
     s.set('rights-holder', 'test')
     self.assertEqual(s.get('verbose'), False)
     self.assertEqual(s.get('rights-holder'), 'test')
-
-  @unittest.skip('Halts on raw_input()')
-  def test_0040(self):
-    """Setting invalid CN fails"""
-    s = session.Session(nodes, format_ids)
-    print 'Hit Enter on "Use anyway?" prompt'
-    self.assertRaises(cli_exceptions.InvalidArguments, s.set, 'cn-url', 'test')
 
   def test_0050(self):
     """Setting valid CN is successful"""
@@ -153,49 +145,3 @@ class TestSession(unittest.TestCase):
     s2 = session.Session(nodes, format_ids)
     s2.load(tmp_pickle)
     self.assertEqual(s2.get('rights-holder'), u)
-
-
-#===============================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store', default='', dest='test', help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestSession
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

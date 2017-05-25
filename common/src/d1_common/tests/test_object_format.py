@@ -27,7 +27,9 @@ import d1_test.util
 
 class TestObjectFormat(unittest.TestCase):
   def setUp(self):
-    self.ofl_pyxb = d1_test.util.read_test_xml('objectFormatList_v2_0.xml')
+    self.ofl_pyxb = d1_test.util.read_xml_file_to_pyxb(
+      'objectFormatList_v2_0.xml'
+    )
 
   def test_0010(self):
     """pyxb_to_dict()"""

@@ -22,7 +22,6 @@
 import unittest
 
 import d1_client.cnclient_2_0
-import d1_common.util
 import d1_test.mock_api.catch_all
 import shared_settings
 
@@ -30,7 +29,7 @@ import shared_settings
 class TestCNClient_2_0(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
-    d1_common.util.log_setup(is_debug=True)
+    pass # d1_common.util.log_setup(is_debug=True)
 
   def setUp(self):
     self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
