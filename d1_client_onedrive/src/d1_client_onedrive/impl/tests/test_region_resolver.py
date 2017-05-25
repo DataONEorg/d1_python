@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`test_resource_map_resolver`
-====================================
-
-:Synopsis:
- - Test the ResourceMapResolver class.
-:Region:
-  DataONE (Dahl)
-"""
 
 import logging
 import sys

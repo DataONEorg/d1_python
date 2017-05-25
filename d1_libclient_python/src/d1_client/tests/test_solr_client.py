@@ -20,7 +20,9 @@
 # limitations under the License.
 """Test the Solr client
 
-Note:
+Note: Currently issues requests to cn.dataone.org.
+
+TODO: Create Solr mockup.
 """
 import unittest
 

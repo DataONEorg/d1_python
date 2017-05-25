@@ -46,7 +46,7 @@ import responses
 
 # Config
 
-GET_ENDPOINT_RX = r'v([123])/object/(.*)'
+GET_ENDPOINT_RX = r'v[123]/object/.*'
 
 
 def add_callback(base_url):

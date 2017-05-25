@@ -18,8 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test XML document comparison utility.
-"""
 
 import unittest
 
@@ -210,7 +208,7 @@ XML_SYNTAX_ERROR = """<?xml version="1.0" ?>
 # TODO: Add tests for remaining functions in xml.py.
 
 
-class TestXML(unittest.TestCase):
+class TestXml(unittest.TestCase):
   def test_0010(self):
     """Compare xml_correct with itself and verify that compare passes."""
     self.assertTrue(d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT))

@@ -18,16 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_object_format_info
-=================================================
-
-Unit tests for ObjectFormatInfo.
-
-:Created: 2012-10-25
-:Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
-"""
 
 import StringIO
 import unittest

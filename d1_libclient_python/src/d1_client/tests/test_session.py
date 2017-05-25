@@ -18,20 +18,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for Session.
-"""
 
 import base64
 import hashlib
 import logging
 import unittest
 
+import requests
+import responses
+
 import d1_client.session as session
 import d1_common.logging_context
 import d1_common.types.exceptions
 import d1_common.util
-import requests
-import responses
+import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.post as mock_post
 import shared_settings
 
 
@@ -40,15 +41,18 @@ class TestSession(unittest.TestCase):
   def setUpClass(cls):
     d1_common.util.log_setup(is_debug=True)
 
+  def setUp(self):
+    mock_get.add_callback(shared_settings.MN_RESPONSES_URL)
+    mock_post.add_callback(shared_settings.MN_RESPONSES_URL)
+
   def _get_hash(self, pid):
     s = session.Session(shared_settings.MN_RESPONSES_URL)
     response = s.GET(['object', pid])
     return hashlib.sha1(response.content).hexdigest()
 
   def _get_response(self, pid, header_dict=None):
-    header_dict = header_dict or {}
     s = session.Session(shared_settings.MN_RESPONSES_URL)
-    return s.GET(['object', pid], headers=header_dict)
+    return s.GET(['object', pid], headers=header_dict or {})
 
   def _post(self, query_dict, header_dict, body):
     s = session.Session(
@@ -62,7 +66,6 @@ class TestSession(unittest.TestCase):
     s = session.Session(shared_settings.MN_RESPONSES_URL)
     return s.POST(['post'], fields=fields_dict)
 
-  @unittest.skip('')
   @responses.activate
   def test_0010(self):
     """HTTP GET is successful
@@ -86,14 +89,12 @@ class TestSession(unittest.TestCase):
     self.assertEqual(c_hash, c1_hash)
     self.assertEqual(c_hash, c2_hash)
 
-  @unittest.skip('')
   @responses.activate
   def test_0020(self):
     """Successful HTTP GET returns 200 OK"""
     response = self._get_response('pid1')
     self.assertEqual(response.status_code, 200)
 
-  @unittest.skip('')
   @responses.activate
   def test_0030(self):
     """HTTP GET 404"""
@@ -106,7 +107,7 @@ class TestSession(unittest.TestCase):
     )
     self.assertEqual(response.text, expected_response_body_str)
 
-  @unittest.skip('')
+  @responses.activate
   def test_0040(self):
     """HTTP GET against http://some.bogus.address/ raises ConnectionError"""
     s = session.Session('http://some.bogus.address')
@@ -115,7 +116,6 @@ class TestSession(unittest.TestCase):
       logger.setLevel(logging.ERROR)
       self.assertRaises(requests.exceptions.ConnectionError, s.GET, '/')
 
-  @unittest.skip('')
   @responses.activate
   def test_0050(self):
     """HTTP POST is successful
@@ -138,7 +138,6 @@ class TestSession(unittest.TestCase):
       r_dict['header_dict']['Content-Length'], str(len(body_str))
     )
 
-  @unittest.skip('')
   @responses.activate
   def test_0060(self):
     """Query params passed to Session() and individual POST are combined
@@ -154,7 +153,6 @@ class TestSession(unittest.TestCase):
     self.assertIn('default_query', r_dict['query_dict'])
     self.assertEqual(r_dict['query_dict']['default_query'], ['test'])
 
-  @unittest.skip('')
   @responses.activate
   def test_0070(self):
     """Roundtrip for HTML Form fields"""
@@ -172,7 +170,6 @@ class TestSession(unittest.TestCase):
     self.assertIn('1234', body_str)
     self.assertIn('5678', body_str)
 
-  @unittest.skip('')
   @responses.activate
   def test_0080(self):
     """cURL command line retains query parameters and headers"""

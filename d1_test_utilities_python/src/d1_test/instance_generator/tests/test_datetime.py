@@ -18,14 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.tests.test_date
-============================================
-
-:Synopsis: Unit tests for datetime generator.
-:Created: 2011-12-05
-:Author: DataONE (Dahl)
-"""
 
 import logging
 import time

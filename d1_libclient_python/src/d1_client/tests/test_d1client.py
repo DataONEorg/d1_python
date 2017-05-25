@@ -18,13 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_client.tests.test_d1client
-=======================================
-
-:Synopsis: Unit tests for d1client.
-:Created: 2010-01-08
-:Author: DataONE (Vieglais, Dahl)
-"""
 
 import unittest
 
