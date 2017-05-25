@@ -15,40 +15,81 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Read and write DataONE OAI-ORE Resource Maps.
+
+Includes convenience functions to perform the most common parsing and generating
+tasks for Resource Maps.
+
+For more information about how Resource Maps are used in DataONE, see:
+
+https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html
+"""
 
 import logging
 
 import rdflib
+import rdflib.tools.rdf2dot
 
-try:
-  from d1_common.url import encodePathElement
-except:
-  #Approximate the URLPath encoder used in DataONE. The urllib version should
-  #provide equivalent functionality for the purposes of the ORE documents.
-  import urllib
-
-  def encodePathElement(s):
-    return urllib.quote(s.encode('utf-8'))
-
-
-# A tag that will be added to the resource map
-SOFTWARE_ID = u"d1_pyore DataONE Python library"
-
-# Namespaces and prefixes used here.
-NAMESPACES = {
-  u'cito': u'http://purl.org/spar/cito/',
-  u'dc': u'http://purl.org/dc/elements/1.1/',
-  u'dcterms': u'http://purl.org/dc/terms/',
-  u'ore': u'http://www.openarchives.org/ore/terms/',
-  u'foaf': u'http://xmlns.com/foaf/0.1/',
-}
+import d1_common.const
+import d1_common.url
+import d1_common.util
+import d1_common.type_conversions
 
 # RDFLib wrappers around the namespaces. Others are defined by RDFLib
-DCTERMS = rdflib.Namespace(NAMESPACES[u'dcterms'])
-CITO = rdflib.Namespace(NAMESPACES[u'cito'])
-ORE = rdflib.Namespace(NAMESPACES[u'ore'])
+DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'dcterms'])
+CITO = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'cito'])
+ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'ore'])
 
-#===============================================================================
+
+def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
+  """Create a simple resource map with one science metadata document and n
+  science data objects.
+  """
+  ore = ResourceMap()
+  ore.oreInitialize(ore_pid)
+  ore.addMetadataDocument(scimeta_pid)
+  ore.addDataDocuments(sciobj_pid_list, scimeta_pid)
+  return ore
+
+
+def createResourceMapFromStream(
+    in_stream, base_url=d1_common.const.URL_DATAONE_ROOT
+):
+  """Create a simple resource map from a stream that contains a list of
+identifiers.
+
+  The first non-blank line is the PID of the resource map itself. Second line
+  is the science metadata PID and remaining lines are science data PIDs.
+
+  Example stream:
+
+  ore_pid_value
+  sci_meta_pid_value
+  data_pid_1
+  data_pid_2
+  data_pid_3
+  """
+  pids = []
+  for line in in_stream:
+    pid = line.strip()
+    if pid == '#' or pid.startswith('# '):
+      continue
+
+  if len(pids) < 2:
+    raise ValueError('Insufficient identifiers provided.')
+
+  logging.info(u'Read {} identifiers'.format(len(pids)))
+  ore = ResourceMap(base_url=base_url)
+  logging.info(u'ORE PID = {}'.format(pids[0]))
+  ore.oreInitialize(pids[0])
+  logging.info(u'Metadata PID = {}'.format(pids[1]))
+  ore.addMetadataDocument(pids[1])
+  ore.addDataDocuments(pids[2:], pids[1])
+
+  return ore
+
+
+# ===============================================================================
 
 
 class ResourceMap(rdflib.ConjunctiveGraph):
@@ -56,44 +97,35 @@ class ResourceMap(rdflib.ConjunctiveGraph):
   DataONE."""
 
   def __init__(
-      self, base_url=u'https://cn.dataone.org/cn', dataone_api_version="2"
+      self, ore_pid=None, scimeta_pid=None, scidata_pid_list=None,
+      base_url=d1_common.const.URL_DATAONE_ROOT, api_major=2, debug=True,
+      ore_software_id=d1_common.const.ORE_SOFTWARE_ID, *args, **kwargs
   ):
     """Initialize the Graph instance."""
-    super(ResourceMap, self).__init__()
-    self._L = logging.getLogger(self.__class__.__name__)
-    self._dataone_api_version = dataone_api_version
+    super(ResourceMap, self).__init__(*args, **kwargs)
     self._base_url = base_url
+    self._version_tag = d1_common.type_conversions.get_version_tag(api_major)
     self._ore_initialized = False
-    self.aggregate_id = None
+    if ore_pid:
+      self.oreInitialize(ore_pid, ore_software_id)
+    if scimeta_pid:
+      self.addMetadataDocument(scimeta_pid)
+      if scidata_pid_list:
+        self.addDataDocuments(scidata_pid_list, scimeta_pid)
 
-  def _parse(self, rdf_xml_doc):
-    """Parse a unicode containing a OAI-ORE document."""
-    self.parse(data=rdf_xml_doc)
-    self._ore_initialized = True
-    return self
-
-  def _pidToId(self, pid):
-    """Converts a pid to a URI that can be used as an OAI-ORE identifier."""
-    return u"{0}/v{1}/resolve/{2}".format(
-      self._base_url, self._dataone_api_version, encodePathElement(pid)
-    )
-
-  def oreInitialize(self, pid):
+  def oreInitialize(self, pid, ore_software_id=d1_common.const.ORE_SOFTWARE_ID):
     """Creates the basic ORE document structure."""
-    #Set nice prefixes for the namespaces
-    for k in NAMESPACES.keys():
-      self.bind(k, NAMESPACES[k])
-
-    #Create the ORE entity
-    oid = self._pidToId(pid)
+    # Set nice prefixes for the namespaces
+    for k in d1_common.const.ORE_NAMESPACE_DICT.keys():
+      self.bind(k, d1_common.const.ORE_NAMESPACE_DICT[k])
+    # Create the ORE entity
+    oid = self._pid_to_id(pid)
     ore = rdflib.URIRef(oid)
     self.add((ore, rdflib.RDF.type, ORE.ResourceMap))
     self.add((ore, DCTERMS.identifier, rdflib.term.Literal(pid)))
-    self.add((ore, DCTERMS.creator, rdflib.term.Literal(SOFTWARE_ID)))
-
-    #Add an empty aggregation
-    self.aggregate_id = u"{0}#aggregation".format(oid)
-    ag = rdflib.URIRef(self.aggregate_id)
+    self.add((ore, DCTERMS.creator, rdflib.term.Literal(ore_software_id)))
+    # Add an empty aggregation
+    ag = rdflib.URIRef(d1_common.url.joinPathElements(oid, u'aggregation'))
     self.add((ore, ORE.describes, ag))
     self.add((ag, rdflib.RDF.type, ORE.Aggregation))
     self.add((ORE.Aggregation, rdflib.RDFS.isDefinedBy, ORE.term('')))
@@ -102,10 +134,17 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     )
     self._ore_initialized = True
 
+  def serialize(self, doc_format='pretty-xml', *args, **kwargs):
+    """Serialize to Resouce Map document.
+    doc_format can be:
+      'xml', 'n3', 'turtle', 'nt', 'pretty-xml', 'trix', 'trig' and 'nquads'
+    """
+    return super(ResourceMap,
+                 self).serialize(format=doc_format, *args, **kwargs)
+
   def getAggregation(self):
     """Return the URIRef of the Aggregation entity."""
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
+    self._check_initialized()
     return [
       o
       for o in self.subjects(predicate=rdflib.RDF.type, object=ORE.Aggregation)
@@ -113,44 +152,34 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
   def getObjectByPid(self, pid):
     """Returns the URIRef of the entry identified by pid."""
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
+    self._check_initialized()
     opid = rdflib.term.Literal(pid)
     res = [o for o in self.subjects(predicate=DCTERMS.identifier, object=opid)]
-    self._L.debug(res)
     return res[0]
 
   def addResource(self, pid):
     """Add a resource to the resource map."""
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
+    self._check_initialized()
     try:
       # is entry already in place?
       self.getObjectByPid(pid)
       return
     except IndexError:
       pass
-    #Entry not present, add it to the graph
-    oid = self._pidToId(pid)
+    # Entry not present, add it to the graph
+    oid = self._pid_to_id(pid)
     obj = rdflib.URIRef(oid)
     ag = self.getAggregation()
     self.add((ag, ORE.aggregates, obj))
     self.add((obj, ORE.isAggregatedBy, ag))
     self.add((obj, DCTERMS.identifier, rdflib.term.Literal(pid)))
 
-  def removeResource(self, oid):
-    """"""
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
-    raise NotImplementedError()
-
   def setDocuments(self, pid_a, pid_b):
     """Sets the assertion that pid_a cito:documents pid_b.
 
     pid_a and pid_b must be present.
     """
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
+    self._check_initialized()
     id_a = self.getObjectByPid(pid_a)
     id_b = self.getObjectByPid(pid_b)
     self.add((id_a, CITO.documents, id_b))
@@ -160,41 +189,35 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
     pid_a and pid_b must be present.
     """
-    if not self._ore_initialized:
-      raise ValueError("Resource map structure is not initialized.")
+    self._check_initialized()
     id_a = self.getObjectByPid(pid_a)
-    id_b = self.getObjectByPid(pid_a)
+    id_b = self.getObjectByPid(pid_b)
     self.add((id_a, CITO.isDocumentedBy, id_b))
 
   def addMetadataDocument(self, pid):
     """Add the specified metadata document to the resource map."""
     self.addResource(pid)
 
-  def addDataDocuments(self, data_pids, metadata_pid=None):
+  def addDataDocuments(self, scidata_pid_list, scimeta_pid=None):
     """Add data documents to the resource map and cross reference with
     metadata.
-
-    Args
-
-      data_pids (list): A list of identifiers for data objects
-      metadata_pid (unicode): The metadata document identifier
     """
     mpids = self.getAggregatedScienceMetadataPids()
-    if metadata_pid is None:
+    if scimeta_pid is None:
       if len(mpids) > 1:
         raise ValueError(
           'No metadata PID specified and more than one choice available.'
         )
-      metadata_pid = mpids[0]
+      scimeta_pid = mpids[0]
     else:
-      #Add the metadata object
-      if metadata_pid not in mpids:
-        self.addMetadataDocument(metadata_pid)
+      # Add the metadata object
+      if scimeta_pid not in mpids:
+        self.addMetadataDocument(scimeta_pid)
 
-    for dpid in data_pids:
+    for dpid in scidata_pid_list:
       self.addResource(dpid)
-      self.setDocumentedBy(dpid, metadata_pid)
-      self.setDocuments(metadata_pid, dpid)
+      self.setDocumentedBy(dpid, scimeta_pid)
+      self.setDocuments(scimeta_pid, dpid)
 
   def getResourceMapPid(self):
     """Return the PID of the resource map."""
@@ -225,7 +248,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
       list of strings
     """
-    return map(str, [o for o in self.predicates()])
+    return sorted(set([str(o) for o in self.predicates()]))
 
   def getSubjectObjectsByPredicate(self, predicate):
     """Return all subject/objects in the OAI-ORE document with a given
@@ -235,8 +258,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
       PREFIX dc: <http://purl.org/dc/elements/1.1/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      PREFIX rdfs1: <http://www.w3.org/2001/01/rdf-schema#>
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns# >
+      PREFIX rdfs1: <http://www.w3.org/2001/01/rdf-schema# >
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
       PREFIX cito: <http://purl.org/spar/cito/>
@@ -249,7 +272,10 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     Returns:
       list of (subject, object) strings
     """
-    return [(str(s), str(o)) for s, o in self.subject_objects(predicate)]
+    return sorted(
+      set([(str(s), str(o))
+           for s, o in self.subject_objects(rdflib.term.URIRef(predicate))])
+    )
 
   def getAggregatedPids(self):
     q = '''
@@ -262,7 +288,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
       ?o dcterms:identifier ?pid .
     }
     '''
-    return map(str, [o[0] for o in self.query(q)])
+    return [str(o[0]) for o in self.query(q)]
 
   def getAggregatedScienceMetadataPids(self):
     """Return PIDs of all science metadata documents in ORE document."""
@@ -278,9 +304,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         ?o dcterms:identifier ?pid .
       }
     '''
-    return map(str, [o[0] for o in self.query(q)])
-    #return map(str, [o[0] for o in self.objects( ORE.aggregates,
-    #                                             CITO.documents )])
+    return [str(o[0]) for o in self.query(q)]
+    # return [str(o[0]) for o in self.objects(ORE.aggregates, CITO.documents)]
 
   def getAggregatedScienceDataPids(self):
     """Return PIDs of all the data documents in the ORE document."""
@@ -296,9 +321,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         ?o dcterms:identifier ?pid .
       }
     '''
-    return map(str, [o[0] for o in self.query(q)])
-    #return map(str, [o[0] for o in self.objects( ORE.aggregates,
-    #                                             CITO.isDocumentedBy )])
+    return [str(o[0]) for o in self.query(q)]
+    # return [str(o[0]) for o in self.objects(ORE.aggregates, CITO.isDocumentedBy)]
 
   def asGraphvizDot(self, stream):
     """Serialize the graph in .dot format for ingest to graphviz.
@@ -308,5 +332,23 @@ class ResourceMap(rdflib.ConjunctiveGraph):
       stream (file): A file like object open for writing that will receive the
          resulting document.
     """
-    import rdflib.tools.rdf2dot
     rdflib.tools.rdf2dot.rdf2dot(self, stream)
+
+  # Private
+
+  def _parse(self, rdf_xml_doc):
+    """Parse a unicode containing a OAI-ORE document."""
+    self.parse(data=rdf_xml_doc)
+    self._ore_initialized = True
+    return self
+
+  def _pid_to_id(self, pid):
+    """Converts a pid to a URI that can be used as an OAI-ORE identifier."""
+    return d1_common.url.joinPathElements(
+      self._base_url, self._version_tag, u'resolve',
+      d1_common.url.encodePathElement(pid)
+    )
+
+  def _check_initialized(self):
+    if not self._ore_initialized:
+      raise ValueError('ResourceMap is not initialized.')

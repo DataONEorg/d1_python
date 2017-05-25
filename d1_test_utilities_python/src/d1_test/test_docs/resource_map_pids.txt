@@ -1,0 +1,14 @@
+# Comment line, separate the # from text with a space.
+# These are example values for pids2ore
+# First row = identifier for resource map object
+# Second row = identifier for metadata document
+# Subsquent rows = identifiers for data
+# Blank rows are ignored
+# White space is stripped from start and end of rows.
+
+ore_pid_value
+sci_meta_pid_value
+data_pid_1
+data_pid_2
+data_pid_3
+
