@@ -4,12 +4,6 @@ common-unicode-ascii-safe-0123456789	common-unicode-ascii-safe-0123456789
 common-unicode-ascii-safe-:@$-_.!*()',~	common-unicode-ascii-safe-:@$-_.!*()',~
 common-unicode-ascii-safe-unreserved-._~	common-unicode-ascii-safe-unreserved-._~
 common-unicode-ascii-safe-sub-delims-$!*()',	common-unicode-ascii-safe-sub-delims-$!*()',
-common-unicode-ascii-safe-sd-chartests-$	common-unicode-ascii-safe-sd-chartests-$
-common-unicode-ascii-safe-sd-chartests-!	common-unicode-ascii-safe-sd-chartests-!
-common-unicode-ascii-safe-sd-chartests-*	common-unicode-ascii-safe-sd-chartests-*
-common-unicode-ascii-safe-sd-chartests-()	common-unicode-ascii-safe-sd-chartests-()
-common-unicode-ascii-safe-sd-chartests-'	common-unicode-ascii-safe-sd-chartests-'
-common-unicode-ascii-safe-sd-chartests-,	common-unicode-ascii-safe-sd-chartests-,
 common-unicode-ascii-safe-gen-delims-:@	common-unicode-ascii-safe-gen-delims-:@
 common-unicode-ascii-escaped-"#<>[]^`{}|	common-unicode-ascii-escaped-%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C
 common-unicode-ascii-escaped-tomcatBlocked-\	common-unicode-ascii-escaped-tomcatBlocked-%5C
