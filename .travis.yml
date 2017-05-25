@@ -14,11 +14,11 @@ install:
   - pip install --upgrade setuptools
   - pip install coverage pytest-cov
 script:
-  - cd $TRAVIS_BUILD_DIR/d1_common_python/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_libclient_python/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_client_cli/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_test_utilities_python/src && python setup.py develop
-  - cd $TRAVIS_BUILD_DIR/d1_mn_generic/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/common/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/client_lib/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/client_cli/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/test_utilities/src && python setup.py develop
+  - cd $TRAVIS_BUILD_DIR/gmn/src && python setup.py develop
   - cd $TRAVIS_BUILD_DIR
   # Debug
   - pip freeze
