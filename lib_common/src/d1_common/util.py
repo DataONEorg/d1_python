@@ -98,3 +98,17 @@ def utf8_to_unicode(f):
     return f(*new_args, **new_kwargs)
 
   return wrap
+
+
+class EventCounter(object):
+  def __init__(self):
+    self._event_dict = {}
+
+  def count(self, event_str, inc_int=1):
+    self._event_dict.setdefault(event_str, 0)
+    self._event_dict[event_str] += inc_int
+
+  def log(self):
+    logging.info('Counted events:')
+    for event_str, count_int in sorted(self._event_dict.items()):
+      logging.info('  {}: {}'.format(event_str, count_int))
