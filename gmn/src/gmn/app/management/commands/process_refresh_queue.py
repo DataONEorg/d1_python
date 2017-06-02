@@ -168,7 +168,7 @@ class SysMetaRefreshQueueProcessor(object):
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
-    if sysmeta_pyxb.identifier.value() != pid:
+    if gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier) != pid:
       raise RefreshError(
         u'PID in retrieved System Metadata does not match the object for which '
         u'refresh was requested. pid="{}"'.format(pid)

@@ -138,7 +138,7 @@ class TestAccessPolicy(unittest.TestCase):
     }
     ap_pyxb = d1_common.access_policy.get_access_policy_pyxb(ap_dict)
     ap_xml = d1_test.util.read_utf8_to_unicode('accessPolicy_v1_0.basic.xml')
-    self.assertEqual(ap_pyxb.toxml(), ap_xml)
+    self.assertEqual(ap_pyxb.toxml('utf-8'), ap_xml)
 
   def test_0150(self):
     """get_effective_permission_dict()"""

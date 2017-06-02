@@ -194,7 +194,7 @@ class CommandProcessor():
       start=self._session.get(session.START_NAME),
       count=self._session.get(session.COUNT_NAME)
     )
-    object_log_xml = object_log.toxml()
+    object_log_xml = object_log.toxml('utf-8')
     self._output(StringIO.StringIO(self._pretty(object_log_xml)), path)
 
   def list_objects(self, path):
@@ -208,7 +208,7 @@ class CommandProcessor():
       start=self._session.get(session.START_NAME),
       count=self._session.get(session.COUNT_NAME)
     )
-    object_list_xml = object_list.toxml()
+    object_list_xml = object_list.toxml('utf-8')
     self._output(StringIO.StringIO(self._pretty(object_list_xml)), path)
 
   # Write operations (queued)
@@ -267,7 +267,7 @@ class CommandProcessor():
     return dom.toprettyxml(indent='  ')
 
   def _system_metadata_print(self, metadata, path=None):
-    sci_meta_xml = metadata.toxml()
+    sci_meta_xml = metadata.toxml('utf-8')
     if path is not None:
       path = cli_util.os.path.expanduser(path)
     self._output(StringIO.StringIO(self._pretty(sci_meta_xml)), path)
@@ -296,7 +296,7 @@ class CommandProcessor():
         start=self._session.get(session.START_NAME),
         rows=self._session.get(session.COUNT_NAME),
       )
-      cli_util.print_info(self._pretty(object_list.toxml()))
+      cli_util.print_info(self._pretty(object_list.toxml('utf-8')))
     except d1_common.types.exceptions.ServiceFailure as e:
       e = "%".join(str(e).splitlines()) # Flatten line
       regexp = re.compile(

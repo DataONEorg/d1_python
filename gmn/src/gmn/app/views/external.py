@@ -315,7 +315,7 @@ def get_checksum(request, pid):
   # TODO: look into log type other than 'read'
   gmn.app.event_log.read(pid, request)
   return django.http.HttpResponse(
-    checksum_obj.toxml(), d1_common.const.CONTENT_TYPE_XML
+    checksum_obj.toxml('utf-8'), d1_common.const.CONTENT_TYPE_XML
   )
 
 

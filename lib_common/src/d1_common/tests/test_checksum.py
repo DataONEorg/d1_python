@@ -79,7 +79,7 @@ class TestChecksum(unittest.TestCase):
     """
     checksum_obj_in = dataoneTypes.checksum('1' * 32)
     checksum_obj_in.algorithm = 'MD5'
-    checksum_xml = checksum_obj_in.toxml()
+    checksum_xml = checksum_obj_in.toxml('utf-8')
     checksum_obj_out = dataoneTypes.CreateFromDocument(checksum_xml)
     self.assertEqual(checksum_obj_in.value(), checksum_obj_out.value())
     self.assertEqual(checksum_obj_in.algorithm, checksum_obj_out.algorithm)

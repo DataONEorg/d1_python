@@ -56,7 +56,7 @@ class MemberNodeClient_2_0(
   ):
     mmp_dict = {
       'pid': pid.encode('utf-8'),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
 

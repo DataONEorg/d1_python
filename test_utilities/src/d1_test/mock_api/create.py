@@ -26,15 +26,17 @@ d1_exception.py
 
 import base64
 import json
+import logging
 import re
 import urlparse
+
+import responses
 
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.url
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
-import responses
 
 CREATE_ENDPOINT_RX = r'v([123])/object'
 
@@ -55,6 +57,7 @@ def _request_callback(request):
   body to satisfy the requirements for create() and echo of the POSTed
   information in headers (serialized to Base64 encoded JSON).
   """
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
@@ -75,5 +78,5 @@ def _request_callback(request):
     'Echo-Header-Base64':
       base64.b64encode(json.dumps(dict(request.headers))),
   }
-  body_str = d1_common.types.dataoneTypes.identifier('echo-post').toxml()
+  body_str = d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8')
   return 200, header_dict, body_str

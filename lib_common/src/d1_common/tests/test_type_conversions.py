@@ -29,7 +29,7 @@ import d1_test.util
 
 class TestTypeConversions(unittest.TestCase):
   def _print_pretty_xml_obj(self, xml_obj):
-    print d1_common.xml.pretty_xml(xml_obj.toxml())
+    print d1_common.xml.pretty_xml(xml_obj.toxml('utf-8'))
 
   def _print_pretty_xml_str(self, xml_str):
     print d1_common.xml.pretty_xml(xml_str)

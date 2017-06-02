@@ -108,7 +108,7 @@ class SystemMetadataCreator():
     )
     #print sys_meta
     #pyxb.RequireValidWhenGenerating(False)
-    #print sys_meta.toxml()
+    #print sys_meta.toxml('utf-8')
     return sys_meta
 
   def _create_access_policy_pyxb_object(self, operation):
@@ -174,7 +174,7 @@ class SystemMetadataCreator():
 
   #def _create_system_metadata_xml(self, pid, path):
   #  sys_meta = self._create_system_metadata(pid, cli_util.os.path.expanduser(path))
-  #  return sys_meta.toxml()
+  #  return sys_meta.toxml('utf-8')
 
   #sys_meta_creator = system_metadata.system_metadata()
   #access_policy = self.access_control.to_pyxb()
@@ -241,7 +241,7 @@ class SystemMetadataCreator():
   #
   #
   #def to_xml(self):
-  #  return self.to_pyxb().toxml()
+  #  return self.to_pyxb().toxml('utf-8')
   #
   ##
   ## Private.
@@ -271,7 +271,7 @@ class SystemMetadataCreator():
   #  sys_meta.accessPolicy = access_policy
   #  sys_meta.replicationPolicy = replication_policy
   #  #pyxb.RequireValidWhenGenerating(False)
-  #  #print sys_meta.toxml()
+  #  #print sys_meta.toxml('utf-8')
   #  return sys_meta
   #
   #
@@ -283,7 +283,7 @@ class SystemMetadataCreator():
   #
   #
   #def to_xml(self):
-  #  return self.to_pyxb().toxml()
+  #  return self.to_pyxb().toxml('utf-8')
   #
 
   #def from_xml(self, xml):

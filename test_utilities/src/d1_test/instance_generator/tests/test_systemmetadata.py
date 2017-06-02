@@ -37,13 +37,13 @@ class TestSystemMetadata(unittest.TestCase):
     """generate()"""
     s = sysmeta.generate()
     self.assertIsInstance(s, dataoneTypes_v1.SystemMetadata)
-    self.assertTrue(s.toxml())
+    self.assertTrue(s.toxml('utf-8'))
 
   def ztest_020(self):
     """generate_from_file()"""
     s = sysmeta.generate_from_file(__file__)
     self.assertIsInstance(s, dataoneTypes_v1.SystemMetadata)
-    self.assertTrue(s.toxml())
+    self.assertTrue(s.toxml('utf-8'))
     checksum_calculator = hashlib.sha1()
     with open(__file__, 'rb') as f:
       checksum_calculator.update(f.read())

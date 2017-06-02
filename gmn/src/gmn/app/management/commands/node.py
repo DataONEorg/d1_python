@@ -70,7 +70,7 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, command_str):
     node_pyxb = gmn.app.node.get_pyxb()
     if command_str == 'view':
-      logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml()))
+      logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml('utf-8')))
     elif command_str == 'register':
       self._register(node_pyxb)
     elif command_str == 'update':

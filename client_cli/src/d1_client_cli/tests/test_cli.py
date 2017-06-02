@@ -472,7 +472,7 @@ class TestCLI(unittest.TestCase):
       re.sub(
         r'<dateSysMetadataModified>.*?</dateSysMetadataModified>',
         '',
-        client.listObjects().toxml(),
+        client.listObjects().toxml('utf-8'),
       )
     )
     self.assertTrue(
@@ -563,7 +563,7 @@ class TestCLI(unittest.TestCase):
       self.assertTrue(
         d1_common.system_metadata.is_equivalent_xml(
           expected_sysmeta_xml,
-          create_sysmeta_pyxb.toxml(),
+          create_sysmeta_pyxb.toxml('utf-8'),
           ignore_timestamps=True,
         )
       )

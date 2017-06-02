@@ -71,6 +71,9 @@ def serialize(obj_pyxb):
 def pretty_xml(doc_xml):
   """Pretty formatting of XML
   """
+  if isinstance(doc_xml, unicode):
+    doc_xml = doc_xml.encode('utf8')
+  print type(doc_xml)
   try:
     xml_obj = xml.dom.minidom.parseString(doc_xml)
   except TypeError:
@@ -81,7 +84,7 @@ def pretty_xml(doc_xml):
 
 
 def pretty_pyxb(doc_pyxb):
-  return pretty_xml(doc_pyxb.toxml())
+  return pretty_xml(doc_pyxb.toxml('utf-8'))
 
 
 def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
@@ -210,7 +213,7 @@ def is_equal_xml(a_xml, b_xml):
 
 
 def is_equal_pyxb(a_pyxb, b_pyxb):
-  return is_equal_xml(a_pyxb.toxml(), b_pyxb.toxml())
+  return is_equal_xml(a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8'))
 
 
 def is_equal_elements(a_el, b_el):

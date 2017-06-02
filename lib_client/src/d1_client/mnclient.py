@@ -105,7 +105,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     mmp_dict = {
       'pid': pid.encode('utf-8'),
       'object': ('content.bin', obj),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     return self.POST('object', fields=mmp_dict, headers=vendorSpecific)
 
@@ -124,7 +124,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
     mmp_dict = {
       'newPid': newPid.encode('utf-8'),
       'object': ('content.bin', obj),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     return self.PUT(['object', pid], fields=mmp_dict, headers=vendorSpecific)
 
@@ -186,7 +186,7 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def replicateResponse(self, sysmeta_pyxb, sourceNode, vendorSpecific=None):
     mmp_dict = {
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
       'sourceNode': sourceNode.encode('utf-8'),
     }
     return self.POST('replicate', fields=mmp_dict, headers=vendorSpecific)

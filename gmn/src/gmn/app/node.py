@@ -60,7 +60,7 @@ def get_pretty_xml(major_version_int=2):
 
 
 def get_xml(major_version_int):
-  return _get_pyxb(major_version_int).toxml()
+  return _get_pyxb(major_version_int).toxml('utf-8')
 
 
 def get_pyxb(major_version_int=2):

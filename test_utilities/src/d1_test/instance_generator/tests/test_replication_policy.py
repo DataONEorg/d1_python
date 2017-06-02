@@ -34,7 +34,7 @@ class TestReplicationPolicy(unittest.TestCase):
   def test_0010(self):
     """generate()"""
     replication_policy_obj = replicationpolicy.generate()
-    self.assertTrue(replication_policy_obj.toxml())
+    self.assertTrue(replication_policy_obj.toxml('utf-8'))
 
 
 if __name__ == "__main__":

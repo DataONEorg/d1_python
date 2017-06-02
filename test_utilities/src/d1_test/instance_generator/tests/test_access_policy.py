@@ -65,7 +65,7 @@ class TestAccessPolicy(unittest.TestCase):
     for i in range(10):
       access_policy_pyxb = access_policy.generate()
       self.assertIsInstance(access_policy_pyxb, dataoneTypes_v1.AccessPolicy)
-      self.assertTrue(access_policy_pyxb.toxml())
+      self.assertTrue(access_policy_pyxb.toxml('utf-8'))
 
 
 if __name__ == "__main__":

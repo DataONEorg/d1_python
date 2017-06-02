@@ -18,14 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module object_format_info
-============================
+"""Map DataONE ObjectFormatIDs to Content-Type and filename extension
 
-:Synopsis:
-  Map DataONE ObjectFormatIDs to Content-Type and filename extension. The
-  mappings are provided in a CSV file. Raises KeyError for unknown values.
-:Created: 2012-10-25
-:Author: DataONE (Dahl)
+mappings are provided in a CSV file. Raises KeyError for unknown values.
 """
 
 import csv

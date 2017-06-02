@@ -128,7 +128,7 @@ class DataONEFS(dokan.Operations, D1FS):
         sysm = self.getSystemMetadata(pid)
         ctime1 = time.mktime(sysm.dateUploaded.timetuple())
         mtime1 = time.mktime(sysm.dateSysMetadataModified.timetuple())
-        xml = sysm.toxml()
+        xml = sysm.toxml('utf-8')
         return dict(
           attr=attrs, ctime=ctime1, atime=now, wtime=mtime1, size=len(xml),
           nlinks=1
@@ -250,7 +250,7 @@ class DataONEFS(dokan.Operations, D1FS):
       sysm = self.getSystemMetadata(pid)
       ctime1 = time.mktime(sysm.dateUploaded.timetuple())
       mtime1 = time.mktime(sysm.dateSysMetadataModified.timetuple())
-      xml = sysm.toxml()
+      xml = sysm.toxml('utf-8')
       result.append(
         dict(
           name='systemmetadata.xml', attr=(
@@ -305,7 +305,7 @@ class DataONEFS(dokan.Operations, D1FS):
 
       if mfname == 'systemmetadata.xml':
         obj = self.getSystemMetadata(pid)
-        xml = obj.toxml()
+        xml = obj.toxml('utf-8')
         if offset + numberOfBytesToRead > len(xml):
           numberOfBytesToRead = len(xml) - offset
         return xml[offset:offset + numberOfBytesToRead]

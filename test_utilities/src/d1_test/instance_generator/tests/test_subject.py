@@ -36,7 +36,7 @@ class TestSubject(unittest.TestCase):
     """generate()"""
     subject_obj = subject.generate()
     self.assertIsInstance(subject_obj, dataoneTypes_v1.Subject)
-    self.assertTrue(subject_obj.toxml())
+    self.assertTrue(subject_obj.toxml('utf-8'))
 
 
 if __name__ == "__main__":

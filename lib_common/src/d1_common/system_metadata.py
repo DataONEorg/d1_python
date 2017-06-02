@@ -131,7 +131,9 @@ def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
   """
   normalize(a_pyxb, ignore_timestamps)
   normalize(b_pyxb, ignore_timestamps)
-  return d1_common.xml.is_equivalent(a_pyxb.toxml(), b_pyxb.toxml())
+  return d1_common.xml.is_equivalent(
+    a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8')
+  )
 
 
 def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
