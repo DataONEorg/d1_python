@@ -22,30 +22,31 @@
 
 from __future__ import absolute_import
 
-import datetime
 import re
+import datetime
 
-import django.conf
-import django.core.files.move
-import django.http
-
+import d1_common.url
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
+import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
-import d1_common.url
+
 import gmn.app.auth
+import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.models
-import gmn.app.psycopg_adapter
-import gmn.app.sysmeta
 import gmn.app.sysmeta_sid
 import gmn.app.sysmeta_util
-import gmn.app.util
+import gmn.app.psycopg_adapter
+
+import django.conf
+import django.http
+import django.core.files.move
 
 
 def dataoneTypes(request):
@@ -111,36 +112,34 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
 
 
 def set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
-  now_datetime = datetime.datetime.utcnow()
-  if not update_submitter:
-    sysmeta_pyxb.submitter = None
-  else:
-    _pyxb_set_with_override(
-      sysmeta_pyxb, 'submitter', request.primary_subject_str
-    )
-  _pyxb_set_with_override(
-    sysmeta_pyxb, 'originMemberNode', django.conf.settings.NODE_IDENTIFIER
-  )
-  _pyxb_set_with_override(
-    sysmeta_pyxb, 'authoritativeMemberNode',
-    django.conf.settings.NODE_IDENTIFIER
-  )
-  _pyxb_set_with_override(sysmeta_pyxb, 'dateSysMetadataModified', now_datetime)
-  _pyxb_set_with_override(sysmeta_pyxb, 'serialVersion', 1)
-  _pyxb_set_with_override(sysmeta_pyxb, 'dateUploaded', now_datetime)
-
-
-def _pyxb_set_with_override(pyxb, attr_str, value):
-  """See the description of TRUST_CLIENT_* in settings_site.py.
+  """See the description of TRUST_CLIENT_* in settings.py.
   """
-  is_trusted_from_client = getattr(
-    django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
-  )
-  if is_trusted_from_client:
-    if gmn.app.sysmeta_util.get_value(pyxb, attr_str) is None:
-      setattr(pyxb, attr_str, value)
+  now_datetime = datetime.datetime.utcnow()
+
+  default_value_list = [
+    ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
+    ('authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
+    ('dateSysMetadataModified', now_datetime, False),
+    ('serialVersion', 1, False),
+    ('dateUploaded', now_datetime, False),
+  ]
+
+  if update_submitter:
+    default_value_list.append(('submitter', request.primary_subject_str, True))
   else:
-    setattr(pyxb, attr_str, value)
+    sysmeta_pyxb.submitter = None
+
+  for attr_str, default_value, is_simple_content in default_value_list:
+    is_trusted_from_client = getattr(
+      django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
+    )
+    override_value = None
+    if is_trusted_from_client:
+      override_value = (
+        gmn.app.sysmeta_util.get_value(sysmeta_pyxb, attr_str)
+        if is_simple_content else getattr(sysmeta_pyxb, attr_str, None)
+      )
+    setattr(sysmeta_pyxb, attr_str, override_value or default_value)
 
 
 def http_response_with_boolean_true_type():
