@@ -44,8 +44,8 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 import gmn.app.models
-import gmn.app.views.asserts
 import gmn.app.views.util
+import gmn.app.views.asserts
 
 
 def add_access_policy_filter(query, request, column_name):
@@ -60,31 +60,19 @@ def add_access_policy_filter(query, request, column_name):
 def add_replica_filter(query, request):
   param_name = 'replicaStatus'
   bool_val = request.GET.get(param_name, True)
-  if not gmn.app.views.util.is_bool_param(bool_val):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
-        param_name, bool_val
-      )
-    )
-  if gmn.app.views.util.is_true_param(bool_val):
+  if bool_val is None:
     return query
-  else:
-    local_replicas_queryset = gmn.app.models.LocalReplica.objects.all()
-    return query.filter(pid__id__in=local_replicas_queryset)
+  gmn.app.views.asserts.is_bool_param(param_name, bool_val)
+  if gmn.app.views.util.is_false_param(bool_val):
+    query = query.filter(pid__localreplica_pid__isnull=True)
+  return query
 
 
 def add_bool_filter(query, request, column_name, param_name):
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
-  if gmn.app.views.util.is_bool_param(bool_val):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
-        param_name, bool_val
-      )
-    )
+  gmn.app.views.asserts.is_bool_param(param_name, bool_val)
   filter_arg = column_name
   return query.filter(
     **{filter_arg: gmn.app.views.util.is_true_param(bool_val)}
