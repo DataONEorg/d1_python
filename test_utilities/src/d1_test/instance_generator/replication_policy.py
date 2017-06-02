@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.replicationpolicy
-==============================================
-
-:Synopsis: Generate random replication policy objects.
-:Created: 2011-08-03
-:Author: DataONE (Vieglais)
+"""Generate random replication policy objects
 """
 
 import random

@@ -18,13 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.resource_map`
-===============================
+"""Resolve resource map
 
-:Synopsis:
- - Resolve a filesystem path pointing to a resource map.
-:Author:
-  DataONE (Dahl)
+Resolve a filesystem path pointing to a resource map.
 """
 
 import logging

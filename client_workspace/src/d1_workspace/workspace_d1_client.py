@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`workspace_d1_client`
-=============================
-
-:Synopsis:
- - Interact with the DataONE infrastructure.
-:Author:
-  DataONE (Dahl)
+"""Interact with the DataONE infrastructure
 """
 
 import logging

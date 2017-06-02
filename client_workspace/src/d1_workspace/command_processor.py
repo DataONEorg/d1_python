@@ -18,13 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`command_processor`
-===========================
+"""Command processor
 
-:Synopsis:
- - Interface to the backends.
-:Author:
- - DataONE (Dahl)
+Interface to the backends.
 """
 
 import logging

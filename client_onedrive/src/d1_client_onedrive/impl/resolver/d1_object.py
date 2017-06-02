@@ -18,14 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.d1_object`
-============================
+"""Resolve a DataONE object
 
-:Synopsis:
- - Determine what type of DataONE object a given PID references and branch out
-   to a resolver that is specialized for that type.
-:Author:
-  DataONE (Dahl)
+Determine what type of DataONE object a given PID references and branch out to a
+resolver that is specialized for that type.
 """
 
 import logging

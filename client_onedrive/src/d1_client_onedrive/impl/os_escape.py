@@ -18,16 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`os_escape`
-===================
+"""OS specific escaping
 
-:Synopsis:
- - Escape DataONE identifiers, so that they follow the filesystem conventions
-   and restrictions for valid file- and folder names on a given OS.
- - Unescape the escaped file- and folder names to arrive at the original DataONE
-  identifiers.
-:Author:
-  DataONE (Dahl)
+Escape DataONE identifiers, so that they follow the filesystem conventions and
+restrictions for valid file- and folder names on a given OS.
+
+Unescape the escaped file- and folder names to arrive at the original DataONE
+identifiers.
 
 DataONE supports identifiers containing characters that cannot (or should not)
 be represented directly within the file- and folder names in a filesystem, such

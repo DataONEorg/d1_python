@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.subject
-====================================
-
-:Synopsis: Generate random Subject objects.
-:Created: 2011-12-08
-:Author: DataONE (Dahl)
+"""Generate random Subject objects
 """
 
 import d1_common.types.dataoneTypes

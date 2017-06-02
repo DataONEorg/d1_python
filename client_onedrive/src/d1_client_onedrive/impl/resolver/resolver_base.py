@@ -18,15 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.resolver_base`
-===============================
+"""Base resolver
 
-:Synopsis:
- - Abstract Base Class (ABC) for the resolvers.
- - The resolvers are a class of objects that translate filesystem paths to
-   their corresponding files and folders.
-:Author:
-  DataONE (Dahl)
+Abstract Base Class (ABC) for the resolvers.
+
+The resolvers are a class of objects that translate filesystem paths to their
+corresponding files and folders.
 """
 
 import logging

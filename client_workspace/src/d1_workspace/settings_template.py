@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`settings`
-==================
-
-:Synopsis:
- - Default settings for the DataONE Workspace Client.
-:Author:
-  DataONE (Dahl)
+"""Default settings for the DataONE Workspace Client
 """
 
 import os

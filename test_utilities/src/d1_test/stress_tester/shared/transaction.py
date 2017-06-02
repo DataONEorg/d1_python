@@ -18,15 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`transaction`
-==================
-
-:Created: 2011-04-22
-:Author: DataONE (Dahl)
-:Synopsis: Base class for Multi-Mechanize Transaction.
-:Dependencies:
-  - python 2.6
+"""Base class for Multi-Mechanize Transaction
 """
 
 import codecs

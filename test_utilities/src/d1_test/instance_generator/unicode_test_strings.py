@@ -18,14 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.unicode_test_strings
-=================================================
-
-:Synopsis:
-  A set of Unicode strings that are particularly likely to trip up the unwary.
-:Created: 2011-12-05
-:Author: DataONE (Vieglais, Dahl)
+"""A set of Unicode strings that are particularly likely to trip up the unwary
 """
 
 UNICODE_TEST_STRINGS = [

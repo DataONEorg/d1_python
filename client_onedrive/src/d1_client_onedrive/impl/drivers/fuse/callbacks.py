@@ -18,14 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`callbacks`
-========================
+"""Handle callbacks from FUSE
 
-:Synopsis:
- - Handle callbacks from FUSE. The callbacks are called by FUSE when actions
-   are performed on the filesystem.
-:Author:
-  DataONE (Dahl)
+The callbacks are called by FUSE when actions are performed on the filesystem.
 """
 
 import errno

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,31 +17,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random dates
-"""
-
-import datetime
-import random
-
-import d1_common.date_time
-
-
-def random_date(earliest=0, latest=1e10):
-  """Generate a random date somewhere between earliest and latest.
-  """
-  tstamp = random.randrange(earliest, latest)
-  dt = datetime.datetime.utcfromtimestamp(tstamp)
-  return d1_common.date_time.create_utc_datetime(
-    dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second,
-    random.randint(0, 1000)
-  )
-
-
-def now():
-  """Generate a date with the current UTC date and time"""
-  return datetime.datetime.utcnow()
-
-
-def generate():
-  """Generate a d1_common.types.dataoneTypes.DateTime with a random datetime"""
-  return d1_common.types.dataoneTypes.DateTime(random_date())

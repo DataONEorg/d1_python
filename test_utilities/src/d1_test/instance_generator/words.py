@@ -18,20 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.words
-==================================
+"""Random words
 
-:Synopsis:
-  A selection of 1000 words pulled randomly from /usr/share/dict/words using
-  the randomWords method below.
-:Created: 2011-07-31
-:Author: DataONE (Vieglais, Dahl)
+A selection of 1000 words pulled randomly from /usr/share/dict/words using the
+randomWords method below.
 """
 
 import codecs
 import random
 
+# Yapf gets into some kind of worst case performance when formatting this,
+# so we disable it.
+# yapf: disable
 WORDS_1K = [
   u'untrimmed', u'Hydriote', u'burnish', u'tsia', u'petiolary', u'vocative',
   u'incensement', u'periodic', u'Klikitat', u'stipendiarian', u'witchwood',

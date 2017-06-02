@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 import email.message
 import email.utils
+import functools
 import logging
 import os
 import sys
@@ -78,6 +79,7 @@ def utf8_to_unicode(f):
   function.
   """
 
+  @functools.wraps(f)
   def wrap(*args, **kwargs):
     new_args = []
     new_kwargs = {}
@@ -95,6 +97,4 @@ def utf8_to_unicode(f):
         new_kwargs[key] = arg
     return f(*new_args, **new_kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap

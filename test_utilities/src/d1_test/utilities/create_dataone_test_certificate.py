@@ -18,18 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`create_dataone_test_certificate`
-======================================
+"""Create DataONE compliant certificate
 
-:Synopsis:
-  Create a DataONE compliant certificate. The certificate can optionally include
-  a SubjectInfo XML document in which equivalent identities and group
-  memberships are described. The certificate will normally be signed with a test
-  CA that is trusted by a test instance of a Member Node. Test instances set up
-  by DataONE will normally trust the DataONE Test CA.
-:Author:
-  DataONE (Dahl)
+The certificate can optionally include a SubjectInfo XML document in which
+equivalent identities and group memberships are described. The certificate will
+normally be signed with a test CA that is trusted by a test instance of a Member
+Node. Test instances set up by DataONE will normally trust the DataONE Test CA.
 """
 
 # Example: ./create_dataone_test_certificate.py --ca-path test_files/ca_test.crt

@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`onedrive_exceptions`
-========================
-
-:Synopsis:
- - Type that gets raised as exception for invalid paths.
-:Author:
-  DataONE (Dahl)
+"""Type that gets raised as exception for invalid paths
 """
 
 import inspect

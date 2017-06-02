@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`dataone`
-==============
-
-:Synopsis: DataONE Command Line Interface
-:Created: 2011-11-20
-:Author: DataONE (Dahl)
+"""DataONE Command Line Interface
 """
 
 import logging

@@ -17,15 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`list_effective_subjects`
-==============================
+"""Get active subjects from DataONE X.509 v3 Certificate
 
-:Synopsis:
-  Given a DataONE X.509 v3 Certificate, list all subjects, equivalent
-  identities and groups for which the certificate holder is authenticated.
-:Author:
-  DataONE (Dahl)
+Given a DataONE X.509 v3 Certificate, list all subjects, equivalent identities
+and groups for which the certificate holder is authenticated.
 """
 
 import logging

@@ -18,19 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`oaiore`
-=============
-
-:Synopsis: Example of forming a package form a Science Metadata Object and a
-  Science Data Object.
-:Created: 2011-08-08
-:Author: DataONE (Vieglais, Dahl)
-
-Requires:
-  RDFLib
-  Foresite python library, available in svn at:
-    https://foresite-toolkit.googlecode.com/svn/foresite-python/trunk
+"""Create resource map from a Science Metadata Object and a Science Data Object
 """
 
 import logging

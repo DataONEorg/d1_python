@@ -18,15 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`generate_certificates`
-===============================
+"""Create set of test certificates signed by the local test CA
 
-:Synopsis:
-  Create set of test certificates signed by the local test CA, for
-  use by the stress tester. A certificate is created for each subject in the
-  subject list and two certificates are created for test subjects with special
-  permissions.
-:Author: DataONE (Dahl)
+For use by the stress tester. A certificate is created for each subject in the
+subject list and two certificates are created for test subjects with special
+permissions.
 """
 
 import codecs

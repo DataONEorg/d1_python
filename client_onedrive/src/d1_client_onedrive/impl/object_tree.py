@@ -18,15 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`object_tree`
-=====================
+"""Object Tree
 
-:Synopsis:
-  - Based on a source tree that contains only PIDs and queries, maintain the
-    object tree that is browsed through the ONEDrive filesystem.
-  - Cache the information on disk between runs of ONEDrive.
-:Author:
-  DataONE (Dahl)
+Based on a source tree that contains only PIDs and queries, maintain the object
+tree that is browsed through the ONEDrive filesystem.
+
+Cache the information on disk between runs of ONEDrive.
 """
 
 import logging

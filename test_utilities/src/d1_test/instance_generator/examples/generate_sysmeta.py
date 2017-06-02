@@ -57,7 +57,7 @@ def processDoc(fname, options={}):
     (tnow, repr(sys.argv[1:]), " ".join(sys.argv[1:]))
   )
   sysm = system_metadata.generate_from_file(fname, options)
-  root = lxml.etree.fromstring(sysm.toxml())
+  root = lxml.etree.fromstring(sysm.toxml('utf-8'))
   root.insert(0, comment)
   pxml = lxml.etree.tostring(
     root, pretty_print=True, encoding='UTF-8', xml_declaration=True

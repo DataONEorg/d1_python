@@ -18,16 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`zotero_cache`
-======================
+"""Hold a local cache of the online Zotero library
 
-:Synopsis:
-  - Hold a local cache of the online Zotero library.
-  - Provide overview of what has changed in the online Zotero library since
-    last sync.
-  - Expose a simple API to query and refresh the cache.
-:Author:
-  DataONE (Dahl)
+Provide overview of what has changed in the online Zotero library since last
+sync.
+
+Expose a simple API to query and refresh the cache.
 """
 
 # Zotero API:

@@ -18,16 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`cache`
-===============
+"""Cache Python objects on disk
 
-:Synopsis:
-  - Cache Python objects with a limit on how many objects can be cached. When
-    the cache reaches a configured size, adding a new object causes the oldest
-    object to be removed. The oldest object is the object that was added first
-    of the objects still in the cache.
-  - The cache is stored on disk.
-:Author: DataONE (Dahl)
+Cache Python objects with a limit on how many objects can be cached. When the
+cache reaches a configured size, adding a new object causes the oldest object to
+be removed. The oldest object is the object that was added first of the objects
+still in the cache.
 """
 
 import logging

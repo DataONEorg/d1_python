@@ -18,11 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`generate_test_subject_certs`
-=====================================
-
-:Synopsis: Create set of test certificates signed by the DataONE Test CA.
-:Author: DataONE (Dahl)
+"""Create set of test certificates signed by the DataONE Test CA
 """
 
 import logging
@@ -241,7 +237,7 @@ def create_session_extension(subject, persons, groups):
   #    PyErr_SetString(PyExc_ValueError, "Unknown extension name");
   #    return NULL;
   #}
-  ext = OpenSSL.crypto.X509Extension('nsComment', False, session.toxml())
+  ext = OpenSSL.crypto.X509Extension('nsComment', False, session.toxml('utf-8'))
 
   return ext
 

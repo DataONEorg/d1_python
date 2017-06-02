@@ -18,17 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`d1_dokan`
-==================
+"""Create Dokan drive
 
-:Synopsis:
- - Create Dokan drive.
- - Handle callbacks from Dokan.
+Handle callbacks from Dokan.
 
- The callbacks are called by Dokan when actions are performed on the filesystem.
-
-:Author:
-  DataONE (Kroiss, Dahl)
+The callbacks are called by Dokan when actions are performed on the filesystem.
 """
 
 import errno
@@ -189,7 +183,7 @@ class DataONEFS(dokan.Operations):
     # example
     #if mfname == 'systemmetadata.xml':
     #  obj = self.getSystemMetadata(pid)
-    #  xml = obj.toxml()
+    #  xml = obj.toxml('utf-8')
     #  if offset+numberOfBytesToRead>len(xml):
     #    numberOfBytesToRead = len(xml) - offset
     #  return xml[offset:offset+numberOfBytesToRead]

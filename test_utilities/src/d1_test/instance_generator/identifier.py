@@ -17,13 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.identifier
-=======================================
-
-:Synopsis: Generate instances of Identifier.
-:Created: 2011-07-31
-:Author: DataONE (Vieglais, Dahl)
+"""Generate random Identifier
 """
 
 import d1_common.types.dataoneTypes

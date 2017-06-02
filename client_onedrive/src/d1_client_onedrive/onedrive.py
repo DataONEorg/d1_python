@@ -18,16 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`onedrive`
-==================
+"""Top level module for ONEDrive
 
-:Synopsis:
- - Top level module for ONEDrive.
- - Parse arguments.
- - Instantiate the Root resolver.
- - Mount FUSE / Dokan.
-:Author:
-  DataONE (Dahl)
+- Parse arguments
+- Instantiate the Root resolver
+- Mount FUSE / Dokan
 """
 import logging
 import optparse

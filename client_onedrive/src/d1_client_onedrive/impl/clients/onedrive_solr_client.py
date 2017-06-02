@@ -18,14 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`solr_client`
-=====================
-
-:Synopsis:
- - Generate and run queries against Solr.
- - Cache the results.
-:Author:
-  DataONE (Dahl)
+"""Generate and run queries against Solr, with caching
 """
 
 import logging

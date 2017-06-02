@@ -18,15 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`workspace`
-===================
+"""Workspace
 
-:Synopsis:
-  Hold a local cache of the online workspace definition with Solr records for
-  all identifiers and the results of all queries. Expose a simple API to query
-  and refresh the cache. Keep a pickled version of the cache on disk.
-:Author:
-  DataONE (Dahl)
+Hold a local cache of the online workspace definition with Solr records for all
+identifiers and the results of all queries. Expose a simple API to query and
+refresh the cache. Keep a pickled version of the cache on disk.
 
 TERMS
 

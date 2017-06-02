@@ -18,13 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.single`
-=========================
+"""Resolve single
 
-:Synopsis:
- - This resolver simply renders all objects into a single folder.
-:Author:
-  DataONE (Dahl)
+This resolver simply renders all objects into a single folder.
 """
 
 import logging

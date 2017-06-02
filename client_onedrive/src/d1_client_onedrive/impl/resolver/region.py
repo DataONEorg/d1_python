@@ -18,13 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.region`
-=========================
+"""Resolve region
 
-:Synopsis:
- - Resolve a filesystem path pointing into a Region controlled hierarchy.
-:Author:
-  DataONE (Dahl)
+Resolve a filesystem path pointing into a Region controlled hierarchy.
 """
 
 import hashlib

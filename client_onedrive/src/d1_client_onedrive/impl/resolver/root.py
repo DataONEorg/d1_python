@@ -18,18 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`resolver.root`
-=======================
+"""Resolve root
 
-:Synopsis:
- - The root of ONEDrive is a list of folders, designating different types of
-   interactions which can be performed with the DataONE infrastructure. The root
-   resolver renders the folders and transfers control to the appropriate path
-   resolver, based on the path which is entered.
- - The root resolver unescapes path entries before they are passed into the
-   resolver hierarchy and escapes entries that are received.
-:Author:
-  DataONE (Dahl)
+The root of ONEDrive is a list of folders, designating different types of
+interactions which can be performed with the DataONE infrastructure. The root
+resolver renders the folders and transfers control to the appropriate path
+resolver, based on the path which is entered.
+
+The root resolver unescapes path entries before they are passed into the
+resolver hierarchy and escapes entries that are received.
 """
 
 import logging

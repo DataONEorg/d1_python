@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`replica`
-==============
-
-:Synopsis: Generate random replica objects.
-:Created: 2011-08-03
-:Author: DataONE (Vieglais, Dahl)
+"""Generate random replica objects
 """
 
 import random

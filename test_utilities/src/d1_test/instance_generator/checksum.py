@@ -18,13 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`checksum`
-===============
-
-:Synopsis: Generate checksum objects.
-:Created: 2011-12-05
-:Author: DataONE (Dahl)
+"""Generate random checksum
 """
 
 import random

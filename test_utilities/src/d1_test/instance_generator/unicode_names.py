@@ -18,14 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.unicode_names
-==========================================
+"""Unicode test names
 
-:Synopsis: A few names in unicode pulled from
-  http://www.i18nguy.com/unicode-example.html.
-:Created: 2011-07-31
-:Author: DataONE (Vieglais, Dahl)
+Source: http://www.i18nguy.com/unicode-example.html.
 """
 
 UNICODE_NAMES = [

@@ -18,30 +18,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-Module d1_instance_generator.accesspolicy
-=========================================
+"""Generate random AccessPolicy
 
-:Synopsis:
-  Generates an AccessPolicy instance that is essentially random though conforms
-  to the following rules:
+Generates an AccessPolicy instance that is essentially random though conforms to
+the following rules:
 
-  1. Subjects are selected at random from a set of 1000 values
+1. Subjects are selected at random from a set of 1000 values
 
-  2. If the subject contains the string "_group_" it is considered to be a group
-  of subjects rather than an individual
+2. If the subject contains the string "_group_" it is considered to be a group
+of subjects rather than an individual
 
-  3. Access rules are assigned by the presence of the strings "_read_",
-  "_write_", "_execute_", and "_changePermission_".
+3. Access rules are assigned by the presence of the strings "_read_", "_write_",
+"_execute_", and "_changePermission_".
 
-  This approach for construction allows verification of the rules through a
-  mechanism independent of the normal access policy evaluation process for
-  testing purposes.
+This approach for construction allows verification of the rules through a
+mechanism independent of the normal access policy evaluation process for testing
+purposes.
 
-  For example, an <allow> clause that contains any subject with the string
-  "_read_" in it, should also contain the read permission entry.
-:Created: 2011-08-02
-:Author: DataONE (Vieglais, Dahl)
+For example, an <allow> clause that contains any subject with the string
+"_read_" in it, should also contain the read permission entry.
 """
 
 import random
