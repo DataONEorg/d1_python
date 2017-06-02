@@ -145,7 +145,7 @@ Submit Member Node information to DataONE
 
 The Member Node information is submitted to DataONE in a Node document. GMN automatically generates the Node document based on the settings configured in the previous step.
 
-  After editing ``settings_site.py``, check if the Node document is successfully
+  After editing ``settings.py``, check if the Node document is successfully
   generated::
 
     $ su gmn

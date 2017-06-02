@@ -51,5 +51,5 @@ Install the client side certificate
     $ sudo chmod 400 client_key.pem client_key_nopassword.pem
 
   Other names and/or directories may be used. If so, update ``CLIENT_CERT_PATH``
-  and ``CLIENT_CERT_PRIVATE_KEY_PATH`` in the GMN ``settings_site.py`` file to
+  and ``CLIENT_CERT_PRIVATE_KEY_PATH`` in the GMN ``settings.py`` file to
   the new paths.

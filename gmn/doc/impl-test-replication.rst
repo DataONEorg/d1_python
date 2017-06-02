@@ -17,7 +17,7 @@ The simplest way to test the replication functionality is to turn off access con
 Changing root CN
 ----------------
 
-RepTest needs to be set up as the root CN for the GMN instance being tested. This is done by modifying ``DATAONE_ROOT`` in ``settings_site.py`` to point to RepTest. E.g., if RepTest is running on the same machine as GMN::
+RepTest needs to be set up as the root CN for the GMN instance being tested. This is done by modifying ``DATAONE_ROOT`` in ``settings.py`` to point to RepTest. E.g., if RepTest is running on the same machine as GMN::
 
   DATAONE_ROOT = 'http://localhost:8181'
 

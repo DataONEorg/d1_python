@@ -36,8 +36,8 @@ GMN supports all tiers. To select the tier for your Member Node, take the follow
   Node operator to provide storage space to DataONE (for storing object
   replicas).
 
-When you have determined which tier to use, edit ``settings_site.py``::
+When you have determined which tier to use, edit ``settings.py``::
 
-  $ sudo nano /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/settings_site.py
+  $ sudo nano /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/settings.py
 
 * Set TIER to 1, 2, 3 or 4.
