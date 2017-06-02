@@ -21,21 +21,21 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.flat_space as flat_space
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.flat_space as flat_space
 
 options = {}
 
 
-class O():
+class TestOptions():
   def flat_space(self):
     pass
 
 
 class TestFlatSpaceResolver(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.base_url = 'https://localhost/'
     options.object_tree_xml = './test_flat_space.xml'
     options.max_error_path_cache_size = 1000
@@ -43,4 +43,5 @@ class TestFlatSpaceResolver(unittest.TestCase):
     self._w = flat_space.Resolver(options, object_tree_test_sample.object_tree)
 
   def test_0010(self):
+    """__init__()"""
     pass

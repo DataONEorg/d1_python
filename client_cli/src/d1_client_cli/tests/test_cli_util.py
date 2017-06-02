@@ -25,16 +25,18 @@ import StringIO
 import tempfile
 import unittest
 
+import responses
+
+#import d1_test.mock_api.util as mock_util
+import d1_test.util
+import d1_test.mock_api.get as mock_get
+
 import d1_client.mnclient_2_0
 import d1_client_cli.impl.cli
+import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.cli_client
 import d1_client_cli.impl.cli_exceptions
-import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.operation_validator
-import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.util as mock_util
-import d1_test.util
-import responses
 
 
 class TestCLIUtil(unittest.TestCase):
@@ -194,7 +196,7 @@ class TestCLIUtil(unittest.TestCase):
     with tempfile.NamedTemporaryFile() as tmp_file:
       cli_util.copy_requests_stream_to_file(response, tmp_file.name)
       expected_sciobj_str = client.get('test_pid_1').content
-      self.assertEqual(len(expected_sciobj_str), mock_util.NUM_SCIOBJ_BYTES)
+      self.assertEqual(len(expected_sciobj_str), 258)
       self.assertEqual(expected_sciobj_str, tmp_file.read())
 
   @responses.activate
@@ -212,6 +214,7 @@ class TestCLIUtil(unittest.TestCase):
   # print()
 
   def test_0180(self):
+    """print()"""
     with d1_test.util.capture_std() as (out_stream, err_stream):
       msg = 'test_msg'
       cli_util.print_debug(msg)

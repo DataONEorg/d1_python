@@ -22,24 +22,25 @@
 
 from __future__ import absolute_import
 
-import logging
 import os
+import logging
 
-import d1_common.types.exceptions
 import d1_common.url
-import django.conf
-import django.core.management.base
+import d1_common.types.exceptions
 
 import gmn.app.auth
-import gmn.app.management.commands.util
-import gmn.app.models
 import gmn.app.node
-import gmn.app.sysmeta
-import gmn.app.sysmeta_obsolescence
-import gmn.app.sysmeta_util
 import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_util
 import gmn.app.views.asserts
+import gmn.app.sysmeta_revision
 import gmn.app.views.diagnostics
+import gmn.app.management.commands.util
+
+import django.conf
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit
@@ -100,13 +101,13 @@ class UpdateAccessPolicy(object):
     try:
       sysmeta_pyxb = self._deserialize_sysmeta_xml_file(sysmeta_xml_path)
       self._access_policy_to_model(
-        sysmeta_pyxb.identifier.value(), sysmeta_pyxb
+        gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier), sysmeta_pyxb
       )
     except django.core.management.base.CommandError as e:
       logging.error(str(e))
       self._events.count('Failed')
     else:
-      logging.info(sysmeta_pyxb.identifier.value())
+      logging.info(gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier))
       self._events.count('Updated')
 
   def _deserialize_sysmeta_xml_file(self, sysmeta_xml_path):

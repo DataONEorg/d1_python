@@ -21,11 +21,12 @@
 
 import logging
 
-import baseclient_2_0
 import cnclient_1_1
+import baseclient_2_0
+
+import d1_common.util
 import d1_common.const
 import d1_common.types.dataoneTypes_v2_0
-import d1_common.util
 
 
 class CoordinatingNodeClient_2_0(
@@ -60,10 +61,10 @@ class CoordinatingNodeClient_2_0(
   #=========================================================================
 
   @d1_common.util.utf8_to_unicode
-  def deleteObjectResponse(self, pid):
+  def deleteResponse(self, pid):
     return self.DELETE(['object', pid])
 
   @d1_common.util.utf8_to_unicode
-  def deleteObject(self, pid):
-    response = self.deleteObjectResponse(pid)
+  def delete(self, pid):
+    response = self.deleteResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')

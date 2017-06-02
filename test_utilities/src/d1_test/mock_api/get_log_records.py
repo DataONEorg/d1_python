@@ -30,17 +30,20 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import datetime
 import re
+import logging
+import datetime
 
+import responses
+import pyxb.utils.domutils
+import pyxb.namespace.utility
+
+import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
-import d1_common.url
-import d1_test.mock_api.d1_exception
+
 import d1_test.mock_api.util
-import pyxb.namespace.utility
-import pyxb.utils.domutils
-import responses
+import d1_test.mock_api.d1_exception
 
 # Config
 
@@ -59,6 +62,7 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
@@ -108,4 +112,4 @@ def _generate_log_records(pyxb_bindings, n_start, n_count):
   log.total = N_TOTAL
 
   pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
-  return log.toxml()
+  return log.toxml('utf-8')

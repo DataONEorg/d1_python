@@ -21,26 +21,29 @@
 
 import unittest
 
-import d1_client.baseclient
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.types.exceptions
-import d1_test.instance_generator
-import d1_test.instance_generator.random_data
-import d1_test.mock_api.catch_all
-import d1_test.mock_api.describe
-import d1_test.mock_api.generate_identifier
-import d1_test.mock_api.get
-import d1_test.mock_api.get_log_records
-import d1_test.mock_api.get_system_metadata
-import d1_test.mock_api.is_authorized
-import d1_test.mock_api.list_objects
-import d1_test.mock_api.ping
-import d1_test.util
-import requests.structures
 import responses
 import shared_settings
+import requests.structures
+
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.types.dataoneTypes_v1_1
+
+import d1_test.util
+import d1_test.mock_api.get
+import d1_test.mock_api.ping
+import d1_test.mock_api.describe
+import d1_test.instance_generator
+import d1_test.mock_api.catch_all
+import d1_test.mock_api.list_objects
+import d1_test.mock_api.is_authorized
+import d1_test.mock_api.get_log_records
+import d1_test.mock_api.generate_identifier
+import d1_test.mock_api.get_system_metadata
+import d1_test.instance_generator.random_data
+
+import d1_client.baseclient
 
 
 class TestDataONEBaseClient(unittest.TestCase):
@@ -54,7 +57,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     )
 
   def test_0010(self):
-    """Able to instantiate DataONEBaseClient"""
+    """__init__()"""
     base_client = d1_client.baseclient.DataONEBaseClient(
       shared_settings.MN_RESPONSES_URL
     )
@@ -96,6 +99,7 @@ class TestDataONEBaseClient(unittest.TestCase):
 
   @responses.activate
   def test_0040(self):
+    """MNRead.getLogRecords(): Returned type is Log"""
     d1_test.mock_api.get_log_records.add_callback(
       shared_settings.MN_RESPONSES_URL
     )
@@ -103,15 +107,6 @@ class TestDataONEBaseClient(unittest.TestCase):
       self.client.getLogRecords(),
       d1_common.types.dataoneTypes_v1_1.Log,
     )
-
-  @responses.activate
-  def test_0050(self):
-    """MNRead.getLogRecords(): Returned type is Log"""
-    d1_test.mock_api.get_log_records.add_callback(
-      shared_settings.MN_RESPONSES_URL
-    )
-    # getLogRecords() verifies that the returned type is Log.
-    return self.client.getLogRecords()
 
   @responses.activate
   def test_0060(self):
@@ -148,7 +143,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     """CNRead.get(): Unknown PID raises NotFound"""
     d1_test.mock_api.get.add_callback(shared_settings.MN_RESPONSES_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.get, 'unknown_pid'
+      d1_common.types.exceptions.NotFound, self.client.get, '<NotFound>pid'
     )
 
   @responses.activate
@@ -181,7 +176,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     )
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getSystemMetadata,
-      'unknown_pid'
+      '<NotFound>pid'
     )
 
   # CNRead.describe()
@@ -198,9 +193,9 @@ class TestDataONEBaseClient(unittest.TestCase):
     self.assertIn('Last-Modified', description_dict)
     del description_dict['Last-Modified']
     expected_dict = {
-      'Content-Length': '1024',
+      'Content-Length': '240',
       'DataONE-SerialVersion': '3',
-      'DataONE-Checksum': 'SHA-1,d4fa5f2a63c0df10d5e3b07f586d58dbb8e98d39',
+      'DataONE-Checksum': 'SHA-1,9af83d3c3c29474aa17c43da4b3574055871fab5',
       'DataONE-FormatId': u'application/octet-stream',
       u'Content-Type': 'application/octet-stream'
     }
@@ -215,7 +210,7 @@ class TestDataONEBaseClient(unittest.TestCase):
     # DataONEException headers are detected, deserialized and raised as
     # exceptions.
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.describe, 'unknown_pid'
+      d1_common.types.exceptions.NotFound, self.client.describe, '<NotFound>pid'
     )
 
   # CNCore.listObjects()

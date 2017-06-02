@@ -19,13 +19,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.sax
+import unittest
 
-import d1_common.checksum
-import d1_common.const
-import d1_common.types.dataoneTypes as dataoneTypes
 import pyxb
+
+import d1_common.const
+import d1_common.checksum
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 
@@ -75,8 +76,7 @@ class TestChecksum(unittest.TestCase):
     self.deserialize_checksum_and_check(EG_BAD_CHECKSUM_2, shouldfail=True)
 
   def test_0040(self):
-    """Serialization: Checksum -> XML -> Checksum.
-    """
+    """Serialization: Checksum -> XML -> Checksum"""
     checksum_obj_in = dataoneTypes.checksum('1' * 32)
     checksum_obj_in.algorithm = 'MD5'
     checksum_xml = checksum_obj_in.toxml('utf-8')

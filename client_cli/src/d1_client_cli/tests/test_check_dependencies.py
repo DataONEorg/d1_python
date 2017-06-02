@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for DataONE Command Line Interface
-"""
+"""Unit tests for DataONE Command Line Interface"""
 
 import unittest
 
-import d1_client_cli.impl.check_dependencies
 import d1_test.util
+
+import d1_client_cli.impl.check_dependencies
 
 
 class TestCheckDependencies(unittest.TestCase):

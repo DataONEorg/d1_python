@@ -21,9 +21,9 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.resource_map as resource_map
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.resource_map as resource_map
 
 options = {}
 
@@ -35,6 +35,6 @@ class TestResourceMapResolver(unittest.TestCase):
     )
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass

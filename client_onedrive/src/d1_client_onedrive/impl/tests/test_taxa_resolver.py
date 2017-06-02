@@ -21,9 +21,9 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.taxa as taxa
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.taxa as taxa
 
 options = {}
 
@@ -33,6 +33,6 @@ class TestTaxaResolver(unittest.TestCase):
     self._resolver = taxa.Resolver(options, object_tree_test_sample.object_tree)
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass

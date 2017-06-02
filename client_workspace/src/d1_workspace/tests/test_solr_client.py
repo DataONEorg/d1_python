@@ -382,13 +382,13 @@ example_query_result_1 = {
 }
 
 
-class O():
+class TestOptions():
   pass
 
 
 class TestSolrClient(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.BASE_URL = 'https://localhost/'
     self.c = onedrive_solr_client.SolrClient(options)
 

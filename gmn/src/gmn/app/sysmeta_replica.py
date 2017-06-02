@@ -23,12 +23,13 @@
 from __future__ import absolute_import
 
 import d1_common.checksum
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import django.conf
-from django.db.models import Sum
+import d1_common.types.dataoneTypes
 
 import gmn.app.models
+
+import django.conf
+from django.db.models import Sum
 
 # ------------------------------------------------------------------------------
 # Local Replica / Replication Queue
@@ -48,10 +49,10 @@ def is_unprocessed_local_replica(pid):
   ).exists()
 
 
-def is_obsolescence_chain_placeholder(pid):
-  """For replicas, the PIDs referenced in obsolescence chains are reserved for
+def is_revision_chain_placeholder(pid):
+  """For replicas, the PIDs referenced in revision chains are reserved for
   use by other replicas."""
-  return gmn.app.models.ReplicaObsolescenceChainReference.objects.filter(
+  return gmn.app.models.ReplicaRevisionChainReference.objects.filter(
     pid__did=pid
   ).exists()
 
@@ -94,7 +95,7 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
     source_node_urn=source_node_urn,
   )
   local_replica_model = gmn.app.models.local_replica(
-    pid=sysmeta_pyxb.identifier.value(),
+    pid=gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier),
     replica_info_model=replica_info_model,
   )
   gmn.app.models.replication_queue(
@@ -138,7 +139,8 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
     ) not in django.conf.settings.REPLICATION_ALLOWEDNODE:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept replicas from originating node. '
-        u'originating_node="{}"'.format(sysmeta_pyxb.originMemberNode.value())
+        u'originating_node="{}"'.
+        format(gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.originMemberNode))
       )
 
   if len(django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
@@ -146,7 +148,7 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
     ) not in django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept objects of specified format. format="{}"'
-        .format(sysmeta_pyxb.formatId.value())
+        .format(gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.formatId))
       )
 
 
@@ -169,7 +171,7 @@ def replica_pyxb_to_model(sciobj_model, sysmeta_pyxb):
 def _register_remote_replica(sciobj_model, replica_pyxb):
   replica_info_model = gmn.app.models.replica_info(
     status_str=replica_pyxb.replicationStatus,
-    source_node_urn=replica_pyxb.replicaMemberNode.value(),
+    source_node_urn=gmn.app.sysmeta_util.uvalue(replica_pyxb.replicaMemberNode),
     timestamp=replica_pyxb.replicaVerified,
   )
   gmn.app.models.remote_replica(

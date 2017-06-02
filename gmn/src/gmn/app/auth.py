@@ -25,15 +25,18 @@ for performing the attempted operation.
 
 from __future__ import absolute_import
 
-import d1_common.cert.subjects
+import logging
+
 import d1_common.const
-import d1_common.types.dataoneTypes
+import d1_common.cert.subjects
 import d1_common.types.exceptions
-import django.conf
-import django.core.cache
+import d1_common.types.dataoneTypes
 
 import gmn.app.models
 import gmn.app.node_registry
+
+import django.conf
+import django.core.cache
 
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:
@@ -103,6 +106,12 @@ def get_trusted_subjects_string():
 
 
 def is_trusted_subject(request):
+  logging.debug(
+    'Active subjects: {}'.format(', '.join(request.all_subjects_set))
+  )
+  logging.debug(
+    'Trusted subjects: {}'.format(', '.join(get_trusted_subjects()))
+  )
   return not request.all_subjects_set.isdisjoint(get_trusted_subjects())
 
 

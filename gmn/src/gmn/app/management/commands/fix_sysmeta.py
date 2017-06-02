@@ -28,19 +28,20 @@ import logging
 
 import d1_client.cnclient
 import d1_client.iter.sysmeta_multi
-import django.conf
-import django.core.management.base
 
 import gmn.app.auth
-import gmn.app.management.commands.util
-import gmn.app.models
 import gmn.app.node
-import gmn.app.sysmeta
-import gmn.app.sysmeta_obsolescence
-import gmn.app.sysmeta_util
 import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_util
 import gmn.app.views.asserts
+import gmn.app.sysmeta_revision
 import gmn.app.views.diagnostics
+import gmn.app.management.commands.util
+
+import django.conf
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit
@@ -85,7 +86,7 @@ class FixSystemMetadata(object):
     if not django.conf.settings.DEBUG_GMN:
       raise django.core.management.base.CommandError(
         u'This command is only available when DEBUG_GMN is True in '
-        u'settings_site.py'
+        u'settings.py'
       )
 
   def _fix_system_metadata_all(self):
@@ -98,8 +99,8 @@ class FixSystemMetadata(object):
       }
     )
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      pid = sysmeta_pyxb.identifier.value()
-      cn_submitter = sysmeta_pyxb.submitter.value()
+      pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+      cn_submitter = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.submitter)
       if not gmn.app.sysmeta.is_pid(pid):
         logging.warn(u'CN PID not on MN. pid="{}"'.format(pid))
         self._events.count(u'CN PID not on MN')

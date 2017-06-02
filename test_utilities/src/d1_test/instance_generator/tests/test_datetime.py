@@ -19,8 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import time
+import logging
 import unittest
 
 import d1_test.instance_generator.dates as dates
@@ -33,20 +33,21 @@ class TestDateTime(unittest.TestCase):
     pass
 
   def test_0010(self):
-    """generate(), random"""
+    """random_date(): Dates are random"""
     for i in range(10):
       t1 = dates.random_date()
       t2 = dates.random_date()
       self.assertTrue(t1 != t2)
 
   def test_0020(self):
-    """generate(), random, restricted"""
+    """random_date(): Dates are random, with restricted time span"""
     for i in range(10):
       t1 = dates.random_date(100, 200)
       t2 = dates.random_date(50, 60)
       self.assertTrue(t2 < t1)
 
   def test_0030(self):
+    """now()"""
     for i in range(10):
       now_1 = dates.now()
       time.sleep(0.01)

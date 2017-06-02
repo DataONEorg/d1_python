@@ -24,17 +24,17 @@ import unittest
 import onedrive_d1_client
 
 
-class O():
+class TestOptions():
   pass
 
 
 class TestD1Client(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.BASE_URL = 'https://localhost/'
     self.d1 = onedrive_d1_client.D1Client(options)
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass

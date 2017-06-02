@@ -24,15 +24,18 @@ import hashlib
 import logging
 import unittest
 
-import d1_client.session as session
-import d1_common.logging_context
-import d1_common.types.exceptions
-import d1_common.util
-import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.post as mock_post
 import requests
 import responses
 import shared_settings
+
+import d1_common.util
+import d1_common.logging_context
+import d1_common.types.exceptions
+
+import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.post as mock_post
+
+import d1_client.session as session
 
 
 class TestSession(unittest.TestCase):
@@ -68,7 +71,7 @@ class TestSession(unittest.TestCase):
   @responses.activate
   def test_0010(self):
     """HTTP GET is successful
-    Mocked GET returns object bytes uniquely tied to given PID.
+    Mocked GET returns object bytes uniquely tied to given PID
     """
     a_pid = 'pid_hy7tf83453y498'
     b_pid = 'pid_09y68gh73n60'
@@ -118,7 +121,7 @@ class TestSession(unittest.TestCase):
   @responses.activate
   def test_0050(self):
     """HTTP POST is successful
-    Roundtrip for body, headers and query params.
+    Roundtrip for body, headers and query params
     """
     body_str = 'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
@@ -139,8 +142,7 @@ class TestSession(unittest.TestCase):
 
   @responses.activate
   def test_0060(self):
-    """Query params passed to Session() and individual POST are combined
-    """
+    """Query params passed to Session() and individual POST are combined"""
     body_str = 'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}

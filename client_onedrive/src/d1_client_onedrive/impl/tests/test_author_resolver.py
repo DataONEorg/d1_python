@@ -21,9 +21,9 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.author as author
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.author as author
 
 options = {}
 
@@ -38,7 +38,7 @@ class TestAuthorResolver(unittest.TestCase):
     )
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass
 

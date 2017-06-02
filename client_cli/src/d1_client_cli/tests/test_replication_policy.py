@@ -19,8 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
 import sys
+import StringIO
 import unittest
 
 import d1_client_cli.impl.replication_policy as replication_policy
@@ -33,16 +33,16 @@ class TestReplicationPolicy(unittest.TestCase):
     pass
 
   def test_0010(self):
-    """The replication policy object can be instantiated"""
+    """__init__()"""
     self.assertNotEquals(None, replication_policy.ReplicationPolicy())
 
   def test_0020(self):
-    """After instatiation, get_preferred() returns empty list."""
+    """get_preferred(): Returns empty list"""
     s = replication_policy.ReplicationPolicy()
     self.assertFalse(len(s.get_preferred()))
 
   def test_0030(self):
-    """After instatiation, get_blocked() returns empty list."""
+    """After instatiation, get_blocked() returns empty list"""
     s = replication_policy.ReplicationPolicy()
     self.assertFalse(len(s.get_blocked()))
 
@@ -81,7 +81,7 @@ class TestReplicationPolicy(unittest.TestCase):
     self.assertTrue('blocked_mn' in s.get_blocked())
 
   def test_0080(self):
-    """Replication is allowed by default."""
+    """Replication is allowed by default"""
     s = replication_policy.ReplicationPolicy()
     self.assertTrue(s.get_replication_allowed())
 

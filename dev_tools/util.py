@@ -19,14 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
+import shutil
 import hashlib
 import logging
-import shutil
-import subprocess
 import tempfile
+import subprocess
 
-import baron.render
 import redbaron
+import baron.render
 import redbaron.nodes
 
 
@@ -92,3 +93,44 @@ class UnicodeRenderWalker(baron.render.RenderWalker):
   def dump(self, baron_tree):
     self.walk(baron_tree)
     return self._dump
+
+
+def has_test_class(r):
+  for node in r('ClassNode'):
+    if is_test_class(node.name):
+      return True
+  return False
+
+
+def split_func_name(func_name):
+  m = re.match(r'(test_\D*)\d*_?(.*)', func_name)
+  return m.group(1), m.group(2)
+
+
+def gen_doc_str(post_name_str, old_doc_str):
+  return u'"""{}{}"""'.format(
+    post_name_str.replace(u'_', u' ') + ': ' if post_name_str else u'',
+    old_doc_str.strip("""\r\n"\'"""),
+  )
+
+
+def get_doc_str(node):
+  doc_str = node.value[0].value if has_doc_str(node) else u''
+  doc_str = doc_str.strip('"\' \t\n\r')
+  doc_str = re.sub(r'\s+', ' ', doc_str)
+  return doc_str
+
+
+def is_test_func(func_name):
+  return re.match(r'^test_', func_name)
+
+
+def is_test_class(class_name):
+  return re.match(r'^Test', class_name)
+
+
+def has_doc_str(node):
+  return (
+    isinstance(node.value[0], redbaron.nodes.StringNode) or
+    isinstance(node.value[0], redbaron.nodes.UnicodeStringNode)
+  )

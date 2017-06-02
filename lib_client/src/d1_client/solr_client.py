@@ -21,9 +21,9 @@ Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
 client/python/solr.py
 """
 
-import datetime
-import logging
 import random
+import logging
+import datetime
 from xml.sax.saxutils import quoteattr
 
 import d1_client.baseclient_1_1

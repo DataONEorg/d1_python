@@ -21,20 +21,20 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.root as root
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.root as root
 
 options = {}
 
 
-class O():
+class TestOptions():
   pass
 
 
 class TestRootResolver(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.base_url = 'https://localhost/'
     options.object_tree_xml = './test_object_tree.xml'
     options.max_error_path_cache_size = 1000
@@ -45,7 +45,7 @@ class TestRootResolver(unittest.TestCase):
     self._r = root.RootResolver(options, object_tree_test_sample.object_tree)
 
   def test_0010(self):
-    """instantiate: """
+    """__init__()"""
     pass
 
   # To enable these tests, the test object_tree class must be expanded to match

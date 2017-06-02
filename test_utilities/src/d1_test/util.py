@@ -20,25 +20,28 @@
 # limitations under the License.
 """Utilities for unit- and integration tests"""
 
-import StringIO
-import codecs
-import contextlib
-import logging
 import os
-import random
-import subprocess
+import re
 import sys
-import tempfile
 import xml
+import codecs
+import random
+import hashlib
+import logging
+import StringIO
+import tempfile
+import contextlib
+import subprocess
 
-import d1_common.types
-import d1_common.types.dataoneErrors
-import d1_common.types.dataoneTypes
-import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_common.util
-import d1_common.xml
 import mock
 import pyxb
+
+import d1_common.xml
+import d1_common.util
+import d1_common.types
+import d1_common.types.dataoneTypes
+import d1_common.types.dataoneErrors
+import d1_common.types.dataoneTypes_v2_0 as v2
 
 
 @contextlib.contextmanager
@@ -69,17 +72,24 @@ def capture_log():
 
 @contextlib.contextmanager
 def mock_raw_input(answer_str):
+  def _log(prompt_str):
+    sys.stdout.write(prompt_str)
+    return mock.DEFAULT
+
   with mock.patch(
       '__builtin__.raw_input',
-      side_effect=_mock_raw_input_side_effect,
+      side_effect=_log,
       return_value=answer_str,
   ):
     yield
 
 
-def _mock_raw_input_side_effect(prompt_str):
-  sys.stdout.write(prompt_str)
-  return mock.DEFAULT
+@contextlib.contextmanager
+def reproducible_random(seed=0):
+  state = random.getstate()
+  random.seed(seed)
+  yield
+  random.setstate(state)
 
 
 def get_test_filepath(filename):
@@ -96,7 +106,7 @@ def write_test_file(filename, obj_str, mode_str='wb'):
     return f.write(obj_str)
 
 
-def is_existing_file(filename):
+def is_existing_test_file(filename):
   return os.path.exists(get_test_filepath(filename))
 
 
@@ -161,21 +171,21 @@ def get_random_valid_pid(client):
   return get_pid_by_index(client, random.randint(0, total - 1))
 
 
-def kdiff_pyxb(a_pyxb, b_pyxb):
-  return kdiff_str(
-    d1_common.pyxb.pretty_pyxb(a_pyxb),
-    d1_common.pyxb.pretty_pyxb(b_pyxb),
+def debug_diff_pyxb(a_pyxb, b_pyxb):
+  return debug_diff_str(
+    d1_common.xml.pretty_pyxb(a_pyxb),
+    d1_common.xml.pretty_pyxb(b_pyxb),
   )
 
 
-def kdiff_xml(a_xml, b_xml):
-  return kdiff_str(
+def debug_diff_xml(a_xml, b_xml):
+  return debug_diff_str(
     d1_common.xml.pretty_xml(a_xml),
     d1_common.xml.pretty_xml(b_xml),
   )
 
 
-def kdiff_str(a_str, b_str):
+def debug_diff_str(a_str, b_str):
   with tempfile.NamedTemporaryFile() as a_f:
     with tempfile.NamedTemporaryFile() as b_f:
       a_f.write(a_str)
@@ -183,3 +193,21 @@ def kdiff_str(a_str, b_str):
       a_f.seek(0)
       b_f.seek(0)
       subprocess.call(['kdiff3', a_f.name, b_f.name])
+
+
+def generate_reproducible_sciobj_str(pid):
+  """Return a science object byte string that is always the same for a given PID
+  """
+  # Ignore any decoration.
+  pid = re.sub(r'^<.*?>', '', pid)
+  pid_hash_int = int(hashlib.md5(pid).hexdigest(), 16)
+  with reproducible_random(pid_hash_int):
+    return (
+      'These are the reproducible Science Object bytes for pid="{}". '
+      'What follows is 100 to 200 random bytes: '.format(pid.encode('utf-8')) +
+      str(
+        bytearray(
+          random.getrandbits(8) for _ in range(random.randint(100, 200))
+        )
+      )
+    )

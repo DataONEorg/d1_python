@@ -83,13 +83,13 @@ Example v2 SystemMetadata XML document with all optional values included:
 </v2:systemMetadata>
 """
 
-import datetime
 import logging
+import datetime
 
-import d1_common.access_policy
-import d1_common.date_time
-import d1_common.types.dataoneTypes
 import d1_common.xml
+import d1_common.date_time
+import d1_common.access_policy
+import d1_common.types.dataoneTypes
 
 
 def normalize(sysmeta_pyxb, reset_timestamps=False):
@@ -127,13 +127,17 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
 
 
 def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
-  """Normalizes then compares SystemMetadata objects for equivalency.
+  """Normalizes then compares SystemMetadata PyXB objects for equivalency.
   """
   normalize(a_pyxb, ignore_timestamps)
   normalize(b_pyxb, ignore_timestamps)
-  return d1_common.xml.is_equivalent(
-    a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8')
-  )
+  a_xml = a_pyxb.toxml('utf-8')
+  b_xml = b_pyxb.toxml('utf-8')
+  is_equivalent = d1_common.xml.is_equivalent(a_xml, b_xml)
+  if not is_equivalent:
+    logging.debug('XML documents not equivalent:')
+    logging.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
+  return is_equivalent
 
 
 def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
@@ -141,14 +145,10 @@ def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
   {a_xml} and {b_xml} should be UTF-8 encoded DataONE System Metadata XML
   documents.
   """
-  is_equivalent = is_equivalent_pyxb(
+  return is_equivalent_pyxb(
     d1_common.xml.deserialize(a_xml),
     d1_common.xml.deserialize(b_xml), ignore_timestamps
   )
-  if not is_equivalent:
-    logging.debug('XML documents not equivalent:')
-    logging.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
-  return is_equivalent
 
 
 def clear_elements(

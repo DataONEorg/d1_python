@@ -28,17 +28,20 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 
 A NotFound exception can be triggered by passing a formatId that starts with
-"unknown_".
+"<NotFound>".
 """
 
 import re
+import logging
 
+import responses
+
+import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
-import d1_common.url
-import d1_test.mock_api.d1_exception
+
 import d1_test.mock_api.util
-import responses
+import d1_test.mock_api.d1_exception
 
 # Config
 N_TOTAL = 100
@@ -57,13 +60,14 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
   pid_str, pyxb_bindings = _parse_url(request.url)
-  if pid_str.startswith('unknown_'):
+  if pid_str.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
   body_str = _generate_object_location_list(pyxb_bindings, pid_str)
@@ -100,4 +104,4 @@ def _generate_object_location_list(pyxb_bindings, pid_str):
 
     objectLocationList.objectLocation.append(objectLocation)
 
-  return objectLocationList.toxml()
+  return objectLocationList.toxml('utf-8')

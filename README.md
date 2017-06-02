@@ -49,6 +49,7 @@ We try to follow [PEP8](https://www.python.org/dev/peps/pep-0008/), with the mai
 To help keep the style consistent and commit logs, blame/praise and other code annotations accurate, we use the following `pre-commit` hooks to automatically format and check Python scripts before committing to GitHub:
 
 * [YAPF](https://github.com/google/yapf) - PEP8 formatting with DataONE modifications
+* [isort](https://github.com/timothycrosley/isort) - Sort and group imports
 * [Flake8](http://flake8.pycqa.org/en/latest/) - Lint, code and style validation
 * [trailing-whitespace](git://github.com/pre-commit/pre-commit-hooks) - Remove trailing whitespace
 

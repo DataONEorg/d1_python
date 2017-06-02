@@ -25,35 +25,37 @@ is unrestricted in debug mode. Disabled in production.
 
 from __future__ import absolute_import
 
+import os
 import cgi
 import csv
 import json
-import os
 import pprint
 import shutil
 import urlparse
 
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import django.apps
-import django.conf
+import d1_common.types.dataoneTypes
+
 import gmn.app.auth
+import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.models
+import gmn.app.views.util
+import gmn.app.views.create
 import gmn.app.node_registry
+import gmn.app.views.asserts
 import gmn.app.psycopg_adapter
 import gmn.app.restrict_to_verb
-import gmn.app.sysmeta
-import gmn.app.util
-import gmn.app.views.asserts
-import gmn.app.views.create
-import gmn.app.views.util
-from django.db.models import Q
+
+import django.apps
+import django.conf
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect, reverse
+from django.db.models import Q
+from django.shortcuts import reverse, redirect, render_to_response
 
 # ------------------------------------------------------------------------------
 # Diagnostics portal.
@@ -194,7 +196,7 @@ def object_permissions(request, pid):
 # noinspection PyUnusedLocal
 @gmn.app.restrict_to_verb.get
 def get_setting(request, setting_str):
-  """Get a value from django.conf.settings.py or settings_site.py"""
+  """Get a value from django.conf.settings.py or settings.py"""
   setting_obj = getattr(django.conf.settings, setting_str, '<UNKNOWN SETTING>')
   if isinstance(setting_obj, set):
     setting_obj = sorted(list(setting_obj))

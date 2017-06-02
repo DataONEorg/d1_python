@@ -21,10 +21,12 @@
 
 import unittest
 
-import d1_client.iter.objectlist_multi
-import d1_test.mock_api.list_objects as mock_list_objects
 import responses
 import shared_settings
+
+import d1_test.mock_api.list_objects as mock_list_objects
+
+import d1_client.iter.objectlist_multi
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -32,7 +34,7 @@ import shared_settings
 MAX_OBJECTS = 20
 
 
-class TestIterLogRecordMultithreaded(unittest.TestCase):
+class TestIterObjectListIterator(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     pass # d1_common.util.log_setup(is_debug=True)
@@ -42,6 +44,7 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
 
   @responses.activate
   def test_0010(self):
+    """Object List iteration"""
     mock_list_objects.add_callback(shared_settings.MN_RESPONSES_URL)
 
     object_list_iterator = d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
@@ -56,7 +59,7 @@ class TestIterLogRecordMultithreaded(unittest.TestCase):
     # object_list_pyxb = client.listObjects(start=30, count=100)
     # print object_list_pyxb.count
     # for object_info_pyxb in object_list_pyxb.objectInfo:
-    #   print object_info_pyxb.toxml()
+    #   print object_info_pyxb.toxml('utf-8')
 
     # assert resp.json() == {'value': 6}
     #

@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ReplicaObsolescenceChainReference',
+            name='ReplicaRevisionChainReference',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('pid', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='app.IdNamespace')),

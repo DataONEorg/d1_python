@@ -22,12 +22,12 @@
 
 from __future__ import absolute_import
 
-import email.message
-import email.utils
-import functools
-import logging
 import os
 import sys
+import logging
+import functools
+import email.utils
+import email.message
 
 
 def log_setup(is_debug, is_multiprocess=False):

@@ -11,16 +11,17 @@ generate_sysmeta.py -f $OBJECT \
 
 """
 
-import datetime
-import logging
-import optparse
-import os.path
 import sys
+import logging
+import os.path
 import urllib2
+import datetime
+import optparse
+
+from lxml import etree
+from d1_instance_generator import systemmetadata
 
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-from d1_instance_generator import systemmetadata
-from lxml import etree
 
 
 def getObjectFormatFromID(fmtid, default='application/octet-stream'):
@@ -58,7 +59,7 @@ def processDoc(fname, options={}):
     (tnow, repr(sys.argv[1:]), " ".join(sys.argv[1:]))
   )
   sysm = systemmetadata.generate_from_file(fname, options)
-  root = etree.fromstring(sysm.toxml())
+  root = etree.fromstring(sysm.toxml('utf-8'))
   root.insert(0, comment)
   pxml = etree.tostring(
     root, pretty_print=True, encoding='UTF-8', xml_declaration=True

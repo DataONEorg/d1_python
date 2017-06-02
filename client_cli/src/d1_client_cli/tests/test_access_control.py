@@ -21,16 +21,17 @@
 
 import unittest
 
+import d1_test.util
+
 import d1_client_cli.impl.access_control as access_control
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
-import d1_test.util
 
 #===============================================================================
 
 
 class TestAccessControl(unittest.TestCase):
   def test_0010(self):
-    """AccessControl(): The access_control object can be instantiated"""
+    """AccessControl(): __init__()"""
     a = access_control.AccessControl()
     self.assertEqual(len(a.allow), 0)
 

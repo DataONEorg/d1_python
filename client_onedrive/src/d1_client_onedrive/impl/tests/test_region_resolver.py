@@ -21,20 +21,20 @@
 
 import unittest
 
-import d1_client_onedrive.impl.resolver.region as region
-
 import object_tree_test_sample
+
+import d1_client_onedrive.impl.resolver.region as region
 
 options = {}
 
 
-class O():
+class TestOptions():
   pass
 
 
 class TestRegionResolver(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.base_url = 'https://localhost/'
     options.object_tree_xml = './test_object_tree.xml'
     options.max_error_path_cache_size = 1000
@@ -46,19 +46,19 @@ class TestRegionResolver(unittest.TestCase):
     )
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass
 
   def test_0020(self):
-    """merge empty: """
+    """_merge_region_trees(): Simple"""
     dst = {}
     src = {}
     self._resolver._merge_region_trees(dst, src, 'testpid')
     self.assertEqual(dst, {})
 
   def test_0030(self):
-    """merge simple to empty: """
+    """_merge_region_trees(): Merge simple to empty"""
     dst = {}
     src = {'d1': {}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -83,7 +83,7 @@ class TestRegionResolver(unittest.TestCase):
     )
 
   def test_0040(self):
-    """merge simple to simple: """
+    """_merge_region_trees(): Merge simple to simple"""
     dst = {'f1': None, 'd1': {'f21': None}}
     src = {'d1': {}, 'd2': {}, 'd3': {'d31': {'d311': {}}, 'd32': {}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -113,7 +113,7 @@ class TestRegionResolver(unittest.TestCase):
     )
 
   def test_0050(self):
-    """merge complex to complex: """
+    """_merge_region_trees(): Merge simple to complex"""
     dst = {
       'f1': None,
       'd1': {
@@ -183,21 +183,21 @@ class TestRegionResolver(unittest.TestCase):
     )
 
   def test_0060(self):
-    """merge conflict 1: """
+    """_merge_region_trees(): Handle merge conflict 1"""
     dst = {'x1': {}}
     src = {'x1': None}
     self._resolver._merge_region_trees(dst, src, 'x')
     self.assertEqual(dst, {'x1': {'x': None}})
 
   def test_0070(self):
-    """merge conflict 2: """
+    """_merge_region_trees(): Handle merge conflict 2"""
     dst = {'x1': {'x': None}}
     src = {'x1': {'x': {}}}
     self._resolver._merge_region_trees(dst, src, 'x')
     self.assertEqual(dst, {'x1': {'x': {'x': None}}})
 
   def test_0080(self):
-    """merge build: """
+    """_merge_region_trees(): Handle merge conflict 3"""
     dst = {}
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')

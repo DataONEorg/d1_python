@@ -20,10 +20,12 @@
 
 import unittest
 
-import d1_client.mnclient_2_0
+import responses
+
 import d1_test.mock_api.describe as mock_describe
 import d1_test.mock_api.tests.config as config
-import responses
+
+import d1_client.mnclient_2_0
 
 
 class TestMockDescribe(unittest.TestCase):
@@ -44,9 +46,9 @@ class TestMockDescribe(unittest.TestCase):
     self.assertIn('Last-Modified', header_dict)
     del header_dict['Last-Modified']
     expected_header_dict = {
-      'Content-Length': '1024',
+      'Content-Length': '256',
       'DataONE-SerialVersion': '3',
-      'DataONE-Checksum': 'SHA-1,8982dcc9ac4b2ae603392d85cb30be3c1fe4f964',
+      'DataONE-Checksum': 'SHA-1,aa19dbfb3c19ef07831302e4a57fb21a4ea740ba',
       'DataONE-FormatId': u'application/octet-stream',
       u'Content-Type': 'application/octet-stream',
     }

@@ -21,10 +21,12 @@
 
 import unittest
 
-import d1_common.system_metadata
-import d1_common.xml
-import d1_test.util
 import pyxb
+
+import d1_common.xml
+import d1_common.system_metadata
+
+import d1_test.util
 
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -35,7 +37,7 @@ class TestSystemMetadata(unittest.TestCase):
 
   def test_0010(self):
     """PyXB performs schema validation on sysmeta object and raises
-    pyxb.PyXBException on invalid XML doc.
+    pyxb.PyXBException on invalid XML doc
     """
     self.assertRaises(
       pyxb.PyXBException, d1_test.util.read_xml_file_to_pyxb,
@@ -61,7 +63,7 @@ class TestSystemMetadata(unittest.TestCase):
   def test_0040(self):
     """is_equivalent() Returns True for sysmeta where elements that can occur in
     any order without changing the meaning of the doc have been shuffled
-    around.
+    around
     """
     swizzled_pyxb = d1_test.util.read_xml_file_to_pyxb(
       'systemMetadata_v2_0.swizzled.xml'

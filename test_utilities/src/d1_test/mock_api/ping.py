@@ -30,11 +30,14 @@ d1_exception.py
 """
 
 import re
+import logging
 
-import d1_common.const
-import d1_common.url
-import d1_test.mock_api.d1_exception
 import responses
+
+import d1_common.url
+import d1_common.const
+
+import d1_test.mock_api.d1_exception
 
 PING_ENDPOINT_RX = r'v([123])/monitor/ping'
 
@@ -50,6 +53,7 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:

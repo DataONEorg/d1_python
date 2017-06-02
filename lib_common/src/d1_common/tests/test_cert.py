@@ -20,12 +20,14 @@
 
 import unittest
 
-import d1_common.cert.subject_info
-import d1_common.cert.subjects
-import d1_common.cert.x509
-import d1_test.util
 # 3rd party
 from cryptography.hazmat.backends.openssl.x509 import _Certificate
+
+import d1_common.cert.x509
+import d1_common.cert.subjects
+import d1_common.cert.subject_info
+
+import d1_test.util
 
 
 class TestCert(unittest.TestCase):
@@ -42,8 +44,7 @@ class TestCert(unittest.TestCase):
     )
 
   def test_0010(self):
-    """Deserialize PEM to cryptography.Certificate object.
-    """
+    """Deserialize PEM to cryptography.Certificate object"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
     )
@@ -51,7 +52,7 @@ class TestCert(unittest.TestCase):
 
   def test_0020(self):
     """Extract primary subject from certificate and returns as
-    DataONE compliant serialization.
+    DataONE compliant serialization
     """
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
@@ -62,8 +63,7 @@ class TestCert(unittest.TestCase):
     )
 
   def test_0030(self):
-    """Extract SubjectInfo from certificate, SubjectInfo present
-    """
+    """Extract SubjectInfo from certificate, SubjectInfo present"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
     )
@@ -76,8 +76,7 @@ class TestCert(unittest.TestCase):
     self.assertEqual(expected_subject_info_xml, extracted_subject_info_xml)
 
   def test_0040(self):
-    """Extract SubjectInfo from certificate, SubjectInfo missing
-    """
+    """Extract SubjectInfo from certificate, SubjectInfo missing"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_no_subject_info_pem
     )

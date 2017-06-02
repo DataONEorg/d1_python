@@ -36,7 +36,7 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     exclude_package_data={
-      '': ['settings_site.py'],
+      '': ['settings.py'],
     },
     install_requires=[
       'dataone.cli == 2.3.0rc1',

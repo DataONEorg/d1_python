@@ -21,9 +21,11 @@
 
 import unittest
 
-import d1_client.cnclient_2_0
-import d1_test.mock_api.catch_all
 import shared_settings
+
+import d1_test.mock_api.catch_all
+
+import d1_client.cnclient_2_0
 
 
 class TestCNClient_2_0(unittest.TestCase):
@@ -37,15 +39,16 @@ class TestCNClient_2_0(unittest.TestCase):
     )
 
   def test_0010(self):
-    """CoordinatingNodeClient_2_0(): Instantiate"""
+    """__init__()"""
     self.assertIsInstance(
       self.client, d1_client.cnclient_2_0.CoordinatingNodeClient_2_0
     )
 
   @d1_test.mock_api.catch_all.activate
   def test_0020(self):
+    """delete(): Generates expected REST call"""
     d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.deleteObject('valid_pid')
+    received_echo_dict = self.client.delete('valid_pid')
     expected_echo_dict = {
       'request': {
         u'pyxb_namespace': u'http://ns.dataone.org/service/types/v2.0',

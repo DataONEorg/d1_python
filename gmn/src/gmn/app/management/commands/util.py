@@ -22,16 +22,16 @@
 
 from __future__ import absolute_import
 
-import fcntl
-import logging
 import os
 import sys
+import fcntl
+import logging
 import tempfile
+
+import gmn.app.models
 
 import django.conf
 import django.core.management.base
-
-import gmn.app.models
 
 single_instance_lock_file = None
 
@@ -72,7 +72,7 @@ def abort_if_stand_alone_instance():
   if django.conf.settings.STAND_ALONE:
     raise django.core.management.base.CommandError(
       u'Aborted: Command not applicable in stand-alone instance of GMN. '
-      u'See STAND_ALONE in settings_site.py.'
+      u'See STAND_ALONE in settings.py.'
     )
 
 

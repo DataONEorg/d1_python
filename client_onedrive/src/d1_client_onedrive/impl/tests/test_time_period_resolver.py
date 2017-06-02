@@ -22,7 +22,6 @@
 import unittest
 
 import impl.resolver.time_period as time_period
-
 from object_tree_test_sample import object_tree
 
 options = {}
@@ -33,6 +32,6 @@ class TestTimePeriodResolver(unittest.TestCase):
     self._resolver = time_period.Resolver(options, object_tree)
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass

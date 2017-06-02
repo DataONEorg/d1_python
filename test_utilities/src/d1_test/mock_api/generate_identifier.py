@@ -30,12 +30,15 @@ d1_exception.py
 """
 
 import re
+import logging
 
+import responses
+
+import d1_common.url
 import d1_common.const
 import d1_common.types.dataoneTypes
-import d1_common.url
+
 import d1_test.mock_api.d1_exception
-import responses
 
 POST_ENDPOINT_RX = r'v([123])/generate'
 
@@ -51,6 +54,7 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
@@ -60,5 +64,5 @@ def _request_callback(request):
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
   identifier_pyxb = d1_common.types.dataoneTypes.identifier('test_id')
-  body_str = identifier_pyxb.toxml()
+  body_str = identifier_pyxb.toxml('utf-8')
   return 200, header_dict, body_str

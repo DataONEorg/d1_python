@@ -21,12 +21,11 @@
 """Misc utilities that don't fit anywhere else
 """
 
-import HTMLParser
-import errno
-import logging
 import os
-import platform
+import errno
 import pprint
+import logging
+import platform
 
 
 def log_dump(s):
@@ -55,20 +54,3 @@ def os_format(txt):
     return txt.replace('\n', '\r\n').encode('utf16')
   else:
     return txt.encode('utf8')
-
-
-class SimpleHTMLToText(HTMLParser.HTMLParser):
-  def __init__(self):
-    self.reset()
-    self.fed = []
-    super(SimpleHTMLToText, self).__init__()
-
-  def get_text(self, html):
-    self.feed(html)
-    return self.get_data()
-
-  def handle_data(self, d):
-    self.fed.append(d)
-
-  def get_data(self):
-    return ''.join(self.fed)

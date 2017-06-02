@@ -172,13 +172,13 @@ class MediaTypeProperty(models.Model):
 # obsoletes and obsoletedBy fields by replicas.
 
 
-class ReplicaObsolescenceChainReference(models.Model):
+class ReplicaRevisionChainReference(models.Model):
   pid = models.OneToOneField(IdNamespace, models.CASCADE)
 
 
-def replica_obsolescence_chain_reference(pid):
+def replica_revision_chain_reference(pid):
   pid_model = did(pid)
-  ref_model = ReplicaObsolescenceChainReference(pid=pid_model)
+  ref_model = ReplicaRevisionChainReference(pid=pid_model)
   ref_model.save()
   return ref_model
 
@@ -219,7 +219,9 @@ class LocalReplica(models.Model):
   # Relate directly to IdNamespace because tracking of local replicas starts
   # before there is a local object (when the replica is first requested by the
   # CN).
-  pid = models.OneToOneField(IdNamespace, models.CASCADE)
+  pid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  )
   info = models.OneToOneField(ReplicaInfo, models.CASCADE)
 
 

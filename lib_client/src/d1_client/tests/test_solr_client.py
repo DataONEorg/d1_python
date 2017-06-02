@@ -20,14 +20,15 @@
 # limitations under the License.
 """Test the Solr client
 
-Note: Currently issues requests to cn.dataone.org.
+Note: Currently issues requests to cn.dataone.org
 
-TODO: Create Solr mockup.
+TODO: Create Solr mockup
 """
 import unittest
 
-import d1_client.solr_client
 import d1_common.util
+
+import d1_client.solr_client
 
 # CN_RESPONSES_BASE_URL = 'http://responses/cn'
 CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
@@ -45,11 +46,11 @@ class TestSolrClientReal(unittest.TestCase):
   # SolrClient()
 
   def test_0010(self):
-    """SolrClient(): Instantiate"""
+    """__init__()"""
     d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
 
   def test_0020(self):
-    """SolrClient(): String representation"""
+    """str()"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     self.assertEquals(
       str(solr_client),

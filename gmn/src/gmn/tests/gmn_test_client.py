@@ -27,8 +27,8 @@ these methods.
 
 from __future__ import absolute_import
 
-import logging
 import os
+import logging
 
 import d1_client.mnclient
 
@@ -86,7 +86,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     mmp_fields = {
       'pid': pid.encode('utf-8'),
       'sourceNode': sourceNode,
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     response = self.POST(['replicate', pid], fields=mmp_fields,
                          headers=vendorSpecific)
@@ -132,7 +132,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     mmp_fields = {
       'pid': pid.encode('utf-8'),
       'object': ('content.bin', obj),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml().encode('utf-8')),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     response = self.POST(['create', pid], fields=mmp_fields,
                          headers=vendorSpecific)
@@ -203,10 +203,9 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   ):
     """Test PID write locking.
     """
-    return self.GET(
-      ['concurrency_write_lock', key, val, sleep_before, sleep_after],
-      headers=headers
-    )
+    return self.GET([
+      'concurrency_write_lock', key, val, sleep_before, sleep_after
+    ], headers=headers)
 
   def concurrency_get_dictionary_id(self, headers=None):
     """Get dictionary ID.

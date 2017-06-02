@@ -24,17 +24,20 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import base64
-import json
 import re
+import json
+import base64
+import logging
 import urlparse
 
+import responses
+
+import d1_common.url
 import d1_common.const
 import d1_common.types.dataoneTypes
-import d1_common.url
-import d1_test.mock_api.d1_exception
+
 import d1_test.mock_api.util
-import responses
+import d1_test.mock_api.d1_exception
 
 POST_ENDPOINT_RX = r'v([123])/post'
 
@@ -52,6 +55,7 @@ def add_callback(base_url):
 def _request_callback(request):
   """Echo a generic post.
   """
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:

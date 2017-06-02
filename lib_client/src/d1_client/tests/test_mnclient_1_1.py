@@ -20,8 +20,9 @@
 # limitations under the License.
 import unittest
 
-import d1_client.mnclient_1_1
 import shared_settings
+
+import d1_client.mnclient_1_1
 
 
 class TestMNClient_1_1(unittest.TestCase):
@@ -35,7 +36,5 @@ class TestMNClient_1_1(unittest.TestCase):
     )
 
   def test_0010(self):
-    """Initialize MemberNodeClient_1_1"""
-    # Completion means that the client was successfully instantiated in
-    # setUp().
+    """__init__()"""
     pass

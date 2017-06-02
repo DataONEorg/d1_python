@@ -18,21 +18,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate and run queries against Solr, with caching
+"""Extend d1_client.solr_client.SolrClient for OneDrive
 """
 
 import logging
 
-import d1_common.const
-import d1_common.date_time
-import d1_common.url
 import requests
 
 # App
 from .. import onedrive_exceptions
 
+import d1_common.url
+import d1_common.const
+import d1_common.date_time
 
-class SolrClient(object):
+import d1_client.solr_client
+
+
+class OneDriveSolrClient(d1_client.solr_client.SolrClient):
   def __init__(self, options, max_retries=3):
     self._solr_endpoint = options.base_url + options.solr_query_path
     self._session = requests.Session()
@@ -98,45 +101,3 @@ class SolrClient(object):
                  ] = d1_common.date_time.from_iso8601(record[date_field])
         except Exception as e:
           logging.exception(e)
-
-  def _query(self, query, filter_queries=None, fields=None):
-    if fields is None:
-      fields = ['*']
-
-    query_params = {
-      'q': query,
-      'fl': ','.join(fields),
-      'rows': self._max_objects_for_query,
-      'indent': 'on',
-      'wt': 'json'
-    }
-
-    if filter_queries is not None:
-      query_params.extend(self._make_query_param_tuples('fl', filter_queries))
-
-    r = requests.get(
-      self._solr_endpoint, timeout_sec=self._timeout_sec, params=query_params,
-      verify=False
-    )
-    return r.json()
-
-  def _escape_query_term_string(self, term):
-    """Escape a query term string and wrap it in quotes.
-    """
-    return u'"{0}"'.format(self._escape_query_term(term))
-
-  def _make_query_param_tuples(self, query_type, terms):
-    return [(query_type, t) for t in self.__escape_query_term_list(terms)]
-
-  def __escape_query_term_list(self, terms):
-    return [self._escape_query_term(term) for term in terms]
-
-  def _escape_query_term(self, term):
-    reserved = [
-      '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*',
-      '?', ':'
-    ]
-    term = term.replace(u'\\', u'\\\\')
-    for c in reserved:
-      term = term.replace(c, u'\{0}'.format(c))
-    return term

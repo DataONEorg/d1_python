@@ -23,25 +23,28 @@ from __future__ import absolute_import
 
 import unittest
 
-import d1_client_cli.impl.cli
-import d1_client_cli.impl.cli_client
-import d1_client_cli.impl.command_processor
-import d1_client_cli.impl.format_ids as format_ids
-import d1_client_cli.impl.nodes as nodes
-import d1_client_cli.impl.operation_queue as operation_queue
-import d1_client_cli.impl.operation_validator
-import d1_client_cli.impl.session as session
+import responses
+
 import d1_common.types.dataoneTypes as v2
-import d1_test.instance_generator.random_data
-import d1_test.mock_api.catch_all
+
+import d1_test.util
 import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.list_formats as mock_list_formats
-import d1_test.mock_api.list_nodes as mock_list_nodes
 import d1_test.mock_api.ping as mock_ping
 import d1_test.mock_api.resolve as mock_resolve
+import d1_test.mock_api.catch_all
+import d1_test.mock_api.list_nodes as mock_list_nodes
 import d1_test.mock_api.solr_search as mock_solr_search
-import d1_test.util
-import responses
+import d1_test.mock_api.list_formats as mock_list_formats
+import d1_test.instance_generator.random_data
+
+import d1_client_cli.impl.cli
+import d1_client_cli.impl.nodes as nodes
+import d1_client_cli.impl.session as session
+import d1_client_cli.impl.cli_client
+import d1_client_cli.impl.format_ids as format_ids
+import d1_client_cli.impl.operation_queue as operation_queue
+import d1_client_cli.impl.command_processor
+import d1_client_cli.impl.operation_validator
 
 MN_RESPONSES_BASE_URL = 'http://responses/mn'
 CN_RESPONSES_BASE_URL = 'http://responses/cn'
@@ -127,17 +130,15 @@ class TestCommandProcessor(unittest.TestCase):
 
   @responses.activate
   def test_0040(self):
-    object_list_pyxb = self._search()
-    self.assertEqual(len(object_list_pyxb.objectInfo), 100)
-
-  def _search(self):
     """search(): Generates expected REST request and formatted result"""
     self._set_mock_session()
     with d1_test.util.capture_std() as (out_stream, err_stream):
       self.cp.search('test-search-query-string')
     object_list_xml = out_stream.getvalue().strip()
     object_list_pyxb = v2.CreateFromDocument(object_list_xml)
-    return object_list_pyxb
+
+    object_list_pyxb = self.test()
+    self.assertEqual(len(object_list_pyxb.objectInfo), 100)
 
   # list_format_ids()
 

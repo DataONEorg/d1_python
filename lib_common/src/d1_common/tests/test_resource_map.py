@@ -19,17 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cStringIO as StringIO
 import json
-import logging
 import pprint
+import logging
 import unittest
+import cStringIO as StringIO
 
-import d1_common.resource_map
-import d1_common.util
-import d1_test.util
 import rdflib
 import rdflib.compare
+
+import d1_common.util
+import d1_common.resource_map
+
+import d1_test.util
 
 
 class TestResourceMap(unittest.TestCase):
@@ -59,7 +61,7 @@ class TestResourceMap(unittest.TestCase):
 
   def _check_nt(self, ore, filename):
     ore_nt = ore.serialize(doc_format='nt')
-    if not d1_test.util.is_existing_file(filename):
+    if not d1_test.util.is_existing_test_file(filename):
       d1_test.util.write_test_file(filename, ore_nt)
       logging.warning(u'Wrote new test file: {}'.format(filename))
     expected_ore_nt = d1_test.util.read_test_file(filename)
@@ -67,7 +69,7 @@ class TestResourceMap(unittest.TestCase):
 
   def _check_obj(self, obj, filename):
     got_json = json.dumps(obj, indent=2, sort_keys=True)
-    if not d1_test.util.is_existing_file(filename):
+    if not d1_test.util.is_existing_test_file(filename):
       d1_test.util.write_test_file(filename, got_json)
       logging.warning(u'Wrote new test file: {}'.format(filename))
     expected_json = d1_test.util.read_test_file(filename)
@@ -81,13 +83,12 @@ class TestResourceMap(unittest.TestCase):
     return obj
 
   def test_0010(self):
-    """init(): Instantiate empty resource map
-    """
+    """__init__(): Empty"""
     ore = d1_common.resource_map.ResourceMap()
     self.assertIsInstance(ore, d1_common.resource_map.ResourceMap)
 
   def test_0020(self):
-    """init(): Instantiate resource map by ORE PID"""
+    """__init__(): Instantiate resource map by ORE PID"""
     ore = d1_common.resource_map.ResourceMap('test_pid', ore_software_id='TEST')
     self._check_nt(ore, 'resource_map_pid.result')
 

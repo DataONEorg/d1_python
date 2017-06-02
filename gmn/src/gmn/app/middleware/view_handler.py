@@ -22,22 +22,23 @@
 
 from __future__ import absolute_import
 
-import StringIO
 import logging
+import StringIO
 
 import d1_common
 import d1_common.const
-import django.conf
 
-import gmn.app.middleware.session_cert
 import gmn.app.middleware.session_jwt
+import gmn.app.middleware.session_cert
+
+import django.conf
 
 
 class ViewHandler(object):
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
     logging.info(
-      u'View: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
+      u'Calling view: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
       .format(
         view_func.func_name, request.method, view_args, view_kwargs, request.path_info
       )
@@ -54,7 +55,14 @@ class ViewHandler(object):
     # submit lists of subjects without having to generate certificates. In other
     # scenarios, it is desirable to simulate an HTTPS interaction as closely as
     # possible by providing a complete certificate.
+    request.primary_subject_str, request.all_subjects_set = (
+      self.get_active_subject_set(request)
+    )
 
+  def get_active_subject_set(self, request):
+    """Get a set containing all subjects for which the current connection has
+    been successfully authenticated
+    """
     # Handle complete certificate in vendor specific extension.
     if django.conf.settings.DEBUG_GMN:
       if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
@@ -64,15 +72,16 @@ class ViewHandler(object):
 
     # Add subjects from any provided certificate and JWT and store them in
     # the Django request obj.
-    cert_primary_str, cert_equivalent_set = gmn.app.middleware.session_cert.get_subjects(
-      request
+    cert_primary_str, cert_equivalent_set = (
+      gmn.app.middleware.session_cert.get_subjects(request)
     )
-    jwt_subject_list = gmn.app.middleware.session_jwt.validate_jwt_and_get_subject_list(
-      request
+    jwt_subject_list = (
+      gmn.app.middleware.session_jwt.validate_jwt_and_get_subject_list(request)
     )
     primary_subject_str = cert_primary_str
-    all_subjects_set = cert_equivalent_set | {cert_primary_str
-                                              } | set(jwt_subject_list)
+    all_subjects_set = (
+      cert_equivalent_set | {cert_primary_str} | set(jwt_subject_list)
+    )
     if len(jwt_subject_list) == 1:
       jwt_primary_str = jwt_subject_list[0]
       if jwt_primary_str != cert_primary_str:
@@ -84,12 +93,11 @@ class ViewHandler(object):
             'subjects differ. Using the certificate for primary subject and'
             'the JWT as equivalent.'
           )
-    logging.info(u'Primary subject: {}'.format(primary_subject_str))
+
+    logging.info(u'Primary active subject: {}'.format(primary_subject_str))
     logging.info(
-      u'All subjects: {}'.format(', '.join(sorted(all_subjects_set)))
+      u'All active subjects: {}'.format(', '.join(sorted(all_subjects_set)))
     )
-    request.primary_subject_str = primary_subject_str
-    request.all_subjects_set = all_subjects_set
 
     # Handle list of subjects in vendor specific extension:
     if django.conf.settings.DEBUG_GMN:
@@ -98,6 +106,8 @@ class ViewHandler(object):
         request.all_subjects_set.update(
           request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t')
         )
+
+    return primary_subject_str, all_subjects_set
 
   def pem_in_http_header_to_pem_in_string(self, header_str):
     header = StringIO.StringIO(header_str)

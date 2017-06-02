@@ -22,30 +22,33 @@
 
 from __future__ import absolute_import
 
-import json
-import logging
 import os
-import shutil
+import json
 import zlib
+import shutil
+import logging
 
-import d1_client.cnclient_2_0
-import d1_common.types.exceptions
-import d1_common.url
-import django.conf
-import django.core.management.base
 import psycopg2
 import psycopg2.extras
 
+import d1_common.url
+import d1_common.types.exceptions
+
+import d1_client.cnclient_2_0
+
 import gmn.app.auth
-import gmn.app.management.commands.util
-import gmn.app.models
 import gmn.app.node
-import gmn.app.sysmeta
-import gmn.app.sysmeta_obsolescence
-import gmn.app.sysmeta_util
 import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_util
 import gmn.app.views.asserts
+import gmn.app.sysmeta_revision
 import gmn.app.views.diagnostics
+import gmn.app.management.commands.util
+
+import django.conf
+import django.core.management.base
 
 CONNECTION_STR = "host=''"
 
@@ -160,20 +163,20 @@ class V2Migration(object):
   # Science Objects
 
   def _migrate_sciobj(self):
-    obsolescence_list = self._get_obsolescence_list()
-    # obsolescence_list = self._load_json(UNSORTED_CHAINS_PATH)
-    # self._dump_json(obsolescence_list, UNSORTED_CHAINS_PATH)
+    revision_list = self._get_revision_list()
+    # revision_list = self._load_json(UNSORTED_CHAINS_PATH)
+    # self._dump_json(revision_list, UNSORTED_CHAINS_PATH)
     obsoletes_pid_list = []
     obsoleted_by_pid_list = []
-    for pid, obsoletes_pid, obsoleted_by_pid in obsolescence_list:
+    for pid, obsoletes_pid, obsoleted_by_pid in revision_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
-    self._create_sciobj(topo_obsolescence_list)
+    topo_revision_list = self._topological_sort(obsoletes_pid_list)
+    self._create_sciobj(topo_revision_list)
     self._update_obsoleted_by(obsoleted_by_pid_list)
 
-  def _get_obsolescence_list(self):
-    obsolescence_list = []
+  def _get_revision_list(self):
+    revision_list = []
     # noinspection SqlResolve
     self._v1_cursor.execute(
       """
@@ -183,20 +186,18 @@ class V2Migration(object):
     sciobj_row_list = self._v1_cursor.fetchall()
     n = len(sciobj_row_list)
     for i, sciobj_row in enumerate(sciobj_row_list):
-      self._log_pid_info(
-        'Retrieving obsolescence chains', i, n, sciobj_row['pid']
-      )
+      self._log_pid_info('Retrieving revision chains', i, n, sciobj_row['pid'])
       try:
         sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
         self._log(str(e))
         continue
-      obsolescence_list.append(self._identifiers(sysmeta_pyxb))
-    return obsolescence_list
+      revision_list.append(self._identifiers(sysmeta_pyxb))
+    return revision_list
 
-  def _create_sciobj(self, topo_obsolescence_list):
-    n = len(topo_obsolescence_list)
-    for i, pid in enumerate(topo_obsolescence_list):
+  def _create_sciobj(self, topo_revision_list):
+    n = len(topo_revision_list)
+    for i, pid in enumerate(topo_revision_list):
       # noinspection SqlResolve
       self._v1_cursor.execute(
         """
@@ -223,7 +224,7 @@ class V2Migration(object):
             obsoleted_by_pid
         ):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
-          gmn.app.sysmeta_obsolescence.set_obsolescence(
+          gmn.app.sysmeta_revision.set_revision(
             pid, obsoleted_by_pid=obsoleted_by_pid
           )
 
@@ -248,7 +249,7 @@ class V2Migration(object):
       is_connected = False
       for pid, obsoletes_pid in unsorted_dict.items():
         if obsoletes_pid is None or obsoletes_pid in sorted_set:
-          self._log('Sorting obsolescence chains')
+          self._log('Sorting revision chains')
           is_connected = True
           sorted_list.append(pid)
           sorted_set.add(pid)
@@ -256,7 +257,7 @@ class V2Migration(object):
       if not is_connected:
         self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
         self._log(
-          'Skipped one or more unconnected obsolescence chains. '
+          'Skipped one or more unconnected revision chains. '
           'See {}'.format(UNCONNECTED_CHAINS_PATH)
         )
         break

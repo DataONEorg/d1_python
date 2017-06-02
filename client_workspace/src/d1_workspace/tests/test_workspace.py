@@ -94,7 +94,7 @@ class TestWorkspace(unittest.TestCase):
       print k
 
   def _test_1000(self):
-    """TODO: Test refresh on various non-emtpy cache."""
+    """TODO: Test refresh on various non-emtpy cache"""
     with tempfile.NamedTemporaryFile(delete=False) as f:
       pickle.dump([], f)
       f.close()

@@ -23,14 +23,11 @@
 from __future__ import absolute_import
 
 import gmn.app.auth
+import gmn.app.util
 import gmn.app.models
 import gmn.app.sysmeta_util
-import gmn.app.util
 
-
-def is_sid(did):
-  return gmn.app.models.SeriesIdToPersistentId.objects.filter(sid__did=did
-                                                              ).exists()
+# PyXB
 
 
 def has_sid(sysmeta_pyxb):
@@ -39,6 +36,14 @@ def has_sid(sysmeta_pyxb):
 
 def get_sid(sysmeta_pyxb):
   return gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
+
+
+# Model
+
+
+def is_sid(did):
+  return gmn.app.models.SeriesIdToPersistentId.objects.filter(sid__did=did
+                                                              ).exists()
 
 
 def update_or_create_sid_to_pid_map(sid, pid):
@@ -67,8 +72,9 @@ def resolve_sid(sid):
 
 
 def get_sid_by_pid(pid):
-  """Get the SID to which the {pid} currently maps.
-  Return None if there is no SID that currently maps to {pid}.
+  """Get the SID to which the {pid} maps.
+  This is the reverse of resolve.
+  Return None if there is no SID maps to {pid}.
   """
   try:
     return gmn.app.models.SeriesIdToPersistentId.objects.get(
@@ -100,5 +106,5 @@ def get_sid_by_pid(pid):
 #   """
 #   sid = sysmeta_db.get_sid_by_pid(pid)
 #   if sid:
-#     chain_pid_list = sysmeta_db.get_pids_in_obsolescence_chain(pid)
+#     chain_pid_list = sysmeta_db.get_pids_in_revision_chain(pid)
 #     update_sid(sid, chain_pid_list[-1])

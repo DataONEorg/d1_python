@@ -18,14 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
 import random
 import string
+import datetime
 
-import d1_common.checksum
 import d1_common.const
+import d1_common.checksum
 import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
+
 import d1_test.instance_generator
 import d1_test.instance_generator.random_data
 
@@ -48,12 +49,12 @@ def generate_science_object_with_sysmeta(
     num_min_bytes,
     num_max_bytes,
     format_id=FORMAT_ID,
-    include_obsolescence_bool=False,
+    include_revision_bool=False,
     use_v1_bool=False,
 ):
   sci_obj = _create_science_object_bytes(pid, num_min_bytes, num_max_bytes)
   sys_meta = _generate_system_metadata_for_science_object(
-    pid, sci_obj, format_id, include_obsolescence_bool, use_v1_bool
+    pid, sci_obj, format_id, include_revision_bool, use_v1_bool
   )
   return sys_meta, sci_obj
 
@@ -61,7 +62,7 @@ def generate_science_object_with_sysmeta(
 def _create_science_object_bytes(pid, num_min_bytes, num_max_bytes):
   """Create a string of pseudo-random bytes that are always the same for a given
   {pid}. The length if set randomly between {num_min_bytes} and {num_max_bytes}
-  including.
+  including
   """
   # Seeding the PRNG with the PID causes the same sequence to be generated each
   # time.
@@ -71,7 +72,7 @@ def _create_science_object_bytes(pid, num_min_bytes, num_max_bytes):
 
 
 def _generate_system_metadata_for_science_object(
-    pid, sciobj_str, format_id, include_obsolescence_bool, use_v1_bool
+    pid, sciobj_str, format_id, include_revision_bool, use_v1_bool
 ):
   now = datetime.datetime.now()
   if use_v1_bool:
@@ -90,7 +91,7 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb.size = len(sciobj_str)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 
-  if include_obsolescence_bool:
+  if include_revision_bool:
     sysmeta_pyxb.obsoletedBy = generate_random_ascii('obsoleted_by_pid')
     sysmeta_pyxb.obsoletes = generate_random_ascii('obsoletes_pid')
 

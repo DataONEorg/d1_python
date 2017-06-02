@@ -30,13 +30,16 @@ d1_exception.py
 """
 
 import re
+import logging
 
+import responses
+
+import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
-import d1_common.url
-import d1_test.mock_api.d1_exception
+
 import d1_test.mock_api.util
-import responses
+import d1_test.mock_api.d1_exception
 
 # Config
 
@@ -55,13 +58,14 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
   pid, pyxb_bindings = _parse_url(request.url)
-  if pid.startswith('unknown_'):
+  if pid.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
   sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(pyxb_bindings, pid)[1]

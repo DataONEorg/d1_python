@@ -20,11 +20,13 @@
 
 import unittest
 
-import d1_client.mnclient_2_0
-import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.tests.config as config
 import requests
 import responses
+
+import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.tests.config as config
+
+import d1_client.mnclient_2_0
 
 
 class TestMockGet(unittest.TestCase):
@@ -53,6 +55,14 @@ class TestMockGet(unittest.TestCase):
     obj_2b_str = self.client.get('test_pid_2').content
     self.assertEqual(obj_1a_str, obj_1b_str)
     self.assertEqual(obj_2a_str, obj_2b_str)
+
+  @responses.activate
+  def test_0030(self):
+    """mock_api.get(): Redirects"""
+    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
+    direct_sciobj_str = self.client.get('test_pid_1').content
+    redirect_sciobj_str = self.client.get('<REDIRECT:303:3>test_pid_1').content
+    self.assertEqual(direct_sciobj_str, redirect_sciobj_str)
 
   # @responses.activate
   # def test_0012(self):

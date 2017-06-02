@@ -22,42 +22,45 @@
 
 from __future__ import absolute_import
 
-import datetime
-import logging
 import os
-import urlparse
 import uuid
+import logging
+import datetime
+import urlparse
+
+import requests
+
+import d1_common.const
+import d1_common.checksum
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.types.dataoneTypes_v1_1
+
+import d1_client.cnclient
+import d1_client.object_format_info
+
+import gmn.app.auth
+import gmn.app.node
+import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.db_filter
+import gmn.app.event_log
+import gmn.app.views.util
+import gmn.app.sysmeta_sid
+import gmn.app.sysmeta_util
+import gmn.app.views.create
+import gmn.app.views.asserts
+import gmn.app.psycopg_adapter
+import gmn.app.sysmeta_replica
+import gmn.app.restrict_to_verb
+import gmn.app.sysmeta_revision
+import gmn.app.sysmeta_validate
+import gmn.app.views.decorators
 
 import django.conf
 import django.http
 import django.utils.http
-import requests
-
-import d1_client.cnclient
-import d1_client.object_format_info
-import d1_common.checksum
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.types.exceptions
-import gmn.app.auth
-import gmn.app.db_filter
-import gmn.app.event_log
-import gmn.app.models
-import gmn.app.node
-import gmn.app.psycopg_adapter
-import gmn.app.restrict_to_verb
-import gmn.app.sysmeta
-import gmn.app.sysmeta_obsolescence
-import gmn.app.sysmeta_replica
-import gmn.app.sysmeta_sid
-import gmn.app.sysmeta_util
-import gmn.app.sysmeta_validate
-import gmn.app.util
-import gmn.app.views.asserts
-import gmn.app.views.create
-import gmn.app.views.decorators
-import gmn.app.views.util
 
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
@@ -328,8 +331,8 @@ def get_object_list(request):
   # The ObjectList is returned ordered by modified_timestamp ascending. The order has
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
-  query = gmn.app.models.ScienceObject.objects.order_by('modified_timestamp'
-                                                        ).select_related()
+  query = gmn.app.models.ScienceObject.objects.order_by('modified_timestamp')
+  #.select_related()
   if not gmn.app.auth.is_trusted_subject(request):
     query = gmn.app.db_filter.add_access_policy_filter(query, request, 'id')
   query = gmn.app.db_filter.add_datetime_filter(
@@ -452,7 +455,7 @@ def put_meta(request):
     sid = gmn.app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
     if gmn.app.sysmeta_sid.is_sid(sid):
       gmn.app.sysmeta_sid.update_or_create_sid_to_pid_map(sid, pid)
-  gmn.app.sysmeta.update(new_sysmeta_pyxb, skip_immutable=True)
+  gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
   gmn.app.event_log.update(pid, request)
   return gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -597,9 +600,7 @@ def put_object(request, old_pid):
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
   gmn.app.event_log.update(old_pid, request)
-  gmn.app.sysmeta_obsolescence.set_obsolescence(
-    old_pid, obsoleted_by_pid=new_pid
-  )
+  gmn.app.sysmeta_revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
   gmn.app.sysmeta.update_modified_timestamp(old_pid)
   return new_pid
 
@@ -646,12 +647,12 @@ def delete_object(request, pid):
   """
   sciobj = gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   url_split = urlparse.urlparse(sciobj.url)
-  _delete_object_from_filesystem(url_split, pid)
-  _delete_object_from_database(pid)
+  _delete_from_filesystem(url_split, pid)
+  _delete_from_database(pid)
   return pid
 
 
-def _delete_object_from_filesystem(url_split, pid):
+def _delete_from_filesystem(url_split, pid):
   if url_split.scheme == 'file':
     sciobj_path = gmn.app.util.sciobj_file_path(pid)
     try:
@@ -660,14 +661,23 @@ def _delete_object_from_filesystem(url_split, pid):
       pass
 
 
-def _delete_object_from_database(pid):
+def _delete_from_database(pid):
   # The models.CASCADE property is set on all ForeignKey fields, so most object
   # related info is deleted when deleting the IdNamespace "root".
-  #
-  # TODO: This causes associated permissions to be deleted, but any subjects
-  # that are no longer needed are not deleted. The orphaned subjects should not
+
+  # The orphaned subjects should not
   # cause any issues and will be reused if they are needed again.
+
+  if gmn.app.sysmeta_revision.is_in_revision_chain(pid):
+    gmn.app.sysmeta_revision.cut_from_chain(pid)
+
+  sid = gmn.app.sysmeta_sid.get_sid_by_pid(pid)
   gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
+  if sid and not gmn.app.models.SeriesIdToPersistentId.objects.filter(
+      sid__did=pid
+  ).exists():
+    gmn.app.models.IdNamespace.objects.filter(did=sid).delete()
+  gmn.app.sysmeta_util.delete_unused_subjects()
 
 
 @gmn.app.restrict_to_verb.put
@@ -701,7 +711,7 @@ def post_replicate(request):
   gmn.app.sysmeta_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )
-  pid = sysmeta_pyxb.identifier.value()
+  pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
   gmn.app.views.asserts.is_unused(pid)
   gmn.app.sysmeta_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb

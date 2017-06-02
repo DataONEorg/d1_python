@@ -23,17 +23,18 @@ from __future__ import absolute_import
 
 import functools
 
+import d1_common.url
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
-import d1_common.url
-import django.conf
 
 import gmn.app.auth
 import gmn.app.sysmeta
+import gmn.app.views.util
 import gmn.app.sysmeta_sid
 import gmn.app.views.asserts
-import gmn.app.views.util
+
+import django.conf
 
 # ------------------------------------------------------------------------------
 # Series ID (SID)
@@ -44,7 +45,7 @@ def resolve_sid(f):
   """Decorator that adds SID resolve and PID validation to view handlers.
   - For v1 calls, assume that {did} is a pid and raise NotFound exception
     if it's not valid.
-  - For v2 calls, if pid_or_sid is a valid PID, return it. If not, try to
+  - For v2 calls, if DID is a valid PID, return it. If not, try to
     resolve it as a SID and, if successful, return the new PID. Else, raise
     NotFound exception.
   """
@@ -54,8 +55,6 @@ def resolve_sid(f):
     pid = resolve_sid_func(request, did)
     return f(request, pid, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -88,8 +87,6 @@ def decode_id(f):
   def wrap(request, did, *args, **kwargs):
     return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -115,8 +112,6 @@ def trusted_permission(f):
     trusted(request)
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -130,8 +125,6 @@ def list_objects_access(f):
       trusted(request)
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -145,8 +138,6 @@ def get_log_records_access(f):
       trusted(request)
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -171,8 +162,6 @@ def assert_create_update_delete_permission(f):
     gmn.app.auth.assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -191,8 +180,6 @@ def authenticated(f):
       )
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -212,8 +199,6 @@ def verified(f):
       )
     return f(request, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 
@@ -226,8 +211,6 @@ def required_permission(f, level):
     gmn.app.auth.assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
 
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
   return wrap
 
 

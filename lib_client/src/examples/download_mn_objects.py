@@ -25,18 +25,19 @@ shows how to:
 - Retrieve the bytes and System Metadata for each object.
 """
 
-import logging
 import os
 import urllib
+import logging
 
-import d1_client.cnclient
-import d1_client.mnclient_2_0
+import d1_common.xml
+import d1_common.util
 import d1_common.const
 # D1
 # import d1_common.types.generated.dataoneTypes as v2
 import d1_common.types.exceptions
-import d1_common.util
-import d1_common.xml
+
+import d1_client.cnclient
+import d1_client.mnclient_2_0
 
 # Config.
 
@@ -162,7 +163,7 @@ class MemberNodeObjectDownloader(object):
           u'{}.sysmeta.xml'.format(self._pid_to_filename(pid))
         ), 'wb'
     ) as f:
-      f.write(d1_common.xml.pretty_xml(sysmeta_pyxb.toxml()))
+      f.write(d1_common.xml.pretty_xml(sysmeta_pyxb.toxml('utf-8')))
 
   def _download_object_bytes_to_file(self, pid):
     try:

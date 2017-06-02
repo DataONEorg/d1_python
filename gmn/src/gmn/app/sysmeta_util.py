@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import
 
+import logging
+
 import gmn.app.models
 
 
@@ -42,10 +44,40 @@ def get_sci_model(pid):
 
 
 def get_value(sysmeta_pyxb, sysmeta_attr):
-  """PyXB validation will fail if required elements are missing. Optional
-  elements that are not present are represented with attributes
-  that are present but set to None."""
+  """Get a Simple Content value from PyXB
+
+  PyXB validation will fail if required elements are missing. Optional elements
+  that are not present are represented with attributes that are present but set
+  to None."""
   try:
-    return getattr(sysmeta_pyxb, sysmeta_attr).value()
+    return uvalue(getattr(sysmeta_pyxb, sysmeta_attr))
   except (ValueError, AttributeError):
     return None
+
+
+def uvalue(obj_pyxb):
+  """Getting a Simple Content value from PyXB with .value() returns a PyXB type
+  that lazily evaluates to a native unicode string. This confused parts of the
+  Django ORM that check types before passing values to the database. This
+  function forces immediate conversion to unicode.
+  """
+  return unicode(obj_pyxb.value())
+
+
+def delete_unused_subjects():
+  """Delete any unused subjects from the database. This is not strictly required
+  as any unused subjects will automatically be reused if needed in the future.
+  """
+  # This causes Django to create a single join (check with query.query)
+  query = gmn.app.models.Subject.objects.all()
+  query = query.filter(scienceobject_submitter__isnull=True)
+  query = query.filter(scienceobject_rights_holder__isnull=True)
+  query = query.filter(eventlog__isnull=True)
+  query = query.filter(permission__isnull=True)
+  query = query.filter(whitelistforcreateupdatedelete__isnull=True)
+
+  logging.debug('Deleting {} unused subjects:'.format(query.count()))
+  for s in query.all():
+    logging.debug(u'  {}'.format(s.subject))
+
+  query.delete()

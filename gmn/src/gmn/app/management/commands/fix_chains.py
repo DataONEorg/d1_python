@@ -28,19 +28,19 @@ from __future__ import absolute_import
 
 import logging
 
+import gmn.app.auth
+import gmn.app.node
+import gmn.app.util
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.sysmeta_util
+import gmn.app.views.asserts
+import gmn.app.sysmeta_revision
+import gmn.app.views.diagnostics
+import gmn.app.management.commands.util
+
 import django.conf
 import django.core.management.base
-
-import gmn.app.auth
-import gmn.app.management.commands.util
-import gmn.app.models
-import gmn.app.node
-import gmn.app.sysmeta
-import gmn.app.sysmeta_obsolescence
-import gmn.app.sysmeta_util
-import gmn.app.util
-import gmn.app.views.asserts
-import gmn.app.views.diagnostics
 
 
 # noinspection PyClassHasNoInit
@@ -76,7 +76,7 @@ class obsoletedBy(object):
   def run(self):
     try:
       self._check_debug_mode()
-      self._add_obsolescence_refs()
+      self._add_revision_refs()
     except django.core.management.base.CommandError as e:
       logging.info(str(e))
     self._events.log()
@@ -85,10 +85,10 @@ class obsoletedBy(object):
     if not django.conf.settings.DEBUG_GMN:
       raise django.core.management.base.CommandError(
         'This command is only available when DEBUG_GMN is True in '
-        'settings_site.py'
+        'settings.py'
       )
 
-  def _add_obsolescence_refs(self):
+  def _add_revision_refs(self):
     for sciobj_model in gmn.app.models.ScienceObject.objects.all():
       pid = sciobj_model.pid.did
       logging.debug('Checking. pid="{}"'.format(pid))
@@ -100,7 +100,7 @@ class obsoletedBy(object):
 
   def _set_obsoletes_if_missing(self, pid, obsoletes_pid):
     if not self._has_obsoletes(pid):
-      gmn.app.sysmeta_obsolescence.set_obsolescence(
+      gmn.app.sysmeta_revision.set_revision(
         pid,
         obsoletes_pid=obsoletes_pid,
       )
@@ -112,7 +112,7 @@ class obsoletedBy(object):
 
   def _set_obsoleted_by_if_missing(self, pid, obsoleted_by_pid):
     if not self._has_obsoleted_by(pid):
-      gmn.app.sysmeta_obsolescence.set_obsolescence(
+      gmn.app.sysmeta_revision.set_revision(
         pid,
         obsoleted_by_pid=obsoleted_by_pid,
       )

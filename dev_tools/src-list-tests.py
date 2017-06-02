@@ -20,17 +20,16 @@
 # limitations under the License.
 """List tests and their docstrings
 """
-import argparse
-import logging
-import os
-import re
+from __future__ import absolute_import
 
-import redbaron
-import redbaron.nodes
+import os
+import logging
+import argparse
+
+import dev_tools.util
+import dev_tools.file_iterator
 
 import d1_common.util
-import file_iterator
-import util
 
 
 def main():
@@ -61,7 +60,7 @@ def main():
 
   event_counter = d1_common.util.EventCounter()
 
-  for module_path in file_iterator.file_iter(
+  for module_path in dev_tools.file_iterator.file_iter(
       path_list=[args.path],
       include_glob_list=['test_*.py'],
       exclude_glob_list=args.exclude,
@@ -82,8 +81,8 @@ def main():
 
 
 def list_tests_module(module_path, event_counter):
-  r = util.redbaron_module_path_to_tree(module_path)
-  if has_test_class(r):
+  r = dev_tools.util.redbaron_module_path_to_tree(module_path)
+  if dev_tools.util.has_test_class(r):
     event_counter.count('Test files')
     list_tests_tree(r, module_path, event_counter)
   else:
@@ -95,44 +94,15 @@ def list_tests_module(module_path, event_counter):
 
 def list_tests_tree(r, module_path, event_counter):
   for node in r('DefNode'):
-    if is_test_func(node.name):
-      if has_doc_str(node):
-        doc_str = get_doc_str(node)
+    if dev_tools.util.is_test_func(node.name):
+      if dev_tools.util.has_doc_str(node):
+        doc_str = dev_tools.util.get_doc_str(node)
       else:
         doc_str = '<missing>'
         event_counter.count('Missing docstrings')
       print '{}.{}: {}'.format(
         os.path.split(module_path)[1][:-3], node.name, doc_str
       )
-
-
-def is_test_func(func_name):
-  return re.match(r'^test_', func_name)
-
-
-def is_test_class(class_name):
-  return re.match(r'^Test', class_name)
-
-
-def has_doc_str(node):
-  return (
-    isinstance(node.value[0], redbaron.nodes.StringNode) or
-    isinstance(node.value[0], redbaron.nodes.UnicodeStringNode)
-  )
-
-
-def has_test_class(r):
-  for node in r('ClassNode'):
-    if is_test_class(node.name):
-      return True
-  return False
-
-
-def get_doc_str(node):
-  doc_str = node.value[0].value if has_doc_str(node) else u''
-  doc_str = doc_str.strip('"\' \t\n\r')
-  doc_str = re.sub(r'\s+', ' ', doc_str)
-  return doc_str
 
 
 if __name__ == '__main__':

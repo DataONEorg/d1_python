@@ -18,21 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`random_data`
-==================
-
-:Synopsis: Generate random data of various types.
-:Created: 2011-12-05
-:Author: DataONE (Dahl)
+"""Generate random data of various types
 """
 
-import StringIO
-import random
 import re
+import random
+import StringIO
 
-import unicode_names
 import words
+import unicode_names
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
 unicode_characters = u''.join(set(u''.join(unicode_names.UNICODE_NAMES)))
@@ -43,7 +37,7 @@ random.seed()
 
 def random_bytes(n_bytes):
   """Return a string containing random bytes"""
-  return ''.join(chr(random.randint(0, 255)) for x in range(n_bytes))
+  return bytearray(random.getrandbits(8) for _ in xrange(n_bytes))
 
 
 def random_bytes_flo(n_bytes):
@@ -102,7 +96,7 @@ def random_unicode_char_no_whitespace():
   return random.choice(unicode_characters_no_whitespace)
 
 
-def random_unicode_string_no_whitespace(min_len=5, max_len=100):
+def random_unicode_string_no_whitespace(min_len=5, max_len=20):
   s = StringIO.StringIO()
   for i in range(random.randint(min_len, max_len)):
     s.write(random_unicode_char_no_whitespace())

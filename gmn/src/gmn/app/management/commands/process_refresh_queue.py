@@ -28,15 +28,16 @@ import logging
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
+
+import gmn.app.auth
+import gmn.app.models
+import gmn.app.sysmeta
+import gmn.app.event_log
+import gmn.app.management.commands.util
+
 import django.conf
 import django.core.management.base
 from django.db import transaction
-
-import gmn.app.auth
-import gmn.app.event_log
-import gmn.app.management.commands.util
-import gmn.app.models
-import gmn.app.sysmeta
 
 
 # noinspection PyClassHasNoInit
@@ -158,7 +159,7 @@ class SysMetaRefreshQueueProcessor(object):
     No sanity checking is done on the provided System Metadata. It comes from a
     CN and is implicitly trusted.
     """
-    gmn.app.sysmeta.update(sysmeta_pyxb)
+    gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
 
   def _assert_is_pid_of_native_object(self, pid):
     if not gmn.app.sysmeta.is_pid_of_existing_object(pid):

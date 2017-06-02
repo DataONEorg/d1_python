@@ -219,10 +219,10 @@ class TestExceptions(unittest.TestCase):
     Test serialization and deserialization of DataONE Exceptions by performing
     a round trip:
 
-    1) Create a native DataONE Exception object.
-    2) Serialize the object to XML.
-    3) Deserialize XML to object.
-    4) Verify that the object contains the same information as in (1).
+    1) Create a native DataONE Exception object
+    2) Serialize the object to XML
+    3) Deserialize XML to object
+    4) Verify that the object contains the same information as in (1)
     """
     # Create a native DataONE IdentifierNotUnique Exception object.
     exc = exceptions.IdentifierNotUnique(

@@ -18,19 +18,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import SimpleHTTPServer
-import SocketServer
-import cgi
-import logging
 import re
-import threading
+import cgi
 import urllib
+import logging
 import urlparse
+import threading
+import SocketServer
+
+import SimpleHTTPServer
+import replication_error
+import test_object_generator
 
 import d1_common.const
 import d1_common.types.dataoneTypes_v1 as dataoneTypes
-import replication_error
-import test_object_generator
 
 TEST_CN_NODE_ID = 'urn:node:RepTestCN'
 TEST_MN_NODE_ID = 'urn:node:RepTestMN'
@@ -277,8 +278,8 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
     self.end_headers()
     object_bytes = test_object_generator.generate_science_object_with_sysmeta(
-      pid, include_obsolescence_bool=True
-    )[0].toxml()
+      pid, include_revision_bool=True
+    )[0].toxml('utf-8')
     self.wfile.write(object_bytes)
 
   def _generate_response_ServiceFailure(self, msg):
@@ -300,7 +301,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     node_list.append(self._create_mn_node_obj())
     self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
     self.end_headers()
-    self.wfile.write(node_list.toxml())
+    self.wfile.write(node_list.toxml('utf-8'))
 
   def _record_mn_call(self, *params):
     self._logger.debug('Recorded call: {0}'.format(', '.join(params)))

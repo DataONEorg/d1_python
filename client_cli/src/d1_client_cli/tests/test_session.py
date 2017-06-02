@@ -19,17 +19,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
 import os
 import sys
-import unittest
 import uuid
+import StringIO
+import unittest
 
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
-import d1_client_cli.impl.format_ids as format_ids
+import d1_common.const
+
 import d1_client_cli.impl.nodes as nodes
 import d1_client_cli.impl.session as session
-import d1_common.const
+import d1_client_cli.impl.format_ids as format_ids
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 nodes = nodes.Nodes()
 #  'node_a',
@@ -52,7 +53,7 @@ class TestSession(unittest.TestCase):
     pass
 
   def test_0010(self):
-    """The session object can be instantiated"""
+    """__init__()"""
     s = session.Session(nodes, format_ids)
     self.assertNotEquals(None, s, 'Could not instantiate session.')
 

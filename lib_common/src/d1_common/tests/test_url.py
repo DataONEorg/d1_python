@@ -23,6 +23,7 @@ import os
 import unittest
 
 import d1_common.url
+
 import d1_test.util
 
 HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -169,24 +170,21 @@ class TestUrl(unittest.TestCase):
     )
 
   def test_0100(self):
-    """Equivalent
-    """
+    """Equivalent"""
     a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
     b = "Http://www.SOME.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10&k1=11#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
     self.assertListEqual(url_diff_list, [])
 
   def test_0110(self):
-    """Equivalent, k2 moved
-    """
+    """Equivalent, k2 moved"""
     a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
     b = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k2=abc&k3=def&k1=10&k1=11#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
     self.assertListEqual(url_diff_list, [])
 
   def test_0120(self):
-    """Different params, p1 replaced with p4
-    """
+    """Different params, p1 replaced with p4"""
     a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
     b = "http://www.some.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
@@ -195,8 +193,7 @@ class TestUrl(unittest.TestCase):
     )
 
   def test_0130(self):
-    """Different params, p3 missing
-    """
+    """Different params, p3 missing"""
     a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
     b = "http://www.some.host:999/a/b/c/;p1;p2?k1=10&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
@@ -205,8 +202,7 @@ class TestUrl(unittest.TestCase):
     )
 
   def test_0140(self):
-    """Different query, second k11 key missing
-    """
+    """Different query, second k11 key missing"""
     a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
     b = "http://www.some.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
@@ -217,8 +213,7 @@ class TestUrl(unittest.TestCase):
     )
 
   def test_0150(self):
-    """Different query, value for k2 different
-    """
+    """Different query, value for k2 different"""
     a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=11&k2=abc&k3=def#frag"
     b = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k3=dex&k1=10&k1=11&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)

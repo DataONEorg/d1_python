@@ -53,12 +53,13 @@ memory). So we convert streaming responses to string before passing them to
 Responses.
 """
 
-import logging
 import re
+import logging
+
+import responses
+import requests_toolbelt
 
 import django.test
-import requests_toolbelt
-import responses
 
 base_url_list = []
 
@@ -82,6 +83,7 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
+  logging.debug('Received callback. url="{}"'.format(request.url))
   # url_path = u'/{}/{}'.format(
   #   *d1_test.mock_api.util.split_url_at_version_tag(request.url)[1:]
   # )
@@ -93,8 +95,10 @@ def _request_callback(request):
   else:
     assert False
 
-  logging.debug('base_url="{}"'.format(base_url))
-  logging.debug('url_path="{}"'.format(url_path))
+  logging.debug(
+    'Calling Django test client. base_url="{}" url_path="{}"'
+    .format(base_url, url_path)
+  )
 
   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
     data = request.body.read()
@@ -102,10 +106,18 @@ def _request_callback(request):
     data = request.body
 
   django_client = django.test.Client()
-  django_response = getattr(django_client, request.method.lower())(
-    url_path, data=data, content_type=request.headers.get('Content-Type'),
-    **_headers_to_wsgi_env(request.headers or {})
-  )
+  try:
+    django_response = getattr(django_client, request.method.lower())(
+      url_path, data=data, content_type=request.headers.get('Content-Type'),
+      **_headers_to_wsgi_env(request.headers or {})
+    )
+  except Exception as e:
+    logging.error(
+      'Django test client raised exception. base_url="{}" url_path="{}"'
+      .format(base_url, url_path)
+    )
+    logging.error(str(e))
+    raise
 
   return (
     django_response.status_code, django_response.items(),

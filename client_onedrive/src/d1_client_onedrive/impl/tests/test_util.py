@@ -19,12 +19,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import unittest
+
+import mock
+
+import d1_client_onedrive.impl.util
 
 
 class TestUtil(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_0010(self):
-    pass
+  def test_1000(self):
+    """ensure_dir_exists()"""
+    with mock.patch('os.makedirs') as mock_makedirs:
+      d1_client_onedrive.impl.util.ensure_dir_exists('/abc/de/f')
+      mock_makedirs.assert_called_with('/abc/de/f')
+
+  def test_1010(self):
+    """string_from_path_elements()"""
+    self.assertEquals(
+      d1_client_onedrive.impl.util.string_from_path_elements(['abc', 'de',
+                                                              'f']), 'abc/de/f'
+    )
+
+  def test_1020(self):
+    """is_root()"""
+    self.assertTrue(d1_client_onedrive.impl.util.is_root(['', '']))
+    self.assertFalse(d1_client_onedrive.impl.util.is_root(['a', '']))
+
+  def test_1030(self):
+    """os_format()"""
+    with mock.patch('platform.system', return_value='Linux'):
+      self.assertEquals(
+        d1_client_onedrive.impl.util.os_format('a\nb\n'),
+        'a\nb\n',
+      )
+    with mock.patch('platform.system', return_value='Windows'):
+      self.assertEquals(
+        d1_client_onedrive.impl.util.os_format('a\nb\n'),
+        '\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00',
+      )

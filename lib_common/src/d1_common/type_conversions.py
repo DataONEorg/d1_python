@@ -37,13 +37,13 @@ from __future__ import absolute_import
 import re
 import xml.etree.ElementTree as etree
 
-import pyxb.namespace.utility
 import pyxb.utils.domutils
+import pyxb.namespace.utility
 
+import d1_common.util
 import d1_common.types.dataoneTypes_v1 as v1_0
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
-import d1_common.util
 
 # PyXB shares information about all known types between all imported bindings.
 PYXB_BINDING = d1_common.types.dataoneTypes_v1
@@ -52,6 +52,12 @@ NS_DICT = {
   'v1': str(v1_0.Namespace),
   'v1_1': str(v1_1.Namespace),
   'v2': str(v2_0.Namespace),
+}
+
+BINDING_TO_VERSION_TAG_DICT = {
+  v1_0: 'v1',
+  v1_1: 'v1',
+  v2_0: 'v2',
 }
 
 # Register global namespace prefixes for use by ElementTree when serializing.
@@ -80,6 +86,10 @@ def get_pyxb_bindings_by_version_tag(api_major):
     return v2_0
   else:
     raise ValueError('Unknown DataONE API version tag: {}'.format(api_major))
+
+
+def get_version_tag_by_pyxb_bindings(bindings_pyxb):
+  return BINDING_TO_VERSION_TAG_DICT[bindings_pyxb]
 
 
 def get_pyxb_bindings_by_api_version(api_major, api_minor=0):

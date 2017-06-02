@@ -20,15 +20,18 @@
 
 import unittest
 
-import d1_client.cnclient_2_0
+import responses
+
+import d1_common.util
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.util
+import d1_common.types.dataoneTypes_v2_0
+
 import d1_test.mock_api.resolve as mock_resolve
 import d1_test.mock_api.tests.config as config
-import responses
+
+import d1_client.cnclient_2_0
 
 
 class TestMockResolve(unittest.TestCase):
@@ -55,7 +58,7 @@ class TestMockResolve(unittest.TestCase):
     """mock_api.resolve(): Unknown PID returns D1 NotFound"""
     mock_resolve.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.resolve, 'unknown_pid'
+      d1_common.types.exceptions.NotFound, self.client.resolve, '<NotFound>pid'
     )
 
   @responses.activate

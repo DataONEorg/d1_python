@@ -18,13 +18,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
 import random
 import string
+import datetime
 
-import d1_common.checksum
 import d1_common.const
+import d1_common.checksum
 import d1_common.types.dataoneTypes_v1 as dataoneTypes
+
 import d1_test.instance_generator.random_data
 
 # Values used in the generated System Metadata
@@ -48,17 +49,17 @@ def generate_random_ascii(prefix):
   )
 
 
-def generate_science_object_with_sysmeta(pid, include_obsolescence_bool=False):
+def generate_science_object_with_sysmeta(pid, include_revision_bool=False):
   sci_obj = _create_science_object_bytes(pid)
   sys_meta = _generate_system_metadata_for_science_object(
-    pid, sci_obj, include_obsolescence_bool
+    pid, sci_obj, include_revision_bool
   )
   return sys_meta, sci_obj
 
 
 def _create_science_object_bytes(pid):
   """Create a set of pseudo-random bytes that are always the same for a given
-  SID.
+  SID
   """
   # Seeding the PRNG with the PID causes the same sequence to be generated each
   # time.
@@ -67,7 +68,7 @@ def _create_science_object_bytes(pid):
 
 
 def _generate_system_metadata_for_science_object(
-    pid, sciobj_str, include_obsolescence_bool=False
+    pid, sciobj_str, include_revision_bool=False
 ):
   now = datetime.datetime.now()
 
@@ -83,7 +84,7 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb.size = len(sciobj_str)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 
-  if include_obsolescence_bool:
+  if include_revision_bool:
     sysmeta_pyxb.obsoletedBy = generate_random_ascii('obsoleted_by_pid')
     sysmeta_pyxb.obsoletes = generate_random_ascii('obsoletes_pid')
 

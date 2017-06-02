@@ -19,11 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import time
 # Stdlib
 # import os
 import logging
-import os
-import time
 import unittest
 
 import d1_client_onedrive.impl.cache_disk as cache_disk
@@ -44,7 +44,7 @@ class TestDiskCache(unittest.TestCase):
       os.unlink(os.path.join(TEST_CACHE_PATH, f))
 
   def test_0010(self):
-    """cache: """
+    """DiskCache()"""
     c = cache_disk.DiskCache(10, TEST_CACHE_PATH)
     c['a'] = 1
     self.assertEqual(len(c), 1)
@@ -52,7 +52,7 @@ class TestDiskCache(unittest.TestCase):
     self.assertEqual(len(c), 1)
 
   def test_0020(self):
-    """cache: """
+    """DiskCache()"""
     c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
     c['a'] = 1
     time.sleep(1.1)
@@ -66,7 +66,7 @@ class TestDiskCache(unittest.TestCase):
     self.assertEqual(c['c'], 3)
 
   def test_0030(self):
-    """cache: """
+    """DiskCache()"""
     c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
     c['a'] = 1
     c['b'] = 2

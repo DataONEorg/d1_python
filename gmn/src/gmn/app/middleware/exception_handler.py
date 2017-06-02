@@ -39,20 +39,20 @@ serialized to a set of HTTP headers for HEAD requests.
 
 from __future__ import absolute_import
 
-import logging
 import os
-import subprocess
 import sys
+import logging
 import traceback
+import subprocess
 
 import d1_common.const
 import d1_common.ext.mimeparser
 import d1_common.types.exceptions
-import django.conf
-# Django.
-from django.http import HttpResponse
 
 import gmn.app.middleware.detail_codes
+
+import django.conf
+import django.http
 
 
 class ExceptionHandler(object):
@@ -76,14 +76,14 @@ class ExceptionHandler(object):
 
   def _serialize_dataone_exception_for_regular_request(self, e):
     exception_xml = e.serialize()
-    return HttpResponse(
+    return django.http.HttpResponse(
       exception_xml, status=e.errorCode,
       content_type=d1_common.const.CONTENT_TYPE_XML
     )
 
   def _serialize_dataone_exception_for_head_request(self, e):
     exception_headers = e.serialize_to_headers()
-    http_response = HttpResponse(
+    http_response = django.http.HttpResponse(
       '', status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
     )
     for k, v in exception_headers:

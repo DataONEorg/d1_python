@@ -28,18 +28,18 @@ import command_processor
 # D1
 
 
-class O():
+class TestOptions():
   pass
 
 
 class TestCommandProcessor(unittest.TestCase):
   def setUp(self):
-    options = O()
+    options = TestOptions()
     options.BASE_URL = 'https://localhost/'
     options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
     self.c = command_processor.CommandProcessor(options)
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     # Test class instantiation (done in setUp())
     pass

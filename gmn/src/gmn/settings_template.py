@@ -24,8 +24,9 @@ This file contains settings that are specific to an instance of GMN.
 
 from __future__ import absolute_import
 
-import d1_common.const
 import d1_common.util
+# noinspection PyUnresolvedReferences
+import d1_common.const
 
 # ==============================================================================
 # Debugging

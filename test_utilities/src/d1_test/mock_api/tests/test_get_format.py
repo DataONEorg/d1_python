@@ -20,15 +20,18 @@
 
 import unittest
 
-import d1_client.cnclient_2_0
+import responses
+
+import d1_common.util
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.util
+import d1_common.types.dataoneTypes_v2_0
+
 import d1_test.mock_api.get_format as mock_get_format
 import d1_test.mock_api.tests.config as config
-import responses
+
+import d1_client.cnclient_2_0
 
 
 class TestMockGetFormat(unittest.TestCase):
@@ -56,7 +59,7 @@ class TestMockGetFormat(unittest.TestCase):
     mock_get_format.add_callback(config.CN_RESPONSES_BASE_URL)
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self.client.getFormat,
-      'unknown_format_id'
+      '<NotFound>format_id'
     )
 
   @responses.activate

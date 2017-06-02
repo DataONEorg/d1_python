@@ -21,23 +21,22 @@
 """FUSE callback handlers.
 """
 
-import datetime
-import errno
 import os
 import stat
 import time
-
-import fuse
+import errno
+import datetime
 
 import fs
+import fuse
 
 
 def dbg(func):
   def debug_print(*args, **kwargs):
     #logging.debug('DBG CALL: {0}({1} {2})'.format(func.__name__, args, kwargs))
-    f = func(*args, **kwargs)
-    #logging.debug('DBG RET: {0}: {1}'.format(func.__name__, f))
-    return f
+    fun = func(*args, **kwargs)
+    #logging.debug('DBG RET: {0}: {1}'.format(func.__name__, fun))
+    return fun
 
   return debug_print
 
@@ -50,6 +49,7 @@ class FUSECallbacks(fuse.Operations):
 
     print 'Generated files: {0}'.format(len(self.fs))
 
+  # noinspection PyMethodOverriding
   @dbg
   def getattr(self, path, fh):
     """Called by FUSE when the attributes for a file or directory are required.
@@ -123,10 +123,10 @@ class FUSECallbacks(fuse.Operations):
   @dbg
   def _get_direct_children(self, path):
     a = self._get_all_children(path)
-    n = self._n_elements(path)
+    n = self._count_path_elements(path)
     c = set()
     for aa in a:
-      c.add(self._get_element_n(aa[0], n))
+      c.add(self._get_path_element(aa[0], n))
     return sorted(list(c))
 
   @dbg
@@ -138,21 +138,21 @@ class FUSECallbacks(fuse.Operations):
     return c
 
   @dbg
-  def _n_elements(self, path):
+  def _count_path_elements(self, path):
     if path == '':
       return 0
     return path.count('/') + 1
 
   @dbg
   def _get_paths(self, d):
-    return [f[0] for f in d]
+    return [v[0] for v in d]
 
   @dbg
-  def _get_first_n_elements(self, path, n):
+  def _get_first_path_elements(self, path, n):
     return '/'.join(path.split('/')[:n])
 
   @dbg
-  def _get_element_n(self, path, n):
+  def _get_path_element(self, path, n):
     return path.split('/')[n]
 
   @dbg
@@ -184,43 +184,42 @@ class FUSECallbacks(fuse.Operations):
     if path == '':
       return True
     for p in self.fs:
-      if p[0].startswith(path) and self._n_elements(p[0]
-                                                    ) > self._n_elements(path):
+      if (
+        p[0].startswith(path) and (
+          self._count_path_elements(p[0]) > self._count_path_elements(path)
+        )
+      ): # yapf: disable
         return True
     return False
 
   @dbg
   def _is_file(self, path):
     return path in self.file_paths
-    #for p in self.fs:
-    #  if path == p[0]:
-    #    return True
-    #return False
 
   @dbg
   def _is_direct_child(self, base, child):
-    return child.startswith(base) and self._n_elements(
+    return child.startswith(base) and self._count_path_elements(
       child
-    ) == self._n_elements(base) + 1
+    ) == self._count_path_elements(base) + 1
 
   @dbg
   def _mk_relative(self, path):
     assert (path[0] == '/')
     return path[1:]
 
-  def _flatten(self, fs):
+  def _flatten(self, filesys):
     paths = []
-    self._flatten_r(paths, '', fs)
+    self._flatten_r(paths, '', filesys)
     return sorted(paths)
 
-  def _flatten_r(self, paths, p, fs):
-    for f in fs:
+  def _flatten_r(self, paths, p, filesys):
+    for v in filesys:
       try:
-        iter(f[1])
+        iter(v[1])
       except TypeError:
-        paths.append((os.path.join(p, f[0]), f[1], f[2]))
+        paths.append((os.path.join(p, v[0]), v[1], v[2]))
       else:
-        self._flatten_r(paths, os.path.join(p, f[0]), f[1])
+        self._flatten_r(paths, os.path.join(p, v[0]), v[1])
 
 
 if __name__ == '__main__':

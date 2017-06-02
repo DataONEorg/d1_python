@@ -23,33 +23,23 @@ from __future__ import absolute_import
 
 import unittest
 
-import d1_client.mnclient_1_1
-import d1_client.mnclient_2_0
-import d1_test.mock_api.django_client as mock_django_client
-import d1_test.util
-import django.test
-import gmn.app.middleware.session_jwt
-import gmn.tests.gmn_test_case
 import mock
 
-BASE_URL = 'http://mock/mn'
+import d1_test.util
+
+import gmn.tests.gmn_test_case
+import gmn.app.middleware.session_jwt
+
+import django.test
 
 
-@unittest.skip('TODO: Seems like mocking timegm is suddenly not working')
+@django.test.override_settings(
+  DEBUG=True,
+  STAND_ALONE=False,
+  DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
+)
+@unittest.skip('Tests failing because cn certs changed to LE')
 class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
-  # @classmethod
-  # def setUpClass(cls):
-  #   pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    mock_django_client.add_callback(BASE_URL)
-    self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(BASE_URL)
-    self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
-
-  @django.test.override_settings(
-    STAND_ALONE=False,
-    DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
-  )
   def test_0010(self):
     """_get_cn_cert() successfully retrieves CN server cert from cn-stage"""
     cert_obj = gmn.app.middleware.session_jwt._get_cn_cert()
@@ -64,27 +54,18 @@ class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
       jwt_base64
     )
 
-  @django.test.override_settings(
-    STAND_ALONE=False,
-    DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
-  )
   def test_0020(self):
     """_validate_jwt_and_get_subject_list() silently returns an empty subject
     list when parsing the token fails to failed validation. The token expired on
-    2016-10-06.
+    2016-10-06
     """
     subject_list = self._parse_test_token()
     self.assertListEqual(subject_list, [])
 
-  @django.test.tag("test")
-  @django.test.override_settings(
-    STAND_ALONE=False,
-    DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
-  )
   def test_0030(self):
     """_validate_jwt_and_get_subject_list() successfully returns the expected
     subject list when PyJWS' call to calendar.timegm() is mocked to return a
-    time just before the token expired.
+    time just before the token expired
     """
     with mock.patch(
         'gmn.app.middleware.session_jwt.jwt.api_jwt.timegm'

@@ -21,8 +21,7 @@
 
 import unittest
 
-import \
-  d1_client_onedrive.impl.clients.query_engine_description as query_engine_description
+import d1_client_onedrive.impl.clients.query_engine_description as query_engine_description
 
 options = {}
 
@@ -33,7 +32,7 @@ class TestQueryEngineDescription(unittest.TestCase):
     self.q.load('test_index/query_engine_description.xml')
 
   def test_0010(self):
-    """init: """
+    """__init__()"""
     pass
 
   def test_0020(self):

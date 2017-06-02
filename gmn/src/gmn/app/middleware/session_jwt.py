@@ -22,19 +22,21 @@
 
 from __future__ import absolute_import
 
-import httplib
-import logging
-import socket
 import ssl
+import socket
+import logging
 import urlparse
 
-import cryptography.hazmat.backends
+import jwt
+import httplib
 import cryptography.x509
+import cryptography.hazmat.backends
+
 import d1_common.const
 import d1_common.types.exceptions
+
 import django.conf
 import django.core.cache
-import jwt
 
 # App
 
@@ -76,7 +78,7 @@ def _validate_jwt_and_get_subject_list(jwt_base64):
   If validation fails for any reason, errors are logged and an empty list is
   returned. Possible errors include:
 
-  - GMN is in stand-alone mode (settings_site.STAND_ALONE).
+  - GMN is in stand-alone mode (settings.STAND_ALONE).
   - GMN could not establish a trusted (TLS/SSL) connection to the root CN in
   the env.
   - The certificate could not be retrieved from the root CN.

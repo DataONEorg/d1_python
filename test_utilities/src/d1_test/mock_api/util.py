@@ -21,21 +21,22 @@
 """Utilities for mocking up DataONE API endpoints with Responses
 """
 
-import base64
-import datetime
-import hashlib
-import json
-import random
 import re
+import json
+import base64
+import hashlib
+import datetime
 import urlparse
 
 import pyxb.utils
 
+import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
-import d1_common.url
+
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
+from d1_test.util import generate_reproducible_sciobj_str
 from d1_test.mock_api.list_objects import N_TOTAL
 
 NUM_SCIOBJ_BYTES = 1024
@@ -91,14 +92,8 @@ def get_page(query_dict, n_total):
   return n_start, n_count
 
 
-def generate_sciobj_bytes(pid, n_count=NUM_SCIOBJ_BYTES):
-  pid_hash_int = int(hashlib.md5(pid).hexdigest(), 16)
-  random.seed(pid_hash_int)
-  return bytearray(random.getrandbits(8) for _ in xrange(n_count))
-
-
 def generate_sysmeta(pyxb_bindings, pid):
-  sciobj_str = d1_test.mock_api.util.generate_sciobj_bytes(pid)
+  sciobj_str = generate_reproducible_sciobj_str(pid)
   sysmeta_pyxb = _generate_system_metadata_for_sciobj_str(
     pyxb_bindings, pid, sciobj_str
   )
@@ -151,7 +146,7 @@ def generate_object_list(pyxb_bindings, n_start, n_count):
   objectList.total = N_TOTAL
 
   pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
-  return objectList.toxml()
+  return objectList.toxml('utf-8')
 
 
 # def echo_post_callback(request):

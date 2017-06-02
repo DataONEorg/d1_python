@@ -39,7 +39,7 @@ class TestCLIExceptions(unittest.TestCase):
     cli.do_set('verbose true')
 
   def test_0010(self):
-    """InvalidArguments(): Successfully instantiated and raised"""
+    """InvalidArguments(): __init__()"""
     self.assertRaises(
       d1_client_cli.impl.cli_exceptions.InvalidArguments, lambda: self._raise(
         d1_client_cli.impl.cli_exceptions.InvalidArguments('test_message')
@@ -53,7 +53,7 @@ class TestCLIExceptions(unittest.TestCase):
     self.assertEqual(msg_str, str(ex))
 
   def test_0030(self):
-    """CLIError(): Successfully instantiated and raised"""
+    """CLIError(): __init__()"""
     self.assertRaises(
       d1_client_cli.impl.cli_exceptions.CLIError, lambda: self.
       _raise(d1_client_cli.impl.cli_exceptions.CLIError('test_message'))

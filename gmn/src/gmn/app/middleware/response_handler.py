@@ -25,19 +25,21 @@ Serialize DataONE response objects according to Accept header and set header
 
 from __future__ import absolute_import
 
+import logging
 import datetime
 
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
-import django.conf
-import django.db
-import django.http
-from django.db.models import Max
 
 import gmn.app.views.util
+
+import django.db
+import django.conf
+import django.http
+from django.db.models import Max
 
 
 class ResponseHandler(object):
@@ -53,10 +55,12 @@ class ResponseHandler(object):
       response = self._serialize_object(request, view_result)
     elif isinstance(view_result, basestring):
       response = self._http_response_with_identifier_type(request, view_result)
-    else:
-      assert False, "Unknown view response type: {} {}".format(
-        type(view_result), str(view_result)
+    elif isinstance(view_result, Exception):
+      logging.error(
+        'View exception: '.format(type(view_result), str(view_result))
       )
+      return view_result
+      # response = view_result
     self._debug_mode_responses(request, response)
     return response
 
@@ -91,7 +95,7 @@ class ResponseHandler(object):
     d1_type_latest_date = self._latest_date(
       view_result['query'], d1_type_date_field
     )
-    response.write(d1_type.toxml().encode('utf-8'))
+    response.write(d1_type.toxml('utf-8'))
     self._set_headers(response, d1_type_latest_date, response.tell())
     return response
 
@@ -134,7 +138,7 @@ class ResponseHandler(object):
 
   def _http_response_with_identifier_type(self, request, pid):
     pid_pyxb = gmn.app.views.util.dataoneTypes(request).identifier(pid)
-    pid_xml = pid_pyxb.toxml()
+    pid_xml = pid_pyxb.toxml('utf-8')
     return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
   def _set_headers(self, response, content_modified_timestamp, content_length):
@@ -144,58 +148,3 @@ class ResponseHandler(object):
 
   def _latest_date(self, query, field):
     return query.aggregate(Max(field))
-
-  # TODO: Check that the integration tests have a return type check for each
-  # API.
-  # def _assert_correct_return_type(self, request, response):
-  #   # Pass through: Django HTML Exception page
-  #   if response['content-type'] == 'text/html':
-  #     return
-  #   # Pass through: Streaming HTTP responses
-  #   if response.streaming:
-  #     return
-  #   # Pass through: Anything from the diagnostics API
-  #   if gmn.app.views.util.is_diag_api(request):
-  #     return
-  #   # Pass through boolean responses
-  #   api_verb_str = request.path_info.split('/')[2]
-  #   if api_verb_str in (
-  #     'dirtySystemMetadata',
-  #     'error',
-  #     'isAuthorized',
-  #     'meta',
-  #     'ping',
-  #     'replicate',
-  #   ):
-  #     return
-  #   if request.method == 'HEAD' and api_verb_str == 'object':
-  #     return
-  #   # Anything else has to be a valid XML doc
-  #   assert response['content-type'] == d1_common.const.CONTENT_TYPE_XML, \
-  #     u'Invalid content type. content-type="{}"'.format(response['content-type'])
-  #   assert d1_common.type_conversions.str_is_well_formed(response.content), \
-  #     u'Not well formed XML. content="{}"'.format(response.content)
-  #   # The XML doc can be a D1 error or a D1 type corresponding to the API
-  #
-  #   if d1_common.type_conversions.str_is_error(response.content):
-  #     return
-  #
-  #   # # v1 only types
-  #   # if d1_common.type_conversions.str_is_identifier(response.content):
-  #   #   return
-  #   # if d1_common.type_conversions.str_is_objectList(response.content):
-  #   #   return
-  #
-  #   return_type_version_match_bool = True
-  #   if gmn.app.views.util.is_v1_api(request) \
-  #       and not d1_common.type_conversions.str_is_v1(response.content):
-  #     return_type_version_match_bool = False
-  #
-  #   # v2 returns a mix of v1 and v2
-  #   # if gmn.app.views.util.is_v2_api(request) \
-  #   #     and not d1_common.type_conversions.str_is_v2(response.content):
-  #   #   return_type_version_match_bool = False
-  #
-  #   assert return_type_version_match_bool, \
-  #     u'Return type version does not correspond to request version. ' \
-  #     u'content="{}"'.format(response.content)

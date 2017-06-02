@@ -210,35 +210,35 @@ XML_SYNTAX_ERROR = """<?xml version="1.0" ?>
 
 class TestXml(unittest.TestCase):
   def test_0010(self):
-    """Compare xml_correct with itself and verify that compare passes."""
+    """Compare xml_correct with itself and verify that compare passes"""
     self.assertTrue(d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT))
 
   def test_0020(self):
-    """Compare xml_correct with itself and verify that compare passes."""
+    """Compare xml_correct with itself and verify that compare passes"""
     self.assertTrue(
       d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT_SWAPPED_ATTRIBUTES)
     )
 
   def test_0030(self):
-    """Verify that comparison fails when an attribute is missing."""
+    """Verify that comparison fails when an attribute is missing"""
     self.assertFalse(
       d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_COUNT)
     )
 
   def test_0040(self):
-    """Verify that comparison fails when an element is missing."""
+    """Verify that comparison fails when an element is missing"""
     self.assertFalse(
       d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_ENTRY)
     )
 
   def test_0050(self):
-    """Verify that comparison fails when to elements appear in the wrong order."""
+    """Verify that comparison fails when to elements appear in the wrong order"""
     self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_WRONG_ORDER))
 
   def test_0060(self):
-    """Verify that comparison fails when an element is missing text."""
+    """Verify that comparison fails when an element is missing text"""
     self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_TEXT))
 
   def test_0070(self):
-    """Verify that comparison fails when the document is not well formed."""
+    """Verify that comparison fails when the document is not well formed"""
     self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_SYNTAX_ERROR))

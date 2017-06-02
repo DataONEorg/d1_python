@@ -1,12 +1,15 @@
 # D1
 import unittest
 
-import d1_client.baseclient_1_1
-import d1_common.util
-import d1_test.instance_generator.random_data
-import d1_test.mock_api.catch_all
-import d1_test.util
 import shared_settings
+
+import d1_common.util
+
+import d1_test.util
+import d1_test.mock_api.catch_all
+import d1_test.instance_generator.random_data
+
+import d1_client.baseclient_1_1
 
 # import d1_test.mock_api.log_records
 # import d1_test.mock_api.all
@@ -23,7 +26,7 @@ class TestDataONEBaseClient_1_1(unittest.TestCase):
     )
 
   def test_0010(self):
-    """Able to instantiate TestDataONEBaseClient_1_1"""
+    """__init__()"""
     base_client = d1_client.baseclient_1_1.DataONEBaseClient_1_1(
       shared_settings.MN_RESPONSES_URL
     )
