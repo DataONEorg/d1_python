@@ -18,51 +18,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import requests
 import responses
 
+import d1_test.d1_test_case
 import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.tests.config as config
-
-import d1_client.mnclient_2_0
 
 
-class TestMockGet(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockGet(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.get() returns a Requests Response object"""
-    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(self.client.get('test_pid_1'), requests.Response)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert isinstance(mn_client_v1_v2.get('test_pid_1'), requests.Response)
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1_v2):
     """mock_api.get() returns the same content each time for a given PID"""
-    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
-    obj_1a_str = self.client.get('test_pid_1').content
-    obj_2a_str = self.client.get('test_pid_2').content
-    obj_1b_str = self.client.get('test_pid_1').content
-    obj_2b_str = self.client.get('test_pid_2').content
-    self.assertEqual(obj_1a_str, obj_1b_str)
-    self.assertEqual(obj_2a_str, obj_2b_str)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    obj_1a_str = mn_client_v1_v2.get('test_pid_1').content
+    obj_2a_str = mn_client_v1_v2.get('test_pid_2').content
+    obj_1b_str = mn_client_v1_v2.get('test_pid_1').content
+    obj_2b_str = mn_client_v1_v2.get('test_pid_2').content
+    assert obj_1a_str == obj_1b_str
+    assert obj_2a_str == obj_2b_str
 
   @responses.activate
-  def test_0030(self):
+  def test_0030(self, mn_client_v1_v2):
     """mock_api.get(): Redirects"""
-    mock_get.add_callback(config.MN_RESPONSES_BASE_URL)
-    direct_sciobj_str = self.client.get('test_pid_1').content
-    redirect_sciobj_str = self.client.get('<REDIRECT:303:3>test_pid_1').content
-    self.assertEqual(direct_sciobj_str, redirect_sciobj_str)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    direct_sciobj_str = mn_client_v1_v2.get('test_pid_1').content
+    redirect_sciobj_str = mn_client_v1_v2.get(
+      '<REDIRECT:303:3>test_pid_1'
+    ).content
+    assert direct_sciobj_str == redirect_sciobj_str
 
   # @responses.activate
   # def test_0012(self):

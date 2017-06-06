@@ -29,19 +29,21 @@
 """
 
 import context
+import pytest
+import test_client
 
 import d1_common.const
 import d1_common.types.exceptions
+
 import d1_test_case
-import test_client
 
 
 class Test030ListObjects(d1_test_case.D1TestCase):
   def assert_counts(self, object_list, start, count, total):
-    self.assertEqual(object_list.start, start)
-    self.assertEqual(object_list.count, count)
-    self.assertEqual(object_list.total, total)
-    self.assertEqual(len(object_list.objectInfo), count)
+    assert object_list.start == start
+    assert object_list.count == count
+    assert object_list.total == total
+    assert len(object_list.objectInfo) == count
 
   def setUp(self):
     pass
@@ -53,12 +55,12 @@ class Test030ListObjects(d1_test_case.D1TestCase):
 
     object_list = client.listObjects(context.TOKEN, start=0, count=0)
 
-    self.assertEqual(object_list.start, 0)
-    self.assertEqual(object_list.count, 0)
+    assert object_list.start == 0
+    assert object_list.count == 0
     # The server is required to have at least 15 objects to pass this test.
     # Without a few objects to perform tests on, many of the remaining tests in
     # the suite become meaningless.
-    self.assertTrue(object_list.total >= 15)
+    assert object_list.total >= 15
 
     context.object_total = object_list.total
 
@@ -111,28 +113,26 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # It's common to forget to check for negative numbers when validating
     # indexes.
     client = test_client.TestClient(context.node['baseurl'])
-    self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest, client.listObjects,
-      context.TOKEN, start=-1, count=d1_common.const.MAX_LISTOBJECTS
-    )
+    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+      client.listObjects(
+        context.TOKEN, start=-1, count=d1_common.const.MAX_LISTOBJECTS
+      )
 
   def test_050_invalid_request_invalid_count(self):
     """count parameter higher than MAX_LISTOBJECTS returns InvalidRequest.
     """
     client = test_client.TestClient(context.node['baseurl'])
-    self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest, client.listObjects,
-      context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS + 1
-    )
+    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+      client.listObjects(
+        context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS + 1
+      )
 
   def test_060_invalid_request_negative_count(self):
     """Negative 'count' parameter returns InvalidRequest.
     """
     client = test_client.TestClient(context.node['baseurl'])
-    self.assertRaises(
-      d1_common.types.exceptions.InvalidRequest, client.listObjects,
-      context.TOKEN, count=-1
-    )
+    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+      client.listObjects(context.TOKEN, count=-1)
 
   def test_070_date_range_1(self):
     """fromDate and toDate parameters are accepted separately and
@@ -157,10 +157,10 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     # timestamps on the node, so filtering on the lowest timestamp must
     # eliminate at least one object.
     object_list = client.listObjects(context.TOKEN, fromDate=dates[-1])
-    self.assertTrue(object_list.count < context.object_total)
+    assert object_list.count < context.object_total
     # Filtering on the highest timestamp must eliminate at least one object.
     object_list = client.listObjects(context.TOKEN, toDate=dates[0])
-    self.assertTrue(object_list.count < context.object_total)
+    assert object_list.count < context.object_total
 
   def test_075_date_range_2(self):
     """fromDate and toDate correctly split the number of returned
@@ -181,7 +181,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     high = client.listObjects(context.TOKEN, fromDate=middle_date).total
     # Check that the separate totals match the total number of objects in the
     # collection.
-    self.assertEqual(low + high, context.object_total)
+    assert low + high == context.object_total
 
   def test_080_date_range_3(self):
     """fromDate and toDate parameters are accepted together and
@@ -201,4 +201,4 @@ class Test030ListObjects(d1_test_case.D1TestCase):
       context.TOKEN, fromDate=dates[0], toDate=dates[-1],
       count=d1_common.const.MAX_LISTOBJECTS
     )
-    self.assertTrue(object_list.count >= len(dates))
+    assert object_list.count >= len(dates)

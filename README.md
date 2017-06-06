@@ -79,3 +79,42 @@ Notes:
   * **Flake8 validation**: the same procedure as for `YAPF` can be used, as `Flake8` searches for its configuration file in the same way. In addition, IDEs can typically do code inspections and tag issues directly in the UI, where they can be handled before commit.
 
 * See the `YAPF` and `Flake8` config files at `./.style.yapf` and `./.flake8` for the formatting options we have selected.
+
+#### Testing
+
+* Testing is based on the [pytest](https://docs.pytest.org/en/latest/) unit test framework.
+
+* We have added some custom functionality to pytest:
+
+  * `--update-samples`: Enable a mode that invokes `kdiff3` to display diffs and, after user confirmation, can automatically update or write new test sample documents on mismatches.
+
+  * `--pycharm`: Attempt to move the cursor in PyCharm to the location of the most recent test failure.
+
+  * `parameterize_dict`: Support for parameterizing test functions by adding a dict class member containing parameter sets.
+
+  * See `./conftest.py` for implementation and notes.
+
+* To run pytest based tests from PyCharm:
+
+  * By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail as they are based on pytest. To use pytest as default, set `Settings > Tools > Python Integrated Tools > Default test runner` to py.test. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
+
+  * Generate and run a configuration for a specific test by placing the cursor on a test function name and running `Run context configuration`.
+
+  * After generating the configuration, debug with the regular `Debug (Shift-F9)` command.
+
+
+##### Django
+
+* Testing of the GMN Django web app is based on pytest and [pytest-django](https://pytest-django.readthedocs.io/en/latest/).
+
+* To change GMN settings for test class or method:
+
+  @django.test.override_settings(
+    CLIENT_CERT_PATH=None,
+    CLIENT_CERT_PRIVATE_KEY_PATH=None,
+  )
+
+* Preventing the prompt to delete the Django test database. E.g.: Got an error creating the test database. Type 'yes' if you would like to try deleting the test database:
+
+  * Add `--noinput` to the Django test configuration
+    * https://stackoverflow.com/questions/34244171

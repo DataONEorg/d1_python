@@ -26,10 +26,11 @@ See the file_iterator module for details on the arguments.
 """
 
 import argparse
-
-import d1_common.util
+import logging
 
 import file_iterator
+
+import d1_common.util
 
 
 def main():
@@ -68,7 +69,8 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
-    print file_path
+    with d1_common.util.print_logging():
+      logging.info(file_path)
 
 
 if __name__ == '__main__':

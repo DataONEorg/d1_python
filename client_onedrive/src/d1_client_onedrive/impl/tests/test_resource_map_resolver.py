@@ -19,16 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import object_tree_test_sample
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.resolver.resource_map as resource_map
 
 options = {}
 
 
-class TestResourceMapResolver(unittest.TestCase):
+class TestResourceMapResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self._resolver = resource_map.Resolver(
       options, object_tree_test_sample.object_tree

@@ -19,45 +19,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+import pytest
 import pyxb
 
-import d1_common.xml
 import d1_common.system_metadata
+import d1_common.xml
 
-import d1_test.util
+import d1_test.d1_test_case
 
 # logging.basicConfig(level=logging.DEBUG)
 
 
-class TestSystemMetadata(unittest.TestCase):
-  def setUp(self):
-    self.sm_pyxb = d1_test.util.read_xml_file_to_pyxb('systemMetadata_v2_0.xml')
+class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
+  sm_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+    'systemMetadata_v2_0.xml'
+  )
 
   def test_0010(self):
     """PyXB performs schema validation on sysmeta object and raises
     pyxb.PyXBException on invalid XML doc
     """
-    self.assertRaises(
-      pyxb.PyXBException, d1_test.util.read_xml_file_to_pyxb,
-      'systemMetadata_v1_0.invalid.xml'
-    )
+    with pytest.raises(pyxb.PyXBException):
+      self.read_xml_file_to_pyxb('systemMetadata_v1_0.invalid.xml')
 
   def test_0020(self):
     """is_equivalent() Returns False for modified sysmeta"""
-    modified_pyxb = d1_test.util.read_xml_file_to_pyxb(
-      'systemMetadata_v2_0.xml'
-    )
+    modified_pyxb = self.read_xml_file_to_pyxb('systemMetadata_v2_0.xml')
     modified_pyxb.identifier = 'modifiedIdentifier'
-    self.assertFalse(
-      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, modified_pyxb)
+    assert not d1_common.system_metadata.is_equivalent_pyxb(
+      self.sm_pyxb, modified_pyxb
     )
 
   def test_0030(self):
     """is_equivalent() Returns True for duplicated sysmeta"""
-    self.assertTrue(
-      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb)
+    assert d1_common.system_metadata.is_equivalent_pyxb(
+      self.sm_pyxb, self.sm_pyxb
     )
 
   def test_0040(self):
@@ -65,9 +61,9 @@ class TestSystemMetadata(unittest.TestCase):
     any order without changing the meaning of the doc have been shuffled
     around
     """
-    swizzled_pyxb = d1_test.util.read_xml_file_to_pyxb(
+    swizzled_pyxb = self.read_xml_file_to_pyxb(
       'systemMetadata_v2_0.swizzled.xml'
     )
-    self.assertTrue(
-      d1_common.system_metadata.is_equivalent_pyxb(self.sm_pyxb, swizzled_pyxb)
+    assert d1_common.system_metadata.is_equivalent_pyxb(
+      self.sm_pyxb, swizzled_pyxb
     )

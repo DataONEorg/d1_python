@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import onedrive_solr_client
+
+import d1_test.d1_test_case
 
 # Example results
 
@@ -386,7 +386,7 @@ class TestOptions():
   pass
 
 
-class TestSolrClient(unittest.TestCase):
+class TestSolrClient(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     options = TestOptions()
     options.BASE_URL = 'https://localhost/'

@@ -21,9 +21,10 @@
 
 # Stdlib
 # import os
-import unittest
 
 import command_processor
+
+import d1_test.d1_test_case
 
 # D1
 
@@ -32,7 +33,7 @@ class TestOptions():
   pass
 
 
-class TestCommandProcessor(unittest.TestCase):
+class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     options = TestOptions()
     options.BASE_URL = 'https://localhost/'

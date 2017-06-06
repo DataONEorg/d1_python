@@ -26,30 +26,30 @@ command iterates over the requests and attempts to create the replicas.
 
 from __future__ import absolute_import
 
-import shutil
 import logging
+import shutil
 
-import d1_common.url
-import d1_common.util
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
+import d1_common.url
+import d1_common.util
 
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
 
-import gmn.app.util
+import gmn.app.event_log
+import gmn.app.local_replica
+import gmn.app.management.commands.util
 import gmn.app.models
 import gmn.app.sysmeta
-import gmn.app.event_log
+import gmn.app.util
 import gmn.app.views.util
-import gmn.app.sysmeta_replica
-import gmn.app.management.commands.util
 
 import django.conf
-import django.db.transaction
 import django.core.management.base
+import django.db.transaction
 
 
 # noinspection PyClassHasNoInit
@@ -201,7 +201,7 @@ class ReplicationQueueProcessor(object):
     node_list = self._get_node_list()
     discovered_nodes = []
     for node in node_list.node:
-      discovered_node_id = gmn.app.sysmeta_util.uvalue(node.identifier)
+      discovered_node_id = gmn.app.util.uvalue(node.identifier)
       discovered_nodes.append(discovered_node_id)
       if discovered_node_id == source_node:
         return node.baseURL
@@ -223,7 +223,7 @@ class ReplicationQueueProcessor(object):
     revision chains and SIDs. So this create sequence differs significantly
     from the regular one that is accessed through MNStorage.create().
     """
-    pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+    pid = gmn.app.util.uvalue(sysmeta_pyxb.identifier)
     self._assert_is_pid_of_local_unprocessed_replica(pid)
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
@@ -237,7 +237,7 @@ class ReplicationQueueProcessor(object):
   def _check_and_create_replica_revision(self, sysmeta_pyxb, attr_str):
     revision_attr = getattr(sysmeta_pyxb, attr_str)
     if revision_attr is not None:
-      pid = gmn.app.sysmeta_util.uvalue(revision_attr)
+      pid = gmn.app.util.uvalue(revision_attr)
       self._assert_pid_is_unknown_or_replica(pid)
       self._create_replica_revision_reference(pid)
 
@@ -251,7 +251,7 @@ class ReplicationQueueProcessor(object):
       shutil.copyfileobj(sciobj_stream, f)
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
-    if not gmn.app.sysmeta_replica.is_unprocessed_local_replica(pid):
+    if not gmn.app.local_replica.is_unprocessed_local_replica(pid):
       raise ReplicateError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
@@ -260,7 +260,7 @@ class ReplicationQueueProcessor(object):
   def _assert_pid_is_unknown_or_replica(self, pid):
     if gmn.app.sysmeta.is_did(
         pid
-    ) and not gmn.app.sysmeta_replica.is_local_replica(pid):
+    ) and not gmn.app.local_replica.is_local_replica(pid):
       raise ReplicateError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)

@@ -21,11 +21,11 @@
 """FUSE callback handlers.
 """
 
+import datetime
+import errno
 import os
 import stat
 import time
-import errno
-import datetime
 
 import fs
 import fuse
@@ -34,9 +34,9 @@ import fuse
 def dbg(func):
   def debug_print(*args, **kwargs):
     #logging.debug('DBG CALL: {0}({1} {2})'.format(func.__name__, args, kwargs))
-    fun = func(*args, **kwargs)
-    #logging.debug('DBG RET: {0}: {1}'.format(func.__name__, fun))
-    return fun
+    # func = func(*args, **kwargs)
+    #logging.debug('DBG RET: {0}: {1}'.format(func.__name__, func))
+    return func
 
   return debug_print
 

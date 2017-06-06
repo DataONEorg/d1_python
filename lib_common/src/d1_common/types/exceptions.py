@@ -19,7 +19,7 @@
 # limitations under the License.
 """Native objects for holding DataONE Exceptions
 
-- Wrap the PyXB bindings with Exception based classes
+- Wrap the PyXB client with Exception based classes
 - PyXB based XML serialization and deserialization
 - Add deserialize to string and HTTP headers
 
@@ -35,6 +35,7 @@ auth.py(315)
 </error>
 """
 
+import logging
 import re
 import string
 import StringIO
@@ -45,8 +46,8 @@ import pyxb
 import pyxb.binding.datatypes as XS
 import pyxb.utils.domutils
 
-from d1_common.types import dataoneErrors
 import d1_common.util
+from d1_common.types import dataoneErrors
 
 
 def deserialize(dataone_exception_xml):
@@ -72,17 +73,13 @@ def deserialize(dataone_exception_xml):
       dataone_exception_pyxb.nodeId,
     )
 
-  msg = StringIO.StringIO()
-  msg.write('Deserialization failed.\n')
-  msg.write('Error: {}\n'.format(error_str))
-  msg.write(
-    'Input: {}\n'.format(
-      '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
-    )
-  )
   raise ServiceFailure(
     detailCode=0,
-    description=msg.getvalue(),
+    description='Deserialization failed. error="{}" doc="{}"'.format(
+      error_str,
+      '<empty response>'
+      if not dataone_exception_xml else dataone_exception_xml,
+    ),
     traceInformation=traceback.format_exc(),
   )
 
@@ -115,7 +112,7 @@ def _get_header(headers, header):
 
 
 def create_exception_by_name(
-    name, detailCode="0", description='', traceInformation=None,
+    name, detailCode='0', description='', traceInformation=None,
     identifier=None, nodeId=None
 ):
   try:
@@ -131,7 +128,7 @@ def create_exception_by_name(
 
 
 def create_exception_by_error_code(
-    errorCode, detailCode="0", description='', traceInformation=None,
+    errorCode, detailCode='0', description='', traceInformation=None,
     identifier=None, nodeId=None
 ):
   try:
@@ -152,14 +149,14 @@ def create_exception_by_error_code(
 class DataONEException(Exception):
   """Base class for exceptions raised by DataONE.
   """
-
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
+  @d1_common.util.unicode_to_utf8
   def __init__(
-      self, errorCode, detailCode="0", description='', traceInformation=None,
+      self, errorCode, detailCode='0', description='', traceInformation=None,
       identifier=None, nodeId=None
   ):
     self.errorCode = errorCode
-    self.detailCode = str(detailCode)
+    self.detailCode = detailCode
     self.description = description
     # trace information is stored internally as a unicode string that may or
     # may not be XML. Serialization will use the XML structure if it is valid,
@@ -170,16 +167,86 @@ class DataONEException(Exception):
     self.identifier = identifier
     self.nodeId = nodeId
 
+  def __repr__(self):
+    logging.error('7' * 100)
+    for attr_str in [
+        'errorCode', 'detailCode', 'description', 'identifier', 'nodeId',
+        'traceInformation'
+    ]:
+      logging.error(type(getattr(self, attr_str)))
+
+    s = '{}({})'.format(
+      self.__class__.__name__, ', '.join([
+        '{}="{}"'.format(attr_str, getattr(self, attr_str))
+        for attr_str in [
+          'errorCode', 'detailCode', 'description', 'identifier', 'nodeId',
+          'traceInformation'
+        ]
+      ])
+    )
+
+    logging.error(s)
+    logging.error('8' * 100)
+    return s
+
   def __str__(self):
+    """If msg is None, format to empty string.
+    If msg has a single line, format to:
+    tag: msg
+    If msg has multiple lines, format to:
+    tag:
+      line 1
+      line 2
+    Msg is truncated to 1024 chars.
+    """
+
+    # def fmt(tag, msg):
+    #   if msg is None:
+    #     return
+    #   # assert isinstance(tag, unicode)
+    #   # assert isinstance(msg, unicode)
+    #   if isinstance(msg, unicode):
+    #     msg = msg.encode('utf-8')
+    #   elif not isinstance(msg, basestring):
+    #     msg = str(msg)
+    #   msg = msg.strip()
+    #   if not msg:
+    #     return
+    #   if len(msg) > 1024:
+    #     msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
+    #   elif msg.count('\n') <= 1:
+    #     return '{0}: {1}\n'.format(tag, msg.strip())
+    #   else:
+    #     return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
+
     msg = StringIO.StringIO()
-    msg.write(self.format_message(u'name', self.name))
-    msg.write(self.format_message(u'errorCode', self.errorCode))
-    msg.write(self.format_message(u'detailCode', self.detailCode))
-    msg.write(self.format_message(u'description', self.description))
-    msg.write(self.format_message(u'traceInformation', self.traceInformation))
-    msg.write(self.format_message(u'identifier', self.identifier))
-    msg.write(self.format_message(u'nodeId', self.nodeId))
+    msg.write(self.fmt('name', self.name))
+    msg.write(self.fmt('errorCode', self.errorCode))
+    msg.write(self.fmt('detailCode', self.detailCode))
+    msg.write(self.fmt('description', self.description))
+    msg.write(self.fmt('traceInformation', self.traceInformation))
+    msg.write(self.fmt('identifier', self.identifier))
+    msg.write(self.fmt('nodeId', self.nodeId))
     return msg.getvalue()
+
+  def fmt(self, tag, msg):
+    if msg is None:
+      return
+    # assert isinstance(tag, unicode)
+    # assert isinstance(msg, unicode)
+    if isinstance(msg, unicode):
+      msg = msg.encode('utf-8')
+    elif not isinstance(msg, basestring):
+      msg = str(msg)
+    msg = msg.strip()
+    if not msg:
+      return
+    if len(msg) > 1024:
+      msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
+    elif msg.count('\n') <= 1:
+      return '{0}: {1}\n'.format(tag, msg.strip())
+    else:
+      return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
 
   def friendly_format(self):
     """Serialize to a format more suitable for displaying to end users.
@@ -190,29 +257,7 @@ class DataONEException(Exception):
       msg = 'errorCode: {0} / detailCode: {1}'.format(
         self.errorCode, self.detailCode
       )
-    return self.format_message(self.name, msg)
-
-  def format_message(self, tag, msg):
-    """If msg is None, format to empty string.
-    If msg has a single line, format to:
-    tag: msg
-    If msg has multiple lines, format to:
-    tag:
-      line 1
-      line 2
-    Msg is truncated to 1024 chars.
-    """
-    if msg is None:
-      return
-    msg = str(msg).strip()
-    if len(msg) > 1024:
-      msg = msg[:1024] + u' ...'
-    if msg == '':
-      return
-    elif msg.count('\n') <= 1:
-      return '{0}: {1}\n'.format(tag, msg.strip())
-    else:
-      return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
+    return self.fmt(self.name, msg)
 
   def serialize(self):
     dataone_exception_pyxb = dataoneErrors.error()
@@ -235,8 +280,9 @@ class DataONEException(Exception):
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
-    pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
-    return dataone_exception_pyxb.toxml(encoding='utf-8')
+    # TODO: Check if this is still needed
+    #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
+    return dataone_exception_pyxb.toxml('utf-8')
 
   def toxml(self):
     return self.serialize()
@@ -266,7 +312,7 @@ class DataONEException(Exception):
     if v is None:
       return ''
     else:
-      return str(v)[:1024].replace(u'\n', u' / ')
+      return str(v)[:1024].replace('\n', ' / ')
 
   @property
   def name(self):
@@ -279,13 +325,13 @@ class DataONEException(Exception):
     return self._traceInformation
 
   @traceInformation.setter
-  def traceInformation(self, traceInformation):
-    if isinstance(traceInformation, XS.anyType):
-      tmp = traceInformation.toxml(encoding='utf-8')
+  def traceInformation(self, trace_information):
+    if isinstance(trace_information, XS.anyType):
+      tmp = trace_information.toxml('utf-8')
       # Remove the XML prolog from the start of the resulting string.
-      traceInformation = re.sub(r'^<\?(.*)\?>', '', tmp)
-      traceInformation = traceInformation.strip()
-    self._traceInformation = traceInformation
+      trace_information = re.sub(r'^<\?(.*)\?>', '', tmp)
+      trace_information = trace_information.strip()
+    self._traceInformation = trace_information
 
 
 #===============================================================================

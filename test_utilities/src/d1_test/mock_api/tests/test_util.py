@@ -18,49 +18,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
+
+import d1_test.d1_test_case
 import d1_test.mock_api.util
 
 
-class TestMockUtil(unittest.TestCase):
+class TestMockUtil(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def test_0010(self):
     """parse_rest_url() 1"""
-    version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+    version_tag, endpoint_str, param_list, query_dict, client = (
       d1_test.mock_api.util.parse_rest_url('/v1/log')
     )
-    self.assertEqual(version_tag, 'v1')
-    self.assertEqual(endpoint_str, 'log')
-    self.assertEqual(param_list, [])
-    self.assertEqual(query_dict, {})
-    self.assertEqual(pyxb_bindings.Namespace, v1_1.Namespace)
+    assert version_tag == 'v1'
+    assert endpoint_str == 'log'
+    assert param_list == []
+    assert query_dict == {}
+    assert client.bindings.Namespace == v1_1.Namespace
 
   def test_0020(self):
     """parse_rest_url() 2"""
     # GET /object[?fromDate={fromDate}&toDate={toDate}&
     # identifier={identifier}&formatId={formatId}&replicaStatus={replicaStatus}
     # &start={start}&count={count}]
-    version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+    version_tag, endpoint_str, param_list, query_dict, client = (
       d1_test.mock_api.util.parse_rest_url(
         'http://dataone.server.edu/dataone/mn/v2/object/'
         'ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50'
       )
     )
-    self.assertEqual(version_tag, 'v2')
-    self.assertEqual(endpoint_str, 'object')
-    self.assertEqual(param_list, ['ar//g1', 'arg2/'])
-    self.assertEqual(
-      query_dict, {
-        'count': ['50'],
-        'toDate': ['date2'],
-        'fromDate': ['date1'],
-        'start': ['500']
-      }
-    )
-    self.assertEqual(pyxb_bindings.Namespace, v2_0.Namespace)
+    assert version_tag == 'v2'
+    assert endpoint_str == 'object'
+    assert param_list == ['ar//g1', 'arg2/']
+    assert query_dict == {
+      'count': ['50'],
+      'toDate': ['date2'],
+      'fromDate': ['date1'],
+      'start': ['500']
+    }
+    assert client.bindings.Namespace == v2_0.Namespace

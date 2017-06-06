@@ -19,116 +19,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.sax
 
 import pyxb
 
-import d1_test.util
-# D1
-from d1_common.types import dataoneTypes
-
-EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <identifier>identifier0</identifier>
-    <objectLocation>
-        <nodeIdentifier>nodeIdentifier0</nodeIdentifier>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <version>version0</version>
-        <version>version1</version>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-    <objectLocation>
-        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <version>version2</version>
-        <version>version3</version>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-</d1:objectLocationList>
-"""
-
-# TODO.
-EG_OBJECTLOCATIONLIST_KNB = """"""
-
-# Missing version.
-EG_BAD_OBJECTLOCATIONLIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <identifier>identifier0</identifier>
-    <objectLocation>
-        <nodeIdentifier>nodeIdentifier0</nodeIdentifier>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-    <objectLocation>
-        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <version>version2</version>
-        <version>version3</version>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-</d1:objectLocationList>
-"""
-
-# Missing nodeIdentifier.
-EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <identifier>identifier0</identifier>
-    <objectLocation>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <version>version0</version>
-        <version>version1</version>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-    <objectLocation>
-        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <version>version2</version>
-        <version>version3</version>
-        <url>http://www.oxygenxml.com/</url>
-        <preference>0</preference>
-    </objectLocation>
-</d1:objectLocationList>
-"""
+import d1_test.d1_test_case
 
 
-class TestObjectLocationList(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
+class TestObjectLocationList(d1_test.d1_test_case.D1TestCase):
+  parameterize_dict = {
+    'test_0010': [
+      dict(filename='object_list_gmn_valid.xml', shouldfail=False),
+      dict(filename='object_list_invalid_1.xml', shouldfail=True),
+    ],
+  }
+
+  def test_0010(self, filename, shouldfail):
+    """Deserialize various ObjectLocationList XML docs"""
     try:
-      dataoneTypes.CreateFromDocument(doc)
+      self.read_sample_file(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
-        return
-      else:
+      if not shouldfail:
         raise
-
-  def test_0010(self):
-    """deserialize gmn: Deserialize: XML -> ObjectLocationList (GMN)"""
-    d1_test.util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
-
-  def test_0020(self):
-    """deserialize knb: Deserialize: XML -> ObjectLocationList (KNB)"""
-    #util.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
-
-  def test_0030(self):
-    """deserialize bad 1: Deserialize: XML -> ObjectLocationList (bad 1)"""
-    d1_test.util.deserialize_and_check(
-      EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True
-    )
-
-  def test_0040(self):
-    """deserialize bad 2: Deserialize: XML -> ObjectLocationList (bad 2)"""
-    d1_test.util.deserialize_and_check(
-      EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True
-    )

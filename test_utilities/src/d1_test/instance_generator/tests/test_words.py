@@ -22,18 +22,19 @@
 import logging
 import unittest
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.words as words
 
 #===============================================================================
 
 
-class TestSubject(unittest.TestCase):
+class TestSubject(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """random_words()"""
-    self.assertEqual(len(words.random_words(2000)), 2000)
+    assert len(words.random_words(2000)) == 2000
 
 
 if __name__ == "__main__":

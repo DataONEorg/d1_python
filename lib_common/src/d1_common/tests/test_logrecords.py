@@ -19,93 +19,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.sax
 
 import pyxb
 
-import d1_test.util
-# D1
-from d1_common.types import dataoneTypes
-
-# flake8: noqa: E501
-
-EG_LOG_GMN = """<?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>read</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>368</entryId><identifier>hdl:10255/dryad.1227/mets.xml</identifier><ipAddress>17.18.19.20</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>17.18.19.20</subject><event>replicate</event><dateLogged>1999-12-19T16:03:22</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>408</entryId><identifier>hdl:10255/dryad.174/mets.xml</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>21.22.23.24</subject><event>update</event><dateLogged>1999-11-17T04:15:23</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>9</entryId><identifier>12Cpaup.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)</userAgent><subject>21.22.23.24</subject><event>read</event><dateLogged>1999-10-05T01:34:37</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>29</entryId><identifier>15Jmatrix4.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)</userAgent><subject>21.22.23.24</subject><event>replicate</event><dateLogged>1999-09-17T01:59:18</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-</ns1:log>"""
-
-# TODO.
-EG_LOG_KNB = """<?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>read</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>368</entryId><identifier>hdl:10255/dryad.1227/mets.xml</identifier><ipAddress>17.18.19.20</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>17.18.19.20</subject><event>replicate</event><dateLogged>1999-12-19T16:03:22</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>408</entryId><identifier>hdl:10255/dryad.174/mets.xml</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>21.22.23.24</subject><event>update</event><dateLogged>1999-11-17T04:15:23</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>9</entryId><identifier>12Cpaup.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)</userAgent><subject>21.22.23.24</subject><event>read</event><dateLogged>1999-10-05T01:34:37</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>29</entryId><identifier>15Jmatrix4.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)</userAgent><subject>21.22.23.24</subject><event>replicate</event><dateLogged>1999-09-17T01:59:18</dateLogged><nodeIdentifier>urn:node:dryad_mn</nodeIdentifier></logEntry>
-</ns1:log>"""
-
-EG_BAD_LOG_1 = """<?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>read</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><nodeIdentifier>dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>368</entryId><identifier>hdl:10255/dryad.1227/mets.xml</identifier><ipAddress>17.18.19.20</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>17.18.19.20</subject><event>replicate</event><dateLogged>1999-12-19T16:03:22</dateLogged><nodeIdentifier>dryad_mn</nodeIdentifier></logEntry>
-<logINVALIDEntry><entryId>408</entryId><identifier>hdl:10255/dryad.174/mets.xml</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>21.22.23.24</subject><event>update</event><dateLogged>1999-11-17T04:15:23</dateLogged><nodeIdentifier>dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>9</entryId><identifier>12Cpaup.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)</userAgent><subject>21.22.23.24</subject><event>read</event><dateLogged>1999-10-05T01:34:37</dateLogged><nodeIdentifier>dryad_mn</nodeIdentifier></logEntry>
-<logEntry><entryId>29</entryId><identifier>15Jmatrix4.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)</userAgent><subject>21.22.23.24</subject><event>replicate</event><dateLogged>1999-09-17T01:59:18</dateLogged><nodeIdentifier>dryad_mn</nodeIdentifier></logEntry>
-</ns1:log>"""
-
-EG_BAD_LOG_2 = """<?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>read</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>368</entryId><identifier>hdl:10255/dryad.1227/mets.xml</identifier><ipAddress>17.18.19.20</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>17.18.19.20</subject><event>replicate</event><dateLogged>1999-12-19T16:03:22</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><identifier>hdl:10255/dryad.174/mets.xml</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>21.22.23.24</subject><event>update</event><dateLogged>1999-11-17T04:15:23</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>9</entryId><identifier>12Cpaup.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)</userAgent><subject>21.22.23.24</subject><event>read</event><dateLogged>1999-10-05T01:34:37</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>29</entryId><identifier>15Jmatrix4.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)</userAgent><subject>21.22.23.24</subject><event>replicate</event><dateLogged>1999-09-17T01:59:18</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-</ns1:log>"""
-
-EG_BAD_LOG_3 = """<?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="453" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<logEntry><entryId>453</entryId><identifier>hdl:10255/dryad.1228/mets.xml</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13</userAgent><subject>127.0.0.1</subject><event>INVALID</event><dateLogged>2011-02-20T19:01:19.171071</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>368</entryId><identifier>hdl:10255/dryad.1227/mets.xml</identifier><ipAddress>17.18.19.20</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>17.18.19.20</subject><event>replicate</event><dateLogged>1999-12-19T16:03:22</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>408</entryId><identifier>hdl:10255/dryad.174/mets.xml</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0</userAgent><subject>21.22.23.24</subject><event>update</event><dateLogged>1999-11-17T04:15:23</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>9</entryId><identifier>12Cpaup.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)</userAgent><subject>21.22.23.24</subject><event>read</event><dateLogged>1999-10-05T01:34:37</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-<logEntry><entryId>29</entryId><identifier>15Jmatrix4.txt</identifier><ipAddress>21.22.23.24</ipAddress><userAgent>msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)</userAgent><subject>21.22.23.24</subject><event>replicate</event><dateLogged>1999-09-17T01:59:18</dateLogged><memberNode>dryad_mn</memberNode></logEntry>
-</ns1:log>"""
+import d1_test.d1_test_case
 
 
-class TestObjectList(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
+class TestLogRecords(d1_test.d1_test_case.D1TestCase):
+  parameterize_dict = {
+    'test_0010': [
+      dict(filename='log_gmn_valid.xml', shouldfail=False),
+      dict(filename='log_knb_valid.xml', shouldfail=False),
+      dict(filename='log_invalid_1.xml', shouldfail=True),
+      dict(filename='log_invalid_2.xml', shouldfail=True),
+      dict(filename='log_invalid_3.xml', shouldfail=True),
+    ],
+  }
+
+  def test_0010(self, filename, shouldfail):
+    """Deserialize various Log XML docs"""
     try:
-      dataoneTypes.CreateFromDocument(doc)
+      self.read_xml_file_to_pyxb(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
-        return
-      else:
+      if not shouldfail:
         raise
-
-  def test_0010(self):
-    """serialization gmn: Deserialize: XML -> Log (GMN)"""
-    try:
-      d1_test.util.deserialize_and_check(EG_LOG_GMN)
-    except Exception as e:
-      print e
-
-  def test_0020(self):
-    """serialization knb: Deserialize: XML -> Log (KNB)"""
-    self.deserialize_and_check(EG_LOG_KNB)
-
-  def test_0030(self):
-    """serialization bad 1: Deserialize: XML -> Log (bad 1)"""
-    d1_test.util.deserialize_and_check(EG_BAD_LOG_1, shouldfail=True)
-
-  def test_0040(self):
-    """serialization bad 2: Deserialize: XML -> Log (bad 2)"""
-    d1_test.util.deserialize_and_check(EG_BAD_LOG_2, shouldfail=True)
-
-  def test_0050(self):
-    """serialization bad 3: Deserialize: XML -> Log (bad 3)"""
-    d1_test.util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)

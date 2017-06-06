@@ -20,50 +20,43 @@
 
 from __future__ import absolute_import
 
-import os
-import sys
-import random
-import string
+import datetime
 import hashlib
 import logging
-import datetime
+import os
+import random
+import string
 import StringIO
+import sys
 import tempfile
 import traceback
 
+import pytest
 import requests
 
-import d1_common.xml
-import d1_common.util
-import d1_common.types
 import d1_common.checksum
-import d1_common.types.exceptions
+import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
 
-import d1_test.util
-import d1_test.mock_api.get
+import d1_test.d1_test_case
 import d1_test.mock_api.create
 import d1_test.mock_api.django_client
+import d1_test.mock_api.get
 
-import d1_client.session
 import d1_client.mnclient
 import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
+import d1_client.session
 
 import gmn.app
 import gmn.app.models
 import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_client
-
-import django.conf
-import django.test
-
-BASE_URL = 'http://mock/mn'
-# Mocked 3rd party server for object byte streams
-REMOTE_URL = 'http://remote/'
-INVALID_URL = 'http://invalid/'
 
 DEFAULT_PERMISSION_LIST = [
   (['subj1'], ['read']),
@@ -75,17 +68,35 @@ DEFAULT_PERMISSION_LIST = [
 HTTPBIN_SERVER_STR = 'http://httpbin.org'
 GMN_TEST_SUBJECT_PUBLIC = 'public'
 
+d1_common.util.log_setup(True)
 
 # Setting DEBUG=True here is a workaround for pytest-django setting
 # settings.DEBUG to False (in pytest_django/plugin.py)
-@django.test.override_settings(DEBUG=True)
-class D1TestCase(django.test.TransactionTestCase): # TestCase
-  def setUp(self):
-    d1_test.mock_api.django_client.add_callback(BASE_URL)
-    d1_test.mock_api.get.add_callback(REMOTE_URL)
-    self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(BASE_URL)
-    self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
-    self.test_client = gmn.tests.gmn_test_client.GMNTestClient(BASE_URL)
+# @django.test.override_settings(DEBUG=True)
+
+
+@pytest.mark.django_db(transaction=True)
+class GMNTestCase(
+    # django.test.TransactionTestCase,
+    d1_test.d1_test_case.D1TestCase,
+):
+  # def __init__(self, *args, **kwargs):
+  #   super(GMNTestCase, self).__init__(*args, **kwargs)
+
+  def setup_method(self, method):
+    d1_test.mock_api.django_client.add_callback(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    self.test_client = gmn.tests.gmn_test_client.GMNTestClient(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
     self.v1 = d1_common.types.dataoneTypes_v1_1
     self.v2 = d1_common.types.dataoneTypes_v2_0
     # Remove limit on max diff to show. This can cause debug output to
@@ -110,24 +121,44 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     the complete traceInformation.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
+    if isinstance(exc_value, Exception):
+      logging.exception('Test failed with exception:')
     if isinstance(exc_value, d1_common.types.exceptions.DataONEException):
+      func_name_str = self.get_test_func_name()
+      file_path = os.path.join(
+        tempfile.gettempdir(), u'gmn_test_failed_{}.txt'.format(func_name_str)
+      )
+      # Dump the entire exception
+      with open(file_path, 'w') as f:
+        f.write(str(exc_value))
+      logging.error('Wrote exception to file. path="{}"'.format(file_path))
+      # Dump any HTML (typically from the Django diags page)
       if exc_value.traceInformation:
-        func_name = traceback.extract_tb(exc_traceback)[1][2]
-        file_path = os.path.join(
-          tempfile.gettempdir(), u'traceInformation_{}'.format(func_name)
-        )
-        in_html = False
-        with open(file_path, 'w') as f:
-          for line_str in exc_value.traceInformation.splitlines():
-            if '<!DOCTYPE' in line_str or '<html' in line_str:
-              in_html = True
-            if in_html:
-              f.write(line_str)
-        link_path = os.path.join(
-          tempfile.gettempdir(), u'traceInformation.html'
-        )
-        self.hardlink(file_path, link_path)
-        logging.warning(u'Wrote traceInformation to {}'.format(file_path))
+        ss = StringIO.StringIO()
+        is_in_html = False
+        for line_str in exc_value.traceInformation.splitlines():
+          if '<!DOCTYPE' in line_str or '<html' in line_str:
+            is_in_html = True
+          if is_in_html:
+            ss.write(line_str)
+        if is_in_html:
+          file_path = os.path.join(
+            tempfile.gettempdir(), u'gmn_test_failed.html'
+          )
+          with open(file_path, 'w') as f:
+            f.write(str(ss.getvalue()))
+          logging.error(
+            'Wrote HTML from exception to file. path="{}"'.format(file_path)
+          )
+
+  def get_test_func_name(self):
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    for stack_trace in traceback.extract_tb(exc_traceback):
+      module_path = stack_trace[0]
+      func_name = stack_trace[2]
+      if func_name.startswith('test_'):
+        return u'{}_{}'.format(os.path.split(module_path)[1][:-3], func_name)
+    return u'<not a test>'
 
   # def disable_server_cert_validation(self):
   #   requests.packages.urllib3.disable_warnings()
@@ -142,58 +173,54 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     self.assert_sysmeta_sid(sysmeta_pyxb, sid)
 
   def assert_sysmeta_pid(self, sysmeta_pyxb, pid):
-    self.assertEquals(self.get_pyxb_value(sysmeta_pyxb, 'identifier'), pid)
+    assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
 
   def assert_sysmeta_sid(self, sysmeta_pyxb, sid):
-    self.assertEquals(self.get_pyxb_value(sysmeta_pyxb, 'seriesId'), sid)
+    assert self.get_pyxb_value(sysmeta_pyxb, 'seriesId') == sid
 
   def assert_eq_sysmeta_sid(self, sysmeta_a_pyxb, sysmeta_b_pyxb):
-    self.assertEquals(
-      self.get_pyxb_value(sysmeta_a_pyxb, 'seriesId'),
-      self.get_pyxb_value(sysmeta_b_pyxb, 'seriesId'),
-    )
+    assert self.get_pyxb_value(sysmeta_a_pyxb, 'seriesId') == \
+      self.get_pyxb_value(sysmeta_b_pyxb, 'seriesId')
 
   def assert_object_list_slice(self, object_list, start, count, total):
     """Check that slice matches the expected slice and that actual number of
     objects matches the slice count
     """
-    self.assertEqual(object_list.start, start)
-    self.assertEqual(object_list.count, count)
-    self.assertEqual(object_list.total, total)
-    self.assertEqual(len(object_list.objectInfo), count)
+    assert object_list.start == start
+    assert object_list.count == count
+    assert object_list.total == total
+    assert len(object_list.objectInfo) == count
 
   def assert_log_slice(self, log, start, count, total):
     """Check that slice matches the expected slice and that actual number of
     objects matches the slice count
     """
-    self.assertEqual(log.start, start)
-    self.assertEqual(log.count, count)
-    self.assertEqual(log.total, total)
+    assert log.start == start
+    assert log.count == count
+    assert log.total == total
     # Check that the actual number of log records matches the count
     # provided in the slice.
-    self.assertEqual(len(log.logEntry), count)
+    assert len(log.logEntry) == count
 
   def assert_required_response_headers_present(self, response):
-    self.assertIn('last-modified', response.headers)
-    self.assertIn('content-length', response.headers)
-    self.assertIn('content-type', response.headers)
+    assert 'last-modified' in response.headers
+    assert 'content-length' in response.headers
+    assert 'content-type' in response.headers
 
   def assert_valid_date(self, date_str):
-    self.assertTrue(datetime.datetime(*map(int, date_str.split('-'))))
+    assert datetime.datetime(*map(int, date_str.split('-')))
 
   def assert_sci_obj_size_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
-    self.assertEqual(sysmeta_pyxb.size, len(sciobj_str))
+    assert sysmeta_pyxb.size == len(sciobj_str)
 
   def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
-    self.assertTrue(
-      d1_common.checksum.
+    assert d1_common.checksum. \
       is_checksum_correct_on_string(sysmeta_pyxb, sciobj_str)
-    )
 
   def assert_checksums_equal(self, a_pyxb, b_pyxb):
-    self.assertTrue(d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb))
+    assert d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb)
 
-  def assert_valid_chain(self, client, pid_chain_list, base_sid):
+  def assert_valid_chain(self, client, pid_chain_list, sid):
     logging.debug('Chain: {}'.format(' - '.join(pid_chain_list)))
     pad_pid_chain_list = [None] + pid_chain_list + [None]
     i = 0
@@ -204,24 +231,17 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
         'Link {}: {} <- {} -> {}'.format(i, prev_pid, cur_pid, next_pid)
       )
       obj_str, sysmeta_pyxb = self.get_obj(client, cur_pid)
-      self.assertEqual(self.get_pyxb_value(sysmeta_pyxb, 'obsoletes'), prev_pid)
-      self.assertEqual(self.get_pyxb_value(sysmeta_pyxb, 'identifier'), cur_pid)
-      self.assertEqual(
-        self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy'), next_pid
-      )
-      if base_sid:
-        self.assertEqual(
-          self.get_pyxb_value(sysmeta_pyxb, 'seriesId'), base_sid
-        )
+      assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletes') == prev_pid
+      assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == cur_pid
+      assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') == next_pid
+      assert self.get_pyxb_value(sysmeta_pyxb, 'seriesId') == sid
       i += 1
 
   #
   # CRUD
   #
 
-  def create_obj_chain(
-      self, client, binding, chain_len, sid=None, *args, **kwargs
-  ):
+  def create_revision_chain(self, client, chain_len, sid=None, *args, **kwargs):
     """Create a revision chain with a total of {chain_len} objects. If
     client is v2, assign a SID to the chain. Return the SID (None for v1)
     and a list of the PIDs in the chain. The first PID in the list is the
@@ -235,8 +255,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
 
     base_pid, sid, sciobj_str, sysmeta_pyxb = (
       self.create_obj(
-        client, binding, pid=did(0), sid=did(0, True)
-        if sid else None, *args, **kwargs
+        client, pid=did(0), sid=did(0, True) if sid else None, *args, **kwargs
       )
     )
     pid_chain_list = [base_pid]
@@ -244,8 +263,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       update_pid = did(i)
       base_pid, sid, sciobj_str, sysmeta_pyxb = (
         self.update_obj(
-          client, binding, old_pid=base_pid, new_pid=update_pid, sid=sid, *args,
-          **kwargs
+          client, old_pid=base_pid, new_pid=update_pid, sid=sid, *args, **kwargs
         )
       )
       pid_chain_list.append(update_pid)
@@ -296,15 +314,17 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       try:
         return api_func(*arg_list, **arg_dict)
       except requests.exceptions.ConnectionError as e:
-        self.fail(
+        pytest.fail(
           'Check that the test function is decorated with '
           '"@responses.activate". error="{}"'.format(str(e))
         )
+        # coercing to Unicode: need string or buffer, NoneType found:
+        # Check that authentication has been disabled
 
   def create_obj(
-      self, client, binding, pid=True, sid=None, submitter=True,
-      rights_holder=True, permission_list=True, active_subj_list=True,
-      trusted_subj_list=True, disable_auth=True, vendor_dict=None, now_dt=True
+      self, client, pid=True, sid=None, submitter=True, rights_holder=True,
+      permission_list=True, active_subj_list=True, trusted_subj_list=True,
+      disable_auth=True, vendor_dict=None, now_dt=True
   ):
     """Generate a test object and call MNStorage.create()
     Parameters:
@@ -312,7 +332,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       Other: Use the supplied value
     """
     pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-      binding, pid, sid, submitter, rights_holder, permission_list, now_dt
+      client, pid, sid, submitter, rights_holder, permission_list, now_dt
     )
     self.call_d1_client(
       client.create, pid,
@@ -320,11 +340,11 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
       disable_auth=disable_auth
     )
-    self.assertEquals(self.get_pyxb_value(sysmeta_pyxb, 'identifier'), pid)
+    assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
     return pid, sid, sciobj_str, sysmeta_pyxb
 
   def update_obj(
-      self, client, binding, old_pid, new_pid=True, sid=None, submitter=True,
+      self, client, old_pid, new_pid=True, sid=None, submitter=True,
       rights_holder=True, permission_list=True, active_subj_list=True,
       trusted_subj_list=True, disable_auth=True, vendor_dict=None, now_dt=True
   ):
@@ -334,7 +354,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       Other: Use the supplied value
     """
     pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-      binding, new_pid, sid, submitter, rights_holder, permission_list, now_dt
+      client, new_pid, sid, submitter, rights_holder, permission_list, now_dt
     )
     self.call_d1_client(
       client.update, old_pid,
@@ -342,7 +362,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
       active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
       disable_auth=disable_auth
     )
-    self.assertEquals(self.get_pyxb_value(sysmeta_pyxb, 'identifier'), pid)
+    assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
     return pid, sid, sciobj_str, sysmeta_pyxb
 
   def get_obj(
@@ -367,11 +387,11 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
   #
 
   def generate_sysmeta(
-      self, binding, pid, sid=None, sciobj_str=None, submitter=None,
+      self, client, pid, sid=None, sciobj_str=None, submitter=None,
       rights_holder=None, obsoletes=None, obsoleted_by=None,
       permission_list=None, now_dt=None
   ):
-    sysmeta_pyxb = binding.systemMetadata()
+    sysmeta_pyxb = client.bindings.systemMetadata()
     sysmeta_pyxb.serialVersion = 1
     sysmeta_pyxb.identifier = pid
     sysmeta_pyxb.seriesId = sid
@@ -390,33 +410,31 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     sysmeta_pyxb.obsoletes = obsoletes
     sysmeta_pyxb.obsoletedBy = obsoleted_by
     sysmeta_pyxb.accessPolicy = self.generate_access_policy(
-      binding, permission_list
+      client, permission_list
     )
-    sysmeta_pyxb.replicationPolicy = self.create_replication_policy_pyxb(
-      binding
-    )
+    sysmeta_pyxb.replicationPolicy = self.create_replication_policy_pyxb(client)
     return sysmeta_pyxb
 
-  def generate_access_policy(self, binding, permission_list=None):
+  def generate_access_policy(self, client, permission_list=None):
     if permission_list is None:
       return None
     elif permission_list == 'default':
       permission_list = DEFAULT_PERMISSION_LIST
-    access_policy_pyxb = binding.accessPolicy()
+    access_policy_pyxb = client.bindings.accessPolicy()
     for subject_list, action_list in permission_list:
       subject_list = gmn.tests.gmn_mock.expand_subjects(subject_list)
       action_list = list(action_list)
-      access_rule_pyxb = binding.AccessRule()
+      access_rule_pyxb = client.bindings.AccessRule()
       for subject_str in subject_list:
         access_rule_pyxb.subject.append(subject_str)
       for action_str in action_list:
-        permission_pyxb = binding.Permission(action_str)
+        permission_pyxb = client.bindings.Permission(action_str)
         access_rule_pyxb.permission.append(permission_pyxb)
       access_policy_pyxb.append(access_rule_pyxb)
     return access_policy_pyxb
 
   def create_replication_policy_pyxb(
-      self, binding, preferred_node_list=None, blocked_node_list=None,
+      self, client, preferred_node_list=None, blocked_node_list=None,
       is_replication_allowed=True, num_replicas=None
   ):
     """{preferred_node_list} and {preferred_node_list}:
@@ -426,7 +444,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     """
     preferred_node_list = self.prep_node_list(preferred_node_list, 'preferred')
     blocked_node_list = self.prep_node_list(blocked_node_list, 'blocked')
-    rep_pyxb = binding.ReplicationPolicy()
+    rep_pyxb = client.bindings.ReplicationPolicy()
     rep_pyxb.preferredMemberNode = preferred_node_list
     rep_pyxb.blockedMemberNode = blocked_node_list
     rep_pyxb.replicationAllowed = is_replication_allowed
@@ -434,21 +452,21 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     return rep_pyxb
 
   def generate_sciobj(
-      self, binding, pid, sid=None, submitter=None, rights_holder=None,
+      self, client, pid, sid=None, submitter=None, rights_holder=None,
       obsoletes=None, obsoleted_by=None, permission_list=None, now_dt=None
   ):
     """Generate the object bytes and system metadata for a test object
     """
-    sciobj_str = d1_test.util.generate_reproducible_sciobj_str(pid)
+    sciobj_str = d1_test.d1_test_case.generate_reproducible_sciobj_str(pid)
     sysmeta_pyxb = self.generate_sysmeta(
-      binding, pid, sid, sciobj_str, submitter or GMN_TEST_SUBJECT_PUBLIC,
+      client, pid, sid, sciobj_str, submitter or GMN_TEST_SUBJECT_PUBLIC,
       rights_holder or GMN_TEST_SUBJECT_PUBLIC, obsoletes, obsoleted_by,
       permission_list, now_dt
     )
     return sciobj_str, sysmeta_pyxb
 
   def generate_sciobj_with_defaults(
-      self, binding, pid=True, sid=None, submitter=True, rights_holder=True,
+      self, client, pid=True, sid=None, submitter=True, rights_holder=True,
       permission_list=True, now_dt=True
   ):
     """Generate the object bytes and system metadata for a test object
@@ -459,7 +477,7 @@ class D1TestCase(django.test.TransactionTestCase): # TestCase
     pid = self.random_pid() if pid is True else pid
     sid = self.random_sid() if sid is True else sid
     sciobj_str, sysmeta_pyxb = self.generate_sciobj(
-      binding, pid, sid,
+      client, pid, sid,
       'submitter_subj' if submitter is True else submitter,
       'rights_holder_subj' if rights_holder is True else rights_holder,
       None, None,

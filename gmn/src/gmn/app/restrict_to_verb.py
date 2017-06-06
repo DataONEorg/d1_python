@@ -33,12 +33,12 @@ import django.http
 
 def allow_only_verbs(f, verbs):
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     if request.method not in verbs:
       return django.http.HttpResponseNotAllowed(verbs)
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def get(f):

@@ -24,9 +24,11 @@
 import logging
 import os
 import time
-import unittest
 
 import cache_disk
+import pytest
+
+import d1_test.d1_test_case
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -34,7 +36,7 @@ log = logging.getLogger(__name__)
 TEST_CACHE_PATH = './test_cache'
 
 
-class TestDiskCache(unittest.TestCase):
+class TestDiskCache(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     try:
       os.mkdir(TEST_CACHE_PATH)
@@ -47,9 +49,9 @@ class TestDiskCache(unittest.TestCase):
     """cache: """
     c = cache_disk.DiskCache(10, TEST_CACHE_PATH)
     c['a'] = 1
-    self.assertEqual(len(c), 1)
-    self.assertEqual(c['a'], 1)
-    self.assertEqual(len(c), 1)
+    assert len(c) == 1
+    assert c['a'] == 1
+    assert len(c) == 1
 
   def test_0020(self):
     """cache: """
@@ -60,10 +62,11 @@ class TestDiskCache(unittest.TestCase):
     c['b'] = 2
     time.sleep(1.1)
     c['c'] = 3
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'a')
-    self.assertEqual(c['b'], 2)
-    self.assertEqual(c['c'], 3)
+    assert len(c) == 2
+    with pytest.raises(KeyError):
+      c.__getitem__('a')
+    assert c['b'] == 2
+    assert c['c'] == 3
 
   def test_0030(self):
     """cache: """
@@ -72,7 +75,8 @@ class TestDiskCache(unittest.TestCase):
     c['b'] = 2
     c['c'] = 3
     c['a'] = 4
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'b')
-    self.assertEqual(c['a'], 4)
-    self.assertEqual(c['c'], 3)
+    assert len(c) == 2
+    with pytest.raises(KeyError):
+      c.__getitem__('b')
+    assert c['a'] == 4
+    assert c['c'] == 3

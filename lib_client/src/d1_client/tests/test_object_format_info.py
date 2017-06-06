@@ -20,7 +20,10 @@
 # limitations under the License.
 
 import StringIO
-import unittest
+
+import pytest
+
+import d1_test.d1_test_case
 
 import d1_client.object_format_info
 
@@ -37,13 +40,8 @@ Blank line above.
 """
 
 
-class TestObjectFormatInfo(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.i = d1_client.object_format_info.ObjectFormatInfo()
+class TestObjectFormatInfo(d1_test.d1_test_case.D1TestCase):
+  i = d1_client.object_format_info.ObjectFormatInfo()
 
   def test_0010(self):
     """init()"""
@@ -51,36 +49,31 @@ class TestObjectFormatInfo(unittest.TestCase):
 
   def test_0020(self):
     """content_type_from_format_id()"""
-    self.assertEqual(
-      self.i.content_type_from_format_id('netCDF-3'), 'application/netcdf'
-    )
+    assert self.i.content_type_from_format_id(
+      'netCDF-3'
+    ) == 'application/netcdf'
 
   def test_0030(self):
     """filename_extension_from_format_id()"""
-    self.assertEqual(
-      self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
-    )
+    assert self.i.filename_extension_from_format_id('netCDF-3') == '.nc'
 
   def test_0040(self):
     """read_csv_file()"""
     self.i.read_csv_file()
-    self.assertEqual(
-      self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
-    )
+    assert self.i.filename_extension_from_format_id('netCDF-3') == '.nc'
 
   def test_0050(self):
     """read_csv_file(new_csv)"""
     self.i.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
-    self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
+    assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
   def test_0060(self):
     """singleton"""
     j = d1_client.object_format_info.ObjectFormatInfo()
     j.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
-    self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
+    assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
   def test_0070(self):
     """bad_csv_file"""
-    self.assertRaises(
-      Exception, self.i.read_csv_file, StringIO.StringIO(CSV_TEST_INVALID)
-    )
+    with pytest.raises(Exception):
+      self.i.read_csv_file(StringIO.StringIO(CSV_TEST_INVALID))

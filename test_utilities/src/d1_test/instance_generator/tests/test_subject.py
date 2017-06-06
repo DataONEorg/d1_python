@@ -23,20 +23,22 @@ import logging
 import unittest
 
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.subject as subject
 
 #===============================================================================
 
 
-class TestSubject(unittest.TestCase):
+class TestSubject(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """generate()"""
     subject_obj = subject.generate()
-    self.assertIsInstance(subject_obj, dataoneTypes_v1.Subject)
-    self.assertTrue(subject_obj.toxml('utf-8'))
+    assert isinstance(subject_obj, dataoneTypes_v1.Subject)
+    assert subject_obj.toxml('utf-8')
 
 
 if __name__ == "__main__":

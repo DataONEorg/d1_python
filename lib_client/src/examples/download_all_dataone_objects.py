@@ -18,57 +18,48 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`download_all_dataone_objects`
-===================================
+"""Download all DataONE objects
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Retrieve a list of all DataONE Member Nodes
-  - Retrieve a list of all objects of specific FormatID on each of those Member
-    Nodes.
-  - Retrieve and examine the System Metadata for each of the listed objects.
-  - Based on information in the System Metadata, determine if the corresponding
-    object should be downloaded.
-  - Download the corresponding object.
+- Retrieve a list of all DataONE Member Nodes
+- Retrieve a list of all objects of specific FormatID on each of those Member
+  Nodes.
+- Retrieve and examine the System Metadata for each of the listed objects.
+- Based on information in the System Metadata, determine if the corresponding
+  object should be downloaded.
+- Download the corresponding object.
 
-  Notes:
+Notes:
 
-  - This approach retrieves object lists directly from each Member Node and is
-    mainly suitable in special situations where a 3rd party wishes to examine
-    the overal state of objects in DataONE, for instance, for creating
-    statistics or data quality reports.
-  - This approach uses the listObjects() Member Node API method, which has very
-    limited filtering facilities. The example shows how to use this filtering to
-    list objects that are of a specific type (FormatID) and that are native to
-    the Member Node (i.e., not replicas). If a more specific set of objects is
-    desired, it is better to use DataONE's query interface, which offers much
-    richer filtering facilities.
-  - It is not possible to filter out non-public objects with listObjects().
-    Instead, this script attempts to download the object's System Metadata and
-    checks for NotAuthorized exceptions.
-  - If a completely unfiltered object list is required, simply remove the
-    formatId and replicaStatus parameters in the listObjects() call below.
-  - The Member Node object list is retrieved in small sections, called pages.
-    The objects on each page are processed before retrieving the next page.
-  - The listObjects() Member Node API method may not be efficiently implemented
-    by all Member Nodes as it is intended primarily for use by Coordinating
-    Nodes.
-  - The listObjects() method may miss objects that are created while the method
-    is in use.
+- This approach retrieves object lists directly from each Member Node and is
+  mainly suitable in special situations where a 3rd party wishes to examine
+  the overal state of objects in DataONE, for instance, for creating
+  statistics or data quality reports.
+- This approach uses the listObjects() Member Node API method, which has very
+  limited filtering facilities. The example shows how to use this filtering to
+  list objects that are of a specific type (FormatID) and that are native to
+  the Member Node (i.e., not replicas). If a more specific set of objects is
+  desired, it is better to use DataONE's query interface, which offers much
+  richer filtering facilities.
+- It is not possible to filter out non-public objects with listObjects().
+  Instead, this script attempts to download the object's System Metadata and
+  checks for NotAuthorized exceptions.
+- If a completely unfiltered object list is required, simply remove the
+  formatId and replicaStatus parameters in the listObjects() call below.
+- The Member Node object list is retrieved in small sections, called pages.
+  The objects on each page are processed before retrieving the next page.
+- The listObjects() Member Node API method may not be efficiently implemented
+  by all Member Nodes as it is intended primarily for use by Coordinating
+  Nodes.
+- The listObjects() method may miss objects that are created while the method
+  is in use.
 
-:Author:
-  DataONE (Dahl)
-
-:Created:
-  2013-05-30
-
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
+Requires:
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
 import logging
@@ -76,11 +67,12 @@ import os
 import shutil
 import urllib
 
-import d1_client.cnclient
-import d1_client.mnclient
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
+
+import d1_client.cnclient
+import d1_client.mnclient
 
 # Config.
 

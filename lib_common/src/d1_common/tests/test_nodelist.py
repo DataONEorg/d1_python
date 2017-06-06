@@ -19,296 +19,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.sax
 
 import pyxb
 
-import d1_test.util
-# D1
-from d1_common.types import dataoneTypes
-
-# flake8: noqa: E501
-
-EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier0</identifier>
-        <name>name0</name>
-        <description>description0</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service name="name1" version="version0" available="false">
-                <restriction methodName="methodName0">
-                    <subject>subject0</subject>
-                    <subject>subject1</subject>
-                </restriction>
-                <restriction methodName="methodName1">
-                    <subject>subject2</subject>
-                    <subject>subject3</subject>
-                </restriction>
-            </service>
-            <service name="name2" version="version1" available="false">
-                <restriction methodName="methodName2">
-                    <subject>subject4</subject>
-                    <subject>subject5</subject>
-                </restriction>
-                <restriction methodName="methodName3">
-                    <subject>subject6</subject>
-                    <subject>subject7</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject8</subject>
-        <subject>subject9</subject>
-        <contactSubject>contactSubject0</contactSubject>
-        <contactSubject>contactSubject1</contactSubject>
-    </node>
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier1</identifier>
-        <name>name3</name>
-        <description>description1</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service name="name4" version="version2" available="false">
-                <restriction methodName="methodName4">
-                    <subject>subject10</subject>
-                    <subject>subject11</subject>
-                </restriction>
-                <restriction methodName="methodName5">
-                    <subject>subject12</subject>
-                    <subject>subject13</subject>
-                </restriction>
-            </service>
-            <service name="name5" version="version3" available="false">
-                <restriction methodName="methodName6">
-                    <subject>subject14</subject>
-                    <subject>subject15</subject>
-                </restriction>
-                <restriction methodName="methodName7">
-                    <subject>subject16</subject>
-                    <subject>subject17</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject18</subject>
-        <subject>subject19</subject>
-        <contactSubject>contactSubject2</contactSubject>
-        <contactSubject>contactSubject3</contactSubject>
-    </node>
-</d1:nodeList>
-"""
-
-# TODO.
-EG_NODELIST_KNB = """"""
-
-# Missing version.
-EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier0</identifier>
-        <name>name0</name>
-        <description>description0</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service name="name1" available="false">
-                <restriction methodName="methodName0">
-                    <subject>subject0</subject>
-                    <subject>subject1</subject>
-                </restriction>
-                <restriction methodName="methodName1">
-                    <subject>subject2</subject>
-                    <subject>subject3</subject>
-                </restriction>
-            </service>
-            <service name="name2" version="version1" available="false">
-                <restriction methodName="methodName2">
-                    <subject>subject4</subject>
-                    <subject>subject5</subject>
-                </restriction>
-                <restriction methodName="methodName3">
-                    <subject>subject6</subject>
-                    <subject>subject7</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject8</subject>
-        <subject>subject9</subject>
-        <contactSubject>contactSubject0</contactSubject>
-        <contactSubject>contactSubject1</contactSubject>
-    </node>
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier1</identifier>
-        <name>name3</name>
-        <description>description1</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service name="name4" version="version2" available="false">
-                <restriction methodName="methodName4">
-                    <subject>subject10</subject>
-                    <subject>subject11</subject>
-                </restriction>
-                <restriction methodName="methodName5">
-                    <subject>subject12</subject>
-                    <subject>subject13</subject>
-                </restriction>
-            </service>
-            <service name="name5" version="version3" available="false">
-                <restriction methodName="methodName6">
-                    <subject>subject14</subject>
-                    <subject>subject15</subject>
-                </restriction>
-                <restriction methodName="methodName7">
-                    <subject>subject16</subject>
-                    <subject>subject17</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject18</subject>
-        <subject>subject19</subject>
-        <contactSubject>contactSubject2</contactSubject>
-        <contactSubject>contactSubject3</contactSubject>
-    </node>
-</d1:nodeList>
-"""
-
-# Missing nodeList/node/service/name.
-EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier0</identifier>
-        <name>name0</name>
-        <description>description0</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service version="version0" available="false">
-                <restriction methodName="methodName0">
-                    <subject>subject0</subject>
-                    <subject>subject1</subject>
-                </restriction>
-                <restriction methodName="methodName1">
-                    <subject>subject2</subject>
-                    <subject>subject3</subject>
-                </restriction>
-            </service>
-            <service name="name2" version="version1" available="false">
-                <restriction methodName="methodName2">
-                    <subject>subject4</subject>
-                    <subject>subject5</subject>
-                </restriction>
-                <restriction methodName="methodName3">
-                    <subject>subject6</subject>
-                    <subject>subject7</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject8</subject>
-        <subject>subject9</subject>
-        <contactSubject>contactSubject0</contactSubject>
-        <contactSubject>contactSubject1</contactSubject>
-    </node>
-    <node replicate="false" synchronize="false" type="mn" state="up">
-        <identifier>identifier1</identifier>
-        <name>name3</name>
-        <description>description1</description>
-        <baseURL>http://www.oxygenxml.com/</baseURL>
-        <services>
-            <service name="name4" version="version2" available="false">
-                <restriction methodName="methodName4">
-                    <subject>subject10</subject>
-                    <subject>subject11</subject>
-                </restriction>
-                <restriction methodName="methodName5">
-                    <subject>subject12</subject>
-                    <subject>subject13</subject>
-                </restriction>
-            </service>
-            <service name="name5" version="version3" available="false">
-                <restriction methodName="methodName6">
-                    <subject>subject14</subject>
-                    <subject>subject15</subject>
-                </restriction>
-                <restriction methodName="methodName7">
-                    <subject>subject16</subject>
-                    <subject>subject17</subject>
-                </restriction>
-            </service>
-        </services>
-        <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
-            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
-            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
-        </synchronization>
-        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject18</subject>
-        <subject>subject19</subject>
-        <contactSubject>contactSubject2</contactSubject>
-        <contactSubject>contactSubject3</contactSubject>
-    </node>
-</d1:nodeList>
-"""
+import d1_test.d1_test_case
 
 
-class TestNodeList(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
+class TestNodeList(d1_test.d1_test_case.D1TestCase):
+  # def test_0000(self):
+  #   self.write_sample_file('node_list_gmn_valid.xml', EG_NODELIST_GMN)
+  #   self.write_sample_file('node_list_knb_valid.xml', EG_NODELIST_KNB)
+  #   self.write_sample_file('node_list_invalid_1.xml', EG_BAD_NODELIST_1)
+  #   self.write_sample_file('node_list_invalid_2.xml', EG_BAD_NODELIST_2)
+  #   self.write_sample_file('node_list_invalid_3.xml', EG_BAD_NODELIST_3)
+
+  parameterize_dict = {
+    'test_0010': [
+      dict(filename='node_list_gmn_valid.xml', shouldfail=False),
+      dict(filename='node_list_invalid_1.xml', shouldfail=True),
+      dict(filename='node_list_invalid_2.xml', shouldfail=True),
+    ],
+  }
+
+  def test_0010(self, filename, shouldfail):
+    """Deserialize various NodeList XML docs"""
     try:
-      dataoneTypes.CreateFromDocument(doc)
+      self.read_sample_file(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
-        return
-      else:
+      if not shouldfail:
         raise
-    if shouldfail:
-      raise Exception('Did not receive expected exception')
-
-  def test_0010(self):
-    """serialization gmn: Deserialize: XML -> NodeList (GMN)"""
-    d1_test.util.deserialize_and_check(EG_NODELIST_GMN)
-
-  def test_0020(self):
-    """serialization knb: Deserialize: XML -> NodeList (KNB)"""
-    #util.deserialize_and_check(EG_NODELIST_KNB)
-
-  def test_0030(self):
-    """serialization bad 1: Deserialize: XML -> NodeList (bad 1)"""
-    d1_test.util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
-
-  def test_0040(self):
-    """serialization bad 2: Deserialize: XML -> NodeList (bad 2)"""
-    d1_test.util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)

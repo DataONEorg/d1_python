@@ -29,11 +29,13 @@
 """
 
 import context
+import pytest
+import test_client
 
 import d1_common.const
 import d1_common.types.exceptions
+
 import d1_test_case
-import test_client
 
 
 class Test070GetChecksum(d1_test_case.D1TestCase):
@@ -44,10 +46,8 @@ class Test070GetChecksum(d1_test_case.D1TestCase):
     """404 NotFound when attempting to get checksum for non-existing object.
     """
     client = test_client.TestClient(context.node['baseurl'])
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, client.get, context.TOKEN,
-      '_invalid_pid_'
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      client.get(context.TOKEN, '_invalid_pid_')
 
   def test_020_get_object_by_valid_pid(self):
     """Successful retrieval of checksums for known objects.
@@ -59,5 +59,5 @@ class Test070GetChecksum(d1_test_case.D1TestCase):
         client = test_client.TestClient(context.node['baseurl'])
         pid = object_info.identifier.value()
         checksum = client.getChecksum(context.TOKEN, pid)
-        self.assertEqual(object_info.checksum.value(), checksum.value())
-        self.assertEqual(object_info.checksum.algorithm, checksum.algorithm)
+        assert object_info.checksum.value() == checksum.value()
+        assert object_info.checksum.algorithm == checksum.algorithm

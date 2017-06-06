@@ -22,11 +22,15 @@
 import logging
 
 import baseclient
+
 import d1_common.const
+import d1_common.type_conversions
 import d1_common.util
 
 
-class CoordinatingNodeClient(baseclient.DataONEBaseClient):
+class CoordinatingNodeClient(
+    baseclient.DataONEBaseClient,
+):
   """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available on
   Coordinating Nodes.
 
@@ -37,10 +41,15 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(CoordinatingNodeClient, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 1)
-    kwargs.setdefault('api_minor', 0)
-    baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
+
+    self._api_major = 1
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
+    )
 
   #=========================================================================
   # Core API
@@ -263,18 +272,6 @@ class CoordinatingNodeClient(baseclient.DataONEBaseClient):
       pid, userId, serialVersion, vendorSpecific
     )
     return self._read_boolean_response(response)
-
-  # CNAuthorization.isAuthorized(session, pid, action) → boolean
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
-
-  @d1_common.util.utf8_to_unicode
-  def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
-    return self.GET(['isAuthorized', pid, action], headers=vendorSpecific)
-
-  @d1_common.util.utf8_to_unicode
-  def isAuthorized(self, pid, action, vendorSpecific=None):
-    response = self.isAuthorizedResponse(pid, action, vendorSpecific)
-    return self._read_boolean_401_response(response)
 
   # CNAuthorization.setAccessPolicy(session, pid, accessPolicy, serialVersion) → boolean
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.setAccessPolicy

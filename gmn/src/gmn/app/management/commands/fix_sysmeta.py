@@ -30,15 +30,14 @@ import d1_client.cnclient
 import d1_client.iter.sysmeta_multi
 
 import gmn.app.auth
-import gmn.app.node
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
-import gmn.app.sysmeta_util
-import gmn.app.views.asserts
-import gmn.app.sysmeta_revision
-import gmn.app.views.diagnostics
 import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 import django.conf
 import django.core.management.base
@@ -99,13 +98,13 @@ class FixSystemMetadata(object):
       }
     )
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
-      cn_submitter = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.submitter)
+      pid = gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+      cn_submitter = gmn.app.util.uvalue(sysmeta_pyxb.submitter)
       if not gmn.app.sysmeta.is_pid(pid):
         logging.warn(u'CN PID not on MN. pid="{}"'.format(pid))
         self._events.count(u'CN PID not on MN')
         continue
-      sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
+      sciobj_model = gmn.app.util.get_sci_model(pid)
       mn_submitter = sciobj_model.submitter.subject
       if cn_submitter != mn_submitter:
         sciobj_model.submitter = gmn.app.models.subject(cn_submitter)
@@ -138,7 +137,7 @@ class FixSystemMetadata(object):
   #       self._events.count('Failed')
   #
   # def _fix_system_metadata(self, pid):
-  #   sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
+  #   sciobj_model = gmn.app.util.get_sci_model(pid)
   #   if not self._is_recent_system_metadata(sciobj_model.uploaded_timestamp):
   #     logging.info('Skipped not recent dateUploaded. pid="{}"'.format(pid))
   #     self._events.count('Skipped not recent dateUploaded')

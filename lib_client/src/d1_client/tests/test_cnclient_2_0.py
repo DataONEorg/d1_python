@@ -19,60 +19,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-import shared_settings
-
+import d1_test.d1_test_case
 import d1_test.mock_api.catch_all
 
 import d1_client.cnclient_2_0
 
 
-class TestCNClient_2_0(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      shared_settings.CN_RESPONSES_URL
-    )
-
-  def test_0010(self):
+class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
+  def test_0010(self, cn_client_v2):
     """__init__()"""
-    self.assertIsInstance(
-      self.client, d1_client.cnclient_2_0.CoordinatingNodeClient_2_0
+    assert isinstance(
+      cn_client_v2, d1_client.cnclient_2_0.CoordinatingNodeClient_2_0
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0020(self):
+  def test_0020(self, cn_client_v2):
     """delete(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.delete('valid_pid')
-    expected_echo_dict = {
-      'request': {
-        u'pyxb_namespace': u'http://ns.dataone.org/service/types/v2.0',
-        u'param_list': [u'valid_pid'],
-        u'body_base64': u'',
-        u'header_dict': {
-          u'Content-Length': u'0',
-          u'Accept-Encoding': u'gzip, deflate',
-          u'Charset': u'utf-8',
-          u'Accept': u'*/*',
-          u'User-Agent': u'pyd1/2.1.0rc2 +http://dataone.org/',
-          u'Connection': u'keep-alive'
-        },
-        u'version_tag': u'v2',
-        u'query_dict': {},
-        u'endpoint_str': u'object'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient_2_0',
-        'expected_type': 'Identifier',
-        'vendor_specific_dict': None,
-        'received_303_redirect': False
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v2.delete('valid_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'delete', cn_client_v2
     )

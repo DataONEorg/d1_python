@@ -23,18 +23,14 @@ from __future__ import absolute_import
 
 import responses
 
-import d1_test.util
-
-import gmn.tests.gmn_test_case
 import gmn.app.middleware.session_cert
+import gmn.tests.gmn_test_case
 
 
-class TestCert(gmn.tests.gmn_test_case.D1TestCase):
-  def setUp(self):
-    super(TestCert, self).setUp()
-    self.cert_simple_subject_info_pem = d1_test.util.read_test_file(
-      'cert_with_simple_subject_info.pem'
-    )
+class TestCert(gmn.tests.gmn_test_case.GMNTestCase):
+  cert_simple_subject_info_pem = gmn.tests.gmn_test_case.GMNTestCase.read_sample_file(
+    'cert_with_simple_subject_info.pem'
+  )
 
   @responses.activate
   def test_0010(self):
@@ -45,16 +41,12 @@ class TestCert(gmn.tests.gmn_test_case.D1TestCase):
       gmn.app.middleware.session_cert.
       get_authenticated_subjects(self.cert_simple_subject_info_pem)
     )
-    self.assertEqual(
-      primary_str,
-      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
-    )
-    self.assertListEqual(
-      sorted(equivalent_set),
+    assert primary_str == \
+      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+    assert sorted(equivalent_set) == \
       [
         'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
         'authenticatedUser',
         'public',
         'verifiedUser',
-      ],
-    )
+      ]

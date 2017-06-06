@@ -21,12 +21,12 @@
 
 import logging
 
-import cnclient_1_1
 import baseclient_2_0
+import cnclient_1_1
 
-import d1_common.util
 import d1_common.const
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.util
 
 
 class CoordinatingNodeClient_2_0(
@@ -50,11 +50,15 @@ class CoordinatingNodeClient_2_0(
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(CoordinatingNodeClient_2_0, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 2)
-    kwargs.setdefault('api_minor', 0)
-    baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
-    cnclient_1_1.CoordinatingNodeClient_1_1.__init__(self, *args, **kwargs)
+
+    self._api_major = 2
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
+    )
 
   #=========================================================================
   # Core API

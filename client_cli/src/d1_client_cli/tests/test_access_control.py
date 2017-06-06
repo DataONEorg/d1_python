@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
 
-import d1_test.util
+import d1_test.d1_test_case
 
 import d1_client_cli.impl.access_control as access_control
 import d1_client_cli.impl.cli_exceptions as cli_exceptions
@@ -29,11 +29,11 @@ import d1_client_cli.impl.cli_exceptions as cli_exceptions
 #===============================================================================
 
 
-class TestAccessControl(unittest.TestCase):
+class TestAccessControl(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """AccessControl(): __init__()"""
     a = access_control.AccessControl()
-    self.assertEqual(len(a.allow), 0)
+    assert len(a.allow) == 0
 
   def test_0020(self):
     """clear(): Removes all allowed subjects"""
@@ -42,38 +42,36 @@ class TestAccessControl(unittest.TestCase):
     a.add_allowed_subject('subject_2', None)
     a.add_allowed_subject('subject_3', None)
     a.clear()
-    self.assertEqual(len(a.allow), 0)
+    assert len(a.allow) == 0
 
   def test_0030(self):
     """add_allowed_subject(): Single subject added without specified permission
     is retained and defaults to read"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
-    self.assertEqual(len(a.allow), 1)
-    self.assertTrue('subject_1' in a.allow)
-    self.assertEqual(a.allow['subject_1'], 'read')
+    assert len(a.allow) == 1
+    assert 'subject_1' in a.allow
+    assert a.allow['subject_1'] == 'read'
 
   def test_0040(self):
     """Adding subject that already exists updates its permission"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
-    self.assertEqual(len(a.allow), 1)
-    self.assertTrue('subject_1' in a.allow)
-    self.assertEqual(a.allow['subject_1'], 'read')
+    assert len(a.allow) == 1
+    assert 'subject_1' in a.allow
+    assert a.allow['subject_1'] == 'read'
     a.add_allowed_subject('subject_1', 'write')
-    self.assertEqual(len(a.allow), 1)
-    self.assertTrue('subject_1' in a.allow)
-    self.assertEqual(a.allow['subject_1'], 'write')
+    assert len(a.allow) == 1
+    assert 'subject_1' in a.allow
+    assert a.allow['subject_1'] == 'write'
 
   def test_0050(self):
     """add_allowed_subject(): Subject added with invalid permission raises
     exception InvalidArguments"""
     a = access_control.AccessControl()
-    self.assertRaises(
-      cli_exceptions.InvalidArguments, a.add_allowed_subject, 'subject_1',
-      'invalid_permission'
-    )
-    self.assertEqual(len(a.allow), 0)
+    with pytest.raises(cli_exceptions.InvalidArguments):
+      a.add_allowed_subject('subject_1', 'invalid_permission')
+    assert len(a.allow) == 0
 
   def test_0060(self):
     """add_allowed_subject(): Multiple subjects with different permissions are
@@ -82,13 +80,13 @@ class TestAccessControl(unittest.TestCase):
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
-    self.assertEqual(len(a.allow), 3)
-    self.assertTrue('subject_1' in a.allow)
-    self.assertEqual(a.allow['subject_1'], 'read')
-    self.assertTrue('subject_2' in a.allow)
-    self.assertEqual(a.allow['subject_2'], 'write')
-    self.assertTrue('subject_3' in a.allow)
-    self.assertEqual(a.allow['subject_3'], 'changePermission')
+    assert len(a.allow) == 3
+    assert 'subject_1' in a.allow
+    assert a.allow['subject_1'] == 'read'
+    assert 'subject_2' in a.allow
+    assert a.allow['subject_2'] == 'write'
+    assert 'subject_3' in a.allow
+    assert a.allow['subject_3'] == 'changePermission'
 
   def test_0070(self):
     """remove_allowed_subject()"""
@@ -97,8 +95,8 @@ class TestAccessControl(unittest.TestCase):
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
     a.remove_allowed_subject('subject_3')
-    self.assertEqual(len(a.allow), 2)
-    self.assertFalse('subject_3' in a.allow)
+    assert len(a.allow) == 2
+    assert not ('subject_3' in a.allow)
 
   def test_0080(self):
     """str() returns formatted string representation"""
@@ -109,32 +107,28 @@ class TestAccessControl(unittest.TestCase):
     actual = []
     for s in str(a).split('\n'):
       actual.append(s.strip())
-    self.assertEquals(actual[1], 'read                          "subject_1"')
-    self.assertEquals(actual[2], 'write                         "subject_2"')
-    self.assertEquals(actual[3], 'changePermission              "subject_3"')
+    assert actual[1] == 'read                          "subject_1"'
+    assert actual[2] == 'write                         "subject_2"'
+    assert actual[3] == 'changePermission              "subject_3"'
 
   def test_0090(self):
     """_confirm_special_subject_write(): Allows setting if user answers 'yes"""
     a = access_control.AccessControl()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
-      with d1_test.util.mock_raw_input('yes'):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+      with d1_test.d1_test_case.mock_raw_input('yes'):
         a._confirm_special_subject_write('public', 'write')
     prompt_str = out_stream.getvalue()
-    self.assertEqual(
-      'WARN     It is not recommended to give write access to public. '
-      'Continue? [yes/NO] ',
-      prompt_str,
-    )
+    assert 'WARN     It is not recommended to give write access to public. ' \
+    'Continue? [yes/NO] ' == prompt_str
 
   def test_0100(self):
     """_confirm_special_subject_write(): Raises InvalidArguments if user answers
     'no"""
     a = access_control.AccessControl()
-    with d1_test.util.capture_std():
-      with d1_test.util.mock_raw_input('no'):
-        self.assertRaises(
-          cli_exceptions.InvalidArguments,
-          a._confirm_special_subject_write,
-          'public',
-          'write',
-        )
+    with d1_test.d1_test_case.capture_std():
+      with d1_test.d1_test_case.mock_raw_input('no'):
+        with pytest.raises(cli_exceptions.InvalidArguments):
+          a._confirm_special_subject_write(
+            'public',
+            'write',
+          )

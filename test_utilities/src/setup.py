@@ -37,6 +37,9 @@ def main():
     install_requires=[
       'dataone.libclient == 2.3.0rc1',
       #
+      # 'decorator == 4.0.11',
+      'contextlib2 == 0.5.5',
+      'freezegun == 0.3.9',
       'lxml == 3.7.3',
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',

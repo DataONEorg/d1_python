@@ -20,17 +20,20 @@
 # limitations under the License.
 
 import os
+import StringIO
 import sys
 import uuid
-import StringIO
-import unittest
+
+import pytest
 
 import d1_common.const
 
+import d1_test.d1_test_case
+
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.format_ids as format_ids
 import d1_client_cli.impl.nodes as nodes
 import d1_client_cli.impl.session as session
-import d1_client_cli.impl.format_ids as format_ids
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
 
 nodes = nodes.Nodes()
 #  'node_a',
@@ -48,69 +51,69 @@ format_ids = format_ids.FormatIDs()
 #===============================================================================
 
 
-class TestSession(unittest.TestCase):
+class TestSession(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """__init__()"""
     s = session.Session(nodes, format_ids)
-    self.assertNotEquals(None, s, 'Could not instantiate session.')
+    assert s is not None, 'Could not instantiate session'
 
   def test_0020(self):
     """After instatiation, the default session parameters are available via get()"""
     s = session.Session(nodes, format_ids)
     #self.assertEqual(s.get('pretty'), True)
-    self.assertEqual(s.get('cn-url'), d1_common.const.URL_DATAONE_ROOT)
+    assert s.get('cn-url') == d1_common.const.URL_DATAONE_ROOT
 
   def test_0030(self):
     """Session parameters can be updated with set()"""
     s = session.Session(nodes, format_ids)
     s.set('verbose', False),
     s.set('rights-holder', 'test')
-    self.assertEqual(s.get('verbose'), False)
-    self.assertEqual(s.get('rights-holder'), 'test')
+    assert s.get('verbose') is False
+    assert s.get('rights-holder') == 'test'
 
   def test_0050(self):
     """Setting valid CN is successful"""
     s = session.Session(nodes, format_ids)
     valid_cn = 'https://cn-unm-1.dataone.org/cn'
     s.set('cn-url', valid_cn)
-    self.assertEqual(s.get('cn-url'), valid_cn)
+    assert s.get('cn-url') == valid_cn
 
   def test_0060(self):
     """Session parameters can be brought back to their defaults with reset()"""
     s = session.Session(nodes, format_ids)
     s.set('query', 'testquery'),
-    self.assertEqual(s.get('query'), 'testquery')
+    assert s.get('query') == 'testquery'
     s.reset()
-    self.assertEqual(s.get('query'), '*:*')
+    assert s.get('query') == '*:*'
 
   def test_0070(self):
     """Getting an non-existing session parameter raises InvalidArguments"""
     s = session.Session(nodes, format_ids)
-    self.assertRaises(cli_exceptions.InvalidArguments, s.get, 'bogus-value')
+    with pytest.raises(cli_exceptions.InvalidArguments):
+      s.get('bogus-value')
 
   def test_0080(self):
     """set_with_conversion() handles None"""
     s = session.Session(nodes, format_ids)
-    self.assertEqual(s.get('verbose'), True)
+    assert s.get('verbose') is True
     s.set_with_conversion('verbose', 'None')
-    self.assertEqual(s.get('verbose'), None)
+    assert s.get('verbose') is None
 
   def test_0090(self):
     """set_with_conversion() handles integer conversions"""
     s = session.Session(nodes, format_ids)
-    self.assertEqual(s.get('verbose'), True)
+    assert s.get('verbose') is True
     s.set_with_conversion('verbose', '1')
-    self.assertEqual(s.get('verbose'), 1)
+    assert s.get('verbose') == 1
 
   def test_0100(self):
     """set_with_conversion() raises InvalidArguments on non-existing session parameter"""
     s = session.Session(nodes, format_ids)
-    self.assertRaises(
-      cli_exceptions.InvalidArguments, s.set_with_conversion, 'bogus-value', '1'
-    )
+    with pytest.raises(cli_exceptions.InvalidArguments):
+      s.set_with_conversion('bogus-value', '1')
 
   def test_0110(self):
     """Session object exposes access control"""
@@ -129,8 +132,8 @@ class TestSession(unittest.TestCase):
     out = sys.stdout.getvalue()
     sys.stdout = old
     # validate
-    self.assertTrue(len(out) > 100)
-    self.assertTrue(type(out) is str)
+    assert len(out) > 100
+    assert type(out) is str
 
   def test_0130(self):
     """Session is successfully saved and then loaded (pickled and unpickled)"""
@@ -145,4 +148,4 @@ class TestSession(unittest.TestCase):
     s1.save(tmp_pickle)
     s2 = session.Session(nodes, format_ids)
     s2.load(tmp_pickle)
-    self.assertEqual(s2.get('rights-holder'), u)
+    assert s2.get('rights-holder') == u

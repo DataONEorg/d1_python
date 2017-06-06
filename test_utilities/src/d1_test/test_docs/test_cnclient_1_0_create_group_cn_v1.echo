@@ -1,0 +1,15 @@
+{
+  "request": {
+    "endpoint_str": "groups", 
+    "param_list": [], 
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
+    "query_dict": {}, 
+    "version_tag": "v1"
+  }, 
+  "wrapper": {
+    "class_name": "CoordinatingNodeClient_1_1", 
+    "expected_type": null, 
+    "received_303_redirect": false, 
+    "vendor_specific_dict": null
+  }
+}

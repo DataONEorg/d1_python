@@ -23,16 +23,16 @@ from __future__ import absolute_import
 
 import functools
 
-import d1_common.url
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
+import d1_common.url
 
 import gmn.app.auth
+import gmn.app.revision
 import gmn.app.sysmeta
-import gmn.app.views.util
-import gmn.app.sysmeta_sid
 import gmn.app.views.asserts
+import gmn.app.views.util
 
 import django.conf
 
@@ -51,11 +51,11 @@ def resolve_sid(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, did, *args, **kwargs):
+  def wrapper(request, did, *args, **kwargs):
     pid = resolve_sid_func(request, did)
     return f(request, pid, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def resolve_sid_func(request, did):
@@ -65,8 +65,8 @@ def resolve_sid_func(request, did):
   elif gmn.app.views.util.is_v2_api(request):
     if gmn.app.sysmeta.is_pid(did):
       return did
-    elif gmn.app.sysmeta_sid.is_sid(did):
-      return gmn.app.sysmeta_sid.resolve_sid(did)
+    elif gmn.app.revision.is_sid(did):
+      return gmn.app.revision.resolve_sid(did)
     else:
       raise d1_common.types.exceptions.NotFound(
         0, u'Unknown identifier. id="{}"'.format(did), identifier=did
@@ -84,10 +84,11 @@ def decode_id(f):
   # dispatcher. IMO, that's a bug and I'm working with Django devs to see if
   # this can be fixed. Update this accordingly.
   @functools.wraps(f)
-  def wrap(request, did, *args, **kwargs):
-    return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
+  def wrapper(request, did, *args, **kwargs):
+    # return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
+    return f(request, did, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 # ------------------------------------------------------------------------------
@@ -108,11 +109,11 @@ def trusted_permission(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     trusted(request)
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def list_objects_access(f):
@@ -120,12 +121,12 @@ def list_objects_access(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     if not django.conf.settings.PUBLIC_OBJECT_LIST:
       trusted(request)
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def get_log_records_access(f):
@@ -133,12 +134,12 @@ def get_log_records_access(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     if not django.conf.settings.PUBLIC_LOG_RECORDS:
       trusted(request)
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def trusted(request):
@@ -158,11 +159,11 @@ def assert_create_update_delete_permission(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     gmn.app.auth.assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def authenticated(f):
@@ -170,7 +171,7 @@ def authenticated(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
         0,
@@ -180,7 +181,7 @@ def authenticated(f):
       )
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def verified(f):
@@ -188,7 +189,7 @@ def verified(f):
   """
 
   @functools.wraps(f)
-  def wrap(request, *args, **kwargs):
+  def wrapper(request, *args, **kwargs):
     if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
         0,
@@ -199,7 +200,7 @@ def verified(f):
       )
     return f(request, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def required_permission(f, level):
@@ -207,11 +208,11 @@ def required_permission(f, level):
   """
 
   @functools.wraps(f)
-  def wrap(request, pid, *args, **kwargs):
+  def wrapper(request, pid, *args, **kwargs):
     gmn.app.auth.assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
 
-  return wrap
+  return wrapper
 
 
 def changepermission_permission(f):

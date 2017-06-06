@@ -20,30 +20,25 @@
 # limitations under the License.
 """Unit tests for DataONE Command Line Interface"""
 
-import unittest
-
-import d1_test.util
+import d1_test.d1_test_case
 
 import d1_client_cli.impl.check_dependencies
 
 
-class TestCheckDependencies(unittest.TestCase):
+class TestCheckDependencies(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def test_0010(self):
     """check_dependencies(): Returns True given modules known to be present"""
-    self.assertTrue(
-      d1_client_cli.impl.check_dependencies.
-      are_modules_importable(['os', 'sys'])
+    assert d1_client_cli.impl.check_dependencies.are_modules_importable(
+      ['os', 'sys']
     )
 
   def test_0020(self):
     """check_dependencies(): Returns false and logs error on invalid module"""
-    with d1_test.util.capture_log() as log_stream:
-      self.assertFalse(
-        d1_client_cli.impl.check_dependencies.
+    with d1_test.d1_test_case.capture_log() as log_stream:
+      assert not d1_client_cli.impl.check_dependencies. \
         are_modules_importable(['os', 'invalid_module'])
-      )
-    self.assertIn('dependencies failed', log_stream.getvalue())
+    assert 'dependencies failed' in log_stream.getvalue()

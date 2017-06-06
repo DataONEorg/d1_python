@@ -30,7 +30,7 @@ import logging
 
 import d1_client.cnclient
 
-import gmn.app.sysmeta_util
+import gmn.app.util
 
 import django.conf
 import django.core.cache
@@ -96,7 +96,7 @@ def get_cn_subjects_from_dataone_root():
       for service in services:
         if service.name == 'CNCore':
           for subject in node.subject:
-            cn_subjects.add(gmn.app.sysmeta_util.uvalue(subject))
+            cn_subjects.add(gmn.app.util.uvalue(subject))
           break
   return cn_subjects
 

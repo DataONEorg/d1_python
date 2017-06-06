@@ -22,22 +22,22 @@
 
 from __future__ import absolute_import
 
-import os
 import logging
+import os
 
-import d1_common.url
 import d1_common.types.exceptions
+import d1_common.url
 
 import gmn.app.auth
-import gmn.app.node
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
-import gmn.app.sysmeta_util
-import gmn.app.views.asserts
-import gmn.app.sysmeta_revision
-import gmn.app.views.diagnostics
 import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
+import gmn.app.views.util
 
 import django.conf
 import django.core.management.base
@@ -101,19 +101,19 @@ class UpdateAccessPolicy(object):
     try:
       sysmeta_pyxb = self._deserialize_sysmeta_xml_file(sysmeta_xml_path)
       self._access_policy_to_model(
-        gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier), sysmeta_pyxb
+        gmn.app.util.uvalue(sysmeta_pyxb.identifier), sysmeta_pyxb
       )
     except django.core.management.base.CommandError as e:
       logging.error(str(e))
       self._events.count('Failed')
     else:
-      logging.info(gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier))
+      logging.info(gmn.app.util.uvalue(sysmeta_pyxb.identifier))
       self._events.count('Updated')
 
   def _deserialize_sysmeta_xml_file(self, sysmeta_xml_path):
     try:
       with open(sysmeta_xml_path, 'rb') as f:
-        return gmn.app.sysmeta.deserialize(f.read())
+        return gmn.app.views.util.deserialize(f)
     except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
       raise django.core.management.base.CommandError(
         'Unable to read SysMeta. error="{}"'.format(str(e))
@@ -124,5 +124,5 @@ class UpdateAccessPolicy(object):
       return
     if not gmn.app.sysmeta.is_pid(pid):
       return
-    sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
+    sci_model = gmn.app.util.get_sci_model(pid)
     gmn.app.sysmeta._access_policy_pyxb_to_model(sci_model, sysmeta_pyxb)

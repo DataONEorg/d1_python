@@ -33,10 +33,9 @@ import gmn.tests.gmn_test_case
 import django.test
 
 
-class TestTrustedClientOverrides(gmn.tests.gmn_test_case.D1TestCase):
+class TestTrustedClientOverrides(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  @gmn.tests.gmn_mock.disable_auth_decorator
-  def _test_override(self, client, binding):
+  def _test_override(self, mn_client_v2):
     override_list = [
       (True, 'submitter', 'override_submitter_subj'),
       (True, 'originMemberNode', 'urn:node:OverrideOriginMN'),
@@ -49,33 +48,34 @@ class TestTrustedClientOverrides(gmn.tests.gmn_test_case.D1TestCase):
       (False, 'dateUploaded', datetime.datetime(1981, 1, 1, 1, 1, 1)),
     ]
 
-    pid, sid, sciobj_str, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
-      binding, True, sid=True
-    )
+    with gmn.tests.gmn_mock.disable_auth():
+      pid, sid, sciobj_str, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
+        mn_client_v2, True, sid=True
+      )
 
-    # Override PyXB with client values
-    for is_simple_content, attr_str, override_value in override_list:
-      setattr(send_sysmeta_pyxb, attr_str, override_value)
+      # Override PyXB with client values
+      for is_simple_content, attr_str, override_value in override_list:
+        setattr(send_sysmeta_pyxb, attr_str, override_value)
 
-    # Create obj with overrides
-    self.call_d1_client(
-      client.create,
-      pid,
-      StringIO.StringIO(sciobj_str),
-      send_sysmeta_pyxb,
-    )
+      # Create obj with overrides
+      self.call_d1_client(
+        mn_client_v2.create,
+        pid,
+        StringIO.StringIO(sciobj_str),
+        send_sysmeta_pyxb,
+      )
 
-    recv_sysmeta_pyxb = client.getSystemMetadata(pid)
+      recv_sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
 
-    self.dump_pyxb(recv_sysmeta_pyxb)
+      self.dump_pyxb(recv_sysmeta_pyxb)
 
-    accepted_override_list = []
-    for is_simple_content, attr_str, override_value in override_list:
-      attr = getattr(recv_sysmeta_pyxb, attr_str)
-      recv_value = attr.value() if is_simple_content else attr
-      accepted_override_list.append(override_value == recv_value)
+      accepted_override_list = []
+      for is_simple_content, attr_str, override_value in override_list:
+        attr = getattr(recv_sysmeta_pyxb, attr_str)
+        recv_value = attr.value() if is_simple_content else attr
+        accepted_override_list.append(override_value == recv_value)
 
-    return accepted_override_list
+      return accepted_override_list
 
   @django.test.override_settings(
     TRUST_CLIENT_SUBMITTER=False,
@@ -87,11 +87,9 @@ class TestTrustedClientOverrides(gmn.tests.gmn_test_case.D1TestCase):
   )
   def test_1010(self):
     """Trusted Client Overrides: Combination 1"""
-    accepted_override_list = self._test_override(self.client_v1, self.v1)
-    self.assertListEqual(
-      accepted_override_list,
-      [False, False, False, False, False, False],
-    )
+    accepted_override_list = self._test_override(self.client_v1)
+    assert accepted_override_list == \
+      [False, False, False, False, False, False]
 
   @django.test.override_settings(
     TRUST_CLIENT_SUBMITTER=True,
@@ -103,11 +101,9 @@ class TestTrustedClientOverrides(gmn.tests.gmn_test_case.D1TestCase):
   )
   def test_1020(self):
     """Trusted Client Overrides: Combination 2"""
-    accepted_override_list = self._test_override(self.client_v1, self.v1)
-    self.assertListEqual(
-      accepted_override_list,
-      [True, False, False, False, False, True],
-    )
+    accepted_override_list = self._test_override(self.client_v1)
+    assert accepted_override_list == \
+      [True, False, False, False, False, True]
 
   @django.test.override_settings(
     TRUST_CLIENT_SUBMITTER=True,
@@ -119,8 +115,6 @@ class TestTrustedClientOverrides(gmn.tests.gmn_test_case.D1TestCase):
   )
   def test_1030(self):
     """Trusted Client Overrides: Combination 3"""
-    accepted_override_list = self._test_override(self.client_v1, self.v1)
-    self.assertListEqual(
-      accepted_override_list,
-      [True, True, True, True, True, True],
-    )
+    accepted_override_list = self._test_override(self.client_v1)
+    assert accepted_override_list == \
+      [True, True, True, True, True, True]

@@ -21,35 +21,28 @@
 
 from __future__ import absolute_import
 
-import unittest
-
 import mock
+import pytest
 
-import d1_test.util
-
-import gmn.tests.gmn_test_case
 import gmn.app.middleware.session_jwt
+import gmn.tests.gmn_test_case
 
-import django.test
 
-
-@django.test.override_settings(
-  DEBUG=True,
-  STAND_ALONE=False,
-  DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
-)
-@unittest.skip('Tests failing because cn certs changed to LE')
-class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
+# @django.test.override_settings(
+#   DEBUG=True,
+#   STAND_ALONE=False,
+#   DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
+# )
+@pytest.mark.skip('Tests failing because cn certs changed to LE')
+class TestJwt(gmn.tests.gmn_test_case.GMNTestCase):
   def test_0010(self):
-    """_get_cn_cert() successfully retrieves CN server cert from cn-stage"""
+    """_get_cn_cert() successfully retrieves CN server cert"""
     cert_obj = gmn.app.middleware.session_jwt._get_cn_cert()
-    self.assertIn(
-      u'cn-stage.test.dataone.org',
+    assert u'cn.dataone.org' in \
       [v.value for v in cert_obj.subject]
-    )
 
   def _parse_test_token(self):
-    jwt_base64 = d1_test.util.read_test_file('test_token_2.base64')
+    jwt_base64 = self.read_sample_file('test_token_2.base64')
     return gmn.app.middleware.session_jwt._validate_jwt_and_get_subject_list(
       jwt_base64
     )
@@ -60,7 +53,7 @@ class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
     2016-10-06
     """
     subject_list = self._parse_test_token()
-    self.assertListEqual(subject_list, [])
+    assert subject_list == []
 
   def test_0030(self):
     """_validate_jwt_and_get_subject_list() successfully returns the expected
@@ -73,6 +66,6 @@ class TestJwt(gmn.tests.gmn_test_case.D1TestCase):
       awt_exp_ts = 1475786896
       mock_date.return_value = awt_exp_ts - 1
       subject_list = self._parse_test_token()
-      self.assertListEqual(
-        subject_list, [u'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org']
-      )
+      assert subject_list == [
+        u'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+      ]

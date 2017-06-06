@@ -22,35 +22,35 @@
 
 from __future__ import absolute_import
 
-import re
 import datetime
+import re
 
-import d1_common.url
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.url
+import d1_common.xml
 
 import gmn.app.auth
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.sysmeta_sid
-import gmn.app.sysmeta_util
+import gmn.app.models
 import gmn.app.psycopg_adapter
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
 
 import django.conf
-import django.http
 import django.core.files.move
+import django.http
 
 
 def dataoneTypes(request):
-  """Return the PyXB type bindings to use when handling a request"""
+  """Return the PyXB type client to use when handling a request"""
   if is_v1_api(request):
     return d1_common.types.dataoneTypes_v1_1
   elif is_v2_api(request) or is_diag_api(request):
@@ -87,7 +87,8 @@ def is_false_param(request_param):
 
 def read_utf8_xml(stream_obj):
   try:
-    return stream_obj.read().decode('utf8')
+    return stream_obj.read(django.conf.settings.MAX_XML_DOCUMENT_SIZE
+                           ).decode('utf-8')
   except IOError as e:
     msg = u'Read failed on XML stream. error="{}"'.format(str(e))
   except UnicodeDecodeError as e:
@@ -95,6 +96,25 @@ def read_utf8_xml(stream_obj):
       str(e)
     )
   raise d1_common.types.exceptions.ServiceFailure(0, msg)
+
+
+def deserialize(xml_flo):
+  # Since the entire XML document must be in memory while being deserialized,
+  # we limit the size we are willing to handle.
+  if xml_flo.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0,
+      u'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
+      .format(xml_flo.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
+    )
+  try:
+    xml_str = read_utf8_xml(xml_flo)
+  except d1_common.types.exceptions.ServiceFailure as e:
+    raise d1_common.types.exceptions.InvalidRequest(e.message)
+  try:
+    return d1_common.xml.deserialize(xml_str)
+  except ValueError as e:
+    raise d1_common.types.exceptions.InvalidRequest(0, str(e))
 
 
 def generate_sysmeta_xml_matching_api_version(request, pid):
@@ -136,7 +156,7 @@ def set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
     override_value = None
     if is_trusted_from_client:
       override_value = (
-        gmn.app.sysmeta_util.get_value(sysmeta_pyxb, attr_str)
+        gmn.app.util.get_value(sysmeta_pyxb, attr_str)
         if is_simple_content else getattr(sysmeta_pyxb, attr_str, None)
       )
     setattr(sysmeta_pyxb, attr_str, override_value or default_value)

@@ -19,14 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
+import responses
 
-import d1_client.cnclient
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.node_ref
@@ -40,234 +42,142 @@ import d1_test.instance_generator.system_metadata
 import d1_test.mock_api.catch_all
 import d1_test.mock_api.get_format
 import d1_test.mock_api.list_formats
-import d1_test.util
-import responses
-import shared_settings
 
 
-class TestCNClient(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient.CoordinatingNodeClient(
-      shared_settings.CN_RESPONSES_URL
-    )
-
+@d1_test.d1_test_case.reproducible_random_decorator('TestCNClient')
+class TestCNClient(d1_test.d1_test_case.D1TestCase):
   #=========================================================================
   # Core API
   #=========================================================================
 
-  def test_0010(self):
+  def test_0010(self, cn_client_v1):
     """Initialize CoordinatingNodeClient"""
     # Completion means that the client was successfully instantiated in
     # setUp().
     pass
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, cn_client_v1):
     """CNCore.listFormats(): Returns valid ObjectFormatList with at least 3
     entries"""
-    d1_test.mock_api.list_formats.add_callback(shared_settings.CN_RESPONSES_URL)
-    object_format_list_pyxb = self.client.listFormats()
-    self.assertTrue(len(object_format_list_pyxb.objectFormat) >= 3)
+    d1_test.mock_api.list_formats.add_callback(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    object_format_list_pyxb = cn_client_v1.listFormats()
+    assert len(object_format_list_pyxb.objectFormat) >= 3
     object_format_pyxb = object_format_list_pyxb.objectFormat[0]
-    self.assertIsInstance(
+    assert isinstance(
       object_format_pyxb.formatId,
       d1_common.types.dataoneTypes.ObjectFormatIdentifier
     )
 
   @responses.activate
-  def test_0030(self):
+  def test_0030(self, cn_client_v1):
     """CNCore.getFormat(): Returns valid ObjectFormat for known formatId"""
-    d1_test.mock_api.get_format.add_callback(shared_settings.CN_RESPONSES_URL)
-    object_format_pyxb = self.client.getFormat('valid_format_id')
-    self.assertIsInstance(
-      object_format_pyxb, d1_common.types.dataoneTypes_v1.ObjectFormat
-    )
-    self.assertEqual(object_format_pyxb.formatId, 'valid_format_id')
+    d1_test.mock_api.get_format.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    object_format_pyxb = cn_client_v1.getFormat('valid_format_id')
+    assert isinstance(object_format_pyxb, cn_client_v1.bindings.ObjectFormat)
+    assert object_format_pyxb.formatId == 'valid_format_id'
 
   # CNCore.reserveIdentifier()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0040(self):
+  def test_0040(self, cn_client_v1):
     """CNCore.reserveIdentifier(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.reserveIdentifier('unused_pid')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'reserve',
-        'param_list': ['unused_pid'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1',
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'Identifier',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.reserveIdentifier('unused_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'reserve_identifier', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0050(self):
+  def test_0050(self, cn_client_v1):
     """CNCore.reserveIdentifier(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.reserveIdentifier,
-      'unused_pid', {'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.reserveIdentifier('unused_pid', {'trigger': '404'})
 
   # CNCore.hasReservation()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0060(self):
+  def test_0060(self, cn_client_v1):
     """CNCore.hasReservation(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.hasReservation('test_pid', 'test_subject')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'reserve',
-        'param_list': ['test_pid', 'test_subject'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.hasReservation('test_pid', 'test_subject')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'has_reservation', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0070(self):
+  def test_0070(self, cn_client_v1):
     """CNCore.hasReservation(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.hasReservation,
-      'test_pid', 'test_subject', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.hasReservation(
+        'test_pid', 'test_subject', vendorSpecific={'trigger': '404'}
+      )
 
   # CNCore.listChecksumAlgorithms()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0080(self):
+  def test_0080(self, cn_client_v1):
     """CNCore.listChecksumAlgorithms(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.listChecksumAlgorithms()
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'checksum',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'ChecksumAlgorithmList',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.listChecksumAlgorithms()
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'list_checksum_algorithms', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0090(self):
+  def test_0090(self, cn_client_v1):
     """CNCore.listChecksumAlgorithms(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.listChecksumAlgorithms,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.listChecksumAlgorithms(vendorSpecific={'trigger': '404'})
 
   # CNCore.setObsoletedBy()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0100(self):
+  def test_0100(self, cn_client_v1):
     """CNCore.setObsoletedBy(): Generates expected REST query"""
     # TODO: Check if spec is correct re. serialVersion:
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/
     # CN_APIs.html#CNCore.setObsoletedBy
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.setObsoletedBy(
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.setObsoletedBy(
       'new_pid', 'old_pid', serialVersion=10
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'obsoletedBy',
-        'param_list': ['new_pid'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'set_obsoleted_by', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0110(self):
+  def test_0110(self, cn_client_v1):
     """CNCore.setObsoletedBy(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.setObsoletedBy,
-      'new_pid', 'old_pid', serialVersion=10, vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.setObsoletedBy(
+        'new_pid', 'old_pid', serialVersion=10,
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNCore.listNodes()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0120(self):
+  def test_0120(self, cn_client_v1):
     """CNCore.listNodes(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.listNodes()
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'node',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'NodeList',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.listNodes()
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'list_nodes', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0130(self):
+  def test_0130(self, cn_client_v1):
     """CNCore.listNodes(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.listNodes,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.listNodes(vendorSpecific={'trigger': '404'})
 
   #=========================================================================
   # Read API
@@ -276,108 +186,58 @@ class TestCNClient(unittest.TestCase):
   # CNRead.resolve()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0140(self):
+  def test_0140(self, cn_client_v1):
     """CNRead.resolve(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.resolve('valid_pid')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'resolve',
-        'param_list': ['valid_pid'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'ObjectLocationList',
-        'received_303_redirect': True,
-        'vendor_specific_dict': None
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.resolve('valid_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'resolve', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0150(self):
+  def test_0150(self, cn_client_v1):
     """CNRead.resolve(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.resolve, 'valid_pid',
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.resolve('valid_pid', vendorSpecific={'trigger': '404'})
 
   # CNRead.getChecksum()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0160(self):
+  def test_0160(self, cn_client_v1):
     """CNRead.getChecksum(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.getChecksum('valid_pid')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'checksum',
-        'param_list': ['valid_pid'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'Checksum',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.getChecksum('valid_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'get_checksum', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0170(self):
+  def test_0170(self, cn_client_v1):
     """CNRead.getChecksum(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.getChecksum, 'valid_pid',
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.getChecksum('valid_pid', vendorSpecific={'trigger': '404'})
 
   # CNRead.search()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0180(self):
+  def test_0180(self, cn_client_v1):
     """CNRead.search(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.search('query_type', 'query_string')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'search',
-        'param_list': ['query_type', 'query_string'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'ObjectList',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.search('query_type', 'query_string')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'search', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0190(self):
+  def test_0190(self, cn_client_v1):
     """CNRead.search(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.search, 'query_type',
-      'query_string', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.search(
+        'query_type', 'query_string', vendorSpecific={'trigger': '404'}
+      )
 
   #=========================================================================
   # Authorization API
@@ -386,77 +246,45 @@ class TestCNClient(unittest.TestCase):
   # CNAuthorization.setRightsHolder()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0200(self):
+  def test_0200(self, cn_client_v1):
     """CNAuthorization.setRightsHolder(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.setRightsHolder(
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.setRightsHolder(
       'valid_pid', 'valid_subject', serialVersion=10
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'owner',
-        'param_list': ['valid_pid'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'set_rights_holder', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0210(self):
+  def test_0210(self, cn_client_v1):
     """CNAuthorization.setRightsHolder(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.setRightsHolder,
-      'valid_pid', 'valid_subject', serialVersion=10,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.setRightsHolder(
+        'valid_pid', 'valid_subject', serialVersion=10,
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNAuthorization.isAuthorized()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0220(self):
+  def test_0220(self, cn_client_v1):
     """CNAuthorization.isAuthorized(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.isAuthorized('valid_pid', 'read')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'isAuthorized',
-        'param_list': ['valid_pid', 'read'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.isAuthorized('valid_pid', 'read')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'is_authorized', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0230(self):
+  def test_0230(self, cn_client_v1):
     """CNAuthorization.isAuthorized(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.isAuthorized,
-      'valid_pid', 'read', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.isAuthorized(
+        'valid_pid', 'read', vendorSpecific={'trigger': '404'}
+      )
 
   #=========================================================================
   # Identity API
@@ -465,420 +293,248 @@ class TestCNClient(unittest.TestCase):
   # CNIdentity.registerAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0240(self):
+  def test_0240(self, cn_client_v1):
     """CNAuthorization.registerAccount(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
-    received_echo_dict = self.client.registerAccount(person_pyxb)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    received_echo_dict = cn_client_v1.registerAccount(person_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'register_account', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0250(self):
+  def test_0250(self, cn_client_v1):
     """CNAuthorization.registerAccount(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.registerAccount,
-      person_pyxb, vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.registerAccount(
+        person_pyxb, vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.updateAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0260(self):
+  def test_0260(self, cn_client_v1):
     """CNAuthorization.updateAccount(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
-    received_echo_dict = self.client.updateAccount('valid_subject', person_pyxb)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['valid_subject'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    received_echo_dict = cn_client_v1.updateAccount(
+      'valid_subject', person_pyxb
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'update_account', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0270(self):
+  def test_0270(self, cn_client_v1):
     """CNAuthorization.updateAccount(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     person_pyxb = d1_test.instance_generator.person.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.updateAccount,
-      'valid_subject', person_pyxb, vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.updateAccount(
+        'valid_subject', person_pyxb, vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.verifyAccount()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0280(self):
+  def test_0280(self, cn_client_v1):
     """CNAuthorization.verifyAccount(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.verifyAccount('valid_subject')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['valid_subject'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.verifyAccount('valid_subject')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'verify_account', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0290(self):
+  def test_0290(self, cn_client_v1):
     """CNAuthorization.verifyAccount(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.verifyAccount,
-      'valid_subject', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.verifyAccount(
+        'valid_subject', vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.getSubjectInfo()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0300(self):
+  def test_0300(self, cn_client_v1):
     """CNIdentity.getSubjectInfo(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.getSubjectInfo('valid_subject')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['valid_subject'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'SubjectInfo',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.getSubjectInfo('valid_subject')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'get_subject_info', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0310(self):
+  def test_0310(self, cn_client_v1):
     """CNIdentity.getSubjectInfo(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.getSubjectInfo,
-      'valid_subject', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.getSubjectInfo(
+        'valid_subject', vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.listSubjects()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0320(self):
+  def test_0320(self, cn_client_v1):
     """CNIdentity.listSubjects(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    received_echo_dict = self.client.listSubjects('valid_subject')
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {
-          'query': ['valid_subject']
-        },
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': 'SubjectInfo',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.listSubjects('valid_subject')
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'list_subjects', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0330(self):
+  def test_0330(self, cn_client_v1):
     """CNIdentity.listSubjects(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.listSubjects,
-      'valid_subject', vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.listSubjects(
+        'valid_subject', vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.mapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0340(self):
+  def test_0340(self, cn_client_v1):
     """CNIdentity.mapIdentity(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     primary_subject = d1_test.instance_generator.person.generate()
     secondary_subject = d1_test.instance_generator.person.generate()
-    received_echo_dict = self.client.mapIdentity(
+    received_echo_dict = cn_client_v1.mapIdentity(
       primary_subject, secondary_subject
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['map'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'map_identity', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0350(self):
+  def test_0350(self, cn_client_v1):
     """CNIdentity.mapIdentity(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     primary_subject = d1_test.instance_generator.subject.generate()
     secondary_subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.mapIdentity,
-      primary_subject, secondary_subject, vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.mapIdentity(
+        primary_subject, secondary_subject, vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.removeMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0360(self):
+  def test_0360(self, cn_client_v1):
     """CNIdentity.removeMapIdentity(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    received_echo_dict = self.client.removeMapIdentity(subject)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['map', subject.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.removeMapIdentity(
+      'test_remove_map_identity_subj'
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'remove_map_identity', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0370(self):
+  def test_0370(self, cn_client_v1):
     """CNIdentity.removeMapIdentity(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.removeMapIdentity,
-      subject, vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.removeMapIdentity(
+        'test_remove_map_identity_subj', vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.requestMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0380(self):
+  def test_0380(self, cn_client_v1):
     """CNIdentity.requestMapIdentity(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    received_echo_dict = self.client.requestMapIdentity(subject)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.requestMapIdentity(
+      cn_client_v1.bindings.subject('test_request_map_identity_subj')
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'request_map_identity', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0390(self):
+  def test_0390(self, cn_client_v1):
     """CNIdentity.requestMapIdentity(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.requestMapIdentity,
-      subject, vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.requestMapIdentity(
+        cn_client_v1.bindings.subject('test_request_map_identity_subj'),
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.confirmMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0400(self):
+  def test_0400(self, cn_client_v1):
     """CNIdentity.confirmMapIdentity(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    received_echo_dict = self.client.confirmMapIdentity(subject)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['pendingmap', subject.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.confirmMapIdentity(
+      cn_client_v1.bindings.subject('test_confirm_map_identity_subj')
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'confirm_map_identity', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0410(self):
+  def test_0410(self, cn_client_v1):
     """CNIdentity.confirmMapIdentity(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.confirmMapIdentity,
-      subject, vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.confirmMapIdentity(
+        cn_client_v1.bindings.subject('test_request_map_identity_subj'),
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.denyMapIdentity()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0420(self):
+  def test_0420(self, cn_client_v1):
     """CNIdentity.denyMapIdentity(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    received_echo_dict = self.client.denyMapIdentity(subject)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'accounts',
-        'param_list': ['pendingmap', subject.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.denyMapIdentity(
+      cn_client_v1.bindings.subject('test_deny_map_identity_subj')
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'deny_map_identity', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0430(self):
+  def test_0430(self, cn_client_v1):
     """CNIdentity.denyMapIdentity(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.denyMapIdentity, subject,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.denyMapIdentity(
+        cn_client_v1.bindings.subject('test_deny_map_identity_subj'),
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNIdentity.createGroup()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0440(self):
+  def test_0440(self, cn_client_v1):
     """CNIdentity.createGroup(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    received_echo_dict = self.client.createGroup(subject)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'groups',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    received_echo_dict = cn_client_v1.createGroup(
+      cn_client_v1.bindings.subject('test_create_group_subj')
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'create_group', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0450(self):
+  def test_0450(self, cn_client_v1):
     """CNIdentity.createGroup(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    subject = d1_test.instance_generator.subject.generate()
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.createGroup, subject,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.createGroup(
+        cn_client_v1.bindings.subject('test_create_group_subj'),
+        vendorSpecific={'trigger': '404'}
+      )
 
   #=========================================================================
   # Replication API
@@ -887,265 +543,179 @@ class TestCNClient(unittest.TestCase):
   # CNReplication.setReplicationStatus()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0460(self):
+  def test_0460(self, cn_client_v1):
     """CNReplication.setReplicationStatus(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    pid_pyxb = d1_test.instance_generator.identifier.generate()
-    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    replication_status_pyxb = d1_test.instance_generator.replication_status.generate()
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    pid_pyxb = cn_client_v1.bindings.Identifier(
+      'test_set_replication_status_pid'
+    )
+    node_ref_pyxb = cn_client_v1.bindings.nodeReference(
+      'test_set_replication_status_node_ref'
+    )
+    replication_status_pyxb = cn_client_v1.bindings.ReplicationStatus(
+      'requested'
+    )
     failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
-    received_echo_dict = self.client.setReplicationStatus(
+    received_echo_dict = cn_client_v1.setReplicationStatus(
       pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'replicaNotifications',
-        'param_list': [pid_pyxb.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'set_replication_status', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0470(self):
+  def test_0470(self, cn_client_v1):
     """CNReplication.setReplicationStatus(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    pid_pyxb = d1_test.instance_generator.identifier.generate()
-    node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    replication_status_pyxb = d1_test.instance_generator.replication_status.generate()
-    failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.setReplicationStatus,
-      pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb,
-      vendorSpecific={'trigger': '404'}
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    pid_pyxb = cn_client_v1.bindings.Identifier(
+      'test_set_replication_status_pid'
     )
+    node_ref_pyxb = cn_client_v1.bindings.nodeReference(
+      'test_set_replication_status_node_ref'
+    )
+    replication_status_pyxb = cn_client_v1.bindings.ReplicationStatus(
+      'requested'
+    )
+    failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.setReplicationStatus(
+        pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb,
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNReplication.updateReplicationMetadata()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0480(self):
+  def test_0480(self, cn_client_v1):
     """CNReplication.updateReplicationMetadata(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    pid_pyxb = d1_test.instance_generator.identifier.generate()
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+
+    pid_pyxb = cn_client_v1.bindings.Identifier(
+      'test_update_replication_metadata_pid'
+    )
     replica_pyxb = d1_test.instance_generator.replica.generate()
     serial_version_int = 3
-    received_echo_dict = self.client.updateReplicationMetadata(
+    received_echo_dict = cn_client_v1.updateReplicationMetadata(
       pid_pyxb, replica_pyxb, serial_version_int
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'replicaMetadata',
-        'param_list': [pid_pyxb.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'update_replication_metadata', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0490(self):
+  def test_0490(self, cn_client_v1):
     """CNReplication.updateReplicationMetadata(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
     replica_pyxb = d1_test.instance_generator.replica.generate()
     serial_version_int = 3
-
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound,
-      self.client.updateReplicationMetadata, pid_pyxb, replica_pyxb,
-      serial_version_int, vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.updateReplicationMetadata(
+        pid_pyxb, replica_pyxb, serial_version_int,
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNReplication.setReplicationPolicy()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0500(self):
+  def test_0500(self, cn_client_v1):
     """CNReplication.setReplicationPolicy(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
     replica_pyxb = d1_test.instance_generator.replica.generate()
     serial_version_int = 3
-    received_echo_dict = self.client.setReplicationPolicy(
+    received_echo_dict = cn_client_v1.setReplicationPolicy(
       pid_pyxb, replica_pyxb, serial_version_int
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'replicaPolicies',
-        'param_list': [pid_pyxb.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'set_replication_policy', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0510(self):
+  def test_0510(self, cn_client_v1):
     """CNReplication.setReplicationPolicy(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
     replica_pyxb = d1_test.instance_generator.replica.generate()
     serial_version_int = 3
 
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.setReplicationPolicy,
-      pid_pyxb, replica_pyxb, serial_version_int,
-      vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.setReplicationPolicy(
+        pid_pyxb, replica_pyxb, serial_version_int,
+        vendorSpecific={'trigger': '404'}
+      )
 
   # CNReplication.isNodeAuthorized()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0520(self):
+  def test_0520(self, cn_client_v1):
     """CNReplication.isNodeAuthorized(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
     pid_pyxb = d1_test.instance_generator.identifier.generate()
-    received_echo_dict = self.client.isNodeAuthorized(node_ref_pyxb, pid_pyxb)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'replicaAuthorizations',
-        'param_list': [pid_pyxb.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {
-          'targetNodeSubject': [node_ref_pyxb.value()]
-        },
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    received_echo_dict = cn_client_v1.isNodeAuthorized(node_ref_pyxb, pid_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'is_node_authorized', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0530(self):
+  def test_0530(self, cn_client_v1):
     """CNReplication.isNodeAuthorized(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
     pid_pyxb = d1_test.instance_generator.identifier.generate()
 
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.isNodeAuthorized,
-      node_ref_pyxb, pid_pyxb, vendorSpecific={'trigger': '404'}
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.isNodeAuthorized(
+        node_ref_pyxb, pid_pyxb, vendorSpecific={'trigger': '404'}
+      )
 
     #=========================================================================
     # Register API
     #=========================================================================
 
-  # CNRegister.updateNodeCapabilities()
+    # CNRegister.updateNodeCapabilities()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0540(self):
+  def test_0540(self, cn_client_v1):
     """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
-    received_echo_dict = self.client.updateNodeCapabilities(
+    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    received_echo_dict = cn_client_v1.updateNodeCapabilities(
       node_ref_pyxb, node_pyxb
     )
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'node',
-        'param_list': [node_ref_pyxb.value()],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'update_node_capabilities', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0550(self):
+  def test_0550(self, cn_client_v1):
     """CNRegister.updateNodeCapabilities(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.updateNodeCapabilities,
-      node_ref_pyxb, node_pyxb, vendorSpecific={'trigger': '404'}
-    )
+    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.updateNodeCapabilities(
+        node_ref_pyxb, node_pyxb, vendorSpecific={'trigger': '404'}
+      )
 
   # CNRegister.register()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0560(self):
+  def test_0560(self, cn_client_v1):
     """CNRegister.register(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
-    received_echo_dict = self.client.register(node_pyxb)
-    expected_echo_dict = {
-      'request': {
-        'endpoint_str': 'node',
-        'param_list': [],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v1.1',
-        'query_dict': {},
-        'version_tag': 'v1'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient',
-        'expected_type': None,
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    received_echo_dict = cn_client_v1.register(node_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, expected_echo_dict
+      received_echo_dict, 'register', cn_client_v1
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0570(self):
+  def test_0570(self, cn_client_v1):
     """CNRegister.register(): Converts DataONEException XML doc to exception"""
-    d1_test.mock_api.catch_all.add_callback(shared_settings.CN_RESPONSES_URL)
-    node_pyxb = d1_test.util.read_test_pyxb('node_v1_0.xml')
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.register, node_pyxb,
-      vendorSpecific={'trigger': '404'}
-    )
+    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v1.register(node_pyxb, vendorSpecific={'trigger': '404'})

@@ -29,20 +29,20 @@ import datetime
 
 import pyxb
 
-import d1_common.xml
-import d1_common.util
 import d1_common.date_time
-import d1_common.types.exceptions
+import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
 
+import gmn.app
 import gmn.app.auth
-import gmn.app.util
+import gmn.app.local_replica
 import gmn.app.models
-import gmn.app.sysmeta_sid
-import gmn.app.sysmeta_util
-import gmn.app.sysmeta_replica
-import gmn.app.sysmeta_revision
+import gmn.app.revision
+import gmn.app.util
 
 
 def archive_object(pid):
@@ -53,31 +53,10 @@ def archive_object(pid):
   - The object is not a replica.
   - The object is not archived.
   """
-  sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
+  sciobj_model = gmn.app.util.get_sci_model(pid)
   sciobj_model.is_archived = True
   sciobj_model.save()
   _update_modified_timestamp(sciobj_model)
-
-
-def deserialize(sysmeta_xml):
-  if not isinstance(sysmeta_xml, unicode):
-    try:
-      sysmeta_xml = sysmeta_xml.decode('utf8')
-    except UnicodeDecodeError as e:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, u'The System Metadata XML doc is not valid UTF-8 encoded Unicode. '
-        u'error="{}", xml="{}"'.format(str(e), sysmeta_xml)
-      )
-  try:
-    return d1_common.types.dataoneTypes_v2_0.CreateFromDocument(sysmeta_xml)
-  except pyxb.ValidationError as e:
-    err_str = e.details()
-  except pyxb.PyXBException as e:
-    err_str = str(e)
-  raise d1_common.types.exceptions.InvalidSystemMetadata(
-    0, u'System Metadata XML doc validation failed. error="{}", xml="{}"'
-    .format(err_str, sysmeta_xml)
-  )
 
 
 def serialize(sysmeta_pyxb):
@@ -104,13 +83,13 @@ def create_or_update(sysmeta_pyxb, url=None):
   - For Create, PID is verified not to exist. E.g., with
   gmn.app.views.asserts.is_unused(pid).
   - Any supplied SID is verified to be valid for the given operation. E.g., with
-  gmn.app.views.asserts.is_valid_sid_for_chain_if_specified().
+  gmn.app.views.asserts.is_valid_sid_for_chain().
   """
 
-  pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+  pid = gmn.app.util.uvalue(sysmeta_pyxb.identifier)
 
   try:
-    sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
+    sci_model = gmn.app.util.get_sci_model(pid)
   except gmn.app.models.ScienceObject.DoesNotExist:
     sci_model = gmn.app.models.ScienceObject()
     sci_model.pid = gmn.app.models.did(pid)
@@ -141,7 +120,7 @@ def is_pid(did):
   Includes unprocessed replicas and revision chain placeholders for remote
   objects.
   """
-  return is_did(did) and not gmn.app.sysmeta_sid.is_sid(did)
+  return is_did(did) and not gmn.app.revision.is_sid(did)
 
 
 def is_pid_of_existing_object(pid):
@@ -153,11 +132,11 @@ def is_pid_of_existing_object(pid):
 
 def is_archived(pid):
   return is_pid_of_existing_object(pid) \
-         and gmn.app.sysmeta_util.get_sci_model(pid).is_archived
+         and gmn.app.util.get_sci_model(pid).is_archived
 
 
 def update_modified_timestamp(pid):
-  sci_model = gmn.app.sysmeta_util.get_sci_model(pid)
+  sci_model = gmn.app.util.get_sci_model(pid)
   _update_modified_timestamp(sci_model)
 
 
@@ -168,13 +147,13 @@ def model_to_pyxb(pid):
 def get_identifier_type(did):
   if not is_did(did):
     return u'unused on this Member Node'
-  elif gmn.app.sysmeta_sid.is_sid(did):
+  elif gmn.app.revision.is_sid(did):
     return u'a Series ID (SID)'
   elif is_pid_of_existing_object(did):
     return u'a Persistent ID (PID) of an existing local object'
-  elif gmn.app.sysmeta_replica.is_local_replica(did):
+  elif gmn.app.local_replica.is_local_replica(did):
     return u'a Persistent ID (PID) of a local replica'
-  elif gmn.app.sysmeta_replica.is_revision_chain_placeholder(did):
+  elif gmn.app.local_replica.is_revision_chain_placeholder(did):
     return \
       u'a Persistent ID (PID) that is reserved due to being referenced in ' \
       u'the revision chain of a local replica'
@@ -188,7 +167,7 @@ def get_identifier_type(did):
 
 
 def _model_to_pyxb(pid):
-  sciobj_model = gmn.app.sysmeta_util.get_sci_model(pid)
+  sciobj_model = gmn.app.util.get_sci_model(pid)
   sysmeta_pyxb = _base_model_to_pyxb(sciobj_model)
   if _has_media_type_db(sciobj_model):
     sysmeta_pyxb.mediaType = _media_type_model_to_pyxb(sciobj_model)
@@ -198,9 +177,7 @@ def _model_to_pyxb(pid):
     sysmeta_pyxb.replicationPolicy = _replication_policy_model_to_pyxb(
       sciobj_model
     )
-  sysmeta_pyxb.replica = gmn.app.sysmeta_replica.replica_model_to_pyxb(
-    sciobj_model
-  )
+  sysmeta_pyxb.replica = replica_model_to_pyxb(sciobj_model)
   return sysmeta_pyxb
 
 
@@ -208,35 +185,35 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
   sci_model.modified_timestamp = sysmeta_pyxb.dateSysMetadataModified
   sci_model.format = gmn.app.models.format(sysmeta_pyxb.formatId)
   sci_model.filename = getattr(sysmeta_pyxb, 'fileName', None)
-  sci_model.checksum = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.checksum)
+  sci_model.checksum = gmn.app.util.uvalue(sysmeta_pyxb.checksum)
   sci_model.checksum_algorithm = gmn.app.models.checksum_algorithm(
     sysmeta_pyxb.checksum.algorithm
   )
   sci_model.size = sysmeta_pyxb.size
   if sysmeta_pyxb.submitter:
     sci_model.submitter = gmn.app.models.subject(
-      gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.submitter)
+      gmn.app.util.uvalue(sysmeta_pyxb.submitter)
     )
   sci_model.rights_holder = gmn.app.models.subject(
-    gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.rightsHolder)
+    gmn.app.util.uvalue(sysmeta_pyxb.rightsHolder)
   )
   sci_model.origin_member_node = gmn.app.models.node(
-    gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.originMemberNode)
+    gmn.app.util.uvalue(sysmeta_pyxb.originMemberNode)
   )
   sci_model.authoritative_member_node = gmn.app.models.node(
-    gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.authoritativeMemberNode)
+    gmn.app.util.uvalue(sysmeta_pyxb.authoritativeMemberNode)
   )
-  gmn.app.sysmeta_revision.set_revision_by_model(
+  gmn.app.revision.set_revision_by_model(
     sci_model,
-    gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes'),
-    gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletedBy'),
+    gmn.app.util.get_value(sysmeta_pyxb, 'obsoletes'),
+    gmn.app.util.get_value(sysmeta_pyxb, 'obsoletedBy'),
   )
   sci_model.is_archived = sysmeta_pyxb.archived or False
-  series_id = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
-  if series_id:
-    gmn.app.sysmeta_sid.update_or_create_sid_to_pid_map(
-      series_id, gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
-    )
+  # series_id = gmn.app.util.get_value(sysmeta_pyxb, 'seriesId')
+  # if series_id:
+  #   gmn.app.sysmeta_revision.update_or_create_sid_to_pid_map(
+  #     series_id, gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+  #   )
 
 
 def _base_model_to_pyxb(sciobj_model):
@@ -266,8 +243,13 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.obsoletes = sub_sciobj(sciobj_model.obsoletes)
   base_pyxb.obsoletedBy = sub_sciobj(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
-  base_pyxb.seriesId = gmn.app.sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
+  base_pyxb.seriesId = gmn.app.revision.get_sid_by_pid(sciobj_model.pid.did)
   return base_pyxb
+
+
+def _update_modified_timestamp(sci_model):
+  sci_model.modified_timestamp = datetime.datetime.utcnow()
+  sci_model.save()
 
 
 # ------------------------------------------------------------------------------
@@ -299,7 +281,7 @@ def _media_type_pyxb_to_model(sci_model, sysmeta_pyxb):
 
 def _delete_existing_media_type(sysmeta_pyxb):
   gmn.app.models.MediaType.objects.filter(
-    sciobj__pid__did=gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+    sciobj__pid__did=gmn.app.util.uvalue(sysmeta_pyxb.identifier)
   ).delete()
 
 
@@ -314,8 +296,7 @@ def _insert_media_type_name_row(sci_model, media_type_pyxb):
 def _insert_media_type_property_rows(media_type_model, media_type_pyxb):
   for p in media_type_pyxb.property_:
     media_type_property_model = gmn.app.models.MediaTypeProperty(
-      media_type=media_type_model, name=p.name,
-      value=gmn.app.sysmeta_util.uvalue(p)
+      media_type=media_type_model, name=p.name, value=gmn.app.util.uvalue(p)
     )
     media_type_property_model.save()
 
@@ -377,7 +358,7 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
   )
   allow_rights_holder.permission.append(permission)
   allow_rights_holder.subject.append(
-    gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.rightsHolder)
+    gmn.app.util.uvalue(sysmeta_pyxb.rightsHolder)
   )
   top_level = _get_highest_level_action_for_rule(allow_rights_holder)
   _insert_permission_rows(sci_model, allow_rights_holder, top_level)
@@ -400,7 +381,7 @@ def _has_access_policy_pyxb(sysmeta_pyxb):
 
 def _delete_existing_access_policy(sysmeta_pyxb):
   gmn.app.models.Permission.objects.filter(
-    sciobj__pid__did=gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+    sciobj__pid__did=gmn.app.util.uvalue(sysmeta_pyxb.identifier)
   ).delete()
 
 
@@ -416,8 +397,7 @@ def _get_highest_level_action_for_rule(allow_rule):
 def _insert_permission_rows(sci_model, allow_rule, top_level):
   for s in allow_rule.subject:
     permission_model = gmn.app.models.Permission(
-      sciobj=sci_model,
-      subject=gmn.app.models.subject(gmn.app.sysmeta_util.uvalue(s)),
+      sciobj=sci_model, subject=gmn.app.models.subject(gmn.app.util.uvalue(s)),
       level=top_level
     )
     permission_model.save()
@@ -472,9 +452,7 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
       # node_urn_model = gmn.app.models.Node.objects.get_or_create(
       #   urn=rep_node_urn.value()
       # )[0]
-      node_urn_model = gmn.app.models.node(
-        gmn.app.sysmeta_util.uvalue(rep_node_urn)
-      )
+      node_urn_model = gmn.app.models.node(gmn.app.util.uvalue(rep_node_urn))
       rep_node_obj = rep_node_model()
       rep_node_obj.node = node_urn_model
       rep_node_obj.replication_policy = replication_policy_model
@@ -532,6 +510,42 @@ def _replication_policy_model_to_pyxb(sciobj_model):
   return replication_policy_pyxb
 
 
-def _update_modified_timestamp(sci_model):
-  sci_model.modified_timestamp = datetime.datetime.utcnow()
-  sci_model.save()
+# ------------------------------------------------------------------------------
+# Remote Replica
+# ------------------------------------------------------------------------------
+
+# <replica xmlns="">
+#     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
+#     <replicationStatus>queued</replicationStatus>
+#     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+# </replica>
+
+
+def replica_pyxb_to_model(sciobj_model, sysmeta_pyxb):
+  for replica_pyxb in sysmeta_pyxb.replica:
+    _register_remote_replica(sciobj_model, replica_pyxb)
+
+
+def _register_remote_replica(sciobj_model, replica_pyxb):
+  replica_info_model = gmn.app.models.replica_info(
+    status_str=replica_pyxb.replicationStatus,
+    source_node_urn=gmn.app.util.uvalue(replica_pyxb.replicaMemberNode),
+    timestamp=replica_pyxb.replicaVerified,
+  )
+  gmn.app.models.remote_replica(
+    sciobj_model=sciobj_model,
+    replica_info_model=replica_info_model,
+  )
+
+
+def replica_model_to_pyxb(sciobj_model):
+  replica_pyxb_list = []
+  for replica_model in gmn.app.models.RemoteReplica.objects.filter(
+      sciobj=sciobj_model
+  ):
+    replica_pyxb = d1_common.types.dataoneTypes.Replica()
+    replica_pyxb.replicaMemberNode = replica_model.info.member_node.urn
+    replica_pyxb.replicationStatus = replica_model.info.status.status
+    replica_pyxb.replicaVerified = replica_model.info.timestamp
+    replica_pyxb_list.append(replica_pyxb)
+  return replica_pyxb_list

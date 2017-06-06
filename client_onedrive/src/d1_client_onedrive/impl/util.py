@@ -21,11 +21,11 @@
 """Misc utilities that don't fit anywhere else
 """
 
-import os
 import errno
-import pprint
 import logging
+import os
 import platform
+import pprint
 
 
 def log_dump(s):
@@ -53,4 +53,4 @@ def os_format(txt):
   if platform.system() == "Windows":
     return txt.replace('\n', '\r\n').encode('utf16')
   else:
-    return txt.encode('utf8')
+    return txt.encode('utf-8')

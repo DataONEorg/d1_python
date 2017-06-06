@@ -23,26 +23,26 @@ from __future__ import absolute_import
 
 import StringIO
 import tempfile
-import unittest
 
+import pytest
 import responses
 
 #import d1_test.mock_api.util as mock_util
-import d1_test.util
+import d1_test.d1_test_case
 import d1_test.mock_api.get as mock_get
 
 import d1_client.mnclient_2_0
 import d1_client_cli.impl.cli
-import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.cli_client
 import d1_client_cli.impl.cli_exceptions
+import d1_client_cli.impl.cli_util as cli_util
 import d1_client_cli.impl.operation_validator
 
 
-class TestCLIUtil(unittest.TestCase):
+class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def setUp(self):
     cli = d1_client_cli.impl.cli.CLI()
@@ -108,60 +108,55 @@ class TestCLIUtil(unittest.TestCase):
       expected_result=None
   ):
     test_prompt = 'Test Prompt'
-    with d1_test.util.capture_std() as (out_stream, err_stream):
-      with d1_test.util.mock_raw_input(answer or ''):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+      with d1_test.d1_test_case.mock_raw_input(answer or ''):
         is_confirmed = cli_util.confirm(
           test_prompt, default=default or '', allow_blank=allow_blank
         )
-        self.assertEqual(expected_result, is_confirmed)
-    self.assertIn(
-      '{} {}'.format(test_prompt, expected_prompt or '').strip(),
+        assert expected_result == is_confirmed
+    assert '{} {}'.format(test_prompt, expected_prompt or '').strip() in \
       out_stream.getvalue()
-    )
 
   # output()
 
   def test_0100(self):
     """output(): Output to screen when no file path is provided"""
     msg_str = 'line1\nline2\n'
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli_util.output(StringIO.StringIO(msg_str), path=None)
-    self.assertEqual(msg_str, out_stream.getvalue())
+    assert msg_str == out_stream.getvalue()
 
   def test_0110(self):
     """output(): Output to file when file path is provided"""
     msg_str = 'line1\nline2\n'
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file_path = tmp_file.name
       cli_util.output(StringIO.StringIO(msg_str), path=tmp_file_path)
-    self.assertEqual('', out_stream.getvalue())
+    assert '' == out_stream.getvalue()
     with open(tmp_file_path, 'r') as tmp_file:
-      self.assertEqual(msg_str, tmp_file.read())
+      assert msg_str == tmp_file.read()
 
   def test_0120(self):
     """output(): Raises CLIError on invalid path"""
     msg_str = 'line1\nline2\n'
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.CLIError,
-      cli_util.output,
-      StringIO.StringIO(msg_str),
-      path='/some/invalid/path',
-    )
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.CLIError):
+      cli_util.output(
+        StringIO.StringIO(msg_str),
+        path='/some/invalid/path',
+      )
 
   # assert_file_exists()
 
   def test_0130(self):
     """assert_file_exists(): Returns silently if path references a file"""
     with tempfile.NamedTemporaryFile() as tmp_file:
-      self.assertIsNone(cli_util.assert_file_exists(tmp_file.name))
+      assert cli_util.assert_file_exists(tmp_file.name) is None
 
   def test_0140(self):
     """assert_file_exists(): Raises InvalidArguments if path is invalid"""
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.InvalidArguments,
-      cli_util.assert_file_exists, '/'
-    )
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.InvalidArguments):
+      cli_util.assert_file_exists('/')
 
   # copy_file_like_object_to_file()
 
@@ -174,57 +169,51 @@ class TestCLIUtil(unittest.TestCase):
       StringIO.StringIO(msg_str), tmp_file_path
     )
     with open(tmp_file_path, 'r') as tmp_file:
-      self.assertEqual(msg_str, tmp_file.read())
+      assert msg_str == tmp_file.read()
 
   def test_0160(self):
     """copy_file_like_object_to_file(): Raises InvalidArguments if path is invalid"""
     msg_str = 'line1\nline2\n'
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.CLIError,
-      cli_util.copy_file_like_object_to_file, msg_str, '/'
-    )
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.CLIError):
+      cli_util.copy_file_like_object_to_file(msg_str, '/')
 
   # copy_requests_stream_to_file()
 
   @responses.activate
   def test_0170(self):
     """copy_requests_stream_to_file(): Copies Requests Response body to file when path is valid"""
-    responses_base_url = 'http://responses/mn'
+    responses_base_url = 'http://mock/node'
     mock_get.add_callback(responses_base_url)
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(responses_base_url)
     response = client.get('test_pid_1')
     with tempfile.NamedTemporaryFile() as tmp_file:
       cli_util.copy_requests_stream_to_file(response, tmp_file.name)
       expected_sciobj_str = client.get('test_pid_1').content
-      self.assertEqual(len(expected_sciobj_str), 258)
-      self.assertEqual(expected_sciobj_str, tmp_file.read())
+      assert len(expected_sciobj_str) == 258
+      assert expected_sciobj_str == tmp_file.read()
 
   @responses.activate
   def test_0171(self):
     """copy_requests_stream_to_file(): Raises InvalidArguments if path is invalid"""
-    responses_base_url = 'http://responses/mn'
+    responses_base_url = 'http://mock/node'
     mock_get.add_callback(responses_base_url)
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(responses_base_url)
     response = client.get('test_pid_1')
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.CLIError,
-      cli_util.copy_requests_stream_to_file, response, '/an/invalid/path'
-    )
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.CLIError):
+      cli_util.copy_requests_stream_to_file(response, '/an/invalid/path')
 
   # print()
 
   def test_0180(self):
     """print()"""
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       msg = 'test_msg'
       cli_util.print_debug(msg)
       cli_util.print_error(msg)
       cli_util.print_warn(msg)
       cli_util.print_info(msg)
-    self.assertEquals(
-      'DEBUG    test_msg\n'
-      'ERROR    test_msg\n'
-      'WARN     test_msg\n'
-      '         test_msg\n',
-      out_stream.getvalue(),
-    )
+    assert 'DEBUG    test_msg\n' \
+      'ERROR    test_msg\n' \
+      'WARN     test_msg\n' \
+      '         test_msg\n' == \
+      out_stream.getvalue()

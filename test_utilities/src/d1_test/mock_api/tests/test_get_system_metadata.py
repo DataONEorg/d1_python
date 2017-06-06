@@ -18,52 +18,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import freezegun
+import pytest
+import responses
 
-import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
+
+import d1_test.d1_test_case
 import d1_test.mock_api.get_system_metadata as mock_sysmeta
-import d1_test.mock_api.tests.config as config
-import responses
 
 
-class TestMockSystemMetadata(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata() returns a System Metadata PyXB object"""
-    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.getSystemMetadata('test_pid'),
-      d1_common.types.dataoneTypes_v2_0.SystemMetadata,
+    mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert isinstance(
+      mn_client_v1_v2.getSystemMetadata('test_pid'),
+      mn_client_v1_v2.bindings.SystemMetadata
     )
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata(): Passing a trigger header triggers a DataONEException"""
-    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.getSystemMetadata,
-      'test_pid', vendorSpecific={'trigger': '404'}
-    )
+    mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      mn_client_v1_v2.getSystemMetadata(
+        'test_pid', vendorSpecific={'trigger': '404'}
+      )
 
   @responses.activate
-  def test_0030(self):
+  @freezegun.freeze_time('1977-01-27')
+  def test_0030(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
-    mock_sysmeta.add_callback(config.MN_RESPONSES_BASE_URL)
-    sysmeta_pyxb = self.client.getSystemMetadata('test_pid')
-    sysmeta_xml = sysmeta_pyxb.toxml('utf8')
-    self.assertIn('http://ns.dataone.org/service/types/v2.0', sysmeta_xml)
+    mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    sysmeta_pyxb = mn_client_v1_v2.getSystemMetadata('test_pid')
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      sysmeta_pyxb, 'mock_get_system_metadata', mn_client_v1_v2
+    )
+    # assert 'http://ns.dataone.org/service/types/v2.0' in sysmeta_xml

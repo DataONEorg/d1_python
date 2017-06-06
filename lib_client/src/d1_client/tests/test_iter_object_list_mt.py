@@ -19,11 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import responses
-import shared_settings
 
+import d1_test.d1_test_case
 import d1_test.mock_api.list_objects as mock_list_objects
 
 import d1_client.iter.objectlist_multi
@@ -34,10 +32,10 @@ import d1_client.iter.objectlist_multi
 MAX_OBJECTS = 20
 
 
-class TestIterObjectListIterator(unittest.TestCase):
+class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def setUp(self):
     pass
@@ -45,10 +43,10 @@ class TestIterObjectListIterator(unittest.TestCase):
   @responses.activate
   def test_0010(self):
     """Object List iteration"""
-    mock_list_objects.add_callback(shared_settings.MN_RESPONSES_URL)
+    mock_list_objects.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
 
     object_list_iterator = d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
-      shared_settings.MN_RESPONSES_URL, page_size=123, max_workers=2,
+      d1_test.d1_test_case.MOCK_BASE_URL, page_size=123, max_workers=2,
       max_queue_size=10
     )
 

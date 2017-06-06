@@ -22,12 +22,13 @@
 import logging
 import unittest
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.replica as replica
 
 #===============================================================================
 
 
-class TestReplica(unittest.TestCase):
+class TestReplica(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 

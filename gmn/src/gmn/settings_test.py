@@ -2,12 +2,12 @@ from __future__ import absolute_import
 
 import logging
 
+import d1_common.const
 # noinspection PyUnresolvedReferences
 import d1_common.util
-import d1_common.const
 
-DEBUG = False
-DEBUG_GMN = False
+DEBUG = True
+DEBUG_GMN = True
 DEBUG_PYCHARM = False
 DEBUG_PYCHARM_BIN = 'pycharm.sh'
 DEBUG_ECHO_REQUEST = False

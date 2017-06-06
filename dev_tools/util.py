@@ -19,15 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-import shutil
 import hashlib
 import logging
-import tempfile
+import re
+import shutil
 import subprocess
+import tempfile
 
-import redbaron
 import baron.render
+import redbaron
 import redbaron.nodes
 
 
@@ -52,7 +52,7 @@ def redbaron_module_path_to_tree(module_path):
 
 def redbaron_tree_to_module_str(baron_tree, strict=False):
   return UnicodeRenderWalker(strict=strict
-                             ).dump(baron_tree.fst()).encode('utf8')
+                             ).dump(baron_tree.fst()).encode('utf-8')
 
 
 def update_module_file(redbaron_tree, module_path, diff_only=True):
@@ -85,10 +85,10 @@ class UnicodeRenderWalker(baron.render.RenderWalker):
     self._dump = ''
 
   def before_string(self, string, key):
-    self._dump += string.decode('utf8')
+    self._dump += string.decode('utf-8')
 
   def before_constant(self, constant, key):
-    self._dump += constant.decode('utf8')
+    self._dump += constant.decode('utf-8')
 
   def dump(self, baron_tree):
     self.walk(baron_tree)

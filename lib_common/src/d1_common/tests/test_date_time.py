@@ -20,14 +20,17 @@
 # limitations under the License.
 
 import datetime
-import unittest
+
+import pytest
 
 import d1_common.date_time
+
+import d1_test.d1_test_case
 
 # App
 
 
-class TestDateTime(unittest.TestCase):
+class TestDateTime(d1_test.d1_test_case.D1TestCase):
   def _test_date_naive(self):
     return datetime.datetime(1999, 3, 19, 1, 2, 3, tzinfo=None)
 
@@ -58,22 +61,22 @@ class TestDateTime(unittest.TestCase):
     """to_seconds_since_epoch() assumes naive datetime is in UTC"""
     # Used http://www.epochconverter.com/ to verify.
     dt = self._test_date_naive()
-    self.assertEqual(d1_common.date_time.to_seconds_since_epoch(dt), 921805323)
+    assert d1_common.date_time.to_seconds_since_epoch(dt) == 921805323
 
   def test_0020(self):
     """to_seconds_since_epoch() honors timezone (MST, UTC-7)"""
     # Used http://www.epochconverter.com/ to verify.
     dt = self._test_date_MST()
-    self.assertEqual(
-      d1_common.date_time.to_seconds_since_epoch(dt), 921805323 + (7 * 3600)
+    assert d1_common.date_time.to_seconds_since_epoch(dt) == 921805323 + (
+      7 * 3600
     )
 
   def test_0030(self):
     """to_seconds_since_epoch() honors timezone (YEKT, UTC+6)"""
     # Used http://www.epochconverter.com/ to verify.
     dt = self._test_date_YEKT()
-    self.assertEqual(
-      d1_common.date_time.to_seconds_since_epoch(dt), 921805323 - (6 * 3600)
+    assert d1_common.date_time.to_seconds_since_epoch(dt) == 921805323 - (
+      6 * 3600
     )
 
   # to_http_datetime()
@@ -82,27 +85,25 @@ class TestDateTime(unittest.TestCase):
     """to_http_datetime() assumes naive datetime is in UTC"""
     dt = self._test_date_naive()
     dt_str = 'Fri, 19 Mar 1999 01:02:03 GMT'
-    self.assertEqual(d1_common.date_time.to_http_datetime(dt), dt_str)
+    assert d1_common.date_time.to_http_datetime(dt) == dt_str
 
   def test_0050(self):
     """to_http_datetime() honors timezone (MST, UTC-7)"""
     dt = self._test_date_MST()
     dt_str = 'Fri, 19 Mar 1999 08:02:03 GMT'
-    self.assertEqual(d1_common.date_time.to_http_datetime(dt), dt_str)
+    assert d1_common.date_time.to_http_datetime(dt) == dt_str
 
   def test_0060(self):
     """to_http_datetime() honors timezone (YEKT, UTC+6)"""
     dt = self._test_date_YEKT()
     dt_str = 'Thu, 18 Mar 1999 19:02:03 GMT'
-    self.assertEqual(d1_common.date_time.to_http_datetime(dt), dt_str)
+    assert d1_common.date_time.to_http_datetime(dt) == dt_str
 
   # from_http_datetime()
 
   def _from_http_datetime(self, that_fateful_day_in_november_94):
     dt = d1_common.date_time.from_http_datetime(that_fateful_day_in_november_94)
-    self.assertEqual(
-      dt, d1_common.date_time.create_utc_datetime(1994, 11, 6, 8, 49, 37)
-    )
+    assert dt == d1_common.date_time.create_utc_datetime(1994, 11, 6, 8, 49, 37)
 
   def test_0070(self):
     """from_http_datetime(): RFC 822, updated by RFC 1123"""
@@ -121,31 +122,30 @@ class TestDateTime(unittest.TestCase):
   def test_0100(self):
     """is_utc() is false for naive datetime"""
     dt = self._test_date_naive()
-    self.assertFalse(d1_common.date_time.is_utc(dt))
+    assert not d1_common.date_time.is_utc(dt)
 
   def test_0110(self):
     """is_utc() is false for timezone aware datetime not at UTC (MST, UTC-7)"""
     dt = self._test_date_MST()
-    self.assertFalse(d1_common.date_time.is_utc(dt))
+    assert not d1_common.date_time.is_utc(dt)
 
   def test_0120(self):
     """is_utc() is false for timezone aware datetime not at UTC (YEKT, UTC+6)"""
     dt = self._test_date_YEKT()
-    self.assertFalse(d1_common.date_time.is_utc(dt))
+    assert not d1_common.date_time.is_utc(dt)
 
   def test_0130(self):
     """is_utc() is true for timezone aware datetime at UTC"""
     dt = self._test_date_UTC()
-    self.assertTrue(d1_common.date_time.is_utc(dt))
+    assert d1_common.date_time.is_utc(dt)
 
   # normalize_datetime_to_utc()
 
   def test_0140(self):
     """normalize_datetime_to_utc() raises TypeError for naive datetime and no timezone arg"""
     dt = self._test_date_naive()
-    self.assertRaises(
-      TypeError, d1_common.date_time.normalize_datetime_to_utc, dt
-    )
+    with pytest.raises(TypeError):
+      d1_common.date_time.normalize_datetime_to_utc(dt)
 
   def test_0150(self):
     """normalize_datetime_to_utc() does raise exception for non-conflicting timezones"""
@@ -155,20 +155,19 @@ class TestDateTime(unittest.TestCase):
   def test_0160(self):
     """normalize_datetime_to_utc() raises TypeError conflicting timezones"""
     dt = self._test_date_YEKT()
-    self.assertRaises(
-      TypeError, d1_common.date_time.normalize_datetime_to_utc, dt, 3 * 60
-    )
+    with pytest.raises(TypeError):
+      d1_common.date_time.normalize_datetime_to_utc(dt, 3 * 60)
 
   def test_0170(self):
     """normalize_datetime_to_utc() returns correct result for timezone aware datetime"""
     dt = self._test_date_YEKT()
     dt_utc = d1_common.date_time.normalize_datetime_to_utc(dt)
-    self.assertEqual(dt, dt_utc)
-    self.assertEqual(dt_utc.utcoffset(), datetime.timedelta(0))
+    assert dt == dt_utc
+    assert dt_utc.utcoffset() == datetime.timedelta(0)
 
   def test_0180(self):
     """normalize_datetime_to_utc() returns correct result for naive datetime and timezone arg"""
     dt = self._test_date_naive()
     dt_utc_norm = d1_common.date_time.normalize_datetime_to_utc(dt, 3 * 60)
     dt_utc = d1_common.date_time.create_utc_datetime(1999, 3, 18, 22, 2, 3)
-    self.assertEqual(dt_utc_norm, dt_utc)
+    assert dt_utc_norm == dt_utc

@@ -29,15 +29,14 @@ from __future__ import absolute_import
 import logging
 
 import gmn.app.auth
-import gmn.app.node
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
-import gmn.app.sysmeta_util
-import gmn.app.views.asserts
-import gmn.app.sysmeta_revision
-import gmn.app.views.diagnostics
 import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
 
 import django.conf
 import django.core.management.base
@@ -100,7 +99,7 @@ class obsoletedBy(object):
 
   def _set_obsoletes_if_missing(self, pid, obsoletes_pid):
     if not self._has_obsoletes(pid):
-      gmn.app.sysmeta_revision.set_revision(
+      gmn.app.revision.set_revision(
         pid,
         obsoletes_pid=obsoletes_pid,
       )
@@ -112,7 +111,7 @@ class obsoletedBy(object):
 
   def _set_obsoleted_by_if_missing(self, pid, obsoleted_by_pid):
     if not self._has_obsoleted_by(pid):
-      gmn.app.sysmeta_revision.set_revision(
+      gmn.app.revision.set_revision(
         pid,
         obsoleted_by_pid=obsoleted_by_pid,
       )
@@ -124,7 +123,7 @@ class obsoletedBy(object):
 
   def _has_obsoletes(self, pid):
     try:
-      return gmn.app.sysmeta_util.get_sci_model(pid).obsoletes is not None
+      return gmn.app.util.get_sci_model(pid).obsoletes is not None
     except gmn.app.models.ScienceObject.DoesNotExist:
       logging.debug(
         'obsoletes ref to non-existing object. pid="{}"'.format(pid)
@@ -134,7 +133,7 @@ class obsoletedBy(object):
 
   def _has_obsoleted_by(self, pid):
     try:
-      return gmn.app.sysmeta_util.get_sci_model(pid).obsoleted_by is not None
+      return gmn.app.util.get_sci_model(pid).obsoleted_by is not None
     except gmn.app.models.ScienceObject.DoesNotExist:
       logging.debug(
         'obsoletedBy ref to non-existing object. pid="{}"'.format(pid)

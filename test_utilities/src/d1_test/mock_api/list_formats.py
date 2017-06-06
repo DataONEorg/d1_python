@@ -27,17 +27,17 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
 import logging
+import re
 
 import responses
 
-import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 # Config
 N_TOTAL = 100
@@ -62,9 +62,9 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
-  query_dict, pyxb_bindings = _parse_url(request.url)
+  query_dict, client = _parse_url(request.url)
   n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
-  body_str = _generate_object_format_list(pyxb_bindings, n_start, n_count)
+  body_str = _generate_object_format_list(client, n_start, n_count)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
@@ -72,27 +72,27 @@ def _request_callback(request):
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'formats'
   assert len(param_list) == 0, 'listFormats() does not accept any parameters'
-  return query_dict, pyxb_bindings
+  return query_dict, client
 
 
-def _generate_object_format_list(pyxb_bindings, n_start, n_count):
-  objectFormatList = pyxb_bindings.objectFormatList()
+def _generate_object_format_list(client, n_start, n_count):
+  objectFormatList = client.bindings.objectFormatList()
 
   for i in range(n_count):
-    objectFormat = pyxb_bindings.ObjectFormat()
+    objectFormat = client.bindings.ObjectFormat()
     objectFormat.formatId = 'format_id_{}'.format(n_start + i)
     objectFormat.formatName = 'format_name_{}'.format(n_start + i)
     objectFormat.formatType = 'format_type_{}'.format(n_start + i)
 
-    if hasattr(pyxb_bindings, 'MediaType'): # Only in v2
-      mediaType = pyxb_bindings.MediaType()
+    if hasattr(client, 'MediaType'): # Only in v2
+      mediaType = client.bindings.MediaType()
       mediaType.name = 'media_type_name_{}'.format(n_start + i)
-      # mediaTypeProperty = pyxb_bindings.MediaTypeProperty(
+      # mediaTypeProperty = client.bindings.MediaTypeProperty(
       # 'media_type_property_{}'.format(n_start + i))
       # mediaType.property_.append(mediaTypeProperty)
       objectFormat.mediaType = mediaType

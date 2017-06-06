@@ -21,7 +21,9 @@
 
 from __future__ import absolute_import
 
-import unittest
+import pytest
+
+import d1_test.d1_test_case
 
 import d1_client_cli.impl.cli
 import d1_client_cli.impl.cli_client
@@ -29,10 +31,10 @@ import d1_client_cli.impl.cli_exceptions
 import d1_client_cli.impl.operation_validator
 
 
-class TestCLIExceptions(unittest.TestCase):
+class TestCLIExceptions(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def setUp(self):
     cli = d1_client_cli.impl.cli.CLI()
@@ -40,30 +42,28 @@ class TestCLIExceptions(unittest.TestCase):
 
   def test_0010(self):
     """InvalidArguments(): __init__()"""
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.InvalidArguments, lambda: self._raise(
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.InvalidArguments):
+      self._raise(
         d1_client_cli.impl.cli_exceptions.InvalidArguments('test_message')
       )
-    )
 
   def test_0020(self):
     """InvalidArguments(): Returns string"""
     msg_str = 'test_message'
     ex = d1_client_cli.impl.cli_exceptions.InvalidArguments(msg_str)
-    self.assertEqual(msg_str, str(ex))
+    assert msg_str == str(ex)
 
   def test_0030(self):
     """CLIError(): __init__()"""
-    self.assertRaises(
-      d1_client_cli.impl.cli_exceptions.CLIError, lambda: self.
-      _raise(d1_client_cli.impl.cli_exceptions.CLIError('test_message'))
-    )
+    with pytest.raises(d1_client_cli.impl.cli_exceptions.CLIError):
+      self. \
+    _raise(d1_client_cli.impl.cli_exceptions.CLIError('test_message'))
 
   def test_0040(self):
     """CLIError(): Returns string"""
     msg_str = 'test_message'
     ex = d1_client_cli.impl.cli_exceptions.CLIError(msg_str)
-    self.assertEqual(msg_str, str(ex))
+    assert msg_str == str(ex)
 
   def _raise(self, ex):
     raise ex

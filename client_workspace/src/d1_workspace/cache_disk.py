@@ -125,7 +125,7 @@ class DiskCache(dict):
     )
 
   def _filename_from_key(self, key):
-    return urllib.quote(key.encode('utf8'), safe='') # doseq=True
+    return urllib.quote(key.encode('utf-8'), safe='') # doseq=True
 
   def _write_key_value_to_disk(self, key, value):
     with open(self._path_from_key(key), 'wb') as f:

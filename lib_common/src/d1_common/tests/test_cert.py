@@ -18,39 +18,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 # 3rd party
 from cryptography.hazmat.backends.openssl.x509 import _Certificate
 
-import d1_common.cert.x509
-import d1_common.cert.subjects
 import d1_common.cert.subject_info
+import d1_common.cert.subjects
+import d1_common.cert.x509
 
-import d1_test.util
+import d1_test.d1_test_case
 
 
-class TestCert(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+class TestCert(d1_test.d1_test_case.D1TestCase):
+  cert_simple_subject_info_pem = d1_test.d1_test_case.D1TestCase.read_sample_file(
+    'cert_with_simple_subject_info.pem'
+  )
+  cert_no_subject_info_pem = d1_test.d1_test_case.D1TestCase.read_sample_file(
+    'cert_without_subject_info.pem'
+  )
 
-  def setUp(self):
-    self.cert_simple_subject_info_pem = d1_test.util.read_test_file(
-      'cert_with_simple_subject_info.pem'
-    )
-    self.cert_no_subject_info_pem = d1_test.util.read_test_file(
-      'cert_without_subject_info.pem'
-    )
-
-  def test_0010(self):
+  def test_0010(self, mn_client_v2):
     """Deserialize PEM to cryptography.Certificate object"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    self.assertEqual(type(cert_obj), _Certificate)
+    assert type(cert_obj) == _Certificate
 
-  def test_0020(self):
+  def test_0020(self, mn_client_v2):
     """Extract primary subject from certificate and returns as
     DataONE compliant serialization
     """
@@ -58,59 +51,50 @@ class TestCert(unittest.TestCase):
       self.cert_simple_subject_info_pem
     )
     primary_str = d1_common.cert.x509._extract_dataone_subject_from_dn(cert_obj)
-    self.assertEqual(
-      primary_str, 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
-    )
+    assert primary_str == 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
 
-  def test_0030(self):
+  def test_0030(self, mn_client_v2):
     """Extract SubjectInfo from certificate, SubjectInfo present"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    expected_subject_info_xml = d1_test.util.read_test_file(
-      'cert_simple_subject_info.xml'
-    )
     extracted_subject_info_xml = d1_common.cert.x509._extract_subject_info(
       cert_obj
     )
-    self.assertEqual(expected_subject_info_xml, extracted_subject_info_xml)
+    self.assert_equals_sample(
+      extracted_subject_info_xml, 'cert_simple_subject_info', mn_client_v2
+    )
 
-  def test_0040(self):
+  def test_0040(self, mn_client_v2):
     """Extract SubjectInfo from certificate, SubjectInfo missing"""
     cert_obj = d1_common.cert.x509._deserialize_pem(
       self.cert_no_subject_info_pem
     )
     missing_subject_info = d1_common.cert.x509._extract_subject_info(cert_obj)
-    self.assertIsNone(missing_subject_info)
+    assert missing_subject_info is None
 
-  def test_0050(self):
+  def test_0050(self, mn_client_v2):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     present
     """
     primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
       self.cert_simple_subject_info_pem
     )
-    self.assertEqual(
-      primary_str,
-      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
-    )
-    self.assertListEqual(
-      sorted(equivalent_set),
+    assert primary_str == \
+      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+    assert sorted(equivalent_set) == \
       [
         'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
         'verifiedUser',
-      ],
-    )
+      ]
 
-  def test_0060(self):
+  def test_0060(self, mn_client_v2):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     missing
     """
     primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
       self.cert_no_subject_info_pem
     )
-    self.assertEqual(
-      primary_str,
-      'CN=Roger Dahl A538,O=Google,C=US,DC=cilogon,DC=org',
-    )
-    self.assertSetEqual(equivalent_set, set())
+    assert primary_str == \
+      'CN=Roger Dahl A538,O=Google,C=US,DC=cilogon,DC=org'
+    assert equivalent_set == set()

@@ -28,19 +28,21 @@
   - python 2.6
 """
 
-import StringIO
 import datetime
 import random
+import StringIO
 import uuid
 import xml.sax.saxutils
 
 import context
+import test_client
+import test_utilities
+
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
+
 import d1_test_case
-import test_client
-import test_utilities
 
 
 class Test310Create(d1_test_case.D1TestCase):
@@ -116,7 +118,7 @@ class Test310Create(d1_test_case.D1TestCase):
     checksum = test_utilities.calculate_checksum(
       response, context.checksum_algorithm
     )
-    self.assertEqual(context.checksum, checksum)
+    assert context.checksum == checksum
 
   def test_040_log_records_total_increased_by_one(self):
     """Total number of log records increased by one.
@@ -125,7 +127,7 @@ class Test310Create(d1_test_case.D1TestCase):
     log_records = client.getLogRecords(
       context.TOKEN, datetime.datetime(1800, 1, 1), 0, 0
     )
-    self.assertEqual(context.log_records_total, log_records.total + 1)
+    assert context.log_records_total == log_records.total + 1
 
   def test_070_describe_returns_correct_header(self):
     """Successful describe for newly created object.
@@ -138,16 +140,16 @@ class Test310Create(d1_test_case.D1TestCase):
     headers_lower = dict((header.lower(), value) for header, value in headers)
     # Check for the required headers.
     # Verify that date is a valid date.
-    self.assertTrue(d1_common.date_time.from_iso8601(headers_lower['date']))
-    self.assertTrue('content-type' in headers_lower)
-    self.assertTrue('content-length' in headers_lower)
+    assert d1_common.date_time.from_iso8601(headers_lower['date'])
+    assert 'content-type' in headers_lower
+    assert 'content-length' in headers_lower
 
   def test_080_total_number_of_objects_increased_by_one(self):
     """Total number of objects reported by listObjects increased by one.
     """
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(context.TOKEN, start=0, count=0)
-    self.assertEqual(object_list.total, context.object_total + 1)
+    assert object_list.total == context.object_total + 1
 
   # TODO:
   #- Verify that the object length reported by describe matches what was

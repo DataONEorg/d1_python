@@ -280,45 +280,56 @@ def remote_replica(sciobj_model, replica_info_model):
 
 
 # ------------------------------------------------------------------------------
-# SeriesID (SID)
+# Revision Chains and Series ID (SID)
 # ------------------------------------------------------------------------------
 
 
-class SeriesIdToPersistentId(models.Model):
+class ChainIdToSeriesID(models.Model):
   sid = models.ForeignKey(
-    IdNamespace, models.CASCADE, related_name='%(class)s_sid'
+    IdNamespace,
+    models.CASCADE,
+    related_name='%(class)s_sid',
+    null=True,
   )
+  head_pid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_head_pid'
+  )
+
+
+class PersistentIdToChainID(models.Model):
+  chain = models.ForeignKey(ChainIdToSeriesID, models.CASCADE)
   pid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
   )
 
 
-def sid_to_pid(sid, pid):
-  return SeriesIdToPersistentId.objects.get_or_create(
-    sid=did(sid), pid=did(pid)
-  )[0]
+# def sid_to_pid(sid, pid):
+#   return ChainIdToSeriesID.objects.get_or_create(
+#     sid=did(sid), head_pid=did(pid)
+#   )[0]
 
+#     SeriesIdToHeadPersistentId.objects.get_or_create(
+#       sid=did(sid), defaults={'pid': did(pid)}
+#     )
 
-class SeriesIdToHeadPersistentId(models.Model):
-  # For fast resolve of SID to the current head of a chain.
-  sid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_sid'
-  )
-  pid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
-  )
+# class SeriesIdToPersistentId(models.Model):
+#   sid = models.ForeignKey(
+#     IdNamespace, models.CASCADE, related_name='%(class)s_sid'
+#   )
 
+# def sid_to_pid(sid, pid):
+#   return SeriesIdToPersistentId.objects.get_or_create(
+#     sid=did(sid), pid=did(pid)
+#   )[0]
 
-def sid_to_head_pid(sid, pid):
-  sid_to_head_pid_model, was_created = (
-    SeriesIdToHeadPersistentId.objects.get_or_create(
-      sid=did(sid), defaults={'pid': did(pid)}
-    )
-  )
-  if not was_created:
-    sid_to_head_pid_model.pid = did(pid)
-    sid_to_head_pid_model.save()
-
+# class SeriesIdToHeadPersistentId(models.Model):
+#   # For fast resolve of SID to the current head of a chain.
+#   sid = models.OneToOneField(
+#     IdNamespace, models.CASCADE, related_name='%(class)s_sid'
+#   )
+#   pid = models.OneToOneField(
+#     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+#   )
 
 # ------------------------------------------------------------------------------
 # Access Log

@@ -19,11 +19,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.dom.minidom
+
+import pytest
 
 # D1
 from d1_common.types import exceptions
+
+import d1_test.d1_test_case
 
 TRACE_SECTION = """  <traceInformation>
     <value>traceInformation0</value>
@@ -77,91 +80,86 @@ INVALID_ERROR_DOC = (
 )
 
 
-class TestExceptions(unittest.TestCase):
+class TestExceptions(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """deserialize()"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
-    self.assertIsInstance(d1_exception, exceptions.IdentifierNotUnique)
-    self.assertEqual(d1_exception.detailCode, '123.456.789')
-    self.assertEqual(d1_exception.errorCode, 409)
-    self.assertEqual(d1_exception.name, 'IdentifierNotUnique')
-    self.assertEqual(d1_exception.identifier, 'SomeDataONEPID')
-    self.assertEqual(d1_exception.nodeId, 'urn:node:SomeNode')
-    self.assertEqual(d1_exception.description, 'description0')
-    self.assertEqual(d1_exception.traceInformation, TRACE_SECTION.strip())
+    assert isinstance(d1_exception, exceptions.IdentifierNotUnique)
+    assert d1_exception.detailCode == '123.456.789'
+    assert d1_exception.errorCode == 409
+    assert d1_exception.name == 'IdentifierNotUnique'
+    assert d1_exception.identifier == 'SomeDataONEPID'
+    assert d1_exception.nodeId == 'urn:node:SomeNode'
+    assert d1_exception.description == 'description0'
+    assert d1_exception.traceInformation == TRACE_SECTION.strip()
 
   def test_0020(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertIsInstance(x2, exceptions.NotFound)
-    self.assertEqual(x1.errorCode, x2.errorCode)
-    self.assertEqual(x1.detailCode, x2.detailCode)
-    self.assertEqual(x1.name, x2.name)
-    self.assertEqual(x1.description, x2.description)
-    self.assertEqual(x1.nodeId, x2.nodeId)
-    self.assertEqual(x1.identifier, x2.identifier)
-    self.assertEqual(x1.traceInformation, x2.traceInformation)
+    assert isinstance(x2, exceptions.NotFound)
+    assert x1.errorCode == x2.errorCode
+    assert x1.detailCode == x2.detailCode
+    assert x1.name == x2.name
+    assert x1.description == x2.description
+    assert x1.nodeId == x2.nodeId
+    assert x1.identifier == x2.identifier
+    assert x1.traceInformation == x2.traceInformation
 
   def test_0030(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertIsInstance(x2, exceptions.NotFound)
-    self.assertEqual(x1.errorCode, x2.errorCode)
-    self.assertEqual(x1.detailCode, x2.detailCode)
-    self.assertEqual(x1.name, x2.name)
-    self.assertEqual(x1.description, x2.description)
-    self.assertEqual(x1.nodeId, x2.nodeId)
-    self.assertEqual(x1.identifier, x2.identifier)
-    self.assertEqual(x1.traceInformation, x2.traceInformation)
+    assert isinstance(x2, exceptions.NotFound)
+    assert x1.errorCode == x2.errorCode
+    assert x1.detailCode == x2.detailCode
+    assert x1.name == x2.name
+    assert x1.description == x2.description
+    assert x1.nodeId == x2.nodeId
+    assert x1.identifier == x2.identifier
+    assert x1.traceInformation == x2.traceInformation
 
   def test_0040(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
-    self.assertIsInstance(x2, exceptions.NotFound)
-    self.assertEqual(x1.errorCode, x2.errorCode)
-    self.assertEqual(x1.detailCode, x2.detailCode)
-    self.assertEqual(x1.name, x2.name)
-    self.assertEqual(x1.description, x2.description)
-    self.assertEqual(x1.nodeId, x2.nodeId)
-    self.assertEqual(x1.identifier, x2.identifier)
-    self.assertEqual(x1.traceInformation, x2.traceInformation)
+    assert isinstance(x2, exceptions.NotFound)
+    assert x1.errorCode == x2.errorCode
+    assert x1.detailCode == x2.detailCode
+    assert x1.name == x2.name
+    assert x1.description == x2.description
+    assert x1.nodeId == x2.nodeId
+    assert x1.identifier == x2.identifier
+    assert x1.traceInformation == x2.traceInformation
 
   def test_0050(self):
     """deserialize() of bad document raises ServiceFailure"""
-    self.assertRaises(
-      exceptions.ServiceFailure, exceptions.deserialize, INVALID_ERROR_DOC[0]
-    )
+    with pytest.raises(exceptions.ServiceFailure):
+      exceptions.deserialize(INVALID_ERROR_DOC[0])
 
   def test_0060(self):
     """String representation"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
-    self.assertTrue('name: IdentifierNotUnique' in str(d1_exception))
-    self.assertTrue('errorCode: 409' in str(d1_exception))
-    self.assertTrue('detailCode: 123.456.789' in str(d1_exception))
+    assert 'name: IdentifierNotUnique' in str(d1_exception)
+    assert 'errorCode: 409' in str(d1_exception)
+    assert 'detailCode: 123.456.789' in str(d1_exception)
 
   def test_0070(self):
     """create with only detailCode then serialize()"""
     e = exceptions.ServiceFailure(123)
-    self.assertEqual(
-      e.serialize(), u'<?xml version="1.0" encoding="utf-8"?>'
+    assert e.serialize() == u'<?xml version="1.0" encoding="utf-8"?>' \
       u'<error detailCode="123" errorCode="500" name="ServiceFailure"/>'
-    )
 
   def test_0080(self):
     """create with string detailCode and description, then serialize()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
     se = e.serialize()
-    self.assertEqual(
-      se, u'<?xml version="1.0" encoding="utf-8"?>'
-      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">'
+    assert se == u'<?xml version="1.0" encoding="utf-8"?>' \
+      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">' \
       u'<description>test description</description></error>'
-    )
 
   def test_0090(self):
     """create with detailCode, description and traceInformation, then serialize()"""
@@ -170,12 +168,10 @@ class TestExceptions(unittest.TestCase):
       traceInformation='test traceInformation'
     )
     se = e.serialize()
-    self.assertEqual(
-      se, u'<?xml version="1.0" encoding="utf-8"?>'
-      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">'
-      u'<description>test description</description>'
+    assert se == u'<?xml version="1.0" encoding="utf-8"?>' \
+      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">' \
+      u'<description>test description</description>' \
       u'<traceInformation>test traceInformation</traceInformation></error>'
-    )
 
   def test_0100(self):
     """serialize_to_headers()"""
@@ -192,7 +188,7 @@ class TestExceptions(unittest.TestCase):
       'DataONE-Exception-Identifier': '',
       'DataONE-Exception-ErrorCode': u'500'
     }
-    self.assertDictEqual(header_dict, expected_dict)
+    assert header_dict == expected_dict
 
   def test_0110(self):
     """deserialize_from_headers()"""
@@ -207,11 +203,11 @@ class TestExceptions(unittest.TestCase):
       #'DataONE-Exception-NodeId' not required or provided
     }
     e = exceptions.deserialize_from_headers(headers)
-    self.assertEqual(e.name, 'IdentifierNotUnique')
-    self.assertEqual(e.errorCode, 409)
-    self.assertEqual(e.detailCode, '123.456.789')
-    self.assertEqual(e.description, 'test description')
-    self.assertEqual(e.traceInformation, 'test traceInformation')
+    assert e.name == 'IdentifierNotUnique'
+    assert e.errorCode == 409
+    assert e.detailCode == '123.456.789'
+    assert e.description == 'test description'
+    assert e.traceInformation == 'test traceInformation'
 
   def test_0120(self):
     """Test serialization and deserialization of DataONE Exceptions
@@ -234,25 +230,23 @@ class TestExceptions(unittest.TestCase):
     # Check XML.
     dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild
-    self.assertEqual(root.tagName, u'error')
-    self.assertEqual(root.attributes['detailCode'].value, u'1010')
-    self.assertEqual(root.attributes['errorCode'].value, u'409')
-    self.assertEqual(root.attributes['name'].value, u'IdentifierNotUnique')
-    self.assertEqual(root.attributes['identifier'].value, u'test_pid')
-    self.assertEqual(
-      root.getElementsByTagName('description')[0].childNodes[0].nodeValue,
+    assert root.tagName == u'error'
+    assert root.attributes['detailCode'].value == u'1010'
+    assert root.attributes['errorCode'].value == u'409'
+    assert root.attributes['name'].value == u'IdentifierNotUnique'
+    assert root.attributes['identifier'].value == u'test_pid'
+    assert root.getElementsByTagName('description')[0].childNodes[0].nodeValue == \
       u'description_test'
-    )
     # Disabled until we have decided how to encode traceInformation.
     #self.assertEqual(root.getElementsByTagName('traceInformation')[0]\
     #                 .childNodes[0].nodeValue, u'test trace information')
     # Deserialize XML.
     exc_deser = exceptions.deserialize(exc_ser_xml)
     # Check deserialized native object.
-    self.assertEqual(exc_deser.detailCode, '1010')
-    self.assertEqual(exc_deser.errorCode, 409)
-    self.assertEqual(exc_deser.name, 'IdentifierNotUnique')
-    self.assertEqual(exc_deser.identifier, 'test_pid')
-    self.assertEqual(exc_deser.description, 'description_test')
+    assert exc_deser.detailCode == '1010'
+    assert exc_deser.errorCode == 409
+    assert exc_deser.name == 'IdentifierNotUnique'
+    assert exc_deser.identifier == 'test_pid'
+    assert exc_deser.description == 'description_test'
     # Disabled until we have decided how to encode traceInformation.
     #self.assertEqual(exc_deser.traceInformation, 'test trace information')

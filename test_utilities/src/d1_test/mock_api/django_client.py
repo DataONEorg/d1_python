@@ -40,8 +40,8 @@ import d1_test.mock_api.django_client as mock_django_client
 
 @responses.activate
 def test_1000(self):
-  mock_django_client.add_callback(BASE_URL)
-  d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(BASE_URL)
+  mock_django_client.add_callback(MOCK_BASE_URL)
+  d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(MOCK_BASE_URL)
   node_pyxb = d1_client.getCapabilities()
 
 Note: for get(), GMN returns a StreamingHttpResponse that Requests detects as a
@@ -53,11 +53,11 @@ memory). So we convert streaming responses to string before passing them to
 Responses.
 """
 
-import re
 import logging
+import re
 
-import responses
 import requests_toolbelt
+import responses
 
 import django.test
 
@@ -111,14 +111,14 @@ def _request_callback(request):
       url_path, data=data, content_type=request.headers.get('Content-Type'),
       **_headers_to_wsgi_env(request.headers or {})
     )
-  except Exception as e:
-    logging.error(
+  except Exception:
+    logging.exception(
       'Django test client raised exception. base_url="{}" url_path="{}"'
       .format(base_url, url_path)
     )
-    logging.error(str(e))
     raise
 
+  django_response.setdefault('HTTP-Version', 'HTTP/1.1')
   return (
     django_response.status_code, django_response.items(),
     ''.join(django_response.streaming_content)

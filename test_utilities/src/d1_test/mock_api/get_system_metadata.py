@@ -29,17 +29,17 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
 import logging
+import re
 
 import responses
 
-import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 # Config
 
@@ -64,23 +64,23 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid, pyxb_bindings = _parse_url(request.url)
+  pid, client = _parse_url(request.url)
   if pid.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(pyxb_bindings, pid)[1]
+  sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(client, pid)[1]
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
-  return 200, header_dict, sysmeta_pyxb.toxml('utf8')
+  return 200, header_dict, sysmeta_pyxb.toxml('utf-8')
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'meta'
   assert len(
     param_list
   ) == 1, 'getSystemMetadata() accepts a single parameter, the PID'
-  return param_list[0], pyxb_bindings
+  return param_list[0], client

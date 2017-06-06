@@ -19,16 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import object_tree_test_sample
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.resolver.d1_object as d1_object
 
 options = {}
 
 
-class TestD1ObjectResolver(unittest.TestCase):
+class TestD1ObjectResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self._resolver = d1_object.Resolver(
       options, object_tree_test_sample.object_tree

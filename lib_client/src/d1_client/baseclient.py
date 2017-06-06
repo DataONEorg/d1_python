@@ -19,10 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
 import logging
+import StringIO
 
-import pyxb # pip install pyxb
+# App
+import session
 
 import d1_common.const
 import d1_common.type_conversions
@@ -32,11 +33,12 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
-# App
-import session
+import d1_common.xml
 
 
-class DataONEBaseClient(session.Session):
+class DataONEBaseClient(
+    session.Session,
+):
   """Extend Session by adding REST API wrappers for APIs that are available on
   both Coordinating Nodes and Member Nodes, and that have the same signature on
   both:
@@ -62,7 +64,7 @@ class DataONEBaseClient(session.Session):
   dealing with nodes that don't fully comply with the spec.
   """
 
-  def __init__(self, base_url, api_major=1, api_minor=0, **kwargs):
+  def __init__(self, base_url, *args, **kwargs):
     """Create a DataONEBaseClient. See Session for parameters.
 
     :param api_major: Major version of the DataONE API
@@ -72,17 +74,23 @@ class DataONEBaseClient(session.Session):
 
     :returns: None
     """
-    self.logger = logging.getLogger('DataONEBaseClient')
-    self.logger.debug(
-      'Creating v{}.{} client for baseURL: {}'.
-      format(api_major, api_minor, base_url)
+    super(DataONEBaseClient, self).__init__(base_url, *args, **kwargs)
+
+    self.logger = logging.getLogger(__file__)
+
+    self._api_major = 1
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
     )
-    session.Session.__init__(self, base_url, **kwargs)
-    self._api_major = api_major
-    self._api_minor = api_minor
-    self._bindings = d1_common.type_conversions.get_pyxb_bindings_by_api_version(
-      api_major, api_minor
-    )
+
+  @property
+  def api_version_tup(self):
+    return self._api_major, self._api_minor
+
+  @property
+  def bindings(self):
+    return self._bindings
 
   # ----------------------------------------------------------------------------
   # Response handling.
@@ -124,7 +132,9 @@ class DataONEBaseClient(session.Session):
 
   def _raise_service_failure(self, response, msg):
     trace = self.dump_request_and_response(response)
-    raise d1_common.types.exceptions.ServiceFailure(0, msg, trace)
+    e = d1_common.types.exceptions.ServiceFailure(0, msg, trace)
+    logging.error('Raised: {}'.format(str(e)))
+    raise e
 
   def _raise_service_failure_invalid_content_type(self, response):
     self._raise_service_failure(
@@ -137,10 +147,10 @@ class DataONEBaseClient(session.Session):
   ):
     msg = StringIO.StringIO()
     msg.write(
-      'Node responded with a valid status code but failed to '
-      'include a valid DataONE type in the response body.\n\n'
+      'Node responded with a valid status code but failed to include a valid '
+      'DataONE type in the response body. '
     )
-    msg.write('Deserialize exception:\n{0}\n'.format(deserialize_exception))
+    msg.write('Deserialize exception: {0}'.format(str(deserialize_exception)))
     self._raise_service_failure(response, msg.getvalue())
 
   def _raise_service_failure_incorrect_dataone_type(
@@ -209,41 +219,10 @@ class DataONEBaseClient(session.Session):
     """Given a response body, try to create an instance of a DataONE type. The
     return value will be either an instance of a type or a DataONE exception.
     """
-    response_body = response.content
-    # TODO: Update this to automatically remove empty elements (probably using
-    # ElementTree)
     try:
-      return self._bindings.CreateFromDocument(response_body)
-    except pyxb.SimpleFacetValueError as e:
-      # example: <blockedMemberNode/> is not allowed since it is a zero length
-      # string
-      if not self.retry_SimpleFacetValueError:
-        self._raise_service_failure_invalid_dataone_type(
-          response, response_body, str(e)
-        )
-    except pyxb.IncompleteElementContentError as e:
-      # TODO: Update this to extract the error details. See implementation in
-      # DataONEException.
-      # example: <accessPolicy/> is not allowed since it requires 1..n
-      # AccessRule entries
-      if not self.retry_IncompleteElementContentError:
-        self._raise_service_failure_invalid_dataone_type(
-          response, response_body, str(e)
-        )
-    #Continue, retry without validation
-    self.logger.warn("Retrying deserialization without schema validation...")
-    validation_setting = pyxb.RequireValidWhenParsing()
-    try:
-      pyxb.RequireValidWhenParsing(False)
-      return self._bindings.CreateFromDocument(response_body)
-    except pyxb.PyXBException as e:
-      pyxb.RequireValidWhenParsing(validation_setting)
-      self._raise_service_failure_invalid_dataone_type(
-        response, response_body, str(e)
-      )
-    finally:
-      # always make sure the validation flag is set to the original when exiting
-      pyxb.RequireValidWhenParsing(validation_setting)
+      return d1_common.xml.deserialize(response.content)
+    except ValueError as e:
+      self._raise_service_failure_invalid_dataone_type(response, e)
 
   def _read_boolean_response(self, response):
     if self._status_is_200_ok(response):
@@ -532,14 +511,12 @@ class DataONEBaseClient(session.Session):
 
   @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
-    query = {
-      'action': action,
-    }
-    return self.GET(['isAuthorized', pid], query=query, headers=vendorSpecific)
+    return self.GET(['isAuthorized', pid], query={'action': action},
+                    headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
-  def isAuthorized(self, pid, access, vendorSpecific=None):
-    response = self.isAuthorizedResponse(
-      pid, access, vendorSpecific=vendorSpecific
-    )
-    return self._read_boolean_response(response)
+  def isAuthorized(self, pid, action, vendorSpecific=None):
+    """Return True if user is allowed to perform {action} on {pid}, else False.
+    """
+    response = self.isAuthorizedResponse(pid, action, vendorSpecific)
+    return self._read_boolean_401_response(response)

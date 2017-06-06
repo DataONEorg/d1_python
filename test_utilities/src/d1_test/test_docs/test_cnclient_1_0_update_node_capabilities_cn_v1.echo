@@ -1,0 +1,17 @@
+{
+  "request": {
+    "endpoint_str": "node", 
+    "param_list": [
+      "urn:node:\u3000\u0430d\u0e04\u30fb\u30b5"
+    ], 
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
+    "query_dict": {}, 
+    "version_tag": "v1"
+  }, 
+  "wrapper": {
+    "class_name": "CoordinatingNodeClient_1_1", 
+    "expected_type": null, 
+    "received_303_redirect": false, 
+    "vendor_specific_dict": null
+  }
+}

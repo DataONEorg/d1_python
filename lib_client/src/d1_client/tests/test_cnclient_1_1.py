@@ -19,24 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-import d1_client.cnclient_1_1
-import shared_settings
+import d1_test.d1_test_case
 
 
-class TestCNClient_1_1(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient_1_1.CoordinatingNodeClient_1_1(
-      shared_settings.CN_RESPONSES_URL
-    )
-
-  def test_0010(self):
-    """Initialize CoordinatingNodeClient_1_1"""
-    # Completion means that the client was successfully instantiated in
-    # setUp().
-    pass
+class TestCNClient_1_1(d1_test.d1_test_case.D1TestCase):
+  pass

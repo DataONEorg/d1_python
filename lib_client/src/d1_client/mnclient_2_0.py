@@ -22,14 +22,18 @@
 import logging
 
 import baseclient_2_0
+import mnclient_1_1
+
+import d1_common
 import d1_common.const
 import d1_common.date_time
+import d1_common.type_conversions
 import d1_common.util
-import mnclient_1_1
 
 
 class MemberNodeClient_2_0(
-    baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1
+    baseclient_2_0.DataONEBaseClient_2_0,
+    mnclient_1_1.MemberNodeClient_1_1,
 ):
   """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
   for Member nodes that was added in v2.0 of the DataONE infrastructure.
@@ -41,11 +45,15 @@ class MemberNodeClient_2_0(
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(MemberNodeClient_2_0, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 2)
-    kwargs.setdefault('api_minor', 0)
-    baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
-    mnclient_1_1.MemberNodeClient_1_1.__init__(self, *args, **kwargs)
+
+    self._api_major = 2
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
+    )
 
   # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
   # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata

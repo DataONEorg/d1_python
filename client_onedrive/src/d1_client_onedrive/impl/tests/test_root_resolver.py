@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import object_tree_test_sample
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.resolver.root as root
 
@@ -32,7 +32,7 @@ class TestOptions():
   pass
 
 
-class TestRootResolver(unittest.TestCase):
+class TestRootResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     options = TestOptions()
     options.base_url = 'https://localhost/'

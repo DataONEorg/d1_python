@@ -23,11 +23,11 @@
 
 from __future__ import absolute_import
 
-import logging
 import argparse
+import logging
 
-import dev_tools.util
 import dev_tools.file_iterator
+import dev_tools.util
 
 import d1_common.util
 
@@ -105,7 +105,8 @@ def renumber_all(r, do_move):
 
 
 def renumber_method(node, test_idx, do_move):
-  print 'Method: {}'.format(node.name)
+  with d1_common.util.print_logging():
+    logging.info('Method: {}'.format(node.name))
   test_name, test_trailing = dev_tools.util.split_func_name(node.name)
   if not do_move:
     # node.name = u'test_{:04d}{}'.format(test_idx, test_trailing)

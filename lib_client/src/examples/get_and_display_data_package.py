@@ -18,33 +18,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`get_and_display_data_package`
-===================================
+"""Get and display data package
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Download a Resource Map (Data Package)
-  - Parse and display the Resource Map.
+- Download a Resource Map (Data Package)
+- Parse and display the Resource Map.
 
-:Author:
-  DataONE (Dahl)
+Requires:
 
-:Created:
-  2013-03-04
-
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
 import logging
 
-import d1_client.mnclient
 import d1_common.resource_map
+
+import d1_client.mnclient
 
 # Config.
 

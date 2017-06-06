@@ -39,11 +39,11 @@ serialized to a set of HTTP headers for HEAD requests.
 
 from __future__ import absolute_import
 
-import os
-import sys
 import logging
-import traceback
+import os
 import subprocess
+import sys
+import traceback
 
 import d1_common.const
 import d1_common.ext.mimeparser
@@ -87,7 +87,7 @@ class ExceptionHandler(object):
       '', status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
     )
     for k, v in exception_headers:
-      http_response[k] = v.encode('utf8')
+      http_response[k] = v.encode('utf-8')
     return http_response
 
   def _log_dataone_exception(self, e):

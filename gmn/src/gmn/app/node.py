@@ -22,10 +22,10 @@
 
 from __future__ import absolute_import
 
-import d1_common.types.dataoneTypes_v1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.type_conversions
 import d1_common.util
 import d1_common.xml
+
 import django.conf
 
 # Example Node document:
@@ -69,10 +69,14 @@ def get_pyxb(major_version_int=2):
 
 # noinspection PyTypeChecker
 def _get_pyxb(major_version_int):
-  assert major_version_int in (1, 2)
-  binding = v1 if major_version_int == 1 else v2
+  if major_version_int == 1:
+    bindings = d1_common.type_conversions.get_bindings_by_api_version(1, 1)
+  elif major_version_int == 2:
+    bindings = d1_common.type_conversions.get_bindings_by_api_version(2, 0)
+  else:
+    assert False
 
-  node_pyxb = binding.node()
+  node_pyxb = bindings.node()
   node_pyxb.identifier = django.conf.settings.NODE_IDENTIFIER
   node_pyxb.name = django.conf.settings.NODE_NAME
   node_pyxb.description = django.conf.settings.NODE_DESCRIPTION
@@ -81,20 +85,20 @@ def _get_pyxb(major_version_int):
   node_pyxb.synchronize = django.conf.settings.NODE_SYNCHRONIZE
   node_pyxb.type = 'mn'
   node_pyxb.state = django.conf.settings.NODE_STATE
-  node_pyxb.subject.append(binding.Subject(django.conf.settings.NODE_SUBJECT))
+  node_pyxb.subject.append(bindings.Subject(django.conf.settings.NODE_SUBJECT))
   node_pyxb.contactSubject.append(
-    binding.Subject(django.conf.settings.NODE_CONTACT_SUBJECT)
+    bindings.Subject(django.conf.settings.NODE_CONTACT_SUBJECT)
   )
-  node_pyxb.services = _create_service_list_pyxb(binding, major_version_int)
+  node_pyxb.services = _create_service_list_pyxb(bindings, major_version_int)
   if django.conf.settings.NODE_SYNCHRONIZE:
-    node_pyxb.synchronization = _create_synchronization_policy_pyxb(binding)
+    node_pyxb.synchronization = _create_synchronization_policy_pyxb(bindings)
   if django.conf.settings.NODE_REPLICATE:
-    node_pyxb.nodeReplicationPolicy = _create_replication_policy_pyxb(binding)
+    node_pyxb.nodeReplicationPolicy = _create_replication_policy_pyxb(bindings)
   return node_pyxb
 
 
-def _create_synchronization_policy_pyxb(binding):
-  schedule_pyxb = binding.Schedule()
+def _create_synchronization_policy_pyxb(bindings):
+  schedule_pyxb = bindings.Schedule()
   schedule_pyxb.year = django.conf.settings.NODE_SYNC_SCHEDULE_YEAR
   schedule_pyxb.mon = django.conf.settings.NODE_SYNC_SCHEDULE_MONTH
   schedule_pyxb.wday = django.conf.settings.NODE_SYNC_SCHEDULE_WEEKDAY
@@ -102,49 +106,51 @@ def _create_synchronization_policy_pyxb(binding):
   schedule_pyxb.hour = django.conf.settings.NODE_SYNC_SCHEDULE_HOUR
   schedule_pyxb.min = django.conf.settings.NODE_SYNC_SCHEDULE_MINUTE
   schedule_pyxb.sec = django.conf.settings.NODE_SYNC_SCHEDULE_SECOND
-  sync = binding.Synchronization()
+  sync = bindings.Synchronization()
   sync.schedule = schedule_pyxb
   return sync
 
 
-def _create_replication_policy_pyxb(binding):
-  replication_pyxb = binding.nodeReplicationPolicy()
+def _create_replication_policy_pyxb(bindings):
+  replication_pyxb = bindings.nodeReplicationPolicy()
   if django.conf.settings.REPLICATION_MAXOBJECTSIZE != -1:
     replication_pyxb.maxObjectSize = django.conf.settings.REPLICATION_MAXOBJECTSIZE
   if django.conf.settings.REPLICATION_SPACEALLOCATED != -1:
     replication_pyxb.spaceAllocated = django.conf.settings.REPLICATION_SPACEALLOCATED
   for allowed_node in django.conf.settings.REPLICATION_ALLOWEDNODE:
-    replication_pyxb.allowedNode.append(binding.NodeReference(allowed_node))
+    replication_pyxb.allowedNode.append(bindings.NodeReference(allowed_node))
   for allowed_object in django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
     replication_pyxb.allowedObjectFormat.append(
-      binding.ObjectFormatIdentifier(allowed_object)
+      bindings.ObjectFormatIdentifier(allowed_object)
     )
   return replication_pyxb
 
 
-def _create_service_list_pyxb(binding, major_version_int):
-  service_list_pyxb = binding.services()
-  service_list_pyxb.extend(_create_service_list_for_version_pyxb(binding, 'v1'))
+def _create_service_list_pyxb(bindings, major_version_int):
+  service_list_pyxb = bindings.services()
+  service_list_pyxb.extend(
+    _create_service_list_for_version_pyxb(bindings, 'v1')
+  )
   if major_version_int == 2:
     service_list_pyxb.extend(
-      _create_service_list_for_version_pyxb(binding, 'v2')
+      _create_service_list_for_version_pyxb(bindings, 'v2')
     )
   return service_list_pyxb
 
 
-def _create_service_list_for_version_pyxb(binding, service_version):
+def _create_service_list_for_version_pyxb(bindings, service_version):
   return [
-    _create_service_pyxb(binding, 'MNCore', service_version),
-    _create_service_pyxb(binding, 'MNRead', service_version),
-    _create_service_pyxb(binding, 'MNAuthorization', service_version),
-    _create_service_pyxb(binding, 'MNStorage', service_version),
-    _create_service_pyxb(binding, 'MNReplication', service_version)
+    _create_service_pyxb(bindings, 'MNCore', service_version),
+    _create_service_pyxb(bindings, 'MNRead', service_version),
+    _create_service_pyxb(bindings, 'MNAuthorization', service_version),
+    _create_service_pyxb(bindings, 'MNStorage', service_version),
+    _create_service_pyxb(bindings, 'MNReplication', service_version)
   ]
 
 
-def _create_service_pyxb(binding, service_name, service_version):
-  service_pyxb = binding.Service()
-  service_pyxb.name = binding.ServiceName(service_name)
-  service_pyxb.version = binding.ServiceVersion(service_version)
+def _create_service_pyxb(bindings, service_name, service_version):
+  service_pyxb = bindings.Service()
+  service_pyxb.name = bindings.ServiceName(service_name)
+  service_pyxb.version = bindings.ServiceVersion(service_version)
   service_pyxb.available = True
   return service_pyxb

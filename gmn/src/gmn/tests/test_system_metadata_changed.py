@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 
+import pytest
 import responses
 
 import d1_common
@@ -31,45 +32,41 @@ import gmn.tests.gmn_test_case
 import gmn.tests.gmn_test_client
 
 
-class TestSystemMetadataChanged(gmn.tests.gmn_test_case.D1TestCase):
+class TestSystemMetadataChanged(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_0110(self):
     """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized"""
 
-    def test(client, binding):
+    def test(client):
       with gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
-        with self.assertRaises(d1_common.types.exceptions.NotAuthorized):
+        with pytest.raises(d1_common.types.exceptions.NotAuthorized):
           client.systemMetadataChanged('test', 0, d1_common.date_time.utc_now())
 
     # Not relevant for v2
-    test(self.client_v1, self.v1)
+    test(self.client_v1)
 
   @responses.activate
-  @gmn.tests.gmn_mock.disable_auth_decorator
   def test_1700(self):
     """systemMetadataChanged(): fails when called with invalid PID"""
 
-    def test(client, binding):
-      with self.assertRaises(d1_common.types.exceptions.NotFound):
+    def test(client):
+      with pytest.raises(d1_common.types.exceptions.NotFound):
         client.systemMetadataChanged(
           '_bogus_pid_', 1, d1_common.date_time.utc_now()
         )
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)
 
   @responses.activate
-  @gmn.tests.gmn_mock.disable_auth_decorator
   def test_1701(self):
     """systemMetadataChanged(): Succeeds when called with valid PID"""
 
-    def test(client, binding):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        client, binding, sid=True
-      )
-      self.assertTrue(
-        client.systemMetadataChanged(pid, 1, d1_common.date_time.utc_now())
-      )
+    def test(client):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
+      assert client.systemMetadataChanged(pid, 1, d1_common.date_time.utc_now())
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)

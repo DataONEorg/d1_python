@@ -27,36 +27,37 @@ import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestArchiveRevision(gmn.tests.gmn_test_case.D1TestCase):
+class TestArchiveRevision(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, cn_mn_client_v1_v2):
     """archive(): Archived flag correctly set and represented"""
+    with gmn.tests.gmn_mock.disable_auth():
 
-    def test(client, binding, sid=None):
-      base_sid, pid_chain_list = self.create_obj_chain(
-        client, binding, chain_len=5, sid=sid
-      )
-      self.assert_valid_chain(client, pid_chain_list, base_sid)
-
-      def assert_archived(client, binding, pid):
+      def assert_archived(client, pid):
         unarchived_sysmeta_pyxb = client.getSystemMetadata(pid)
-        self.assertFalse(unarchived_sysmeta_pyxb.archived)
+        assert not unarchived_sysmeta_pyxb.archived
         pid_archived = client.archive(pid)
-        self.assertEqual(pid, pid_archived.value())
+        assert pid == pid_archived.value()
         archived_sysmeta_pyxb = client.getSystemMetadata(pid)
-        self.assertTrue(archived_sysmeta_pyxb.archived)
+        assert archived_sysmeta_pyxb.archived
         self.assert_eq_sysmeta_sid(
           unarchived_sysmeta_pyxb,
           archived_sysmeta_pyxb,
         )
 
-      # Archive head
-      assert_archived(client, binding, pid_chain_list[-1])
-      # Archive tail
-      assert_archived(client, binding, pid_chain_list[0])
-      # Archive center
-      assert_archived(client, binding, pid_chain_list[3])
+      # archive() is supported on both CNs and MNs. Since this test creates a
+      # revision chain, and create() is only supported on MNs, we use the MN
+      # client to create the objects when testing both CN and MN archive().
+      # with gmn.tests.gmn_mock.disable_auth():
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+      base_sid, pid_chain_list = self.create_revision_chain(
+        self.client_v2, chain_len=5, sid=True, disable_auth=False
+      )
+      self.assert_valid_chain(self.client_v2, pid_chain_list, base_sid)
+
+      # Archive head
+      assert_archived(cn_mn_client_v1_v2, pid_chain_list[-1])
+      # Archive tail
+      assert_archived(cn_mn_client_v1_v2, pid_chain_list[0])
+      # Archive center
+      assert_archived(cn_mn_client_v1_v2, pid_chain_list[3])

@@ -27,22 +27,23 @@ import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestArchiveStandalone(gmn.tests.gmn_test_case.D1TestCase):
-  def _assert_archived_flag_set(self, client, binding):
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, binding)
-    self.assertFalse(sysmeta_pyxb.archived)
+class TestArchiveStandalone(gmn.tests.gmn_test_case.GMNTestCase):
+  def _assert_archived_flag_set(self, client):
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client)
+    assert not sysmeta_pyxb.archived
     pid_archived = client.archive(pid)
-    self.assertEqual(pid, pid_archived.value())
+    assert pid == pid_archived.value()
     archived_sysmeta_pyxb = client.getSystemMetadata(pid)
-    self.assertTrue(archived_sysmeta_pyxb.archived)
+    assert archived_sysmeta_pyxb.archived
 
   @responses.activate
+  @gmn.tests.gmn_mock.disable_auth()
   def test_0010_v1(self):
     """MNStorage.archive(): Archived flag is set in sysmeta"""
-    self._assert_archived_flag_set(self.client_v1, self.v1)
+    self._assert_archived_flag_set(self.client_v1)
 
   @responses.activate
+  @gmn.tests.gmn_mock.disable_auth()
   def test_0020_v2(self):
     """MNStorage.archive(): Archived flag is set in sysmeta"""
-    self._assert_archived_flag_set(self.client_v2, self.v2)
+    self._assert_archived_flag_set(self.client_v2)

@@ -34,21 +34,23 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import django
-import django.conf
-from django.db.models import Avg, Count, Sum
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
 
 import gmn.app.auth
 import gmn.app.db_filter
 import gmn.app.event_log
 import gmn.app.models
 import gmn.app.psycopg_adapter
-import gmn.app.sysmeta_validate
 import gmn.app.util
 import gmn.app.views.asserts
 import gmn.app.views.util
+
+import django
+import django.conf
+from django.db.models import Avg
+from django.db.models import Count
+from django.db.models import Sum
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
 
 
 def home(request):

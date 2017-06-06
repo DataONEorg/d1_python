@@ -35,11 +35,12 @@ recursive searches.
 import argparse
 import logging
 
-import d1_common.util
 import pip
 
 import file_iterator
 import util
+
+import d1_common.util
 
 
 def main():
@@ -70,9 +71,10 @@ def main():
 
   pkg_name_list = find_pkg_names(args)
 
-  print u'Dependent on packages:'
-  for pkg_name_str in pkg_name_list:
-    print u'  {}'.format(pkg_name_str)
+  with d1_common.util.print_logging():
+    logging.info(u'Dependent on packages:')
+    for pkg_name_str in pkg_name_list:
+      logging.info(u'  {}'.format(pkg_name_str))
 
 
 def find_pkg_names(args):

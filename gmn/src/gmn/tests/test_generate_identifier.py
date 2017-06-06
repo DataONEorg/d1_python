@@ -28,13 +28,12 @@ import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestGenerateIdentifier(gmn.tests.gmn_test_case.D1TestCase):
-  def _generate_identifier(self, client, binding):
+class TestGenerateIdentifier(gmn.tests.gmn_test_case.GMNTestCase):
+  def _generate_identifier(self, client):
     fragment = 'test_fragment'
     identifier = client.generateIdentifier('UUID', fragment)
-    self.assertTrue(identifier.value().startswith(fragment))
-    self.assertTrue(len(identifier.value()) > len(fragment))
+    assert identifier.value().startswith(fragment)
+    assert len(identifier.value()) > len(fragment)
     return identifier.value()
 
   @responses.activate
@@ -43,11 +42,12 @@ class TestGenerateIdentifier(gmn.tests.gmn_test_case.D1TestCase):
     matches scheme and fragment
     """
 
-    def test(client, binding):
-      self._generate_identifier(client, binding)
+    def test(client):
+      self._generate_identifier(client)
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)
 
   @responses.activate
   def test_02(self):
@@ -55,10 +55,11 @@ class TestGenerateIdentifier(gmn.tests.gmn_test_case.D1TestCase):
     when called second time
     """
 
-    def test(client, binding):
-      pid1 = self._generate_identifier(client, binding)
-      pid2 = self._generate_identifier(client, binding)
-      self.assertNotEqual(pid1, pid2)
+    def test(client):
+      pid1 = self._generate_identifier(client)
+      pid2 = self._generate_identifier(client)
+      assert pid1 != pid2
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)

@@ -18,66 +18,59 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`create_data_package`
-==========================
+"""Create data package
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Automatically create data packages from local objects.
-  - Generate the system metadata for a local file.
-  - Generate an access policy for public access.
-  - Upload the local files to a Member Node as science Science Object.
-  - Create the data packages on the Member Node.
+- Automatically create data packages from local objects.
+- Generate the system metadata for a local file.
+- Generate an access policy for public access.
+- Upload the local files to a Member Node as science Science Object.
+- Create the data packages on the Member Node.
 
-:Author:
-  DataONE (Dahl)
+Requires:
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
+- A client side certificate that is trusted by the target Member Node.
 
-:Created:
-  2013-02-27
+Operation:
 
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
-  - A client side certificate that is trusted by the target Member Node.
+Data packages are created from files in a folder provided by the user.
+Files with the same basename are combined into a package, with the basename
+being the name of the package.
 
-:Operation:
-  Data packages are created from files in a folder provided by the user.
-  Files with the same basename are combined into a package, with the basename
-  being the name of the package.
+Example:
 
-  Example:
+The files
 
-  The files
+  myfile.1.txt
+  myfile.2.txt
+  myfile.jpg
 
-    myfile.1.txt
-    myfile.2.txt
-    myfile.jpg
+would be grouped into a package because they share the same basename. First,
+each of the files would be uploaded to the Member Node separately. The full
+filename is used as the PID.
 
-  would be grouped into a package because they share the same basename. First,
-  each of the files would be uploaded to the Member Node separately. The full
-  filename is used as the PID.
+For each file, a system metadata file is generated, based on information
+from the file and from a set of fixed settings.
 
-  For each file, a system metadata file is generated, based on information
-  from the file and from a set of fixed settings.
-
-  Then, a package for all the files is generated. System metadata is generated
-  for the package, and the package is uploaded to the Member Node.
+Then, a package for all the files is generated. System metadata is generated
+for the package, and the package is uploaded to the Member Node.
 """
 
-import StringIO
 import datetime
 import hashlib
 import logging
 import os
+import StringIO
 
-import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.dataoneTypes as dataoneTypes
+
+import d1_client.mnclient_2_0
 
 # Config.
 

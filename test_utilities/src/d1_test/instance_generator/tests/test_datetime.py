@@ -19,16 +19,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import time
 import logging
+import time
 import unittest
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.dates as dates
 
 #===============================================================================
 
 
-class TestDateTime(unittest.TestCase):
+class TestDateTime(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
@@ -37,14 +38,14 @@ class TestDateTime(unittest.TestCase):
     for i in range(10):
       t1 = dates.random_date()
       t2 = dates.random_date()
-      self.assertTrue(t1 != t2)
+      assert t1 != t2
 
   def test_0020(self):
     """random_date(): Dates are random, with restricted time span"""
     for i in range(10):
       t1 = dates.random_date(100, 200)
       t2 = dates.random_date(50, 60)
-      self.assertTrue(t2 < t1)
+      assert t2 < t1
 
   def test_0030(self):
     """now()"""
@@ -52,7 +53,7 @@ class TestDateTime(unittest.TestCase):
       now_1 = dates.now()
       time.sleep(0.01)
       now_2 = dates.now()
-      self.assertTrue(now_2 > now_1)
+      assert now_2 > now_1
 
 
 if __name__ == "__main__":

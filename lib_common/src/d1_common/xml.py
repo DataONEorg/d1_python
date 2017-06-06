@@ -33,29 +33,35 @@ import xml.sax
 
 import pyxb
 
-import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.dataoneTypes
 
 
 def deserialize(doc_xml):
-  if not isinstance(doc_xml, unicode):
-    doc_xml = doc_xml.decode('utf8')
+  if isinstance(doc_xml, unicode):
+    doc_xml = doc_xml.encode('utf-8')
+  else:
+    if not is_valid_utf8(doc_xml):
+      raise ValueError(
+        'Invalid XML doc encoding. Must be unicode or UTF-8. str="{}"'
+        .format(doc_xml.decode('utf-8', error='replace'))
+      )
   try:
-    return d1_common.types.dataoneTypes_v2_0.CreateFromDocument(doc_xml)
+    return d1_common.types.dataoneTypes.CreateFromDocument(doc_xml)
   except pyxb.ValidationError as e:
     raise ValueError(
-      u'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
+      'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
       format(e.details(), doc_xml)
     )
   except (pyxb.PyXBException, xml.sax.SAXParseException, Exception) as e:
     raise ValueError(
-      u'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
+      'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
       format(str(e), doc_xml)
     )
 
 
 def serialize(obj_pyxb):
   try:
-    return obj_pyxb.toxml('utf8')
+    return obj_pyxb.toxml('utf-8')
   except pyxb.ValidationError as e:
     raise ValueError(
       u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
@@ -72,8 +78,7 @@ def pretty_xml(doc_xml):
   """Pretty formatting of XML
   """
   if isinstance(doc_xml, unicode):
-    doc_xml = doc_xml.encode('utf8')
-  print type(doc_xml)
+    doc_xml = doc_xml.encode('utf-8')
   try:
     xml_obj = xml.dom.minidom.parseString(doc_xml)
   except TypeError:
@@ -259,6 +264,15 @@ def format_diff_xml(a_xml, b_xml):
       pretty_xml(b_xml).splitlines(),
     )
   )
+
+
+def is_valid_utf8(s):
+  try:
+    s.decode('utf-8')
+  except UnicodeDecodeError:
+    return False
+  else:
+    return True
 
 
 class CompareError(Exception):

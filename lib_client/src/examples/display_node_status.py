@@ -18,40 +18,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`display_node_status`
-==========================
+"""Display node status
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Retrieve a list of all DataONE Nodes
-  - Get and display key metrics for each of the Nodes.
+- Retrieve a list of all DataONE Nodes
+- Get and display key metrics for each of the Nodes.
 
-:Note:
-  See the description for the CERTIFICATE setting below for limitations in the
-  information displayed by this script.
+Note:
 
-:Author:
-  DataONE (Dahl)
+See the description for the CERTIFICATE setting below for limitations in the
+information displayed by this script.
 
-:Created:
-  2013-11-18
+Requires:
 
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
 import logging
 
-import d1_client.cnclient
-import d1_client.mnclient
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
+
+import d1_client.cnclient
+import d1_client.mnclient
 
 # Config.
 

@@ -18,54 +18,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+import pytest
 import responses
 
-import d1_common.util
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v2_0
+import d1_common.types.exceptions
+import d1_common.util
 
+import d1_test.d1_test_case
 import d1_test.mock_api.resolve as mock_resolve
-import d1_test.mock_api.tests.config as config
-
-import d1_client.cnclient_2_0
 
 
-class TestMockResolve(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=config.CN_RESPONSES_BASE_URL
-    )
-
+class TestMockResolve(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, cn_client_v2):
     """mock_api.resolve(): Returns a valid ObjectLocationList"""
-    mock_resolve.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.resolve('valid_pid'),
-      d1_common.types.dataoneTypes_v2_0.ObjectLocationList,
+    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert isinstance(
+      cn_client_v2.resolve('valid_pid'),
+      cn_client_v2.bindings.ObjectLocationList
     )
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, cn_client_v2):
     """mock_api.resolve(): Unknown PID returns D1 NotFound"""
-    mock_resolve.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.resolve, '<NotFound>pid'
-    )
+    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v2.resolve('<NotFound>pid')
 
   @responses.activate
-  def test_0030(self):
+  def test_0030(self, cn_client_v2):
     """mock_api.resolve(): Passing a trigger header triggers a DataONEException"""
-    mock_resolve.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.resolve, 'valid_pid',
-      vendorSpecific={'trigger': '404'}
-    )
+    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v2.resolve('valid_pid', vendorSpecific={'trigger': '404'})

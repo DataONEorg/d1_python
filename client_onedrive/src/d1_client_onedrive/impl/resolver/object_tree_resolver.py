@@ -29,22 +29,13 @@ from StringIO import StringIO
 
 import resolver_base
 import resource_map
-from d1_client_onedrive.impl import attributes
-from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import onedrive_exceptions
-from d1_client_onedrive.impl import util
-from d1_client_onedrive.impl.resolver import author
-from d1_client_onedrive.impl.resolver import region
-from d1_client_onedrive.impl.resolver import single
-from d1_client_onedrive.impl.resolver import taxa
-from d1_client_onedrive.impl.resolver import time_period
 
-# App
-from ..onedrive_exceptions import ONEDriveException
+from .. import onedrive_exceptions
+
+import d1_client_onedrive.impl
+import d1_client_onedrive.impl.resolver
 
 log = logging.getLogger(__name__)
-
-#log.setLevel(logging.DEBUG)
 
 
 class Resolver(resolver_base.Resolver):
@@ -52,16 +43,24 @@ class Resolver(resolver_base.Resolver):
     super(Resolver, self).__init__(options, object_tree)
     self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     self._resolvers = {
-      u'All': single.Resolver(options, object_tree),
-      u'Authors': author.Resolver(options, object_tree),
-      u'Regions': region.Resolver(options, object_tree),
-      u'Taxa': taxa.Resolver(options, object_tree),
-      u'TimePeriods': time_period.Resolver(options, object_tree),
+      u'All':
+        d1_client_onedrive.impl.resolver.single.Resolver(options, object_tree),
+      u'Authors':
+        d1_client_onedrive.impl.resolver.author.Resolver(options, object_tree),
+      u'Regions':
+        d1_client_onedrive.impl.resolver.region.Resolver(options, object_tree),
+      u'Taxa':
+        d1_client_onedrive.impl.resolver.taxa.Resolver(options, object_tree),
+      u'TimePeriods':
+        d1_client_onedrive.impl.resolver.time_period.Resolver(
+          options, object_tree
+        ),
     }
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {0}'.
+      format(d1_client_onedrive.impl.util.string_from_path_elements(path))
     )
 
     # All items rendered by the ObjectTree Resolver are folders. Anything else is
@@ -74,10 +73,10 @@ class Resolver(resolver_base.Resolver):
 
     try:
       object_tree_folder = self._object_tree.get_folder(path, object_tree_root)
-    except ONEDriveException:
+    except onedrive_exceptions.ONEDriveException:
       pass
     else:
-      return attributes.Attributes(is_dir=True)
+      return d1_client_onedrive.impl.attributes.Attributes(is_dir=True)
 
       #if len(path) > 0:
       #  if path[-1] == self._get_help_name():
@@ -100,8 +99,10 @@ class Resolver(resolver_base.Resolver):
       object_tree_folder = self._object_tree.get_folder(
         object_tree_path, object_tree_root
       )
-    except ONEDriveException:
-      raise onedrive_exceptions.PathException(u'Invalid folder')
+    except onedrive_exceptions.ONEDriveException:
+      raise d1_client_onedrive.impl.onedrive_exceptions.PathException(
+        u'Invalid folder'
+      )
 
     if self._is_readme_file([root_name]):
       return self._get_readme_file_attributes(object_tree_path)
@@ -119,7 +120,8 @@ class Resolver(resolver_base.Resolver):
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
     log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
+      u'get_directory: {0}'.
+      format(d1_client_onedrive.impl.util.string_from_path_elements(path))
     )
 
     # To determine where the path transitions from the object_tree to the
@@ -129,7 +131,7 @@ class Resolver(resolver_base.Resolver):
 
     try:
       object_tree_folder = self._object_tree.get_folder(path, object_tree_root)
-    except ONEDriveException:
+    except onedrive_exceptions.ONEDriveException:
       pass
     else:
       res = self._resolve_object_tree_folder(object_tree_folder)
@@ -152,8 +154,10 @@ class Resolver(resolver_base.Resolver):
       object_tree_folder = self._object_tree.get_folder(
         object_tree_path, object_tree_root
       )
-    except ONEDriveException:
-      raise onedrive_exceptions.PathException(u'Invalid folder')
+    except onedrive_exceptions.ONEDriveException:
+      raise d1_client_onedrive.impl.onedrive_exceptions.PathException(
+        u'Invalid folder'
+      )
 
     log.debug('controlled path: {0}'.format(controlled_path))
     #log.debug('object_tree folder: {0}'.format(object_tree_folder))
@@ -167,20 +171,23 @@ class Resolver(resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
-      format(util.string_from_path_elements(path), size, offset)
+      u'read_file: {0}, {1}, {2}'.format(
+        d1_client_onedrive.impl.util.string_from_path_elements(path), size, offset
+      )
     )
 
     try:
       object_tree_folder = self._object_tree.get_folder(path, object_tree_root)
-    except ONEDriveException:
+    except onedrive_exceptions.ONEDriveException:
       pass
     else:
       if len(path) > 0:
         if path[-1] == object_tree_folder.get_help_name():
           return self._getFolderHelp(object_tree_folder, size, offset)
           #return object_tree_folder.get_help_text(size, offset)
-      raise onedrive_exceptions.PathException(u'Invalid file')
+      raise d1_client_onedrive.impl.onedrive_exceptions.PathException(
+        u'Invalid file'
+      )
 
     object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(
       path
@@ -190,8 +197,10 @@ class Resolver(resolver_base.Resolver):
       object_tree_folder = self._object_tree.get_folder(
         object_tree_path, object_tree_root
       )
-    except ONEDriveException:
-      raise onedrive_exceptions.PathException(u'Invalid folder')
+    except onedrive_exceptions.ONEDriveException:
+      raise d1_client_onedrive.impl.onedrive_exceptions.PathException(
+        u'Invalid folder'
+      )
 
     if self._is_readme_file([root_name]):
       return self._generate_readme_text(object_tree_path)[offset:offset + size]
@@ -245,10 +254,12 @@ class Resolver(resolver_base.Resolver):
     for i, e in enumerate(path):
       if e in self._resolvers or e == self._get_readme_filename():
         return path[:i], path[i], path[i + 1:]
-    raise onedrive_exceptions.PathException(u'Invalid folder: %s' % str(path))
+    raise d1_client_onedrive.impl.onedrive_exceptions.PathException(
+      u'Invalid folder: %s' % str(path)
+    )
 
   def _resolve_object_tree_folder(self, object_tree_folder):
-    dir = directory.Directory()
+    dir = d1_client_onedrive.impl.directory.Directory()
     self._append_folders(dir, object_tree_folder)
     dir.extend(self._resolvers.keys())
     return dir
@@ -261,7 +272,7 @@ class Resolver(resolver_base.Resolver):
   # Readme
 
   def _get_readme_file_attributes(self, object_tree_path):
-    return attributes.Attributes(
+    return d1_client_onedrive.impl.attributes.Attributes(
       size=len(self._generate_readme_text(object_tree_path)), is_dir=False
     )
 
@@ -305,4 +316,4 @@ class Resolver(resolver_base.Resolver):
         res.write(u'- {}\n'.format(f))
     else:
       res.write(u'No object_tree sub-folders are specified at this level.\n')
-    return res.getvalue().encode('utf8')
+    return res.getvalue().encode('utf-8')

@@ -23,8 +23,10 @@ import unittest
 
 import query_engine_description
 
+import d1_test.d1_test_case
 
-class TestQueryEngineDescription(unittest.TestCase):
+
+class TestQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self.q = query_engine_description.QueryEngineDescription()
     self.q.load('test_index/query_engine_description.xml')
@@ -35,9 +37,7 @@ class TestQueryEngineDescription(unittest.TestCase):
 
   def test_0020(self):
     """get query engine version: """
-    self.assertEqual(
-      self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53'
-    )
+    assert self.q.get_query_engine_version() == '3.4.0.2011.09.20.17.19.53'
 
 
 if __name__ == "__main__":

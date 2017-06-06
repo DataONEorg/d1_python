@@ -23,12 +23,14 @@ import logging
 import unittest
 
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy as access_policy
 
 #===============================================================================
 
 
-class TestAccessPolicy(unittest.TestCase):
+class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
@@ -36,14 +38,14 @@ class TestAccessPolicy(unittest.TestCase):
     """select_random_set_of_permissions()"""
     for i in range(10):
       permissions = access_policy.random_set_of_permissions()
-      self.assertTrue(access_policy.permission_labels_to_objects(permissions))
+      assert access_policy.permission_labels_to_objects(permissions)
 
   def test_0020(self):
     """permissions_to_tag_string()"""
     for i in range(10):
       permissions = access_policy.random_set_of_permissions()
       s = access_policy.permissions_to_tag_string(permissions)
-      self.assertIsInstance(s, unicode)
+      assert isinstance(s, unicode)
 
   def test_0030(self):
     """random_subject_with_permission_labels()"""
@@ -58,14 +60,14 @@ class TestAccessPolicy(unittest.TestCase):
       subjects = access_policy.random_subjects_with_permission_labels(
         permissions
       )
-      self.assertIsInstance(subjects, list)
+      assert isinstance(subjects, list)
 
   def test_0050(self):
     """generate()"""
     for i in range(10):
       access_policy_pyxb = access_policy.generate()
-      self.assertIsInstance(access_policy_pyxb, dataoneTypes_v1.AccessPolicy)
-      self.assertTrue(access_policy_pyxb.toxml('utf-8'))
+      assert isinstance(access_policy_pyxb, dataoneTypes_v1.AccessPolicy)
+      assert access_policy_pyxb.toxml('utf-8')
 
 
 if __name__ == "__main__":

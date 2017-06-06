@@ -23,20 +23,22 @@ import logging
 import unittest
 
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.person as person
 
 #===============================================================================
 
 
-class TestPerson(unittest.TestCase):
+class TestPerson(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """generate()"""
     person_obj = person.generate()
-    self.assertIsInstance(person_obj, dataoneTypes_v1.Person)
-    self.assertTrue(person_obj.toxml('utf-8'))
+    assert isinstance(person_obj, dataoneTypes_v1.Person)
+    assert person_obj.toxml('utf-8')
 
 
 if __name__ == "__main__":

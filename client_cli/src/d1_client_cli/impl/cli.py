@@ -542,7 +542,7 @@ be lost if you exit.""".format(n_remaining_operations)
 
   def _split_args(self, line, n_required, n_optional, pad=True):
     # Workaround for issue with shlex.split() that was fixed in Python 2.7.
-    args = [a.decode('utf8') for a in shlex.split(line.encode('utf8'))]
+    args = [a.decode('utf-8') for a in shlex.split(line.encode('utf-8'))]
     n_optional_max = 1000 if n_optional == -1 else n_optional
     if len(args) < n_required or len(args) > n_required + n_optional_max:
       msg = self._text_description_of_required_and_optional(

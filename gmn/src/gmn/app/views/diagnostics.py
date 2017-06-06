@@ -25,37 +25,39 @@ is unrestricted in debug mode. Disabled in production.
 
 from __future__ import absolute_import
 
-import os
 import cgi
 import csv
 import json
+import os
 import pprint
 import shutil
 import urlparse
 
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
 import gmn.app.auth
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.views.util
-import gmn.app.views.create
+import gmn.app.models
 import gmn.app.node_registry
-import gmn.app.views.asserts
 import gmn.app.psycopg_adapter
 import gmn.app.restrict_to_verb
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.create
+import gmn.app.views.util
 
 import django.apps
 import django.conf
-from django.http import HttpResponse
 from django.db.models import Q
-from django.shortcuts import reverse, redirect, render_to_response
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
+from django.shortcuts import reverse
 
 # ------------------------------------------------------------------------------
 # Diagnostics portal.
@@ -149,8 +151,7 @@ def whitelist_subject(request):
 
 def create(request, pid):
   """Minimal version of create() used for inserting test objects."""
-  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  sysmeta_pyxb = gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   gmn.app.views.create.create(request, sysmeta_pyxb)
   return gmn.app.views.util.http_response_with_boolean_true_type()
 

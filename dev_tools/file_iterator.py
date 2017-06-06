@@ -22,7 +22,6 @@ import fnmatch
 import logging
 import os
 
-
 DEFAULT_EXCLUDE_GLOB_LIST = [
   # Dirs
   'build/', 'dist/', '*egg-info/', 'build/', 'generated/', '.git/', 'doc/',
@@ -161,7 +160,7 @@ def file_iter(
   for path in path_list:
     path = os.path.expanduser(path)
     if not isinstance(path, unicode):
-      path = path.decode('utf8')
+      path = path.decode('utf-8')
     if not ignore_invalid:
       if not (os.path.isfile(path) or os.path.isdir(path)):
         raise EnvironmentError(0, 'Not a valid file or dir path', path)

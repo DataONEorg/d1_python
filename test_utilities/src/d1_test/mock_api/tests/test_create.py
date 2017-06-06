@@ -18,41 +18,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
 import base64
 import json
-import unittest
+import StringIO
 
-import d1_client.mnclient_2_0
-import d1_common.types.dataoneTypes_v2_0 as v2
-import d1_test.mock_api.create as mock_create
-import d1_test.mock_api.tests.config as config
-import d1_test.mock_api.util
 import responses
 
+import d1_test.d1_test_case
+import d1_test.mock_api.create as mock_create
+import d1_test.mock_api.util
 
-class TestMockPost(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
 
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockPost(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.create(): Echoes the request"""
-    mock_create.add_callback(config.MN_RESPONSES_BASE_URL)
+    mock_create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(
-      v2, 'post_pid'
+      mn_client_v1_v2, 'post_pid'
     )
-    response = self.client.createResponse(
+    response = mn_client_v1_v2.createResponse(
       'post_pid', StringIO.StringIO(sciobj_str), sysmeta_pyxb
     )
-    identifier_pyxb = v2.CreateFromDocument(response.content)
-    self.assertEqual(identifier_pyxb.value(), 'echo-post')
+    identifier_pyxb = mn_client_v1_v2.bindings.CreateFromDocument(
+      response.content
+    )
+    assert identifier_pyxb.value() == 'echo-post'
     echo_body_str = base64.b64decode(response.headers['Echo-Body-Base64'])
     echo_query_dict = json.loads(
       base64.b64decode(response.headers['Echo-Query-Base64'])
@@ -60,6 +51,6 @@ class TestMockPost(unittest.TestCase):
     echo_header_dict = json.loads(
       base64.b64decode(response.headers['Echo-Header-Base64'])
     )
-    self.assertIsInstance(echo_body_str, basestring)
-    self.assertIsInstance(echo_query_dict, dict)
-    self.assertIsInstance(echo_header_dict, dict)
+    assert isinstance(echo_body_str, basestring)
+    assert isinstance(echo_query_dict, dict)
+    assert isinstance(echo_header_dict, dict)

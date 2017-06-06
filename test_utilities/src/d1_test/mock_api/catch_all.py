@@ -40,33 +40,34 @@ import d1_test.mock_api.catch_all as mock_catch_all
 
 @mock_catch_all.activate
 def test_0010(self):
-  mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
+  mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
   echo_dict = self.client.getFormat('valid_format_id')
   ...
 """
 
 import base64
-import functools
 import json
 import logging
-import pprint
 import re
-import unittest
 
-import d1_common.const
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-import d1_common.url
-import d1_test.mock_api.d1_exception
-import d1_test.mock_api.util
+import decorator
 import mock
 import responses
 
+import d1_common.const
+import d1_common.type_conversions
+import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
+import d1_common.url
 
-def activate(fun):
-  @functools.wraps(fun)
+import d1_test.d1_test_case
+import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
+
+
+def activate(func):
   @responses.activate
-  def wrap(*args, **kwargs):
+  def wrapper(func2, *args, **kwargs):
     with mock.patch(
         'd1_client.baseclient.DataONEBaseClient._read_dataone_type_response',
         mock_read_response
@@ -86,9 +87,9 @@ def activate(fun):
         'd1_client.baseclient.DataONEBaseClient._read_json_response',
         mock_read_response
     ):
-      return fun(*args, **kwargs)
+      return func2(*args, **kwargs)
 
-  return wrap
+  return decorator.decorator(wrapper, func)
 
 
 def add_callback(base_url):
@@ -103,18 +104,12 @@ def add_callback(base_url):
     )
 
 
-def assert_expected_echo(received_echo_dict, expected_echo_dict):
-  test_case = unittest.TestCase('__init__')
+def assert_expected_echo(received_echo_dict, name_postfix_str, client):
   _dict_key_val_to_unicode(received_echo_dict)
-  _dict_key_val_to_unicode(expected_echo_dict)
   _delete_volatile_keys(received_echo_dict)
-  _delete_volatile_keys(expected_echo_dict)
-  logging.debug(
-    'received_echo_dict: {}'.format(pprint.pformat(received_echo_dict))
+  d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+    received_echo_dict, name_postfix_str, client, 'echo'
   )
-  # Check the remaining values, which should all be static.
-  test_case.maxDiff = None
-  test_case.assertDictEqual(received_echo_dict, expected_echo_dict)
 
 
 def _delete_volatile_keys(echo_dict):
@@ -160,7 +155,7 @@ def _dict_key_val_to_unicode(d):
 
 
 def _str_to_unicode(s):
-  return s if isinstance(s, unicode) else s.decode('utf8')
+  return s if isinstance(s, unicode) else s.decode('utf-8')
 
 
 @classmethod
@@ -193,7 +188,7 @@ def _request_callback(request):
     body_str = request.body.read()
   except AttributeError:
     body_str = request.body
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(request.url)
   )
   header_dict = {
@@ -205,7 +200,7 @@ def _request_callback(request):
     'endpoint_str': endpoint_str,
     'param_list': param_list,
     'query_dict': query_dict,
-    'pyxb_namespace': str(pyxb_bindings.Namespace),
+    'pyxb_namespace': str(client.bindings.Namespace),
     'header_dict': dict(request.headers),
   }
   return 200, header_dict, json.dumps(body_dict)

@@ -26,10 +26,10 @@ normally be signed with a test CA that is trusted by a test instance of a Member
 Node. Test instances set up by DataONE will normally trust the DataONE Test CA.
 """
 
-# Example: ./create_dataone_test_certificate.py --ca-path test_files/ca_test.crt
-# --ca-key-path test_files/ca_test.key --ca-key-pw ca_test --public-key-path
-# test_files/new_cert_public_key.pem --subject-info-path
-# test_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
+# Example: ./create_dataone_test_certificate.py --ca-path sample_files/ca_test.crt
+# --ca-key-path sample_files/ca_test.key --ca-key-pw ca_test --public-key-path
+# sample_files/new_cert_public_key.pem --subject-info-path
+# sample_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
 import logging
 import optparse

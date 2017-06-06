@@ -22,19 +22,20 @@
 import logging
 import unittest
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.replication_policy as replicationpolicy
 
 #===============================================================================
 
 
-class TestReplicationPolicy(unittest.TestCase):
+class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """generate()"""
     replication_policy_obj = replicationpolicy.generate()
-    self.assertTrue(replication_policy_obj.toxml('utf-8'))
+    assert replication_policy_obj.toxml('utf-8')
 
 
 if __name__ == "__main__":

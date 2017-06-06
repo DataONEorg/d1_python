@@ -18,60 +18,52 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`delete_all_objects_of_type`
-=================================
+"""Delete all objects of type
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Retrieve a list of all objects with specific FormatID on a Member
-    Node.
-  - Delete all objects with a specific FormatID from a Member Node.
+- Retrieve a list of all objects with specific FormatID on a Member
+  Node.
+- Delete all objects with a specific FormatID from a Member Node.
 
-  Notes:
-  - Do NOT use this script to delete undesired objects from a production Member
-    Node!
-  - The objects are deleted with the MNStorage.delete() API method. The API
-    method is intended to be called only by CNs under specific circumstances. In
-    a stand-alone or non-production environment, the API can be used for
-    removing objects from a Member Node.
-  - MNStorage.delete() is only available to subjects which have delete
-    permission on the node.
-  - To delete all the objects on the node, remove the formatId and replicaStatus
-    parameters in the listObjects() call below.
-  - The Member Node object list is retrieved in small sections, called pages.
-    Because removing objects may, depending on the implementation of
-    listObjects(), cause the contents in each page to shift, the entire list of
-    objects to delete is created first and then the deletions are performed in a
-    separate step. This could require a lot of memory if running on a server
-    with a large number of objects. In that case, an alternative implementation
-    is to delete the objects as they are discovered and repeat the process until
-    no more objects to delete are found.
-  - The listObjects() Member Node API method may not be efficiently implemented
-    by all Member Nodes as it is intended primarily for use by Coordinating
-    Nodes.
+Notes:
+- Do NOT use this script to delete undesired objects from a production Member
+  Node!
+- The objects are deleted with the MNStorage.delete() API method. The API
+  method is intended to be called only by CNs under specific circumstances. In
+  a stand-alone or non-production environment, the API can be used for
+  removing objects from a Member Node.
+- MNStorage.delete() is only available to subjects which have delete
+  permission on the node.
+- To delete all the objects on the node, remove the formatId and replicaStatus
+  parameters in the listObjects() call below.
+- The Member Node object list is retrieved in small sections, called pages.
+  Because removing objects may, depending on the implementation of
+  listObjects(), cause the contents in each page to shift, the entire list of
+  objects to delete is created first and then the deletions are performed in a
+  separate step. This could require a lot of memory if running on a server
+  with a large number of objects. In that case, an alternative implementation
+  is to delete the objects as they are discovered and repeat the process until
+  no more objects to delete are found.
+- The listObjects() Member Node API method may not be efficiently implemented
+  by all Member Nodes as it is intended primarily for use by Coordinating
+  Nodes.
 
-:Author:
-  DataONE (Dahl)
-
-:Created:
-  2013-10-21
-
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
+Requires:
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
 import logging
 
-import d1_client.cnclient
-import d1_client.mnclient
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
+
+import d1_client.cnclient
+import d1_client.mnclient
 
 # Config.
 

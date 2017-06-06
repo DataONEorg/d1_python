@@ -25,46 +25,47 @@ SID
 """
 from __future__ import absolute_import
 
+import pytest
 import responses
 
-import d1_common.xml
-import d1_common.util
 import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
 
 import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-class TestDeleteStandalone(gmn.tests.gmn_test_case.D1TestCase):
+class TestDeleteStandalone(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  @gmn.tests.gmn_mock.disable_auth_decorator
-  def _assert_delete(self, client, binding, sid=None):
-    pid, sid, send_sciobj_str, send_sysmeta_pyxb = (
-      self.create_obj(client, binding, sid=sid)
-    )
-    # Is retrievable
-    recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
-    self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
-    # Delete
-    identifier_pyxb = client.delete(pid)
-    self.assertEqual(identifier_pyxb.value(), pid)
-    # Is no longer retrievable so new delete() raises 404
-    with self.assertRaises(d1_common.types.exceptions.NotFound):
-      client.delete(pid)
-    # PID can now be reused
-    self.create_obj(client, binding, pid, sid)
-    # Is again retrievable
-    reused_sysmeta_pyxb = self.client_v2.getSystemMetadata(pid)
-    self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
+  def _assert_delete(self, client, sid=None):
+    with gmn.tests.gmn_mock.disable_auth():
+      pid, sid, send_sciobj_str, send_sysmeta_pyxb = (
+        self.create_obj(client, sid=sid)
+      )
+      # Is retrievable
+      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
+      self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
+      # Delete
+      identifier_pyxb = client.delete(pid)
+      assert identifier_pyxb.value() == pid
+      # Is no longer retrievable so new delete() raises 404
+      with pytest.raises(d1_common.types.exceptions.NotFound):
+        client.delete(pid)
+      # PID can now be reused
+      self.create_obj(client, pid, sid)
+      # Is again retrievable
+      reused_sysmeta_pyxb = self.client_v2.getSystemMetadata(pid)
+      self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
   def test_0010(self):
     """MNStorage.delete(): Standalone object, SID unsupported in v1"""
-    self._assert_delete(self.client_v1, self.v1)
+    self._assert_delete(self.client_v1)
 
   def test_0020(self):
     """MNStorage.delete(): Standalone object without SID"""
-    self._assert_delete(self.client_v2, self.v2)
+    self._assert_delete(self.client_v2)
 
   def test_0030(self):
     """MNStorage.delete(): Standalone object with SID"""
-    self._assert_delete(self.client_v2, self.v2, sid=True)
+    self._assert_delete(self.client_v2, sid=True)

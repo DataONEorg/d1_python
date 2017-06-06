@@ -31,8 +31,9 @@
 import datetime
 
 import context
-import d1_test_case
 import test_client
+
+import d1_test_case
 
 EVENTS_TOTAL = 123
 
@@ -51,7 +52,7 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
     # Each object must have exactly one create event.
     # TODO: This would miss a situation where one object is missing a create
     # event and another object makes up for it by having two.
-    self.assertEqual(log_records.total, context.object_total)
+    assert log_records.total == context.object_total
 
   def test_020_get_total_events(self):
     """Get total number of events.
@@ -76,10 +77,10 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
     logRecords = client.getLogRecords(
       '<dummy token>', datetime.datetime(1800, 1, 1)
     )
-    self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
+    assert len(logRecords.logEntry) == EVENTS_TOTAL
     found = False
     for o in logRecords.logEntry:
       if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' and o.event == 'create':
         found = True
         break
-    self.assertTrue(found)
+    assert found

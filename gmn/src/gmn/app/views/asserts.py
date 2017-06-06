@@ -25,25 +25,25 @@ not true.
 
 from __future__ import absolute_import
 
-import urlparse
 import contextlib
+import urlparse
 
 import requests
 
+import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
+import d1_common.types
 import d1_common.types.exceptions
 
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.sysmeta_sid
-import gmn.app.sysmeta_util
+import gmn.app.local_replica
+import gmn.app.models
 import gmn.app.psycopg_adapter
-import gmn.app.sysmeta_replica
-import gmn.app.sysmeta_revision
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
 
 import django.conf
 
@@ -77,20 +77,20 @@ def is_valid_for_update(pid):
   is_not_archived(pid)
 
 
-def is_valid_sid_for_chain_if_specified(sysmeta_pyxb, pid):
+def is_valid_sid_for_chain(pid, sid):
   """Assert that any SID in {sysmeta_pyxb} can be assigned to the single object
   {pid} or to the chain to which {pid} belongs.
 
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
   """
-  sid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'seriesId')
-  if sid is None:
+  if not sid:
     return
-  existing_sid = gmn.app.sysmeta_sid.get_sid_by_pid(pid)
+  existing_sid = gmn.app.revision.get_sid_by_pid(pid)
   if existing_sid is None:
     is_unused(sid)
   else:
+    is_sid(sid)
     if existing_sid != sid:
       raise d1_common.types.exceptions.InvalidRequest(
         0,
@@ -106,11 +106,11 @@ def does_not_contain_replica_sections(sysmeta_pyxb):
   """Assert that {sysmeta_pyxb} does not contain any replica information.
   """
   if len(getattr(sysmeta_pyxb, 'replica', [])):
-    raise d1_common.types.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'A replica section was included. A new object object created via '
       u'create() or update() cannot already have replicas. pid="{}"'.
-      format(gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)),
-      identifier=gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+      format(gmn.app.util.uvalue(sysmeta_pyxb.identifier)),
+      identifier=gmn.app.util.uvalue(sysmeta_pyxb.identifier)
     )
 
 
@@ -118,12 +118,12 @@ def sysmeta_is_not_archived(sysmeta_pyxb):
   """Assert that {sysmeta_pyxb} does not have have the archived flag set.
   """
   if getattr(sysmeta_pyxb, 'archived', False):
-    raise d1_common.types.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       u'Archived flag was set. A new object created via create() or update() '
       u'cannot already be archived. pid="{}"'.format(
-        gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
-      ), identifier=gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+        gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+      ), identifier=gmn.app.util.uvalue(sysmeta_pyxb.identifier)
     )
 
 
@@ -144,8 +144,8 @@ def is_pid_of_existing_object(did):
 
 
 def is_sid(did):
-  if not gmn.app.sysmeta_sid.is_sid(did):
-    raise d1_common.types.exceptions.NotFound(
+  if not gmn.app.revision.is_sid(did):
+    raise d1_common.types.exceptions.InvalidRequest(
       0, u'Identifier is {}. Expected a Series ID (SID). id="{}"'.format(
         gmn.app.sysmeta.get_identifier_type(did), did
       ), identifier=did
@@ -153,7 +153,7 @@ def is_sid(did):
 
 
 def is_not_replica(pid):
-  if gmn.app.sysmeta_replica.is_local_replica(pid):
+  if gmn.app.local_replica.is_local_replica(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Object is a replica and cannot be updated on this Member Node. '
       u'The operation must be performed on the authoritative Member Node. '
@@ -170,8 +170,8 @@ def is_not_archived(pid):
 
 
 def has_matching_modified_timestamp(new_sysmeta_pyxb):
-  pid = gmn.app.sysmeta_util.uvalue(new_sysmeta_pyxb.identifier)
-  old_sysmeta_model = gmn.app.sysmeta_util.get_sci_model(pid)
+  pid = gmn.app.util.uvalue(new_sysmeta_pyxb.identifier)
+  old_sysmeta_model = gmn.app.util.get_sci_model(pid)
   old_ts = old_sysmeta_model.modified_timestamp
   new_ts = new_sysmeta_pyxb.dateSysMetadataModified
   if old_ts != new_ts:
@@ -214,12 +214,12 @@ def obsoletes_not_specified(sysmeta_pyxb):
 
 def obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid):
   if sysmeta_pyxb.obsoletes is not None:
-    if gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.obsoletes) != old_pid:
+    if gmn.app.util.uvalue(sysmeta_pyxb.obsoletes) != old_pid:
       raise d1_common.types.exceptions.InvalidSystemMetadata(
         0, u'Persistent ID (PID) specified in System Metadata "obsoletes" '
         u'field does not match PID specified in URL. '
         u'sysmeta_pyxb="{}", url="{}"'.format(
-          gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.obsoletes), old_pid
+          gmn.app.util.uvalue(sysmeta_pyxb.obsoletes), old_pid
         )
       )
 
@@ -230,25 +230,26 @@ def revision_references_existing_objects_if_specified(sysmeta_pyxb):
 
 
 def is_in_revision_chain(pid):
-  if not gmn.app.sysmeta_revision.is_in_revision_chain(pid):
+  if not gmn.app.revision.is_in_revision_chain(pid):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, "Object is not in a revision chain. pid={}".format(pid), identifier=pid
+      0, u'Object is not in a revision chain. pid="{}"'.format(pid),
+      identifier=pid
     )
 
 
 def _check_pid_exists_if_specified(sysmeta_pyxb, sysmeta_attr):
-  pid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, sysmeta_attr)
+  pid = gmn.app.util.get_value(sysmeta_pyxb, sysmeta_attr)
   if pid is None:
     return
   if not gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
-    raise d1_common.types.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'System Metadata field references non-existing object. '
       u'field="{}", pid="{}"'.format(sysmeta_attr, pid)
     )
 
 
 def is_not_obsoleted(pid):
-  if gmn.app.sysmeta_revision.is_obsoleted(pid):
+  if gmn.app.revision.is_obsoleted(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Object has already been obsoleted. pid="{}"'.format(pid),
       identifier=pid
@@ -309,18 +310,6 @@ def post_has_mime_parts(request, parts):
     )
 
 
-def xml_document_not_too_large(flo):
-  """Because the entire XML document must be in memory while being deserialized
-  (and probably in several copies at that), limit the size that can be
-  handled."""
-  if flo.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0,
-      u'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
-      .format(flo.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
-    )
-
-
 def date_is_utc(date_time):
   if not d1_common.date_time.is_utc(date_time):
     raise d1_common.types.exceptions.InvalidRequest(
@@ -359,7 +348,7 @@ def url_is_retrievable(url):
 
 
 def url_pid_matches_sysmeta(sysmeta_pyxb, pid):
-  sysmeta_pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+  sysmeta_pid = gmn.app.util.uvalue(sysmeta_pyxb.identifier)
   if sysmeta_pid != pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
@@ -367,3 +356,48 @@ def url_pid_matches_sysmeta(sysmeta_pyxb, pid):
       u'PID specified in the included System Metadata. '
       u'url_pid="{}", sysmeta_pid="{}"'.format(pid, sysmeta_pid)
     )
+
+
+def validate_sysmeta_against_uploaded(request, sysmeta_pyxb):
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' not in request.META:
+    _validate_sysmeta_file_size(request, sysmeta_pyxb)
+    _validate_sysmeta_checksum(request, sysmeta_pyxb)
+
+
+def _validate_sysmeta_file_size(request, sysmeta_pyxb):
+  if sysmeta_pyxb.size != request.FILES['object'].size:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, u'Object size in System Metadata does not match that of the '
+      u'uploaded object. sysmeta_pyxb={} bytes, uploaded={} bytes'
+      .format(sysmeta_pyxb.size, request.FILES['object'].size)
+    )
+
+
+def _validate_sysmeta_checksum(request, sysmeta_pyxb):
+  h = _get_checksum_calculator(sysmeta_pyxb)
+  c = _calculate_object_checksum(request, h)
+  if sysmeta_pyxb.checksum.value().lower() != c.lower():
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0,
+      u'Checksum in System Metadata does not match that of the uploaded object. '
+      u'sysmeta_pyxb="{}", uploaded="{}"'
+      .format(sysmeta_pyxb.checksum.value().lower(), c.lower())
+    )
+
+
+def _get_checksum_calculator(sysmeta_pyxb):
+  try:
+    return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+      sysmeta_pyxb.checksum.algorithm
+    )
+  except LookupError:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, u'Checksum algorithm is unsupported. algorithm="{}"'
+      .format(sysmeta_pyxb.checksum.algorithm)
+    )
+
+
+def _calculate_object_checksum(request, checksum_calculator):
+  for chunk in request.FILES['object'].chunks():
+    checksum_calculator.update(chunk)
+  return checksum_calculator.hexdigest()

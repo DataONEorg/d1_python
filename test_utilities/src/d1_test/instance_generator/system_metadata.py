@@ -23,22 +23,21 @@
 
 from __future__ import absolute_import
 
+import logging
 import os
 import random
-import logging
 
 import d1_common.checksum
-import d1_common.types.dataoneTypes_v2_0 as v2
 
-import d1_test.instance_generator.dates as dates
+import d1_test.instance_generator.access_policy as access_policy
 import d1_test.instance_generator.checksum as checksum_generator
+import d1_test.instance_generator.dates as dates
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.random_data as random_data
-import d1_test.instance_generator.access_policy as access_policy
 import d1_test.instance_generator.replication_policy as replication_policy
 
 
-def generate(options=None, bindings=v2):
+def generate(client, options=None):
   """Generate a random System Metadata object.
 
   {options} is a set of key-value pairs that allow the caller to prevent
@@ -51,7 +50,7 @@ def generate(options=None, bindings=v2):
   """
   options = options or {}
 
-  sysmeta_pyxb = bindings.systemMetadata()
+  sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.serialVersion = random.randint(1, 100)
   sysmeta_pyxb.identifier = options.get(
     'identifier', identifier.generate(prefix='id_')

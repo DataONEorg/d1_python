@@ -19,16 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import onedrive_d1_client
+
+import d1_test.d1_test_case
 
 
 class TestOptions():
   pass
 
 
-class TestD1Client(unittest.TestCase):
+class TestD1Client(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     options = TestOptions()
     options.BASE_URL = 'https://localhost/'

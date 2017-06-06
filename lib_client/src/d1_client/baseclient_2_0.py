@@ -21,14 +21,16 @@
 
 import logging
 
+#=============================================================================
+import d1_common
+import d1_common.type_conversions
+
 import d1_client.baseclient_1_1
 
-# D1
 
-#=============================================================================
-
-
-class DataONEBaseClient_2_0(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
+class DataONEBaseClient_2_0(
+    d1_client.baseclient_1_1.DataONEBaseClient_1_1,
+):
   """Extend DataONEBaseClient_1_1 with functionality common between Member and
   Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
 
@@ -40,11 +42,14 @@ class DataONEBaseClient_2_0(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(DataONEBaseClient_2_0, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 2)
-    kwargs.setdefault('api_minor', 0)
-    d1_client.baseclient_1_1.DataONEBaseClient_1_1.__init__(
-      self, *args, **kwargs
+
+    self._api_major = 2
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
     )
 
   #=============================================================================

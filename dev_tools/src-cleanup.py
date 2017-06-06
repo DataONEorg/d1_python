@@ -24,12 +24,12 @@ from __future__ import absolute_import
 import argparse
 import logging
 
-import d1_common.util
+import file_iterator
 import redbaron
 import redbaron.nodes
 import util
 
-import file_iterator
+import d1_common.util
 
 
 def main():
@@ -77,7 +77,9 @@ def main():
       if is_modified:
         modified_cnt += 1
     except Exception as e:
-      print 'Cleaning failed. error="{}" path="{}"'.format(module_path, str(e))
+      logging.error(
+        'Cleaning failed. error="{}" path="{}"'.format(module_path, str(e))
+      )
       if args.debug:
         raise
 

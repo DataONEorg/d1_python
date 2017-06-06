@@ -21,12 +21,13 @@
 
 import pickle
 import tempfile
-import unittest
 
 import workspace
 
+import d1_test.d1_test_case
 
-class TestWorkspace(unittest.TestCase):
+
+class TestWorkspace(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 

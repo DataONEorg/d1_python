@@ -21,23 +21,24 @@
 
 from __future__ import absolute_import
 
-import StringIO
 import contextlib
 import datetime
 import os
 import re
+import StringIO
 import tempfile
-import unittest
 
-import d1_client.mnclient
-import d1_client_cli.impl.cli
-import d1_client_cli.impl.cli_client
-import d1_client_cli.impl.cli_exceptions as cli_exceptions
-import d1_client_cli.impl.operation_validator
+import freezegun
+import mock
+import pytest
+import responses
+
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes as v2
 import d1_common.util
 import d1_common.xml
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 import d1_test.mock_api.catch_all
 import d1_test.mock_api.get as mock_get
@@ -45,66 +46,67 @@ import d1_test.mock_api.get_log_records as mock_get_log_records
 import d1_test.mock_api.get_system_metadata as mock_get_system_metadata
 import d1_test.mock_api.list_nodes as mock_list_nodes
 import d1_test.mock_api.list_objects as mock_list_objects
-import d1_test.util
-import mock
-import responses
+
+import d1_client.mnclient
+import d1_client_cli.impl.cli
+import d1_client_cli.impl.cli_client
+import d1_client_cli.impl.cli_exceptions as cli_exceptions
+import d1_client_cli.impl.operation_validator
 
 
-class TestCLI(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
+@freezegun.freeze_time('1977-03-27')
+@d1_test.d1_test_case.reproducible_random_decorator('TestCLI')
+class TestCLI(d1_test.d1_test_case.D1TestCase):
+  def setup_method(self, method):
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_set('verbose true')
 
-  def test_0010(self):
+  def test_0010(self, cn_client_v2):
     """preloop(): Successful initialization"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
 
-  def test_0020(self):
+  def test_0020(self, cn_client_v2):
     """preloop(): Successful deinitialization"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.postloop()
-    self.assertIn('Exiting', out_stream.getvalue())
+    assert 'Exiting' in out_stream.getvalue()
 
-  def test_0030(self):
+  def test_0030(self, cn_client_v2):
     """precmd(): Successful line formattting"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
     test_cmd_str = 'somecommand arg1 arg2 arg3'
     received_line = cli.precmd(test_cmd_str)
-    self.assertIn(test_cmd_str, received_line)
+    assert test_cmd_str in received_line
 
-  def test_0040(self):
+  def test_0040(self, cn_client_v2):
     """default(): Yields unknown command"""
     cli = d1_client_cli.impl.cli.CLI()
     test_cmd_str = 'somecommand arg1 arg2 arg3'
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.default(test_cmd_str)
-    self.assertIn('Unknown command: somecommand', out_stream.getvalue())
+    assert 'Unknown command: somecommand' in out_stream.getvalue()
 
-  def test_0050(self):
+  def test_0050(self, cn_client_v2):
     """run_command_line_arguments(): """
     cli = d1_client_cli.impl.cli.CLI()
     test_cmd_str = 'somecommand arg1 arg2 arg3'
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.default(test_cmd_str)
-    self.assertIn('Unknown command: somecommand', out_stream.getvalue())
+    assert 'Unknown command: somecommand' in out_stream.getvalue()
 
-  def test_0060(self):
+  def test_0060(self, cn_client_v2):
     """do_help(): Valid command returns help string"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.stdout = StringIO.StringIO()
     test_cmd_str = 'get'
     cli.do_help(test_cmd_str)
-    self.assertIn('The object is saved to <file>', cli.stdout.getvalue())
+    assert 'The object is saved to <file>' in cli.stdout.getvalue()
 
-  def test_0070(self):
+  def test_0070(self, cn_client_v2):
     """do_history(): Returns history"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
@@ -112,18 +114,18 @@ class TestCLI(unittest.TestCase):
     cli.precmd(test_cmd_str)
     test_cmd_str = 'somecommand2 arg1 arg2 arg3'
     cli.precmd(test_cmd_str)
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_history('')
-    self.assertIn('somecommand1', out_stream.getvalue())
-    self.assertIn('somecommand2', out_stream.getvalue())
+    assert 'somecommand1' in out_stream.getvalue()
+    assert 'somecommand2' in out_stream.getvalue()
 
   # do_exit()
 
-  def test_0080(self):
+  def test_0080(self, cn_client_v2):
     """do_exit(): Gives option to cancel if the operation queue is not empty"""
     self._do_exit('yes', 1)
 
-  def test_0090(self):
+  def test_0090(self, cn_client_v2):
     """do_exit(): Does not exit if cancelled"""
     self._do_exit('no', 0)
 
@@ -141,33 +143,31 @@ class TestCLI(unittest.TestCase):
       'test_pid', tmp_path, 'test_format_id'
     )
     cli._command_processor._operation_queue.append(create_operation)
-    with d1_test.util.capture_std() as (out_stream, err_stream):
-      with d1_test.util.mock_raw_input(answer_str):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+      with d1_test.d1_test_case.mock_raw_input(answer_str):
         with mock.patch('sys.exit', return_value='') as mock_method:
           cli.do_exit('')
-          self.assertEqual(mock_method.call_count, exit_call_count)
-    self.assertIn(
-      'There are 1 unperformed operations in the write operation queue',
-      out_stream.getvalue(),
+          assert mock_method.call_count == exit_call_count
+    assert 'There are 1 unperformed operations in the write operation queue' in out_stream.getvalue(
     )
 
-  def test_0100(self):
+  def test_0100(self, cn_client_v2):
     """do_exit(): Calls sys.exit()"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
     with mock.patch('sys.exit', return_value='') as mock_method:
       cli.do_quit('')
-      self.assertGreater(mock_method.call_count, 0)
+      assert mock_method.call_count > 0
 
-  def test_0110(self):
+  def test_0110(self, cn_client_v2):
     """do_eof(): Calls sys.exit()"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
     with mock.patch('sys.exit', return_value='') as mock_method:
       cli.do_eof('')
-      self.assertGreater(mock_method.call_count, 0)
+      assert mock_method.call_count > 0
 
-  def test_0120(self):
+  def test_0120(self, cn_client_v2):
     """do_reset(), do_set(), do_save(), do_load(): Session to disk round trip"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.preloop()
@@ -183,68 +183,68 @@ class TestCLI(unittest.TestCase):
     cli.do_save(path)
     # Reset and check that values are at their defaults
     cli.do_reset('')
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('editor')
-    self.assertIn('editor: nano', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'editor: nano' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('cn-url')
-    self.assertIn('cn-url: https://cn.dataone.org/cn', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'cn-url: https://cn.dataone.org/cn' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('key-file')
-    self.assertIn('key-file: None', out_stream.getvalue())
+    assert 'key-file: None' in out_stream.getvalue()
     # Load from file and verify
     cli.do_load(path)
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('editor')
-    self.assertIn('editor: test_editor', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'editor: test_editor' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('cn-url')
-    self.assertIn('cn-url: test_cn-url', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'cn-url: test_cn-url' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('key-file')
-    self.assertIn('key-file: test-key-file', out_stream.getvalue())
+    assert 'key-file: test-key-file' in out_stream.getvalue()
 
-  def test_0130(self):
+  def test_0130(self, cn_client_v2):
     """set: Command gives expected output on flag toggle"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('verbose true')
-    self.assertIn('verbose to "true"', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'verbose to "true"' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('verbose false')
-    self.assertIn('verbose to "false"', out_stream.getvalue())
+    assert 'verbose to "false"' in out_stream.getvalue()
 
-  def test_0140(self):
+  def test_0140(self, cn_client_v2):
     """set: Command gives expected output when setting count"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('count 2')
-    self.assertIn('count to "2"', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'count to "2"' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('count 3')
-    self.assertIn('count to "3"', out_stream.getvalue())
+    assert 'count to "3"' in out_stream.getvalue()
 
-  def test_0150(self):
+  def test_0150(self, cn_client_v2):
     """set: Command gives expected output when setting query string"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('query a=b')
-    self.assertIn('variable query to "a=b"', out_stream.getvalue())
+    assert 'variable query to "a=b"' in out_stream.getvalue()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0160(self):
+  def test_0160(self, cn_client_v2):
     """ping: Returns server status"""
-    d1_test.mock_api.catch_all.add_callback('http://responses/mn')
+    d1_test.mock_api.catch_all.add_callback('http://mock/node')
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
-      cli.do_set('cn-url http://responses/mn')
-      cli.do_set('mn-url http://responses/mn')
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+      cli.do_set('cn-url http://mock/node')
+      cli.do_set('mn-url http://mock/node')
       cli.do_ping('')
 
-  def test_0170(self):
+  def test_0170(self, cn_client_v2):
     """do_allowaccess(): Correctly sets access control"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_allowaccess('test_subject_1 write')
       cli.do_allowaccess('test_subject_2 write')
       cli.do_allowaccess('test_subject_3 changePermission')
@@ -253,74 +253,66 @@ class TestCLI(unittest.TestCase):
       for allow_pyxb in access_pyxb.allow:
         if allow_pyxb in ('test_subject_1', 'test_subject_2', 'test_subject_3'):
           check_cnt += 1
-    self.assertEqual(check_cnt, 3)
-    self.assertIn(
-      'Set changePermission access for subject "test_subject_3"',
-      out_stream.getvalue()
-    )
+    assert check_cnt == 3
+    assert 'Set changePermission access for subject "test_subject_3"' in out_stream.getvalue()
 
-  def test_0180(self):
+  def test_0180(self, cn_client_v2):
     """do_denyaccess(): Subject without permissions raises InvalidArguments"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
     cli.do_allowaccess('test_subject_2 write')
     cli.do_allowaccess('test_subject_3 changePermission')
-    self.assertRaises(
-      cli_exceptions.InvalidArguments,
-      cli.do_denyaccess,
-      'unknown_subject',
-    )
+    with pytest.raises(cli_exceptions.InvalidArguments):
+      cli.do_denyaccess(
+        'unknown_subject',
+      )
 
-  def test_0190(self):
+  def test_0190(self, cn_client_v2):
     """do_denyaccess(): Subject with permissions is removed"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
     cli.do_allowaccess('test_subject_2 write')
     cli.do_allowaccess('test_subject_3 changePermission')
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('')
     env_str = out_stream.getvalue()
-    self.assertIn('test_subject_3: changePermission', env_str)
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'test_subject_3: changePermission' in env_str
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_denyaccess('test_subject_3')
-    self.assertIn('Removed subject "test_subject_3"', out_stream.getvalue())
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    assert 'Removed subject "test_subject_3"' in out_stream.getvalue()
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('')
     env_str = out_stream.getvalue()
-    self.assertIn('test_subject_1: write', env_str)
-    self.assertIn('test_subject_2: write', env_str)
-    self.assertNotIn('test_subject_3: changePermission', env_str)
+    assert 'test_subject_1: write' in env_str
+    assert 'test_subject_2: write' in env_str
+    assert 'test_subject_3: changePermission' not in env_str
 
-  def test_0200(self):
+  def test_0200(self, cn_client_v2):
     """do_clearaccess(): Removes all subjects"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
     cli.do_allowaccess('test_subject_2 write')
     cli.do_allowaccess('test_subject_3 changePermission')
     cli.do_clearaccess('')
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_set('')
     env_str = out_stream.getvalue()
-    self.assertNotIn('test_subject_1: write', env_str)
-    self.assertNotIn('test_subject_2: write', env_str)
-    self.assertNotIn('test_subject_3: changePermission', env_str)
+    assert 'test_subject_1: write' not in env_str
+    assert 'test_subject_2: write' not in env_str
+    assert 'test_subject_3: changePermission' not in env_str
 
-  def test_0210(self):
+  def test_0210(self, cn_client_v2):
     """do_allowrep(), do_denyrep(): Toggles replication"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
     cli.do_allowrep('')
-    self.assertTrue(
-      cli._command_processor.get_session().get_replication_policy()
+    assert cli._command_processor.get_session().get_replication_policy() \
       .get_replication_allowed()
-    )
     cli.do_denyrep('')
-    self.assertFalse(
-      cli._command_processor.get_session().get_replication_policy()
+    assert not cli._command_processor.get_session().get_replication_policy() \
       .get_replication_allowed()
-    )
 
-  def test_0220(self):
+  def test_0220(self, cn_client_v2):
     """do_preferrep(): Adds preferred replication targets"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -329,12 +321,10 @@ class TestCLI(unittest.TestCase):
     cli.do_preferrep('preferred-mn-3')
     preferred_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_preferred()
-    self.assertListEqual(
-      ['preferred-mn-1', 'preferred-mn-2', 'preferred-mn-3'],
-      preferred_mn_list,
-    )
+    assert ['preferred-mn-1', 'preferred-mn-2', 'preferred-mn-3'] == \
+      preferred_mn_list
 
-  def test_0230(self):
+  def test_0230(self, cn_client_v2):
     """do_blockrep(): Adds blocked replication targets"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -343,12 +333,10 @@ class TestCLI(unittest.TestCase):
     cli.do_blockrep('blocked-mn-3')
     blocked_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_blocked()
-    self.assertListEqual(
-      ['blocked-mn-1', 'blocked-mn-2', 'blocked-mn-3'],
-      blocked_mn_list,
-    )
+    assert ['blocked-mn-1', 'blocked-mn-2', 'blocked-mn-3'] == \
+      blocked_mn_list
 
-  def test_0240(self):
+  def test_0240(self, cn_client_v2):
     """do_removerep(): Adds blocked replication targets"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -362,27 +350,23 @@ class TestCLI(unittest.TestCase):
     cli.do_removerep('preferred-mn-3')
     preferred_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_preferred()
-    self.assertListEqual(
-      ['preferred-mn-1', 'preferred-mn-2'],
-      preferred_mn_list,
-    )
+    assert ['preferred-mn-1', 'preferred-mn-2'] == \
+      preferred_mn_list
     blocked_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_blocked()
-    self.assertListEqual(
-      ['blocked-mn-1', 'blocked-mn-3'],
-      blocked_mn_list,
-    )
+    assert ['blocked-mn-1', 'blocked-mn-3'] == \
+      blocked_mn_list
 
-  def test_0250(self):
+  def test_0250(self, cn_client_v2):
     """do_numberrep(): Sets preferred number of replicas"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
     cli.do_numberrep('42')
     received_num_replicas = cli._command_processor.get_session(
     ).get_replication_policy().get_number_of_replicas()
-    self.assertEqual(received_num_replicas, 42)
+    assert received_num_replicas == 42
 
-  def test_0260(self):
+  def test_0260(self, cn_client_v2):
     """do_clearrep(): Resets replication policy to default"""
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -394,18 +378,18 @@ class TestCLI(unittest.TestCase):
     cli.do_clearrep('')
     preferred_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_preferred()
-    self.assertFalse(preferred_mn_list)
+    assert not preferred_mn_list
     blocked_mn_list = cli._command_processor.get_session(
     ).get_replication_policy().get_blocked()
-    self.assertFalse(blocked_mn_list)
+    assert not blocked_mn_list
 
   @responses.activate
-  def test_0270(self):
+  def test_0270(self, cn_client_v2):
     """list nodes: Gives expected output"""
     mock_list_nodes.add_callback('http://responses/cn')
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_set('cn-url http://responses/cn')
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_listnodes('')
     node_line = (
       '         cn \tcn-ucsb-1                               '
@@ -413,10 +397,10 @@ class TestCLI(unittest.TestCase):
       '\tcn-unm-1                                '
       '\thttps://cn-unm-1.dataone.org/cn\n'
     )
-    self.assertIn(node_line, out_stream.getvalue())
+    assert node_line in out_stream.getvalue()
 
   @responses.activate
-  def test_0280(self):
+  def test_0280(self, cn_client_v2):
     """do_get(): Successful file download"""
     mock_get.add_callback('http://responses/cn')
     cli = d1_client_cli.impl.cli.CLI()
@@ -429,10 +413,10 @@ class TestCLI(unittest.TestCase):
       received_sciobj_str = f.read()
     client = d1_client.mnclient.MemberNodeClient('http://responses/cn')
     expected_sciobj_str = client.get(pid_str).content
-    self.assertEqual(received_sciobj_str, expected_sciobj_str)
+    assert received_sciobj_str == expected_sciobj_str
 
   @responses.activate
-  def test_0290(self):
+  def test_0290(self, cn_client_v2):
     """do_meta(): Successful system metadata download"""
     mock_get_system_metadata.add_callback('http://responses/cn')
     cli = d1_client_cli.impl.cli.CLI()
@@ -450,7 +434,7 @@ class TestCLI(unittest.TestCase):
     )
 
   @responses.activate
-  def test_0300(self):
+  def test_0300(self, cn_client_v2):
     """do_list(): Successful object listing"""
     mock_list_objects.add_callback('http://responses/cn')
     cli = d1_client_cli.impl.cli.CLI()
@@ -475,13 +459,11 @@ class TestCLI(unittest.TestCase):
         client.listObjects().toxml('utf-8'),
       )
     )
-    self.assertTrue(
-      d1_common.xml.
+    assert d1_common.xml. \
       is_equal_xml(received_object_list_xml, expected_object_list_xml)
-    )
 
   @responses.activate
-  def test_0310(self):
+  def test_0310(self, cn_client_v2):
     """do_log(): Successful object listing"""
     mock_get_log_records.add_callback('http://responses/cn')
     cli = d1_client_cli.impl.cli.CLI()
@@ -498,103 +480,70 @@ class TestCLI(unittest.TestCase):
       log_entry.dateLogged = now
     for log_entry in expected_event_log_pyxb.logEntry:
       log_entry.dateLogged = now
-    self.assertTrue(
-      d1_common.xml.
+    assert d1_common.xml. \
       is_equal_pyxb(received_event_log_pyxb, expected_event_log_pyxb)
-    )
 
   #
   # Write Operations
   #
 
   @d1_test.mock_api.catch_all.activate
-  def test_0320(self):
+  @freezegun.freeze_time('1977-02-27')
+  def test_0320(self, cn_client_v2):
     """do_create(): Expected REST call is issued"""
-    d1_test.mock_api.catch_all.add_callback('http://responses/mn')
+    d1_test.mock_api.catch_all.add_callback('http://mock/node')
     cli = d1_client_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
         cli, cli.do_create, '{pid} {tmp_file_path}'
-    ) as pid_str:
+    ):
       self._assert_queued_operations(cli, 1, 'create')
       # Check cancel
-      with d1_test.util.capture_std() as (out_stream, err_stream):
-        with d1_test.util.mock_raw_input('no'):
-          self.assertRaises(cli_exceptions.InvalidArguments, cli.do_run, '')
-          self.assertIn('Continue', out_stream.getvalue())
+      with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+        with d1_test.d1_test_case.mock_raw_input('no'):
+          with pytest.raises(cli_exceptions.InvalidArguments):
+            cli.do_run('')
+          assert 'Continue' in out_stream.getvalue()
       # Check create
       with mock.patch(
           'd1_client_cli.impl.cli_client.CLIMNClient.create'
       ) as mock_client:
-        with d1_test.util.capture_std() as (out_stream, err_stream):
-          with d1_test.util.mock_raw_input('yes'):
+        with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+          with d1_test.d1_test_case.mock_raw_input('yes'):
             cli.do_run('')
       name, args, kwargs = mock_client.mock_calls[0]
       create_pid_str, tmp_file, create_sysmeta_pyxb = args
-      expected_sysmeta_xml = """<?xml version="1.0" ?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>1</serialVersion>
-  <identifier>{pid}</identifier>
-  <formatId>test-format-id</formatId>
-  <size>{size}</size>
-  <checksum algorithm="SHA-1">{hash}</checksum>
-  <rightsHolder>test-rights-holder-subject</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>test_subject_1</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>test_subject_3</subject>
-      <permission>changePermission</permission>
-    </allow>
-  </accessPolicy>
-  <replicationPolicy numberReplicas="42" replicationAllowed="true">
-    <preferredMemberNode>preferred-mn-2</preferredMemberNode>
-    <blockedMemberNode>blocked-mn-1</blockedMemberNode>
-    <blockedMemberNode>blocked-mn-2</blockedMemberNode>
-  </replicationPolicy>
-  <dateUploaded>2017-04-30T14:03:16.923319</dateUploaded>
-  <dateSysMetadataModified>2017-04-30T14:03:16.923319</dateSysMetadataModified>
-</ns1:systemMetadata>""".format(
-        pid=pid_str,
-        hash=create_sysmeta_pyxb.checksum.value(),
-        size=create_sysmeta_pyxb.size,
+      d1_common.system_metadata.normalize(
+        create_sysmeta_pyxb, reset_timestamps=True
       )
-      self.assertTrue(
-        d1_common.system_metadata.is_equivalent_xml(
-          expected_sysmeta_xml,
-          create_sysmeta_pyxb.toxml('utf-8'),
-          ignore_timestamps=True,
-        )
-      )
+      self.assert_equals_sample(create_sysmeta_pyxb, 'do_create', cn_client_v2)
 
-  def test_0330(self):
+  def test_0330(self, cn_client_v2):
     """do_clearqueue(): Queue can be cleared"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       with self._add_write_operation_to_queue(
           cli, cli.do_create, '{pid} {tmp_file_path}'
       ):
         self._assert_queued_operations(cli, 1, 'create')
-        with d1_test.util.mock_raw_input('yes'):
+        with d1_test.d1_test_case.mock_raw_input('yes'):
           cli.do_clearqueue('')
         self._assert_queue_empty(cli)
-    self.assertIn('You are about to clear', out_stream.getvalue())
+    assert 'You are about to clear' in out_stream.getvalue()
 
-  def test_0340(self):
+  def test_0340(self, cn_client_v2):
     """do_update(): Task is added to queue"""
     cli = d1_client_cli.impl.cli.CLI()
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       with self._add_write_operation_to_queue(
           cli, cli.do_update, 'old_pid {pid} {tmp_file_path}'
       ):
         self._assert_queued_operations(cli, 1, 'update')
-        with d1_test.util.mock_raw_input('yes'):
+        with d1_test.d1_test_case.mock_raw_input('yes'):
           cli.do_clearqueue('')
         self._assert_queue_empty(cli)
-    self.assertIn('You are about to clear', out_stream.getvalue())
+    assert 'You are about to clear' in out_stream.getvalue()
 
-  def test_0350(self):
+  def test_0350(self, cn_client_v2):
     """do_package(): Task is added to queue"""
     cli = d1_client_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
@@ -606,7 +555,7 @@ class TestCLI(unittest.TestCase):
       self._clear_queue(cli)
       self._assert_queue_empty(cli)
 
-  def test_0360(self):
+  def test_0360(self, cn_client_v2):
     """do_archive(): Tasks are added to queue for each pid"""
     cli = d1_client_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
@@ -618,7 +567,7 @@ class TestCLI(unittest.TestCase):
       self._clear_queue(cli)
       self._assert_queue_empty(cli)
 
-  def test_0370(self):
+  def test_0370(self, cn_client_v2):
     """do_updateaccess(): Tasks are added to queue for each pid"""
     cli = d1_client_cli.impl.cli.CLI()
     with self._disable_check_for_authenticated_access():
@@ -631,7 +580,7 @@ class TestCLI(unittest.TestCase):
         self._clear_queue(cli)
         self._assert_queue_empty(cli)
 
-  def test_0380(self):
+  def test_0380(self, cn_client_v2):
     """do_updatereplication(): Tasks are added to queue for each pid"""
     cli = d1_client_cli.impl.cli.CLI()
     with self._disable_check_for_authenticated_access():
@@ -645,17 +594,16 @@ class TestCLI(unittest.TestCase):
         self._assert_queue_empty(cli)
 
   def _assert_queue_empty(self, cli):
-    self.assertRaises(
-      cli_exceptions.InvalidArguments,
-      cli.do_queue,
-      '',
-    )
+    with pytest.raises(cli_exceptions.InvalidArguments):
+      cli.do_queue(
+        '',
+      )
 
   def _clear_queue(self, cli):
-    with d1_test.util.capture_std() as (out_stream, err_stream):
-      with d1_test.util.mock_raw_input('yes'):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
+      with d1_test.d1_test_case.mock_raw_input('yes'):
         cli.do_clearqueue('')
-      self.assertIn('You are about to clear', out_stream.getvalue())
+      assert 'You are about to clear' in out_stream.getvalue()
 
   @contextlib.contextmanager
   def _add_write_operation_to_queue(
@@ -671,8 +619,8 @@ class TestCLI(unittest.TestCase):
     cli.do_set('authoritative-mn urn:node:myTestMN')
     cli.do_set('rights-holder test-rights-holder-subject')
     cli.do_set('format-id test-format-id')
-    cli.do_set('cn-url http://responses/mn')
-    cli.do_set('mn-url http://responses/mn')
+    cli.do_set('cn-url http://mock/node')
+    cli.do_set('mn-url http://mock/node')
     pid_str = 'test_pid_{}'.format(
       d1_test.instance_generator.random_data.random_3_words()
     )
@@ -683,7 +631,7 @@ class TestCLI(unittest.TestCase):
       'pid': pid_str,
       'tmp_file_path': tmp_file.name,
     })
-    with d1_test.util.capture_std():
+    with d1_test.d1_test_case.capture_std():
       write_fun(cmd_format_str.format(**kwargs_dict))
     yield pid_str
     os.unlink(tmp_file.name)
@@ -699,49 +647,47 @@ class TestCLI(unittest.TestCase):
 
   def _assert_queued_operations(self, cli, num_operations, operation_str):
     # print cli.do_queue('')
-    with d1_test.util.capture_std() as (out_stream, err_stream):
+    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_queue('')
     queue_str = out_stream.getvalue()
-    self.assertRegexpMatches(
-      queue_str, r'operation:\s*{}'.format(operation_str)
-    )
-    self.assertRegexpMatches(queue_str, r'\d+ of {}'.format(num_operations))
+    assert re.search(r'operation:\s*{}'.format(operation_str), queue_str)
+    assert re.search(r'\d+ of {}'.format(num_operations), queue_str)
 
-  def test_0390(self):
+  def test_0390(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = '*:* dateModified:[* TO *]'
     args = ' '.join(filter(None, ()))
     cli = d1_client_cli.impl.cli.CLI()
     actual = cli._command_processor._create_solr_query(args)
-    self.assertEquals(expect, actual)
+    assert expect == actual
 
-  def test_0400(self):
+  def test_0400(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
     cli = d1_client_cli.impl.cli.CLI()
     actual = cli._command_processor._create_solr_query(args)
-    self.assertEquals(expect, actual)
+    assert expect == actual
 
-  def test_0410(self):
+  def test_0410(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_set('query abstract:water')
     actual = cli._command_processor._create_solr_query(args)
-    self.assertEquals(expect, actual)
+    assert expect == actual
 
-  def test_0420(self):
+  def test_0420(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
     cli = d1_client_cli.impl.cli.CLI()
     cli.do_set('query abstract:water')
     actual = cli._command_processor._create_solr_query(args)
-    self.assertEquals(expect, actual)
+    assert expect == actual
 
-  def test_0430(self):
+  def test_0430(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* formatId:text/csv dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
@@ -749,4 +695,4 @@ class TestCLI(unittest.TestCase):
     cli.do_set('query None')
     cli.do_set('search-format-id text/csv')
     actual = cli._command_processor._create_solr_query(args)
-    self.assertEquals(expect, actual)
+    assert expect == actual

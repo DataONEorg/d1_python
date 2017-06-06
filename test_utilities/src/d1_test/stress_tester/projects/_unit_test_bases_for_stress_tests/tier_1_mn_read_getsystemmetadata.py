@@ -29,11 +29,13 @@
 """
 
 import context
+import pytest
+import test_client
 
 import d1_common.const
 import d1_common.types.exceptions
+
 import d1_test_case
-import test_client
 
 
 class Test080GetSystemMetadata(d1_test_case.D1TestCase):
@@ -44,10 +46,8 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
     """404 NotFound when attempting to get non-existing SysMeta.
     """
     client = test_client.TestClient(context.node['baseurl'])
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, client.getSystemMetadata,
-      context.TOKEN, '_invalid_pid_'
-    )
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      client.getSystemMetadata(context.TOKEN, '_invalid_pid_')
 
   def test_020_get_sysmeta_by_valid_pid(self):
     """Successful retrieval of valid SysMeta objects.
@@ -58,21 +58,13 @@ class Test080GetSystemMetadata(d1_test_case.D1TestCase):
         pid = object_info.identifier.value()
         sys_meta = client.getSystemMetadata(context.TOKEN, pid)
         # Verify that identifier in SysMeta matches the one that was retrieved.
-        self.assertEqual(
-          object_info.identifier.value(), sys_meta.identifier.value()
-        )
+        assert object_info.identifier.value() == sys_meta.identifier.value()
         # Verify that object format matches listObjects.
-        self.assertEqual(object_info.objectFormat, sys_meta.objectFormat)
+        assert object_info.objectFormat == sys_meta.objectFormat
         # Verify that date matches listObjects.
-        self.assertEqual(
-          object_info.dateSysMetadataModified, sys_meta.dateSysMetadataModified
-        )
+        assert object_info.dateSysMetadataModified == sys_meta.dateSysMetadataModified
         # Verify that size matches listObjects.
-        self.assertEqual(object_info.size, sys_meta.size)
+        assert object_info.size == sys_meta.size
         # Verify that checksum and checksum algorithm matches listObjects.
-        self.assertEqual(
-          object_info.checksum.value(), sys_meta.checksum.value()
-        )
-        self.assertEqual(
-          object_info.checksum.algorithm, sys_meta.checksum.algorithm
-        )
+        assert object_info.checksum.value() == sys_meta.checksum.value()
+        assert object_info.checksum.algorithm == sys_meta.checksum.algorithm

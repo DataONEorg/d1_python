@@ -26,19 +26,19 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
-
-import re
 import logging
+import os
+import re
 
 import responses
 
-import d1_common.url
-import d1_common.util
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
+import d1_common.util
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 # Config
 
@@ -64,10 +64,29 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
-  node_list_xml_path = d1_common.util.abs_path('./type_docs/node_list_2_0.xml')
-  with open(node_list_xml_path, 'r') as f:
+  version_tag = _parse_url(request.url)
+  if version_tag == 'v1':
+    type_doc_name = 'node_list_1_0.xml'
+  elif version_tag == 'v2':
+    type_doc_name = 'node_list_2_0.xml'
+  else:
+    assert False, \
+      'Type doc not available for version. tag="{}"'.format(version_tag)
+  node_list_xml_path = d1_common.util.abs_path(
+    os.path.join('type_docs', type_doc_name)
+  )
+  with open(node_list_xml_path, 'rb') as f:
     node_list_xml = f.read()
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
   return 200, header_dict, node_list_xml
+
+
+def _parse_url(url):
+  version_tag, endpoint_str, param_list, query_dict, client = (
+    d1_test.mock_api.util.parse_rest_url(url)
+  )
+  assert endpoint_str == 'node'
+  assert not param_list, 'listNodes() accepts no parameters'
+  return version_tag

@@ -31,8 +31,10 @@
 import os
 
 import context
-import d1_test_case
+import pytest
 import test_client
+
+import d1_test_case
 
 
 class TestUpdate(d1_test_case.D1TestCase):
@@ -68,9 +70,10 @@ class TestUpdate(d1_test_case.D1TestCase):
     pid = self.find_valid_pid(client)
     # Delete the object on GMN.
     pid_deleted = client.delete(context.TOKEN, pid)
-    self.assertEqual(pid, pid_deleted.value())
+    assert pid == pid_deleted.value()
     # Verify that the object no longer exists.
     # We check for SyntaxError raised by the XML deserializer when it attempts
     # to deserialize a DataONEException. The exception is caused by the body
     # being empty since describe() uses a HEAD request.
-    self.assertRaises(SyntaxError, client.describe, context.TOKEN, pid)
+    with pytest.raises(SyntaxError):
+      client.describe(context.TOKEN, pid)

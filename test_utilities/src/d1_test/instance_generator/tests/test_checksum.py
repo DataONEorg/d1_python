@@ -19,19 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import d1_common.checksum
+
+import d1_test.d1_test_case
 import d1_test.instance_generator.checksum as checksum
 
 #===============================================================================
 
 
-class TestChecksum(unittest.TestCase):
+class TestChecksum(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
   def test_0010(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
-    self.assertTrue(d1_common.checksum.is_supported_algorithm(algorithm_str))
+    assert d1_common.checksum.is_supported_algorithm(algorithm_str)

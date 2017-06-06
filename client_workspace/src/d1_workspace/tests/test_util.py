@@ -20,13 +20,14 @@
 # limitations under the License.
 
 import sys
-import unittest
+
+import d1_test.d1_test_case
 
 # D1
 sys.path.append('..')
 
 
-class TestUtil(unittest.TestCase):
+class TestUtil(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 

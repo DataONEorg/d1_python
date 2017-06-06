@@ -30,10 +30,10 @@ import d1_client.d1client
 import d1_client.mnclient
 
 import gmn.app.auth
-import gmn.app.models
-import gmn.app.sysmeta
 import gmn.app.event_log
 import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.sysmeta
 
 import django.conf
 import django.core.management.base
@@ -169,7 +169,7 @@ class SysMetaRefreshQueueProcessor(object):
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
-    if gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier) != pid:
+    if gmn.app.util.uvalue(sysmeta_pyxb.identifier) != pid:
       raise RefreshError(
         u'PID in retrieved System Metadata does not match the object for which '
         u'refresh was requested. pid="{}"'.format(pid)

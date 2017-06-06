@@ -18,12 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datetime
 import random
 import string
-import datetime
 
-import d1_common.const
 import d1_common.checksum
+import d1_common.const
 import d1_common.types.dataoneTypes_v1 as v1
 import d1_common.types.dataoneTypes_v2_0 as v2
 
@@ -76,12 +76,12 @@ def _generate_system_metadata_for_science_object(
 ):
   now = datetime.datetime.now()
   if use_v1_bool:
-    binding = v1
+    client = v1
   else:
-    binding = v2
+    client = v2
 
-  sysmeta_pyxb = binding.systemMetadata()
-  sysmeta_pyxb.accessPolicy = _generate_public_access_policy(binding)
+  sysmeta_pyxb = client.bindings.systemMetadata()
+  sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
   sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object(sciobj_str)
   sysmeta_pyxb.dateSysMetadataModified = now
   sysmeta_pyxb.dateUploaded = now
@@ -101,11 +101,11 @@ def _generate_system_metadata_for_science_object(
   return sysmeta_pyxb
 
 
-def _generate_public_access_policy(binding):
-  access_policy_pyxb = binding.accessPolicy()
-  access_rule_pyxb = binding.AccessRule()
+def _generate_public_access_policy(client):
+  access_policy_pyxb = client.bindings.accessPolicy()
+  access_rule_pyxb = client.bindings.AccessRule()
   access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission_pyxb = binding.Permission('read')
+  permission_pyxb = client.bindings.Permission('read')
   access_rule_pyxb.permission.append(permission_pyxb)
   access_policy_pyxb.append(access_rule_pyxb)
   return access_policy_pyxb

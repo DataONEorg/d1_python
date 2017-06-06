@@ -31,17 +31,17 @@ A NotFound exception can be triggered by passing a formatId that starts with
 "<NotFound>".
 """
 
-import re
 import logging
+import re
 
 import responses
 
-import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 # Config
 N_TOTAL = 100
@@ -66,11 +66,11 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid_str, pyxb_bindings = _parse_url(request.url)
+  pid_str, client = _parse_url(request.url)
   if pid_str.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  body_str = _generate_object_location_list(pyxb_bindings, pid_str)
+  body_str = _generate_object_location_list(client, pid_str)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
@@ -79,21 +79,21 @@ def _request_callback(request):
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'resolve'
   assert len(param_list) == 1, 'resolve() accept a single parameter, the pid'
-  return param_list[0], pyxb_bindings
+  return param_list[0], client
 
 
-def _generate_object_location_list(pyxb_bindings, pid_str):
-  objectLocationList = pyxb_bindings.objectLocationList()
+def _generate_object_location_list(client, pid_str):
+  objectLocationList = client.bindings.objectLocationList()
   objectLocationList.identifier = pid_str
 
   for i in range(3):
     pid_str = 'resolved_pid_{}'.format(i)
-    objectLocation = pyxb_bindings.ObjectLocation()
+    objectLocation = client.bindings.ObjectLocation()
     objectLocation.nodeIdentifier = 'urn:node:testResolve{}'.format(i)
     objectLocation.baseURL = 'https://{}.some.base.url/mn'.format(i)
     objectLocation.version = 'v2'

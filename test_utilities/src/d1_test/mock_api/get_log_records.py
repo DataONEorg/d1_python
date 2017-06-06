@@ -30,20 +30,18 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
-import logging
 import datetime
+import logging
+import re
 
 import responses
-import pyxb.utils.domutils
-import pyxb.namespace.utility
 
-import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 # Config
 
@@ -68,10 +66,10 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
-  query_dict, pyxb_bindings = _parse_log_url(request.url)
+  query_dict, client = _parse_log_url(request.url)
   n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
   # TODO: Add support for filters: fromDate, toDate, pidFilter
-  body_str = _generate_log_records(pyxb_bindings, n_start, n_count)
+  body_str = _generate_log_records(client, n_start, n_count)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
@@ -79,22 +77,22 @@ def _request_callback(request):
 
 
 def _parse_log_url(url):
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'log'
   assert len(param_list) == 0, 'log() does not accept any parameters'
-  return query_dict, pyxb_bindings
+  return query_dict, client
 
 
-def _generate_log_records(pyxb_bindings, n_start, n_count):
+def _generate_log_records(client, n_start, n_count):
   if n_start + n_count > N_TOTAL:
     n_count = N_TOTAL - n_start
 
-  log = pyxb_bindings.log()
+  log = client.bindings.log()
 
   for i in range(n_count):
-    logEntry = pyxb_bindings.LogEntry()
+    logEntry = client.bindings.LogEntry()
 
     logEntry.entryId = str(i)
     logEntry.identifier = 'object#{}'.format(n_start + i)
@@ -111,5 +109,5 @@ def _generate_log_records(pyxb_bindings, n_start, n_count):
   log.count = len(log.logEntry)
   log.total = N_TOTAL
 
-  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
+  #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return log.toxml('utf-8')

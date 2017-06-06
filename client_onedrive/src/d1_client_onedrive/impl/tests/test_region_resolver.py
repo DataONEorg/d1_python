@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import object_tree_test_sample
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.resolver.region as region
 
@@ -32,7 +32,7 @@ class TestOptions():
   pass
 
 
-class TestRegionResolver(unittest.TestCase):
+class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     options = TestOptions()
     options.base_url = 'https://localhost/'
@@ -55,62 +55,58 @@ class TestRegionResolver(unittest.TestCase):
     dst = {}
     src = {}
     self._resolver._merge_region_trees(dst, src, 'testpid')
-    self.assertEqual(dst, {})
+    assert dst == {}
 
   def test_0030(self):
     """_merge_region_trees(): Merge simple to empty"""
     dst = {}
     src = {'d1': {}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
-    self.assertEqual(
-      dst, {
-        'd2': {
-          'd21': {
-            'testpid': None
-          },
-          'd22': {
-            'testpid': None,
-            'd31': {
-              'testpid': None
-            }
-          },
+    assert dst == {
+      'd2': {
+        'd21': {
           'testpid': None
         },
-        'd1': {
-          'testpid': None
-        }
+        'd22': {
+          'testpid': None,
+          'd31': {
+            'testpid': None
+          }
+        },
+        'testpid': None
+      },
+      'd1': {
+        'testpid': None
       }
-    )
+    }
 
   def test_0040(self):
     """_merge_region_trees(): Merge simple to simple"""
     dst = {'f1': None, 'd1': {'f21': None}}
     src = {'d1': {}, 'd2': {}, 'd3': {'d31': {'d311': {}}, 'd32': {}}}
     self._resolver._merge_region_trees(dst, src, 'testpid')
-    self.assertEqual(
-      dst, {
-        'f1': None,
-        'd2': {
+    assert dst == {
+      'f1': None,
+      'd2': {
+        'testpid': None
+      },
+      'd3': {
+        'd32': {
           'testpid': None
         },
-        'd3': {
-          'd32': {
+        'testpid': None,
+        'd31': {
+          'd311': {
             'testpid': None
           },
-          'testpid': None,
-          'd31': {
-            'd311': {
-              'testpid': None
-            },
-            'testpid': None
-          }
-        },
-        'd1': {
-          'f21': None,
           'testpid': None
         }
+      },
+      'd1': {
+        'f21': None,
+        'testpid': None
       }
-    )
+    }
 
   def test_0050(self):
     """_merge_region_trees(): Merge simple to complex"""
@@ -144,61 +140,59 @@ class TestRegionResolver(unittest.TestCase):
       }
     }
     self._resolver._merge_region_trees(dst, src, 'x')
-    self.assertEqual(
-      dst, {
-        'f1': None,
-        'd2': {
-          'd21': {},
-          'x': None,
-          'd22': {
-            'd31': {}
-          }
+    assert dst == {
+      'f1': None,
+      'd2': {
+        'd21': {},
+        'x': None,
+        'd22': {
+          'd31': {}
+        }
+      },
+      'd3': {
+        'x': None,
+        'd32': {
+          'x': None
         },
-        'd3': {
+        'd31': {
           'x': None,
-          'd32': {
-            'x': None
-          },
-          'd31': {
+          'd311': {
             'x': None,
-            'd311': {
-              'x': None,
-              'f3111': {
-                'x': None
-              }
+            'f3111': {
+              'x': None
             }
           }
+        }
+      },
+      'd1': {
+        'x': None,
+        'f11': {
+          'x': None
         },
-        'd1': {
-          'x': None,
-          'f11': {
-            'x': None
-          },
-          'd11': {},
-          'd12': {
-            'f121': None
-          }
+        'd11': {},
+        'd12': {
+          'f121': None
         }
       }
-    )
+    }
 
   def test_0060(self):
     """_merge_region_trees(): Handle merge conflict 1"""
     dst = {'x1': {}}
     src = {'x1': None}
     self._resolver._merge_region_trees(dst, src, 'x')
-    self.assertEqual(dst, {'x1': {'x': None}})
+    assert dst == {'x1': {'x': None}}
 
   def test_0070(self):
     """_merge_region_trees(): Handle merge conflict 2"""
     dst = {'x1': {'x': None}}
     src = {'x1': {'x': {}}}
     self._resolver._merge_region_trees(dst, src, 'x')
-    self.assertEqual(dst, {'x1': {'x': {'x': None}}})
+    assert dst == {'x1': {'x': {'x': None}}}
 
   def test_0080(self):
     """_merge_region_trees(): Handle merge conflict 3"""
     dst = {}
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')
-    self.assertEqual(dst, {'d1': {'x': None, 'y': None}})
+    assert dst == {'d1': {'x': None, 'y': None}}

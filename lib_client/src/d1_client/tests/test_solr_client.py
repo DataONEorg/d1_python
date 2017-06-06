@@ -24,23 +24,22 @@ Note: Currently issues requests to cn.dataone.org
 
 TODO: Create Solr mockup
 """
-import unittest
-
 import d1_common.util
+
+import d1_test.d1_test_case
 
 import d1_client.solr_client
 
-# CN_RESPONSES_BASE_URL = 'http://responses/cn'
 CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
 
 
-class TestSolrClientReal(unittest.TestCase):
+class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def _assert_at_least_one_populated_row(self, rows):
-    self.assertTrue(any(rows), 'Expected at least one populated row in results')
+    assert any(rows), 'Expected at least one populated row in results'
 
   #=============================================================================
   # SolrClient()
@@ -52,10 +51,8 @@ class TestSolrClientReal(unittest.TestCase):
   def test_0020(self):
     """str()"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    self.assertEquals(
-      str(solr_client),
-      '''SolrClient(base_url="{}")'''.format(CN_RESPONSES_BASE_URL),
-    )
+    assert str(solr_client) == \
+      '''SolrClient(base_url="{}")'''.format(CN_RESPONSES_BASE_URL)
 
   # search()
 
@@ -84,9 +81,9 @@ class TestSolrClientReal(unittest.TestCase):
     }
     if 'maxScore' in response_dict['response']:
       del response_dict['response']['maxScore']
-    self.assertIn('QTime', response_dict['responseHeader'])
+    assert 'QTime' in response_dict['responseHeader']
     del response_dict['responseHeader']['QTime']
-    self.assertDictEqual(response_dict, expected_dict)
+    assert response_dict == expected_dict
 
   # count()
 
@@ -94,7 +91,7 @@ class TestSolrClientReal(unittest.TestCase):
     """count(): Query returns valid count"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     obj_count = solr_client.count(q='id:abc*')
-    self.assertEquals(obj_count, 3)
+    assert obj_count == 3
 
   # get_ids()
 
@@ -102,7 +99,7 @@ class TestSolrClientReal(unittest.TestCase):
     """get_ids(): Query returns list of IDs"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     response_dict = solr_client.get_ids(q='id:abc*')
-    self.assertEquals(response_dict['matches'], 3)
+    assert response_dict['matches'] == 3
 
   # get_field_values()
 
@@ -125,7 +122,7 @@ class TestSolrClientReal(unittest.TestCase):
     # }
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     response_dict = solr_client.get_field_values('formatId', q='*abc*')
-    self.assertIn('numFound', response_dict)
+    assert 'numFound' in response_dict
 
   # get_field_min_max()
 
@@ -152,7 +149,7 @@ class TestSolrClientReal(unittest.TestCase):
     # }
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     min_max_tup = solr_client.get_field_min_max('formatId', q='*abc*')
-    self.assertGreater(min_max_tup[1], min_max_tup[0])
+    assert min_max_tup[1] > min_max_tup[0]
 
   # field_alpha_histogram()
 
@@ -181,7 +178,7 @@ class TestSolrClientReal(unittest.TestCase):
     bin_list = solr_client.field_alpha_histogram(
       'formatId', q='*abc*', n_bins=10
     )
-    self.assertGreater(len(bin_list), 0)
+    assert len(bin_list) > 0
     # TODO: field_alpha_histogram() is not returning the right number of bins.
 
   #=============================================================================
@@ -193,7 +190,7 @@ class TestSolrClientReal(unittest.TestCase):
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
       client, q='*:*', page_size=5
     )
-    self.assertGreater(len(list(solr_iter)), 1)
+    assert len(list(solr_iter)) > 1
 
   def test_0100(self):
     """SolrSearchResponseIterator(): Query 2"""
@@ -210,8 +207,8 @@ class TestSolrClientReal(unittest.TestCase):
       client, q='*:*', page_size=5, field='size'
     )
     for i, record_dict in enumerate(solr_iter):
-      self.assertIsInstance(record_dict, dict)
-    self.assertGreater(i, 1)
+      assert isinstance(record_dict, dict)
+    assert i > 1
 
   #=============================================================================
   # SolrValuesResponseIterator
@@ -222,7 +219,7 @@ class TestSolrClientReal(unittest.TestCase):
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
       client, field='formatId', q='*:*', page_size=5
     )
-    self.assertGreater(len(list(solr_iter)), 1)
+    assert len(list(solr_iter)) > 1
 
   def test_0130(self):
     """SolrValuesResponseIterator(): Query 2"""
@@ -244,7 +241,7 @@ class TestSolrClientReal(unittest.TestCase):
     )
     i = 0
     for i, record_dict in enumerate(solr_iter):
-      self.assertIsInstance(record_dict, list)
+      assert isinstance(record_dict, list)
       if i == 100:
         break
-    self.assertGreater(i, 1)
+    assert i > 1

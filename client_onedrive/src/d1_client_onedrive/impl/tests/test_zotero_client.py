@@ -2,7 +2,8 @@
 
 import os
 import sys
-import unittest
+
+import d1_test.d1_test_case
 
 # D1
 sys.path.append('../..')
@@ -15,7 +16,7 @@ options = {}
 # Check "Allow write access" on the "Edit Key" page on Zotero.org.
 
 
-class TestZoteroClient(unittest.TestCase):
+class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
   def _show_object_tree(self, zotero_client):
     # pprint.pprint(zotero_client.collections())
     # pprint.pprint(zotero_client.collections_sub(''))
@@ -98,7 +99,7 @@ class TestZoteroClient(unittest.TestCase):
       if not items:
         break
       for i in items:
-        print i['title'].encode('utf8')
+        print i['title'].encode('utf-8')
         zotero_client.delete_item(i)
 
   #def test_100(self):

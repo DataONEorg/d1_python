@@ -18,34 +18,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`validate_system_metadata`
-===============================
+"""Validate system metadata
 
-:Synopsis:
-  Check basic availability and correctness of the Science Objects and System
-  Metadata available on a CN or MN.
+Check basic availability and correctness of the Science Objects and System
+Metadata available on a CN or MN.
 
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Iterate over all objects that are available on a CN or MN when
-    authenticating with a specific certificate.
-  - Work around System Metadata issues that cause validation errors.
-  - Compare the size and checksum recorded in an object's System Metadata with
-    the actual size and checksum of the object.
+- Iterate over all objects that are available on a CN or MN when
+  authenticating with a specific certificate.
+- Work around System Metadata issues that cause validation errors.
+- Compare the size and checksum recorded in an object's System Metadata with
+  the actual size and checksum of the object.
 
-:Author:
-  DataONE (Dahl, Servilla)
+Requires:
 
-:Created:
-  2014-08-14
-
-:Requires:
-  - Python 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
-  - A client side certificate that is trusted by the target Member Node.
+- Python 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
+- A client side certificate that is trusted by the target Member Node.
 """
 
 from __future__ import print_function
@@ -53,12 +45,14 @@ from __future__ import print_function
 import csv
 import sys
 
-import d1_client.mnclient
-import d1_client.objectlistiterator
+import pyxb
+
 import d1_common.checksum
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
-import pyxb
+
+import d1_client.mnclient
+import d1_client.objectlistiterator
 
 CSV_FILE_PATH = './validation_results.csv'
 BASE_URL = None # e.g., https://tropical.lternet.edu/knb/d1/mn/

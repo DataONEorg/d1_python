@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import d1_common.xml
+
+import d1_test.d1_test_case
 
 XML_CORRECT = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
@@ -208,37 +208,33 @@ XML_SYNTAX_ERROR = """<?xml version="1.0" ?>
 # TODO: Add tests for remaining functions in xml.py.
 
 
-class TestXml(unittest.TestCase):
+class TestXml(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """Compare xml_correct with itself and verify that compare passes"""
-    self.assertTrue(d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT))
+    assert d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT)
 
   def test_0020(self):
     """Compare xml_correct with itself and verify that compare passes"""
-    self.assertTrue(
-      d1_common.xml.is_equivalent(XML_CORRECT, XML_CORRECT_SWAPPED_ATTRIBUTES)
+    assert d1_common.xml.is_equivalent(
+      XML_CORRECT, XML_CORRECT_SWAPPED_ATTRIBUTES
     )
 
   def test_0030(self):
     """Verify that comparison fails when an attribute is missing"""
-    self.assertFalse(
-      d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_COUNT)
-    )
+    assert not d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_COUNT)
 
   def test_0040(self):
     """Verify that comparison fails when an element is missing"""
-    self.assertFalse(
-      d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_ENTRY)
-    )
+    assert not d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_ENTRY)
 
   def test_0050(self):
     """Verify that comparison fails when to elements appear in the wrong order"""
-    self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_WRONG_ORDER))
+    assert not d1_common.xml.is_equivalent(XML_CORRECT, XML_WRONG_ORDER)
 
   def test_0060(self):
     """Verify that comparison fails when an element is missing text"""
-    self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_TEXT))
+    assert not d1_common.xml.is_equivalent(XML_CORRECT, XML_MISSING_TEXT)
 
   def test_0070(self):
     """Verify that comparison fails when the document is not well formed"""
-    self.assertFalse(d1_common.xml.is_equivalent(XML_CORRECT, XML_SYNTAX_ERROR))
+    assert not d1_common.xml.is_equivalent(XML_CORRECT, XML_SYNTAX_ERROR)

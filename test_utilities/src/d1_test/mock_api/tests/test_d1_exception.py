@@ -18,16 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 
 
-class TestMockD1Exception(unittest.TestCase):
+class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
   @classmethod
   def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
+    pass
 
   def test_0010(self):
     """trigger_by_status_code(): GET request returns DataONEException XML doc"""
@@ -39,11 +38,11 @@ class TestMockD1Exception(unittest.TestCase):
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
       fake_request, 413
     )
-    self.assertTrue(exc_response_tup)
+    assert exc_response_tup
     status_code_int, header_dict, body_str = exc_response_tup
-    self.assertEqual(status_code_int, 413)
-    self.assertDictEqual(header_dict, {'Content-Type': 'application/xml'})
-    self.assertIn('?xml', body_str)
+    assert status_code_int == 413
+    assert header_dict == {'Content-Type': 'application/xml'}
+    assert '?xml' in body_str
 
   def test_0020(self):
     """trigger_by_status_code(): HEAD request returns DataONEException headers"""
@@ -55,11 +54,11 @@ class TestMockD1Exception(unittest.TestCase):
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
       fake_request, 413
     )
-    self.assertTrue(exc_response_tup)
+    assert exc_response_tup
     status_code_int, header_dict, body_str = exc_response_tup
-    self.assertIsInstance(status_code_int, int)
-    self.assertIsInstance(header_dict, dict)
-    self.assertIsInstance(body_str, str)
+    assert isinstance(status_code_int, int)
+    assert isinstance(header_dict, dict)
+    assert isinstance(body_str, str)
     expected_header_dict = {
       'DataONE-Exception-TraceInformation': '',
       'DataONE-Exception-DetailCode': u'0',
@@ -70,7 +69,7 @@ class TestMockD1Exception(unittest.TestCase):
       'Content-Type': 'application/xml',
       'DataONE-Exception-ErrorCode': u'413'
     }
-    self.assertDictEqual(header_dict, expected_header_dict)
+    assert header_dict == expected_header_dict
 
   def test_0030(self):
     """trigger_by_pid()"""
@@ -82,8 +81,8 @@ class TestMockD1Exception(unittest.TestCase):
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_pid(
       fake_request, 'trigger_413'
     )
-    self.assertTrue(exc_response_tup)
+    assert exc_response_tup
     status_code_int, header_dict, body_str = exc_response_tup
-    self.assertEqual(status_code_int, 413)
-    self.assertDictEqual(header_dict, {'Content-Type': 'application/xml'})
-    self.assertIn('?xml', body_str)
+    assert status_code_int == 413
+    assert header_dict == {'Content-Type': 'application/xml'}
+    assert '?xml' in body_str

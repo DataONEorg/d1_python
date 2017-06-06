@@ -19,9 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import object_tree_test_sample
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.resolver.author as author
 
@@ -31,7 +31,7 @@ options = {}
 # supply the information that would normally come from a CN.
 
 
-class TestAuthorResolver(unittest.TestCase):
+class TestAuthorResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self._resolver = author.Resolver(
       options, object_tree_test_sample.object_tree
@@ -45,6 +45,6 @@ class TestAuthorResolver(unittest.TestCase):
   def test_0020(self):
     """get_attributes([])"""
     a = self._resolver.get_attributes([], [])
-    self.assertEqual(a.date(), None)
-    self.assertEqual(a.size(), 0)
-    self.assertEqual(a.is_dir(), True)
+    assert a.date() is None
+    assert a.size() == 0
+    assert a.is_dir() is True

@@ -22,12 +22,12 @@
 """
 from __future__ import absolute_import
 
-import os
-import logging
 import argparse
+import logging
+import os
 
-import dev_tools.util
 import dev_tools.file_iterator
+import dev_tools.util
 
 import d1_common.util
 
@@ -71,8 +71,8 @@ def main():
     try:
       list_tests_module(module_path, event_counter)
     except Exception as e:
-      print 'Operation failed. error="{}" path="{}"'.format(
-        module_path, e.message
+      logging.error(
+        'Operation failed. error="{}" path="{}"'.format(module_path, e.message)
       )
       if args.debug:
         raise
@@ -100,9 +100,11 @@ def list_tests_tree(r, module_path, event_counter):
       else:
         doc_str = '<missing>'
         event_counter.count('Missing docstrings')
-      print '{}.{}: {}'.format(
-        os.path.split(module_path)[1][:-3], node.name, doc_str
-      )
+      with d1_common.util.print_logging():
+        logging.info(
+          '{}.{}: {}'.
+          format(os.path.split(module_path)[1][:-3], node.name, doc_str)
+        )
 
 
 if __name__ == '__main__':

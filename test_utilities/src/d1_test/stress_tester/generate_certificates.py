@@ -88,7 +88,7 @@ def create_certificates():
 
 
 def get_subject_list():
-  return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
+  return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf-8').read().splitlines()
 
 
 def create_certificate(subject, subject_dn_tuple, subject_info):

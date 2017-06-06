@@ -18,58 +18,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
 
-import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.catch_all as mock_catch_all
-import d1_test.mock_api.tests.config as config
-
-# 3rd party
 
 
-class TestMockCatchAll(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=config.CN_RESPONSES_BASE_URL
-    )
-
+class TestMockCatchAll(d1_test.d1_test_case.D1TestCase):
   @mock_catch_all.activate
-  def test_0010(self):
+  def test_0010(self, cn_client_v2):
     """mock_api.catch_all: Returns a dict correctly echoing the request"""
-    mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
-    echo_dict = self.client.getFormat('valid_format_id')
-    expected_dict = {
-      'request': {
-        'endpoint_str': 'formats',
-        'param_list': ['valid_format_id'],
-        'pyxb_namespace': 'http://ns.dataone.org/service/types/v2.0',
-        'query_dict': {},
-        'version_tag': 'v2'
-      },
-      'wrapper': {
-        'class_name': 'CoordinatingNodeClient_2_0',
-        'expected_type': 'ObjectFormat',
-        'received_303_redirect': False,
-        'vendor_specific_dict': None
-      }
-    }
-
-    mock_catch_all.assert_expected_echo(echo_dict, expected_dict)
+    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    echo_dict = cn_client_v2.getFormat('valid_format_id')
+    mock_catch_all.assert_expected_echo(echo_dict, 'catch_all', cn_client_v2)
 
   @mock_catch_all.activate
-  def test_0020(self):
+  def test_0020(self, cn_client_v2):
     """mock_api.catch_all(): Passing a trigger header triggers a DataONEException"""
-    mock_catch_all.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.getFormat,
-      'valid_format_id', vendorSpecific={'trigger': '404'}
-    )
+    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      cn_client_v2.getFormat(
+        'valid_format_id', vendorSpecific={'trigger': '404'}
+      )

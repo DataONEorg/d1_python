@@ -29,16 +29,16 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
 import logging
+import re
 
 import responses
 
-import d1_common.url
 import d1_common.const
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 IS_AUTHORIZED_ENDPOINT_RX = r'v([123])/isAuthorized/(.*)'
 
@@ -62,7 +62,7 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return NotFound
-  pid, pyxb_bindings = _parse_url(request.url)
+  pid, client = _parse_url(request.url)
   if pid == 'unauthorized_pid':
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
   # Return regular response
@@ -73,8 +73,8 @@ def _request_callback(request):
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, pyxb_bindings = (
+  version_tag, endpoint_str, param_list, query_dict, client = (
     d1_test.mock_api.util.parse_rest_url(url)
   )
   assert endpoint_str == 'isAuthorized'
-  return param_list[0], pyxb_bindings
+  return param_list[0], client

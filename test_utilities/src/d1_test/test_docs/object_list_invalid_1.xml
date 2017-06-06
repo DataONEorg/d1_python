@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d1:objectList xmlns:d1="http://ns.dataone.org/service/types/v1" count="5" start="0"
+    total="0">
+    <objectInfo>
+        <identifier>knb:testid:201020217324403 </identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.1.0</objectFormat>
+        <checksum algorithm="MD5"
+            >4d6537f48d2967725bfcc7a9f0d5094ce4088e0975fcd3f1a361f15f46e49f83</checksum>
+        <dateSysMetadataModified>2010-07-22T06:58:32.097Z</dateSysMetadataModified>
+        <size>12</size>
+    </objectInfo>
+    <objectInfo>
+        <identifier>test.2010181122146255</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.1.0</objectFormat>
+        <checksum algorithm="MD5">9CF71CAAEBE5B24B122F2ACF9EB8C1C3</checksum>
+        <dateSysMetadataModified>2010-07-01T02:21:46.633Z</dateSysMetadataModified>
+        <size>86</size>
+    </objectInfo>
+    <objectInfo>
+        <identifier>test.2010181153417114</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.1.0</objectFormat>
+        <checksum algorithm="MD5">9CF71CAAEBE5B24B122F2ACF9EB8C1C3</checksum>
+        <dateSysMetadataModified>2010-07-01T05:34:17.179Z</dateSysMetadataModified>
+        <size>86</size>
+    </objectInfo>
+    <objectInfo>
+        <identifier>test.201018115165054</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+        <checksum algorithm="MD5">9CF71CAAEBE5B24B122F2ACF9EB8C1C3</checksum>
+        <dateSysMetadataModified>2010-07-01T05:16:50.127Z</dateSysMetadataModified>
+        <size>86</size>
+    </objectInfo>
+</d1:objectList>

@@ -18,30 +18,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-import d1_client.mnclient_2_0
-import d1_test.mock_api.post as mock_post
-import d1_test.mock_api.tests.config as config
 import requests
 import responses
 
+import d1_test.d1_test_case
+import d1_test.mock_api.post as mock_post
 
-class TestMockPost(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
 
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockPost(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.post(): Echoes the request"""
-    mock_post.add_callback(config.MN_RESPONSES_BASE_URL)
-    response = requests.post(config.MN_RESPONSES_BASE_URL + '/v1/post')
+    mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    response = requests.post(d1_test.d1_test_case.MOCK_BASE_URL + '/v1/post')
     body_dict = response.json()
     expected_dict = {
       u'body_str': u'',
@@ -53,6 +42,6 @@ class TestMockPost(unittest.TestCase):
         u'Accept-Encoding': u'gzip, deflate'
       }
     }
-    self.assertIn('User-Agent', body_dict['header_dict'])
+    assert 'User-Agent' in body_dict['header_dict']
     del body_dict['header_dict']['User-Agent']
-    self.assertDictEqual(body_dict, expected_dict)
+    assert body_dict == expected_dict

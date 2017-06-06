@@ -24,6 +24,9 @@ import logging
 import baseclient_1_1
 import mnclient
 
+import d1_common
+import d1_common.type_conversions
+
 
 class MemberNodeClient_1_1(
     baseclient_1_1.DataONEBaseClient_1_1,
@@ -39,8 +42,12 @@ class MemberNodeClient_1_1(
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(MemberNodeClient_1_1, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 1)
-    kwargs.setdefault('api_minor', 1)
-    baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
-    mnclient.MemberNodeClient.__init__(self, *args, **kwargs)
+
+    self._api_major = 1
+    self._api_minor = 1
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
+    )

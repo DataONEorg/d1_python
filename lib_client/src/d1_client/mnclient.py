@@ -22,12 +22,16 @@
 import logging
 
 import baseclient
+
 import d1_common.const
 import d1_common.date_time
+import d1_common.type_conversions
 import d1_common.util
 
 
-class MemberNodeClient(baseclient.DataONEBaseClient):
+class MemberNodeClient(
+    baseclient.DataONEBaseClient,
+):
   """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available on
   Member Nodes.
 
@@ -38,10 +42,15 @@ class MemberNodeClient(baseclient.DataONEBaseClient):
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
+    super(MemberNodeClient, self).__init__(*args, **kwargs)
+
     self.logger = logging.getLogger(__file__)
-    kwargs.setdefault('api_major', 1)
-    kwargs.setdefault('api_minor', 0)
-    baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
+
+    self._api_major = 1
+    self._api_minor = 0
+    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+      self._api_major, self._api_minor
+    )
 
   # ============================================================================
   # MNCore

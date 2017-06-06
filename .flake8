@@ -9,16 +9,15 @@ max-line-length = 100
 # E122 continuation line missing indentation or outdented
 # E125 continuation line with same indent as next logical line
 # E126 continuation line over-indented for hanging indent
+# E127
 # E131 continuation line unaligned for hanging indent
 # E261 at least two spaces before inline comment
 # E265 block comment should start with '# '
 # E266 too many leading '#' for block comment - removing this because it triggers on script that is commented out
-ignore = E111,E114,E121,E122,E125,E126,E131,E261,E265,E266
+ignore = E111,E114,E121,E122,E125,E126,E127,E131,E261,E265,E266
 
 [pytest]
-addopts = --failed-first -p no:random-order
-# --cov=. --cov-report=term --cov-report=xml
-# --failed-first
+addopts = --failed-first -p no:random-order --cov=. --cov-report=term --cov-report=xml
 testpaths = ./lib_common ./lib_client ./client_cli ./test_utilities ./gmn
 # ./client_onedrive ./client_workspace
 python_files = tests.py test_*.py *_tests.py

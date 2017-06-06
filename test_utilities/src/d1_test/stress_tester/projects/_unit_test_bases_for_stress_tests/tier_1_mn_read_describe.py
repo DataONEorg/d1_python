@@ -28,15 +28,17 @@
   - python 2.6
 """
 
+import xml
+
 import context
+import pytest
+import test_client
 
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_test_case
-import test_client
 
-import xml
+import d1_test_case
 
 
 class Test060Describe(d1_test_case.D1TestCase):
@@ -49,10 +51,8 @@ class Test060Describe(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     # The exception is caused by the body being empty since describe() uses a
     # HEAD request.
-    self.assertRaises(
-      xml.parsers.expat.ExpatError, client.describe, context.TOKEN,
-      '_invalid_pid_'
-    )
+    with pytest.raises(xml.parsers.expat.ExpatError):
+      client.describe(context.TOKEN, '_invalid_pid_')
 
   def test_020_describe_by_valid_pid(self):
     """Successful describe for known objects.
@@ -74,14 +74,14 @@ class Test060Describe(d1_test_case.D1TestCase):
         headers_lower = dict((header.lower(), value)
                              for header, value in headers)
         # Check for the required headers.
-        self.assertTrue('date' in headers_lower)
-        self.assertTrue('content-type' in headers_lower)
-        self.assertTrue('content-length' in headers_lower)
+        assert 'date' in headers_lower
+        assert 'content-type' in headers_lower
+        assert 'content-length' in headers_lower
         # Verify that the object length reported by describe matches what was
         # reported by listObjects.
-        self.assertEqual(int(headers_lower['content-length']), object_info.size)
+        assert int(headers_lower['content-length']) == object_info.size
         # Verify that date is a valid date.
-        self.assertTrue(d1_common.date_time.from_iso8601(headers_lower['date']))
+        assert d1_common.date_time.from_iso8601(headers_lower['date'])
         # Verify that date matches what was reported by listObjects.
         # TODO: Fails with: TypeError: can't compare offset-naive and
         # offset-aware datetimes

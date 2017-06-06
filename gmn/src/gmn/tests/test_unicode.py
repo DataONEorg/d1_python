@@ -23,48 +23,40 @@ from __future__ import absolute_import
 
 import logging
 
+import pytest
 import responses
 
 import d1_common
 import d1_common.system_metadata
 
-import d1_test.util
-
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestUnicode(gmn.tests.gmn_test_case.D1TestCase):
+@pytest.mark.skip('TODO')
+class TestUnicode(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_0010(self):
     """Unicode: GMN and libraries handle Unicode correctly"""
 
-    def test(client, binding):
+    def test(client):
       # print d1_test.util.read_utf8_to_unicode('tricky_identifiers_unicode.txt')
       # return
-      tricky_unicode_str = d1_test.util.read_utf8_to_unicode(
-        'tricky_identifiers_unicode.txt'
+      tricky_unicode_str = self.read_utf8_to_unicode(
+        'tricky_identifiers_unicode.utf8.txt'
       )
       for line in tricky_unicode_str.splitlines():
-        try:
-          pid_unescaped, pid_escaped = line.split('\t')
-        except ValueError:
-          continue
-        logging.debug('Testing PID: {}'.format(pid_unescaped))
+        pid_unescaped, pid_escaped = line.split('\t')
+        logging.debug(u'Testing PID: {}'.format(pid_unescaped))
         pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
-          client, binding, pid=pid_unescaped, sid=True
+          client, pid=pid_unescaped, sid=True
         )
         recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
         # self.assertEquals(send_sciobj_str, recv_sciobj_str)
-        self.assertTrue(
-          d1_common.system_metadata.is_equivalent_pyxb(
-            send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
-          )
+        assert d1_common.system_metadata.is_equivalent_pyxb(
+          send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
         )
         client.delete(pid)
 
-    try:
-      test(self.client_v1, self.v1)
-      test(self.client_v2, self.v2)
-    except Exception:
-      logging.warning('Unicode test error')
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)

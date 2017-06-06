@@ -21,57 +21,48 @@
 
 import base64
 import json
-import unittest
 
-import d1_client.mnclient
-import d1_client.mnclient_1_1
+import requests_toolbelt
+import responses
+
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.create
-import d1_test.util
-import requests_toolbelt
-import responses
-import shared_settings
 
 
-class TestMNClient(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    d1_test.mock_api.create.add_callback(shared_settings.MN_RESPONSES_URL)
-    self.client = d1_client.mnclient.MemberNodeClient(
-      shared_settings.MN_RESPONSES_URL
-    )
-    self.sysmeta_pyxb = d1_test.util.read_test_pyxb(
-      'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-    )
-    self.sysmeta_xml = d1_test.util.read_xml_file_to_pyxb(
-      'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-    )
-    self.obj = 'test'
-    self.pid = '1234'
+class TestMNClient(d1_test.d1_test_case.D1TestCase):
+  sysmeta_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+    'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+  )
+  sysmeta_xml = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+    'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+  )
+  obj = 'test'
+  pid = '1234'
 
   #=========================================================================
   # MNCore
   #=========================================================================
 
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1):
     """MNCore.createResponse(): Generates a correctly encoded Multipart document
     and Content-Type header
     """
-    response = self.client.createResponse(
+    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+
+    response = mn_client_v1.createResponse(
       '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )
-    self.assertEqual(response.status_code, 200)
+    assert response.status_code == 200
 
     identifier_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
       response.content
     )
-    self.assertEqual(identifier_pyxb.value(), 'echo-post')
+    assert identifier_pyxb.value() == 'echo-post'
     echo_body_str = base64.b64decode(response.headers['Echo-Body-Base64'])
     echo_query_dict = json.loads(
       base64.b64decode(response.headers['Echo-Query-Base64'])
@@ -79,57 +70,49 @@ class TestMNClient(unittest.TestCase):
     echo_header_dict = json.loads(
       base64.b64decode(response.headers['Echo-Header-Base64'])
     )
-    self.assertIsInstance(echo_body_str, basestring)
-    self.assertIsInstance(echo_query_dict, dict)
-    self.assertIsInstance(echo_header_dict, dict)
+    assert isinstance(echo_body_str, basestring)
+    assert isinstance(echo_query_dict, dict)
+    assert isinstance(echo_header_dict, dict)
 
     multipart_decoder = requests_toolbelt.MultipartDecoder(
       echo_body_str, echo_header_dict['Content-Type']
     )
 
-    self.assertEqual(len(multipart_decoder.parts), 3)
+    assert len(multipart_decoder.parts) == 3
 
-    self.assertDictEqual(
-      dict(multipart_decoder.parts[0].headers),
+    assert dict(multipart_decoder.parts[0].headers) == \
       {
         'Content-Disposition':
           'form-data; name="sysmeta"; filename="sysmeta.xml"'
-      },
-    )
-    self.assertIn('<?xml', multipart_decoder.parts[0].content)
-    self.assertIn(
-      '<identifier>BAYXXX_015ADCP015R00_20051215.50.9</identifier>',
+      }
+    assert '<?xml' in multipart_decoder.parts[0].content
+    assert '<identifier>BAYXXX_015ADCP015R00_20051215.50.9</identifier>' in \
       multipart_decoder.parts[0].content
-    )
 
-    self.assertDictEqual(
-      dict(multipart_decoder.parts[1].headers),
+    assert dict(multipart_decoder.parts[1].headers) == \
       {
         'Content-Disposition':
           'form-data; name="object"; filename="content.bin"'
-      },
-    )
-    self.assertEqual(
-      multipart_decoder.parts[1].content, 'BAYXXX_015ADCP015R00_20051215.50.9'
-    )
+      }
+    assert multipart_decoder.parts[1].content == 'BAYXXX_015ADCP015R00_20051215.50.9'
 
-    self.assertDictEqual(
-      dict(multipart_decoder.parts[2].headers),
-      {'Content-Disposition': 'form-data; name="pid"'},
-    )
-    self.assertEqual(multipart_decoder.parts[2].content, '1234')
+    assert dict(multipart_decoder.parts[2].headers) == \
+      {'Content-Disposition': 'form-data; name="pid"'}
+    assert multipart_decoder.parts[2].content == '1234'
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1):
     """MNCore.create(): Returned Identifier object is correctly parsed"""
-    identifier_pyxb = self.client.create(
+    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+
+    identifier_pyxb = mn_client_v1.create(
       '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )
-    self.assertEqual(identifier_pyxb.value(), 'echo-post')
+    assert identifier_pyxb.value() == 'echo-post'
 
-  @responses.activate
-  def test_0030(self):
-    """MNCore.getCapabilities(): """
+  # @responses.activate
+  # def test_0030(self):
+  #   """MNCore.getCapabilities(): """
 
   # @unittest.skip(
   #   "TODO: Skipped due to waiting for test env. Should set up test env or remove"
@@ -138,7 +121,7 @@ class TestMNClient(unittest.TestCase):
   # def test_0040(self):
   #   """"""
   #   """MNCore.ping() returns True"""
-  #   ping = self.client.ping()
+  #   ping = self.mn_client_v1.ping()
   #   self.assertIsInstance(ping, bool)
   #   self.assertTrue(ping)
   #
@@ -149,7 +132,7 @@ class TestMNClient(unittest.TestCase):
   # def test_0050(self):
   #   """"""
   #   """MNCore.getCapabilities() returns a valid Node"""
-  #   node = self.client.getCapabilities()
+  #   node = self.mn_client_v1.getCapabilities()
   #   self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
   #
   # # ============================================================================

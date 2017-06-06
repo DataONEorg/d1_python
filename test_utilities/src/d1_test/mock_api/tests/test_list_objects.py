@@ -18,54 +18,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
+import responses
 
-import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.list_objects as mock_object_list
-import d1_test.mock_api.tests.config as config
-import responses
 
 
-class TestMockListObjects(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
-    mock_object_list.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.listObjects(), d1_common.types.dataoneTypes_v2_0.ObjectList
+    mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert isinstance(
+      mn_client_v1_v2.listObjects(), mn_client_v1_v2.bindings.ObjectList
     )
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1_v2):
     """mock_api.listObjects() returns a populated ObjectList"""
-    mock_object_list.add_callback(config.MN_RESPONSES_BASE_URL)
-    object_list = self.client.listObjects()
-    self.assertEqual(len(object_list.objectInfo), 100)
+    mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    object_list = mn_client_v1_v2.listObjects()
+    assert len(object_list.objectInfo) == 100
     for object_info in object_list.objectInfo:
-      self.assertEqual(object_info.formatId, 'text/plain')
+      assert object_info.formatId == 'text/plain'
       break
 
   @responses.activate
-  def test_0030(self):
+  def test_0030(self, mn_client_v1_v2):
     """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
-    mock_object_list.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure, self.client.listObjects,
-      vendorSpecific={'trigger': '500'}
-    )
+    mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.ServiceFailure):
+      mn_client_v1_v2.listObjects(vendorSpecific={'trigger': '500'})
 
   # TODO: More tests

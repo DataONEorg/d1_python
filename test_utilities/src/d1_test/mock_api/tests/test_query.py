@@ -18,35 +18,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
+import responses
 
-import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.solr_query as mock_query
-import d1_test.mock_api.tests.config as config
-import responses
 
 
-class TestMockQuery(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockQuery(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.query() returns a JSON doc with expected structure"""
-    mock_query.add_callback(config.MN_RESPONSES_BASE_URL)
-    response_dict = self.client.query('query_engine', 'query_string')
-    self.assertIsInstance(response_dict, dict)
-    self.assertIn(u'User-Agent', response_dict['header_dict'])
+    mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    response_dict = mn_client_v1_v2.query('query_engine', 'query_string')
+    assert isinstance(response_dict, dict)
+    assert u'User-Agent' in response_dict['header_dict']
     del response_dict['header_dict']['User-Agent']
     expected_dict = {
       u'body_base64': u'PG5vIGJvZHk+',
@@ -58,13 +49,13 @@ class TestMockQuery(unittest.TestCase):
         u'Accept': u'*/*',
       }
     }
-    self.assertDictEqual(response_dict, expected_dict)
+    assert response_dict == expected_dict
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1_v2):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
-    mock_query.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotAuthorized, self.client.query,
-      'query_engine', 'query_string', vendorSpecific={'trigger': '401'}
-    )
+    mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+      mn_client_v1_v2.query(
+        'query_engine', 'query_string', vendorSpecific={'trigger': '401'}
+      )

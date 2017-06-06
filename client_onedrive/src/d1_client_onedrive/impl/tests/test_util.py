@@ -21,14 +21,14 @@
 
 from __future__ import absolute_import
 
-import unittest
-
 import mock
+
+import d1_test.d1_test_case
 
 import d1_client_onedrive.impl.util
 
 
-class TestUtil(unittest.TestCase):
+class TestUtil(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
@@ -40,25 +40,20 @@ class TestUtil(unittest.TestCase):
 
   def test_1010(self):
     """string_from_path_elements()"""
-    self.assertEquals(
-      d1_client_onedrive.impl.util.string_from_path_elements(['abc', 'de',
-                                                              'f']), 'abc/de/f'
-    )
+    assert d1_client_onedrive.impl.util.string_from_path_elements([
+      'abc', 'de', 'f'
+    ]) == 'abc/de/f'
 
   def test_1020(self):
     """is_root()"""
-    self.assertTrue(d1_client_onedrive.impl.util.is_root(['', '']))
-    self.assertFalse(d1_client_onedrive.impl.util.is_root(['a', '']))
+    assert d1_client_onedrive.impl.util.is_root(['', ''])
+    assert not d1_client_onedrive.impl.util.is_root(['a', ''])
 
   def test_1030(self):
     """os_format()"""
     with mock.patch('platform.system', return_value='Linux'):
-      self.assertEquals(
-        d1_client_onedrive.impl.util.os_format('a\nb\n'),
-        'a\nb\n',
-      )
+      assert d1_client_onedrive.impl.util.os_format('a\nb\n') == \
+        'a\nb\n'
     with mock.patch('platform.system', return_value='Windows'):
-      self.assertEquals(
-        d1_client_onedrive.impl.util.os_format('a\nb\n'),
-        '\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00',
-      )
+      assert d1_client_onedrive.impl.util.os_format('a\nb\n') == \
+        '\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00'

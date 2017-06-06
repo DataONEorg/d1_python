@@ -7,11 +7,11 @@
         exclude: &EXCLUDE
           '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)|(/migrations/)'
 
--   repo: git://github.com/FalconSocial/pre-commit-python-sorter
-    sha: b57843b0b874df1d16eb0bef00b868792cb245c2
-    hooks:
-    -   id: python-import-sorter
-        exclude: *EXCLUDE
+#-   repo: git://github.com/FalconSocial/pre-commit-python-sorter
+#    sha: b57843b0b874df1d16eb0bef00b868792cb245c2
+#    hooks:
+#    -   id: python-import-sorter
+#        exclude: *EXCLUDE
 
 -   repo: git://github.com/pre-commit/pre-commit-hooks
     sha: 5bf6c09bfa1297d3692cadd621ef95f1284e33c0

@@ -21,15 +21,17 @@
 
 import datetime
 import logging
-import unittest
+
+import responses
+
+import d1_common.types.dataoneTypes as dataoneTypes
+
+import d1_test.d1_test_case
+import d1_test.mock_api.get_log_records as mock_get_log_records
 
 import d1_client.cnclient
 import d1_client.iter.logrecord
 import d1_client.mnclient
-import d1_common.types.dataoneTypes as dataoneTypes
-import d1_test.mock_api.get_log_records as mock_get_log_records
-import responses
-import shared_settings
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -37,17 +39,11 @@ import shared_settings
 MAX_OBJECTS = 20
 
 
-class TestLogRecordIterator(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    mock_get_log_records.add_callback(shared_settings.MN_RESPONSES_URL)
-
+class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_0010(self):
     """PageSize=5, start=0"""
+    mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     self._log_record_iterator_test(5, 0)
 
   def _test_110(self):
@@ -64,7 +60,7 @@ class TestLogRecordIterator(unittest.TestCase):
       self, page_size, start, from_date=None, to_date=None
   ):
     client = d1_client.mnclient.MemberNodeClient(
-      base_url=shared_settings.MN_RESPONSES_URL
+      base_url=d1_test.d1_test_case.MOCK_BASE_URL
     )
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(
@@ -76,7 +72,7 @@ class TestLogRecordIterator(unittest.TestCase):
     )
     cnt = 0
     for event in log_record_iterator:
-      self.assertIsInstance(event.event, dataoneTypes.Event)
+      assert isinstance(event.event, dataoneTypes.Event)
       logging.info("Event      = {}".format(event.event))
       logging.info("Timestamp  = {}".format(event.dateLogged.isoformat()))
       logging.info("IP Addres  = {}".format(event.ipAddress))
@@ -90,7 +86,7 @@ class TestLogRecordIterator(unittest.TestCase):
         total = MAX_OBJECTS
         break
 
-    self.assertEqual(cnt, total - start)
+    assert cnt == total - start
 
   def _get_log_total_count(self, client, from_date, to_date):
     return client.getLogRecords(

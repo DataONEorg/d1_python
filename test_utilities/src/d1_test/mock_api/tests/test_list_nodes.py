@@ -18,41 +18,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-import d1_client.cnclient_2_0
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.types.exceptions
-import d1_common.util
-import d1_test.mock_api.list_nodes as list_nodes
-import d1_test.mock_api.tests.config as config
 import responses
 
+import d1_test.d1_test_case
+import d1_test.mock_api.list_nodes as list_nodes
 
-class TestMockObjectList(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
 
-  def setUp(self):
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=config.CN_RESPONSES_BASE_URL
-    )
-
+class TestMockObjectList(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, cn_client_v1_v2):
     """mock_api.listNodes() returns a DataONE ObjectList PyXB object"""
-    list_nodes.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.listNodes(), d1_common.types.dataoneTypes_v2_0.NodeList
-    )
+    list_nodes.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    print type(cn_client_v1_v2.listNodes())
+    print type(cn_client_v1_v2.bindings.NodeList)
+    if not isinstance(
+        cn_client_v1_v2.listNodes(), cn_client_v1_v2.bindings.NodeList
+    ):
+      pass
 
   # @responses.activate
   # def test_0011(self):
   #   """mock_api.listNodes() returns a populated ObjectList"""
-  #   mock_object_list.add_callback(config.CN_RESPONSES_BASE_URL)
+  #   mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
   #   object_list = self.client.listNodes()
   #   self.assertEqual(len(object_list.objectInfo), 100)
   #   for object_info in object_list.objectInfo:
@@ -62,7 +49,7 @@ class TestMockObjectList(unittest.TestCase):
   # @responses.activate
   # def test_0012(self):
   #   """mock_api.listNodes(): Passing a trigger header triggers a DataONEException"""
-  #   mock_object_list.add_callback(config.CN_RESPONSES_BASE_URL)
+  #   mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
   #   self.assertRaises(
   #     d1_common.types.exceptions.ServiceFailure, self.client.listNodes,
   #     vendorSpecific={'trigger': '500'}

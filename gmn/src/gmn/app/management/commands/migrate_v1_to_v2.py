@@ -22,30 +22,30 @@
 
 from __future__ import absolute_import
 
-import os
 import json
-import zlib
-import shutil
 import logging
+import os
+import shutil
+import zlib
 
 import psycopg2
 import psycopg2.extras
 
-import d1_common.url
 import d1_common.types.exceptions
+import d1_common.url
 
 import d1_client.cnclient_2_0
 
 import gmn.app.auth
-import gmn.app.node
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
-import gmn.app.sysmeta_util
-import gmn.app.views.asserts
-import gmn.app.sysmeta_revision
-import gmn.app.views.diagnostics
 import gmn.app.management.commands.util
+import gmn.app.models
+import gmn.app.node
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.diagnostics
+import gmn.app.views.util
 
 import django.conf
 import django.core.management.base
@@ -224,16 +224,12 @@ class V2Migration(object):
             obsoleted_by_pid
         ):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
-          gmn.app.sysmeta_revision.set_revision(
-            pid, obsoleted_by_pid=obsoleted_by_pid
-          )
+          gmn.app.revision.set_revision(pid, obsoleted_by_pid=obsoleted_by_pid)
 
   def _identifiers(self, sysmeta_pyxb):
-    pid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'identifier')
-    obsoletes_pid = gmn.app.sysmeta_util.get_value(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = gmn.app.sysmeta_util.get_value(
-      sysmeta_pyxb, 'obsoletedBy'
-    )
+    pid = gmn.app.util.get_value(sysmeta_pyxb, 'identifier')
+    obsoletes_pid = gmn.app.util.get_value(sysmeta_pyxb, 'obsoletes')
+    obsoleted_by_pid = gmn.app.util.get_value(sysmeta_pyxb, 'obsoletedBy')
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
@@ -292,7 +288,7 @@ class V2Migration(object):
     )
     try:
       with open(sysmeta_xml_ver_path, 'rb') as f:
-        return gmn.app.sysmeta.deserialize(f.read())
+        return gmn.app.views.util.deserialize(f.read())
     except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
       raise django.core.management.base.CommandError(
         'Unable to read SysMeta. error="{}"'.format(str(e))

@@ -29,9 +29,9 @@
 """
 
 import context
+import test_client
 
 import d1_test_case
-import test_client
 
 
 class Test020GetCapabilities(d1_test_case.D1TestCase):
@@ -44,11 +44,11 @@ class Test020GetCapabilities(d1_test_case.D1TestCase):
     """
     client = test_client.TestClient(context.node['baseurl'])
     node_list = client.listNodes()
-    self.assertEqual(len(node_list.node), 1)
+    assert len(node_list.node) == 1
     for node in node_list.node:
       # Verif that correct node was reached and that it provided the correct identifier.
-      self.assertEqual(node.baseURL, context.node['baseurl'])
-      self.assertEqual(node.identifier, context.node['identifier'])
+      assert node.baseURL == context.node['baseurl']
+      assert node.identifier == context.node['identifier']
       # Verify that the interfaces required for Tier 1 compliance are present.
       # Service name: node.services.service
       for service in node.services.service:

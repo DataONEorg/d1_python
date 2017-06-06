@@ -18,52 +18,45 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`create_science_object`
-============================
+"""Create science object
 
-:Synopsis:
-  This is an example on how to use the DataONE Client Library for Python. It
-  shows how to:
+This is an example on how to use the DataONE Client Library for Python. It
+shows how to:
 
-  - Generate the system metadata for a local file.
-  - Generate an access policy for public access.
-  - Upload the local file to a Member Node as a Science Object.
+- Generate the system metadata for a local file.
+- Generate an access policy for public access.
+- Upload the local file to a Member Node as a Science Object.
 
-  See the Config section below before running the script.
+See the Config section below before running the script.
 
-:Author:
-  DataONE (Dahl)
+Requires:
+- Python 2.6 or 2.7.
+- DataONE Common Library for Python (automatically installed as a dependency)
+- DataONE Client Library for Python (sudo pip install dataone.libclient)
+- A client side certificate that is valid on the target Member Node.
 
-:Created:
-  2013-02-27
+Operation:
 
-:Requires:
-  - Python 2.6 or 2.7.
-  - DataONE Common Library for Python (automatically installed as a dependency)
-  - DataONE Client Library for Python (sudo pip install dataone.libclient)
-  - A client side certificate that is valid on the target Member Node.
+The first time the script is run, a message indicating that the object was
+successfully created should be displayed, and the object should become
+available on the Member Node.
 
-:Operation:
-  The first time the script is run, a message indicating that the object was
-  successfully created should be displayed, and the object should become
-  available on the Member Node.
+If the script is then launched again without changing the identifier (PID),
+an IdentifierNotUnique exception should be returned. This indicates that the
+identifier is now in use by the previously created object.
 
-  If the script is then launched again without changing the identifier (PID),
-  an IdentifierNotUnique exception should be returned. This indicates that the
-  identifier is now in use by the previously created object.
-
-  Any other errors will also be returned as DataONE exceptions.
+Any other errors will also be returned as DataONE exceptions.
 """
 
-import StringIO
 import datetime
 import hashlib
 import logging
+import StringIO
 
-import d1_client.mnclient
 import d1_common.const
 import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+
+import d1_client.mnclient
 
 # Config.
 

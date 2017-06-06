@@ -27,11 +27,13 @@ import random
 import time
 
 import certificate
-import d1_client.mnclient
-import d1_common.const
-import d1_common.util
 import settings
 import subject_dn
+
+import d1_common.const
+import d1_common.util
+
+import d1_client.mnclient
 
 
 class Transaction(object):
@@ -101,16 +103,16 @@ class Transaction(object):
     )
 
   def get_subject_list(self):
-    return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
+    return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf-8').read().splitlines()
 
   def get_public_object_list(self):
     return codecs.open(settings.PUBLIC_OBJECTS_PATH, 'r',
-                       'utf8').read().splitlines()
+                       'utf-8').read().splitlines()
 
   def get_private_object_list(self):
     return [
       l.split('\t')
-      for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf8').read()
+      for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf-8').read()
       .splitlines()
     ]
 

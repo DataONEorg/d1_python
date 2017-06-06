@@ -18,39 +18,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
+import responses
 
-import d1_client.mnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.ping as mock_ping
-import d1_test.mock_api.tests.config as config
-import responses
 
 
-class TestMockPing(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockPing(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.ping() returns 200"""
-    mock_ping.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertTrue(self.client.ping())
+    mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert mn_client_v1_v2.ping()
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, mn_client_v1_v2):
     """mock_api.ping(): Passing a trigger header triggers a DataONEException"""
-    mock_ping.add_callback(config.MN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.NotFound, self.client.ping,
-      vendorSpecific={'trigger': '404'}
-    )
+    mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      mn_client_v1_v2.ping(vendorSpecific={'trigger': '404'})

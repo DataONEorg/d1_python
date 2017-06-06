@@ -27,21 +27,19 @@ import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestDescribe(gmn.tests.gmn_test_case.D1TestCase):
+class TestDescribe(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1290_v1(self):
     """MNStorage.describe(): Returns valid header for valid object"""
 
-    def test(client, binding):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        client, binding, sid=True
-      )
+    def test(client):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
       info = client.describe(pid)
-      self.assertIn('dataone-formatid', info)
-      self.assertIn('content-length', info)
-      self.assertIn('last-modified', info)
-      self.assertIn('dataone-checksum', info)
+      assert 'dataone-formatid' in info
+      assert 'content-length' in info
+      assert 'last-modified' in info
+      assert 'dataone-checksum' in info
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)

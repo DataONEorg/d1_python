@@ -1,0 +1,17 @@
+{
+  "request": {
+    "endpoint_str": "replicaPolicies", 
+    "param_list": [
+      "\u3000\u0430d\u0e04\u30fb\u30b5\uc185\u1169\u0648jp\u064a\u043e\u12a3\u0995"
+    ], 
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
+    "query_dict": {}, 
+    "version_tag": "v1"
+  }, 
+  "wrapper": {
+    "class_name": "CoordinatingNodeClient_1_1", 
+    "expected_type": null, 
+    "received_303_redirect": false, 
+    "vendor_specific_dict": null
+  }
+}

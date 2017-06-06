@@ -18,43 +18,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import pytest
+import responses
 
-import d1_client.cnclient_2_0
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+
+import d1_test.d1_test_case
 import d1_test.mock_api.solr_search as mock_solr_search
-import d1_test.mock_api.tests.config as config
-import responses
 
 
-class TestMockSolrSearch(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=config.CN_RESPONSES_BASE_URL
-    )
-
+class TestMockSolrSearch(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, cn_client_v1_v2):
     """mock_api.search() returns a DataONE ObjectList PyXB object"""
-    mock_solr_search.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertIsInstance(
-      self.client.search(queryType='solr', query='query-string'),
-      d1_common.types.dataoneTypes_v2_0.ObjectList
+    mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    assert isinstance(
+      cn_client_v1_v2.search(queryType='solr', query='query-string'),
+      cn_client_v1_v2.bindings.ObjectList
     )
 
   @responses.activate
-  def test_0020(self):
+  def test_0020(self, cn_client_v1_v2):
     """mock_api.search(): Passing a trigger header triggers a DataONEException"""
-    mock_solr_search.add_callback(config.CN_RESPONSES_BASE_URL)
-    self.assertRaises(
-      d1_common.types.exceptions.ServiceFailure, self.client.search, 'solr',
-      'query-string', vendorSpecific={'trigger': '500'}
-    )
+    mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    with pytest.raises(d1_common.types.exceptions.ServiceFailure):
+      cn_client_v1_v2.search(
+        'solr', 'query-string', vendorSpecific={'trigger': '500'}
+      )

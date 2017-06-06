@@ -23,8 +23,9 @@ import os
 import re
 import subprocess
 
-import d1_common.util
 import git # pip install pygit
+
+import d1_common.util
 
 # Path to PyCharm, for automatically moving to errors in the IDE
 DEFAULT_PYCHARM_BIN_PATH = os.path.expanduser(
@@ -56,7 +57,8 @@ def main():
 
 def trigger_all_pre_commit_hooks(repo_path):
   repo = git.Repo(repo_path)
-  for rel_repo_path in get_git_modified_files(repo):
+  for rel_repo_path in get_git_staged_files(repo):
+    # for rel_repo_path in get_git_modified_files(repo):
     abs_path = os.path.join(repo_path, rel_repo_path)
     logging.info('Checking file. path="{}"'.format(rel_repo_path))
     while True:
@@ -100,6 +102,11 @@ def strip_path_root(root_path, full_path):
 def get_git_modified_files(repo):
   # 'HEAD~1..HEAD'
   for file_path in repo.git.diff('HEAD^', name_only=True).splitlines():
+    yield file_path
+
+
+def get_git_staged_files(repo):
+  for file_path in repo.git.diff('HEAD', name_only=True).splitlines():
     yield file_path
 
 

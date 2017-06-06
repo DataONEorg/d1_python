@@ -20,12 +20,13 @@
 # limitations under the License.
 
 import datetime
-import unittest
 
 import callbacks
 
+import d1_test.d1_test_case
 
-class TestMockup(unittest.TestCase):
+
+class TestMockup(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self.c = callbacks.FUSECallbacks()
 
@@ -34,69 +35,59 @@ class TestMockup(unittest.TestCase):
 
   def test_0010(self):
     """_count_path_elements(): Returns number of path elements"""
-    self.assertEqual(self.c._count_path_elements(''), 0)
-    self.assertEqual(self.c._count_path_elements('a'), 1)
-    self.assertEqual(self.c._count_path_elements('a/b'), 2)
+    assert self.c._count_path_elements('') == 0
+    assert self.c._count_path_elements('a') == 1
+    assert self.c._count_path_elements('a/b') == 2
 
   def test_0020(self):
     """_get_first_path_elements(): Returns first path elements"""
-    self.assertEqual(self.c._get_first_path_elements('a', 1), 'a')
-    self.assertEqual(self.c._get_first_path_elements('a/b', 1), 'a')
-    self.assertEqual(self.c._get_first_path_elements('a/b/c', 2), 'a/b')
-    self.assertEqual(self.c._get_first_path_elements('a/b/c', 10), 'a/b/c')
+    assert self.c._get_first_path_elements('a', 1) == 'a'
+    assert self.c._get_first_path_elements('a/b', 1) == 'a'
+    assert self.c._get_first_path_elements('a/b/c', 2) == 'a/b'
+    assert self.c._get_first_path_elements('a/b/c', 10) == 'a/b/c'
 
   def test_0030(self):
     """_get_all_children(): Returns all sub-paths"""
-    self.assertEqual(
-      self._get_paths(self.c._get_all_children('')),
+    assert self._get_paths(self.c._get_all_children('')) == \
       ['d/d2/f3a', 'd/d2/f3b', 'd/f2a', 'd/f2b', 'd/f2c', 'fa', 'fb']
-    )
-    self.assertEqual(
-      self._get_paths(self.c._get_all_children('d/d2')),
+    assert self._get_paths(self.c._get_all_children('d/d2')) == \
       ['d/d2/f3a', 'd/d2/f3b']
-    )
 
   def test_0040(self):
     """_get_path_element(): Returns path element by index"""
-    self.assertEqual(self.c._get_path_element('', 0), '')
-    self.assertEqual(self.c._get_path_element('a', 0), 'a')
-    self.assertEqual(self.c._get_path_element('a/b', 0), 'a')
-    self.assertEqual(self.c._get_path_element('a/b/c', 1), 'b')
-    self.assertEqual(self.c._get_path_element('a/b/c', 2), 'c')
+    assert self.c._get_path_element('', 0) == ''
+    assert self.c._get_path_element('a', 0) == 'a'
+    assert self.c._get_path_element('a/b', 0) == 'a'
+    assert self.c._get_path_element('a/b/c', 1) == 'b'
+    assert self.c._get_path_element('a/b/c', 2) == 'c'
 
   def test_0050(self):
     """_is_direct_child(): Determine if path is path is direct child"""
-    self.assertTrue(self.c._is_direct_child('', 'a'))
-    self.assertTrue(self.c._is_direct_child('a/b', 'a/b/c'))
-    self.assertFalse(self.c._is_direct_child('a/b', 'a/b/c/d'))
-    self.assertFalse(self.c._is_direct_child('a/b', 'a/b'))
-    self.assertFalse(self.c._is_direct_child('a/b', 'a'))
+    assert self.c._is_direct_child('', 'a')
+    assert self.c._is_direct_child('a/b', 'a/b/c')
+    assert not self.c._is_direct_child('a/b', 'a/b/c/d')
+    assert not self.c._is_direct_child('a/b', 'a/b')
+    assert not self.c._is_direct_child('a/b', 'a')
 
   def test_0060(self):
     """_get_direct_children(): Returns direct sub-paths"""
-    self.assertEqual(self.c._get_direct_children(''), ['d', 'fa', 'fb'])
-    self.assertEqual(
-      self.c._get_direct_children('d'), ['d2', 'f2a', 'f2b', 'f2c']
-    )
-    self.assertEqual(self.c._get_direct_children('d/d2'), ['f3a', 'f3b'])
+    assert self.c._get_direct_children('') == ['d', 'fa', 'fb']
+    assert self.c._get_direct_children('d') == ['d2', 'f2a', 'f2b', 'f2c']
+    assert self.c._get_direct_children('d/d2') == ['f3a', 'f3b']
 
   def test_0070(self):
     """_is_dir(): Returns True for directories"""
-    self.assertTrue(self.c._is_dir(''))
-    self.assertTrue(self.c._is_dir('d'))
-    self.assertTrue(self.c._is_dir('d/d2'))
-    self.assertFalse(self.c._is_dir('a'))
-    self.assertFalse(self.c._is_dir('a/d'))
-    self.assertFalse(self.c._is_dir('fa'))
-    self.assertFalse(self.c._is_dir('d/f2a'))
+    assert self.c._is_dir('')
+    assert self.c._is_dir('d')
+    assert self.c._is_dir('d/d2')
+    assert not self.c._is_dir('a')
+    assert not self.c._is_dir('a/d')
+    assert not self.c._is_dir('fa')
+    assert not self.c._is_dir('d/f2a')
 
   def test_0080(self):
     """_get_meta_file(): """
-    self.assertEqual(
-      self.c._get_meta_file('fa'),
+    assert self.c._get_meta_file('fa') == \
       (50, datetime.datetime(2005, 5, 23, 11, 12, 13))
-    )
-    self.assertEqual(
-      self.c._get_meta_file('d/d2/f3b'),
+    assert self.c._get_meta_file('d/d2/f3b') == \
       (56, datetime.datetime(2005, 5, 23, 11, 12, 13))
-    )

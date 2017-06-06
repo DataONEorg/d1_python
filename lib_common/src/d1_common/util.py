@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import
 
+import contextlib
+import email.message
+import email.utils
+import functools
+import logging
 import os
 import sys
-import logging
-import functools
-import email.utils
-import email.message
 
 
 def log_setup(is_debug, is_multiprocess=False):
@@ -80,7 +81,7 @@ def utf8_to_unicode(f):
   """
 
   @functools.wraps(f)
-  def wrap(*args, **kwargs):
+  def wrapper(*args, **kwargs):
     new_args = []
     new_kwargs = {}
     for arg in args:
@@ -97,7 +98,23 @@ def utf8_to_unicode(f):
         new_kwargs[key] = arg
     return f(*new_args, **new_kwargs)
 
-  return wrap
+  return wrapper
+
+
+def unicode_to_utf8(f):
+  @functools.wraps(f)
+  def wrapper(*args, **kwargs):
+    return f(
+      *[v.encode('utf-8') if isinstance(v, unicode) else v for v in args], **{
+        k: v.encode('utf-8') if isinstance(v, unicode) else v
+        for k, v in kwargs.items()
+      }
+    )
+
+  return wrapper
+
+
+#===============================================================================
 
 
 class EventCounter(object):
@@ -112,3 +129,35 @@ class EventCounter(object):
     logging.info('Counted events:')
     for event_str, count_int in sorted(self._event_dict.items()):
       logging.info('  {}: {}'.format(event_str, count_int))
+
+
+#===============================================================================
+
+
+@contextlib.contextmanager
+def print_logging():
+  """Temporarily remove all formatting from logging.
+
+  Creates a logger that writes only the logged strings. This makes logging look
+  like print(). The main use case is in scripts that mix logging and print(), as
+  Python uses separate streams for those, and output can, and does, end up
+  getting shuffled up. Also, it can be used as a "print with log level".
+
+  This works by saving the logging levels on the current handlers, setting
+  them to something high, so they don't interfere unless it's something
+  serious. Then, add a handler without formatting with debug level logging.
+  When leaving the context, remove the old handler and restore the log levels.
+  """
+  root_logger = logging.getLogger()
+  old_level_list = [h.level for h in root_logger.handlers]
+  for h in root_logger.handlers:
+    h.setLevel(logging.WARNING)
+  log_format = logging.Formatter('%(message)s')
+  stream_handler = logging.StreamHandler(sys.stdout)
+  stream_handler.setFormatter(log_format)
+  stream_handler.setLevel(logging.DEBUG)
+  root_logger.addHandler(stream_handler)
+  yield
+  root_logger.removeHandler(stream_handler)
+  for h, level in zip(root_logger.handlers, old_level_list):
+    h.setLevel(level)

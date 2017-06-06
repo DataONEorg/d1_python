@@ -19,12 +19,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import xml.sax
 
 import pyxb
+
 # D1
 from d1_common.types import dataoneTypes
+
+import d1_test.d1_test_case
 
 EG_PID_GMN = (
   '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -52,7 +54,7 @@ EG_BAD_PID_1 = (
 EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid',)
 
 
-class TestPID(unittest.TestCase):
+class TestPID(d1_test.d1_test_case.D1TestCase):
   def deserialize_pid_and_check(self, doc, shouldfail=False):
     try:
       obj = dataoneTypes.CreateFromDocument(doc[0])
@@ -63,7 +65,7 @@ class TestPID(unittest.TestCase):
         raise
     if shouldfail:
       raise Exception('Did not receive expected exception')
-    self.assertEqual(obj.value(), doc[1])
+    assert obj.value() == doc[1]
 
   def test_0010(self):
     """deserialize gmn: Deserialize: XML -> PID (GMN)"""

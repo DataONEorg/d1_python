@@ -18,32 +18,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import responses
 
+import d1_test.d1_test_case
 import d1_test.mock_api.describe as mock_describe
-import d1_test.mock_api.tests.config as config
-
-import d1_client.mnclient_2_0
 
 
-class TestMockDescribe(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      base_url=config.MN_RESPONSES_BASE_URL
-    )
-
+class TestMockDescribe(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """mock_api.describe(): Returns a dict with the expected headers"""
-    mock_describe.add_callback(config.MN_RESPONSES_BASE_URL)
-    header_dict = self.client.describe('test_pid')
-    self.assertIn('Last-Modified', header_dict)
+    mock_describe.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    header_dict = mn_client_v1_v2.describe('test_pid')
+    assert 'Last-Modified' in header_dict
     del header_dict['Last-Modified']
     expected_header_dict = {
       'Content-Length': '256',
@@ -52,4 +39,4 @@ class TestMockDescribe(unittest.TestCase):
       'DataONE-FormatId': u'application/octet-stream',
       u'Content-Type': 'application/octet-stream',
     }
-    self.assertDictEqual(expected_header_dict, dict(header_dict))
+    assert expected_header_dict == dict(header_dict)

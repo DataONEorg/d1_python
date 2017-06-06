@@ -19,53 +19,55 @@
 # limitations under the License.
 """Psycopg Postgres adapter for Python
 
-This module registers custom adapters with Psycopg, which simplify reading
-and writing custom DataONE PyXB types to/from database models.
+Registers custom adapters with Psycopg, which simplify reading and writing
+custom DataONE PyXB types to/from database models.
 """
 
 from __future__ import absolute_import
 
-import d1_common.types.dataoneTypes
 import psycopg2.extensions
 import pyxb.binding.datatypes
+
+import d1_common.types.dataoneTypes
 
 # noinspection PyArgumentList
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 
-def adapt_pyxb_binding(binding):
+def adapt_pyxb_bindings(client):
   return psycopg2.extensions.AsIs(
-    u"'{}'".format(unicode(binding).replace('\'', '\'\''))
+    u"'{}'".format(unicode(client).replace('\'', '\'\''))
   )
   # An example uses adapt() here, but I could not get that to work with
   # casting to unicode. It works with casting to str.
-  #.format(psycopg2.extensions.adapt(str(binding))))
+  #.format(psycopg2.extensions.adapt(str(client))))
 
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.NonEmptyNoWhitespaceString800, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.NonEmptyNoWhitespaceString800,
+  adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.NonEmptyString800, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.NonEmptyString800, adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.ChecksumAlgorithm, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.ChecksumAlgorithm, adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.NonEmptyString, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.NonEmptyString, adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  pyxb.binding.datatypes.string, adapt_pyxb_binding
+  pyxb.binding.datatypes.string, adapt_pyxb_bindings
 )
 
 psycopg2.extensions.register_adapter(
-  pyxb.binding.datatypes.boolean, adapt_pyxb_binding
+  pyxb.binding.datatypes.boolean, adapt_pyxb_bindings
 )

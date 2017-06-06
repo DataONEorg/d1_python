@@ -28,15 +28,15 @@ import gmn.tests.gmn_mock
 import gmn.tests.gmn_test_case
 
 
-@gmn.tests.gmn_mock.disable_auth_decorator
-class TestGetCapabilities(gmn.tests.gmn_test_case.D1TestCase):
+class TestGetCapabilities(gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1850_v1(self):
     """MNCore.getCapabilities(): Returns a valid Node Registry document"""
 
-    def test(client, binding):
+    def test(client):
       node = client.getCapabilities()
-      self.assertIsInstance(node, binding.Node)
+      assert isinstance(node, client.bindings.Node)
 
-    test(self.client_v1, self.v1)
-    test(self.client_v2, self.v2)
+    with gmn.tests.gmn_mock.disable_auth():
+      test(self.client_v1)
+      test(self.client_v2)

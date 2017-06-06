@@ -19,18 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-import d1_client.baseclient_2_0
+import d1_test.d1_test_case
 
 
-class TestDataONEBaseclientV2(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.base_url = 'www.example.com'
-    self.client = d1_client.baseclient_2_0.DataONEBaseClient_2_0(
-      "http://bogus.target/mn"
-    )
+class TestDataONEBaseclientV2(d1_test.d1_test_case.D1TestCase):
+  pass

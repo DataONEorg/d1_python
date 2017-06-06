@@ -23,13 +23,14 @@ import logging
 import random
 import unittest
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.random_data as random_data
 
 #===============================================================================
 
 
-class TestIdentifier(unittest.TestCase):
+class TestIdentifier(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     pass
 
@@ -42,8 +43,8 @@ class TestIdentifier(unittest.TestCase):
       min_len += len(prefix)
       max_len += len(prefix)
       identifier_obj = identifier.generate(prefix, min_len, max_len)
-      self.assertTrue(len(identifier_obj.value()) >= min_len)
-      self.assertTrue(len(identifier_obj.value()) <= max_len)
+      assert len(identifier_obj.value()) >= min_len
+      assert len(identifier_obj.value()) <= max_len
 
 
 if __name__ == "__main__":

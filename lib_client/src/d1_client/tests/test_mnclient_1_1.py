@@ -18,23 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import unittest
 
-import shared_settings
-
-import d1_client.mnclient_1_1
+import d1_test.d1_test_case
 
 
-class TestMNClient_1_1(unittest.TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass # d1_common.util.log_setup(is_debug=True)
-
-  def setUp(self):
-    self.client = d1_client.mnclient_1_1.MemberNodeClient_1_1(
-      shared_settings.MN_RESPONSES_URL
-    )
-
-  def test_0010(self):
-    """__init__()"""
-    pass
+class TestMNClient_1_1(d1_test.d1_test_case.D1TestCase):
+  pass

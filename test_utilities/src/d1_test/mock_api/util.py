@@ -21,23 +21,25 @@
 """Utilities for mocking up DataONE API endpoints with Responses
 """
 
-import re
-import json
 import base64
-import hashlib
 import datetime
+import hashlib
+import json
+import re
 import urlparse
 
-import pyxb.utils
+import freezegun
 
-import d1_common.url
 import d1_common.const
 import d1_common.type_conversions
+import d1_common.url
 
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
-from d1_test.util import generate_reproducible_sciobj_str
+from d1_test.d1_test_case import generate_reproducible_sciobj_str
 from d1_test.mock_api.list_objects import N_TOTAL
+
+import d1_client.util
 
 NUM_SCIOBJ_BYTES = 1024
 SYSMETA_FORMATID = 'application/octet-stream'
@@ -46,10 +48,10 @@ SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 
 def parse_rest_url(rest_url):
   """Parse a DataONE REST API URL.
-  Return: version_tag, endpoint_str, param_list, query_dict, pyxb_bindings.
+  Return: version_tag, endpoint_str, param_list, query_dict, client.bindings.
   E.g.:
     http://dataone.server.edu/dataone/mn/v1/objects/mypid ->
-    'v1', 'objects', ['mypid'], {}, <v1 bindings>
+    'v1', 'objects', ['mypid'], {}, <v1 client>
   The version tag must be present. Everything leading up to the version tag is
   the baseURL and is discarded.
   """
@@ -59,10 +61,8 @@ def parse_rest_url(rest_url):
   param_list = _decode_path_elements(url_obj.path)
   endpoint_str = param_list.pop(0)
   query_dict = urlparse.parse_qs(url_obj.query) if url_obj.query else {}
-  pyxb_bindings = d1_common.type_conversions.get_pyxb_bindings_by_version_tag(
-    version_tag
-  )
-  return version_tag, endpoint_str, param_list, query_dict, pyxb_bindings
+  client = d1_client.util.get_client_by_version_tag(version_tag)
+  return version_tag, endpoint_str, param_list, query_dict, client
 
 
 def _decode_path_elements(path):
@@ -92,10 +92,10 @@ def get_page(query_dict, n_total):
   return n_start, n_count
 
 
-def generate_sysmeta(pyxb_bindings, pid):
+def generate_sysmeta(client, pid):
   sciobj_str = generate_reproducible_sciobj_str(pid)
   sysmeta_pyxb = _generate_system_metadata_for_sciobj_str(
-    pyxb_bindings, pid, sciobj_str
+    client, pid, sciobj_str
   )
   return sciobj_str, sysmeta_pyxb
 
@@ -123,15 +123,16 @@ def echo_get_callback(request):
   return 200, header_dict, json.dumps(body_dict)
 
 
-def generate_object_list(pyxb_bindings, n_start, n_count):
-  objectList = pyxb_bindings.objectList()
+@freezegun.freeze_time('1977-07-27')
+def generate_object_list(client, n_start, n_count):
+  objectList = client.bindings.objectList()
 
   for i in range(n_count):
-    objectInfo = pyxb_bindings.ObjectInfo()
+    objectInfo = client.bindings.ObjectInfo()
 
     objectInfo.identifier = 'object#{}'.format(n_start + i)
     objectInfo.formatId = 'text/plain'
-    checksum = pyxb_bindings.Checksum(
+    checksum = client.bindings.Checksum(
       hashlib.sha1(objectInfo.identifier.value()).hexdigest()
     )
     checksum.algorithm = 'SHA-1'
@@ -145,7 +146,7 @@ def generate_object_list(pyxb_bindings, n_start, n_count):
   objectList.count = len(objectList.objectInfo)
   objectList.total = N_TOTAL
 
-  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
+  #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return objectList.toxml('utf-8')
 
 
@@ -176,33 +177,33 @@ def generate_object_list(pyxb_bindings, n_start, n_count):
 #
 
 
-def _generate_system_metadata_for_sciobj_str(pyxb_bindings, pid, sciobj_str):
+def _generate_system_metadata_for_sciobj_str(client, pid, sciobj_str):
   size = len(sciobj_str)
   md5 = hashlib.md5(sciobj_str).hexdigest()
   now = datetime.datetime.now()
-  sysmeta_pyxb = _generate_sysmeta_pyxb(pyxb_bindings, pid, size, md5, now)
+  sysmeta_pyxb = _generate_sysmeta_pyxb(client, pid, size, md5, now)
   return sysmeta_pyxb
 
 
-def _generate_sysmeta_pyxb(pyxb_bindings, pid, size, md5, now):
-  sysmeta_pyxb = pyxb_bindings.systemMetadata()
+def _generate_sysmeta_pyxb(client, pid, size, md5, now):
+  sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.identifier = pid
   sysmeta_pyxb.formatId = SYSMETA_FORMATID
   sysmeta_pyxb.size = size
   sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
-  sysmeta_pyxb.checksum = pyxb_bindings.checksum(md5)
+  sysmeta_pyxb.checksum = client.bindings.checksum(md5)
   sysmeta_pyxb.checksum.algorithm = 'MD5'
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.dateSysMetadataModified = now
-  sysmeta_pyxb.accessPolicy = _generate_public_access_policy(pyxb_bindings)
+  sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
   return sysmeta_pyxb
 
 
-def _generate_public_access_policy(pyxb_bindings):
-  accessPolicy = pyxb_bindings.accessPolicy()
-  accessRule = pyxb_bindings.AccessRule()
+def _generate_public_access_policy(client):
+  accessPolicy = client.bindings.accessPolicy()
+  accessRule = client.bindings.AccessRule()
   accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission = pyxb_bindings.Permission('read')
+  permission = client.bindings.Permission('read')
   accessRule.permission.append(permission)
   accessPolicy.append(accessRule)
   return accessPolicy

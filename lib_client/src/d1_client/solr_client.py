@@ -21,9 +21,9 @@ Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
 client/python/solr.py
 """
 
-import random
-import logging
 import datetime
+import logging
+import random
 from xml.sax.saxutils import quoteattr
 
 import d1_client.baseclient_1_1
@@ -322,7 +322,7 @@ class SolrClient(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
         'facet.field': name,
         'facet.limit': '1',
         'facet.mincount': 1,
-        'facet.query': [sq.encode('utf8') for sq in q_bin],
+        'facet.query': [sq.encode('utf-8') for sq in q_bin],
       }
       response_dict = self._post_query(query_dict, **query_args)
       for i in xrange(len(bin_list)):
@@ -360,7 +360,7 @@ class SolrClient(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
     return term
 
   def _escape_xml_entity(self, s):
-    return quoteattr(s).encode('utf8')
+    return quoteattr(s).encode('utf-8')
 
   def _coerce_type(self, field_type, value):
     """Returns unicode(value) after trying to coerce it into the Solr field

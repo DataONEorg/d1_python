@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>1</serialVersion>
+  <identifier>test_pid_burrito,carpingly,coloradoite</identifier>
+  <formatId>test-format-id</formatId>
+  <size>49</size>
+  <checksum algorithm="SHA-1">c7c38cd0ae6270f2e5990511a0a4cddf340e2beb</checksum>
+  <rightsHolder>test-rights-holder-subject</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>test_subject_1</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>test_subject_3</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="42" replicationAllowed="true">
+    <preferredMemberNode>preferred-mn-2</preferredMemberNode>
+    <blockedMemberNode>blocked-mn-1</blockedMemberNode>
+    <blockedMemberNode>blocked-mn-2</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>1970-01-01T00:00:00Z</dateUploaded>
+  <dateSysMetadataModified>1970-01-01T00:00:00Z</dateSysMetadataModified>
+</ns1:systemMetadata>

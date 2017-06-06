@@ -19,15 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import impl.resolver.time_period as time_period
 from object_tree_test_sample import object_tree
+
+import d1_test.d1_test_case
 
 options = {}
 
 
-class TestTimePeriodResolver(unittest.TestCase):
+class TestTimePeriodResolver(d1_test.d1_test_case.D1TestCase):
   def setUp(self):
     self._resolver = time_period.Resolver(options, object_tree)
 

@@ -22,41 +22,38 @@
 
 from __future__ import absolute_import
 
-import os
-import uuid
-import logging
 import datetime
+import logging
+import os
 import urlparse
+import uuid
 
 import requests
 
-import d1_common.const
 import d1_common.checksum
+import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v1_1
+import d1_common.types.exceptions
 
 import d1_client.cnclient
 import d1_client.object_format_info
 
 import gmn.app.auth
-import gmn.app.node
-import gmn.app.util
-import gmn.app.models
-import gmn.app.sysmeta
 import gmn.app.db_filter
 import gmn.app.event_log
-import gmn.app.views.util
-import gmn.app.sysmeta_sid
-import gmn.app.sysmeta_util
-import gmn.app.views.create
-import gmn.app.views.asserts
+import gmn.app.local_replica
+import gmn.app.models
+import gmn.app.node
 import gmn.app.psycopg_adapter
-import gmn.app.sysmeta_replica
 import gmn.app.restrict_to_verb
-import gmn.app.sysmeta_revision
-import gmn.app.sysmeta_validate
+import gmn.app.revision
+import gmn.app.sysmeta
+import gmn.app.util
+import gmn.app.views.asserts
+import gmn.app.views.create
 import gmn.app.views.decorators
+import gmn.app.views.util
 
 import django.conf
 import django.http
@@ -69,14 +66,19 @@ OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 # ==============================================================================
 
 
+# Forward calls for /object/{id} URLs
 def dispatch_object(request, did):
   if request.method == 'GET':
+    # MNRead.get()
     return get_object(request, did)
   elif request.method == 'HEAD':
+    # MNRead.describe()
     return head_object(request, did)
   elif request.method == 'PUT':
+    # MNStorage.update()
     return put_object(request, did)
   elif request.method == 'DELETE':
+    # MNStorage.delete()
     return delete_object(request, did)
   else:
     return django.http.HttpResponseNotAllowed(
@@ -84,10 +86,13 @@ def dispatch_object(request, did):
     )
 
 
+# Forward calls for /object URLs
 def dispatch_object_list(request):
   if request.method == 'GET':
+    # MNRead.listObjects()
     return get_object_list(request)
   elif request.method == 'POST':
+    # MNStorage.create()
     return post_object_list(request)
   else:
     return django.http.HttpResponseNotAllowed(['GET', 'POST'])
@@ -328,9 +333,9 @@ def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
-  # The ObjectList is returned ordered by modified_timestamp ascending. The order has
-  # been left undefined in the spec, to allow MNs to select what is optimal
-  # for them.
+  # The ObjectList is returned ordered by modified_timestamp ascending. The
+  # order has been left undefined in the spec, to allow MNs to select what is
+  # optimal for them.
   query = gmn.app.models.ScienceObject.objects.order_by('modified_timestamp')
   #.select_related()
   if not gmn.app.auth.is_trusted_subject(request):
@@ -362,23 +367,18 @@ def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
   gmn.app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
-  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['message'])
-  synchronization_failed_xml = gmn.app.views.util.read_utf8_xml(
-    request.FILES['message']
-  )
   try:
-    synchronization_failed = d1_common.types.exceptions.deserialize(
-      synchronization_failed_xml.encode('utf-8')
+    synchronization_failed = gmn.app.views.util.deserialize(
+      request.FILES['message']
     )
   except d1_common.types.exceptions.DataONEException as e:
     # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
     # to the CN. Can only log the issue and return a 200 OK.
     logging.error(
       u'Received notification of synchronization error from CN but was unable '
-      u'to deserialize the DataONE Exception passed by the CN.\n'
-      u'Exception passed by CN: {}\n'
-      u'Exception when deserializing: {}\n'.format(
-        synchronization_failed_xml.encode('utf-8'), str(e)
+      u'to deserialize the DataONE Exception passed by the CN. '
+      u'message="{}" error="{}"'.format(
+        gmn.app.views.util.read_utf8_xml(request.FILES['message']), str(e)
       )
     )
   else:
@@ -430,8 +430,13 @@ def _assert_node_is_authorized(request, pid):
 
 
 @gmn.app.restrict_to_verb.put
+# TODO: Check if by update by SID not supported by design
 def put_meta(request):
   """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
+
+  TODO: Currently, this call allows making breaking changes to SysMeta. We
+  need to clarify what can be modified and what the behavior should be when
+  working with SIDs and chains.
   """
   gmn.app.util.coerce_put_post(request)
   gmn.app.views.asserts.post_has_mime_parts(
@@ -440,22 +445,17 @@ def put_meta(request):
   pid = request.POST['pid']
   gmn.app.auth.assert_allowed(request, gmn.app.auth.WRITE_LEVEL, pid)
   gmn.app.views.asserts.is_valid_for_update(pid)
-  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  new_sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  new_sysmeta_pyxb = gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   gmn.app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
-  gmn.app.views.asserts.is_valid_sid_for_chain_if_specified(
-    new_sysmeta_pyxb, pid
-  )
-  # TODO: Need to clarify desired functionality.
   gmn.app.views.util.set_mn_controlled_values(
     request, new_sysmeta_pyxb, update_submitter=False
   )
-  if gmn.app.sysmeta_sid.has_sid(new_sysmeta_pyxb):
-    sid = gmn.app.sysmeta_sid.get_sid(new_sysmeta_pyxb)
-    if gmn.app.sysmeta_sid.is_sid(sid):
-      gmn.app.sysmeta_sid.update_or_create_sid_to_pid_map(sid, pid)
   gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
+  # SID
+  if gmn.app.revision.has_sid(new_sysmeta_pyxb):
+    sid = gmn.app.revision.get_sid(new_sysmeta_pyxb)
+    gmn.app.views.asserts.is_valid_sid_for_chain(pid, sid)
+    gmn.app.revision.update_sid_to_head_pid_map(pid)
   gmn.app.event_log.update(pid, request)
   return gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -559,21 +559,23 @@ def post_object_list(request):
   gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  sysmeta_pyxb = gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   gmn.app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
   gmn.app.views.asserts.is_unused(new_pid)
-  if gmn.app.sysmeta_sid.has_sid(sysmeta_pyxb):
-    sid = gmn.app.sysmeta_sid.get_sid(sysmeta_pyxb)
+  sid = gmn.app.revision.get_sid(sysmeta_pyxb)
+  # if gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
+  if sid:
     gmn.app.views.asserts.is_unused(sid)
   _create(request, sysmeta_pyxb, new_pid)
+  gmn.app.revision.create_chain(sid, new_pid)
   return new_pid
 
 
 @gmn.app.restrict_to_verb.put
 @gmn.app.views.decorators.decode_id
-@gmn.app.views.decorators.resolve_sid
+# TODO: Update by SID not supported. Check if by design
+# @gmn.app.views.decorators.resolve_sid
 @gmn.app.views.decorators.write_permission # OLD object
 def put_object(request, old_pid):
   """MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
@@ -586,22 +588,27 @@ def put_object(request, old_pid):
   )
   gmn.app.views.asserts.is_valid_for_update(old_pid)
   gmn.app.views.asserts.is_not_obsoleted(old_pid)
-  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
+  sysmeta_pyxb = gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   gmn.app.views.asserts.obsoletes_matches_pid_if_specified(
     sysmeta_pyxb, old_pid
   )
-  gmn.app.views.asserts.is_valid_sid_for_chain_if_specified(
-    sysmeta_pyxb, old_pid
-  )
-  sysmeta_pyxb.obsoletes = old_pid
   new_pid = request.POST['newPid']
+  sysmeta_pyxb.obsoletes = old_pid
   _create(request, sysmeta_pyxb, new_pid)
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
+  gmn.app.revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
+  # SID
+  sid = gmn.app.revision.get_sid(sysmeta_pyxb)
+  gmn.app.views.asserts.is_valid_sid_for_chain(old_pid, sid)
+  gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
+  # if gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
+  #   sid = gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
+  # gmn.app.sysmeta_revision.update_or_create_sid_to_pid_map(sid, new_pid)
+
   gmn.app.event_log.update(old_pid, request)
-  gmn.app.sysmeta_revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
   gmn.app.sysmeta.update_modified_timestamp(old_pid)
+
   return new_pid
 
 
@@ -609,13 +616,9 @@ def _create(request, sysmeta_pyxb, new_pid):
   gmn.app.views.asserts.is_unused(new_pid)
   gmn.app.views.asserts.does_not_contain_replica_sections(sysmeta_pyxb)
   gmn.app.views.asserts.sysmeta_is_not_archived(sysmeta_pyxb)
-  # gmn.app.views.asserts.is_unused(mn.sysmeta_pyxb.get_value(sysmeta_pyxb, 'seriesId'))
   gmn.app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
-  gmn.app.views.asserts.xml_document_not_too_large(request.FILES['sysmeta'])
   gmn.app.views.asserts.obsoleted_by_not_specified(sysmeta_pyxb)
-  gmn.app.sysmeta_validate.validate_sysmeta_against_uploaded(
-    request, sysmeta_pyxb
-  )
+  gmn.app.views.asserts.validate_sysmeta_against_uploaded(request, sysmeta_pyxb)
   gmn.app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
   #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
   gmn.app.views.create.create(request, sysmeta_pyxb)
@@ -662,22 +665,14 @@ def _delete_from_filesystem(url_split, pid):
 
 
 def _delete_from_database(pid):
+  sciobj_model = gmn.app.util.get_sci_model(pid)
+  if gmn.app.revision.is_in_revision_chain(sciobj_model):
+    gmn.app.revision.cut_from_chain(sciobj_model)
+  gmn.app.revision.delete_chain(pid)
   # The models.CASCADE property is set on all ForeignKey fields, so most object
   # related info is deleted when deleting the IdNamespace "root".
-
-  # The orphaned subjects should not
-  # cause any issues and will be reused if they are needed again.
-
-  if gmn.app.sysmeta_revision.is_in_revision_chain(pid):
-    gmn.app.sysmeta_revision.cut_from_chain(pid)
-
-  sid = gmn.app.sysmeta_sid.get_sid_by_pid(pid)
   gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
-  if sid and not gmn.app.models.SeriesIdToPersistentId.objects.filter(
-      sid__did=pid
-  ).exists():
-    gmn.app.models.IdNamespace.objects.filter(did=sid).delete()
-  gmn.app.sysmeta_util.delete_unused_subjects()
+  gmn.app.util.delete_unused_subjects()
 
 
 @gmn.app.restrict_to_verb.put
@@ -706,14 +701,13 @@ def post_replicate(request):
   gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
-  sysmeta_xml = gmn.app.views.util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta_pyxb = gmn.app.sysmeta.deserialize(sysmeta_xml)
-  gmn.app.sysmeta_replica.assert_request_complies_with_replication_policy(
+  sysmeta_pyxb = gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
+  gmn.app.local_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )
-  pid = gmn.app.sysmeta_util.uvalue(sysmeta_pyxb.identifier)
+  pid = gmn.app.util.uvalue(sysmeta_pyxb.identifier)
   gmn.app.views.asserts.is_unused(pid)
-  gmn.app.sysmeta_replica.add_to_replication_queue(
+  gmn.app.local_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb
   )
   return gmn.app.views.util.http_response_with_boolean_true_type()

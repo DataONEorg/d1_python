@@ -19,22 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
 import d1_common.object_format
-import d1_test.util
+
+import d1_test.d1_test_case
 
 
-class TestObjectFormat(unittest.TestCase):
-  def setUp(self):
-    self.ofl_pyxb = d1_test.util.read_xml_file_to_pyxb(
-      'objectFormatList_v2_0.xml'
-    )
+class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
+  ofl_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+    'objectFormatList_v2_0.xml'
+  )
 
   def test_0010(self):
     """pyxb_to_dict()"""
     ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
-    self.assertEqual(len(ofl_dict), 117)
+    assert len(ofl_dict) == 117
 
     expected_text_xml_dict = {
       'extension': u'html',
@@ -46,4 +44,4 @@ class TestObjectFormat(unittest.TestCase):
       }
     }
 
-    self.assertDictEqual(ofl_dict['text/html'], expected_text_xml_dict)
+    assert ofl_dict['text/html'] == expected_text_xml_dict
