@@ -82,7 +82,7 @@ DATABASES = {
   }
 }
 
-OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
+OBJECT_STORE_PATH = '/tmp'
 
 PROXY_MODE_BASIC_AUTH_ENABLED = False
 PROXY_MODE_BASIC_AUTH_USERNAME = ''
