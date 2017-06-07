@@ -38,7 +38,6 @@ def main():
       'dataone.libclient == 2.3.0rc1',
       'pyxb == 1.2.5',
       'requests == 2.14.2',
-      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

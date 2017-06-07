@@ -48,7 +48,6 @@ def main():
       'rdflib == 4.2.2',
       'requests == 2.14.2',
       'responses == 0.5.1',
-      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

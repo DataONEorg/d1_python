@@ -42,7 +42,6 @@ def main():
       'iso8601 == 0.1.11',
       'pyasn1 == 0.2.3',
       'pyxb == 1.2.5',
-      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

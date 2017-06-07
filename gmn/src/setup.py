@@ -50,7 +50,6 @@ def main():
       'psycopg2 == 2.7.1',
       'pyjwt == 1.5.0',
       'pyxb == 1.2.5',
-      'setuptools == 35.0.2',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
