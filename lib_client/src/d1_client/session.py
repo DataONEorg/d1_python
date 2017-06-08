@@ -25,13 +25,12 @@ import datetime
 import logging
 import urlparse
 
-import cachecontrol  # pip install cachecontrol
+import cachecontrol
 import requests
 import requests.adapters
 import requests_toolbelt
 import requests_toolbelt.utils.dump
 
-# D1
 import d1_common.const
 import d1_common.date_time
 import d1_common.url

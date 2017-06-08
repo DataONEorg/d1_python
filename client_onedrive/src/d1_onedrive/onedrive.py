@@ -18,12 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Top level module for ONEDrive
+
+- Parse arguments
+- Instantiate the Root resolver
+- Mount FUSE / Dokan
+"""
 
 from __future__ import absolute_import
 
 import logging
 import optparse
-import os
 import platform
 import sys
 
@@ -35,13 +40,6 @@ from onedrive.impl import object_tree
 from onedrive.impl import util
 from onedrive.impl.clients import onedrive_zotero_client
 from onedrive.impl.resolver import root
-
-"""Top level module for ONEDrive
-
-- Parse arguments
-- Instantiate the Root resolver
-- Mount FUSE / Dokan
-"""
 
 # flake8: noqa: F402
 

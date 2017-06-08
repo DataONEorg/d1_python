@@ -28,29 +28,26 @@ import re
 import cryptography.hazmat.backends
 import cryptography.x509
 import cryptography.x509.oid
-# 3rd party
-# pyasn1 is pulled in by cryptography
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
 
-"""Map OID to short names for use when creating DataONE compliant serialization
-of the DN.
-
-This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
-
-The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514
-refers to a registry but, if the registry exists, it's probably too large to be
-useful to us. So we pull in OIDs for a small set that can be expected in RDNs in
-certs from CILogon and will just need to expand it if required.
-
-RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
-
-If the AttributeType is defined to have a short name (descriptor) [RFC4512] and
-that short name is known to be registered [REGISTRY] [RFC4520] as identifying
-the AttributeType , that short name a <descr>, is used.  Otherwise the
-AttributeType is encoded as the dotted-decimal encoding , a <numericoid> of its
-OBJECT IDENTIFIER. The <descr> and <numericoid> are defined in [RFC4512].
-"""
+# Map OID to short names for use when creating DataONE compliant serialization
+# of the DN.
+#
+# This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
+#
+# The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514
+# refers to a registry but, if the registry exists, it's probably too large to be
+# useful to us. So we pull in OIDs for a small set that can be expected in RDNs in
+# certs from CILogon and will just need to expand it if required.
+#
+# RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
+#
+# If the AttributeType is defined to have a short name (descriptor) [RFC4512] and
+# that short name is known to be registered [REGISTRY] [RFC4520] as identifying
+# the AttributeType , that short name a <descr>, is used.  Otherwise the
+# AttributeType is encoded as the dotted-decimal encoding , a <numericoid> of its
+# OBJECT IDENTIFIER. The <descr> and <numericoid> are defined in [RFC4512].
 OID_TO_SHORT_NAME_DICT = {
   '0.9.2342.19200300.100.1.1': 'UID', # userId
   '0.9.2342.19200300.100.1.25': 'DC', # domainComponent

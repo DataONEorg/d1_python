@@ -18,6 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Perform various small source cleanup tasks on modules
+
+By default, files are NOT modified. After having verified that the modifications
+are as expected with the `--diff` switch, run the script again with `--update`
+to modify the files.
+
+When files are updated, the original file is backed up by appending "~" to the
+original name. Any earlier backups are overwritten. Use clean-tree.py to delete
+the backups.
+"""
 
 from __future__ import absolute_import
 
@@ -32,17 +42,6 @@ import redbaron
 import redbaron.nodes
 
 import d1_common.util
-
-"""Perform various small source cleanup tasks on modules
-
-By default, files are NOT modified. After having verified that the modifications
-are as expected with the `--diff` switch, run the script again with `--update`
-to modify the files.
-
-When files are updated, the original file is backed up by appending "~" to the
-original name. Any earlier backups are overwritten. Use clean-tree.py to delete
-the backups.
-"""
 
 # Single line comments containing these strings will not be removed.
 KEEP_COMMENTS = ['noqa', 'noinspection']
