@@ -20,6 +20,8 @@
 """Utilities for handling DataONE environments
 """
 
+from __future__ import absolute_import
+
 import d1_common.const
 
 D1_ENV_DICT = {

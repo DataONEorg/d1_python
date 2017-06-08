@@ -39,10 +39,13 @@ For example, an <allow> clause that contains any subject with the string
 "_read_" in it, should also contain the read permission entry.
 """
 
+from __future__ import absolute_import
+
 import random
 
 import d1_common.types.dataoneTypes
-import random_data
+
+import d1_test.instance_generator.random_data
 
 # Map between permission labels and permissions.
 PERMISSIONS = {
@@ -73,7 +76,7 @@ def random_subject_with_permission_labels(permissions, group_chance=0.1):
   """Generate a random subject that is tagged with the provided permissions
   and has a certain chance of being tagged as group
   """
-  subject_base = random_data.random_3_words()
+  subject_base = d1_test.instance_generator.random_data.random_3_words()
   tags = permissions_to_tag_string(permissions)
   group = '_group_' if random.random() <= group_chance else ''
   return subject_base + group + tags

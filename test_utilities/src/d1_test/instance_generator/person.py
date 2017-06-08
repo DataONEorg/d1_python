@@ -21,26 +21,33 @@
 """Generate random Person
 """
 
+from __future__ import absolute_import
+
 import random
 
 import d1_common.types.dataoneTypes_v1
-import random_data
-import subject
+
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.subject
 
 
 def generate():
   person = d1_common.types.dataoneTypes_v1.person()
-  person.subject = subject.generate()
+  person.subject = d1_test.instance_generator.subject.generate()
   for i in range(random.randint(1, 3)):
-    person.givenName.append('givenName_' + random_data.random_word())
-  person.familyName = 'familyName_' + random_data.random_word()
+    person.givenName.append(
+      'givenName_' + d1_test.instance_generator.random_data.random_word()
+    )
+  person.familyName = 'familyName_' + d1_test.instance_generator.random_data.random_word()
   for i in range(random.randint(1, 3)):
-    person.email.append(random_data.random_email())
+    person.email.append(d1_test.instance_generator.random_data.random_email())
   for i in range(random.randint(1, 3)):
-    person.isMemberOf.append('isMemberOf_' + random_data.random_word())
+    person.isMemberOf.append(
+      'isMemberOf_' + d1_test.instance_generator.random_data.random_word()
+    )
   for i in range(random.randint(1, 3)):
     person.equivalentIdentity.append(
-      'equivalentIdentity_' + random_data.random_word()
+      'equivalentIdentity_' + d1_test.instance_generator.random_data.random_word()
     )
-  person.verified = random_data.random_bool()
+  person.verified = d1_test.instance_generator.random_data.random_bool()
   return person

@@ -18,7 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# 3rd party
+from __future__ import absolute_import
+
 from cryptography.hazmat.backends.openssl.x509 import _Certificate
 
 import d1_common.cert.subject_info

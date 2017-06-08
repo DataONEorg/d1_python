@@ -21,11 +21,14 @@
 """Create set of test certificates signed by the DataONE Test CA
 """
 
+from __future__ import absolute_import
+
 import logging
 import os
 import urllib
 
 import OpenSSL
+
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 
 # Get an instance of a logger.

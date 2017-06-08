@@ -23,10 +23,13 @@ Given a DataONE X.509 v3 Certificate, list all subjects, equivalent identities
 and groups for which the certificate holder is authenticated.
 """
 
+from __future__ import absolute_import
+
 import logging
 import optparse
 
 import d1_certificate.certificate_extractor
+
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1

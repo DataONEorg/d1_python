@@ -19,17 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from __future__ import absolute_import
 
-import baseclient
+import logging
 
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.util
 
+import d1_client.baseclient
+
 
 class CoordinatingNodeClient(
-    baseclient.DataONEBaseClient,
+    d1_client.baseclient.DataONEBaseClient,
 ):
   """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available on
   Coordinating Nodes.
@@ -40,7 +42,7 @@ class CoordinatingNodeClient(
   """
 
   def __init__(self, *args, **kwargs):
-    """See baseclient.DataONEBaseClient for args."""
+    """See d1_client.baseclient.DataONEBaseClient for args."""
     super(CoordinatingNodeClient, self).__init__(*args, **kwargs)
 
     self.logger = logging.getLogger(__file__)
@@ -57,7 +59,7 @@ class CoordinatingNodeClient(
 
   # CNCore.ping() → null
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.ping
-  # Implemented in baseclient.py
+  # Implemented in d1_client.baseclient.py
 
   # CNCore.create(session, pid, object, sysmeta) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.create
@@ -87,7 +89,7 @@ class CoordinatingNodeClient(
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords
-  # Implemented in baseclient.py
+  # Implemented in d1_client.baseclient.py
 
   # CNCore.reserveIdentifier(session, pid) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.reserveIdentifier
@@ -171,10 +173,10 @@ class CoordinatingNodeClient(
   #=========================================================================
 
   # CNRead.get(session, pid) → OctetStream
-  # Implemented in baseclient.py
+  # Implemented in d1_client.baseclient.py
 
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
-  # Implemented in baseclient.py
+  # Implemented in d1_client.baseclient.py
 
   # CNRead.resolve(session, pid) → ObjectLocationList
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.resolve

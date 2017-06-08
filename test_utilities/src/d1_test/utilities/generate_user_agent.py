@@ -19,6 +19,8 @@
 # limitations under the License.
 """Return a randomly selected user agent string
 """
+from __future__ import absolute_import
+
 import random
 
 USER_AGENTS = [

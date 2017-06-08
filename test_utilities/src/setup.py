@@ -20,6 +20,8 @@
 # limitations under the License.
 """DataONE Test Utilities package
 """
+from __future__ import absolute_import
+
 import setuptools
 
 

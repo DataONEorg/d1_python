@@ -3,12 +3,14 @@ display included subject information such as mapped identities and group
 memberships.
 """
 
+from __future__ import absolute_import
+
 import logging
 import optparse
 import sys
 
-from OpenSSL import crypto
 from lxml import etree
+from OpenSSL import crypto
 from pyasn1.codec.ber import decoder
 from pyasn1.error import PyAsn1Error
 

@@ -21,20 +21,26 @@
 """Generate random replica objects
 """
 
+from __future__ import absolute_import
+
 import random
 
 import d1_common.types.dataoneTypes
-import dates
-import random_data
+
+import d1_test.instance_generator.dates
+import d1_test.instance_generator.random_data
 
 
 def generate():
   res = d1_common.types.dataoneTypes.replica()
   res.replicaMemberNode = (
-    u"mn_" + random_data.random_unicode_string_no_whitespace(5, 10)
+    u"mn_" +
+    d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
+      5, 10
+    )
   )
   res.replicationStatus = d1_common.types.dataoneTypes.ReplicationStatus.completed
-  res.replicaVerified = dates.now()
+  res.replicaVerified = d1_test.instance_generator.dates.now()
   return res
 
 

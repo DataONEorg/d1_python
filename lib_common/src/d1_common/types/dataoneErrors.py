@@ -20,10 +20,12 @@
 """Import the PYXB bindings required for handling the DataONE Exception types
 """
 
+from __future__ import absolute_import
+
 import logging
 
-# flake8: noqa: F403
-
 from d1_common.types.generated.dataoneErrors import *
+
+# flake8: noqa: F403
 
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)

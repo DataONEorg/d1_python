@@ -20,11 +20,12 @@
 """Utilities for handling checksums
 """
 
+from __future__ import absolute_import
+
 import hashlib
 
-import const
-
-from .types import dataoneTypes
+import d1_common.const
+import d1_common.types.dataoneTypes
 
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 
@@ -37,36 +38,38 @@ DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
 # Checksum PyXB object creation
 
 
-def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
+def create_checksum_object(
+    o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+):
   checksum_str = calculate_checksum(o, algorithm)
-  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
 
 
 def create_checksum_object_from_stream(
-    f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+    f, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_stream(f, algorithm)
-  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
 
 
 def create_checksum_object_from_iterator(
-    itr, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+    itr, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_iterator(itr, algorithm)
-  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
 
 
 def create_checksum_object_from_string(
-    s, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+    s, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_string(s, algorithm)
-  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
 
@@ -74,7 +77,7 @@ def create_checksum_object_from_string(
 # Calculate checksum
 
 
-def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
+def calculate_checksum(o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM):
   checksum_calculator = get_checksum_calculator_by_dataone_designator(algorithm)
   checksum_calculator.update(o)
   return checksum_calculator.hexdigest()
@@ -82,7 +85,7 @@ def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
 
 def calculate_checksum_on_stream(
     f,
-    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+    algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
     chunk_size=DEFAULT_CHUNK_SIZE,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
@@ -93,7 +96,7 @@ def calculate_checksum_on_stream(
 
 def calculate_checksum_on_iterator(
     itr,
-    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+    algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
   for chunk in itr:
@@ -103,7 +106,7 @@ def calculate_checksum_on_iterator(
 
 def calculate_checksum_on_string(
     s,
-    algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+    algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
   for chunk in s:
@@ -151,7 +154,7 @@ def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
 
 
 def get_default_checksum_algorithm():
-  return const.DEFAULT_CHECKSUM_ALGORITHM
+  return d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 
 
 def is_supported_algorithm(algorithm_str):

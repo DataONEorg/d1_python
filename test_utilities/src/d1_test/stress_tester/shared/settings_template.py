@@ -21,6 +21,8 @@
 """Settings for the stress tester.
 """
 
+from __future__ import absolute_import
+
 import os
 
 # The MN to stress test.

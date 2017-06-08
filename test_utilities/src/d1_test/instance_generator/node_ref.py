@@ -20,9 +20,11 @@
 """Generate NodeReference PyXB objects
 """
 
+from __future__ import absolute_import
+
 import d1_common.types.dataoneTypes
 
-import random_data
+import d1_test.instance_generator.random_data
 
 
 def generate(prefix=u'urn:node:', min_len=5, max_len=20):
@@ -36,6 +38,6 @@ def generate_bare(prefix=u'', min_len=5, max_len=20):
   len_prefix = len(prefix)
   if len_prefix >= max_len:
     raise ValueError('Unable to generate random string: No room for prefix')
-  return prefix + random_data.random_unicode_string_no_whitespace(
+  return prefix + d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
     min_len - len_prefix, max_len - len_prefix
   )

@@ -25,10 +25,12 @@ A handy way to search for files in a Python source code tree.
 See the file_iterator module for details on the arguments.
 """
 
+from __future__ import absolute_import
+
 import argparse
 import logging
 
-import file_iterator
+import dev_tools.lib_dev.file_iterator as file_iterator
 
 import d1_common.util
 

@@ -21,6 +21,8 @@
 """Base class for Multi-Mechanize Transaction
 """
 
+from __future__ import absolute_import
+
 import codecs
 import os
 import random

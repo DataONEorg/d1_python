@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import context
 import test_client
 
@@ -35,9 +37,6 @@ import d1_test_case
 
 
 class Test015GetStatus(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_getstatus(self):
     """GetStatus() does not raise and does not return empty object."""
     client = test_client.TestClient(context.node['baseurl'])

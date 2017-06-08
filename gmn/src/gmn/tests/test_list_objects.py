@@ -17,13 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNRead.listObjects()"""
+"""Test MNRead.listObjects()
+"""
 
 from __future__ import absolute_import
 
 import unittest
 
-#import django.test
 import responses
 
 import gmn.tests.gmn_mock

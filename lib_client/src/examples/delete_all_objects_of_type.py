@@ -56,6 +56,8 @@ Requires:
 - DataONE Client Library for Python (sudo pip install dataone.libclient)
 """
 
+from __future__ import absolute_import
+
 import logging
 
 import d1_common.const

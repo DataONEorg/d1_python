@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import xml
 
 import context
@@ -42,9 +44,6 @@ import d1_test_case
 
 
 class Test060Describe(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_describe_by_invalid_pid(self):
     """404 NotFound when attempting to get description for non-existing object.
     """

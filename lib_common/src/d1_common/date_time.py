@@ -20,6 +20,8 @@
 """Utilities for handling date-times in DataONE
 """
 
+from __future__ import absolute_import
+
 import calendar
 import datetime
 import email.utils

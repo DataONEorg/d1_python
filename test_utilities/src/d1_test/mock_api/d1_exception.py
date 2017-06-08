@@ -29,6 +29,8 @@ E.g.:
 client.create(..., vendorSpecific={'trigger': '401'})
 """
 
+from __future__ import absolute_import
+
 import re
 
 import d1_common.types.exceptions

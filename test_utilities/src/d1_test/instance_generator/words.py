@@ -24,6 +24,8 @@ A selection of 1000 words pulled randomly from /usr/share/dict/words using the
 randomWords method below.
 """
 
+from __future__ import absolute_import
+
 import codecs
 import random
 
@@ -232,37 +234,14 @@ WORDS_1K = [
 ]
 
 
-def _count_lines(source):
-  f = file(source, 'r')
-  bufsize = 8192
-  buf = f.read(bufsize)
-  lc = buf.count('\n')
-  while len(buf) == bufsize:
-    buf = f.read(bufsize)
-    lc += buf.count('\n')
-  f.close()
-  return lc
-
-
-def random_words(count=100, source='/usr/share/dict/words'):
-  """Returns a random selection of count words from WORDS_1K or by reading
+def random_words(count=100, supplemental_word_file_path='/usr/share/dict/words'):
+  """Return a random selection of count words from WORDS_1K or by reading
   from source if the number of words requested is more than available in
   WORDS_1K.
   """
-  if len(WORDS_1K) > count:
+  if count <= len(WORDS_1K):
     return random.sample(WORDS_1K, count)
-  nlines = _count_lines(source)
-  linenos = random.sample(xrange(0, nlines - 1), count)
-  linenos.sort()
-  words = []
-  fsrc = codecs.open(source, 'r', 'utf-8')
-  cline = 0
-  cpos = 0
-  while cpos < count:
-    while cline < linenos[cpos]:
-      line = fsrc.readline()
-      cline += 1
-    words.append(line.strip())
-    cpos += 1
-  random.shuffle(words)
-  return words
+  with codecs.open(supplemental_word_file_path, 'r', 'utf-8') as f:
+    supplemental_word_list = f.read().splitlines()
+  supplemental_word_list.extend(WORDS_1K)
+  return random.sample(supplemental_word_list, count)

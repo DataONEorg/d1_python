@@ -21,6 +21,8 @@ Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
 client/python/solr.py
 """
 
+from __future__ import absolute_import
+
 import datetime
 import logging
 import random

@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import d1_common.access_policy
 import d1_common.xml
 
@@ -25,9 +27,6 @@ import d1_test.d1_test_case
 
 
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
-  # def __init__(self):
-  # super(TestAccessPolicy, self).__init__()
-
   def setUp(self):
     self.ap_pyxb = self.read_xml_file_to_pyxb('accessPolicy_v1_0.redundant.xml')
 

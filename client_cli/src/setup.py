@@ -20,6 +20,8 @@
 # limitations under the License.
 """DataONE Command-Line Interface package
 """
+from __future__ import absolute_import
+
 import setuptools
 
 
@@ -42,7 +44,7 @@ def main():
       'responses == 0.5.1',
     ],
     entry_points={'console_scripts': [
-      'dataone = d1_client_cli.dataone:main',
+      'dataone = d1_cli.dataone:main',
     ]},
     setup_requires=[
       'setuptools_git >= 1.1',

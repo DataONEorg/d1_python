@@ -21,15 +21,19 @@
 """Populate a Member Node with randomly generated objects
 """
 
-import StringIO
+from __future__ import absolute_import
+
 import logging
 import optparse
+import StringIO
 import sys
+
+import test_object_generator
+
+import d1_common.types.exceptions
 
 import d1_client.mnclient
 import d1_client.mnclient_2_0
-import d1_common.types.exceptions
-import test_object_generator
 
 # Defaults
 MN_BASE_URL = 'https://localhost/mn'

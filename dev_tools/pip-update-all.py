@@ -6,7 +6,10 @@ https://github.com/nschloe/pipdated
 http://stackoverflow.com/a/3452888/353337
 """
 
+from __future__ import absolute_import
+
 import os
+
 os.system(
   "pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U"
 )

@@ -28,16 +28,15 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import context
+import test_client
 
 import d1_test_case
-import test_client
 
 
 class Test010Ping(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_ping(self):
     """Ping() does not raise."""
     client = test_client.TestClient(context.node['baseurl'])

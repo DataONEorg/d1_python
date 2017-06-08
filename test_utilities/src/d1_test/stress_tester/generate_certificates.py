@@ -25,6 +25,8 @@ subject list and two certificates are created for test subjects with special
 permissions.
 """
 
+from __future__ import absolute_import
+
 import codecs
 import logging
 import optparse

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import absolute_import
+
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -16,8 +20,6 @@
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import json
 import xml.sax
 
@@ -29,8 +31,6 @@ import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes
 
 import d1_test.d1_test_case
-
-# App
 
 
 class TestChecksum(d1_test.d1_test_case.D1TestCase):

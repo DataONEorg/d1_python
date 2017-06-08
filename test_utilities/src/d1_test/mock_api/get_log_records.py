@@ -30,6 +30,8 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
+from __future__ import absolute_import
+
 import datetime
 import logging
 import re

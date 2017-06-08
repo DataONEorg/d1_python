@@ -1,7 +1,52 @@
 [run]
+include =
+  *.py
+
 omit =
-  */dist-packages/*
-  */generated/*
-  */tests/*
-  */setup.py
+  #### Tracked but not included in coverage
+
+  # dirs
+
   */dev_tools/*
+  */drivers/*
+  */generated/*
+  */mockup/*
+  */tests/*
+
+  # files
+
+  */conftest.py
+  */devpi-settings.sh
+  */settings.py
+  */setup.py
+  */test.py
+  */t.py
+
+  #### Untracked, based on .gitignore
+
+  # All dot-files and dot-dirs
+  */.*
+  */__pycache__/*
+  */_build/*
+  */build/*
+  */certificates/*
+  */certs/*
+  */cover/*
+  */d1_objects/*
+  */develop-eggs/*
+  */dist-packages/*
+  */dist-packages/*
+  */dist/*
+  */docutils/*
+  */downloads/*
+  */eggs/*
+  */env/*
+  */htmlcov/*
+  */lib/*
+  */lib64/*
+  */parts/*
+  */sdist/*
+  */stores/*
+  */target/*
+  */tests/*
+  */var/*

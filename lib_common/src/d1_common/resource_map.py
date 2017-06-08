@@ -25,15 +25,17 @@ For more information about how Resource Maps are used in DataONE, see:
 https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html
 """
 
+from __future__ import absolute_import
+
 import logging
 
 import rdflib
 import rdflib.tools.rdf2dot
 
 import d1_common.const
+import d1_common.type_conversions
 import d1_common.url
 import d1_common.util
-import d1_common.type_conversions
 
 # RDFLib wrappers around the namespaces. Others are defined by RDFLib
 DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'dcterms'])

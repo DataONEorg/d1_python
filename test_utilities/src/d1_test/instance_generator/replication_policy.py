@@ -21,10 +21,13 @@
 """Generate random replication policy objects
 """
 
+from __future__ import absolute_import
+
 import random
 
 import d1_common.types.dataoneTypes
-import random_data
+
+import d1_test.instance_generator.random_data
 
 
 def generate():
@@ -33,19 +36,19 @@ def generate():
   nodes = []
   for i in xrange(0, n):
     nodes.append(
-      u"preferredMemberNode_" +
-      random_data.random_unicode_string_no_whitespace(5, 10)
+      u"preferredMemberNode_" + d1_test.instance_generator.random_data.
+      random_unicode_string_no_whitespace(5, 10)
     )
   res.preferredMemberNode = nodes
   n = random.randint(1, 10)
   nodes = []
   for i in xrange(0, n):
     nodes.append(
-      u"blockedMemberNode_" +
-      random_data.random_unicode_string_no_whitespace(5, 10)
+      u"blockedMemberNode_" + d1_test.instance_generator.random_data.
+      random_unicode_string_no_whitespace(5, 10)
     )
   res.blockedMemberNode = nodes
-  res.replicationAllowed = random_data.random_bool()
+  res.replicationAllowed = d1_test.instance_generator.random_data.random_bool()
   if res.replicationAllowed:
     res.numberReplicas = random.randint(1, 10)
   else:

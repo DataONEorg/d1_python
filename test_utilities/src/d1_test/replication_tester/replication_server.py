@@ -18,16 +18,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-import cgi
-import urllib
-import logging
-import urlparse
-import threading
-import SocketServer
+from __future__ import absolute_import
 
-import SimpleHTTPServer
+import cgi
+import logging
+import re
+import SocketServer
+import threading
+import urllib
+import urlparse
+
 import replication_error
+import SimpleHTTPServer
 import test_object_generator
 
 import d1_common.const

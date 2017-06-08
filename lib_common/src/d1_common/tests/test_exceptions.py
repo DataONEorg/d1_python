@@ -19,11 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import xml.dom.minidom
 
 import pytest
 
-# D1
 from d1_common.types import exceptions
 
 import d1_test.d1_test_case
@@ -210,7 +211,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert e.traceInformation == 'test traceInformation'
 
   def test_0120(self):
-    """Test serialization and deserialization of DataONE Exceptions
+    """Serialization and deserialization of DataONE Exceptions
 
     Test serialization and deserialization of DataONE Exceptions by performing
     a round trip:

@@ -19,11 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import xml.sax
 
 import pyxb
 
-# D1
 from d1_common.types import dataoneTypes
 
 import d1_test.d1_test_case

@@ -17,12 +17,14 @@ not that un-tracked files are not included. Still, what it does has some
 benefits, so we use it for all the packages in d1_python.
 """
 
+from __future__ import absolute_import
+
 import logging
 import os
 import sys
 import zipfile
 
-import git # pip install gitpython
+import git  # pip install gitpython
 
 
 def main():

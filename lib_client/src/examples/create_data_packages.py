@@ -60,6 +60,8 @@ Then, a package for all the files is generated. System metadata is generated
 for the package, and the package is uploaded to the Member Node.
 """
 
+from __future__ import absolute_import
+
 import datetime
 import hashlib
 import logging

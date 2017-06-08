@@ -19,18 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import logging
 
-import baseclient
-
-import d1_common
+# import d1_common
 import d1_common.type_conversions
+
+import d1_client.baseclient
 
 #=============================================================================
 
 
 class DataONEBaseClient_1_1(
-    baseclient.DataONEBaseClient,
+    d1_client.baseclient.DataONEBaseClient,
 ):
   """Extend DataONEBaseClient with functionality common between Member and
   Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
@@ -42,7 +44,7 @@ class DataONEBaseClient_1_1(
   """
 
   def __init__(self, *args, **kwargs):
-    """See baseclient.DataONEBaseClient for args."""
+    """See d1_client.baseclient.DataONEBaseClient for args."""
     super(DataONEBaseClient_1_1, self).__init__(*args, **kwargs)
 
     self.logger = logging.getLogger(__file__)

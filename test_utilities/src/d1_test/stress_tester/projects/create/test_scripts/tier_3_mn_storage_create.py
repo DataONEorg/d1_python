@@ -26,13 +26,18 @@
 :Author: DataONE (Dahl)
 """
 
+from __future__ import absolute_import
+
 import random
 import string
 
-import d1_common.types.dataoneTypes as dataoneTypes
 import settings
 import transaction
-from d1_test.instance_generator import random_data, system_metadata
+
+import d1_common.types.dataoneTypes as dataoneTypes
+
+from d1_test.instance_generator import random_data
+from d1_test.instance_generator import system_metadata
 
 # Config
 

@@ -19,11 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import logging
 import StringIO
-
-# App
-import session
 
 import d1_common.const
 import d1_common.type_conversions
@@ -35,9 +34,11 @@ import d1_common.url
 import d1_common.util
 import d1_common.xml
 
+import d1_client.session
+
 
 class DataONEBaseClient(
-    session.Session,
+    d1_client.session.Session,
 ):
   """Extend Session by adding REST API wrappers for APIs that are available on
   both Coordinating Nodes and Member Nodes, and that have the same signature on
@@ -303,10 +304,14 @@ class DataONEBaseClient(
   # CNCore / MNCore
   # ----------------------------------------------------------------------------
 
-  # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords
-  # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords
+  # CNCore.getLogRecords(d1_client.session[, fromDate][, toDate][, event][,
+  # start][, count]) → Log
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/
+  # apis/CN_APIs.html#CNCore.getLogRecords
+  # MNCore.getLogRecords(d1_client.session[, fromDate][, toDate][, event][,
+  # start=0][, count=1000]) → Log
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/
+  # apis/MN_APIs.html#MNCore.getLogRecords
 
   @d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(
@@ -373,9 +378,9 @@ class DataONEBaseClient(
   # CNRead / MNRead
   # ----------------------------------------------------------------------------
 
-  # CNRead.get(session, pid) → OctetStream
+  # CNRead.get(d1_client.session, pid) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.get
-  # MNRead.get(session, pid) → OctetStream
+  # MNRead.get(d1_client.session, pid) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.get
 
   @d1_common.util.utf8_to_unicode
@@ -386,9 +391,9 @@ class DataONEBaseClient(
     response = self.getResponse(pid, vendorSpecific)
     return self._read_stream_response(response)
 
-  # CNRead.getSystemMetadata(session, pid) → SystemMetadata
+  # CNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getSystemMetadata
-  # MNRead.getSystemMetadata(session, pid) → SystemMetadata
+  # MNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getSystemMetadata
 
   @d1_common.util.utf8_to_unicode
@@ -402,9 +407,9 @@ class DataONEBaseClient(
     )
     return self._read_dataone_type_response(response, 'SystemMetadata')
 
-  # CNRead.describe(session, pid) → DescribeResponse
+  # CNRead.describe(d1_client.session, pid) → DescribeResponse
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.describe
-  # MNRead.describe(session, pid) → DescribeResponse
+  # MNRead.describe(d1_client.session, pid) → DescribeResponse
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
   @d1_common.util.utf8_to_unicode
@@ -421,10 +426,10 @@ class DataONEBaseClient(
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_header_response(response)
 
-  # CNRead.listObjects(session[, fromDate][, toDate][, formatId]
+  # CNRead.listObjects(d1_client.session[, fromDate][, toDate][, formatId]
   #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.listObjects
-  # MNRead.listObjects(session[, fromDate][, toDate][, formatId]
+  # MNRead.listObjects(d1_client.session[, fromDate][, toDate][, formatId]
   #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.listObjects
 
@@ -464,9 +469,9 @@ class DataONEBaseClient(
   # CNCore / MNStorage
   # ----------------------------------------------------------------------------
 
-  # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
+  # CNCore.generateIdentifier(d1_client.session, scheme[, fragment]) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.generateIdentifier
-  # MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
+  # MNStorage.generateIdentifier(d1_client.session, scheme[, fragment]) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
   @d1_common.util.utf8_to_unicode
@@ -485,9 +490,9 @@ class DataONEBaseClient(
     response = self.generateIdentifierResponse(scheme, fragment, vendorSpecific)
     return self._read_dataone_type_response(response, 'Identifier')
 
-  # CNStorage.delete(session, pid) → Identifier
+  # CNStorage.delete(d1_client.session, pid) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNStorage.archive
-  # MNStorage.delete(session, pid) → Identifier
+  # MNStorage.delete(d1_client.session, pid) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.archive
 
   @d1_common.util.utf8_to_unicode
@@ -504,9 +509,9 @@ class DataONEBaseClient(
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
 
-  # MNAuthorization.isAuthorized(session, id, action) → boolean
+  # MNAuthorization.isAuthorized(d1_client.session, id, action) → boolean
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNAuthorization.isAuthorized
-  # CNAuthorization.isAuthorized(session, id, action) → boolean
+  # CNAuthorization.isAuthorized(d1_client.session, id, action) → boolean
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
   @d1_common.util.utf8_to_unicode

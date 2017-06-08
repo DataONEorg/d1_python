@@ -35,6 +35,8 @@ auth.py(315)
 </error>
 """
 
+from __future__ import absolute_import
+
 import logging
 import re
 import string

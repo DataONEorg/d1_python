@@ -20,6 +20,8 @@
 """Utilities for processing X.509 v3 certificates
 """
 
+from __future__ import absolute_import
+
 import logging
 import re
 
@@ -30,6 +32,7 @@ import cryptography.x509.oid
 # pyasn1 is pulled in by cryptography
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
+
 """Map OID to short names for use when creating DataONE compliant serialization
 of the DN.
 

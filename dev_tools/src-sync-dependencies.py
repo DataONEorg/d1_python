@@ -29,17 +29,20 @@ and the new version number to use in the next release of the stack. We keep
 the version numbers for all the packages in the d1_python repository in sync.
 """
 
+from __future__ import absolute_import
+
 import argparse
 import logging
 import os
 import pkgutil
 import re
 
-import d1_common.util
 import pkg_resources
 
-import file_iterator
-import util
+import dev_tools.lib_dev.file_iterator as file_iterator
+import lib_dev.util
+
+import d1_common.util
 
 
 def main():
@@ -67,7 +70,7 @@ def main():
     '--debug', action='store_true', default=False, help='Debug level logging'
   )
   parser.add_argument(
-    '--diff', dest='diff_only', action='store_true', default=False,
+    '--diff', dest='show_diff', action='store_true', default=False,
     help='Show diff and do not modify any files'
   )
 
@@ -83,15 +86,15 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
-    update_deps_on_file(args, setup_path, args.diff_only, args.d1_version)
+    update_deps_on_file(args, setup_path, args.show_diff, args.d1_version)
 
-  update_common_version_const(args.d1_version, args.diff_only)
+  update_common_version_const(args.d1_version, args.show_diff)
 
 
-def update_deps_on_file(args, setup_path, diff_only, d1_version):
+def update_deps_on_file(args, setup_path, show_diff, d1_version):
   logging.info('Updating setup.py... path="{}"'.format(setup_path))
   try:
-    r = util.redbaron_module_path_to_tree(setup_path)
+    r = lib_dev.util.redbaron_module_path_to_tree(setup_path)
     r = update_deps_on_tree(r, d1_version)
   except Exception as e:
     logging.error(
@@ -100,7 +103,7 @@ def update_deps_on_file(args, setup_path, diff_only, d1_version):
     if args.debug:
       raise
   else:
-    util.update_module_file(r, setup_path, diff_only)
+    lib_dev.util.update_module_file(r, setup_path, show_diff)
 
 
 def update_deps_on_tree(r, d1_version):
@@ -175,11 +178,11 @@ def update_common_version_const(d1_version, only_diff):
   logging.info(
     'Updating VERSION in d1_common.const. path="{}"'.format(const_module_path)
   )
-  r = util.redbaron_module_path_to_tree(const_module_path)
+  r = lib_dev.util.redbaron_module_path_to_tree(const_module_path)
   for n in r('AssignmentNode'):
     if n.target.value == 'VERSION':
       n.value.value = "'{}'".format(d1_version)
-      util.update_module_file(r, const_module_path, only_diff)
+      lib_dev.util.update_module_file(r, const_module_path, only_diff)
       break
 
 

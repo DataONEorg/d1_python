@@ -19,6 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import logging
 import unittest
 
@@ -31,9 +33,6 @@ import d1_test.instance_generator.access_policy as access_policy
 
 
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_0010(self):
     """select_random_set_of_permissions()"""
     for i in range(10):

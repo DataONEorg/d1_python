@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import datetime
 
 import context
@@ -39,9 +41,6 @@ EVENTS_TOTAL = 123
 
 
 class Test040GetLogRecords(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_create_events(self):
     """Event log contains the correct number of create events.
     """

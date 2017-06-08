@@ -20,6 +20,8 @@
 # limitations under the License.
 """DataONE ONEDrive Client package
 """
+from __future__ import absolute_import
+
 import sys
 
 import setuptools
@@ -90,7 +92,6 @@ def main():
     install_requires=[
       'dataone.common == 2.3.0rc1',
       'dataone.libclient == 2.3.0rc1',
-      'dataone.workspace_client == 2.3.0rc1',
       #
       'fusepy == 2.0.4',
       'pyxb == 1.2.5',

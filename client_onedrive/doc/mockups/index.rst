@@ -17,6 +17,7 @@ Contents
 .. toctree::
   :maxdepth: 1
 
+  overview-of-mockups
   native-integration/index
   onemercury-integration/index
   standalone/index

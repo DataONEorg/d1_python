@@ -23,6 +23,8 @@
 mappings are provided in a CSV file. Raises KeyError for unknown values.
 """
 
+from __future__ import absolute_import
+
 import csv
 
 import d1_common.util

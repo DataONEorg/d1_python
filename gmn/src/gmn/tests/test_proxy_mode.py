@@ -22,10 +22,11 @@ the object bytes to another web server (proxy mode). The mode is selectable on a
 per object basis
 """
 
+from __future__ import absolute_import
+
 import os
 
 import pytest
-#import django.test
 import requests
 import responses
 

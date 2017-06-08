@@ -19,17 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from __future__ import absolute_import
 
-import baseclient_1_1
-import cnclient
+import logging
 
 import d1_common.type_conversions
 
+import d1_client.baseclient_1_1
+import d1_client.cnclient
+
 
 class CoordinatingNodeClient_1_1(
-    baseclient_1_1.DataONEBaseClient_1_1,
-    cnclient.CoordinatingNodeClient,
+    d1_client.baseclient_1_1.DataONEBaseClient_1_1,
+    d1_client.cnclient.CoordinatingNodeClient,
 ):
   """Extend DataONEBaseClient_1_1 and CoordinatingNodeClient with functionality
   for Coordinating nodes that was added in v1.1 of the DataONE infrastructure.

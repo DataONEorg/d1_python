@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import transaction
 
 

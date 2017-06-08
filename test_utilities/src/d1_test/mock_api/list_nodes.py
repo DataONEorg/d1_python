@@ -26,6 +26,8 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
+from __future__ import absolute_import
+
 import logging
 import os
 import re

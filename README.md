@@ -50,12 +50,14 @@ To help keep the style consistent and commit logs, blame/praise and other code a
 
 * [YAPF](https://github.com/google/yapf) - PEP8 formatting with DataONE modifications
 * [isort](https://github.com/timothycrosley/isort) - Sort and group imports
-* [Flake8](http://flake8.pycqa.org/en/latest/) - Lint, code and style validation
 * [trailing-whitespace](git://github.com/pre-commit/pre-commit-hooks) - Remove trailing whitespace
+* [Flake8](http://flake8.pycqa.org/en/latest/) - Lint, code and style validation
 
-Configuration files for `YAPF` and `Flake8` are included in this repository.
+Configuration files for YAPF (`./.flake8`), isort (`./.isort.cfg`) and Flake8
+(`./.style.yapf`) are included, and show the formatting options we have
+selected.
 
-Contributors are encouraged to set up the hooks before creating PRs. This can be done automagically with [pre-commit](pre-commit.com), for which a configuration file has also been included.
+Contributors are encouraged to set up the hooks before creating PRs. This can be done automagically with [pre-commit](pre-commit.com), for which a configuration file is also included.
 
 To set up automatic validation and formatting:
 
@@ -66,7 +68,7 @@ To set up automatic validation and formatting:
 
 Notes:
 
-* If the `YAPF` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. The modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
+* If the `YAPF`, `isort` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. The modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
 * `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring the files to be staged and commited again.
 
@@ -78,43 +80,40 @@ Notes:
 
   * **Flake8 validation**: the same procedure as for `YAPF` can be used, as `Flake8` searches for its configuration file in the same way. In addition, IDEs can typically do code inspections and tag issues directly in the UI, where they can be handled before commit.
 
-* See the `YAPF` and `Flake8` config files at `./.style.yapf` and `./.flake8` for the formatting options we have selected.
 
-#### Testing
+#### Unit tests
 
 * Testing is based on the [pytest](https://docs.pytest.org/en/latest/) unit test framework.
 
-* We have added some custom functionality to pytest:
+* We have added some custom functionality to pytest which can be enabled to launching pytest with the following switches:
 
   * `--update-samples`: Enable a mode that invokes `kdiff3` to display diffs and, after user confirmation, can automatically update or write new test sample documents on mismatches.
 
-  * `--pycharm`: Attempt to move the cursor in PyCharm to the location of the most recent test failure.
-
   * `parameterize_dict`: Support for parameterizing test functions by adding a dict class member containing parameter sets.
+
+  * `--pycharm`: Attempt to move the cursor in PyCharm to the location of the test of failure.
 
   * See `./conftest.py` for implementation and notes.
 
-* To run pytest based tests from PyCharm:
 
-  * By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail as they are based on pytest. To use pytest as default, set `Settings > Tools > Python Integrated Tools > Default test runner` to py.test. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
+#### Debugging tests with PyCharm
 
-  * Generate and run a configuration for a specific test by placing the cursor on a test function name and running `Run context configuration`.
+* By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail as they require pytest. To generate pytest configurations by default, set `Settings > Tools > Python Integrated Tools > Default test runner` to py.test. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
 
-  * After generating the configuration, debug with the regular `Debug (Shift-F9)` command.
+* Generate and run a configuration for a specific test by placing the cursor on a test function name and running `Run context configuration (Ctrl+Shift+F10)`.
+
+* After generating the configuration, debug with `Debug (Shift-F9)`.
+
+* If running the tests outside of PyCharm, launching `pytest` with the `--pycharm` switch will cause `pytest` to attempt to move the cursor in PyCharm to the location of any tests failures as they occur. This should be used with the `--exitfirst` (`-x`) switch.
+
+* Stopping a test that has hit a breakpoint in PyCharm can cause the test database to be left around. On the next run, Django will then prompt the user to type "yes" to remove the database. The prompt appears in the PyCharm debug console output. To disable the prompt, go to `Run / Debug Configurations > Edit Configurations > Defaults > Django tests > Options` and add `--noinput`. See the [question on SO](https://stackoverflow.com/questions/34244171) for details.
+
+* `pytest` by default captures `stdout` and `stderr` output for the tests and only shows the output for the tests that failed after all tests have been completed. Since a test that hits a breakpoint has not yet failed, this hides any output from tests being debugged and also hides output from the debug console prompt (where Python script can be evaluated in the current context). To see the output while debugging, go to `Run / Debug Configurations > Edit Configurations > Defaults > py.test > Additional Arguments` and add `--capture=no` (`-s`). Verbosity can also be increased by adding one or more `-v`.  
 
 
 ##### Django
 
 * Testing of the GMN Django web app is based on pytest and [pytest-django](https://pytest-django.readthedocs.io/en/latest/).
 
-* To change GMN settings for test class or method:
+* The tests use `settings_test.py` for GMN and Django configuration.
 
-  @django.test.override_settings(
-    CLIENT_CERT_PATH=None,
-    CLIENT_CERT_PRIVATE_KEY_PATH=None,
-  )
-
-* Preventing the prompt to delete the Django test database. E.g.: Got an error creating the test database. Type 'yes' if you would like to try deleting the test database:
-
-  * Add `--noinput` to the Django test configuration
-    * https://stackoverflow.com/questions/34244171

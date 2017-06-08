@@ -25,13 +25,16 @@ This class provides a more abstract interface that can be used for interacting
 with any DataONE node regardless of type and version.
 """
 
+from __future__ import absolute_import
+
 import logging
 import time
 
 import cnclient_2_0
+import mnclient_2_0
+
 import d1_common.const
 import d1_common.util
-import mnclient_2_0
 
 # Config.
 

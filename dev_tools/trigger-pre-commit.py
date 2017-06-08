@@ -17,13 +17,15 @@ in the IDE to the line that triggered the error.
 After fixing an error, hit Enter to retrigger the hooks in order to check if
 there more errors or S to skip directly to the next file.
 """
+from __future__ import absolute_import
+
 import argparse
 import logging
 import os
 import re
 import subprocess
 
-import git # pip install pygit
+import git
 
 import d1_common.util
 

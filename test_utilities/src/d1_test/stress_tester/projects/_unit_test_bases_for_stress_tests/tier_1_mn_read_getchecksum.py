@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import context
 import pytest
 import test_client
@@ -39,9 +41,6 @@ import d1_test_case
 
 
 class Test070GetChecksum(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_get_checksum_by_invalid_pid(self):
     """404 NotFound when attempting to get checksum for non-existing object.
     """

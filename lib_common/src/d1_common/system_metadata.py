@@ -83,13 +83,15 @@ Example v2 SystemMetadata XML document with all optional values included:
 </v2:systemMetadata>
 """
 
-import logging
-import datetime
+from __future__ import absolute_import
 
-import d1_common.xml
-import d1_common.date_time
+import datetime
+import logging
+
 import d1_common.access_policy
+import d1_common.date_time
 import d1_common.types.dataoneTypes
+import d1_common.xml
 
 
 def normalize(sysmeta_pyxb, reset_timestamps=False):

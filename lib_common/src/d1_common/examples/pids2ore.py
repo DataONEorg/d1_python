@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 """Version 2 of OAI-ORE support in Python for DataONE."""
+from __future__ import absolute_import
+
 import logging
 
 from resource_map import ResourceMap

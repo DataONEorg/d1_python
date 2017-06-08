@@ -9,5 +9,5 @@ def entrypoint0():
 
 def entrypoint1():
 
-  from onedrive import onedrive
+  from d1_onedrive import onedrive
   onedrive.main()

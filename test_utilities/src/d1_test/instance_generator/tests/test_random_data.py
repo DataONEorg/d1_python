@@ -19,20 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import logging
 import random
 import unittest
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.random_data as random_data
+import d1_test.instance_generator.random_data
 
 #===============================================================================
 
 
 class TestRandomData(d1_test.d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def _assert_unique(self, unique_list):
     count = {}
     for item in unique_list:
@@ -46,18 +45,18 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
 
   def test_0010(self):
     """random_bytes()"""
-    s = random_data.random_bytes(1000)
+    s = d1_test.instance_generator.random_data.random_bytes(1000)
     assert len(s) == 1000
 
   def test_0020(self):
     """random_unicode_name()"""
-    name = random_data.random_unicode_name()
+    name = d1_test.instance_generator.random_data.random_unicode_name()
     assert len(name) > 0
     assert isinstance(name, unicode)
 
   def test_0030(self):
     """random_unicode_name_list()"""
-    names = random_data.random_unicode_name_list(10)
+    names = d1_test.instance_generator.random_data.random_unicode_name_list(10)
     assert len(names) == 10
     for name in names:
       assert len(names) > 0
@@ -66,26 +65,28 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
   def test_0040(self):
     """random_unicode_name_unique_list()"""
     for i in range(10):
-      names = random_data.random_unicode_name_unique_list(30)
+      names = d1_test.instance_generator.random_data.random_unicode_name_unique_list(
+        30
+      )
       assert len(names) == 30
       assert isinstance(names[0], unicode)
       self._assert_unique(names)
 
   def test_0050(self):
     """random_word()"""
-    word = random_data.random_word()
+    word = d1_test.instance_generator.random_data.random_word()
     assert len(word) > 0
     assert isinstance(word, unicode)
 
   def test_0060(self):
     """random_3_words()"""
-    words = random_data.random_3_words()
+    words = d1_test.instance_generator.random_data.random_3_words()
     assert len(words) > 0
     assert isinstance(words, unicode)
 
   def test_0070(self):
     """random_word_list()"""
-    words = random_data.random_word_list(10)
+    words = d1_test.instance_generator.random_data.random_word_list(10)
     assert len(words) == 10
     for word in words:
       assert len(words) > 0
@@ -94,7 +95,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
   def test_0080(self):
     """random_word_unique_list()"""
     for i in range(10):
-      names = random_data.random_word_unique_list(30)
+      names = d1_test.instance_generator.random_data.random_word_unique_list(30)
       assert len(names) == 30
       assert isinstance(names[0], unicode)
       self._assert_unique(names)
@@ -104,20 +105,22 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
     for i in range(10):
       min_len = random.randint(0, 100)
       max_len = random.randint(min_len, 100)
-      s = random_data.random_unicode_string_no_whitespace(min_len, max_len)
+      s = d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
+        min_len, max_len
+      )
       assert len(s) >= min_len
       assert len(s) <= max_len
 
   def test_0100(self):
     """random_email()"""
     for i in range(10):
-      s = random_data.random_email()
+      s = d1_test.instance_generator.random_data.random_email()
       assert s
 
   def test_0110(self):
     """random_bool()"""
     for i in range(10):
-      b = random_data.random_bool()
+      b = d1_test.instance_generator.random_data.random_bool()
       assert isinstance(b, bool)
 
 

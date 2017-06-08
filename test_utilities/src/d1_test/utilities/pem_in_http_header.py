@@ -23,6 +23,8 @@
 For debugging certificate processing logic, it is sometimes convenient to pass
 the certificates via HTTP headers instead of HTTPS.
 """
+from __future__ import absolute_import
+
 import StringIO
 
 

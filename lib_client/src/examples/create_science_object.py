@@ -48,6 +48,8 @@ identifier is now in use by the previously created object.
 Any other errors will also be returned as DataONE exceptions.
 """
 
+from __future__ import absolute_import
+
 import datetime
 import hashlib
 import logging

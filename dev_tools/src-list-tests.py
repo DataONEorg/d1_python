@@ -26,8 +26,8 @@ import argparse
 import logging
 import os
 
-import dev_tools.file_iterator
-import dev_tools.util
+import dev_tools.lib_dev.file_iterator
+import lib_dev.util
 
 import d1_common.util
 
@@ -60,7 +60,7 @@ def main():
 
   event_counter = d1_common.util.EventCounter()
 
-  for module_path in dev_tools.file_iterator.file_iter(
+  for module_path in dev_tools.lib_dev.file_iterator.file_iter(
       path_list=[args.path],
       include_glob_list=['test_*.py'],
       exclude_glob_list=args.exclude,
@@ -81,8 +81,8 @@ def main():
 
 
 def list_tests_module(module_path, event_counter):
-  r = dev_tools.util.redbaron_module_path_to_tree(module_path)
-  if dev_tools.util.has_test_class(r):
+  r = lib_dev.util.redbaron_module_path_to_tree(module_path)
+  if lib_dev.util.has_test_class(r):
     event_counter.count('Test files')
     list_tests_tree(r, module_path, event_counter)
   else:
@@ -94,9 +94,9 @@ def list_tests_module(module_path, event_counter):
 
 def list_tests_tree(r, module_path, event_counter):
   for node in r('DefNode'):
-    if dev_tools.util.is_test_func(node.name):
-      if dev_tools.util.has_doc_str(node):
-        doc_str = dev_tools.util.get_doc_str(node)
+    if lib_dev.util.is_test_func(node.name):
+      if lib_dev.util.has_doc_str(node):
+        doc_str = lib_dev.util.get_doc_str(node)
       else:
         doc_str = '<missing>'
         event_counter.count('Missing docstrings')

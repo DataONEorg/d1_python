@@ -24,20 +24,22 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
-import json
+from __future__ import absolute_import
+
 import base64
+import json
 import logging
+import re
 import urlparse
 
 import responses
 
-import d1_common.url
 import d1_common.const
 import d1_common.types.dataoneTypes
+import d1_common.url
 
-import d1_test.mock_api.util
 import d1_test.mock_api.d1_exception
+import d1_test.mock_api.util
 
 POST_ENDPOINT_RX = r'v([123])/post'
 

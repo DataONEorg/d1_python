@@ -25,16 +25,18 @@ shows how to:
 - Retrieve the bytes and System Metadata for each object.
 """
 
+from __future__ import absolute_import
+
+import logging
 import os
 import urllib
-import logging
 
-import d1_common.xml
-import d1_common.util
 import d1_common.const
 # D1
 # import d1_common.types.generated.dataoneTypes as v2
 import d1_common.types.exceptions
+import d1_common.util
+import d1_common.xml
 
 import d1_client.cnclient
 import d1_client.mnclient_2_0

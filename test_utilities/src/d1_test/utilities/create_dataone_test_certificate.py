@@ -31,6 +31,8 @@ Node. Test instances set up by DataONE will normally trust the DataONE Test CA.
 # sample_files/new_cert_public_key.pem --subject-info-path
 # sample_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
+from __future__ import absolute_import
+
 import logging
 import optparse
 import re

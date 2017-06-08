@@ -78,6 +78,8 @@ and
 </accessPolicy>
 """
 
+from __future__ import absolute_import
+
 import d1_common.types.dataoneTypes
 import d1_common.xml
 

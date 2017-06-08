@@ -21,12 +21,15 @@
 """Generate a list of test subjects
 """
 
+from __future__ import absolute_import
+
 import logging
 import optparse
 import sys
 
 import settings
 import subject_dn
+
 # D1
 from d1_test.instance_generator import random_data
 

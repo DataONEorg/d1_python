@@ -21,9 +21,11 @@
 """Generate random Subject objects
 """
 
+from __future__ import absolute_import
+
 import d1_common.types.dataoneTypes
 
-import random_data
+import d1_test.instance_generator.random_data
 
 
 def generate():
@@ -31,4 +33,6 @@ def generate():
 
 
 def generate_bare():
-  return random_data.random_unicode_string_no_whitespace(5, 10)
+  return d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
+    5, 10
+  )

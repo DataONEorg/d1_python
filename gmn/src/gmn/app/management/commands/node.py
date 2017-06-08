@@ -20,18 +20,23 @@
 """View Node doc, register or update Member Node
 """
 
+from __future__ import absolute_import
+
 import logging
 
-import d1_client.cnclient_2_0
+import util
+
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
-import django.conf
-import django.core.management.base
+
+import d1_client.cnclient_2_0
 
 import gmn.app.models
 import gmn.app.node
-import util
+
+import django.conf
+import django.core.management.base
 
 
 # noinspection PyClassHasNoInit

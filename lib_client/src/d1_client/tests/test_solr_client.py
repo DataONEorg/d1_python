@@ -24,6 +24,8 @@ Note: Currently issues requests to cn.dataone.org
 
 TODO: Create Solr mockup
 """
+from __future__ import absolute_import
+
 import d1_common.util
 
 import d1_test.d1_test_case
@@ -34,10 +36,6 @@ CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
 
 
 class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass
-
   def _assert_at_least_one_populated_row(self, rows):
     assert any(rows), 'Expected at least one populated row in results'
 

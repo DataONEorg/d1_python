@@ -23,10 +23,12 @@ Automatically creates and deletes a mount point for ONEDrive and passes some
 OS X specific options to ONEDrive.
 """
 
+from __future__ import absolute_import
+
 import os
 import sys
 
-import d1_client_onedrive
+import d1_onedrive
 
 
 def main():
@@ -43,7 +45,7 @@ def start_onedrive(mount_point):
     #'volicon=mac_dataone.icns',
   ])
 
-  d1_client_onedrive.onedrive.main()
+  d1_onedrive.onedrive.main()
 
 
 class MountPoint():

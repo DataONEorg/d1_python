@@ -21,6 +21,8 @@
 """Generic Member Node (GMN) package
 """
 
+from __future__ import absolute_import
+
 import setuptools
 
 

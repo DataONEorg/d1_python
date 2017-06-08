@@ -25,11 +25,14 @@ GMN will then process the request as normal, but return the profiling report
 instead of the actual result.
 """
 
+from __future__ import absolute_import
+
+import os
 import StringIO
+import sys
+
 import hotshot
 import hotshot.stats
-import os
-import sys
 
 import django.conf
 import django.core.exceptions

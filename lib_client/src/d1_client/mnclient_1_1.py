@@ -19,18 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from __future__ import absolute_import
 
-import baseclient_1_1
-import mnclient
+import logging
 
 import d1_common
 import d1_common.type_conversions
 
+import d1_client.baseclient_1_1
+import d1_client.mnclient
+
 
 class MemberNodeClient_1_1(
-    baseclient_1_1.DataONEBaseClient_1_1,
-    mnclient.MemberNodeClient,
+    d1_client.baseclient_1_1.DataONEBaseClient_1_1,
+    d1_client.mnclient.MemberNodeClient,
 ):
   """Extend DataONEBaseClient_1_1 and MemberNodeClient with functionality
   for Member nodes that was added in v1.1 of the DataONE infrastructure.

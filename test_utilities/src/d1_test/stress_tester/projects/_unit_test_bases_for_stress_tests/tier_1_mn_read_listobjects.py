@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import context
 import pytest
 import test_client
@@ -44,9 +46,6 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     assert object_list.count == count
     assert object_list.total == total
     assert len(object_list.objectInfo) == count
-
-  def setUp(self):
-    pass
 
   def test_010_get_object_count(self):
     """Get object count.

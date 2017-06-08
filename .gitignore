@@ -2,59 +2,43 @@
 certificates/
 certs/
 d1_objects/
+devpi-settings.sh
 secret_key.txt
 settings.py
 stores/
 
-# DataONE dev tools
-/dev_tools/devpi-settings.sh
-
-# IntelliJ / PyCharm
 .idea/
-
-# IDEs
 .project
 .pydevproject
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
 *$py.class
+*.py[cod]
+__pycache__/
 
 # C extensions
 *.so
 
 # Distribution / packaging
+*.egg
+*.egg-info/
+.eggs/
+.installed.cfg
 .Python
-env/
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
-lib/
+env/
 lib64/
 parts/
 sdist/
 var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
-*,cover
 .cache
+.cover
 .coverage
 .coverage.*
 .hypothesis/
@@ -64,20 +48,31 @@ coverage.xml
 htmlcov/
 nosetests.xml
 
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-
 # Sphinx documentation
 docs/_build/
 docutils/
 
-# PyBuilder
-target/
+
+# Misc generated files
+*.bak
+*.tmp
+*.log
+*~
 
 # Ipython Notebook
 .ipynb_checkpoints
 
+# PyInstaller
+*.manifest
+*.spec
+
+# PyBuilder
+target/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Translations
+*.mo
+*.pot

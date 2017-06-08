@@ -53,6 +53,8 @@ memory). So we convert streaming responses to string before passing them to
 Responses.
 """
 
+from __future__ import absolute_import
+
 import logging
 import re
 

@@ -21,6 +21,8 @@
 """Random names
 """
 
+from __future__ import absolute_import
+
 import random
 
 # Yapf gets into some kind of worst case performance when formatting this,

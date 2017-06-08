@@ -29,23 +29,28 @@ package on PyPI.
 # and target nodes. In this code, source/src and destination/dst is used
 # instead.
 
-import Queue
-import StringIO
+from __future__ import absolute_import
+
 import logging
 import optparse
 import os
+import Queue
 import socket
+import StringIO
 import sys
 import time
 
-import d1_client.mnclient
-import d1_common.const
-import d1_common.types.exceptions
 import replication_error
 import replication_server
 import test_object_generator
+
+import d1_common.const
+import d1_common.types.exceptions
+
 from d1_test.replication_tester.test_object_generator import \
   generate_random_ascii
+
+import d1_client.mnclient
 
 # Defaults. These can be modified on the command line.
 
@@ -282,8 +287,8 @@ class ReplicationTester(object):
   #
 
   def _test_getReplica_with_unknown_pid(self):
-    """Test that the Source MN responds correctly to MNRead.getReplica()
-    in which the identifier is unknown.
+    """Source MN responds correctly to MNRead.getReplica() in which the
+    identifier is unknown.
     """
     try:
       self._call_src_get_replica(self._pid_unknown)
@@ -299,7 +304,7 @@ class ReplicationTester(object):
       )
 
   def _test_getReplica_with_rejected_pid(self):
-    """Test that the Source MN responds correctly on MNRead.getReplica()
+    """Source MN responds correctly on MNRead.getReplica()
     in which the identifier is valid but replication is rejected by the CN.
     """
     try:
@@ -331,7 +336,7 @@ class ReplicationTester(object):
   #
 
   def _test_getReplica_with_approved_pid(self):
-    """Test that the Source MN responds correctly on MNRead.getReplica()
+    """Source MN responds correctly on MNRead.getReplica()
     in which the identifier is valid and replication is approved by the CN.
     """
     try:
@@ -365,8 +370,8 @@ class ReplicationTester(object):
   #
 
   def _test_MNReplication_replicate_with_existing_pid(self):
-    """Test that the destination MN correctly rejects a replication request
-    in which the identifier already exists on the MN.
+    """The destination MN correctly rejects a replication request in which the
+    identifier already exists on the MN.
     """
     try:
       self._call_dst_replicate(self._dst_existing_pid)
@@ -384,9 +389,9 @@ class ReplicationTester(object):
       )
 
   def _test_MNReplication_replicate_with_unauthorized_pid(self):
-    """Test that the destination MN responds correctly on
-    MNReplication.replicate() with an object that is valid for replication but
-    for which the CN denies replication.
+    """The destination MN responds correctly on MNReplication.replicate() with
+    an object that is valid for replication but for which the CN denies
+    replication.
     """
     try:
       self._call_dst_replicate(self._pid_not_authorized)

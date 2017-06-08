@@ -21,13 +21,16 @@
 """Generate random checksum
 """
 
+from __future__ import absolute_import
+
 import random
 
 import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.util
-import random_data
+
+import d1_test.instance_generator.random_data
 
 
 def random_checksum_algorithm():
@@ -39,6 +42,6 @@ def random_checksum_algorithm():
 def generate():
   """Generate a Checksum object for a random string, using random algorithm."""
   return d1_common.checksum.create_checksum_object(
-    random_data.random_bytes(10),
+    d1_test.instance_generator.random_data.random_bytes(10),
     random_checksum_algorithm(),
   )

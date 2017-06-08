@@ -29,14 +29,16 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import re
+from __future__ import absolute_import
+
 import logging
+import re
 
 import responses
 
-import d1_common.url
 import d1_common.const
 import d1_common.types.dataoneTypes
+import d1_common.url
 
 import d1_test.mock_api.d1_exception
 

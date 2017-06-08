@@ -25,8 +25,10 @@ session contains the primary identity, a list of equivalent identities and group
 memberships of the caller.
 """
 
-import subject_info
-import x509
+from __future__ import absolute_import
+
+import d1_common.cert.subject_info
+import d1_common.cert.x509
 
 
 def extract_subjects(cert_pem):
@@ -38,9 +40,9 @@ def extract_subjects(cert_pem):
 
   All returned subjects are DataONE compliant serializations.
   """
-  primary_str, subject_info_xml = x509.extract(cert_pem)
+  primary_str, subject_info_xml = d1_common.cert.x509.extract(cert_pem)
   if subject_info_xml is not None:
-    equivalent_set = subject_info.extract_subjects(
+    equivalent_set = d1_common.cert.subject_info.extract_subjects(
       subject_info_xml, primary_str
     )
   else:

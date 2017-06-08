@@ -27,8 +27,8 @@ these methods.
 
 from __future__ import absolute_import
 
-import os
 import logging
+import os
 
 import d1_client.mnclient
 
@@ -193,7 +193,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self.GET('concurrency_clear', headers=headers)
 
   def concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
-    """Test PID read locking.
+    """PID read locking
     """
     return self.GET(['concurrency_read_lock', key, sleep_before, sleep_after],
                     headers=headers)

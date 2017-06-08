@@ -34,14 +34,17 @@ the number of workers. A single connection is reused, first for retrieving a
 page of results, then all System Metadata objects in the result.
 """
 
+from __future__ import absolute_import
+
 import logging
 import multiprocessing
 import time
 
-import d1_client.mnclient_1_1
-import d1_client.mnclient_2_0
 import d1_common.type_conversions
 import d1_common.types.exceptions
+
+import d1_client.mnclient_1_1
+import d1_client.mnclient_2_0
 
 # Defaults
 OBJECT_LIST_PAGE_SIZE = 100

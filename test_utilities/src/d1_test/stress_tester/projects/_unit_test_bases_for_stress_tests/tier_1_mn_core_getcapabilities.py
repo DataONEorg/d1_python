@@ -28,6 +28,8 @@
   - python 2.6
 """
 
+from __future__ import absolute_import
+
 import context
 import test_client
 
@@ -35,9 +37,6 @@ import d1_test_case
 
 
 class Test020GetCapabilities(d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_010_get_capabilities(self):
     """GetCapabilities returns a NodeList containing a single, valid Node
     object.

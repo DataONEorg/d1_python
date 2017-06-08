@@ -19,18 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from __future__ import absolute_import
 
-import baseclient
+import logging
 
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.util
 
+import d1_client.baseclient
+
 
 class MemberNodeClient(
-    baseclient.DataONEBaseClient,
+    d1_client.baseclient.DataONEBaseClient,
 ):
   """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available on
   Member Nodes.

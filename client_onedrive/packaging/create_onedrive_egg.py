@@ -22,6 +22,8 @@ Created on Jan 11, 2013
 
 @author: brumgard
 """
+from __future__ import absolute_import
+
 import sys
 
 from setuptools import setup
@@ -45,10 +47,11 @@ setup(
     'lxml': 'deps/lxml-3.1beta1/lxml',
     'fuse': 'deps/fuse'
   }, packages=[
-    'onedrive', 'impl', 'impl.drivers', 'impl.drivers.fuse', 'impl.resolver',
-    'd1_common', 'd1_common.types', 'd1_common.types.generated', 'iso8601',
-    'd1_client', 'pyxb', 'pyxb.namespace', 'pyxb.utils', 'pyxb.binding',
-    'rdflib', 'rdflib.syntax', 'rdflib.store', 'rdflib.syntax.serializers',
+    'onedrive', 'onedrive.impl', 'onedrive.impl.drivers',
+    'onedrive.impl.drivers.fuse', 'onedrive.impl.resolver', 'd1_common',
+    'd1_common.types', 'd1_common.types.generated', 'iso8601', 'd1_client',
+    'pyxb', 'pyxb.namespace', 'pyxb.utils', 'pyxb.binding', 'rdflib',
+    'rdflib.syntax', 'rdflib.store', 'rdflib.syntax.serializers',
     'rdflib.syntax.parsers', 'rdflib.sparql', 'foresite', 'lxml', 'fuse'
   ], entry_points={
     'setuptools.installation': [

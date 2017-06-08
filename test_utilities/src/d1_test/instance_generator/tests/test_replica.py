@@ -19,6 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import logging
 import unittest
 
@@ -29,9 +31,6 @@ import d1_test.instance_generator.replica as replica
 
 
 class TestReplica(d1_test.d1_test_case.D1TestCase):
-  def setUp(self):
-    pass
-
   def test_0010(self):
     """generate()"""
     replica.generate()

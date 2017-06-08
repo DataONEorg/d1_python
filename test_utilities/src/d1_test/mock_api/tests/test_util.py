@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import d1_common.types.dataoneTypes_v1_1 as v1_1
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 
@@ -26,10 +28,6 @@ import d1_test.mock_api.util
 
 
 class TestMockUtil(d1_test.d1_test_case.D1TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass
-
   def test_0010(self):
     """parse_rest_url() 1"""
     version_tag, endpoint_str, param_list, query_dict, client = (

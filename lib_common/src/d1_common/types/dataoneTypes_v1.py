@@ -19,10 +19,12 @@
 # limitations under the License.
 """Import PyXB bindings required for handling v1.0 DataONE types
 """
+from __future__ import absolute_import
+
 import logging
 
-# flake8: noqa: F403
-
 from d1_common.types.generated.dataoneTypes_v1 import *
+
+# flake8: noqa: F403
 
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)

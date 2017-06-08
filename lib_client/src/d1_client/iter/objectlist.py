@@ -30,11 +30,14 @@ DataONE node. Data is retrieved from the target only when required.
 :Dependencies:
   - python 2.6
 """
-import httplib
+from __future__ import absolute_import
+
 import logging
 
-import d1_common.types.exceptions
+import httplib
 import pyxb
+
+import d1_common.types.exceptions
 
 
 class ObjectListIterator(object):

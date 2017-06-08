@@ -19,6 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import responses
 
 import d1_test.d1_test_case
@@ -33,13 +35,6 @@ MAX_OBJECTS = 20
 
 
 class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass
-
-  def setUp(self):
-    pass
-
   @responses.activate
   def test_0010(self):
     """Object List iteration"""

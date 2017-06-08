@@ -21,15 +21,19 @@
 """Generate random data of various types
 """
 
-import re
+from __future__ import absolute_import
+
 import random
+import re
 import StringIO
 
-import words
-import unicode_names
+import d1_test.instance_generator.unicode_names
+import d1_test.instance_generator.words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
-unicode_characters = u''.join(set(u''.join(unicode_names.UNICODE_NAMES)))
+unicode_characters = u''.join(
+  set(u''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES))
+)
 unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
 
 random.seed()
@@ -47,7 +51,7 @@ def random_bytes_flo(n_bytes):
 
 def random_unicode_name():
   """Return a random Unicode name"""
-  return random.choice(unicode_names.UNICODE_NAMES)
+  return random.choice(d1_test.instance_generator.unicode_names.UNICODE_NAMES)
 
 
 def random_unicode_name_list(n_names):
@@ -60,11 +64,13 @@ def random_unicode_name_list(n_names):
 
 def random_unicode_name_unique_list(n_names):
   """Return a list of random Unicode names. Names are unique"""
-  return random.sample(unicode_names.UNICODE_NAMES, n_names)
+  return random.sample(
+    d1_test.instance_generator.unicode_names.UNICODE_NAMES, n_names
+  )
 
 
 def random_word():
-  return random.choice(words.WORDS_1K)
+  return random.choice(d1_test.instance_generator.words.WORDS_1K)
 
 
 def random_3_words():
@@ -83,7 +89,7 @@ def random_word_list(n_words):
 
 def random_word_unique_list(n_names):
   """Return a list of random words. Words are unique"""
-  return random.sample(words.WORDS_1K, n_names)
+  return random.sample(d1_test.instance_generator.words.WORDS_1K, n_names)
 
 
 def random_unicode_char():

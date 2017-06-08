@@ -24,15 +24,14 @@ Follow the pattern there to convert all these to ContextDecorators.
 TODO: In Python 3, items() is a view, so must use d.copy.items(), etc.
 """
 
+from __future__ import absolute_import
+
 import functools
-# import inspect
 import logging
 
-# import contextlib
 import contextlib2
 import mock
 
-# import decorator
 import django.test
 
 SUBJ_DICT = {

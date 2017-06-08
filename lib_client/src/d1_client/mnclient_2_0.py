@@ -19,10 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from __future__ import absolute_import
 
-import baseclient_2_0
-import mnclient_1_1
+import logging
 
 import d1_common
 import d1_common.const
@@ -30,10 +29,13 @@ import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.util
 
+import d1_client.baseclient_2_0
+import d1_client.mnclient_1_1
+
 
 class MemberNodeClient_2_0(
-    baseclient_2_0.DataONEBaseClient_2_0,
-    mnclient_1_1.MemberNodeClient_1_1,
+    d1_client.baseclient_2_0.DataONEBaseClient_2_0,
+    d1_client.mnclient_1_1.MemberNodeClient_1_1,
 ):
   """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
   for Member nodes that was added in v2.0 of the DataONE infrastructure.

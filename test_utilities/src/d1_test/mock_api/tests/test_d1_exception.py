@@ -18,16 +18,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 
 
 class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass
-
   def test_0010(self):
     """trigger_by_status_code(): GET request returns DataONEException XML doc"""
 

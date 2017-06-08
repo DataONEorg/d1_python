@@ -20,12 +20,14 @@
 """Utilities for handling URLs in DataONE
 """
 
+from __future__ import absolute_import
+
 import re
 import sys
 import urllib
 import urlparse
 
-import const
+import d1_common.const
 
 # ==============================================================================
 
@@ -36,7 +38,7 @@ def encodePathElement(element):
   return urllib.quote((
     element.encode('utf-8') if isinstance(element, unicode) else str(element)
     if isinstance(element, int) else element
-  ), safe=const.URL_PATHELEMENT_SAFE_CHARS)
+  ), safe=d1_common.const.URL_PATHELEMENT_SAFE_CHARS)
 
 
 def decodePathElement(element):
@@ -51,7 +53,7 @@ def encodeQueryElement(element):
   return urllib.quote((
     element.encode('utf-8') if isinstance(element, unicode) else str(element)
     if isinstance(element, int) else element
-  ), safe=const.URL_QUERYELEMENT_SAFE_CHARS)
+  ), safe=d1_common.const.URL_QUERYELEMENT_SAFE_CHARS)
 
 
 def decodeQueryElement(element):
@@ -184,23 +186,23 @@ def urlencode(query, doseq=0):
 def makeCNBaseURL(url):
   """Attempt to create a valid CN BaseURL when one or more sections of the URL
   are missing"""
-  o = urlparse.urlparse(url, scheme=const.DEFAULT_CN_PROTOCOL)
+  o = urlparse.urlparse(url, scheme=d1_common.const.DEFAULT_CN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc
     path = o.path
   elif o.netloc:
     netloc = o.netloc
-    path = const.DEFAULT_CN_PATH
+    path = d1_common.const.DEFAULT_CN_PATH
   elif o.path:
     s = o.path.split('/', 1)
     netloc = s[0]
     if len(s) == 1:
-      path = const.DEFAULT_CN_PATH
+      path = d1_common.const.DEFAULT_CN_PATH
     else:
       path = s[1]
   else:
-    netloc = const.DEFAULT_CN_HOST
-    path = const.DEFAULT_CN_PATH
+    netloc = d1_common.const.DEFAULT_CN_HOST
+    path = d1_common.const.DEFAULT_CN_PATH
   return urlparse.urlunparse(
     (o.scheme, netloc, path, o.params, o.query, o.fragment)
   )
@@ -209,23 +211,23 @@ def makeCNBaseURL(url):
 def makeMNBaseURL(url):
   """Attempt to create a valid MN BaseURL when one or more sections of the URL
   are missing"""
-  o = urlparse.urlparse(url, scheme=const.DEFAULT_MN_PROTOCOL)
+  o = urlparse.urlparse(url, scheme=d1_common.const.DEFAULT_MN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc
     path = o.path
   elif o.netloc:
     netloc = o.netloc
-    path = const.DEFAULT_MN_PATH
+    path = d1_common.const.DEFAULT_MN_PATH
   elif o.path:
     s = o.path.split('/', 1)
     netloc = s[0]
     if len(s) == 1:
-      path = const.DEFAULT_MN_PATH
+      path = d1_common.const.DEFAULT_MN_PATH
     else:
       path = s[1]
   else:
-    netloc = const.DEFAULT_MN_HOST
-    path = const.DEFAULT_MN_PATH
+    netloc = d1_common.const.DEFAULT_MN_HOST
+    path = d1_common.const.DEFAULT_MN_PATH
   return urlparse.urlunparse(
     (o.scheme, netloc, path, o.params, o.query, o.fragment)
   )

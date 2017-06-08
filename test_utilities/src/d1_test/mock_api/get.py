@@ -40,6 +40,8 @@ of desired redirects. E.g.:
 client.get('<REDIRECT:303:3>pid')
 """
 
+from __future__ import absolute_import
+
 import logging
 import re
 
@@ -49,7 +51,6 @@ import d1_common.const
 import d1_common.types.exceptions
 import d1_common.url
 
-# Config
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util

@@ -22,20 +22,38 @@
 from __future__ import absolute_import
 
 import argparse
+import lib2to3.main
+import lib2to3.refactor
 import logging
 
-import file_iterator
+import lib_dev.file_iterator
+import lib_dev.util
 import redbaron
 import redbaron.nodes
-import util
 
 import d1_common.util
+
+"""Perform various small source cleanup tasks on modules
+
+By default, files are NOT modified. After having verified that the modifications
+are as expected with the `--diff` switch, run the script again with `--update`
+to modify the files.
+
+When files are updated, the original file is backed up by appending "~" to the
+original name. Any earlier backups are overwritten. Use clean-tree.py to delete
+the backups.
+"""
+
+# Single line comments containing these strings will not be removed.
+KEEP_COMMENTS = ['noqa', 'noinspection']
 
 
 def main():
   parser = argparse.ArgumentParser(
-    description='Perform various small source cleanup tasks on modules'
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
   )
+
   parser.add_argument('path', nargs='+', help='File or directory path')
   parser.add_argument('--include', nargs='+', help='Include glob patterns')
   parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
@@ -52,8 +70,13 @@ def main():
     default=True, help='Don\'t add default glob exclude patterns'
   )
   parser.add_argument(
-    '--diff', dest='diff_only', action='store_false', default=True,
+    '--diff', dest='show_diff', action='store_true', default=False,
     help='Show diff and do not modify any files'
+  )
+  parser.add_argument(
+    '--update', dest='update', action='store_true', default=False,
+    help='Apply the updates to the original files. By default, no files are '
+    'changed.'
   )
   parser.add_argument(
     '--debug', action='store_true', default=False, help='Debug level logging'
@@ -63,7 +86,9 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for module_path in file_iterator.file_iter(
+  event_counter = d1_common.util.EventCounter()
+
+  for module_path in lib_dev.file_iterator.file_iter(
       path_list=args.path,
       include_glob_list=['*.py'] if not args.include else args.include,
       exclude_glob_list=args.exclude,
@@ -71,11 +96,15 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
-    modified_cnt = 0
     try:
-      is_modified = clean_module(module_path, args.diff_only)
-      if is_modified:
-        modified_cnt += 1
+      is_cleaned = clean_module(module_path, args.show_diff, args.update)
+      if is_cleaned:
+        event_counter.count('Cleaned files')
+
+      is_futurized = futurize_module(module_path, args.show_diff, args.update)
+      if is_futurized:
+        event_counter.count('Futurized files')
+
     except Exception as e:
       logging.error(
         'Cleaning failed. error="{}" path="{}"'.format(module_path, str(e))
@@ -83,20 +112,35 @@ def main():
       if args.debug:
         raise
 
-  logging.info('Files modified: {}'.format(modified_cnt))
+  event_counter.log()
 
 
-def clean_module(module_path, diff_only):
+def clean_module(module_path, show_diff, write_update):
   logging.info('Cleaning module... path="{}"'.format(module_path))
-  r = util.redbaron_module_path_to_tree(module_path)
+  r = lib_dev.util.redbaron_module_path_to_tree(module_path)
   r = clean_all(r)
-  return util.update_module_file(r, module_path, diff_only)
+  return lib_dev.util.update_module_file(
+    r, module_path, show_diff, write_update
+  )
 
 
 def clean_all(r):
-  r = _remove_single_line_import_comments(r)
-  r = _remove_module_level_docstrs_in_unit_tests(r)
+  # r = _remove_single_line_import_comments(r)
+  # r = _remove_module_level_docstrs_in_unit_tests(r)
+  # r = _add_absolute_import(r)
   return r
+
+
+def futurize_module(module_path, show_diff, write_update):
+  """2to3 uses AST, not Baron"""
+  logging.info('Futurizing module... path="{}"'.format(module_path))
+  ast_tree = back_to_the_futurize(module_path)
+  return lib_dev.util.update_module_file_ast(
+    ast_tree, module_path, show_diff, write_update
+  )
+
+
+# remove_single_line_import_comments
 
 
 def _remove_single_line_import_comments(r):
@@ -110,11 +154,19 @@ def _remove_single_line_import_comments(r):
       if not (
           import_r[i - 2].type != 'comment' and v.type == 'comment' and
           import_r[i + 2].type != 'comment'
-      ):
+      ) or _is_keep_comment(v):
         new_import_r.append(v)
     else:
       new_import_r.append(v)
   return new_import_r + remaining_r
+
+
+def _is_keep_comment(r):
+  return any([keep in r.value[0] for keep in KEEP_COMMENTS]) # maybe?
+  # return any([keep in r.value for keep in KEEP_COMMENTS])
+
+
+# remove_module_level_docstrs
 
 
 def _remove_module_level_docstrs_in_unit_tests(r):
@@ -139,6 +191,86 @@ def split_by_last_import(r):
   import_r = r.node_list[:last_import_n.index_on_parent_raw + 1]
   remaining_r = r.node_list[last_import_n.index_on_parent_raw + 1:]
   return import_r, remaining_r
+
+
+# add_absolute_import
+
+
+def _add_absolute_import(r):
+  if has_future_absolute_import(r):
+    return r
+
+  new_r = redbaron.NodeList()
+  first = True
+  for v in r.node_list:
+    if v.type == 'import' and first:
+      first = False
+      new_r.append(
+        redbaron.RedBaron('from __future__ import absolute_import # NEW\n')
+      )
+    new_r.append(v)
+  return new_r
+
+
+def has_future_absolute_import(r):
+  import_node_list = r('FromImportNode', recursive=False)
+  return any([
+    rr.value[0].value == '__future__' and
+    'absolute_import' in [v.value for v in rr.targets]
+    for rr in import_node_list if rr.value
+  ])
+
+
+# The following fixers are "safe": they convert Python 2 code to more
+# modern Python 2 code. They should be uncontroversial to apply to most
+# projects that are happy to drop support for Py2.5 and below. Applying
+# them first will reduce the size of the patch set for the real porting.
+lib2to3_fix_names_stage1 = {
+  'lib2to3.fixes.fix_apply',
+  'lib2to3.fixes.fix_except',
+  'lib2to3.fixes.fix_exec',
+  'lib2to3.fixes.fix_exitfunc',
+  'lib2to3.fixes.fix_funcattrs',
+  'lib2to3.fixes.fix_has_key',
+  'lib2to3.fixes.fix_idioms',
+  'lib2to3.fixes.fix_intern',
+  'lib2to3.fixes.fix_isinstance',
+  'lib2to3.fixes.fix_methodattrs',
+  'lib2to3.fixes.fix_ne',
+  'lib2to3.fixes.fix_numliterals',
+  'lib2to3.fixes.fix_paren',
+  'lib2to3.fixes.fix_reduce',
+  'lib2to3.fixes.fix_renames',
+  'lib2to3.fixes.fix_repr',
+  'lib2to3.fixes.fix_standarderror',
+  'lib2to3.fixes.fix_sys_exc',
+  'lib2to3.fixes.fix_throw',
+  'lib2to3.fixes.fix_tuple_params',
+  'lib2to3.fixes.fix_types',
+  'lib2to3.fixes.fix_ws_comma',
+  'lib2to3.fixes.fix_xreadlines',
+}
+
+libfuturize_fix_names_stage1 = {
+  'libfuturize.fixes.fix_absolute_import',
+  'libfuturize.fixes.fix_next_call',
+  'libfuturize.fixes.fix_print_with_import',
+  'libfuturize.fixes.fix_raise',
+}
+
+
+def back_to_the_futurize(module_path):
+  fixer_names_set = lib2to3_fix_names_stage1 | libfuturize_fix_names_stage1
+  mt = lib2to3.refactor.MultiprocessRefactoringTool(
+    fixer_names=sorted(fixer_names_set)
+  )
+  with open(module_path, 'rb') as f:
+    module_str = f.read()
+  tree = mt.refactor_string(module_str, 'urk')
+  if mt.errors:
+    raise ValueError('lib2to3 refactor error')
+  # mt.summarize()
+  return tree
 
 
 if __name__ == '__main__':

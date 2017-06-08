@@ -159,14 +159,14 @@ def create(request, pid):
 # noinspection PyUnusedLocal
 @gmn.app.restrict_to_verb.get
 def slash(request, p1, p2, p3):
-  """Test that GMN correctly handles three arguments separated by slashes"""
+  """Correctly handles arguments separated by slashes"""
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
 # noinspection PyUnusedLocal
 @gmn.app.restrict_to_verb.get
 def exception(request, exception_type):
-  """Test that GMN correctly catches and serializes exceptions raised by views"""
+  """Correctly catches and serializes exceptions raised by views"""
   if exception_type == 'python':
     raise Exception("Test Python Exception")
   elif exception_type == 'dataone':

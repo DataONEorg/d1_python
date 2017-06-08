@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+
 import logging
 
 import d1_client.cnclient_2_0
