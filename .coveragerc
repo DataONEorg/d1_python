@@ -1,8 +1,5 @@
 [run]
 
-include =
-  *.py
-
 omit =
   #### Tracked but not included in coverage
 
@@ -14,24 +11,24 @@ omit =
   */mockup/*
   */tests/*
 
-#  # files
-#
-#  */conftest.py
-#  */devpi-settings.sh
-#  */settings.py
-#  */setup.py
-#  */test.py
-#  */t.py
-#
-#  #### Untracked, based on .gitignore
-#
-#  # All dot-files and dot-dirs
+  # files
+
+  # Only Python scripts, as coverage is implicitly limited to .py
+  */conftest.py
+  */settings*.py
+  */setup.py
+  */test.py
+  */t.py
+
+  #### Untracked, based on .gitignore
+
+  # All dot-files and dot-dirs
 #  */.*
-#  */__pycache__/*
-#  */_build/*
-#  */build/*
-#  */certificates/*
-#  */certs/*
+  */__pycache__/*
+  */_build/*
+  */build/*
+  */certificates/*
+  */certs/*
 #  */cover/*
 #  */d1_objects/*
 #  */develop-eggs/*
