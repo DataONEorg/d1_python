@@ -29,6 +29,7 @@ import subprocess
 import tempfile
 
 import baron.render
+import git
 import redbaron
 import redbaron.nodes
 
@@ -171,3 +172,16 @@ def has_doc_str(node):
     isinstance(node.value[0], redbaron.nodes.StringNode) or
     isinstance(node.value[0], redbaron.nodes.UnicodeStringNode)
   )
+
+
+def find_repo_root_by_path(path):
+  """Given a path to an item in a git repository, find the root of the
+  repository"""
+  repo = git.Repo(path, search_parent_directories=True)
+  return repo.git.rev_parse('--show-toplevel')
+
+
+def find_repo_root():
+  """Assume that this module is in a git repository and find the root of the
+  repository"""
+  return find_repo_root_by_path(__file__)
