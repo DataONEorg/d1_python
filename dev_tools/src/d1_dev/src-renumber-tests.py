@@ -26,8 +26,8 @@ from __future__ import absolute_import
 import argparse
 import logging
 
-import dev_tools.lib_dev.file_iterator
-import lib_dev.util
+import d1_dev.file_iterator
+import d1_dev.util
 
 import d1_common.util
 
@@ -66,7 +66,7 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for module_path in dev_tools.lib_dev.file_iterator.file_iter(
+  for module_path in d1_dev.file_iterator.file_iter(
       path_list=[args.path],
       include_glob_list=['test_*.py'],
       exclude_glob_list=args.exclude,
@@ -86,20 +86,20 @@ def main():
 
 def renumber_module(module_path, show_diff, do_move):
   logging.info('Renumbering: {}'.format(module_path))
-  r = lib_dev.util.redbaron_module_path_to_tree(module_path)
-  if not lib_dev.util.has_test_class(r):
+  r = d1_dev.util.redbaron_module_path_to_tree(module_path)
+  if not d1_dev.util.has_test_class(r):
     logging.info(
       'Skipped: No Test class in module. path="{}"'.format(module_path)
     )
     return False
   renumber_all(r, do_move)
-  lib_dev.util.update_module_file(r, module_path, show_diff)
+  d1_dev.util.update_module_file(r, module_path, show_diff)
 
 
 def renumber_all(r, do_move):
   test_idx = 1000
   for node in r('DefNode'):
-    if lib_dev.util.is_test_func(node.name):
+    if d1_dev.util.is_test_func(node.name):
       renumber_method(node, test_idx, do_move)
       test_idx += 10
 
@@ -107,21 +107,21 @@ def renumber_all(r, do_move):
 def renumber_method(node, test_idx, do_move):
   with d1_common.util.print_logging():
     logging.info('Method: {}'.format(node.name))
-  test_name, test_trailing = lib_dev.util.split_func_name(node.name)
+  test_name, test_trailing = d1_dev.util.split_func_name(node.name)
   if not do_move:
     # node.name = u'test_{:04d}{}'.format(test_idx, test_trailing)
     node.name = u'test_{:04d}'.format(test_idx)
   else:
     node.name = u'test_{:04d}'.format(test_idx)
-    old_doc_str = lib_dev.util.get_doc_str(node)
-    new_doc_str = lib_dev.util.gen_doc_str(test_trailing, old_doc_str)
+    old_doc_str = d1_dev.util.get_doc_str(node)
+    new_doc_str = d1_dev.util.gen_doc_str(test_trailing, old_doc_str)
     if new_doc_str != u'""""""':
-      if lib_dev.util.has_doc_str(node):
+      if d1_dev.util.has_doc_str(node):
         node.value[0].value = new_doc_str
       else:
         node.value.insert(0, new_doc_str)
     else:
-      if lib_dev.util.has_doc_str(node):
+      if d1_dev.util.has_doc_str(node):
         node.value.pop(0)
 
 

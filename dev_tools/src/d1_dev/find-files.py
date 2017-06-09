@@ -30,7 +30,7 @@ from __future__ import absolute_import
 import argparse
 import logging
 
-import dev_tools.lib_dev.file_iterator as file_iterator
+import d1_dev.file_iterator as file_iterator
 
 import d1_common.util
 

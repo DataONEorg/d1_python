@@ -39,8 +39,8 @@ import logging
 
 import pip
 
-import dev_tools.lib_dev.file_iterator as file_iterator
-import lib_dev.util
+import d1_dev.file_iterator as file_iterator
+import d1_dev.util
 
 import d1_common.util
 
@@ -99,7 +99,7 @@ def find_deps_in_source(module_path):
   )
   try:
     return find_deps_in_tree(
-      lib_dev.util.redbaron_module_path_to_tree(module_path)
+      d1_dev.util.redbaron_module_path_to_tree(module_path)
     )
   except Exception as e:
     logging.error(

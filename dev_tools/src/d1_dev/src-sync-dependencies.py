@@ -39,8 +39,8 @@ import re
 
 import pkg_resources
 
-import lib_dev.file_iterator as file_iterator
-import lib_dev.util
+import d1_dev.file_iterator as file_iterator
+import d1_dev.util
 
 import d1_common.util
 
@@ -94,7 +94,7 @@ def main():
 def update_deps_on_file(args, setup_path, show_diff, d1_version):
   logging.info('Updating setup.py... path="{}"'.format(setup_path))
   try:
-    r = lib_dev.util.redbaron_module_path_to_tree(setup_path)
+    r = d1_dev.util.redbaron_module_path_to_tree(setup_path)
     r = update_deps_on_tree(r, d1_version)
   except Exception as e:
     logging.error(
@@ -103,7 +103,7 @@ def update_deps_on_file(args, setup_path, show_diff, d1_version):
     if args.debug:
       raise
   else:
-    lib_dev.util.update_module_file(r, setup_path, show_diff)
+    d1_dev.util.update_module_file(r, setup_path, show_diff)
 
 
 def update_deps_on_tree(r, d1_version):
@@ -178,11 +178,11 @@ def update_common_version_const(d1_version, only_diff):
   logging.info(
     'Updating VERSION in d1_common.const. path="{}"'.format(const_module_path)
   )
-  r = lib_dev.util.redbaron_module_path_to_tree(const_module_path)
+  r = d1_dev.util.redbaron_module_path_to_tree(const_module_path)
   for n in r('AssignmentNode'):
     if n.target.value == 'VERSION':
       n.value.value = "'{}'".format(d1_version)
-      lib_dev.util.update_module_file(r, const_module_path, only_diff)
+      d1_dev.util.update_module_file(r, const_module_path, only_diff)
       break
 
 

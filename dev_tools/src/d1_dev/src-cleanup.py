@@ -36,8 +36,8 @@ import lib2to3.main
 import lib2to3.refactor
 import logging
 
-import lib_dev.file_iterator
-import lib_dev.util
+import d1_dev.file_iterator
+import d1_dev.util
 import redbaron
 import redbaron.nodes
 
@@ -87,7 +87,7 @@ def main():
 
   event_counter = d1_common.util.EventCounter()
 
-  for module_path in lib_dev.file_iterator.file_iter(
+  for module_path in d1_dev.file_iterator.file_iter(
       path_list=args.path,
       include_glob_list=['*.py'] if not args.include else args.include,
       exclude_glob_list=args.exclude,
@@ -116,11 +116,9 @@ def main():
 
 def clean_module(module_path, show_diff, write_update):
   logging.info('Cleaning module... path="{}"'.format(module_path))
-  r = lib_dev.util.redbaron_module_path_to_tree(module_path)
+  r = d1_dev.util.redbaron_module_path_to_tree(module_path)
   r = clean_all(r)
-  return lib_dev.util.update_module_file(
-    r, module_path, show_diff, write_update
-  )
+  return d1_dev.util.update_module_file(r, module_path, show_diff, write_update)
 
 
 def clean_all(r):
@@ -134,7 +132,7 @@ def futurize_module(module_path, show_diff, write_update):
   """2to3 uses AST, not Baron"""
   logging.info('Futurizing module... path="{}"'.format(module_path))
   ast_tree = back_to_the_futurize(module_path)
-  return lib_dev.util.update_module_file_ast(
+  return d1_dev.util.update_module_file_ast(
     ast_tree, module_path, show_diff, write_update
   )
 

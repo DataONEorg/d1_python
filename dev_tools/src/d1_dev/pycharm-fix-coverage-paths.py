@@ -4,7 +4,6 @@
 This converts them to absolute, which PyCharm handles.
 """
 
-import logging
 import os
 import xml.etree.ElementTree
 
@@ -20,10 +19,8 @@ def main():
 
   repo_root_path = d1_dev.util.find_repo_root()
 
-  logging.info('Repository: {}'.format(repo_root_path))
-
   cov_xml_path = os.path.join(repo_root_path, 'coverage.xml')
-  fixed_cov_xml_path = os.path.join(repo_root_path, 'fixed_coverage.xml')
+  fixed_cov_xml_path = os.path.join(repo_root_path, 'coverage_pycharm.xml')
 
   with open(cov_xml_path, 'rb') as f:
     cov_tree = d1_common.type_conversions.str_to_etree(f.read())
