@@ -117,11 +117,13 @@ Notes:
 
 * The tests use `settings_test.py` for GMN and Django configuration.
 
-### Creating a new release
+### Create a new release
 
-##### Updating dependencies
+##### Update dependencies
 
-The stack should pass all the tests with the most recent available versions of all the dependencies. Start by updating all the dependencies:
+The stack should pass all the tests with the most recent available versions of all the dependencies.
+
+Start by updating all the dependencies:
 
     $ cd d1_python
     $ sudo ./dev_tools/pip-update-all.py
@@ -148,4 +150,51 @@ The `<version>` argument specifies what the version will be for the release. E.g
     TODO
 
 
+### Setting up the development environment
 
+These instructions are tested on Linux Mint 18 and should also work on close derivatives.
+
+Install packaged dependencies:
+
+    $ sudo apt-get update
+    $ sudo apt-get -fy dist-upgrade
+    $ sudo apt-get install -y subversion python-setuptools python-dev \
+    libssl-dev postgresql-server-dev-all git
+
+Download the source from GitHub:
+
+    $ git clone https://github.com/DataONEorg/d1_python.git
+
+Set the `D1ROOT` environment variable to the location of `d1_python`. It's handy to set the variable in the startup script for your shell. E.g.,:
+
+    $ export D1ROOT=~/my/dev/d1_python
+
+Add the DataONE packages to the Python path, and install their dependencies:
+
+    $ sh $D1ROOT/dev_tools/develop.sh
+
+Run the following commands, except, change the "createuser" line to:
+
+    $ sudo -u postgres createuser <youruser> ($ whoami)
+
+    https://pythonhosted.org/dataone.generic_member_node/setup-local-postgresql.html
+
+
+Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
+
+    $ sudo cp /home/dahl/d1_python/d1_mn_generic/src/deployment/openssl.cnf .
+
+  https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
+
+Run the tests and verify that they all pass:
+
+      $ pytest
+
+
+### Troubleshooting
+
+* Clear out the installed libraries and reinstall:
+
+      $ sudo rm -rf /usr/local/lib/python2.7/dist-packages/d1_*
+      $ sudo nano /usr/local/lib/python2.7/dist-packages/easy-install.pth
+      Remove all lines that are: dataone.*.egg and that are paths to your d1_python.
