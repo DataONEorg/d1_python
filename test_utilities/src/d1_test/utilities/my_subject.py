@@ -4,6 +4,7 @@ memberships.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 import optparse
@@ -40,7 +41,7 @@ def dumpExtensions(x509):
     try:
       v = decoder.decode(ext.get_data())
       logging.debug("  Value: %s" % str(v))
-    except PyAsn1Error, err:
+    except PyAsn1Error as err:
       logging.warn(err)
       logging.debug("  Value: %s" % str(ext.get_data()))
 
@@ -111,17 +112,19 @@ if __name__ == "__main__":
 
   fname = args[1]
   subject, status = getSubjectFromCertFile(fname)
-  print subject['subject']
+  print(subject['subject'])
   if options.info:
     if subject['subjectInfo'] is not None:
       if options.format:
         root = etree.fromstring(str(subject['subjectInfo']))
-        print "SubjectInfo:"
-        print etree.tostring(
-          root, pretty_print=True, encoding='UTF-8', xml_declaration=True
+        print("SubjectInfo:")
+        print(
+          etree.tostring(
+            root, pretty_print=True, encoding='UTF-8', xml_declaration=True
+          )
         )
       else:
-        print str(subject['subjectInfo'])
+        print(str(subject['subjectInfo']))
   if status == 0:
     sys.exit(2)
   sys.exit(0)

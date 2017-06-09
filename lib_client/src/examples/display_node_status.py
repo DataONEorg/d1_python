@@ -39,6 +39,7 @@ Requires:
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 
@@ -91,7 +92,7 @@ def main():
     else:
       logging.error('Unknown node type')
       return
-    print
+    print()
 
 
 def get_node_list_from_coordinating_node():
@@ -116,46 +117,50 @@ def get_mn_metrics(mn):
 
 def print_capabilities(client):
   caps = client.getCapabilities()
-  print 'Identifier: {0}'.format(caps.identifier.value())
-  print 'Name: {0}'.format(caps.name)
-  print 'Description: {0}'.format(caps.description)
-  print 'Member Node subject(s):'
+  print('Identifier: {}'.format(caps.identifier.value()))
+  print('Name: {}'.format(caps.name))
+  print('Description: {}'.format(caps.description))
+  print('Member Node subject(s):')
   for s in caps.subject:
-    print '  {0}'.format(s.value())
-  print 'Contact(s):'
+    print('  {}'.format(s.value()))
+  print('Contact(s):')
   for c in caps.contactSubject:
-    print '  {0}'.format(c.value())
+    print('  {}'.format(c.value()))
   #print 'Contact subject: {0}'.format(caps.contactSubject)
-  print 'Services:'
+  print('Services:')
   for s in caps.services.service:
-    print '  Name: {0}'.format(s.name)
-    print '  Version: {0}'.format(s.version)
-    print '  Available: {0}'.format(s.available)
-  print 'Synchronization: '
-  print '  Schedule: hour={0} mday={1} min={2} mon={3} sec={4} wday={5} year={6}'.format(
-    caps.synchronization.schedule.hour, caps.synchronization.schedule.mday,
-    caps.synchronization.schedule.min, caps.synchronization.schedule.mon,
-    caps.synchronization.schedule.sec, caps.synchronization.schedule.wday,
-    caps.synchronization.schedule.year
+    print('  Name: {}'.format(s.name))
+    print('  Version: {}'.format(s.version))
+    print('  Available: {}'.format(s.available))
+  print('Synchronization: ')
+  print(
+    '  Schedule: hour={} mday={} min={} mon={} sec={} wday={} year={}'.format(
+      caps.synchronization.schedule.hour, caps.synchronization.schedule.mday,
+      caps.synchronization.schedule.min, caps.synchronization.schedule.mon,
+      caps.synchronization.schedule.sec, caps.synchronization.schedule.wday,
+      caps.synchronization.schedule.year
+    )
   )
-  print '  Last harvested: {0}'.format(caps.synchronization.lastHarvested)
-  print '  Last complete harvest: {0}'.format(
-    caps.synchronization.lastCompleteHarvest
+  print('  Last harvested: {}'.format(caps.synchronization.lastHarvested))
+  print(
+    '  Last complete harvest: {}'.
+    format(caps.synchronization.lastCompleteHarvest)
   )
 
 
 def get_gen_metrics(client, node):
-  print 'Node: {0}'.format(node.name)
-  print 'Base URL: {0}'.format(node.baseURL)
-  print 'Node Type: {0}'.format(node.type.upper())
-  print 'Ping: {0}'.format(get_ping(client))
-  print 'Total number of objects: {0}'.format(get_number_of_objects(client))
+  print('Node: {}'.format(node.name))
+  print('Base URL: {}'.format(node.baseURL))
+  print('Node Type: {}'.format(node.type.upper()))
+  print('Ping: {}'.format(get_ping(client)))
+  print('Total number of objects: {}'.format(get_number_of_objects(client)))
   try:
-    print 'Total number of log records: {0}'.format(
-      get_number_of_log_records(client)
+    print(
+      'Total number of log records: {}'.
+      format(get_number_of_log_records(client))
     )
   except d1_common.types.exceptions.NotAuthorized:
-    print 'Log records are restricted'
+    print('Log records are restricted')
 
 
 def get_ping(client):

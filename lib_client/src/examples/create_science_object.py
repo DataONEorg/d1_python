@@ -49,6 +49,7 @@ Any other errors will also be returned as DataONE exceptions.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import datetime
 import hashlib
@@ -123,7 +124,7 @@ def main():
   # efficient if the file fits in memory, as it already had to be read from disk
   # once, for the MD5 checksum calculation.
   client.create(SCIENCE_OBJECT_PID, StringIO.StringIO(science_object), sys_meta)
-  print 'Object created successfully'
+  print('Object created successfully')
 
 
 def generate_system_metadata_for_science_object(science_object):

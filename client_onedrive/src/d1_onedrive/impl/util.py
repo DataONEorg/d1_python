@@ -32,7 +32,7 @@ import pprint
 
 def log_dump(s):
   logging.debug('-' * 79)
-  logging.debug('{0}: {1}'.format(s, pprint.pformat(s)))
+  logging.debug('{}: {}'.format(s, pprint.pformat(s)))
 
 
 def ensure_dir_exists(path):

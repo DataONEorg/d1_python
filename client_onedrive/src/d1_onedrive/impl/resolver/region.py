@@ -87,21 +87,19 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_folder, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.format(util.string_from_path_elements(path))
     )
 
     return self._get_attributes(object_tree_folder, path)
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
-    )
+    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
 
     return self._get_directory(object_tree_folder, path)
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
+      u'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
 
@@ -204,7 +202,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   def _get_region_tree_for_geo_record(self, geo_record):
     try:
       c = httplib.HTTPConnection(GAZETTEER_HOST)
-      c.request('GET', '/region_tree/{0}/{1}/{2}/{3}'.format(*geo_record[1:]))
+      c.request('GET', '/region_tree/{}/{}/{}/{}'.format(*geo_record[1:]))
       return json.loads(c.getresponse().read())
     except (httplib.HTTPException, socket.error):
       return {'Reverse geocoding failed': {}}

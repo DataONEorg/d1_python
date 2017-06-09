@@ -22,6 +22,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 import optparse
@@ -54,7 +55,7 @@ def main():
   if not check_dependencies.are_modules_importable():
     raise Exception(u'Dependency check failed')
 
-  print u'DataONE Command Line Interface ({})'.format(cli.__version__)
+  print(u'DataONE Command Line Interface ({})'.format(cli.__version__))
 
   parser = optparse.OptionParser(
     usage=u'usage: %prog [command] ...', option_list=option_list

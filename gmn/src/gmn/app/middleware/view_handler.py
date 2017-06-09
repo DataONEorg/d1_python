@@ -28,8 +28,8 @@ import StringIO
 import d1_common
 import d1_common.const
 
-import gmn.app.middleware.session_jwt
 import gmn.app.middleware.session_cert
+import gmn.app.middleware.session_jwt
 
 import django.conf
 
@@ -40,7 +40,7 @@ class ViewHandler(object):
     logging.info(
       u'Calling view: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
       .format(
-        view_func.func_name, request.method, view_args, view_kwargs, request.path_info
+        view_func.__name__, request.method, view_args, view_kwargs, request.path_info
       )
     )
     # logging.debug(request.headers)

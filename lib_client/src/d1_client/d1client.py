@@ -26,6 +26,7 @@ with any DataONE node regardless of type and version.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 import time
@@ -45,8 +46,8 @@ COMMANDS = ['resolve', 'total', 'list', 'meta', 'get']
 
 
 def showHelp():
-  print 'd1client command [options]'
-  print 'Command = one of [%s]' % ",".join(COMMANDS)
+  print('d1client command [options]')
+  print('Command = one of [%s]' % ",".join(COMMANDS))
 
 
 class DataONEObject(object):
@@ -208,7 +209,7 @@ class DataONEClient(object):
       mn = self._getMN(location)
       try:
         return mn.get(pid)
-      except Exception, e:
+      except Exception as e:
         self._logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
 

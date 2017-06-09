@@ -83,7 +83,7 @@ def main():
   )
 
   try:
-    item_path = itr.next()
+    item_path = next(itr)
     while True:
       logging.debug('item_path="{}"'.format(item_path))
       is_junk_bool = is_junk(item_path)

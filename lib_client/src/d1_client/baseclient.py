@@ -151,7 +151,7 @@ class DataONEBaseClient(
       'Node responded with a valid status code but failed to include a valid '
       'DataONE type in the response body. '
     )
-    msg.write('Deserialize exception: {0}'.format(str(deserialize_exception)))
+    msg.write('Deserialize exception: {}'.format(str(deserialize_exception)))
     self._raise_service_failure(response, msg.getvalue())
 
   def _raise_service_failure_incorrect_dataone_type(

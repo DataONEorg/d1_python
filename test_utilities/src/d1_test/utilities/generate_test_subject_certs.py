@@ -246,9 +246,7 @@ def create_session_extension(subject, persons, groups):
 
 
 def create_certificate(
-    req,
-  (issuer_cert, issuer_key), serial,
-  (not_before, not_after), digest="md5"
+    req, xxx_todo_changeme, serial, xxx_todo_changeme1, digest="md5"
 ):
   """Generate a certificate given a certificate request.
 
@@ -271,6 +269,8 @@ def create_certificate(
   :returns: The signed certificate.
   :return type: X509
   """
+  (issuer_cert, issuer_key) = xxx_todo_changeme
+  (not_before, not_after) = xxx_todo_changeme1
   cert = OpenSSL.crypto.X509()
   cert.set_serial_number(serial)
   cert.gmtime_adj_notBefore(not_before)
@@ -345,7 +345,7 @@ def main():
 
     # Write the private key to disk.
     out_cert_key_path = os.path.join(
-      cert_dir, '{0}.key'.format(urllib.quote(subject, ''))
+      cert_dir, '{}.key'.format(urllib.quote(subject, ''))
     )
     out_key_file = open(out_cert_key_path, 'w')
     out_key_file.write(
@@ -354,7 +354,7 @@ def main():
 
     # Write the cert to disk.
     out_cert_pem_path = os.path.join(
-      cert_dir, '{0}.crt'.format(urllib.quote(subject, ''))
+      cert_dir, '{}.crt'.format(urllib.quote(subject, ''))
     )
     out_cert_file = open(out_cert_pem_path, 'w')
     out_cert_file.write(

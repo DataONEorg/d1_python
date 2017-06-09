@@ -35,6 +35,7 @@ though has been modified in many respects.
 # print 'first match=', eval(data)['response']['docs'][0]
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import codecs
 import logging
@@ -548,7 +549,7 @@ class SolrConnection:
       params['sort'] = '%s desc' % name
       data = self.search(params)
       minmax[1] = data['response']['docs'][0][name][0]
-    except Exception, e:
+    except Exception as e:
       self.logger.debug('Exception in MinMax: %s' % str(e))
       pass
     finally:
@@ -1212,12 +1213,12 @@ if __name__ == '__main__':
       client, q, fq=fq, fields=fields, pagesize=pagesize
     )
     for row in rows:
-      print row
+      print(row)
     rows = SOLRArrayResponseIterator(
       client, q, fq=fq, fields=fields, pagesize=pagesize
     )
     for row in rows:
-      print row
+      print(row)
 
   #def test2():
   #  client = SolrConnection(host="cn-dev.dataone.org", solrBase="/datanet_solr")

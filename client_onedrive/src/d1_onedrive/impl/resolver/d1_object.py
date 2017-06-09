@@ -57,19 +57,17 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.format(util.string_from_path_elements(path))
     )
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
-    )
+    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
     return self._get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
+      u'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     return self._read_file(object_tree_root, path, size, offset)
@@ -155,7 +153,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._raise_invalid_path()
 
   def _raise_invalid_pid(self, pid):
-    raise onedrive_exceptions.PathException(u'Invalid PID: {0}'.format(pid))
+    raise onedrive_exceptions.PathException(u'Invalid PID: {}'.format(pid))
 
   def _raise_invalid_path(self):
     raise onedrive_exceptions.PathException(u'Invalid path')
@@ -184,5 +182,5 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def _generate_search_fields_text(self, record):
     return util.os_format(
-      '\n'.join(sorted([u'{0}: {1}'.format(k, v) for k, v in record.items()]))
+      '\n'.join(sorted([u'{}: {}'.format(k, v) for k, v in record.items()]))
     )

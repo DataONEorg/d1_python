@@ -49,7 +49,7 @@ class DiskCache(dict):
     return self._clear_cache()
 
   def __repr__(self):
-    return '{0}({1})'.format(self.__class__, self.__dict__)
+    return '{}({})'.format(self.__class__, self.__dict__)
 
   def __setitem__(self, key, value):
     self._delete_oldest_file_if_full()

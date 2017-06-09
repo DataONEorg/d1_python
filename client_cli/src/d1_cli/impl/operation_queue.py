@@ -75,7 +75,7 @@ class OperationQueue(object):
     self._assert_queue_not_empty()
     self._print_operation_queue()
     if not cli_util.confirm(
-        'You are about to perform {0} queued write operations. Continue?'
+        'You are about to perform {} queued write operations. Continue?'
         .format(len(self._operations)), default='yes'
     ):
       raise cli_exceptions.InvalidArguments(u'Cancelled')
@@ -86,7 +86,7 @@ class OperationQueue(object):
   def clear(self):
     self._assert_queue_not_empty()
     if cli_util.confirm(
-        'You are about to clear the queue of {0} write operations. Continue?'
+        'You are about to clear the queue of {} write operations. Continue?'
         .format(len(self._operations)), default='yes'
     ):
       self._clear()
@@ -101,7 +101,7 @@ class OperationQueue(object):
     cli_util.print_info('Operation queue:')
     for i, operation in enumerate(self._operations):
       cli_util.print_info('')
-      cli_util.print_info('{0} of {1}:'.format(i + 1, len(self._operations)))
+      cli_util.print_info('{} of {}:'.format(i + 1, len(self._operations)))
       self._operation_formatter.print_operation(operation)
     cli_util.print_info('')
 
@@ -133,7 +133,7 @@ class OperationQueue(object):
 
   def _launch_text_editor(self, path):
     editor = self._get_editor_command()
-    cli_util.print_info('Launching editor: {0}'.format(editor))
+    cli_util.print_info('Launching editor: {}'.format(editor))
     try:
       subprocess.call([editor, path])
     except OSError:
@@ -159,34 +159,34 @@ class OperationQueue(object):
       if operation[u'operation'] == u'create':
         pid = operation[u'parameters']['identifier']
         path = operation[u'parameters']['science-file']
-        operation[u'_comment'] = '{0} of {1}: create({2}, {3})'.format(
+        operation[u'_comment'] = '{} of {}: create({}, {})'.format(
           j, k, pid, path
         )
       elif operation[u'operation'] == u'update':
         pid_new = operation[u'parameters']['identifier-new']
         pid_old = operation[u'parameters']['identifier-old']
         path = operation[u'parameters']['science-file']
-        operation[u'_comment'] = '{0} of {1}: update({2}, {3}, {4})'.format(
+        operation[u'_comment'] = '{} of {}: update({}, {}, {})'.format(
           j, k, pid_new, pid_old, path
         )
       elif operation[u'operation'] == u'create_package':
         pid_package = operation[u'parameters']['identifier-package']
         pid_meta = operation[u'parameters'][u'identifier-science-meta']
         pid_datas = operation[u'parameters'][u'identifier-science-data']
-        operation[u'_comment'] = '{0} of {1}: create_package({2}, {3}, {4})'.format(
+        operation[u'_comment'] = '{} of {}: create_package({}, {}, {})'.format(
           j, k, pid_package, pid_meta, ', '.join(pid_datas)
         )
       elif operation[u'operation'] == u'archive':
         pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{0} of {1}: archive({2})'.format(j, k, pid)
+        operation[u'_comment'] = '{} of {}: archive({})'.format(j, k, pid)
       elif operation[u'operation'] == u'update_access_policy':
         pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{0} of {1}: update_access_policy({2})'.format(
+        operation[u'_comment'] = '{} of {}: update_access_policy({})'.format(
           j, k, pid
         )
       elif operation[u'operation'] == u'update_replication_policy':
         pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{0} of {1}: update_replication_policy({2})'.format(
+        operation[u'_comment'] = '{} of {}: update_replication_policy({})'.format(
           j, k, pid
         )
 

@@ -62,7 +62,7 @@ class Resolver(object):
       raise onedrive_exceptions.PathException(msg)
 
   def _raise_invalid_pid(self, pid):
-    raise onedrive_exceptions.PathException(u'Invalid PID: {0}'.format(pid))
+    raise onedrive_exceptions.PathException(u'Invalid PID: {}'.format(pid))
 
   # Readme file.
 

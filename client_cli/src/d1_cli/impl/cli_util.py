@@ -22,6 +22,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import os
 import shutil
@@ -72,16 +73,17 @@ def output(file_like_object, path, verbose=False):
       if verbose:
         print_info(line.rstrip())
       else:
-        print line.rstrip()
+        print(line.rstrip())
   else:
     try:
       object_file = open(os.path.expanduser(path), u'wb')
       shutil.copyfileobj(file_like_object, object_file)
       object_file.close()
-    except EnvironmentError as (errno, strerror):
+    except EnvironmentError as xxx_todo_changeme:
+      (errno, strerror) = xxx_todo_changeme.args
       error_line_list = [
-        u'Could not write to object_file: {0}'.format(path),
-        u'I/O error({0}): {1}'.format(errno, strerror),
+        u'Could not write to object_file: {}'.format(path),
+        u'I/O error({}): {}'.format(errno, strerror),
       ]
       error_message = u'\n'.join(error_line_list)
       raise cli_exceptions.CLIError(error_message)
@@ -89,7 +91,7 @@ def output(file_like_object, path, verbose=False):
 
 def assert_file_exists(path):
   if not os.path.isfile(os.path.expanduser(path)):
-    msg = u'Invalid file: {0}'.format(path)
+    msg = u'Invalid file: {}'.format(path)
     raise cli_exceptions.InvalidArguments(msg)
 
 
@@ -106,10 +108,11 @@ def copy_file_like_object_to_file(file_like_object, path):
     else:
       shutil.copyfileobj(fsrc, sys.stdout)
 
-  except EnvironmentError as (errno, strerror):
+  except EnvironmentError as xxx_todo_changeme1:
+    (errno, strerror) = xxx_todo_changeme1.args
     error_line_list = [
-      u'Could not write to object_file: {0}'.format(path),
-      u'I/O error({0}): {1}'.format(errno, strerror),
+      u'Could not write to object_file: {}'.format(path),
+      u'I/O error({}): {}'.format(errno, strerror),
     ]
     error_message = u'\n'.join(error_line_list)
     raise cli_exceptions.CLIError(error_message)
@@ -120,10 +123,11 @@ def copy_requests_stream_to_file(response, path):
     with open(os.path.expanduser(path), u'wb') as f:
       for chunk_str in response.iter_content():
         f.write(chunk_str)
-  except EnvironmentError as (errno, strerror):
+  except EnvironmentError as xxx_todo_changeme2:
+    (errno, strerror) = xxx_todo_changeme2.args
     error_line_list = [
-      u'Could not write to object_file: {0}'.format(path),
-      u'I/O error({0}): {1}'.format(errno, strerror),
+      u'Could not write to object_file: {}'.format(path),
+      u'I/O error({}): {}'.format(errno, strerror),
     ]
     error_message = u'\n'.join(error_line_list)
     raise cli_exceptions.CLIError(error_message)
@@ -152,4 +156,4 @@ def _print_level(level, msg):
   """Print the information in Unicode safe manner.
   """
   for l in unicode(msg.rstrip()).split(u'\n'):
-    print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
+    print(u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8'))

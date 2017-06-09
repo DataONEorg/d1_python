@@ -221,7 +221,7 @@ class OperationMaker(object):
       return None
 
   def _get_cilogon_certificate_path(self):
-    return u'/tmp/x509up_u{0}'.format(os.getuid())
+    return u'/tmp/x509up_u{}'.format(os.getuid())
 
   def _get_certificate_key(self):
     if not self._session.get(session.ANONYMOUS_NAME):

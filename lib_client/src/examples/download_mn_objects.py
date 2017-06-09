@@ -104,7 +104,7 @@ class MemberNodeObjectDownloader(object):
 
   def download_all(self):
     logging.info(
-      'Retrieving objects for Member Node: {0}'.format(self._base_url)
+      'Retrieving objects for Member Node: {}'.format(self._base_url)
     )
     current_start = 0
     while True:
@@ -120,7 +120,7 @@ class MemberNodeObjectDownloader(object):
         raise
       else:
         logging.info(
-          'Retrieved page: {0}/{1}'.format(
+          'Retrieved page: {}/{}'.format(
             current_start / LIST_OBJECTS_PAGE_SIZE + 1, object_list.total /
             LIST_OBJECTS_PAGE_SIZE
           )
@@ -156,7 +156,7 @@ class MemberNodeObjectDownloader(object):
     try:
       return self._mn_client.getSystemMetadata(pid)
     except d1_common.types.exceptions.NotAuthorized:
-      raise DownloadError(u'Ignoring non-public object. pid={0}'.format(pid))
+      raise DownloadError(u'Ignoring non-public object. pid={}'.format(pid))
 
   def _write_system_metadata_to_file(self, sysmeta_pyxb, pid):
     with open(

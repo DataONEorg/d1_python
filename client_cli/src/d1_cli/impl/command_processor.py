@@ -96,7 +96,7 @@ class CommandProcessor():
     if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
-      'Unsupported query engine: {0}'.
+      'Unsupported query engine: {}'.
       format(self._session.get(session.QUERY_ENGINE_NAME))
     )
 
@@ -164,7 +164,7 @@ class CommandProcessor():
         self._output(response, path)
         return
 
-    raise cli_exceptions.CLIError(u'Could not find object: {0}'.format(pid))
+    raise cli_exceptions.CLIError(u'Could not find object: {}'.format(pid))
 
   def system_metadata_get(self, pid, path):
     metadata = None
@@ -260,7 +260,7 @@ class CommandProcessor():
       cli_util.copy_requests_stream_to_file(file_like_object, path)
     else:
       cli_util.copy_file_like_object_to_file(file_like_object, abs_path)
-    cli_util.print_info('Created file: {0}'.format(abs_path))
+    cli_util.print_info('Created file: {}'.format(abs_path))
 
   def _pretty(self, xml_doc):
     # As far as I can tell from the docs, it should not be necessary to encode
@@ -281,9 +281,9 @@ class CommandProcessor():
 
   def _print_ping_result(self, result, url):
     if result:
-      cli_util.print_info('Responded:       {0}'.format(url))
+      cli_util.print_info('Responded:       {}'.format(url))
     else:
-      cli_util.print_error('Did not respond: {0}'.format(url))
+      cli_util.print_error('Did not respond: {}'.format(url))
 
   def _search_solr(self, line):
     """Perform a SOLR search.
@@ -341,7 +341,7 @@ class CommandProcessor():
   def _time_span_to_solr_filter(self):
     fromdate = self._session.get(session.FROM_DATE_NAME)
     todate = self._session.get(session.TO_DATE_NAME)
-    return u' dateModified:[{0} TO {1}]'.format(
+    return u' dateModified:[{} TO {}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else u'*',
       d1_common.date_time.to_http_datetime(todate) if todate else u'*'
     )
@@ -353,7 +353,7 @@ class CommandProcessor():
     else:
       if line.find(SOLR_FORMAT_ID_NAME) >= 0:
         cli_util.print_warn(
-          u'Using query format restriction instead: {0}'.
+          u'Using query format restriction instead: {}'.
           format(search_format_id)
         )
       else:

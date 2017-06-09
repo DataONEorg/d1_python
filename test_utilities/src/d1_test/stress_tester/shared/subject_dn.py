@@ -29,6 +29,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import re
 
@@ -64,6 +65,8 @@ def dataone_compliant_dn_serialization_to_dn_tuple(d1_dn_string):
 
 
 if __name__ == '__main__':
-  print dataone_compliant_dn_serialization_to_dn_tuple(
-    'CN=test1,test2,test3,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+  print(
+    dataone_compliant_dn_serialization_to_dn_tuple(
+      'CN=test1,test2,test3,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+    )
   )

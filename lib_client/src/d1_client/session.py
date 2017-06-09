@@ -211,11 +211,11 @@ class Session(object):
     """Get request as cURL command line for debugging.
     """
     if kwargs.get('query'):
-      url = u'{0}?{1}'.format(url, d1_common.url.urlencode(kwargs['query']))
-    curl_cmd = [u'curl -X {0}'.format(method)]
+      url = u'{}?{}'.format(url, d1_common.url.urlencode(kwargs['query']))
+    curl_cmd = [u'curl -X {}'.format(method)]
     for k, v in kwargs['headers'].items():
-      curl_cmd.append(u'-H "{0}: {1}"'.format(k, v))
-    curl_cmd.append(u'{0}'.format(url))
+      curl_cmd.append(u'-H "{}: {}"'.format(k, v))
+    curl_cmd.append(u'{}'.format(url))
     return ' '.join(curl_cmd)
 
   def dump_request_and_response(self, response):

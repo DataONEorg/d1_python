@@ -77,7 +77,7 @@ class FUSECallbacks(fuse.Operations):
     """Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
     """
-    log.debug(u'readdir(): {0}'.format(path))
+    log.debug(u'readdir(): {}'.format(path))
     try:
       dir = self._directory_cache[path]
     except KeyError:
@@ -89,7 +89,7 @@ class FUSECallbacks(fuse.Operations):
     """Called by FUSE when a file is opened.
     Determines if the provided path and open flags are valid.
     """
-    log.debug(u'open(): {0}'.format(path))
+    log.debug(u'open(): {}'.format(path))
     # ONEDrive is currently read only. Anything but read access is denied.
     if (flags & self._READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
       self._raise_error_permission_denied(path)
@@ -98,7 +98,7 @@ class FUSECallbacks(fuse.Operations):
     return attribute.is_dir()
 
   def read(self, path, size, offset, fh):
-    log.debug(u'read(): {0}'.format(path))
+    log.debug(u'read(): {}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
     except onedrive_exceptions.PathException:
@@ -134,7 +134,7 @@ class FUSECallbacks(fuse.Operations):
       attributes.date()
     ) if attributes.date() is not None else self._start_time
     return dict(
-      st_mode=stat.S_IFDIR | 0555 if attributes.is_dir() else stat.S_IFREG | 0444,
+      st_mode=stat.S_IFDIR | 0o555 if attributes.is_dir() else stat.S_IFREG | 0o444,
       st_ino=0,
       st_dev=0,
       st_nlink=2, # TODO
@@ -151,9 +151,9 @@ class FUSECallbacks(fuse.Operations):
       self._raise_error_no_such_file_or_directory(path)
 
   def _raise_error_no_such_file_or_directory(self, path):
-    log.debug(u'Error: No such file or directory: {0}'.format(path))
+    log.debug(u'Error: No such file or directory: {}'.format(path))
     raise fuse.FuseOSError(errno.ENOENT)
 
   def _raise_error_permission_denied(self, path):
-    log.debug('Error: Permission denied: {0}'.format(path))
+    log.debug('Error: Permission denied: {}'.format(path))
     raise fuse.FuseOSError(errno.EACCES)

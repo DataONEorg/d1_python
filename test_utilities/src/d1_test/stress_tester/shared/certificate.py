@@ -43,7 +43,7 @@ def check_path(path):
   for "file not found", do explit checks of certificate paths.
   """
   if not os.path.exists(path):
-    raise Exception('Certificate or key does not exist: {0}'.format(path))
+    raise Exception('Certificate or key does not exist: {}'.format(path))
 
 
 def get_certificate_path_for_subject(subject):

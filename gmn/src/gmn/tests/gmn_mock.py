@@ -67,7 +67,12 @@ SUBJ_DICT = {
 
 @contextlib2.contextmanager
 def active_subjects_context(active_subject_set):
-  """Override list of active subjects that GMN detects for authentication
+  """Override list of active subjects that GMN detects for authentication. the Active
+  subjects is a list of DataONE subject strings for which the currently connected
+  client is authenticated. They are derived from are the list of In
+  regular operation, acti
+  production, active subare passed to GMN by clients via certificates and
+  tokens, as part of the REST calls.
   """
   expanded_set = expand_subjects(active_subject_set)
   logging.debug('ContextManager: active_subjects()')

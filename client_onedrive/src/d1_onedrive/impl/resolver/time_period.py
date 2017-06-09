@@ -58,7 +58,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_folder, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.format(util.string_from_path_elements(path))
     )
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
@@ -71,9 +71,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
-    )
+    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 2:
       return self._get_directory(object_tree_folder, path)
@@ -84,7 +82,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
+      u'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
@@ -174,7 +172,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     end_dated = end_date.year / 10
     decades = []
     for d in range(begin_dated, end_dated + 1):
-      decades.append('{0}-{1}'.format(d * 10, d * 10 + 9))
+      decades.append('{}-{}'.format(d * 10, d * 10 + 9))
     return decades
 
   def _is_year_in_date_range(self, year, begin_date, end_date):

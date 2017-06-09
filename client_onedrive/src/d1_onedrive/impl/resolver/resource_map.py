@@ -55,7 +55,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.format(util.string_from_path_elements(path))
     )
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
@@ -72,9 +72,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
-    )
+    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
       return self._d1_object_resolver.get_directory(object_tree_root, path)
@@ -89,7 +87,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
+      u'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):

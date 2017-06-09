@@ -43,6 +43,7 @@ encoding of the Unicode strings.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 import os
@@ -128,9 +129,9 @@ if os.name in WINDOWS:
 # TODO: Move to unit tests.
 if __name__ == '__main__':
   c = 'doi:10.5063/AA/matthias.7.1'
-  print c
+  print(c)
   q = windows_filename_from_identifier(c)
-  print c
+  print(c)
   c2 = windows_identifier_from_filename(q)
-  print c2
-  print c == c2
+  print(c2)
+  print(c == c2)

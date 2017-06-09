@@ -31,7 +31,7 @@ import sys
 try:
   import iso8601
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write('pip install iso8601\n')
   raise
 

@@ -77,6 +77,5 @@ class ObjectFormatInfo(Singleton):
       self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
     except (csv.Error, Exception) as e:
       raise Exception(
-        'Error in csv file. Line: {1}  Error: {2}'.
-        format(csv_reader.line_num, e)
+        'Error in csv file. Line: {}  Error: {}'.format(csv_reader.line_num, e)
       )

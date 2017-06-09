@@ -44,8 +44,8 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 import gmn.app.models
-import gmn.app.views.util
 import gmn.app.views.asserts
+import gmn.app.views.util
 
 
 def add_access_policy_filter(query, request, column_name):
@@ -89,7 +89,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     date_str += 'T00:00:00Z'
   try:
     date = d1_common.date_time.from_iso8601(date_str)
-  except d1_common.date_time.iso8601.ParseError, e:
+  except d1_common.date_time.iso8601.ParseError as e:
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Invalid date format for parameter. parameter="{}" date="{}", '
       u'parse_error="{}"'.format(param_name, date_str, str(e))

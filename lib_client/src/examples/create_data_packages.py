@@ -61,6 +61,7 @@ for the package, and the package is uploaded to the Member Node.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import datetime
 import hashlib
@@ -130,16 +131,16 @@ def main():
   # Iterate over the object groups and create them and their resource maps
   # on the Member Node.
   for group in find_file_groups(SCIENCE_OBJECTS_DIR_PATH):
-    print 'Group: {0}'.format(group)
+    print('Group: {}'.format(group))
     files_in_group = find_files_in_group(SCIENCE_OBJECTS_DIR_PATH, group)
     if len(files_in_group) < 2:
       raise Exception('Each group must have at least 2 files')
     for file_path in files_in_group:
-      print '  File: {0}'.format(file_path)
+      print('  File: {}'.format(file_path))
       create_science_object_on_member_node(client, file_path)
     create_package_on_member_node(client, files_in_group)
 
-  print 'Objects created successfully'
+  print('Objects created successfully')
 
 
 # Create the object on the Member Node. The create() call takes an open

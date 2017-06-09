@@ -21,6 +21,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import hashlib
 
@@ -89,8 +90,18 @@ def calculate_checksum_on_stream(
     chunk_size=DEFAULT_CHUNK_SIZE,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
+  while True:
+    chunk = f.read(chunk_size)
+    if not chunk:
+      break
+    checksum_calc.update(chunk)
+  return checksum_calc.hexdigest()
+  checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
+  i = 0
   for chunk in f.read(chunk_size):
     checksum_calc.update(chunk)
+    i += 1
+    print('{} {}'.format(len(chunk), i))
   return checksum_calc.hexdigest()
 
 

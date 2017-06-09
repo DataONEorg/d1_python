@@ -214,7 +214,7 @@ class D1FS():
 
   @cache.region('mem_cache', 'getAbstract')
   def getAbstract(self, pid):
-    self.logger.debug('getAbstract: {0}'.format(pid))
+    self.logger.debug('getAbstract: {}'.format(pid))
     sc = self.getSolrClient()
     q = sc.prepareQueryTerm('identifier', pid)
     records = solrclient.SOLRArrayResponseIterator(
@@ -269,5 +269,5 @@ class D1FS():
     try:
       res = formats[ofmt]
     except Exception:
-      logging.error('Unknown file format requested: {0}'.format(ofmt))
+      logging.error('Unknown file format requested: {}'.format(ofmt))
     return res

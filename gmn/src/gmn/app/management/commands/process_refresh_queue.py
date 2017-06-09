@@ -87,7 +87,7 @@ class SysMetaRefreshQueueProcessor(object):
     logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid.did))
     try:
       self._refresh(queue_model)
-    except StandardError:
+    except Exception:
       logging.exception(u'System Metadata refresh failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:

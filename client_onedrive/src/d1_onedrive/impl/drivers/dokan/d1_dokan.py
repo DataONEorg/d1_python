@@ -96,7 +96,7 @@ def run(options, root_resolver):
 
   d1fs = dokan.Dokan(
     DataONEFS(options, root_resolver), options.mount_drive_letter, DriverOption,
-    0x19831116L, THREADS
+    0x19831116, THREADS
   )
 
   #if options.unmount:
@@ -127,7 +127,7 @@ class DataONEFS(dokan.Operations):
     self.directory_cache = options.directory_cache
 
   def getFileInformation(self, fileName):
-    log.debug(u'getFileInformation(): fileName={0}'.format(fileName))
+    log.debug(u'getFileInformation(): fileName={}'.format(fileName))
     if self._is_os_special_file(fileName):
       return None
     attributes = self._get_attributes_through_cache(fileName)
@@ -138,7 +138,7 @@ class DataONEFS(dokan.Operations):
 
   def findFilesWithPattern(self, path, searchPattern):
     log.debug(
-      u'findFilesWithPattern(): path={0} searchPattern={1}'.
+      u'findFilesWithPattern(): path={} searchPattern={}'.
       format(path, searchPattern)
     )
 
@@ -171,7 +171,7 @@ class DataONEFS(dokan.Operations):
   # science metadata
 
   def readFile(self, path, size, offset):
-    log.debug(u'read(): {0}'.format(path))
+    log.debug(u'read(): {}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
     except onedrive_exceptions.PathException:
@@ -199,8 +199,8 @@ class DataONEFS(dokan.Operations):
 
   def getDiskFreeSpace(self):
     return dict(
-      freeBytesAvailable=0x100000000L - 2048, totalNumberOfBytes=0x100000000L,
-      totalNumberOfFreeBytes=0x100000000L - 2048
+      freeBytesAvailable=0x100000000 - 2048, totalNumberOfBytes=0x100000000,
+      totalNumberOfFreeBytes=0x100000000 - 2048
     )
 
   def getVolumeInformation(self):
@@ -249,7 +249,7 @@ class DataONEFS(dokan.Operations):
     return len(set(path.split(os.path.sep)) & self._options.ignore_special)
 
   def _raise_error_no_such_file_or_directory(self, path):
-    log.debug(u'Error: No such file or directory: {0}'.format(path))
+    log.debug(u'Error: No such file or directory: {}'.format(path))
     raise OSError(errno.ENOENT, '')
 
 

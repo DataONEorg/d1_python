@@ -22,6 +22,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 import optparse
@@ -57,8 +58,8 @@ def main():
 
   create_subject_list(n_subjects)
 
-  print '{0} test subjects written to {1}'.format(
-    n_subjects, settings.SUBJECTS_PATH
+  print(
+    '{} test subjects written to {}'.format(n_subjects, settings.SUBJECTS_PATH)
   )
 
 

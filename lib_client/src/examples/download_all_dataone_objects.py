@@ -148,7 +148,7 @@ class MemberNodeObjectDownloader(object):
 
   def download_objects_from_member_node(self):
     logging.info(
-      'Retrieving objects for Member Node: {0}'.format(self._node.name)
+      'Retrieving objects for Member Node: {}'.format(self._node.name)
     )
     current_start = 0
     while True:
@@ -166,7 +166,7 @@ class MemberNodeObjectDownloader(object):
           break
 
         logging.info(
-          'Retrieved page: {0}/{1}'.format(
+          'Retrieved page: {}/{}'.format(
             current_start / LIST_OBJECTS_PAGE_SIZE + 1, object_list.total /
             LIST_OBJECTS_PAGE_SIZE
           )
@@ -188,7 +188,7 @@ class MemberNodeObjectDownloader(object):
     try:
       return self._mn_client.getSystemMetadata(pid)
     except d1_common.types.exceptions.NotAuthorized:
-      logging.info('Ignoring non-public object: {0}'.format(pid))
+      logging.info('Ignoring non-public object: {}'.format(pid))
     except d1_common.types.exceptions.DataONEException:
       logging.exception('getSystemMetadata() failed with exception:')
       raise

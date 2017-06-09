@@ -55,7 +55,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {0}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.format(util.string_from_path_elements(path))
     )
     if not path:
       return attributes.Attributes(is_dir=True)
@@ -64,16 +64,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(
-      u'get_directory: {0}'.format(util.string_from_path_elements(path))
-    )
+    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
     if not path:
       return self._get_directory(object_tree_root, path)
     return self._resource_map_resolver.get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.
+      u'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if not path:

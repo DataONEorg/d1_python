@@ -44,7 +44,7 @@ class Cache(dict):
     self._data = {}
 
   def __repr__(self):
-    return '{0}({1})'.format(self.__class__, self.__dict__)
+    return '{}({})'.format(self.__class__, self.__dict__)
 
   def __setitem__(self, key, value):
     if key not in self._data:

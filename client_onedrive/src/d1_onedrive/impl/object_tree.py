@@ -197,7 +197,7 @@ class ObjectTree():
     self._cache['records'][record['id']] = record
 
   def _get_cache_folder_recursive(self, path, folder=None):
-    logging.debug('path={0}'.format(path))
+    logging.debug('path={}'.format(path))
     if folder is None:
       folder = self._cache['tree']
     if not path:

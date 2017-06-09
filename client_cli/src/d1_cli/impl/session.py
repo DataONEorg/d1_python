@@ -62,7 +62,6 @@ import copy
 import os
 import pickle
 import platform
-import types
 
 import d1_cli.impl.access_control as access_control
 import d1_cli.impl.cli_exceptions as cli_exceptions
@@ -185,7 +184,7 @@ class Session(object):
         self._variables[variable] = value
       except ValueError:
         raise cli_exceptions.InvalidArguments(
-          u'Invalid value for {0}: {1}'.format(variable, value_string)
+          u'Invalid value for {}: {}'.format(variable, value_string)
         )
 
   def print_variable(self, variable):
@@ -196,7 +195,7 @@ class Session(object):
 
   def print_single_variable(self, variable):
     self._assert_valid_variable(variable)
-    cli_util.print_info(u'{0}: {1}'.format(variable, self.get(variable)))
+    cli_util.print_info(u'{}: {}'.format(variable, self.get(variable)))
 
   def print_all_variables(self):
     f = operation_formatter.OperationFormatter()
@@ -239,7 +238,7 @@ class Session(object):
     except (NameError, IOError, ImportError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to load session from file: {0}\n{1}'.
+          u'Unable to load session from file: {}\n{}'.
           format(pickle_file_path, str(e))
         )
 
@@ -252,7 +251,7 @@ class Session(object):
     except (NameError, IOError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to save session to file: {0}\n{1}'.
+          u'Unable to save session to file: {}\n{}'.
           format(pickle_file_path, str(e))
         )
 
@@ -274,18 +273,18 @@ class Session(object):
   def _assert_valid_variable(self, variable):
     if variable not in self._variables:
       raise cli_exceptions.InvalidArguments(
-        u'Invalid session variable: {0}'.format(variable)
+        u'Invalid session variable: {}'.format(variable)
       )
 
   def _validate_variable_type(self, value, type_converter):
     # Make sure booleans are "sane"
-    if isinstance(type_converter, types.BooleanType):
+    if isinstance(type_converter, bool):
       if value in (u'true', u'True', u't', u'T', 1, u'1', u'yes', u'Yes'):
         return True
       elif value in (u'false', u'False', u'f', u'F', 0, u'0', u'no', u'No'):
         return False
       else:
-        raise ValueError(u'Invalid boolean value: {0}'.format(value))
+        raise ValueError(u'Invalid boolean value: {}'.format(value))
     else:
       return value
 
@@ -295,7 +294,7 @@ class Session(object):
         d1_common.checksum.get_checksum_calculator_by_dataone_designator(value)
       except LookupError:
         raise cli_exceptions.InvalidArguments(
-          u'Invalid checksum algorithm: {0}'.format(value)
+          u'Invalid checksum algorithm: {}'.format(value)
         )
     elif variable == CN_URL_NAME:
       # TODO: Add warning if URL is not a known CN / environment
@@ -306,7 +305,7 @@ class Session(object):
           n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn'
       ]:
         if not cli_util.confirm(
-            '"{0}" is not a known DataONE Member Node. Use anyway?'.
+            '"{}" is not a known DataONE Member Node. Use anyway?'.
             format(value)
         ):
           raise cli_exceptions.InvalidArguments(u'Member Node update cancelled')
@@ -314,5 +313,5 @@ class Session(object):
       cn_base_url = self.get(CN_URL_NAME)
       if value not in self._format_ids.get(cn_base_url):
         raise cli_exceptions.InvalidArguments(
-          u'Invalid Object Format ID: {0}'.format(value)
+          u'Invalid Object Format ID: {}'.format(value)
         )

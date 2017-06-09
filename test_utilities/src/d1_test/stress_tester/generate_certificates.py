@@ -26,6 +26,7 @@ permissions.
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import codecs
 import logging
@@ -84,8 +85,9 @@ def create_certificates():
     )
     subject_info = create_subject_info(subject)
     create_certificate(subject, subject_dn_tuple, subject_info)
-  print 'Created {0} client side certificates in {1}'.format(
-    len(subjects), settings.CLIENT_CERT_DIR
+  print(
+    'Created {} client side certificates in {}'.
+    format(len(subjects), settings.CLIENT_CERT_DIR)
   )
 
 

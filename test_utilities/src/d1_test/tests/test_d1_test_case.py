@@ -20,6 +20,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import logging
 
@@ -31,7 +32,7 @@ class TestTestUtils(d1_test.d1_test_case.D1TestCase):
     """capture_output():"""
     expected_output_str = 'test_output'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      print expected_output_str,
+      print(expected_output_str, end='')
     received_output_str = out_stream.getvalue()
     assert expected_output_str == received_output_str
 

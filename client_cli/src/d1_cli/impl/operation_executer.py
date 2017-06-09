@@ -52,7 +52,7 @@ class OperationExecuter(object):
     elif operation[u'operation'] == 'update_replication_policy':
       self._execute_update_replication_policy(operation)
     else:
-      assert False, u'Invalid operation: {0}'.format(operation[u'operation'])
+      assert False, u'Invalid operation: {}'.format(operation[u'operation'])
 
   #
   # Private.

@@ -204,7 +204,7 @@ def main():
       if not options.only_src:
         tester.test_dst_mn()
   except replication_error.ReplicationTesterError as e:
-    logger.error('Replication testing failed: {0}'.format(e))
+    logger.error('Replication testing failed: {}'.format(e))
   else:
     logging.info('All replication tests passed')
 
@@ -300,7 +300,7 @@ class ReplicationTester(object):
     ) as e:
       raise replication_error.ReplicationTesterError(
         'Source MNRead.getReplica(unknown PID): '
-        'Expected NotFound exception. Received: {0}'.format(str(e))
+        'Expected NotFound exception. Received: {}'.format(str(e))
       )
 
   def _test_getReplica_with_rejected_pid(self):
@@ -317,7 +317,7 @@ class ReplicationTester(object):
     ) as e:
       raise replication_error.ReplicationTesterError(
         'Source MNRead.getReplica(valid PID with replication rejected): '
-        'Expected NotAuthorized exception. Received: {0}'.format(e)
+        'Expected NotAuthorized exception. Received: {}'.format(e)
       )
     self._assert_correct_mn_call_instant(
       'isNodeAuthorized_rejected', self._src_existing_pid_deny, 'public'
@@ -344,7 +344,7 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.DataONEException as e:
       raise replication_error.ReplicationTesterError(
         'Source MNRead.getReplica(valid PID with replication approved): '
-        'Expected OctetStream. Received exception: {0}'.format(e)
+        'Expected OctetStream. Received exception: {}'.format(e)
       )
     self._assert_correct_mn_call_instant(
       'isNodeAuthorized_approved', self._src_existing_pid_approve, 'public'
@@ -380,7 +380,7 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.DataONEException as e:
       raise replication_error.ReplicationTesterError(
         'MNReplication.replicate()(existing PID): '
-        'Expected exception IdentifierNotUnique. Received: {0}'.format(e)
+        'Expected exception IdentifierNotUnique. Received: {}'.format(e)
       )
     else:
       raise replication_error.ReplicationTesterError(
@@ -398,7 +398,7 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.DataONEException as e:
       raise replication_error.ReplicationTesterError(
         'MNReplication.replicate(PID_NOT_AUTHORIZED): '
-        'Expected MN to accept replication request. Instead, received exception: {0}'.
+        'Expected MN to accept replication request. Instead, received exception: {}'.
         format(e)
       )
     self._assert_correct_mn_call_with_wait(
@@ -418,7 +418,7 @@ class ReplicationTester(object):
     except d1_common.types.exceptions.DataONEException as e:
       raise replication_error.ReplicationTesterError(
         'MNReplication.replicate()(PID_KNOWN_AND_AUTHORIZED): '
-        'Expected MN to accept replication request. Instead, received exception: {0}'.
+        'Expected MN to accept replication request. Instead, received exception: {}'.
         format(e)
       )
     self._assert_correct_mn_call_with_wait(
@@ -450,7 +450,7 @@ class ReplicationTester(object):
 
   def _log_debug_header(self, msg):
     self._logger.debug('-' * 80)
-    self._logger.info('Testing: {0}'.format(msg))
+    self._logger.info('Testing: {}'.format(msg))
 
   def _assert_correct_mn_call_with_wait(self, *expected_call):
     return self._assert_correct_mn_call(True, expected_call)
@@ -460,17 +460,17 @@ class ReplicationTester(object):
 
   def _assert_correct_mn_call(self, block, expected_call):
     if block:
-      self._logger.debug('Waiting for call from MN: {0}'.format(expected_call))
+      self._logger.debug('Waiting for call from MN: {}'.format(expected_call))
     try:
       call = self._queue.get(block, self._options.timeout_sec)
     except Queue.Empty:
       raise replication_error.ReplicationTesterError(
-        'MN did not make expected call: {0}'.format(expected_call)
+        'MN did not make expected call: {}'.format(expected_call)
       )
     else:
       if call != expected_call:
         raise replication_error.ReplicationTesterError(
-          'MN made an unexpected call: {0}.\nExpected: {1}'
+          'MN made an unexpected call: {}.\nExpected: {}'
           .format(call, expected_call)
         )
 
@@ -483,7 +483,7 @@ class ReplicationTester(object):
   def _assert_if_invalid(self, path):
     if path is not None and not os.path.isfile(path):
       raise replication_error.ReplicationTesterError(
-        'No certificate or key at path: {0}'.format(path)
+        'No certificate or key at path: {}'.format(path)
       )
 
 

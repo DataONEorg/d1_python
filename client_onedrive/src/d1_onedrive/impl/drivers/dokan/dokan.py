@@ -372,7 +372,7 @@ class Dokan(object):
         pFile = PWIN32_FIND_DATAW(File)
         fillFindData(pFile, dokanFileInfo)
       return const.DOKAN_SUCCESS
-    except Exception, e:
+    except Exception as e:
       logging.error('%s', e)
       return const.DOKAN_ERROR
 

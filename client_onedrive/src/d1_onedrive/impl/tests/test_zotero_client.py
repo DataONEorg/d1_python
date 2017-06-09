@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import os
 
@@ -59,7 +60,7 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
       object_tree_path
   ):
     object_tree_folder = object_tree_client.get_folder(object_tree_path)
-    print object_tree_folder['name']
+    print(object_tree_folder['name'])
     # collection = zotero_create_collection(
     #   zotero_client, zotero_collection, object_tree_folder['name']
     # )
@@ -89,10 +90,10 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
 
   def _print_zotero_types(self, zotero_client):
     for i in zotero_client.item_types():
-      print
-      print i['localized']
+      print()
+      print(i['localized'])
       for j in zotero_client.item_type_fields(i['itemType']):
-        print ' ', j['localized']
+        print(' ', j['localized'])
 
   def _zotero_delete_all(zotero_client):
     while True:
@@ -100,7 +101,7 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
       if not items:
         break
       for i in items:
-        print i['title'].encode('utf-8')
+        print(i['title'].encode('utf-8'))
         zotero_client.delete_item(i)
 
   @pytest.mark.skip('TODO')

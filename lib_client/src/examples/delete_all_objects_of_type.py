@@ -113,11 +113,11 @@ class MemberNodeObjectDeleter(object):
 
   def delete_objects_from_member_node(self):
     logging.info(
-      'Searching for objects to delete on Member Node: {0}'.
+      'Searching for objects to delete on Member Node: {}'.
       format(self._base_url)
     )
     pids_delete = self._find_objects_to_delete()
-    logging.info('Found {0} objects to delete'.format(len(pids_delete)))
+    logging.info('Found {} objects to delete'.format(len(pids_delete)))
     if not len(pids_delete):
       return
     self._delete_objects(pids_delete)
@@ -125,11 +125,11 @@ class MemberNodeObjectDeleter(object):
     pids_remaining = self._find_objects_to_delete()
     if len(pids_remaining):
       logging.error(
-        'Deletion failed on {0} of {1} objects'.
+        'Deletion failed on {} of {} objects'.
         format(len(pids_remaining), len(pids_delete))
       )
     else:
-      logging.info('Successfully deleted {0} objects'.format(len(pids_delete)))
+      logging.info('Successfully deleted {} objects'.format(len(pids_delete)))
 
   def _find_objects_to_delete(self):
     pids = []
@@ -145,7 +145,7 @@ class MemberNodeObjectDeleter(object):
         raise
 
       logging.info(
-        'Retrieved page: {0}/{1} ({2} objects)'.format(
+        'Retrieved page: {}/{} ({} objects)'.format(
           current_start / LIST_OBJECTS_PAGE_SIZE + 1, object_list.total /
           LIST_OBJECTS_PAGE_SIZE + 1, object_list.count
         )
@@ -160,7 +160,7 @@ class MemberNodeObjectDeleter(object):
     return pids
 
   def _delete_objects(self, pids):
-    logging.info('Deleting objects on Member Node: {0}'.format(self._base_url))
+    logging.info('Deleting objects on Member Node: {}'.format(self._base_url))
     for pid in pids:
       self._delete_object(pid)
 
@@ -171,7 +171,7 @@ class MemberNodeObjectDeleter(object):
       logging.exception('MNStorage.delete() failed with exception:')
       raise
     else:
-      logging.info('Deleted: {0}'.format(pid))
+      logging.info('Deleted: {}'.format(pid))
 
 
 if __name__ == '__main__':

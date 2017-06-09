@@ -246,9 +246,9 @@ class DataONEException(Exception):
     if len(msg) > 1024:
       msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
     elif msg.count('\n') <= 1:
-      return '{0}: {1}\n'.format(tag, msg.strip())
+      return '{}: {}\n'.format(tag, msg.strip())
     else:
-      return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
+      return '{}:\n  {}\n'.format(tag, msg.replace('\n', '\n  ').strip())
 
   def friendly_format(self):
     """Serialize to a format more suitable for displaying to end users.
@@ -256,7 +256,7 @@ class DataONEException(Exception):
     if self.description is not None:
       msg = self.description
     else:
-      msg = 'errorCode: {0} / detailCode: {1}'.format(
+      msg = 'errorCode: {} / detailCode: {}'.format(
         self.errorCode, self.detailCode
       )
     return self.fmt(self.name, msg)

@@ -93,9 +93,9 @@ class OperationFormatter(object):
     for s in v:
       # Access control rules are stored in tuples.
       if isinstance(s, tuple):
-        s = '{0}: {1}'.format(*s)
+        s = '{}: {}'.format(*s)
       lines.append(
-        '{0}{1}{2}{3}'.
+        '{}{}{}{}'.
         format(' ' * indent, key, ' ' * (TAB - indent - len(key) - 1), s)
       )
       key = ''

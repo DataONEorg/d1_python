@@ -87,7 +87,7 @@ class ReplicationPolicy():
         int(number_of_replicas)
       except ValueError:
         raise d1_cli.impl.cli_exceptions.InvalidArguments(
-          u'"Invalid number: {0}'.format(number_of_replicas)
+          u'"Invalid number: {}'.format(number_of_replicas)
         )
     self.number_of_replicas = int(number_of_replicas)
 
@@ -131,13 +131,13 @@ class ReplicationPolicy():
       del self._member_nodes[mn]
     except KeyError:
       raise d1_cli.impl.cli_exceptions.InvalidArguments(
-        u'Replication policy not set for MN: {0}'.format(mn)
+        u'Replication policy not set for MN: {}'.format(mn)
       )
 
   def _add_preferred(self, mn):
     if self._is_blocked(mn):
       d1_cli.impl.cli_util.print_warn(
-        'The Member Node, "{0}", was changed from blocked to preferred'.
+        'The Member Node, "{}", was changed from blocked to preferred'.
         format(mn)
       )
     self._set_policy(mn, True)
@@ -145,7 +145,7 @@ class ReplicationPolicy():
   def _add_blocked(self, mn):
     if self._is_preferred(mn):
       d1_cli.impl.cli_util.print_warn(
-        'The Member Node, "{0}", was changed from preferred to blocked'.
+        'The Member Node, "{}", was changed from preferred to blocked'.
         format(mn)
       )
     self._set_policy(mn, False)

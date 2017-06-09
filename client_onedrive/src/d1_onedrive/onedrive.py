@@ -65,7 +65,7 @@ def main():
   for k, v in settings.__dict__.items():
     # Only allow overriding strings, ints and bools.
     if k.isupper():
-      param_name = '--{0}'.format(k.lower().replace('_', '-'))
+      param_name = '--{}'.format(k.lower().replace('_', '-'))
       if type(v) is str or type(v) is int:
         parser.add_option(
           param_name, action='store', type=str(type(v).__name__),
@@ -74,7 +74,7 @@ def main():
       elif type(v) is bool:
         if v:
           parser.add_option(
-            '--disable-{0}'.format(k.lower().replace('_', '-')),
+            '--disable-{}'.format(k.lower().replace('_', '-')),
             action='store_false', default=True, dest=k.lower(), metavar=v
           )
         else:
@@ -120,7 +120,7 @@ def main():
   elif platform.system() == 'Windows':
     import onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks
   else:
-    log.error('Unknown platform: {0}'.format(platform.system()))
+    log.error('Unknown platform: {}'.format(platform.system()))
     exit()
 
   # Instantiate the Root resolver.
@@ -155,12 +155,12 @@ def log_setup(options):
 
 
 def log_version():
-  log.info('ONEDrive version: {0}'.format(onedrive.__version__))
+  log.info('ONEDrive version: {}'.format(onedrive.__version__))
 
 
 def log_startup_parameters(options, arguments):
-  log.debug('Options: {0}'.format(str(options)))
-  log.debug('Arguments: {0}'.format(str(arguments)))
+  log.debug('Options: {}'.format(str(options)))
+  log.debug('Arguments: {}'.format(str(arguments)))
 
 
 if __name__ == '__main__':

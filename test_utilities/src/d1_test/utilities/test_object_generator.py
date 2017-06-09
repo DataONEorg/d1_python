@@ -37,7 +37,7 @@ FORMAT_ID = 'application/octet-stream'
 
 
 def generate_random_ascii(prefix, num_chars=10):
-  return '{0}_{1}'.format(
+  return '{}_{}'.format(
     prefix, ''.join(
       random.
       choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)

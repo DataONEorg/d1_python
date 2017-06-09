@@ -12,6 +12,7 @@ generate_sysmeta.py -f $OBJECT \
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import datetime
 import logging
@@ -112,15 +113,15 @@ if __name__ == '__main__':
     options.llevel = 20
   logging.basicConfig(level=int(options.llevel))
   if options.fname is None:
-    print 'File name for object is required.'
+    print('File name for object is required.')
     parser.print_help()
     sys.exit()
   if options.identifier is None:
-    print 'Identifier for object is required.'
+    print('Identifier for object is required.')
     parser.print_help()
     sys.exit()
   if not os.path.exists(options.fname):
-    print 'File %s not found' % options.fname
+    print('File %s not found' % options.fname)
     parser.print_help()
     sys.exit()
 
@@ -168,5 +169,5 @@ if __name__ == '__main__':
 
   logging.debug(str(oopts))
 
-  print processDoc(oopts['fname'], oopts)
+  print(processDoc(oopts['fname'], oopts))
   sys.exit()

@@ -67,7 +67,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {0}'.
+      u'get_attributes: {}'.
       format(d1_onedrive.impl.util.string_from_path_elements(path))
     )
 
@@ -128,7 +128,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
     log.debug(
-      u'get_directory: {0}'.
+      u'get_directory: {}'.
       format(d1_onedrive.impl.util.string_from_path_elements(path))
     )
 
@@ -167,7 +167,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         u'Invalid folder'
       )
 
-    log.debug('controlled path: {0}'.format(controlled_path))
+    log.debug('controlled path: {}'.format(controlled_path))
     #log.debug('object_tree folder: {0}'.format(object_tree_folder))
 
     # Now have all information required for gathering information about all the
@@ -179,7 +179,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {0}, {1}, {2}'.format(
+      u'read_file: {}, {}, {}'.format(
         d1_onedrive.impl.util.string_from_path_elements(path), size, offset
       )
     )
@@ -292,9 +292,9 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       folder_name = object_tree_path[-1]
     else:
       folder_name = 'root'
-    header = u'ObjectTree Folder "{0}"'.format(folder_name)
+    header = u'ObjectTree Folder "{}"'.format(folder_name)
     res.write(header + '\n')
-    res.write('{0}\n\n'.format('=' * len(header)))
+    res.write('{}\n\n'.format('=' * len(header)))
     res.write(
       u'The content present in object_tree folders is determined by a list\n'
     )

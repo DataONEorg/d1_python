@@ -18,6 +18,7 @@ Contents:
     - best_match():        Choose the mime-type with the highest quality ('q')
     from a list of candidates.
 """
+from functools import reduce
 
 __version__ = "0.1.2"
 __author__ = 'Joe Gregorio'

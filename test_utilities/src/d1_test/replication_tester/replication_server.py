@@ -79,7 +79,7 @@ class TestHTTPServer(threading.Thread):
     SocketServer.TCPServer.src_existing_pid_deny = self.src_existing_pid_deny
 
     self._logger.info(
-      'Starting HTTP Server. Host={0} Port={1}'.format(self._host, self._port)
+      'Starting HTTP Server. Host={} Port={}'.format(self._host, self._port)
     )
     self.httpd.serve_forever()
 
@@ -106,7 +106,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     )
 
   def do_GET(self):
-    self._logger.debug('Received HTTP GET: {0}'.format(self.path))
+    self._logger.debug('Received HTTP GET: {}'.format(self.path))
     url = urlparse.urlparse(urllib.unquote(self.path))
     if self._handle_isNodeAuthorized(url):
       return
@@ -118,17 +118,17 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       return
     else:
       raise replication_error.ReplicationTesterError(
-        'Unknown REST URL: {0}'.format(self.path)
+        'Unknown REST URL: {}'.format(self.path)
       )
 
   def do_PUT(self):
-    self._logger.debug('Received HTTP PUT: {0}'.format(self.path))
+    self._logger.debug('Received HTTP PUT: {}'.format(self.path))
     url = urlparse.urlparse(urllib.unquote(self.path))
     if self._handle_setReplicationStatus(url):
       return
     else:
       raise replication_error.ReplicationTesterError(
-        'Unknown REST URL: {0}'.format(self.path)
+        'Unknown REST URL: {}'.format(self.path)
       )
 
   # Request handlers.
@@ -159,7 +159,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       )
     else:
       raise replication_error.ReplicationTesterError(
-        'Invalid Test PID: {0}'.format(pid)
+        'Invalid Test PID: {}'.format(pid)
       )
     return True
 
@@ -306,7 +306,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     self.wfile.write(node_list.toxml('utf-8'))
 
   def _record_mn_call(self, *params):
-    self._logger.debug('Recorded call: {0}'.format(', '.join(params)))
+    self._logger.debug('Recorded call: {}'.format(', '.join(params)))
     self.server._queue.put(params)
 
   def _create_cn_node_obj(self):

@@ -65,7 +65,7 @@ class MountPoint():
       if not i:
         mount_point = mount_point_base
       else:
-        mount_point = '{0}{1}'.format(mount_point_base, i)
+        mount_point = '{}{}'.format(mount_point_base, i)
       try:
         os.mkdir(mount_point)
       except OSError:

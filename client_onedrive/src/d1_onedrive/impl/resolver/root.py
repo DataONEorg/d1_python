@@ -67,7 +67,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     }
 
   def get_attributes(self, path):
-    log.debug(u'get_attributes: {0}'.format(path))
+    log.debug(u'get_attributes: {}'.format(path))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
@@ -75,7 +75,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_attributes(p)
 
   def get_directory(self, path):
-    log.debug(u'get_directory: {0}'.format(path))
+    log.debug(u'get_directory: {}'.format(path))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
 
@@ -88,7 +88,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_directory(p)
 
   def read_file(self, path, size, offset):
-    log.debug(u'read_file: {0}, {1}, {2}'.format(path, size, offset))
+    log.debug(u'read_file: {}, {}, {}'.format(path, size, offset))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
@@ -156,7 +156,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   def _raise_if_os_special_file(self, path):
     # For each file of "name", Finder on Mac OS X attempts to access ".name".
     if path[-1] in self._options.ignore_special:
-      log.debug('Ignored file: {0}'.format(path[-1]))
+      log.debug('Ignored file: {}'.format(path[-1]))
       raise onedrive_exceptions.PathException(u'Ignored OS special file')
 
   def _is_root(self, path):

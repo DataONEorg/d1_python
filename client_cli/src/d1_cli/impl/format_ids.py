@@ -46,7 +46,7 @@ class FormatIDs(object):
 
   def format(self, cn_base_url):
     format_ids = self.get(cn_base_url)
-    return ['{0}'.format(format_id) for format_id in format_ids]
+    return ['{}'.format(format_id) for format_id in format_ids]
 
   # Private.
 

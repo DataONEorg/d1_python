@@ -92,7 +92,7 @@ class Transaction(object):
       with open(settings.ERROR_PATH, 'w') as f:
         f.write(response.read())
       raise Exception(
-        'Invalid response code: {0}. Error captured in {1}.'
+        'Invalid response code: {}. Error captured in {}.'
         .format(response.status_code, settings.ERROR_PATH)
       )
 
@@ -100,7 +100,7 @@ class Transaction(object):
     with open(settings.ERROR_PATH, 'w') as f:
       f.write(str(e))
     raise Exception(
-      'Invalid response code: {0}. Error captured in {1}.'
+      'Invalid response code: {}. Error captured in {}.'
       .format(response.status_code, settings.ERROR_PATH)
     )
 

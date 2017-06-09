@@ -19,6 +19,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import responses
 
@@ -31,8 +32,8 @@ class TestMockObjectList(d1_test.d1_test_case.D1TestCase):
   def test_0010(self, cn_client_v1_v2):
     """mock_api.listNodes() returns a DataONE ObjectList PyXB object"""
     list_nodes.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    print type(cn_client_v1_v2.listNodes())
-    print type(cn_client_v1_v2.bindings.NodeList)
+    print(type(cn_client_v1_v2.listNodes()))
+    print(type(cn_client_v1_v2.bindings.NodeList))
     if not isinstance(
         cn_client_v1_v2.listNodes(), cn_client_v1_v2.bindings.NodeList
     ):

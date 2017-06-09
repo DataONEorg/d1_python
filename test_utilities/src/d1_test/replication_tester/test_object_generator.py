@@ -42,7 +42,7 @@ N_SCI_OBJ_BYTES = 10
 
 
 def generate_random_ascii(prefix):
-  return '{0}_{1}'.format(
+  return '{}_{}'.format(
     prefix, ''.join(
       random.
       choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
