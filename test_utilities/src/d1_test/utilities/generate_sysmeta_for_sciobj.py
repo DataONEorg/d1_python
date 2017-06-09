@@ -22,9 +22,12 @@ import sys
 import urllib2
 
 from d1_instance_generator import systemmetadata
-from lxml import etree
 
 import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
+
+#from lxml import etree
+
+# flake8: noqa: F403
 
 
 def getObjectFormatFromID(fmtid, default='application/octet-stream'):

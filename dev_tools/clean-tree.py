@@ -34,7 +34,7 @@ import os
 import shutil
 import sys
 
-import dev_tools.lib_dev.file_iterator as file_iterator
+import lib_dev.file_iterator as file_iterator
 
 import d1_common.util
 

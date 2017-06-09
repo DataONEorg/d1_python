@@ -247,12 +247,6 @@ Misc
     http://pyxb.sourceforge.net/
 
 
-  lxml
-    A library for processing XML and HTML with Python
-
-    http://lxml.de/
-
-
   minixsv
     A Lightweight XML schema validator
 

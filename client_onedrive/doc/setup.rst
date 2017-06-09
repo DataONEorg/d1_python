@@ -74,7 +74,7 @@ Make sure the system is up to date::
 
 Set up server packages:
 
-* The build environment for DataONE Python extensions and lxml
+* The build environment for DataONE Python extensions
 * Commands used in the install
 
 ::

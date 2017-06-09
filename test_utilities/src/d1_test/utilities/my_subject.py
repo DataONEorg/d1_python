@@ -10,10 +10,12 @@ import logging
 import optparse
 import sys
 
-from lxml import etree
+#from lxml import etree
 from OpenSSL import crypto
 from pyasn1.codec.ber import decoder
 from pyasn1.error import PyAsn1Error
+
+# flake8: noqa: F403
 
 
 def getSubjectFromName(xName):

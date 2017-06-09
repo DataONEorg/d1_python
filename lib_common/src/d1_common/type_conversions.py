@@ -345,35 +345,3 @@ def strip_node_list(etree_obj):
 
 def v2_0_tag(element_name):
   return '{{{}}}{}'.format(NS_DICT['v2'], element_name)
-
-
-# Solution based on lxml.
-#
-# # http://wiki.tei-c.org/index.php/Remove-Namespaces.xsl
-# xslt="""<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-# <xsl:output method="xml" indent="no"/>
-#
-# <xsl:template match="/|comment()|processing-instruction()">
-#     <xsl:copy>
-#       <xsl:apply-templates/>
-#     </xsl:copy>
-# </xsl:template>
-#
-# <xsl:template match="*">
-#     <xsl:element name="{local-name()}">
-#       <xsl:apply-templates select="@*|node()"/>
-#     </xsl:element>
-# </xsl:template>
-#
-# <xsl:template match="@*">
-#     <xsl:attribute name="{local-name()}">
-#       <xsl:value-of select="."/>
-#     </xsl:attribute>
-# </xsl:template>
-# </xsl:stylesheet>
-# """
-#
-# xslt_doc = ET.parse(io.BytesIO(xslt))
-# transform = ET.XSLT(xslt_doc)
-# dom = transform(dom)
-# print(ET.tostring(dom))

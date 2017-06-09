@@ -39,9 +39,6 @@ Finally, an installer is built for the executable and all dependencies.
     > python -m pip install -U pip
 
 
-#. Download and install the 32-bit Python 2.7 lxml Windows installer from
-   http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml.
-
 #. Open a Command Prompt.
 
 #. Install the DataONE Client Library for Python and dependencies::

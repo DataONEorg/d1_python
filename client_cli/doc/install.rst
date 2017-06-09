@@ -9,8 +9,7 @@ Install
 The CLI is distributed via PyPI, the Python Package Index.
 
   Set up OS packages required by some of the CLI's PyPI distributed
-  dependencies. This includes a build environment for DataONE Python extensions
-  and lxml.
+  dependencies. This includes a build environment for DataONE Python extensions.
 
   ::
 

@@ -21,11 +21,13 @@ import os.path
 import sys
 import urllib2
 
-import lxml
-
 import d1_common.types.dataoneTypes as dataoneTypes
 
 import d1_test.instance_generator.system_metadata as system_metadata
+
+#import lxml
+
+# flake8: noqa: F821
 
 
 def getObjectFormatFromID(fmtid, default='application/octet-stream'):
