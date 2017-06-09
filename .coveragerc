@@ -1,7 +1,7 @@
 [run]
 
-#include =
-#  *.py
+include =
+  *.py
 
 omit =
   #### Tracked but not included in coverage
