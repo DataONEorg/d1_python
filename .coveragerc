@@ -2,8 +2,8 @@
 
 # Only tracked files or directories need to be excluded here, as those are the
 # only ones that get pushed to GitHub and pulled in by Travis. However, we also
-# exclude some untracked directories that otherwise end up significantly
-# lowering coverage on local coverage checks.
+# exclude some untracked directories that otherwise may significantly skew
+# coverage locally.
 #
 # Don't filter /build/ here. A parent in Travis' default build directory has
 # that name.
@@ -13,15 +13,17 @@
 omit =
   # Tracked
 
+  */__init__.py
   */conftest.py
   */settings*.py
   */setup.py
-  */test.py
   */t.py
+  */test.py
 
   */dev_tools/*
   */drivers/*
   */generated/*
+  */migrations/*
   */mockup/*
   */tests/*
 
