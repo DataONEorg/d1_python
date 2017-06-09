@@ -17,12 +17,10 @@ install:
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
-  - python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
-  # Debug
+  - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+  - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check
-  - python ./dev_tools/syspath.py
-  # Run the tests
   - pytest
 after_success:
   # Submit results to Coveralls.io.
