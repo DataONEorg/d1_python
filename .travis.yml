@@ -30,4 +30,4 @@ after_success:
   # our packages to prevent it from pulling in the latest version, which is
   # likely to conflict with the fixed version our packages pull in.
   - pip install coveralls
-  - coveralls
+  - cd $D1ROOT && echo $PWD && coveralls
