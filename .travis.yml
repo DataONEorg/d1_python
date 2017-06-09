@@ -17,7 +17,7 @@ install:
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
-  - python ./dev_tools/src/d1_dev/setup-all.py develop
+  - python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
   # Debug
   - pip freeze
   - pip check

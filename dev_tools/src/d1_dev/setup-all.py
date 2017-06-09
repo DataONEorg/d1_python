@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Run setup.py for each of the D1 Python packages
+
+Note: Can't use any other D1 packages here. They may not be installed yet.
 """
 from __future__ import absolute_import
 from __future__ import print_function
@@ -10,12 +12,16 @@ import logging
 import os
 import subprocess
 
-import d1_dev.util
-
-import d1_common
-import d1_common.util
+try:
+  import d1_dev.util
+except ImportError:
+  is_d1_dev_installed = False
+  logging.info('d1_dev not yet installed')
+else:
+  is_d1_dev_installed = True
 
 PKG_PATH_LIST = [
+  'dev_tools',
   'lib_common',
   'lib_client',
   'client_cli',
@@ -26,7 +32,7 @@ PKG_PATH_LIST = [
 
 
 def main():
-  d1_common.util.log_setup()
+  logging.basicConfig(level=logging.DEBUG)
 
   parser = argparse.ArgumentParser(
     description=__doc__,
@@ -35,9 +41,16 @@ def main():
   parser.add_argument(
     'command', nargs='+', help='setup command (e.g., build sdist bdist_wheel)'
   )
+  parser.add_argument(
+    '--root', help='repository root. for bootstrap install in Travis CI'
+  )
   args = parser.parse_args()
 
-  repo_root_path = d1_dev.util.find_repo_root()
+  if args.root:
+    repo_root_path = args.root
+  else:
+    assert is_d1_dev_installed, 'd1_dev not installed. Must use --root'
+    repo_root_path = d1_dev.util.find_repo_root()
 
   for pkg_path in PKG_PATH_LIST:
     setup_dir_path = os.path.join(repo_root_path, pkg_path, 'src')
