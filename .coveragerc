@@ -35,7 +35,6 @@ omit =
   */d1_objects/*
   */develop-eggs/*
   */dist-packages/*
-  */dist-packages/*
   */dist/*
   */docutils/*
   */downloads/*
