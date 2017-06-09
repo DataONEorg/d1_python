@@ -41,9 +41,10 @@ def main():
       '': ['settings.py'],
     },
     install_requires=[
-      'dataone.cli == 2.3.0rc1',
-      'dataone.common == 2.3.0rc1',
-      'dataone.libclient == 2.3.0rc1',
+      # These are not yet available when bootstrapping on Travis
+      #'dataone.cli == 2.3.0rc1',
+      #'dataone.common == 2.3.0rc1',
+      #'dataone.libclient == 2.3.0rc1',
       #
       'baron == 0.6.5',
       'pip == 9.0.1',
