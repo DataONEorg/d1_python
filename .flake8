@@ -17,8 +17,7 @@ max-line-length = 100
 ignore = E111,E114,E121,E122,E125,E126,E127,E131,E261,E265,E266
 
 [pytest]
-addopts = --failed-first -p no:random-order
-#--cov=. --cov-report=term --cov-report=xml
+addopts = --failed-first -p no:random-order --cov=. --cov-report=term --cov-report=xml
 testpaths = ./lib_common ./lib_client ./test_utilities ./gmn ./client_cli ./client_onedrive
 python_files = test_*.py
 DJANGO_SETTINGS_MODULE = gmn.settings_test
