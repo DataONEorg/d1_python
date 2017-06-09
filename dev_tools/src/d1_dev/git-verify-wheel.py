@@ -24,7 +24,7 @@ import os
 import sys
 import zipfile
 
-import git  # pip install gitpython
+import git
 
 
 def main():

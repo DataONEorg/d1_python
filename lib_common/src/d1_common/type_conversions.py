@@ -35,7 +35,7 @@ We select string as the "hub" representation for XML.
 from __future__ import absolute_import
 
 import re
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree
 
 import pyxb.namespace.utility
 import pyxb.utils.domutils
@@ -62,7 +62,7 @@ BINDING_TO_VERSION_TAG_DICT = {
 
 # Register global namespace prefixes for use by ElementTree when serializing.
 for prefix_str, uri_str in NS_DICT.items():
-  etree.register_namespace(prefix_str, uri_str)
+  xml.etree.ElementTree.register_namespace(prefix_str, uri_str)
 
 # dom = etree.parse(io.BytesIO(content))
 # validateBinding(self)
@@ -216,7 +216,7 @@ def str_is_objectList(xml_str):
 def str_is_well_formed(xml_str):
   try:
     str_to_etree(xml_str)
-  except etree.ParseError:
+  except xml.etree.ElementTree.ParseError:
     return False
   else:
     return True
@@ -240,15 +240,15 @@ def str_to_pyxb(xml_str):
 
 
 def str_to_etree(xml_str):
-  return etree.fromstring(xml_str)
+  return xml.etree.ElementTree.fromstring(xml_str)
 
 
 def pyxb_to_str(pyxb_obj):
-  return pyxb_obj.toxml('utf8')
+  return pyxb_obj.toxml('utf-8')
 
 
 def etree_to_str(etree_obj):
-  return etree.tostring(etree_obj, 'utf8')
+  return xml.etree.ElementTree.tostring(etree_obj, 'utf-8')
 
 
 def pyxb_to_etree(pyxb_obj):

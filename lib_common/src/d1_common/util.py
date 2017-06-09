@@ -31,7 +31,7 @@ import os
 import sys
 
 
-def log_setup(is_debug, is_multiprocess=False):
+def log_setup(is_debug=False, is_multiprocess=False):
   """Set up a standardized log format for the DataONE Python stack. All Python
   components should use this function. If {is_multiprocess} is True, include
   process ID in the log so that logs can be separated for each process.
