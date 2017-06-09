@@ -117,3 +117,35 @@ Notes:
 
 * The tests use `settings_test.py` for GMN and Django configuration.
 
+### Creating a new release
+
+##### Updating dependencies
+
+The stack should pass all the tests with the most recent available versions of all the dependencies. Start by updating all the dependencies:
+
+    $ cd d1_python
+    $ sudo ./dev_tools/pip-update-all.py
+
+##### Make sure that the tests still pass
+
+    $ pytest
+
+##### Update the setup.py files
+
+The DataONE Python stack specifies fixed versions of all its dependencies. This ensures that a stack deployed to production matches one that passed the tests. As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Run the script with:
+
+    $ cd d1_python
+    $ ./dev_tools/src-sync-dependencies.py . <version>
+
+The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
+
+##### Build the new packages
+
+    TODO
+
+##### Push the new packages to PyPI
+
+    TODO
+
+
+
