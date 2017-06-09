@@ -1,3 +1,4 @@
+
 # d1_python
 
 Python components for DataONE clients and servers.
@@ -143,7 +144,8 @@ The `<version>` argument specifies what the version will be for the release. E.g
 
 ##### Build the new packages
 
-    TODO
+    $ clean-tree.py
+    $ setup-all.py sdist bdist_wheel
 
 ##### Push the new packages to PyPI
 
