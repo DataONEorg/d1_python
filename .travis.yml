@@ -8,7 +8,8 @@ python:
   - 2.7
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y build-essential python-dev libssl-dev libxml2-dev libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl
+  - sudo apt-get install -y build-essential python-dev libssl-dev libxml2-dev
+  libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools

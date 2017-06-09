@@ -63,7 +63,6 @@ def pytest_generate_tests(metafunc):
   except (AttributeError, KeyError):
     return
   arg_names = sorted(func_arg_list[0])
-  print(arg_names)
   metafunc.parametrize(
     arg_names,
     [[func_args[name] for name in arg_names] for func_args in func_arg_list]

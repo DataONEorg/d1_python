@@ -38,8 +38,10 @@ escaped name, so the escaping must be reversible. This is because the filesystem
 driver (e.g., FUSE), passes the escaped name back to ONEDrive when the user
 interacts with the file or folder.
 
-The current implementation simply uses URL percent-encoding of an UTF-8
-encoding of the Unicode strings.
+The current implementation simply uses URL percent-encoding of an UTF-8 encoding
+of the Unicode strings.
+
+Quote and unquote are somewhat borrowed from python urllib standard library.
 """
 
 from __future__ import absolute_import
@@ -47,14 +49,20 @@ from __future__ import print_function
 
 import logging
 import os
+import urllib
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
-"""Quote and unquote are somewhat borrowed from python urllib standard
-library.
-"""
 _hexdig = '0123456789ABCDEFabcdef'
 _hextochr = dict((a + b, chr(int(a + b, 16))) for a in _hexdig for b in _hexdig)
+
+LINUX = [
+  "posix",
+]
+
+WINDOWS = [
+  "nt",
+]
 
 
 def unquote(s):
@@ -74,12 +82,10 @@ def unquote(s):
   return s
 
 
-"""Pass in a dictionary that has unsafe characters as the keys, and the
-percent encoded value as the value.
-"""
-
-
 def quote(s, unsafe=u'/'):
+  """Pass in a dictionary that has unsafe characters as the keys, and the
+  percent encoded value as the value.
+  """
   res = s.replace(u'%', u'%25')
   for c in unsafe:
     res = res.replace(c, '%' + (hex(ord(c)).upper())[2:])
@@ -87,51 +93,29 @@ def quote(s, unsafe=u'/'):
 
 
 def posix_filename_from_identifier(identifier):
-  #TODO: This method of encoding is bad because it downgrades unicode and so
-  # presents readability issues. The only character that *really* needs to be
-  # escaped on posix systems is "/"
-  #
-  # On Windows, the following characters are not allowed:
-  # \ / :  * ? " < > |
-  # Linux
-  #return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
-  return quote(identifier)
+  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
 
 
 def posix_identifier_from_filename(filename):
-  #return urllib.unquote(filename).decode('utf8')
-  return unquote(filename)
+  return urllib.unquote(filename).decode('utf8')
 
 
 def windows_filename_from_identifier(identifier):
+  """On Windows, the following characters are not allowed:
+  \ / :  * ? " < > |
+  """
   return quote(identifier, u'\\/:*?"<>|')
 
 
 def windows_identifier_from_filename(filename):
-  #return urllib.unquote(filename).decode('utf8')
-  return unquote(filename)
+  return urllib.unquote(filename).decode('utf8')
 
 
-LINUX = [
-  "posix",
-]
-WINDOWS = [
-  "nt",
-]
-
-filename_from_identifier = posix_filename_from_identifier
-identifier_from_filename = posix_identifier_from_filename
-
-if os.name in WINDOWS:
-  filename_from_identifier = windows_filename_from_identifier
-  identifier_from_filename = windows_identifier_from_filename
-
-# TODO: Move to unit tests.
-if __name__ == '__main__':
-  c = 'doi:10.5063/AA/matthias.7.1'
-  print(c)
-  q = windows_filename_from_identifier(c)
-  print(c)
-  c2 = windows_identifier_from_filename(q)
-  print(c2)
-  print(c == c2)
+identifier_from_filename = (
+  windows_identifier_from_filename
+  if os.name in WINDOWS else posix_identifier_from_filename
+)
+filename_from_identifier = (
+  windows_filename_from_identifier
+  if os.name in WINDOWS else posix_filename_from_identifier
+)
