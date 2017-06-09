@@ -39,7 +39,7 @@ import re
 
 import pkg_resources
 
-import dev_tools.lib_dev.file_iterator as file_iterator
+import lib_dev.file_iterator as file_iterator
 import lib_dev.util
 
 import d1_common.util
