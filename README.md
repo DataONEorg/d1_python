@@ -191,6 +191,12 @@ Run the tests and verify that they all pass:
       $ pytest
 
 
+### Building the documentation
+
+
+      TODO
+
+
 ### Troubleshooting
 
 * Clear out the installed libraries and reinstall:

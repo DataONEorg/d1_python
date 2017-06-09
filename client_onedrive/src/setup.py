@@ -26,56 +26,7 @@ import sys
 
 import setuptools
 
-# http://www.py2exe.org/index.cgi/WorkingWithVariousPackagesAndModules
-#
-# lxml
-#
-# if missing _elementhpath, either pull whole lxml library in packages=..., or
-# put "from lxml import _elementhpath as _dummy" somewhere in code; in both
-# cases also pull gzip in packages=...
-
-# Windows executable setup
-if sys.platform == 'win32':
-  opts = {
-    'py2exe': {
-      'packages': [
-        'd1_client_onedrive', 'd1_client_onedrive.impl',
-        'd1_client_onedrive.impl.drivers',
-        'd1_client_onedrive.impl.drivers.dokan',
-        'd1_client_onedrive.impl.drivers.fuse',
-        'd1_client_onedrive.impl.resolver', 'rdflib.plugins', 'lxml'
-      ],
-      'skip_archive':
-        True,
-    }
-  }
-  extra_opts = dict(
-    console=['d1_client_onedrive/onedrive.py'],
-  )
-elif sys.platform == 'darwin':
-  # Mac App setup
-  opts = dict(
-    py2app=dict(
-      argv_emulation=True,
-      iconfile='mac/mac_dataone.icns',
-      packages=['rdflib', 'rdfextras', 'lxml'],
-      site_packages=False,
-      resources=['d1_client_onedrive/impl/d1.icon'],
-      #resources = ['mime_mappings.csv',]
-      plist=dict(
-        LSBackgroundOnly=True,
-      ),
-    )
-  )
-  extra_opts = dict(
-    #app = ['d1_client_onedrive/onedrive.py'],
-    app=['mac/start_app.py'],
-    setup_requires=['py2app'],
-  )
-else:
-  # Normal setup
-  opts = dict()
-  extra_opts = dict()
+# yapf: disable
 
 
 def main():
@@ -96,7 +47,6 @@ def main():
       'fusepy == 2.0.4',
       'pyxb == 1.2.5',
       'pyzotero == 1.2.10',
-      'rdfextras == 0.4',
       'rdflib == 4.2.2',
       'requests == 2.14.2',
     ],
@@ -116,6 +66,59 @@ def main():
     options=opts,
     **extra_opts
   )
+
+
+# Windows executable setup
+if sys.platform == 'win32':
+  opts = {
+    'py2exe': {
+      'packages': [
+        'd1_client_onedrive',
+        'd1_client_onedrive.impl',
+        'd1_client_onedrive.impl.drivers',
+        'd1_client_onedrive.impl.drivers.dokan',
+        'd1_client_onedrive.impl.drivers.fuse',
+        'd1_client_onedrive.impl.resolver',
+        'rdflib.plugins',
+      ],
+      'skip_archive': True,
+    },
+  },
+  extra_opts = dict(
+    console=['d1_client_onedrive/onedrive.py'],
+  ),
+
+elif sys.platform == 'darwin':
+  # Mac App setup
+  opts = dict(
+    py2app=dict(
+      argv_emulation=True,
+      iconfile='mac/mac_dataone.icns',
+      packages=[
+        'rdflib',
+      ],
+      site_packages=False,
+      resources=[
+        'd1_client_onedrive/impl/d1.icon',
+      ],
+      plist=dict(
+        LSBackgroundOnly=True,
+      ),
+    ),
+  ),
+  extra_opts = dict(
+    #app = ['d1_client_onedrive/onedrive.py'],
+    app=[
+      'mac/start_app.py',
+    ],
+    setup_requires=[
+      'py2app',
+    ],
+  )
+else:
+  # Normal setup
+  opts = dict()
+  extra_opts = dict()
 
 
 if __name__ == '__main__':

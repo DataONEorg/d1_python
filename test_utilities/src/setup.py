@@ -42,7 +42,6 @@ def main():
       'contextlib2 == 0.5.5',
       'decorator == 4.0.11',
       'freezegun == 0.3.9',
-      'lxml == 3.7.3',
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',
       'pyasn1 == 0.2.3',

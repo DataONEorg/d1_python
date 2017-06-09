@@ -40,7 +40,6 @@ def main():
       'dataone.common == 2.3.0rc1',
       #
       'cachecontrol == 0.12.2',
-      'google.foresite-toolkit == 1.3.3',
       'python-dateutil == 2.6.0',
       'pyxb == 1.2.5',
       'rdflib == 4.2.2',
