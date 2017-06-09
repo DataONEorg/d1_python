@@ -14,7 +14,8 @@ install:
   - pip install --upgrade setuptools
   - pip install coverage pytest-cov pytest-django
 script:
-  - D1ROOT=$TRAVIS_BUILD_DIR . $D1ROOT/dev_tools/develop.sh
+  - export D1ROOT=$TRAVIS_BUILD_DIR
+  - sh $D1ROOT/dev_tools/develop.sh
   # Debug
   - pip freeze
   - pip check
@@ -23,7 +24,8 @@ script:
   # Run the tests
   - cd $TRAVIS_BUILD_DIR && pytest
 after_success:
-  # coveralls has a requirement for requests >= 1.0.0, so we install it after
+  # Submit results to Coveralls.io.
+  # Coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
   # likely to conflict with the fixed version our packages pull in.
   - pip install coveralls
