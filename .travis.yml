@@ -14,8 +14,7 @@ install:
   - pip install --upgrade setuptools
   - pip install coverage pytest-cov pytest-django
 script:
-  - cd $TRAVIS_BUILD_DIR
-  - D1ROOT=$TRAVIS_BUILD_DIR sh $D1ROOT/dev_tools/develop.sh
+  - D1ROOT=$TRAVIS_BUILD_DIR $D1ROOT/dev_tools/develop.sh
   # Debug
   - pip freeze
   - pip check
