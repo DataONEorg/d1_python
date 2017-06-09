@@ -39,13 +39,13 @@ def main():
     install_requires=[
       'dataone.common == 2.3.0rc1',
       #
-      'cachecontrol == 0.12.2',
+      'cachecontrol == 0.12.3',
       'python-dateutil == 2.6.0',
       'pyxb == 1.2.5',
       'rdflib == 4.2.2',
       'rdflib-jsonld == 0.4.0',
-      'requests-toolbelt == 0.7.1',
-      'requests[security] == 2.14.2',
+      'requests-toolbelt == 0.8.0',
+      'requests[security] == 2.17.3',
       'responses == 0.5.1',
     ],
     setup_requires=[

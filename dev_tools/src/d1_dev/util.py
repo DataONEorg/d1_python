@@ -108,8 +108,9 @@ def diff_update_file(module_path, module_str, show_diff=False, update=False):
         os.unlink(module_path + '~')
       except EnvironmentError:
         pass
+      tmp_file.seek(0)
       shutil.move(module_path, module_path + '~')
-      shutil.move(tmp_file.name, module_path)
+      shutil.copy(tmp_file.name, module_path)
       shutil.copystat(module_path + '~', module_path)
 
   return True

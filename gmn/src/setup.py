@@ -45,8 +45,8 @@ def main():
       'dataone.common == 2.3.0rc1',
       'dataone.libclient == 2.3.0rc1',
       #
-      'cryptography == 1.8.1',
-      'django == 1.11.1',
+      'cryptography == 1.9',
+      'django == 1.11.2',
       'iso8601 == 0.1.11',
       'mock == 2.0.0',
       'psycopg2 == 2.7.1',

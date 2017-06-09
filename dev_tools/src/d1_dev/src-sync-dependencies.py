@@ -103,7 +103,7 @@ def update_deps_on_file(args, setup_path, show_diff, d1_version):
     if args.debug:
       raise
   else:
-    d1_dev.util.update_module_file(r, setup_path, show_diff)
+    d1_dev.util.update_module_file(r, setup_path, show_diff, update=True)
 
 
 def update_deps_on_tree(r, d1_version):
@@ -182,7 +182,9 @@ def update_common_version_const(d1_version, only_diff):
   for n in r('AssignmentNode'):
     if n.target.value == 'VERSION':
       n.value.value = "'{}'".format(d1_version)
-      d1_dev.util.update_module_file(r, const_module_path, only_diff)
+      d1_dev.util.update_module_file(
+        r, const_module_path, only_diff, update=True
+      )
       break
 
 

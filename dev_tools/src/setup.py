@@ -18,8 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Test Utilities package
+"""DataONE developer tools package
 """
+
 from __future__ import absolute_import
 
 import setuptools
@@ -27,28 +28,26 @@ import setuptools
 
 def main():
   setuptools.setup(
-    name='dataone.test_utilities',
+    name='dataone.dev',
     version='2.3.0rc1',
-    description='Utilities for testing DataONE infrastructure components',
+    description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
+    url='https://github.com/DataONEorg/d1_dev',
     license='Apache License, Version 2.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
+    exclude_package_data={
+      '': ['settings.py'],
+    },
     install_requires=[
+      'dataone.cli == 2.3.0rc1',
+      'dataone.common == 2.3.0rc1',
       'dataone.libclient == 2.3.0rc1',
       #
-      'contextlib2 == 0.5.5',
-      'decorator == 4.0.11',
-      'freezegun == 0.3.9',
-      'mock == 2.0.0',
-      'multi-mechanize == 1.2.0',
-      'pyasn1 == 0.2.3',
-      'pyxb == 1.2.5',
-      'rdflib == 4.2.2',
-      'requests == 2.17.3',
-      'responses == 0.5.1',
+      'baron == 0.6.5',
+      'pip == 9.0.1',
+      'redbaron == 0.6.3',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -61,10 +60,7 @@ def main():
       'Programming Language :: Python :: 2',
       'Programming Language :: Python :: 2.7',
     ],
-    keywords=(
-      'DataONE source code unit tests ingeration tests coverage travis '
-      'coveralls'
-    ),
+    keywords='DataONE python'
   )
 
 

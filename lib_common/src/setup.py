@@ -40,7 +40,7 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'cryptography == 1.8.1',
+      'cryptography == 1.9',
       'iso8601 == 0.1.11',
       'pyasn1 == 0.2.3',
       'pyxb == 1.2.5',
