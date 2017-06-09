@@ -1,9 +1,23 @@
+# Exclude various files and directories from coverage.
+
+# Only tracked files or directories need to be excluded here, as those are the
+# only ones that get pushed to GitHub and pulled in by Travis. However, we also
+# exclude some untracked directories that otherwise end up significantly
+# lowering coverage on local coverage checks.
+#
+# Don't filter /build/ here. A parent in Travis' default build directory has
+# that name.
+
 [run]
 
 omit =
-  #### Tracked but not included in coverage
+  # Tracked
 
-  # dirs
+  */conftest.py
+  */settings*.py
+  */setup.py
+  */test.py
+  */t.py
 
   */dev_tools/*
   */drivers/*
@@ -11,39 +25,15 @@ omit =
   */mockup/*
   */tests/*
 
-  # files
+  # Any tracked and untracked dot-files and dot-dirs
+  */.*
 
-  # Only Python scripts, as coverage is implicitly limited to .py
-  */conftest.py
-  */settings*.py
-  */setup.py
-  */test.py
-  */t.py
+  # Untracked
 
-  #### Untracked, based on .gitignore
-
-  # All dot-files and dot-dirs
-#  */.*
   */__pycache__/*
-  */_build/*
-  */build/*
-  */certificates/*
-  */certs/*
-#  */cover/*
-#  */d1_objects/*
-#  */develop-eggs/*
-#  */dist-packages/*
-#  */dist/*
-#  */docutils/*
-#  */downloads/*
-#  */eggs/*
-#  */env/*
-#  */htmlcov/*
-#  */lib/*
-#  */lib64/*
-#  */parts/*
-#  */sdist/*
-#  */stores/*
-#  */target/*
-#  */tests/*
-#  */var/*
+  */src/_build/*
+  */src/build/*
+  */src/develop-eggs/*
+  */src/dist-packages/*
+  */src/dist/*
+  */src/sdist/*
