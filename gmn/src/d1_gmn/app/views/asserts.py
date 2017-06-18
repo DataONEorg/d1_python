@@ -102,6 +102,15 @@ def is_valid_sid_for_chain(pid, sid):
       )
 
 
+def sysmeta_sanity_checks(request, sysmeta_pyxb, new_pid=None):
+  does_not_contain_replica_sections(sysmeta_pyxb)
+  sysmeta_is_not_archived(sysmeta_pyxb)
+  if new_pid:
+    url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
+  obsoleted_by_not_specified(sysmeta_pyxb)
+  validate_sysmeta_against_uploaded(request, sysmeta_pyxb)
+
+
 def does_not_contain_replica_sections(sysmeta_pyxb):
   """Assert that {sysmeta_pyxb} does not contain any replica information.
   """

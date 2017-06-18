@@ -43,15 +43,12 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Delete
       identifier_pyxb = client.delete(pid)
       assert identifier_pyxb.value() == pid
-
       # Is no longer retrievable so new delete() raises 404
       with pytest.raises(d1_common.types.exceptions.NotFound):
         client.delete(pid)
-
       # New chain is valid and matches the expected chain
       pid_chain_list.remove(pid)
       self.assert_valid_chain(client, pid_chain_list, sid)
-
       # PID can now be reused
       self.create_obj(client, pid, sid)
       # Is again retrievable
@@ -59,39 +56,16 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
   @responses.activate
-  def test_0010(self):
+  def test_0010(self, mn_client_v1_v2):
     """MNStorage.delete(): Deleted flag correctly set and represented"""
-
-    def test(client, sid=None):
-      base_sid, pid_chain_list = self.create_revision_chain(
-        client, chain_len=5, sid=sid
-      )
-      self.assert_valid_chain(client, pid_chain_list, base_sid)
-      # Delete head
-      self.assert_delete(client, pid_chain_list[-1], sid, pid_chain_list)
-      # Delete tail
-      self.assert_delete(client, pid_chain_list[0], sid, pid_chain_list)
-      # Delete center
-      self.assert_delete(client, pid_chain_list[2], sid, pid_chain_list)
-
-    test(self.client_v1)
-    test(self.client_v2)
-
-  # def test_0010(self):
-  #   """MNStorage.delete(): Revision chain, SID unsupported in v1"""
-  #   self._test_chain_delete_head(self.client_v1)
-  #
-  # def test_0020(self):
-  #   """MNStorage.delete(): Revision chain without SID"""
-  #   self._test_chain_delete_head(self.client_v2)
-
-  # def test_0030(self):
-  #   """MNStorage.delete(): Revision chain with SID"""
-  #   self._test_chain_delete_head(self.client_v2, sid=True)
-
-  # @responses.activate
-  # @d1_gmn.tests.gmn_mock.disable_auth
-  # def test_0020_v2(self):
-  #   """MNStorage.delete(): Revision chain without SID, delete head"""
-  #   base_sid, pid_chain_list = self.create_revision_chain(self.client_v2, chain_len=5)
-  #   self.assert_valid_chain(self.client_v2, pid_chain_list, base_sid)
+    sid, pid_chain_list = self.create_revision_chain(
+      mn_client_v1_v2,
+      chain_len=5,
+    )
+    self.assert_valid_chain(mn_client_v1_v2, pid_chain_list, sid)
+    # Delete head
+    self.assert_delete(mn_client_v1_v2, pid_chain_list[-1], sid, pid_chain_list)
+    # Delete tail
+    self.assert_delete(mn_client_v1_v2, pid_chain_list[0], sid, pid_chain_list)
+    # Delete center
+    self.assert_delete(mn_client_v1_v2, pid_chain_list[2], sid, pid_chain_list)

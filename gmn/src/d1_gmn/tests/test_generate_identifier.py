@@ -38,29 +38,19 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return identifier.value()
 
   @responses.activate
-  def test_01(self):
+  def test_01(self, mn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a valid identifier that
     matches scheme and fragment
     """
-
-    def test(client):
-      self._generate_identifier(client)
-
     with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      self._generate_identifier(mn_client_v1_v2)
 
   @responses.activate
-  def test_02(self):
+  def test_02(self, mn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a different, valid identifier
     when called second time
     """
-
-    def test(client):
-      pid1 = self._generate_identifier(client)
-      pid2 = self._generate_identifier(client)
-      assert pid1 != pid2
-
     with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      pid1 = self._generate_identifier(mn_client_v1_v2)
+      pid2 = self._generate_identifier(mn_client_v1_v2)
+      assert pid1 != pid2

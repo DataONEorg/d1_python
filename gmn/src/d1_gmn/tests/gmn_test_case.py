@@ -182,25 +182,17 @@ class GMNTestCase(
     assert self.get_pyxb_value(sysmeta_a_pyxb, 'seriesId') == \
       self.get_pyxb_value(sysmeta_b_pyxb, 'seriesId')
 
-  def assert_object_list_slice(self, object_list, start, count, total):
+  def assert_slice(self, slice_pyxb, start, count, total):
     """Check that slice matches the expected slice and that actual number of
     objects matches the slice count
     """
-    assert object_list.start == start
-    assert object_list.count == count
-    assert object_list.total == total
-    assert len(object_list.objectInfo) == count
-
-  def assert_log_slice(self, log, start, count, total):
-    """Check that slice matches the expected slice and that actual number of
-    objects matches the slice count
-    """
-    assert log.start == start
-    assert log.count == count
-    assert log.total == total
-    # Check that the actual number of log records matches the count
-    # provided in the slice.
-    assert len(log.logEntry) == count
+    assert slice_pyxb.start == start
+    assert slice_pyxb.count == count
+    assert slice_pyxb.total == total
+    if hasattr(slice_pyxb, 'objectInfo'):
+      assert len(slice_pyxb.objectInfo) == count
+    elif hasattr(slice_pyxb, 'logEntry'):
+      assert len(slice_pyxb.logEntry) == count
 
   def assert_required_response_headers_present(self, response):
     assert 'last-modified' in response.headers
@@ -214,8 +206,12 @@ class GMNTestCase(
     assert sysmeta_pyxb.size == len(sciobj_str)
 
   def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
-    assert d1_common.checksum. \
-      is_checksum_correct_on_string(sysmeta_pyxb, sciobj_str)
+    checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
+      sciobj_str, sysmeta_pyxb.checksum.algorithm
+    )
+    assert d1_common.checksum.are_checksums_equal(
+      checksum_pyxb, sysmeta_pyxb.checksum
+    )
 
   def assert_checksums_equal(self, a_pyxb, b_pyxb):
     assert d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb)

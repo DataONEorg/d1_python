@@ -30,17 +30,15 @@ import d1_gmn.tests.gmn_test_case
 
 class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1290_v1(self):
+  def test_1290_v1(self, mn_client_v1_v2):
     """MNStorage.describe(): Returns valid header for valid object"""
 
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
-      info = client.describe(pid)
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+        mn_client_v1_v2, sid=True
+      )
+      info = mn_client_v1_v2.describe(pid)
       assert 'dataone-formatid' in info
       assert 'content-length' in info
       assert 'last-modified' in info
       assert 'dataone-checksum' in info
-
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)

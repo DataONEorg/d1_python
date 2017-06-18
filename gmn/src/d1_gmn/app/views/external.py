@@ -614,13 +614,7 @@ def put_object(request, old_pid):
 
 def _create(request, sysmeta_pyxb, new_pid):
   d1_gmn.app.views.asserts.is_unused(new_pid)
-  d1_gmn.app.views.asserts.does_not_contain_replica_sections(sysmeta_pyxb)
-  d1_gmn.app.views.asserts.sysmeta_is_not_archived(sysmeta_pyxb)
-  d1_gmn.app.views.asserts.url_pid_matches_sysmeta(sysmeta_pyxb, new_pid)
-  d1_gmn.app.views.asserts.obsoleted_by_not_specified(sysmeta_pyxb)
-  d1_gmn.app.views.asserts.validate_sysmeta_against_uploaded(
-    request, sysmeta_pyxb
-  )
+  d1_gmn.app.views.asserts.sysmeta_sanity_checks(request, sysmeta_pyxb, new_pid)
   d1_gmn.app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
   #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
   d1_gmn.app.views.create.create(request, sysmeta_pyxb)
