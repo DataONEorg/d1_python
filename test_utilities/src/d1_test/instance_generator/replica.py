@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random replica objects
+"""Generate random Replica
 """
 
 from __future__ import absolute_import
@@ -30,23 +30,27 @@ import d1_common.types.dataoneTypes
 import d1_test.instance_generator.dates
 import d1_test.instance_generator.random_data
 
-
-def generate():
-  res = d1_common.types.dataoneTypes.replica()
-  res.replicaMemberNode = (
-    u"mn_" +
-    d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
-      5, 10
-    )
-  )
-  res.replicationStatus = d1_common.types.dataoneTypes.ReplicationStatus.completed
-  res.replicaVerified = d1_test.instance_generator.dates.now()
-  return res
+REPLICA_STATUS_LIST = [
+  d1_common.types.dataoneTypes.ReplicationStatus.queued,
+  d1_common.types.dataoneTypes.ReplicationStatus.requested,
+  d1_common.types.dataoneTypes.ReplicationStatus.completed,
+  d1_common.types.dataoneTypes.ReplicationStatus.failed,
+  d1_common.types.dataoneTypes.ReplicationStatus.invalidated,
+]
 
 
-def generate_list(min=1, max=10):
-  n = random.randint(min, max)
-  res = []
-  for i in xrange(0, n):
-    res.append(generate())
-  return res
+def generate(min_replicas=0, max_replicas=5):
+  n_replicas = random.randint(min_replicas, max_replicas)
+  replica_list = []
+  for _ in range(n_replicas):
+    replica_pyxb = generate_single()
+    replica_list.append(replica_pyxb)
+  return replica_list or None
+
+
+def generate_single():
+  replica_pyxb = d1_common.types.dataoneTypes.replica()
+  replica_pyxb.replicaMemberNode = d1_test.instance_generator.random_data.random_mn()
+  replica_pyxb.replicationStatus = random.choice(REPLICA_STATUS_LIST)
+  replica_pyxb.replicaVerified = d1_test.instance_generator.dates.random_date()
+  return replica_pyxb

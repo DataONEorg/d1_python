@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random Subject objects
+"""Generate random Subject
 """
 
 from __future__ import absolute_import
@@ -33,6 +33,4 @@ def generate():
 
 
 def generate_bare():
-  return d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
-    5, 10
-  )
+  return d1_test.instance_generator.random_data.random_lower_ascii(5, 10)

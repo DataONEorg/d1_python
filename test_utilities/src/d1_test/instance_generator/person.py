@@ -36,18 +36,20 @@ def generate():
   person.subject = d1_test.instance_generator.subject.generate()
   for i in range(random.randint(1, 3)):
     person.givenName.append(
-      'givenName_' + d1_test.instance_generator.random_data.random_word()
+      'givenName_' + d1_test.instance_generator.random_data.random_lower_ascii()
     )
-  person.familyName = 'familyName_' + d1_test.instance_generator.random_data.random_word()
+  person.familyName = 'familyName_' + d1_test.instance_generator.random_data.random_lower_ascii(
+  )
   for i in range(random.randint(1, 3)):
     person.email.append(d1_test.instance_generator.random_data.random_email())
   for i in range(random.randint(1, 3)):
     person.isMemberOf.append(
-      'isMemberOf_' + d1_test.instance_generator.random_data.random_word()
+      'isMemberOf_' + d1_test.instance_generator.random_data.random_lower_ascii()
     )
   for i in range(random.randint(1, 3)):
     person.equivalentIdentity.append(
-      'equivalentIdentity_' + d1_test.instance_generator.random_data.random_word()
+      'equivalentIdentity_' +
+      d1_test.instance_generator.random_data.random_lower_ascii()
     )
   person.verified = d1_test.instance_generator.random_data.random_bool()
   return person

@@ -38,6 +38,6 @@ def generate_bare(prefix=u'', min_len=5, max_len=20):
   len_prefix = len(prefix)
   if len_prefix >= max_len:
     raise Exception('Unable to generate Identifier: No room for prefix')
-  return prefix + d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
+  return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
     min_len - len_prefix, max_len - len_prefix
   )

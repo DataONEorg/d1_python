@@ -76,34 +76,45 @@ def random_subject_with_permission_labels(permissions, group_chance=0.1):
   """Generate a random subject that is tagged with the provided permissions
   and has a certain chance of being tagged as group
   """
-  subject_base = d1_test.instance_generator.random_data.random_3_words()
+  subject_base = 'subj_{}'.format(
+    d1_test.instance_generator.random_data.random_lower_ascii()
+  )
+  group = '_group' if random.random() <= group_chance else ''
   tags = permissions_to_tag_string(permissions)
-  group = '_group_' if random.random() <= group_chance else ''
   return subject_base + group + tags
 
 
 def random_subjects_with_permission_labels(
-    permissions, min=1, max=100, group_chance=0.1
+    permissions, min_len=1, max_len=100, group_chance=0.1
 ):
   subjects = []
-  for i in xrange(random.randint(min, max)):
+  for i in xrange(random.randint(min_len, max_len)):
     subject = random_subject_with_permission_labels(permissions, group_chance)
     subjects.append(subject)
   return subjects
 
 
+def random_subject_list(min_len=1, max_len=10, group_chance=0.1):
+  return [
+    'subj_{}{}'.format(
+      d1_test.instance_generator.random_data.random_lower_ascii(),
+      '_group' if random.random() <= group_chance else '',
+    ) for _ in range(random.randint(min_len, max_len))
+  ]
+
+
 def generate(min_rules=1, max_rules=5, max_subjects=5):
-  """Generate a random access policy document.
+  """Generate a random access policy document
   """
+  if not min_rules:
+    return None
   ap = d1_common.types.dataoneTypes.accessPolicy()
   n_rules = random.randint(min_rules, max_rules)
   rules = []
   for i in xrange(0, n_rules):
     ar = d1_common.types.dataoneTypes.accessRule()
     permissions = random_set_of_permissions()
-    ar.subject = random_subjects_with_permission_labels(
-      permissions, max=max_subjects
-    )
+    ar.subject = random_subject_list(max_len=max_subjects)
     ar.permission = permissions
     rules.append(ar)
   ap.allow = rules

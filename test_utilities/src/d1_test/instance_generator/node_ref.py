@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate NodeReference PyXB objects
+"""Generate random NodeReference
 """
 
 from __future__ import absolute_import
@@ -38,6 +38,6 @@ def generate_bare(prefix=u'', min_len=5, max_len=20):
   len_prefix = len(prefix)
   if len_prefix >= max_len:
     raise ValueError('Unable to generate random string: No room for prefix')
-  return prefix + d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
+  return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
     min_len - len_prefix, max_len - len_prefix
   )

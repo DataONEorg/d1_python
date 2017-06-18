@@ -25,6 +25,7 @@ from __future__ import absolute_import
 
 import random
 import re
+import string
 import StringIO
 
 import d1_test.instance_generator.unicode_names
@@ -36,7 +37,28 @@ unicode_characters = u''.join(
 )
 unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
 
+# Seed the PRNG one time, when this module is first imported. This instance is
+# shared between all importing modules.
 random.seed()
+
+
+def random_mn(min_len=1, max_len=2):
+  return 'mn_{}'.format(random_lower_ascii(min_len, max_len))
+
+
+def random_cn(min_len=1, max_len=1):
+  return 'cn_{}'.format(random_lower_ascii(min_len, max_len))
+
+
+def random_subj(min_len=1, max_len=2):
+  return 'subj_{}'.format(random_lower_ascii(min_len, max_len))
+
+
+def random_lower_ascii(min_len=2, max_len=2):
+  return ''.join([
+    random.choice(string.ascii_lowercase)
+    for _ in range(random.randint(min_len, max_len))
+  ])
 
 
 def random_bytes(n_bytes):
@@ -44,7 +66,7 @@ def random_bytes(n_bytes):
   return bytearray(random.getrandbits(8) for _ in xrange(n_bytes))
 
 
-def random_bytes_flo(n_bytes):
+def random_bytes_file(n_bytes):
   """Return a file-like object containing random bytes"""
   return StringIO.StringIO(random_bytes(n_bytes))
 
@@ -110,7 +132,8 @@ def random_unicode_string_no_whitespace(min_len=5, max_len=20):
 
 
 def random_email():
-  return random_word() + '@' + random_word() + random_word() + '.dataone.org'
+  return random_lower_ascii() + '@' + random_lower_ascii() + random_lower_ascii(
+  ) + '.dataone.org'
 
 
 def random_bool():

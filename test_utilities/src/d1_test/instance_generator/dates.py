@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random dates
+"""Generate random DateTime
 """
 
 from __future__ import absolute_import
@@ -38,11 +38,6 @@ def random_date(earliest=0, latest=1e10):
     dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second,
     random.randint(0, 1000)
   )
-
-
-def now():
-  """Generate a date with the current UTC date and time"""
-  return datetime.datetime.utcnow()
 
 
 def generate():

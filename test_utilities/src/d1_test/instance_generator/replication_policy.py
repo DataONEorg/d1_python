@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random replication policy objects
+"""Generate random ReplicationPolicy
 """
 
 from __future__ import absolute_import
@@ -30,27 +30,21 @@ import d1_common.types.dataoneTypes
 import d1_test.instance_generator.random_data
 
 
-def generate():
-  res = d1_common.types.dataoneTypes.replicationPolicy()
-  n = random.randint(1, 10)
-  nodes = []
-  for i in xrange(0, n):
-    nodes.append(
-      u"preferredMemberNode_" + d1_test.instance_generator.random_data.
-      random_unicode_string_no_whitespace(5, 10)
-    )
-  res.preferredMemberNode = nodes
-  n = random.randint(1, 10)
-  nodes = []
-  for i in xrange(0, n):
-    nodes.append(
-      u"blockedMemberNode_" + d1_test.instance_generator.random_data.
-      random_unicode_string_no_whitespace(5, 10)
-    )
-  res.blockedMemberNode = nodes
-  res.replicationAllowed = d1_test.instance_generator.random_data.random_bool()
-  if res.replicationAllowed:
-    res.numberReplicas = random.randint(1, 10)
+def generate(min_pref=0, max_pref=4, min_block=0, max_block=4):
+  n_pref = random.randint(min_pref, max_pref)
+  n_block = random.randint(min_block, max_block)
+  if not (n_pref or n_block):
+    return
+  rp_pyxb = d1_common.types.dataoneTypes.replicationPolicy()
+  rp_pyxb.preferredMemberNode = [
+    d1_test.instance_generator.random_data.random_mn() for _ in range(n_pref)
+  ] or None
+  rp_pyxb.blockedMemberNode = [
+    d1_test.instance_generator.random_data.random_mn() for _ in range(n_block)
+  ] or None
+  rp_pyxb.replicationAllowed = d1_test.instance_generator.random_data.random_bool()
+  if rp_pyxb.replicationAllowed:
+    rp_pyxb.numberReplicas = random.randint(1, 10)
   else:
-    res.numberReplicas = 0
-  return res
+    rp_pyxb.numberReplicas = 0
+  return rp_pyxb
