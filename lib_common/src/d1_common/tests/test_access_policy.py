@@ -27,7 +27,7 @@ import d1_test.d1_test_case
 
 
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
-  ap_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+  ap_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
     'accessPolicy_v1_0.redundant.xml'
   )
 

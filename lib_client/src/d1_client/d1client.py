@@ -123,8 +123,8 @@ class DataONEObject(object):
   def save(self, outstr):
     """Persist a copy of the bytes of this object.
 
-        :param out_flo: file like object open for writing.
-        :type out_flo: File Like Object
+        :param out_file: file like object open for writing.
+        :type out_file: File Like Object
         :returns: None
         :return type: NoneType
         """

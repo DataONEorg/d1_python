@@ -54,24 +54,24 @@ import django.conf
 # App
 
 
-def get_pretty_xml(major_version_int=2):
-  node_xml = get_xml(major_version_int)
+def get_pretty_xml(api_major_int=2):
+  node_xml = get_xml(api_major_int)
   return d1_common.xml.pretty_xml(node_xml)
 
 
-def get_xml(major_version_int):
-  return _get_pyxb(major_version_int).toxml('utf-8')
+def get_xml(api_major_int):
+  return _get_pyxb(api_major_int).toxml('utf-8')
 
 
-def get_pyxb(major_version_int=2):
-  return _get_pyxb(major_version_int)
+def get_pyxb(api_major_int=2):
+  return _get_pyxb(api_major_int)
 
 
 # noinspection PyTypeChecker
-def _get_pyxb(major_version_int):
-  if major_version_int == 1:
+def _get_pyxb(api_major_int):
+  if api_major_int == 1:
     bindings = d1_common.type_conversions.get_bindings_by_api_version(1, 1)
-  elif major_version_int == 2:
+  elif api_major_int == 2:
     bindings = d1_common.type_conversions.get_bindings_by_api_version(2, 0)
   else:
     assert False
@@ -89,7 +89,7 @@ def _get_pyxb(major_version_int):
   node_pyxb.contactSubject.append(
     bindings.Subject(django.conf.settings.NODE_CONTACT_SUBJECT)
   )
-  node_pyxb.services = _create_service_list_pyxb(bindings, major_version_int)
+  node_pyxb.services = _create_service_list_pyxb(bindings, api_major_int)
   if django.conf.settings.NODE_SYNCHRONIZE:
     node_pyxb.synchronization = _create_synchronization_policy_pyxb(bindings)
   if django.conf.settings.NODE_REPLICATE:
@@ -126,12 +126,12 @@ def _create_replication_policy_pyxb(bindings):
   return replication_pyxb
 
 
-def _create_service_list_pyxb(bindings, major_version_int):
+def _create_service_list_pyxb(bindings, api_major_int):
   service_list_pyxb = bindings.services()
   service_list_pyxb.extend(
     _create_service_list_for_version_pyxb(bindings, 'v1')
   )
-  if major_version_int == 2:
+  if api_major_int == 2:
     service_list_pyxb.extend(
       _create_service_list_for_version_pyxb(bindings, 'v2')
     )

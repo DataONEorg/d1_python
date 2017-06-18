@@ -32,7 +32,7 @@ import d1_client.mnclient_2_0
 OBJECT_LIST_PAGE_SIZE = 100
 MAX_WORKERS = 10
 MAX_QUEUE_SIZE = 100
-MAJOR_VERSION = 2
+API_MAJOR = 2
 
 
 class ObjectListIteratorMulti(object):
@@ -47,7 +47,7 @@ class ObjectListIteratorMulti(object):
       page_size=OBJECT_LIST_PAGE_SIZE,
       max_workers=MAX_WORKERS,
       max_queue_size=MAX_QUEUE_SIZE,
-      major_version=MAJOR_VERSION,
+      api_major=API_MAJOR,
       client_args_dict=None,
       listObjects_args_dict=None,
   ):
@@ -55,10 +55,10 @@ class ObjectListIteratorMulti(object):
     self._page_size = page_size
     self._max_workers = max_workers
     self._max_queue_size = max_queue_size
-    self._major_version = major_version
+    self._api_major = api_major
     self._client_args_dict = client_args_dict or {}
     self._listObjects_args_dict = listObjects_args_dict or {}
-    # d1_common.type_conversions.set_default_pyxb_namespace(major_version)
+    # d1_common.type_conversions.set_default_pyxb_namespace(api_major)
 
   def __iter__(self):
     manager = multiprocessing.Manager()

@@ -172,8 +172,8 @@ def get_log(request):
 def get_node(request):
   """MNCore.getCapabilities() → Node
   """
-  major_version_int = 2 if d1_gmn.app.views.util.is_v2_api(request) else 1
-  node_pretty_xml = d1_gmn.app.node.get_pretty_xml(major_version_int)
+  api_major_int = 2 if d1_gmn.app.views.util.is_v2_api(request) else 1
+  node_pretty_xml = d1_gmn.app.node.get_pretty_xml(api_major_int)
   return django.http.HttpResponse(
     node_pretty_xml, d1_common.const.CONTENT_TYPE_XML
   )

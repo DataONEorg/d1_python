@@ -89,7 +89,7 @@ def pretty_xml(doc_xml):
 
 
 def pretty_pyxb(doc_pyxb):
-  return pretty_xml(doc_pyxb.toxml('utf-8'))
+  return pretty_xml(serialize(doc_pyxb))
 
 
 def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
@@ -117,11 +117,6 @@ def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
     xml.etree.ElementTree.fromstring(b_xml, parser=parser2)
   )
   return _is_equivalent(a_tree, b_tree) and _is_equivalent(b_tree, a_tree)
-
-
-#
-# Private
-#
 
 
 def _is_equivalent(a_tree, b_tree):

@@ -105,14 +105,14 @@ class ReplicationQueueProcessor(object):
       logging.exception(u'Replication failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.REPLICATION_MAX_ATTEMPTS:
-        logging.warning(
+        logging.warn(
           u'Replication failed and will be retried during next processing. '
           u'failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS
           )
         )
       else:
-        logging.warning(
+        logging.warn(
           u'Replication failed and has reached the maximum number of attempts. '
           u'Recording the request as permanently failed and notifying the CN. '
           u'failed_attempts={}, max_attempts={}'.format(

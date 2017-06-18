@@ -39,7 +39,6 @@ import d1_common.url
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
 from d1_test.d1_test_case import generate_reproducible_sciobj_str
-from d1_test.mock_api.list_objects import N_TOTAL
 
 import d1_client.util
 
@@ -63,7 +62,9 @@ def parse_rest_url(rest_url):
   param_list = _decode_path_elements(url_obj.path)
   endpoint_str = param_list.pop(0)
   query_dict = urlparse.parse_qs(url_obj.query) if url_obj.query else {}
-  client = d1_client.util.get_client_by_version_tag(version_tag)
+  client = d1_client.util.get_client_class_by_version_tag(version_tag)(
+    base_url='http://invalid/'
+  )
   return version_tag, endpoint_str, param_list, query_dict, client
 
 
@@ -90,7 +91,7 @@ def get_page(query_dict, n_total):
   n_start = int(query_dict['start'][0]) if 'start' in query_dict else 0
   n_count = int(query_dict['count'][0]) if 'count' in query_dict else n_total
   if n_start + n_count > n_total:
-    n_count = N_TOTAL - n_start
+    n_count = n_total - n_start
   return n_start, n_count
 
 
@@ -126,7 +127,7 @@ def echo_get_callback(request):
 
 
 @freezegun.freeze_time('1977-07-27')
-def generate_object_list(client, n_start, n_count):
+def generate_object_list(client, n_start, n_count, n_total):
   objectList = client.bindings.objectList()
 
   for i in range(n_count):
@@ -146,7 +147,7 @@ def generate_object_list(client, n_start, n_count):
 
   objectList.start = n_start
   objectList.count = len(objectList.objectInfo)
-  objectList.total = N_TOTAL
+  objectList.total = n_total
 
   #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return objectList.toxml('utf-8')
@@ -173,10 +174,6 @@ def generate_object_list(client, n_start, n_count):
 #     'header_dict': dict(request.headers),
 #   }
 #   return 200, header_dict, json.dumps(body_dict)
-
-#
-# Private
-#
 
 
 def _generate_system_metadata_for_sciobj_str(client, pid, sciobj_str):

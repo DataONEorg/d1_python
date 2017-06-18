@@ -56,15 +56,15 @@ EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid',)
 
 
 class TestPID(d1_test.d1_test_case.D1TestCase):
-  def deserialize_pid_and_check(self, doc, shouldfail=False):
+  def deserialize_pid_and_check(self, doc, raises_pyxb_exc=False):
     try:
       obj = dataoneTypes.CreateFromDocument(doc[0])
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
+      if raises_pyxb_exc:
         return
       else:
         raise
-    if shouldfail:
+    if raises_pyxb_exc:
       raise Exception('Did not receive expected exception')
     assert obj.value() == doc[1]
 
@@ -79,8 +79,8 @@ class TestPID(d1_test.d1_test_case.D1TestCase):
 
   def test_0030(self):
     """deserialize bad 1: Deserialize: XML -> PID (bad 1)"""
-    self.deserialize_pid_and_check(EG_BAD_PID_1, shouldfail=True)
+    self.deserialize_pid_and_check(EG_BAD_PID_1, raises_pyxb_exc=True)
 
   def test_0040(self):
     """deserialize bad 2: Deserialize: XML -> PID (bad 2)"""
-    self.deserialize_pid_and_check(EG_BAD_PID_2, shouldfail=True)
+    self.deserialize_pid_and_check(EG_BAD_PID_2, raises_pyxb_exc=True)

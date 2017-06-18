@@ -45,20 +45,16 @@ import d1_test.mock_api.ping
 
 import d1_client.baseclient
 
-# import d1_common.types.dataoneTypes_v1_1
-
-d1_common.util.log_setup(True)
-
 
 class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self, cn_mn_client_v1):
+  def test_0010(self):
     """__init__()"""
     base_client = d1_client.baseclient.DataONEBaseClient(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     assert isinstance(base_client, d1_client.baseclient.DataONEBaseClient)
 
-  def test_0020(self, cn_mn_client_v1):
+  def test_0020(self):
     """slice_sanity_check()"""
     cn_mn_client_v1 = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
@@ -70,7 +66,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       cn_mn_client_v1._slice_sanity_check(10, 'invalid_int')
 
-  def test_0030(self, cn_mn_client_v1):
+  def test_0030(self):
     """date_span_sanity_check()"""
     cn_mn_client_v1 = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
@@ -230,7 +226,8 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
 
   @d1_test.mock_api.catch_all.activate
   def test_0170(self, cn_mn_client_v1):
-    """CNgenerateIdentifier.generateIdentifier(): Converts DataONEException XML doc to exception"""
+    """CNRegister.generateIdentifier(): Converts DataONEException XML doc to
+    exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     scheme_str = (
       'scheme_' + d1_test.instance_generator.random_data.random_3_words()

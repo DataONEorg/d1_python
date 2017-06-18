@@ -90,7 +90,7 @@ def pytest_runtest_makereport(item, call):
         DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)
       ])
     except subprocess.CalledProcessError as e:
-      logging.warning(
+      logging.warn(
         'Unable to open in PyCharm. error="{}" src_path="{}", src_line={}'.
         format(str(e), src_path, src_line)
       )
@@ -157,3 +157,11 @@ def mn_client_v2(request):
 @pytest.fixture(scope='function', params=[mn_v1, mn_v2])
 def mn_client_v1_v2(request):
   yield request.param(MOCK_BASE_URL)
+
+
+# DB fixtures
+#
+# @pytest.fixture(scope='session')
+# def django_db_setup():# django_db_blocker):
+#   #with django_db_blocker.unblock():
+#   django.core.management.call_command('loaddata', 'db_fixture.json.bz2')

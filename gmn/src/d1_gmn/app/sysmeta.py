@@ -161,11 +161,6 @@ def get_identifier_type(did):
     assert False, u'Unable to classify identifier'
 
 
-#
-# Private
-#
-
-
 def _model_to_pyxb(pid):
   sciobj_model = d1_gmn.app.util.get_sci_model(pid)
   sysmeta_pyxb = _base_model_to_pyxb(sciobj_model)

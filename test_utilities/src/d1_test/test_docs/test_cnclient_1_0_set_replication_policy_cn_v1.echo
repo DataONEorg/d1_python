@@ -2,7 +2,7 @@
   "request": {
     "endpoint_str": "replicaPolicies", 
     "param_list": [
-      "\u3000\u0430d\u0e04\u30fb\u30b5\uc185\u1169\u0648jp\u064a\u043e\u12a3\u0995"
+      "acfagqwmwtfxqbb"
     ], 
     "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
     "query_dict": {}, 

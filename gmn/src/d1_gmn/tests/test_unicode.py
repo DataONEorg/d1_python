@@ -42,7 +42,7 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test(client):
       # print d1_test.util.read_utf8_to_unicode('tricky_identifiers_unicode.txt')
       # return
-      tricky_unicode_str = self.read_utf8_to_unicode(
+      tricky_unicode_str = self.load_sample_utf8_to_unicode(
         'tricky_identifiers_unicode.utf8.txt'
       )
       for line in tricky_unicode_str.splitlines():

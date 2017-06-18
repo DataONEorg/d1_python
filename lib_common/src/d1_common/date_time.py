@@ -64,6 +64,10 @@ def to_seconds_since_epoch(dt):
   return calendar.timegm(dt.utctimetuple())
 
 
+def ts_to_dt(ts, tz=None):
+  return datetime.datetime.fromtimestamp(ts, tz)
+
+
 def to_http_datetime(dt):
   """Format datetime to the preferred HTTP Full Date format, which is a
   fixed-length subset of that defined by RFC 1123.

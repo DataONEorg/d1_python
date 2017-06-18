@@ -40,9 +40,7 @@ def are_files_equal(old_file, new_file):
       return old_f.read() == new_f.read()
 
 
-#
 # RedBaron
-#
 
 
 def redbaron_module_path_to_tree(module_path):
@@ -173,6 +171,9 @@ def has_doc_str(node):
     isinstance(node.value[0], redbaron.nodes.StringNode) or
     isinstance(node.value[0], redbaron.nodes.UnicodeStringNode)
   )
+
+
+# Git
 
 
 def find_repo_root_by_path(path):

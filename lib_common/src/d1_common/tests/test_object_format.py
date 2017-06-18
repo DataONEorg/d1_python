@@ -27,7 +27,7 @@ import d1_test.d1_test_case
 
 
 class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
-  ofl_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+  ofl_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
     'objectFormatList_v2_0.xml'
   )
 

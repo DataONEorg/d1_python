@@ -31,15 +31,15 @@ import d1_test.d1_test_case
 class TestObjectList(d1_test.d1_test_case.D1TestCase):
   parameterize_dict = {
     'test_0010': [
-      dict(filename='object_list_gmn_valid.xml', shouldfail=False),
-      dict(filename='object_list_invalid_1.xml', shouldfail=True),
+      dict(filename='object_list_gmn_valid.xml', raises_pyxb_exc=False),
+      dict(filename='object_list_invalid_1.xml', raises_pyxb_exc=True),
     ],
   }
 
-  def test_0010(self, filename, shouldfail):
+  def test_0010(self, filename, raises_pyxb_exc):
     """Deserialize various ObjectList XML docs"""
     try:
-      self.read_sample_file(filename)
+      self.load_sample(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if not shouldfail:
+      if not raises_pyxb_exc:
         raise

@@ -52,8 +52,8 @@ class QueryEngineDescription(object):
     i = open(xml_path, 'rb').read()
     self.read(i)
 
-  def read(self, xml_flo):
-    self.doc = dataoneTypes.CreateFromDocument(xml_flo)
+  def read(self, xml_file):
+    self.doc = dataoneTypes.CreateFromDocument(xml_file)
 
   def assert_is_initialized(self):
     assert self.doc is not None

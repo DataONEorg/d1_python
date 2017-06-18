@@ -50,7 +50,7 @@ import d1_client.mnclient_2_0
 OBJECT_LIST_PAGE_SIZE = 100
 MAX_WORKERS = 10
 MAX_QUEUE_SIZE = 100
-MAJOR_VERSION = 2
+API_MAJOR = 2
 POOL_SIZE_FACTOR = 10
 
 
@@ -61,19 +61,19 @@ class SystemMetadataIteratorMulti(object):
       page_size=OBJECT_LIST_PAGE_SIZE,
       max_workers=MAX_WORKERS,
       max_queue_size=MAX_QUEUE_SIZE,
-      major_version=MAJOR_VERSION,
+      api_major=API_MAJOR,
       client_dict=None,
-      listObjects_dict=None,
-      getSysMeta_dict=None,
+      list_objects_dict=None,
+      get_sysmeta_dict=None,
   ):
     self._base_url = base_url
     self._page_size = page_size
     self._max_workers = max_workers
     self._max_queue_size = max_queue_size
-    self._major_version = major_version
+    self._api_major = api_major
     self._client_dict = client_dict or {}
-    self._listObjects_dict = listObjects_dict or {}
-    self._getSysMeta_dic = getSysMeta_dict or {}
+    self._list_objects_dict = list_objects_dict or {}
+    self._getSysMeta_dic = get_sysmeta_dict or {}
 
   def __iter__(self):
     manager = multiprocessing.Manager()
@@ -85,7 +85,8 @@ class SystemMetadataIteratorMulti(object):
       target=_get_all_pages,
       args=(
         queue, namespace, self._base_url, self._page_size, self._max_workers,
-        self._client_dict, self._listObjects_dict, self._getSysMeta_dic
+        self._api_major, self._client_dict, self._list_objects_dict,
+        self._getSysMeta_dic
       ),
     )
 
@@ -112,20 +113,24 @@ class SystemMetadataIteratorMulti(object):
     process.join()
 
 
-def _get_total_object_count(base_url, client_dict, listObjects_dict):
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
-  args_dict = listObjects_dict.copy()
+def _get_total_object_count(
+    base_url, api_major, client_dict, list_objects_dict
+):
+  client = create_client(base_url, api_major, client_dict)
+  args_dict = list_objects_dict.copy()
   args_dict['count'] = 0
   return client.listObjects(**args_dict).total
 
 
 def _get_all_pages(
-    queue, namespace, base_url, page_size, max_workers, client_dict,
-    listObjects_dict, getSysMeta_dict
+    queue, namespace, base_url, page_size, max_workers, api_major, client_dict,
+    list_objects_dict, get_sysmeta_dict
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_total = _get_total_object_count(base_url, client_dict, listObjects_dict)
+  n_total = _get_total_object_count(
+    base_url, api_major, client_dict, list_objects_dict
+  )
   n_pages = (n_total - 1) / page_size + 1
 
   for page_idx in range(n_pages):
@@ -136,8 +141,8 @@ def _get_all_pages(
     )
     pool.apply_async(
       _get_page, args=(
-        queue, namespace, base_url, page_idx, n_pages, page_size, client_dict,
-        listObjects_dict, getSysMeta_dict
+        queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
+        client_dict, list_objects_dict, get_sysmeta_dict
       )
     )
     # The pool does not support a clean way to limit the number of queued tasks
@@ -156,15 +161,15 @@ def _get_all_pages(
 
 
 def _get_page(
-    queue, namespace, base_url, page_idx, n_pages, page_size, client_dict,
-    listObjects_dict, getSysMeta_dict
+    queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
+    client_dict, list_objects_dict, get_sysmeta_dict
 ):
   if namespace.stop:
     return
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
+  client = create_client(base_url, api_major, client_dict)
   try:
     object_list_pyxb = client.listObjects(
-      start=page_idx * page_size, count=page_size, **listObjects_dict
+      start=page_idx * page_size, count=page_size, **list_objects_dict
     )
   except Exception as e:
     logging.error(
@@ -177,13 +182,13 @@ def _get_page(
       if namespace.stop:
         return
       _get_sysmeta(
-        client, queue, object_info_pyxb.identifier.value(), getSysMeta_dict
+        client, queue, object_info_pyxb.identifier.value(), get_sysmeta_dict
       )
 
 
-def _get_sysmeta(client, queue, pid, getSysMeta_dict):
+def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
   try:
-    sysmeta_pyxb = client.getSystemMetadata(pid, getSysMeta_dict)
+    sysmeta_pyxb = client.getSystemMetadata(pid, get_sysmeta_dict)
   except d1_common.types.exceptions.DataONEException as e:
     logging.debug(
       'getSystemMetadata() failed. pid="{}" error="{}"'.format(pid, str(e))
@@ -192,3 +197,10 @@ def _get_sysmeta(client, queue, pid, getSysMeta_dict):
   else:
     logging.debug('getSystemMetadata() ok. pid="{}"'.format(pid))
     queue.put(sysmeta_pyxb)
+
+
+def create_client(base_url, api_major, client_dict):
+  if api_major <= 1:
+    return d1_client.mnclient_1_1.MemberNodeClient_1_1(base_url, **client_dict)
+  else:
+    return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)

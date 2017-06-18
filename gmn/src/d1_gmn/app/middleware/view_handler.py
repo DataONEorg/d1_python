@@ -89,7 +89,7 @@ class ViewHandler(object):
         if cert_primary_str == d1_common.const.SUBJECT_PUBLIC:
           primary_subject_str = jwt_primary_str
         else:
-          logging.warning(
+          logging.warn(
             'Both a certificate and a JWT were provided and the primary '
             'subjects differ. Using the certificate for primary subject and'
             'the JWT as equivalent.'

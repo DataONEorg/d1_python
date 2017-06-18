@@ -87,7 +87,9 @@ def _parse_url(url):
 
 
 def _create_headers(sciobj_str, sysmeta_pyxb):
-  checksum_pyxb = d1_common.checksum.create_checksum_object(sciobj_str)
+  checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
+    sciobj_str
+  )
   return {
     'Content-Length':
       str(sysmeta_pyxb.size),

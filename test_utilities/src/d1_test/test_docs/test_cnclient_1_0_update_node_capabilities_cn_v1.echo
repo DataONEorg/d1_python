@@ -2,7 +2,7 @@
   "request": {
     "endpoint_str": "node", 
     "param_list": [
-      "urn:node:\u3000\u0430d\u0e04\u30fb\u30b5"
+      "urn:node:acfagq"
     ], 
     "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
     "query_dict": {}, 

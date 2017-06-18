@@ -2,12 +2,12 @@
   "request": {
     "endpoint_str": "replicaAuthorizations", 
     "param_list": [
-      "\u1169\u0648jp\u064a\u043e\u12a3\u0995\u83f2\u0435\u0438\u0627\u09c1v\u0f42\u2817\u03bc\u30fb"
+      "mwtfxqbbmwdidtdhwg"
     ], 
     "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
     "query_dict": {
       "targetNodeSubject": [
-        "urn:node:\u3000\u0430d\u0e04\u30fb\u30b5"
+        "urn:node:acfagq"
       ]
     }, 
     "version_tag": "v1"

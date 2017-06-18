@@ -25,6 +25,4 @@ import d1_test.d1_test_case
 
 
 class TestDataONEClient(d1_test.d1_test_case.D1TestCase):
-  @classmethod
-  def setUpClass(cls):
-    pass
+  pass

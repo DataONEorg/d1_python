@@ -206,11 +206,6 @@ def is_equivalent_xml(a_xml, b_xml):
   )
 
 
-#
-# Private
-#
-
-
 def _get_grouped_permission_dict(normalized_permission_list):
   """Arranges {normalized_permission_list} into a dict suitable as a base
   for building the briefest possible representation in an AccessPolicy PyXB

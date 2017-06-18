@@ -121,6 +121,10 @@ class EventCounter(object):
   def __init__(self):
     self._event_dict = {}
 
+  @property
+  def event_dict(self):
+    return self._event_dict
+
   def count(self, event_str, inc_int=1):
     self._event_dict.setdefault(event_str, 0)
     self._event_dict[event_str] += inc_int
@@ -151,7 +155,7 @@ def print_logging():
   root_logger = logging.getLogger()
   old_level_list = [h.level for h in root_logger.handlers]
   for h in root_logger.handlers:
-    h.setLevel(logging.WARNING)
+    h.setLevel(logging.warn)
   log_format = logging.Formatter('%(message)s')
   stream_handler = logging.StreamHandler(sys.stdout)
   stream_handler.setFormatter(log_format)

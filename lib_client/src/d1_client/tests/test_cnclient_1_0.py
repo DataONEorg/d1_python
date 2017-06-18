@@ -595,7 +595,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     pid_pyxb = cn_client_v1.bindings.Identifier(
       'test_update_replication_metadata_pid'
     )
-    replica_pyxb = d1_test.instance_generator.replica.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate_single()
     serial_version_int = 3
     received_echo_dict = cn_client_v1.updateReplicationMetadata(
       pid_pyxb, replica_pyxb, serial_version_int
@@ -609,7 +609,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     """CNReplication.updateReplicationMetadata(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
-    replica_pyxb = d1_test.instance_generator.replica.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate_single()
     serial_version_int = 3
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.updateReplicationMetadata(
@@ -624,7 +624,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     """CNReplication.setReplicationPolicy(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
-    replica_pyxb = d1_test.instance_generator.replica.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate_single()
     serial_version_int = 3
     received_echo_dict = cn_client_v1.setReplicationPolicy(
       pid_pyxb, replica_pyxb, serial_version_int
@@ -638,7 +638,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     """CNReplication.setReplicationPolicy(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     pid_pyxb = d1_test.instance_generator.identifier.generate()
-    replica_pyxb = d1_test.instance_generator.replica.generate()
+    replica_pyxb = d1_test.instance_generator.replica.generate_single()
     serial_version_int = 3
 
     with pytest.raises(d1_common.types.exceptions.NotFound):
@@ -683,7 +683,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     """CNRegister.updateNodeCapabilities(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    node_pyxb = self.load_sample_xml_to_pyxb('node_v1_0.xml')
     received_echo_dict = cn_client_v1.updateNodeCapabilities(
       node_ref_pyxb, node_pyxb
     )
@@ -696,7 +696,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     """CNRegister.updateNodeCapabilities(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
-    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    node_pyxb = self.load_sample_xml_to_pyxb('node_v1_0.xml')
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.updateNodeCapabilities(
         node_ref_pyxb, node_pyxb, vendorSpecific={'trigger': '404'}
@@ -708,7 +708,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
   def test_0560(self, cn_client_v1):
     """CNRegister.register(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    node_pyxb = self.load_sample_xml_to_pyxb('node_v1_0.xml')
     received_echo_dict = cn_client_v1.register(node_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'register', cn_client_v1
@@ -718,6 +718,6 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
   def test_0570(self, cn_client_v1):
     """CNRegister.register(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    node_pyxb = self.read_xml_file_to_pyxb('node_v1_0.xml')
+    node_pyxb = self.load_sample_xml_to_pyxb('node_v1_0.xml')
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.register(node_pyxb, vendorSpecific={'trigger': '404'})

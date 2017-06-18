@@ -50,7 +50,7 @@ class Test050Get(d1_test_case.D1TestCase):
     pid = object_info.identifier.value()
     # Verify checksum and checksum algorithm.
     response = client.get(context.TOKEN, pid)
-    checksum_from_get = test_utilities.calculate_checksum(
+    checksum_from_get = test_utilities.calculate_checksum_on_string(
       response, object_info.checksum.algorithm
     )
     assert object_info.checksum.value() == checksum_from_get

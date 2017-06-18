@@ -22,35 +22,37 @@
 For each Node in the environment, returns a PyXB representation of a DataONE
 Node document.
 
-https://releases.dataone.org/online/api-documentation-v2.0/apis/Types.html#Types.Node
+https://releases.dataone.org/online/api-documentation-v2.0/
+apis/Types.html#Types.Node
 """
 
 from __future__ import absolute_import
 
 import logging
 
-import d1_client.mnclient_2_0
+import d1_client.cnclient_2_0
 
-MAJOR_VERSION = 2
+API_MAJOR = 2
 
 
 class NodeListIterator(object):
   def __init__(
       self,
       base_url,
-      major_version=MAJOR_VERSION,
+      api_major=API_MAJOR,
       client_dict=None,
       listNodes_dict=None,
   ):
     self._base_url = base_url
-    self._major_version = major_version
+    self._api_major = api_major
     self._client_dict = client_dict or {}
     self._listNodes_dict = listNodes_dict
 
   def __iter__(self):
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+    client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       self._base_url, **self._client_dict
     )
+    # The NodeList type does not support slicing.
     node_list_pyxb = client.listNodes()
     logging.debug(
       'Retrieved {} Node documents'.format(len(node_list_pyxb.node))

@@ -95,7 +95,7 @@ class Test310Create(d1_test_case.D1TestCase):
     context.scidata_file = self.generate_random_file(context.scidata_size)
 
     context.scidata_file.seek(0)
-    context.checksum = test_utilities.calculate_checksum(
+    context.checksum = test_utilities.calculate_checksum_on_string(
       context.scidata_file, context.checksum_algorithm
     )
 
@@ -117,7 +117,7 @@ class Test310Create(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     response = client.get(context.TOKEN, context.pid_created)
     # Calculate the checksum.
-    checksum = test_utilities.calculate_checksum(
+    checksum = test_utilities.calculate_checksum_on_string(
       response, context.checksum_algorithm
     )
     assert context.checksum == checksum

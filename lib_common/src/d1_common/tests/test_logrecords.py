@@ -31,18 +31,18 @@ import d1_test.d1_test_case
 class TestLogRecords(d1_test.d1_test_case.D1TestCase):
   parameterize_dict = {
     'test_0010': [
-      dict(filename='log_gmn_valid.xml', shouldfail=False),
-      dict(filename='log_knb_valid.xml', shouldfail=False),
-      dict(filename='log_invalid_1.xml', shouldfail=True),
-      dict(filename='log_invalid_2.xml', shouldfail=True),
-      dict(filename='log_invalid_3.xml', shouldfail=True),
+      dict(filename='log_gmn_valid.xml', raises_pyxb_exc=False),
+      dict(filename='log_knb_valid.xml', raises_pyxb_exc=False),
+      dict(filename='log_invalid_1.xml', raises_pyxb_exc=True),
+      dict(filename='log_invalid_2.xml', raises_pyxb_exc=True),
+      dict(filename='log_invalid_3.xml', raises_pyxb_exc=True),
     ],
   }
 
-  def test_0010(self, filename, shouldfail):
+  def test_0010(self, filename, raises_pyxb_exc):
     """Deserialize various Log XML docs"""
     try:
-      self.read_xml_file_to_pyxb(filename)
+      self.load_sample_xml_to_pyxb(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if not shouldfail:
+      if not raises_pyxb_exc:
         raise

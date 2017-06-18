@@ -33,7 +33,7 @@ import d1_test.d1_test_case
 
 
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
-  sm_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+  sm_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
     'systemMetadata_v2_0.xml'
   )
 
@@ -42,11 +42,11 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     pyxb.PyXBException on invalid XML doc
     """
     with pytest.raises(pyxb.PyXBException):
-      self.read_xml_file_to_pyxb('systemMetadata_v1_0.invalid.xml')
+      self.load_sample_xml_to_pyxb('systemMetadata_v1_0.invalid.xml')
 
   def test_0020(self):
     """is_equivalent() Returns False for modified sysmeta"""
-    modified_pyxb = self.read_xml_file_to_pyxb('systemMetadata_v2_0.xml')
+    modified_pyxb = self.load_sample_xml_to_pyxb('systemMetadata_v2_0.xml')
     modified_pyxb.identifier = 'modifiedIdentifier'
     assert not d1_common.system_metadata.is_equivalent_pyxb(
       self.sm_pyxb, modified_pyxb
@@ -63,7 +63,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     any order without changing the meaning of the doc have been shuffled
     around
     """
-    swizzled_pyxb = self.read_xml_file_to_pyxb(
+    swizzled_pyxb = self.load_sample_xml_to_pyxb(
       'systemMetadata_v2_0.swizzled.xml'
     )
     assert d1_common.system_metadata.is_equivalent_pyxb(

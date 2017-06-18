@@ -72,8 +72,9 @@ def _request_callback(request):
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }
   return (
-    200, header_dict,
-    d1_test.mock_api.util.generate_object_list(client, n_start, n_count),
+    200, header_dict, d1_test.mock_api.util.generate_object_list(
+      client, n_start, n_count, N_TOTAL
+    ),
   )
 
 

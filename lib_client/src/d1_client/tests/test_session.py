@@ -41,11 +41,6 @@ import d1_client.session as session
 
 
 class TestSession(d1_test.d1_test_case.D1TestCase):
-  # @classmethod
-  # @responses.activate
-  # # def setup_class(cls):
-  # def setup_method(self, method):
-
   def _get_hash(self, pid):
     mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     s = session.Session(d1_test.d1_test_case.MOCK_BASE_URL)

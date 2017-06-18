@@ -84,7 +84,9 @@ def _generate_system_metadata_for_science_object(
 
   sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
-  sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object(sciobj_str)
+  sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
+    sciobj_str
+  )
   sysmeta_pyxb.dateSysMetadataModified = now
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.formatId = format_id

@@ -29,25 +29,18 @@ import d1_test.d1_test_case
 
 
 class TestNodeList(d1_test.d1_test_case.D1TestCase):
-  # def test_0000(self):
-  #   self.write_sample_file('node_list_gmn_valid.xml', EG_NODELIST_GMN)
-  #   self.write_sample_file('node_list_knb_valid.xml', EG_NODELIST_KNB)
-  #   self.write_sample_file('node_list_invalid_1.xml', EG_BAD_NODELIST_1)
-  #   self.write_sample_file('node_list_invalid_2.xml', EG_BAD_NODELIST_2)
-  #   self.write_sample_file('node_list_invalid_3.xml', EG_BAD_NODELIST_3)
-
   parameterize_dict = {
     'test_0010': [
-      dict(filename='node_list_gmn_valid.xml', shouldfail=False),
-      dict(filename='node_list_invalid_1.xml', shouldfail=True),
-      dict(filename='node_list_invalid_2.xml', shouldfail=True),
+      dict(filename='node_list_gmn_valid.xml', raises_pyxb_exc=False),
+      dict(filename='node_list_invalid_1.xml', raises_pyxb_exc=True),
+      dict(filename='node_list_invalid_2.xml', raises_pyxb_exc=True),
     ],
   }
 
-  def test_0010(self, filename, shouldfail):
+  def test_0010(self, filename, raises_pyxb_exc):
     """Deserialize various NodeList XML docs"""
     try:
-      self.read_sample_file(filename)
+      self.load_sample(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if not shouldfail:
+      if not raises_pyxb_exc:
         raise

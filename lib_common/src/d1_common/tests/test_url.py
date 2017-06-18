@@ -31,7 +31,7 @@ HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):
-  _unicode_strings = d1_test.d1_test_case.D1TestCase.read_utf8_to_unicode(
+  _unicode_strings = d1_test.d1_test_case.D1TestCase.load_sample_utf8_to_unicode(
     'testUnicodeStrings.utf8.txt'
   )
 

@@ -162,7 +162,7 @@ class ExceptionHandler(object):
         '--line', src_line_num, src_path
       ])
     except subprocess.CalledProcessError as e:
-      logging.warning(
+      logging.warn(
         'PyCharm debugging is enabled but opening the location of the exception '
         'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
           e.message, src_path, src_line_num

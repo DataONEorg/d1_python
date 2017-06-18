@@ -98,17 +98,17 @@ def read_utf8_xml(stream_obj):
   raise d1_common.types.exceptions.ServiceFailure(0, msg)
 
 
-def deserialize(xml_flo):
+def deserialize(xml_file):
   # Since the entire XML document must be in memory while being deserialized,
   # we limit the size we are willing to handle.
-  if xml_flo.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
+  if xml_file.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
-      .format(xml_flo.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
+      .format(xml_file.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
     )
   try:
-    xml_str = read_utf8_xml(xml_flo)
+    xml_str = read_utf8_xml(xml_file)
   except d1_common.types.exceptions.ServiceFailure as e:
     raise d1_common.types.exceptions.InvalidRequest(e.message)
   try:

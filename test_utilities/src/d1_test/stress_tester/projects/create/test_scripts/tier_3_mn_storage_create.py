@@ -70,10 +70,10 @@ class Transaction(transaction.Transaction):
     self.check_response(response)
 
   def create_science_object(self):
-    return random_data.random_bytes_flo(N_SCI_OBJ_BYTES)
+    return random_data.random_bytes_file(N_SCI_OBJ_BYTES)
 
   def create_system_metadata(self, sci_obj, access_policy):
-    return system_metadata.generate_from_flo(
+    return system_metadata.generate_from_file(
       sci_obj, {
         'identifier': self.generate_random_ascii_pid(),
         'accessPolicy': access_policy,

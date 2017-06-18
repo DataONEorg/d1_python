@@ -36,7 +36,7 @@ import django.http
 class RequestHandler(object):
   def process_request(self, request):
     if django.conf.settings.DEBUG_GMN and django.conf.settings.DEBUG_ECHO_REQUEST:
-      logging.warning('django.conf.settings.DEBUG_ECHO_REQUEST=True')
+      logging.warn('django.conf.settings.DEBUG_ECHO_REQUEST=True')
       pp = pprint.PrettyPrinter(indent=2)
       return django.http.HttpResponse(
         pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT

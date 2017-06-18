@@ -28,7 +28,7 @@ import d1_gmn.tests.gmn_test_case
 
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  cert_simple_subject_info_pem = d1_gmn.tests.gmn_test_case.GMNTestCase.read_sample_file(
+  cert_simple_subject_info_pem = d1_gmn.tests.gmn_test_case.GMNTestCase.load_sample(
     'cert_with_simple_subject_info.pem'
   )
 

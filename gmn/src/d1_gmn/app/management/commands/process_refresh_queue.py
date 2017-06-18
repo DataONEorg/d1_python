@@ -91,7 +91,7 @@ class SysMetaRefreshQueueProcessor(object):
       logging.exception(u'System Metadata refresh failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
-        logging.warning(
+        logging.warn(
           u'SysMeta refresh failed and will be retried during next processing. '
           u'failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts,
@@ -99,7 +99,7 @@ class SysMetaRefreshQueueProcessor(object):
           )
         )
       else:
-        logging.warning(
+        logging.warn(
           u'SysMeta refresh failed and has reached the maximum number of '
           u'attempts. Recording the request as permanently failed and '
           u'removing from queue. failed_attempts={}, max_attempts={}'.format(

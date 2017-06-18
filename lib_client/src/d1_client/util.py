@@ -28,12 +28,12 @@ import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 
 
-def get_client_by_version_tag(api_major, base_url='http://invalid/'):
+def get_client_class_by_version_tag(api_major):
   api_major = str(api_major)
   if api_major in ('v1', '1'):
-    return d1_client.mnclient_1_1.MemberNodeClient_1_1(base_url)
+    return d1_client.mnclient_1_1.MemberNodeClient_1_1
   elif api_major in ('v2', '2'):
-    return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url)
+    return d1_client.mnclient_2_0.MemberNodeClient_2_0
   else:
     raise ValueError('Unknown DataONE API version tag: {}'.format(api_major))
 

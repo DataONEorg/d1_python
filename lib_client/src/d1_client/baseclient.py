@@ -162,6 +162,7 @@ class DataONEBaseClient(
       .format(expected_type_str, received_type_str)
     )
 
+  # noinspection PyProtectedMember
   def _assert_correct_dataone_type(self, response, pyxb_obj, d1_type_name):
     s = str(pyxb_obj._ExpandedName).split('}')[-1]
     if s != d1_type_name:

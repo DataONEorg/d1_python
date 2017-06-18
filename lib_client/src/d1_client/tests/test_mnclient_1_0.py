@@ -36,10 +36,10 @@ import d1_test.mock_api.create
 
 
 class TestMNClient(d1_test.d1_test_case.D1TestCase):
-  sysmeta_pyxb = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+  sysmeta_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
     'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
   )
-  sysmeta_xml = d1_test.d1_test_case.D1TestCase.read_xml_file_to_pyxb(
+  sysmeta_xml = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
     'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
   )
   obj = 'test'
@@ -111,46 +111,3 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
       '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )
     assert identifier_pyxb.value() == 'echo-post'
-
-  # @responses.activate
-  # def test_0030(self):
-  #   """MNCore.getCapabilities(): """
-
-  # @unittest.skip(
-  #   "TODO: Skipped due to waiting for test env. Should set up test env or remove"
-  # )
-  # @responses.activate
-  # def test_0040(self):
-  #   """"""
-  #   """MNCore.ping() returns True"""
-  #   ping = self.mn_client_v1.ping()
-  #   self.assertIsInstance(ping, bool)
-  #   self.assertTrue(ping)
-  #
-  # @unittest.skip(
-  #   "TODO: Skipped due to waiting for test env. Should set up test env or remove"
-  # )
-  # @responses.activate
-  # def test_0050(self):
-  #   """"""
-  #   """MNCore.getCapabilities() returns a valid Node"""
-  #   node = self.mn_client_v1.getCapabilities()
-  #   self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
-  #
-  # # ============================================================================
-  # # MNRead
-  # # ============================================================================
-  #
-  # # Only tested through GMN integration tests for now.
-  #
-  # #=========================================================================
-  # # MNStorage
-  # #=========================================================================
-  #
-  # # Only tested through GMN integration tests for now.
-  #
-  # #=========================================================================
-  # # MNReplication
-  # #=========================================================================
-  #
-  # # Only tested through GMN integration tests for now.

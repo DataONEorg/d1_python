@@ -34,7 +34,7 @@ import os
 import shutil
 import sys
 
-import file_iterator as file_iterator
+import d1_dev.file_iterator
 
 import d1_common.util
 
@@ -45,6 +45,7 @@ JUNK_GLOB_LIST = [
   '.cache/',
   # Files
   '*~', '*.bak', '*.tmp', '*.pyc', '.coverage', 'coverage.xml',
+  'pip_freeze_*.txt',
 ] # yapf: disable
 
 
@@ -69,10 +70,9 @@ def main():
   )
 
   args = parser.parse_args()
-
   d1_common.util.log_setup(args.debug)
 
-  itr = file_iterator.file_iter(
+  itr = d1_dev.file_iterator.file_iter(
     path_list=args.path,
     include_glob_list=args.include,
     exclude_glob_list=args.exclude,

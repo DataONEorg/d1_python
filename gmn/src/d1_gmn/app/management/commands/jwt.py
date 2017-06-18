@@ -79,10 +79,10 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(str(e))
 
   def _handle(self, command_str, jwt_path):
-    jwt_base64 = self._read_jwt(jwt_path)
+    jwt_b64 = self._read_jwt(jwt_path)
     try:
       primary_list = d1_gmn.app.middleware.session_jwt.get_subject_list_without_validate(
-        jwt_base64
+        jwt_b64
       )
       if not primary_list:
         raise jwt.InvalidTokenError('No subject')

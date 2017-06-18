@@ -21,9 +21,10 @@
 """LogRecordIterator
 
 An iterator that provides a convenient way to retrieve log records from a
-DataONE node and iterate over the results. Log records are retrieved from the
-node in batches as required. The returned log records can be filtered by
-providing arguments to getLogRecords() via the getlogRecords_dict parameter.
+DataONE node and iterate over the results. Log records are automatically
+retrieved from the node in batches as required. The returned log records can be
+filtered by providing arguments to getLogRecords() via the getlogRecords_dict
+parameter.
 """
 
 
@@ -33,7 +34,7 @@ class LogRecordIterator(object):
       client,
       getlogRecords_dict=None,
       start=0,
-      count=100,
+      count=1000,
   ):
     """
     :param client: The client that will be used for calling getlogRecords()
