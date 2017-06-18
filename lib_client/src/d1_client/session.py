@@ -23,6 +23,7 @@ from __future__ import absolute_import
 import collections
 import datetime
 import logging
+import os
 import urlparse
 
 import cachecontrol
@@ -39,6 +40,9 @@ DEFAULT_NUMBER_OF_RETRIES = 3
 DEFAULT_USE_CACHE = True
 DEFAULT_USE_STREAM = False
 DEFAULT_VERIFY_TLS = True
+DEFAULT_SUPPRESS_VERIFY_WARNINGS = False
+
+UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 
 class Session(object):
@@ -95,8 +99,12 @@ class Session(object):
     :type use_stream: bool
 
     :param verify_tls: Verify the server side TLS/SSL certificate.
-      (default: True)
-    :type verify_tls: bool
+      (default: True). Can also hold a path that points to a trusted CA bundle
+    :type verify_tls: bool or path
+
+    :param suppress_verify_warnings: Suppress the warnings issued when
+      {verify_tls} is set to False.
+    :type suppress_verify_warnings: bool
 
     :param user_agent: Override the default User-Agent string used by d1client.
     :type user_agent: str
@@ -111,14 +119,17 @@ class Session(object):
     self._scheme, self._host, self._port, self._path = urlparse.urlparse(
       base_url
     )[:4]
-
     self._api_major = 1
     self._api_minor = 0
-
     # Adapter
     self._use_cache = kwargs_dict.pop('use_cache', DEFAULT_USE_CACHE)
     self._max_retries = kwargs_dict.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
-
+    # Option to suppress SSL/TLS verification warnings
+    suppress_verify_warnings = kwargs_dict.pop(
+      'suppress_verify_warnings', DEFAULT_SUPPRESS_VERIFY_WARNINGS
+    )
+    if suppress_verify_warnings:
+      requests.packages.urllib3.disable_warnings()
     # Default parameters for requests
     self._default_request_arg_dict = {
       'params':
@@ -136,6 +147,11 @@ class Session(object):
           kwargs_dict.pop('charset', d1_common.const.DEFAULT_CHARSET),
       },
     }
+    # Use the OS trust store on Ubuntu and derivatives
+    if self._default_request_arg_dict['verify'] is True:
+      if os.path.isfile(UBUNTU_CA_BUNDLE_PATH):
+        self._default_request_arg_dict['verify'] = UBUNTU_CA_BUNDLE_PATH
+    # Default headers
     self._default_request_arg_dict['headers'
                                    ].update(kwargs_dict.pop('headers', {}))
     self._default_request_arg_dict.update(kwargs_dict)
