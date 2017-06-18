@@ -21,22 +21,17 @@
 
 from __future__ import absolute_import
 
-import logging
-import unittest
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.replication_policy as replicationpolicy
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestReplicationPolicy')
 class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """generate()"""
     replication_policy_obj = replicationpolicy.generate()
-    assert replication_policy_obj.toxml('utf-8')
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    self.assert_equals_sample(
+      replication_policy_obj, 'test_replica_policy__generate'
+    )

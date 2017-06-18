@@ -21,25 +21,21 @@
 
 from __future__ import absolute_import
 
-import logging
-import unittest
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.replica as replica
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestReplica')
 class TestReplica(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """generate()"""
-    replica.generate()
+    replica_list = replica.generate()
+    replica_xml_str = ''.join([r.toxml('utf-8') for r in replica_list])
+    self.assert_equals_sample(replica_xml_str, 'test_replica_generate')
 
   def test_0020(self):
-    """generate_list()"""
-    replica.generate_list()
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    """generate_single()"""
+    replica_pyxb = replica.generate_single()
+    self.assert_equals_sample(replica_pyxb, 'test_replica_generate_single')

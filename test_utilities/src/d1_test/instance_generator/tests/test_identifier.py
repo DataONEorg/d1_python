@@ -21,10 +21,6 @@
 
 from __future__ import absolute_import
 
-import logging
-import random
-import unittest
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.random_data as random_data
@@ -32,20 +28,12 @@ import d1_test.instance_generator.random_data as random_data
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestIdentifier')
 class TestIdentifier(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """generate()"""
-    for i in range(10):
-      min_len = random.randint(1, 100)
-      max_len = random.randint(101, 200)
-      prefix = random_data.random_unicode_string_no_whitespace()
-      min_len += len(prefix)
-      max_len += len(prefix)
-      identifier_obj = identifier.generate(prefix, min_len, max_len)
-      assert len(identifier_obj.value()) >= min_len
-      assert len(identifier_obj.value()) <= max_len
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    id_list = [
+      identifier.generate(random_data.random_lower_ascii(), i,
+                          i + 5).toxml('utf-8') for i in range(10)
+    ]
+    self.assert_equals_sample(id_list, 'inst_gen__identifier')

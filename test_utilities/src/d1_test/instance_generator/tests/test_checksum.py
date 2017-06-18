@@ -21,16 +21,17 @@
 
 from __future__ import absolute_import
 
-import d1_common.checksum
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.checksum as checksum
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestChecksum')
 class TestChecksum(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
-    assert d1_common.checksum.is_supported_algorithm(algorithm_str)
+    self.assert_equals_sample(
+      algorithm_str, 'inst_gen__checksum__random_checksum_algorithm'
+    )

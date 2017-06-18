@@ -21,109 +21,101 @@
 
 from __future__ import absolute_import
 
-import logging
-import random
-import unittest
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestRandomData')
 class TestRandomData(d1_test.d1_test_case.D1TestCase):
-  def _assert_unique(self, unique_list):
-    count = {}
-    for item in unique_list:
-      try:
-        count[item] += 1
-      except LookupError:
-        count[item] = 1
-      assert len(item) > 0
-    for name, count in count.items():
-      assert count == 1
-
   def test_0010(self):
     """random_bytes()"""
-    s = d1_test.instance_generator.random_data.random_bytes(1000)
-    assert len(s) == 1000
+    s = d1_test.instance_generator.random_data.random_bytes(100)
+    self.assert_equals_sample(s, 'inst_gen__random_data__random_bytes')
 
   def test_0020(self):
     """random_unicode_name()"""
-    name = d1_test.instance_generator.random_data.random_unicode_name()
-    assert len(name) > 0
-    assert isinstance(name, unicode)
+    name_list = [
+      d1_test.instance_generator.random_data.random_unicode_name()
+      for _ in range(10)
+    ]
+    self.assert_equals_sample(
+      name_list, 'inst_gen__random_data__random_unicode_name'
+    )
 
   def test_0030(self):
     """random_unicode_name_list()"""
-    names = d1_test.instance_generator.random_data.random_unicode_name_list(10)
-    assert len(names) == 10
-    for name in names:
-      assert len(names) > 0
-      assert isinstance(name, unicode)
+    name_list = d1_test.instance_generator.random_data.random_unicode_name_list(
+      10
+    )
+    self.assert_equals_sample(
+      name_list, 'inst_gen__random_data__random_unicode_name_list'
+    )
 
   def test_0040(self):
     """random_unicode_name_unique_list()"""
-    for i in range(10):
-      names = d1_test.instance_generator.random_data.random_unicode_name_unique_list(
-        30
-      )
-      assert len(names) == 30
-      assert isinstance(names[0], unicode)
-      self._assert_unique(names)
+    name_list = d1_test.instance_generator.random_data.random_unicode_name_unique_list(
+      30
+    )
+    self.assert_equals_sample(
+      name_list, 'inst_gen__random_data__random_unicode_name_unique_list'
+    )
 
   def test_0050(self):
     """random_word()"""
-    word = d1_test.instance_generator.random_data.random_word()
-    assert len(word) > 0
-    assert isinstance(word, unicode)
+    word_list = [
+      d1_test.instance_generator.random_data.random_word() for _ in range(10)
+    ]
+    self.assert_equals_sample(word_list, 'inst_gen__random_data__random_word')
 
   def test_0060(self):
     """random_3_words()"""
-    words = d1_test.instance_generator.random_data.random_3_words()
-    assert len(words) > 0
-    assert isinstance(words, unicode)
+    word_list = [
+      d1_test.instance_generator.random_data.random_3_words()
+      for _ in range(10)
+    ]
+    self.assert_equals_sample(
+      word_list, 'inst_gen__random_data__random_3_words'
+    )
 
   def test_0070(self):
     """random_word_list()"""
-    words = d1_test.instance_generator.random_data.random_word_list(10)
-    assert len(words) == 10
-    for word in words:
-      assert len(words) > 0
-      assert isinstance(word, unicode)
+    word_list = d1_test.instance_generator.random_data.random_word_list(10)
+    self.assert_equals_sample(
+      word_list, 'inst_gen__random_data__random_word_list'
+    )
 
   def test_0080(self):
     """random_word_unique_list()"""
-    for i in range(10):
-      names = d1_test.instance_generator.random_data.random_word_unique_list(30)
-      assert len(names) == 30
-      assert isinstance(names[0], unicode)
-      self._assert_unique(names)
+    unique_word_list = d1_test.instance_generator.random_data.random_word_unique_list(
+      30
+    )
+    assert len(set(unique_word_list)) == len(unique_word_list)
+    self.assert_equals_sample(
+      unique_word_list, 'inst_gen__random_data__random_word_unique_list'
+    )
 
   def test_0090(self):
     """random_unicode_string()"""
-    for i in range(10):
-      min_len = random.randint(0, 100)
-      max_len = random.randint(min_len, 100)
-      s = d1_test.instance_generator.random_data.random_unicode_string_no_whitespace(
-        min_len, max_len
-      )
-      assert len(s) >= min_len
-      assert len(s) <= max_len
+    string_list = [
+      d1_test.instance_generator.random_data.random_lower_ascii(i, i + 5)
+      for i in range(10)
+    ]
+    self.assert_equals_sample(
+      string_list, 'inst_gen__random_data__random_unicode_string'
+    )
 
   def test_0100(self):
     """random_email()"""
-    for i in range(10):
-      s = d1_test.instance_generator.random_data.random_email()
-      assert s
+    email_list = [
+      d1_test.instance_generator.random_data.random_email() for _ in range(10)
+    ]
+    self.assert_equals_sample(email_list, 'inst_gen__random_data__random_email')
 
   def test_0110(self):
     """random_bool()"""
-    for i in range(10):
-      b = d1_test.instance_generator.random_data.random_bool()
-      assert isinstance(b, bool)
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    bool_list = [
+      d1_test.instance_generator.random_data.random_bool() for _ in range(10)
+    ]
+    self.assert_equals_sample(bool_list, 'inst_gen__random_data__random_bool')

@@ -235,9 +235,8 @@ WORDS_1K = [
 
 
 def random_words(count=100, supplemental_word_file_path='/usr/share/dict/words'):
-  """Return a random selection of count words from WORDS_1K or by reading
-  from source if the number of words requested is more than available in
-  WORDS_1K.
+  """Return a random selection of count words from WORDS_1K. Include words from
+  file if number of words requested is more than available in WORDS_1K.
   """
   if count <= len(WORDS_1K):
     return random.sample(WORDS_1K, count)

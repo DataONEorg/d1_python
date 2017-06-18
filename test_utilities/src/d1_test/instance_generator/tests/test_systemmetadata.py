@@ -21,31 +21,28 @@
 
 from __future__ import absolute_import
 
-import hashlib
-import unittest
-
-import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.system_metadata as sysmeta
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestSystemMetadata')
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
   def test_0010(self, cn_client_v1_v2):
     """generate()"""
-    s = sysmeta.generate(cn_client_v1_v2)
-    assert isinstance(s, dataoneTypes_v1.SystemMetadata)
-    assert s.toxml('utf-8')
+    sysmeta_pyxb = sysmeta.generate(cn_client_v1_v2)
+    self.assert_equals_sample(
+      sysmeta_pyxb, 'inst_gen__systemmetadata__generate', cn_client_v1_v2
+    )
 
-  @unittest.skip('TODO')
-  def test_020(self):
-    """generate_from_file()"""
-    s = sysmeta.generate_from_file(__file__)
-    assert isinstance(s, dataoneTypes_v1.SystemMetadata)
-    assert s.toxml('utf-8')
-    checksum_calculator = hashlib.sha1()
-    with open(__file__, 'rb') as f:
-      checksum_calculator.update(f.read())
-    assert s.checksum.value() == checksum_calculator.hexdigest()
+  def test_020(self, cn_client_v1_v2):
+    """generate_from_file_path()"""
+    sysmeta_path = self.get_sample_path('systemMetadata_v2_0.xml')
+    sysmeta_pyxb = sysmeta.generate_from_file_path(
+      cn_client_v1_v2, sysmeta_path
+    )
+    self.assert_equals_sample(
+      sysmeta_pyxb, 'inst_gen__systemmetadata__generate_from_file_path',
+      cn_client_v1_v2
+    )

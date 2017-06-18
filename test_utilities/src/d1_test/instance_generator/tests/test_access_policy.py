@@ -21,54 +21,56 @@
 
 from __future__ import absolute_import
 
-import logging
-import unittest
-
-import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy as access_policy
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestAccessPolicy')
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """select_random_set_of_permissions()"""
-    for i in range(10):
-      permissions = access_policy.random_set_of_permissions()
-      assert access_policy.permission_labels_to_objects(permissions)
+    permissions = access_policy.random_set_of_permissions()
+    self.assert_equals_sample(
+      permissions, 'inst_gen__access_policy__select_random_set_of_permissions'
+    )
 
   def test_0020(self):
     """permissions_to_tag_string()"""
-    for i in range(10):
-      permissions = access_policy.random_set_of_permissions()
-      s = access_policy.permissions_to_tag_string(permissions)
-      assert isinstance(s, unicode)
+    permissions = access_policy.random_set_of_permissions()
+    s = access_policy.permissions_to_tag_string(permissions)
+    self.assert_equals_sample(
+      s, 'inst_gen__access_policy__permissions_to_tag_string'
+    )
 
   def test_0030(self):
     """random_subject_with_permission_labels()"""
-    for i in range(10):
-      permissions = access_policy.random_set_of_permissions()
-      access_policy.random_subject_with_permission_labels(permissions)
+    permissions = access_policy.random_set_of_permissions()
+    s = access_policy.random_subject_with_permission_labels(permissions)
+    self.assert_equals_sample(
+      s, 'inst_gen__access_policy__random_subject_with_permission_labels'
+    )
 
   def test_0040(self):
     """random_subjects_with_permission_labels()"""
-    for i in range(100):
-      permissions = access_policy.random_set_of_permissions()
-      subjects = access_policy.random_subjects_with_permission_labels(
-        permissions
-      )
-      assert isinstance(subjects, list)
+    permissions = access_policy.random_set_of_permissions()
+    subjects = access_policy.random_subjects_with_permission_labels(permissions)
+    self.assert_equals_sample(
+      subjects,
+      'inst_gen__access_policy__random_subjects_with_permission_labels'
+    )
 
   def test_0050(self):
     """generate()"""
-    for i in range(10):
-      access_policy_pyxb = access_policy.generate()
-      assert isinstance(access_policy_pyxb, dataoneTypes_v1.AccessPolicy)
-      assert access_policy_pyxb.toxml('utf-8')
+    access_policy_pyxb = access_policy.generate()
+    self.assert_equals_sample(
+      access_policy_pyxb, 'inst_gen__access_policy__generate'
+    )
 
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+  def test_0060(self):
+    """random_subject_list()"""
+    subject_list = access_policy.random_subject_list()
+    self.assert_equals_sample(
+      subject_list, 'inst_gen__access_policy__random_subject_list'
+    )

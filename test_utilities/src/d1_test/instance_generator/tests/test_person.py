@@ -21,25 +21,15 @@
 
 from __future__ import absolute_import
 
-import logging
-import unittest
-
-import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.person as person
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestPerson')
 class TestPerson(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """generate()"""
-    person_obj = person.generate()
-    assert isinstance(person_obj, dataoneTypes_v1.Person)
-    assert person_obj.toxml('utf-8')
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    person_list = [person.generate().toxml('utf-8') for _ in range(3)]
+    self.assert_equals_sample(person_list, 'inst_gen__person')

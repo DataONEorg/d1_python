@@ -23,7 +23,6 @@
 
 from __future__ import absolute_import
 
-import logging
 import os
 import random
 
@@ -32,8 +31,11 @@ import d1_common.checksum
 import d1_test.instance_generator.access_policy as access_policy
 import d1_test.instance_generator.checksum as checksum_generator
 import d1_test.instance_generator.dates as dates
+import d1_test.instance_generator.format_id
 import d1_test.instance_generator.identifier as identifier
+import d1_test.instance_generator.media_type
 import d1_test.instance_generator.random_data as random_data
+import d1_test.instance_generator.replica
 import d1_test.instance_generator.replication_policy as replication_policy
 
 
@@ -45,8 +47,7 @@ def generate(client, options=None):
   providing previously created objects of the appropriate types.
 
   E.g., providing an Identifier object in options['identifier'] causes that
-  object to be used and prevents a randomly generated Identifier from being
-  used.
+  object to be used instead of a randomly generated Identifier.
   """
   options = options or {}
 
@@ -55,47 +56,65 @@ def generate(client, options=None):
   sysmeta_pyxb.identifier = options.get(
     'identifier', identifier.generate(prefix='id_')
   )
-  sysmeta_pyxb.dateUploaded = options.get('dateUploaded', dates.now())
-  sysmeta_pyxb.formatId = options.get('formatId', 'application/octet-stream')
-  sysmeta_pyxb.checksum = options.get('checksum', checksum_generator.generate())
+  sysmeta_pyxb.formatId = options.get(
+    'formatId', d1_test.instance_generator.format_id.generate()
+  )
   sysmeta_pyxb.size = options.get('size', random.randint(1, 1024**4))
-  sysmeta_pyxb.submitter = options.get(
-    'submitter', u'submitter_' + random_data.random_3_words()
-  )
+  sysmeta_pyxb.checksum = options.get('checksum', checksum_generator.generate())
+  sysmeta_pyxb.submitter = options.get('submitter', random_data.random_subj())
   sysmeta_pyxb.rightsHolder = options.get(
-    'rightsHolder', u'rightsHolder_' + random_data.random_3_words()
-  )
-  sysmeta_pyxb.originMemberNode = options.get(
-    'originMemberNode',
-    u'originMemberNode_' + random_data.random_unicode_string_no_whitespace()
-  )
-  sysmeta_pyxb.authoritativeMemberNode = options.get(
-    'authoritativeMemberNode', u'authoritativeMemberNode_' +
-    random_data.random_unicode_string_no_whitespace()
+    'rightsHolder', random_data.random_subj()
   )
   sysmeta_pyxb.accessPolicy = options.get(
-    'accessPolicy',
-    access_policy.generate(min_rules=1, max_rules=5, max_subjects=5)
+    'accessPolicy', access_policy.generate(min_rules=0)
   )
   sysmeta_pyxb.replicationPolicy = options.get(
     'replicationPolicy', replication_policy.generate()
   )
+
+  # obsoletes
+  # obsoletedBy
+  # archived
+
+  sysmeta_pyxb.dateUploaded = options.get('dateUploaded', dates.random_date())
   sysmeta_pyxb.dateSysMetadataModified = options.get(
-    'dateSysMetadataModified', dates.now()
+    'dateSysMetadataModified', dates.random_date()
   )
-  logging.debug(str(sysmeta_pyxb.checksum.value()))
+  sysmeta_pyxb.originMemberNode = options.get(
+    'originMemberNode', random_data.random_mn()
+  )
+  sysmeta_pyxb.authoritativeMemberNode = options.get(
+    'authoritativeMemberNode', random_data.random_mn()
+  )
+  sysmeta_pyxb.replica = options.get(
+    'replica', d1_test.instance_generator.replica.generate()
+  )
+
+  # seriesId
+
+  sysmeta_pyxb.mediaType = options.get(
+    'mediaType', d1_test.instance_generator.media_type.generate()
+  )
+  sysmeta_pyxb.fileName = options.get(
+    'fileName', 'file_{}'.format(
+      d1_test.instance_generator.random_data.
+      random_lower_ascii(min_len=3, max_len=3)
+    )
+  )
+
   return sysmeta_pyxb
 
 
-def generate_from_flo(flo, options=None):
+def generate_from_file(client, flo, options=None):
   options = options or {}
-  options['checksum'
-          ] = d1_common.checksum.create_checksum_object_from_stream(flo)
+  options['checksum'] = (
+    d1_common.checksum.create_checksum_object_from_stream(flo)
+  )
   flo.seek(0, os.SEEK_END)
   options['size'] = flo.tell()
-  return generate(options)
+  return generate(client, options)
 
 
-def generate_from_file(path, options=None):
-  f = open(path, 'rb')
-  return generate_from_flo(f, options)
+def generate_from_file_path(client, path, options=None):
+  with open(path, 'rb') as f:
+    return generate_from_file(client, f, options)

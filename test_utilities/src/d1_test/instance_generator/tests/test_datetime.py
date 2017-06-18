@@ -21,40 +21,26 @@
 
 from __future__ import absolute_import
 
-import logging
-import time
-import unittest
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.dates as dates
 
 #===============================================================================
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestDateTime')
 class TestDateTime(d1_test.d1_test_case.D1TestCase):
   def test_0010(self):
     """random_date(): Dates are random"""
-    for i in range(10):
-      t1 = dates.random_date()
-      t2 = dates.random_date()
-      assert t1 != t2
+    random_date_list = [dates.random_date().isoformat() for _ in range(10)]
+    self.assert_equals_sample(
+      random_date_list, 'inst_gen__datetime__random_date_unrestricted'
+    )
 
   def test_0020(self):
     """random_date(): Dates are random, with restricted time span"""
-    for i in range(10):
-      t1 = dates.random_date(100, 200)
-      t2 = dates.random_date(50, 60)
-      assert t2 < t1
-
-  def test_0030(self):
-    """now()"""
-    for i in range(10):
-      now_1 = dates.now()
-      time.sleep(0.01)
-      now_2 = dates.now()
-      assert now_2 > now_1
-
-
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+    random_date_list = [
+      dates.random_date(100, 200).isoformat() for _ in range(10)
+    ]
+    self.assert_equals_sample(
+      random_date_list, 'inst_gen__datetime__random_date_restricted'
+    )
