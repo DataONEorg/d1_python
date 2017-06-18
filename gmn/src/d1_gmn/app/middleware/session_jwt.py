@@ -25,20 +25,15 @@ from __future__ import absolute_import
 import logging
 import socket
 import ssl
-import urlparse
 
-import cryptography.hazmat.backends
-import cryptography.x509
 import httplib
-import jwt
 
-import d1_common.const
-import d1_common.types.exceptions
+import d1_common.cert.jwt
+import d1_common.cert.x509
+import d1_common.date_time
 
 import django.conf
 import django.core.cache
-
-# App
 
 
 def validate_jwt_and_get_subject_list(request):
@@ -50,16 +45,14 @@ def validate_jwt_and_get_subject_list(request):
       u'ignoring included JWT.'
     )
     return []
-  return _validate_jwt_and_get_subject_list(_get_jwt_header(request))
+  return [
+    d1_common.cert.jwt.
+    get_subject_with_local_validation(_get_jwt_header(request))
+  ]
 
 
-def get_subject_list_without_validate(jwt_base64):
-  return _get_subject_list_without_validate(jwt_base64)
-
-
-#
-# Private
-#
+def get_subject_list_without_validate(jwt_b64):
+  return d1_common.cert.jwt.get_subject_list_without_validate(jwt_b64)
 
 
 def _has_jwt_header(request):
@@ -70,84 +63,6 @@ def _get_jwt_header(request):
   return request.META['Authorization']
 
 
-def _validate_jwt_and_get_subject_list(jwt_base64):
-  """Validate any JWT in the request and return a list of authenticated
-  subjects.
-
-  The JWT is validated by checking that it was signed with a CN certificate.
-  If validation fails for any reason, errors are logged and an empty list is
-  returned. Possible errors include:
-
-  - GMN is in stand-alone mode (settings.STAND_ALONE).
-  - GMN could not establish a trusted (TLS/SSL) connection to the root CN in
-  the env.
-  - The certificate could not be retrieved from the root CN.
-  - The JWT could not be decoded.
-  - The JWT signature signature was invalid.
-  - The JWT claim set contains invalid "Not Before" or "Expiration Time" claims.
-
-  Currently, DataONE issues JWTs with only the primary subject. Equivalent
-  identities and groups, as set up in the DataONE identity portal, are not
-  represented. So the the list will contain either a single subject or be
-  empty.
-  """
-  jwt_dict = _decode_and_validate_jwt(jwt_base64)
-  subject_list = []
-  if jwt_dict is not None:
-    subject_list.append(jwt_dict['sub'])
-  return subject_list
-
-
-def _fix_base64_jwt(jwt_base64):
-  header_json, payload_json, signature_str = jwt_base64.split('.')
-  return '.'.join([
-    _fix_base64_padding(_fix_base64_alphabet(header_json)),
-    _fix_base64_padding(_fix_base64_alphabet(payload_json)),
-    _fix_base64_padding(_fix_base64_alphabet(signature_str)),
-  ]).strip()
-
-
-def _fix_base64_padding(base64_str):
-  padding = len(base64_str) % 4
-  if padding:
-    base64_str += '=' * (4 - padding)
-  return base64_str
-
-
-def _fix_base64_alphabet(base64_str):
-  # jwt.decode() assumes a URL safe version of the base64 alphabet that uses
-  # '-' instead of '+' and '_' instead of '/'.
-  return base64_str.replace('+', '-').replace('/', '_')
-
-
-def _decode_and_validate_jwt(jwt_base64):
-  cn_cert_obj = _get_cn_cert()
-  cn_public_key = cn_cert_obj.public_key()
-  try:
-    return jwt.decode(
-      _fix_base64_jwt(jwt_base64), key=cn_public_key, algorithms=['RS256']
-    )
-  except jwt.InvalidTokenError as e:
-    logging.warning(
-      u'Ignoring JWT that failed to validate. error="{}"'.format(e.message)
-    )
-    return None
-
-
-def _get_subject_list_without_validate(jwt_base64):
-  jwt_dict = _decode_without_validate(jwt_base64)
-  subject_list = []
-  if jwt_dict is not None:
-    subject_list.append(jwt_dict['sub'])
-  return subject_list
-
-
-def _decode_without_validate(jwt_base64):
-  return jwt.decode(
-    _fix_base64_jwt(jwt_base64), verify=False, algorithms=['RS256']
-  )
-
-
 def _get_cn_cert():
   """Get the public TLS/SSL X.509 certificate from the root CN of the DataONE
   environment. The certificate is used for validating the signature of the JWTs.
@@ -155,19 +70,25 @@ def _get_cn_cert():
   If certificate retrieval fails, a new attempt to retrieve the certificate
   is performed after the cache expires (settings.CACHES.default.TIMEOUT).
 
-  If successful, returns cryptography.Certificate().
+  If successful, returns a cryptography.Certificate().
   """
   try:
-    return django.core.cache.cache.cn_cert_obj
+    cert_obj = django.core.cache.cache.cn_cert_obj
+    d1_common.cert.x509.log_cert_info(
+      logging.debug, 'Using cached CN cert for JWT validation', cert_obj
+    )
+    return cert_obj
   except AttributeError:
-    cn_cert_obj = _download_and_decode_cert()
+    cn_cert_obj = _download_and_decode_cn_cert()
     django.core.cache.cache.cn_cert_obj = cn_cert_obj
     return cn_cert_obj
 
 
-def _download_and_decode_cert():
+def _download_and_decode_cn_cert():
   try:
-    cert_der = _download_cn_cert()
+    cert_der = d1_common.cert.x509.download_as_der(
+      django.conf.settings.DATAONE_ROOT
+    )
   except (httplib.HTTPException, socket.error, ssl.SSLError) as e:
     logging.warn(
       u'Unable to get CN certificates from the DataONE environment. '
@@ -176,34 +97,11 @@ def _download_and_decode_cert():
     )
     return None
   else:
-    logging.info(
-      u'CN certificates successfully retrieved from the DataONE environment. '
-      u'env="{}"'.format(django.conf.settings.DATAONE_ROOT)
+    cert_obj = d1_common.cert.x509.decode_der(cert_der)
+    d1_common.cert.x509.log_cert_info(
+      logging.debug,
+      u'CN certificate successfully retrieved from the DataONE environment. '
+      u'env="{}"'.format(django.conf.settings.DATAONE_ROOT),
+      cert_obj,
     )
-    return _decode_cert(cert_der)
-
-
-def _download_cn_cert():
-  """Download cert and return it as a DER encoded string"""
-  # TODO: This requires Python 2.7.9 but is a better solution. Update the
-  # code after upgrading to 2.7.9 or later.
-  # ssl_context = ssl.create_default_context()
-  # ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-  # ssl_socket = ssl_context.wrap_socket(
-  #   socket.socket(),
-  #   server_hostname=django.conf.settings.DATAONE_ROOT
-  # )
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  sock.settimeout(d1_common.const.RESPONSE_TIMEOUT)
-  ssl_socket = ssl.SSLSocket(sock)
-  url_obj = urlparse.urlparse(django.conf.settings.DATAONE_ROOT)
-  ssl_socket.connect((url_obj.netloc, 443))
-  return ssl_socket.getpeercert(binary_form=True)
-
-
-def _decode_cert(cert_der):
-  """Decode cert DER string and return a cryptography.Certificate()"""
-  return cryptography.x509.load_der_x509_certificate(
-    cert_der,
-    cryptography.hazmat.backends.default_backend(),
-  )
+    return cert_obj
