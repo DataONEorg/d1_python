@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""For each tracked file in a repository, trigger pre-commit hooks until the
-hooks pass.
+"""For each file that is specified, tracked and modified in a repository,
+trigger pre-commit hooks until the hooks pass.
 
 If our pre-commit hooks are triggered during a commit, the files that were
 modified by the hooks must be staged again. When a new commit is issued, the
@@ -25,6 +25,8 @@ import os
 import re
 import subprocess
 
+import d1_dev.file_iterator
+import d1_dev.util
 import git
 
 import d1_common.util
@@ -37,11 +39,19 @@ DEFAULT_PYCHARM_BIN_PATH = os.path.expanduser(
 
 def main():
   parser = argparse.ArgumentParser(
-    description='Trigger Git hooks on all modified tracked files below dir in repo'
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument('path', nargs='+', help='File or directory path')
+  parser.add_argument('--include', nargs='+', help='Include glob patterns')
+  parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+  parser.add_argument(
+    '--no-recursive', dest='recursive', action='store_false', default=True,
+    help='Search directories recursively'
   )
   parser.add_argument(
-    'root', action='store', default=None,
-    help='Root of tree of files on which to trigger hooks'
+    '--ignore-invalid', action='store_true', default=False,
+    help='Ignore invalid paths'
   )
   parser.add_argument(
     '--pycharm', action='store', default=DEFAULT_PYCHARM_BIN_PATH,
@@ -53,27 +63,57 @@ def main():
 
   args = parser.parse_args()
   d1_common.util.log_setup(args.debug)
-  repo_path = os.path.realpath(os.path.expanduser(args.root))
-  trigger_all_pre_commit_hooks(repo_path)
 
-
-def trigger_all_pre_commit_hooks(repo_path):
+  repo_path = d1_dev.util.find_repo_root_by_path(__file__)
   repo = git.Repo(repo_path)
-  for rel_repo_path in get_git_staged_files(repo):
-    # for rel_repo_path in get_git_modified_files(repo):
-    abs_path = os.path.join(repo_path, rel_repo_path)
-    logging.info('Checking file. path="{}"'.format(rel_repo_path))
+
+  specified_file_path_list = get_specified_file_path_list(args)
+  tracked_and_modified_path_list = get_tracked_and_modified_files(
+    repo, repo_path
+  )
+  trigger_path_list = sorted(
+    set(specified_file_path_list).intersection(tracked_and_modified_path_list)
+  )
+  trigger_all_pre_commit_hooks(trigger_path_list)
+
+
+def get_specified_file_path_list(args):
+  specified_file_path_list = [
+    os.path.realpath(p)
+    for p in d1_dev.file_iterator.file_iter(
+      path_list=args.path,
+      include_glob_list=args.include,
+      exclude_glob_list=args.exclude,
+      recursive=args.recursive,
+      ignore_invalid=args.ignore_invalid,
+      default_excludes=False,
+      return_dir_paths=True,
+    )
+  ]
+  return specified_file_path_list
+
+
+def get_tracked_and_modified_files(repo, repo_path):
+  return [
+    os.path.realpath(os.path.join(repo_path, p))
+    for p in repo.git.diff('HEAD', name_only=True).splitlines()
+  ]
+
+
+def trigger_all_pre_commit_hooks(trigger_path_list):
+  for trigger_path in trigger_path_list:
+    logging.info('Checking file. path="{}"'.format(trigger_path))
     while True:
-      recheck_bool = trigger_pre_commit_hook(repo_path, rel_repo_path, abs_path)
+      recheck_bool = trigger_pre_commit_hook(trigger_path)
       if not recheck_bool:
         break
 
 
-def trigger_pre_commit_hook(repo_path, rel_repo_path, abs_path):
+def trigger_pre_commit_hook(trigger_path):
   try:
     res_str = subprocess.check_output([
-      'pre-commit', 'run', '--verbose', '--no-stash', '--files', rel_repo_path
-    ], cwd=repo_path, stderr=subprocess.STDOUT)
+      'pre-commit', 'run', '--verbose', '--no-stash', '--files', trigger_path
+    ], stderr=subprocess.STDOUT)
   except subprocess.CalledProcessError as e:
     res_str = e.output
 
@@ -83,7 +123,7 @@ def trigger_pre_commit_hook(repo_path, rel_repo_path, abs_path):
     if m:
       logging.info('Error: {}'.format(res_line))
       if DEFAULT_PYCHARM_BIN_PATH is not None:
-        open_exception_location_in_pycharm(abs_path, m.group(1))
+        open_exception_location_in_pycharm(trigger_path, m.group(1))
       while True:
         action_str = raw_input(
           'Opened in PyCharm. Recheck: Enter, Skip file: s Enter: '
@@ -118,7 +158,7 @@ def open_exception_location_in_pycharm(src_path, src_line_num):
       DEFAULT_PYCHARM_BIN_PATH, '--line', src_line_num, src_path
     ])
   except subprocess.CalledProcessError as e:
-    logging.warning(
+    logging.warn(
       'PyCharm debugging is enabled but opening the location of the exception '
       'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
         e.message, src_path, src_line_num
