@@ -39,8 +39,8 @@ class GMNStartupChecks(django.apps.AppConfig):
   name = 'd1_gmn.app.startup'
 
   def ready(self):
-    self._check_cert_file(django.conf.settings.CLIENT_CERT_PATH)
-    self._check_cert_file(django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH)
+    self._check_cert_file('CLIENT_CERT_PATH')
+    self._check_cert_file('CLIENT_CERT_PRIVATE_KEY_PATH')
     self._warn_unsafe_for_prod()
 
   def _warn_unsafe_for_prod(self):
@@ -60,14 +60,19 @@ class GMNStartupChecks(django.apps.AppConfig):
           'safe="{}"'.format(setting_str, setting_current, setting_safe)
         )
 
-  def _check_cert_file(self, cert_pem_path):
+  def _check_cert_file(self, cert_pem_setting):
+    cert_pem_path = getattr(django.conf.settings, cert_pem_setting, None)
     if cert_pem_path is None:
+      logging.warn(
+        'Certificate path not set. setting="{}"'.format(cert_pem_setting)
+      )
       return
     try:
       d1_gmn.app.util.assert_readable_file(cert_pem_path)
     except ValueError as e:
       raise django.core.exceptions.ImproperlyConfigured(
-        u'Configuration error: Invalid certificate: {}'.format(str(e))
+        u'Configuration error: Invalid certificate path. '
+        u'setting="{}". msg="{}"'.format(cert_pem_setting, str(e))
       )
 
   def _set_secret_key(self):

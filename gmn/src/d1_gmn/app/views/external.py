@@ -697,7 +697,7 @@ def post_replicate(request):
   d1_gmn.app.views.asserts.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
-  sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
+  sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.local_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )

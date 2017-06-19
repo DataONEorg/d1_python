@@ -89,10 +89,11 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
+  cert_subj = _get_client_side_certificate_subject()
   return (
     d1_gmn.app.node_registry.get_cn_subjects() |
-    django.conf.settings.DATAONE_TRUSTED_SUBJECTS |
-    {_get_client_side_certificate_subject()}
+    django.conf.settings.DATAONE_TRUSTED_SUBJECTS | {cert_subj}
+    if cert_subj is not None else set()
   )
 
 
@@ -116,20 +117,25 @@ def is_trusted_subject(request):
 
 
 def _get_client_side_certificate_subject():
+  """Return the DN from the client side certificate as a D1 subject if
+  a client side cert has been configured. Else return None."""
   subject = django.core.cache.cache.get('client_side_certificate_subject')
   if subject is not None:
     return subject
-
   cert_pem = _get_client_side_certificate_pem()
+  if cert_pem is None:
+    return None
   subject = _extract_subject_from_pem(cert_pem)
-
   django.core.cache.cache.set('client_side_certificate_subject', subject)
   return subject
 
 
 def _get_client_side_certificate_pem():
+  client_cert_path = django.conf.settings.CLIENT_CERT_PATH
+  if client_cert_path is None:
+    return None
   try:
-    return open(django.conf.settings.CLIENT_CERT_PATH, 'rb').read()
+    return open(client_cert_path, 'rb').read()
   except EnvironmentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0,
