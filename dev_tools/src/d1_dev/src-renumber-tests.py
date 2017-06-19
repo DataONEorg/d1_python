@@ -19,6 +19,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Renumber test functions to free up space for new tests
+
+By default, files are NOT modified. After having verified that the modifications
+are as expected with the `--diff` switch, run the script again with `--update`
+to modify the files.
+
+When files are updated, the original file is backed up by appending "~" to the
+original name. Any earlier backups are overwritten. Use clean-tree.py to delete
+the backups.
 """
 
 from __future__ import absolute_import
@@ -51,15 +59,20 @@ def main():
     default=True, help='Don\'t add default glob exclude patterns'
   )
   parser.add_argument(
-    '--debug', action='store_true', default=False, help='Debug level logging'
+    '--move', action='store_true', default=False,
+    help='Move remaining part of test function name to the test\'s docstring'
   )
   parser.add_argument(
     '--diff', dest='show_diff', action='store_true', default=False,
     help='Show diff and do not modify any files'
   )
   parser.add_argument(
-    '--move', action='store_true', default=False,
-    help='Move remaining part of test function name to the test\'s docstring'
+    '--update', dest='update', action='store_true', default=False,
+    help='Apply the updates to the original files. By default, no files are '
+    'changed.'
+  )
+  parser.add_argument(
+    '--debug', action='store_true', default=False, help='Debug level logging'
   )
 
   args = parser.parse_args()
@@ -75,16 +88,16 @@ def main():
       default_excludes=args.default_excludes,
   ):
     try:
-      renumber_module(module_path, args.show_diff, args.move)
+      renumber_module(module_path, args.move, args.show_diff, args.update)
     except Exception as e:
       logging.error(
-        'Operation failed. error="{}" path="{}"'.format(module_path, e.message)
+        'Operation failed. error="{}" path="{}"'.format(str(e), module_path)
       )
       if args.debug:
         raise
 
 
-def renumber_module(module_path, show_diff, do_move):
+def renumber_module(module_path, do_move, show_diff, write_update):
   logging.info('Renumbering: {}'.format(module_path))
   r = d1_dev.util.redbaron_module_path_to_tree(module_path)
   if not d1_dev.util.has_test_class(r):
@@ -93,7 +106,7 @@ def renumber_module(module_path, show_diff, do_move):
     )
     return False
   renumber_all(r, do_move)
-  d1_dev.util.update_module_file(r, module_path, show_diff)
+  d1_dev.util.update_module_file(r, module_path, show_diff, write_update)
 
 
 def renumber_all(r, do_move):
@@ -105,24 +118,23 @@ def renumber_all(r, do_move):
 
 
 def renumber_method(node, test_idx, do_move):
+  new_name = u'test_{:04d}'.format(test_idx)
   with d1_common.util.print_logging():
-    logging.info('Method: {}'.format(node.name))
-  test_name, test_trailing = d1_dev.util.split_func_name(node.name)
+    logging.info('Method: {} -> {}'.format(node.name, new_name))
+  node.name = new_name
   if not do_move:
-    # node.name = u'test_{:04d}{}'.format(test_idx, test_trailing)
-    node.name = u'test_{:04d}'.format(test_idx)
-  else:
-    node.name = u'test_{:04d}'.format(test_idx)
-    old_doc_str = d1_dev.util.get_doc_str(node)
-    new_doc_str = d1_dev.util.gen_doc_str(test_trailing, old_doc_str)
-    if new_doc_str != u'""""""':
-      if d1_dev.util.has_doc_str(node):
-        node.value[0].value = new_doc_str
-      else:
-        node.value.insert(0, new_doc_str)
+    return
+  test_name, test_trailing = d1_dev.util.split_func_name(node.name)
+  old_doc_str = d1_dev.util.get_doc_str(node)
+  new_doc_str = d1_dev.util.gen_doc_str(test_trailing, old_doc_str)
+  if new_doc_str != u'""""""':
+    if d1_dev.util.has_doc_str(node):
+      node.value[0].value = new_doc_str
     else:
-      if d1_dev.util.has_doc_str(node):
-        node.value.pop(0)
+      node.value.insert(0, new_doc_str)
+  else:
+    if d1_dev.util.has_doc_str(node):
+      node.value.pop(0)
 
 
 if __name__ == '__main__':
