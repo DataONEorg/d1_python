@@ -39,10 +39,10 @@ DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
 # Checksum PyXB object creation
 
 
-def create_checksum_object(
+def create_checksum_object_from_string(
     o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
-  checksum_str = calculate_checksum(o, algorithm)
+  checksum_str = calculate_checksum_on_string(o, algorithm)
   checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
@@ -66,22 +66,7 @@ def create_checksum_object_from_iterator(
   return checksum_pyxb
 
 
-def create_checksum_object_from_string(
-    s, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
-):
-  checksum_str = calculate_checksum_on_string(s, algorithm)
-  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
-  checksum_pyxb.algorithm = algorithm
-  return checksum_pyxb
-
-
 # Calculate checksum
-
-
-def calculate_checksum(o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM):
-  checksum_calculator = get_checksum_calculator_by_dataone_designator(algorithm)
-  checksum_calculator.update(o)
-  return checksum_calculator.hexdigest()
 
 
 def calculate_checksum_on_stream(
@@ -95,13 +80,6 @@ def calculate_checksum_on_stream(
     if not chunk:
       break
     checksum_calc.update(chunk)
-  return checksum_calc.hexdigest()
-  checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
-  i = 0
-  for chunk in f.read(chunk_size):
-    checksum_calc.update(chunk)
-    i += 1
-    print('{} {}'.format(len(chunk), i))
   return checksum_calc.hexdigest()
 
 
@@ -120,30 +98,11 @@ def calculate_checksum_on_string(
     algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
 ):
   checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
-  for chunk in s:
-    checksum_calc.update(chunk)
+  checksum_calc.update(s)
   return checksum_calc.hexdigest()
 
 
 # Checksum validation
-
-
-def is_checksum_correct(sysmeta_pyxb, obj_stream):
-  return are_checksums_equal(
-    create_checksum_object_from_stream(
-      obj_stream, sysmeta_pyxb.checksum.algorithm
-    ),
-    sysmeta_pyxb.checksum,
-  )
-
-
-def is_checksum_correct_on_string(sysmeta_pyxb, obj_str):
-  return are_checksums_equal(
-    create_checksum_object_from_string(
-      obj_str, sysmeta_pyxb.checksum.algorithm
-    ),
-    sysmeta_pyxb.checksum,
-  )
 
 
 def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
