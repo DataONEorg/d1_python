@@ -97,7 +97,8 @@ def diff_update_file(module_path, module_str, show_diff=False, update=False):
     if show_diff:
       try:
         tmp_file.seek(0)
-        subprocess.check_call(['kdiff3', module_path, tmp_file.name])
+        #subprocess.check_call(['kdiff3', module_path, tmp_file.name])
+        subprocess.check_call(['condiff.sh', module_path, tmp_file.name])
       except subprocess.CalledProcessError:
         pass
 

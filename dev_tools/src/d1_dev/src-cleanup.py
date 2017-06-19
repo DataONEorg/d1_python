@@ -32,9 +32,12 @@ the backups.
 from __future__ import absolute_import
 
 import argparse
+import datetime
 import lib2to3.main
 import lib2to3.refactor
 import logging
+import os
+import re
 
 import d1_dev.file_iterator
 import d1_dev.util
@@ -45,6 +48,28 @@ import d1_common.util
 
 # Single line comments containing these strings will not be removed.
 KEEP_COMMENTS = ['noqa', 'noinspection']
+
+COPYRIGHT_NOTICE = """\
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-{} DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
 
 
 def main():
@@ -100,9 +125,9 @@ def main():
       if is_cleaned:
         event_counter.count('Cleaned files')
 
-      is_futurized = futurize_module(module_path, args.show_diff, args.update)
-      if is_futurized:
-        event_counter.count('Futurized files')
+      # is_futurized = futurize_module(module_path, args.show_diff, args.update)
+      # if is_futurized:
+      #   event_counter.count('Futurized files')
 
     except Exception as e:
       logging.error(
@@ -117,14 +142,17 @@ def main():
 def clean_module(module_path, show_diff, write_update):
   logging.info('Cleaning module... path="{}"'.format(module_path))
   r = d1_dev.util.redbaron_module_path_to_tree(module_path)
-  r = clean_all(r)
+  r = clean_all(module_path, r)
   return d1_dev.util.update_module_file(r, module_path, show_diff, write_update)
 
 
-def clean_all(r):
+def clean_all(module_path, r):
   # r = _remove_single_line_import_comments(r)
   # r = _remove_module_level_docstrs_in_unit_tests(r)
   # r = _add_absolute_import(r)
+  # r = _update_init_all(module_path, r)
+  # r = _remove_init_all(r)
+  r = _insert_copyright_header(r)
   return r
 
 
@@ -203,7 +231,7 @@ def _add_absolute_import(r):
     if v.type == 'import' and first:
       first = False
       new_r.append(
-        redbaron.RedBaron('from __future__ import absolute_import # NEW\n')
+        redbaron.RedBaron('from __future__ import absolute_import\n')
       )
     new_r.append(v)
   return new_r
@@ -268,6 +296,66 @@ def back_to_the_futurize(module_path):
     raise ValueError('lib2to3 refactor error')
   # mt.summarize()
   return tree
+
+
+def _update_init_all(module_path, r):
+  """Add or update __all__ in __init__.py file"""
+  module_dir_path = os.path.split(module_path)[0]
+  module_list = []
+  for item_name in os.listdir(module_dir_path):
+    item_path = os.path.join(module_dir_path, item_name)
+    if os.path.isfile(item_path) and item_name in ('__init__.py', 'setup.py'):
+      continue
+    if os.path.isfile(item_path) and not item_name.endswith('.py'):
+      continue
+    # if os.path.isdir(item_path) and not os.path.isfile(
+    #     os.path.join(item_path, '__init__.py')
+    # ):
+    #   continue
+    if os.path.isdir(item_path):
+      continue
+    module_list.append(re.sub(r'.py$', '', item_name).encode('utf-8'))
+  module_literal_str = str(sorted(module_list))
+
+  assignment_node_list = r('AssignmentNode', recursive=False)
+  for n in assignment_node_list:
+    if n.type == 'assignment' and n.target.value == '__all__':
+      n.value = module_literal_str
+      break
+  else:
+    r.node_list.append(
+      redbaron.RedBaron('__all__ = {}\n'.format(module_literal_str))
+    )
+  return r
+
+
+def _remove_init_all(r):
+  """Remove any __all__ in __init__.py file"""
+  new_r = redbaron.NodeList()
+  for n in r.node_list:
+    if n.type == 'assignment' and n.target.value == '__all__':
+      pass
+    else:
+      new_r.append(n)
+  return new_r
+
+
+def _insert_copyright_header(r):
+  for i, n in enumerate(r.node_list):
+    if n.type == 'comment' and re.search(r'Copyright.*DataONE', n.value):
+      return r
+
+  i = 0
+
+  for n in r('CommentNode', recursive=False)[:3]:
+    if n.value.startswith('#!') or 'coding' in n.value:
+      i = n.index_on_parent_raw + 2 # skip endl node
+
+  r.node_list.insert(
+    i, redbaron.RedBaron(COPYRIGHT_NOTICE.format(datetime.datetime.now().year))
+  )
+
+  return r
 
 
 if __name__ == '__main__':
