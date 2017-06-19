@@ -7,8 +7,8 @@ sudo:
 python:
   - 2.7
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y build-essential python-dev libssl-dev libxml2-dev
+  - sudo apt-get -q update
+  - sudo apt-get -q install -y build-essential python-dev libssl-dev libxml2-dev
     libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl
 install:
   - pip install --upgrade pip
@@ -21,7 +21,7 @@ script:
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check
-  - pytest
+  - pytest --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.
   # Coveralls has a requirement for requests >= 1.0.0, so we install it after

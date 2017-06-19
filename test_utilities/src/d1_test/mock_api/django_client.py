@@ -68,20 +68,26 @@ base_url_list = []
 
 def add_callback(base_url):
   base_url_list.append(base_url)
-
-  for method in [
-      responses.DELETE, responses.GET, responses.HEAD, responses.OPTIONS,
-      responses.PATCH, responses.POST, responses.PUT
-  ]:
+  method_list = [
+    responses.GET,
+    responses.POST,
+    responses.PUT,
+    responses.DELETE,
+    responses.HEAD,
+    responses.OPTIONS,
+    responses.PATCH,
+  ]
+  for method in method_list:
     responses.add_callback(
       method,
       re.compile('^{}'.format(base_url)),
       callback=_request_callback,
       content_type='',
     )
-    logging.debug(
-      'Added callback. method="{}" base_url="{}"'.format(method, base_url)
-    )
+  logging.debug(
+    'Added callbacks for all methods. base_url="{}" methods="{}"'.
+    format(base_url, ', '.join(method_list))
+  )
 
 
 def _request_callback(request):

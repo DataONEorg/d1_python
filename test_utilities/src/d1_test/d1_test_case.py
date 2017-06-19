@@ -43,6 +43,7 @@ import pytest
 import pyxb
 import pyxb.binding.basis
 
+import d1_common.cert.x509
 import d1_common.const
 import d1_common.types
 import d1_common.types.dataoneErrors
@@ -166,9 +167,6 @@ def reproducible_random_context(seed):
   random.setstate(state)
 
 
-#
-
-
 def generate_reproducible_sciobj_str(pid):
   """Return a science object byte string that is always the same for a given PID
   """
@@ -195,70 +193,97 @@ def get_test_module_name():
 
 
 def format_sample_file_name(client, name_postfix_str, extension_str):
-  return '{}.{}'.format(
-    '_'.join([
-      get_test_module_name(),
-      name_postfix_str,
+  section_list = [
+    get_test_module_name(),
+    name_postfix_str,
+  ]
+  if client:
+    section_list.extend([
       d1_client.util.get_client_type(client),
       d1_client.util.get_version_tag_by_d1_client(client),
-    ]), extension_str
-  )
+    ])
+  return '{}.{}'.format('_'.join(section_list), extension_str)
 
 
 #===============================================================================
 
 
 class D1TestCase(object): # unittest.TestCase
+
+  # Sample files
+
   @staticmethod
-  def get_sample_filepath(filename):
+  def get_sample_path(filename):
     return os.path.join(d1_common.util.abs_path('test_docs'), filename)
 
   @staticmethod
-  def read_sample_file(filename, mode_str='rb'):
-    with open(D1TestCase.get_sample_filepath(filename), mode_str) as f:
+  def load_sample(filename, mode_str='rb'):
+    with open(D1TestCase.get_sample_path(filename), mode_str) as f:
       return f.read()
 
   @staticmethod
-  def read_utf8_to_unicode(filename):
-    utf8_path = D1TestCase.get_sample_filepath(filename)
+  def load_sample_utf8_to_unicode(filename):
+    utf8_path = D1TestCase.get_sample_path(filename)
     unicode_file = codecs.open(utf8_path, encoding='utf-8', mode='r')
     return unicode_file.read()
 
   @staticmethod
-  def read_xml_file_to_pyxb(filename, mode_str='r'):
+  def load_sample_xml_to_pyxb(filename, mode_str='r'):
     logging.debug('Reading sample XML file. filename="{}"'.format(filename))
-    xml_str = D1TestCase.read_sample_file(filename, mode_str)
+    xml_str = D1TestCase.load_sample(filename, mode_str)
     return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
   @staticmethod
-  def deserialize_and_check(doc, shouldfail=False):
+  def assert_equals_sample(
+      got_obj, name_postfix_str, client=None, extension_str='sample'
+  ):
+    filename = format_sample_file_name(client, name_postfix_str, extension_str)
+    logging.info('Using sample file. filename="{}"'.format(filename))
+    got_str = D1TestCase.obj_to_pretty_str(got_obj)
+    try:
+      exp_str = D1TestCase.load_sample(filename)
+    except EnvironmentError as e:
+      logging.error(
+        'Could not read sample file. filename="{}" error="{}"'.
+        format(filename, str(e))
+      )
+      exp_str = ''
+    try:
+      assert got_str == exp_str
+    except AssertionError:
+      # noinspection PyUnresolvedReferences
+      if not pytest.config.getoption('--update-samples'):
+        raise
+    else:
+      return
+    D1TestCase.save_sample_interactive(got_str, exp_str, filename)
+
+  #
+
+  @staticmethod
+  def deserialize_and_check(doc, raises_pyxb_exc=False):
     try:
       d1_common.types.dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
+      if raises_pyxb_exc:
         return
       else:
         raise
-    if shouldfail:
+    if raises_pyxb_exc:
       raise Exception('Did not receive expected exception')
 
   @staticmethod
-  def deserialize_exception_and_check(doc, shouldfail=False):
+  def deserialize_exception_and_check(doc, raises_pyxb_exc=False):
     try:
       obj = d1_common.types.dataoneErrors.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
+      if raises_pyxb_exc:
         return
       else:
         raise
-    if shouldfail:
+    if raises_pyxb_exc:
       raise Exception('Did not receive expected exception')
     return obj
-
-  @staticmethod
-  def read_test_pyxb(filename, mode_str='r'):
-    xml_str = D1TestCase.read_sample_file(filename, mode_str)
-    return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
   @staticmethod
   def get_total_number_of_objects(client):
@@ -296,8 +321,8 @@ class D1TestCase(object): # unittest.TestCase
 
   @staticmethod
   def display_diff_str(got_str, exp_str):
-    with tempfile.NamedTemporaryFile(prefix='GOT__', suffix='txt') as got_f:
-      with tempfile.NamedTemporaryFile(prefix='EXP__', suffix='txt') as exp_f:
+    with tempfile.NamedTemporaryFile(suffix='__RECEIVED') as got_f:
+      with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
         got_f.write(got_str)
         exp_f.write(exp_str)
         got_f.seek(0)
@@ -305,47 +330,20 @@ class D1TestCase(object): # unittest.TestCase
         subprocess.call(['kdiff3', got_f.name, exp_f.name])
 
   @staticmethod
-  def assert_equals_sample(
-      got_obj, name_postfix_str, client, extension_str='sample'
-  ):
-    filename = format_sample_file_name(client, name_postfix_str, extension_str)
-    logging.info('Using sample file. filename="{}"'.format(filename))
-    got_str = D1TestCase.obj_to_pretty_str(got_obj)
-    try:
-      exp_str = D1TestCase.read_sample_file(filename)
-    except EnvironmentError as e:
-      logging.error(
-        'Could not read sample file. filename="{}" error="{}"'.
-        format(filename, str(e))
-      )
-      exp_str = ''
-
-    try:
-      assert got_str == exp_str
-    except AssertionError:
-      # noinspection PyUnresolvedReferences
-      if not pytest.config.getoption("--update-samples"):
-        raise
-    else:
-      return
-    D1TestCase.write_sample_file_interactive(got_str, exp_str, filename)
-
-  @staticmethod
-  def write_sample_file_interactive(got_str, exp_str, filename):
+  def save_sample_interactive(got_str, exp_str, filename):
     D1TestCase.display_diff_str(got_str, exp_str)
     answer_str = None
-    while answer_str not in ('y', 'n'):
-      answer_str = raw_input('Update sample file "{}"? [y/n] '.format(filename))
-    if answer_str == 'y':
-      D1TestCase.write_sample_file(filename, got_str)
+    while answer_str not in ('y', 'n', ''):
+      answer_str = raw_input('Update sample file "{}"? [Y/n] '.format(filename))
+    if answer_str in ('y', ''):
+      D1TestCase.save_sample(filename, got_str)
 
   # noinspection PyUnreachableCode
   @staticmethod
   def obj_to_pretty_str(o):
     logging.debug('Serializing object. type="{}"'.format(type(o)))
-    with ignore_exceptions():
-      if isinstance(o, unicode):
-        o = o.encode('utf-8')
+    if isinstance(o, unicode):
+      o = o.encode('utf-8')
     with ignore_exceptions():
       return d1_common.xml.pretty_xml(o)
     with ignore_exceptions():
@@ -356,7 +354,7 @@ class D1TestCase(object): # unittest.TestCase
       if 'digraph' in o:
         return '\n'.join(
           sorted(
-            str(re.sub('node\d+', 'nodeX', o)).splitlines(),
+            str(re.sub(r'node\d+', 'nodeX', o)).splitlines(),
           )
         )
     with ignore_exceptions():
@@ -366,11 +364,26 @@ class D1TestCase(object): # unittest.TestCase
       return json.dumps(o, sort_keys=True, indent=2)
     with ignore_exceptions():
       return str(o)
-    with ignore_exceptions():
-      return repr(o)
+    return repr(o)
 
   @staticmethod
-  def write_sample_file(filename, obj_str, mode_str='wb'):
+  def save_sample(filename, obj_str, mode_str='wb'):
     logging.info('Writing sample file. filename="{}"'.format(filename))
-    with open(D1TestCase.get_sample_filepath(filename), mode_str) as f:
+    with open(D1TestCase.get_sample_path(filename), mode_str) as f:
       return f.write(obj_str)
+
+  @staticmethod
+  @contextlib.contextmanager
+  def mock_ssl_download(cert_obj):
+    """Simulate successful cert downloads by catching calls to
+    ssl.SSLSocket.getpeercert() and returning {cert_obj} in DER format.
+    """
+    cert_der = d1_common.cert.x509.get_cert_der(cert_obj)
+    with mock.patch(
+        'd1_common.cert.x509.ssl.SSLSocket.connect'
+    ) as mock_connect:
+      with mock.patch(
+          'd1_common.cert.x509.ssl.SSLSocket.getpeercert'
+      ) as mock_getpeercert:
+        mock_getpeercert.return_value = cert_der
+        yield mock_connect, mock_getpeercert

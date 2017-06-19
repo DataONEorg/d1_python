@@ -344,17 +344,14 @@ def _insert_copyright_header(r):
   for i, n in enumerate(r.node_list):
     if n.type == 'comment' and re.search(r'Copyright.*DataONE', n.value):
       return r
-
   i = 0
-
   for n in r('CommentNode', recursive=False)[:3]:
     if n.value.startswith('#!') or 'coding' in n.value:
-      i = n.index_on_parent_raw + 2 # skip endl node
-
+      # Skip endl node.
+      i = n.index_on_parent_raw + 2
   r.node_list.insert(
     i, redbaron.RedBaron(COPYRIGHT_NOTICE.format(datetime.datetime.now().year))
   )
-
   return r
 
 

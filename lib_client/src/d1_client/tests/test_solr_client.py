@@ -39,6 +39,20 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   def _assert_at_least_one_populated_row(self, rows):
     assert any(rows), 'Expected at least one populated row in results'
 
+  def _delete_volatile_keys(self, solr_dict):
+    """Delete keys that have values that may differ between calls"""
+
+    def delete(del_solr_dict, path_list):
+      k = path_list[0]
+      if k in del_solr_dict:
+        if len(path_list) > 1:
+          delete(del_solr_dict[k], path_list[1:])
+        else:
+          del del_solr_dict[k]
+
+    delete(solr_dict, ['response', 'maxScore'])
+    delete(solr_dict, ['responseHeader', 'QTime'])
+
   #=============================================================================
   # SolrClient()
 
@@ -57,31 +71,11 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   def test_0030(self):
     """search(): Query returns valid dict"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    response_dict = solr_client.search(q='id:2yt87y0n9f3t8450')
-    self._check_search_response(response_dict)
-
-  def _check_search_response(self, response_dict):
-    expected_dict = {
-      u'responseHeader': {
-        u'status': 0,
-        #        u'QTime': 3,
-        u'params': {
-          u'q': u'id:2yt87y0n9f3t8450',
-          u'wt': u'json'
-        }
-      },
-      u'response': {
-        u'start': 0,
-        # u'maxScore': 0.0,
-        u'numFound': 0,
-        u'docs': []
-      }
-    }
-    if 'maxScore' in response_dict['response']:
-      del response_dict['response']['maxScore']
-    assert 'QTime' in response_dict['responseHeader']
-    del response_dict['responseHeader']['QTime']
-    assert response_dict == expected_dict
+    solr_dict = solr_client.search(q='id:2yt87y0n9f3t8450')
+    self._delete_volatile_keys(solr_dict)
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      solr_dict, 'solr_client_query_returns_valid_dict'
+    )
 
   # count()
 
@@ -89,95 +83,53 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """count(): Query returns valid count"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     obj_count = solr_client.count(q='id:abc*')
-    assert obj_count == 3
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      obj_count, 'solr_client_query_returns_valid_count'
+    )
 
   # get_ids()
 
   def test_0050(self):
     """get_ids(): Query returns list of IDs"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    response_dict = solr_client.get_ids(q='id:abc*')
-    assert response_dict['matches'] == 3
+    solr_dict = solr_client.get_ids(q='id:abc*')
+    self._delete_volatile_keys(solr_dict)
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      solr_dict, 'solr_client_returns_list_of_ids'
+    )
 
   # get_field_values()
 
   def test_0060(self):
     """get_field_values(): Query returns unique field values"""
-    # {
-    #   u'formatId': [
-    #     u'eml://ecoinformatics.org/eml-2.1.1', 1231,
-    #     u'http://datadryad.org/profile/v3.1', 968,
-    #     u'eml://ecoinformatics.org/eml-2.1.0', 651,
-    #     u'http://www.isotc211.org/2005/gmd-noaa', 377, u'FGDC-STD-001.1-1999',
-    #     324, u'eml://ecoinformatics.org/eml-2.0.1', 127,
-    #     u'http://www.isotc211.org/2005/gmd', 35,
-    #     u'http://ns.dataone.org/metadata/schema/onedcx/v1.0', 14,
-    #     u'FGDC-STD-001-1998', 8, u'eml://ecoinformatics.org/eml-2.0.0', 5,
-    #     u'http://purl.org/ornl/schema/mercury/terms/v1.0', 1
-    #   ],
-    #   'numFound':
-    #     3741
-    # }
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    response_dict = solr_client.get_field_values('formatId', q='*abc*')
-    assert 'numFound' in response_dict
+    solr_dict = solr_client.get_field_values('formatId', q='*abc*')
+    self._delete_volatile_keys(solr_dict)
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      solr_dict, 'solr_client_returns_unique_field_values'
+    )
 
   # get_field_min_max()
 
   def test_0070(self):
     """get_field_min_max(): Query returns min and max field values"""
-    # {
-    #   u'responseHeader': {
-    #     u'status': 0,
-    #     u'QTime': 4,
-    #     u'params': {
-    #       u'q': u'*abc*',
-    #       u'sort': u'formatId asc',
-    #       u'rows': u'1',
-    #       u'fl': u'formatId',
-    #     }
-    #   },
-    #   u'response': {
-    #     u'start': 0,
-    #     u'numFound': 3741,
-    #     u'docs': [{
-    #       u'formatId': u'FGDC-STD-001-1998'
-    #     }]
-    #   }
-    # }
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     min_max_tup = solr_client.get_field_min_max('formatId', q='*abc*')
-    assert min_max_tup[1] > min_max_tup[0]
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      min_max_tup, 'solr_client_returns_min_and_max_field_values'
+    )
 
   # field_alpha_histogram()
 
   def test_0080(self):
     """field_alpha_histogram(): Query returns histogram"""
-    # {
-    #   u'responseHeader': {
-    #     u'status': 0,
-    #     u'QTime': 4,
-    #     u'params': {
-    #       u'q': u'*abc*',
-    #       u'sort': u'formatId asc',
-    #       u'rows': u'1',
-    #       u'fl': u'formatId',
-    #     }
-    #   },
-    #   u'response': {
-    #     u'start': 0,
-    #     u'numFound': 3741,
-    #     u'docs': [{
-    #       u'formatId': u'FGDC-STD-001-1998'
-    #     }]
-    #   }
-    # }
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     bin_list = solr_client.field_alpha_histogram(
       'formatId', q='*abc*', n_bins=10
     )
-    assert len(bin_list) > 0
-    # TODO: field_alpha_histogram() is not returning the right number of bins.
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      bin_list, 'solr_client_returns_histogram'
+    )
 
   #=============================================================================
   # SolrSearchResponseIterator()
@@ -186,9 +138,12 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """SolrSearchResponseIterator(): Query 1"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
-      client, q='*:*', page_size=5
+      client, q='id:ark:/13030/m5s46rt1/2/cadwsap-s3100027-004.pdf', page_size=5
     )
-    assert len(list(solr_iter)) > 1
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      solr_list, 'solr_client_iterator_query_1'
+    )
 
   def test_0100(self):
     """SolrSearchResponseIterator(): Query 2"""

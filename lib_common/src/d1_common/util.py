@@ -155,7 +155,7 @@ def print_logging():
   root_logger = logging.getLogger()
   old_level_list = [h.level for h in root_logger.handlers]
   for h in root_logger.handlers:
-    h.setLevel(logging.warn)
+    h.setLevel(logging.WARN)
   log_format = logging.Formatter('%(message)s')
   stream_handler = logging.StreamHandler(sys.stdout)
   stream_handler.setFormatter(log_format)

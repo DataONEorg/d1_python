@@ -116,31 +116,24 @@ def assert_expected_echo(received_echo_dict, name_postfix_str, client):
 
 def _delete_volatile_keys(echo_dict):
   """Delete keys that have values that may differ between calls"""
-  for key_path in [
-    ['request', 'body_base64'],
-    ['request', 'header_dict', 'Accept'],
-    ['request', 'header_dict', 'Accept-Encoding'],
-    ['request', 'header_dict', 'User-Agent'],
-    ['request', 'header_dict', 'Charset'],
-    ['request', 'header_dict', 'Connection'],
-    ['request', 'header_dict', 'Content-Length'],
-    ['request', 'header_dict', 'Content-Type'],
-    ['request', 'header_dict'],
-  ]:
-    _delete_key(echo_dict, key_path)
 
+  def delete(d, key_path):
+    k = key_path[0]
+    if k in d:
+      if len(key_path) > 1:
+        delete(d[k], key_path[1:])
+      else:
+        del d[k]
 
-def _delete_key(echo_dict, key_path):
-  d = echo_dict
-  for key in key_path[:-1]:
-    try:
-      d = d[key]
-    except KeyError:
-      return
-  try:
-    del d[key_path[-1]]
-  except KeyError:
-    pass
+  delete(echo_dict, ['request', 'body_base64'])
+  delete(echo_dict, ['request', 'header_dict', 'Accept'])
+  delete(echo_dict, ['request', 'header_dict', 'Accept-Encoding'])
+  delete(echo_dict, ['request', 'header_dict', 'User-Agent'])
+  delete(echo_dict, ['request', 'header_dict', 'Charset'])
+  delete(echo_dict, ['request', 'header_dict', 'Connection'])
+  delete(echo_dict, ['request', 'header_dict', 'Content-Length'])
+  delete(echo_dict, ['request', 'header_dict', 'Content-Type'])
+  delete(echo_dict, ['request', 'header_dict'])
 
 
 def _dict_key_val_to_unicode(d):
