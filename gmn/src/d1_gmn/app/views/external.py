@@ -128,7 +128,9 @@ def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
   """
-  query = d1_gmn.app.models.EventLog.objects.order_by('-timestamp').select_related()
+  query = d1_gmn.app.models.EventLog.objects.order_by(
+    '-timestamp', 'sciobj__pid__did'
+  ).select_related()
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(
       query, request, 'sciobj__id'
@@ -334,8 +336,8 @@ def get_object_list(request):
   [, identifier][, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
   query = d1_gmn.app.models.ScienceObject.objects.order_by(
-    'modified_timestamp'
-  ) # .select_related()
+    '-modified_timestamp', 'pid__did'
+  ).select_related()
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(query, request, 'id')
   query = d1_gmn.app.db_filter.add_datetime_filter(

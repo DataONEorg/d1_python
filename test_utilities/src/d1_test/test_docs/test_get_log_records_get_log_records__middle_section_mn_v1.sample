@@ -72,21 +72,21 @@
   </logEntry>
   <logEntry>
     <entryId>1</entryId>
-    <identifier>PID_ihhatxfpoz_1980-03-16_00:00:00</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>1980-03-16T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>1</entryId>
     <identifier>PID_bauwppqnsk_1979-07-25_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
+    <dateLogged>1980-03-16T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>1</entryId>
+    <identifier>PID_ihhatxfpoz_1980-03-16_00:00:00</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
     <dateLogged>1980-03-16T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
@@ -102,21 +102,21 @@
   </logEntry>
   <logEntry>
     <entryId>1</entryId>
-    <identifier>PID_virliuqvof_1979-12-27_00:00:00</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>update</event>
-    <dateLogged>1980-03-14T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>1</entryId>
     <identifier>PID_ijbjjtiuvo_1980-03-14_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
+    <dateLogged>1980-03-14T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>1</entryId>
+    <identifier>PID_virliuqvof_1979-12-27_00:00:00</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>update</event>
     <dateLogged>1980-03-14T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
