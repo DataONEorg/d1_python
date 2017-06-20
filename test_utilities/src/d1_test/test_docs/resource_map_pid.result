@@ -1,8 +1,0 @@
-
-<http://www.openarchives.org/ore/terms/Aggregation> <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.openarchives.org/ore/terms/> .
-<http://www.openarchives.org/ore/terms/Aggregation> <http://www.w3.org/2000/01/rdf-schema#label> "Aggregation" .
-<https://cn.dataone.org/cn/v2/resolve/test_pid/aggregation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openarchives.org/ore/terms/Aggregation> .
-<https://cn.dataone.org/cn/v2/resolve/test_pid> <http://purl.org/dc/terms/creator> "TEST" .
-<https://cn.dataone.org/cn/v2/resolve/test_pid> <http://purl.org/dc/terms/identifier> "test_pid" .
-<https://cn.dataone.org/cn/v2/resolve/test_pid> <http://www.openarchives.org/ore/terms/describes> <https://cn.dataone.org/cn/v2/resolve/test_pid/aggregation> .
-<https://cn.dataone.org/cn/v2/resolve/test_pid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openarchives.org/ore/terms/ResourceMap> .
