@@ -275,6 +275,10 @@ class D1TestCase(object): # unittest.TestCase
         format(filename, str(e))
       )
       exp_str = ''
+    map(
+      logging.debug,
+      ['Expect obj:'] + ['  {}'.format(s) for s in exp_str.splitlines()],
+    )
     try:
       assert got_str == exp_str
     except AssertionError:
