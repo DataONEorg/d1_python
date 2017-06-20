@@ -26,6 +26,7 @@ omit =
   */migrations/*
   */mockup/*
   */tests/*
+  */tools/*
 
   # Any tracked and untracked dot-files and dot-dirs
   */.*

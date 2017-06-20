@@ -33,23 +33,10 @@ import logging
 import os
 import time
 
-# from const import DOKAN_OPTION_NETWORK
-# from const import DOKAN_OPTION_REMOVABLE
-# from const import DOKAN_SUCCESS
-# from const import DOKAN_ERROR
-from const import DOKAN_OPTION_DEBUG
-from const import DOKAN_OPTION_KEEP_ALIVE
-from const import DOKAN_OPTION_STDERR
-from const import FILE_ATTRIBUTE_DEVICE
-from const import FILE_ATTRIBUTE_DIRECTORY
-from const import FILE_ATTRIBUTE_NORMAL
-from const import FILE_ATTRIBUTE_READONLY
-from const import FILE_CASE_PRESERVED_NAMES
-from const import FILE_CASE_SENSITIVE_SEARCH
-from const import FILE_READ_ONLY_VOLUME
-# App
-from d1_onedrive.impl import onedrive_exceptions
-from d1_onedrive.impl.drivers import dokan
+import d1_onedrive.impl
+import d1_onedrive.impl.drivers.dokan.const
+import d1_onedrive.impl.drivers.dokan.dokan
+import d1_onedrive.impl.onedrive_exceptions
 
 import d1_common.const
 import d1_common.date_time
@@ -90,11 +77,17 @@ def run(options, root_resolver):
   # Windows Explorer, the first time it will always crash Explorer.  After that
   # first crash it appears to be fine.  I need to figure out how to fix this.
 
-  DriverOption = DOKAN_OPTION_KEEP_ALIVE # | DOKAN_OPTION_NETWORK
-  if (options.stderr):
-    DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
+  DriverOption = (
+    d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_KEEP_ALIVE
+    # | DOKAN_OPTION_NETWORK
+  )
+  if options.stderr:
+    DriverOption |= (
+      d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_DEBUG |
+      d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_STDERR
+    )
 
-  d1fs = dokan.Dokan(
+  d1fs = d1_onedrive.impl.drivers.dokan.dokan.Dokan(
     DataONEFS(options, root_resolver), options.mount_drive_letter, DriverOption,
     0x19831116, THREADS
   )
@@ -112,7 +105,7 @@ def run(options, root_resolver):
     logging.error("Failed to mount DataONE drive")
 
 
-class DataONEFS(dokan.Operations):
+class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
   """
   Read-only user-mode file system for DataONE using Dokan
   """
@@ -133,7 +126,7 @@ class DataONEFS(dokan.Operations):
     attributes = self._get_attributes_through_cache(fileName)
     stat = self._stat_from_attributes(attributes)
     if fileName == "\\":
-      stat['attr'] |= FILE_ATTRIBUTE_DEVICE
+      stat['attr'] |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DEVICE
     return stat
 
   def findFilesWithPattern(self, path, searchPattern):
@@ -174,7 +167,7 @@ class DataONEFS(dokan.Operations):
     log.debug(u'read(): {}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
-    except onedrive_exceptions.PathException:
+    except d1_onedrive.impl.onedrive_exceptions.PathException:
       #raise OSError(errno.ENOENT, e) FUSE
       raise IOError('Could not read specified file: %s', path)
 
@@ -206,8 +199,9 @@ class DataONEFS(dokan.Operations):
   def getVolumeInformation(self):
     #logging.error('')
     fsFlags = (
-      FILE_READ_ONLY_VOLUME | FILE_CASE_SENSITIVE_SEARCH |
-      FILE_CASE_PRESERVED_NAMES
+      d1_onedrive.impl.drivers.dokan.const.FILE_READ_ONLY_VOLUME |
+      d1_onedrive.impl.drivers.dokan.const.FILE_CASE_SENSITIVE_SEARCH |
+      d1_onedrive.impl.drivers.dokan.const.FILE_CASE_PRESERVED_NAMES
     )
     return dict(
       volumeNameBuffer=u'DataONE Disk', maximumComponentLength=260,
@@ -229,8 +223,9 @@ class DataONEFS(dokan.Operations):
       attributes.date()
     ) if attributes.date() is not None else self.start_time
 
-    attrs = FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir() else FILE_ATTRIBUTE_NORMAL
-    attrs |= FILE_ATTRIBUTE_READONLY
+    attrs = d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir(
+    ) else d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_NORMAL
+    attrs |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_READONLY
 
     stat = dict(
       attr=attrs,

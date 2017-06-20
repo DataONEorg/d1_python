@@ -32,14 +32,9 @@ import optparse
 import platform
 import sys
 
-import onedrive
-from onedrive import settings
-from onedrive.impl import cache_memory as cache
-from onedrive.impl import check_dependencies
-from onedrive.impl import object_tree
-from onedrive.impl import util
-from onedrive.impl.clients import onedrive_zotero_client
-from onedrive.impl.resolver import root
+import d1_onedrive.impl
+import d1_onedrive.impl.clients
+import d1_onedrive.impl.resolver
 
 # flake8: noqa: F402
 
@@ -116,9 +111,9 @@ def main():
   log_startup_parameters(options, arguments)
 
   if platform.system() == 'Linux' or platform.system() == 'Darwin':
-    import onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
+    import d1_onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
   elif platform.system() == 'Windows':
-    import onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks
+    import d1_onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks
   else:
     log.error('Unknown platform: {}'.format(platform.system()))
     exit()
@@ -155,7 +150,7 @@ def log_setup(options):
 
 
 def log_version():
-  log.info('ONEDrive version: {}'.format(onedrive.__version__))
+  log.info('ONEDrive version: {}'.format(d1_onedrive.__version__))
 
 
 def log_startup_parameters(options, arguments):

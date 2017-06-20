@@ -31,10 +31,10 @@ import os
 import stat
 import time
 
-import fuse
-from d1_onedrive.impl import cache_memory as cache
+import d1_onedrive.impl
 # App
-from d1_onedrive.impl import onedrive_exceptions
+import d1_onedrive.impl.onedrive_exceptions
+import fuse
 
 import d1_common.date_time
 
@@ -53,8 +53,12 @@ class FUSECallbacks(fuse.Operations):
     self._start_time = time.time()
     self._gid = os.getgid()
     self._uid = os.getuid()
-    self._attribute_cache = cache.Cache(self._options.attribute_max_cache_items)
-    self._directory_cache = cache.Cache(self._options.directory_max_cache_items)
+    self._attribute_cache = d1_onedrive.impl.cache_memory.Cache(
+      self._options.attribute_max_cache_items
+    )
+    self._directory_cache = d1_onedrive.impl.cache_memory.Cache(
+      self._options.directory_max_cache_items
+    )
 
   def getattr(self, path, fh):
     """Called by FUSE when the attributes for a file or directory are required.
@@ -101,7 +105,7 @@ class FUSECallbacks(fuse.Operations):
     log.debug(u'read(): {}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
-    except onedrive_exceptions.PathException:
+    except d1_onedrive.impl.onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   # Private.
@@ -112,7 +116,7 @@ class FUSECallbacks(fuse.Operations):
       d.append('.')
       d.append('..')
       return d
-    except onedrive_exceptions.PathException:
+    except d1_onedrive.impl.onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   def _get_attributes_through_cache(self, path):
@@ -126,7 +130,7 @@ class FUSECallbacks(fuse.Operations):
   def _get_attributes(self, path):
     try:
       return self._root_resolver.get_attributes(path)
-    except onedrive_exceptions.PathException:
+    except d1_onedrive.impl.onedrive_exceptions.PathException:
       self._raise_error_no_such_file_or_directory(path)
 
   def _stat_from_attributes(self, attributes):

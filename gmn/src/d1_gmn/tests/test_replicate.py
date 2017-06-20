@@ -19,6 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNReplication.replicate()
+
+These tests do NOT check if GMN acts on the request and actually performs the
+replication
 """
 
 from __future__ import absolute_import
@@ -31,9 +34,11 @@ import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
 import d1_common
+import d1_common.types.exceptions
+
+import django.test
 
 
-@pytest.mark.skip('TODO')
 class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   # ----------------------------------------------------------------------------
@@ -41,67 +46,64 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
   # ----------------------------------------------------------------------------
 
   @responses.activate
-  def test_1900_v1(self):
+  def test_1000(self, mn_client_v1_v2):
+    """MNReplication.replicate(): Returns NotAuthorized on request from
+    non-trusted subject
+    """
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      self.client_v2, sid=True
+    )
+    with django.test.override_settings(NODE_REPLICATE=True):
+      with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+        mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  @responses.activate
+  def test_1010(self, mn_client_v1_v2):
+    """MNReplication.replicate(): Returns InvalidRequest when not accepting
+    replicas
+    """
+    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      mn_client_v1_v2
+    )
+    with django.test.override_settings(NODE_REPLICATE=False):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+          mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  @responses.activate
+  def test_1011(self, mn_client_v1_v2):
+    """MNReplication.replicate(): Returns InvalidRequest if requested replica
+    is larger than local limit
+    """
+    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      mn_client_v1_v2
+    )
+    with django.test.override_settings(
+        NODE_REPLICATE=True, REPLICATION_MAXOBJECTSIZE=10
+    ):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+          mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  @responses.activate
+  def test_1020(self, mn_client_v1_v2):
     """MNReplication.replicate(): Request to replicate new object returns 200
-    OK. Does NOT check if GMN acts on the request and actually performs the
-    replication
+    OK
     """
-    self._test_1900(self.client_v1)
+    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      mn_client_v1_v2
+    )
+    with django.test.override_settings(NODE_REPLICATE=True):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
 
   @responses.activate
-  def test_1900_v2(self):
-    """MNReplication.replicate(): Request to replicate new object returns 200
-    OK. Does NOT check if GMN acts on the request and actually performs the
-    replication
-    """
-    self._test_1900(self.client_v2)
-
-  def _test_1900(self, mn_client_v1):
-    pid = self.random_pid()
-    scidata, sysmeta_pyxb = self.generate_sciobj(mn_client_v1, pid)
-    mn_client_v1.replicate(sysmeta_pyxb, 'test_source_node')
-
-  @responses.activate
-  def test_1910_v1(self):
+  def test_1030(self, mn_client_v1_v2):
     """MNReplication.replicate(): Request to replicate existing object raises
-    IdentifierNotUnique. Does NOT check if GMN acts on the request and actually
-    performs the replication
+    IdentifierNotUnique
     """
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      self._test_1910(self.client_v1)
-
-  @responses.activate
-  def test_1910_v2(self):
-    """MNReplication.replicate(): Request to replicate existing object raises
-    IdentifierNotUnique. Does NOT check if GMN acts on the request and actually
-    performs the replication
-    """
-    self._test_1910(self.client_v2)
-
-  def _test_1910(self, mn_client_v1):
-    known_pid = 'AnserMatrix.htm'
-    scidata, sysmeta_pyxb = self.generate_sciobj(mn_client_v1, known_pid)
-    with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-      mn_client_v1.replicate(sysmeta_pyxb, 'test_source_node')
-
-  @responses.activate
-  def test_1920_v1(self):
-    """MNReplication.replicate(): Request from non-trusted subject returns
-    NotAuthorized. Does NOT check if GMN acts on the request and actually
-    performs the replication
-    """
-    self._test_1920(self.client_v1)
-
-  @responses.activate
-  def test_1920_v2(self):
-    """MNReplication.replicate(): Request from non-trusted subject returns
-    NotAuthorized. Does NOT check if GMN acts on the request and actually
-    performs the replication
-    """
-    self._test_1920(self.client_v2)
-
-  def _test_1920(self, mn_client_v1):
-    known_pid = 'new_pid_2'
-    scidata, sysmeta_pyxb = self.generate_sciobj(mn_client_v1, known_pid)
-    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-      mn_client_v1.replicate(sysmeta_pyxb, 'test_source_node')
+    with django.test.override_settings(NODE_REPLICATE=True):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+          mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')

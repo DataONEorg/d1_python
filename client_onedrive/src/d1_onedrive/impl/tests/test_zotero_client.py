@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import logging
 import os
 
 import d1_onedrive.impl.clients.onedrive_zotero_client as zotero_client
@@ -73,22 +74,6 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
     #   copy_dirs_recursive(zotero_client, object_tree_client, None, [])
     pass
 
-  def _copy_dirs_recursive(
-      self, zotero_client, object_tree_client, zotero_collection,
-      object_tree_path
-  ):
-    object_tree_folder = object_tree_client.get_folder(object_tree_path)
-    print(object_tree_folder['name'])
-    # collection = zotero_create_collection(
-    #   zotero_client, zotero_collection, object_tree_folder['name']
-    # )
-    # for pid in object_tree_folder['items']:
-    #   zotero_create_item(zotero_client, collection, pid)
-    # for d in object_tree_folder['dirs']:
-    #   copy_dirs_recursive(
-    #     zotero_client, object_tree_client, collection, object_tree_path + [d]
-    #   )
-
   def _zotero_create_collection(self, zotero_client, zotero_collection, name):
     params = {'name': name}
     if zotero_collection is not None:
@@ -106,12 +91,12 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
       zotero_collection['collectionKey'], item_with_key
     )
 
-  def _print_zotero_types(self, zotero_client):
+  def _log_zotero_types(self, zotero_client):
     for i in zotero_client.item_types():
-      print()
-      print(i['localized'])
+      logging.debug('')
+      logging.debug(i['localized'])
       for j in zotero_client.item_type_fields(i['itemType']):
-        print(' ', j['localized'])
+        logging.debug(' ', j['localized'])
 
   def _zotero_delete_all(zotero_client):
     while True:
@@ -119,7 +104,7 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
       if not items:
         break
       for i in items:
-        print(i['title'].encode('utf-8'))
+        logging.debug(i['title'].encode('utf-8'))
         zotero_client.delete_item(i)
 
   @pytest.mark.skip('TODO')

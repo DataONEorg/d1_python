@@ -30,5 +30,5 @@ def entrypoint0():
 
 def entrypoint1():
 
-  from d1_onedrive import onedrive
-  onedrive.main()
+  from d1_onedrive import d1_onedrive
+  d1_onedrive.main()

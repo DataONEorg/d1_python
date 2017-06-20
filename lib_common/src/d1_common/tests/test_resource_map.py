@@ -476,6 +476,3 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     self.assert_equals_sample(
       stream.getvalue(), 'resource_map_as_graphviz_dot', mn_client_v2
     )
-    # print stream.getvalue()
-    # return
-    # assert 'node1 -> node2' in stream.getvalue()

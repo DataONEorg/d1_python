@@ -38,12 +38,11 @@ import logging
 import os
 import re
 
+# App
+import d1_onedrive.impl.onedrive_exceptions
 import httplib
 # 3rd party
-from pyzotero import zotero
-
-# App
-from .. import onedrive_exceptions
+import pyzotero
 
 try:
   import cPickle as pickle
@@ -57,7 +56,7 @@ class ZoteroClient(object):
     self._user_id = self._get_setting('ZOTERO_USER')
     self._api_access_key = self._get_setting('ZOTERO_API_ACCESS_KEY')
     self._check_api_key()
-    self._zotero_client = zotero.Zotero(
+    self._zotero_client = pyzotero.zotero.Zotero(
       self._user_id, 'user', self._api_access_key
     )
 
@@ -136,7 +135,7 @@ class ZoteroClient(object):
       try:
         return os.environ[key]
       except KeyError:
-        raise onedrive_exceptions.ONEDriveException(
+        raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
           'Required value must be set in settings.py or OS environment: {}'.
           format(key)
         )
@@ -250,7 +249,9 @@ class ZoteroClient(object):
         path[1:], filtered_tree['collections'][path[0]]
       )
     except KeyError:
-      raise onedrive_exceptions.ONEDriveException('Invalid path')
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
+        'Invalid path'
+      )
 
   def _check_api_key(self):
     host = 'api.zotero.org'
@@ -260,7 +261,7 @@ class ZoteroClient(object):
     connection = httplib.HTTPSConnection(host)
     connection.request('GET', url)
     if connection.getresponse().status == 403:
-      raise onedrive_exceptions.ONEDriveException(
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
         'Invalid Zotero User ID or API key. UserID: {}, API Key: {}.'
         .format(self._user_id, self._api_access_key)
       )

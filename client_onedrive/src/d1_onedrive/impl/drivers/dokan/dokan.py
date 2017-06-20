@@ -29,12 +29,10 @@ from __future__ import absolute_import
 
 import ctypes
 import ctypes.wintypes as wintypes
+import functools
 import logging
-from ctypes.wintypes import FILETIME
-from ctypes.wintypes import WIN32_FIND_DATAW
-from functools import partial
 
-import const
+import d1_onedrive.impl.drivers.dokan.const
 
 
 class Dokan(object):
@@ -76,7 +74,7 @@ class Dokan(object):
     self.dokan_ops = dokan_operations()
     for name, prototype in dokan_operations._fields_:
       if prototype != ctypes.c_voidp and getattr(operations, name, None):
-        op = partial(self._wrapper_, getattr(self, name))
+        op = functools.partial(self._wrapper_, getattr(self, name))
         setattr(self.dokan_ops, name, prototype(op))
 
   def _wrapper_(self, func, *args, **kwargs):
@@ -246,10 +244,10 @@ class Dokan(object):
         numberOfBytesRead, ctypes.byref(sizeRead),
         ctypes.sizeof(ctypes.c_ulong)
       )
-      return const.DOKAN_SUCCESS
+      return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
     except Exception:
       #logging.error('%s', e)
-      return const.DOKAN_ERROR
+      return d1_onedrive.impl.drivers.dokan.const.DOKAN_ERROR
 
   def writeFile(
       self, fileName, buffer, numberOfBytesToWrite, numberOfBytesWritten,
@@ -303,13 +301,13 @@ class Dokan(object):
     #    try:
     ret = self.operations('getFileInformation', fileName)
     if ret is None:
-      return -const.ERROR_FILE_NOT_FOUND
+      return -d1_onedrive.impl.drivers.dokan.const.ERROR_FILE_NOT_FOUND
     create_ft = self.python_timestamp_to_win32_filetime(ret['ctime'])
     last_access_ft = self.python_timestamp_to_win32_filetime(ret['atime'])
     last_write_ft = self.python_timestamp_to_win32_filetime(ret['wtime'])
-    cft = FILETIME(create_ft[0], create_ft[1])
-    laft = FILETIME(last_access_ft[0], last_access_ft[1])
-    lwft = FILETIME(last_write_ft[0], last_write_ft[1])
+    cft = ctypes.wintypes.FILETIME(create_ft[0], create_ft[1])
+    laft = ctypes.wintypes.FILETIME(last_access_ft[0], last_access_ft[1])
+    lwft = ctypes.wintypes.FILETIME(last_write_ft[0], last_write_ft[1])
     size = self.pyint_to_double_dwords(ret['size'])
     _Buffer = BY_HANDLE_FILE_INFORMATION(
       ctypes.c_ulong(ret['attr']), # attributes
@@ -326,7 +324,7 @@ class Dokan(object):
     ctypes.memmove(
       buffer, ctypes.byref(_Buffer), ctypes.sizeof(BY_HANDLE_FILE_INFORMATION)
     )
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   #except Exception,e:
   #  logging.error('%s', e)
@@ -365,16 +363,16 @@ class Dokan(object):
     try:
       ret = self.operations('findFilesWithPattern', fileName, searchPattern)
       if ret is None:
-        return const.DOKAN_ERROR
+        return d1_onedrive.impl.drivers.dokan.const.DOKAN_ERROR
       for r in ret:
         create_ft = self.python_timestamp_to_win32_filetime(r['ctime'])
         last_access_ft = self.python_timestamp_to_win32_filetime(r['atime'])
         last_write_ft = self.python_timestamp_to_win32_filetime(r['wtime'])
-        cft = FILETIME(create_ft[0], create_ft[1])
-        laft = FILETIME(last_access_ft[0], last_access_ft[1])
-        lwft = FILETIME(last_write_ft[0], last_write_ft[1])
+        cft = ctypes.wintypes.FILETIME(create_ft[0], create_ft[1])
+        laft = ctypes.wintypes.FILETIME(last_access_ft[0], last_access_ft[1])
+        lwft = ctypes.wintypes.FILETIME(last_write_ft[0], last_write_ft[1])
         size = self.pyint_to_double_dwords(r['size'])
-        File = WIN32_FIND_DATAW(
+        File = ctypes.wintypes.WIN32_FIND_DATAW(
           ctypes.c_ulong(r['attr']), # attributes
           cft, # creation time
           laft, # last access time
@@ -386,12 +384,12 @@ class Dokan(object):
           r['name'], # file name
           ''
         ) # alternate name
-        pFile = PWIN32_FIND_DATAW(File)
+        pFile = ctypes.wintypes.PWIN32_FIND_DATAW(File)
         fillFindData(pFile, dokanFileInfo)
-      return const.DOKAN_SUCCESS
+      return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
     except Exception as e:
       logging.error('%s', e)
-      return const.DOKAN_ERROR
+      return d1_onedrive.impl.drivers.dokan.const.DOKAN_ERROR
 
   def setFileAttributes(self, fileName, fileAttributes, dokanFileInfo):
     """
@@ -562,7 +560,7 @@ class Dokan(object):
       ctypes.byref(ctypes.c_longlong(ret['totalNumberOfFreeBytes'])),
       ctypes.sizeof(ctypes.c_longlong)
     )
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def getVolumeInformation(
       self, volumeNameBuffer, volumeNameSize, volumeSerialNumber,
@@ -624,7 +622,7 @@ class Dokan(object):
         fileSystemNameSize
       )
     )
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def unmount(self, dokanFileInfo):
     """
@@ -708,79 +706,79 @@ class Operations(object):
     return getattr(self, op)(*args)
 
   def createFile(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def openDirectory(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def createDirectory(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def cleanup(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def closeFile(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def readFile(self, fileName, numberOfBytesToRead, offset):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def writeFile(self, fileName, buffer, numberOfBytesToWrite, offset):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def flushFileBuffers(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def getFileInformation(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def findFiles(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def findFilesWithPattern(self, fileName, searchPattern):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def setFileAttributes(self, fileName, fileAttributes):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def setFileTime(self, fileName, creationTime, lastAccessTime, lastWriteTime):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def deleteFile(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def deleteDirectory(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def moveFile(self, existingFileName, newFileName, replaceExisting):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def setEndOfFile(self, fileName, length):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def setAllocationSize(self, fileName, length):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def lockFile(self, fileName, offset, length):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def unlockFile(self, fileName, offset, length):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def getDiskFreeSpace(self):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def getVolumeInformation(self):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def unmount(self):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def getFileSecurity(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
   def setFileSecurity(self, fileName):
-    return const.DOKAN_SUCCESS
+    return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
 
 
 class _DOKAN_OPTIONS(ctypes.Structure):

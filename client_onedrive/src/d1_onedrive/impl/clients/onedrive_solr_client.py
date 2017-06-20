@@ -25,9 +25,8 @@ from __future__ import absolute_import
 
 import logging
 
+import d1_onedrive.impl.onedrive_exceptions
 import requests
-
-from .. import onedrive_exceptions
 
 import d1_common.const
 import d1_common.date_time
@@ -62,7 +61,7 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
     try:
       return response[0]
     except IndexError:
-      raise onedrive_exceptions.ONEDriveException(
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
         'Object does not exist. pid={}'.format(pid)
       )
 

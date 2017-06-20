@@ -86,7 +86,7 @@ def add_callback(base_url):
     )
   logging.debug(
     'Added callbacks for all methods. base_url="{}" methods="{}"'.
-    format(base_url, ', '.join(method_list))
+    format(base_url, '/'.join(method_list))
   )
 
 

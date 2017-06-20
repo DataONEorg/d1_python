@@ -20,7 +20,7 @@ from __future__ import absolute_import
 
 import os
 
-import callbacks
+import d1_onedrive.impl.drivers.fuse.callbacks
 import fuse
 
 
@@ -41,6 +41,7 @@ def run(options, root_resolver):
     fuse_args['nonempty'] = options.fuse_nonempty
 
   fuse.FUSE(
-    callbacks.FUSECallbacks(options, root_resolver), options.mountpoint,
-    **fuse_args
+    d1_onedrive.impl.drivers.fuse.callbacks.FUSECallbacks(
+      options, root_resolver
+    ), options.mountpoint, **fuse_args
   )

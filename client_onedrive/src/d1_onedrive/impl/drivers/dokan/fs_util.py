@@ -31,8 +31,6 @@ import urllib
 import urlparse
 
 import solrclient
-from beaker.cache import CacheManager
-from beaker.util import parse_cache_config_options
 
 import d1_common.const
 
@@ -68,8 +66,8 @@ cache_opts = {
   'cache.mem_cache.enabled': 'True',
   'cache.mem_cache.expire': '300'
 }
-# initialize the cache manager
-cache = CacheManager(**parse_cache_config_options(cache_opts))
+
+cache = None # d1_onedrive.impl.CacheManager(**parse_cache_config_options(cache_opts))
 
 
 class D1FS():

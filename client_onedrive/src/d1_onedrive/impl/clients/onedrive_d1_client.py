@@ -28,12 +28,14 @@ import socket
 import ssl
 
 # App
-from .. import disk_cache
-from .. import onedrive_exceptions
+import d1_onedrive.impl.disk_cache
+import d1_onedrive.impl.onedrive_exceptions
 
 import d1_common
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
+import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
 
@@ -45,10 +47,10 @@ log.setLevel(logging.DEBUG)
 class DataONEClient():
   def __init__(self, options):
     self._options = options
-    self._science_object_cache = disk_cache.DiskCache(
+    self._science_object_cache = d1_onedrive.impl.disk_cache.DiskCache(
       options.sci_obj_max_cache_items, options.sci_obj_cache_path
     )
-    self._system_metadata_cache = disk_cache.DiskCache(
+    self._system_metadata_cache = d1_onedrive.impl.disk_cache.DiskCache(
       options.sys_meta_max_cache_items, options.sys_meta_cache_path
     )
 
@@ -73,9 +75,11 @@ class DataONEClient():
     try:
       return self.client.describe(pid)
     except d1_common.types.exceptions.DataONEException as e:
-      raise onedrive_exceptions.ONEDriveException(e.description)
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
+        e.description
+      )
     except (ssl.SSLError, socket.error) as e:
-      raise onedrive_exceptions.ONEDriveException(str(e))
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(str(e))
 
   #
   # Private.
@@ -100,9 +104,11 @@ class DataONEClient():
       )
       return d1client.get(pid).read()
     except d1_common.types.exceptions.DataONEException as e:
-      raise onedrive_exceptions.ONEDriveException(e.description)
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
+        e.description
+      )
     except (ssl.SSLError, socket.error) as e:
-      raise onedrive_exceptions.ONEDriveException(str(e))
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(str(e))
 
   # System Metadata as PyXB object.
 
@@ -133,6 +139,8 @@ class DataONEClient():
       result = self.client.getSystemMetadataResponse(pid)
       return result.read()
     except d1_common.types.exceptions.DataONEException as e:
-      raise onedrive_exceptions.ONEDriveException(e.description)
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
+        e.description
+      )
     except (ssl.SSLError, socket.error) as e:
-      raise onedrive_exceptions.ONEDriveException(str(e))
+      raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(str(e))

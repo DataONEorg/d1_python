@@ -118,6 +118,8 @@ Notes:
 
 * The tests use `settings_test.py` for GMN and Django configuration.
 
+* Pytest-django forces `settings.DEBUG` to `False` in `pytest_django/plugin.py`. To set `settings.DEBUG`, override it close to where it will be read, e.g., wit `@django.test.override_settings(DEBUG=True)`.
+
 ### Create a new release
 
 ##### Update dependencies

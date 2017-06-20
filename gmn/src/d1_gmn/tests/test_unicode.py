@@ -40,8 +40,6 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """Unicode: GMN and libraries handle Unicode correctly"""
 
     def test(client):
-      # print d1_test.util.read_utf8_to_unicode('tricky_identifiers_unicode.txt')
-      # return
       tricky_unicode_str = self.load_sample_utf8_to_unicode(
         'tricky_identifiers_unicode.utf8.txt'
       )

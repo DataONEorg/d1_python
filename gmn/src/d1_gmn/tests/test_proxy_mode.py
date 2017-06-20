@@ -69,16 +69,9 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
       else:
         proxy_url = self.get_invalid_sciobj_url(pid, client)
 
-      # if use_invalid_url:
-      # with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
         client, pid=pid, vendor_dict=self.vendor_proxy_mode(proxy_url)
       )
-      #   return
-      # else:
-      #   pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
-      #     client, pid=pid, vendor_dict=self.vendor_proxy_mode(proxy_url)
-      #   )
 
       # Check
 
@@ -86,20 +79,9 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
       assert not os.path.isfile(sciobj_path)
       # self.assertEquals(os.path.getsize(sciobj_path), 0)
-
       received_sciobj_str, received_sysmeta_pyxb = self.get_obj(client, pid)
 
       assert send_sciobj_str == received_sciobj_str
-
-      # self.assertEqual(len(response.content), 1024)
-      # self.assertEqual(send_sciobj_str, response.content)
-      # self.assertEqual(
-      #   send_sysmeta_pyxb.checksum.value(),
-      #   recv_sysmeta_pyxb.checksum.value(),
-      # )
-      # self.assert_sci_obj_checksum_matches_sysmeta(
-      #   response, recv_sysmeta_pyxb
-      # )
 
   def get_remote_sciobj_url(self, pid, client):
     return d1_common.url.joinPathElements(

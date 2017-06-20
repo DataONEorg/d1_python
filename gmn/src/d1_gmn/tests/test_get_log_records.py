@@ -22,318 +22,210 @@
 
 from __future__ import absolute_import
 
+import datetime
+
+import freezegun
+import pytest
 import responses
 
+import d1_gmn.app.models
+import d1_gmn.app.util
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
+
+import d1_common
+import d1_common.types
+import d1_common.types.exceptions
+import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.system_metadata
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestGetLogRecords')
+@freezegun.freeze_time('1977-05-27')
 class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0001(self):
-    """getLogRecords():"""
+  def test_1001(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: start=0, count=0 returns empty slice with
+    correct total event count
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(start=0, count=0)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__number_of_events', mn_client_v1_v2
+      )
 
-  #   def test(mn_client_v1_v2):
-  #     for _ in range(100):
-  #       pid = self.random_pid()
-  #       sciobj_str = d1_test.d1_test_case.generate_reproducible_sciobj_str(pid)
-  #       options = {
-  #         'identifier': mn_client_v1_v2.bindings.Identifier(pid),
-  #       }
-  #       # rnd_sysmeta_pyxb = (
-  #       #   d1_test.instance_generator.system_metadata.generate_from_flo(
-  #       #     StringIO.StringIO(sciobj_str), options
-  #       #   )
-  #       # )
-  #       #
-  #       # self.dump_pyxb(rnd_sysmeta_pyxb)
-  #       #
-  #       # mn_client_v1_v2.create(pid, StringIO.StringIO(sciobj_str), rnd_sysmeta_pyxb)
-  #
-  #     #       pid, sid, sciobj_str, send_sysmeta_pyxb = (
-  #     #         self.generate_sciobj_with_defaults(mn_client_v1_v2)
-  #     #       )
-  #     #       send_checksum = d1_common.checksum.create_checksum_object_from_string(
-  #     #         sciobj_str, algorithm_str
-  #     #       )
-  #     #       send_sysmeta_pyxb.checksum = send_checksum
-  #     #       mn_client_v1_v2.create(pid, StringIO.StringIO(sciobj_str), send_sysmeta_pyxb)
-  #     #       recv_checksum = mn_client_v1_v2.getChecksum(pid, algorithm_str)
-  #     #       d1_common.checksum.are_checksums_equal(
-  #     #         send_sysmeta_pyxb.checksum, recv_checksum
-  #     #       )
-  #     #
-  #     # # MNCore.getLogRecords(session[, fromDate][, toDate][, event][,
-  #     idFilter][, start=0][, count=1000]) → Log¶
-  #     MNCore.getLogRecords(session[, fromDate][, toDate][, event][,
-  #     idFilter][, start=0][, count=1000]) → Log¶
-  #     #
-  #     # test(self.client_v1)
-  #
-  #   with d1_gmn.tests.gmn_mock.disable_auth():
-  #     test(self.client_v2)
-  #
-  # # def test_0010(self):
-  # #   """MNRead.getLogRecords(): replicaStatus filter"""
-  # #   # Create two objects, one local and one replica
-  # #   local_pid = self.create_obj(self.client_v2)[0]
-  # #   replica_pid = self.create_obj(self.client_v2)[0]
-  # #   self.convert_to_replica(replica_pid)
-  # #   # No replicationStatus filter returns both objects
-  # #   object_list_pyxb = self.client_v2.getLogRecords()
-  # #   self.assertListEqual(
-  # #     sorted([replica_pid, local_pid]),
-  # #     self.log_to_pid_list(object_list_pyxb),
-  # #   )
-  # #   # replicationStatus=True returns both objects
-  # #   object_list_pyxb = self.client_v2.getLogRecords()
-  # #   self.assertListEqual(
-  # #     sorted([replica_pid, local_pid]),
-  # #     self.log_to_pid_list(object_list_pyxb),
-  # #   )
-  # #   # replicationStatus=False returns only the local object
-  # #   object_list_pyxb = self.client_v2.getLogRecords(replicaStatus=False)
-  # #   self.assertListEqual(
-  # #     [local_pid],
-  # #     self.log_to_pid_list(object_list_pyxb),
-  # #   )
-  # #   # Check header.
-  # #   self.assert_object_list_slice(
-  # #     object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA
-  # #   )
-  #
-  # #   def test_1100_D(self):
-  # #     """Event log is populated.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     logRecords = mn_client_v1_v2.getLogRecords(
-  # #       count=d1_common.const.MAX_LISTOBJECTS,
-  # #     )
-  # #     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
-  # #     self.assertIn(
-  # #       ('hdl:10255/dryad.654/mets.xml', 'create'),
-  # #       [(o.identifier.value(), o.event) for o in logRecords.logEntry],
-  # #     )
-  # #
-  # # qwe
-  # #
-  # #
-  # #   @responses.activate
-  # #   def test_1500_v1(self):
-  # #     """getLogRecords(): Get event count
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1500(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1500_v2(self):
-  # #     """getLogRecords(): Get event count
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1500(mn_client_v1_v2)
-  # #
-  # #   def _test_1500(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=0, count=0,
-  # #     )
-  # #     self.assert_log_slice(log, 0, 0, EVENTS_TOTAL_1500)
-  # #
-  # #   @responses.activate
-  # #   def test_1510_v1(self):
-  # #     """getLogRecords(): Slicing: Starting at 0 and getting half of the
-  # #     available events.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1510(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1510_v2(self):
-  # #     """getLogRecords(): Slicing: Starting at 0 and getting half of the
-  # #     available events.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1510(mn_client_v1_v2)
-  # #
-  # #   def _test_1510(self, mn_client_v1_v2):
-  # #     object_cnt_half = EVENTS_TOTAL / 2
-  # #     # Starting at 0 and getting half of the available objects.
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=0, count=object_cnt_half,
-  # #     )
-  # #     self.assert_log_slice(log, 0, object_cnt_half, EVENTS_TOTAL_1500)
-  # #
-  # #   @responses.activate
-  # #   def test_1520_v1(self):
-  # #     """getLogRecords(): Slicing: From center and more than are available
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1520(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1520_v2(self):
-  # #     """getLogRecords(): Slicing: From center and more than are available
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1520(mn_client_v1_v2)
-  # #
-  # #   def _test_1520(self, mn_client_v1_v2):
-  # #     object_cnt_half = EVENTS_TOTAL_1500 / 2
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=object_cnt_half, count=d1_common.const.MAX_LISTOBJECTS,
-  # #
-  # #     )
-  # #     self.assert_log_slice(
-  # #       log, object_cnt_half, EVENTS_TOTAL_1500 - object_cnt_half,
-  # #       EVENTS_TOTAL_1500
-  # #     )
-  # #
-  # #   @responses.activate
-  # #   def test_1530_v1(self):
-  # #     """getLogRecords(): Slicing: Starting above number of events that are
-  # #     available.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1530(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1530_v2(self):
-  # #     """getLogRecords(): Slicing: Starting above number of events that are
-  # #     available.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1530(mn_client_v1_v2)
-  # #
-  # #   def _test_1530(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=EVENTS_TOTAL_1500 * 2, count=1,
-  # #     )
-  # #     self.assert_log_slice(log, EVENTS_TOTAL_1500 * 2, 0, EVENTS_TOTAL_1500)
-  # #
-  # #   @responses.activate
-  # #   def test_1550_v1(self):
-  # #     """getLogRecords(): Date range query: Get all events from the 1990s.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1550(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1550_v2(self):
-  # #     """getLogRecords(): Date range query: Get all events from the 1990s.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1550(mn_client_v1_v2)
-  # #
-  # #   def _test_1550(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       count=d1_common.const.MAX_LISTOBJECTS,
-  # #       fromDate=datetime.datetime(1990, 1, 1),
-  # #       toDate=datetime.datetime(1999, 12, 31),
-  # #     )
-  # #     self.assert_log_slice(
-  # #       log, 0, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S,
-  # #       EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S
-  # #     )
-  # #
-  # #   @responses.activate
-  # #   def test_1560_v1(self):
-  # #     """getLogRecords(): Date range query: Get first 10 objects from the
-  # #     1990s.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1560(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1560_v2(self):
-  # #     """getLogRecords(): Date range query: Get first 10 objects from the
-  # #     1990s.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1560(mn_client_v1_v2)
-  # #
-  # #   def _test_1560(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=0, count=10, fromDate=datetime.datetime(1990, 1, 1),
-  # #       toDate=datetime.datetime(1999, 12, 31),
-  # #     )
-  # #     self.assert_log_slice(log, 0, 10, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S)
-  # #
-  # #   @responses.activate
-  # #   def test_1570_v1(self):
-  # #     """getLogRecords(): Date range query: Get all events from the 1990s,
-  # #     filtered by event type.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1570(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1570_v2(self):
-  # #     """getLogRecords(): Date range query: Get all events from the 1990s,
-  # #     filtered by event type.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1570(mn_client_v1_v2)
-  # #
-  # #   def _test_1570(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=0, count=d1_common.const.MAX_LISTOBJECTS,
-  # #       fromDate=datetime.datetime(1990, 1, 1),
-  # #       toDate=datetime.datetime(1999, 12, 31), event='delete',
-  # #
-  # #     )
-  # #     self.assert_log_slice(
-  # #       log, 0, EVENTS_DELETES_UNI_TIME_IN_1990S, EVENTS_DELETES_UNI_TIME_IN_1990S
-  # #     )
-  # #
-  # #   @responses.activate
-  # #   def test_1580_v1(self):
-  # #     """getLogRecords(): Date range query: Get 10 first events from
-  # #     non-existing date range.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1580(mn_client_v1_v2)
-  # #
-  # #   @responses.activate
-  # #   def test_1580_v2(self):
-  # #     """getLogRecords(): Date range query: Get 10 first events from
-  # #     non-existing date range.
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1580(mn_client_v1_v2)
-  # #
-  # #   def _test_1580(self, mn_client_v1_v2):
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       start=0, count=d1_common.const.MAX_LISTOBJECTS,
-  # #       fromDate=datetime.datetime(2500, 1, 1),
-  # #       toDate=datetime.datetime(2500, 12, 31),
-  # #     )
-  # #     self.assert_log_slice(log, 0, 0, 0)
-  # #
-  # #   @responses.activate
-  # #   def test_1591_v1(self):
-  # #     """create() of object causes a new create event to be written for the
-  # #     given PID
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient.MemberNodeClient(GMN_URL)
-  # #     self._test_1591(self.client_v1)
-  # #
-  # #   @responses.activate
-  # #   def test_1591_v2(self):
-  # #     """create() of object causes a new create event to be written for the
-  # #     given PID
-  # #     """
-  # #     mn_client_v1_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-  # #     self._test_1591(self.client_v2)
-  # #
-  # #   def _test_1591(self, mn_client_v1_v2):
-  # #     pid = self.random_pid()
-  # #     self.create(mn_client_v1_v2, pid)
-  # #     log = mn_client_v1_v2.getLogRecords(
-  # #       pidFilter=pid,
-  # #     )
-  # #     self.assertEqual(len(log.logEntry), 1)
-  # #     self.assertEqual(log.logEntry[0].event, 'create')
-  # #     self.assertEqual(log.logEntry[0].identifier.value(), pid)
+  @responses.activate
+  def test_1002(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: Retrieve front section
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(start=0, count=21)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__front_section', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1003(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: Retrieve middle section
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(start=2000, count=15)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__middle_section', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1004(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: Retrieve exact end section
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      n_events = self.get_total_log_records(mn_client_v1_v2)
+      # Slice indexes are zero based.
+      log = mn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__exact_end_section', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1005(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: Specifying more events than are
+    available returns the available events
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      n_events = self.get_total_log_records(mn_client_v1_v2)
+      # Slice indexes are zero based.
+      log = mn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__count_beyond_end_section', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1006(self, mn_client_v1_v2):
+    """getLogRecords(): Slicing: Specifying start above available events
+    returns an empty list
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      n_events = self.get_total_log_records(mn_client_v1_v2)
+      # Slice indexes are zero based.
+      log = mn_client_v1_v2.getLogRecords(start=n_events + 1234, count=10000)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__start_beyond_end_section', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1010(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): event type filter: Unknown event returns an empty
+    list.
+
+    In v2, event type is not an enum.
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(event='bogus_event')
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__event_filter_unknown', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1011(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): event type filter: known event returns list of
+    requested size with total equal to the number of events of the type
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(event='update', count=10)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log, 'get_log_records__event_filter_update', mn_client_v1_v2
+      )
+
+  @responses.activate
+  def test_1012(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): Date range query: Get all events from 1979
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      newest_log = mn_client_v1_v2.getLogRecords(
+        fromDate=datetime.datetime(1979, 1, 1),
+        toDate=datetime.datetime(1979, 12, 31), start=0, count=1
+      )
+      n_match = newest_log.total
+      oldest_log = mn_client_v1_v2.getLogRecords(
+        fromDate=datetime.datetime(1979, 1, 1),
+        toDate=datetime.datetime(1979, 12, 31), start=n_match - 1, count=1
+      )
+      # Verify that first and last records are both in 1979 and that first doc
+      # is the newest, as GMN sorts on timestamp descending.
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
+        'get_log_records__date_range_first_last',
+        mn_client_v1_v2,
+      )
+
+  @responses.activate
+  def test_1013(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): Date range query: Using a date range in the
+    future returns empty list
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(
+        fromDate=datetime.datetime(2500, 1, 1),
+        toDate=datetime.datetime(3000, 12, 31), start=0, count=1
+      )
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        log,
+        'get_log_records__date_range_in_the_future',
+        mn_client_v1_v2,
+      )
+
+  @responses.activate
+  def test_1014(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): Date range query: End date before start date
+    raises InvalidRequest
+    """
+    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        mn_client_v1_v2.getLogRecords(
+          fromDate=datetime.datetime(1692, 5, 1),
+          toDate=datetime.datetime(1445, 9, 2), start=0, count=1
+        )
+
+  @responses.activate
+  @freezegun.freeze_time('2388-08-28')
+  def test_1015(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): create() of object causes a new create event to
+    be added for the given PID
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      n_create_events_before = self.get_total_log_records(
+        mn_client_v1_v2, event='create'
+      )
+      with freezegun.freeze_time('2388-08-28'):
+        pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+          mn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
+        )
+      # The event timestamp is set directly in the db, so it's not covered by
+      # freezegun. We just set it manually.
+      sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+      event_log_model = d1_gmn.app.models.EventLog.objects.get(
+        sciobj=sciobj_model
+      )
+      event_log_model.timestamp = sysmeta_pyxb.dateUploaded
+      event_log_model.save()
+      #
+      n_create_events_after = self.get_total_log_records(
+        mn_client_v1_v2, event='create'
+      )
+      assert n_create_events_after == n_create_events_before + 1
+      # Verify that the most recent record now matches the object that was created
+      event_pyxb = mn_client_v1_v2.getLogRecords(start=0, count=1)
+      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+        '\n'.join(
+          '{}: {}'.format(k, v) for k, v in {
+            'pid': pid,
+            'sid': sid,
+            'sysmeta': d1_common.xml.pretty_pyxb(sysmeta_pyxb),
+            'create_event': d1_common.xml.pretty_pyxb(event_pyxb),
+          }.items()
+        ),
+        'get_log_records__new_create_event',
+        mn_client_v1_v2,
+      )

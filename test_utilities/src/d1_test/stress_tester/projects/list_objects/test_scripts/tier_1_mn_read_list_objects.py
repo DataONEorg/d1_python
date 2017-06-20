@@ -54,7 +54,7 @@ class Transaction(transaction.Transaction):
 
   # Definition of listObjects from mnclient.py:
   #
-  # def listObjects(self, fromDate=None, toDate=None, objectFormat=None,
+  # def listObjects(self, fromDate=None, toDate=None, formatId=None,
   #                 replicaStatus=None, start=0,
   #                 count=d1_common.const.DEFAULT_LISTOBJECTS,
   #                 vendorSpecific=None):

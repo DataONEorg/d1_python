@@ -22,10 +22,10 @@ from __future__ import absolute_import
 
 import datetime
 import hashlib
+import json
 import logging
 import os
 import random
-import string
 import StringIO
 import sys
 import tempfile
@@ -58,6 +58,8 @@ import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 import d1_client.session
 
+from django.db import connection
+
 DEFAULT_PERMISSION_LIST = [
   (['subj1'], ['read']),
   (['subj2', 'subj3', 'subj4'], ['read', 'write']),
@@ -67,21 +69,23 @@ DEFAULT_PERMISSION_LIST = [
 
 HTTPBIN_SERVER_STR = 'http://httpbin.org'
 GMN_TEST_SUBJECT_PUBLIC = 'public'
+ENABLE_SQL_PROFILING = False
 
-d1_common.util.log_setup(True)
-
-# Setting DEBUG=True here is a workaround for pytest-django setting
-# settings.DEBUG to False (in pytest_django/plugin.py)
-# @django.test.override_settings(DEBUG=True)
+# d1_common.util.log_setup(True)
 
 
-@pytest.mark.django_db(transaction=True)
 class GMNTestCase(
-    # django.test.TransactionTestCase,
     d1_test.d1_test_case.D1TestCase,
 ):
-  # def __init__(self, *args, **kwargs):
-  #   super(GMNTestCase, self).__init__(*args, **kwargs)
+  def setup_class(self):
+    if ENABLE_SQL_PROFILING:
+      connection.queries = []
+
+  def teardown_class(self):
+    GMNTestCase.capture_exception()
+    if ENABLE_SQL_PROFILING:
+      logging.debug('SQL queries by all methods:')
+      map(logging.debug, connection.queries)
 
   def setup_method(self, method):
     d1_test.mock_api.django_client.add_callback(
@@ -103,7 +107,8 @@ class GMNTestCase(
     # explode...
     self.maxDiff = None
 
-  def tearDown(self):
+  @classmethod
+  def capture_exception(cls):
     """If GMN responds with something that cannot be parsed by d1_client as
     a valid response for the particular call, d1_client raises a DataONE
     ServiceFailure exception with the response stored in the traceInformation
@@ -121,37 +126,38 @@ class GMNTestCase(
     the complete traceInformation.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    if isinstance(exc_value, Exception):
-      logging.exception('Test failed with exception:')
-    if isinstance(exc_value, d1_common.types.exceptions.DataONEException):
-      func_name_str = self.get_test_func_name()
-      file_path = os.path.join(
-        tempfile.gettempdir(), u'gmn_test_failed_{}.txt'.format(func_name_str)
-      )
-      # Dump the entire exception
-      with open(file_path, 'w') as f:
-        f.write(str(exc_value))
-      logging.error('Wrote exception to file. path="{}"'.format(file_path))
-      # Dump any HTML (typically from the Django diags page)
-      if exc_value.traceInformation:
-        ss = StringIO.StringIO()
-        is_in_html = False
-        for line_str in exc_value.traceInformation.splitlines():
-          if '<!DOCTYPE' in line_str or '<html' in line_str:
-            is_in_html = True
-          if is_in_html:
-            ss.write(line_str)
+    if not isinstance(exc_value, Exception):
+      return
+    logging.exception('Test failed with exception:')
+    if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
+      return
+    func_name_str = GMNTestCase.get_test_func_name()
+    file_path = os.path.join(
+      tempfile.gettempdir(), u'gmn_test_failed_{}.txt'.format(func_name_str)
+    )
+    # Dump the entire exception
+    with open(file_path, 'w') as f:
+      f.write(str(exc_value))
+    logging.error('Wrote exception to file. path="{}"'.format(file_path))
+    # Dump any HTML (typically from the Django diags page)
+    if exc_value.traceInformation:
+      ss = StringIO.StringIO()
+      is_in_html = False
+      for line_str in exc_value.traceInformation.splitlines():
+        if '<!DOCTYPE' in line_str or '<html' in line_str:
+          is_in_html = True
         if is_in_html:
-          file_path = os.path.join(
-            tempfile.gettempdir(), u'gmn_test_failed.html'
-          )
-          with open(file_path, 'w') as f:
-            f.write(str(ss.getvalue()))
-          logging.error(
-            'Wrote HTML from exception to file. path="{}"'.format(file_path)
-          )
+          ss.write(line_str)
+      if is_in_html:
+        file_path = os.path.join(tempfile.gettempdir(), u'gmn_test_failed.html')
+        with open(file_path, 'w') as f:
+          f.write(str(ss.getvalue()))
+        logging.error(
+          'Wrote HTML from exception to file. path="{}"'.format(file_path)
+        )
 
-  def get_test_func_name(self):
+  @staticmethod
+  def get_test_func_name():
     exc_type, exc_value, exc_traceback = sys.exc_info()
     for stack_trace in traceback.extract_tb(exc_traceback):
       module_path = stack_trace[0]
@@ -486,43 +492,11 @@ class GMNTestCase(
   # Misc
   #
 
-  def now_str(self):
-    return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-
-  def random_str(self, num_chars=10):
-    return ''.join([
-      random.choice(string.ascii_lowercase) for _ in range(num_chars)
-    ])
-
-  def random_id(self):
-    return '{}_{}'.format(self.random_str(), self.now_str())
-
-  def random_pid(self):
-    return 'PID_{}'.format(self.random_id())
-
-  def random_sid(self):
-    return 'SID_{}'.format(self.random_id())
-
-  def random_tag(self, tag_str):
-    return '{}_{}'.format(tag_str, self.random_str())
-
-  def get_pyxb_value(self, inst_pyxb, inst_attr):
-    try:
-      return unicode(getattr(inst_pyxb, inst_attr).value())
-    except (ValueError, AttributeError):
-      return None
-
   def object_list_to_pid_list(self, object_list_pyxb):
     return sorted([v.identifier.value() for v in object_list_pyxb.objectInfo])
 
   def log_to_pid_list(self, log_record_list_pyxb):
     return sorted([v.identifier.value() for v in log_record_list_pyxb.logEntry])
-
-  def vendor_trusted_subjects(self, active_subj_list):
-    return {
-      'VENDOR-INCLUDE-SUBJECTS':
-        u'\t'.join(self.expand_subjects(active_subj_list))
-    }
 
   def vendor_proxy_mode(self, object_stream_url):
     return {'VENDOR-GMN-REMOTE-URL': object_stream_url}
@@ -552,6 +526,29 @@ class GMNTestCase(
       logging.debug('  {}'.format(s.subject))
 
   def dump_pyxb(self, type_pyxb):
-    logging.debug('PyXB object:')
-    for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines():
-      logging.debug(u'  {}'.format(s))
+    map(logging.debug, self.format_pyxb(type_pyxb).splitlines())
+
+  def format_pyxb(self, type_pyxb):
+    ss = StringIO.StringIO()
+    ss.write('PyXB object:\n')
+    ss.write(
+      '\n'.join([
+        u'  {}'.format(s)
+        for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines()
+      ])
+    )
+    return ss.getvalue()
+
+  def get_pid_list(self):
+    """Get list of all PIDs in the DB fixture"""
+    return json.loads(self.load_sample('db_fixture_pid.json', 'rb'))
+
+  def get_sid_list(self):
+    """Get list of all SIDs in the DB fixture"""
+    return json.loads(self.load_sample('db_fixture_sid.json', 'rb'))
+
+  def get_total_log_records(self, client, **filters):
+    return client.getLogRecords(start=0, count=0, **filters).total
+
+  def get_total_objects(self, client, **filters):
+    return client.listObjects(start=0, count=0, **filters).total

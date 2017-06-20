@@ -45,7 +45,7 @@ def start_onedrive(mount_point):
     #'volicon=mac_dataone.icns',
   ])
 
-  d1_onedrive.onedrive.main()
+  d1_onedrive.d1_onedrive.main()
 
 
 class MountPoint():

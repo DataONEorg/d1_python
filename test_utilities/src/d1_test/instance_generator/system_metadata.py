@@ -54,7 +54,7 @@ def generate(client, options=None):
   sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.serialVersion = random.randint(1, 100)
   sysmeta_pyxb.identifier = options.get(
-    'identifier', identifier.generate(prefix='id_')
+    'identifier', identifier.generate(prefix='pid_')
   )
   sysmeta_pyxb.formatId = options.get(
     'formatId', d1_test.instance_generator.format_id.generate()
@@ -89,9 +89,9 @@ def generate(client, options=None):
   sysmeta_pyxb.replica = options.get(
     'replica', d1_test.instance_generator.replica.generate()
   )
-
-  # seriesId
-
+  sysmeta_pyxb.seriesId = options.get(
+    'seriesId', identifier.generate(prefix='sid_')
+  )
   sysmeta_pyxb.mediaType = options.get(
     'mediaType', d1_test.instance_generator.media_type.generate()
   )
@@ -101,7 +101,6 @@ def generate(client, options=None):
       random_lower_ascii(min_len=3, max_len=3)
     )
   )
-
   return sysmeta_pyxb
 
 

@@ -25,7 +25,7 @@ import xml.sax
 
 import pyxb
 
-from d1_common.types import dataoneTypes
+import d1_common.types
 
 import d1_test.d1_test_case
 
@@ -58,7 +58,7 @@ EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid',)
 class TestPID(d1_test.d1_test_case.D1TestCase):
   def deserialize_pid_and_check(self, doc, raises_pyxb_exc=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc[0])
+      obj = d1_common.types.dataoneTypes.CreateFromDocument(doc[0])
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if raises_pyxb_exc:
         return

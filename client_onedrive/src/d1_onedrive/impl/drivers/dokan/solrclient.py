@@ -55,16 +55,15 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import codecs
+#===============================================================================
+import datetime
 import logging
 import random
 import socket
 import urllib
-from xml.dom.minidom import parseString
+import xml.dom.minidom
 
 import httplib
-from mx import DateTime
-
-#===============================================================================
 
 
 class SolrException(Exception):
@@ -151,7 +150,7 @@ class SolrConnection:
       ex = SolrException(rsp.status, rsp.reason)
       try:
         ex.body = rsp.read()
-      except:
+      except Exception:
         pass
       raise ex
     return rsp
@@ -159,7 +158,7 @@ class SolrConnection:
   def close(self):
     try:
       self.conn.close()
-    except:
+    except Exception:
       pass
 
   def doPost(self, url, body, headers):
@@ -197,7 +196,7 @@ class SolrConnection:
     if data.startswith('<result status="'
                        ) and not data.startswith('<result status="0"'):
       data = self.decoder(data)[0]
-      parsed = parseString(data)
+      parsed = xml.dom.minidom.parseString(data)
       status = parsed.documentElement.getAttribute('status')
       if status != 0:
         #reason = parsed.documentElement.firstChild.nodeValue
@@ -287,20 +286,19 @@ class SolrConnection:
       try:
         v = int(value)
         return unicode(v)
-      except:
+      except Exception:
         return None
     elif ftype == 'float':
       try:
         v = float(value)
         return unicode(v)
-      except:
+      except Exception:
         return None
     elif ftype == 'date':
       try:
-        v = DateTime.DateTimeFrom(value)
-        v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
-        return v
-      except:
+        v = datetime.datetime.strptime(value, '%b %d %Y %I:%M%p')
+        return v.isoformat()
+      except Exception:
         return None
     return unicode(value)
 
@@ -314,7 +312,7 @@ class SolrConnection:
     try:
       ftype = self.fieldtypes[field]
       return ftype
-    except:
+    except Exception:
       pass
     fta = field.split('_')
     if len(fta) > 1:
@@ -323,7 +321,7 @@ class SolrConnection:
         ftype = self.fieldtypes[ft]
         #cache the type so it's used next time
         self.fieldtypes[field] = ftype
-      except:
+      except Exception:
         pass
     return ftype
 
@@ -435,7 +433,7 @@ class SolrConnection:
     try:
       rsp = self.doPost(self.solrBase + '', request, self.formheaders)
       data = eval(rsp.read())
-    except:
+    except Exception:
       pass
     if data is None:
       return response
@@ -455,7 +453,7 @@ class SolrConnection:
     try:
       rsp = self.doPost(self.solrBase + '', request, self.formheaders)
       data = eval(rsp.read())
-    except:
+    except Exception:
       pass
     if data['response']['numFound'] > 0:
       return data['response']['docs'][0]
@@ -586,7 +584,7 @@ class SolrConnection:
     fields = self.getFields()
     try:
       fld = fields['fields'][name]
-    except:
+    except Exception:
       return unicode
     if fld['type'] in ['string', 'text', 'stext', 'text_ws']:
       return unicode
@@ -668,7 +666,7 @@ class SolrConnection:
                   (name,
                    self.prepareQueryTerm(name, bin[0]),
                    self.prepareQueryTerm(name, bin[1]))
-            except:
+            except Exception:
               self.logger.exception('Exception 1 in fieldAlphaHistogram:')
             qbin.append(binq)
             bins.append(bin)
@@ -689,7 +687,7 @@ class SolrConnection:
           request = request + '&%s' % urllib.urlencode({
             'facet.query': self.encoder(sq)[0],
           })
-        except:
+        except Exception:
           self.logger.exception('Exception 2 in fieldAlphaHistogram')
       rsp = self.doPost(self.solrBase + '', request, self.formheaders)
       data = eval(rsp.read())
@@ -964,7 +962,7 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
           res.append(v[0])
         else:
           res.append(v)
-      except:
+      except Exception:
         res.append(None)
     return res
 
@@ -1187,7 +1185,7 @@ class SOLRValuesResponseIterator(object):
     try:
       self.res = data['facet_counts']['facet_fields'][self.field]
       self.logger.debug(self.res)
-    except:
+    except Exception:
       self.res = []
     self.index = 0
 

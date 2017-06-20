@@ -207,7 +207,7 @@ class CommandProcessor():
     object_list = client.listObjects(
       fromDate=self._session.get(session.FROM_DATE_NAME),
       toDate=self._session.get(session.TO_DATE_NAME),
-      objectFormat=self._session.get(session.SEARCH_FORMAT_NAME),
+      formatId=self._session.get(session.SEARCH_FORMAT_NAME),
       start=self._session.get(session.START_NAME),
       count=self._session.get(session.COUNT_NAME)
     )

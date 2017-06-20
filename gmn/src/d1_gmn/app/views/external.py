@@ -331,13 +331,11 @@ def get_checksum(request, pid):
 @d1_gmn.app.views.decorators.list_objects_access
 def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
-  [, replicaStatus][, start=0][, count=1000]) → ObjectList
+  [, identifier][, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
-  # The ObjectList is returned ordered by modified_timestamp ascending. The
-  # order has been left undefined in the spec, to allow MNs to select what is
-  # optimal for them.
-  query = d1_gmn.app.models.ScienceObject.objects.order_by('modified_timestamp')
-  #.select_related()
+  query = d1_gmn.app.models.ScienceObject.objects.order_by(
+    'modified_timestamp'
+  ) # .select_related()
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(query, request, 'id')
   query = d1_gmn.app.db_filter.add_datetime_filter(
@@ -348,6 +346,9 @@ def get_object_list(request):
   )
   query = d1_gmn.app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
+  )
+  query = d1_gmn.app.db_filter.add_string_filter(
+    query, request, 'pid__did', 'identifier'
   )
   query = d1_gmn.app.db_filter.add_replica_filter(query, request)
   query_unsliced = query

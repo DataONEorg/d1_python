@@ -32,7 +32,6 @@ import os
 import pkg_resources
 
 import d1_onedrive.impl.resolver.resolver_base
-# App
 from d1_onedrive.impl import attributes
 from d1_onedrive.impl import util
 

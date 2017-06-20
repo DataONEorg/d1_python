@@ -227,7 +227,6 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     )
     # Serialize to XML.
     exc_ser_xml = exc.serialize()
-    #print exc_ser_xml
     # Check XML.
     dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild

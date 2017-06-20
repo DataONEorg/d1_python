@@ -344,6 +344,7 @@ def _insert_copyright_header(r):
   for i, n in enumerate(r.node_list):
     if n.type == 'comment' and re.search(r'Copyright.*DataONE', n.value):
       return r
+  logging.info('Adding copyright header')
   i = 0
   for n in r('CommentNode', recursive=False)[:3]:
     if n.value.startswith('#!') or 'coding' in n.value:

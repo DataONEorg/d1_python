@@ -91,13 +91,26 @@ REQUIRE_WHITELIST_FOR_UPDATE = True
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn2',
+    'NAME': 'test_gmn2',
     'USER': '',
     'PASSWORD': '',
     'HOST': '',
     'PORT': '',
-    'ATOMIC_REQUESTS': True,
-  }
+    # Transactions
+    'ATOMIC_REQUESTS': False,
+    'AUTOCOMMIT': False,
+  },
+  'template': {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'test_gmn2_templ',
+    'USER': '',
+    'PASSWORD': '',
+    'HOST': '',
+    'PORT': '',
+    # Transactions
+    'ATOMIC_REQUESTS': False,
+    'AUTOCOMMIT': False,
+  },
 }
 
 OBJECT_STORE_PATH = '/tmp'
@@ -116,11 +129,6 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 MEDIA_URL = ''
 STATIC_URL = '/static/'
-
-if DEBUG or DEBUG_GMN:
-  LOG_LEVEL = 'DEBUG'
-else:
-  LOG_LEVEL = 'WARNING'
 
 # Capture everything that is logged
 LOGGING = {
@@ -145,8 +153,19 @@ LOGGING = {
   'loggers': {
     '': {
       'handlers': ['console'],
-      'level': logging.DEBUG,
+      'level': 'DEBUG',
+      'class': 'logging.StreamHandler',
     },
+    # SQL query profiling
+    # 'django.db.backends': {
+    #   'handlers': ['console'],
+    #   'level': logging.DEBUG,
+    #   'propagate': False,
+    # },
+    # 'django.db.backends.schema': {
+    #   # don't log schema queries, django >= 1.7
+    #   'propagate': False,
+    # },
   }
 }
 

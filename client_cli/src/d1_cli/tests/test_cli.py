@@ -648,7 +648,6 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       yield
 
   def _assert_queued_operations(self, cli, num_operations, operation_str):
-    # print cli.do_queue('')
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli.do_queue('')
     queue_str = out_stream.getvalue()

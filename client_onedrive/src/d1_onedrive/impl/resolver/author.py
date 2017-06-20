@@ -25,15 +25,13 @@ from __future__ import absolute_import
 
 import logging
 
+import d1_onedrive.impl
+import d1_onedrive.impl.attributes
+import d1_onedrive.impl.directory
+import d1_onedrive.impl.onedrive_exceptions
 import d1_onedrive.impl.resolver.resolver_base
 import d1_onedrive.impl.resolver.resource_map
-# App
-from d1_onedrive.impl import attributes
-from d1_onedrive.impl import directory
-from d1_onedrive.impl import onedrive_exceptions
-from d1_onedrive.impl import util
-
-# D1
+import d1_onedrive.impl.util
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
@@ -51,7 +49,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._resource_map_resolver = d1_onedrive.impl.resolver.resource_map.Resolver(
       options, object_tree
     )
-    self._readme_txt = util.os_format(README_TXT)
+    self._readme_txt = d1_onedrive.impl.util.os_format(README_TXT)
 
   # The author resolver handles hierarchy levels:
   # / = List of Authors
@@ -60,7 +58,8 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def get_attributes(self, object_tree_folder, path):
     log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
+      u'get_attributes: {}'.
+      format(d1_onedrive.impl.util.string_from_path_elements(path))
     )
 
     if len(path) <= 2:
@@ -71,7 +70,10 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug(
+      u'get_directory: {}'.
+      format(d1_onedrive.impl.util.string_from_path_elements(path))
+    )
 
     if len(path) <= 1:
       return self._get_directory(object_tree_folder, path)
@@ -82,8 +84,9 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
-      format(util.string_from_path_elements(path), size, offset)
+      u'read_file: {}, {}, {}'.format(
+        d1_onedrive.impl.util.string_from_path_elements(path), size, offset
+      )
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
@@ -91,14 +94,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       return self._resource_map_resolver.read_file(
         object_tree_folder, path[1:], size, offset
       )
-    raise onedrive_exceptions.PathException(u'Invalid file')
+    raise d1_onedrive.impl.onedrive_exceptions.PathException(u'Invalid file')
 
   # Private.
 
   def _get_attributes(self, path):
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
-    return attributes.Attributes(0, is_dir=True)
+    return d1_onedrive.impl.attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, object_tree_folder, path):
     if not path:
@@ -110,7 +113,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._resolve_author(author, object_tree_folder)
 
   def _resolve_author_root(self, object_tree_folder):
-    d = directory.Directory()
+    d = d1_onedrive.impl.directory.Directory()
     authors = set()
     for pid in object_tree_folder['items']:
       try:
@@ -121,7 +124,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return d
 
   def _resolve_author(self, author, object_tree_folder):
-    d = directory.Directory()
+    d = d1_onedrive.impl.directory.Directory()
     for pid in object_tree_folder['items']:
       try:
         record = self._object_tree.get_object_record(pid)
@@ -132,5 +135,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # As each author folder in the root has at least one object, an empty folder
     # here can only be due to an invalid path.
     if not d:
-      raise onedrive_exceptions.PathException(u'Invalid author')
+      raise d1_onedrive.impl.onedrive_exceptions.PathException(
+        u'Invalid author'
+      )
     return d

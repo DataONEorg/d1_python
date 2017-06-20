@@ -93,15 +93,14 @@ def update_module_file_ast(
 def diff_update_file(module_path, module_str, show_diff=False, update=False):
   with tempfile.NamedTemporaryFile() as tmp_file:
     tmp_file.write(module_str)
-
     if show_diff:
       try:
         tmp_file.seek(0)
-        #subprocess.check_call(['kdiff3', module_path, tmp_file.name])
-        subprocess.check_call(['condiff.sh', module_path, tmp_file.name])
+        subprocess.check_call(['kdiff3', module_path, tmp_file.name])
+        # Running from the console
+        # subprocess.check_call(['condiff.sh', module_path, tmp_file.name])
       except subprocess.CalledProcessError:
         pass
-
     if update:
       try:
         os.unlink(module_path + '~')
@@ -111,8 +110,13 @@ def diff_update_file(module_path, module_str, show_diff=False, update=False):
       shutil.move(module_path, module_path + '~')
       shutil.copy(tmp_file.name, module_path)
       shutil.copystat(module_path + '~', module_path)
-
+      touch(module_path)
   return True
+
+
+def touch(module_path, times=None):
+  with open(module_path, 'a'):
+    os.utime(module_path, times)
 
 
 # Modified version of the class at baron/dumper.py which seems to fix handling

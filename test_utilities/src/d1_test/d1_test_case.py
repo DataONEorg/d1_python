@@ -23,6 +23,7 @@ from __future__ import absolute_import
 
 import codecs
 import contextlib
+import datetime
 import hashlib
 import inspect
 import json
@@ -30,6 +31,7 @@ import logging
 import os
 import random
 import re
+import string
 import StringIO
 import subprocess
 import sys
@@ -50,6 +52,8 @@ import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_common.xml
+
+import d1_test.instance_generator.system_metadata
 
 import d1_client.util
 
@@ -214,7 +218,26 @@ class D1TestCase(object): # unittest.TestCase
 
   @staticmethod
   def get_sample_path(filename):
-    return os.path.join(d1_common.util.abs_path('test_docs'), filename)
+    """Get the path to a sample file
+
+    Also provides a mechanism for cleaning out unused sample files. To clean,
+    move all files from `test_docs` to `test_docs_tidy`, and run the tests. And
+    any files that are in use are moved back to `test_docs`. Files that remain
+    in `test_docs_tidy` can be untracked and deleted.
+
+    This procedure moves files while pytest is running, which tends to confuse
+    pytest. Fix by clearing out pytest's cache with clean-tree.py.
+    """
+    tidy_file_path = os.path.join(
+      d1_common.util.abs_path('test_docs_tidy'), filename
+    )
+    use_file_path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
+    if os.path.isfile(use_file_path):
+      return use_file_path
+    elif os.path.isfile(tidy_file_path):
+      os.rename(tidy_file_path, use_file_path)
+      return use_file_path
+    return use_file_path
 
   @staticmethod
   def load_sample(filename, mode_str='rb'):
@@ -240,6 +263,10 @@ class D1TestCase(object): # unittest.TestCase
     filename = format_sample_file_name(client, name_postfix_str, extension_str)
     logging.info('Using sample file. filename="{}"'.format(filename))
     got_str = D1TestCase.obj_to_pretty_str(got_obj)
+    map(
+      logging.debug,
+      ['Got obj:'] + ['  {}'.format(s) for s in got_str.splitlines()],
+    )
     try:
       exp_str = D1TestCase.load_sample(filename)
     except EnvironmentError as e:
@@ -373,6 +400,11 @@ class D1TestCase(object): # unittest.TestCase
       return f.write(obj_str)
 
   @staticmethod
+  def touch(module_path, times=None):
+    with open(module_path, 'a'):
+      os.utime(module_path, times)
+
+  @staticmethod
   @contextlib.contextmanager
   def mock_ssl_download(cert_obj):
     """Simulate successful cert downloads by catching calls to
@@ -387,3 +419,45 @@ class D1TestCase(object): # unittest.TestCase
       ) as mock_getpeercert:
         mock_getpeercert.return_value = cert_der
         yield mock_connect, mock_getpeercert
+
+  def create_random_sciobj(self, client, pid=True, sid=True):
+    pid = self.random_pid() if pid is True else pid
+    sid = self.random_sid() if sid is True else sid
+    options = {
+      # 'rightsHolder': 'fixture_rights_holder_subj',
+      'identifier': client.bindings.Identifier(pid) if pid else None,
+      'seriesId': client.bindings.Identifier(sid) if sid else None,
+    }
+    sciobj_str = generate_reproducible_sciobj_str(pid)
+    sysmeta_pyxb = (
+      d1_test.instance_generator.system_metadata.generate_from_file(
+        client, StringIO.StringIO(sciobj_str), options
+      )
+    )
+    return pid, sid, sciobj_str, sysmeta_pyxb
+
+  def get_pyxb_value(self, inst_pyxb, inst_attr):
+    try:
+      return unicode(getattr(inst_pyxb, inst_attr).value())
+    except (ValueError, AttributeError):
+      return None
+
+  def now_str(self):
+    return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
+  def random_str(self, num_chars=10):
+    return ''.join([
+      random.choice(string.ascii_lowercase) for _ in range(num_chars)
+    ])
+
+  def random_id(self):
+    return '{}_{}'.format(self.random_str(), self.now_str())
+
+  def random_pid(self):
+    return 'PID_{}'.format(self.random_id())
+
+  def random_sid(self):
+    return 'SID_{}'.format(self.random_id())
+
+  def random_tag(self, tag_str):
+    return '{}_{}'.format(tag_str, self.random_str())

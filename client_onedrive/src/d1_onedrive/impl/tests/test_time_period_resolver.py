@@ -24,7 +24,7 @@
 from __future__ import absolute_import
 
 import d1_onedrive.impl.resolver.time_period as time_period
-from d1_onedrive.impl.tests.object_tree_test_sample import object_tree
+import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
 
@@ -33,7 +33,9 @@ options = {}
 
 class TestTimePeriodResolver(d1_test.d1_test_case.D1TestCase):
   def setup_method(self):
-    self._resolver = time_period.Resolver(options, object_tree)
+    self._resolver = time_period.Resolver(
+      options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
+    )
 
   def test_0010(self):
     """__init__()"""
