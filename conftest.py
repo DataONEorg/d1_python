@@ -25,14 +25,28 @@ import logging
 import os
 import subprocess
 
+import psycopg2
+import psycopg2.extensions
 import pytest
+
+import d1_gmn.tests.gmn_test_case
 
 from d1_client.cnclient_1_1 import CoordinatingNodeClient_1_1 as cn_v1
 from d1_client.cnclient_2_0 import CoordinatingNodeClient_2_0 as cn_v2
 from d1_client.mnclient_1_1 import MemberNodeClient_1_1 as mn_v1
 from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 
+import django.conf
+import django.core.management
+import django.db
+import django.db.utils
+
+# from django.db import django.db.connections
+
 DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
+
+# import d1_common.util
+# d1_common.util.log_setup(True)
 
 
 def pytest_addoption(parser):
@@ -53,6 +67,10 @@ def pytest_addoption(parser):
     '--pycharm', action='store_true', default=False,
     help='Attempt to move the cursor in PyCharm to location of most recent test '
     'failure'
+  )
+  parser.addoption(
+    '--refresh-template', action='store_true', default=False,
+    help='Force reloading the template fixture'
   )
 
 
@@ -160,8 +178,85 @@ def mn_client_v1_v2(request):
 
 
 # DB fixtures
-#
-# @pytest.fixture(scope='session')
-# def django_db_setup():# django_db_blocker):
-#   #with django_db_blocker.unblock():
-#   django.core.management.call_command('loaddata', 'db_fixture.json.bz2')
+
+
+@pytest.yield_fixture(scope='session')
+def django_db_setup(django_db_blocker):
+  """Set up DB fixture
+  """
+  logging.info('Setting up DB fixture')
+  test_db_key = 'default'
+  test_db_name = django.conf.settings.DATABASES[test_db_key]['NAME']
+  template_db_key = 'template'
+  template_db_name = django.conf.settings.DATABASES[template_db_key]['NAME']
+
+  with django_db_blocker.unblock():
+    try:
+      load_template_fixture(template_db_key, template_db_name)
+    except psycopg2.DatabaseError as e:
+      logging.debug(str(e))
+    logging.debug('Dropping test DB')
+    run_sql('postgres', "drop database if exists {};".format(test_db_name))
+    logging.debug('Creating test DB from template')
+    run_sql(
+      'postgres',
+      "create database {} template {};".format(test_db_name, template_db_name)
+    )
+    # Haven't found out how to prevent transactions from being started, so
+    # closing the implicit transaction here so that template fixture remains
+    # available.
+    django.db.connections[test_db_key].commit()
+    logging.debug('Test DB ready')
+    yield
+
+
+def load_template_fixture(template_db_key, template_db_name):
+  """Load DB fixture from compressed JSON file to template database"""
+  logging.info('Loading template DB fixture')
+  fixture_file_path = d1_gmn.tests.gmn_test_case.GMNTestCase.get_sample_path(
+    'db_fixture.json.bz2'
+  )
+  if pytest.config.getoption("--refresh-template"):
+    # django.core.management.call_command('flush', database=template_db_key)
+    run_sql('postgres', "drop database if exists {};".format(template_db_name))
+  logging.debug('Creating blank DB')
+  run_sql(
+    'postgres', "create database {} encoding 'utf-8';".format(template_db_name)
+  )
+  logging.debug('Creating GMN tables')
+  django.core.management.call_command(
+    'migrate', '--run-syncdb', database=template_db_key
+  )
+  logging.debug('Populating tables with fixture data')
+  django.core.management.call_command(
+    'loaddata', fixture_file_path, database=template_db_key, commit=True
+  )
+  django.db.connections[template_db_key].commit()
+  for connection in django.db.connections.all():
+    connection.close()
+
+
+def run_sql(db, sql):
+  try:
+    conn = psycopg2.connect(database=db)
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cur = conn.cursor()
+    cur.execute(sql)
+  except psycopg2.DatabaseError as e:
+    logging.debug('SQL query result="{}"'.format(str(e)))
+    raise
+  try:
+    return cur.fetchall()
+  except psycopg2.DatabaseError:
+    return None
+  finally:
+    # django.db.connections[test_db_key].close()
+    conn.close()
+    for connection in django.db.connections.all():
+      connection.close()
+
+
+@pytest.fixture(autouse=True)
+# @pytest.mark.django_db(transaction=True)
+def enable_db_access(db):
+  pass
