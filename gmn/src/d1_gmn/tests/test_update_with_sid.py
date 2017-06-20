@@ -58,7 +58,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1001(self):
+  def test_1010(self):
     """MNStorage.update(): Reusing PID as SID when creating two standalone
     objects raises IdentifierNotUnique
     """
@@ -75,7 +75,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1010(self):
+  def test_1020(self):
     """MNStorage.update(): Updating standalone object that has SID with SID
     belonging to another object or chain raises InvalidRequest
     """
@@ -95,7 +95,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1011(self):
+  def test_1030(self):
     """MNStorage.update(): Updating standalone object that does not have SID,
     with SID belonging to another object or chain raises InvalidRequest
     """
@@ -115,7 +115,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1020(self):
+  def test_1040(self):
     """A chain can be created by updating a standalone object, when neither
     objects have a SID
     """
@@ -132,7 +132,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1040(self):
+  def test_1050(self):
     """MNStorage.update(): Updating a object that has a SID without specifying a
     SID in the update causes the SID to be retained in both objects
     """

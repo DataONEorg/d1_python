@@ -36,24 +36,24 @@ class TestCLIExceptions(d1_test.d1_test_case.D1TestCase):
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('verbose true')
 
-  def test_0010(self):
+  def test_1000(self):
     """InvalidArguments(): __init__()"""
     with pytest.raises(d1_cli.impl.cli_exceptions.InvalidArguments):
       self._raise(d1_cli.impl.cli_exceptions.InvalidArguments('test_message'))
 
-  def test_0020(self):
+  def test_1010(self):
     """InvalidArguments(): Returns string"""
     msg_str = 'test_message'
     ex = d1_cli.impl.cli_exceptions.InvalidArguments(msg_str)
     assert msg_str == str(ex)
 
-  def test_0030(self):
+  def test_1020(self):
     """CLIError(): __init__()"""
     with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
       self. \
     _raise(d1_cli.impl.cli_exceptions.CLIError('test_message'))
 
-  def test_0040(self):
+  def test_1030(self):
     """CLIError(): Returns string"""
     msg_str = 'test_message'
     ex = d1_cli.impl.cli_exceptions.CLIError(msg_str)

@@ -39,12 +39,12 @@ class TestArchiveStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   @d1_gmn.tests.gmn_mock.disable_auth()
-  def test_0010_v1(self):
+  def test_1000(self):
     """MNStorage.archive(): Archived flag is set in sysmeta"""
     self._assert_archived_flag_set(self.client_v1)
 
   @responses.activate
   @d1_gmn.tests.gmn_mock.disable_auth()
-  def test_0020_v2(self):
+  def test_1010(self):
     """MNStorage.archive(): Archived flag is set in sysmeta"""
     self._assert_archived_flag_set(self.client_v2)

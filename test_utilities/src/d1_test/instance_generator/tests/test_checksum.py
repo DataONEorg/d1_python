@@ -29,7 +29,7 @@ import d1_test.instance_generator.checksum as checksum
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestChecksum')
 class TestChecksum(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
     self.assert_equals_sample(

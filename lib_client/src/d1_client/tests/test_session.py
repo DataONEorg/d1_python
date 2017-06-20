@@ -67,7 +67,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     return s.POST(['post'], fields=fields_dict)
 
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """HTTP GET is successful
     Mocked GET returns object bytes uniquely tied to given PID
     """
@@ -90,13 +90,13 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert c_hash == c2_hash
 
   @responses.activate
-  def test_0020(self):
+  def test_1010(self):
     """Successful HTTP GET returns 200 OK"""
     response = self._get_response('pid1')
     assert response.status_code == 200
 
   @responses.activate
-  def test_0030(self):
+  def test_1020(self):
     """HTTP GET 404"""
     response = self._get_response('valid_pid', header_dict={'trigger': '404'})
     assert response.status_code == 404
@@ -108,7 +108,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert response.text == expected_response_body_str
 
   @responses.activate
-  def test_0040(self):
+  def test_1030(self):
     """HTTP GET against http://some.bogus.address/ raises ConnectionError"""
     s = session.Session('http://some.bogus.address')
     logger = logging.getLogger()
@@ -118,7 +118,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         s.GET('/')
 
   @responses.activate
-  def test_0050(self):
+  def test_1040(self):
     """HTTP POST is successful
     Roundtrip for body, headers and query params
     """
@@ -138,7 +138,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert r_dict['header_dict']['Content-Length'] == str(len(body_str))
 
   @responses.activate
-  def test_0060(self):
+  def test_1050(self):
     """Query params passed to Session() and individual POST are combined"""
     mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     body_str = 'test_body'
@@ -153,7 +153,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert r_dict['query_dict']['default_query'] == ['test']
 
   @responses.activate
-  def test_0070(self):
+  def test_1060(self):
     """Roundtrip for HTML Form fields"""
     field_dict = {
       'post_data_1': '1234',
@@ -170,7 +170,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert '5678' in body_str
 
   @responses.activate
-  def test_0080(self):
+  def test_1070(self):
     """cURL command line retains query parameters and headers"""
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}

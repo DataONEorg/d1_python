@@ -34,7 +34,7 @@ MAX_OBJECTS = 20
 
 class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """Object List iteration"""
     mock_list_objects.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
 

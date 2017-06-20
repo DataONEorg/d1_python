@@ -34,7 +34,7 @@ import d1_test.mock_api.solr_query as mock_query
 
 class TestMockQuery(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.query() returns a JSON doc with expected structure"""
     mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     response_dict = mn_client_v1_v2.query('query_engine', 'query_string')
@@ -54,7 +54,7 @@ class TestMockQuery(d1_test.d1_test_case.D1TestCase):
     assert response_dict == expected_dict
 
   @responses.activate
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
     mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):

@@ -108,7 +108,7 @@ class TestZoteroClient(d1_test.d1_test_case.D1TestCase):
         zotero_client.delete_item(i)
 
   @pytest.mark.skip('TODO')
-  def test_100(self):
+  def test_1000(self):
     """Create Zotero Cache with defaults, non-existing pickle"""
     try:
       os.unlink(self.pickle_path)

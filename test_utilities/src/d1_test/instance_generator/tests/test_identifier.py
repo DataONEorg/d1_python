@@ -30,7 +30,7 @@ import d1_test.instance_generator.random_data as random_data
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestIdentifier')
 class TestIdentifier(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """generate()"""
     id_list = [
       identifier.generate(random_data.random_lower_ascii(), i,

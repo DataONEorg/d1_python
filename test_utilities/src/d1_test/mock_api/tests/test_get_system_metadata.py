@@ -37,7 +37,7 @@ import d1_test.mock_api.get_system_metadata as mock_sysmeta
 
 class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata() returns a System Metadata PyXB object"""
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert isinstance(
@@ -46,7 +46,7 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata(): Passing a trigger header triggers a DataONEException"""
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):
@@ -56,7 +56,7 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
 
   @responses.activate
   @freezegun.freeze_time('1977-01-27')
-  def test_0030(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     sysmeta_pyxb = mn_client_v1_v2.getSystemMetadata('test_pid')

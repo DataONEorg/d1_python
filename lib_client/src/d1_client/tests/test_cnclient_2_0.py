@@ -28,14 +28,14 @@ import d1_client.cnclient_2_0
 
 
 class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self, cn_client_v2):
+  def test_1000(self, cn_client_v2):
     """__init__()"""
     assert isinstance(
       cn_client_v2, d1_client.cnclient_2_0.CoordinatingNodeClient_2_0
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0020(self, cn_client_v2):
+  def test_1010(self, cn_client_v2):
     """delete(): Generates expected REST call"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     received_echo_dict = cn_client_v2.delete('valid_pid')

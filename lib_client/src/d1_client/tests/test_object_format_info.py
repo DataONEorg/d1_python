@@ -45,37 +45,37 @@ Blank line above.
 class TestObjectFormatInfo(d1_test.d1_test_case.D1TestCase):
   i = d1_client.object_format_info.ObjectFormatInfo()
 
-  def test_0010(self):
+  def test_1000(self):
     """init()"""
     pass # Successful setup of the test means that the class initialized ok.
 
-  def test_0020(self):
+  def test_1010(self):
     """content_type_from_format_id()"""
     assert self.i.content_type_from_format_id(
       'netCDF-3'
     ) == 'application/netcdf'
 
-  def test_0030(self):
+  def test_1020(self):
     """filename_extension_from_format_id()"""
     assert self.i.filename_extension_from_format_id('netCDF-3') == '.nc'
 
-  def test_0040(self):
+  def test_1030(self):
     """read_csv_file()"""
     self.i.read_csv_file()
     assert self.i.filename_extension_from_format_id('netCDF-3') == '.nc'
 
-  def test_0050(self):
+  def test_1040(self):
     """read_csv_file(new_csv)"""
     self.i.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
-  def test_0060(self):
+  def test_1050(self):
     """singleton"""
     j = d1_client.object_format_info.ObjectFormatInfo()
     j.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
-  def test_0070(self):
+  def test_1060(self):
     """bad_csv_file"""
     with pytest.raises(Exception):
       self.i.read_csv_file(StringIO.StringIO(CSV_TEST_INVALID))

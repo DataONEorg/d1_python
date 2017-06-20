@@ -35,7 +35,7 @@ import d1_test.mock_api.list_formats as mock_object_format_list
 
 class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, cn_client_v1_v2):
+  def test_1000(self, cn_client_v1_v2):
     """mock_api.listFormats() returns a objectFormatList PyXB object"""
     mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert isinstance(
@@ -43,7 +43,7 @@ class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0020(self, cn_client_v1_v2):
+  def test_1010(self, cn_client_v1_v2):
     """mock_api.listFormats() returns a populated objectFormatList"""
     mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     object_format_list = cn_client_v1_v2.listFormats()
@@ -53,7 +53,7 @@ class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
       break
 
   @responses.activate
-  def test_0030(self, cn_client_v1_v2):
+  def test_1020(self, cn_client_v1_v2):
     """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
     mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):

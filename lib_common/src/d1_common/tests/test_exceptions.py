@@ -82,7 +82,7 @@ INVALID_ERROR_DOC = (
 
 
 class TestExceptions(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """deserialize()"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
     assert isinstance(d1_exception, exceptions.IdentifierNotUnique)
@@ -94,7 +94,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert d1_exception.description == 'description0'
     assert d1_exception.traceInformation == TRACE_SECTION.strip()
 
-  def test_0020(self):
+  def test_1010(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
     sxml = x1.serialize()
@@ -108,7 +108,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.identifier == x2.identifier
     assert x1.traceInformation == x2.traceInformation
 
-  def test_0030(self):
+  def test_1020(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
     sxml = x1.serialize()
@@ -122,7 +122,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.identifier == x2.identifier
     assert x1.traceInformation == x2.traceInformation
 
-  def test_0040(self):
+  def test_1030(self):
     """deserialize, serialize, deserialize"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
     sxml = x1.serialize()
@@ -136,25 +136,25 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.identifier == x2.identifier
     assert x1.traceInformation == x2.traceInformation
 
-  def test_0050(self):
+  def test_1040(self):
     """deserialize() of bad document raises ServiceFailure"""
     with pytest.raises(exceptions.ServiceFailure):
       exceptions.deserialize(INVALID_ERROR_DOC[0])
 
-  def test_0060(self):
+  def test_1050(self):
     """String representation"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
     assert 'name: IdentifierNotUnique' in str(d1_exception)
     assert 'errorCode: 409' in str(d1_exception)
     assert 'detailCode: 123.456.789' in str(d1_exception)
 
-  def test_0070(self):
+  def test_1060(self):
     """create with only detailCode then serialize()"""
     e = exceptions.ServiceFailure(123)
     assert e.serialize() == u'<?xml version="1.0" encoding="utf-8"?>' \
       u'<error detailCode="123" errorCode="500" name="ServiceFailure"/>'
 
-  def test_0080(self):
+  def test_1070(self):
     """create with string detailCode and description, then serialize()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
     se = e.serialize()
@@ -162,7 +162,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
       u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">' \
       u'<description>test description</description></error>'
 
-  def test_0090(self):
+  def test_1080(self):
     """create with detailCode, description and traceInformation, then serialize()"""
     e = exceptions.ServiceFailure(
       '123.456.789', description='test description',
@@ -174,7 +174,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
       u'<description>test description</description>' \
       u'<traceInformation>test traceInformation</traceInformation></error>'
 
-  def test_0100(self):
+  def test_1090(self):
     """serialize_to_headers()"""
     e = exceptions.ServiceFailure(
       '123.456.789', 'test description', 'test traceInformation'
@@ -191,7 +191,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     }
     assert header_dict == expected_dict
 
-  def test_0110(self):
+  def test_1100(self):
     """deserialize_from_headers()"""
     headers = {
       'DataONE-Exception-Name': 'IdentifierNotUnique', # required
@@ -210,7 +210,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert e.description == 'test description'
     assert e.traceInformation == 'test traceInformation'
 
-  def test_0120(self):
+  def test_1110(self):
     """Serialization and deserialization of DataONE Exceptions
 
     Test serialization and deserialization of DataONE Exceptions by performing

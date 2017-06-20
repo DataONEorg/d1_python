@@ -31,12 +31,12 @@ import d1_test.d1_test_case
 
 
 class TestAccessControl(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """AccessControl(): __init__()"""
     a = access_control.AccessControl()
     assert len(a.allow) == 0
 
-  def test_0020(self):
+  def test_1010(self):
     """clear(): Removes all allowed subjects"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -45,7 +45,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     a.clear()
     assert len(a.allow) == 0
 
-  def test_0030(self):
+  def test_1020(self):
     """add_allowed_subject(): Single subject added without specified permission
     is retained and defaults to read"""
     a = access_control.AccessControl()
@@ -54,7 +54,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert 'subject_1' in a.allow
     assert a.allow['subject_1'] == 'read'
 
-  def test_0040(self):
+  def test_1030(self):
     """Adding subject that already exists updates its permission"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -66,7 +66,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert 'subject_1' in a.allow
     assert a.allow['subject_1'] == 'write'
 
-  def test_0050(self):
+  def test_1040(self):
     """add_allowed_subject(): Subject added with invalid permission raises
     exception InvalidArguments"""
     a = access_control.AccessControl()
@@ -74,7 +74,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
       a.add_allowed_subject('subject_1', 'invalid_permission')
     assert len(a.allow) == 0
 
-  def test_0060(self):
+  def test_1050(self):
     """add_allowed_subject(): Multiple subjects with different permissions are
     correctly retained"""
     a = access_control.AccessControl()
@@ -89,7 +89,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert 'subject_3' in a.allow
     assert a.allow['subject_3'] == 'changePermission'
 
-  def test_0070(self):
+  def test_1060(self):
     """remove_allowed_subject()"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -99,7 +99,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert len(a.allow) == 2
     assert not ('subject_3' in a.allow)
 
-  def test_0080(self):
+  def test_1070(self):
     """str() returns formatted string representation"""
     a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
@@ -112,7 +112,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert actual[2] == 'write                         "subject_2"'
     assert actual[3] == 'changePermission              "subject_3"'
 
-  def test_0090(self):
+  def test_1080(self):
     """_confirm_special_subject_write(): Allows setting if user answers 'yes"""
     a = access_control.AccessControl()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -122,7 +122,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     assert 'WARN     It is not recommended to give write access to public. ' \
     'Continue? [yes/NO] ' == prompt_str
 
-  def test_0100(self):
+  def test_1090(self):
     """_confirm_special_subject_write(): Raises InvalidArguments if user answers
     'no"""
     a = access_control.AccessControl()

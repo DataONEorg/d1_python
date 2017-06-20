@@ -31,7 +31,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     'accessPolicy_v1_0.redundant.xml'
   )
 
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """_get_grouped_permission_dict()"""
     perm_dict = d1_common.access_policy._get_grouped_permission_dict([
       ('subj1', 'write'),
@@ -43,74 +43,74 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       'write': ['subj1', 'subj3'],
     }
 
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """get_normalized_permission_from_iter()"""
     assert d1_common.access_policy.get_normalized_permission_from_iter(
         ['write', 'changePermission']
       ) == \
       'changePermission'
 
-  def test_0030(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """get_normalized_permission_from_iter()"""
     assert d1_common.access_policy.get_normalized_permission_from_iter(['write']) == \
       'write'
 
-  def test_0040(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2):
     """get_normalized_permission_from_iter()"""
     assert d1_common.access_policy.get_normalized_permission_from_iter([]) is None
 
-  def test_0050(self, mn_client_v1_v2):
+  def test_1040(self, mn_client_v1_v2):
     """get_effective_permission_list_from_iter()"""
     assert d1_common.access_policy.get_effective_permission_list_from_iter(
         ['write', 'changePermission']
       ) == \
       ['read', 'write', 'changePermission']
 
-  def test_0060(self, mn_client_v1_v2):
+  def test_1050(self, mn_client_v1_v2):
     """get_effective_permission_list_from_iter()"""
     assert d1_common.access_policy.get_effective_permission_list_from_iter(
       ['write']
     ) == ['read', 'write']
 
-  def test_0070(self, mn_client_v1_v2):
+  def test_1060(self, mn_client_v1_v2):
     """get_effective_permission_list_from_iter()"""
     assert d1_common.access_policy.get_effective_permission_list_from_iter(
       []
     ) is None
 
-  def test_0080(self, mn_client_v1_v2):
+  def test_1070(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert d1_common.access_policy.is_subject_allowed(
       self.ap_pyxb, 'subj1', 'read'
     )
 
-  def test_0090(self, mn_client_v1_v2):
+  def test_1080(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert not d1_common.access_policy. \
       is_subject_allowed(self.ap_pyxb, 'subj1', 'write')
 
-  def test_0100(self, mn_client_v1_v2):
+  def test_1090(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert not d1_common.access_policy. \
       is_subject_allowed(self.ap_pyxb, 'subj1', 'changePermission')
 
-  def test_0110(self, mn_client_v1_v2):
+  def test_1100(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert d1_common.access_policy.is_subject_allowed(
       self.ap_pyxb, 'subj2', 'read'
     )
 
-  def test_0120(self, mn_client_v1_v2):
+  def test_1110(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert d1_common.access_policy. \
       is_subject_allowed(self.ap_pyxb, 'subj2', 'write')
 
-  def test_0130(self, mn_client_v1_v2):
+  def test_1120(self, mn_client_v1_v2):
     """is_subject_allowed()"""
     assert not d1_common.access_policy. \
       is_subject_allowed(self.ap_pyxb, 'subj2', 'changePermission')
 
-  def test_0140(self, mn_client_v1_v2):
+  def test_1130(self, mn_client_v1_v2):
     """get_access_policy_pyxb()"""
     ap_dict = {
       'read': ['subj2'],
@@ -121,7 +121,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       ap_pyxb, 'accessPolicy_v1_0_basic', mn_client_v1_v2
     )
 
-  def test_0150(self, mn_client_v1_v2):
+  def test_1140(self, mn_client_v1_v2):
     """get_effective_permission_dict()"""
     ap_dict = d1_common.access_policy.get_effective_permission_dict(
       self.ap_pyxb
@@ -135,7 +135,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     }
     assert ap_dict == expected_ap_dict
 
-  def test_0160(self, mn_client_v1_v2):
+  def test_1150(self, mn_client_v1_v2):
     """get_normalized_permission_list()"""
     ap_list = d1_common.access_policy.get_normalized_permission_list(
       self.ap_pyxb
@@ -149,7 +149,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     ]
     assert ap_list == expected_ap_list
 
-  def test_0170(self, mn_client_v1_v2):
+  def test_1160(self, mn_client_v1_v2):
     """get_effective_permission_list()"""
     ap_list = d1_common.access_policy.get_effective_permission_list(
       self.ap_pyxb, 'subj5'

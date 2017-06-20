@@ -28,7 +28,7 @@ import d1_test.mock_api.util
 
 
 class TestMockUtil(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """parse_rest_url() 1"""
     version_tag, endpoint_str, param_list, query_dict, client = (
       d1_test.mock_api.util.parse_rest_url('/v1/log')
@@ -39,7 +39,7 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
     assert query_dict == {}
     assert client.bindings.Namespace == v1_1.Namespace
 
-  def test_0020(self):
+  def test_1010(self):
     """parse_rest_url() 2"""
     # GET /object[?fromDate={fromDate}&toDate={toDate}&
     # identifier={identifier}&formatId={formatId}&replicaStatus={replicaStatus}

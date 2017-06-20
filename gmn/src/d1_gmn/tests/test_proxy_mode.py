@@ -104,27 +104,27 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return requests.get(sciobj_url).content
 
   @responses.activate
-  def test_0010_v1(self):
+  def test_1000(self):
     """create(): Proxy mode: Create and retrieve proxied object"""
     self.create_and_check_proxy_obj(self.client_v1, do_redirect=False)
 
   @responses.activate
-  def test_0020_v2(self):
+  def test_1010(self):
     """create(): Proxy mode: Create and retrieve proxied object"""
     self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
 
   @responses.activate
-  def test_0021_v1(self):
+  def test_1020(self):
     """create(): Proxy mode: Create and retrieve proxied object with redirect"""
     self.create_and_check_proxy_obj(self.client_v1, do_redirect=True)
 
   @responses.activate
-  def test_0022_v2(self):
+  def test_1030(self):
     """create(): Proxy mode: Create and retrieve proxied object with redirect"""
     self.create_and_check_proxy_obj(self.client_v2, do_redirect=True)
 
   @responses.activate
-  def test_0030_v1(self):
+  def test_1040(self):
     """create(): Proxy mode: Passing invalid url raises InvalidRequest"""
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       self.create_and_check_proxy_obj(

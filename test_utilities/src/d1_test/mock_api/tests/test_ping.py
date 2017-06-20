@@ -34,13 +34,13 @@ import d1_test.mock_api.ping as mock_ping
 
 class TestMockPing(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.ping() returns 200"""
     mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert mn_client_v1_v2.ping()
 
   @responses.activate
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """mock_api.ping(): Passing a trigger header triggers a DataONEException"""
     mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):

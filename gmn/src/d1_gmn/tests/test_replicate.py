@@ -71,7 +71,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
           mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
 
   @responses.activate
-  def test_1011(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """MNReplication.replicate(): Returns InvalidRequest if requested replica
     is larger than local limit
     """
@@ -86,7 +86,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
           mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2):
     """MNReplication.replicate(): Request to replicate new object returns 200
     OK
     """
@@ -98,7 +98,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
         mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
 
   @responses.activate
-  def test_1030(self, mn_client_v1_v2):
+  def test_1040(self, mn_client_v1_v2):
     """MNReplication.replicate(): Request to replicate existing object raises
     IdentifierNotUnique
     """

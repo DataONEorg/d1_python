@@ -35,7 +35,7 @@ import d1_test.mock_api.list_objects as mock_object_list
 
 class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
     mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert isinstance(
@@ -43,7 +43,7 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """mock_api.listObjects() returns a populated ObjectList"""
     mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     object_list = mn_client_v1_v2.listObjects()
@@ -53,7 +53,7 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
       break
 
   @responses.activate
-  def test_0030(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
     mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.ServiceFailure):

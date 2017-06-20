@@ -54,18 +54,18 @@ format_ids = format_ids.FormatIDs()
 
 
 class TestSession(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """__init__()"""
     s = session.Session(nodes, format_ids)
     assert s is not None, 'Could not instantiate session'
 
-  def test_0020(self):
+  def test_1010(self):
     """After instatiation, the default session parameters are available via get()"""
     s = session.Session(nodes, format_ids)
     #self.assertEqual(s.get('pretty'), True)
     assert s.get('cn-url') == d1_common.const.URL_DATAONE_ROOT
 
-  def test_0030(self):
+  def test_1020(self):
     """Session parameters can be updated with set()"""
     s = session.Session(nodes, format_ids)
     s.set('verbose', False),
@@ -73,14 +73,14 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert s.get('verbose') is False
     assert s.get('rights-holder') == 'test'
 
-  def test_0050(self):
+  def test_1030(self):
     """Setting valid CN is successful"""
     s = session.Session(nodes, format_ids)
     valid_cn = 'https://cn-unm-1.dataone.org/cn'
     s.set('cn-url', valid_cn)
     assert s.get('cn-url') == valid_cn
 
-  def test_0060(self):
+  def test_1040(self):
     """Session parameters can be brought back to their defaults with reset()"""
     s = session.Session(nodes, format_ids)
     s.set('query', 'testquery'),
@@ -88,38 +88,38 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     s.reset()
     assert s.get('query') == '*:*'
 
-  def test_0070(self):
+  def test_1050(self):
     """Getting an non-existing session parameter raises InvalidArguments"""
     s = session.Session(nodes, format_ids)
     with pytest.raises(cli_exceptions.InvalidArguments):
       s.get('bogus-value')
 
-  def test_0080(self):
+  def test_1060(self):
     """set_with_conversion() handles None"""
     s = session.Session(nodes, format_ids)
     assert s.get('verbose') is True
     s.set_with_conversion('verbose', 'None')
     assert s.get('verbose') is None
 
-  def test_0090(self):
+  def test_1070(self):
     """set_with_conversion() handles integer conversions"""
     s = session.Session(nodes, format_ids)
     assert s.get('verbose') is True
     s.set_with_conversion('verbose', '1')
     assert s.get('verbose') == 1
 
-  def test_0100(self):
+  def test_1080(self):
     """set_with_conversion() raises InvalidArguments on non-existing session parameter"""
     s = session.Session(nodes, format_ids)
     with pytest.raises(cli_exceptions.InvalidArguments):
       s.set_with_conversion('bogus-value', '1')
 
-  def test_0110(self):
+  def test_1090(self):
     """Session object exposes access control"""
     s = session.Session(nodes, format_ids)
     s.get_access_control().add_allowed_subject('newsubject', 'write')
 
-  def test_0120(self):
+  def test_1100(self):
     """print_all_variables() is available and appears to work"""
     # capture stdout
     old = sys.stdout
@@ -134,7 +134,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert len(out) > 100
     assert type(out) is str
 
-  def test_0130(self):
+  def test_1110(self):
     """Session is successfully saved and then loaded (pickled and unpickled)"""
     tmp_pickle = './pickle.tmp'
     try:

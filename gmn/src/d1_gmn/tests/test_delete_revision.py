@@ -56,7 +56,7 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """MNStorage.delete(): Deleted flag correctly set and represented"""
     sid, pid_chain_list = self.create_revision_chain(
       mn_client_v1_v2,

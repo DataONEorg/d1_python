@@ -33,7 +33,7 @@ import d1_test.mock_api.util
 
 class TestMockPost(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.create(): Echoes the request"""
     mock_create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(

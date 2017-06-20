@@ -35,7 +35,7 @@ import d1_common
 
 class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1800(self):
+  def test_1000(self):
     """MNRead.synchronizationFailed() with valid error returns 200 OK"""
 
     def test(client):
@@ -52,7 +52,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1810_v1(self):
+  def test_1010(self):
     """MNRead.synchronizationFailed() from untrusted subject raises
     NotAuthorized
     """
@@ -70,7 +70,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1830_v1(self):
+  def test_1020(self):
     """MNRead.synchronizationFailed() with invalid XML document returns 200
     OK"""
 

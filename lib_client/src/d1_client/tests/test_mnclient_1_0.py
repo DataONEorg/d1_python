@@ -50,7 +50,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
   #=========================================================================
 
   @responses.activate
-  def test_0010(self, mn_client_v1):
+  def test_1000(self, mn_client_v1):
     """MNCore.createResponse(): Generates a correctly encoded Multipart document
     and Content-Type header
     """
@@ -103,7 +103,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
     assert multipart_decoder.parts[2].content == '1234'
 
   @responses.activate
-  def test_0020(self, mn_client_v1):
+  def test_1010(self, mn_client_v1):
     """MNCore.create(): Returned Identifier object is correctly parsed"""
     d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
 

@@ -36,7 +36,7 @@ import d1_client.baseclient_1_1
 
 
 class TestDataONEBaseClient_1_1(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self, cn_mn_client_v1):
+  def test_1000(self, cn_mn_client_v1):
     """__init__()"""
     base_client = d1_client.baseclient_1_1.DataONEBaseClient_1_1(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -48,7 +48,7 @@ class TestDataONEBaseClient_1_1(d1_test.d1_test_case.D1TestCase):
   # MNRead.query()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0020(self, cn_mn_client_v1):
+  def test_1010(self, cn_mn_client_v1):
     """MNRead.query(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     query_engine_str = 'Test Query Engine. Tricky Chars: ได:@$-_.!*()&=/?'
@@ -59,7 +59,7 @@ class TestDataONEBaseClient_1_1(d1_test.d1_test_case.D1TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0030(self, cn_mn_client_v1):
+  def test_1020(self, cn_mn_client_v1):
     """MNRead.query(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     query_engine_str = 'Test Query Engine. Tricky Chars: ได:@$-_.!*()&=/?'

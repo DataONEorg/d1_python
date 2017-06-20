@@ -33,7 +33,7 @@ class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
   )
 
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """Extract primary and equivalent subjects from certificate. This does not
     perform validation
     """

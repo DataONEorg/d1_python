@@ -81,7 +81,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
   # get_*()
 
-  def test_0010(self):
+  def test_1000(self):
     """get_*()"""
     assert isinstance(self.cp.get_session(), session.Session)
     assert isinstance(
@@ -93,7 +93,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   # ping()
 
   @responses.activate
-  def test_0020(self):
+  def test_1010(self):
     """ping(): Without list of hosts, pings CN and MN set in session"""
     stdout_str = self._ping()
     assert re.search(
@@ -104,7 +104,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0030(self):
+  def test_1020(self):
     """ping(): With list of hosts, pings each host"""
     host_list = [
       d1_test.d1_test_case.MOCK_BASE_URL + '/{}'.format(i) for i in range(10)
@@ -124,7 +124,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   # search()
 
   @responses.activate
-  def test_0040(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2):
     """search(): Generates expected REST request and formatted result"""
     self._set_mock_session()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -137,7 +137,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   # list_format_ids()
 
   @responses.activate
-  def test_0041(self):
+  def test_1040(self):
     """list_format_ids(): Generates expected REST request and formatted result"""
     self._set_mock_session()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -149,7 +149,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   # list_nodes()
 
   @responses.activate
-  def test_0042(self):
+  def test_1050(self):
     """list_nodes(): Generates expected REST request and formatted result"""
     self._set_mock_session()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -160,7 +160,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
   # resolve()
 
   @responses.activate
-  def test_0043(self):
+  def test_1060(self):
     """resolve(): Generates expected REST request and formatted result"""
     self._set_mock_session()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):

@@ -28,13 +28,13 @@ import d1_test.mock_api.is_authorized as mock_is_authorized
 
 class TestMockIsAuthorized(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.isAuthorized(): Returns True 'authorized_pid"""
     mock_is_authorized.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert mn_client_v1_v2.isAuthorized('authorized_pid', 'read') is True
 
   @responses.activate
-  def test_0020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """mock_api.isAuthorized(): Returns False for 'unauthorized_pid"""
     mock_is_authorized.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert mn_client_v1_v2.isAuthorized('unauthorized_pid', 'read') is False

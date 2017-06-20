@@ -30,7 +30,7 @@ import d1_test.d1_test_case
 
 class TestLogRecords(d1_test.d1_test_case.D1TestCase):
   parameterize_dict = {
-    'test_0010': [
+    'test_1000': [
       dict(filename='log_gmn_valid.xml', raises_pyxb_exc=False),
       dict(filename='log_knb_valid.xml', raises_pyxb_exc=False),
       dict(filename='log_invalid_1.xml', raises_pyxb_exc=True),
@@ -39,7 +39,7 @@ class TestLogRecords(d1_test.d1_test_case.D1TestCase):
     ],
   }
 
-  def test_0010(self, filename, raises_pyxb_exc):
+  def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize various Log XML docs"""
     try:
       self.load_sample_xml_to_pyxb(filename)

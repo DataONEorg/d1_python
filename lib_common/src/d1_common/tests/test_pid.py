@@ -68,19 +68,19 @@ class TestPID(d1_test.d1_test_case.D1TestCase):
       raise Exception('Did not receive expected exception')
     assert obj.value() == doc[1]
 
-  def test_0010(self):
+  def test_1000(self):
     """deserialize gmn: Deserialize: XML -> PID (GMN)"""
     self.deserialize_pid_and_check(EG_PID_GMN)
 
-  def test_0020(self):
+  def test_1010(self):
     """deserialize knb: Deserialize: XML -> PID (KNB)"""
     # TODO.
     #doctest(EG_PID_KNB)
 
-  def test_0030(self):
+  def test_1020(self):
     """deserialize bad 1: Deserialize: XML -> PID (bad 1)"""
     self.deserialize_pid_and_check(EG_BAD_PID_1, raises_pyxb_exc=True)
 
-  def test_0040(self):
+  def test_1030(self):
     """deserialize bad 2: Deserialize: XML -> PID (bad 2)"""
     self.deserialize_pid_and_check(EG_BAD_PID_2, raises_pyxb_exc=True)

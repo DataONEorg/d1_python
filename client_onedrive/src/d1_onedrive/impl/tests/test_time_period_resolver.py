@@ -37,7 +37,7 @@ class TestTimePeriodResolver(d1_test.d1_test_case.D1TestCase):
       options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
     )
 
-  def test_0010(self):
+  def test_1000(self):
     """__init__()"""
     # Test class instantiation (done in setup_method())
     pass

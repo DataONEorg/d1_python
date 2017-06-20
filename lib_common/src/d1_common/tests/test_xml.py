@@ -29,42 +29,42 @@ import d1_test.d1_test_case
 
 
 class TestXml(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """is_equivalent(): True for identical docs"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     assert d1_common.xml.is_equivalent(valid_xml, valid_xml)
 
-  def test_0020(self):
+  def test_1010(self):
     """is_equivalent(): True for docs identical except for swapped attributes"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     valid_swapped_attr_xml = self.load_sample('test_xml_valid_swapped_attr_xml')
     assert d1_common.xml.is_equivalent(valid_xml, valid_swapped_attr_xml)
 
-  def test_0030(self):
+  def test_1020(self):
     """is_equivalent(): False when an attribute is missing"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     missing_count_xml = self.load_sample('test_xml_missing_count_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, missing_count_xml)
 
-  def test_0040(self):
+  def test_1030(self):
     """Verify that comparison fails when an element is missing"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     missing_entry_xml = self.load_sample('test_xml_missing_entry_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, missing_entry_xml)
 
-  def test_0050(self):
+  def test_1040(self):
     """Verify that comparison fails when to elements appear in the wrong order"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     wrong_order_xml = self.load_sample('test_xml_wrong_order_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, wrong_order_xml)
 
-  def test_0060(self):
+  def test_1050(self):
     """Verify that comparison fails when an element is missing text"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     missing_text_xml = self.load_sample('test_xml_missing_text_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, missing_text_xml)
 
-  def test_0070(self):
+  def test_1060(self):
     """Verify that comparison fails when the document is not well formed"""
     valid_xml = self.load_sample('test_xml_valid_xml')
     syntax_error_xml = self.load_sample('test_xml_syntax_error_xml')

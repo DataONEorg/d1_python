@@ -29,7 +29,7 @@ import d1_test.instance_generator.person as person
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestPerson')
 class TestPerson(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """generate()"""
     person_list = [person.generate().toxml('utf-8') for _ in range(3)]
     self.assert_equals_sample(person_list, 'inst_gen__person')

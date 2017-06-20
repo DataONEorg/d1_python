@@ -29,14 +29,14 @@ import d1_test.instance_generator.dates as dates
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestDateTime')
 class TestDateTime(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """random_date(): Dates are random"""
     random_date_list = [dates.random_date().isoformat() for _ in range(10)]
     self.assert_equals_sample(
       random_date_list, 'inst_gen__datetime__random_date_unrestricted'
     )
 
-  def test_0020(self):
+  def test_1010(self):
     """random_date(): Dates are random, with restricted time span"""
     random_date_list = [
       dates.random_date(100, 200).isoformat() for _ in range(10)

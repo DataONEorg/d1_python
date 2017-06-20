@@ -46,56 +46,56 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
   # confirm()
 
-  def test_0010(self):
+  def test_1000(self):
     """confirm(): default=no, answer=no"""
     self._test_confirm(
       default='no', answer='no', expected_prompt='[yes/NO]',
       expected_result=False
     )
 
-  def test_0020(self):
+  def test_1010(self):
     """confirm(): default=no, answer=yes"""
     self._test_confirm(
       default='no', answer='yes', expected_prompt='[yes/NO]',
       expected_result=True
     )
 
-  def test_0030(self):
+  def test_1020(self):
     """confirm(): default=no, answer=unset"""
     self._test_confirm(
       default='no', expected_prompt='[yes/NO]', expected_result=False
     )
 
-  def test_0040(self):
+  def test_1030(self):
     """confirm(): default=yes, answer=no"""
     self._test_confirm(
       default='yes', answer='no', expected_prompt='[YES/no]',
       expected_result=False
     )
 
-  def test_0050(self):
+  def test_1040(self):
     """confirm(): default=yes, answer=yes"""
     self._test_confirm(
       default='yes', answer='yes', expected_prompt='[YES/no]',
       expected_result=True
     )
 
-  def test_0060(self):
+  def test_1050(self):
     """confirm(): default=yes, answer=unset"""
     self._test_confirm(
       default='yes', answer='yes', expected_prompt='[YES/no]',
       expected_result=True
     )
 
-  def test_0070(self):
+  def test_1060(self):
     """confirm(): default=unset, answer=no"""
     self._test_confirm(answer='no', expected_result=False)
 
-  def test_0080(self):
+  def test_1070(self):
     """confirm(): default=unset, answer=yes"""
     self._test_confirm(answer='yes', expected_result=True)
 
-  def test_0090(self):
+  def test_1080(self):
     """confirm(): default=unset, answer=unset"""
     self._test_confirm(allow_blank=True)
 
@@ -115,14 +115,14 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
   # output()
 
-  def test_0100(self):
+  def test_1090(self):
     """output(): Output to screen when no file path is provided"""
     msg_str = 'line1\nline2\n'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       cli_util.output(StringIO.StringIO(msg_str), path=None)
     assert msg_str == out_stream.getvalue()
 
-  def test_0110(self):
+  def test_1100(self):
     """output(): Output to file when file path is provided"""
     msg_str = 'line1\nline2\n'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -133,7 +133,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     with open(tmp_file_path, 'r') as tmp_file:
       assert msg_str == tmp_file.read()
 
-  def test_0120(self):
+  def test_1110(self):
     """output(): Raises CLIError on invalid path"""
     msg_str = 'line1\nline2\n'
     with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
@@ -144,19 +144,19 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
   # assert_file_exists()
 
-  def test_0130(self):
+  def test_1120(self):
     """assert_file_exists(): Returns silently if path references a file"""
     with tempfile.NamedTemporaryFile() as tmp_file:
       assert cli_util.assert_file_exists(tmp_file.name) is None
 
-  def test_0140(self):
+  def test_1130(self):
     """assert_file_exists(): Raises InvalidArguments if path is invalid"""
     with pytest.raises(d1_cli.impl.cli_exceptions.InvalidArguments):
       cli_util.assert_file_exists('/')
 
   # copy_file_like_object_to_file()
 
-  def test_0150(self):
+  def test_1140(self):
     """copy_file_like_object_to_file(): Copies flo to file when path is valid"""
     msg_str = 'line1\nline2\n'
     with tempfile.NamedTemporaryFile() as tmp_file:
@@ -167,7 +167,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     with open(tmp_file_path, 'r') as tmp_file:
       assert msg_str == tmp_file.read()
 
-  def test_0160(self):
+  def test_1150(self):
     """copy_file_like_object_to_file(): Raises InvalidArguments if path is invalid"""
     msg_str = 'line1\nline2\n'
     with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
@@ -176,7 +176,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   # copy_requests_stream_to_file()
 
   @responses.activate
-  def test_0170(self):
+  def test_1160(self):
     """copy_requests_stream_to_file(): Copies Requests Response body to file when path is valid"""
     responses_base_url = 'http://mock/node'
     mock_get.add_callback(responses_base_url)
@@ -189,7 +189,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
       assert expected_sciobj_str == tmp_file.read()
 
   @responses.activate
-  def test_0171(self):
+  def test_1170(self):
     """copy_requests_stream_to_file(): Raises InvalidArguments if path is invalid"""
     responses_base_url = 'http://mock/node'
     mock_get.add_callback(responses_base_url)
@@ -200,7 +200,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
   # print()
 
-  def test_0180(self):
+  def test_1180(self):
     """print()"""
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       msg = 'test_msg'

@@ -43,7 +43,7 @@ MAX_OBJECTS = 20
 
 class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """PageSize=5, start=0"""
     mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     self._log_record_iterator_test(5, 0)

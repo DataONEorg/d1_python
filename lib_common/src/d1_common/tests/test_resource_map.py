@@ -331,22 +331,22 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       return sorted(obj)
     return obj
 
-  def test_0010(self, mn_client_v2):
+  def test_1000(self, mn_client_v2):
     """__init__(): Empty"""
     ore = d1_common.resource_map.ResourceMap()
     assert isinstance(ore, d1_common.resource_map.ResourceMap)
 
-  def test_0020(self, mn_client_v2):
+  def test_1010(self, mn_client_v2):
     """__init__(): Instantiate resource map by ORE PID"""
     ore = d1_common.resource_map.ResourceMap('test_pid', ore_software_id='TEST')
     self.assert_equals_sample(ore, 'resource_map_pid', mn_client_v2)
 
-  def test_0030(self, mn_client_v2):
+  def test_1020(self, mn_client_v2):
     """serialize(): Instantiate resource map by pid, scimeta and scidata"""
     ore = self._create()
     self.assert_equals_sample(ore, 'resource_map_full', mn_client_v2)
 
-  def test_0040(self, mn_client_v2):
+  def test_1030(self, mn_client_v2):
     """getAggregation()"""
     ore = self._create()
     aggr = ore.getAggregation()
@@ -355,20 +355,20 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       aggr
     ) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation'
 
-  def test_0050(self, mn_client_v2):
+  def test_1040(self, mn_client_v2):
     """getObjectByPid()"""
     ore = self._create()
     u = ore.getObjectByPid('ore_pid')
     assert isinstance(u, rdflib.URIRef)
     assert str(u) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid'
 
-  def test_0060(self, mn_client_v2):
+  def test_1050(self, mn_client_v2):
     """addResource()"""
     ore = self._create()
     ore.addResource('resource1_pid')
     self.assert_equals_sample(ore, 'resource_map_add_resource', mn_client_v2)
 
-  def test_0070(self, mn_client_v2):
+  def test_1060(self, mn_client_v2):
     """setDocuments()"""
     ore = self._create()
     ore.addResource('resource1_pid')
@@ -376,7 +376,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     ore.setDocuments('resource1_pid', 'resource2_pid')
     self.assert_equals_sample(ore, 'resource_map_set_documents', mn_client_v2)
 
-  def test_0080(self, mn_client_v2):
+  def test_1070(self, mn_client_v2):
     """setDocumentedBy()"""
     ore = self._create()
     ore.addResource('resource1_pid')
@@ -386,7 +386,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       ore, 'resource_map_set_documented_by', mn_client_v2
     )
 
-  def test_0090(self, mn_client_v2):
+  def test_1080(self, mn_client_v2):
     """addMetadataDocument()"""
     ore = self._create()
     ore.addMetadataDocument('meta_pid')
@@ -394,7 +394,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       ore, 'resource_map_add_metadata_document_by', mn_client_v2
     )
 
-  def test_0100(self, mn_client_v2):
+  def test_1090(self, mn_client_v2):
     """addDataDocuments()"""
     ore = self._create()
     ore.addDataDocuments(['more_data1_pid', 'more_data2_pid'], 'meta_pid')
@@ -402,14 +402,14 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       ore, 'resource_map_add_data_documents_by', mn_client_v2
     )
 
-  def test_0110(self, mn_client_v2):
+  def test_1100(self, mn_client_v2):
     """getResourceMapPid()"""
     ore = self._create()
     resource_map_pid = ore.getResourceMapPid()
     assert isinstance(resource_map_pid, str)
     assert resource_map_pid == 'ore_pid'
 
-  def test_0120(self, mn_client_v2):
+  def test_1110(self, mn_client_v2):
     """getAllTriples()"""
     ore = self._create()
     triple_list = ore.getAllTriples()
@@ -418,7 +418,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       sorted_triple_list, 'resource_map_get_all_triples', mn_client_v2
     )
 
-  def test_0130(self, mn_client_v2):
+  def test_1120(self, mn_client_v2):
     """getAllPredicates()"""
     ore = self._create()
     predicate_list = ore.getAllPredicates()
@@ -427,7 +427,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       sorted_predicate_list, 'resource_map_get_all_predicates', mn_client_v2
     )
 
-  def test_0140(self, mn_client_v2):
+  def test_1130(self, mn_client_v2):
     """getSubjectObjectsByPredicate()"""
     ore = self._create()
     subobj_list = ore.getSubjectObjectsByPredicate(
@@ -439,7 +439,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       mn_client_v2
     )
 
-  def test_0150(self, mn_client_v2):
+  def test_1140(self, mn_client_v2):
     """getAggregatedPids()"""
     ore = self._create()
     pid_list = ore.getAggregatedPids()
@@ -448,7 +448,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       sorted_pid_list, 'resource_map_get_aggregated_pids', mn_client_v2
     )
 
-  def test_0160(self, mn_client_v2):
+  def test_1150(self, mn_client_v2):
     """getAggregatedScienceMetadataPids()"""
     ore = self._create()
     pid_list = ore.getAggregatedScienceMetadataPids()
@@ -458,7 +458,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       mn_client_v2
     )
 
-  def test_0170(self, mn_client_v2):
+  def test_1160(self, mn_client_v2):
     """getAggregatedScienceDataPids()"""
     ore = self._create()
     pid_list = ore.getAggregatedScienceDataPids()
@@ -468,7 +468,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
       mn_client_v2
     )
 
-  def test_0180(self, mn_client_v2):
+  def test_1170(self, mn_client_v2):
     """asGraphvizDot()"""
     ore = self._create()
     stream = StringIO.StringIO()

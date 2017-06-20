@@ -29,14 +29,14 @@ import d1_test.instance_generator.access_policy as access_policy
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestAccessPolicy')
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """select_random_set_of_permissions()"""
     permissions = access_policy.random_set_of_permissions()
     self.assert_equals_sample(
       permissions, 'inst_gen__access_policy__select_random_set_of_permissions'
     )
 
-  def test_0020(self):
+  def test_1010(self):
     """permissions_to_tag_string()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.permissions_to_tag_string(permissions)
@@ -44,7 +44,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       s, 'inst_gen__access_policy__permissions_to_tag_string'
     )
 
-  def test_0030(self):
+  def test_1020(self):
     """random_subject_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.random_subject_with_permission_labels(permissions)
@@ -52,7 +52,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       s, 'inst_gen__access_policy__random_subject_with_permission_labels'
     )
 
-  def test_0040(self):
+  def test_1030(self):
     """random_subjects_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
     subjects = access_policy.random_subjects_with_permission_labels(permissions)
@@ -61,14 +61,14 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       'inst_gen__access_policy__random_subjects_with_permission_labels'
     )
 
-  def test_0050(self):
+  def test_1040(self):
     """generate()"""
     access_policy_pyxb = access_policy.generate()
     self.assert_equals_sample(
       access_policy_pyxb, 'inst_gen__access_policy__generate'
     )
 
-  def test_0060(self):
+  def test_1050(self):
     """random_subject_list()"""
     subject_list = access_policy.random_subject_list()
     self.assert_equals_sample(

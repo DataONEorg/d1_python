@@ -40,7 +40,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     'cert_without_subject_info.pem'
   )
 
-  def test_0010(self):
+  def test_1000(self):
     """Deserialize PEM to cryptography.Certificate object"""
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem
@@ -49,7 +49,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
       cert_obj
     ) == cryptography.hazmat.backends.openssl.x509._Certificate
 
-  def test_0020(self):
+  def test_1010(self):
     """Extract primary subject from certificate and returns as
     DataONE compliant serialization
     """
@@ -59,7 +59,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     primary_str = d1_common.cert.x509.extract_subject_from_dn(cert_obj)
     assert primary_str == 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
 
-  def test_0030(self):
+  def test_1020(self):
     """Extract SubjectInfo from certificate, SubjectInfo present"""
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem
@@ -71,7 +71,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
       extracted_subject_info_xml, 'cert_simple_subject_info'
     )
 
-  def test_0040(self):
+  def test_1030(self):
     """Extract SubjectInfo from certificate, SubjectInfo missing"""
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_no_subject_info_pem
@@ -81,7 +81,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     )
     assert missing_subject_info is None
 
-  def test_0050(self):
+  def test_1040(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     present
     """
@@ -96,7 +96,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         'verifiedUser',
       ]
 
-  def test_0060(self):
+  def test_1050(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     missing
     """
@@ -108,7 +108,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     assert equivalent_set == set()
 
   @freezegun.freeze_time('2021-01-01')
-  def test_0070(self):
+  def test_1060(self):
     """log_cert_info(): Outputs expected log"""
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem

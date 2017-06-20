@@ -26,7 +26,7 @@ import d1_test.mock_api.util
 
 
 class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """trigger_by_status_code(): GET request returns DataONEException XML doc"""
 
     def fake_request():
@@ -42,7 +42,7 @@ class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
     assert header_dict == {'Content-Type': 'application/xml'}
     assert '?xml' in body_str
 
-  def test_0020(self):
+  def test_1010(self):
     """trigger_by_status_code(): HEAD request returns DataONEException headers"""
 
     def fake_request():
@@ -69,7 +69,7 @@ class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
     }
     assert header_dict == expected_header_dict
 
-  def test_0030(self):
+  def test_1020(self):
     """trigger_by_pid()"""
 
     def fake_request():

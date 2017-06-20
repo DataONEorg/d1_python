@@ -35,14 +35,14 @@ import d1_test.d1_test_case
 
 class TestChecksum(d1_test.d1_test_case.D1TestCase):
   parameterize_dict = {
-    'test_0010': [
+    'test_1000': [
       dict(filename='checksum_gmn_valid.xml', raises_pyxb_exc=False),
       dict(filename='checksum_invalid_1.xml', raises_pyxb_exc=True),
       dict(filename='checksum_invalid_2.xml', raises_pyxb_exc=True),
     ],
   }
 
-  def test_0010(self, filename, raises_pyxb_exc):
+  def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize: XML -> Checksum"""
     exp_json = self.load_sample(filename)
     exp_dict = json.loads(exp_json)
@@ -55,7 +55,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
       assert checksum_pyxb.algorithm == exp_dict['algorithm']
       assert checksum_pyxb.value() == exp_dict['checksum']
 
-  def test_0040(self):
+  def test_1010(self):
     """Serialization: Checksum -> XML -> Checksum"""
     checksum_obj_in = dataoneTypes.checksum('1' * 32)
     checksum_obj_in.algorithm = 'MD5'
@@ -64,7 +64,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     assert checksum_obj_in.value() == checksum_obj_out.value()
     assert checksum_obj_in.algorithm == checksum_obj_out.algorithm
 
-  def test_0050(self):
+  def test_1020(self):
     """checksums_are_equal(): Same checksum, same algorithm"""
     c1 = dataoneTypes.Checksum('BAADF00D')
     c1.algorithm = 'SHA-1'
@@ -72,7 +72,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     c2.algorithm = 'SHA-1'
     assert d1_common.checksum.are_checksums_equal(c1, c2)
 
-  def test_0060(self):
+  def test_1030(self):
     """checksums_are_equal(): Same checksum, different algorithm"""
     c1 = dataoneTypes.Checksum('BAADF00D')
     c1.algorithm = 'SHA-1'
@@ -81,7 +81,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     with pytest.raises(ValueError):
       d1_common.checksum.are_checksums_equal(c1, c2)
 
-  def test_0070(self):
+  def test_1040(self):
     """checksums_are_equal(): Different checksum, same algorithm"""
     c1 = dataoneTypes.Checksum('BAADF00DX')
     c1.algorithm = 'MD5'
@@ -89,7 +89,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     c2.algorithm = 'MD5'
     assert not d1_common.checksum.are_checksums_equal(c1, c2)
 
-  def test_0080(self):
+  def test_1050(self):
     """checksums_are_equal(): Case insensitive checksum comparison"""
     c1 = dataoneTypes.Checksum('baadf00d')
     c1.algorithm = 'MD5'
@@ -97,7 +97,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     c2.algorithm = 'MD5'
     assert d1_common.checksum.are_checksums_equal(c1, c2)
 
-  def test_0090(self):
+  def test_1060(self):
     """get_checksum_calculator_by_dataone_designator() returns a checksum calculator"""
     calculator = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
       'SHA-1'
@@ -105,7 +105,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     calculator.update('test')
     assert calculator.hexdigest()
 
-  def test_0100(self):
+  def test_1070(self):
     """get_checksum_calculator_by_dataone_designator() raises on invalid algorithm"""
     with pytest.raises(Exception):
       d1_common.checksum.get_checksum_calculator_by_dataone_designator(

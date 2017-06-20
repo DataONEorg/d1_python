@@ -54,7 +54,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
   # MNStorage.updateSystemMetadata()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0040(self, mn_client_v2):
+  def test_1000(self, mn_client_v2):
     """MNStorage.updateSystemMetadata(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     received_echo_dict = mn_client_v2.updateSystemMetadata(
@@ -65,7 +65,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0050(self, mn_client_v2):
+  def test_1010(self, mn_client_v2):
     """MNStorage.updateSystemMetadata(): Converts DataONEException XML doc to exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):

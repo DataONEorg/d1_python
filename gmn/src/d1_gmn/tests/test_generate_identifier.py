@@ -38,7 +38,7 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return identifier.value()
 
   @responses.activate
-  def test_01(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a valid identifier that
     matches scheme and fragment
     """
@@ -46,7 +46,7 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self._generate_identifier(mn_client_v1_v2)
 
   @responses.activate
-  def test_02(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a different, valid identifier
     when called second time
     """

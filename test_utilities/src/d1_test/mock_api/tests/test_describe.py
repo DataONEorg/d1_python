@@ -28,7 +28,7 @@ import d1_test.mock_api.describe as mock_describe
 
 class TestMockDescribe(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """mock_api.describe(): Returns a dict with the expected headers"""
     mock_describe.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     header_dict = mn_client_v1_v2.describe('test_pid')

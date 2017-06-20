@@ -37,11 +37,11 @@ class TestQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
   def setup_method(self):
     self.q = query_engine_description.QueryEngineDescription()
 
-  def test_0010(self):
+  def test_1000(self):
     """__init__()"""
     assert isinstance(self.q, query_engine_description.QueryEngineDescription)
 
-  def test_0020(self):
+  def test_1010(self):
     """get query engine version: """
     assert self.q.get_query_engine_version() == '3.4.0.2011.09.20.17.19.53'
 

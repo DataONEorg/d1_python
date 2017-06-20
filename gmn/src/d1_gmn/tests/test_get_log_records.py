@@ -50,7 +50,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       log_entry_pyxb.entryId = '1'
 
   @responses.activate
-  def test_1001(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: start=0, count=0 returns empty slice with
     correct total event count
     """
@@ -62,7 +62,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1002(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Retrieve front section
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -73,7 +73,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1003(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Retrieve middle section
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -84,7 +84,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1004(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Retrieve exact end section
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -97,7 +97,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1005(self, mn_client_v1_v2):
+  def test_1040(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Specifying more events than are
     available returns the available events
     """
@@ -111,7 +111,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1006(self, mn_client_v1_v2):
+  def test_1050(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Specifying start above available events
     returns an empty list
     """
@@ -125,7 +125,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1060(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): event type filter: Unknown event returns an empty
     list.
 
@@ -139,7 +139,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1011(self, mn_client_v1_v2):
+  def test_1070(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): event type filter: known event returns list of
     requested size with total equal to the number of events of the type
     """
@@ -151,7 +151,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1012(self, mn_client_v1_v2):
+  def test_1080(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): Date range query: Get all events from 1979
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -175,7 +175,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1013(self, mn_client_v1_v2):
+  def test_1090(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): Date range query: Using a date range in the
     future returns empty list
     """
@@ -192,7 +192,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1014(self, mn_client_v1_v2):
+  def test_1100(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): Date range query: End date before start date
     raises InvalidRequest
     """
@@ -205,7 +205,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   @freezegun.freeze_time('2388-08-28')
-  def test_1015(self, mn_client_v1_v2):
+  def test_1110(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): create() of object causes a new create event to
     be added for the given PID
     """

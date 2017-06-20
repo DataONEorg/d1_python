@@ -35,7 +35,7 @@ import d1_common.date_time
 
 class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0110(self):
+  def test_1000(self):
     """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized"""
 
     def test(client):
@@ -48,7 +48,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v1)
 
   @responses.activate
-  def test_1700(self):
+  def test_1010(self):
     """systemMetadataChanged(): fails when called with invalid PID"""
 
     def test(client):
@@ -62,7 +62,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1701(self):
+  def test_1020(self):
     """systemMetadataChanged(): Succeeds when called with valid PID"""
 
     def test(client):

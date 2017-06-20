@@ -85,7 +85,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
     TRUST_CLIENT_SERIALVERSION=False,
     TRUST_CLIENT_DATEUPLOADED=False,
   )
-  def test_1010(self):
+  def test_1000(self):
     """Trusted Client Overrides: Combination 1"""
     accepted_override_list = self._test_override(self.client_v1)
     assert accepted_override_list == \
@@ -99,7 +99,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
     TRUST_CLIENT_SERIALVERSION=False,
     TRUST_CLIENT_DATEUPLOADED=True,
   )
-  def test_1020(self):
+  def test_1010(self):
     """Trusted Client Overrides: Combination 2"""
     accepted_override_list = self._test_override(self.client_v1)
     assert accepted_override_list == \
@@ -113,7 +113,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
     TRUST_CLIENT_SERIALVERSION=True,
     TRUST_CLIENT_DATEUPLOADED=True,
   )
-  def test_1030(self):
+  def test_1020(self):
     """Trusted Client Overrides: Combination 3"""
     accepted_override_list = self._test_override(self.client_v1)
     assert accepted_override_list == \

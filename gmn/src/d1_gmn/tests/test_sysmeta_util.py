@@ -34,7 +34,7 @@ import d1_gmn.tests.gmn_test_case
 @pytest.mark.skip('TODO. pytest-django does not support assertQuerysetEqual')
 class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """delete_unused_subjects()"""
 
     def test(client):

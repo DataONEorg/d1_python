@@ -45,7 +45,7 @@ import d1_common.xml
 
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """update(): Raises NotAuthorized if none of the trusted subjects are
     active"""
 
@@ -61,7 +61,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_0011(self):
+  def test_1010(self):
     """update(): Non-existing object raises NotFound"""
 
     def test(client):
@@ -72,7 +72,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_0021(self):
+  def test_1020(self):
     """update(): updates the object if one or more trusted subjects are active"""
 
     def test(client):
@@ -86,7 +86,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_0030(self):
+  def test_1030(self):
     """update() / get(): Object with no explicit permissions can be retrieved
     by a trusted subject
     """
@@ -106,7 +106,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_0040(self):
+  def test_1040(self):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by non-trusted subjects
     """
@@ -129,7 +129,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_0050(self):
+  def test_1050(self):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by the submitter
     """
@@ -152,7 +152,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     test(self.client_v2)
 
   @responses.activate
-  def test_1030(self):
+  def test_1060(self):
     """update() of object records an update event on the obsoleted object and a
     create event on the new object
     """
@@ -183,7 +183,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1031(self):
+  def test_1070(self):
     """update() correctly adjusts sysmeta on obsoleted object"""
 
     def test(client):
@@ -209,7 +209,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1033(self):
+  def test_1080(self):
     """MNStorage.update(): Obsoleted object raises InvalidRequest"""
 
     def test(client):
@@ -229,7 +229,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1034(self):
+  def test_1090(self):
     """MNStorage.update(): Update an object with existing PID raises
     IdentifierNotUnique
     """
@@ -251,7 +251,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(self.client_v2)
 
   @responses.activate
-  def test_1035(self):
+  def test_1100(self):
     """MNStorage.update(): Update an object with URL PID not matching SysMeta
     raises InvalidSystemMetadata
     """

@@ -47,14 +47,14 @@ import d1_client.baseclient
 
 
 class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """__init__()"""
     base_client = d1_client.baseclient.DataONEBaseClient(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     assert isinstance(base_client, d1_client.baseclient.DataONEBaseClient)
 
-  def test_0020(self):
+  def test_1010(self):
     """slice_sanity_check()"""
     cn_mn_client_v1 = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
@@ -66,7 +66,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       cn_mn_client_v1._slice_sanity_check(10, 'invalid_int')
 
-  def test_0030(self):
+  def test_1020(self):
     """date_span_sanity_check()"""
     cn_mn_client_v1 = d1_client.baseclient.DataONEBaseClient(
       "http://bogus.target/mn"
@@ -83,7 +83,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords
 
   @responses.activate
-  def test_0040(self, cn_mn_client_v1):
+  def test_1030(self, cn_mn_client_v1):
     """MNRead.getLogRecords(): Returned type is Log"""
     d1_test.mock_api.get_log_records.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -93,7 +93,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0060(self, cn_mn_client_v1):
+  def test_1040(self, cn_mn_client_v1):
     """MNRead.getLogRecords(): Log has at least two entries"""
     d1_test.mock_api.get_log_records.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -105,13 +105,13 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNCore.ping()
 
   @responses.activate
-  def test_0070(self, cn_mn_client_v1):
+  def test_1050(self, cn_mn_client_v1):
     """ping(): Returns True"""
     d1_test.mock_api.ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert cn_mn_client_v1.ping()
 
   @responses.activate
-  def test_0080(self, cn_mn_client_v1):
+  def test_1060(self, cn_mn_client_v1):
     """ping(): Passing a trigger header triggers a DataONEException"""
     d1_test.mock_api.ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):
@@ -121,14 +121,14 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNRead.get()
 
   @responses.activate
-  def test_0090(self, cn_mn_client_v1):
+  def test_1070(self, cn_mn_client_v1):
     """CNRead.get(): Unknown PID raises NotFound"""
     d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_mn_client_v1.get('<NotFound>pid')
 
   @responses.activate
-  def test_0100(self, cn_mn_client_v1):
+  def test_1080(self, cn_mn_client_v1):
     """MNRead.get(): Returns valid response on valid PID"""
     d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     cn_mn_client_v1.get('valid_pid')
@@ -137,7 +137,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNRead.getSystemMetadata()
 
   @responses.activate
-  def test_0110(self, cn_mn_client_v1):
+  def test_1090(self, cn_mn_client_v1):
     """CNRead.getSystemMetadata(): Returns SystemMetadata type"""
     d1_test.mock_api.get_system_metadata.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -146,7 +146,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     assert isinstance(sysmeta_pyxb, cn_mn_client_v1.bindings.SystemMetadata)
 
   @responses.activate
-  def test_0120(self, cn_mn_client_v1):
+  def test_1100(self, cn_mn_client_v1):
     """MNRead.getSystemMetadata(): Unknown PID raises NotFound"""
     d1_test.mock_api.get_system_metadata.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -158,7 +158,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNRead.describe()
 
   @responses.activate
-  def test_0130(self, cn_mn_client_v1):
+  def test_1110(self, cn_mn_client_v1):
     """CNRead.describe(): GET request returns dict of D1 custom headers"""
     d1_test.mock_api.describe.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     description_dict = cn_mn_client_v1.describe('good_pid')
@@ -175,7 +175,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     assert dict(description_dict) == expected_dict
 
   @responses.activate
-  def test_0140(self, cn_mn_client_v1):
+  def test_1120(self, cn_mn_client_v1):
     """CNRead.describe(): HEAD request for unknown PID raises NotFound"""
     d1_test.mock_api.describe.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     # describe() is a HEAD request, which can't return a body, so we use a
@@ -189,7 +189,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNCore.listObjects()
 
   @responses.activate
-  def test_0150(self, cn_mn_client_v1):
+  def test_1130(self, cn_mn_client_v1):
     """listObjects(): Returns a valid ObjectList that contains at least 3 entries"""
     # cn_mn_client_v1 = api
     d1_test.mock_api.list_objects.add_callback(
@@ -208,7 +208,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNStorage.generateIdentifier()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0160(self, cn_mn_client_v1):
+  def test_1140(self, cn_mn_client_v1):
     """CNRegister.generateIdentifier(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     scheme_str = (
@@ -225,7 +225,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     )
 
   @d1_test.mock_api.catch_all.activate
-  def test_0170(self, cn_mn_client_v1):
+  def test_1150(self, cn_mn_client_v1):
     """CNRegister.generateIdentifier(): Converts DataONEException XML doc to
     exception"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
@@ -245,7 +245,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # MNAuthorization.isAuthorized()
 
   @responses.activate
-  def test_0180(self, cn_mn_client_v1):
+  def test_1160(self, cn_mn_client_v1):
     """isAuthorized(): Returns 200 for a readable PID"""
     d1_test.mock_api.is_authorized.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -253,7 +253,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     assert cn_mn_client_v1.isAuthorized('authorized_pid', 'read')
 
   @responses.activate
-  def test_0190(self, cn_mn_client_v1):
+  def test_1170(self, cn_mn_client_v1):
     """isAuthorized(): Returns True if authorized, else False"""
     d1_test.mock_api.is_authorized.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL

@@ -29,7 +29,7 @@ import d1_test.instance_generator.format_id
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestFormatId')
 class TestFormatId(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """generate()"""
     format_id_list = [
       d1_test.instance_generator.format_id.generate() for _ in range(10)

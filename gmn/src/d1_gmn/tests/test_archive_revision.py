@@ -30,7 +30,7 @@ import d1_gmn.tests.gmn_test_case
 
 class TestArchiveRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0010(self, cn_mn_client_v1_v2):
+  def test_1000(self, cn_mn_client_v1_v2):
     """archive(): Archived flag correctly set and represented"""
     with d1_gmn.tests.gmn_mock.disable_auth():
 

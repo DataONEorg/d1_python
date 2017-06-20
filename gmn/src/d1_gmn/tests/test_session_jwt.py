@@ -44,7 +44,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return cert_obj, jwt_bu64
 
   @freezegun.freeze_time('2011-02-01')
-  def test_0010(self):
+  def test_1000(self):
     """_download_and_decode_cn_cert(): Successfully retrieves and decodes CN
     server cert"""
     cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
@@ -59,7 +59,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @freezegun.freeze_time('2011-02-01')
-  def test_0020(self):
+  def test_1010(self):
     """_get_cn_cert(): Retrieves the cert from the CN on the first download and
     from the cache on the second"""
     cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(

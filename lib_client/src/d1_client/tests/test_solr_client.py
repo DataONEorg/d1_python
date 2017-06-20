@@ -56,11 +56,11 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   #=============================================================================
   # SolrClient()
 
-  def test_0010(self):
+  def test_1000(self):
     """__init__()"""
     d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
 
-  def test_0020(self):
+  def test_1010(self):
     """str()"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     assert str(solr_client) == \
@@ -68,7 +68,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # search()
 
-  def test_0030(self):
+  def test_1020(self):
     """search(): Query returns valid dict"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.search(q='id:2yt87y0n9f3t8450')
@@ -79,7 +79,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # count()
 
-  def test_0040(self):
+  def test_1030(self):
     """count(): Query returns valid count"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     obj_count = solr_client.count(q='id:abc*')
@@ -89,7 +89,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # get_ids()
 
-  def test_0050(self):
+  def test_1040(self):
     """get_ids(): Query returns list of IDs"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.get_ids(q='id:abc*')
@@ -100,7 +100,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # get_field_values()
 
-  def test_0060(self):
+  def test_1050(self):
     """get_field_values(): Query returns unique field values"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.get_field_values('formatId', q='*abc*')
@@ -111,7 +111,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # get_field_min_max()
 
-  def test_0070(self):
+  def test_1060(self):
     """get_field_min_max(): Query returns min and max field values"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     min_max_tup = solr_client.get_field_min_max('formatId', q='*abc*')
@@ -121,7 +121,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
   # field_alpha_histogram()
 
-  def test_0080(self):
+  def test_1070(self):
     """field_alpha_histogram(): Query returns histogram"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     bin_list = solr_client.field_alpha_histogram(
@@ -134,7 +134,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   #=============================================================================
   # SolrSearchResponseIterator()
 
-  def test_0090(self):
+  def test_1080(self):
     """SolrSearchResponseIterator(): Query 1"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
@@ -145,7 +145,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
       solr_list, 'solr_client_iterator_query_1'
     )
 
-  def test_0100(self):
+  def test_1090(self):
     """SolrSearchResponseIterator(): Query 2"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
@@ -153,7 +153,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     )
     self._assert_at_least_one_populated_row(solr_iter)
 
-  def test_0110(self):
+  def test_1100(self):
     """SolrSearchResponseIterator(): Query 3"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
@@ -166,7 +166,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   #=============================================================================
   # SolrValuesResponseIterator
 
-  def test_0120(self):
+  def test_1110(self):
     """SolrValuesResponseIterator(): Query 1"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
@@ -174,7 +174,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     )
     assert len(list(solr_iter)) > 1
 
-  def test_0130(self):
+  def test_1120(self):
     """SolrValuesResponseIterator(): Query 2"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
@@ -183,7 +183,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     )
     self._assert_at_least_one_populated_row(solr_iter)
 
-  def test_0140(self):
+  def test_1130(self):
     """SolrValuesResponseIterator(): Query 3"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(

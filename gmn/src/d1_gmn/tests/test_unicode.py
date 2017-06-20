@@ -36,7 +36,7 @@ import d1_common.system_metadata
 @pytest.mark.skip('TODO')
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """Unicode: GMN and libraries handle Unicode correctly"""
 
     def test(client):

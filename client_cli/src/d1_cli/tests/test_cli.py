@@ -63,12 +63,12 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('verbose true')
 
-  def test_0010(self, cn_client_v2):
+  def test_1000(self, cn_client_v2):
     """preloop(): Successful initialization"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
 
-  def test_0020(self, cn_client_v2):
+  def test_1010(self, cn_client_v2):
     """preloop(): Successful deinitialization"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -76,7 +76,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.postloop()
     assert 'Exiting' in out_stream.getvalue()
 
-  def test_0030(self, cn_client_v2):
+  def test_1020(self, cn_client_v2):
     """precmd(): Successful line formattting"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -84,7 +84,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     received_line = cli.precmd(test_cmd_str)
     assert test_cmd_str in received_line
 
-  def test_0040(self, cn_client_v2):
+  def test_1030(self, cn_client_v2):
     """default(): Yields unknown command"""
     cli = d1_cli.impl.cli.CLI()
     test_cmd_str = 'somecommand arg1 arg2 arg3'
@@ -92,7 +92,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.default(test_cmd_str)
     assert 'Unknown command: somecommand' in out_stream.getvalue()
 
-  def test_0050(self, cn_client_v2):
+  def test_1040(self, cn_client_v2):
     """run_command_line_arguments(): """
     cli = d1_cli.impl.cli.CLI()
     test_cmd_str = 'somecommand arg1 arg2 arg3'
@@ -100,7 +100,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.default(test_cmd_str)
     assert 'Unknown command: somecommand' in out_stream.getvalue()
 
-  def test_0060(self, cn_client_v2):
+  def test_1050(self, cn_client_v2):
     """do_help(): Valid command returns help string"""
     cli = d1_cli.impl.cli.CLI()
     cli.stdout = StringIO.StringIO()
@@ -108,7 +108,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     cli.do_help(test_cmd_str)
     assert 'The object is saved to <file>' in cli.stdout.getvalue()
 
-  def test_0070(self, cn_client_v2):
+  def test_1060(self, cn_client_v2):
     """do_history(): Returns history"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -123,11 +123,11 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
   # do_exit()
 
-  def test_0080(self, cn_client_v2):
+  def test_1070(self, cn_client_v2):
     """do_exit(): Gives option to cancel if the operation queue is not empty"""
     self._do_exit('yes', 1)
 
-  def test_0090(self, cn_client_v2):
+  def test_1080(self, cn_client_v2):
     """do_exit(): Does not exit if cancelled"""
     self._do_exit('no', 0)
 
@@ -153,7 +153,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert 'There are 1 unperformed operations in the write operation queue' in out_stream.getvalue(
     )
 
-  def test_0100(self, cn_client_v2):
+  def test_1090(self, cn_client_v2):
     """do_exit(): Calls sys.exit()"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -161,7 +161,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_quit('')
       assert mock_method.call_count > 0
 
-  def test_0110(self, cn_client_v2):
+  def test_1100(self, cn_client_v2):
     """do_eof(): Calls sys.exit()"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -169,7 +169,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_eof('')
       assert mock_method.call_count > 0
 
-  def test_0120(self, cn_client_v2):
+  def test_1110(self, cn_client_v2):
     """do_reset(), do_set(), do_save(), do_load(): Session to disk round trip"""
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
@@ -206,7 +206,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_set('key-file')
     assert 'key-file: test-key-file' in out_stream.getvalue()
 
-  def test_0130(self, cn_client_v2):
+  def test_1120(self, cn_client_v2):
     """set: Command gives expected output on flag toggle"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -216,7 +216,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_set('verbose false')
     assert 'verbose to "false"' in out_stream.getvalue()
 
-  def test_0140(self, cn_client_v2):
+  def test_1130(self, cn_client_v2):
     """set: Command gives expected output when setting count"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -226,7 +226,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_set('count 3')
     assert 'count to "3"' in out_stream.getvalue()
 
-  def test_0150(self, cn_client_v2):
+  def test_1140(self, cn_client_v2):
     """set: Command gives expected output when setting query string"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -234,7 +234,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert 'variable query to "a=b"' in out_stream.getvalue()
 
   @d1_test.mock_api.catch_all.activate
-  def test_0160(self, cn_client_v2):
+  def test_1150(self, cn_client_v2):
     """ping: Returns server status"""
     d1_test.mock_api.catch_all.add_callback('http://mock/node')
     cli = d1_cli.impl.cli.CLI()
@@ -243,7 +243,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       cli.do_set('mn-url http://mock/node')
       cli.do_ping('')
 
-  def test_0170(self, cn_client_v2):
+  def test_1160(self, cn_client_v2):
     """do_allowaccess(): Correctly sets access control"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -258,7 +258,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert check_cnt == 3
     assert 'Set changePermission access for subject "test_subject_3"' in out_stream.getvalue()
 
-  def test_0180(self, cn_client_v2):
+  def test_1170(self, cn_client_v2):
     """do_denyaccess(): Subject without permissions raises InvalidArguments"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
@@ -269,7 +269,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         'unknown_subject',
       )
 
-  def test_0190(self, cn_client_v2):
+  def test_1180(self, cn_client_v2):
     """do_denyaccess(): Subject with permissions is removed"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
@@ -289,7 +289,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert 'test_subject_2: write' in env_str
     assert 'test_subject_3: changePermission' not in env_str
 
-  def test_0200(self, cn_client_v2):
+  def test_1190(self, cn_client_v2):
     """do_clearaccess(): Removes all subjects"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_allowaccess('test_subject_1 write')
@@ -303,7 +303,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert 'test_subject_2: write' not in env_str
     assert 'test_subject_3: changePermission' not in env_str
 
-  def test_0210(self, cn_client_v2):
+  def test_1200(self, cn_client_v2):
     """do_allowrep(), do_denyrep(): Toggles replication"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -314,7 +314,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert not cli._command_processor.get_session().get_replication_policy() \
       .get_replication_allowed()
 
-  def test_0220(self, cn_client_v2):
+  def test_1210(self, cn_client_v2):
     """do_preferrep(): Adds preferred replication targets"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -326,7 +326,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert ['preferred-mn-1', 'preferred-mn-2', 'preferred-mn-3'] == \
       preferred_mn_list
 
-  def test_0230(self, cn_client_v2):
+  def test_1220(self, cn_client_v2):
     """do_blockrep(): Adds blocked replication targets"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -338,7 +338,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert ['blocked-mn-1', 'blocked-mn-2', 'blocked-mn-3'] == \
       blocked_mn_list
 
-  def test_0240(self, cn_client_v2):
+  def test_1230(self, cn_client_v2):
     """do_removerep(): Adds blocked replication targets"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -359,7 +359,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert ['blocked-mn-1', 'blocked-mn-3'] == \
       blocked_mn_list
 
-  def test_0250(self, cn_client_v2):
+  def test_1240(self, cn_client_v2):
     """do_numberrep(): Sets preferred number of replicas"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -368,7 +368,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     ).get_replication_policy().get_number_of_replicas()
     assert received_num_replicas == 42
 
-  def test_0260(self, cn_client_v2):
+  def test_1250(self, cn_client_v2):
     """do_clearrep(): Resets replication policy to default"""
     cli = d1_cli.impl.cli.CLI()
     cli.do_reset('')
@@ -386,7 +386,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert not blocked_mn_list
 
   @responses.activate
-  def test_0270(self, cn_client_v2):
+  def test_1260(self, cn_client_v2):
     """list nodes: Gives expected output"""
     mock_list_nodes.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
@@ -402,7 +402,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert node_line in out_stream.getvalue()
 
   @responses.activate
-  def test_0280(self, cn_client_v2):
+  def test_1270(self, cn_client_v2):
     """do_get(): Successful file download"""
     mock_get.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
@@ -418,7 +418,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert received_sciobj_str == expected_sciobj_str
 
   @responses.activate
-  def test_0290(self, cn_client_v2):
+  def test_1280(self, cn_client_v2):
     """do_meta(): Successful system metadata download"""
     mock_get_system_metadata.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
@@ -436,7 +436,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0300(self, cn_client_v2):
+  def test_1290(self, cn_client_v2):
     """do_list(): Successful object listing"""
     mock_list_objects.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
@@ -465,7 +465,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       is_equal_xml(received_object_list_xml, expected_object_list_xml)
 
   @responses.activate
-  def test_0310(self, cn_client_v2):
+  def test_1300(self, cn_client_v2):
     """do_log(): Successful object listing"""
     mock_get_log_records.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
@@ -491,7 +491,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
   @d1_test.mock_api.catch_all.activate
   @freezegun.freeze_time('1977-02-27')
-  def test_0320(self, cn_client_v2):
+  def test_1310(self, cn_client_v2):
     """do_create(): Expected REST call is issued"""
     d1_test.mock_api.catch_all.add_callback('http://mock/node')
     cli = d1_cli.impl.cli.CLI()
@@ -519,7 +519,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       )
       self.assert_equals_sample(create_sysmeta_pyxb, 'do_create', cn_client_v2)
 
-  def test_0330(self, cn_client_v2):
+  def test_1320(self, cn_client_v2):
     """do_clearqueue(): Queue can be cleared"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -532,7 +532,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         self._assert_queue_empty(cli)
     assert 'You are about to clear' in out_stream.getvalue()
 
-  def test_0340(self, cn_client_v2):
+  def test_1330(self, cn_client_v2):
     """do_update(): Task is added to queue"""
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -545,7 +545,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         self._assert_queue_empty(cli)
     assert 'You are about to clear' in out_stream.getvalue()
 
-  def test_0350(self, cn_client_v2):
+  def test_1340(self, cn_client_v2):
     """do_package(): Task is added to queue"""
     cli = d1_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
@@ -557,7 +557,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       self._clear_queue(cli)
       self._assert_queue_empty(cli)
 
-  def test_0360(self, cn_client_v2):
+  def test_1350(self, cn_client_v2):
     """do_archive(): Tasks are added to queue for each pid"""
     cli = d1_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
@@ -569,7 +569,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       self._clear_queue(cli)
       self._assert_queue_empty(cli)
 
-  def test_0370(self, cn_client_v2):
+  def test_1360(self, cn_client_v2):
     """do_updateaccess(): Tasks are added to queue for each pid"""
     cli = d1_cli.impl.cli.CLI()
     with self._disable_check_for_authenticated_access():
@@ -582,7 +582,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         self._clear_queue(cli)
         self._assert_queue_empty(cli)
 
-  def test_0380(self, cn_client_v2):
+  def test_1370(self, cn_client_v2):
     """do_updatereplication(): Tasks are added to queue for each pid"""
     cli = d1_cli.impl.cli.CLI()
     with self._disable_check_for_authenticated_access():
@@ -654,7 +654,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert re.search(r'operation:\s*{}'.format(operation_str), queue_str)
     assert re.search(r'\d+ of {}'.format(num_operations), queue_str)
 
-  def test_0390(self, cn_client_v2):
+  def test_1380(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = '*:* dateModified:[* TO *]'
     args = ' '.join(filter(None, ()))
@@ -662,7 +662,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
 
-  def test_0400(self, cn_client_v2):
+  def test_1390(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
@@ -670,7 +670,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
 
-  def test_0410(self, cn_client_v2):
+  def test_1400(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
@@ -679,7 +679,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
 
-  def test_0420(self, cn_client_v2):
+  def test_1410(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))
@@ -688,7 +688,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
 
-  def test_0430(self, cn_client_v2):
+  def test_1420(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* formatId:text/csv dateModified:[* TO *]'
     args = ' '.join(filter(None, ('id:knb-lter*',)))

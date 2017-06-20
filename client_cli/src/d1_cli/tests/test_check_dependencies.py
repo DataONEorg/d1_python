@@ -29,11 +29,11 @@ import d1_test.d1_test_case
 
 
 class TestCheckDependencies(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self):
+  def test_1000(self):
     """check_dependencies(): Returns True given modules known to be present"""
     assert d1_cli.impl.check_dependencies.are_modules_importable(['os', 'sys'])
 
-  def test_0020(self):
+  def test_1010(self):
     """check_dependencies(): Returns false and logs error on invalid module"""
     with d1_test.d1_test_case.capture_log() as log_stream:
       assert not d1_cli.impl.check_dependencies. \

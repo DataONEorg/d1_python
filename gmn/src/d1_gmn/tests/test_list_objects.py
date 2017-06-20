@@ -133,7 +133,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1061(self, cn_mn_client_v1_v2):
+  def test_1070(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): DID filter: Existing DID returns a list
     with a single item
     """
@@ -146,7 +146,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1070(self, cn_mn_client_v1_v2):
+  def test_1080(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): DID filter: SID returns list of
     the objects in the chain
     """
@@ -160,7 +160,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1080(self, cn_mn_client_v1_v2):
+  def test_1090(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): Date range query: Get all objects uploaded in 1980
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -182,7 +182,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1090(self, cn_mn_client_v1_v2):
+  def test_1100(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): Date range query: Using a date range in the
     future returns empty list
     """
@@ -198,7 +198,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1100(self, cn_mn_client_v1_v2):
+  def test_1110(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): Date range query: End date before start date
     raises InvalidRequest
     """
@@ -210,7 +210,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   @responses.activate
-  def test_1110(self, cn_mn_client_v1_v2):
+  def test_1120(self, cn_mn_client_v1_v2):
     """MNRead.listObjects(): replicaStatus filter"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid_list = self.get_pid_list()

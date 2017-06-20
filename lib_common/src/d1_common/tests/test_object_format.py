@@ -31,7 +31,7 @@ class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
     'objectFormatList_v2_0.xml'
   )
 
-  def test_0010(self):
+  def test_1000(self):
     """pyxb_to_dict()"""
     ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
     assert len(ofl_dict) == 117

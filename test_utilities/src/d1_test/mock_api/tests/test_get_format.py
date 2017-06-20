@@ -35,7 +35,7 @@ import d1_test.mock_api.get_format as mock_get_format
 
 class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_0010(self, cn_client_v1_v2):
+  def test_1000(self, cn_client_v1_v2):
     """mock_api.getFormat(): Valid formatId returns ObjectFormat PyXB object"""
     mock_get_format.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     assert isinstance(
@@ -44,14 +44,14 @@ class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
     )
 
   @responses.activate
-  def test_0020(self, cn_client_v1_v2):
+  def test_1010(self, cn_client_v1_v2):
     """mock_api.getFormat(): Unknown formatId returns D1 NotFound"""
     mock_get_format.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1_v2.getFormat('<NotFound>format_id')
 
   @responses.activate
-  def test_0030(self, cn_client_v1_v2):
+  def test_1020(self, cn_client_v1_v2):
     """mock_api.getFormat(): Passing a trigger header triggers a DataONEException"""
     mock_get_format.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):

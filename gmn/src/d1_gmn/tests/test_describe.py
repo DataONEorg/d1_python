@@ -30,7 +30,7 @@ import d1_gmn.tests.gmn_test_case
 
 class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1290_v1(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """MNStorage.describe(): Returns valid header for valid object"""
 
     with d1_gmn.tests.gmn_mock.disable_auth():

@@ -41,14 +41,14 @@ import d1_common.xml
 
 class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """MNStorage.create(): Creating a standalone object with new PID and SID
     does not raise exception
     """
     self.create_obj(mn_client_v1_v2)
 
   @responses.activate
-  def test_1020(self, mn_client_v2):
+  def test_1010(self, mn_client_v2):
     """MNStorage.create(): Reusing existing SID as PID when creating
     a standalone object raises IdentifierNotUnique
 
@@ -59,7 +59,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.create_obj(mn_client_v2, sid)
 
   @responses.activate
-  def test_1030(self, mn_client_v2):
+  def test_1020(self, mn_client_v2):
     """MNStorage.create(): Attempting to reuse existing SID as SID when creating
     a standalone object raises IdentifierNotUnique
 
@@ -71,7 +71,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.create_obj(mn_client_v2, sid=sid)
 
   @responses.activate
-  def test_1040(self):
+  def test_1030(self):
     """MNStorage.get(): v2.get() retrieves object created with v1.create()"""
     pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
       self.client_v1
@@ -82,7 +82,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert recv_sysmeta_pyxb.seriesId is None
 
   @responses.activate
-  def test_1050(self):
+  def test_1040(self):
     """MNStorage.get(): v1.get() retrieves object created with v2.create()"""
     pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
       self.client_v2
@@ -93,7 +93,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert not hasattr(recv_sysmeta_pyxb, 'seriesId')
 
   @responses.activate
-  def test_1060(self):
+  def test_1050(self):
     """MNStorage.get(): Attempting to pass a SID to v1.get() raises NotFound
     even though the SID exists (by design, we don't resolve SIDs for v1)
     """
@@ -104,7 +104,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sciobj_str, sysmeta_pyxb = self.get_obj(self.client_v1, sid)
 
   @responses.activate
-  def test_1070(self, mn_client_v1_v2):
+  def test_1060(self, mn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata
     """
@@ -123,7 +123,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   @responses.activate
-  def test_1080(self, mn_client_v1_v2):
+  def test_1070(self, mn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata
     """
@@ -139,7 +139,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   @responses.activate
-  def test_1090(self, mn_client_v1_v2):
+  def test_1080(self, mn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata
     """
@@ -158,7 +158,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   @responses.activate
-  def test_1100(self, mn_client_v1_v2):
+  def test_1090(self, mn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta_pyxb.obsoletedBy pointing to unknown object raises InvalidSystemMetadata
     """

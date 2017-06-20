@@ -38,7 +38,7 @@ import d1_common.util
 
 class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2):
     """MNRead.getChecksum(): Matching checksums"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(self.client_v2)
@@ -50,7 +50,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_checksums_equal(send_checksum_pyxb, recv_checksum_pyxb)
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2):
     """getChecksum(): Supported algorithms return matching checksum
     """
 
@@ -73,7 +73,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
       test(mn_client_v1_v2, 'SHA-1')
 
   @responses.activate
-  def test_1040(self, mn_client_v1_v2):
+  def test_1020(self, mn_client_v1_v2):
     """getChecksum(): Unsupported algorithm returns InvalidRequest exception"""
 
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -82,7 +82,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
         mn_client_v1_v2.getChecksum(pid, 'INVALID_ALGORITHM')
 
   @responses.activate
-  def test_1050(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2):
     """getChecksum(): Non-existing object raises NotFound exception"""
 
     with d1_gmn.tests.gmn_mock.disable_auth():

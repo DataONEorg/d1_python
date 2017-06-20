@@ -29,14 +29,14 @@ import d1_test.instance_generator.system_metadata as sysmeta
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSystemMetadata')
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
-  def test_0010(self, cn_client_v1_v2):
+  def test_1000(self, cn_client_v1_v2):
     """generate()"""
     sysmeta_pyxb = sysmeta.generate(cn_client_v1_v2)
     self.assert_equals_sample(
       sysmeta_pyxb, 'inst_gen__systemmetadata__generate', cn_client_v1_v2
     )
 
-  def test_020(self, cn_client_v1_v2):
+  def test_1010(self, cn_client_v1_v2):
     """generate_from_file_path()"""
     sysmeta_path = self.get_sample_path('systemMetadata_v2_0.xml')
     sysmeta_pyxb = sysmeta.generate_from_file_path(

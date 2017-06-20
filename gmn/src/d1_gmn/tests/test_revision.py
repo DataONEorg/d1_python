@@ -59,7 +59,7 @@ class TestCutFromChain(d1_gmn.tests.gmn_test_case.GMNTestCase):
       assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') is None
 
   @responses.activate
-  def test_0010(self):
+  def test_1000(self):
     """cut_from_chain()"""
 
     def test(client, sid=None):
