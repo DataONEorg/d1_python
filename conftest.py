@@ -69,7 +69,7 @@ def pytest_addoption(parser):
     'failure'
   )
   parser.addoption(
-    '--refresh-template', action='store_true', default=False,
+    '--refresh-fixture', action='store_true', default=False,
     help='Force reloading the template fixture'
   )
 
@@ -216,7 +216,7 @@ def load_template_fixture(template_db_key, template_db_name):
   fixture_file_path = d1_gmn.tests.gmn_test_case.GMNTestCase.get_sample_path(
     'db_fixture.json.bz2'
   )
-  if pytest.config.getoption("--refresh-template"):
+  if pytest.config.getoption("--refresh-fixture"):
     # django.core.management.call_command('flush', database=template_db_key)
     run_sql('postgres', "drop database if exists {};".format(template_db_name))
   logging.debug('Creating blank DB')
