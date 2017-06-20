@@ -457,7 +457,9 @@ def put_meta(request):
     sid = d1_gmn.app.revision.get_sid(new_sysmeta_pyxb)
     d1_gmn.app.views.asserts.is_valid_sid_for_chain(pid, sid)
     d1_gmn.app.revision.update_sid_to_head_pid_map(pid)
-  d1_gmn.app.event_log.update(pid, request)
+  d1_gmn.app.event_log.update(
+    pid, request, timestamp=new_sysmeta_pyxb.dateUploaded
+  )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
 
@@ -606,8 +608,9 @@ def put_object(request, old_pid):
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
   # d1_gmn.app.sysmeta_revision.update_or_create_sid_to_pid_map(sid, new_pid)
-
-  d1_gmn.app.event_log.update(old_pid, request)
+  d1_gmn.app.event_log.update(
+    old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
+  )
   d1_gmn.app.sysmeta.update_modified_timestamp(old_pid)
 
   return new_pid

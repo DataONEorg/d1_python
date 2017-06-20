@@ -213,19 +213,18 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       n_create_events_before = self.get_total_log_records(
         mn_client_v1_v2, event='create'
       )
-      with freezegun.freeze_time('2388-08-28'):
-        pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-          mn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
-        )
-      # The event timestamp is set directly in the db, so it's not covered by
-      # freezegun. We just set it manually.
-      sciobj_model = d1_gmn.app.util.get_sci_model(pid)
-      event_log_model = d1_gmn.app.models.EventLog.objects.get(
-        sciobj=sciobj_model
+      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+        mn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
       )
-      event_log_model.timestamp = sysmeta_pyxb.dateUploaded
-      event_log_model.save()
-      #
+      # # The event timestamp is set directly in the db, so it's not covered by
+      # # freezegun. We just set it manually.
+      # sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+      # event_log_model = d1_gmn.app.models.EventLog.objects.get(
+      #   sciobj=sciobj_model
+      # )
+      # event_log_model.timestamp = sysmeta_pyxb.dateUploaded
+      # event_log_model.save()
+      # #
       n_create_events_after = self.get_total_log_records(
         mn_client_v1_v2, event='create'
       )

@@ -54,7 +54,8 @@ def create(request, sysmeta_pyxb):
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
   # Log the create event for this object.
   d1_gmn.app.event_log.create(
-    d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier), request
+    d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier), request,
+    timestamp=sysmeta_pyxb.dateUploaded
   )
 
 
