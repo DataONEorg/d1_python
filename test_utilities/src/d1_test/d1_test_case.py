@@ -289,6 +289,18 @@ class D1TestCase(object): # unittest.TestCase
       return
     D1TestCase.save_sample_interactive(got_str, exp_str, filename)
 
+  @staticmethod
+  def log_sxs_color_diff(got_str, exp_path):
+    with tempfile.NamedTemporaryFile() as tmp_file:
+      tmp_file.write(got_str)
+      try:
+        tmp_file.seek(0)
+        diff_str = subprocess.check_output(['diff', got_str, exp_path])
+      except subprocess.CalledProcessError as e:
+        logging.warning('Unable to generate diff. error="{}"'.format(str(e)))
+        return
+    map(logging.info, ['GOT <-> EXP'] + diff_str.splitlines())
+
   #
 
   @staticmethod

@@ -45,6 +45,10 @@ import d1_test.instance_generator.system_metadata
 @d1_test.d1_test_case.reproducible_random_decorator('TestGetLogRecords')
 @freezegun.freeze_time('1977-05-27')
 class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
+  def norm_entry_id(self, log):
+    for log_entry_pyxb in log.logEntry:
+      log_entry_pyxb.entryId = '1'
+
   @responses.activate
   def test_1001(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: start=0, count=0 returns empty slice with
@@ -52,6 +56,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=0, count=0)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__number_of_events', mn_client_v1_v2
       )
@@ -62,6 +67,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=0, count=21)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__front_section', mn_client_v1_v2
       )
@@ -72,6 +78,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=2000, count=15)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__middle_section', mn_client_v1_v2
       )
@@ -84,6 +91,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       n_events = self.get_total_log_records(mn_client_v1_v2)
       # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__exact_end_section', mn_client_v1_v2
       )
@@ -97,6 +105,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       n_events = self.get_total_log_records(mn_client_v1_v2)
       # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__count_beyond_end_section', mn_client_v1_v2
       )
@@ -110,6 +119,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       n_events = self.get_total_log_records(mn_client_v1_v2)
       # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events + 1234, count=10000)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__start_beyond_end_section', mn_client_v1_v2
       )
@@ -123,6 +133,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(event='bogus_event')
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__event_filter_unknown', mn_client_v1_v2
       )
@@ -134,6 +145,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(event='update', count=10)
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log, 'get_log_records__event_filter_update', mn_client_v1_v2
       )
@@ -154,6 +166,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       # Verify that first and last records are both in 1979 and that first doc
       # is the newest, as GMN sorts on timestamp descending.
+      self.norm_entry_id(newest_log)
+      self.norm_entry_id(oldest_log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
         'get_log_records__date_range_first_last',
@@ -170,6 +184,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         fromDate=datetime.datetime(2500, 1, 1),
         toDate=datetime.datetime(3000, 12, 31), start=0, count=1
       )
+      self.norm_entry_id(log)
       d1_test.d1_test_case.D1TestCase.assert_equals_sample(
         log,
         'get_log_records__date_range_in_the_future',

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <ns1:log count="15" start="2000" total="3231" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
-    <entryId>1231</entryId>
+    <entryId>1</entryId>
     <identifier>PID_kumutnludz_1980-03-23_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -11,7 +11,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1230</entryId>
+    <entryId>1</entryId>
     <identifier>PID_fwbqcrcdtc_1980-03-22_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -21,7 +21,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1229</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ilheicghtt_1980-03-21_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -31,7 +31,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1228</entryId>
+    <entryId>1</entryId>
     <identifier>PID_jcthaadtll_1980-03-20_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -41,7 +41,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1227</entryId>
+    <entryId>1</entryId>
     <identifier>PID_pcmqetvdyp_1980-03-19_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -51,7 +51,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1226</entryId>
+    <entryId>1</entryId>
     <identifier>PID_rbflcdqucc_1980-03-18_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -61,7 +61,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1225</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ocwvbbtibk_1980-03-17_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -71,7 +71,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1223</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ihhatxfpoz_1980-03-16_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -81,7 +81,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1224</entryId>
+    <entryId>1</entryId>
     <identifier>PID_bauwppqnsk_1979-07-25_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -91,7 +91,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1222</entryId>
+    <entryId>1</entryId>
     <identifier>PID_hkvfymsebb_1980-03-15_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -101,7 +101,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1221</entryId>
+    <entryId>1</entryId>
     <identifier>PID_virliuqvof_1979-12-27_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -111,7 +111,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1220</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ijbjjtiuvo_1980-03-14_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -121,7 +121,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1219</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ehjqryqkge_1980-03-13_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -131,7 +131,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1218</entryId>
+    <entryId>1</entryId>
     <identifier>PID_ymaesqqejk_1980-03-12_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
@@ -141,7 +141,7 @@
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>1217</entryId>
+    <entryId>1</entryId>
     <identifier>PID_abeexmafzd_1980-03-11_00:00:00</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
