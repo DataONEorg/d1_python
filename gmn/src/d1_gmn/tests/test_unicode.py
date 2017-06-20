@@ -24,7 +24,6 @@ from __future__ import absolute_import
 
 import logging
 
-import pytest
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -33,13 +32,11 @@ import d1_common
 import d1_common.system_metadata
 
 
-@pytest.mark.skip('TODO')
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self):
+  def test_1000(self, mn_client_v1_v2):
     """Unicode: GMN and libraries handle Unicode correctly"""
-
-    def test(client):
+    with d1_gmn.tests.gmn_mock.disable_auth():
       tricky_unicode_str = self.load_sample_utf8_to_unicode(
         'tricky_identifiers_unicode.utf8.txt'
       )
@@ -47,15 +44,12 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         pid_unescaped, pid_escaped = line.split('\t')
         logging.debug(u'Testing PID: {}'.format(pid_unescaped))
         pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
-          client, pid=pid_unescaped, sid=True
+          mn_client_v1_v2, pid=pid_unescaped, sid=True
         )
-        recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
-        # self.assertEquals(send_sciobj_str, recv_sciobj_str)
+        recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
         assert d1_common.system_metadata.is_equivalent_pyxb(
           send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
         )
-        client.delete(pid)
-
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+        assert pid == pid_unescaped
+        assert recv_sysmeta_pyxb.identifier.value() == pid_unescaped
+        mn_client_v1_v2.delete(pid)
