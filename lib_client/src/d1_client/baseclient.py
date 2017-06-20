@@ -292,7 +292,8 @@ class DataONEBaseClient(
         raise ValueError
     except ValueError:
       raise d1_common.types.exceptions.InvalidRequest(
-        0, "'start' and 'count' must be 0 or a positive integer"
+        0, '"start" and "count" must be 0 or positive integers. '
+        'start="{}"  count="{}"'.format(start, count)
       )
 
   def _date_span_sanity_check(self, fromDate, toDate):
@@ -436,16 +437,17 @@ class DataONEBaseClient(
 
   @d1_common.util.utf8_to_unicode
   def listObjectsResponse(
-      self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-      nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None
+      self, fromDate=None, toDate=None, formatId=None, identifier=None,
+      replicaStatus=None, nodeId=None, start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS, vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
-      'formatId': objectFormat,
+      'formatId': formatId,
+      'identifier': identifier,
       'replicaStatus': replicaStatus,
       'nodeId': nodeId,
       'start': int(start),
@@ -455,14 +457,13 @@ class DataONEBaseClient(
 
   @d1_common.util.utf8_to_unicode
   def listObjects(
-      self, fromDate=None, toDate=None, objectFormat=None, replicaStatus=None,
-      nodeId=None, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-      vendorSpecific=None
+      self, fromDate=None, toDate=None, formatId=None, identifier=None,
+      replicaStatus=None, nodeId=None, start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS, vendorSpecific=None
   ):
     response = self.listObjectsResponse(
-      fromDate=fromDate, toDate=toDate, objectFormat=objectFormat,
-      replicaStatus=replicaStatus, nodeId=nodeId, start=start, count=count,
-      vendorSpecific=vendorSpecific
+      fromDate, toDate, formatId, identifier, replicaStatus, nodeId, start,
+      count, vendorSpecific
     )
     return self._read_dataone_type_response(response, 'ObjectList')
 
