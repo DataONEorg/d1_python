@@ -1,0 +1,23 @@
+PyXB object:
+  <?xml version="1.0" ?>
+  <ns1:objectList count="1" start="0" total="19" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+    <objectInfo>
+      <identifier>PID_ogmjqcutmy_1979-09-14_00:00:00</identifier>
+      <formatId>nexus/1997</formatId>
+      <checksum algorithm="SHA-1">baa73c197ee17301f367069b8b1ded81e0bf4f61</checksum>
+      <dateSysMetadataModified>1980-01-01T00:00:00</dateSysMetadataModified>
+      <size>242</size>
+    </objectInfo>
+  </ns1:objectList>
+
+PyXB object:
+  <?xml version="1.0" ?>
+  <ns1:objectList count="1" start="18" total="19" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+    <objectInfo>
+      <identifier>PID_emmhcbgqem_1979-01-07_00:00:00</identifier>
+      <formatId>ddi:codebook:2_5</formatId>
+      <checksum algorithm="SHA-1">b2f8ce5bb3b5d057c1093f039fb566aa3fd675ce</checksum>
+      <dateSysMetadataModified>1980-09-20T13:47:06</dateSysMetadataModified>
+      <size>304</size>
+    </objectInfo>
+  </ns1:objectList>

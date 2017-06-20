@@ -1,0 +1,10 @@
+{
+  "consumerKey": "theconsumerkey", 
+  "exp": 1497396323, 
+  "fullName": "Roger Dahl", 
+  "iat": 1497331523, 
+  "issuedAt": "2017-06-13T05:25:23.336+00:00", 
+  "sub": "http://orcid.org/0000-0001-8849-7530", 
+  "ttl": 64800, 
+  "userId": "http://orcid.org/0000-0001-8849-7530"
+}

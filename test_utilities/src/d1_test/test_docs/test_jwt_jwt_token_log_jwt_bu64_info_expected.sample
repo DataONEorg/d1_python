@@ -1,0 +1,11 @@
+test msg:
+  Issued At: 2017-06-13 05:25:23
+  Expiration Time: 2017-06-13 23:25:23
+  _sig_sha1: 1e70746eb4e2b8eb51e914b14a8ea179fb05f001
+  alg: RS256
+  consumerKey: theconsumerkey
+  fullName: Roger Dahl
+  issuedAt: 2017-06-13T05:25:23.336+00:00
+  sub: http://orcid.org/0000-0001-8849-7530
+  ttl: 64800
+  userId: http://orcid.org/0000-0001-8849-7530

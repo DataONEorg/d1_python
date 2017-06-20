@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
+  <person>
+    <subject>CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Roger</givenName>
+    <familyName>Dahl</familyName>
+    <verified>true</verified>
+  </person>
+</d1:subjectInfo>

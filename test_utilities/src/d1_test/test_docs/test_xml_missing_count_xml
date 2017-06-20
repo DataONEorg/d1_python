@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<ns1:objectList start="0" total="100"
+    xmlns:ns1="http://ns.dataone.org/service/types/v1">
+    <objectInfo>
+        <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+        <checksum algorithm="SHA-1">3f56de593b6ffc536253b799b429453e3673fc19</checksum>
+        <dateSysMetadataModified>1970-01-19T04:53:32</dateSysMetadataModified>
+        <size>3666</size>
+    </objectInfo>
+    <objectInfo>
+        <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+        <checksum algorithm="SHA-1">aac6cca196fb6330d1013a10cce6a4604ca180d3</checksum>
+        <dateSysMetadataModified>1970-02-06T18:11:22</dateSysMetadataModified>
+        <size>3635</size>
+    </objectInfo>
+    <objectInfo>
+        <identifier>AnserMatrix.htm</identifier>
+        <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+        <checksum algorithm="MD5">0e25cf59d7bd4d57154cc83e0aa32b34</checksum>
+        <dateSysMetadataModified>1970-05-27T06:12:49</dateSysMetadataModified>
+        <size>11048</size>
+    </objectInfo>
+</ns1:objectList>

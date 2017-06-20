@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>44</serialVersion>
+  <identifier>pid_lsbhgrsljq</identifier>
+  <formatId>FGDC-STD-001.1-1999</formatId>
+  <size>420953855809</size>
+  <checksum algorithm="MD5">f8555e4a9a178bdfb4cadac94b414dcb</checksum>
+  <submitter>subj_g</submitter>
+  <rightsHolder>subj_q</rightsHolder>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_vd</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>2049-01-29T17:25:31.000675Z</dateUploaded>
+  <dateSysMetadataModified>2114-10-01T16:43:28.000556Z</dateSysMetadataModified>
+  <originMemberNode>mn_jx</originMemberNode>
+  <authoritativeMemberNode>mn_ul</authoritativeMemberNode>
+</ns1:systemMetadata>

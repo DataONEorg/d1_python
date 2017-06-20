@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<ns1:objectList count="1" start="999" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_vyofxcutey_1979-01-01_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-resource-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">700ade8f4393e4faabbd75426d16a2bbd7d0ae14</checksum>
+    <dateSysMetadataModified>2286-08-11T14:58:05</dateSysMetadataModified>
+    <size>295</size>
+  </objectInfo>
+</ns1:objectList>

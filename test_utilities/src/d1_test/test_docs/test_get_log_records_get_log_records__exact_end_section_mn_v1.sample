@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<ns1:log count="1" start="3230" total="3231" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <logEntry>
+    <entryId>1</entryId>
+    <identifier>PID_vasvtgnirg_1977-06-28_00:00:00</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>1977-06-28T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+</ns1:log>

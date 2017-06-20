@@ -1,0 +1,282 @@
+{
+  "failed": false, 
+  "ids": [
+    "a", 
+    "a", 
+    "a"
+  ], 
+  "matches": 3, 
+  "response": {
+    "docs": [
+      {
+        "abstract": "The Remote Sensing Phenology (RSP) collection is a set of nine annual phenological metrics for the conterminous United States.  Researchers at the USGS EROS Center utilize data gathered by satellite sensors to track seasonal changes in vegetation.  The satellite sensors that provide the raw data are the Moderate Resolution Imaging Spectroradiometer (MODIS) carried aboard National Aeronautics and Space Administration (NASA) Terra and Aqua satellites.  The satellite data are initially transformed into Normalized Difference Vegetation Index (NDVI) values.  eMODIS NDVI provide the foundation for the phenology metrics.  Time-series NDVI can be summarized and analyzed to produce nine key phenological indicators.  These data represent a powerful tool for documenting plant life-cycle trends and detecting the impacts of climate change on ecosystems.\nThe complete set of phenological metrics are as follows: 1. Start of Season Time (SOST): starting time of the onset of the growing season (in day of the year). 2. Start of Season NDVI (SOSN): NDVI value at the starting time of the onset of the growing season (unitless- based on NDVI units). 3. End of Season Time (EOST): ending time of the growing season (in day of the year). 4. End of Season NDVI (EOSN): NDVI value at the ending time of the growing season (unitless-based on NDVI units). 5. Maximum Time (MAXT): the day of the year when the NDVI reaches its maximum during the growing season (in day of the year). 6. Maximum NDVI (MAXN): the highest (or peak) value in NDVI observed in a growing season (unitless-based on NDVI units). 7. Duration (DUR): the length of the growing season-the time between the start of season and end of season (in number of days). 8. Amplitude (AMP): the difference between the Maximum NDVI and NDVI at the day of start of season (unitless-based on NDVI units). 9. Time Integrated NDVI (TIN): the cumulative value of NDVI from the start to the end of the growing season (unitless-based on accumulated NDVI unit", 
+        "author": "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center", 
+        "authorSurName": "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center", 
+        "authorSurNameSort": "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center", 
+        "authoritativeMN": "urn:node:USGS_SDC", 
+        "checksum": "ab1c5be0a30ffc8598f0a0e85d58530c", 
+        "checksumAlgorithm": "MD5", 
+        "contactOrganization": [
+          "U.S. Geological Survey Earth Resources Observation and Science (EROS) Center"
+        ], 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc56df2-ac6c-49e4-bce4-be26fee989d1", 
+        "datasource": "urn:node:USGS_SDC", 
+        "dateModified": "2016-10-29T04:18:24Z", 
+        "datePublished": "2016-10-27T00:00:00Z", 
+        "dateUploaded": "2016-10-29T04:18:24Z", 
+        "eastBoundCoord": -65.4, 
+        "fileID": "https://cn.dataone.org/cn/v2/resolve/abc56df2-ac6c-49e4-bce4-be26fee989d1", 
+        "formatId": "FGDC-STD-001.1-1999", 
+        "formatType": "METADATA", 
+        "geoform": "Remote-Sensing Image", 
+        "geohash_1": [
+          "9"
+        ], 
+        "geohash_2": [
+          "9y"
+        ], 
+        "geohash_3": [
+          "9ye"
+        ], 
+        "geohash_4": [
+          "9ye5"
+        ], 
+        "geohash_5": [
+          "9ye51"
+        ], 
+        "geohash_6": [
+          "9ye51c"
+        ], 
+        "geohash_7": [
+          "9ye51cg"
+        ], 
+        "geohash_8": [
+          "9ye51cg5"
+        ], 
+        "geohash_9": [
+          "9ye51cg5j"
+        ], 
+        "id": "abc56df2-ac6c-49e4-bce4-be26fee989d1", 
+        "identifier": "abc56df2-ac6c-49e4-bce4-be26fee989d1", 
+        "investigator": [
+          "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center"
+        ], 
+        "isPublic": true, 
+        "isService": false, 
+        "keywords": [
+          "Time Integrated NDVI (TIN)", 
+          "Amplitude (AMP)", 
+          "Maximum NDVI (MAXN)", 
+          "Maximum Time (MAXT)", 
+          "End of Season NDVI (EOSN)", 
+          "Start of Season NDVI (SOSN)", 
+          "eMODIS", 
+          "Start of Season Time (SOST)", 
+          "Normalized Difference Vegetation Index (NDVI)", 
+          "Phenology", 
+          "Vegetation", 
+          "Moderate Resolution Imaging Spectroradiometer (MODIS)", 
+          "End of Season Time (EOST)"
+        ], 
+        "northBoundCoord": 51.7, 
+        "origin": [
+          "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center"
+        ], 
+        "presentationCat": "Remote-Sensing Image", 
+        "pubDate": "2016-10-27T00:00:00Z", 
+        "purpose": "The goal of this project is to provide USGS and other researchers with complete and consistent public domain information on the vegetation phenology across the conterminous U.S.", 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:USGS_SDC", 
+          "urn:node:CN"
+        ], 
+        "replicaVerifiedDate": [
+          "2016-11-04T20:03:04.849Z", 
+          "2016-11-04T20:03:04.852Z"
+        ], 
+        "replicationAllowed": false, 
+        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
+        "serviceCoupling": "false", 
+        "size": 11399, 
+        "southBoundCoord": 22.5, 
+        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
+        "title": "eMODIS Phenology: 2001-Present", 
+        "updateDate": "2016-10-29T04:18:24Z", 
+        "webUrl": [
+          "https://lta.cr.usgs.gov/emodis_phen"
+        ], 
+        "westBoundCoord": -128.5
+      }, 
+      {
+        "abstract": "Aeromagnetic data were collected along flight lines by instruments in an\naircraft that recorded magnetic-field values and locations. In the earlier\ndays of surveying, the only way to represent this data was to generate an\nanalog map with contour lines. This dataset is a representation of the\ndigitized contour lines either by following the lines or by choosing the\nintersection of the contour and flight-line to create a value of the magnetic\nfield. The values presented are latitude, longitude, and map magnetic-field\nvalues.", 
+        "author": "U.S. Geological Survey and the Department of Interior", 
+        "authorSurName": "U.S. Geological Survey and the Department of Interior", 
+        "authorSurNameSort": "U.S. Geological Survey and the Department of Interior", 
+        "authoritativeMN": "urn:node:USGS_SDC", 
+        "beginDate": "1953-12-02T00:00:00Z", 
+        "checksum": "8b3c6031b069182cb14f7c8a8821f781", 
+        "checksumAlgorithm": "MD5", 
+        "contactOrganization": [
+          "Web site administration: U.S Geological Survey\nCentral Publications Group", 
+          "USGS Eastern Mineral and Environmental Resources Science Center"
+        ], 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abceca0f-fa06-44d5-8e28-dad7918199ae", 
+        "datasource": "urn:node:USGS_SDC", 
+        "dateModified": "2016-10-29T04:41:27Z", 
+        "datePublished": "2012-01-01T00:00:00Z", 
+        "dateUploaded": "2016-10-29T04:41:27Z", 
+        "eastBoundCoord": -103.31, 
+        "endDate": "1953-12-05T00:00:00Z", 
+        "fileID": "https://cn.dataone.org/cn/v2/resolve/abceca0f-fa06-44d5-8e28-dad7918199ae", 
+        "formatId": "FGDC-STD-001.1-1999", 
+        "formatType": "METADATA", 
+        "geoform": "analog contour map", 
+        "geohash_1": [
+          "9"
+        ], 
+        "geohash_2": [
+          "9x"
+        ], 
+        "geohash_3": [
+          "9xw"
+        ], 
+        "geohash_4": [
+          "9xwr"
+        ], 
+        "geohash_5": [
+          "9xwrc"
+        ], 
+        "geohash_6": [
+          "9xwrc6"
+        ], 
+        "geohash_7": [
+          "9xwrc6b"
+        ], 
+        "geohash_8": [
+          "9xwrc6b8"
+        ], 
+        "geohash_9": [
+          "9xwrc6b8x"
+        ], 
+        "id": "abceca0f-fa06-44d5-8e28-dad7918199ae", 
+        "identifier": "abceca0f-fa06-44d5-8e28-dad7918199ae", 
+        "investigator": [
+          "U.S. Geological Survey and the Department of Interior"
+        ], 
+        "isPublic": true, 
+        "isService": false, 
+        "keywords": [
+          "geophysical surveys", 
+          "aeromagnetic data", 
+          "airborne surveys", 
+          "magnetic surveys", 
+          "residual magnetic field", 
+          "total field", 
+          "magnetic", 
+          "geophysics", 
+          "geospatial datasets", 
+          "magnetic field (earth)", 
+          "aeromagnetic surveying", 
+          "field monitoring stations", 
+          "United States", 
+          "South Dakota", 
+          "SD", 
+          "Custer county", 
+          "f46033 = Custer"
+        ], 
+        "northBoundCoord": 43.63, 
+        "origin": [
+          "U.S. Geological Survey and the Department of Interior"
+        ], 
+        "placeKey": [
+          "United States", 
+          "South Dakota", 
+          "SD", 
+          "Custer county", 
+          "f46033 = Custer"
+        ], 
+        "presentationCat": "analog contour map", 
+        "pubDate": "2012-01-01T00:00:00Z", 
+        "purpose": "Aeromagnetic surveys are used for geophysical prospecting.  Some variations in\nmagnetic measurements are caused by rocks that contain significant amounts of\nmagnetic minerals (magnetite being the most common).  These anomalies reflect\nvariations in the amount and type of magnetic material and the shape and depth\nof the body of rock. The features and patterns of aeromagnetic anomalies can\nalso be used to delineate details of subsurface geology including the locations\nof buried faults and the thickness of surficial sedimentary rocks.", 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:USGS_SDC", 
+          "urn:node:CN"
+        ], 
+        "replicaVerifiedDate": [
+          "2016-11-04T20:25:56.803Z", 
+          "2016-11-04T20:25:56.808Z"
+        ], 
+        "replicationAllowed": false, 
+        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
+        "serviceCoupling": "false", 
+        "size": 14273, 
+        "southBoundCoord": 43.5, 
+        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
+        "title": "Airborne geophysical survey: South Black Hills, South Dakota", 
+        "updateDate": "2016-10-29T04:41:27Z", 
+        "webUrl": [
+          "http://mrdata.usgs.gov/magnetic/show-survey.php?id=0123"
+        ], 
+        "westBoundCoord": -104.0
+      }, 
+      {
+        "authoritativeMN": "urn:node:IARC", 
+        "checksum": "efea346b7f5baccc5b4e988ebe52022b59013cbc", 
+        "checksumAlgorithm": "SHA-1", 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "datasource": "urn:node:IARC", 
+        "dateModified": "2016-12-23T20:48:32.719Z", 
+        "dateUploaded": "2016-12-23T20:45:29.229Z", 
+        "formatId": "http://www.openarchives.org/ore/terms", 
+        "formatType": "RESOURCE", 
+        "id": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "identifier": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "isPublic": true, 
+        "isService": false, 
+        "numberReplicas": 3, 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:IARC", 
+          "urn:node:CN", 
+          "urn:node:NKN", 
+          "urn:node:NMEPSCOR", 
+          "urn:node:mnUNM1", 
+          "urn:node:US_MPC"
+        ], 
+        "replicaVerifiedDate": [
+          "2016-12-23T20:48:32.122Z", 
+          "2016-12-23T20:48:32.127Z", 
+          "2016-12-26T12:29:23.229Z", 
+          "2016-12-26T12:29:26.215Z", 
+          "2017-02-02T12:43:34.505Z", 
+          "2017-02-13T10:15:05.012Z"
+        ], 
+        "replicationAllowed": true, 
+        "rightsHolder": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
+        "serviceCoupling": "false", 
+        "size": 2908, 
+        "submitter": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
+        "updateDate": "2016-12-23T20:45:29.229Z"
+      }
+    ], 
+    "numFound": 3, 
+    "start": 0
+  }, 
+  "responseHeader": {
+    "params": {
+      "q": "id:abc*", 
+      "rows": "1000", 
+      "start": "0", 
+      "wt": "json"
+    }, 
+    "status": 0
+  }, 
+  "start": 0
+}

@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<ns1:objectList count="21" start="0" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_zsuuolrthc_1980-01-28_00:00:00</identifier>
+    <formatId>http://www.nexml.org/2009</formatId>
+    <checksum algorithm="SHA-1">01090fb0c9ec12288c29920e32ae2f47936db63e</checksum>
+    <dateSysMetadataModified>1970-01-26T01:42:34</dateSysMetadataModified>
+    <size>306</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_hkbmleipbz_1978-11-15_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-project-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">d5a85c9e6c5c27247ffb27f45e5ef4728ddf00da</checksum>
+    <dateSysMetadataModified>1970-06-19T18:14:52</dateSysMetadataModified>
+    <size>282</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_hkvfymsebb_1980-03-15_00:00:00</identifier>
+    <formatId>application/bagit-097</formatId>
+    <checksum algorithm="SHA-1">d2e1f13a6c5347d8040fc121ab707614c9b7ad18</checksum>
+    <dateSysMetadataModified>1970-07-21T23:04:05</dateSysMetadataModified>
+    <size>241</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_apgezasvif_1977-07-09_00:00:00</identifier>
+    <formatId>video/mp4</formatId>
+    <checksum algorithm="SHA-1">534619103a9200fad33d23696842451664438150</checksum>
+    <dateSysMetadataModified>1971-04-23T16:59:44</dateSysMetadataModified>
+    <size>329</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_agdtqpzyqu_1978-10-28_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-resource-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">5a27c3a6ba53e10e31e40b35b756318a91b6f84e</checksum>
+    <dateSysMetadataModified>1971-08-02T11:06:04</dateSysMetadataModified>
+    <size>256</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_pytzxaexva_1979-06-25_00:00:00</identifier>
+    <formatId>image/jpeg</formatId>
+    <checksum algorithm="SHA-1">d8072a9fc36897ad000b82a9de92e7e280924746</checksum>
+    <dateSysMetadataModified>1972-03-22T02:53:59</dateSysMetadataModified>
+    <size>326</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_foktxywpvx_1977-10-15_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">8b3406a9b78d4ac82cc74517b4a6b5fc01f387c1</checksum>
+    <dateSysMetadataModified>1973-03-12T14:41:09</dateSysMetadataModified>
+    <size>245</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_kpgigetzqu_1979-09-13_00:00:00</identifier>
+    <formatId>CF-1.0</formatId>
+    <checksum algorithm="SHA-1">1d55cfc85201c3af59cdd7f055938b02e8ccb02f</checksum>
+    <dateSysMetadataModified>1973-06-04T23:08:30</dateSysMetadataModified>
+    <size>320</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_esqjhaqcje_1977-10-12_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-physical-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">a29ba1b482c5e36b343f2d8cc2732265e6e3c222</checksum>
+    <dateSysMetadataModified>1974-03-17T18:28:32</dateSysMetadataModified>
+    <size>288</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_bayklhlvgd_1978-01-26_00:00:00</identifier>
+    <formatId>text/tsv</formatId>
+    <checksum algorithm="SHA-1">67ca097c13bb872bd3e929c02c9f92040d0233bd</checksum>
+    <dateSysMetadataModified>1974-05-21T01:47:41</dateSysMetadataModified>
+    <size>246</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_acserqwona_1977-10-23_00:00:00</identifier>
+    <formatId>netCDF-3</formatId>
+    <checksum algorithm="SHA-1">bad70a5ed5db093bfb016c12c44600b24030c583</checksum>
+    <dateSysMetadataModified>1974-08-04T19:59:18</dateSysMetadataModified>
+    <size>247</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_ymaesqqejk_1980-03-12_00:00:00</identifier>
+    <formatId>image/png</formatId>
+    <checksum algorithm="SHA-1">a576c175cc7d47abb374824e83f4ad68fceb5646</checksum>
+    <dateSysMetadataModified>1975-04-13T16:35:37</dateSysMetadataModified>
+    <size>251</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_iziczpwipp_1977-11-14_00:00:00</identifier>
+    <formatId>-//ecoinformatics.org//eml-coverage-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">91389a7e8599903dc7b36c0467d534ab6d5a27ec</checksum>
+    <dateSysMetadataModified>1975-08-08T04:21:46</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_qydhjbimvt_1977-10-16_00:00:00</identifier>
+    <formatId>video/mp4</formatId>
+    <checksum algorithm="SHA-1">81bd944b30b02151974645b16bb0cb4bc529c7d6</checksum>
+    <dateSysMetadataModified>1975-09-08T11:05:39</dateSysMetadataModified>
+    <size>248</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_mdjkyshfkp_1977-11-12_00:00:00</identifier>
+    <formatId>ddi:codebook:2_5</formatId>
+    <checksum algorithm="SHA-1">8ce073d8f37be0f81bf90544b62fb21df6e49a08</checksum>
+    <dateSysMetadataModified>1976-01-11T19:49:00</dateSysMetadataModified>
+    <size>333</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_mjvbodxgoq_1979-12-21_00:00:00</identifier>
+    <formatId>application/x-bzip2</formatId>
+    <checksum algorithm="SHA-1">4d4df512128821d99c19b1f77e64ebe0f5562b7f</checksum>
+    <dateSysMetadataModified>1976-04-29T14:37:45</dateSysMetadataModified>
+    <size>319</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_hjasbblkof_1979-08-21_00:00:00</identifier>
+    <formatId>application/msword</formatId>
+    <checksum algorithm="SHA-1">86720a1e126402351b6cbf7904d4acc016e58922</checksum>
+    <dateSysMetadataModified>1976-05-08T00:36:38</dateSysMetadataModified>
+    <size>298</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_wkzidnxflw_1979-05-30_00:00:00</identifier>
+    <formatId>image/jpeg</formatId>
+    <checksum algorithm="SHA-1">7e1084343d20bf96fbf31258da4785f83ea156db</checksum>
+    <dateSysMetadataModified>1976-06-29T07:25:27</dateSysMetadataModified>
+    <size>311</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_ythekroehf_1979-09-21_00:00:00</identifier>
+    <formatId>application/vnd.openxmlformats-officedocument.wordprocessingml.document</formatId>
+    <checksum algorithm="SHA-1">07eeeadc24ae710392327961f2f9327c3dd60f80</checksum>
+    <dateSysMetadataModified>1976-09-01T10:39:11</dateSysMetadataModified>
+    <size>252</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_fhhoctpoyy_1979-05-16_00:00:00</identifier>
+    <formatId>application/MATLAB</formatId>
+    <checksum algorithm="SHA-1">0ffbb25b427086f0bc4aba129dcd4d521e2ad555</checksum>
+    <dateSysMetadataModified>1976-10-23T06:51:53</dateSysMetadataModified>
+    <size>328</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_sfbqakpzvh_1977-10-27_00:00:00</identifier>
+    <formatId>image/svg xml</formatId>
+    <checksum algorithm="SHA-1">706c7ecc4101138899c14fabf53a00d3956862db</checksum>
+    <dateSysMetadataModified>1976-12-06T22:08:33</dateSysMetadataModified>
+    <size>329</size>
+  </objectInfo>
+</ns1:objectList>
