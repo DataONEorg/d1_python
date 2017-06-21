@@ -54,3 +54,11 @@ class TestTestUtils(d1_test.d1_test_case.D1TestCase):
     received_prompt_str = out_stream.getvalue()
     assert expected_prompt_str == received_prompt_str
     assert expected_answer_str == received_answer_str
+
+  def test_1030(self):
+    """log_sxs_diff()"""
+    diff_str = self.gen_sxs_diff(
+      self.load_sample('test_xml_missing_count_xml'),
+      self.load_sample('test_xml_missing_entry_xml'),
+    )
+    assert 'objectList' in diff_str

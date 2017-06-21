@@ -117,6 +117,17 @@ def ignore_exceptions(*exception_list):
     pass
 
 
+@contextlib.contextmanager
+def tmp_file_pair(got_str, exp_str):
+  with tempfile.NamedTemporaryFile(suffix='__RECEIVED') as got_f:
+    with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
+      got_f.write(got_str)
+      exp_f.write(exp_str)
+      got_f.seek(0)
+      exp_f.seek(0)
+      yield got_f, exp_f
+
+
 # reproducible_random
 
 # TODO: When we move to Py3, move this over to the simple wrapper supported
@@ -275,33 +286,24 @@ class D1TestCase(object): # unittest.TestCase
         format(filename, str(e))
       )
       exp_str = ''
-    map(
-      logging.debug,
-      ['Expect obj:'] + ['  {}'.format(s) for s in exp_str.splitlines()],
-    )
-    try:
-      assert got_str == exp_str
-    except AssertionError:
-      # noinspection PyUnresolvedReferences
-      if not pytest.config.getoption('--update-samples'):
-        raise
-    else:
+    if got_str == exp_str:
       return
-    D1TestCase.save_sample_interactive(got_str, exp_str, filename)
+    logging.error('Sample mismatch. GOT <-> EXPECTED')
+    logging.error('\n' + D1TestCase.gen_sxs_diff(got_str, exp_str))
+    if pytest.config.getoption('--update-samples'):
+      D1TestCase.save_sample_interactive(got_str, exp_str, filename)
+    else:
+      raise AssertionError('Sample mismatch. filename="{}"'.format(filename))
 
   @staticmethod
-  def log_sxs_color_diff(got_str, exp_path):
-    with tempfile.NamedTemporaryFile() as tmp_file:
-      tmp_file.write(got_str)
+  def gen_sxs_diff(got_str, exp_str):
+    with tmp_file_pair(got_str, exp_str) as (got_f, exp_f):
       try:
-        tmp_file.seek(0)
-        diff_str = subprocess.check_output(['diff', got_str, exp_path])
+        subprocess.check_output(['sdiff', '-bBWs', got_f.name, exp_f.name])
       except subprocess.CalledProcessError as e:
-        logging.warning('Unable to generate diff. error="{}"'.format(str(e)))
-        return
-    map(logging.info, ['GOT <-> EXP'] + diff_str.splitlines())
-
-  #
+        return e.output
+      else:
+        return '<There were significant differences>'
 
   @staticmethod
   def deserialize_and_check(doc, raises_pyxb_exc=False):
@@ -364,13 +366,8 @@ class D1TestCase(object): # unittest.TestCase
 
   @staticmethod
   def display_diff_str(got_str, exp_str):
-    with tempfile.NamedTemporaryFile(suffix='__RECEIVED') as got_f:
-      with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
-        got_f.write(got_str)
-        exp_f.write(exp_str)
-        got_f.seek(0)
-        exp_f.seek(0)
-        subprocess.call(['kdiff3', got_f.name, exp_f.name])
+    with tmp_file_pair(got_str, exp_str) as (got_f, exp_f):
+      subprocess.call(['kdiff3', got_f.name, exp_f.name])
 
   @staticmethod
   def save_sample_interactive(got_str, exp_str, filename):
