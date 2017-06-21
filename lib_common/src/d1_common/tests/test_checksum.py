@@ -44,7 +44,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
 
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize: XML -> Checksum"""
-    exp_json = self.load_sample(filename)
+    exp_json = self.sample.load(filename)
     exp_dict = json.loads(exp_json)
     try:
       checksum_pyxb = dataoneTypes.CreateFromDocument(exp_dict['xml'])

@@ -21,27 +21,21 @@
 """Utilities for unit- and integration tests"""
 from __future__ import absolute_import
 
-import codecs
 import contextlib
 import datetime
 import hashlib
 import inspect
-import json
 import logging
 import os
 import random
 import re
 import string
 import StringIO
-import subprocess
 import sys
-import tempfile
-import traceback
 import xml
 
 import decorator
 import mock
-import pytest
 import pyxb
 import pyxb.binding.basis
 
@@ -54,10 +48,7 @@ import d1_common.util
 import d1_common.xml
 
 import d1_test.instance_generator.system_metadata
-
-import d1_client.util
-
-# Settings
+import d1_test.sample
 
 CN_URL = d1_common.const.URL_DATAONE_ROOT
 
@@ -106,26 +97,6 @@ def mock_raw_input(answer_str):
       return_value=answer_str,
   ):
     yield
-
-
-@contextlib.contextmanager
-def ignore_exceptions(*exception_list):
-  exception_list = exception_list or (Exception,)
-  try:
-    yield
-  except exception_list:
-    pass
-
-
-@contextlib.contextmanager
-def tmp_file_pair(got_str, exp_str):
-  with tempfile.NamedTemporaryFile(suffix='__RECEIVED') as got_f:
-    with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
-      got_f.write(got_str)
-      exp_f.write(exp_str)
-      got_f.seek(0)
-      exp_f.seek(0)
-      yield got_f, exp_f
 
 
 # reproducible_random
@@ -200,110 +171,13 @@ def generate_reproducible_sciobj_str(pid):
     )
 
 
-def get_test_module_name():
-  for module_path, line_num, func_name, line_str in traceback.extract_stack():
-    module_name = os.path.splitext(os.path.split(module_path)[1])[0]
-    if module_name.startswith('test_') and func_name.startswith('test_'):
-      return module_name
-
-
-def format_sample_file_name(client, name_postfix_str, extension_str):
-  section_list = [
-    get_test_module_name(),
-    name_postfix_str,
-  ]
-  if client:
-    section_list.extend([
-      d1_client.util.get_client_type(client),
-      d1_client.util.get_version_tag_by_d1_client(client),
-    ])
-  return '{}.{}'.format('_'.join(section_list), extension_str)
-
-
 #===============================================================================
 
 
-class D1TestCase(object): # unittest.TestCase
-
-  # Sample files
-
-  @staticmethod
-  def get_sample_path(filename):
-    """Get the path to a sample file
-
-    Also provides a mechanism for cleaning out unused sample files. To clean,
-    move all files from `test_docs` to `test_docs_tidy`, and run the tests. And
-    any files that are in use are moved back to `test_docs`. Files that remain
-    in `test_docs_tidy` can be untracked and deleted.
-
-    This procedure moves files while pytest is running, which tends to confuse
-    pytest. Fix by clearing out pytest's cache with clean-tree.py.
-    """
-    tidy_file_path = os.path.join(
-      d1_common.util.abs_path('test_docs_tidy'), filename
-    )
-    use_file_path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
-    if os.path.isfile(use_file_path):
-      return use_file_path
-    elif os.path.isfile(tidy_file_path):
-      os.rename(tidy_file_path, use_file_path)
-      return use_file_path
-    return use_file_path
-
-  @staticmethod
-  def load_sample(filename, mode_str='rb'):
-    with open(D1TestCase.get_sample_path(filename), mode_str) as f:
-      return f.read()
-
-  @staticmethod
-  def load_sample_utf8_to_unicode(filename):
-    utf8_path = D1TestCase.get_sample_path(filename)
-    unicode_file = codecs.open(utf8_path, encoding='utf-8', mode='r')
-    return unicode_file.read()
-
-  @staticmethod
-  def load_sample_xml_to_pyxb(filename, mode_str='r'):
-    logging.debug('Reading sample XML file. filename="{}"'.format(filename))
-    xml_str = D1TestCase.load_sample(filename, mode_str)
-    return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
-
-  @staticmethod
-  def assert_equals_sample(
-      got_obj, name_postfix_str, client=None, extension_str='sample'
-  ):
-    filename = format_sample_file_name(client, name_postfix_str, extension_str)
-    logging.info('Using sample file. filename="{}"'.format(filename))
-    got_str = D1TestCase.obj_to_pretty_str(got_obj)
-    map(
-      logging.debug,
-      ['Got obj:'] + ['  {}'.format(s) for s in got_str.splitlines()],
-    )
-    try:
-      exp_str = D1TestCase.load_sample(filename)
-    except EnvironmentError as e:
-      logging.error(
-        'Could not read sample file. filename="{}" error="{}"'.
-        format(filename, str(e))
-      )
-      exp_str = ''
-    if got_str == exp_str:
-      return
-    logging.error('Sample mismatch. GOT <-> EXPECTED')
-    logging.error('\n' + D1TestCase.gen_sxs_diff(got_str, exp_str))
-    if pytest.config.getoption('--update-samples'):
-      D1TestCase.save_sample_interactive(got_str, exp_str, filename)
-    else:
-      raise AssertionError('Sample mismatch. filename="{}"'.format(filename))
-
-  @staticmethod
-  def gen_sxs_diff(got_str, exp_str):
-    with tmp_file_pair(got_str, exp_str) as (got_f, exp_f):
-      try:
-        subprocess.check_output(['sdiff', '-bBWs', got_f.name, exp_f.name])
-      except subprocess.CalledProcessError as e:
-        return e.output
-      else:
-        return '<There were significant differences>'
+class D1TestCase(object):
+  @property
+  def sample(self):
+    return d1_test.sample
 
   @staticmethod
   def deserialize_and_check(doc, raises_pyxb_exc=False):
@@ -351,68 +225,6 @@ class D1TestCase(object): # unittest.TestCase
     return D1TestCase.get_pid_by_index(client, random.randint(0, total - 1))
 
   @staticmethod
-  def display_diff_pyxb(got_pyxb, exp_pyxb):
-    return D1TestCase.display_diff_str(
-      d1_common.xml.pretty_pyxb(got_pyxb),
-      d1_common.xml.pretty_pyxb(exp_pyxb),
-    )
-
-  @staticmethod
-  def display_diff_xml(got_xml, exp_xml):
-    return D1TestCase.display_diff_str(
-      d1_common.xml.pretty_xml(got_xml),
-      d1_common.xml.pretty_xml(exp_xml),
-    )
-
-  @staticmethod
-  def display_diff_str(got_str, exp_str):
-    with tmp_file_pair(got_str, exp_str) as (got_f, exp_f):
-      subprocess.call(['kdiff3', got_f.name, exp_f.name])
-
-  @staticmethod
-  def save_sample_interactive(got_str, exp_str, filename):
-    D1TestCase.display_diff_str(got_str, exp_str)
-    answer_str = None
-    while answer_str not in ('y', 'n', ''):
-      answer_str = raw_input('Update sample file "{}"? [Y/n] '.format(filename))
-    if answer_str in ('y', ''):
-      D1TestCase.save_sample(filename, got_str)
-
-  # noinspection PyUnreachableCode
-  @staticmethod
-  def obj_to_pretty_str(o):
-    logging.debug('Serializing object. type="{}"'.format(type(o)))
-    if isinstance(o, unicode):
-      o = o.encode('utf-8')
-    with ignore_exceptions():
-      return d1_common.xml.pretty_xml(o)
-    with ignore_exceptions():
-      return d1_common.xml.pretty_pyxb(o)
-    with ignore_exceptions():
-      return '\n'.join(sorted(o.serialize(doc_format='nt').splitlines()))
-    with ignore_exceptions():
-      if 'digraph' in o:
-        return '\n'.join(
-          sorted(
-            str(re.sub(r'node\d+', 'nodeX', o)).splitlines(),
-          )
-        )
-    with ignore_exceptions():
-      if '\n' in str(o):
-        return str(o)
-    with ignore_exceptions():
-      return json.dumps(o, sort_keys=True, indent=2)
-    with ignore_exceptions():
-      return str(o)
-    return repr(o)
-
-  @staticmethod
-  def save_sample(filename, obj_str, mode_str='wb'):
-    logging.info('Writing sample file. filename="{}"'.format(filename))
-    with open(D1TestCase.get_sample_path(filename), mode_str) as f:
-      return f.write(obj_str)
-
-  @staticmethod
   def touch(module_path, times=None):
     with open(module_path, 'a'):
       os.utime(module_path, times)
@@ -420,7 +232,7 @@ class D1TestCase(object): # unittest.TestCase
   @staticmethod
   @contextlib.contextmanager
   def mock_ssl_download(cert_obj):
-    """Simulate successful cert downloads by catching calls to
+    """Simulate successful cert download by catching call to
     ssl.SSLSocket.getpeercert() and returning {cert_obj} in DER format.
     """
     cert_der = d1_common.cert.x509.get_cert_der(cert_obj)

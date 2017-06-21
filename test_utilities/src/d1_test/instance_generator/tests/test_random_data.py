@@ -32,7 +32,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """random_bytes()"""
     s = d1_test.instance_generator.random_data.random_bytes(100)
-    self.assert_equals_sample(s, 'inst_gen__random_data__random_bytes')
+    self.sample.assert_equals(s, 'inst_gen__random_data__random_bytes')
 
   def test_1010(self):
     """random_unicode_name()"""
@@ -40,7 +40,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
       d1_test.instance_generator.random_data.random_unicode_name()
       for _ in range(10)
     ]
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       name_list, 'inst_gen__random_data__random_unicode_name'
     )
 
@@ -49,7 +49,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
     name_list = d1_test.instance_generator.random_data.random_unicode_name_list(
       10
     )
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       name_list, 'inst_gen__random_data__random_unicode_name_list'
     )
 
@@ -58,7 +58,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
     name_list = d1_test.instance_generator.random_data.random_unicode_name_unique_list(
       30
     )
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       name_list, 'inst_gen__random_data__random_unicode_name_unique_list'
     )
 
@@ -67,7 +67,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
     word_list = [
       d1_test.instance_generator.random_data.random_word() for _ in range(10)
     ]
-    self.assert_equals_sample(word_list, 'inst_gen__random_data__random_word')
+    self.sample.assert_equals(word_list, 'inst_gen__random_data__random_word')
 
   def test_1050(self):
     """random_3_words()"""
@@ -75,14 +75,14 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
       d1_test.instance_generator.random_data.random_3_words()
       for _ in range(10)
     ]
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       word_list, 'inst_gen__random_data__random_3_words'
     )
 
   def test_1060(self):
     """random_word_list()"""
     word_list = d1_test.instance_generator.random_data.random_word_list(10)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       word_list, 'inst_gen__random_data__random_word_list'
     )
 
@@ -92,7 +92,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
       30
     )
     assert len(set(unique_word_list)) == len(unique_word_list)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       unique_word_list, 'inst_gen__random_data__random_word_unique_list'
     )
 
@@ -102,7 +102,7 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
       d1_test.instance_generator.random_data.random_lower_ascii(i, i + 5)
       for i in range(10)
     ]
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       string_list, 'inst_gen__random_data__random_unicode_string'
     )
 
@@ -111,11 +111,11 @@ class TestRandomData(d1_test.d1_test_case.D1TestCase):
     email_list = [
       d1_test.instance_generator.random_data.random_email() for _ in range(10)
     ]
-    self.assert_equals_sample(email_list, 'inst_gen__random_data__random_email')
+    self.sample.assert_equals(email_list, 'inst_gen__random_data__random_email')
 
   def test_1100(self):
     """random_bool()"""
     bool_list = [
       d1_test.instance_generator.random_data.random_bool() for _ in range(10)
     ]
-    self.assert_equals_sample(bool_list, 'inst_gen__random_data__random_bool')
+    self.sample.assert_equals(bool_list, 'inst_gen__random_data__random_bool')

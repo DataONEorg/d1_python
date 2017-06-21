@@ -34,4 +34,4 @@ class TestFormatId(d1_test.d1_test_case.D1TestCase):
     format_id_list = [
       d1_test.instance_generator.format_id.generate() for _ in range(10)
     ]
-    self.assert_equals_sample(format_id_list, 'inst_gen__format_id__generate')
+    self.sample.assert_equals(format_id_list, 'inst_gen__format_id__generate')

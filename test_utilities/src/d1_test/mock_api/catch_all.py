@@ -65,6 +65,7 @@ import d1_common.url
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
+import d1_test.sample
 
 
 def activate(func):
@@ -109,7 +110,7 @@ def add_callback(base_url):
 def assert_expected_echo(received_echo_dict, name_postfix_str, client):
   _dict_key_val_to_unicode(received_echo_dict)
   _delete_volatile_keys(received_echo_dict)
-  d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+  d1_test.sample.assert_equals(
     received_echo_dict, name_postfix_str, client, 'echo'
   )
 

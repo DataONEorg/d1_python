@@ -59,7 +59,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """SysMeta: Roundtrip of fully populated System Metadata"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Prepare fully populated sysmeta
-      orig_sysmeta_pyxb = self.load_sample_xml_to_pyxb(
+      orig_sysmeta_pyxb = self.sample.load_xml_to_pyxb(
         'systemMetadata_v2_0.xml'
       )
       pid = self.random_pid()

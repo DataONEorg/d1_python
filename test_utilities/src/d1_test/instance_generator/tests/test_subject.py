@@ -32,4 +32,4 @@ class TestSubject(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """generate()"""
     subject_list = [subject.generate().toxml('utf-8') for _ in range(10)]
-    self.assert_equals_sample(subject_list, 'inst_gen__subject__generate')
+    self.sample.assert_equals(subject_list, 'inst_gen__subject__generate')

@@ -60,7 +60,7 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     sysmeta_pyxb = mn_client_v1_v2.getSystemMetadata('test_pid')
-    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+    self.sample.assert_equals(
       sysmeta_pyxb, 'mock_get_system_metadata', mn_client_v1_v2
     )
     # assert 'http://ns.dataone.org/service/types/v2.0' in sysmeta_xml

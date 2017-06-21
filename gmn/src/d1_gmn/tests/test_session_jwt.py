@@ -36,10 +36,10 @@ import django.core.cache
 
 class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def load_sample_cert_jwt_pair(self, cert_file_name, jwt_file_name):
-    cert_pem = self.load_sample(cert_file_name)
+    cert_pem = self.sample.load(cert_file_name)
     cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)
     # d1_common.cert.x509.log_cert_info(logging.info, 'CERT', cert_obj)
-    jwt_bu64 = self.load_sample(jwt_file_name)
+    jwt_bu64 = self.sample.load(jwt_file_name)
     # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
     return cert_obj, jwt_bu64
 
@@ -54,7 +54,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with self.mock_ssl_download(cert_obj) as (mock_connect, mock_getpeercert):
       cert_obj = d1_gmn.app.middleware.session_jwt._download_and_decode_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.assert_equals_sample(
+      self.sample.assert_equals(
         cert_obj.subject, 'session_jwt_download_and_decode'
       )
 
@@ -70,7 +70,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Remote read
       cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.assert_equals_sample(
+      self.sample.assert_equals(
         cert_obj.subject, 'session_jwt_download_and_decode'
       )
       assert len(mock_connect.mock_calls) == 1
@@ -78,7 +78,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Cache
       cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.assert_equals_sample(
+      self.sample.assert_equals(
         cert_obj.subject, 'session_jwt_download_and_decode'
       )
       # Did not call connect() and getpeercert() again

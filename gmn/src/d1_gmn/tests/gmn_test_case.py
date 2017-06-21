@@ -541,11 +541,11 @@ class GMNTestCase(
 
   def get_pid_list(self):
     """Get list of all PIDs in the DB fixture"""
-    return json.loads(self.load_sample('db_fixture_pid.json', 'rb'))
+    return json.loads(self.sample.load('db_fixture_pid.json', 'rb'))
 
   def get_sid_list(self):
     """Get list of all SIDs in the DB fixture"""
-    return json.loads(self.load_sample('db_fixture_sid.json', 'rb'))
+    return json.loads(self.sample.load('db_fixture_sid.json', 'rb'))
 
   def get_total_log_records(self, client, **filters):
     return client.getLogRecords(start=0, count=0, **filters).total

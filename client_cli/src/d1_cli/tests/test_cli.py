@@ -517,7 +517,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       d1_common.system_metadata.normalize(
         create_sysmeta_pyxb, reset_timestamps=True
       )
-      self.assert_equals_sample(create_sysmeta_pyxb, 'do_create', cn_client_v2)
+      self.sample.assert_equals(create_sysmeta_pyxb, 'do_create', cn_client_v2)
 
   def test_1320(self, cn_client_v2):
     """do_clearqueue(): Queue can be cleared"""

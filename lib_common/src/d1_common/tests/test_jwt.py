@@ -56,10 +56,10 @@ CERT_FILE_NAME_LIST = [
 
 class TestJwt(d1_test.d1_test_case.D1TestCase):
   def load_sample_cert_jwt_pair(self, cert_file_name, jwt_file_name):
-    cert_pem = self.load_sample(cert_file_name)
+    cert_pem = self.sample.load(cert_file_name)
     cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)
     # d1_common.cert.x509.log_cert_info(logging.info, 'CERT', cert_obj)
-    jwt_bu64 = self.load_sample(jwt_file_name)
+    jwt_bu64 = self.sample.load(jwt_file_name)
     # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
     return cert_obj, jwt_bu64
 
@@ -90,7 +90,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
       'jwt_token_20170612_232523.base64',
     )
     jwt_dict = d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       jwt_dict,
       'jwt_token_decoded_matches_expected',
     )
@@ -136,8 +136,8 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
   def test_1060(self):
     """get_subject_with_file_validation(): After successful validation, returns
     subject from JWT"""
-    cert_path = self.get_sample_path('cert_cn_dataone_org_20170517_122900.pem')
-    jwt_bu64 = self.load_sample('jwt_token_20170612_232523.base64')
+    cert_path = self.sample.get_path('cert_cn_dataone_org_20170517_122900.pem')
+    jwt_bu64 = self.sample.load('jwt_token_20170612_232523.base64')
     assert d1_common.cert.jwt.get_subject_with_file_validation(
       jwt_bu64, cert_path
     ) == 'http://orcid.org/0000-0001-8849-7530'
@@ -146,8 +146,8 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
   def test_1070(self):
     """get_subject_with_file_validation(): Fails with expired token
     """
-    cert_path = self.get_sample_path('cert_cn_dataone_org_20170517_122900.pem')
-    jwt_bu64 = self.load_sample('jwt_token_20170612_232523.base64')
+    cert_path = self.sample.get_path('cert_cn_dataone_org_20170517_122900.pem')
+    jwt_bu64 = self.sample.load('jwt_token_20170612_232523.base64')
     assert d1_common.cert.jwt.get_subject_with_file_validation(
       jwt_bu64, cert_path
     ) is None
@@ -155,9 +155,9 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
   @freezegun.freeze_time('2021-01-01')
   def test_1080(self):
     """log_jwt_bu64_info(): Outputs expected log"""
-    jwt_bu64 = self.load_sample('jwt_token_20170612_232523.base64')
+    jwt_bu64 = self.sample.load('jwt_token_20170612_232523.base64')
     with d1_test.d1_test_case.capture_log() as log_stream:
       d1_common.cert.jwt.log_jwt_bu64_info(logging.info, "test msg", jwt_bu64)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       log_stream.getvalue(), 'jwt_token_log_jwt_bu64_info_expected'
     )

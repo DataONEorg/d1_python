@@ -32,7 +32,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """select_random_set_of_permissions()"""
     permissions = access_policy.random_set_of_permissions()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       permissions, 'inst_gen__access_policy__select_random_set_of_permissions'
     )
 
@@ -40,7 +40,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     """permissions_to_tag_string()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.permissions_to_tag_string(permissions)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       s, 'inst_gen__access_policy__permissions_to_tag_string'
     )
 
@@ -48,7 +48,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     """random_subject_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.random_subject_with_permission_labels(permissions)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       s, 'inst_gen__access_policy__random_subject_with_permission_labels'
     )
 
@@ -56,7 +56,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     """random_subjects_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
     subjects = access_policy.random_subjects_with_permission_labels(permissions)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       subjects,
       'inst_gen__access_policy__random_subjects_with_permission_labels'
     )
@@ -64,13 +64,13 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
   def test_1040(self):
     """generate()"""
     access_policy_pyxb = access_policy.generate()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       access_policy_pyxb, 'inst_gen__access_policy__generate'
     )
 
   def test_1050(self):
     """random_subject_list()"""
     subject_list = access_policy.random_subject_list()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       subject_list, 'inst_gen__access_policy__random_subject_list'
     )

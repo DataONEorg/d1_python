@@ -27,9 +27,7 @@ import d1_test.d1_test_case
 
 
 class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
-  ap_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
-    'accessPolicy_v1_0.redundant.xml'
-  )
+  ap_pyxb = d1_test.sample.load_xml_to_pyxb('accessPolicy_v1_0.redundant.xml')
 
   def test_1000(self, mn_client_v1_v2):
     """_get_grouped_permission_dict()"""
@@ -117,7 +115,7 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
       'write': ['subj1', 'subj3'],
     }
     ap_pyxb = d1_common.access_policy.get_access_policy_pyxb(ap_dict)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       ap_pyxb, 'accessPolicy_v1_0_basic', mn_client_v1_v2
     )
 

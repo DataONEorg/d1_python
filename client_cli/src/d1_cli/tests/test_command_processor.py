@@ -130,7 +130,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       self.cp.search('test-search-query-string')
     object_list_xml = out_stream.getvalue().strip()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       object_list_xml, 'cmd_proc_obj_list', mn_client_v1_v2
     )
 

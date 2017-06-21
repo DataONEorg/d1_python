@@ -30,13 +30,14 @@ import d1_common.cert.subjects
 import d1_common.cert.x509
 
 import d1_test.d1_test_case
+import d1_test.sample
 
 
 class TestCert(d1_test.d1_test_case.D1TestCase):
-  cert_simple_subject_info_pem = d1_test.d1_test_case.D1TestCase.load_sample(
+  cert_simple_subject_info_pem = d1_test.sample.load(
     'cert_with_simple_subject_info.pem'
   )
-  cert_no_subject_info_pem = d1_test.d1_test_case.D1TestCase.load_sample(
+  cert_no_subject_info_pem = d1_test.sample.load(
     'cert_without_subject_info.pem'
   )
 
@@ -67,7 +68,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     extracted_subject_info_xml = d1_common.cert.x509.extract_subject_info_extension(
       cert_obj
     )
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       extracted_subject_info_xml, 'cert_simple_subject_info'
     )
 
@@ -115,6 +116,6 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     )
     with d1_test.d1_test_case.capture_log() as log_stream:
       d1_common.cert.x509.log_cert_info(logging.warn, 'test msg', cert_obj)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       log_stream.getvalue(), 'x509_log_cert_info_expected'
     )

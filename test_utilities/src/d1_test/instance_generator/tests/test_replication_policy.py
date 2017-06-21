@@ -32,6 +32,6 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """generate()"""
     replication_policy_obj = replicationpolicy.generate()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       replication_policy_obj, 'test_replica_policy__generate'
     )

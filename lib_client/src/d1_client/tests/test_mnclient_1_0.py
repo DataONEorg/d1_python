@@ -33,13 +33,14 @@ import d1_common.util
 
 import d1_test.d1_test_case
 import d1_test.mock_api.create
+import d1_test.sample
 
 
 class TestMNClient(d1_test.d1_test_case.D1TestCase):
-  sysmeta_pyxb = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
+  sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
     'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
   )
-  sysmeta_xml = d1_test.d1_test_case.D1TestCase.load_sample_xml_to_pyxb(
+  sysmeta_xml = d1_test.sample.load_xml_to_pyxb(
     'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
   )
   obj = 'test'

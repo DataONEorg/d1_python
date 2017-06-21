@@ -32,17 +32,17 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, cn_client_v1_v2):
     """generate()"""
     sysmeta_pyxb = sysmeta.generate(cn_client_v1_v2)
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       sysmeta_pyxb, 'inst_gen__systemmetadata__generate', cn_client_v1_v2
     )
 
   def test_1010(self, cn_client_v1_v2):
     """generate_from_file_path()"""
-    sysmeta_path = self.get_sample_path('systemMetadata_v2_0.xml')
+    sysmeta_path = self.sample.get_path('systemMetadata_v2_0.xml')
     sysmeta_pyxb = sysmeta.generate_from_file_path(
       cn_client_v1_v2, sysmeta_path
     )
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       sysmeta_pyxb, 'inst_gen__systemmetadata__generate_from_file_path',
       cn_client_v1_v2
     )

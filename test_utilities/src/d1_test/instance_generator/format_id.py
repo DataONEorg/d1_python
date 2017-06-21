@@ -26,6 +26,7 @@ from __future__ import absolute_import
 import random
 
 import d1_test.d1_test_case
+import d1_test.sample
 
 
 class Generate(object):
@@ -36,8 +37,7 @@ class Generate(object):
     if self._format_id_list is None:
       self._format_id_list = [
         o.formatId
-        for o in d1_test.d1_test_case.D1TestCase.
-        load_sample_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
+        for o in d1_test.sample.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
       ]
 
     return random.choice(self._format_id_list)

@@ -27,6 +27,7 @@ from __future__ import absolute_import
 import random
 
 import d1_test.d1_test_case
+import d1_test.sample
 
 
 class Generate(object):
@@ -35,9 +36,8 @@ class Generate(object):
 
   def __call__(self):
     if self._user_agent_list is None:
-      self._user_agent_list = d1_test.d1_test_case.D1TestCase.load_sample(
-        'common_user_agents.txt'
-      ).splitlines()
+      self._user_agent_list = d1_test.sample.load('common_user_agents.txt'
+                                                  ).splitlines()
     return random.choice(self._user_agent_list)
 
 

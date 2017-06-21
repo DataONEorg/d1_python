@@ -26,9 +26,11 @@ import responses
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.tests.gmn_test_case
 
+import d1_test.sample
+
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  cert_simple_subject_info_pem = d1_gmn.tests.gmn_test_case.GMNTestCase.load_sample(
+  cert_simple_subject_info_pem = d1_test.sample.load(
     'cert_with_simple_subject_info.pem'
   )
 

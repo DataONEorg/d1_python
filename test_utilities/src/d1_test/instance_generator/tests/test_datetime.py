@@ -32,7 +32,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """random_date(): Dates are random"""
     random_date_list = [dates.random_date().isoformat() for _ in range(10)]
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       random_date_list, 'inst_gen__datetime__random_date_unrestricted'
     )
 
@@ -41,6 +41,6 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
     random_date_list = [
       dates.random_date(100, 200).isoformat() for _ in range(10)
     ]
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       random_date_list, 'inst_gen__datetime__random_date_restricted'
     )

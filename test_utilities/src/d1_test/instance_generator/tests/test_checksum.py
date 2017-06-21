@@ -32,6 +32,6 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """random_checksum_algorithm(): Returns a valid checksum algorithm"""
     algorithm_str = checksum.random_checksum_algorithm()
-    self.assert_equals_sample(
+    self.sample.assert_equals(
       algorithm_str, 'inst_gen__checksum__random_checksum_algorithm'
     )

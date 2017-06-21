@@ -51,7 +51,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=0, count=0)
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__number_of_objects', cn_mn_client_v1_v2
       )
 
@@ -61,7 +61,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=0, count=21)
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__front_section', cn_mn_client_v1_v2
       )
 
@@ -71,7 +71,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=612, count=15)
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__middle_section', cn_mn_client_v1_v2
       )
 
@@ -85,7 +85,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(
         start=n_objects - 1, count=1
       )
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__exact_end_section', cn_mn_client_v1_v2
       )
 
@@ -100,7 +100,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(
         start=n_objects - 10, count=100
       )
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__count_beyond_end_section',
         cn_mn_client_v1_v2
       )
@@ -116,7 +116,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(
         start=n_objects + 1234, count=10000
       )
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__start_beyond_end_section',
         cn_mn_client_v1_v2
       )
@@ -128,7 +128,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(identifier='bogus_did')
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__pid_filter_unknown', cn_mn_client_v1_v2
       )
 
@@ -140,7 +140,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid = random.choice(self.get_pid_list())
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(identifier=pid)
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__pid_filter_existing',
         cn_mn_client_v1_v2
       )
@@ -155,7 +155,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(
         identifier=sid, count=10
       )
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb, 'list_objects__sid_filter', cn_mn_client_v1_v2
       )
 
@@ -175,7 +175,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       # Verify that first and last records are both in 1980 and that first doc
       # is the newest, as GMN sorts on timestamp descending.
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
         'list_objects__date_range_first_last',
         cn_mn_client_v1_v2,
@@ -191,7 +191,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         fromDate=datetime.datetime(2500, 1, 1),
         toDate=datetime.datetime(3000, 12, 31), start=0, count=1
       )
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         object_list_pyxb,
         'list_objects__date_range_in_the_future',
         cn_mn_client_v1_v2,
@@ -232,7 +232,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         cn_mn_client_v1_v2, replicaStatus=True
       )
 
-      d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      d1_test.sample.assert_equals(
         [n_obj_reg_1, n_obj_rep_1, n_obj_reg_2, n_obj_rep_2],
         'list_objects__replica_status_filter', cn_mn_client_v1_v2
       )

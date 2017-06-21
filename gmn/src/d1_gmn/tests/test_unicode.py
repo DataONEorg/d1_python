@@ -37,7 +37,7 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self, mn_client_v1_v2):
     """Unicode: GMN and libraries handle Unicode correctly"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      tricky_unicode_str = self.load_sample_utf8_to_unicode(
+      tricky_unicode_str = self.sample.load_utf8_to_unicode(
         'tricky_identifiers_unicode.utf8.txt'
       )
       for line in tricky_unicode_str.splitlines():

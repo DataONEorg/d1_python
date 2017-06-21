@@ -29,7 +29,7 @@ import psycopg2
 import psycopg2.extensions
 import pytest
 
-import d1_gmn.tests.gmn_test_case
+import d1_test.sample
 
 from d1_client.cnclient_1_1 import CoordinatingNodeClient_1_1 as cn_v1
 from d1_client.cnclient_2_0 import CoordinatingNodeClient_2_0 as cn_v2
@@ -213,9 +213,7 @@ def django_db_setup(django_db_blocker):
 def load_template_fixture(template_db_key, template_db_name):
   """Load DB fixture from compressed JSON file to template database"""
   logging.info('Loading template DB fixture')
-  fixture_file_path = d1_gmn.tests.gmn_test_case.GMNTestCase.get_sample_path(
-    'db_fixture.json.bz2'
-  )
+  fixture_file_path = d1_test.sample.get_path('db_fixture.json.bz2')
   if pytest.config.getoption("--refresh-fixture"):
     # django.core.management.call_command('flush', database=template_db_key)
     run_sql('postgres', "drop database if exists {};".format(template_db_name))
