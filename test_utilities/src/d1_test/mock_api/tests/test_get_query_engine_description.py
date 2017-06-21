@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,33 +17,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test Query Engine Description handling
-"""
+
 from __future__ import absolute_import
+from __future__ import print_function
 
-import unittest
-
-import d1_onedrive.impl.clients.query_engine_description as query_engine_description
-import pytest
+import responses
 
 import d1_test.d1_test_case
-
-options = {}
-
-
-@pytest.mark.skip('TODO')
-class TestQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    self.q = query_engine_description.QueryEngineDescription()
-
-  def test_1000(self):
-    """__init__()"""
-    assert isinstance(self.q, query_engine_description.QueryEngineDescription)
-
-  def test_1010(self):
-    """get query engine version: """
-    assert self.q.get_query_engine_version() == '3.4.0.2011.09.20.17.19.53'
+import d1_test.mock_api.query_engine_description
 
 
-if __name__ == "__main__":
-  unittest.main()
+class TestMockQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
+  @responses.activate
+  def test_1000(self, cn_client_v1_v2):
+    """mock_api.getQueryEngineDescription(): Returns a DataONE
+    QueryEngineDescription PyXB object"""
+    d1_test.mock_api.query_engine_description.add_callback(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
+    d1_test.d1_test_case.D1TestCase.assert_equals_sample(
+      qed_xml, 'test_get_query_engine_description__returns_qed', cn_client_v1_v2
+    )

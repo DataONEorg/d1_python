@@ -1,0 +1,1285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:queryEngineDescription xmlns:ns2="http://ns.dataone.org/service/types/v1.1">
+    <queryEngineVersion>5.2.1</queryEngineVersion>
+    <querySchemaVersion>1.1</querySchemaVersion>
+    <name>solr</name>
+    <additionalInfo>http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html</additionalInfo>
+    <queryField>
+        <name>_root_</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>_version_</name>
+        <type>long</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>false</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>abstract</name>
+        <description>The full text of the abstract as provided in the science metadata document.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>attribute</name>
+        <description>Multi-valued field containing the text from attributeName, attributeLabel, attributeDescription, attributeUnit fields into a single searchable text field.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>attributeDescription</name>
+        <description>Multi-valued field containing the attribute descriptive text.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>attributeLabel</name>
+        <description>Multi-valued field containing secondary attribute name information.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>attributeName</name>
+        <description>Multi-valued field containing the main attribute name information.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>attributeUnit</name>
+        <description>Multi-valued field containing the attribute unit information.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>author</name>
+        <description>Principle Investigator (PI) / Author as listed in the metadata document.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>authorGivenName</name>
+        <description>The given name of the primary author/PI.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>authorGivenNameSort</name>
+        <description>The given name of the primary author/PI case normalized for sorting.</description>
+        <type>alphaOnlySort</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>authoritativeMN</name>
+        <description>The node Id of the authoritative Member Node for the object.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>authorLastName</name>
+        <description>The LAST name(s) of the author(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>authorSurName</name>
+        <description>The sur name of the primary author/PI.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>authorSurNameSort</name>
+        <description>The sur name of the primary author/PI case normalized for sorting.</description>
+        <type>alphaOnlySort</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>beginDate</name>
+        <description>The starting date of the temporal range of the content described by the metadata document.</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>blockedReplicationMN</name>
+        <description>A multi-valued field that contains the node Ids of member nodes that are blocked from holding replicas of this object.</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>changePermission</name>
+        <description>List of subjects (groups and individuals) that have change permission on PID.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>checksum</name>
+        <description>The checksum for the object</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>checksumAlgorithm</name>
+        <description>Algorithm used for generating the object checksum</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>class</name>
+        <description>Taxonomic class name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>contactOrganization</name>
+        <description>Name of the organization to contact for more information about the dataset</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>contactOrganizationText</name>
+        <description>Copy from contactOrganization</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>datasource</name>
+        <description>The node Id of the member node that originally contributed the content.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>dataUrl</name>
+        <description>The URL that can be used to resolve the location of the object given its PID.</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>dateModified</name>
+        <description>The date and time when the object system metadata was last updated.</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>datePublished</name>
+        <description>Publication date for the dataset (this may or may not be coincident with when the content is added to DataONE).</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>dateUploaded</name>
+        <description>The date and time when the object was uploaded to the Member Node.</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>decade</name>
+        <description>The latest decade that is covered by the dataset, expressed in the form "1999-2009"</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>documents</name>
+        <description>Lists all PIDs that this object describes. Obtained by parsing all resource maps in which this object is referenced. Not set for data or resource map objects.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>eastBoundCoord</name>
+        <description>Eastern most longitude of the spatial extent, in decimal degrees, WGS84</description>
+        <type>tfloat</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>edition</name>
+        <description>The version or edition number of the item described.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>endDate</name>
+        <description>The ending date of the temporal range of the content described by the metadata document.</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>family</name>
+        <description>Taxonomic family name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>fileID</name>
+        <description>Contains the `CNRead.resolve` URL for the object ONLY if the object is a science metadata object.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>fileName</name>
+        <description>The file name for the object, specified in system metadata field with the same name.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>formatId</name>
+        <description>The format identifier indicating the type of content this record refers to.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>formatType</name>
+        <description>The format type of the record - DATA, METADATA, RESOURCE.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>gcmdKeyword</name>
+        <description>Keywords drawn from the GCMD controlled vocabulary</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>genus</name>
+        <description>Taxonomic genus name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geoform</name>
+        <description>The name of the general form in which the item's geospatial data is presented</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_1</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_2</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_3</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_4</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_5</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_6</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_7</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_8</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>geohash_9</name>
+        <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>id</name>
+        <description>The identifier of the object being indexed.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>identifier</name>
+        <description>Copy id</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>investigator</name>
+        <description>Name of the investigator(s) responsible for developing the dataset and associated content.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>investigatorText</name>
+        <description>Copy from investigator.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>isDocumentedBy</name>
+        <description>Lists all PIDs that describe this object. Obtained by parsing all resource maps in which this object is referenced.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>isPublic</name>
+        <description>Set to True if the DataONE `public user` is present in the list of subjects with readPermission on PID.</description>
+        <type>boolean</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>isService</name>
+        <description>Set to true if document is a member node service description document.  Use to filter search results for to exclude or include member node services.</description>
+        <type>boolean</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>isSpatial</name>
+        <description>Set to "Y" for records that contain spatial information</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>keyConcept</name>
+        <description>Terms drawn from a controlled vocabulary of concepts that are applicable to the content described by the metadata document.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>keywords</name>
+        <description>Keywords recorded in the science metadata document. These may be controlled by the generator of the metadata or by the metadata standard of the document, but are effectively uncontrolled within the  DataONE context.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>keywordsText</name>
+        <description>Copy from keywords</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>kingdom</name>
+        <description>Taxonomic kingdom(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>LTERSite</name>
+        <description>Data provider organization  identifier, for sources within the LTER network.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>mediaType</name>
+        <description>The name attribute of the media type element in system metadata.  Indicates media type of the object.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>mediaTypeProperty</name>
+        <description>A list of properties describing the media type in system metadata.  The value is a concatenation of the property elements name attribute and the value of the property element.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>namedLocation</name>
+        <description>The name of the location(s) relevant to the content described by the metadata document.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>noBoundingBox</name>
+        <description>Set to "Y" if there is no bounding box information available (i.e., the east, west, north, south most coordinates)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>northBoundCoord</name>
+        <description>Northern most latitude of the spatial extent, in decimal degrees, WGS84</description>
+        <type>tfloat</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>numberReplicas</name>
+        <description>Requested number of replicas for the object</description>
+        <type>int</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>false</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>obsoletedBy</name>
+        <description>If set, indicates the object that replaces this record.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>obsoletes</name>
+        <description>If set, indicates the object that this record obsoletes.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>ogcUrl</name>
+        <description>URL for Open Geospatial Web service if available.</description>
+        <type>text_general</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>order</name>
+        <description>Taxonomic order name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>origin</name>
+        <description>Investigator or Investigator organization name.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>originator</name>
+        <description>Investigator or Investigator organization name. Derived by normalizing origin.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>originatorText</name>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>originText</name>
+        <description>Copy from origin</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>parameter</name>
+        <description>A characteristic, or variable, that is measured or derived as part of data-collection activities.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>parameterText</name>
+        <description>Copy from parameter</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>phylum</name>
+        <description>Taxonomic phylum (or division) name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>placeKey</name>
+        <description>A place name keyword, assigned by the metadata creator. It is one keyword from the thesaurus named in &lt;placekt&gt;</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>preferredReplicationMN</name>
+        <description>A list of member node identifiers that are preferred replication targets for this object.</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>presentationCat</name>
+        <description>Type of data being preserved (maps, text, etc.)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>project</name>
+        <description>The authorized name of a research effort for which data is collected. This name is often reduced to a convenient abbreviation or acronym. All investigators involved in a project should use a common, agreed-upon name.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>projectText</name>
+        <description>Copy from project</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_generated</name>
+        <description>A multi-valued field containing the identifiers of data objects that this program  generated based on the PROV wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_generatedByExecution</name>
+        <description>A multi-valued field containing the identifiers of the executions that this data object was generated by based on the PROV wasGeneratedBy property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_generatedByProgram</name>
+        <description>A multi-valued field containing the identifiers of the programs that this data object was generated by based on the PROV wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_generatedByUser</name>
+        <description>A multi-valued field containing the identifiers of the users that this data object was generated by based on the PROV wasGeneratedBy, qualifiedAssociation, and agent properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_hasDerivations</name>
+        <description>A multi-valued field containing the identifiers of the data objects that were derivations of the source data object described by this metadata object, based on the PROV wasDerivedBy property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_hasSources</name>
+        <description>A multi-valued field containing the identifiers of the data objects that were sources to the derived data object described by this metadata object, based on the PROV wasDerivedBy property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_instanceOfClass</name>
+        <description>A multi-valued field containing the identifiers of the semantic classes that this object is an instance of, based on the PROV, ProvONE, and other ontologies.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_used</name>
+        <description>A multi-valued field containing the identifiers of data objects that this program used based on the PROV used, qualifiedAssociation, and hadPlan properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_usedByExecution</name>
+        <description>A multi-valued field containing the identifiers of the executions that used this data object based on the PROV used property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_usedByProgram</name>
+        <description>A multi-valued field containing the identifiers of the programs that used this data object based on the PROV used, qualifiedAssociation, and hadPlan properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_usedByUser</name>
+        <description>A multi-valued field containing the identifiers of the users that used this data object based on the PROV used, qualifiedAssociation, and agent properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_wasDerivedFrom</name>
+        <description>A multi-valued field containing the identifiers of data objects that this data object was derived from based on the PROV wasDerivedBy property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_wasExecutedByExecution</name>
+        <description>A multi-valued field containing the identifiers of the executions that used this program based on the PROV qualifiedAssociation, and hadPlan properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_wasExecutedByUser</name>
+        <description>A multi-valued field containing the identifiers of the users that executed this program based on the PROV qualifiedAssociation, hadPlan, and agent properties.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>prov_wasInformedBy</name>
+        <description>A multi-valued field containing the identifiers of executions that this execution was informed by based on the PROV wasInformedBy property.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>pubDate</name>
+        <description>Publication date for the dataset (this may or may not be coincident with when the content is added to DataONE).</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>purpose</name>
+        <description>The "Purpose" describes the "why" aspects of the data set (For example, why was the data set created?).</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>readPermission</name>
+        <description>List of subjects (groups and individuals) that have read permission on PID.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>relatedOrganizations</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>replicaMN</name>
+        <description>One or more node Ids holding copies of the object.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>replicationAllowed</name>
+        <description>True if this object can be replicated.</description>
+        <type>boolean</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>replicaVerifiedDate</name>
+        <type>tdate</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>resourceMap</name>
+        <description>List of resource map PIDs that reference this PID.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>rightsHolder</name>
+        <description>The `Subject` that acts as the rights holder for the object.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>scientificName</name>
+        <description>Taxonomic scientific name(s) at the most precise level available for the organisms of relevance to the dataset</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sem_annotated_by</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sem_annotates</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sem_annotation</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sem_comment</name>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sensor</name>
+        <description>Also called "instrument." A device that is used for collecting data for a data set.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sensorText</name>
+        <description>Copy from sensor.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>seriesId</name>
+        <description>The seriesId is an optional, unique Unicode string that identifies an object revision chain.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceCoupling</name>
+        <description>Either 'tight', 'mixed', or 'loose'.  Tight coupled service work only on the data described by this metadata document.  Loose coupling means service works on any data.  Mixed coupling means service works on data described by this metadata document but may work on other data.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceDescription</name>
+        <description>A human readable description of the member node service to assist discovery and to evaluate applicability.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceEndpoint</name>
+        <description>A URL that indicates how to access the member node service.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceInput</name>
+        <description>Aspect of the service that accepts a digital entity.  Either a list of DataONE formatIds Urls or pid RESOLVE Urls that the member node service operates on.  A pid RESOLVE url indicates a 'tight' coupled service - while a list of formatIds indicates a loose coupled service.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceOutput</name>
+        <description>Aspect of the service that provides a digital entity resulting from operation of the service.  A listing of DataONE formatId which this member node service produces.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceTitle</name>
+        <description>A brief, human readable descriptive title for the member node service.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>serviceType</name>
+        <description>The type of service being provided by the member node.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>site</name>
+        <description>The name or description of the physical location where the data were collected</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>siteText</name>
+        <description>Copy from site.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>size</name>
+        <description>The size of the object, in bytes.</description>
+        <type>tlong</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>source</name>
+        <description>Also called "platform." The mechanism used to support the sensor or instrument that gathers data</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>sourceText</name>
+        <description>Copy from source.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>southBoundCoord</name>
+        <description>Southern most latitude of the spatial extent, in decimal degrees, WGS84</description>
+        <type>tfloat</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>species</name>
+        <description>Taxonomic species name(s)</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>submitter</name>
+        <description>The `Subject` name of the original submitter of the content to DataONE.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>term</name>
+        <description>A secondary subject area within which parameters can be categorized. Approved terms include "agricultural chemicals" and "atmospheric chemistry," among many others. When entering a term in the LandVal Metadata Editor, users should select a standard expression from the pick list for terms if at all possible.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>termText</name>
+        <description>Copy from term.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>text</name>
+        <description>Full text of the metadata record, used to support full text searches</description>
+        <type>text_en_splitting</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>title</name>
+        <description>Title of the dataset as recorded in the science metadata.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>titlestr</name>
+        <description>Copy from title.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>topic</name>
+        <description>The most general subject area within which a parameter is categorized. Approved topics include "agriculture," "atmosphere," and "hydrosphere," among others.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>topicText</name>
+        <description>Copy from topic.</description>
+        <type>text_general</type>
+        <searchable>true</searchable>
+        <returnable>false</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>updateDate</name>
+        <description>Copy from dateuploaded.</description>
+        <type>tdate</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>webUrl</name>
+        <description>Link to the investigator's  web-site.</description>
+        <type>string</type>
+        <searchable>false</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+    <queryField>
+        <name>westBoundCoord</name>
+        <description>Western most longitude of the spatial extent, in decimal degrees, WGS84</description>
+        <type>tfloat</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>false</multivalued>
+    </queryField>
+    <queryField>
+        <name>writePermission</name>
+        <description>List of subjects (groups and individuals) that have write permission on PID.</description>
+        <type>string</type>
+        <searchable>true</searchable>
+        <returnable>true</returnable>
+        <sortable>true</sortable>
+        <multivalued>true</multivalued>
+    </queryField>
+</ns2:queryEngineDescription>

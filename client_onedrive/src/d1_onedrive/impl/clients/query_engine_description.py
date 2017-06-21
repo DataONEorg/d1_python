@@ -24,12 +24,6 @@
 from __future__ import absolute_import
 
 import logging
-import urllib
-
-import d1_common.types.dataoneTypes_v1_1 as dataoneTypes
-
-# 3rd party
-# import pyxb
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -39,55 +33,24 @@ try:
 except (KeyError, AttributeError):
   pass
 
-
-class QueryEngineDescription(object):
-  def __init__(self):
-    self.doc = None
-
-  def download(self, query_url):
-    i = urllib.urlopen(query_url)
-    self.read(i)
-
-  def load(self, xml_path):
-    i = open(xml_path, 'rb').read()
-    self.read(i)
-
-  def read(self, xml_file):
-    self.doc = dataoneTypes.CreateFromDocument(xml_file)
-
-  def assert_is_initialized(self):
-    assert self.doc is not None
-
-  def get_query_engine_version(self):
-    return self.doc.queryEngineVersion
-
-  # TODO:
-  #<xs:element name="querySchemaVersion" type="xs:string" minOccurs="0" maxOccurs="1">
-  #  <xs:annotation>
-  #    <xs:documentation>Version of the schema in use by the query engine, e.g.
-  #    &quot;1.0.1&quot;</xs:documentation>
-  #  </xs:annotation>
-  #</xs:element>
-  #<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1">
-  #  <xs:annotation>
-  #    <xs:documentation>The full, human readable name of the query engine. For example:
-  #      &quot;Apache SOLR&quot;</xs:documentation>
-  #  </xs:annotation>
-  #</xs:element>
-  #<xs:element name="additionalInfo" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded">
-  #  <xs:annotation>
-  #    <xs:documentation>An optional human readable description of the query
-  #    engine. This can be used to describe any special capabilities or intended
-  #    uses for the query engine. For example, a query engine may be tuned to
-  #    suit a particular audience or domain as opposed to providing a general
-  #    purpose discovery mechanism.</xs:documentation>
-  #    <xs:documentation>This field may also contain links to additional
-  #    information about the query engine, such as documentation for the search
-  #    syntax provided by the query engine implemntors.</xs:documentation>
-  #    </xs:annotation>
-  #</xs:element>
-  #<xs:element name="queryField" type="d1_v1.1:QueryField" minOccurs="0" maxOccurs="unbounded">
-  #  <xs:annotation>
-  #    <xs:documentation>A list of query fields supported by the query engine.</xs:documentation>
-  #  </xs:annotation>
-  #</xs:element>
+# class QueryEngineDescription(object):
+#   def __init__(self):
+#     self.doc = None
+#
+#   def download(self, query_url):
+#     i = urllib.urlopen(query_url)
+#     self.read(i)
+#
+#   def load(self, xml_path):
+#     i = open(xml_path, 'rb').read()
+#     self.read(i)
+#
+#   def read(self, xml_file):
+#     self.doc = dataoneTypes.CreateFromDocument(xml_file)
+#
+#   def assert_is_initialized(self):
+#     assert self.doc is not None
+#
+#   def get_query_engine_version(self):
+#     return self.doc.queryEngineVersion
+#
