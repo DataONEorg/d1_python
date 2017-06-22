@@ -55,13 +55,6 @@ DataONE Client Library for Python
 
 \
 
-DataONE Workspace Client for Python
-```````````````````````````````````
-
-.. include:: ./workspace/overview.rst
-
-\
-
 DataONE Test Utilities
 ``````````````````````
 
@@ -80,5 +73,4 @@ Contents
   gmn/index
   common/index
   client/index
-  workspace/index
   test/index
