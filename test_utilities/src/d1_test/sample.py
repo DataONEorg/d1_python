@@ -55,7 +55,6 @@ def assert_equals(
   )
 
   if pytest.config.getoption('--update-samples'):
-
     _save_interactive(got_str, exp_path)
   else:
     raise AssertionError('Sample mismatch. filename="{}"'.format(filename))
@@ -106,15 +105,8 @@ def save_path(got_str, exp_path, mode_str='wb'):
 
 
 def _get_or_create_path(filename):
-  """Get the path to a sample file
-
-  Also provides a mechanism for cleaning out unused sample files. To clean, move
-  all files from `test_docs` to `test_docs_tidy`, and run the tests. Any files
-  that are used by the tests will be moved back to `test_docs`. Files that
-  remain in `test_docs_tidy` can be untracked and deleted.
-
-  This procedure moves files while pytest is running, which may confuse pytest.
-  Fix by clearing out pytest's cache with clean-tree.py.
+  """Get the path to a sample file and enable cleaning out unused sample files.
+  See the test docs for usage.
   """
   path = get_path(filename)
   if not os.path.isfile(path):
