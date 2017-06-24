@@ -24,7 +24,7 @@ from __future__ import absolute_import
 
 import logging
 
-import d1_gmn.app.management.commands.util
+import d1_gmn.app.management.commands._util
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.models
 
@@ -65,7 +65,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    d1_gmn.app.management.commands.util.log_setup(options['debug'])
+    d1_gmn.app.management.commands._util.log_setup(options['debug'])
     if options['command'] not in ('view', 'add', 'remove', 'bulk'):
       logging.info(self.missing_args_message)
       return
@@ -97,7 +97,9 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to add',
       )
-    if d1_gmn.app.management.commands.util.is_subject_in_whitelist(subject_str):
+    if d1_gmn.app.management.commands._util.is_subject_in_whitelist(
+        subject_str
+    ):
       raise django.core.management.base.CommandError(
         u'Subject already in whitelist: {}'.format(subject_str)
       )
@@ -109,7 +111,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to remove',
       )
-    if not d1_gmn.app.management.commands.util.is_subject_in_whitelist(
+    if not d1_gmn.app.management.commands._util.is_subject_in_whitelist(
         subject_str
     ):
       raise django.core.management.base.CommandError(

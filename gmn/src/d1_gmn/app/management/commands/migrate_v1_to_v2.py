@@ -32,7 +32,7 @@ import psycopg2
 import psycopg2.extras
 
 import d1_gmn.app.auth
-import d1_gmn.app.management.commands.util
+import d1_gmn.app.management.commands._util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
@@ -88,12 +88,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    d1_gmn.app.management.commands.util.log_setup(options['debug'])
+    d1_gmn.app.management.commands._util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(d1_gmn.app.management.commands.util.get_command_name())
+      format(d1_gmn.app.management.commands._util.get_command_name())
     )
-    d1_gmn.app.management.commands.util.abort_if_other_instance_is_running()
+    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
     m = V2Migration()
     if not options['force'] and not self._db_is_empty():
       logging.error(
@@ -114,16 +114,16 @@ class Command(django.core.management.base.BaseCommand):
 class V2Migration(object):
   def __init__(self):
     self._v1_cursor = self._create_v1_cursor()
-    self._events = d1_gmn.app.management.commands.util.EventCounter()
+    self._events = d1_gmn.app.management.commands._util.EventCounter()
 
   def migrate(self):
     try:
       self._validate()
-      self._migrate_filesystem()
+      # self._migrate_filesystem()
       self._migrate_sciobj()
       self._migrate_events()
       self._migrate_whitelist()
-      self._update_node_doc()
+      # self._update_node_doc()
     except django.core.management.base.CommandError as e:
       self._log(str(e))
     self._events.log()
@@ -213,7 +213,7 @@ class V2Migration(object):
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_pyxb.obsoletedBy = None
       self._log_pid_info('Creating SciObj DB representation', i, n, pid)
-      d1_gmn.app.sysmeta.create(sysmeta_pyxb, sciobj_row['url'])
+      d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)

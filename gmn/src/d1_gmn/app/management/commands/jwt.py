@@ -32,7 +32,7 @@ import logging
 
 import jwt
 
-import d1_gmn.app.management.commands.util
+import d1_gmn.app.management.commands._util
 import d1_gmn.app.middleware.session_jwt
 import d1_gmn.app.models
 
@@ -69,7 +69,7 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    d1_gmn.app.management.commands.util.log_setup(options['debug'])
+    d1_gmn.app.management.commands._util.log_setup(options['debug'])
     if options['command'] not in ('view', 'whitelist'):
       logging.info(self.missing_args_message)
       return

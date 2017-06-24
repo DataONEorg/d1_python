@@ -25,7 +25,7 @@ from __future__ import absolute_import
 
 import logging
 
-import d1_gmn.app.management.commands.util
+import d1_gmn.app.management.commands._util
 import d1_gmn.app.models
 
 import django.core.management.base
@@ -51,12 +51,12 @@ class Command(django.core.management.base.BaseCommand):
     parser.add_argument('path', type=str, help='path to export file')
 
   def handle(self, *args, **options):
-    d1_gmn.app.management.commands.util.log_setup(options['debug'])
+    d1_gmn.app.management.commands._util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(d1_gmn.app.management.commands.util.get_command_name())
+      format(d1_gmn.app.management.commands._util.get_command_name())
     )
-    d1_gmn.app.management.commands.util.abort_if_other_instance_is_running()
+    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
     self.export_object_list(options['path'], options['public'])
     logging.info(u'Exported object list to: {}'.format(options['path']))
 

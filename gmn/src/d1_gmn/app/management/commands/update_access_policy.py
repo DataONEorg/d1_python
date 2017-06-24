@@ -26,7 +26,7 @@ import logging
 import os
 
 import d1_gmn.app.auth
-import d1_gmn.app.management.commands.util
+import d1_gmn.app.management.commands._util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
@@ -60,12 +60,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **options):
-    d1_gmn.app.management.commands.util.log_setup(options['debug'])
+    d1_gmn.app.management.commands._util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.
-      format(d1_gmn.app.management.commands.util.get_command_name())
+      format(d1_gmn.app.management.commands._util.get_command_name())
     )
-    d1_gmn.app.management.commands.util.abort_if_other_instance_is_running()
+    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
     m = UpdateAccessPolicy()
     m.run(options['sysmeta_root_path'])
 
@@ -75,7 +75,7 @@ class Command(django.core.management.base.BaseCommand):
 
 class UpdateAccessPolicy(object):
   def __init__(self):
-    self._events = d1_gmn.app.management.commands.util.EventCounter()
+    self._events = d1_gmn.app.management.commands._util.EventCounter()
 
   def run(self, sysmeta_root_path):
     try:
