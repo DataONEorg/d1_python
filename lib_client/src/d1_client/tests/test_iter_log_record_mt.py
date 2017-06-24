@@ -81,7 +81,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
       logging.info("Identifier = {}".format(event.identifier.value()))
       logging.info("User agent = {}".format(event.userAgent))
       logging.info("Subject    = {}".format(event.subject.value()))
-      logging.info('-' * 79)
+      logging.info('-' * 100)
       cnt += 1
 
       if cnt == MAX_OBJECTS:

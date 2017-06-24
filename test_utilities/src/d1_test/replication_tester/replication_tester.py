@@ -449,7 +449,7 @@ class ReplicationTester(object):
   #
 
   def _log_debug_header(self, msg):
-    self._logger.debug('-' * 80)
+    self._logger.debug('-' * 100)
     self._logger.info('Testing: {}'.format(msg))
 
   def _assert_correct_mn_call_with_wait(self, *expected_call):

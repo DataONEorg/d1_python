@@ -36,6 +36,6 @@ class TestMockQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
-    d1_test.sample.assert_equals(
+    self.sample.assert_equals(
       qed_xml, 'test_get_query_engine_description__returns_qed', cn_client_v1_v2
     )

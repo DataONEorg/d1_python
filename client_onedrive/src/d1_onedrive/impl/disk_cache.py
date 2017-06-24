@@ -86,21 +86,6 @@ class DiskCache(dict):
       self._delete_oldest_file()
       self._n_items -= 1
 
-  #def keys(self):
-  #  return os.listdir(self._cache_directory_path)
-
-  #def copy(self):
-  #  copyDict = odict()
-  #  copyDict._data = self._data.copy()
-  #  copyDict._keys = self._keys[:]
-  #  return copyDict
-
-  #def log_dump(self):
-  #  log.debug('#' * 79)
-  #  log.debug('Cache:')
-  #  util.log_dump(self._data)
-  #  log.debug('#' * 79)
-
   def _delete_oldest_file(self):
     # The resolution of mtime is 1 second. There is another field with
     # nanosecond resolution, but I'm not sure if it's cross platform. Since it

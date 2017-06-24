@@ -323,25 +323,6 @@ def strip_node_list(etree_obj):
   for node_el in etree_obj.findall('node'):
     strip_node(node_el)
 
-    #  if event_el.text not in
-    #  print event_el.text
-    #  if series_id_el is not None:
-    #    print series_id_el
-    #  for parent_el in etree_obj.find('seriesIdx/..', NS):
-    #  etree_obj.remove()
-    # etree_obj.remove(etree_obj.find('seriesIdx', NS))
-    #  for el in etree_obj.findall('accessPolicy', NS):
-    #    print '2'*100
-    #    print el
-    #    for allow_el in el.findall('allow'):
-    #      print '3'*100
-    #      print allow_el
-    #      el.remove(allow_el)
-    #      # print allow_el
-    #    # el.pa
-    #    # print el.find("..")
-    #    # el.find("..").remove(el)
-
 
 def v2_0_tag(element_name):
   return '{{{}}}{}'.format(NS_DICT['v2'], element_name)

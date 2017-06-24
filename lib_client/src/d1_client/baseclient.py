@@ -139,18 +139,14 @@ class DataONEBaseClient(
 
   def _raise_service_failure_invalid_content_type(self, response):
     self._raise_service_failure(
-      response, 'Node responded with a valid status code but failed to '
-      'include the expected Content-Type'
+      response, 'Response did not contain the expected Content-Type'
     )
 
   def _raise_service_failure_invalid_dataone_type(
       self, response, deserialize_exception
   ):
     msg = StringIO.StringIO()
-    msg.write(
-      'Node responded with a valid status code but failed to include a valid '
-      'DataONE type in the response body. '
-    )
+    msg.write('Response did not contain a valid DataONE type')
     msg.write('Deserialize exception: {}'.format(str(deserialize_exception)))
     self._raise_service_failure(response, msg.getvalue())
 

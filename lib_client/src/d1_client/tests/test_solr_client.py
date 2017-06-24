@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2016 DataONE
+#   Copyright 2009-2017 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ TODO: Create Solr mockup
 """
 from __future__ import absolute_import
 
+import d1_common.const
 import d1_common.util
 
 import d1_test.d1_test_case
@@ -71,11 +72,9 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   def test_1020(self):
     """search(): Query returns valid dict"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    solr_dict = solr_client.search(q='id:2yt87y0n9f3t8450')
+    solr_dict = solr_client.search(q='id:invalid_solr_record_id')
     self._delete_volatile_keys(solr_dict)
-    d1_test.sample.assert_equals(
-      solr_dict, 'solr_client_query_returns_valid_dict'
-    )
+    self.sample.assert_equals(solr_dict, 'solr_client_query_returns_valid_dict')
 
   # count()
 
@@ -83,7 +82,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """count(): Query returns valid count"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     obj_count = solr_client.count(q='id:abc*')
-    d1_test.sample.assert_equals(
+    self.sample.assert_equals(
       obj_count, 'solr_client_query_returns_valid_count'
     )
 
@@ -94,7 +93,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.get_ids(q='id:abc*')
     self._delete_volatile_keys(solr_dict)
-    d1_test.sample.assert_equals(solr_dict, 'solr_client_returns_list_of_ids')
+    self.sample.assert_equals(solr_dict, 'solr_client_returns_list_of_ids')
 
   # get_field_values()
 
@@ -103,7 +102,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.get_field_values('formatId', q='*abc*')
     self._delete_volatile_keys(solr_dict)
-    d1_test.sample.assert_equals(
+    self.sample.assert_equals(
       solr_dict, 'solr_client_returns_unique_field_values'
     )
 
@@ -112,8 +111,10 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   def test_1060(self):
     """get_field_min_max(): Query returns min and max field values"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    min_max_tup = solr_client.get_field_min_max('formatId', q='*abc*')
-    d1_test.sample.assert_equals(
+    min_max_tup = solr_client.get_field_min_max(
+      'formatId', q='*abc*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]'
+    )
+    self.sample.assert_equals(
       min_max_tup, 'solr_client_returns_min_and_max_field_values'
     )
 
@@ -123,9 +124,10 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """field_alpha_histogram(): Query returns histogram"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     bin_list = solr_client.field_alpha_histogram(
-      'formatId', q='*abc*', n_bins=10
+      'formatId', q='*abc*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]',
+      n_bins=10
     )
-    d1_test.sample.assert_equals(bin_list, 'solr_client_returns_histogram')
+    self.sample.assert_equals(bin_list, 'solr_client_returns_histogram')
 
   #=============================================================================
   # SolrSearchResponseIterator()
@@ -137,13 +139,14 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
       client, q='id:ark:/13030/m5s46rt1/2/cadwsap-s3100027-004.pdf', page_size=5
     )
     solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
-    d1_test.sample.assert_equals(solr_list, 'solr_client_iterator_query_1')
+    self.sample.assert_equals(solr_list, 'solr_client_iterator_query_1')
 
   def test_1090(self):
     """SolrSearchResponseIterator(): Query 2"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
-      client, q='*:*', fields='abstract,author,date', page_size=5
+      client, q='*:*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]',
+      fields='abstract,author,date', page_size=5
     )
     self._assert_at_least_one_populated_row(solr_iter)
 
@@ -153,6 +156,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
       client, q='*:*', page_size=5, field='size'
     )
+    i = 0
     for i, record_dict in enumerate(solr_iter):
       assert isinstance(record_dict, dict)
     assert i > 1
@@ -164,7 +168,8 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """SolrValuesResponseIterator(): Query 1"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
-      client, field='formatId', q='*:*', page_size=5
+      client, field='formatId', q='*:*',
+      fq='updateDate:[* TO 2016-12-31T23:59:59Z]', page_size=5
     )
     assert len(list(solr_iter)) > 1
 
@@ -181,10 +186,8 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """SolrValuesResponseIterator(): Query 3"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
-      client,
-      field='size',
-      q='*:*',
-      page_size=5,
+      client, field='size', q='*:*',
+      fq='updateDate:[* TO 2016-12-31T23:59:59Z]', page_size=5
     )
     i = 0
     for i, record_dict in enumerate(solr_iter):

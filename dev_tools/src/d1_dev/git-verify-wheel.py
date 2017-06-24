@@ -88,8 +88,6 @@ def check(setup_path, wheel_path):
   #   for abs_untracked_path in abs_untracked_path_list:
   #     logging.debug(abs_untracked_path)
 
-  # logging.debug('#'*100)
-
   packaged_path_list = get_packaged_files(wheel_path)
   abs_packaged_path_list = [
     os.path.join(setup_dir_path, p) for p in packaged_path_list

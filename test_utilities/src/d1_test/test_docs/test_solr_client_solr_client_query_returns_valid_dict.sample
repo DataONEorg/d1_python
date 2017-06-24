@@ -6,7 +6,7 @@
   }, 
   "responseHeader": {
     "params": {
-      "q": "id:2yt87y0n9f3t8450", 
+      "q": "id:invalid_solr_record_id", 
       "wt": "json"
     }, 
     "status": 0

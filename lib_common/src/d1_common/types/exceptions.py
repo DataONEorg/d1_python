@@ -188,7 +188,6 @@ class DataONEException(Exception):
     self.nodeId = nodeId
 
   def __repr__(self):
-    logging.error('7' * 100)
     for attr_str in [
         'errorCode', 'detailCode', 'description', 'identifier', 'nodeId',
         'traceInformation'
@@ -206,7 +205,6 @@ class DataONEException(Exception):
     )
 
     logging.error(s)
-    logging.error('8' * 100)
     return s
 
   def __str__(self):
@@ -219,26 +217,6 @@ class DataONEException(Exception):
       line 2
     Msg is truncated to 1024 chars.
     """
-
-    # def fmt(tag, msg):
-    #   if msg is None:
-    #     return
-    #   # assert isinstance(tag, unicode)
-    #   # assert isinstance(msg, unicode)
-    #   if isinstance(msg, unicode):
-    #     msg = msg.encode('utf-8')
-    #   elif not isinstance(msg, basestring):
-    #     msg = str(msg)
-    #   msg = msg.strip()
-    #   if not msg:
-    #     return
-    #   if len(msg) > 1024:
-    #     msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
-    #   elif msg.count('\n') <= 1:
-    #     return '{0}: {1}\n'.format(tag, msg.strip())
-    #   else:
-    #     return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
-
     msg = StringIO.StringIO()
     msg.write(self.fmt('name', self.name))
     msg.write(self.fmt('errorCode', self.errorCode))
@@ -261,9 +239,9 @@ class DataONEException(Exception):
     msg = msg.strip()
     if not msg:
       return
-    if len(msg) > 1024:
+    if len(msg) > 2048:
       msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
-    elif msg.count('\n') <= 1:
+    if msg.count('\n') <= 1:
       return '{}: {}\n'.format(tag, msg.strip())
     else:
       return '{}:\n  {}\n'.format(tag, msg.replace('\n', '\n  ').strip())

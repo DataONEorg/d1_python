@@ -7,6 +7,7 @@ See the [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/l
 
 [![Build Status](https://travis-ci.org/DataONEorg/d1_python.svg?branch=master)](https://travis-ci.org/DataONEorg/d1_python)
 [![Coverage Status](https://coveralls.io/repos/github/DataONEorg/d1_python/badge.svg?branch=master)](https://coveralls.io/github/DataONEorg/d1_python?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/dataone-python/badge/?version=latest)](http://dataone-python.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/dataone.common.svg)](https://badge.fury.io/py/dataone.common)
 
 ### v2 and v1 API

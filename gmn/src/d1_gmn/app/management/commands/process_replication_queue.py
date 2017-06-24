@@ -95,7 +95,7 @@ class ReplicationQueueProcessor(object):
     self._remove_completed_requests_from_queue()
 
   def _process_replication_request(self, queue_model):
-    logging.info(u'-' * 79)
+    logging.info('-' * 100)
     logging.info(
       u'Processing PID: {}'.format(queue_model.local_replica.pid.did)
     )

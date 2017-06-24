@@ -31,7 +31,7 @@ import pprint
 
 
 def log_dump(s):
-  logging.debug('-' * 79)
+  logging.debug('-' * 100)
   logging.debug('{}: {}'.format(s, pprint.pformat(s)))
 
 

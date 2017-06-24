@@ -83,7 +83,7 @@ class SysMetaRefreshQueueProcessor(object):
     self._remove_completed_requests_from_queue()
 
   def _process_refresh_request(self, queue_model):
-    logging.info('-' * 79)
+    logging.info('-' * 100)
     logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid.did))
     try:
       self._refresh(queue_model)

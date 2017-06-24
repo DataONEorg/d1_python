@@ -48,12 +48,10 @@ def assert_equals(
   diff_str = _get_sxs_diff(got_str, exp_path)
   if diff_str is None:
     return
-
   logging.error(
-    '\n{0} Sample mismatch. GOT <-> EXPECTED {0}\n{1}'.
-    format('#' * 10, diff_str)
+    '\nSample file: {0}\n{1} Sample mismatch. GOT <-> EXPECTED {1}\n{2}'.
+    format(filename, '-' * 10, diff_str)
   )
-
   if pytest.config.getoption('--update-samples'):
     _save_interactive(got_str, exp_path)
   else:
@@ -147,11 +145,18 @@ def _get_sxs_diff(got_str, exp_path):
   none-whitespace changes, else None.
   """
   try:
-    sdiff_proc = subprocess.Popen([
-      'sdiff', '--ignore-blank-lines', '--ignore-all-space', '--minimal',
-      '--width=160', '--tabsize=2', exp_path, '-'
-    ], bufsize=-1, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
+    sdiff_proc = subprocess.Popen(
+      [
+        'sdiff', '--ignore-blank-lines', '--ignore-all-space', '--minimal',
+        '--width=120', '--tabsize=2', '--strip-trailing-cr', '--expand-tabs',
+        exp_path, '-'
+        # '--suppress-common-lines'
+      ],
+      bufsize=-1,
+      stdin=subprocess.PIPE,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE
+    )
     out_str, err_str = sdiff_proc.communicate(got_str)
   except OSError as e:
     raise AssertionError(

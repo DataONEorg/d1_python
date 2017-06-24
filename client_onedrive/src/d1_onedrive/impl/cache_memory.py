@@ -72,10 +72,10 @@ class Cache(dict):
     return copyDict
 
   def log_dump(self):
-    log.debug('#' * 79)
+    log.debug('-' * 100)
     log.debug('Cache:')
     util.log_dump(self._data)
-    log.debug('#' * 79)
+    log.debug('-' * 100)
 
   # Private.
 
