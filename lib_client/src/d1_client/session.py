@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 
 import collections
+import copy
 import datetime
 import logging
 import os
@@ -47,7 +48,7 @@ UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 class Session(object):
   def __init__(
-      self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs_dict
+      self, base_url, cert_pub_path=None, cert_key_path=None, **kwargs_dict
   ):
     """The Session improves performance by keeping connection related state and
     allowing it to be reused in multiple API calls to a DataONE Coordinating
@@ -67,8 +68,8 @@ class Session(object):
     :param base_url: DataONE Node REST service BaseURL.
     :type host: string
 
-    :param cert_pem_path: Path to a PEM formatted certificate file.
-    :type cert_pem_path: string
+    :param cert_pub_path: Path to a PEM formatted certificate file.
+    :type cert_pub_path: string
 
     :param cert_key_path: Path to a PEM formatted file that contains the private
       key for the certificate file. Only required if the certificate file does
@@ -157,10 +158,10 @@ class Session(object):
     self._default_request_arg_dict.update(kwargs_dict)
     # Requests wants cert path as string if single file and tuple if cert/key
     # pair.
-    if cert_pem_path is not None:
+    if cert_pub_path is not None:
       self._default_request_arg_dict['cert'] = (
-        cert_pem_path, cert_key_path
-        if cert_key_path is not None else cert_pem_path
+        cert_pub_path, cert_key_path
+        if cert_key_path is not None else cert_pub_path
       )
     self._session = self._create_requests_session()
 
@@ -290,7 +291,7 @@ class Session(object):
     }
     kwargs_dict.update(kwargs_in_dict)
     kwargs_dict = self._remove_none_value_items(kwargs_dict)
-    result_dict = self._default_request_arg_dict.copy()
+    result_dict = copy.deepcopy(self._default_request_arg_dict)
     self.nested_update(result_dict, kwargs_dict)
     return result_dict
 
