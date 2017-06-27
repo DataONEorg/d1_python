@@ -156,7 +156,7 @@ def set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
     override_value = None
     if is_trusted_from_client:
       override_value = (
-        d1_gmn.app.util.get_value(sysmeta_pyxb, attr_str)
+        d1_common.xml.get_value(sysmeta_pyxb, attr_str)
         if is_simple_content else getattr(sysmeta_pyxb, attr_str, None)
       )
     setattr(sysmeta_pyxb, attr_str, override_value or default_value)

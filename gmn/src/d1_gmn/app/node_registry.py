@@ -28,7 +28,7 @@ from __future__ import absolute_import
 
 import logging
 
-import d1_gmn.app.util
+import d1_common.xml
 
 import d1_client.cnclient
 
@@ -96,7 +96,7 @@ def get_cn_subjects_from_dataone_root():
       for service in services:
         if service.name == 'CNCore':
           for subject in node.subject:
-            cn_subjects.add(d1_gmn.app.util.uvalue(subject))
+            cn_subjects.add(d1_common.xml.uvalue(subject))
           break
   return cn_subjects
 

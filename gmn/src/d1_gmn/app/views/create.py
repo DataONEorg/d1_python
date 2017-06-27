@@ -27,6 +27,7 @@ import d1_gmn.app.util
 import d1_gmn.app.views.asserts
 
 import d1_common.url
+import d1_common.xml
 
 import django.core.files.move
 
@@ -48,13 +49,13 @@ def create(request, sysmeta_pyxb):
     d1_gmn.app.views.asserts.url_is_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
-    pid = d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+    pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     _object_pid_post_store_local(request, pid)
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
   # Log the create event for this object.
   d1_gmn.app.event_log.create(
-    d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier), request,
+    d1_common.xml.uvalue(sysmeta_pyxb.identifier), request,
     timestamp=sysmeta_pyxb.dateUploaded
   )
 

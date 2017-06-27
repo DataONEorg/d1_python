@@ -27,6 +27,7 @@ import d1_gmn.app.models
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.xml
 
 import django.conf
 from django.db.models import Sum
@@ -95,7 +96,7 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
     source_node_urn=source_node_urn,
   )
   local_replica_model = d1_gmn.app.models.local_replica(
-    pid=d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier),
+    pid=d1_common.xml.uvalue(sysmeta_pyxb.identifier),
     replica_info_model=replica_info_model,
   )
   d1_gmn.app.models.replication_queue(
@@ -140,7 +141,7 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept replicas from originating node. '
         u'originating_node="{}"'.
-        format(d1_gmn.app.util.uvalue(sysmeta_pyxb.originMemberNode))
+        format(d1_common.xml.uvalue(sysmeta_pyxb.originMemberNode))
       )
 
   if len(django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
@@ -148,5 +149,5 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
     ) not in django.conf.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept objects of specified format. format="{}"'
-        .format(d1_gmn.app.util.uvalue(sysmeta_pyxb.formatId))
+        .format(d1_common.xml.uvalue(sysmeta_pyxb.formatId))
       )

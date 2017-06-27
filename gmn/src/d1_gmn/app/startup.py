@@ -61,14 +61,14 @@ class GMNStartupChecks(django.apps.AppConfig):
         )
 
   def _check_cert_file(self, cert_pem_setting):
-    cert_pem_path = getattr(django.conf.settings, cert_pem_setting, None)
-    if cert_pem_path is None:
+    cert_pub_path = getattr(django.conf.settings, cert_pem_setting, None)
+    if cert_pub_path is None:
       logging.warn(
         'Certificate path not set. setting="{}"'.format(cert_pem_setting)
       )
       return
     try:
-      d1_gmn.app.util.assert_readable_file(cert_pem_path)
+      d1_gmn.app.util.assert_readable_file(cert_pub_path)
     except ValueError as e:
       raise django.core.exceptions.ImproperlyConfigured(
         u'Configuration error: Invalid certificate path. '

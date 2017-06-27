@@ -27,6 +27,8 @@ import d1_gmn.app.auth
 import d1_gmn.app.models
 import d1_gmn.app.util
 
+import d1_common.xml
+
 # PyXB
 
 
@@ -35,7 +37,7 @@ def has_sid(sysmeta_pyxb):
 
 
 def get_sid(sysmeta_pyxb):
-  return d1_gmn.app.util.get_value(sysmeta_pyxb, 'seriesId')
+  return d1_common.xml.get_value(sysmeta_pyxb, 'seriesId')
 
 
 # DB updates

@@ -51,6 +51,7 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
+import d1_common.xml
 
 import d1_client.cnclient
 import d1_client.object_format_info
@@ -707,7 +708,7 @@ def post_replicate(request):
   d1_gmn.app.local_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )
-  pid = d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+  pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
   d1_gmn.app.views.asserts.is_unused(pid)
   d1_gmn.app.local_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb

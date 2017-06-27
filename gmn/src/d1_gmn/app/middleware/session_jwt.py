@@ -51,10 +51,6 @@ def validate_jwt_and_get_subject_list(request):
   ]
 
 
-def get_subject_list_without_validate(jwt_b64):
-  return d1_common.cert.jwt.get_subject_list_without_validate(jwt_b64)
-
-
 def _has_jwt_header(request):
   return 'Authorization' in request.META
 

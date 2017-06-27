@@ -44,6 +44,7 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types
 import d1_common.types.exceptions
+import d1_common.xml
 
 import django.conf
 
@@ -118,8 +119,8 @@ def does_not_contain_replica_sections(sysmeta_pyxb):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'A replica section was included. A new object object created via '
       u'create() or update() cannot already have replicas. pid="{}"'.
-      format(d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)),
-      identifier=d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+      format(d1_common.xml.uvalue(sysmeta_pyxb.identifier)),
+      identifier=d1_common.xml.uvalue(sysmeta_pyxb.identifier)
     )
 
 
@@ -131,8 +132,8 @@ def sysmeta_is_not_archived(sysmeta_pyxb):
       0,
       u'Archived flag was set. A new object created via create() or update() '
       u'cannot already be archived. pid="{}"'.format(
-        d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
-      ), identifier=d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+        d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+      ), identifier=d1_common.xml.uvalue(sysmeta_pyxb.identifier)
     )
 
 
@@ -180,7 +181,7 @@ def is_not_archived(pid):
 
 
 def has_matching_modified_timestamp(new_sysmeta_pyxb):
-  pid = d1_gmn.app.util.uvalue(new_sysmeta_pyxb.identifier)
+  pid = d1_common.xml.uvalue(new_sysmeta_pyxb.identifier)
   old_sysmeta_model = d1_gmn.app.util.get_sci_model(pid)
   old_ts = old_sysmeta_model.modified_timestamp
   new_ts = new_sysmeta_pyxb.dateSysMetadataModified
@@ -224,12 +225,12 @@ def obsoletes_not_specified(sysmeta_pyxb):
 
 def obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid):
   if sysmeta_pyxb.obsoletes is not None:
-    if d1_gmn.app.util.uvalue(sysmeta_pyxb.obsoletes) != old_pid:
+    if d1_common.xml.uvalue(sysmeta_pyxb.obsoletes) != old_pid:
       raise d1_common.types.exceptions.InvalidSystemMetadata(
         0, u'Persistent ID (PID) specified in System Metadata "obsoletes" '
         u'field does not match PID specified in URL. '
         u'sysmeta_pyxb="{}", url="{}"'.format(
-          d1_gmn.app.util.uvalue(sysmeta_pyxb.obsoletes), old_pid
+          d1_common.xml.uvalue(sysmeta_pyxb.obsoletes), old_pid
         )
       )
 
@@ -248,7 +249,7 @@ def is_in_revision_chain(pid):
 
 
 def _check_pid_exists_if_specified(sysmeta_pyxb, sysmeta_attr):
-  pid = d1_gmn.app.util.get_value(sysmeta_pyxb, sysmeta_attr)
+  pid = d1_common.xml.get_value(sysmeta_pyxb, sysmeta_attr)
   if pid is None:
     return
   if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
@@ -358,7 +359,7 @@ def url_is_retrievable(url):
 
 
 def url_pid_matches_sysmeta(sysmeta_pyxb, pid):
-  sysmeta_pid = d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+  sysmeta_pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
   if sysmeta_pid != pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
