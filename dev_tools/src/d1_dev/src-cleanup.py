@@ -39,11 +39,11 @@ import logging
 import os
 import re
 
-import d1_dev.file_iterator
 import d1_dev.util
 import redbaron
 import redbaron.nodes
 
+import d1_common.file_iterator
 import d1_common.util
 
 # Single line comments containing these strings will not be removed.
@@ -112,7 +112,7 @@ def main():
 
   event_counter = d1_common.util.EventCounter()
 
-  for module_path in d1_dev.file_iterator.file_iter(
+  for module_path in d1_common.file_iterator.file_iter(
       path_list=args.path,
       include_glob_list=['*.py'] if not args.include else args.include,
       exclude_glob_list=args.exclude,

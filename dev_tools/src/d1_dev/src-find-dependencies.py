@@ -39,9 +39,9 @@ import logging
 
 import pip
 
-import d1_dev.file_iterator as file_iterator
 import d1_dev.util
 
+import d1_common.file_iterator as file_iterator
 import d1_common.util
 
 

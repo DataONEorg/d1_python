@@ -34,9 +34,9 @@ from __future__ import absolute_import
 import argparse
 import logging
 
-import d1_dev.file_iterator
 import d1_dev.util
 
+import d1_common.file_iterator
 import d1_common.util
 
 
@@ -79,7 +79,7 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for module_path in d1_dev.file_iterator.file_iter(
+  for module_path in d1_common.file_iterator.file_iter(
       path_list=[args.path],
       include_glob_list=['test_*.py'],
       exclude_glob_list=args.exclude,
