@@ -183,7 +183,7 @@ def file_iter(
       else:
         # Single directory search
         file_path_iter = os.listdir(path)
-      skip_dir = next(file_path_iter)
+      skip_dir = yield next(file_path_iter)
       while True:
         file_or_dir_path = file_path_iter.send(skip_dir)
         file_or_dir_name = os.path.split(file_or_dir_path)[1]
