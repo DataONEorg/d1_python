@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>38</serialVersion>
+  <identifier>an_unchanging_pid</identifier>
+  <formatId>application/mathematica</formatId>
+  <size>255</size>
+  <checksum algorithm="SHA-1">97acc710723b02c8d3b6273705e94b56e6b445f9</checksum>
+  <submitter>subj_s</submitter>
+  <rightsHolder>subj_gu</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_bg</subject>
+      <subject>subj_tp</subject>
+      <subject>subj_fr_group</subject>
+      <subject>subj_ze</subject>
+      <subject>subj_nt</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_or</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>2007-01-12T04:14:20Z</dateUploaded>
+  <dateSysMetadataModified>2007-01-22T04:14:20Z</dateSysMetadataModified>
+  <originMemberNode>mn_fd</originMemberNode>
+  <authoritativeMemberNode>mn_yw</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_sp</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2260-06-16T00:40:08.0004Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_e</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2280-03-04T07:50:43.000103Z</replicaVerified>
+  </replica>
+</ns1:systemMetadata>

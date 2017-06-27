@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>PID_zgxmjjxhpm_1977-05-27_00:00:00</identifier>
+  <formatId>application/octet-stream</formatId>
+  <size>279</size>
+  <checksum algorithm="MD5">3bcd812fde3c26ff58a86d890011b97d</checksum>
+  <submitter>submitter_subj</submitter>
+  <rightsHolder>rights_holder_subj</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj1</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj4</subject>
+      <subject>subj3</subject>
+      <subject>subj2</subject>
+      <permission>read</permission>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj5</subject>
+      <subject>subj7</subject>
+      <subject>subj6</subject>
+      <subject>subj8</subject>
+      <permission>read</permission>
+      <permission>changePermission</permission>
+    </allow>
+    <allow>
+      <subject>subj11</subject>
+      <subject>subj9</subject>
+      <subject>subj10</subject>
+      <subject>subj12</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="100" replicationAllowed="true"/>
+  <dateUploaded>1973-08-28T00:00:00</dateUploaded>
+  <dateSysMetadataModified>1973-08-28T00:00:00</dateSysMetadataModified>
+  <originMemberNode>urn:node:GMNUnitTestOrigin</originMemberNode>
+  <authoritativeMemberNode>urn:node:GMNUnitTestAuthoritative</authoritativeMemberNode>
+</ns1:systemMetadata>

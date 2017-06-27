@@ -1,0 +1,15 @@
+{
+  "request": {
+    "endpoint_str": "views", 
+    "param_list": [], 
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v2.0", 
+    "query_dict": {}, 
+    "version_tag": "v2"
+  }, 
+  "wrapper": {
+    "class_name": "CoordinatingNodeClient_2_0", 
+    "expected_type": "OptionList", 
+    "received_303_redirect": false, 
+    "vendor_specific_dict": null
+  }
+}

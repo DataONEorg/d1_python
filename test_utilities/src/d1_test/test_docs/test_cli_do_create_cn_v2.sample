@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>1</serialVersion>
   <identifier>test_pid_burrito,carpingly,coloradoite</identifier>

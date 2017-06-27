@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>12</serialVersion>
+  <identifier>object#0000</identifier>
+  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+  <size>223</size>
+  <checksum algorithm="SHA-1">8dbd04cb51725de25325d0e580f437251b67a049</checksum>
+  <submitter>subj_bp</submitter>
+  <rightsHolder>subj_tg</rightsHolder>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_lk</preferredMemberNode>
+    <preferredMemberNode>mn_qk</preferredMemberNode>
+    <preferredMemberNode>mn_mc</preferredMemberNode>
+    <preferredMemberNode>mn_h</preferredMemberNode>
+    <blockedMemberNode>mn_d</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>1981-04-25T05:46:30Z</dateUploaded>
+  <dateSysMetadataModified>1981-05-05T05:46:30Z</dateSysMetadataModified>
+  <originMemberNode>mn_zy</originMemberNode>
+  <authoritativeMemberNode>mn_io</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_yx</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2209-07-23T14:23:37.000881Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_m</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2143-04-05T07:41:59.000758Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_m</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2245-04-03T01:30:30.000917Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_nk</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2280-08-26T08:05:11.000635Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_go</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2264-03-18T12:11:52.000311Z</replicaVerified>
+  </replica>
+  <seriesId>SID_nupddrcxvavs</seriesId>
+  <mediaType name="media_type_fm">
+    <property name="prop_vc">rr</property>
+    <property name="prop_tq">vh</property>
+  </mediaType>
+  <fileName>file_aer</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>71</serialVersion>
+  <identifier>object#0001</identifier>
+  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta4//EN</formatId>
+  <size>283</size>
+  <checksum algorithm="SHA-1">f73a8d3cac9b9677cc9758615e9aef8ecf0dff78</checksum>
+  <submitter>subj_h</submitter>
+  <rightsHolder>subj_r</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_sw</subject>
+      <subject>subj_td</subject>
+      <subject>subj_sc_group</subject>
+      <subject>subj_iy</subject>
+      <subject>subj_fp_group</subject>
+      <permission>write</permission>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_wo</subject>
+      <subject>subj_uj</subject>
+      <subject>subj_an</subject>
+      <permission>write</permission>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="5" replicationAllowed="true">
+    <preferredMemberNode>mn_qk</preferredMemberNode>
+    <preferredMemberNode>mn_em</preferredMemberNode>
+    <preferredMemberNode>mn_p</preferredMemberNode>
+    <preferredMemberNode>mn_ds</preferredMemberNode>
+    <blockedMemberNode>mn_l</blockedMemberNode>
+    <blockedMemberNode>mn_ew</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>2040-10-13T15:31:00Z</dateUploaded>
+  <dateSysMetadataModified>2040-10-23T15:31:00Z</dateSysMetadataModified>
+  <originMemberNode>mn_yj</originMemberNode>
+  <authoritativeMemberNode>mn_tq</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_m</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2173-04-14T00:09:24.000925Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_d</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2210-02-14T14:36:21.000604Z</replicaVerified>
+  </replica>
+  <mediaType name="media_type_ax">
+    <property name="prop_at">mf</property>
+  </mediaType>
+  <fileName>file_igx</fileName>
+</ns1:systemMetadata>

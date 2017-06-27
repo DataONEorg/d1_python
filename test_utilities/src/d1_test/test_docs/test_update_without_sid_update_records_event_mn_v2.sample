@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:log count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_doqnnxtyjwlj</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>2000-11-05T16:33:52</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_doqnnxtyjwlj</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>update</event>
+    <dateLogged>1999-08-23T14:28:28</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+</ns1:log>

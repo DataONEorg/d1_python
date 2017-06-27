@@ -1,0 +1,752 @@
+[
+  {
+    "abstract": "Phred filtering code. To run, use the following:\n\"java -jar PhredFilter.jar <input.fq file> <output file> <threshold>\"\nFor example: java -jar PhredFilter.jar TGACCA1.fq TGACCA1_out.fq 30\nThe output file will be P30_TGACCA1_out.fq", 
+    "author": "Salehi, Faezeh", 
+    "authorGivenName": "Faezeh", 
+    "authorSurName": "Salehi", 
+    "authorSurNameSort": "Salehi", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "08f8a06299f26bc5874fe7c29efac173", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.mv827%2F14%3Fver%3D2015-02-23T12%3A05%3A53.933-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2015-02-23T17:06:34.084Z", 
+    "datePublished": "2015-02-23T17:05:50Z", 
+    "dateUploaded": "2015-02-23T17:05:50Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.mv827%2F14%3Fver%3D2015-02-23T12%3A05%3A53.933-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.mv827/14?ver=2015-02-23T12:05:53.933-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.mv827/14?ver=2015-02-23T12:05:53.933-05:00", 
+    "investigator": [
+      "Salehi, Faezeh", 
+      "Baronio, Roberta", 
+      "Idrogo-Lam, Ryan", 
+      "Vu, Huy", 
+      "Hall, Linda V.", 
+      "Kaiser, Peter", 
+      "Lathrop, Richard, H."
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.mv827?ver=2015-02-23T12:05:05.276-05:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "NGS", 
+      "Next Generation Sequencing", 
+      "Bioinformatics"
+    ], 
+    "origin": [
+      "Salehi, Faezeh", 
+      "Baronio, Roberta", 
+      "Idrogo-Lam, Ryan", 
+      "Vu, Huy", 
+      "Hall, Linda V.", 
+      "Kaiser, Peter", 
+      "Lathrop, Richard, H."
+    ], 
+    "pubDate": "2015-02-23T17:05:50Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2015-02-23T17:06:32.613Z", 
+      "2015-02-23T17:06:32.683Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.mv827?format=d1rem&ver=2015-02-23T12:05:05.276-05:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "serviceCoupling": "false", 
+    "size": 2142, 
+    "submitter": "salehi.faezeh@gmail.com", 
+    "title": "PhredFilter", 
+    "updateDate": "2015-02-23T17:05:50Z"
+  }, 
+  {
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "d845131d549ba11bace5ded0a04ecf29", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F18%3Fver%3D2016-01-28T10%3A59%3A27.564-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2016-01-28T15:59:27.564Z", 
+    "datePublished": "2016-01-28T15:58:46Z", 
+    "dateUploaded": "2016-01-28T15:58:46Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F18%3Fver%3D2016-01-28T10%3A59%3A27.564-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/18?ver=2016-01-28T10:59:27.564-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/18?ver=2016-01-28T10:59:27.564-05:00", 
+    "investigator": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
+    ], 
+    "origin": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "pubDate": "2016-01-28T15:58:46Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2016-02-02T21:32:01.504Z", 
+      "2016-02-02T21:32:05.661Z"
+    ], 
+    "replicationAllowed": false, 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Bacteria"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1937, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "SNBWAL_2.fq", 
+    "updateDate": "2016-01-28T15:58:46Z"
+  }, 
+  {
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "d845131d549ba11bace5ded0a04ecf29", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F18%3Fver%3D2016-02-15T13%3A23%3A13.763-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2016-02-15T18:23:13.763Z", 
+    "datePublished": "2016-01-28T15:58:46Z", 
+    "dateUploaded": "2016-01-28T15:58:46Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F18%3Fver%3D2016-02-15T13%3A23%3A13.763-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/18?ver=2016-02-15T13:23:13.763-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/18?ver=2016-02-15T13:23:13.763-05:00", 
+    "investigator": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.9ng87?ver=2016-09-27T18:07:03.275-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
+    ], 
+    "origin": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "pubDate": "2016-01-28T15:58:46Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2016-02-15T18:24:30.322Z", 
+      "2016-02-15T18:24:30.494Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.9ng87?format=d1rem&ver=2016-09-27T18:07:03.275-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Bacteria"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1937, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "SNBWAL_2.fq", 
+    "updateDate": "2016-01-28T15:58:46Z"
+  }, 
+  {
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "fa67f6e9b9fad136369f14d57fc48111", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F17%3Fver%3D2016-01-28T10%3A59%3A25.609-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2016-01-28T15:59:25.609Z", 
+    "datePublished": "2016-01-28T15:58:45Z", 
+    "dateUploaded": "2016-01-28T15:58:45Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F17%3Fver%3D2016-01-28T10%3A59%3A25.609-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/17?ver=2016-01-28T10:59:25.609-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/17?ver=2016-01-28T10:59:25.609-05:00", 
+    "investigator": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.9ng87?ver=2016-09-27T18:07:03.275-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
+    ], 
+    "origin": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "pubDate": "2016-01-28T15:58:45Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2016-02-02T21:32:05.84Z", 
+      "2016-02-02T21:32:07.617Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.9ng87?format=d1rem&ver=2016-09-27T18:07:03.275-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Bacteria"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1939, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "SNBW-Al_1.fq", 
+    "updateDate": "2016-01-28T15:58:45Z"
+  }, 
+  {
+    "abstract": "Perl script to filter raw illumina reads by name and length. Written by Stefan Kaluziak. Please contact Nathaniel Chu (nathanieldchu@gmail.com) for more information.", 
+    "author": "Chu, Nathaniel", 
+    "authorGivenName": "Nathaniel", 
+    "authorSurName": "Chu", 
+    "authorSurNameSort": "Chu", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "1297f8ed3ccda7c4549a54aa2d163528", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.610dd%2F13%3Fver%3D2014-01-29T10%3A41%3A30.987-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2014-02-22T12:11:09.402Z", 
+    "datePublished": "2014-01-22T20:46:05Z", 
+    "dateUploaded": "2014-01-22T20:46:05Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.610dd%2F13%3Fver%3D2014-01-29T10%3A41%3A30.987-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.610dd/13?ver=2014-01-29T10:41:30.987-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.610dd/13?ver=2014-01-29T10:41:30.987-05:00", 
+    "investigator": [
+      "Chu, Nathaniel", 
+      "Kaluziak, Stefan", 
+      "Trussell, Geoffrey", 
+      "Vollmer, Steven"
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.610dd?ver=2014-01-29T10:41:31.019-05:00", 
+      "http://dx.doi.org/10.5061/dryad.610dd?ver=2014-03-26T16:33:42.441-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Ecological Genetics", 
+      "Phylogeography", 
+      "Population Genetics - Empirical", 
+      "Molluscs"
+    ], 
+    "origin": [
+      "Chu, Nathaniel", 
+      "Kaluziak, Stefan", 
+      "Trussell, Geoffrey", 
+      "Vollmer, Steven"
+    ], 
+    "pubDate": "2014-01-22T20:46:05Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2014-02-22T12:11:08.532Z", 
+      "2014-02-22T12:11:08.611Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.610dd?format=d1rem&ver=2014-01-29T10:41:31.019-05:00", 
+      "http://dx.doi.org/10.5061/dryad.610dd?format=d1rem&ver=2014-03-26T16:33:42.441-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Nucella lapillus"
+    ], 
+    "serviceCoupling": "false", 
+    "site": [
+      "North Atlantic", 
+      "Northwestern Atlantic", 
+      "Rhode Island", 
+      "Massachusetts", 
+      "Maine", 
+      "Canada", 
+      "United States"
+    ], 
+    "size": 2236, 
+    "submitter": "nathanieldchu@gmail.com", 
+    "title": "filter_read_names.fq", 
+    "updateDate": "2014-01-22T20:46:05Z"
+  }, 
+  {
+    "abstract": "Compressed file containing Tomato SAM RNA-seq reads from HTR-method libraries (S_HTR_A5.fastq, S_HTR_A6.fastq, S_HTR_B6.fastq, S_HTR_B7.fastq)", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "42df93104e1883daae8b946b1d5876d9", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F2%3Fver%3D2015-05-15T15%3A07%3A54.117-04%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2015-05-15T19:09:48.165Z", 
+    "datePublished": "2015-05-15T19:01:31Z", 
+    "dateUploaded": "2015-05-15T19:01:31Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F2%3Fver%3D2015-05-15T15%3A07%3A54.117-04%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/2?ver=2015-05-15T15:07:54.117-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/2?ver=2015-05-15T15:07:54.117-04:00", 
+    "investigator": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
+    ], 
+    "origin": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "pubDate": "2015-05-15T19:01:31Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2015-05-15T19:09:46.775Z", 
+      "2015-05-15T19:09:46.837Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Solanum lycopersicum cv M82: LA3475"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1809, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "S_HTR.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:31Z"
+  }, 
+  {
+    "abstract": "Compressed file containing Tomato RNA-seq reads from BrAD-seq shotgun (SHO) type strand-specific libraries (SHO_22.fastq, SHO_23.fastq, SHO_24.fastq).", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "58ef0a9339abc7bb5b302369497ac9eb", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F1%3Fver%3D2015-05-15T15%3A06%3A44.757-04%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2015-05-15T19:09:46.444Z", 
+    "datePublished": "2015-05-15T19:01:28Z", 
+    "dateUploaded": "2015-05-15T19:01:28Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F1%3Fver%3D2015-05-15T15%3A06%3A44.757-04%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/1?ver=2015-05-15T15:06:44.757-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/1?ver=2015-05-15T15:06:44.757-04:00", 
+    "investigator": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
+    ], 
+    "origin": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "pubDate": "2015-05-15T19:01:28Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2015-05-15T19:09:45.044Z", 
+      "2015-05-15T19:09:45.116Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Solanum lycopersicum cv M82: LA3475"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1813, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "SHO.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:28Z"
+  }, 
+  {
+    "abstract": "Compressed file containing Tomato leaf RNA-seq reads from HTR-method libraries (L_HTR_A4.fastq, L_HTR_B5.fastq, L_HTR_C6.fastq, L_HTR_D7.fastq)", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "6e5e885ed406a57a485e23aa473ce46b", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F3%3Fver%3D2015-05-15T15%3A08%3A54.474-04%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2015-05-15T19:09:49.56Z", 
+    "datePublished": "2015-05-15T19:01:34Z", 
+    "dateUploaded": "2015-05-15T19:01:34Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F3%3Fver%3D2015-05-15T15%3A08%3A54.474-04%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/3?ver=2015-05-15T15:08:54.474-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/3?ver=2015-05-15T15:08:54.474-04:00", 
+    "investigator": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
+    ], 
+    "origin": [
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
+    ], 
+    "pubDate": "2015-05-15T19:01:34Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2015-05-15T19:09:48.03Z", 
+      "2015-05-15T19:09:48.113Z"
+    ], 
+    "replicationAllowed": false, 
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
+    ], 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Solanum lycopersicum cv M82: LA3475"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1810, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "L_HTR.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:34Z"
+  }, 
+  {
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "2e81ed9e70e003cd66884ea384117d59", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F16%3Fver%3D2016-01-28T10%3A59%3A23.647-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2016-01-28T15:59:23.647Z", 
+    "datePublished": "2016-01-28T15:58:44Z", 
+    "dateUploaded": "2016-01-28T15:58:44Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F16%3Fver%3D2016-01-28T10%3A59%3A23.647-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/16?ver=2016-01-28T10:59:23.647-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/16?ver=2016-01-28T10:59:23.647-05:00", 
+    "investigator": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
+    ], 
+    "origin": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "pubDate": "2016-01-28T15:58:44Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2016-02-02T21:31:48.614Z", 
+      "2016-02-02T21:31:55.952Z"
+    ], 
+    "replicationAllowed": false, 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Bacteria"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1945, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "S-brine-T_2.fq", 
+    "updateDate": "2016-01-28T15:58:44Z"
+  }, 
+  {
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
+    "authoritativeMN": "urn:node:DRYAD", 
+    "checksum": "616b5781e1c338eb9664cee3df86105a", 
+    "checksumAlgorithm": "MD5", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F15%3Fver%3D2016-01-28T10%3A59%3A21.630-05%3A00", 
+    "datasource": "urn:node:DRYAD", 
+    "dateModified": "2016-01-28T15:59:21.63Z", 
+    "datePublished": "2016-01-28T15:58:44Z", 
+    "dateUploaded": "2016-01-28T15:58:44Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F15%3Fver%3D2016-01-28T10%3A59%3A21.630-05%3A00", 
+    "formatId": "http://datadryad.org/profile/v3.1", 
+    "formatType": "METADATA", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/15?ver=2016-01-28T10:59:21.630-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/15?ver=2016-01-28T10:59:21.630-05:00", 
+    "investigator": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "isPublic": true, 
+    "isService": false, 
+    "keywords": [
+      "Adaptation", 
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
+    ], 
+    "origin": [
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
+    ], 
+    "pubDate": "2016-01-28T15:58:44Z", 
+    "readPermission": [
+      "public"
+    ], 
+    "replicaMN": [
+      "urn:node:DRYAD", 
+      "urn:node:CN"
+    ], 
+    "replicaVerifiedDate": [
+      "2016-02-02T21:31:46.739Z", 
+      "2016-02-02T21:31:47.838Z"
+    ], 
+    "replicationAllowed": false, 
+    "rightsHolder": "admin@datadryad.org", 
+    "scientificName": [
+      "Bacteria"
+    ], 
+    "serviceCoupling": "false", 
+    "size": 1945, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "S-brine-T_1.fq", 
+    "updateDate": "2016-01-28T15:58:44Z"
+  }
+]

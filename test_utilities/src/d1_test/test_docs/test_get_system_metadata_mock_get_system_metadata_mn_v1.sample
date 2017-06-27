@@ -1,16 +1,44 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>39</serialVersion>
   <identifier>test_pid</identifier>
-  <formatId>application/octet-stream</formatId>
-  <size>256</size>
-  <checksum algorithm="MD5">c9eac724393ba6423eb15c267a44b32b</checksum>
-  <rightsHolder>CN=First Last,O=Google,C=US,DC=cilogon,DC=org</rightsHolder>
+  <formatId>nexus/1997</formatId>
+  <size>247</size>
+  <checksum algorithm="SHA-1">c6be21e6c1764485898fb518fa4bffe6139f3e30</checksum>
+  <submitter>subj_e</submitter>
+  <rightsHolder>subj_m</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>public</subject>
+      <subject>subj_ba</subject>
+      <subject>subj_oc</subject>
+      <permission>write</permission>
       <permission>read</permission>
     </allow>
+    <allow>
+      <subject>subj_fh</subject>
+      <subject>subj_wn</subject>
+      <subject>subj_mr</subject>
+      <subject>subj_rg</subject>
+      <permission>write</permission>
+      <permission>changePermission</permission>
+    </allow>
   </accessPolicy>
-  <dateUploaded>1977-01-27T00:00:00</dateUploaded>
-  <dateSysMetadataModified>1977-01-27T00:00:00</dateSysMetadataModified>
+  <replicationPolicy numberReplicas="2" replicationAllowed="true">
+    <blockedMemberNode>mn_ru</blockedMemberNode>
+    <blockedMemberNode>mn_vr</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>2008-07-06T03:33:45Z</dateUploaded>
+  <dateSysMetadataModified>2008-07-16T03:33:45Z</dateSysMetadataModified>
+  <originMemberNode>mn_ou</originMemberNode>
+  <authoritativeMemberNode>mn_l</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_qg</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2064-12-26T07:18:17.000165Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_rp</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2247-01-29T02:43:51.000513Z</replicaVerified>
+  </replica>
 </ns1:systemMetadata>

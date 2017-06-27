@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:objectList count="21" start="0" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_qelfvswkfnch</identifier>
+    <formatId>http://www.cuahsi.org/waterML/1.0/</formatId>
+    <checksum algorithm="SHA-1">b6734cd59dd99971e9d24138c481c1aba9f71db6</checksum>
+    <dateSysMetadataModified>2069-10-06T08:24:19</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_wtextgajavne</identifier>
+    <formatId>application/x-python</formatId>
+    <checksum algorithm="SHA-1">5ea06ba1dfc8f667a5d85da73aace41a04214a6f</checksum>
+    <dateSysMetadataModified>2069-10-01T17:46:34</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_csqojkqmskud</identifier>
+    <formatId>application/x-python</formatId>
+    <checksum algorithm="SHA-1">7889b32b95262cbb6dc48a637df7c87baf868d16</checksum>
+    <dateSysMetadataModified>2069-09-26T10:48:48</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_gwbqjjglekmu</identifier>
+    <formatId>http://www.esri.com/metadata/esriprof80.dtd</formatId>
+    <checksum algorithm="SHA-1">d8deb806daeb2bbcdcb066da0d6602567c06ca69</checksum>
+    <dateSysMetadataModified>2069-09-16T14:09:32</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_xbyhhpaefqqb</identifier>
+    <formatId>application/MATLAB</formatId>
+    <checksum algorithm="SHA-1">0f0a5b420b22336026244c87ebec7f736ad50ca4</checksum>
+    <dateSysMetadataModified>2069-09-09T06:49:34</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_tlhwlucmairl</identifier>
+    <formatId>application/bagit-097</formatId>
+    <checksum algorithm="SHA-1">64d9164fd094a478e5a3f4dd833d6b8c6531d5b1</checksum>
+    <dateSysMetadataModified>2069-09-03T12:48:28</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_ddyldqvekepo</identifier>
+    <formatId>FGDC-STD-001-1998</formatId>
+    <checksum algorithm="SHA-1">fb6bc6fcc96173b6592f3d6e20ba5c4101210041</checksum>
+    <dateSysMetadataModified>2069-08-10T20:59:30</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_jwvuzjxjotxe</identifier>
+    <formatId>application/x-tar</formatId>
+    <checksum algorithm="SHA-1">c21f89bbd5f381f5b9958b142e6ef99ef434286b</checksum>
+    <dateSysMetadataModified>2069-06-12T10:45:57</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_dgytvrbcglgj</identifier>
+    <formatId>application/msword</formatId>
+    <checksum algorithm="SHA-1">992f23bd88e81797c5381be009935167480371b0</checksum>
+    <dateSysMetadataModified>2069-06-06T10:11:15</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_syodsircwhyl</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.0.1</formatId>
+    <checksum algorithm="SHA-1">cb0010ffbce4f2402a0f07edd699f4103e424748</checksum>
+    <dateSysMetadataModified>2069-05-07T04:27:59</dateSysMetadataModified>
+    <size>317</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_pzvhtvovbhju</identifier>
+    <formatId>FGDC-STD-001.1-1999</formatId>
+    <checksum algorithm="SHA-1">c87b84f8d31fc03a2ea6fca63bbffe0f2288e67a</checksum>
+    <dateSysMetadataModified>2068-11-10T17:57:03</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_duhbrmfnfdkv</identifier>
+    <formatId>http://www.esri.com/metadata/esriprof80.dtd</formatId>
+    <checksum algorithm="SHA-1">daf370c2840e08dba2f162f25a7e9af19d69bb3d</checksum>
+    <dateSysMetadataModified>2068-10-13T08:40:19</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_padmdudtwaey</identifier>
+    <formatId>-//ecoinformatics.org//eml-protocol-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">15ceba8d414f803ae93ee24c241665be76cb5cc8</checksum>
+    <dateSysMetadataModified>2068-07-07T19:57:17</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_xvctwothuhjp</identifier>
+    <formatId>application/x-python</formatId>
+    <checksum algorithm="SHA-1">a7b1d9800e39a24c58229804d788094f11cd5602</checksum>
+    <dateSysMetadataModified>2068-06-17T09:38:14</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_vzhpdurrdvjr</identifier>
+    <formatId>application/pdf</formatId>
+    <checksum algorithm="SHA-1">4c9553b23b4b16da6170df4a636eab388f98ab46</checksum>
+    <dateSysMetadataModified>2068-05-31T11:18:57</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_uilvnqzqfrbo</identifier>
+    <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+    <checksum algorithm="SHA-1">5d3aeb6f50cde482c37267a89e3fb9e1aeabc0d5</checksum>
+    <dateSysMetadataModified>2068-04-30T00:37:52</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_htqgspmspdtt</identifier>
+    <formatId>image/gif</formatId>
+    <checksum algorithm="SHA-1">23368462e209335f80b1f3edccaf0c72dccc624c</checksum>
+    <dateSysMetadataModified>2068-02-03T13:57:58</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_udoasazpxfuf</identifier>
+    <formatId>-//ecoinformatics.org//eml-protocol-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">fc9e17c81ba73e81b2f08832d747b99cb65b0385</checksum>
+    <dateSysMetadataModified>2067-12-26T01:29:39</dateSysMetadataModified>
+    <size>316</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_tpsobdabifks</identifier>
+    <formatId>text/html</formatId>
+    <checksum algorithm="SHA-1">87c6830dc5ce9ccf1daba208d10b5bdccf4f7003</checksum>
+    <dateSysMetadataModified>2067-12-22T16:06:52</dateSysMetadataModified>
+    <size>315</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_vssxyercqydl</identifier>
+    <formatId>http://www.icpsr.umich.edu/DDI</formatId>
+    <checksum algorithm="SHA-1">11f40353e080fa8e872caa36b7c61170a04bd725</checksum>
+    <dateSysMetadataModified>2067-05-28T02:17:21</dateSysMetadataModified>
+    <size>315</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_wmqrpwaszhog</identifier>
+    <formatId>http://ns.dataone.org/metadata/schema/onedcx/v1.0</formatId>
+    <checksum algorithm="SHA-1">54464d704792c2704e4c9bd980125929d82d1c12</checksum>
+    <dateSysMetadataModified>2067-02-23T16:56:35</dateSysMetadataModified>
+    <size>315</size>
+  </objectInfo>
+</ns1:objectList>

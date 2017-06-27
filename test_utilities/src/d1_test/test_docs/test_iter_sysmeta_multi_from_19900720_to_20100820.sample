@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>25</serialVersion>
+  <identifier>object#0015</identifier>
+  <formatId>text/turtle</formatId>
+  <size>236</size>
+  <checksum algorithm="SHA-1">0f142c754ec44ea99b5f1cc18264807bb777567d</checksum>
+  <submitter>subj_t</submitter>
+  <rightsHolder>subj_ug</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_hx</subject>
+      <subject>subj_mz</subject>
+      <subject>subj_dn</subject>
+      <subject>subj_ak</subject>
+      <subject>subj_ot</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_tq</subject>
+      <subject>subj_zk</subject>
+      <subject>subj_ly_group</subject>
+      <subject>subj_fj_group</subject>
+      <subject>subj_bo</subject>
+      <permission>changePermission</permission>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_ce</subject>
+      <subject>subj_fu</subject>
+      <subject>subj_ve</subject>
+      <subject>subj_vz</subject>
+      <subject>subj_lr</subject>
+      <permission>changePermission</permission>
+    </allow>
+    <allow>
+      <subject>subj_ef</subject>
+      <subject>subj_il</subject>
+      <subject>subj_zw</subject>
+      <subject>subj_tk</subject>
+      <subject>subj_ux</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_c</preferredMemberNode>
+    <preferredMemberNode>mn_v</preferredMemberNode>
+    <preferredMemberNode>mn_wj</preferredMemberNode>
+    <blockedMemberNode>mn_g</blockedMemberNode>
+    <blockedMemberNode>mn_lf</blockedMemberNode>
+    <blockedMemberNode>mn_p</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>1994-08-15T20:02:49Z</dateUploaded>
+  <dateSysMetadataModified>1994-08-25T20:02:49Z</dateSysMetadataModified>
+  <originMemberNode>mn_dr</originMemberNode>
+  <authoritativeMemberNode>mn_vg</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_r</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2231-10-02T05:18:55.000512Z</replicaVerified>
+  </replica>
+  <seriesId>SID_bbzyfgxayymg</seriesId>
+  <mediaType name="media_type_zy">
+    <property name="prop_mt">uf</property>
+  </mediaType>
+  <fileName>file_ufr</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>39</serialVersion>
+  <identifier>object#0028</identifier>
+  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+  <size>250</size>
+  <checksum algorithm="SHA-1">fda25e9009dede1841828aeaffcb221ec941d2c8</checksum>
+  <submitter>subj_u</submitter>
+  <rightsHolder>subj_a</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_fo</subject>
+      <permission>write</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="7" replicationAllowed="true">
+    <preferredMemberNode>mn_m</preferredMemberNode>
+    <blockedMemberNode>mn_bo</blockedMemberNode>
+    <blockedMemberNode>mn_aj</blockedMemberNode>
+    <blockedMemberNode>mn_m</blockedMemberNode>
+    <blockedMemberNode>mn_b</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>2008-02-12T12:23:23Z</dateUploaded>
+  <dateSysMetadataModified>2008-02-22T12:23:23Z</dateSysMetadataModified>
+  <originMemberNode>mn_ns</originMemberNode>
+  <authoritativeMemberNode>mn_q</authoritativeMemberNode>
+  <seriesId>SID_pjucnszugsvh</seriesId>
+  <mediaType name="media_type_aq">
+    <property name="prop_po">wu</property>
+    <property name="prop_kb">ij</property>
+  </mediaType>
+  <fileName>file_sqt</fileName>
+</ns1:systemMetadata>

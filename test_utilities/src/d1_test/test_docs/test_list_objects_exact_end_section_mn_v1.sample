@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:objectList count="1" start="999" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_xjbojzdukdvb</identifier>
+    <formatId>text/turtle</formatId>
+    <checksum algorithm="SHA-1">e79b525869131bbda6cda50c05cfc942223a1881</checksum>
+    <dateSysMetadataModified>1970-01-31T17:51:30</dateSysMetadataModified>
+    <size>217</size>
+  </objectInfo>
+</ns1:objectList>

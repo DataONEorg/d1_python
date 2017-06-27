@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>pid_lsbhgrsljq</identifier>
+  <formatId>application/octet-stream</formatId>
+  <size>3012</size>
+  <checksum algorithm="SHA-1">765e797b097d17da3cd5e8ccfe33c004303fb7f5</checksum>
+  <submitter>submitter_subj</submitter>
+  <rightsHolder>rights_holder_subj</rightsHolder>
+  <replicationPolicy numberReplicas="100" replicationAllowed="true"/>
+  <dateUploaded>1973-08-28T00:00:00</dateUploaded>
+  <dateSysMetadataModified>1973-08-28T00:00:00</dateSysMetadataModified>
+  <originMemberNode>urn:node:GMNUnitTestOrigin</originMemberNode>
+  <authoritativeMemberNode>urn:node:GMNUnitTestAuthoritative</authoritativeMemberNode>
+</ns1:systemMetadata>

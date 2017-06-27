@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>46</serialVersion>
+  <identifier>PID_qbgxpocmalmj</identifier>
+  <formatId>-//ecoinformatics.org//eml-dataset-2.0.0beta6//EN</formatId>
+  <size>262</size>
+  <checksum algorithm="SHA-1">209392fd28e8a0f7dd1aad4ff432ba1325fb548b</checksum>
+  <submitter>subj_w</submitter>
+  <rightsHolder>subj_rm</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj1</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj4</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj10</subject>
+      <subject>subj11</subject>
+      <subject>subj12</subject>
+      <subject>subj5</subject>
+      <subject>subj6</subject>
+      <subject>subj7</subject>
+      <subject>subj8</subject>
+      <subject>subj9</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="10" replicationAllowed="true">
+    <blockedMemberNode>mn_d</blockedMemberNode>
+    <blockedMemberNode>mn_x</blockedMemberNode>
+    <blockedMemberNode>mn_pb</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_dgforywzpbwe</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>2015-04-01T06:15:02</dateUploaded>
+  <dateSysMetadataModified>2017-06-27T06:26:19.74831</dateSysMetadataModified>
+  <originMemberNode>mn_m</originMemberNode>
+  <authoritativeMemberNode>mn_x</authoritativeMemberNode>
+</ns1:systemMetadata>

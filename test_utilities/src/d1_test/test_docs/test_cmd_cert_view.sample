@@ -1,0 +1,5 @@
+Primary subject:
+  DC=org,DC=cilogon,C=US,O=Google,CN=Robert Waltz A610
+Equivalent subjects:
+  authenticatedUser
+  public

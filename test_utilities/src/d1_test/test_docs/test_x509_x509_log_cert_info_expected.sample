@@ -1,8 +1,0 @@
-test msg:
-  Subject: org / cilogon / US / Google / Roger Dahl A1779
-  Issuer: org / cilogon / US / CILogon / CILogon OpenID CA 1
-  Not Valid Before: 2016-10-25T02:37:42
-  Not Valid After: 2016-10-25T20:42:42
-  Subject Alt Names: roger.dahl.unm@gmail.com
-  CRL Distribution Points: 
-  Authority Access Location: <not found>

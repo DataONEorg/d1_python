@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:objectList count="1" start="0" total="1" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_lemsixcduidx</identifier>
+    <formatId>-//ecoinformatics.org//eml-coverage-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">69732f78552d5e935dbb667abb0a02457563d813</checksum>
+    <dateSysMetadataModified>2030-08-23T20:55:08</dateSysMetadataModified>
+    <size>278</size>
+  </objectInfo>
+</ns1:objectList>

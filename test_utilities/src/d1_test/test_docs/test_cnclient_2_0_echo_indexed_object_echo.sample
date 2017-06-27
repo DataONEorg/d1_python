@@ -1,0 +1,25 @@
+{
+  "request": {
+    "endpoint_str": "diag", 
+    "header_dict": {
+      "Accept": "*/*", 
+      "Accept-Encoding": "gzip, deflate", 
+      "Charset": "utf-8", 
+      "Connection": "keep-alive", 
+      "Content-Length": "2240", 
+      "User-Agent": "pyd1/%s +http://dataone.org/2.3.0rc1"
+    }, 
+    "param_list": [
+      "object"
+    ], 
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v2.0", 
+    "query_dict": {}, 
+    "version_tag": "v2"
+  }, 
+  "wrapper": {
+    "class_name": "CoordinatingNodeClient_2_0", 
+    "expected_type": null, 
+    "received_303_redirect": false, 
+    "vendor_specific_dict": null
+  }
+}

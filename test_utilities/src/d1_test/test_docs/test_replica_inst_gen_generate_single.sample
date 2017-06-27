@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:replica xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <replicaMemberNode>mn_o</replicaMemberNode>
+  <replicationStatus>completed</replicationStatus>
+  <replicaVerified>2072-06-28T08:17:10.00012Z</replicaVerified>
+</ns1:replica>

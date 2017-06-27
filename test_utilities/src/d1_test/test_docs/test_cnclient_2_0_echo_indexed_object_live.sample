@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add>
+  <doc>
+    <field name="id">PID_psbbhrxvadtj</field>
+    <field name="seriesId">SID_pznkzkcgzclz</field>
+    <field name="fileName">file_uvl</field>
+    <field name="mediaType">media_type_cd</field>
+    <field name="mediaTypeProperty">prop_vb hh</field>
+    <field name="mediaTypeProperty">prop_wy nh</field>
+    <field name="mediaTypeProperty">prop_db on</field>
+    <field name="mediaTypeProperty">prop_gi sj</field>
+    <field name="formatId">audio/mpeg</field>
+    <field name="formatType">DATA</field>
+    <field name="size">270</field>
+    <field name="checksum">dac2de2790d5259e3b0f777c09338dc9d57ef034</field>
+    <field name="submitter">subj_m</field>
+    <field name="checksumAlgorithm">SHA-1</field>
+    <field name="rightsHolder">subj_is</field>
+    <field name="replicationAllowed">true</field>
+    <field name="numberReplicas">10</field>
+    <field name="blockedReplicationMN">mn_h</field>
+    <field name="blockedReplicationMN">mn_j</field>
+    <field name="blockedReplicationMN">mn_hx</field>
+    <field name="blockedReplicationMN">mn_yi</field>
+    <field name="dateUploaded">2023-04-11T13:58:31.000Z</field>
+    <field name="dateModified">2023-04-21T13:58:31.000Z</field>
+    <field name="datasource">mn_cz</field>
+    <field name="authoritativeMN">mn_o</field>
+    <field name="readPermission">subj_ey</field>
+    <field name="readPermission">subj_zh</field>
+    <field name="readPermission">subj_sa</field>
+    <field name="readPermission">subj_sg</field>
+    <field name="readPermission">subj_dh</field>
+    <field name="readPermission">subj_bi</field>
+    <field name="readPermission">subj_at_group</field>
+    <field name="readPermission">subj_qg</field>
+    <field name="writePermission">subj_fk_group</field>
+    <field name="writePermission">subj_iq</field>
+    <field name="dataUrl">https://cn.dataone.org/cn/v2/resolve/PID_psbbhrxvadtj</field>
+  </doc>
+</add>

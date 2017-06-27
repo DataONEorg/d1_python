@@ -1,0 +1,27 @@
+{
+  "formatId": [
+    "eml://ecoinformatics.org/eml-2.1.1", 
+    1201, 
+    "http://datadryad.org/profile/v3.1", 
+    917, 
+    "eml://ecoinformatics.org/eml-2.1.0", 
+    642, 
+    "http://www.isotc211.org/2005/gmd-noaa", 
+    286, 
+    "FGDC-STD-001.1-1999", 
+    141, 
+    "eml://ecoinformatics.org/eml-2.0.1", 
+    127, 
+    "http://www.isotc211.org/2005/gmd", 
+    35, 
+    "http://ns.dataone.org/metadata/schema/onedcx/v1.0", 
+    14, 
+    "FGDC-STD-001-1998", 
+    8, 
+    "eml://ecoinformatics.org/eml-2.0.0", 
+    5, 
+    "http://purl.org/ornl/schema/mercury/terms/v1.0", 
+    1
+  ], 
+  "numFound": 3377
+}

@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>33</serialVersion>
+  <identifier>PID_gmyhihuwkxyd</identifier>
+  <formatId>video/avi</formatId>
+  <size>961516091269</size>
+  <checksum algorithm="SHA-1">29a0e06238731d283d6b82bb6bcdc9da43de8c97</checksum>
+  <submitter>subj_k</submitter>
+  <rightsHolder>subj_kj</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_fm_group</subject>
+      <subject>subj_ka</subject>
+      <subject>subj_ly</subject>
+      <subject>subj_nh</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_go</subject>
+      <subject>subj_gx</subject>
+      <subject>subj_id</subject>
+      <subject>subj_mx</subject>
+      <subject>subj_wb</subject>
+      <subject>subj_yx</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="1" replicationAllowed="true">
+    <preferredMemberNode>mn_r</preferredMemberNode>
+    <preferredMemberNode>mn_zd</preferredMemberNode>
+    <preferredMemberNode>mn_d</preferredMemberNode>
+    <blockedMemberNode>mn_q</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2002-08-24T19:24:15</dateUploaded>
+  <dateSysMetadataModified>2002-09-03T19:24:15</dateSysMetadataModified>
+  <originMemberNode>mn_qt</originMemberNode>
+  <authoritativeMemberNode>mn_t</authoritativeMemberNode>
+  <seriesId>SID_ucgernkcbrsb</seriesId>
+  <mediaType name="media_type_pg">
+    <property name="prop_ks">li</property>
+  </mediaType>
+  <fileName>file_nhq</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>100</serialVersion>
+  <identifier>PID_ijhkvekdqbdn</identifier>
+  <formatId>-//ecoinformatics.org//eml-party-2.0.0beta6//EN</formatId>
+  <size>35066282782</size>
+  <checksum algorithm="MD5">ce2a035df7bc6d5cfa8fbbacf521e6cf</checksum>
+  <submitter>subj_ay</submitter>
+  <rightsHolder>subj_h</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ob</subject>
+      <subject>subj_vm</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_kh_group</subject>
+      <subject>subj_si</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_es</preferredMemberNode>
+    <preferredMemberNode>mn_o</preferredMemberNode>
+    <preferredMemberNode>mn_z</preferredMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+    <blockedMemberNode>mn_a</blockedMemberNode>
+    <blockedMemberNode>mn_fz</blockedMemberNode>
+    <blockedMemberNode>mn_w</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_yafekfjrxwlm</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>2069-06-07T17:02:43</dateUploaded>
+  <dateSysMetadataModified>2003-02-13T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_wu</originMemberNode>
+  <authoritativeMemberNode>mn_ne</authoritativeMemberNode>
+  <seriesId>SID_ftcfypvptfzv</seriesId>
+  <mediaType name="media_type_la">
+    <property name="prop_mc">zq</property>
+    <property name="prop_dk">bv</property>
+    <property name="prop_bj">xd</property>
+    <property name="prop_da">tx</property>
+  </mediaType>
+  <fileName>file_zlg</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>8</serialVersion>
+  <identifier>PID_pwaochlxfyby</identifier>
+  <formatId>-//ecoinformatics.org//eml-distribution-2.0.0beta6//EN</formatId>
+  <size>419269600671</size>
+  <checksum algorithm="MD5">ab8a2aa03e9f67434832b4d6203cf8c5</checksum>
+  <submitter>subj_eh</submitter>
+  <rightsHolder>subj_ro</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ac</subject>
+      <subject>subj_at</subject>
+      <subject>subj_bx</subject>
+      <subject>subj_lc</subject>
+      <subject>subj_tf</subject>
+      <subject>subj_um</subject>
+      <subject>subj_wr</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_a</blockedMemberNode>
+    <blockedMemberNode>mn_h</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_ioigztramuxe</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>1977-04-25T03:51:23</dateUploaded>
+  <dateSysMetadataModified>2003-01-15T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_u</originMemberNode>
+  <authoritativeMemberNode>mn_zh</authoritativeMemberNode>
+  <mediaType name="media_type_um">
+    <property name="prop_fi">fj</property>
+    <property name="prop_gn">sa</property>
+    <property name="prop_fp">vy</property>
+  </mediaType>
+  <fileName>file_wbl</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>80</serialVersion>
+  <identifier>PID_lotrirozdfou</identifier>
+  <formatId>CF-1.4</formatId>
+  <size>77698856506</size>
+  <checksum algorithm="SHA1">30cf70b531adb808ab07db8f09036926670d660d</checksum>
+  <submitter>subj_q</submitter>
+  <rightsHolder>subj_wd</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_gx</subject>
+      <subject>subj_gy</subject>
+      <subject>subj_oz</subject>
+      <subject>subj_vk</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_x</blockedMemberNode>
+    <blockedMemberNode>mn_y</blockedMemberNode>
+    <blockedMemberNode>mn_hq</blockedMemberNode>
+    <blockedMemberNode>mn_k</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletes>PID_woprtuhovtkq</obsoletes>
+  <archived>false</archived>
+  <dateUploaded>2049-01-08T15:52:19</dateUploaded>
+  <dateSysMetadataModified>2049-01-18T15:52:19</dateSysMetadataModified>
+  <originMemberNode>mn_i</originMemberNode>
+  <authoritativeMemberNode>mn_o</authoritativeMemberNode>
+  <seriesId>SID_kkgkwmpiqaow</seriesId>
+  <fileName>file_cui</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>33</serialVersion>
+  <identifier>PID_ycxzexuocgwi</identifier>
+  <formatId>application/x-tar</formatId>
+  <size>10928768847</size>
+  <checksum algorithm="SHA1">94310543893ec7558f0cfe44de205f959adf612d</checksum>
+  <submitter>subj_v</submitter>
+  <rightsHolder>subj_vs</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ah</subject>
+      <subject>subj_eo</subject>
+      <subject>subj_no</subject>
+      <subject>subj_zf</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_gx</subject>
+      <subject>subj_if</subject>
+      <subject>subj_if_group</subject>
+      <subject>subj_kg</subject>
+      <subject>subj_om</subject>
+      <subject>subj_pr</subject>
+      <subject>subj_uk</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_pn</preferredMemberNode>
+    <preferredMemberNode>mn_v</preferredMemberNode>
+    <preferredMemberNode>mn_j</preferredMemberNode>
+    <preferredMemberNode>mn_gw</preferredMemberNode>
+    <blockedMemberNode>mn_mu</blockedMemberNode>
+    <blockedMemberNode>mn_l</blockedMemberNode>
+    <blockedMemberNode>mn_rn</blockedMemberNode>
+    <blockedMemberNode>mn_cc</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2002-03-16T08:00:27</dateUploaded>
+  <dateSysMetadataModified>2002-03-26T08:00:27</dateSysMetadataModified>
+  <originMemberNode>mn_w</originMemberNode>
+  <authoritativeMemberNode>mn_mi</authoritativeMemberNode>
+  <seriesId>SID_tufbwypqyitf</seriesId>
+  <mediaType name="media_type_rc">
+    <property name="prop_et">wl</property>
+  </mediaType>
+  <fileName>file_wls</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>94</serialVersion>
+  <identifier>PID_fmavkbbylddv</identifier>
+  <formatId>http://www.esri.com/metadata/esriprof80.dtd</formatId>
+  <size>742476629710</size>
+  <checksum algorithm="SHA1">0388da71e580c524ee2c28d452d14defb78d59f0</checksum>
+  <submitter>subj_ra</submitter>
+  <rightsHolder>subj_lc</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ef</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_qi</subject>
+      <subject>subj_rf</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_bh</subject>
+      <subject>subj_fa</subject>
+      <subject>subj_ke</subject>
+      <subject>subj_rd</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="8" replicationAllowed="true">
+    <preferredMemberNode>mn_pr</preferredMemberNode>
+    <preferredMemberNode>mn_g</preferredMemberNode>
+    <blockedMemberNode>mn_do</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_rsbuveyjzulp</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>2063-12-06T04:17:55</dateUploaded>
+  <dateSysMetadataModified>2002-08-06T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_hr</originMemberNode>
+  <authoritativeMemberNode>mn_i</authoritativeMemberNode>
+  <mediaType name="media_type_wd">
+    <property name="prop_ue">py</property>
+    <property name="prop_kb">ye</property>
+    <property name="prop_ox">yd</property>
+  </mediaType>
+  <fileName>file_adt</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>83</serialVersion>
+  <identifier>PID_qupeppbctpve</identifier>
+  <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta6//EN</formatId>
+  <size>614458606833</size>
+  <checksum algorithm="SHA1">56dcc5aa5fb76bb53fbc9ae297ba1f8f38dc6afd</checksum>
+  <submitter>subj_d</submitter>
+  <rightsHolder>subj_f</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_hi</subject>
+      <subject>subj_hv</subject>
+      <subject>subj_ks</subject>
+      <subject>subj_nj</subject>
+      <subject>subj_um_group</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_gn</subject>
+      <subject>subj_jq</subject>
+      <subject>subj_of</subject>
+      <subject>subj_pr</subject>
+      <subject>subj_vu</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_dn</subject>
+      <subject>subj_mu</subject>
+      <subject>subj_pa</subject>
+      <subject>subj_qz</subject>
+      <subject>subj_tu</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_tw</preferredMemberNode>
+    <blockedMemberNode>mn_f</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_jnaljtdoyntm</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>2052-07-27T09:16:50</dateUploaded>
+  <dateSysMetadataModified>2003-09-13T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_t</originMemberNode>
+  <authoritativeMemberNode>mn_ae</authoritativeMemberNode>
+  <seriesId>SID_uqswjufzkrpw</seriesId>
+  <mediaType name="media_type_ah">
+    <property name="prop_lu">sm</property>
+    <property name="prop_gx">ir</property>
+    <property name="prop_jt">mj</property>
+  </mediaType>
+  <fileName>file_wxa</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>83</serialVersion>
+  <identifier>PID_ukndmvpvgwcz</identifier>
+  <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+  <size>89934074446</size>
+  <checksum algorithm="SHA1">a966380d322957eee4778d9e804a890c7287ba3d</checksum>
+  <submitter>subj_m</submitter>
+  <rightsHolder>subj_ro</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ai</subject>
+      <subject>subj_jk</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_jl</preferredMemberNode>
+    <preferredMemberNode>mn_f</preferredMemberNode>
+    <blockedMemberNode>mn_au</blockedMemberNode>
+    <blockedMemberNode>mn_x</blockedMemberNode>
+    <blockedMemberNode>mn_z</blockedMemberNode>
+    <blockedMemberNode>mn_x</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletedBy>PID_kgccfrbgfmib</obsoletedBy>
+  <archived>false</archived>
+  <dateUploaded>2052-09-10T11:36:31</dateUploaded>
+  <dateSysMetadataModified>2001-09-12T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_t</originMemberNode>
+  <authoritativeMemberNode>mn_mh</authoritativeMemberNode>
+  <seriesId>SID_raypmvumzidt</seriesId>
+  <fileName>file_vly</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>30</serialVersion>
+  <identifier>PID_bhlmbttxditp</identifier>
+  <formatId>-//ecoinformatics.org//eml-resource-2.0.0beta6//EN</formatId>
+  <size>1079267011212</size>
+  <checksum algorithm="SHA1">c24417fa1d85e37c3ddb8348745f67625c58233a</checksum>
+  <submitter>subj_mq</submitter>
+  <rightsHolder>subj_rq</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_au</subject>
+      <subject>subj_bg</subject>
+      <subject>subj_mo</subject>
+      <subject>subj_px</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_bb</subject>
+      <subject>subj_di</subject>
+      <subject>subj_gc</subject>
+      <subject>subj_ja</subject>
+      <subject>subj_jh</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_mi</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+    <preferredMemberNode>mn_y</preferredMemberNode>
+    <preferredMemberNode>mn_z</preferredMemberNode>
+    <preferredMemberNode>mn_s</preferredMemberNode>
+    <blockedMemberNode>mn_bk</blockedMemberNode>
+    <blockedMemberNode>mn_dp</blockedMemberNode>
+    <blockedMemberNode>mn_vb</blockedMemberNode>
+    <blockedMemberNode>mn_p</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>1999-12-05T23:44:50</dateUploaded>
+  <dateSysMetadataModified>1999-12-15T23:44:50</dateSysMetadataModified>
+  <originMemberNode>mn_jd</originMemberNode>
+  <authoritativeMemberNode>mn_al</authoritativeMemberNode>
+  <seriesId>SID_arxzqnznuape</seriesId>
+  <mediaType name="media_type_sw">
+    <property name="prop_rj">ol</property>
+    <property name="prop_dv">og</property>
+    <property name="prop_gx">qq</property>
+  </mediaType>
+  <fileName>file_koq</fileName>
+</ns1:systemMetadata>
+
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>59</serialVersion>
+  <identifier>PID_xildxwfdheoi</identifier>
+  <formatId>-//ecoinformatics.org//eml-dataset-2.0.0beta6//EN</formatId>
+  <size>1023513219380</size>
+  <checksum algorithm="SHA1">c42d6ab8289d223377dd3b7717592cb66493536c</checksum>
+  <submitter>subj_jb</submitter>
+  <rightsHolder>subj_xw</rightsHolder>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_iy</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2028-05-25T09:23:03</dateUploaded>
+  <dateSysMetadataModified>2028-06-04T09:23:03</dateSysMetadataModified>
+  <originMemberNode>mn_tc</originMemberNode>
+  <authoritativeMemberNode>mn_ul</authoritativeMemberNode>
+  <fileName>file_ehh</fileName>
+</ns1:systemMetadata>
