@@ -33,23 +33,21 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     """select_random_set_of_permissions()"""
     permissions = access_policy.random_set_of_permissions()
     self.sample.assert_equals(
-      permissions, 'inst_gen__access_policy__select_random_set_of_permissions'
+      permissions, 'inst_gen_select_random_set_of_permissions'
     )
 
   def test_1010(self):
     """permissions_to_tag_string()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.permissions_to_tag_string(permissions)
-    self.sample.assert_equals(
-      s, 'inst_gen__access_policy__permissions_to_tag_string'
-    )
+    self.sample.assert_equals(s, 'inst_gen_permissions_to_tag_string')
 
   def test_1020(self):
     """random_subject_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
     s = access_policy.random_subject_with_permission_labels(permissions)
     self.sample.assert_equals(
-      s, 'inst_gen__access_policy__random_subject_with_permission_labels'
+      s, 'inst_gen_random_subject_with_permission_labels'
     )
 
   def test_1030(self):
@@ -57,20 +55,15 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
     permissions = access_policy.random_set_of_permissions()
     subjects = access_policy.random_subjects_with_permission_labels(permissions)
     self.sample.assert_equals(
-      subjects,
-      'inst_gen__access_policy__random_subjects_with_permission_labels'
+      subjects, 'inst_gen_random_subjects_with_permission_labels'
     )
 
   def test_1040(self):
     """generate()"""
     access_policy_pyxb = access_policy.generate()
-    self.sample.assert_equals(
-      access_policy_pyxb, 'inst_gen__access_policy__generate'
-    )
+    self.sample.assert_equals(access_policy_pyxb, 'inst_gen_generate')
 
   def test_1050(self):
     """random_subject_list()"""
     subject_list = access_policy.random_subject_list()
-    self.sample.assert_equals(
-      subject_list, 'inst_gen__access_policy__random_subject_list'
-    )
+    self.sample.assert_equals(subject_list, 'inst_gen_random_subject_list')

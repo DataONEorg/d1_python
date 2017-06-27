@@ -29,8 +29,6 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 
-# logging.basicConfig(level=logging.DEBUG)
-
 
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
   sm_pyxb = d1_test.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
@@ -67,3 +65,35 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     assert d1_common.system_metadata.is_equivalent_pyxb(
       self.sm_pyxb, swizzled_pyxb
     )
+
+  def test_1040(self):
+    """update_elements(): Elements are copied from src to dst"""
+    dst_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    src_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_2.xml')
+    d1_common.system_metadata.update_elements(
+      dst_pyxb, src_pyxb, ['identifier', 'accessPolicy', 'size', 'checksum']
+    )
+    # orig_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    # logging.debug(self.sample.get_sxs_diff(orig_pyxb, dst_pyxb))
+    self.sample.assert_equals(dst_pyxb, 'update_elements_copy')
+
+  def test_1041(self):
+    """update_elements(): Passing invalid element raies ValueError"""
+    dst_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    src_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_2.xml')
+    with pytest.raises(ValueError) as exc_info:
+      d1_common.system_metadata.update_elements(
+        dst_pyxb, src_pyxb, [
+          'identifier', 'accessPolicy', 'invalid1', 'size', 'checksum',
+          'invalid2'
+        ]
+      )
+    self.sample.assert_equals(
+      str(exc_info.exconly()), 'update_elements_invalid'
+    )
+    #
+    #   assert 'identifier' not in str(exc_info)
+    #
+    # # orig_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    # # logging.debug(self.sample.get_sxs_diff(orig_pyxb, dst_pyxb))
+    # self.sample.assert_equals(dst_pyxb, 'update_elements')

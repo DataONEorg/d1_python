@@ -58,9 +58,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=0, count=0)
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__number_of_events', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'number_of_events', mn_client_v1_v2)
 
   @responses.activate
   def test_1010(self, mn_client_v1_v2):
@@ -69,9 +67,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=0, count=21)
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__front_section', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'front_section', mn_client_v1_v2)
 
   @responses.activate
   def test_1020(self, mn_client_v1_v2):
@@ -80,9 +76,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(start=2000, count=15)
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__middle_section', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'middle_section', mn_client_v1_v2)
 
   @responses.activate
   def test_1030(self, mn_client_v1_v2):
@@ -93,9 +87,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__exact_end_section', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'exact_end_section', mn_client_v1_v2)
 
   @responses.activate
   def test_1040(self, mn_client_v1_v2):
@@ -108,7 +100,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       log = mn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
       self.norm_entry_id(log)
       self.sample.assert_equals(
-        log, 'get_log_records__count_beyond_end_section', mn_client_v1_v2
+        log, 'count_beyond_end_section', mn_client_v1_v2
       )
 
   @responses.activate
@@ -122,7 +114,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       log = mn_client_v1_v2.getLogRecords(start=n_events + 1234, count=10000)
       self.norm_entry_id(log)
       self.sample.assert_equals(
-        log, 'get_log_records__start_beyond_end_section', mn_client_v1_v2
+        log, 'start_beyond_end_section', mn_client_v1_v2
       )
 
   @responses.activate
@@ -135,9 +127,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(event='bogus_event')
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__event_filter_unknown', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'event_filter_unknown', mn_client_v1_v2)
 
   @responses.activate
   def test_1070(self, mn_client_v1_v2):
@@ -147,9 +137,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = mn_client_v1_v2.getLogRecords(event='update', count=10)
       self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'get_log_records__event_filter_update', mn_client_v1_v2
-      )
+      self.sample.assert_equals(log, 'event_filter_update', mn_client_v1_v2)
 
   @responses.activate
   def test_1080(self, mn_client_v1_v2):
@@ -171,7 +159,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.norm_entry_id(oldest_log)
       self.sample.assert_equals(
         '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
-        'get_log_records__date_range_first_last',
+        'date_range_first_last',
         mn_client_v1_v2,
       )
 
@@ -188,7 +176,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.norm_entry_id(log)
       self.sample.assert_equals(
         log,
-        'get_log_records__date_range_in_the_future',
+        'date_range_in_the_future',
         mn_client_v1_v2,
       )
 
@@ -241,6 +229,6 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             'create_event': d1_common.xml.pretty_pyxb(event_pyxb),
           }.items()
         ),
-        'get_log_records__new_create_event',
+        'new_create_event',
         mn_client_v1_v2,
       )

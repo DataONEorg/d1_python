@@ -25,6 +25,7 @@ from __future__ import absolute_import
 
 import datetime
 
+import freezegun
 import pytest
 import responses
 
@@ -38,31 +39,35 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.d1_test_case
 
+
+# @d1_test.d1_test_case.reproducible_random_decorator('TestCreateAndGetStandalone')
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
     """get(): Response contains expected headers"""
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
-        mn_client_v1_v2, now_dt=datetime.datetime(2010, 10, 10, 10, 10, 10)
-      )
-
+    with freezegun.freeze_time('1981-01-02'):
       with d1_gmn.tests.gmn_mock.disable_auth():
+        pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
+          mn_client_v1_v2,
+          pid='get_response',
+          now_dt=datetime.datetime(2010, 10, 10, 10, 10, 10),
+        )
         response = mn_client_v1_v2.get(pid)
-
-      assert response.headers['content-length'] == str(len(send_sciobj_str))
-      assert response.headers['dataone-checksum'], \
-        'MD5,{}'.format(send_sysmeta_pyxb.checksum.value())
-      assert response.headers['dataone-formatid'] == 'application/octet-stream'
-      assert response.headers['last-modified'] == 'Sun, 10 Oct 2010 10:10:10 GMT'
+        response_str = mn_client_v1_v2.dump_request_and_response(response)
+        self.sample.assert_equals(
+          response_str, 'get_response_headers', mn_client_v1_v2
+        )
 
   @responses.activate
   def test_1010(self, mn_client_v1_v2):
     """get(): Non-existing object raises NotFound"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       with pytest.raises(d1_common.types.exceptions.NotFound):
-        mn_client_v1_v2.get(self.random_pid())
+        mn_client_v1_v2.get(
+          d1_test.instance_generator.identifier.generate_pid()
+        )
 
   @responses.activate
   def test_1020(self, mn_client_v1_v2):

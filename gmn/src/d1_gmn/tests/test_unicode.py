@@ -31,25 +31,32 @@ import d1_gmn.tests.gmn_test_case
 import d1_common
 import d1_common.system_metadata
 
+import d1_test.sample
+
 
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
+  parameterize_dict = {
+    'test_1000': [
+      {
+        'unicode_pid': s.split('\t')[0]
+      }
+      for s in d1_test.sample.
+      load_utf8_to_unicode('tricky_identifiers_unicode.utf8.txt').splitlines()
+    ],
+  }
+
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2, unicode_pid):
     """Unicode: GMN and libraries handle Unicode correctly"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      tricky_unicode_str = self.sample.load_utf8_to_unicode(
-        'tricky_identifiers_unicode.utf8.txt'
+      logging.debug(u'Testing PID: {}'.format(unicode_pid))
+      pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
+        mn_client_v1_v2, pid=unicode_pid, sid=True
       )
-      for line in tricky_unicode_str.splitlines():
-        pid_unescaped, pid_escaped = line.split('\t')
-        logging.debug(u'Testing PID: {}'.format(pid_unescaped))
-        pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
-          mn_client_v1_v2, pid=pid_unescaped, sid=True
-        )
-        recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
-        assert d1_common.system_metadata.is_equivalent_pyxb(
-          send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
-        )
-        assert pid == pid_unescaped
-        assert recv_sysmeta_pyxb.identifier.value() == pid_unescaped
-        mn_client_v1_v2.delete(pid)
+      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
+      assert d1_common.system_metadata.is_equivalent_pyxb(
+        send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
+      )
+      assert pid == unicode_pid
+      assert recv_sysmeta_pyxb.identifier.value() == unicode_pid
+      mn_client_v1_v2.delete(pid)

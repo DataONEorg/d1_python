@@ -29,6 +29,8 @@ import d1_gmn.app.util
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_test.instance_generator.random_data
+
 
 class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _get_db_subj(self):
@@ -39,7 +41,10 @@ class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ])
 
   def _gen_perm_list(self):
-    return [([self.random_str(12)], ['write']) for _ in range(10)]
+    # We use long unique strings for these subjects so that the tests are
+    # unaffected by subjects already in the db.
+    return [([d1_test.instance_generator.random_data.random_subj(fixed_len=12)],
+             ['write']) for _ in range(10)]
 
   def _get_subj_set(self, perm_list):
     return set([subj_list[0] for subj_list, action_list in perm_list])
@@ -90,8 +95,9 @@ class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
       # Check that the database no longer holds the subjects that were only in
       # use for the first object.
+      db_set = self._get_db_subj()
       assert not ((obj_1_subj_set - {obj_1_whitelist} - {obj_1_2_shared}) &
-                  self._get_db_subj())
+                  db_set)
 
       # Check that the database still holds the obj_1 subject that was used in
       # the whitelist and the one that was used in obj_2.

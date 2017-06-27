@@ -54,9 +54,7 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with self.mock_ssl_download(cert_obj) as (mock_connect, mock_getpeercert):
       cert_obj = d1_gmn.app.middleware.session_jwt._download_and_decode_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.sample.assert_equals(
-        cert_obj.subject, 'session_jwt_download_and_decode'
-      )
+      self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
 
   @freezegun.freeze_time('2011-02-01')
   def test_1010(self):
@@ -70,17 +68,13 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Remote read
       cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.sample.assert_equals(
-        cert_obj.subject, 'session_jwt_download_and_decode'
-      )
+      self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
       assert len(mock_connect.mock_calls) == 1
       assert len(mock_getpeercert.mock_calls) == 1
       # Cache
       cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
       mock_connect.assert_called_with(('cn.dataone.org', 443))
-      self.sample.assert_equals(
-        cert_obj.subject, 'session_jwt_download_and_decode'
-      )
+      self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
       # Did not call connect() and getpeercert() again
       assert len(mock_connect.mock_calls) == 1
       assert len(mock_getpeercert.mock_calls) == 1

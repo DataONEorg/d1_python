@@ -62,7 +62,8 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
         sciobj_str, algorithm_str
       )
       send_sysmeta_pyxb.checksum = send_checksum
-      client.create(pid, StringIO.StringIO(sciobj_str), send_sysmeta_pyxb)
+      with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+        client.create(pid, StringIO.StringIO(sciobj_str), send_sysmeta_pyxb)
       recv_checksum = client.getChecksum(pid, algorithm_str)
       d1_common.checksum.are_checksums_equal(
         send_sysmeta_pyxb.checksum, recv_checksum

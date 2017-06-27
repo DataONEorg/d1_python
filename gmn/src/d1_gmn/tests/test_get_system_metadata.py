@@ -27,6 +27,7 @@ import StringIO
 import pytest
 import responses
 
+import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
@@ -37,6 +38,7 @@ import d1_common.util
 import d1_common.xml
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
 
@@ -62,8 +64,10 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       orig_sysmeta_pyxb = self.sample.load_xml_to_pyxb(
         'systemMetadata_v2_0.xml'
       )
-      pid = self.random_pid()
-      sciobj_str = d1_test.d1_test_case.generate_reproducible_sciobj_str(pid)
+      pid = d1_test.instance_generator.identifier.generate_pid()
+      sciobj_str = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_str(
+        pid
+      )
       orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
         sciobj_str
       )
@@ -71,17 +75,18 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       orig_sysmeta_pyxb.obsoletes = None
       orig_sysmeta_pyxb.obsoletedBy = None
       orig_sysmeta_pyxb.identifier = pid
-      orig_sysmeta_pyxb.replica = None
+      # orig_sysmeta_pyxb.replica = None
       orig_sysmeta_pyxb.submitter = 'public'
       orig_sysmeta_pyxb.serialVersion = 1
       orig_sysmeta_pyxb.originMemberNode = 'urn:node:mnDevGMN'
       orig_sysmeta_pyxb.authoritativeMemberNode = 'urn:node:mnDevGMN'
       orig_sysmeta_pyxb.archived = False
       # Create
-      self.call_d1_client(
-        self.client_v2.create, pid,
-        StringIO.StringIO(sciobj_str), orig_sysmeta_pyxb
-      )
+      with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+        self.call_d1_client(
+          self.client_v2.create, pid,
+          StringIO.StringIO(sciobj_str), orig_sysmeta_pyxb
+        )
       # Retrieve
       recv_sysmeta_pyxb = self.call_d1_client(
         self.client_v2.getSystemMetadata, pid

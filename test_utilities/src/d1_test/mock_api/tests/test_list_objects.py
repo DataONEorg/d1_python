@@ -47,10 +47,7 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
     """mock_api.listObjects() returns a populated ObjectList"""
     mock_object_list.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     object_list = mn_client_v1_v2.listObjects()
-    assert len(object_list.objectInfo) == 100
-    for object_info in object_list.objectInfo:
-      assert object_info.formatId == 'text/plain'
-      break
+    self.sample.assert_equals(object_list, 'populated')
 
   @responses.activate
   def test_1020(self, mn_client_v1_v2):

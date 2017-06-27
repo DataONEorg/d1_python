@@ -74,7 +74,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.search(q='id:invalid_solr_record_id')
     self._delete_volatile_keys(solr_dict)
-    self.sample.assert_equals(solr_dict, 'solr_client_query_returns_valid_dict')
+    self.sample.assert_equals(solr_dict, 'search')
 
   # count()
 
@@ -82,9 +82,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """count(): Query returns valid count"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     obj_count = solr_client.count(q='id:abc*')
-    self.sample.assert_equals(
-      obj_count, 'solr_client_query_returns_valid_count'
-    )
+    self.sample.assert_equals(obj_count, 'count')
 
   # get_ids()
 
@@ -93,18 +91,18 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_dict = solr_client.get_ids(q='id:abc*')
     self._delete_volatile_keys(solr_dict)
-    self.sample.assert_equals(solr_dict, 'solr_client_returns_list_of_ids')
+    self.sample.assert_equals(solr_dict, 'get_ids')
 
   # get_field_values()
 
   def test_1050(self):
     """get_field_values(): Query returns unique field values"""
     solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
-    solr_dict = solr_client.get_field_values('formatId', q='*abc*')
-    self._delete_volatile_keys(solr_dict)
-    self.sample.assert_equals(
-      solr_dict, 'solr_client_returns_unique_field_values'
+    solr_dict = solr_client.get_field_values(
+      'formatId', q='*abc*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]'
     )
+    self._delete_volatile_keys(solr_dict)
+    self.sample.assert_equals(solr_dict, 'get_field_values')
 
   # get_field_min_max()
 
@@ -114,9 +112,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     min_max_tup = solr_client.get_field_min_max(
       'formatId', q='*abc*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]'
     )
-    self.sample.assert_equals(
-      min_max_tup, 'solr_client_returns_min_and_max_field_values'
-    )
+    self.sample.assert_equals(min_max_tup, 'get_field_min_max')
 
   # field_alpha_histogram()
 
@@ -127,7 +123,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
       'formatId', q='*abc*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]',
       n_bins=10
     )
-    self.sample.assert_equals(bin_list, 'solr_client_returns_histogram')
+    self.sample.assert_equals(bin_list, 'field_alpha_histogram')
 
   #=============================================================================
   # SolrSearchResponseIterator()
@@ -139,7 +135,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
       client, q='id:ark:/13030/m5s46rt1/2/cadwsap-s3100027-004.pdf', page_size=5
     )
     solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
-    self.sample.assert_equals(solr_list, 'solr_client_iterator_query_1')
+    self.sample.assert_equals(solr_list, 'iterator_query_1')
 
   def test_1090(self):
     """SolrSearchResponseIterator(): Query 2"""
@@ -148,7 +144,8 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
       client, q='*:*', fq='updateDate:[* TO 2016-12-31T23:59:59Z]',
       fields='abstract,author,date', page_size=5
     )
-    self._assert_at_least_one_populated_row(solr_iter)
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    self.sample.assert_equals(solr_list, 'iterator_query_2')
 
   def test_1100(self):
     """SolrSearchResponseIterator(): Query 3"""
@@ -156,10 +153,8 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
       client, q='*:*', page_size=5, field='size'
     )
-    i = 0
-    for i, record_dict in enumerate(solr_iter):
-      assert isinstance(record_dict, dict)
-    assert i > 1
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    self.sample.assert_equals(solr_list, 'iterator_query_3')
 
   #=============================================================================
   # SolrValuesResponseIterator
@@ -168,30 +163,28 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     """SolrValuesResponseIterator(): Query 1"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
-      client, field='formatId', q='*:*',
+      client, field='formatId', q='id:ab*',
       fq='updateDate:[* TO 2016-12-31T23:59:59Z]', page_size=5
     )
-    assert len(list(solr_iter)) > 1
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    self.sample.assert_equals(solr_list, 'response_iterator_query_1')
 
   def test_1120(self):
     """SolrValuesResponseIterator(): Query 2"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
-      client, field='formatId', q='*:*', fields='abstract,author,date',
-      page_size=5
+      client, field='formatId', q='id:ab*', fields='abstract,author,date',
+      fq='updateDate:[* TO 2016-12-31T23:59:59Z]', page_size=5
     )
-    self._assert_at_least_one_populated_row(solr_iter)
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    self.sample.assert_equals(solr_list, 'response_iterator_query_2')
 
   def test_1130(self):
     """SolrValuesResponseIterator(): Query 3"""
     client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
     solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
-      client, field='size', q='*:*',
+      client, field='size', q='id:ab*',
       fq='updateDate:[* TO 2016-12-31T23:59:59Z]', page_size=5
     )
-    i = 0
-    for i, record_dict in enumerate(solr_iter):
-      assert isinstance(record_dict, list)
-      if i == 100:
-        break
-    assert i > 1
+    solr_list = [(self._delete_volatile_keys(d), d)[1] for d in list(solr_iter)]
+    self.sample.assert_equals(solr_list, 'response_iterator_query_3')

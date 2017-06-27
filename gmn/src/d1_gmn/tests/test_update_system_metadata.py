@@ -28,6 +28,7 @@ changes can arrive
 from __future__ import absolute_import
 
 import datetime
+import logging
 import time
 
 import pytest
@@ -44,6 +45,10 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.instance_generator.access_policy
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
+
 
 class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
   # MNStorage.updateSystemMetadata(). Method was added in v2.
@@ -51,7 +56,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   def _update_access_policy(self, pid, permission_list):
     with d1_gmn.tests.gmn_mock.disable_auth():
-      access_policy_pyxb = self.generate_access_policy(
+      access_policy_pyxb = d1_test.instance_generator.access_policy.generate_from_permission_list(
         self.client_v2, permission_list
       )
       sciobj_str, sysmeta_pyxb = self.get_obj(self.client_v2, pid)
@@ -189,7 +194,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True
+        mn_client_v2, sid=True, rights_holder='rights_holder_subj'
       )
       # Get sysmeta
       sciobj_str, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
@@ -242,7 +247,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         mn_client_v2, sid=True
       )
       for i in range(10):
-        random_subject_str = self.random_tag('subject')
+        random_subject_str = d1_test.instance_generator.random_data.random_subj()
         sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
         sysmeta_pyxb.rightsHolder = random_subject_str
         assert mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
@@ -260,6 +265,8 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       base_pid, sid, sciobj_str, ver1_sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True
       )
+      for r in ver1_sysmeta_pyxb.replica:
+        logging.error(r.toxml())
       ver2_sciobj_str, ver2_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Add a new preferred node
       ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append('new_node')
@@ -280,5 +287,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       mn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
       # Check
       ver4_sciobj_str, ver4_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
-      assert d1_common.system_metadata. \
-        is_equivalent_pyxb(ver3_sysmeta_pyxb, ver4_sysmeta_pyxb)
+      assert d1_common.system_metadata.is_equivalent_pyxb(
+        ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
+      )

@@ -36,9 +36,8 @@ class TestMockPost(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, mn_client_v1_v2):
     """mock_api.create(): Echoes the request"""
     mock_create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(
-      mn_client_v1_v2, 'post_pid'
-    )
+    pid, sid, sciobj_str, sysmeta_pyxb = \
+      d1_test.instance_generator.sciobj.generate_reproducible(mn_client_v1_v2, 'post_pid')
     response = mn_client_v1_v2.createResponse(
       'post_pid', StringIO.StringIO(sciobj_str), sysmeta_pyxb
     )

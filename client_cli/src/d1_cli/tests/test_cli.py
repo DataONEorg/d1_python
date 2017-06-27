@@ -53,6 +53,7 @@ import d1_test.mock_api.get_system_metadata as mock_get_system_metadata
 import d1_test.mock_api.list_nodes as mock_list_nodes
 import d1_test.mock_api.list_objects as mock_list_objects
 
+import d1_client.cnclient
 import d1_client.mnclient
 
 

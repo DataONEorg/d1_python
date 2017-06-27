@@ -32,6 +32,8 @@ import d1_gmn.tests.gmn_test_client
 
 import d1_common
 
+import d1_test.instance_generator.identifier
+
 
 class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
@@ -42,7 +44,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # This test does not test if GMN actually does anything with the message
       # passed to the synchronizationFailed() method. There is currently no way
       # for the test to reach that information.
-      pid = self.random_pid()
+      pid = d1_test.instance_generator.identifier.generate_pid()
       msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
       exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
       client.synchronizationFailed(exception)
@@ -58,7 +60,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
 
     def test(client):
-      pid = self.random_pid()
+      pid = d1_test.instance_generator.identifier.generate_pid()
       msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
       exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
       with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'],

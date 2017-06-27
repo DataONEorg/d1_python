@@ -31,9 +31,9 @@ import d1_test.instance_generator.system_metadata as sysmeta
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, cn_client_v1_v2):
     """generate()"""
-    sysmeta_pyxb = sysmeta.generate(cn_client_v1_v2)
+    sysmeta_pyxb = sysmeta.generate_random(cn_client_v1_v2)
     self.sample.assert_equals(
-      sysmeta_pyxb, 'inst_gen__systemmetadata__generate', cn_client_v1_v2
+      sysmeta_pyxb, 'inst_gen_generate', cn_client_v1_v2
     )
 
   def test_1010(self, cn_client_v1_v2):
@@ -43,6 +43,5 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
       cn_client_v1_v2, sysmeta_path
     )
     self.sample.assert_equals(
-      sysmeta_pyxb, 'inst_gen__systemmetadata__generate_from_file_path',
-      cn_client_v1_v2
+      sysmeta_pyxb, 'inst_gen_generate_from_file_path', cn_client_v1_v2
     )

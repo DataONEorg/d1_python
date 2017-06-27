@@ -33,9 +33,9 @@ class TestReplica(d1_test.d1_test_case.D1TestCase):
     """generate()"""
     replica_list = replica.generate()
     replica_xml_str = ''.join([r.toxml('utf-8') for r in replica_list])
-    self.sample.assert_equals(replica_xml_str, 'test_replica_generate')
+    self.sample.assert_equals(replica_xml_str, 'inst_gen_generate')
 
   def test_1010(self):
     """generate_single()"""
     replica_pyxb = replica.generate_single()
-    self.sample.assert_equals(replica_pyxb, 'test_replica_generate_single')
+    self.sample.assert_equals(replica_pyxb, 'inst_gen_generate_single')

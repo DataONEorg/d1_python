@@ -46,9 +46,10 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    assert type(
-      cert_obj
-    ) == cryptography.hazmat.backends.openssl.x509._Certificate
+    assert isinstance(
+      cert_obj, cryptography.hazmat.backends.openssl.x509._Certificate
+    )
+    self.sample.assert_equals(cert_obj, 'deserialize_pem_to_crypt_cert')
 
   def test_1010(self):
     """Extract primary subject from certificate and returns as
@@ -58,7 +59,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
       self.cert_simple_subject_info_pem
     )
     primary_str = d1_common.cert.x509.extract_subject_from_dn(cert_obj)
-    assert primary_str == 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+    self.sample.assert_equals(primary_str, 'extract_dn_to_d1_subject')
 
   def test_1020(self):
     """Extract SubjectInfo from certificate, SubjectInfo present"""
@@ -89,13 +90,10 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
       self.cert_simple_subject_info_pem
     )
-    assert primary_str == \
-      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
-    assert sorted(equivalent_set) == \
-      [
-        'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
-        'verifiedUser',
-      ]
+    self.sample.assert_equals({
+      'primary_str': primary_str,
+      'equivalent_set': equivalent_set
+    }, 'primary_and_equivalent_with_subject_info')
 
   def test_1050(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
@@ -104,9 +102,10 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
       self.cert_no_subject_info_pem
     )
-    assert primary_str == \
-      'CN=Roger Dahl A538,O=Google,C=US,DC=cilogon,DC=org'
-    assert equivalent_set == set()
+    self.sample.assert_equals({
+      'primary_str': primary_str,
+      'equivalent_set': equivalent_set
+    }, 'primary_and_equivalent_without_subject_info')
 
   @freezegun.freeze_time('2021-01-01')
   def test_1060(self):
@@ -116,6 +115,4 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     )
     with d1_test.d1_test_case.capture_log() as log_stream:
       d1_common.cert.x509.log_cert_info(logging.warn, 'test msg', cert_obj)
-    self.sample.assert_equals(
-      log_stream.getvalue(), 'x509_log_cert_info_expected'
-    )
+    self.sample.assert_equals(log_stream.getvalue(), 'log_cert_info_expected')

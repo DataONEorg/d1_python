@@ -42,6 +42,8 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.instance_generator.identifier
+
 
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
@@ -166,17 +168,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       # Obsoleted object has a create and an update event
       log = client.getLogRecords(pidFilter=pid_create)
-      assert len(log.logEntry) == 2
-      # Events are sorted with newest event first.
-      assert log.logEntry[0].event == 'update'
-      assert log.logEntry[0].identifier.value() == pid_create
-      assert log.logEntry[1].event == 'create'
-      assert log.logEntry[1].identifier.value() == pid_create
-      # New object has only a update event
-      log = client.getLogRecords(pidFilter=pid_update)
-      assert len(log.logEntry) == 1
-      assert log.logEntry[0].event == 'create'
-      assert log.logEntry[0].identifier.value() == pid_update
+      self.sample.assert_equals(log, 'update_records_event')
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       test(self.client_v1)
@@ -198,11 +190,13 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       sysmeta_after_update_pyxb = client.getSystemMetadata(pid_create)
       # dateSysMetadataModified is updated on obsoleted object
-      assert sysmeta_after_update_pyxb.dateSysMetadataModified > \
-        sysmeta_before_update_pyxb.dateSysMetadataModified
       # dateUploaded remains unchanged on obsoleted object
-      assert sysmeta_after_update_pyxb.dateUploaded == \
-        sysmeta_before_update_pyxb.dateUploaded
+      self.sample.assert_equals(
+        sysmeta_before_update_pyxb, 'update_adjusts_obsoleted_obj_before'
+      )
+      self.sample.assert_equals(
+        sysmeta_after_update_pyxb, 'update_adjusts_obsoleted_obj_after'
+      )
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       test(self.client_v1)
@@ -263,7 +257,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
         client
       )
-      sysmeta_pyxb.identifier = self.random_pid()
+      sysmeta_pyxb.identifier = d1_test.instance_generator.identifier.generate_pid()
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
         client.update(old_pid, StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb)
 

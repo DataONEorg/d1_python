@@ -34,11 +34,4 @@ class TestMockDescribe(d1_test.d1_test_case.D1TestCase):
     header_dict = mn_client_v1_v2.describe('test_pid')
     assert 'Last-Modified' in header_dict
     del header_dict['Last-Modified']
-    expected_header_dict = {
-      'Content-Length': '256',
-      'DataONE-SerialVersion': '3',
-      'DataONE-Checksum': 'SHA-1,aa19dbfb3c19ef07831302e4a57fb21a4ea740ba',
-      'DataONE-FormatId': u'application/octet-stream',
-      u'Content-Type': 'application/octet-stream',
-    }
-    assert expected_header_dict == dict(header_dict)
+    self.sample.assert_equals(header_dict, 'describe_headers', mn_client_v1_v2)

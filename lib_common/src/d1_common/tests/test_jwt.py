@@ -92,7 +92,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
     jwt_dict = d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj)
     self.sample.assert_equals(
       jwt_dict,
-      'jwt_token_decoded_matches_expected',
+      'validate_and_decode_ok',
     )
 
   @freezegun.freeze_time('2011-01-01')

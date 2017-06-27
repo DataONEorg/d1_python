@@ -157,7 +157,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   # copy_file_like_object_to_file()
 
   def test_1140(self):
-    """copy_file_like_object_to_file(): Copies flo to file when path is valid"""
+    """copy_file_like_object_to_file(): Copies f to file when path is valid"""
     msg_str = 'line1\nline2\n'
     with tempfile.NamedTemporaryFile() as tmp_file:
       tmp_file_path = tmp_file.name
@@ -184,9 +184,11 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     response = client.get('test_pid_1')
     with tempfile.NamedTemporaryFile() as tmp_file:
       cli_util.copy_requests_stream_to_file(response, tmp_file.name)
+      tmp_file.seek(0)
+      got_sciobj_str = tmp_file.read()
       expected_sciobj_str = client.get('test_pid_1').content
-      assert len(expected_sciobj_str) == 258
-      assert expected_sciobj_str == tmp_file.read()
+      self.sample.assert_equals(got_sciobj_str, 'copy_stream_to_file')
+      assert got_sciobj_str == expected_sciobj_str
 
   @responses.activate
   def test_1170(self):

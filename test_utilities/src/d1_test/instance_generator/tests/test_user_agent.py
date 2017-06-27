@@ -34,4 +34,4 @@ class TestUserAgent(d1_test.d1_test_case.D1TestCase):
     user_agent_list = [
       d1_test.instance_generator.user_agent.generate() for _ in range(10)
     ]
-    self.sample.assert_equals(user_agent_list, 'inst_gen__user_agent__generate')
+    self.sample.assert_equals(user_agent_list, 'inst_gen_generate')

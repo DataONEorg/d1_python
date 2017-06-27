@@ -38,5 +38,5 @@ class TestCNClient_1_1(d1_test.d1_test_case.D1TestCase):
     )
     qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
     self.sample.assert_equals(
-      qed_xml, 'test_cnclient_1_1_get_query_engine_description', cn_client_v1_v2
+      qed_xml, 'get_query_engine_description', cn_client_v1_v2
     )

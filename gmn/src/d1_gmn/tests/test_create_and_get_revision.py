@@ -38,6 +38,8 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.instance_generator.identifier
+
 
 class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
@@ -131,7 +133,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       new_pid, sid, sciobj_str, sysmeta_pyxb = (
         self.generate_sciobj_with_defaults(mn_client_v1_v2)
       )
-      sysmeta_pyxb.obsoletes = self.random_pid()
+      sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
         mn_client_v1_v2.create(
@@ -167,7 +169,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       new_pid, sid, sciobj_str, sysmeta_pyxb = (
         self.generate_sciobj_with_defaults(mn_client_v1_v2)
       )
-      sysmeta_pyxb.obsoletes = self.random_pid()
+      sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
         mn_client_v1_v2.create(

@@ -165,14 +165,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     assert isinstance(description_dict, requests.structures.CaseInsensitiveDict)
     assert 'Last-Modified' in description_dict
     del description_dict['Last-Modified']
-    expected_dict = {
-      'Content-Length': '240',
-      'DataONE-SerialVersion': '3',
-      'DataONE-Checksum': 'SHA-1,9af83d3c3c29474aa17c43da4b3574055871fab5',
-      'DataONE-FormatId': u'application/octet-stream',
-      u'Content-Type': 'application/octet-stream'
-    }
-    assert dict(description_dict) == expected_dict
+    self.sample.assert_equals(description_dict, 'describe_returns_dict')
 
   @responses.activate
   def test_1120(self, cn_mn_client_v1):
@@ -211,14 +204,11 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   def test_1140(self, cn_mn_client_v1):
     """CNRegister.generateIdentifier(): Generates expected REST query"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    scheme_str = (
-      'scheme_' + d1_test.instance_generator.random_data.random_3_words()
-    )
     fragment_str = (
       'fragment_' + d1_test.instance_generator.random_data.random_3_words()
     )
     received_echo_dict = cn_mn_client_v1.generateIdentifier(
-      scheme_str, fragment_str
+      'UUID', fragment_str
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'generate_identifier', cn_mn_client_v1

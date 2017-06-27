@@ -107,7 +107,6 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
   def test_1010(self, mn_client_v1):
     """MNCore.create(): Returned Identifier object is correctly parsed"""
     d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-
     identifier_pyxb = mn_client_v1.create(
       '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )

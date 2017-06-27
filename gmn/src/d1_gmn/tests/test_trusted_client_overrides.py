@@ -58,12 +58,13 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
         setattr(send_sysmeta_pyxb, attr_str, override_value)
 
       # Create obj with overrides
-      self.call_d1_client(
-        mn_client_v2.create,
-        pid,
-        StringIO.StringIO(sciobj_str),
-        send_sysmeta_pyxb,
-      )
+      with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+        self.call_d1_client(
+          mn_client_v2.create,
+          pid,
+          StringIO.StringIO(sciobj_str),
+          send_sysmeta_pyxb,
+        )
 
       recv_sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
 

@@ -52,7 +52,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=0, count=0)
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__number_of_objects', cn_mn_client_v1_v2
+        object_list_pyxb, 'number_of_objects', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -62,7 +62,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=0, count=21)
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__front_section', cn_mn_client_v1_v2
+        object_list_pyxb, 'front_section', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -72,7 +72,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(start=612, count=15)
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__middle_section', cn_mn_client_v1_v2
+        object_list_pyxb, 'middle_section', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -86,7 +86,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         start=n_objects - 1, count=1
       )
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__exact_end_section', cn_mn_client_v1_v2
+        object_list_pyxb, 'exact_end_section', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -101,8 +101,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         start=n_objects - 10, count=100
       )
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__count_beyond_end_section',
-        cn_mn_client_v1_v2
+        object_list_pyxb, 'count_beyond_end_section', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -117,8 +116,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         start=n_objects + 1234, count=10000
       )
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__start_beyond_end_section',
-        cn_mn_client_v1_v2
+        object_list_pyxb, 'start_beyond_end_section', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -129,7 +127,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(identifier='bogus_did')
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__pid_filter_unknown', cn_mn_client_v1_v2
+        object_list_pyxb, 'pid_filter_unknown', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -141,8 +139,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid = random.choice(self.get_pid_list())
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(identifier=pid)
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__pid_filter_existing',
-        cn_mn_client_v1_v2
+        object_list_pyxb, 'pid_filter_existing', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -156,7 +153,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         identifier=sid, count=10
       )
       self.sample.assert_equals(
-        object_list_pyxb, 'list_objects__sid_filter', cn_mn_client_v1_v2
+        object_list_pyxb, 'sid_filter', cn_mn_client_v1_v2
       )
 
   @responses.activate
@@ -177,7 +174,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # is the newest, as GMN sorts on timestamp descending.
       self.sample.assert_equals(
         '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
-        'list_objects__date_range_first_last',
+        'date_range_first_last',
         cn_mn_client_v1_v2,
       )
 
@@ -193,7 +190,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       self.sample.assert_equals(
         object_list_pyxb,
-        'list_objects__date_range_in_the_future',
+        'date_range_in_the_future',
         cn_mn_client_v1_v2,
       )
 
@@ -234,5 +231,5 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
       self.sample.assert_equals(
         [n_obj_reg_1, n_obj_rep_1, n_obj_reg_2, n_obj_rep_2],
-        'list_objects__replica_status_filter', cn_mn_client_v1_v2
+        'replica_status_filter', cn_mn_client_v1_v2
       )
