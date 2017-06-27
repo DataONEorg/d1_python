@@ -18,17 +18,52 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Create database entries for a set of test objects
+
+Objects are randomly distributed between categories:
+  - Standalone, no SID
+  - Standalone, SID
+  - Chain, no SID
+  - Chain, SID
+
+This creates the db entries by calling the GMN D1 APIs, then uses Django to dump
+the database to JSON. The test db can then be loaded directly from the JSON file
+but it's much faster to keep an extra copy of the db and then create the test db
+as needed with Postgres' "create database from template" function. So we keep
+this db after generating the JSON and use a procedure, implemented in
+./conftest.py, to only load the db from JSON when required.
+
+Though object bytes are also created, they are not captured in the db fixture.
+So if a test needs get(), getChecksum() and replica() to work, it must first
+create the correct file in GMN's object store or mock object store reads. The
+bytes are predetermined for a given test PID. See
+d1_test.d1_test_case.generate_reproducible_sciobj_str() and
+d1_gmn.app.util.sciobj_file_path().
+
+The django init needs to occur before the django and gmn_test_case imports, so
+we're stuck with a bit of a messy import section that isort and flake8 don't
+like.
+
+isort:skip_file
+"""
+# flake8:noqa:E402
 
 from __future__ import absolute_import
 
 import bz2
 import datetime
 import logging
+import os
 import random
 import StringIO
 
-import freezegun
+# import freezegun
 import responses
+
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "d1_gmn.settings_test")
+django.setup()
 
 import d1_gmn.settings_test
 import d1_gmn.tests.gmn_mock
@@ -37,48 +72,29 @@ import d1_gmn.tests.gmn_test_case
 import d1_test.d1_test_case
 import d1_test.instance_generator.system_metadata
 import d1_test.instance_generator.user_agent
-
-import django as django
-import django.conf
-import django.core.management
+import d1_test.instance_generator.sciobj
+import d1_test.instance_generator.random_data
+import freezegun
 
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
 
 
 def main():
-  django.conf.settings.configure(
-    default_settings=d1_gmn.settings_test, DEBUG=True
-  )
-  django.setup()
-
-  # os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings_test'
-  #   django.conf.settings.configure()
   make_db_fixture = MakeDbFixture()
   make_db_fixture.run()
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestMakeDbFixture')
 class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  """Create database entries for a set of test objects
-
-  Objects are randomly distributed between categories:
-    - Standalone, no SID
-    - Standalone, SID
-    - Chain, no SID
-    - Chain, SID
-  Notes:
-    - Though object bytes are also created, they are not captured in the db
-    fixture. So if a test needs get(), getChecksum() and replica() to work, it
-    must first create the correct file in GMN's object store. The bytes are
-    predetermined for a given test PID. See
-    d1_test.d1_test_case.generate_reproducible_sciobj_str() and
-    d1_gmn.app.util.sciobj_file_path().
-  """
+  def __init__(self):
+    super(MakeDbFixture, self).setup_method(None)
 
   @responses.activate
   def run(self):
-    with freezegun.freeze_time('1977-06-27') as freeze_time:
+    # We control the timestamps of newly created objects directly and use
+    # freeze_time to control the timestamps that GMN sets on updated objects
+    # and events.
+    with freezegun.freeze_time('2001-02-03') as freeze_time:
       with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
         self.clear_db()
         self.create_objects(freeze_time)
@@ -88,7 +104,9 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   def clear_db(self):
     test_db_key = 'default'
-    django.core.management.call_command('flush', database=test_db_key)
+    django.core.management.call_command(
+      'flush', interactive=False, database=test_db_key
+    )
 
   def create_objects(self, freeze_time):
     client = self.client_v2
@@ -100,14 +118,17 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         freeze_time.tick(delta=datetime.timedelta(days=1))
 
-        use_sid = random.random() < 0.5
         do_chain = random.random() < 0.5
 
-        pid, sid, sciobj_str, sysmeta_pyxb = self.create_random_sciobj(
-          client, sid=use_sid
-        )
+        pid, sid, sciobj_str, sysmeta_pyxb = \
+          d1_test.instance_generator.sciobj.generate_reproducible(
+            client
+          )
+
         sciobj_file = StringIO.StringIO(sciobj_str)
-        self.dump_pyxb(sysmeta_pyxb)
+        # self.dump_pyxb(sysmeta_pyxb)
+        # recv_sysmeta_pyxb = client.getSystemMetadata(pid)
+        # self.dump_pyxb(recv_sysmeta_pyxb)
 
         if not do_chain:
           client.create(pid, sciobj_file, sysmeta_pyxb)
@@ -134,7 +155,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
       freeze_time.tick(delta=datetime.timedelta(days=1))
 
-      read_subj = d1_test.instance_generator.system_metadata.random_data.random_subj()
+      read_subj = d1_test.instance_generator.random_data.random_subj()
       with d1_gmn.tests.gmn_mock.set_auth_context(
           active_subj_list=[read_subj], trusted_subj_list=[read_subj],
           do_disable_auth=False
@@ -146,7 +167,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   def save_compressed_db_fixture(self):
-    fixture_file_path = self.get_sample_path('db_fixture.json.bz2')
+    fixture_file_path = self.sample.get_path('db_fixture.json.bz2')
     logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
     with bz2.BZ2File(
         fixture_file_path, 'w', buffering=1024, compresslevel=9
@@ -175,14 +196,17 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
           sysmeta_pyxb = self.call_d1_client(client.getSystemMetadata, pid)
           sid = getattr(sysmeta_pyxb, 'seriesId', None)
-          print sid
           if sid is not None:
             sid_list.append(sid.value())
 
         start_idx += object_list_pyxb.count
 
-    self.save_sample('db_fixture_pid.json', self.obj_to_pretty_str(pid_list))
-    self.save_sample('db_fixture_sid.json', self.obj_to_pretty_str(sid_list))
+    self.sample.save(
+      self.sample.obj_to_pretty_str(pid_list), 'db_fixture_pid.json'
+    )
+    self.sample.save(
+      self.sample.obj_to_pretty_str(sid_list), 'db_fixture_sid.json'
+    )
 
 
 if __name__ == '__main__':
