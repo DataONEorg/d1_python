@@ -42,6 +42,8 @@ import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.url
 
+import d1_test.d1_test_case
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 
@@ -72,7 +74,9 @@ def _request_callback(request):
   if pid.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  sciobj_str, sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(client, pid)
+  pid, sid, sciobj_str, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible(
+    client, pid
+  )
   header_dict = _create_headers(sciobj_str, sysmeta_pyxb)
   return 200, header_dict, ''
 

@@ -45,7 +45,6 @@ import d1_test.mock_api.util
 
 # Config
 
-N_TOTAL = 100
 META_ENDPOINT_RX = r'v([123])/meta/(.*)'
 
 
@@ -70,7 +69,8 @@ def _request_callback(request):
   if pid.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  sysmeta_pyxb = d1_test.mock_api.util.generate_sysmeta(client, pid)[1]
+  pid, sid, sciobj_str, sysmeta_pyxb = \
+    d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }

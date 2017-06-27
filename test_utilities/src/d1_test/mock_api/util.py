@@ -30,15 +30,17 @@ import json
 import re
 import urlparse
 
-import freezegun
-
+import d1_common.checksum
 import d1_common.const
+import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.url
 
+import d1_test.d1_test_case
+import d1_test.instance_generator.date_time
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
-from d1_test.d1_test_case import generate_reproducible_sciobj_str
 
 import d1_client.util
 
@@ -95,14 +97,6 @@ def get_page(query_dict, n_total):
   return n_start, n_count
 
 
-def generate_sysmeta(client, pid):
-  sciobj_str = generate_reproducible_sciobj_str(pid)
-  sysmeta_pyxb = _generate_system_metadata_for_sciobj_str(
-    client, pid, sciobj_str
-  )
-  return sciobj_str, sysmeta_pyxb
-
-
 def echo_get_callback(request):
   """Generic callback that echoes GET requests"""
   # Return DataONEException if triggered
@@ -126,60 +120,52 @@ def echo_get_callback(request):
   return 200, header_dict, json.dumps(body_dict)
 
 
-@freezegun.freeze_time('1977-07-27')
-def generate_object_list(client, n_start, n_count, n_total):
-  objectList = client.bindings.objectList()
+def generate_object_list(
+    client, n_start, n_count, n_total, from_date=None, to_date=None
+):
+  object_list_pyxb = client.bindings.objectList()
 
   for i in range(n_count):
-    objectInfo = client.bindings.ObjectInfo()
+    pid = 'object#{:04d}'.format(n_start + i)
 
-    objectInfo.identifier = 'object#{}'.format(n_start + i)
-    objectInfo.formatId = 'text/plain'
-    checksum = client.bindings.Checksum(
-      hashlib.sha1(objectInfo.identifier.value()).hexdigest()
-    )
-    checksum.algorithm = 'SHA-1'
-    objectInfo.checksum = checksum
-    objectInfo.dateSysMetadataModified = datetime.datetime.now()
-    objectInfo.size = 1234
+    # freeze_time.tick(delta=datetime.timedelta(days=1))
+    pid, sid, sciobj_str, sysmeta_pyxb = \
+      d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
 
-    objectList.objectInfo.append(objectInfo)
+    now_dt = sysmeta_pyxb.dateSysMetadataModified
 
-  objectList.start = n_start
-  objectList.count = len(objectList.objectInfo)
-  objectList.total = n_total
+    if from_date and to_date and not from_date <= now_dt <= to_date:
+      continue
+    elif from_date and not to_date and now_dt < from_date:
+      continue
+    elif not from_date and to_date and now_dt > to_date:
+      continue
 
-  #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
-  return objectList.toxml('utf-8')
+    object_info_pyxb = client.bindings.ObjectInfo()
+
+    object_info_pyxb.identifier = pid
+    object_info_pyxb.formatId = sysmeta_pyxb.formatId
+    object_info_pyxb.checksum = sysmeta_pyxb.checksum
+    object_info_pyxb.dateSysMetadataModified = sysmeta_pyxb.dateSysMetadataModified
+    object_info_pyxb.size = sysmeta_pyxb.size
+
+    object_list_pyxb.objectInfo.append(object_info_pyxb)
+
+  object_list_pyxb.start = n_start
+  object_list_pyxb.count = len(object_list_pyxb.objectInfo)
+  object_list_pyxb.total = n_total
+
+  return object_list_pyxb.toxml('utf-8')
 
 
 # def echo_post_callback(request):
 #   """Generic callback that echoes POST requests"""
-#   # Return DataONEException if triggered
-#   exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-#   if exc_response_tup:
-#     return exc_response_tup
-#   # Return regular response
-#   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
-#     body_str = request.body.read()
-#   else:
-#     body_str = request.body
-#   url_obj = urlparse.urlparse(request.url)
-#   header_dict = {
-#     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
-#   }
-#   body_dict = {
-#     'body_base64': base64.b64encode(body_str),
-#     'query_dict': urlparse.parse_qs(url_obj.query),
-#     'header_dict': dict(request.headers),
-#   }
-#   return 200, header_dict, json.dumps(body_dict)
 
 
 def _generate_system_metadata_for_sciobj_str(client, pid, sciobj_str):
   size = len(sciobj_str)
   md5 = hashlib.md5(sciobj_str).hexdigest()
-  now = datetime.datetime.now()
+  now = d1_test.instance_generator.date_time.from_did(pid)
   sysmeta_pyxb = _generate_sysmeta_pyxb(client, pid, size, md5, now)
   return sysmeta_pyxb
 
@@ -193,7 +179,7 @@ def _generate_sysmeta_pyxb(client, pid, size, md5, now):
   sysmeta_pyxb.checksum = client.bindings.checksum(md5)
   sysmeta_pyxb.checksum.algorithm = 'MD5'
   sysmeta_pyxb.dateUploaded = now
-  sysmeta_pyxb.dateSysMetadataModified = now
+  sysmeta_pyxb.dateSysMetadataModified = now + datetime.timedelta(days=10)
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
   return sysmeta_pyxb
 

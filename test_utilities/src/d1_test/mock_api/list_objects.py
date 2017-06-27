@@ -39,6 +39,7 @@ import re
 import responses
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.url
 
 import d1_test.mock_api.d1_exception
@@ -49,7 +50,35 @@ N_TOTAL = 100
 OBJECT_LIST_ENDPOINT_RX = r'v([123])/object'
 
 
-def add_callback(base_url):
+def add_callback(base_url, n_total=N_TOTAL):
+  def _request_callback(request):
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+      return exc_response_tup
+    # Return regular response
+    query_dict, client = _parse_url(request.url)
+    n_start, n_count = d1_test.mock_api.util.get_page(query_dict, n_total)
+    # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
+    header_dict = {
+      'Content-Type': d1_common.const.CONTENT_TYPE_XML,
+    }
+    from_date = query_dict.get('fromDate', None)
+    to_date = query_dict.get('toDate', None)
+    return (
+      200, header_dict, d1_test.mock_api.util.generate_object_list(
+        client,
+        n_start,
+        n_count,
+        n_total,
+        from_date=d1_common.date_time.from_iso8601(from_date[0])
+        if from_date else None,
+        to_date=d1_common.date_time.from_iso8601(to_date[0])
+        if to_date else None,
+      ),
+    )
+
   responses.add_callback(
     responses.GET,
     re.compile(
@@ -57,26 +86,6 @@ def add_callback(base_url):
     ),
     callback=_request_callback,
     content_type='',
-  )
-
-
-def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return regular response
-  query_dict, client = _parse_url(request.url)
-  n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
-  # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_XML,
-  }
-  return (
-    200, header_dict, d1_test.mock_api.util.generate_object_list(
-      client, n_start, n_count, N_TOTAL
-    ),
   )
 
 

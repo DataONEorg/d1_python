@@ -31,7 +31,7 @@ d1_exception.py
 A NotFound exception can be triggered by passing a pid that starts with
 "<NotFound>". E.g.:
 
-client.get('<NotFound>pid')
+client.get('<NotFound>somepid')
 
 Redirects can be triggered by passing a pid that starts with
 "<REDIRECT:x:y>", where x is the redirect status code and y is the number
@@ -52,6 +52,7 @@ import d1_common.types.exceptions
 import d1_common.url
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 
@@ -69,7 +70,7 @@ def add_callback(base_url):
   logging.debug('Added callback. method="GET" url_rx="{}"'.format(url_rx))
 
 
-def redirect_decorate_pid(pid, redirect_code=303, redirect_n=3):
+def decorate_pid_for_redirect(pid, redirect_code=303, redirect_n=3):
   """Return a PID that will trigger redirects"""
   return u'<REDIRECT:{}:{}>{}'.format(redirect_code, redirect_n, pid)
 
@@ -91,11 +92,12 @@ def _request_callback(request):
     return redirect_tup
 
   # Return regular response
-  body_str = d1_test.d1_test_case.generate_reproducible_sciobj_str(pid)
+  pid, sid, sciobj_str, sysmeta_pyxb = \
+    d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
   }
-  return 200, header_dict, body_str
+  return 200, header_dict, sciobj_str
 
 
 def _parse_url(url):

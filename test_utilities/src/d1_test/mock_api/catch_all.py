@@ -107,7 +107,7 @@ def add_callback(base_url):
     )
 
 
-def assert_expected_echo(received_echo_dict, name_postfix_str, client):
+def assert_expected_echo(received_echo_dict, name_postfix_str, client=None):
   _dict_key_val_to_unicode(received_echo_dict)
   _delete_volatile_keys(received_echo_dict)
   d1_test.sample.assert_equals(
@@ -115,26 +115,32 @@ def assert_expected_echo(received_echo_dict, name_postfix_str, client):
   )
 
 
+def delete_volatile_post_keys(echo_dict):
+  """Delete keys that have values that may differ between POST calls"""
+  del_key(echo_dict, ['request', 'body_base64'])
+  del_key(echo_dict, ['request', 'header_dict', 'Content-Type'])
+
+
+def del_key(d, key_path):
+  k = key_path[0]
+  if k in d:
+    if len(key_path) > 1:
+      del_key(d[k], key_path[1:])
+    else:
+      del d[k]
+
+
 def _delete_volatile_keys(echo_dict):
   """Delete keys that have values that may differ between calls"""
-
-  def delete(d, key_path):
-    k = key_path[0]
-    if k in d:
-      if len(key_path) > 1:
-        delete(d[k], key_path[1:])
-      else:
-        del d[k]
-
-  delete(echo_dict, ['request', 'body_base64'])
-  delete(echo_dict, ['request', 'header_dict', 'Accept'])
-  delete(echo_dict, ['request', 'header_dict', 'Accept-Encoding'])
-  delete(echo_dict, ['request', 'header_dict', 'User-Agent'])
-  delete(echo_dict, ['request', 'header_dict', 'Charset'])
-  delete(echo_dict, ['request', 'header_dict', 'Connection'])
-  delete(echo_dict, ['request', 'header_dict', 'Content-Length'])
-  delete(echo_dict, ['request', 'header_dict', 'Content-Type'])
-  delete(echo_dict, ['request', 'header_dict'])
+  del_key(echo_dict, ['request', 'body_base64'])
+  del_key(echo_dict, ['request', 'header_dict', 'Accept'])
+  del_key(echo_dict, ['request', 'header_dict', 'Accept-Encoding'])
+  del_key(echo_dict, ['request', 'header_dict', 'User-Agent'])
+  del_key(echo_dict, ['request', 'header_dict', 'Charset'])
+  del_key(echo_dict, ['request', 'header_dict', 'Connection'])
+  del_key(echo_dict, ['request', 'header_dict', 'Content-Length'])
+  del_key(echo_dict, ['request', 'header_dict', 'Content-Type'])
+  del_key(echo_dict, ['request', 'header_dict'])
 
 
 def _dict_key_val_to_unicode(d):
