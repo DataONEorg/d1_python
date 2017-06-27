@@ -93,6 +93,14 @@ import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
+SYSMETA_ROOT_CHILD_LIST = [
+  'serialVersion', 'identifier', 'formatId', 'size', 'checksum', 'submitter',
+  'rightsHolder', 'accessPolicy', 'replicationPolicy', 'obsoletes',
+  'obsoletedBy', 'archived', 'dateUploaded', 'dateSysMetadataModified',
+  'originMemberNode', 'authoritativeMemberNode', 'replica', 'seriesId',
+  'mediaType', 'fileName'
+]
+
 
 def normalize(sysmeta_pyxb, reset_timestamps=False):
   """Normalizes {sysmeta_pyxb} in place.
@@ -167,3 +175,22 @@ def clear_elements(
     sysmeta_pyxb.serialVersion = None
 
   sysmeta_pyxb.replicationPolicy = None
+
+
+def update_elements(dst_pyxb, src_pyxb, el_list):
+  """Copy elements specified in {el_list} from {src_pyxb} to {dst_pyxb}
+
+  Only elements that are children of root are supported. See
+  SYSMETA_ROOT_CHILD_LIST.
+
+  If an element in {el_list} does not exist in {src_pyxb}, it is removed from
+  {dst_pyxb}.
+  """
+  invalid_element_set = set(el_list) - set(SYSMETA_ROOT_CHILD_LIST)
+  if invalid_element_set:
+    raise ValueError(
+      'Passed one or more invalid elements. invalid="{}"'
+      .format(', '.join(sorted(list(invalid_element_set))))
+    )
+  for el_str in el_list:
+    setattr(dst_pyxb, el_str, getattr(src_pyxb, el_str, None))
