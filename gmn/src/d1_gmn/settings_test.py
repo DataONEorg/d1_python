@@ -214,8 +214,8 @@ ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
   'django.contrib.staticfiles',
-  'd1_gmn.app.startup.GMNStartupChecks',
   'd1_gmn.app',
+  'd1_gmn.app.startup.GMNStartupChecks',
 ]
 
 SECRET_KEY = '<Do not modify this placeholder value>'
