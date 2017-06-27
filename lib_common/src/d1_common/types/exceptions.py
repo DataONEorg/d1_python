@@ -60,30 +60,38 @@ import re
 import string
 import StringIO
 import traceback
-import xml.sax
 
 import pyxb
 import pyxb.binding.datatypes as XS
 import pyxb.utils.domutils
 
 import d1_common.util
+import d1_common.xml
 from d1_common.types import dataoneErrors
 
 
 def deserialize(dataone_exception_xml):
   """Deserialize a DataONE Exception.
   """
+  # logging.debug('dataone_exception_xml="{}"'
+  # .format(d1_common.xml.pretty_xml(dataone_exception_xml)))
   try:
-    dataone_exception_pyxb = dataoneErrors.CreateFromDocument(
+    dataone_exception_pyxb = d1_common.xml.deserialize_d1_exc(
       dataone_exception_xml
     )
-  except pyxb.ValidationError as e:
-    error_str = e.details()
-  except pyxb.PyXBException as e:
-    error_str = e.message
-  except xml.sax.SAXParseException as e:
-    error_str = str(e)
+  except ValueError as e:
+    raise ServiceFailure(
+      detailCode=0,
+      description='Deserialization failed. error="{}" doc="{}"'.format(
+        str(e),
+        '<empty response>'
+        if not dataone_exception_xml else dataone_exception_xml,
+      ),
+      traceInformation=traceback.format_exc(),
+    )
   else:
+    # logging.debug('dataone_exception_pyxb="{}"'
+    # .format(d1_common.xml.pretty_pyxb(dataone_exception_pyxb)))
     return create_exception_by_name(
       dataone_exception_pyxb.name,
       dataone_exception_pyxb.detailCode,
@@ -92,16 +100,6 @@ def deserialize(dataone_exception_xml):
       dataone_exception_pyxb.identifier,
       dataone_exception_pyxb.nodeId,
     )
-
-  raise ServiceFailure(
-    detailCode=0,
-    description='Deserialization failed. error="{}" doc="{}"'.format(
-      error_str,
-      '<empty response>'
-      if not dataone_exception_xml else dataone_exception_xml,
-    ),
-    traceInformation=traceback.format_exc(),
-  )
 
 
 def deserialize_from_headers(headers):
