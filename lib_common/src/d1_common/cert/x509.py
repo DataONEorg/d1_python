@@ -89,14 +89,17 @@ def extract_subjects(cert_pem):
 
 
 def extract_subject_from_dn(cert_obj):
+  """Serialize a DN to a DataONE subject string.
+  E.g.: CN=Some Name A792,O=Harte Research Institute,C=US,DC=cilogon,DC=org
+  If an RDN contains an unknown OID, the OID is serialized as a dotted string.
+  """
+  print cert_obj.subject
   return (
     ','.join(
-      reversed([
-        '{}={}'.format(
-          OID_TO_SHORT_NAME_DICT.get(v.oid.dotted_string, v.oid.dotted_string),
-          rdn_escape(v.value)
-        ) for v in cert_obj.subject
-      ])
+      '{}={}'.format(
+        OID_TO_SHORT_NAME_DICT.get(v.oid.dotted_string, v.oid.dotted_string),
+        rdn_escape(v.value)
+      ) for v in reversed(list(cert_obj.subject))
     )
   )
 
@@ -126,7 +129,7 @@ def extract_subject_info_extension(cert_obj):
     ).value.value
     return str(pyasn1.codec.der.decoder.decode(subject_info_der)[0])
   except Exception as e:
-    logging.debug('Unable to extract SubjectInfo. error="{}"'.format(e))
+    logging.debug('SubjectInfo not extracted. reason="{}"'.format(e))
     return None
 
 
@@ -260,8 +263,10 @@ def log_cert_info(log, msg_str, cert_obj):
     log, ['{}:'.format(msg_str)] + [
       '  {}'.format(v)
       for v in [
-        'Subject: {}'.format(get_val_str(cert_obj, ['subject', 'value'])),
-        'Issuer: {}'.format(get_val_str(cert_obj, ['issuer', 'value'])),
+        'Subject: {}'.
+        format(get_val_str(cert_obj, ['subject', 'value'], reverse=True)),
+        'Issuer: {}'.
+        format(get_val_str(cert_obj, ['issuer', 'value'], reverse=True)),
         'Not Valid Before: {}'.format(cert_obj.not_valid_before.isoformat()),
         'Not Valid After: {}'.format(cert_obj.not_valid_after.isoformat()),
         'Subject Alt Names: {}'.format(
@@ -311,10 +316,11 @@ def get_val_list(n, path):
     return [x for a in y for x in get_val_list(a, path[1:])]
 
 
-def get_val_str(x, path=None):
-  return '<not found>' if x is None else ' / '.join(
-    map(str, get_val_list(x, path or []))
-  )
+def get_val_str(x, path=None, reverse=False):
+  val_list = get_val_list(x, path or [])
+  if reverse:
+    val_list = reversed(val_list)
+  return '<not found>' if x is None else ' / '.join(map(str, val_list))
 
 
 def get_ext_val_str(cert_obj, e, path=None):

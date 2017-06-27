@@ -92,6 +92,17 @@ def get_subject_with_file_validation(jwt_bu64, cert_path):
   return get_subject_with_local_validation(jwt_bu64, cert_obj)
 
 
+def get_subject_without_validation(jwt_bu64):
+  try:
+    jwt_dict = get_jwt_dict(jwt_bu64)
+  except JwtException as e:
+    return log_jwt_bu64_info(logging.error, str(e), jwt_bu64)
+  try:
+    return jwt_dict['sub']
+  except LookupError:
+    log_jwt_dict_info(logging.error, 'Missing "sub" key', jwt_dict)
+
+
 def get_bu64_tup(jwt_bu64):
   return jwt_bu64.strip().split('.')
 

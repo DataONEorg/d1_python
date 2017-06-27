@@ -40,11 +40,10 @@ Subjects are extracted from the SubjectInfo using the following algorithm:
 
 from __future__ import absolute_import
 
-import pyxb
-
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.xml
 
 
 def extract_subjects(subject_info_xml, primary_str):
@@ -60,15 +59,12 @@ def extract_subjects(subject_info_xml, primary_str):
 
 def _deserialize_subject_info(subject_info_xml):
   try:
-    return d1_common.types.dataoneTypes.CreateFromDocument(subject_info_xml)
-  except pyxb.ValidationError as e:
-    err_str = e.details()
-  except pyxb.PyXBException as e:
-    err_str = str(e)
-  raise d1_common.types.exceptions.InvalidToken(
-    0, u'Could not deserialize SubjectInfo. subject_info="{}", error="{}"'
-    .format(subject_info_xml, err_str)
-  )
+    return d1_common.xml.deserialize(subject_info_xml)
+  except ValueError as e:
+    raise d1_common.types.exceptions.InvalidToken(
+      0, u'Could not deserialize SubjectInfo. subject_info="{}", error="{}"'
+      .format(subject_info_xml, str(e))
+    )
 
 
 def _get_subject_info_sets(subject_info_pyxb, primary_str):
