@@ -42,9 +42,11 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestUpdateWithoutSid')
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self):
@@ -168,11 +170,12 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       # Obsoleted object has a create and an update event
       log = client.getLogRecords(pidFilter=pid_create)
-      self.sample.assert_equals(log, 'update_records_event')
+      self.sample.assert_equals(log, 'update_records_event', client)
 
     with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      with d1_test.d1_test_case.reproducible_random_context():
+        test(self.client_v1)
+        test(self.client_v2)
 
   @responses.activate
   def test_1070(self):
@@ -192,15 +195,17 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # dateSysMetadataModified is updated on obsoleted object
       # dateUploaded remains unchanged on obsoleted object
       self.sample.assert_equals(
-        sysmeta_before_update_pyxb, 'update_adjusts_obsoleted_obj_before'
+        sysmeta_before_update_pyxb, 'update_adjusts_obsoleted_obj_before',
+        client
       )
       self.sample.assert_equals(
-        sysmeta_after_update_pyxb, 'update_adjusts_obsoleted_obj_after'
+        sysmeta_after_update_pyxb, 'update_adjusts_obsoleted_obj_after', client
       )
 
     with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      with d1_test.d1_test_case.reproducible_random_context():
+        test(self.client_v1)
+        test(self.client_v2)
 
   @responses.activate
   def test_1080(self):

@@ -269,7 +269,12 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         logging.error(r.toxml())
       ver2_sciobj_str, ver2_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Add a new preferred node
-      ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append('new_node')
+      try:
+        ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append(
+          'new_node'
+        )
+      except AttributeError:
+        ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode = ['new_node']
       mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
       ver3_sciobj_str, ver3_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Check that the count of preferred nodes increased by one
@@ -282,7 +287,12 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append(
         'preferred_2'
       )
-      ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append('blocked_1')
+      try:
+        ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append(
+          'blocked_1'
+        )
+      except AttributeError:
+        ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode = ['blocked_1']
       ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append('blocked_2')
       mn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
       # Check

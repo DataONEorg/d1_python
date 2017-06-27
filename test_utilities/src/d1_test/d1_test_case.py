@@ -168,7 +168,7 @@ def _reproducible_random_func_decorator(func, seed):
 
 
 @contextlib.contextmanager
-def reproducible_random_context(seed):
+def reproducible_random_context(seed=None):
   """Start the PRNG at a fixed seed"""
   state = random.getstate()
   random.seed(seed)

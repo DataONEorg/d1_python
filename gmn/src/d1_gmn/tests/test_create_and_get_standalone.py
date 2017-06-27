@@ -42,7 +42,9 @@ import d1_common.xml
 import d1_test.d1_test_case
 
 
-# @d1_test.d1_test_case.reproducible_random_decorator('TestCreateAndGetStandalone')
+@d1_test.d1_test_case.reproducible_random_decorator(
+  'TestCreateAndGetStandalone'
+)
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
