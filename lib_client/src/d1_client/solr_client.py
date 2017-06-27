@@ -337,6 +337,7 @@ class SolrClient(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
       # now execute the facet query request
       query_dict = {
         'q': q,
+        'fq': fq,
         'rows': '0',
         'facet': 'true',
         'facet.field': name,
