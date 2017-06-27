@@ -21,7 +21,6 @@
 from __future__ import absolute_import
 
 import datetime
-import hashlib
 import json
 import logging
 import os
@@ -49,6 +48,10 @@ import d1_common.util
 import d1_common.xml
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.access_policy
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api.create
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
@@ -60,15 +63,7 @@ import d1_client.session
 
 from django.db import connection
 
-DEFAULT_PERMISSION_LIST = [
-  (['subj1'], ['read']),
-  (['subj2', 'subj3', 'subj4'], ['read', 'write']),
-  (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
-  (['subj9', 'subj10', 'subj11', 'subj12'], ['changePermission']),
-]
-
 HTTPBIN_SERVER_STR = 'http://httpbin.org'
-GMN_TEST_SUBJECT_PUBLIC = 'public'
 ENABLE_SQL_PROFILING = False
 
 # d1_common.util.log_setup(True)
@@ -106,6 +101,10 @@ class GMNTestCase(
     # Remove limit on max diff to show. This can cause debug output to
     # explode...
     self.maxDiff = None
+
+  @property
+  def mock(self):
+    return d1_gmn.tests.gmn_mock
 
   @classmethod
   def capture_exception(cls):
@@ -252,7 +251,9 @@ class GMNTestCase(
 
     def did(idx, is_sid=False):
       return '#{:03d}_{}'.format(
-        idx, self.random_sid() if is_sid else self.random_pid()
+        idx,
+        d1_test.instance_generator.identifier.generate_sid()
+        if is_sid else d1_test.instance_generator.identifier.generate_pid()
       )
 
     base_pid, sid, sciobj_str, sysmeta_pyxb = (
@@ -336,12 +337,13 @@ class GMNTestCase(
     pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       client, pid, sid, submitter, rights_holder, permission_list, now_dt
     )
-    self.call_d1_client(
-      client.create, pid,
-      StringIO.StringIO(sciobj_str), sysmeta_pyxb, vendor_dict,
-      active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
-      disable_auth=disable_auth
-    )
+    with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+      self.call_d1_client(
+        client.create, pid,
+        StringIO.StringIO(sciobj_str), sysmeta_pyxb, vendor_dict,
+        active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
+        disable_auth=disable_auth
+      )
     assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
     return pid, sid, sciobj_str, sysmeta_pyxb
 
@@ -358,12 +360,13 @@ class GMNTestCase(
     pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       client, new_pid, sid, submitter, rights_holder, permission_list, now_dt
     )
-    self.call_d1_client(
-      client.update, old_pid,
-      StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb, vendor_dict,
-      active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
-      disable_auth=disable_auth
-    )
+    with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+      self.call_d1_client(
+        client.update, old_pid,
+        StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb, vendor_dict,
+        active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
+        disable_auth=disable_auth
+      )
     assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
     return pid, sid, sciobj_str, sysmeta_pyxb
 
@@ -384,108 +387,31 @@ class GMNTestCase(
     self.assert_sci_obj_checksum_matches_sysmeta(sciobj_str, sysmeta_pyxb)
     return sciobj_str, sysmeta_pyxb
 
-  #
-  # SysMeta
-  #
-
-  def generate_sysmeta(
-      self, client, pid, sid=None, sciobj_str=None, submitter=None,
-      rights_holder=None, obsoletes=None, obsoleted_by=None,
-      permission_list=None, now_dt=None
-  ):
-    sysmeta_pyxb = client.bindings.systemMetadata()
-    sysmeta_pyxb.serialVersion = 1
-    sysmeta_pyxb.identifier = pid
-    sysmeta_pyxb.seriesId = sid
-    sysmeta_pyxb.formatId = 'application/octet-stream'
-    sysmeta_pyxb.size = len(sciobj_str)
-    sysmeta_pyxb.submitter = submitter
-    sysmeta_pyxb.rightsHolder = rights_holder
-    sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(
-      hashlib.md5(sciobj_str).hexdigest()
-    )
-    sysmeta_pyxb.checksum.algorithm = 'MD5'
-    sysmeta_pyxb.dateUploaded = now_dt
-    sysmeta_pyxb.dateSysMetadataModified = now_dt
-    sysmeta_pyxb.originMemberNode = 'urn:node:GMNUnitTestOrigin'
-    sysmeta_pyxb.authoritativeMemberNode = 'urn:node:GMNUnitTestAuthoritative'
-    sysmeta_pyxb.obsoletes = obsoletes
-    sysmeta_pyxb.obsoletedBy = obsoleted_by
-    sysmeta_pyxb.accessPolicy = self.generate_access_policy(
-      client, permission_list
-    )
-    sysmeta_pyxb.replicationPolicy = self.create_replication_policy_pyxb(client)
-    return sysmeta_pyxb
-
-  def generate_access_policy(self, client, permission_list=None):
-    if permission_list is None:
-      return None
-    elif permission_list == 'default':
-      permission_list = DEFAULT_PERMISSION_LIST
-    access_policy_pyxb = client.bindings.accessPolicy()
-    for subject_list, action_list in permission_list:
-      subject_list = d1_gmn.tests.gmn_mock.expand_subjects(subject_list)
-      action_list = list(action_list)
-      access_rule_pyxb = client.bindings.AccessRule()
-      for subject_str in subject_list:
-        access_rule_pyxb.subject.append(subject_str)
-      for action_str in action_list:
-        permission_pyxb = client.bindings.Permission(action_str)
-        access_rule_pyxb.permission.append(permission_pyxb)
-      access_policy_pyxb.append(access_rule_pyxb)
-    return access_policy_pyxb
-
-  def create_replication_policy_pyxb(
-      self, client, preferred_node_list=None, blocked_node_list=None,
-      is_replication_allowed=True, num_replicas=None
-  ):
-    """{preferred_node_list} and {preferred_node_list}:
-    None: No node list is generated
-    A list of strings: A node list is generated using the strings as node URNs
-    'random': A short node list is generated from random strings
-    """
-    preferred_node_list = self.prep_node_list(preferred_node_list, 'preferred')
-    blocked_node_list = self.prep_node_list(blocked_node_list, 'blocked')
-    rep_pyxb = client.bindings.ReplicationPolicy()
-    rep_pyxb.preferredMemberNode = preferred_node_list
-    rep_pyxb.blockedMemberNode = blocked_node_list
-    rep_pyxb.replicationAllowed = is_replication_allowed
-    rep_pyxb.numberReplicas = num_replicas or random.randint(10, 100)
-    return rep_pyxb
-
-  def generate_sciobj(
-      self, client, pid, sid=None, submitter=None, rights_holder=None,
-      obsoletes=None, obsoleted_by=None, permission_list=None, now_dt=None
-  ):
-    """Generate the object bytes and system metadata for a test object
-    """
-    sciobj_str = d1_test.d1_test_case.generate_reproducible_sciobj_str(pid)
-    sysmeta_pyxb = self.generate_sysmeta(
-      client, pid, sid, sciobj_str, submitter or GMN_TEST_SUBJECT_PUBLIC,
-      rights_holder or GMN_TEST_SUBJECT_PUBLIC, obsoletes, obsoleted_by,
-      permission_list, now_dt
-    )
-    return sciobj_str, sysmeta_pyxb
-
   def generate_sciobj_with_defaults(
       self, client, pid=True, sid=None, submitter=True, rights_holder=True,
       permission_list=True, now_dt=True
   ):
-    """Generate the object bytes and system metadata for a test object
-    Parameters:
-      True: Use a default or generate a value
-      Other: Use the supplied value
-    """
-    pid = self.random_pid() if pid is True else pid
-    sid = self.random_sid() if sid is True else sid
-    sciobj_str, sysmeta_pyxb = self.generate_sciobj(
-      client, pid, sid,
-      'submitter_subj' if submitter is True else submitter,
-      'rights_holder_subj' if rights_holder is True else rights_holder,
-      None, None,
-      DEFAULT_PERMISSION_LIST if permission_list is True else permission_list,
-      datetime.datetime.now() if now_dt is True else now_dt,
-    ) # yapf: disable
+    permission_list = (
+      d1_test.d1_test_case.DEFAULT_PERMISSION_LIST
+      if permission_list is True else permission_list
+    )
+    sid = d1_test.instance_generator.identifier.generate_sid() if sid is True else sid
+    option_dict = {
+      k: v
+      for (k, v) in (('identifier', pid),
+                     ('seriesId', sid),
+                     ('submitter', submitter),
+                     ('rightsHolder', rights_holder), (
+                       'accessPolicy', d1_test.instance_generator.access_policy.
+                       generate_from_permission_list(client, permission_list)
+                     ),
+                     ('dateUploaded', now_dt),
+                     ('dateSysMetadataModified', now_dt),) if v is not True
+    }
+    pid, sid, sciobj_str, sysmeta_pyxb = \
+      d1_test.instance_generator.sciobj.generate_reproducible(
+        client, None if pid is True else pid, option_dict
+      )
     return pid, sid, sciobj_str, sysmeta_pyxb
 
   #
@@ -501,17 +427,6 @@ class GMNTestCase(
   def vendor_proxy_mode(self, object_stream_url):
     return {'VENDOR-GMN-REMOTE-URL': object_stream_url}
 
-  def prep_node_list(self, node_list, tag_str, num_nodes=5):
-    if node_list is None:
-      return None
-    elif isinstance(node_list, list):
-      return node_list
-    elif node_list == 'random':
-      return [
-        'urn:node:{}'.format(self.random_tag(tag_str))
-        for _ in range(num_nodes)
-      ]
-
   def dump_permissions(self):
     logging.debug('Permissions:')
     for s in d1_gmn.app.models.Permission.objects.all():
@@ -524,20 +439,6 @@ class GMNTestCase(
     logging.debug('Subjects:')
     for s in d1_gmn.app.models.Subject.objects.all():
       logging.debug('  {}'.format(s.subject))
-
-  def dump_pyxb(self, type_pyxb):
-    map(logging.debug, self.format_pyxb(type_pyxb).splitlines())
-
-  def format_pyxb(self, type_pyxb):
-    ss = StringIO.StringIO()
-    ss.write('PyXB object:\n')
-    ss.write(
-      '\n'.join([
-        u'  {}'.format(s)
-        for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines()
-      ])
-    )
-    return ss.getvalue()
 
   def get_pid_list(self):
     """Get list of all PIDs in the DB fixture"""
@@ -552,3 +453,9 @@ class GMNTestCase(
 
   def get_total_objects(self, client, **filters):
     return client.listObjects(start=0, count=0, **filters).total
+
+  def get_random_pid_sample(self, n_pids):
+    return random.sample(
+      [v.pid.did for v in d1_gmn.app.models.ScienceObject.objects.all()],
+      n_pids,
+    )

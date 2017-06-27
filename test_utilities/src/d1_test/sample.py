@@ -28,6 +28,7 @@ import tempfile
 import traceback
 
 import pytest
+import requests.structures
 
 import d1_common
 import d1_common.types
@@ -38,24 +39,64 @@ import d1_common.xml
 import d1_client.util
 
 
+def init_tidy():
+  """Call at start of test run to tidy the samples directory.
+  """
+  sample_dir_path = os.path.join(d1_common.util.abs_path('test_docs'))
+  tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
+  d1_common.util.ensure_dir_exists(sample_dir_path)
+  d1_common.util.ensure_dir_exists(tidy_dir_path)
+  for item_name in os.listdir(sample_dir_path):
+    sample_path = os.path.join(sample_dir_path, item_name)
+    tidy_path = os.path.join(tidy_dir_path, item_name)
+    if os.path.exists(tidy_path):
+      os.unlink(tidy_path)
+    os.rename(sample_path, tidy_path)
+
+
 def assert_equals(
     got_obj, name_postfix_str, client=None, extension_str='sample'
 ):
   filename = _format_file_name(client, name_postfix_str, extension_str)
   logging.info('Using sample file. filename="{}"'.format(filename))
-  got_str = _obj_to_pretty_str(got_obj)
   exp_path = _get_or_create_path(filename)
-  diff_str = _get_sxs_diff(got_str, exp_path)
+  got_str = obj_to_pretty_str(got_obj)
+
+  if pytest.config.getoption('--sample-review'):
+    _review_interactive(got_str, exp_path)
+    return
+
+  diff_str = _get_sxs_diff_file(got_str, exp_path)
+
   if diff_str is None:
     return
-  logging.error(
+
+  if pytest.config.getoption('--sample-write'):
+    save(got_str, filename)
+    return
+
+  if pytest.config.getoption('--sample-ask'):
+    _save_interactive(got_str, exp_path)
+    return
+
+  raise AssertionError(
     '\nSample file: {0}\n{1} Sample mismatch. GOT <-> EXPECTED {1}\n{2}'.
     format(filename, '-' * 10, diff_str)
   )
-  if pytest.config.getoption('--update-samples'):
-    _save_interactive(got_str, exp_path)
+
+
+def assert_no_diff(a_obj, b_obj):
+  a_str = obj_to_pretty_str(a_obj)
+  b_str = obj_to_pretty_str(b_obj)
+  diff_str = _get_sxs_diff_str(a_str, b_str)
+  if diff_str is None:
+    return
+  err_msg = '\n{0} Diff mismatch. A <-> B {0}\n{1}'.format('-' * 10, diff_str)
+  if pytest.config.getoption('--sample-ask'):
+    logging.error(err_msg)
+    _diff_interactive(a_str, b_str)
   else:
-    raise AssertionError('Sample mismatch. filename="{}"'.format(filename))
+    raise AssertionError(err_msg)
 
 
 def get_path(filename):
@@ -88,10 +129,15 @@ def load_xml_to_pyxb(filename, mode_str='r'):
   return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
 
-def save(filename, got_str, mode_str='wb'):
+def save(got_str, filename, mode_str='wb'):
   logging.info('Writing sample file. filename="{}"'.format(filename))
   with open(_get_or_create_path(filename), mode_str) as f:
     return f.write(got_str)
+
+
+def save_obj(got_obj, filename, mode_str='wb'):
+  got_str = obj_to_pretty_str(got_obj)
+  save(got_str, filename, mode_str)
 
 
 def save_path(got_str, exp_path, mode_str='wb'):
@@ -100,6 +146,56 @@ def save_path(got_str, exp_path, mode_str='wb'):
   )
   with open(exp_path, mode_str) as f:
     return f.write(got_str)
+
+
+def get_sxs_diff(a_obj, b_obj):
+  return _get_sxs_diff_str(
+    obj_to_pretty_str(a_obj),
+    obj_to_pretty_str(b_obj),
+  )
+
+
+def obj_to_pretty_str(o):
+  # noinspection PyUnreachableCode
+  def serialize(o):
+    logging.debug('Serializing object. type="{}"'.format(type(o)))
+    if isinstance(o, unicode):
+      o = o.encode('utf-8')
+    if isinstance(o, requests.structures.CaseInsensitiveDict):
+      with ignore_exceptions():
+        o = dict(o)
+    with ignore_exceptions():
+      return d1_common.xml.pretty_xml(o)
+    with ignore_exceptions():
+      return d1_common.xml.pretty_pyxb(o)
+    with ignore_exceptions():
+      return '\n'.join(sorted(o.serialize(doc_format='nt').splitlines()))
+    with ignore_exceptions():
+      if 'digraph' in o:
+        return '\n'.join(
+          sorted(str(re.sub(r'node\d+', 'nodeX', o)).splitlines())
+        )
+    with ignore_exceptions():
+      if '\n' in str(o):
+        return str(o)
+    with ignore_exceptions():
+      return json.dumps(o, sort_keys=True, indent=2, cls=SetToList)
+    with ignore_exceptions():
+      return str(o)
+    return repr(o)
+
+  return clobber_uncontrolled_volatiles(serialize(o)).rstrip() + '\n'
+
+
+def clobber_uncontrolled_volatiles(o_str):
+  """Some volatile values in results are not controlled by freezing the time
+  and PRNG seed. We replace those with a fixed string here.
+  """
+  # requests-toolbelt is using another prng for mmp docs
+  o_str = re.sub(r'(?<=boundary=)[0-9a-fA-F]+', '[volatile]', o_str)
+  # entryId is based on a db sequence type
+  o_str = re.sub(r'(?<=<entryId>)\d+', '[volatile]', o_str)
+  return o_str
 
 
 def _get_or_create_path(filename):
@@ -137,10 +233,10 @@ def _get_sxs_diff_str(got_str, exp_str):
   with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
     exp_f.write(exp_str)
     exp_f.seek(0)
-    return _get_sxs_diff(got_str, exp_f.name)
+    return _get_sxs_diff_file(got_str, exp_f.name)
 
 
-def _get_sxs_diff(got_str, exp_path):
+def _get_sxs_diff_file(got_str, exp_path):
   """Return a minimal formatted side by side diff if there are any
   none-whitespace changes, else None.
   """
@@ -148,8 +244,8 @@ def _get_sxs_diff(got_str, exp_path):
     sdiff_proc = subprocess.Popen(
       [
         'sdiff', '--ignore-blank-lines', '--ignore-all-space', '--minimal',
-        '--width=120', '--tabsize=2', '--strip-trailing-cr', '--expand-tabs',
-        exp_path, '-'
+        '--width=130', '--tabsize=2', '--strip-trailing-cr', '--expand-tabs',
+        '--text', '-', exp_path
         # '--suppress-common-lines'
       ],
       bufsize=-1,
@@ -174,60 +270,54 @@ def _get_sxs_diff(got_str, exp_path):
       )
 
 
-def _display_diff_pyxb(got_pyxb, exp_pyxb):
-  return _display_diff_str(
-    d1_common.xml.pretty_pyxb(got_pyxb),
-    d1_common.xml.pretty_pyxb(exp_pyxb),
-  )
-
-
-def _display_diff_xml(got_xml, exp_xml):
-  return _display_diff_str(
-    d1_common.xml.pretty_xml(got_xml),
-    d1_common.xml.pretty_xml(exp_xml),
-  )
-
-
-def _display_diff_str(got_str, exp_path):
+def _gui_diff_str_path(got_str, exp_path):
   with open(exp_path, 'rb') as exp_f:
     exp_str = exp_f.read()
   with _tmp_file_pair(got_str, exp_str) as (got_f, exp_f):
     subprocess.call(['kdiff3', got_f.name, exp_f.name])
 
 
+def _gui_diff_str_str(a_str, b_str, a_name='received', b_name='expected'):
+  with _tmp_file_pair(a_str, b_str, a_name, b_name) as (a_f, b_f):
+    subprocess.call(['kdiff3', a_f.name, b_f.name])
+
+
 def _save_interactive(got_str, exp_path):
-  _display_diff_str(got_str, exp_path)
+  _gui_diff_str_path(got_str, exp_path)
   answer_str = None
-  while answer_str not in ('y', 'n', ''):
+  while answer_str not in ('', 'n', 'f'):
     answer_str = raw_input(
-      'Update sample file "{}"? [Y/n] '.format(os.path.split(exp_path)[1])
+      'Update sample file "{}"? Yes/No/Fail [Enter/n/f] '.
+      format(os.path.split(exp_path)[1])
     ).lower()
-  if answer_str in ('y', ''):
+  if answer_str == '':
     save_path(got_str, exp_path)
+  elif answer_str == 'f':
+    raise AssertionError('Failure triggered interactively')
 
 
-# noinspection PyUnreachableCode
-def _obj_to_pretty_str(o):
-  logging.debug('Serializing object. type="{}"'.format(type(o)))
-  if isinstance(o, unicode):
-    o = o.encode('utf-8')
-  with ignore_exceptions():
-    return d1_common.xml.pretty_xml(o)
-  with ignore_exceptions():
-    return d1_common.xml.pretty_pyxb(o)
-  with ignore_exceptions():
-    return '\n'.join(sorted(o.serialize(doc_format='nt').splitlines()))
-  with ignore_exceptions():
-    if 'digraph' in o:
-      return '\n'.join(sorted(str(re.sub(r'node\d+', 'nodeX', o)).splitlines()))
-  with ignore_exceptions():
-    if '\n' in str(o):
-      return str(o)
-  with ignore_exceptions():
-    return json.dumps(o, sort_keys=True, indent=2)
-  with ignore_exceptions():
-    return str(o)
-  return repr(o)
+def _diff_interactive(a_str, b_str):
+  _gui_diff_str_str(a_str, b_str, 'a' * 10, 'b' * 10)
+  answer_str = None
+  while answer_str not in ('', 'n'):
+    answer_str = raw_input('Fail? Yes/No [Enter/n] ').lower()
+  if answer_str == '':
+    raise AssertionError('Failure triggered interactively')
+
+
+def _review_interactive(got_str, exp_path):
+
+  _gui_diff_str_path(got_str, exp_path)
+  answer_str = None
+  while answer_str not in ('', 'n', 'f'):
+    answer_str = raw_input(
+      'Update sample file "{}"? Yes/No/Fail [Enter/n/f] '.
+      format(os.path.split(exp_path)[1])
+    ).lower()
+  if answer_str == '':
+    save_path(got_str, exp_path)
+  elif answer_str == 'f':
+    raise AssertionError('Failure triggered interactively')
 
 
 @contextlib.contextmanager
@@ -240,9 +330,11 @@ def ignore_exceptions(*exception_list):
 
 
 @contextlib.contextmanager
-def _tmp_file_pair(got_str, exp_str):
-  with tempfile.NamedTemporaryFile(suffix='__RECEIVED') as got_f:
-    with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
+def _tmp_file_pair(got_str, exp_str, a_name='a', b_name='b'):
+  with tempfile.NamedTemporaryFile(suffix='__{}'.format(a_name.upper())
+                                   ) as got_f:
+    with tempfile.NamedTemporaryFile(suffix='__{}'.format(b_name.upper())
+                                     ) as exp_f:
       got_f.write(got_str)
       exp_f.write(exp_str)
       got_f.seek(0)
@@ -250,5 +342,18 @@ def _tmp_file_pair(got_str, exp_str):
       yield got_f, exp_f
 
 
+# ==============================================================================
+
+
 class SampleException(Exception):
   pass
+
+
+# ==============================================================================
+
+
+class SetToList(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, set):
+      return sorted(list(obj))
+    return json.JSONEncoder.default(self, obj)

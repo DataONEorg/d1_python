@@ -50,18 +50,24 @@ DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
 
 
 def pytest_addoption(parser):
-  """Add a command line option to pytest that enables a mode that invokes
-  `kdiff3` to display diffs and, after user confirmation, can automatically
-  update or write new test sample documents on mismatches.
-
-  The diff should be studied carefully before updating the sample since there is
-  a risk of introducing errors.
-
-  The implementation is in D1TestCase.assert_equals_sample()
+  """Add command line switches for pytest comstomization. See README.md for
+  info.
   """
   parser.addoption(
-    '--update-samples', action='store_true', default=False,
+    '--sample-ask', action='store_true', default=False,
     help='Prompt to update or write new test sample files on failures'
+  )
+  parser.addoption(
+    '--sample-write', action='store_true', default=False,
+    help='Automatically update or write sample files on failures'
+  )
+  parser.addoption(
+    '--sample-review', action='store_true', default=False,
+    help='Review samples (use after --sample-write)'
+  )
+  parser.addoption(
+    '--sample-tidy', action='store_true', default=False,
+    help='Move unused sample files to test_docs_tidy'
   )
   parser.addoption(
     '--pycharm', action='store_true', default=False,
@@ -74,17 +80,14 @@ def pytest_addoption(parser):
   )
 
 
-def pytest_generate_tests(metafunc):
-  """Parameterize test functions via parameterize_dict class member"""
-  try:
-    func_arg_list = metafunc.cls.parameterize_dict[metafunc.function.__name__]
-  except (AttributeError, KeyError):
-    return
-  arg_names = sorted(func_arg_list[0])
-  metafunc.parametrize(
-    arg_names,
-    [[func_args[name] for name in arg_names] for func_args in func_arg_list]
-  )
+# Hooks
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(items):
+  """Hook that runs as early as possible"""
+  if pytest.config.getoption('--sample-tidy'):
+    d1_test.sample.init_tidy()
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -117,6 +120,19 @@ def pytest_runtest_makereport(item, call):
         'Opened in PyCharm. src_path="{}", src_line={}'.
         format(src_path, src_line)
       )
+
+
+def pytest_generate_tests(metafunc):
+  """Parameterize test functions via parameterize_dict class member"""
+  try:
+    func_arg_list = metafunc.cls.parameterize_dict[metafunc.function.__name__]
+  except (AttributeError, KeyError):
+    return
+  arg_names = sorted(func_arg_list[0])
+  metafunc.parametrize(
+    arg_names,
+    [[func_args[name] for name in arg_names] for func_args in func_arg_list]
+  )
 
 
 # Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
@@ -196,11 +212,11 @@ def django_db_setup(django_db_blocker):
     except psycopg2.DatabaseError as e:
       logging.debug(str(e))
     logging.debug('Dropping test DB')
-    run_sql('postgres', "drop database if exists {};".format(test_db_name))
+    run_sql('postgres', 'drop database if exists {};'.format(test_db_name))
     logging.debug('Creating test DB from template')
     run_sql(
       'postgres',
-      "create database {} template {};".format(test_db_name, template_db_name)
+      'create database {} template {};'.format(test_db_name, template_db_name)
     )
     # Haven't found out how to prevent transactions from being started, so
     # closing the implicit transaction here so that template fixture remains

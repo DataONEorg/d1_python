@@ -23,13 +23,10 @@ from __future__ import absolute_import
 
 import contextlib
 import datetime
-import hashlib
 import inspect
 import logging
 import os
 import random
-import re
-import string
 import StringIO
 import sys
 import xml
@@ -47,6 +44,7 @@ import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_common.xml
 
+import d1_test.instance_generator.date_time
 import d1_test.instance_generator.system_metadata
 import d1_test.sample
 
@@ -57,6 +55,18 @@ MOCK_REMOTE_BASE_URL = 'http://mock/remote'
 MOCK_INVALID_BASE_URL = 'http://mock/invalid'
 
 SOLR_QUERY_ENDPOINT = '/cn/v1/query/solr/'
+
+DEFAULT_PERMISSION_LIST = [
+  (['subj1'], ['read']),
+  (['subj2', 'subj3', 'subj4'], ['read', 'write']),
+  (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
+  (['subj9', 'subj10', 'subj11', 'subj12'], ['changePermission']),
+]
+
+SUBJ_DICT = {
+  'trusted': 'gmn_test_subject_trusted',
+  'submitter': 'gmn_test_subject_submitter',
+}
 
 
 @contextlib.contextmanager
@@ -72,6 +82,10 @@ def capture_std():
 
 @contextlib.contextmanager
 def capture_log():
+  """Capture anything output by the logging module. Uses a handler that does not
+  not include any context, such as date-time or originating module to help keep
+  the result stable over time.
+  """
   stream = StringIO.StringIO()
   logger = None
   stream_handler = None
@@ -99,6 +113,15 @@ def mock_raw_input(answer_str):
     yield
 
 
+@contextlib.contextmanager
+def disable_debug_level_logging():
+  try:
+    logging.disable(logging.DEBUG)
+    yield
+  finally:
+    logging.disable(logging.NOTSET)
+
+
 # reproducible_random
 
 # TODO: When we move to Py3, move this over to the simple wrapper supported
@@ -123,10 +146,10 @@ def reproducible_random_decorator(seed):
 def _reproducible_random_class_decorator(cls, seed):
   for test_name, test_func in cls.__dict__.items():
     if test_name.startswith('test_'):
-      logging.debug(
-        'Decorating: {}.{}: reproducible_random()'.
-        format(cls.__name__, test_name)
-      )
+      # logging.debug(
+      #   'Decorating: {}.{}: reproducible_random()'.
+      #   format(cls.__name__, test_name)
+      # )
       setattr(
         cls, test_name, _reproducible_random_func_decorator(test_func, seed)
       )
@@ -135,9 +158,9 @@ def _reproducible_random_class_decorator(cls, seed):
 
 def _reproducible_random_func_decorator(func, seed):
   def wrapper(func2, *args, **kwargs):
-    logging.debug(
-      'Decorating: {}: reproducible_random()'.format(func2.__name__)
-    )
+    # logging.debug(
+    #   'Decorating: {}: reproducible_random()'.format(func2.__name__)
+    # )
     with reproducible_random_context(seed):
       return func2(*args, **kwargs)
 
@@ -151,24 +174,6 @@ def reproducible_random_context(seed):
   random.seed(seed)
   yield
   random.setstate(state)
-
-
-def generate_reproducible_sciobj_str(pid):
-  """Return a science object byte string that is always the same for a given PID
-  """
-  # Ignore any decoration.
-  pid = re.sub(r'^<.*?>', '', pid)
-  pid_hash_int = int(hashlib.md5(pid.encode('utf-8')).hexdigest(), 16)
-  with reproducible_random_context(pid_hash_int):
-    return (
-      'These are the reproducible Science Object bytes for pid="{}". '
-      'What follows is 100 to 200 random bytes: '.format(pid.encode('utf-8')) +
-      str(
-        bytearray(
-          random.getrandbits(8) for _ in range(random.randint(100, 200))
-        )
-      )
-    )
 
 
 #===============================================================================
@@ -245,22 +250,6 @@ class D1TestCase(object):
         mock_getpeercert.return_value = cert_der
         yield mock_connect, mock_getpeercert
 
-  def create_random_sciobj(self, client, pid=True, sid=True):
-    pid = self.random_pid() if pid is True else pid
-    sid = self.random_sid() if sid is True else sid
-    options = {
-      # 'rightsHolder': 'fixture_rights_holder_subj',
-      'identifier': client.bindings.Identifier(pid) if pid else None,
-      'seriesId': client.bindings.Identifier(sid) if sid else None,
-    }
-    sciobj_str = generate_reproducible_sciobj_str(pid)
-    sysmeta_pyxb = (
-      d1_test.instance_generator.system_metadata.generate_from_file(
-        client, StringIO.StringIO(sciobj_str), options
-      )
-    )
-    return pid, sid, sciobj_str, sysmeta_pyxb
-
   def get_pyxb_value(self, inst_pyxb, inst_attr):
     try:
       return unicode(getattr(inst_pyxb, inst_attr).value())
@@ -270,19 +259,118 @@ class D1TestCase(object):
   def now_str(self):
     return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
-  def random_str(self, num_chars=10):
-    return ''.join([
-      random.choice(string.ascii_lowercase) for _ in range(num_chars)
-    ])
+  # def random_str(self, num_chars=10):
+  #   return ''.join([
+  #     random.choice(string.ascii_lowercase) for _ in range(num_chars)
+  #   ])
 
-  def random_id(self):
-    return '{}_{}'.format(self.random_str(), self.now_str())
+  # def random_id(self):
+  #   return '{}_{}'.format(self.random_str(), self.now_str())
+  #
+  # def random_pid(self):
+  #   return 'PID_{}'.format(self.random_id())
+  #
+  # def random_sid(self):
+  #   return 'SID_{}'.format(self.random_id())
+  #
+  # def random_tag(self, tag_str):
+  #   return '{}_{}'.format(tag_str, self.random_str())
 
-  def random_pid(self):
-    return 'PID_{}'.format(self.random_id())
+  def dump_pyxb(self, type_pyxb):
+    map(logging.debug, self.format_pyxb(type_pyxb).splitlines())
 
-  def random_sid(self):
-    return 'SID_{}'.format(self.random_id())
+  def format_pyxb(self, type_pyxb):
+    ss = StringIO.StringIO()
+    ss.write('PyXB object:\n')
+    ss.write(
+      '\n'.join([
+        u'  {}'.format(s)
+        for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines()
+      ])
+    )
+    return ss.getvalue()
 
-  def random_tag(self, tag_str):
-    return '{}_{}'.format(tag_str, self.random_str())
+  #
+  # SysMeta
+  #
+
+  @staticmethod
+  def expand_subjects(subj):
+    if isinstance(subj, basestring):
+      subj = [subj]
+    return {SUBJ_DICT[v] if v in SUBJ_DICT else v for v in subj or []}
+
+  def prep_node_list(self, node_list, tag_str, num_nodes=5):
+    if node_list is None:
+      return None
+    elif isinstance(node_list, list):
+      return node_list
+    elif node_list == 'random':
+      return [
+        'urn:node:{}'.format(self.random_tag(tag_str))
+        for _ in range(num_nodes)
+      ]
+
+
+#===============================================================================
+
+# import logging, logging.config, colorstreamhandler
+#
+# _LOGCONFIG = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#
+#     "handlers": {
+#         "console": {
+#             "class": "colorstreamhandler.ColorStreamHandler",
+#             "stream": "ext://sys.stderr",
+#             "level": "INFO"
+#         }
+#     },
+#
+#     "root": {
+#         "level": "INFO",
+#         "handlers": ["console"]
+#     }
+# }
+#
+# logging.config.dictConfig(_LOGCONFIG)
+# mylogger = logging.getLogger("mylogger")
+# mylogger.warning("foobar")
+
+
+class ColorStreamHandler(logging.StreamHandler):
+  DEFAULT = '\x1b[0m'
+  RED = '\x1b[31m'
+  GREEN = '\x1b[32m'
+  YELLOW = '\x1b[33m'
+  CYAN = '\x1b[36m'
+
+  CRITICAL = RED
+  ERROR = RED
+  WARNING = YELLOW
+  INFO = GREEN
+  DEBUG = CYAN
+
+  @classmethod
+  def _get_color(cls, level):
+    if level >= logging.CRITICAL:
+      return cls.CRITICAL
+    elif level >= logging.ERROR:
+      return cls.ERROR
+    elif level >= logging.WARNING:
+      return cls.WARNING
+    elif level >= logging.INFO:
+      return cls.INFO
+    elif level >= logging.DEBUG:
+      return cls.DEBUG
+    else:
+      return cls.DEFAULT
+
+  def __init__(self, stream=None):
+    logging.StreamHandler.__init__(self, stream)
+
+  def format(self, record):
+    text = logging.StreamHandler.format(self, record)
+    color = self._get_color(record.levelno)
+    return color + text + self.DEFAULT
