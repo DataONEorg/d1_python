@@ -22,22 +22,35 @@
 
 from __future__ import absolute_import
 
+import random
+
 import d1_common.types.dataoneTypes
 
 import d1_test.instance_generator.random_data
 
 
+def generate_pid():
+  return generate_bare('PID_', min_len=12, max_len=12)
+
+
+def generate_sid(probability=1.0):
+  """Generate a SID {probability}*100 percent of the time. Else return None.
+  """
+  if random.random() <= probability:
+    return generate_bare('SID_', min_len=12, max_len=12)
+
+
 def generate(prefix=u'', min_len=5, max_len=20):
   """Generate instance of Identifier holding a random unicode string"""
-  s = generate_bare(prefix, min_len, max_len)
-  return d1_common.types.dataoneTypes.identifier(s)
+  return d1_common.types.dataoneTypes.identifier(
+    generate_bare(prefix, min_len, max_len)
+  )
 
 
 def generate_bare(prefix=u'', min_len=5, max_len=20):
-  """Generate bare Identifier holding a random unicode string"""
-  len_prefix = len(prefix)
-  if len_prefix >= max_len:
-    raise Exception('Unable to generate Identifier: No room for prefix')
+  """Generate bare Identifier holding a random unicode string
+  min and max length does not include the length of the prefix.
+  """
   return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
-    min_len - len_prefix, max_len - len_prefix
+    min_len, max_len
   )

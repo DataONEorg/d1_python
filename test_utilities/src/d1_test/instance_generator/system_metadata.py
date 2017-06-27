@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import
 
+import datetime
 import os
 import random
 
@@ -30,7 +31,7 @@ import d1_common.checksum
 
 import d1_test.instance_generator.access_policy as access_policy
 import d1_test.instance_generator.checksum as checksum_generator
-import d1_test.instance_generator.dates as dates
+import d1_test.instance_generator.date_time as date_time
 import d1_test.instance_generator.format_id
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.media_type
@@ -39,7 +40,7 @@ import d1_test.instance_generator.replica
 import d1_test.instance_generator.replication_policy as replication_policy
 
 
-def generate(client, options=None):
+def generate_random(client, option_dict=None):
   """Generate a random System Metadata object.
 
   {options} is a set of key-value pairs that allow the caller to prevent
@@ -47,28 +48,32 @@ def generate(client, options=None):
   providing previously created objects of the appropriate types.
 
   E.g., providing an Identifier object in options['identifier'] causes that
-  object to be used instead of a randomly generated Identifier.
+  object to be used as the PID instead of a randomly generated Identifier.
   """
-  options = options or {}
+  option_dict = option_dict or {}
 
   sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.serialVersion = random.randint(1, 100)
-  sysmeta_pyxb.identifier = options.get(
-    'identifier', identifier.generate(prefix='pid_')
+  sysmeta_pyxb.identifier = option_dict.get(
+    'identifier', identifier.generate_pid()
   )
-  sysmeta_pyxb.formatId = options.get(
+  sysmeta_pyxb.formatId = option_dict.get(
     'formatId', d1_test.instance_generator.format_id.generate()
   )
-  sysmeta_pyxb.size = options.get('size', random.randint(1, 1024**4))
-  sysmeta_pyxb.checksum = options.get('checksum', checksum_generator.generate())
-  sysmeta_pyxb.submitter = options.get('submitter', random_data.random_subj())
-  sysmeta_pyxb.rightsHolder = options.get(
+  sysmeta_pyxb.size = option_dict.get('size', random.randint(1, 1024**4))
+  sysmeta_pyxb.checksum = option_dict.get(
+    'checksum', checksum_generator.generate()
+  )
+  sysmeta_pyxb.submitter = option_dict.get(
+    'submitter', random_data.random_subj()
+  )
+  sysmeta_pyxb.rightsHolder = option_dict.get(
     'rightsHolder', random_data.random_subj()
   )
-  sysmeta_pyxb.accessPolicy = options.get(
+  sysmeta_pyxb.accessPolicy = option_dict.get(
     'accessPolicy', access_policy.generate(min_rules=0)
   )
-  sysmeta_pyxb.replicationPolicy = options.get(
+  sysmeta_pyxb.replicationPolicy = option_dict.get(
     'replicationPolicy', replication_policy.generate()
   )
 
@@ -76,26 +81,29 @@ def generate(client, options=None):
   # obsoletedBy
   # archived
 
-  sysmeta_pyxb.dateUploaded = options.get('dateUploaded', dates.random_date())
-  sysmeta_pyxb.dateSysMetadataModified = options.get(
-    'dateSysMetadataModified', dates.random_date()
+  sysmeta_pyxb.dateUploaded = option_dict.get(
+    'dateUploaded', date_time.from_did(sysmeta_pyxb.identifier.value())
   )
-  sysmeta_pyxb.originMemberNode = options.get(
+  sysmeta_pyxb.dateSysMetadataModified = option_dict.get(
+    'dateSysMetadataModified',
+    sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10)
+  )
+  sysmeta_pyxb.originMemberNode = option_dict.get(
     'originMemberNode', random_data.random_mn()
   )
-  sysmeta_pyxb.authoritativeMemberNode = options.get(
+  sysmeta_pyxb.authoritativeMemberNode = option_dict.get(
     'authoritativeMemberNode', random_data.random_mn()
   )
-  sysmeta_pyxb.replica = options.get(
+  sysmeta_pyxb.replica = option_dict.get(
     'replica', d1_test.instance_generator.replica.generate()
   )
-  sysmeta_pyxb.seriesId = options.get(
-    'seriesId', identifier.generate(prefix='sid_')
+  sysmeta_pyxb.seriesId = option_dict.get(
+    'seriesId', identifier.generate_sid(probability=0.5)
   )
-  sysmeta_pyxb.mediaType = options.get(
+  sysmeta_pyxb.mediaType = option_dict.get(
     'mediaType', d1_test.instance_generator.media_type.generate()
   )
-  sysmeta_pyxb.fileName = options.get(
+  sysmeta_pyxb.fileName = option_dict.get(
     'fileName', 'file_{}'.format(
       d1_test.instance_generator.random_data.
       random_lower_ascii(min_len=3, max_len=3)
@@ -104,16 +112,16 @@ def generate(client, options=None):
   return sysmeta_pyxb
 
 
-def generate_from_file(client, flo, options=None):
-  options = options or {}
-  options['checksum'] = (
-    d1_common.checksum.create_checksum_object_from_stream(flo)
+def generate_from_file(client, f, option_dict=None):
+  option_dict = option_dict or {}
+  option_dict['checksum'] = (
+    d1_common.checksum.create_checksum_object_from_stream(f)
   )
-  flo.seek(0, os.SEEK_END)
-  options['size'] = flo.tell()
-  return generate(client, options)
+  f.seek(0, os.SEEK_END)
+  option_dict['size'] = f.tell()
+  return generate_random(client, option_dict)
 
 
-def generate_from_file_path(client, path, options=None):
+def generate_from_file_path(client, path, option_dict=None):
   with open(path, 'rb') as f:
-    return generate_from_file(client, f, options)
+    return generate_from_file(client, f, option_dict)

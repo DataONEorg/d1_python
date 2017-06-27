@@ -50,7 +50,9 @@ def random_cn(min_len=1, max_len=1):
   return 'cn_{}'.format(random_lower_ascii(min_len, max_len))
 
 
-def random_subj(min_len=1, max_len=2):
+def random_subj(min_len=1, max_len=2, fixed_len=None):
+  if fixed_len is not None:
+    min_len = max_len = fixed_len
   return 'subj_{}'.format(random_lower_ascii(min_len, max_len))
 
 
