@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for management commands
+"""Utilities for GMN management commands
 """
 
 from __future__ import absolute_import
@@ -53,7 +53,7 @@ def log_setup(debug_bool):
     logging.getLogger('').setLevel(logging.INFO)
 
 
-def abort_if_other_instance_is_running():
+def exit_if_other_instance_is_running():
   global single_instance_lock_file
   command_name_str = get_command_name()
   single_path = os.path.join(
@@ -84,22 +84,3 @@ def is_subject_in_whitelist(subject_str):
   return d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
     subject=d1_gmn.app.models.subject(subject_str)
   ).exists()
-
-
-# ==============================================================================
-
-
-class EventCounter(object):
-  def __init__(self):
-    self._event_dict = {}
-
-  def count(self, event_str, inc_int=1):
-    try:
-      self._event_dict[event_str] += inc_int
-    except KeyError:
-      self._event_dict[event_str] = inc_int
-
-  def log(self):
-    logging.info('Counted events:')
-    for event_str in sorted(self._event_dict):
-      logging.info('  {}: {}'.format(event_str, self._event_dict[event_str]))

@@ -77,18 +77,18 @@ class fixed_chunk_size_iterator(object):
   size chunks.
   """
 
-  def __init__(self, flo, chunk_size=1024**2, length=None):
-    self.flo = flo
+  def __init__(self, f, chunk_size=1024**2, length=None):
+    self.f = f
     self.chunk_size = chunk_size
     self.length = length
 
   def __len__(self):
     if self.length is None:
-      return len(self.flo)
+      return len(self.f)
     return self.length
 
   def next(self):
-    data = self.flo.read(self.chunk_size)
+    data = self.f.read(self.chunk_size)
     if data:
       return data
     else:
@@ -169,27 +169,6 @@ def is_proxy_url(url):
 
 def get_sci_model(pid):
   return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-
-
-def get_value(sysmeta_pyxb, sysmeta_attr):
-  """Get a Simple Content value from PyXB
-
-  PyXB validation will fail if required elements are missing. Optional elements
-  that are not present are represented with attributes that are present but set
-  to None."""
-  try:
-    return uvalue(getattr(sysmeta_pyxb, sysmeta_attr))
-  except (ValueError, AttributeError):
-    return None
-
-
-def uvalue(obj_pyxb):
-  """Getting a Simple Content value from PyXB with .value() returns a PyXB type
-  that lazily evaluates to a native unicode string. This confused parts of the
-  Django ORM that check types before passing values to the database. This
-  function forces immediate conversion to unicode.
-  """
-  return unicode(obj_pyxb.value())
 
 
 def delete_unused_subjects():

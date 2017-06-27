@@ -17,25 +17,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""View or whitelist the DataONE subjects in an X.509 cert.
+"""View or whitelist DataONE subjects in an X.509 PEM certificate file
 
-- When viewing, subjects from the the DataONE SubjectInfo extension, if any, is
-included.
-- When whitelisting, only the certificate's primary subject (retrieved from the
-DN) is whitelisted.
-- The cert must be in PEM format.
-- The DN subject is serialized according to DataONE's specification.
-- The certificate is not verified.
-- If the certificate is used when connecting to a DataONE Node and passes
+view <cert-path>: List primary subject and any subjects in the optional DataONE SubjectInfo
+certificate extension.
+
+cert whitelist: Add primary subject to whitelist for create, update and delete.
+
+The certificate is not verified by this command.
+
+When whitelisting a certificate, only the primary subject is whitelisted. The
+primary subject is a DataONE specific serialization of the certificate DN.
+
+The certificate must be in PEM format.
+
+If the certificate is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
 authenticated for the subjects.
 """
 
 from __future__ import absolute_import
 
+import argparse
 import logging
 
-import d1_gmn.app.management.commands._util
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.models
 
@@ -47,52 +54,40 @@ import django.core.management.base
 
 # noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
-  help = 'View or whitelist DataONE subjects in X.509 PEM certificate'
-
-  missing_args_message = (
-    '<command> must be one of:\n'
-    'view <cert-path>: View DataONE subjects in X.509 PEM certificate\n'
-    'whitelist <cert-path>: Add primary DataONE subject in X.509 PEM '
-    'certificate to whitelist for create, update and delete\n'
-  )
+  def __init__(self, *args, **kwargs):
+    super(Command, self).__init__(*args, **kwargs)
+    self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
+    parser.add_argument('command', choices=['view', 'whitelist'], help='action')
     parser.add_argument(
-      'command',
-      help='valid commands: view, whitelist',
-    )
-    parser.add_argument(
-      'cert_pem_path',
-      help='path to DataONE X.509 PEM certificate',
+      'cert_pub_path', help='path to DataONE X.509 PEM certificate file'
     )
 
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
-    if options['command'] not in ('view', 'whitelist'):
-      logging.info(self.missing_args_message)
-      return
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
     try:
-      self._handle(options['command'], options['cert_pem_path'])
+      self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
 
-  def _handle(self, command_str, cert_pem_path):
-    cert_pem = self._read_pem_cert(cert_pem_path)
+  def _handle(self, opt):
+    cert_pem = self._read_pem_cert(opt['cert_pub_path'])
     primary_str, equivalent_set = (
       d1_gmn.app.middleware.session_cert.get_authenticated_subjects(cert_pem)
     )
-    if command_str == 'view':
+    if opt['command'] == 'view':
       self._view(primary_str, equivalent_set)
-    elif command_str == 'whitelist':
+    elif opt['command'] == 'whitelist':
       self._whitelist(primary_str)
     else:
-      raise django.core.management.base.CommandError('Unknown command')
+      assert False
 
   def _view(self, primary_str, equivalent_set):
     logging.info(u'Primary subject:')
@@ -116,9 +111,9 @@ class Command(django.core.management.base.BaseCommand):
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 
-  def _read_pem_cert(self, cert_pem_path):
+  def _read_pem_cert(self, cert_pub_path):
     try:
-      with open(cert_pem_path, 'r') as f:
+      with open(cert_pub_path, 'r') as f:
         return f.read()
     except EnvironmentError as e:
       raise django.core.management.base.CommandError(

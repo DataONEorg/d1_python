@@ -18,14 +18,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """View Node doc, register or update Member Node
+
+view: Generate a Node doc and display it.
+
+register: Register this GMN instance in a DataONE environment.
+
+update: Update an existing registration for this GMN instance in a DataONE
+environment.
+
+The view, register and update commands start by generating a Node doc based on
+the current settings in settings.py. With view, the doc is just displayed. With
+register, it is submitted to the CN as a new registration. With update, it is
+submitted to the CN as an update for an existing registration.
+
+register can only be used for the initial registration, after which update
+must be used.
 """
 
 from __future__ import absolute_import
 
+import argparse
 import logging
 
-import util
-
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 
@@ -41,47 +57,36 @@ import django.core.management.base
 
 # noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
-  help = 'View Node doc, register or update Member Node'
-
-  missing_args_message = (
-    '<command> must be one of:\n'
-    'view: Generate and view Node doc based on current settings\n'
-    'register: Generate Node doc and submit it to CN for registration of new MN\n'
-    'update: Generate Node doc and submit it to CN for update of existing MN registration\n'
-  )
+  def __init__(self, *args, **kwargs):
+    super(Command, self).__init__(*args, **kwargs)
+    self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
-    parser.add_argument(
-      'command',
-      help='valid commands: view, register, update',
-    )
+    parser.add_argument('command', choices=['view', 'register', 'update'])
 
-  def handle(self, *args, **options):
-    util.log_setup(options['debug'])
-    if options['command'] not in ('view', 'register', 'update'):
-      logging.info(self.missing_args_message)
-      return
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
     try:
-      self._handle(options['command'])
+      self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
 
-  def _handle(self, command_str):
+  def _handle(self, opt):
     node_pyxb = d1_gmn.app.node.get_pyxb()
-    if command_str == 'view':
+    if opt['command'] == 'view':
       logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml('utf-8')))
-    elif command_str == 'register':
+    elif opt['command'] == 'register':
       self._register(node_pyxb)
-    elif command_str == 'update':
+    elif opt['command'] == 'update':
       self._update(node_pyxb)
     else:
-      raise django.core.management.base.CommandError('Unknown command')
+      assert False
 
   def _register(self, node_pyxb):
     util.abort_if_stand_alone_instance()
@@ -106,7 +111,7 @@ class Command(django.core.management.base.BaseCommand):
   def _create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       django.conf.settings.DATAONE_ROOT,
-      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

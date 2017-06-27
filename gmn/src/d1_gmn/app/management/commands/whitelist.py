@@ -18,24 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manage the whitelist for access to create, update and delete operations
-"""
 
-from __future__ import absolute_import
-
-import logging
-
-import d1_gmn.app.management.commands._util
-import d1_gmn.app.middleware.session_cert
-import d1_gmn.app.models
-
-import d1_common.types.exceptions
-import d1_common.util
-
-import django.core.management.base
-
-
-# noinspection PyClassHasNoInit
-class Command(django.core.management.base.BaseCommand):
   help = 'Manage the whitelist for access to create, update and delete operations'
 
   missing_args_message = (
@@ -46,32 +29,47 @@ class Command(django.core.management.base.BaseCommand):
     'bulk <file>: Create whitelist from file (one subject per line, blank and # lines ignored)\n'
   )
 
+"""
+
+from __future__ import absolute_import
+
+import argparse
+import logging
+
+# noinspection PyProtectedMember
+import jwt
+
+import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.middleware.session_cert
+import d1_gmn.app.models
+
+import d1_common.types.exceptions
+import d1_common.util
+
+import django.core.management.base
+
+
+# noinspection PyClassHasNoInit,PyProtectedMember
+class Command(django.core.management.base.BaseCommand):
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
+    parser.add_argument('command', choices=['view', 'add', 'remove', 'bulk'])
     parser.add_argument(
-      'command',
-      help='valid commands: view, add, remove, bulk',
-    )
-    parser.add_argument(
-      'command_arg',
-      default=None,
-      nargs='?',
-      help='argument for command',
+      'command_arg', default=None, nargs='?', help='subject or filename'
     )
 
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
-    if options['command'] not in ('view', 'add', 'remove', 'bulk'):
-      logging.info(self.missing_args_message)
-      return
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
     try:
-      self._handle(options['command'], options['command_arg'])
+      self._handle(opt['command'], opt['command_arg'])
     except d1_common.types.exceptions.DataONEException as e:
+      raise django.core.management.base.CommandError(str(e))
+    except jwt.InvalidTokenError as e:
       raise django.core.management.base.CommandError(str(e))
 
   def _handle(self, command_str, command_arg_str):
@@ -84,7 +82,7 @@ class Command(django.core.management.base.BaseCommand):
     elif command_str == 'bulk':
       self._bulk(command_arg_str)
     else:
-      raise django.core.management.base.CommandError('Unknown command')
+      assert False
 
   def _view(self):
     logging.info(u'Subjects in whitelist:')
@@ -97,9 +95,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to add',
       )
-    if d1_gmn.app.management.commands._util.is_subject_in_whitelist(
-        subject_str
-    ):
+    if util.is_subject_in_whitelist(subject_str):
       raise django.core.management.base.CommandError(
         u'Subject already in whitelist: {}'.format(subject_str)
       )
@@ -111,9 +107,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         u'Please specify a subject to remove',
       )
-    if not d1_gmn.app.management.commands._util.is_subject_in_whitelist(
-        subject_str
-    ):
+    if not util.is_subject_in_whitelist(subject_str):
       raise django.core.management.base.CommandError(
         u'Subject is not in whitelist: {}'.format(subject_str)
       )

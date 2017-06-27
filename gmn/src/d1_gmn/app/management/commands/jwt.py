@@ -17,86 +17,82 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""View or whitelist the DataONE subject in a JSON Web Token (JWT).
+"""View or whitelist the DataONE subject in a JSON Web Token (JWT) file
 
-- The JWT must be in base64 format.
-- The JWT is not verified.
-- If the JWT is used when connecting to a DataONE Node and passes
+view <jwt-path>: View DataONE subject in a JWT
+
+whitelist <jwt-path>: Add subject to whitelist for create, update and delete.
+
+The JWT signature is not verified by this command.
+
+The JWT must be in base64 format.
+
+If the JWT is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
 authenticated for the subject.
 """
 
 from __future__ import absolute_import
 
+import argparse
 import logging
 
 import jwt
 
-import d1_gmn.app.management.commands._util
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.middleware.session_jwt
 import d1_gmn.app.models
 
+import d1_common.cert.jwt
 import d1_common.types.exceptions
 import d1_common.util
 
 import django.core.management.base
 
 
-# noinspection PyClassHasNoInit
+# noinspection PyClassHasNoInit,PyProtectedMember
 class Command(django.core.management.base.BaseCommand):
-  help = 'View or whitelist DataONE subjects in a JSON Web Token'
-
-  missing_args_message = (
-    '<command> must be one of:\n'
-    'view <jwt-path>: View DataONE subject in a JWT\n'
-    'whitelist <jwt-path>: Add DataONE subject in JWT to whitelist for create, update and delete\n'
-  )
-
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
-    parser.add_argument(
-      'command',
-      help='valid commands: view, whitelist',
-    )
-    parser.add_argument(
-      'jwt_path',
-      help='path to JWT',
-    )
+    parser.add_argument('command', choices=['view', 'whitelist'], help='action')
+    parser.add_argument('jwt_path', help='path to base64 JWT file')
 
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
-    if options['command'] not in ('view', 'whitelist'):
-      logging.info(self.missing_args_message)
-      return
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
     try:
-      self._handle(options['command'], options['jwt_path'])
+      self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
+    except jwt.InvalidTokenError as e:
+      raise django.core.management.base.CommandError(str(e))
 
-  def _handle(self, command_str, jwt_path):
-    jwt_b64 = self._read_jwt(jwt_path)
+  def _handle(self, opt):
+    primary_str = self.get_subject(opt['jwt_path'])
+    if opt['command'] == 'view':
+      self._view(primary_str)
+    elif opt['command'] == 'whitelist':
+      self._whitelist(primary_str)
+    else:
+      assert False
+
+  def get_subject(self, jwt_path):
+    jwt_bu64 = self._read_jwt(jwt_path)
     try:
-      primary_list = d1_gmn.app.middleware.session_jwt.get_subject_list_without_validate(
-        jwt_b64
-      )
-      if not primary_list:
-        raise jwt.InvalidTokenError('No subject')
+      jwt_dict = d1_common.cert.jwt.get_jwt_dict(jwt_bu64)
     except jwt.InvalidTokenError as e:
       raise django.core.management.base.CommandError(
         'Unable to decode JWT. error="{}"'.format(str(e))
       )
-    primary_str = primary_list[0]
-    if command_str == 'view':
-      self._view(primary_str)
-    elif command_str == 'whitelist':
-      self._whitelist(primary_str)
-    else:
-      raise django.core.management.base.CommandError('Unknown command')
+    try:
+      return jwt_dict['sub']
+    except KeyError:
+      raise jwt.InvalidTokenError('Missing "sub" key')
 
   def _view(self, primary_str):
     logging.info(u'Primary subject:')
@@ -121,5 +117,5 @@ class Command(django.core.management.base.BaseCommand):
         return f.read()
     except EnvironmentError as e:
       raise django.core.management.base.CommandError(
-        'Unable to read JWT. error="{}"'.format(str(e))
+        'Unable to read JWT file. error="{}"'.format(str(e))
       )
