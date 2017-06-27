@@ -191,6 +191,11 @@ def str_to_v2_pyxb(xml_str):
 # Type checks
 
 
+def get_pyxb_type(obj_pyxb):
+  """Return a type string, such as 'ObjectList' or 'SystemMetadata'"""
+  return str(obj_pyxb._ExpandedName).split('}')[-1]
+
+
 def str_is_v1(xml_str):
   return pyxb_is_v1(str_to_pyxb(xml_str))
 

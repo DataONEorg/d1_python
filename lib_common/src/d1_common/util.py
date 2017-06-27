@@ -25,6 +25,7 @@ from __future__ import absolute_import
 import contextlib
 import email.message
 import email.utils
+import errno
 import functools
 import logging
 import os
@@ -61,6 +62,14 @@ def abs_path(rel_path):
     os.path.
     join(os.path.dirname(sys._getframe(1).f_code.co_filename), rel_path)
   )
+
+
+def ensure_dir_exists(path):
+  try:
+    os.makedirs(path)
+  except OSError as e:
+    if e.errno != errno.EEXIST:
+      raise
 
 
 def get_content_type(content_type):
@@ -149,7 +158,7 @@ def print_logging():
 
   This works by saving the logging levels on the current handlers, setting
   them to something high, so they don't interfere unless it's something
-  serious. Then, add a handler without formatting with debug level logging.
+  serious. Then, adding a handler without formatting with debug level logging.
   When leaving the context, remove the old handler and restore the log levels.
   """
   root_logger = logging.getLogger()

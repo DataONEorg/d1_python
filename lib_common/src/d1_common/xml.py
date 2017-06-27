@@ -33,10 +33,15 @@ import xml.sax
 
 import pyxb
 
+import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 
 
-def deserialize(doc_xml):
+def deserialize(doc_xml, bindings=None):
+  """Deserialize regular D1 XML types to PyXB. See deserialize_d1_exc
+  for deserializing D1 error types
+  """
+  bindings = bindings or d1_common.types.dataoneTypes
   if isinstance(doc_xml, unicode):
     doc_xml = doc_xml.encode('utf-8')
   else:
@@ -46,7 +51,7 @@ def deserialize(doc_xml):
         .format(doc_xml.decode('utf-8', error='replace'))
       )
   try:
-    return d1_common.types.dataoneTypes.CreateFromDocument(doc_xml)
+    return bindings.CreateFromDocument(doc_xml)
   except pyxb.ValidationError as e:
     raise ValueError(
       'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
@@ -55,8 +60,12 @@ def deserialize(doc_xml):
   except (pyxb.PyXBException, xml.sax.SAXParseException, Exception) as e:
     raise ValueError(
       'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
-      format(str(e), doc_xml)
+      format(str(e.message), doc_xml)
     )
+
+
+def deserialize_d1_exc(doc_xml):
+  return deserialize(doc_xml, bindings=d1_common.types.dataoneErrors)
 
 
 def serialize(obj_pyxb):
@@ -83,7 +92,7 @@ def pretty_xml(doc_xml):
     xml_obj = xml.dom.minidom.parseString(doc_xml)
   except TypeError:
     xml_obj = xml.dom.minidom.parse(doc_xml)
-  pretty_xml_str = xml_obj.toprettyxml(indent="  ")
+  pretty_xml_str = xml_obj.toprettyxml(indent='  ', encoding='utf-8')
   # Remove empty lines in the result caused by a bug in toprettyxml().
   return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
 
@@ -268,6 +277,27 @@ def is_valid_utf8(s):
     return False
   else:
     return True
+
+
+def get_value(sysmeta_pyxb, sysmeta_attr):
+  """Get a Simple Content value from PyXB
+
+  PyXB validation will fail if required elements are missing. Optional elements
+  that are not present are represented with attributes that are present but set
+  to None."""
+  try:
+    return uvalue(getattr(sysmeta_pyxb, sysmeta_attr))
+  except (ValueError, AttributeError):
+    return None
+
+
+def uvalue(obj_pyxb):
+  """Getting a Simple Content value from PyXB with .value() returns a PyXB type
+  that lazily evaluates to a native unicode string. This confused parts of the
+  Django ORM that check types before passing values to the database. This
+  function forces immediate conversion to unicode.
+  """
+  return unicode(obj_pyxb.value())
 
 
 class CompareError(Exception):
