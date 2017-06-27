@@ -32,12 +32,9 @@ import logging
 import contextlib2
 import mock
 
-import django.test
+import d1_test.d1_test_case
 
-SUBJ_DICT = {
-  'trusted': 'gmn_test_subject_trusted',
-  'submitter': 'gmn_test_subject_submitter',
-}
+import django.test
 
 # class DeContext(object):
 #   """Makes a context manager also act as a decorator
@@ -74,7 +71,9 @@ def active_subjects_context(active_subject_set):
   production, active subare passed to GMN by clients via certificates and
   tokens, as part of the REST calls.
   """
-  expanded_set = expand_subjects(active_subject_set)
+  expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(
+    active_subject_set
+  )
   logging.debug('ContextManager: active_subjects()')
   with mock.patch(
       'd1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set',
@@ -106,7 +105,8 @@ def trusted_subjects_context(trusted_subject_set):
   logging.debug('ContextManager: trusted_subjects()')
   with mock.patch(
       'd1_gmn.app.auth.get_trusted_subjects',
-      return_value=expand_subjects(trusted_subject_set),
+      return_value=d1_test.d1_test_case.D1TestCase.
+      expand_subjects(trusted_subject_set),
   ):
     yield
 
@@ -171,12 +171,6 @@ def disable_auth():
         yield
 
 
-def expand_subjects(subj):
-  if isinstance(subj, basestring):
-    subj = [subj]
-  return {SUBJ_DICT[v] if v in SUBJ_DICT else v for v in subj or []}
-
-
 def no_client_trust_decorator(func):
   @functools.wraps(func)
   def wrapper(*args, **kwargs):
@@ -196,4 +190,12 @@ def no_client_trust_decorator(func):
 @contextlib2.contextmanager
 def disable_sysmeta_sanity_checks():
   with mock.patch('d1_gmn.app.views.asserts.sysmeta_sanity_checks'):
+    yield
+
+
+@contextlib2.contextmanager
+def disable_management_command_logging():
+  """Prevent management commands from setting up logging, which cause duplicated
+  log messages when the commands are launched multiple times"""
+  with mock.patch('d1_gmn.app.management.commands._util.log_setup'):
     yield
