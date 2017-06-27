@@ -25,7 +25,6 @@ from __future__ import absolute_import
 
 import datetime
 import os
-import StringIO
 
 import d1_cli.impl.cli_util as cli_util
 
@@ -146,26 +145,13 @@ class SystemMetadataCreator():
   def _get_file_checksum(
       self, path, algorithm=u'SHA-1', block_size=1024 * 1024
   ):
-    with open(os.path.expanduser(path), u'r') as f:
-      return self._get_flo_checksum(f, algorithm, block_size)
+    with open(os.path.expanduser(path), 'rb') as f:
+      return d1_common.checksum.calculate_checksum_on_stream(
+        f, algorithm, block_size
+      )
 
-  def _get_string_checksum(
-      self, string, algorithm=u'SHA-1', block_size=1024 * 1024
-  ):
-    return self._get_flo_checksum(
-      StringIO.StringIO(string), algorithm, block_size
-    )
-
-  def _get_flo_checksum(self, flo, algorithm=u'SHA-1', block_size=1024 * 1024):
-    h = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
-      algorithm
-    )
-    while True:
-      data = flo.read(block_size)
-      if not data:
-        break
-      h.update(data)
-    return h.hexdigest()
+  def _get_string_checksum(self, string, algorithm=u'SHA-1', block_size=None):
+    return d1_common.checksum.calculate_checksum_on_string(string, algorithm)
 
   #def _create_system_metadata(self, pid, path, format_id=None):
   #  checksum = self._get_file_checksum(

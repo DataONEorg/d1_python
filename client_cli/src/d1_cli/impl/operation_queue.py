@@ -123,7 +123,7 @@ class OperationQueue(object):
     return path
 
   def _read_from_tmp(self, path):
-    with open(path, u'r') as f:
+    with open(path, 'rb') as f:
       operations = json.load(f)
     self._update_comments(operations)
     return operations

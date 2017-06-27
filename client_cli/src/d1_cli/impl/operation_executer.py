@@ -65,7 +65,7 @@ class OperationExecuter(object):
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
     )
-    with open(cli_util.os.path.expanduser(path), u'r') as f:
+    with open(cli_util.os.path.expanduser(path), 'rb') as f:
       client.create(pid, f, sys_meta)
 
   def _execute_update(self, operation):
@@ -76,7 +76,7 @@ class OperationExecuter(object):
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
     )
-    with open(cli_util.os.path.expanduser(path), u'r') as f:
+    with open(cli_util.os.path.expanduser(path), 'rb') as f:
       client.update(pid_old, f, pid_new, sys_meta)
 
   def _execute_create_package(self, operation):
@@ -122,14 +122,14 @@ class OperationExecuter(object):
   def _mn_client_connect_params_from_operation(self, operation):
     return {
       'base_url': operation['parameters']['mn-url'],
-      'cert_pem_path': operation['authentication']['cert-file'],
+      'cert_pub_path': operation['authentication']['cert-file'],
       'cert_key_path': operation['authentication']['key-file'],
     }
 
   def _cn_client_connect_params_from_operation(self, operation):
     return {
       'base_url': operation['parameters']['cn-url'],
-      'cert_pem_path': operation['authentication']['cert-file'],
+      'cert_pub_path': operation['authentication']['cert-file'],
       'cert_key_path': operation['authentication']['key-file'],
     }
 
