@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <serialVersion>46</serialVersion>
-  <identifier>PID_qbgxpocmalmj</identifier>
-  <formatId>-//ecoinformatics.org//eml-dataset-2.0.0beta6//EN</formatId>
-  <size>262</size>
-  <checksum algorithm="SHA-1">209392fd28e8a0f7dd1aad4ff432ba1325fb548b</checksum>
-  <submitter>subj_w</submitter>
-  <rightsHolder>subj_rm</rightsHolder>
+  <serialVersion>73</serialVersion>
+  <identifier>PID_leuhlwdlakza</identifier>
+  <formatId>-//ecoinformatics.org//eml-distribution-2.0.0beta6//EN</formatId>
+  <size>290</size>
+  <checksum algorithm="SHA-1">d229b68a7fa2a0040ba5680760d26bcecfae8b85</checksum>
+  <submitter>subj_fo</submitter>
+  <rightsHolder>subj_o</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,15 +30,18 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="10" replicationAllowed="true">
-    <blockedMemberNode>mn_d</blockedMemberNode>
-    <blockedMemberNode>mn_x</blockedMemberNode>
-    <blockedMemberNode>mn_pb</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_js</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_dgforywzpbwe</obsoletedBy>
+  <obsoletedBy>PID_kffyhozkimhy</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2015-04-01T06:15:02</dateUploaded>
-  <dateSysMetadataModified>2017-06-27T06:26:19.74831</dateSysMetadataModified>
-  <originMemberNode>mn_m</originMemberNode>
-  <authoritativeMemberNode>mn_x</authoritativeMemberNode>
+  <dateUploaded>2042-12-11T22:45:16</dateUploaded>
+  <dateSysMetadataModified>2017-06-27T16:23:22.350624</dateSysMetadataModified>
+  <originMemberNode>mn_t</originMemberNode>
+  <authoritativeMemberNode>mn_br</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_ud</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2018-09-04T08:09:50.000592Z</replicaVerified>
+  </replica>
 </ns1:systemMetadata>

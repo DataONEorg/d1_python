@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>49</serialVersion>
-  <identifier>PID_jhdodziwunme</identifier>
-  <formatId>image/tiff</formatId>
+  <identifier>PID_hzmgaqsewqii</identifier>
+  <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
   <size>266</size>
-  <checksum algorithm="SHA-1">d9aac154d668f13b82277008e33e759169f74fac</checksum>
-  <submitter>subj_fr</submitter>
-  <rightsHolder>subj_wq</rightsHolder>
+  <checksum algorithm="SHA-1">c93296e0682fe8a0cab6cdcb524015fa1678387a</checksum>
+  <submitter>subj_ao</submitter>
+  <rightsHolder>subj_p</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,46 +30,15 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="8" replicationAllowed="true">
-    <preferredMemberNode>mn_j</preferredMemberNode>
-    <preferredMemberNode>mn_c</preferredMemberNode>
-    <blockedMemberNode>mn_gh</blockedMemberNode>
-    <blockedMemberNode>mn_q</blockedMemberNode>
-    <blockedMemberNode>mn_db</blockedMemberNode>
-    <blockedMemberNode>mn_u</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_qi</preferredMemberNode>
+    <blockedMemberNode>mn_hu</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
-  <dateUploaded>2018-08-20T23:36:18</dateUploaded>
-  <dateSysMetadataModified>2018-08-30T23:36:18</dateSysMetadataModified>
-  <originMemberNode>mn_pt</originMemberNode>
-  <authoritativeMemberNode>mn_an</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_b</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2115-05-24T08:39:08.000234Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_l</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2117-03-03T20:38:36.000829Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_un</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2224-04-12T14:03:33.000645Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_e</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2200-08-22T10:14:29.000125Z</replicaVerified>
-  </replica>
-  <seriesId>SID_vkegoiiwtkux</seriesId>
-  <mediaType name="media_type_fe">
-    <property name="prop_py">rv</property>
-    <property name="prop_pr">ny</property>
-    <property name="prop_cg">lx</property>
-    <property name="prop_ye">pl</property>
-    <property name="prop_fa">av</property>
-  </mediaType>
-  <fileName>file_efk</fileName>
+  <dateUploaded>2018-11-15T07:10:36</dateUploaded>
+  <dateSysMetadataModified>2018-11-25T07:10:36</dateSysMetadataModified>
+  <originMemberNode>mn_fw</originMemberNode>
+  <authoritativeMemberNode>mn_lc</authoritativeMemberNode>
+  <seriesId>SID_tjvajphbmask</seriesId>
+  <fileName>file_buk</fileName>
 </ns1:systemMetadata>
