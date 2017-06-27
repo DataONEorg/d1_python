@@ -66,6 +66,9 @@ class CoordinatingNodeClient_2_0(
   # Core API
   #=========================================================================
 
+  # CNCore.delete(session, id) → Identifier
+  # DELETE /object/{id}
+
   @d1_common.util.utf8_to_unicode
   def deleteResponse(self, pid):
     return self.DELETE(['object', pid])
@@ -74,3 +77,79 @@ class CoordinatingNodeClient_2_0(
   def delete(self, pid):
     response = self.deleteResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')
+
+  #=========================================================================
+  # CNView
+  #=========================================================================
+
+  # CNView.view(session, theme, id) → OctetStream
+  # GET /views/{theme}/{id}
+
+  @d1_common.util.utf8_to_unicode
+  def viewResponse(self, theme, did):
+    return self.GET(['views', theme, did])
+
+  @d1_common.util.utf8_to_unicode
+  def view(self, theme, did):
+    response = self.viewResponse(theme, did)
+    return self._read_stream_response(response)
+
+  # CNView.listViews(session) → OptionList
+  # GET /views
+
+  @d1_common.util.utf8_to_unicode
+  def listViewsResponse(self):
+    return self.GET(['views'])
+
+  @d1_common.util.utf8_to_unicode
+  def listViews(self):
+    response = self.listViewsResponse()
+    return self._read_dataone_type_response(response, 'OptionList')
+
+  #=========================================================================
+  # CNDiagnostic
+  #=========================================================================
+
+  # CNDiagnostic.echoCredentials(session) → SubjectInfo
+  # GET /diag/subject
+
+  @d1_common.util.utf8_to_unicode
+  def echoCredentialsResponse(self):
+    return self.GET(['diag', 'subject'])
+
+  @d1_common.util.utf8_to_unicode
+  def echoCredentials(self):
+    response = self.echoCredentialsResponse()
+    return self._read_dataone_type_response(response, 'SubjectInfo')
+
+  # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
+  # POST /diag/sysmeta
+
+  @d1_common.util.utf8_to_unicode
+  def echoSystemMetadataResponse(self, sysmeta_pyxb):
+    mmp_dict = {
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+    }
+    return self.POST(['diag', 'sysmeta'], fields=mmp_dict)
+
+  @d1_common.util.utf8_to_unicode
+  def echoSystemMetadata(self, sysmeta_pyxb):
+    response = self.echoSystemMetadataResponse(sysmeta_pyxb)
+    return self._read_dataone_type_response(response, 'SystemMetadata')
+
+  # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
+  # POST /diag/object
+
+  @d1_common.util.utf8_to_unicode
+  def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj):
+    mmp_dict = {
+      'queryEngine': queryEngine.encode('utf-8'),
+      'object': ('content.bin', obj),
+      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+    }
+    return self.POST(['diag', 'object'], fields=mmp_dict)
+
+  @d1_common.util.utf8_to_unicode
+  def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj):
+    response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj)
+    return self._read_stream_response(response)

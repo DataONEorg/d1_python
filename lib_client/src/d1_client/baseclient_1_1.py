@@ -68,6 +68,10 @@ class DataONEBaseClient_1_1(
   def queryResponse(
       self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
+    logging.debug(
+      'Solr query: {}'.
+      format(', '.join(['{}={}'.format(k, v) for (k, v) in locals().items()]))
+    )
     return (self.POST
             if do_post else self.GET)(['query', queryEngine, query_str],
                                       headers=vendorSpecific, **kwargs)

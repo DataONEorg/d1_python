@@ -36,9 +36,9 @@ logger = logging.getLogger()
 
 # Config.
 ca_cert_key_path = './ca_intermediate.key'
-ca_cert_pem_path = './ca_intermediate.crt'
+ca_cert_pub_path = './ca_intermediate.crt'
 #ca_cert_key_path = './ca.key'
-#ca_cert_pem_path = './ca.crt'
+#ca_cert_pub_path = './ca.crt'
 
 cert_dir = './test_subject_certs/'
 
@@ -315,7 +315,7 @@ def main():
 
   # Load the DataONE Test CA cert.
   try:
-    ca_cert_file = open(ca_cert_pem_path, 'r').read()
+    ca_cert_file = open(ca_cert_pub_path, 'r').read()
   except IOError:
     logger.error('Must set path to CA key in config section')
     raise
@@ -353,10 +353,10 @@ def main():
     )
 
     # Write the cert to disk.
-    out_cert_pem_path = os.path.join(
+    out_cert_pub_path = os.path.join(
       cert_dir, '{}.crt'.format(urllib.quote(subject, ''))
     )
-    out_cert_file = open(out_cert_pem_path, 'w')
+    out_cert_file = open(out_cert_pub_path, 'w')
     out_cert_file.write(
       OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
     )
