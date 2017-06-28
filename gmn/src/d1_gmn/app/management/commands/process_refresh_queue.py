@@ -19,17 +19,25 @@
 # limitations under the License.
 """Iterate over queue of objects registered to have their System Metadata
 refreshed and refresh them by pulling the latest version from a CN.
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
+
 """
 
 from __future__ import absolute_import
 
+import argparse
 import logging
 
 import d1_gmn.app.auth
 import d1_gmn.app.event_log
-import d1_gmn.app.management.commands._util
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
+
+import d1_common.types
+import d1_common.util
 
 import d1_client.cnclient
 import d1_client.d1client
@@ -40,41 +48,37 @@ import django.core.management.base
 from django.db import transaction
 
 
-# noinspection PyClassHasNoInit
+# noinspection PyClassHasNoInit,PyProtectedMember
 class Command(django.core.management.base.BaseCommand):
-  help = 'Process the System Metadata refresh queue.'
-
-  def add_arguments(self, parser):
-    parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
-    )
-
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
-    logging.info(
-      u'Running management command: {}'.
-      format(d1_gmn.app.management.commands._util.get_command_name())
-    )
-    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
-    d1_gmn.app.management.commands._util.abort_if_stand_alone_instance()
-    p = SysMetaRefreshQueueProcessor()
-    p.process_refresh_queue()
-
-
-#===============================================================================
-
-
-class SysMetaRefreshQueueProcessor(object):
-  def __init__(self):
+  def __init__(self, *args, **kwargs):
+    super(Command, self).__init__(*args, **kwargs)
+    self._events = d1_common.util.EventCounter()
     self.cn_client = self._create_cn_client()
 
-  def process_refresh_queue(self):
+  def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
+    parser.add_argument(
+      '--debug', action='store_true', default=False, help='debug level logging'
+    )
+
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
+    logging.info(
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
+    )
+    util.exit_if_other_instance_is_running(__name__)
+    util.abort_if_stand_alone_instance()
+    try:
+      self._handle(opt)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise django.core.management.base.CommandError(str(e))
+
+  def _handle(self, opt):
     queue_queryset = d1_gmn.app.models.SystemMetadataRefreshQueue.objects.filter(
       status__status='queued'
-    )
+    ).order_by('timestamp', 'sciobj__pid__did')
     if not len(queue_queryset):
       logging.debug('No System Metadata refresh requests to process')
       return
@@ -142,7 +146,7 @@ class SysMetaRefreshQueueProcessor(object):
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=django.conf.settings.DATAONE_ROOT,
-      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
@@ -163,24 +167,17 @@ class SysMetaRefreshQueueProcessor(object):
 
   def _assert_is_pid_of_native_object(self, pid):
     if not d1_gmn.app.sysmeta.is_pid_of_existing_object(pid):
-      raise RefreshError(
+      raise django.core.management.base.CommandError(
         u'Object referenced by PID does not exist or is not valid target for'
         u'System Metadata refresh. pid="{}"'.format(pid)
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
-    if d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier) != pid:
-      raise RefreshError(
+    if d1_common.xml.uvalue(sysmeta_pyxb.identifier) != pid:
+      raise django.core.management.base.CommandError(
         u'PID in retrieved System Metadata does not match the object for which '
         u'refresh was requested. pid="{}"'.format(pid)
       )
 
   def _assert_sysmeta_is_complete(self, sysmeta_pyxb):
     pass
-
-
-# ==============================================================================
-
-
-class RefreshError(Exception):
-  pass

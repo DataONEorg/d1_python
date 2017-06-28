@@ -1,108 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:objectList count="15" start="612" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_qwxaczaitods</identifier>
-    <formatId>application/pdf</formatId>
-    <checksum algorithm="SHA-1">0a12015d67c15cdaec2d98a7513431f3827fdef3</checksum>
-    <dateSysMetadataModified>2002-08-09T00:00:00</dateSysMetadataModified>
-    <size>220</size>
+    <identifier>PID_GMNFXT_phkzfhmopjev</identifier>
+    <formatId>application/bagit-097</formatId>
+    <checksum algorithm="SHA-1">5f94d1f51546ad7094949ead3b940433891605db</checksum>
+    <dateSysMetadataModified>2002-09-06T00:00:00</dateSysMetadataModified>
+    <size>298</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_fmavkbbylddv</identifier>
-    <formatId>http://www.esri.com/metadata/esriprof80.dtd</formatId>
-    <checksum algorithm="SHA-1">6d373bbbe49df653cfc66a20b2b08d318c74bef1</checksum>
-    <dateSysMetadataModified>2002-08-06T00:00:00</dateSysMetadataModified>
+    <identifier>PID_GMNFXT_ulyqvugquesp</identifier>
+    <formatId>-//ecoinformatics.org//eml-protocol-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">fae3cde04984935b031aa713db71c8b639efbbd2</checksum>
+    <dateSysMetadataModified>2002-09-01T00:00:00</dateSysMetadataModified>
     <size>311</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_yalelavxtjwa</identifier>
-    <formatId>CF-1.0</formatId>
-    <checksum algorithm="SHA-1">5a4f410882a2eeaf52d753b50f53272759a14e0c</checksum>
-    <dateSysMetadataModified>2002-08-04T00:00:00</dateSysMetadataModified>
-    <size>289</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_butavycaangm</identifier>
-    <formatId>application/xml</formatId>
-    <checksum algorithm="SHA-1">76d204034dde7e7c654211427e4a2cfb07aa6512</checksum>
-    <dateSysMetadataModified>2002-08-01T00:00:00</dateSysMetadataModified>
-    <size>267</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_ktgueivaixyn</identifier>
-    <formatId>-//ecoinformatics.org//eml-project-2.0.0beta4//EN</formatId>
-    <checksum algorithm="SHA-1">05669f80be6c8230fbce4576e91cf7a748e355de</checksum>
-    <dateSysMetadataModified>2002-07-28T00:00:00</dateSysMetadataModified>
-    <size>302</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_nwgczgyopsrw</identifier>
-    <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta4//EN</formatId>
-    <checksum algorithm="SHA-1">e4e8d388c837d3af197ef8eaa1ebee2eabe0636d</checksum>
-    <dateSysMetadataModified>2002-07-27T21:23:04</dateSysMetadataModified>
-    <size>249</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_pjozbqetliir</identifier>
-    <formatId>-//ecoinformatics.org//eml-physical-2.0.0beta4//EN</formatId>
-    <checksum algorithm="SHA-1">8f8fbc8563062d5b88e8bf28ea0ee4bf35eb8cc2</checksum>
-    <dateSysMetadataModified>2002-07-25T00:00:00</dateSysMetadataModified>
+    <identifier>PID_GMNFXT_fjixaohhxsqj</identifier>
+    <formatId>text/plain</formatId>
+    <checksum algorithm="SHA-1">663dc58a61b388af9be97416994e5ea79a29dbb9</checksum>
+    <dateSysMetadataModified>2002-08-30T00:00:00</dateSysMetadataModified>
     <size>299</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_baqnqdhrqeds</identifier>
-    <formatId>application/x-gzip</formatId>
-    <checksum algorithm="SHA-1">1aa5fcb5ee70bbcf319c4c92122ba2968e874757</checksum>
-    <dateSysMetadataModified>2002-07-21T00:00:00</dateSysMetadataModified>
-    <size>310</size>
+    <identifier>PID_GMNFXT_dkceuafxkjhq</identifier>
+    <formatId>-//ecoinformatics.org//eml-physical-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">92d5c3dd80fec543b6291060d5a3be18f6c7f7d6</checksum>
+    <dateSysMetadataModified>2002-08-26T00:00:00</dateSysMetadataModified>
+    <size>251</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_owedntpeuylg</identifier>
-    <formatId>http://www.loc.gov/METS/</formatId>
-    <checksum algorithm="SHA-1">2b04c84ad89284870d0303809adb931448791c27</checksum>
-    <dateSysMetadataModified>2002-07-19T00:00:00</dateSysMetadataModified>
-    <size>301</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_rtzojqalklus</identifier>
-    <formatId>image/gif</formatId>
-    <checksum algorithm="SHA-1">b61c7296bc7f23b7f65fc0ea9db3e39557b30276</checksum>
-    <dateSysMetadataModified>2002-07-17T00:00:00</dateSysMetadataModified>
-    <size>290</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_hatdwqxaukfz</identifier>
+    <identifier>PID_GMNFXT_sicnpguvwvji</identifier>
     <formatId>text/n3</formatId>
-    <checksum algorithm="SHA-1">23b7b55e0f4f721c745eb681bd78239b3b486f6c</checksum>
-    <dateSysMetadataModified>2002-07-15T00:00:00</dateSysMetadataModified>
-    <size>246</size>
+    <checksum algorithm="SHA-1">4d108969e0701a4bd817da30c93018c8190daf7e</checksum>
+    <dateSysMetadataModified>2002-08-24T00:00:00</dateSysMetadataModified>
+    <size>237</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_pdzhldfxlxhc</identifier>
-    <formatId>CF-1.1</formatId>
-    <checksum algorithm="SHA-1">635027220e141a83dffc7b464cb08c653ebfd847</checksum>
+    <identifier>PID_GMNFXT_sjsunpwgkgsu</identifier>
+    <formatId>-//ecoinformatics.org//eml-software-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">0f0baac87eb6a9418e64736e96172d742d97fa67</checksum>
+    <dateSysMetadataModified>2002-08-20T00:00:00</dateSysMetadataModified>
+    <size>262</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_dzvbyerevvef</identifier>
+    <formatId>-//ecoinformatics.org//eml-software-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">b26aeae5751d728e205b1af427c6951e8933fa86</checksum>
+    <dateSysMetadataModified>2002-08-17T00:00:00</dateSysMetadataModified>
+    <size>283</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_jcseczvmvmlx</identifier>
+    <formatId>-//ecoinformatics.org//eml-entity-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">1e55ffd04bb6d9434d2048b5fc0c191177f1c4eb</checksum>
+    <dateSysMetadataModified>2002-08-14T00:00:00</dateSysMetadataModified>
+    <size>297</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_pnjnxueeflfc</identifier>
+    <formatId>CF-1.2</formatId>
+    <checksum algorithm="SHA-1">b93b97066c50a343820d519e23a2b3a809ecfef5</checksum>
+    <dateSysMetadataModified>2002-08-08T00:00:00</dateSysMetadataModified>
+    <size>282</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_syfroiiasjxn</identifier>
+    <formatId>image/jpeg</formatId>
+    <checksum algorithm="SHA-1">19ae9d6817a36142304e4eee90cdcf9ae6960ee7</checksum>
+    <dateSysMetadataModified>2002-07-29T00:00:00</dateSysMetadataModified>
+    <size>260</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_pwruovflsiud</identifier>
+    <formatId>application/mathematica</formatId>
+    <checksum algorithm="SHA-1">48d5470098581474bff3872c536f7a1d2cf51363</checksum>
+    <dateSysMetadataModified>2002-07-27T00:00:00</dateSysMetadataModified>
+    <size>291</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_vgjoohhieuei</identifier>
+    <formatId>http://rs.tdwg.org/dwc/xsd/simpledarwincore/</formatId>
+    <checksum algorithm="SHA-1">ea9d70becc9e557bffc4f454ada7951df33245da</checksum>
+    <dateSysMetadataModified>2002-07-22T15:10:36</dateSysMetadataModified>
+    <size>256</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_wqbkdmalajvs</identifier>
+    <formatId>text/tsv</formatId>
+    <checksum algorithm="SHA-1">8e4e3cf461306ab71bbc01ea52cb41d4efd36bac</checksum>
+    <dateSysMetadataModified>2002-07-19T00:00:00</dateSysMetadataModified>
+    <size>282</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_zmljpdkcglhe</identifier>
+    <formatId>http://www.cuahsi.org/waterML/1.1/</formatId>
+    <checksum algorithm="SHA-1">6e959b816c221f6b1c2e251566d0f9efae4b3659</checksum>
+    <dateSysMetadataModified>2002-07-17T00:00:00</dateSysMetadataModified>
+    <size>239</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_oejaawluxwdw</identifier>
+    <formatId>http://purl.org/ornl/schema/mercury/terms/v1.0</formatId>
+    <checksum algorithm="SHA-1">5830dcc3b9bf3c6e4f663fba286c5d291ed0a792</checksum>
     <dateSysMetadataModified>2002-07-12T00:00:00</dateSysMetadataModified>
-    <size>295</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_tkvjlwhemhgc</identifier>
-    <formatId>audio/mpeg</formatId>
-    <checksum algorithm="SHA-1">0e0a6f2fb364318ac2c9a37e5898f0e34a4d09f6</checksum>
-    <dateSysMetadataModified>2002-07-08T00:00:00</dateSysMetadataModified>
-    <size>307</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_rouafgheeefe</identifier>
-    <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
-    <checksum algorithm="SHA-1">ef5741b9cf7c90374e53340795a353ce0de4ad1e</checksum>
-    <dateSysMetadataModified>2002-07-04T00:00:00</dateSysMetadataModified>
-    <size>286</size>
-  </objectInfo>
-  <objectInfo>
-    <identifier>PID_epqreaebiwyj</identifier>
-    <formatId>-//ecoinformatics.org//eml-access-2.0.0beta4//EN</formatId>
-    <checksum algorithm="SHA-1">b31e57b82aaf93dbb0dfce528a152a4c5a4b1847</checksum>
-    <dateSysMetadataModified>2002-07-01T00:00:00</dateSysMetadataModified>
-    <size>301</size>
+    <size>266</size>
   </objectInfo>
 </ns1:objectList>

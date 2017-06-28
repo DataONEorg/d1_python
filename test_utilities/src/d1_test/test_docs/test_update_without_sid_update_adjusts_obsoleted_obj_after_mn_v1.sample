@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <serialVersion>73</serialVersion>
-  <identifier>PID_leuhlwdlakza</identifier>
-  <formatId>-//ecoinformatics.org//eml-distribution-2.0.0beta6//EN</formatId>
-  <size>290</size>
-  <checksum algorithm="SHA-1">d229b68a7fa2a0040ba5680760d26bcecfae8b85</checksum>
-  <submitter>subj_fo</submitter>
-  <rightsHolder>subj_o</rightsHolder>
+  <serialVersion>54</serialVersion>
+  <identifier>PID_eomsxomxrjwk</identifier>
+  <formatId>application/mathematica</formatId>
+  <size>271</size>
+  <checksum algorithm="SHA-1">6833ddfa045845dab74d885ba13508a7c1a00217</checksum>
+  <submitter>subj_rv</submitter>
+  <rightsHolder>subj_dp</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -31,17 +31,32 @@
     </allow>
   </accessPolicy>
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <blockedMemberNode>mn_js</blockedMemberNode>
+    <blockedMemberNode>mn_h</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_kffyhozkimhy</obsoletedBy>
+  <obsoletedBy>PID_buqxyitgzycp</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2042-12-11T22:45:16</dateUploaded>
-  <dateSysMetadataModified>2017-06-27T16:23:22.350624</dateSysMetadataModified>
-  <originMemberNode>mn_t</originMemberNode>
-  <authoritativeMemberNode>mn_br</authoritativeMemberNode>
+  <dateUploaded>2023-10-06T06:29:16</dateUploaded>
+  <dateSysMetadataModified>1955-05-15T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_xc</originMemberNode>
+  <authoritativeMemberNode>mn_r</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_ud</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2018-09-04T08:09:50.000592Z</replicaVerified>
+    <replicaMemberNode>mn_fg</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2049-03-21T09:30:20.000282Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_w</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2055-10-24T05:53:50.000091Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_y</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2096-11-01T12:06:50.00063Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_s</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2281-08-12T11:31:24.000241Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

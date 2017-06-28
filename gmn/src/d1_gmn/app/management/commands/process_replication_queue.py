@@ -22,16 +22,19 @@
 Coordinating Nodes call MNReplication.replicate() to request the creation of
 replicas. GMN queues the requests and processes them asynchronously. This
 command iterates over the requests and attempts to create the replicas.
+  help = 'Process the queue of replication requests'
 """
 
 from __future__ import absolute_import
 
+import argparse
 import logging
 import shutil
 
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
-import d1_gmn.app.management.commands._util
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
@@ -42,6 +45,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
+import d1_common.xml
 
 import d1_client.cnclient
 import d1_client.d1client
@@ -52,26 +56,29 @@ import django.core.management.base
 import django.db.transaction
 
 
-# noinspection PyClassHasNoInit
+# noinspection PyClassHasNoInit,PyProtectedMember
 class Command(django.core.management.base.BaseCommand):
-  help = 'Process the queue of replication requests'
-
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
 
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
+  def handle(self, *args, **opt):
+    assert not args
+    util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.
-      format(d1_gmn.app.management.commands._util.get_command_name())
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
-    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
-    d1_gmn.app.management.commands._util.abort_if_stand_alone_instance()
+    util.exit_if_other_instance_is_running(__name__)
+    util.abort_if_stand_alone_instance()
+    try:
+      self._handle(opt)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise django.core.management.base.CommandError(str(e))
+
+  def _handle(self, opt):
     p = ReplicationQueueProcessor()
     p.process_replication_queue()
 
@@ -86,7 +93,7 @@ class ReplicationQueueProcessor(object):
   def process_replication_queue(self):
     queue_queryset = d1_gmn.app.models.ReplicationQueue.objects.filter(
       local_replica__info__status__status='queued'
-    )
+    ).order_by('local_replica__info__timestamp', 'local_replica__pid__did')
     if not len(queue_queryset):
       logging.debug(u'No replication requests to process')
       return
@@ -175,7 +182,7 @@ class ReplicationQueueProcessor(object):
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=django.conf.settings.DATAONE_ROOT,
-      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
 
@@ -190,7 +197,7 @@ class ReplicationQueueProcessor(object):
     )
     mn_client = d1_client.mnclient.MemberNodeClient(
       base_url=source_node_base_url,
-      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
     )
     return self._open_sciobj_stream_on_member_node(
@@ -201,11 +208,11 @@ class ReplicationQueueProcessor(object):
     node_list = self._get_node_list()
     discovered_nodes = []
     for node in node_list.node:
-      discovered_node_id = d1_gmn.app.util.uvalue(node.identifier)
+      discovered_node_id = d1_common.xml.uvalue(node.identifier)
       discovered_nodes.append(discovered_node_id)
       if discovered_node_id == source_node:
         return node.baseURL
-    raise ReplicateError(
+    raise django.core.management.base.CommandError(
       u'Unable to resolve Source Node ID. '
       u'source_node="{}", discovered_nodes="{}"'
       .format(source_node, u', '.join(discovered_nodes))
@@ -223,7 +230,7 @@ class ReplicationQueueProcessor(object):
     revision chains and SIDs. So this create sequence differs significantly
     from the regular one that is accessed through MNStorage.create().
     """
-    pid = d1_gmn.app.util.uvalue(sysmeta_pyxb.identifier)
+    pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
     self._assert_is_pid_of_local_unprocessed_replica(pid)
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
@@ -237,7 +244,7 @@ class ReplicationQueueProcessor(object):
   def _check_and_create_replica_revision(self, sysmeta_pyxb, attr_str):
     revision_attr = getattr(sysmeta_pyxb, attr_str)
     if revision_attr is not None:
-      pid = d1_gmn.app.util.uvalue(revision_attr)
+      pid = d1_common.xml.uvalue(revision_attr)
       self._assert_pid_is_unknown_or_replica(pid)
       self._create_replica_revision_reference(pid)
 
@@ -252,7 +259,7 @@ class ReplicationQueueProcessor(object):
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
     if not d1_gmn.app.local_replica.is_unprocessed_local_replica(pid):
-      raise ReplicateError(
+      raise django.core.management.base.CommandError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
       )
@@ -261,14 +268,7 @@ class ReplicationQueueProcessor(object):
     if d1_gmn.app.sysmeta.is_did(
         pid
     ) and not d1_gmn.app.local_replica.is_local_replica(pid):
-      raise ReplicateError(
+      raise django.core.management.base.CommandError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
       )
-
-
-# ==============================================================================
-
-
-class ReplicateError(Exception):
-  pass

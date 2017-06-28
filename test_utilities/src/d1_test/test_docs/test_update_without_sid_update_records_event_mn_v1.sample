@@ -2,22 +2,22 @@
 <ns1:log count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_czntkokgnczs</identifier>
+    <identifier>PID_eomsxomxrjwk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2031-05-15T00:36:04</dateLogged>
+    <dateLogged>2039-07-23T11:04:11</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_czntkokgnczs</identifier>
+    <identifier>PID_eomsxomxrjwk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1986-11-12T15:02:38</dateLogged>
+    <dateLogged>2023-10-06T06:29:16</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
 </ns1:log>

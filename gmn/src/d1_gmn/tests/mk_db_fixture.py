@@ -75,6 +75,7 @@ import d1_test.instance_generator.user_agent
 import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.random_data
 import freezegun
+import d1_test.instance_generator.identifier
 
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
@@ -120,9 +121,10 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         do_chain = random.random() < 0.5
 
+        pid = d1_test.instance_generator.identifier.generate_pid('PID_GMNFXT_')
         pid, sid, sciobj_str, sysmeta_pyxb = \
           d1_test.instance_generator.sciobj.generate_reproducible(
-            client
+            client, pid
           )
 
         sciobj_file = StringIO.StringIO(sciobj_str)

@@ -36,8 +36,8 @@ class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _get_db_subj(self):
     return set([
       v['subject']
-      for v in d1_gmn.app.models.Subject.objects.all()
-      .order_by('subject').values('subject')
+      for v in d1_gmn.app.models.Subject.objects.order_by('subject')
+      .values('subject')
     ])
 
   def _gen_perm_list(self):

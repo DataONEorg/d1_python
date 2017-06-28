@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>49</serialVersion>
-  <identifier>PID_hzmgaqsewqii</identifier>
-  <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
-  <size>266</size>
-  <checksum algorithm="SHA-1">c93296e0682fe8a0cab6cdcb524015fa1678387a</checksum>
-  <submitter>subj_ao</submitter>
-  <rightsHolder>subj_p</rightsHolder>
+  <serialVersion>37</serialVersion>
+  <identifier>PID_pwhwsulxembq</identifier>
+  <formatId>http://digir.net/schema/conceptual/darwin/2003/1.0/darwin2.xsd</formatId>
+  <size>253</size>
+  <checksum algorithm="SHA-1">5d3a76ce96965cbe18a361b317cbb48faed05770</checksum>
+  <submitter>subj_am</submitter>
+  <rightsHolder>subj_gw</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,15 +30,44 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_qi</preferredMemberNode>
-    <blockedMemberNode>mn_hu</blockedMemberNode>
+  <replicationPolicy numberReplicas="2" replicationAllowed="true">
+    <preferredMemberNode>mn_jq</preferredMemberNode>
+    <blockedMemberNode>mn_a</blockedMemberNode>
+    <blockedMemberNode>mn_fq</blockedMemberNode>
+    <blockedMemberNode>mn_v</blockedMemberNode>
+    <blockedMemberNode>mn_z</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
-  <dateUploaded>2018-11-15T07:10:36</dateUploaded>
-  <dateSysMetadataModified>2018-11-25T07:10:36</dateSysMetadataModified>
-  <originMemberNode>mn_fw</originMemberNode>
-  <authoritativeMemberNode>mn_lc</authoritativeMemberNode>
-  <seriesId>SID_tjvajphbmask</seriesId>
-  <fileName>file_buk</fileName>
+  <dateUploaded>2006-07-23T02:01:31</dateUploaded>
+  <dateSysMetadataModified>2006-08-02T02:01:31</dateSysMetadataModified>
+  <originMemberNode>mn_sp</originMemberNode>
+  <authoritativeMemberNode>mn_tc</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_x</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>1990-11-01T12:51:25.000159Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2077-12-10T21:11:27.000126Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_g</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2123-05-17T12:13:53.000685Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_zy</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2198-02-27T19:38:59.000148Z</replicaVerified>
+  </replica>
+  <seriesId>SID_muiujdvmhwkn</seriesId>
+  <mediaType name="media_type_ct">
+    <property name="prop_be">pn</property>
+    <property name="prop_ek">xt</property>
+    <property name="prop_og">kw</property>
+    <property name="prop_vp">yn</property>
+  </mediaType>
+  <fileName>file_iyd</fileName>
 </ns1:systemMetadata>

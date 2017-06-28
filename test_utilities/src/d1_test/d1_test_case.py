@@ -29,6 +29,7 @@ import os
 import random
 import StringIO
 import sys
+import traceback
 import xml
 
 import decorator
@@ -170,6 +171,8 @@ def _reproducible_random_func_decorator(func, seed):
 @contextlib.contextmanager
 def reproducible_random_context(seed=None):
   """Start the PRNG at a fixed seed"""
+  if seed is None:
+    seed = get_test_module_name()
   state = random.getstate()
   random.seed(seed)
   yield
@@ -374,3 +377,10 @@ class ColorStreamHandler(logging.StreamHandler):
     text = logging.StreamHandler.format(self, record)
     color = self._get_color(record.levelno)
     return color + text + self.DEFAULT
+
+
+def get_test_module_name():
+  for module_path, line_num, func_name, line_str in traceback.extract_stack():
+    module_name = os.path.splitext(os.path.split(module_path)[1])[0]
+    if module_name.startswith('test_') and func_name.startswith('test_'):
+      return module_name

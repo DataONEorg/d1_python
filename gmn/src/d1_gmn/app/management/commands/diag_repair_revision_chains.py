@@ -60,16 +60,15 @@ class Command(django.core.management.base.BaseCommand):
     assert not args
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
-    util.exit_if_other_instance_is_running()
+    util.exit_if_other_instance_is_running(__name__)
     try:
       self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
 
   def _handle(self, opt):
-    util.exit_if_other_instance_is_running()
     fix_chains = FixRevisionChains()
     fix_chains.run()
 
@@ -95,7 +94,9 @@ class FixRevisionChains(object):
       )
 
   def _add_chain_refs(self):
-    for sciobj_model in d1_gmn.app.models.ScienceObject.objects.all():
+    for sciobj_model in d1_gmn.app.models.ScienceObject.objects.order_by(
+        'pid__did'
+    ):
       pid = sciobj_model.pid.did
       logging.debug('Checking. pid="{}"'.format(pid))
       self._events.count('Total')

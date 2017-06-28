@@ -86,9 +86,11 @@ class Command(django.core.management.base.BaseCommand):
 
   def _view(self):
     logging.info(u'Subjects in whitelist:')
-    for whitelist_model in d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.all(
+    for whitelist_model in (
+        d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.
+        order_by('subject__subject')
     ):
-      logging.info('  {}'.format(whitelist_model.subject.subject))
+      logging.info(u'  {}'.format(whitelist_model.subject.subject))
 
   def _add(self, subject_str):
     if subject_str is None:

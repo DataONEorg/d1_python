@@ -2,11 +2,11 @@ PyXB object:
   <?xml version="1.0" encoding="utf-8"?>
   <ns1:objectList count="1" start="0" total="6" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
-      <identifier>PID_lwhvyhxjggmm</identifier>
-      <formatId>anvl/erc-v02</formatId>
-      <checksum algorithm="SHA-1">6e55e51700fc9be94f493ad8e1de2c0f0b1cb36f</checksum>
-      <dateSysMetadataModified>1980-11-12T21:40:32</dateSysMetadataModified>
-      <size>227</size>
+      <identifier>PID_GMNFXT_ucgzsnijaief</identifier>
+      <formatId>CF-1.1</formatId>
+      <checksum algorithm="SHA-1">ac6a244c54eee9a83f12a9ca18aecdf7f249d3a7</checksum>
+      <dateSysMetadataModified>1980-11-03T07:17:10</dateSysMetadataModified>
+      <size>234</size>
     </objectInfo>
   </ns1:objectList>
 
@@ -14,10 +14,10 @@ PyXB object:
   <?xml version="1.0" encoding="utf-8"?>
   <ns1:objectList count="1" start="5" total="6" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
-      <identifier>PID_udsruzzstfhk</identifier>
-      <formatId>-//ecoinformatics.org//eml-software-2.0.0beta6//EN</formatId>
-      <checksum algorithm="SHA-1">f1896d1c762a76f6f1c9abf4f7b13c9d6174eb49</checksum>
-      <dateSysMetadataModified>1980-06-27T10:59:57</dateSysMetadataModified>
-      <size>227</size>
+      <identifier>PID_GMNFXT_dwsnuwqctkjj</identifier>
+      <formatId>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</formatId>
+      <checksum algorithm="SHA-1">220b5404cb20f99b5bf960295cb75480f73c1526</checksum>
+      <dateSysMetadataModified>1980-01-09T23:08:28</dateSysMetadataModified>
+      <size>234</size>
     </objectInfo>
   </ns1:objectList>

@@ -17,11 +17,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Populate GMN v2 database from existing v1 database
+"""Migrate the contents of a GMN v1 instance to this GMN v2 instance
+
+The database and filesystem storage of this instance is initialized by copying
+database entries and files from the existing GMN v1 instance.
+
+The existing GMN v1 instance is not modified in any way.
 """
 
 from __future__ import absolute_import
 
+import argparse
 import json
 import logging
 import os
@@ -32,7 +38,8 @@ import psycopg2
 import psycopg2.extras
 
 import d1_gmn.app.auth
-import d1_gmn.app.management.commands._util
+# noinspection PyProtectedMember
+import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
@@ -44,6 +51,8 @@ import d1_gmn.app.views.util
 
 import d1_common.types.exceptions
 import d1_common.url
+import d1_common.util
+import d1_common.xml
 
 import d1_client.cnclient_2_0
 
@@ -70,51 +79,43 @@ UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 
 # noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
-  help = 'Migrate the contents of a GMN v1 instance to this v2 instance'
+  def __init__(self, *args, **kwargs):
+    super(Command, self).__init__(*args, **kwargs)
+    self._v1_cursor = self._create_v1_cursor()
+    self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):
+    parser.description = __doc__
+    parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug',
-      action='store_true',
-      default=False,
-      help='debug level logging',
+      '--debug', action='store_true', default=False, help='debug level logging'
     )
     parser.add_argument(
-      '--force',
-      action='store_true',
-      dest='force',
-      default=False,
-      help='Overwrite existing v2 database',
+      '--force', action='store_true', dest='force', default=False,
+      help='Overwrite existing v2 database'
     )
 
-  def handle(self, *args, **options):
-    d1_gmn.app.management.commands._util.log_setup(options['debug'])
+  def handle(self, *args, **opt):
+    util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.
-      format(d1_gmn.app.management.commands._util.get_command_name())
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
-    d1_gmn.app.management.commands._util.abort_if_other_instance_is_running()
-    m = V2Migration()
-    if not options['force'] and not self._db_is_empty():
+    util.exit_if_other_instance_is_running(__name__)
+    try:
+      self._handle(opt)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise django.core.management.base.CommandError(str(e))
+
+  def _handle(self, opt):
+    if not opt['force'] and not self._db_is_empty():
       logging.error(
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
     d1_gmn.app.views.diagnostics.delete_all_objects()
-    m.migrate()
 
   def _db_is_empty(self):
-    q = d1_gmn.app.models.IdNamespace.objects.all()
-    return not len(q)
-
-
-#===============================================================================
-
-
-class V2Migration(object):
-  def __init__(self):
-    self._v1_cursor = self._create_v1_cursor()
-    self._events = d1_gmn.app.management.commands._util.EventCounter()
+    return not d1_gmn.app.models.IdNamespace.objects.exists()
 
   def migrate(self):
     try:
@@ -229,9 +230,9 @@ class V2Migration(object):
           )
 
   def _identifiers(self, sysmeta_pyxb):
-    pid = d1_gmn.app.util.get_value(sysmeta_pyxb, 'identifier')
-    obsoletes_pid = d1_gmn.app.util.get_value(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = d1_gmn.app.util.get_value(sysmeta_pyxb, 'obsoletedBy')
+    pid = d1_common.xml.get_value(sysmeta_pyxb, 'identifier')
+    obsoletes_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletes')
+    obsoleted_by_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletedBy')
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
@@ -409,7 +410,7 @@ class V2Migration(object):
   def _create_cn_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       django.conf.settings.DATAONE_ROOT,
-      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

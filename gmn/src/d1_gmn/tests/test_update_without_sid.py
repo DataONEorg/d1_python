@@ -29,6 +29,7 @@ from __future__ import absolute_import
 import StringIO
 import time
 
+import freezegun
 import pytest
 import responses
 
@@ -47,6 +48,7 @@ import d1_test.instance_generator.identifier
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestUpdateWithoutSid')
+@freezegun.freeze_time('1955-05-15')
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self):
@@ -172,10 +174,13 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       log = client.getLogRecords(pidFilter=pid_create)
       self.sample.assert_equals(log, 'update_records_event', client)
 
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      with d1_test.d1_test_case.reproducible_random_context():
-        test(self.client_v1)
-        test(self.client_v2)
+    with d1_test.d1_test_case.reproducible_random_context(
+        'update_records_event'
+    ):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        with d1_test.d1_test_case.reproducible_random_context():
+          test(self.client_v1)
+          test(self.client_v2)
 
   @responses.activate
   def test_1070(self):
@@ -204,6 +209,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       with d1_test.d1_test_case.reproducible_random_context():
+
         test(self.client_v1)
         test(self.client_v2)
 

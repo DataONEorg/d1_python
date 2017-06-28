@@ -312,7 +312,7 @@ def _media_type_model_to_pyxb(sciobj_model):
 
   for media_type_property_model in d1_gmn.app.models.MediaTypeProperty.objects.filter(
       media_type=media_type_model
-  ):
+  ).order_by('name', 'value'):
     media_type_property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
       media_type_property_model.value, name=media_type_property_model.name
     )
@@ -409,7 +409,7 @@ def _access_policy_model_to_pyxb(sciobj_model):
   access_policy_pyxb = d1_common.types.dataoneTypes.AccessPolicy()
   for permission_model in d1_gmn.app.models.Permission.objects.filter(
       sciobj=sciobj_model
-  ):
+  ).order_by('subject', 'level', 'sciobj__pid__did'):
     # Skip implicit permissions for rightsHolder.
     if permission_model.subject.subject == sciobj_model.rights_holder.subject:
       continue
@@ -502,7 +502,7 @@ def _replication_policy_model_to_pyxb(sciobj_model):
   def add(rep_pyxb, rep_node_model):
     for rep_node in rep_node_model.objects.filter(
         replication_policy=replication_policy_model
-    ):
+    ).order_by('node__urn'):
       rep_pyxb.append(rep_node.node.urn)
 
   add(
@@ -550,7 +550,7 @@ def replica_model_to_pyxb(sciobj_model):
   replica_pyxb_list = []
   for replica_model in d1_gmn.app.models.RemoteReplica.objects.filter(
       sciobj=sciobj_model
-  ):
+  ).order_by('info__timestamp', 'info__member_node__urn'):
     replica_pyxb = d1_common.types.dataoneTypes.Replica()
     replica_pyxb.replicaMemberNode = replica_model.info.member_node.urn
     replica_pyxb.replicationStatus = replica_model.info.status.status

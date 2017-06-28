@@ -2,7 +2,7 @@
   "request": {
     "endpoint_str": "replicaAuthorizations", 
     "param_list": [
-      "mwtfxqbbmwdidtdhwg"
+      "DID_mwtfxqbbmwdidtdhwg"
     ], 
     "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
     "query_dict": {

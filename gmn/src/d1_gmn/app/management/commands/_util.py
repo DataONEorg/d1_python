@@ -53,9 +53,9 @@ def log_setup(debug_bool):
     logging.getLogger('').setLevel(logging.INFO)
 
 
-def exit_if_other_instance_is_running():
+def exit_if_other_instance_is_running(command_name_str):
   global single_instance_lock_file
-  command_name_str = get_command_name()
+  # command_name_str = get_command_name()
   single_path = os.path.join(
     tempfile.gettempdir(), command_name_str + '.single'
   )
@@ -76,8 +76,11 @@ def abort_if_stand_alone_instance():
     )
 
 
-def get_command_name():
-  return sys.argv[1]
+# def get_command_name():
+#   for arg_str in sys.argv:
+#     if 'manage.py' not in arg_str and 'pytest' not in arg_str:
+#       return arg_str
+#   return '<unknown>'
 
 
 def is_subject_in_whitelist(subject_str):

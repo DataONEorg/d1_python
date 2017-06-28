@@ -2,7 +2,7 @@
   "request": {
     "endpoint_str": "replicaPolicies", 
     "param_list": [
-      "acfagqwmwtfxqbb"
+      "DID_acfagqwmwtfxqbb"
     ], 
     "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
     "query_dict": {}, 

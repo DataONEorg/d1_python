@@ -30,20 +30,15 @@ import d1_gmn.tests.gmn_test_case
 
 
 class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def _generate_identifier(self, client):
-    fragment = 'test_fragment'
-    identifier = client.generateIdentifier('UUID', fragment)
-    assert identifier.value().startswith(fragment)
-    assert len(identifier.value()) > len(fragment)
-    return identifier.value()
-
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a valid identifier that
     matches scheme and fragment
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      self._generate_identifier(mn_client_v1_v2)
+      fragment = 'test_fragment'
+      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
+      self.sample.assert_equals(identifier_pyxb, 'valid_did_1', mn_client_v1_v2)
 
   @responses.activate
   def test_1010(self, mn_client_v1_v2):
@@ -51,6 +46,12 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     when called second time
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid1 = self._generate_identifier(mn_client_v1_v2)
-      pid2 = self._generate_identifier(mn_client_v1_v2)
-      assert pid1 != pid2
+      fragment = 'test_fragment'
+      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
+      self.sample.assert_equals(
+        identifier_pyxb, 'valid_did_unique_1', mn_client_v1_v2
+      )
+      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
+      self.sample.assert_equals(
+        identifier_pyxb, 'valid_did_unique_2', mn_client_v1_v2
+      )

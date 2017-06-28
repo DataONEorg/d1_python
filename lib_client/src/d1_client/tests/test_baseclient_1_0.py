@@ -200,25 +200,27 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
   # CNCore.generateIdentifier()
   # MNStorage.generateIdentifier()
 
-  @d1_test.mock_api.catch_all.activate
+  @responses.activate
   def test_1140(self, cn_mn_client_v1):
     """CNRegister.generateIdentifier(): Generates expected REST query"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.generate_identifier.add_callback(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
     fragment_str = (
       'fragment_' + d1_test.instance_generator.random_data.random_3_words()
     )
-    received_echo_dict = cn_mn_client_v1.generateIdentifier(
-      'UUID', fragment_str
-    )
-    d1_test.mock_api.catch_all.assert_expected_echo(
-      received_echo_dict, 'generate_identifier', cn_mn_client_v1
+    identifier_pyxb = cn_mn_client_v1.generateIdentifier('UUID', fragment_str)
+    self.sample.assert_equals(
+      identifier_pyxb, 'generate_identifier', cn_mn_client_v1
     )
 
-  @d1_test.mock_api.catch_all.activate
+  @responses.activate
   def test_1150(self, cn_mn_client_v1):
     """CNRegister.generateIdentifier(): Converts DataONEException XML doc to
     exception"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.generate_identifier.add_callback(
+      d1_test.d1_test_case.MOCK_BASE_URL
+    )
     scheme_str = (
       'scheme_' + d1_test.instance_generator.random_data.random_3_words()
     )

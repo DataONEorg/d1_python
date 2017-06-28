@@ -25,7 +25,6 @@ import os
 import re
 import subprocess
 import tempfile
-import traceback
 
 import pytest
 import requests.structures
@@ -35,6 +34,8 @@ import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_common.xml
+
+from d1_test.d1_test_case import get_test_module_name
 
 import d1_client.util
 
@@ -108,7 +109,6 @@ def get_path(filename):
     return path
   elif os.path.isfile(tidy_file_path):
     os.rename(tidy_file_path, path)
-    return path
   return path
 
 
@@ -211,7 +211,7 @@ def _get_or_create_path(filename):
 
 def _format_file_name(client, name_postfix_str, extension_str):
   section_list = [
-    _get_test_module_name(),
+    get_test_module_name(),
     name_postfix_str,
   ]
   if client:
@@ -220,13 +220,6 @@ def _format_file_name(client, name_postfix_str, extension_str):
       d1_client.util.get_version_tag_by_d1_client(client),
     ])
   return '{}.{}'.format('_'.join(section_list), extension_str)
-
-
-def _get_test_module_name():
-  for module_path, line_num, func_name, line_str in traceback.extract_stack():
-    module_name = os.path.splitext(os.path.split(module_path)[1])[0]
-    if module_name.startswith('test_') and func_name.startswith('test_'):
-      return module_name
 
 
 def _get_sxs_diff_str(got_str, exp_str):

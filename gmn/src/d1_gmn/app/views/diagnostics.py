@@ -84,11 +84,13 @@ def diagnostics(request):
 
 @d1_gmn.app.restrict_to_verb.get
 def get_replication_queue(request):
-  q = d1_gmn.app.models.ReplicationQueue.objects.all()
+  q = d1_gmn.app.models.ReplicationQueue.objects.order_by(
+    'local_replica__info__timestamp', 'local_replica__pid__did'
+  )
   if 'excludecompleted' in request.GET:
     q = d1_gmn.app.models.ReplicationQueue.objects.filter(
       ~Q(local_replica__info__status__status='completed')
-    )
+    ).order_by('local_replica__info__timestamp', 'local_replica__pid__did')
   return render_to_response(
     'replicate_get_queue.xml', {'replication_queue': q},
     content_type=d1_common.const.CONTENT_TYPE_XML
@@ -100,7 +102,7 @@ def get_replication_queue(request):
 def clear_replication_queue(request):
   for rep_queue_model in d1_gmn.app.models.ReplicationQueue.objects.filter(
       local_replica__info__status__status='queued'
-  ):
+  ).order_by('local_replica__info__timestamp', 'local_replica__pid__did'):
     d1_gmn.app.models.IdNamespace.objects.filter(
       did=rep_queue_model.local_replica.pid.did
     ).delete()
@@ -186,7 +188,7 @@ def object_permissions(request, pid):
   subjects = []
   permissions = d1_gmn.app.models.Permission.objects.filter(
     sciobj__pid__did=pid
-  )
+  ).order_by('subject__subject', 'level', 'sciobj__pid__did')
   for permission in permissions:
     action = d1_gmn.app.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))

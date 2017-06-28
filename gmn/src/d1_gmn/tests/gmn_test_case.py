@@ -66,8 +66,6 @@ from django.db import connection
 HTTPBIN_SERVER_STR = 'http://httpbin.org'
 ENABLE_SQL_PROFILING = False
 
-# d1_common.util.log_setup(True)
-
 
 class GMNTestCase(
     d1_test.d1_test_case.D1TestCase,
@@ -429,7 +427,9 @@ class GMNTestCase(
 
   def dump_permissions(self):
     logging.debug('Permissions:')
-    for s in d1_gmn.app.models.Permission.objects.all():
+    for s in d1_gmn.app.models.Permission.objects.order_by(
+        'subject__subject', 'level', 'sciobj__pid__did'
+    ):
       logging.debug(s.sciobj.pid.did)
       logging.debug(s.subject)
       logging.debug(s.level)
@@ -437,7 +437,7 @@ class GMNTestCase(
 
   def dump_subjects(self):
     logging.debug('Subjects:')
-    for s in d1_gmn.app.models.Subject.objects.all():
+    for s in d1_gmn.app.models.Subject.objects.order_by('subject'):
       logging.debug('  {}'.format(s.subject))
 
   def get_pid_list(self):
@@ -455,7 +455,11 @@ class GMNTestCase(
     return client.listObjects(start=0, count=0, **filters).total
 
   def get_random_pid_sample(self, n_pids):
+    # We select sample from ordered list since the prng seed may be locked for reproducability.
     return random.sample(
-      [v.pid.did for v in d1_gmn.app.models.ScienceObject.objects.all()],
+      [
+        v.pid.did
+        for v in d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
+      ],
       n_pids,
     )

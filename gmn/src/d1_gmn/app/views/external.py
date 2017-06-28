@@ -638,6 +638,7 @@ def post_generate_identifier(request):
       0, u'Only the UUID scheme is currently supported'
     )
   fragment = request.POST.get('fragment', None)
+  return 'UUID-FROM-GMN'
   while True:
     pid = (fragment if fragment else u'') + uuid.uuid4().hex
     if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():

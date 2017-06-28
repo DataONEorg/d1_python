@@ -29,28 +29,28 @@ import d1_common.types.dataoneTypes
 import d1_test.instance_generator.random_data
 
 
-def generate_pid():
-  return generate_bare('PID_', min_len=12, max_len=12)
+def generate_pid(prefix_str='PID_'):
+  return generate_bare(prefix_str, min_len=12, max_len=12)
 
 
-def generate_sid(probability=1.0):
+def generate_sid(prefix_str='SID_', probability=1.0):
   """Generate a SID {probability}*100 percent of the time. Else return None.
   """
   if random.random() <= probability:
-    return generate_bare('SID_', min_len=12, max_len=12)
+    return generate_bare(prefix_str, min_len=12, max_len=12)
 
 
-def generate(prefix=u'', min_len=5, max_len=20):
+def generate(prefix_str='DID_', min_len=5, max_len=20):
   """Generate instance of Identifier holding a random unicode string"""
   return d1_common.types.dataoneTypes.identifier(
-    generate_bare(prefix, min_len, max_len)
+    generate_bare(prefix_str, min_len, max_len)
   )
 
 
-def generate_bare(prefix=u'', min_len=5, max_len=20):
+def generate_bare(prefix_str='DID_', min_len=5, max_len=20):
   """Generate bare Identifier holding a random unicode string
   min and max length does not include the length of the prefix.
   """
-  return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
+  return prefix_str + d1_test.instance_generator.random_data.random_lower_ascii(
     min_len, max_len
   )

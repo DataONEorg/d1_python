@@ -67,7 +67,7 @@ class Command(django.core.management.base.BaseCommand):
     assert not args
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     try:
       self._handle(opt)
@@ -78,7 +78,7 @@ class Command(django.core.management.base.BaseCommand):
     logging.info(u'Exported object list to: {}'.format(opt['path']))
     with open(opt['path'], 'w') as f:
       for i, sciobj_model in enumerate(
-          d1_gmn.app.models.ScienceObject.objects.all()
+          d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
       ):
         f.write(
           '{}\t{}\n'.format(
@@ -95,4 +95,5 @@ class Command(django.core.management.base.BaseCommand):
     return [
       (p.subject.subject, p.level)
       for p in d1_gmn.app.models.Permission.objects.filter(sciobj=sciobj_model)
+      .order_by('subject__subject')
     ]

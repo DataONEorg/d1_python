@@ -115,11 +115,12 @@ class Command(django.core.management.base.BaseCommand):
     )
 
   def handle(self, *args, **opt):
-    assert not args
     util.log_setup(opt['debug'])
     logging.info(
-      'Running management command: {}'.format(util.get_command_name())
+      u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
+    util.exit_if_other_instance_is_running(__name__)
+    self._check_debug_mode()
     if opt['root'] and opt['baseurl']:
       raise django.core.management.base.CommandError(
         '--root and --baseurl are mutually exclusive'
@@ -132,8 +133,6 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         'Must specify at least one element to copy'
       )
-    util.exit_if_other_instance_is_running()
-    self._check_debug_mode()
     try:
       self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:

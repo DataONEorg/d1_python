@@ -122,11 +122,11 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
   if reset_timestamps:
-    unix_epoch_dt = datetime.datetime(
-      1970, 1, 1, tzinfo=d1_common.date_time.UTC()
-    )
-    sysmeta_pyxb.dateUploaded = unix_epoch_dt
-    sysmeta_pyxb.dateSysMetadataModified = unix_epoch_dt
+    epoch_dt = datetime.datetime(1970, 1, 1, tzinfo=d1_common.date_time.UTC())
+    sysmeta_pyxb.dateUploaded = epoch_dt
+    sysmeta_pyxb.dateSysMetadataModified = epoch_dt
+    for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
+      replica_pyxb.replicaVerified = epoch_dt
   else:
     sysmeta_pyxb.dateUploaded = d1_common.date_time.round_date_time(
       sysmeta_pyxb.dateUploaded
@@ -134,6 +134,10 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
     sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_date_time(
       sysmeta_pyxb.dateSysMetadataModified
     )
+    for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
+      replica_pyxb.replicaVerified = d1_common.date_time.round_date_time(
+        replica_pyxb.replicaVerified
+      )
 
 
 def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
