@@ -62,7 +62,7 @@ create_event: <?xml version="1.0" encoding="utf-8"?>
     <entryId>[volatile]</entryId>
     <identifier>PID_gxmjjxhpmzob</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.0</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2388-08-28T00:00:00</dateLogged>

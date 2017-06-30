@@ -20,7 +20,7 @@
 <https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation> <http://www.openarchives.org/ore/terms/aggregates> <https://cn.dataone.org/cn/v2/resolve/data_pid> .
 <https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation> <http://www.openarchives.org/ore/terms/aggregates> <https://cn.dataone.org/cn/v2/resolve/meta_pid> .
 <https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openarchives.org/ore/terms/Aggregation> .
-<https://cn.dataone.org/cn/v2/resolve/ore_pid> <http://purl.org/dc/terms/creator> "DataONE.org Python ITK 2.3.0rc1" .
+<https://cn.dataone.org/cn/v2/resolve/ore_pid> <http://purl.org/dc/terms/creator> "DataONE.org Python ITK 2.3.0" .
 <https://cn.dataone.org/cn/v2/resolve/ore_pid> <http://purl.org/dc/terms/identifier> "ore_pid" .
 <https://cn.dataone.org/cn/v2/resolve/ore_pid> <http://www.openarchives.org/ore/terms/describes> <https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation> .
 <https://cn.dataone.org/cn/v2/resolve/ore_pid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openarchives.org/ore/terms/ResourceMap> .
