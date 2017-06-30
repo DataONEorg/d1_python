@@ -58,7 +58,7 @@ def home(request):
   if request.path.endswith('/'):
     return HttpResponseRedirect(request.path[:-1])
 
-  gmn_version = d1_gmn.app.__version__
+  gmn_version = d1_gmn.__version__
   django_version = ', '.join(map(str, django.VERSION))
 
   n_science_objects = '{:,}'.format(

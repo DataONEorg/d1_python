@@ -4,7 +4,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_pwhwsulxembq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.2</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.3</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2006-07-23T02:01:31</dateLogged>
@@ -14,7 +14,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_pwhwsulxembq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.2</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.3</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>1997-01-17T12:49:20</dateLogged>

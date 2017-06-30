@@ -150,6 +150,49 @@ We have added some custom functionality to pytest which can be enabled to launch
 
 * Pytest-django forces `settings.DEBUG` to `False` in `pytest_django/plugin.py`. To set `settings.DEBUG`, override it close to where it will be read, e.g., wit `@django.test.override_settings(DEBUG=True)`.
 
+### Setting up the development environment
+
+These instructions are tested on Linux Mint 18 and should also work on close derivatives.
+
+Install packaged dependencies:
+
+    $ sudo apt-get update
+    $ sudo apt-get -fy dist-upgrade
+    $ sudo apt-get install -y subversion python-setuptools python-dev \
+    libssl-dev postgresql-server-dev-all git
+
+Download the source from GitHub:
+
+    $ git clone https://github.com/DataONEorg/d1_python.git
+
+Add the DataONE packages to the Python path, and install their dependencies:
+
+    $ sh $D1ROOT/dev_tools/develop.sh
+
+Run the following commands, except, change the "createuser" line to:
+
+    $ sudo -u postgres createuser <youruser> ($ whoami)
+
+    https://pythonhosted.org/dataone.generic_member_node/setup-local-postgresql.html
+
+Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
+
+    $ sudo cp /home/dahl/d1_python/d1_mn_generic/src/deployment/openssl.cnf .
+
+  https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
+
+Run the tests and verify that they all pass:
+
+    $ pytest
+
+Set up credentials for working with the DataONE account on PyPI:
+
+Edit `~/.pypirc`:
+
+    [server-login]
+    username: dataone
+    password: <secret>
+
 ### Creating a new release
 
 The stack should pass all the tests with the most recent available versions of all the dependencies.
@@ -184,70 +227,16 @@ Building the release packages from a fresh clone is a simple way of ensuring tha
 Build and publish the packages:
 
     cd ~/d1_python_build
-    setup-all.py --root . build sdist bdist_wheel  
-
-
-
-
-#### Update the setup.py files
-
-
-#### Build the new packages
-
-    $ clean-tree.py
-    $ setup-all.py sdist bdist_wheel
-
-#### Push the new packages to PyPI
-
-    TODO
-
-
-### Setting up the development environment
-
-These instructions are tested on Linux Mint 18 and should also work on close derivatives.
-
-Install packaged dependencies:
-
-    $ sudo apt-get update
-    $ sudo apt-get -fy dist-upgrade
-    $ sudo apt-get install -y subversion python-setuptools python-dev \
-    libssl-dev postgresql-server-dev-all git
-
-Download the source from GitHub:
-
-    $ git clone https://github.com/DataONEorg/d1_python.git
-
-Set the `D1ROOT` environment variable to the location of `d1_python`. It's handy to set the variable in the startup script for your shell. E.g.,:
-
-    $ export D1ROOT=~/my/dev/d1_python
-
-Add the DataONE packages to the Python path, and install their dependencies:
-
-    $ sh $D1ROOT/dev_tools/develop.sh
-
-Run the following commands, except, change the "createuser" line to:
-
-    $ sudo -u postgres createuser <youruser> ($ whoami)
-
-    https://pythonhosted.org/dataone.generic_member_node/setup-local-postgresql.html
-
-
-Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
-
-    $ sudo cp /home/dahl/d1_python/d1_mn_generic/src/deployment/openssl.cnf .
-
-  https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
-
-Run the tests and verify that they all pass:
-
-    $ pytest
+    setup-all.py --root . bdist_wheel upload
 
 
 ### Building the documentation
 
+When `d1_python` is pushed to GitHub, a signal is sent by GitHub to [ReadTheDocs.org](https://readthedocs.org/), which automatically retrieves the new version of the project from GitHub, builds the documentation and makes it available at
 
-    TODO
+http://dataone-python.readthedocs.io/en/latest/
 
+So it is not absolutely necessary to have a local build environment set up for the documentation, but building locally provides faster feedback when making changes that need to be checked before publishing.  
 
 ### Troubleshooting
 

@@ -91,7 +91,12 @@ def main():
     except Exception as e:
       logging.error(str(e))
 
-  update_common_version_const(args.d1_version, args.show_diff)
+  update_version_const(
+    'd1_common', ['const.py'], args.d1_version, args.show_diff
+  )
+  update_version_const(
+    'd1_gmn', ['version.py'], args.d1_version, args.show_diff
+  )
 
 
 def update_deps_on_file(args, setup_path, show_diff, d1_version):
@@ -176,23 +181,19 @@ def get_package_version(package_name, d1_version):
     return pkg_resources.get_distribution(package_name).version
 
 
-def update_common_version_const(d1_version, only_diff):
-  const_module_path = get_common_const_module_path()
-  logging.info(
-    'Updating VERSION in d1_common.const. path="{}"'.format(const_module_path)
-  )
-  r = d1_dev.util.redbaron_module_path_to_tree(const_module_path)
+def update_version_const(base_name, path_list, d1_version, only_diff):
+  module_path = get_module_path(base_name, path_list)
+  logging.debug('Updating version in module. path="{}"'.format(module_path))
+  r = d1_dev.util.redbaron_module_path_to_tree(module_path)
   for n in r('AssignmentNode'):
-    if n.target.value == 'VERSION':
+    if n.target.value in ('VERSION', '__version__'):
       n.value.value = "'{}'".format(d1_version)
-      d1_dev.util.update_module_file(
-        r, const_module_path, only_diff, update=True
-      )
+      d1_dev.util.update_module_file(r, module_path, only_diff, update=True)
       break
 
 
-def get_common_const_module_path():
-  return os.path.join(pkgutil.get_loader("d1_common").filename, 'const.py')
+def get_module_path(base_str, path_list):
+  return os.path.join(pkgutil.get_loader(base_str).filename, *path_list)
 
 
 class UpdateException(Exception):
