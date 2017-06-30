@@ -1,0 +1,90 @@
+  <?xml version="1.0" encoding="utf-8"?>
+  <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+    <serialVersion>34</serialVersion>
+    <identifier>PID_kjcabbpycbla</identifier>
+    <formatId>application/x-gzip</formatId>
+    <size>250</size>
+    <checksum algorithm="SHA-1">a1628208290deb09a678fc375beae826443a6afb</checksum>
+    <submitter>subj_h</submitter>
+    <rightsHolder>subj_ot</rightsHolder>
+    <accessPolicy>
+      <allow>
+-       <subject>subj1</subject>
+?                    ^
+
++       <subject>subj_du</subject>
+?                    ^^^
+
++       <subject>subj_fj_group</subject>
++       <subject>subj_lj</subject>
++       <subject>subj_nb</subject>
++       <subject>subj_tq</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
+-       <subject>subj4</subject>
+?                    ^
+
++       <subject>subj_kf</subject>
+?                    ^^^
+
+-       <subject>subj3</subject>
+-       <subject>subj2</subject>
+-       <permission>read</permission>
+        <permission>write</permission>
+      </allow>
+      <allow>
+-       <subject>subj5</subject>
+?                    ^
+
++       <subject>subj_xf</subject>
+?                    ^^^
+
+-       <subject>subj7</subject>
+-       <subject>subj6</subject>
+-       <subject>subj8</subject>
+-       <permission>read</permission>
+-       <permission>changePermission</permission>
+-     </allow>
+-     <allow>
+-       <subject>subj11</subject>
+-       <subject>subj9</subject>
+-       <subject>subj10</subject>
+-       <subject>subj12</subject>
+        <permission>changePermission</permission>
+      </allow>
+    </accessPolicy>
+    <replicationPolicy numberReplicas="0" replicationAllowed="false">
++     <blockedMemberNode>mn_oe</blockedMemberNode>
++     <blockedMemberNode>mn_ta</blockedMemberNode>
+      <blockedMemberNode>mn_yy</blockedMemberNode>
+-     <blockedMemberNode>mn_ta</blockedMemberNode>
+-     <blockedMemberNode>mn_oe</blockedMemberNode>
+      <blockedMemberNode>mn_z</blockedMemberNode>
+    </replicationPolicy>
++   <archived>false</archived>
+-   <dateUploaded>2003-04-18T15:36:08Z</dateUploaded>
+?                                    -
+
++   <dateUploaded>2003-04-18T15:36:08</dateUploaded>
+-   <dateSysMetadataModified>2003-04-28T15:36:08Z</dateSysMetadataModified>
+?                                               -
+
++   <dateSysMetadataModified>2003-04-28T15:36:08</dateSysMetadataModified>
+    <originMemberNode>mn_uu</originMemberNode>
+    <authoritativeMemberNode>mn_jn</authoritativeMemberNode>
+    <replica>
+      <replicaMemberNode>mn_w</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2132-12-03T05:00:04.000191Z</replicaVerified>
+    </replica>
+    <seriesId>SID_oyvfbdjqidbp</seriesId>
+    <mediaType name="media_type_ts">
+-     <property name="prop_tj">vy</property>
+      <property name="prop_em">ru</property>
+      <property name="prop_qv">ye</property>
++     <property name="prop_tj">vy</property>
+      <property name="prop_ul">vl</property>
+    </mediaType>
+-   <fileName>file_odw</fileName>
+  </ns1:systemMetadata>

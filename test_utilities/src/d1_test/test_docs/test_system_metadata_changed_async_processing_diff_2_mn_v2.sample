@@ -1,0 +1,139 @@
+  <?xml version="1.0" encoding="utf-8"?>
+  <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+    <serialVersion>38</serialVersion>
+    <identifier>PID_eudvrgeivqjd</identifier>
+    <formatId>video/mpeg</formatId>
+    <size>255</size>
+    <checksum algorithm="SHA-1">3c80cdbdcae02ca7e72d3724072c2e42273b1ac5</checksum>
+    <submitter>subj_h</submitter>
+    <rightsHolder>subj_d</rightsHolder>
+    <accessPolicy>
+      <allow>
+-       <subject>subj1</subject>
+?                    ^
+
++       <subject>subj_ag</subject>
+?                    ^^^
+
+-       <permission>read</permission>
+-     </allow>
+-     <allow>
+-       <subject>subj4</subject>
+?                    ^
+
++       <subject>subj_az</subject>
+?                    ^^^
+
+-       <subject>subj3</subject>
+?                    ^
+
++       <subject>subj_bh</subject>
+?                    ^^^
+
+-       <subject>subj2</subject>
+?                    ^
+
++       <subject>subj_ce</subject>
+?                    ^^^
+
+-       <permission>read</permission>
++       <subject>subj_dg</subject>
++       <subject>subj_fa</subject>
++       <subject>subj_nk</subject>
++       <subject>subj_ns</subject>
++       <subject>subj_rr</subject>
++       <subject>subj_vw</subject>
+        <permission>write</permission>
+      </allow>
+      <allow>
+-       <subject>subj5</subject>
+?                    ^
+
++       <subject>subj_hs</subject>
+?                    ^^^
+
+-       <subject>subj7</subject>
+?                    ^
+
++       <subject>subj_ix</subject>
+?                    ^^^
+
+-       <subject>subj6</subject>
+?                    ^
+
++       <subject>subj_nu</subject>
+?                    ^^^
+
+-       <subject>subj8</subject>
+?                    ^
+
++       <subject>subj_oq</subject>
+?                    ^^^
+
+-       <permission>read</permission>
+-       <permission>changePermission</permission>
+-     </allow>
+-     <allow>
+-       <subject>subj11</subject>
+-       <subject>subj9</subject>
+?                    ^
+
++       <subject>subj_pk</subject>
+?                    ^^^
+
+-       <subject>subj10</subject>
+?                    ^^
+
++       <subject>subj_sn</subject>
+?                    ^^^
+
+-       <subject>subj12</subject>
+?                    ^^
+
++       <subject>subj_st</subject>
+?                    ^^^
+
+        <permission>changePermission</permission>
+      </allow>
+    </accessPolicy>
+    <replicationPolicy numberReplicas="8" replicationAllowed="true">
+      <preferredMemberNode>mn_a</preferredMemberNode>
++     <blockedMemberNode>mn_fj</blockedMemberNode>
++     <blockedMemberNode>mn_g</blockedMemberNode>
+      <blockedMemberNode>mn_rp</blockedMemberNode>
+      <blockedMemberNode>mn_vv</blockedMemberNode>
+-     <blockedMemberNode>mn_g</blockedMemberNode>
+-     <blockedMemberNode>mn_fj</blockedMemberNode>
+    </replicationPolicy>
++   <archived>false</archived>
+-   <dateUploaded>2007-11-30T21:48:29Z</dateUploaded>
+?                                    -
+
++   <dateUploaded>2007-11-30T21:48:29</dateUploaded>
+-   <dateSysMetadataModified>2007-12-10T21:48:29Z</dateSysMetadataModified>
+?                                               -
+
++   <dateSysMetadataModified>2007-12-10T21:48:29</dateSysMetadataModified>
+    <originMemberNode>mn_na</originMemberNode>
+    <authoritativeMemberNode>mn_h</authoritativeMemberNode>
++   <replica>
++     <replicaMemberNode>mn_p</replicaMemberNode>
++     <replicationStatus>completed</replicationStatus>
++     <replicaVerified>2103-11-25T09:52:21.000226Z</replicaVerified>
++   </replica>
+    <replica>
+      <replicaMemberNode>mn_jg</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2251-09-14T02:18:34.000774Z</replicaVerified>
+    </replica>
+-   <replica>
+-     <replicaMemberNode>mn_p</replicaMemberNode>
+-     <replicationStatus>completed</replicationStatus>
+-     <replicaVerified>2103-11-25T09:52:21.000226Z</replicaVerified>
+-   </replica>
+    <seriesId>SID_fjnserbtqzzr</seriesId>
+    <mediaType name="media_type_yw">
+      <property name="prop_bh">us</property>
+    </mediaType>
+-   <fileName>file_tin</fileName>
+  </ns1:systemMetadata>

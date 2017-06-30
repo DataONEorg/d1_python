@@ -1,0 +1,203 @@
+PyXB object:
+  <?xml version="1.0" encoding="utf-8"?>
+  <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+    <serialVersion>34</serialVersion>
+    <identifier>PID_kjcabbpycbla</identifier>
+    <formatId>application/x-gzip</formatId>
+    <size>250</size>
+    <checksum algorithm="SHA-1">a1628208290deb09a678fc375beae826443a6afb</checksum>
+    <submitter>subj_h</submitter>
+    <rightsHolder>subj_ot</rightsHolder>
+    <accessPolicy>
+      <allow>
+        <subject>subj1</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
+        <subject>subj4</subject>
+        <subject>subj3</subject>
+        <subject>subj2</subject>
+        <permission>read</permission>
+        <permission>write</permission>
+      </allow>
+      <allow>
+        <subject>subj5</subject>
+        <subject>subj7</subject>
+        <subject>subj6</subject>
+        <subject>subj8</subject>
+        <permission>read</permission>
+        <permission>changePermission</permission>
+      </allow>
+      <allow>
+        <subject>subj11</subject>
+        <subject>subj9</subject>
+        <subject>subj10</subject>
+        <subject>subj12</subject>
+        <permission>changePermission</permission>
+      </allow>
+    </accessPolicy>
+    <replicationPolicy numberReplicas="0" replicationAllowed="false">
+      <blockedMemberNode>mn_yy</blockedMemberNode>
+      <blockedMemberNode>mn_ta</blockedMemberNode>
+      <blockedMemberNode>mn_oe</blockedMemberNode>
+      <blockedMemberNode>mn_z</blockedMemberNode>
+    </replicationPolicy>
+    <dateUploaded>2003-04-18T15:36:08Z</dateUploaded>
+    <dateSysMetadataModified>2003-04-28T15:36:08Z</dateSysMetadataModified>
+    <originMemberNode>mn_uu</originMemberNode>
+    <authoritativeMemberNode>mn_jn</authoritativeMemberNode>
+    <replica>
+      <replicaMemberNode>mn_w</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2132-12-03T05:00:04.000191Z</replicaVerified>
+    </replica>
+    <seriesId>SID_oyvfbdjqidbp</seriesId>
+    <mediaType name="media_type_ts">
+      <property name="prop_tj">vy</property>
+      <property name="prop_em">ru</property>
+      <property name="prop_qv">ye</property>
+      <property name="prop_ul">vl</property>
+    </mediaType>
+    <fileName>file_odw</fileName>
+  </ns1:systemMetadata>
+PyXB object:
+  <?xml version="1.0" encoding="utf-8"?>
+  <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+    <serialVersion>59</serialVersion>
+    <identifier>PID_bixtbcchrkzz</identifier>
+    <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+    <size>276</size>
+    <checksum algorithm="SHA-1">d6cd77e7d4ed5727def6b2e8b8a7fdb56a9315df</checksum>
+    <submitter>subj_wc</submitter>
+    <rightsHolder>subj_i</rightsHolder>
+    <accessPolicy>
+      <allow>
+        <subject>subj1</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
+        <subject>subj4</subject>
+        <subject>subj3</subject>
+        <subject>subj2</subject>
+        <permission>read</permission>
+        <permission>write</permission>
+      </allow>
+      <allow>
+        <subject>subj5</subject>
+        <subject>subj7</subject>
+        <subject>subj6</subject>
+        <subject>subj8</subject>
+        <permission>read</permission>
+        <permission>changePermission</permission>
+      </allow>
+      <allow>
+        <subject>subj11</subject>
+        <subject>subj9</subject>
+        <subject>subj10</subject>
+        <subject>subj12</subject>
+        <permission>changePermission</permission>
+      </allow>
+    </accessPolicy>
+    <replicationPolicy numberReplicas="0" replicationAllowed="false">
+      <blockedMemberNode>mn_j</blockedMemberNode>
+      <blockedMemberNode>mn_oa</blockedMemberNode>
+      <blockedMemberNode>mn_r</blockedMemberNode>
+    </replicationPolicy>
+    <dateUploaded>2028-12-06T00:35:25Z</dateUploaded>
+    <dateSysMetadataModified>2028-12-16T00:35:25Z</dateSysMetadataModified>
+    <originMemberNode>mn_pn</originMemberNode>
+    <authoritativeMemberNode>mn_g</authoritativeMemberNode>
+    <replica>
+      <replicaMemberNode>mn_dh</replicaMemberNode>
+      <replicationStatus>completed</replicationStatus>
+      <replicaVerified>2199-11-17T21:56:38.000943Z</replicaVerified>
+    </replica>
+    <replica>
+      <replicaMemberNode>mn_ri</replicaMemberNode>
+      <replicationStatus>completed</replicationStatus>
+      <replicaVerified>2055-04-12T04:16:15.000907Z</replicaVerified>
+    </replica>
+    <replica>
+      <replicaMemberNode>mn_r</replicaMemberNode>
+      <replicationStatus>failed</replicationStatus>
+      <replicaVerified>2049-01-07T11:07:40.000893Z</replicaVerified>
+    </replica>
+    <replica>
+      <replicaMemberNode>mn_an</replicaMemberNode>
+      <replicationStatus>invalidated</replicationStatus>
+      <replicaVerified>2006-09-25T21:27:43.00034Z</replicaVerified>
+    </replica>
+    <seriesId>SID_cqkaeewauixy</seriesId>
+    <mediaType name="media_type_lc">
+      <property name="prop_xw">uf</property>
+      <property name="prop_lq">jv</property>
+      <property name="prop_ec">jf</property>
+      <property name="prop_ea">wu</property>
+    </mediaType>
+    <fileName>file_bmq</fileName>
+  </ns1:systemMetadata>
+PyXB object:
+  <?xml version="1.0" encoding="utf-8"?>
+  <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+    <serialVersion>38</serialVersion>
+    <identifier>PID_eudvrgeivqjd</identifier>
+    <formatId>video/mpeg</formatId>
+    <size>255</size>
+    <checksum algorithm="SHA-1">3c80cdbdcae02ca7e72d3724072c2e42273b1ac5</checksum>
+    <submitter>subj_h</submitter>
+    <rightsHolder>subj_d</rightsHolder>
+    <accessPolicy>
+      <allow>
+        <subject>subj1</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
+        <subject>subj4</subject>
+        <subject>subj3</subject>
+        <subject>subj2</subject>
+        <permission>read</permission>
+        <permission>write</permission>
+      </allow>
+      <allow>
+        <subject>subj5</subject>
+        <subject>subj7</subject>
+        <subject>subj6</subject>
+        <subject>subj8</subject>
+        <permission>read</permission>
+        <permission>changePermission</permission>
+      </allow>
+      <allow>
+        <subject>subj11</subject>
+        <subject>subj9</subject>
+        <subject>subj10</subject>
+        <subject>subj12</subject>
+        <permission>changePermission</permission>
+      </allow>
+    </accessPolicy>
+    <replicationPolicy numberReplicas="8" replicationAllowed="true">
+      <preferredMemberNode>mn_a</preferredMemberNode>
+      <blockedMemberNode>mn_rp</blockedMemberNode>
+      <blockedMemberNode>mn_vv</blockedMemberNode>
+      <blockedMemberNode>mn_g</blockedMemberNode>
+      <blockedMemberNode>mn_fj</blockedMemberNode>
+    </replicationPolicy>
+    <dateUploaded>2007-11-30T21:48:29Z</dateUploaded>
+    <dateSysMetadataModified>2007-12-10T21:48:29Z</dateSysMetadataModified>
+    <originMemberNode>mn_na</originMemberNode>
+    <authoritativeMemberNode>mn_h</authoritativeMemberNode>
+    <replica>
+      <replicaMemberNode>mn_jg</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2251-09-14T02:18:34.000774Z</replicaVerified>
+    </replica>
+    <replica>
+      <replicaMemberNode>mn_p</replicaMemberNode>
+      <replicationStatus>completed</replicationStatus>
+      <replicaVerified>2103-11-25T09:52:21.000226Z</replicaVerified>
+    </replica>
+    <seriesId>SID_fjnserbtqzzr</seriesId>
+    <mediaType name="media_type_yw">
+      <property name="prop_bh">us</property>
+    </mediaType>
+    <fileName>file_tin</fileName>
+  </ns1:systemMetadata>
