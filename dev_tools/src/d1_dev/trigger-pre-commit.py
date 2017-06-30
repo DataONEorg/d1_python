@@ -86,7 +86,7 @@ def main():
   repo = git.Repo(repo_path)
 
   specified_file_path_list = get_specified_file_path_list(args)
-  tracked_and_modified_path_list = get_tracked_and_modified_files(
+  tracked_and_modified_path_list = d1_dev.util.get_tracked_and_modified_files(
     repo, repo_path
   )
   trigger_path_list = sorted(
@@ -109,13 +109,6 @@ def get_specified_file_path_list(args):
     )
   ]
   return specified_file_path_list
-
-
-def get_tracked_and_modified_files(repo, repo_path):
-  return [
-    os.path.realpath(os.path.join(repo_path, p))
-    for p in repo.git.diff('HEAD', name_only=True).splitlines()
-  ]
 
 
 def trigger_all_pre_commit_hooks(trigger_path_list):

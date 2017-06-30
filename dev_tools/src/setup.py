@@ -29,7 +29,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='2.3.0rc1',
+    version='2.3.0',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -46,7 +46,7 @@ def main():
       #'dataone.common == 2.3.0rc1',
       #'dataone.libclient == 2.3.0rc1',
       #
-      'baron == 0.6.5',
+      'baron == 0.6.6',
       'pip == 9.0.1',
       'redbaron == 0.6.3',
     ],

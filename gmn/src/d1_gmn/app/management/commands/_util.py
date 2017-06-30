@@ -119,8 +119,6 @@ class Db(object):
       logging.debug('SQL query result="{}"'.format(str(e)))
       raise
     try:
-      f = self.cur.fetchall()
-      print f
-      return f
+      return self.cur.fetchall()
     except psycopg2.DatabaseError:
       return None

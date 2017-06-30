@@ -194,3 +194,17 @@ def find_repo_root():
   """Assume that this module is in a git repository and find the root of the
   repository"""
   return find_repo_root_by_path(__file__)
+
+
+def get_tracked_and_modified_files(repo, repo_path):
+  return [
+    os.path.realpath(os.path.join(repo_path, p))
+    for p in repo.git.diff('HEAD', name_only=True).splitlines()
+  ]
+
+
+# def get_tracked_files(repo, repo_path):
+#   return [
+#     os.path.realpath(os.path.join(repo_path, p))
+#     for p in repo.git.diff('HEAD', name_only=True).splitlines()
+#   ]
