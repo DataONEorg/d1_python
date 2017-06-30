@@ -197,6 +197,8 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=boundary=)[0-9a-fA-F]+', '[volatile]', o_str)
   # entryId is based on a db sequence type
   o_str = re.sub(r'(?<=<entryId>)\d+', '[volatile]', o_str)
+  # TODO: This shouldn't be needed...
+  o_str = re.sub(r'(?<=Content-Type:).*', '[volatile]', o_str)
   return o_str
 
 

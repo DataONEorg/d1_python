@@ -132,7 +132,7 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self):
     """migrate_v1_to_v2
     """
-    test_db_name = 'gmn_23e23'
+    test_db_name = 'gmn_v1_mig'
     connect_str = "host='' dbname='{}'".format(test_db_name)
 
     db = Db()
@@ -155,7 +155,7 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
       with freezegun.freeze_time('2011-11-11') as freeze_time:
         pid_list = self.run_sql(
           'select pid, serial_version from mn_scienceobject order by pid;',
-          'gmn',
+          test_db_name,
         )
         self._create_objects(pid_list, freeze_time)
 
