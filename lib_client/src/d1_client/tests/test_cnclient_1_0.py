@@ -559,7 +559,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     )
     failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
     received_echo_dict = cn_client_v1.setReplicationStatus(
-      pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb
+      pid_pyxb, node_ref_pyxb.value(), replication_status_pyxb, failure_pyxb
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'set_replication_status', cn_client_v1
@@ -581,7 +581,8 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.setReplicationStatus(
-        pid_pyxb, node_ref_pyxb, replication_status_pyxb, failure_pyxb,
+        pid_pyxb,
+        node_ref_pyxb.value(), replication_status_pyxb, failure_pyxb,
         vendorSpecific={'trigger': '404'}
       )
 
@@ -655,7 +656,9 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     node_ref_pyxb = d1_test.instance_generator.node_ref.generate()
     pid_pyxb = d1_test.instance_generator.identifier.generate()
-    received_echo_dict = cn_client_v1.isNodeAuthorized(node_ref_pyxb, pid_pyxb)
+    received_echo_dict = cn_client_v1.isNodeAuthorized(
+      node_ref_pyxb.value(), pid_pyxb
+    )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'is_node_authorized', cn_client_v1
     )
@@ -669,7 +672,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
 
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.isNodeAuthorized(
-        node_ref_pyxb, pid_pyxb, vendorSpecific={'trigger': '404'}
+        node_ref_pyxb.value(), pid_pyxb, vendorSpecific={'trigger': '404'}
       )
 
     #=========================================================================
