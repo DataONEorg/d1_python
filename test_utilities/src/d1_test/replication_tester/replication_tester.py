@@ -40,13 +40,15 @@ import StringIO
 import sys
 import time
 
-import replication_error
-import replication_server
-import test_object_generator
+import requests
 
 import d1_common.const
 import d1_common.types.exceptions
+import d1_common.url
 
+import d1_test.replication_tester.replication_error as replication_error
+import d1_test.replication_tester.replication_server as replication_server
+import d1_test.replication_tester.test_object_generator as test_object_generator
 from d1_test.replication_tester.test_object_generator import \
   generate_random_ascii
 
@@ -192,6 +194,11 @@ def main():
         while True:
           time.sleep(.1)
       else:
+        assert requests.get(
+          d1_common.url.joinPathElements(
+            options.src_base_url, 'diag', 'clear_replication_queue'
+          )
+        ).ok
         # An existing PID that returns approved on isNodeAuthorized()
         create_test_object_on_mn(options.src_base_url, src_existing_pid_approve)
         # An existing PID that returns denied on isNodeAuthorized()
@@ -213,7 +220,7 @@ def create_test_object_on_mn(base_url, pid):
   sys_meta, sci_obj = test_object_generator.generate_science_object_with_sysmeta(
     pid
   )
-  mn_client = d1_client.mnclient.MemberNodeClient(base_url)
+  mn_client = d1_client.mnclient.MemberNodeClient(base_url, retries=1)
   # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
   mn_client.create(pid, StringIO.StringIO(sci_obj), sys_meta)
 
@@ -239,7 +246,7 @@ class ReplicationTester(object):
     self._src_existing_pid_approve = src_existing_pid_approve
     self._src_existing_pid_deny = src_existing_pid_deny
     self._dst_existing_pid = dst_existing_pid
-    self._validate_cert_pem_paths()
+    self._validate_cert_paths()
     self._queue = Queue.Queue()
     self._http_server = replication_server.TestHTTPServer(
       self._options,
@@ -257,6 +264,7 @@ class ReplicationTester(object):
     time.sleep(2)
     return self
 
+  # noinspection PyShadowingBuiltins
   def __exit__(self, type, value, traceback):
     self._http_server.stop()
 
@@ -353,7 +361,7 @@ class ReplicationTester(object):
   def _call_src_get_replica(self, pid):
     mn_client = self._create_mn_client_for_get_replica()
     try:
-      return mn_client.getReplica(pid).read()
+      return mn_client.getReplica(pid).content
     except socket.error:
       raise replication_error.ReplicationTesterError(
         'Unable to connect to Source MN'
@@ -362,7 +370,7 @@ class ReplicationTester(object):
   def _create_mn_client_for_get_replica(self):
     return d1_client.mnclient.MemberNodeClient(
       self._options.src_base_url, cert_pem_path=self._options.cert_get_replica,
-      cert_key_path=self._options.cert_get_replica_key
+      cert_key_path=self._options.cert_get_replica_key, retries=1
     )
 
   #
@@ -441,7 +449,7 @@ class ReplicationTester(object):
   def _create_mn_client_for_replicate(self):
     return d1_client.mnclient.MemberNodeClient(
       self._options.dst_base_url, cert_pem_path=self._options.cert_replicate,
-      cert_key_path=self._options.cert_replicate_key
+      cert_key_path=self._options.cert_replicate_key, retries=1
     )
 
   #

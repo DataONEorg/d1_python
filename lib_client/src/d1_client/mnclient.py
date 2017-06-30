@@ -207,8 +207,8 @@ class MemberNodeClient(
     response = self.replicateResponse(sysmeta_pyxb, sourceNode, vendorSpecific)
     return self._read_boolean_response(response)
 
-  # MNReplication.getReplica(session) → boolean
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNReplication.getReplica
+  # MNRead.getReplica(session, pid) → OctetStream
+  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getReplica
 
   @d1_common.util.utf8_to_unicode
   def getReplicaResponse(self, pid, vendorSpecific=None):

@@ -29,7 +29,6 @@ from __future__ import absolute_import
 
 import argparse
 import logging
-import shutil
 
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
@@ -48,7 +47,6 @@ import d1_common.util
 import d1_common.xml
 
 import d1_client.cnclient
-import d1_client.d1client
 import d1_client.mnclient
 
 import django.conf
@@ -184,6 +182,7 @@ class ReplicationQueueProcessor(object):
       base_url=django.conf.settings.DATAONE_ROOT,
       cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      retries=1,
     )
 
   def _get_system_metadata(self, queue_model):
@@ -199,6 +198,7 @@ class ReplicationQueueProcessor(object):
       base_url=source_node_base_url,
       cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+      retries=1,
     )
     return self._open_sciobj_stream_on_member_node(
       mn_client, queue_model.local_replica.pid.did
@@ -255,7 +255,10 @@ class ReplicationQueueProcessor(object):
     sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
     d1_gmn.app.util.create_missing_directories(sciobj_path)
     with open(sciobj_path, 'wb') as f:
-      shutil.copyfileobj(sciobj_stream, f)
+      for chunk in sciobj_stream.iter_content(
+          chunk_size=django.conf.settings.NUM_CHUNK_BYTES
+      ):
+        f.write(chunk)
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
     if not d1_gmn.app.local_replica.is_unprocessed_local_replica(pid):

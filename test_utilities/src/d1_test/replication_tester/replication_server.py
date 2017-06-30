@@ -224,12 +224,12 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     if not m:
       return False
     pid = m.group(1)
-    print self.headers
+    logging.debug(self.headers)
     param_dict = cgi.parse_header(self.headers.getheader('Content-Type'))[1]
-    print param_dict
+    logging.debug(param_dict)
     # print self.rfile.read()
     multipart_fields = cgi.parse_multipart(self.rfile, param_dict)
-    print multipart_fields
+    logging.debug(multipart_fields)
     status = multipart_fields.get('status')[0]
     self._logger.debug(
       'Handling call: setReplicationStatus() pid="{}", status="{}"'.

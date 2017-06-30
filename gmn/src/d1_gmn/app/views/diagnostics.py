@@ -100,8 +100,9 @@ def get_replication_queue(request):
 # noinspection PyUnusedLocal
 @d1_gmn.app.restrict_to_verb.get
 def clear_replication_queue(request):
-  for rep_queue_model in d1_gmn.app.models.ReplicationQueue.objects.filter(
-      local_replica__info__status__status='queued'
+  for rep_queue_model in d1_gmn.app.models.ReplicationQueue.objects.all(
+      #filter(
+      #  local_replica__info__status__status='queued'
   ).order_by('local_replica__info__timestamp', 'local_replica__pid__did'):
     d1_gmn.app.models.IdNamespace.objects.filter(
       did=rep_queue_model.local_replica.pid.did

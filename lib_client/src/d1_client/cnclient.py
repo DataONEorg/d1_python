@@ -496,7 +496,7 @@ class CoordinatingNodeClient(
       self, pid, nodeRef, status, dataoneError=None, vendorSpecific=None
   ):
     mmp_dict = {
-      'nodeRef': nodeRef.toxml('utf-8'),
+      'nodeRef': nodeRef, # .toxml('utf-8'),
       'status': status,
     }
     if dataoneError is not None:
@@ -571,7 +571,7 @@ class CoordinatingNodeClient(
       self, targetNodeSubject, pid, vendorSpecific=None
   ):
     query_dict = {
-      'targetNodeSubject': targetNodeSubject.value(),
+      'targetNodeSubject': targetNodeSubject,
     }
     return self.GET(['replicaAuthorizations', pid], query=query_dict,
                     headers=vendorSpecific)
