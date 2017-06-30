@@ -18,7 +18,7 @@ and GMN.
 
   Install the GMN virtual host file and custom apache2.conf file::
 
-    $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/deployment
+    $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment
     $ sudo cp gmn2-ssl.conf /etc/apache2/sites-available/
     $ sudo cp forward_http_to_https.conf /etc/apache2/conf-available
 

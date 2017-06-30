@@ -15,8 +15,11 @@ Initialize the database
   ::
 
     $ sudo su gmn
-    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py migrate --run-syncdb
-    $ exit
+    $ cd /var/local/dataone
+    $ . gmn_venv/bin/activate
+    $ cd gmn_venv/lib/python2.7/site-packages/d1_gmn
+    $
+    $ python manage.py migrate --run-syncdb
 
 
 Set server to UTC timezone (recommended)
