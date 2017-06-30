@@ -86,10 +86,12 @@ def main():
       ignore_invalid=args.ignore_invalid,
       default_excludes=args.default_excludes,
   ):
-    print setup_path
-    # update_deps_on_file(args, setup_path, args.show_diff, args.d1_version)
+    try:
+      update_deps_on_file(args, setup_path, args.show_diff, args.d1_version)
+    except Exception as e:
+      logging.error(str(e))
 
-  # update_common_version_const(args.d1_version, args.show_diff)
+  update_common_version_const(args.d1_version, args.show_diff)
 
 
 def update_deps_on_file(args, setup_path, show_diff, d1_version):

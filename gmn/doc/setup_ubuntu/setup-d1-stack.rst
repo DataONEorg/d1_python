@@ -37,15 +37,9 @@ The GMN stack contains binary components that are built automatically during the
     $ sudo apt install --yes build-essential python-dev libssl-dev libxml2-dev \
     libxslt1-dev libffi-dev postgresql-server-dev-9.5 openssl curl
 
-  Prepare pip from PyPI::
-
-    $ sudo apt install --yes python-pip; \
-    sudo pip install --upgrade pip; \
-    sudo apt remove --yes python-pip;
-
   Install the GMN software stack from PyPI into a Python virtual environment::
 
-    $ sudo pip install --upgrade virtualenv
+    $ sudo --set-home pip install --upgrade pip virtualenv
     $ sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}
     $ cd /var/local/dataone
     $ sudo chown gmn:www-data gmn_venv
@@ -53,15 +47,18 @@ The GMN stack contains binary components that are built automatically during the
 
     $ virtualenv --distribute gmn_venv
     $ . ./gmn_venv/bin/activate
-    $ pip install --upgrade setuptools==33.1.1
     $ pip install dataone.gmn
-    $ exit
+
+  For convenience when logged in as the gmn user, edit `.bashrc`::
+
+    $ nano /home/gmn/.bashrc
 
 
-  Use the GMN Python virtual environment by default for the gmn user::
+  Edit
+  ::
 
-    $ sudo nano /home/gmn/.bashrc
 
+  Use the GMN Python virtual environment by default for the gmn user:
   Close to the top, just after the section that exits if not running
   interactively, add::
 

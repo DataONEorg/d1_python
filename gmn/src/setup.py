@@ -29,7 +29,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.gmn',
-    version='2.3.0',
+    version='2.3.1',
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -41,17 +41,16 @@ def main():
       '': ['settings.py'],
     },
     install_requires=[
-      'dataone.cli == 2.3.0',
-      'dataone.common == 2.3.0',
-      'dataone.libclient == 2.3.0',
+      'dataone.cli == 2.3.1',
+      'dataone.common == 2.3.1',
+      'dataone.libclient == 2.3.1',
       #
-      'cryptography == 1.9',
       'django == 1.11.2',
       'iso8601 == 0.1.11',
-      'mock == 2.0.0',
       'psycopg2 == 2.7.1',
-      'pyjwt == 1.5.2',
+      'PyJWT == 1.5.2',
       'pyxb == 1.2.5',
+      'requests == 2.18.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

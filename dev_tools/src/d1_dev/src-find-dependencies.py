@@ -35,6 +35,7 @@ recursive searches.
 from __future__ import absolute_import
 
 import argparse
+import importlib
 import logging
 
 import pip
@@ -90,7 +91,7 @@ def find_pkg_names(args):
       default_excludes=args.default_excludes,
   ):
     dep_set.update(find_deps_in_source(module_path))
-  return sorted(get_pkg_name_set(dep_set))
+  return sorted(get_external_deps(dep_set))
 
 
 def find_deps_in_source(module_path):
@@ -98,9 +99,11 @@ def find_deps_in_source(module_path):
     'Searching module for dependencies... path="{}"'.format(module_path)
   )
   try:
-    return find_deps_in_tree(
+    dep_list = find_deps_in_tree(
       d1_dev.util.redbaron_module_path_to_tree(module_path)
     )
+    logging.debug('Deps: {}'.format(', '.join(dep_list)))
+    return dep_list
   except Exception as e:
     logging.error(
       'Dependency search failed for module. error="{}" path="{}"'.
@@ -134,6 +137,22 @@ def get_pkg_name_set(dep_set):
     v.key.split(u'==')[0].strip() for v in pip.get_installed_distributions()
   }
   return dep_pkg_set & pip_pkg_set
+
+
+def get_external_deps(dep_set):
+  return {n.split(u'.')[0] for n in dep_set if is_external_library(n)}
+
+
+def is_external_library(module_name):
+  try:
+    mod = importlib.import_module(module_name)
+  except Exception:
+    logging.error('Unable to import: {}'.format(module_name))
+    return True
+  try:
+    return '/dist-packages/' in mod.__file__
+  except AttributeError:
+    return False
 
 
 class DepSearchException(Exception):

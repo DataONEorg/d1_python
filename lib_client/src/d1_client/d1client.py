@@ -31,11 +31,11 @@ from __future__ import print_function
 import logging
 import time
 
-import cnclient_2_0
-import mnclient_2_0
-
 import d1_common.const
 import d1_common.util
+
+import d1_client.cnclient_2_0
+import d1_client.mnclient_2_0
 
 # Config.
 
@@ -122,11 +122,6 @@ class DataONEObject(object):
 
   def save(self, outstr):
     """Persist a copy of the bytes of this object.
-
-        :param out_file: file like object open for writing.
-        :type out_file: File Like Object
-        :returns: None
-        :return type: NoneType
         """
     self._getClient()
     instr = self._client.get(self._pid)
@@ -163,16 +158,16 @@ class DataONEClient(object):
 
   def _getCN(self, forcenew=False):
     if self._cn is None or forcenew:
-      self._cn = cnclient_2_0.CoordinatingNodeClient_2_0(
+      self._cn = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
         base_url=self._cnBaseUrl
       )
     return self._cn
 
   def _getMN(self, base_url, forcenew=False):
     if self._mn is None or forcenew:
-      self._mn = mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
+      self._mn = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
     elif self._mn.base_url != base_url:
-      self._mn = mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
+      self._mn = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
     return self._mn
 
   def getAuthToken(self, forcenew=False):
