@@ -77,7 +77,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     # logging.debug(self.sample.get_sxs_diff(orig_pyxb, dst_pyxb))
     self.sample.assert_equals(dst_pyxb, 'update_elements_copy')
 
-  def test_1041(self):
+  def test_1050(self):
     """update_elements(): Passing invalid element raies ValueError"""
     dst_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
     src_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_2.xml')
