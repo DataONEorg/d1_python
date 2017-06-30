@@ -64,9 +64,9 @@ def abs_path(rel_path):
   )
 
 
-def ensure_dir_exists(path):
+def ensure_dir_exists(dir_path):
   try:
-    os.makedirs(path)
+    os.makedirs(dir_path)
   except OSError as e:
     if e.errno != errno.EEXIST:
       raise

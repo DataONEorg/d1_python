@@ -95,7 +95,7 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
       page_size=page_size,
       max_workers=n_workers,
       client_dict={
-        # 'cert_pub_path': cert_pub_path,
+        # 'cert_pem_path': cert_pem_path,
         # 'cert_key_path': cert_key_path,
       },
       list_objects_dict=dict(fromDate=from_date, toDate=to_date),

@@ -48,7 +48,7 @@ UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 class Session(object):
   def __init__(
-      self, base_url, cert_pub_path=None, cert_key_path=None, **kwargs_dict
+      self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs_dict
   ):
     """The Session improves performance by keeping connection related state and
     allowing it to be reused in multiple API calls to a DataONE Coordinating
@@ -68,8 +68,8 @@ class Session(object):
     :param base_url: DataONE Node REST service BaseURL.
     :type host: string
 
-    :param cert_pub_path: Path to a PEM formatted certificate file.
-    :type cert_pub_path: string
+    :param cert_pem_path: Path to a PEM formatted certificate file.
+    :type cert_pem_path: string
 
     :param cert_key_path: Path to a PEM formatted file that contains the private
       key for the certificate file. Only required if the certificate file does
@@ -158,10 +158,10 @@ class Session(object):
     self._default_request_arg_dict.update(kwargs_dict)
     # Requests wants cert path as string if single file and tuple if cert/key
     # pair.
-    if cert_pub_path is not None:
+    if cert_pem_path is not None:
       self._default_request_arg_dict['cert'] = (
-        cert_pub_path, cert_key_path
-        if cert_key_path is not None else cert_pub_path
+        cert_pem_path, cert_key_path
+        if cert_key_path is not None else cert_pem_path
       )
     self._session = self._create_requests_session()
 

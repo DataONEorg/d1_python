@@ -94,7 +94,7 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
     """echoCredentials(): Live test against prod env"""
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       base_url=d1_common.const.URL_DATAONE_ROOT,
-      cert_pub_path=self.sample.get_path('cert_with_equivalents_and_group.pem')
+      cert_pem_path=self.sample.get_path('cert_with_equivalents_and_group.pem')
     )
     with pytest.raises(OpenSSL.SSL.Error) as exc_info:
       live_client.echoCredentials()

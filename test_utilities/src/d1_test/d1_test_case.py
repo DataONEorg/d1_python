@@ -34,6 +34,7 @@ import xml
 
 import decorator
 import mock
+import psycopg2
 import pyxb
 import pyxb.binding.basis
 
@@ -292,6 +293,29 @@ class D1TestCase(object):
       ])
     )
     return ss.getvalue()
+
+  # @staticmethod
+  # def create_cursor(dsn):
+  #   c = psycopg2.connect(dsn)
+  #   return c.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+  @staticmethod
+  def run_sql(sql_str='', db_str=None, *args):
+    try:
+      conn = psycopg2.connect(database=db_str)
+      # autocommit: Disable automatic transactions
+      conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+      cur = conn.cursor()
+      cur.execute(sql_str, args)
+    except psycopg2.DatabaseError as e:
+      logging.debug('SQL query result="{}"'.format(str(e)))
+      raise
+    try:
+      return cur.fetchall()
+    except psycopg2.DatabaseError:
+      return None
+    finally:
+      conn.close()
 
   #
   # SysMeta

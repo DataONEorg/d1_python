@@ -61,7 +61,7 @@ def main():
   )
   parser.add_option(
     '--cert-pub',
-    dest='cert_pub_path',
+    dest='cert_pem_path',
     action='store',
     type='string',
     default=CERT_PUB_PEM_PATH,
@@ -138,13 +138,13 @@ def main():
   if options.use_v1:
     mn_client = d1_client.mnclient.MemberNodeClient(
       options.mn_base_url,
-      cert_pub_path=options.cert_pub_path,
+      cert_pem_path=options.cert_pem_path,
       cert_key_path=options.cert_key_path,
     )
   else:
     mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       options.mn_base_url,
-      cert_pub_path=options.cert_pub_path,
+      cert_pem_path=options.cert_pem_path,
       cert_key_path=options.cert_key_path,
     )
 

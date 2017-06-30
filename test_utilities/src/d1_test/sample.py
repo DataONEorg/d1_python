@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import bz2
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -25,6 +26,7 @@ import os
 import re
 import subprocess
 import tempfile
+import traceback
 
 import pytest
 import requests.structures
@@ -35,9 +37,9 @@ import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_common.xml
 
-from d1_test.d1_test_case import get_test_module_name
-
 import d1_client.util
+
+import django
 
 
 def init_tidy():
@@ -222,6 +224,13 @@ def _format_file_name(client, name_postfix_str, extension_str):
   return '{}.{}'.format('_'.join(section_list), extension_str)
 
 
+def get_test_module_name():
+  for module_path, line_num, func_name, line_str in traceback.extract_stack():
+    module_name = os.path.splitext(os.path.split(module_path)[1])[0]
+    if module_name.startswith('test_') and func_name.startswith('test_'):
+      return module_name
+
+
 def _get_sxs_diff_str(got_str, exp_str):
   with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
     exp_f.write(exp_str)
@@ -299,7 +308,6 @@ def _diff_interactive(a_str, b_str):
 
 
 def _review_interactive(got_str, exp_path):
-
   _gui_diff_str_path(got_str, exp_path)
   answer_str = None
   while answer_str not in ('', 'n', 'f'):
@@ -333,6 +341,15 @@ def _tmp_file_pair(got_str, exp_str, a_name='a', b_name='b'):
       got_f.seek(0)
       exp_f.seek(0)
       yield got_f, exp_f
+
+
+def save_compressed_db_fixture(filename):
+  fixture_file_path = get_path(filename)
+  logging.info('Writing fixture sample. path="{}"'.format(fixture_file_path))
+  with bz2.BZ2File(
+      fixture_file_path, 'w', buffering=1024, compresslevel=9
+  ) as bz2_file:
+    django.core.management.call_command('dumpdata', stdout=bz2_file)
 
 
 # ==============================================================================
