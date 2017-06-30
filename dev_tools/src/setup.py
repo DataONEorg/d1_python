@@ -57,7 +57,7 @@ def main():
       'Development Status :: 5 - Production/Stable',
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache 2.0 License',
+      'License :: OSI Approved :: Apache Software License',
       'Programming Language :: Python :: 2',
       'Programming Language :: Python :: 2.7',
     ],
