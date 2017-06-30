@@ -106,7 +106,7 @@ class Command(django.core.management.base.BaseCommand):
       help='one or more elements to update'
     )
     parser.add_argument(
-      '--cert-pub', dest='cert_pub_path', action='store', default=None,
+      '--cert-pub', dest='cert_pem_path', action='store', default=None,
       help='path to PEM formatted public key of certificate'
     )
     parser.add_argument(
@@ -142,7 +142,7 @@ class Command(django.core.management.base.BaseCommand):
     try:
       self._update_sysmeta(
         opt['root'], opt['baseurl'], opt['pidrx'], opt['element'],
-        opt['cert_pub_path'], opt['cert_key_path']
+        opt['cert_pem_path'], opt['cert_key_path']
       )
     except django.core.management.base.CommandError as e:
       logging.error(str(e))
@@ -156,12 +156,12 @@ class Command(django.core.management.base.BaseCommand):
       )
 
   def _update_sysmeta(
-      self, sysmeta_path, base_url, pid_rx, element_list, cert_pub_path,
+      self, sysmeta_path, base_url, pid_rx, element_list, cert_pem_path,
       cert_key_path
   ):
     for i, discovered_sysmeta_pyxb in enumerate(
         self._discovered_sysmeta_iter(
-          sysmeta_path, base_url, cert_pub_path, cert_key_path
+          sysmeta_path, base_url, cert_pem_path, cert_key_path
         )
     ):
       self._events.count('SystemMetadata objects discovered')
@@ -191,14 +191,14 @@ class Command(django.core.management.base.BaseCommand):
       self._events.count('Updated')
 
   def _discovered_sysmeta_iter(
-      self, sysmeta_path, base_url, cert_pub_path, cert_key_path
+      self, sysmeta_path, base_url, cert_pem_path, cert_key_path
   ):
     if sysmeta_path:
       return self._discovered_sysmeta_file_iter(sysmeta_path)
     else:
       return d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
         base_url, client_dict={
-          'cert_pub_path': cert_pub_path,
+          'cert_pem_path': cert_pem_path,
           'cert_key_path': cert_key_path,
         }, list_objects_dict={}
       )

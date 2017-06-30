@@ -28,6 +28,8 @@ import os
 import sys
 import tempfile
 
+import psycopg2
+
 import d1_gmn.app.models
 
 import django.conf
@@ -87,3 +89,38 @@ def is_subject_in_whitelist(subject_str):
   return d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
     subject=d1_gmn.app.models.subject(subject_str)
   ).exists()
+
+
+class Db(object):
+  def __init__(self):
+    pass
+
+  def connect(self, dsn):
+    """Connect to DB
+
+    dbname: the database name
+    user: user name used to authenticate
+    password: password used to authenticate
+    host: database host address (defaults to UNIX socket if not provided)
+    port: connection port number (defaults to 5432 if not provided)
+    """
+    self.con = psycopg2.connect(dsn)
+    self.cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # autocommit: Disable automatic transactions
+    self.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+
+  def close(self):
+    self.cur.close()
+
+  def run(self, sql_str, *args, **kwargs):
+    try:
+      self.cur.execute(sql_str, args, **kwargs)
+    except psycopg2.DatabaseError as e:
+      logging.debug('SQL query result="{}"'.format(str(e)))
+      raise
+    try:
+      f = self.cur.fetchall()
+      print f
+      return f
+    except psycopg2.DatabaseError:
+      return None

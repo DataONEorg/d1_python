@@ -40,8 +40,6 @@ import d1_common.types
 import d1_common.util
 
 import d1_client.cnclient
-import d1_client.d1client
-import d1_client.mnclient
 
 import django.conf
 import django.core.management.base
@@ -146,7 +144,7 @@ class Command(django.core.management.base.BaseCommand):
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=django.conf.settings.DATAONE_ROOT,
-      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 

@@ -78,7 +78,7 @@ REPLICATION_MAX_ATTEMPTS = 24
 
 SYSMETA_REFRESH_MAX_ATTEMPTS = 24
 
-DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
+DATAONE_ROOT = 'http://mock/root/cn'
 DATAONE_TRUSTED_SUBJECTS = set([])
 
 ADMINS = (('Test Admin', 'admin@test.tld'),)
@@ -113,14 +113,14 @@ DATABASES = {
   },
 }
 
-OBJECT_STORE_PATH = '/tmp'
+OBJECT_STORE_PATH = '/tmp/gmn_test_obj_store'
 
 PROXY_MODE_BASIC_AUTH_ENABLED = False
 PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
-LOG_PATH = d1_common.util.abs_path('./gmn_test.log')
+LOG_PATH = d1_common.util.abs_path('/tmp/gmn_test.log')
 MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 NUM_CHUNK_BYTES = 1024**2
 SESSION_COOKIE_SECURE = True

@@ -370,7 +370,7 @@ class CommandProcessor():
     return {
       'base_url':
         self._session.get(url_name),
-      'cert_pub_path':
+      'cert_pem_path':
         self._session.get(session.CERT_FILENAME_NAME)
         if not anonymous else None,
       'cert_key_path':

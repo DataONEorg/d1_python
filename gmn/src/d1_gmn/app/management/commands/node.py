@@ -111,7 +111,7 @@ class Command(django.core.management.base.BaseCommand):
   def _create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       django.conf.settings.DATAONE_ROOT,
-      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client

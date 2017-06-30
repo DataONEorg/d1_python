@@ -66,7 +66,7 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument('command', choices=['view', 'whitelist'], help='action')
     parser.add_argument(
-      'cert_pub_path', help='path to DataONE X.509 PEM certificate file'
+      'cert_pem_path', help='path to DataONE X.509 PEM certificate file'
     )
 
   def handle(self, *args, **opt):
@@ -78,7 +78,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(str(e))
 
   def _handle(self, opt):
-    cert_pem = self._read_pem_cert(opt['cert_pub_path'])
+    cert_pem = self._read_pem_cert(opt['cert_pem_path'])
     primary_str, equivalent_set = (
       d1_gmn.app.middleware.session_cert.get_authenticated_subjects(cert_pem)
     )
@@ -111,9 +111,9 @@ class Command(django.core.management.base.BaseCommand):
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 
-  def _read_pem_cert(self, cert_pub_path):
+  def _read_pem_cert(self, cert_pem_path):
     try:
-      with open(cert_pub_path, 'r') as f:
+      with open(cert_pem_path, 'r') as f:
         return f.read()
     except EnvironmentError as e:
       raise django.core.management.base.CommandError(

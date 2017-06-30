@@ -100,7 +100,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.clear_db()
         self.create_objects(freeze_time)
         self.create_read_events(freeze_time)
-        self.save_compressed_db_fixture()
+        self.save_compressed_db_fixture('db_fixture.json.bz2')
         self.save_pid_list_sample()
 
   def clear_db(self):
@@ -167,14 +167,6 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
             'User-Agent': d1_test.instance_generator.user_agent.generate()
           }
         )
-
-  def save_compressed_db_fixture(self):
-    fixture_file_path = self.sample.get_path('db_fixture.json.bz2')
-    logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
-    with bz2.BZ2File(
-        fixture_file_path, 'w', buffering=1024, compresslevel=9
-    ) as bz2_file:
-      django.core.management.call_command('dumpdata', stdout=bz2_file)
 
   def save_pid_list_sample(self, chunk_size=500, **list_objects_kwargs):
     """Get list of all PIDs in the DB fixture"""
