@@ -34,9 +34,6 @@ import os
 import shutil
 import zlib
 
-import psycopg2
-import psycopg2.extras
-
 import d1_gmn.app.auth
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
@@ -59,16 +56,14 @@ import d1_client.cnclient_2_0
 import django.conf
 import django.core.management.base
 
-CONNECTION_STR = "host=''"
-
+DSN_STR = "host='' dbname='gmn'"
 ROOT_PATH = '/var/local/dataone'
 # noinspection PyUnresolvedReferences
-GMN_V1_SERVICE_PATH = os.path.join(
+V1_SERVICE_PATH = os.path.join(
   ROOT_PATH, 'gmn/lib/python2.7/site-packages/service'
 )
-GMN_V1_SYSMETA_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/sysmeta')
-GMN_V1_OBJ_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/object')
-
+V1_SYSMETA_PATH = os.path.join(V1_SERVICE_PATH, 'stores/sysmeta')
+V1_OBJ_PATH = os.path.join(V1_SERVICE_PATH, 'stores/object')
 # noinspection PyUnresolvedReferences
 UNCONNECTED_CHAINS_PATH = os.path.join(
   ROOT_PATH, 'skipped_unconnected_chains.json'
@@ -81,7 +76,8 @@ UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 class Command(django.core.management.base.BaseCommand):
   def __init__(self, *args, **kwargs):
     super(Command, self).__init__(*args, **kwargs)
-    self._v1_cursor = self._create_v1_cursor()
+    self._opt = None
+    self._db = util.Db()
     self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):
@@ -94,6 +90,19 @@ class Command(django.core.management.base.BaseCommand):
       '--force', action='store_true', dest='force', default=False,
       help='Overwrite existing v2 database'
     )
+    parser.add_argument(
+      '--dsn', default=DSN_STR, help='database connection string'
+    )
+    parser.add_argument(
+      '--d1root', default=ROOT_PATH, help='path to local DataONE root'
+    )
+    parser.add_argument(
+      '--v1sysmeta', default=V1_SYSMETA_PATH,
+      help='path to GMN v1 System Metadata store root'
+    )
+    parser.add_argument(
+      '--v1obj', default=V1_OBJ_PATH, help='path to GMN v1 Object store root'
+    )
 
   def handle(self, *args, **opt):
     util.log_setup(opt['debug'])
@@ -101,53 +110,47 @@ class Command(django.core.management.base.BaseCommand):
       u'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     util.exit_if_other_instance_is_running(__name__)
+    self._opt = opt
     try:
-      self._handle(opt)
+      self._handle()
     except d1_common.types.exceptions.DataONEException as e:
-      raise django.core.management.base.CommandError(str(e))
-
-  def _handle(self, opt):
-    if not opt['force'] and not self._db_is_empty():
-      logging.error(
-        u'There is already data in the v2 database. Use --force to overwrite.'
-      )
-      return
-    d1_gmn.app.views.diagnostics.delete_all_objects()
-
-  def _db_is_empty(self):
-    return not d1_gmn.app.models.IdNamespace.objects.exists()
-
-  def migrate(self):
-    try:
-      self._validate()
-      # self._migrate_filesystem()
-      self._migrate_sciobj()
-      self._migrate_events()
-      self._migrate_whitelist()
-      # self._update_node_doc()
-    except django.core.management.base.CommandError as e:
       self._log(str(e))
+      raise django.core.management.base.CommandError(str(e))
     self._events.log()
 
+  def _handle(self):
+    if not self._opt['force'] and not self._v2_db_is_empty():
+      raise django.core.management.base.CommandError(
+        'There is already data in the v2 database. Use --force to overwrite.'
+      )
+    self._db.connect(self._opt['dsn'])
+
+    d1_gmn.app.views.diagnostics.delete_all_objects()
+    self._validate()
+    self._migrate_filesystem()
+    self._migrate_sciobj()
+    self._migrate_events()
+    self._migrate_whitelist()
+    self._update_node_doc()
+
+  def _v2_db_is_empty(self):
+    return not d1_gmn.app.models.IdNamespace.objects.exists()
+
   def _validate(self):
-    self._assert_path_is_dir(ROOT_PATH)
-    self._assert_path_is_dir(GMN_V1_SERVICE_PATH)
-    self._assert_path_is_dir(GMN_V1_SYSMETA_PATH)
-    self._assert_path_is_dir(GMN_V1_OBJ_PATH)
+    self._assert_path_is_dir(self._opt['d1root'])
+    self._assert_path_is_dir(self._opt['v1sysmeta'])
+    self._assert_path_is_dir(self._opt['v1obj'])
 
   def _assert_path_is_dir(self, dir_path):
     if not os.path.isdir(dir_path):
       raise django.core.management.base.CommandError(
-        'Invalid dir path. Adjust in command script. path="{}"'.
-        format(dir_path)
+        'Invalid dir path. path="{}"'.format(dir_path)
       )
 
   # Filesystem
 
   def _migrate_filesystem(self):
-    for dir_path, dir_list, file_list in os.walk(
-        GMN_V1_OBJ_PATH, topdown=False
-    ):
+    for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
@@ -179,12 +182,11 @@ class Command(django.core.management.base.BaseCommand):
   def _get_revision_list(self):
     revision_list = []
     # noinspection SqlResolve
-    self._v1_cursor.execute(
+    sciobj_row_list = self._db.run(
       """
-      select pid, serial_version from mn_scienceobject;
-    """
+        select pid, serial_version from mn_scienceobject;
+      """
     )
-    sciobj_row_list = self._v1_cursor.fetchall()
     n = len(sciobj_row_list)
     for i, sciobj_row in enumerate(sciobj_row_list):
       self._log_pid_info('Retrieving revision chains', i, n, sciobj_row['pid'])
@@ -200,12 +202,10 @@ class Command(django.core.management.base.BaseCommand):
     n = len(topo_revision_list)
     for i, pid in enumerate(topo_revision_list):
       # noinspection SqlResolve
-      self._v1_cursor.execute(
-        """
-        select * from mn_scienceobject where pid = %s;
-      """, (pid,)
-      )
-      sciobj_row = self._v1_cursor.fetchone()
+      sciobj_row = self._db.run(
+        'select * from mn_scienceobject where pid = %s;',
+        pid,
+      )[0]
       try:
         sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
@@ -254,7 +254,7 @@ class Command(django.core.management.base.BaseCommand):
           sorted_set.add(pid)
           del unsorted_dict[pid]
       if not is_connected:
-        self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
+        self._save_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
         self._log(
           'Skipped one or more unconnected revision chains. '
           'See {}'.format(UNCONNECTED_CHAINS_PATH)
@@ -262,7 +262,7 @@ class Command(django.core.management.base.BaseCommand):
         break
     return sorted_list
 
-  def _dump_json(self, unsorted_dict, json_path):
+  def _save_json(self, unsorted_dict, json_path):
     with open(json_path, 'w') as f:
       json.dump(
         unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
@@ -284,14 +284,16 @@ class Command(django.core.management.base.BaseCommand):
     self._events.count(msg)
 
   def _sysmeta_pyxb_by_sciobj_row(self, sciobj_row):
-    sysmeta_xml_path = self._file_path(GMN_V1_SYSMETA_PATH, sciobj_row['pid'])
+    sysmeta_xml_path = self._file_path(
+      self._opt['v1sysmeta'], sciobj_row['pid']
+    )
     sysmeta_xml_ver_path = '{}.{}'.format(
       sysmeta_xml_path,
       sciobj_row['serial_version'],
     )
     try:
       with open(sysmeta_xml_ver_path, 'rb') as f:
-        return d1_gmn.app.views.util.deserialize(f.read())
+        return d1_common.xml.deserialize(f.read())
     except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
       raise django.core.management.base.CommandError(
         'Unable to read SysMeta. error="{}"'.format(str(e))
@@ -312,22 +314,22 @@ class Command(django.core.management.base.BaseCommand):
 
   def _migrate_events(self):
     # noinspection SqlResolve
-    self._v1_cursor.execute(
+    event_row_list = self._db.run(
       """
-      select *
-      from mn_eventlog log
-      join mn_scienceobject sciobj on log.object_id = sciobj.id
-      join mn_eventlogevent event on log.event_id = event.id
-      join mn_eventlogipaddress ip on log.ip_address_id = ip.id
-      join mn_eventloguseragent agent on log.user_agent_id = agent.id
-      join mn_eventlogsubject subject on log.subject_id = subject.id
-      ;
-    """
+        select *
+        from mn_eventlog log
+        join mn_scienceobject sciobj on log.object_id = sciobj.id
+        join mn_eventlogevent event on log.event_id = event.id
+        join mn_eventlogipaddress ip on log.ip_address_id = ip.id
+        join mn_eventloguseragent agent on log.user_agent_id = agent.id
+        join mn_eventlogsubject subject on log.subject_id = subject.id
+        ;
+      """,
     )
-    # event_row_list = self.v1_cursor.fetchall()
-    for i, event_row in enumerate(self._v1_cursor):
+    for i, event_row in enumerate(event_row_list):
       self._log_pid_info(
-        'Processing event logs', i, self._v1_cursor.rowcount,
+        'Processing event logs', i,
+        len(event_row_list),
         '{} {}'.format(event_row['event'], event_row['pid'])
       )
       if d1_gmn.app.sysmeta.is_did(event_row['pid']):
@@ -356,14 +358,13 @@ class Command(django.core.management.base.BaseCommand):
   def _migrate_whitelist(self):
     d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
     # noinspection SqlResolve
-    self._v1_cursor.execute(
+    whitelist_row_list = self._db.run(
       """
-      select * from mn_whitelistforcreateupdatedelete w
-      join mn_permissionsubject s on s.id = w.subject_id
-      ;
-    """
+        select * from mn_whitelistforcreateupdatedelete w
+        join mn_permissionsubject s on s.id = w.subject_id
+        ;
+      """
     )
-    whitelist_row_list = self._v1_cursor.fetchall()
     for whitelist_row in whitelist_row_list:
       logging.info(
         'Migrating whitelist subject: {}'.format(whitelist_row['subject'])
@@ -373,9 +374,9 @@ class Command(django.core.management.base.BaseCommand):
       w.save()
       self._events.count('Whitelisted subject')
 
-  def _create_v1_cursor(self):
-    connection = psycopg2.connect(CONNECTION_STR)
-    return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  # def _create_v1_cursor(self):
+  #   connection = psycopg2.connect(self._opt['dsn'])
+  #   return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
   def _are_on_same_disk(self, path_1, path_2):
     return os.stat(path_1).st_dev == os.stat(path_2).st_dev
@@ -400,7 +401,9 @@ class Command(django.core.management.base.BaseCommand):
         django.conf.settings.NODE_IDENTIFIER, node_pyxb
       )
       if not success_bool:
-        raise Exception('Call returned failure but did not raise exception')
+        raise django.core.management.base.CommandError(
+          'Call returned failure but did not raise exception'
+        )
     except Exception as e:
       raise django.core.management.base.CommandError(
         'Node registry update failed. error="{}"'.format(str(e))
@@ -410,7 +413,7 @@ class Command(django.core.management.base.BaseCommand):
   def _create_cn_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       django.conf.settings.DATAONE_ROOT,
-      cert_pub_path=django.conf.settings.CLIENT_CERT_PATH,
+      cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client
