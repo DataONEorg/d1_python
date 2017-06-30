@@ -152,27 +152,45 @@ We have added some custom functionality to pytest which can be enabled to launch
 
 ### Creating a new release
 
-#### Update dependencies
-
 The stack should pass all the tests with the most recent available versions of all the dependencies.
 
-Start by updating all the dependencies:
-
     $ cd d1_python
-    $ sudo ./dev_tools/pip-update-all.py
-
-#### Make sure that the tests still pass
-
-    $ pytest
-
-#### Update the setup.py files
+    $ sudo ./dev_tools/src/d1_dev/pip-update-all.py
 
 The DataONE Python stack specifies fixed versions of all its dependencies. This ensures that a stack deployed to production matches one that passed the tests. As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Run the script with:
 
     $ cd d1_python
-    $ ./dev_tools/src-sync-dependencies.py . <version>
+    $ src-sync-dependencies.py . <version>
 
 The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
+
+Check that there are no package version conflicts:
+
+    $ pip check
+
+Some sample files contain the version tag and must be updated when the version changes.  
+
+    $ pytest --sample-ask
+
+Commit and push the changes, and check the build on Travis.
+
+After successful build, clone a fresh copy, which will be used for building the release packages:
+
+    $ cd ~
+    $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
+
+Building the release packages from a fresh clone is a simple way of ensuring that only tracked files are released. It is a workaround for the way setuptools works, which is basically that it vacuums up everything that looks like a Python script in anything that looks like a package, which makes it easy to publish local files by accident.
+
+Build and publish the packages:
+
+    cd ~/d1_python_build
+    setup-all.py --root . build sdist bdist_wheel  
+
+
+
+
+#### Update the setup.py files
+
 
 #### Build the new packages
 

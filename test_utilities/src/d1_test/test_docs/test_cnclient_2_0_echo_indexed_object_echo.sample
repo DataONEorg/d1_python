@@ -7,7 +7,7 @@
       "Charset": "utf-8", 
       "Connection": "keep-alive", 
       "Content-Length": "2240", 
-      "User-Agent": "pyd1/%s +http://dataone.org/2.3.0"
+      "User-Agent": "pyd1/%s +http://dataone.org/2.3.2"
     }, 
     "param_list": [
       "object"
