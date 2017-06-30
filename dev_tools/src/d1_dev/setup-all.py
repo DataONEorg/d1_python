@@ -39,13 +39,13 @@ else:
   is_d1_dev_installed = True
 
 PKG_PATH_LIST = [
-  'client_cli',
-  # 'client_onedrive',
-  # 'dev_tools',
-  'gmn',
-  'lib_client',
+  'dev_tools',
   'lib_common',
-  # 'test_utilities',
+  'lib_client',
+  'client_cli',
+  'client_onedrive',
+  'gmn',
+  'test_utilities',
 ]
 
 
