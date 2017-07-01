@@ -83,42 +83,39 @@ def main():
   # Base URLs
 
   parser.add_option(
-    '--reptest-base-url', dest='reptest_base_url', action='store',
-    type='string', default=REPTEST_BASE_URL,
-    help='Set the Base URL for the Replication Tester'
+    '--reptest-base-url', action='store', type='string',
+    default=REPTEST_BASE_URL, help='Set the Base URL for the Replication Tester'
   )
 
   parser.add_option(
-    '--src-base-url', dest='src_base_url', action='store', type='string',
-    default=SRC_BASE_URL, help='Base URL of the source MN to test'
+    '--src-base-url', action='store', type='string', default=SRC_BASE_URL,
+    help='Base URL of the source MN to test'
   )
 
   parser.add_option(
-    '--dst-base-url', dest='dst_base_url', action='store', type='string',
-    default=DST_BASE_URL, help='Base URL of the destination MN to test'
+    '--dst-base-url', action='store', type='string', default=DST_BASE_URL,
+    help='Base URL of the destination MN to test'
   )
 
   # Source and destination certificates
 
   parser.add_option(
-    '--cert-get-replica', dest='cert_get_replica', action='store',
-    type='string', help='Certificate to use when calling MNRead.getReplica()'
+    '--cert-get-replica', action='store', type='string',
+    help='Certificate to use when calling MNRead.getReplica()'
   )
 
   parser.add_option(
-    '--cert-get-replica-key', dest='cert_get_replica_key', action='store',
-    type='string',
+    '--cert-get-replica-key', action='store', type='string',
     help='Certificate key to use when calling MNRead.getReplica()'
   )
 
   parser.add_option(
-    '--cert-replicate', dest='cert_replicate', action='store', type='string',
+    '--cert-replicate', action='store', type='string',
     help='Certificate to use when calling MNReplication.replicate()'
   )
 
   parser.add_option(
-    '--cert-replicate-key', dest='cert_replicate_key', action='store',
-    type='string',
+    '--cert-replicate-key', action='store', type='string',
     help='Certificate key to use when calling MNReplication.replicate()'
   )
 
@@ -131,21 +128,19 @@ def main():
   )
 
   parser.add_option(
-    '--only-src', action='store_true', dest='only_src',
-    help='Test only the source MN'
+    '--only-src', action='store_true', help='Test only the source MN'
   )
 
   parser.add_option(
-    '--only-dst', action='store_true', dest='only_dst',
-    help='Test only the destination MN'
+    '--only-dst', action='store_true', help='Test only the destination MN'
   )
 
   parser.add_option(
-    '--server-mode', action='store_true', dest='server_mode',
+    '--server-mode', action='store_true',
     help='Do not run any tests. Just serve the supported CN and MN APIs'
   )
 
-  parser.add_option('--debug', action='store_true', dest='debug')
+  parser.add_option('--debug', action='store_true')
 
   (options, args) = parser.parse_args()
 

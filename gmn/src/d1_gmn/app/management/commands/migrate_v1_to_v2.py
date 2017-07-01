@@ -87,8 +87,7 @@ class Command(django.core.management.base.BaseCommand):
       '--debug', action='store_true', help='debug level logging'
     )
     parser.add_argument(
-      '--force', action='store_true', dest='force',
-      help='Overwrite existing v2 database'
+      '--force', action='store_true', help='Overwrite existing v2 database'
     )
     parser.add_argument(
       '--dsn', default=DSN_STR, help='database connection string'

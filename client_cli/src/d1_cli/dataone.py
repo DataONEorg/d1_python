@@ -252,7 +252,7 @@ option_list = [
     help='Display less information'
   ),
   optparse.make_option(
-    '--debug', action='store_true', dest='debug',
+    '--debug', action='store_true',
     help='Print full stack trace and exit on errors'
   ),
 ]

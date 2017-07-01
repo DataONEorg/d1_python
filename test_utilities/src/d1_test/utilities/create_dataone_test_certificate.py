@@ -82,28 +82,26 @@ def create_cert(options, args):
 def main():
   parser = optparse.OptionParser()
   parser.add_option(
-    '--subject-info-path', dest='subject_info_path', action='store',
-    type='string', default=None
+    '--subject-info-path', action='store', type='string', default=None
   )
   parser.add_option(
-    '--subject-alt-name', dest='subject_alt_name', action='store',
-    type='string', default='DNS:dataone.org'
+    '--subject-alt-name', action='store', type='string',
+    default='DNS:dataone.org'
   )
   parser.add_option(
-    '--long-term', action='store_true', dest='long_term',
+    '--long-term', action='store_true',
     help='Create a certificate that is valid for 10 years'
   )
 
   parser.add_option(
-    '--ca-path', dest='ca_path', action='store', type='string', default='ca.crt'
+    '--ca-path', action='store', type='string', default='ca.crt'
   )
   parser.add_option(
     '--ca-key-path', dest='ca_cert_key_path', action='store', type='string',
     default='ca.key'
   )
   parser.add_option(
-    '--ca-key-pw', dest='ca_key_pw', action='store', type='string',
-    default='my_ca_pw'
+    '--ca-key-pw', action='store', type='string', default='my_ca_pw'
   )
 
   parser.add_option(
@@ -111,7 +109,7 @@ def main():
     type='string', default='pubkey.pem'
   )
 
-  parser.add_option('--verbose', action='store_true', dest='verbose')
+  parser.add_option('--verbose', action='store_true')
 
   (options, args) = parser.parse_args()
 

@@ -258,11 +258,11 @@ Note: By default this script will not overwrite already created files."""
     help="Output destination directory", default=""
   )
   parser.add_option(
-    "-s", "--suffix", action="store", dest="suffix",
+    "-s", "--suffix", action="store",
     help="module suffix (default=txt)", default="txt"
   )
   parser.add_option(
-    "-m", "--maxdepth", action="store", dest="maxdepth",
+    "-m", "--maxdepth", action="store",
     help="Maximum depth of submodules to show in the TOC (default=4)",
     type="int", default=4
   )
@@ -271,7 +271,7 @@ Note: By default this script will not overwrite already created files."""
     help="Run the script without creating the files"
   )
   parser.add_option(
-    "-f", "--force", action="store_true", dest="force",
+    "-f", "--force", action="store_true",
     help="Overwrite all the files"
   )
   parser.add_option(

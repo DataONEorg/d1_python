@@ -47,7 +47,6 @@ def main():
   )
   parser.add_option(
     '--verbose',
-    dest='verbose',
     action='store_true',
   )
   (options, arguments) = parser.parse_args()

@@ -52,7 +52,7 @@ def main():
 
   parser = optparse.OptionParser('%prog [options]')
   parser.add_option(
-    '-v', '--version', dest='version', action='store_true',
+    '-v', '--version', action='store_true',
     help='Display version information and exit'
   )
 

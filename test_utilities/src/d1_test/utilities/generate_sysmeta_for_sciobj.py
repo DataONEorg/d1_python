@@ -93,7 +93,7 @@ def processDoc(fname, options={}):
 if __name__ == '__main__':
   parser = optparse.OptionParser()
   parser.add_option(
-    '-f', '--fname', dest='fname', action='store', type='string', default=None,
+    '-f', '--fname', action='store', type='string', default=None,
     help='File name of target object'
   )
   parser.add_option(
@@ -101,11 +101,11 @@ if __name__ == '__main__':
     default=None, help='Identifier of target object'
   )
   parser.add_option(
-    '-t', '--format', dest='format', action='store', type='string',
+    '-t', '--format', action='store', type='string',
     default='application/octet-stream', help='Object format ID of target object'
   )
   parser.add_option(
-    '-s', '--submitter', dest='submitter', action='store', type='string',
+    '-s', '--submitter', action='store', type='string',
     default='dataone_integration_test_user',
     help='Subject of the submitter [default: %default].'
   )

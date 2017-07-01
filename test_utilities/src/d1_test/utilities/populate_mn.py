@@ -53,7 +53,6 @@ def main():
 
   parser.add_option(
     '--mn-base-url',
-    dest='mn_base_url',
     action='store',
     type='string',
     default=MN_BASE_URL,
@@ -85,7 +84,6 @@ def main():
   )
   parser.add_option(
     '--num-objects',
-    dest='num_objects',
     action='store',
     type='int',
     default=NUM_OBJECTS,
@@ -93,7 +91,6 @@ def main():
   )
   parser.add_option(
     '--num-min-bytes',
-    dest='num_min_bytes',
     action='store',
     type='int',
     default=NUM_MIN_BYTES,
@@ -101,7 +98,6 @@ def main():
   )
   parser.add_option(
     '--num-max-bytes',
-    dest='num_max_bytes',
     action='store',
     type='int',
     default=NUM_MAX_BYTES,
@@ -109,20 +105,17 @@ def main():
   )
   parser.add_option(
     '--disable-tls-validate',
-    dest='disable_tls_validate',
     action='store_true',
     help='disable validation of server side certificate',
   )
   parser.add_option(
     '--use-v1',
     action='store_true',
-    dest='use_v1',
     help='use the v1 API (v2 is default)',
   )
   parser.add_option(
     '--debug',
     action='store_true',
-    dest='debug',
     help='debug level logging',
   )
 

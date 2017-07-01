@@ -66,7 +66,7 @@ def main():
     help='Show diff and do not modify any files'
   )
   parser.add_argument(
-    '--update', dest='update', action='store_true',
+    '--update', action='store_true',
     help='Apply the updates to the original files. By default, no files are '
     'changed.'
   )
