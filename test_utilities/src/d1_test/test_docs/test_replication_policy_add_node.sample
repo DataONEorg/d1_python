@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <preferredMemberNode>add_preferred_urn</preferredMemberNode>
+  <preferredMemberNode>node1</preferredMemberNode>
+  <preferredMemberNode>node2</preferredMemberNode>
+  <preferredMemberNode>node3</preferredMemberNode>
+  <blockedMemberNode>node4</blockedMemberNode>
+  <blockedMemberNode>node5</blockedMemberNode>
+</replicationPolicy>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <preferredMemberNode>node3</preferredMemberNode>
+  <preferredMemberNode>node1</preferredMemberNode>
+  <preferredMemberNode>node2</preferredMemberNode>
+  <blockedMemberNode>node5</blockedMemberNode>
+  <blockedMemberNode>node4</blockedMemberNode>
+</replicationPolicy>

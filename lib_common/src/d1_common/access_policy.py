@@ -19,8 +19,6 @@
 # limitations under the License.
 """Utilities for handling the DataONE AccessPolicy type
 
-Note:
-
 There can be multiple rules in a policy and each rule can contain multiple
 subjects and permissions. So the same subject can be specified multiple times in
 the same rules or in different rules, each time with a different set of

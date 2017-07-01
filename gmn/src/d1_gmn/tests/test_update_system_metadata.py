@@ -39,6 +39,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
 import d1_common.const
+import d1_common.replication_policy
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
@@ -199,7 +200,9 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Get sysmeta
       sciobj_str, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
       # Update rightsHolder
-      assert sysmeta_pyxb.rightsHolder.value() == 'rights_holder_subj'
+      assert d1_common.xml.uvalue(
+        sysmeta_pyxb.rightsHolder
+      ) == 'rights_holder_subj'
       sysmeta_pyxb.rightsHolder = 'newRightsHolder'
       assert mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
       # Verify
@@ -269,31 +272,27 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         logging.error(r.toxml())
       ver2_sciobj_str, ver2_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Add a new preferred node
-      try:
-        ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append(
-          'new_node'
-        )
-      except AttributeError:
-        ver2_sysmeta_pyxb.replicationPolicy.preferredMemberNode = ['new_node']
+      d1_common.replication_policy.sysmeta_add_preferred(
+        ver2_sysmeta_pyxb, 'new_node'
+      )
       mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
       ver3_sciobj_str, ver3_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Check that the count of preferred nodes increased by one
       assert len(ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode) + 1 == \
         len(ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode)
       # Second round of changes
-      ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append(
-        'preferred_1'
+      d1_common.replication_policy.sysmeta_add_preferred(
+        ver3_sysmeta_pyxb, 'preferred_1'
       )
-      ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode.append(
-        'preferred_2'
+      d1_common.replication_policy.sysmeta_add_preferred(
+        ver3_sysmeta_pyxb, 'preferred_2'
       )
-      try:
-        ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append(
-          'blocked_1'
-        )
-      except AttributeError:
-        ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode = ['blocked_1']
-      ver3_sysmeta_pyxb.replicationPolicy.blockedMemberNode.append('blocked_2')
+      d1_common.replication_policy.sysmeta_add_blocked(
+        ver3_sysmeta_pyxb, 'blocked_1'
+      )
+      d1_common.replication_policy.sysmeta_add_blocked(
+        ver3_sysmeta_pyxb, 'blocked_2'
+      )
       mn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
       # Check
       ver4_sciobj_str, ver4_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)

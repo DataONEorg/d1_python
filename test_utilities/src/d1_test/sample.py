@@ -157,6 +157,13 @@ def get_sxs_diff(a_obj, b_obj):
   )
 
 
+def gui_sxs_diff(a_obj, b_obj):
+  return _gui_diff_str_str(
+    obj_to_pretty_str(a_obj),
+    obj_to_pretty_str(b_obj),
+  )
+
+
 def obj_to_pretty_str(o):
   # noinspection PyUnreachableCode
   def serialize(o):

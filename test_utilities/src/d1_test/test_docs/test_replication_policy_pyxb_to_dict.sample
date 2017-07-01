@@ -1,0 +1,13 @@
+{
+  "allowed": true, 
+  "block": [
+    "node4", 
+    "node5"
+  ], 
+  "num": 3, 
+  "pref": [
+    "node1", 
+    "node2", 
+    "node3"
+  ]
+}
