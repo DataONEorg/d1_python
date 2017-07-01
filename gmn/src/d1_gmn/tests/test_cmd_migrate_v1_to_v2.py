@@ -160,11 +160,16 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self._create_objects(pid_list, freeze_time)
 
       with self.mock.disable_management_command_logging():
-        with d1_test.d1_test_case.disable_debug_level_logging():
+        with d1_test.d1_test_case.capture_log(logging.INFO) as log_stream:
           django.core.management.call_command(
             'migrate_v1_to_v2', '--force', '--d1root', root_path, '--v1sysmeta',
             sysmeta_root_path, '--v1obj', obj_root_path, '--dsn', connect_str
           )
+        log_list = log_stream.getvalue().splitlines()
+        self.sample.assert_equals(
+          '\n'.join(log_list[log_list.index('Counted events:'):]),
+          'migrate_v1_to_v2',
+        )
 
     finally:
       if root_path:

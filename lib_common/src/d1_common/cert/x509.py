@@ -93,7 +93,6 @@ def extract_subject_from_dn(cert_obj):
   E.g.: CN=Some Name A792,O=Harte Research Institute,C=US,DC=cilogon,DC=org
   If an RDN contains an unknown OID, the OID is serialized as a dotted string.
   """
-  print cert_obj.subject
   return (
     ','.join(
       '{}={}'.format(
@@ -287,10 +286,6 @@ def log_cert_info(log, msg_str, cert_obj):
   )
 
 
-# for extension in cert_obj.extensions:
-#   print extension
-
-
 def get_ext(cert_obj, n):
   try:
     return cert_obj.extensions.get_extension_for_oid(
@@ -303,9 +298,6 @@ def get_ext(cert_obj, n):
 def get_val_list(n, path):
   """Return a list of the values in the innermost objects in a set of nested
   lists"""
-  # print '\n#### type="{}" path="{}" dir="{}"\n'.format(
-  #   type(n), ','.join(path), ','.join([v for v in dir(n)])
-  # )
   try:
     y = getattr(n, path[0])
   except AttributeError:

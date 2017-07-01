@@ -68,7 +68,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     rp_dict_1 = d1_common.replication_policy.pyxb_to_dict(rp_swiz_pyxb)
     rp_pyxb_2 = d1_common.replication_policy.dict_to_pyxb(rp_dict_1)
     rp_dict_2 = d1_common.replication_policy.pyxb_to_dict(rp_pyxb_2)
-    self.sample.gui_sxs_diff(rp_dict_1, rp_dict_2)
+    assert rp_dict_1 == rp_dict_2
 
   def test_1030(self):
     """add_node(): Add node without conflict"""

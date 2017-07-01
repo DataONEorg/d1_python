@@ -83,7 +83,7 @@ def capture_std():
 
 
 @contextlib.contextmanager
-def capture_log():
+def capture_log(log_level=logging.DEBUG):
   """Capture anything output by the logging module. Uses a handler that does not
   not include any context, such as date-time or originating module to help keep
   the result stable over time.
@@ -93,7 +93,7 @@ def capture_log():
   stream_handler = None
   try:
     logger = logging.getLogger()
-    logger.level = logging.DEBUG
+    logger.level = log_level
     stream_handler = logging.StreamHandler(stream)
     logger.addHandler(stream_handler)
     yield stream
