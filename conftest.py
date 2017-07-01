@@ -83,13 +83,6 @@ def pytest_addoption(parser):
 # Hooks
 
 
-@pytest.hookimpl(tryfirst=True)
-def pytest_collection_modifyitems(items):
-  """Hook that runs as early as possible"""
-  if pytest.config.getoption('--sample-tidy'):
-    d1_test.sample.init_tidy()
-
-
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
   """Attempt to open error locations in PyCharm. Use with -x / --exitfirst"""
@@ -133,6 +126,28 @@ def pytest_generate_tests(metafunc):
     arg_names,
     [[func_args[name] for name in arg_names] for func_args in func_arg_list]
   )
+
+
+# Fixtures
+
+
+@pytest.fixture(autouse=True)
+# @pytest.mark.django_db(transaction=True)
+def enable_db_access(db):
+  pass
+
+
+@pytest.fixture(scope='session', autouse=True)
+def sample_tidy_session_start(request):
+  logging.info('sample_tidy_session_start()')
+
+  if pytest.config.getoption('--sample-tidy'):
+    d1_test.sample.init_tidy()
+
+  def sample_tidy_session_end():
+    logging.info('sample_tidy_session_end()')
+
+  request.addfinalizer(sample_tidy_session_end)
 
 
 # Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
@@ -268,9 +283,3 @@ def run_sql(db, sql):
     conn.close()
     for connection in django.db.connections.all():
       connection.close()
-
-
-@pytest.fixture(autouse=True)
-# @pytest.mark.django_db(transaction=True)
-def enable_db_access(db):
-  pass

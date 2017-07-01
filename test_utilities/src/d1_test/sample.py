@@ -49,12 +49,14 @@ def init_tidy():
   tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
   d1_common.util.ensure_dir_exists(sample_dir_path)
   d1_common.util.ensure_dir_exists(tidy_dir_path)
-  for item_name in os.listdir(sample_dir_path):
+  i = 0
+  for i, item_name in enumerate(os.listdir(sample_dir_path)):
     sample_path = os.path.join(sample_dir_path, item_name)
     tidy_path = os.path.join(tidy_dir_path, item_name)
     if os.path.exists(tidy_path):
       os.unlink(tidy_path)
     os.rename(sample_path, tidy_path)
+  logging.info('--sample-tidy: Moved {} files'.format(i))
 
 
 def assert_equals(
