@@ -42,9 +42,14 @@ import d1_client.util
 import django
 
 
-def init_tidy():
+def start_tidy():
   """Call at start of test run to tidy the samples directory.
+
+  Pytest will run regular session scope fixtures in parallel with test
+  collection, while this function must complete before collection starts. The
+  best place to call it from appears to be ./conftest.pytest_sessionstart().
   """
+  logging.info('Moving files to tidy dir')
   sample_dir_path = os.path.join(d1_common.util.abs_path('test_docs'))
   tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
   d1_common.util.ensure_dir_exists(sample_dir_path)
@@ -56,7 +61,7 @@ def init_tidy():
     if os.path.exists(tidy_path):
       os.unlink(tidy_path)
     os.rename(sample_path, tidy_path)
-  logging.info('--sample-tidy: Moved {} files'.format(i))
+  logging.info('Moved {} files'.format(i))
 
 
 def assert_equals(
@@ -105,14 +110,15 @@ def assert_no_diff(a_obj, b_obj):
 
 
 def get_path(filename):
-  tidy_file_path = os.path.join(
-    d1_common.util.abs_path('test_docs_tidy'), filename
-  )
   path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
   if os.path.isfile(path):
     return path
-  elif os.path.isfile(tidy_file_path):
+  tidy_file_path = os.path.join(
+    d1_common.util.abs_path('test_docs_tidy'), filename
+  )
+  if os.path.isfile(tidy_file_path):
     os.rename(tidy_file_path, path)
+    logging.info('Moved from tidy: {} -> {}'.format(tidy_file_path, path))
   return path
 
 
@@ -216,7 +222,9 @@ def _get_or_create_path(filename):
   See the test docs for usage.
   """
   path = get_path(filename)
+  logging.info('Sample path: {}'.format(path))
   if not os.path.isfile(path):
+    logging.info('Write new blank file: {}'.format(path))
     with open(path, 'w') as f:
       f.write('<new sample file>\n')
   return path

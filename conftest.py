@@ -80,6 +80,17 @@ def pytest_addoption(parser):
   )
 
 
+def pytest_sessionstart(session):
+  """Run before session.main()"""
+  if pytest.config.getoption('--sample-tidy'):
+    d1_test.sample.start_tidy()
+
+
+def pytest_sessionfinish(session, exitstatus):
+  """Run after all tests"""
+  pass
+
+
 # Hooks
 
 
@@ -135,19 +146,6 @@ def pytest_generate_tests(metafunc):
 # @pytest.mark.django_db(transaction=True)
 def enable_db_access(db):
   pass
-
-
-@pytest.fixture(scope='session', autouse=True)
-def sample_tidy_session_start(request):
-  logging.info('sample_tidy_session_start()')
-
-  if pytest.config.getoption('--sample-tidy'):
-    d1_test.sample.init_tidy()
-
-  def sample_tidy_session_end():
-    logging.info('sample_tidy_session_end()')
-
-  request.addfinalizer(sample_tidy_session_end)
 
 
 # Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
@@ -279,7 +277,6 @@ def run_sql(db, sql):
   except psycopg2.DatabaseError:
     return None
   finally:
-    # django.db.connections[test_db_key].close()
     conn.close()
     for connection in django.db.connections.all():
       connection.close()

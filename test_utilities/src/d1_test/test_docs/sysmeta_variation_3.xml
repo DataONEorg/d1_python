@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <identifier>test_pid</identifier>
+  <formatId>application/octet-stream</formatId>
+  <size>256</size>
+  <checksum algorithm="MD5">c9eac724393ba6423eb15c267a44b32b</checksum>
+  <rightsHolder>CN=First Last,O=Google,C=US,DC=cilogon,DC=org</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>public</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>1977-01-27T00:00:00</dateUploaded>
+  <dateSysMetadataModified>1977-02-27T00:00:00</dateSysMetadataModified>
+</ns1:systemMetadata>
