@@ -46,7 +46,9 @@ def main():
     'usage: %prog [options] <number of subjects to create>'
   )
   parser.add_option(
-    '--verbose', dest='verbose', action='store_true', default=False
+    '--verbose',
+    dest='verbose',
+    action='store_true',
   )
   (options, arguments) = parser.parse_args()
 

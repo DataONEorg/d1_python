@@ -113,11 +113,11 @@ if __name__ == "__main__":
     '40=Error, 50=Fatal [default: %default]'
   )
   parser.add_option(
-    '-i', '--info', dest='info', default=False, action='store_true',
+    '-i', '--info', dest='info', action='store_true',
     help='Show subject info in certificate [default: %default]'
   )
   parser.add_option(
-    '-f', '--format', dest='format', default=False, action='store_true',
+    '-f', '--format', dest='format', action='store_true',
     help='Format output for people [default: %default]'
   )
 

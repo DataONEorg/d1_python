@@ -53,7 +53,7 @@ class Command(django.core.management.base.BaseCommand):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug', action='store_true', default=False, help='debug level logging'
+      '--debug', action='store_true', help='debug level logging'
     )
 
   def handle(self, *args, **opt):

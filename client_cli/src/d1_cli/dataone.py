@@ -244,7 +244,7 @@ option_list = [
     help='Name of the host to use for the Member Node'
   ),
   optparse.make_option(
-    '--no-interactive', action='store_false', dest='interactive', default=True,
+    '--no-interactive', action='store_false', dest='interactive',
     help='Don\'t allow interactive commands'
   ),
   optparse.make_option(
@@ -252,7 +252,7 @@ option_list = [
     help='Display less information'
   ),
   optparse.make_option(
-    '--debug', action='store_true', dest='debug', default=False,
+    '--debug', action='store_true', dest='debug',
     help='Print full stack trace and exit on errors'
   ),
 ]

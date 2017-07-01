@@ -111,20 +111,17 @@ def main():
     '--disable-tls-validate',
     dest='disable_tls_validate',
     action='store_true',
-    default=False,
     help='disable validation of server side certificate',
   )
   parser.add_option(
     '--use-v1',
     action='store_true',
-    default=False,
     dest='use_v1',
     help='use the v1 API (v2 is default)',
   )
   parser.add_option(
     '--debug',
     action='store_true',
-    default=False,
     dest='debug',
     help='debug level logging',
   )

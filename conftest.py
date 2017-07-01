@@ -54,28 +54,28 @@ def pytest_addoption(parser):
   info.
   """
   parser.addoption(
-    '--sample-ask', action='store_true', default=False,
+    '--sample-ask', action='store_true',
     help='Prompt to update or write new test sample files on failures'
   )
   parser.addoption(
-    '--sample-write', action='store_true', default=False,
+    '--sample-write', action='store_true',
     help='Automatically update or write sample files on failures'
   )
   parser.addoption(
-    '--sample-review', action='store_true', default=False,
+    '--sample-review', action='store_true',
     help='Review samples (use after --sample-write)'
   )
   parser.addoption(
-    '--sample-tidy', action='store_true', default=False,
+    '--sample-tidy', action='store_true',
     help='Move unused sample files to test_docs_tidy'
   )
   parser.addoption(
-    '--pycharm', action='store_true', default=False,
+    '--pycharm', action='store_true',
     help='Attempt to move the cursor in PyCharm to location of most recent test '
     'failure'
   )
   parser.addoption(
-    '--refresh-fixture', action='store_true', default=False,
+    '--refresh-fixture', action='store_true',
     help='Force reloading the template fixture'
   )
 

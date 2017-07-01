@@ -90,7 +90,7 @@ def main():
     type='string', default='DNS:dataone.org'
   )
   parser.add_option(
-    '--long-term', action='store_true', default=False, dest='long_term',
+    '--long-term', action='store_true', dest='long_term',
     help='Create a certificate that is valid for 10 years'
   )
 
@@ -111,9 +111,7 @@ def main():
     type='string', default='pubkey.pem'
   )
 
-  parser.add_option(
-    '--verbose', action='store_true', default=False, dest='verbose'
-  )
+  parser.add_option('--verbose', action='store_true', dest='verbose')
 
   (options, args) = parser.parse_args()
 

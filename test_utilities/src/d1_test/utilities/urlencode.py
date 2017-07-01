@@ -76,15 +76,15 @@ if __name__ == "__main__":
     "40=Error, 50=Fatal [default: %default]"
   )
   parser.add_option(
-    "-p", "--path", dest="path", default=False, action="store_true",
+    "-p", "--path", dest="path", action="store_true",
     help="Only apply path encoding rules as per RFC3986 [default: %default]"
   )
   parser.add_option(
-    "-d", "--decode", dest="decode", default=False, action="store_true",
+    "-d", "--decode", dest="decode", action="store_true",
     help="URL decode the string [default: %default]"
   )
   parser.add_option(
-    "-s", "--stdin", dest="stdin", default=False, action="store_true",
+    "-s", "--stdin", dest="stdin", action="store_true",
     help="Read input from stdin instead of command line args [default: %default]"
   )
   (options, args) = parser.parse_args(sys.argv)

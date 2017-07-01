@@ -64,19 +64,18 @@ def main():
   parser.add_argument('--include', nargs='+', help='Include glob patterns')
   parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
   parser.add_argument(
-    '--no-recursive', dest='recursive', action='store_false', default=True,
+    '--no-recursive', dest='recursive', action='store_false',
     help='Search directories recursively'
   )
   parser.add_argument(
-    '--ignore-invalid', action='store_true', default=False,
-    help='Ignore invalid paths'
+    '--ignore-invalid', action='store_true', help='Ignore invalid paths'
   )
   parser.add_argument(
     '--pycharm', action='store', default=DEFAULT_PYCHARM_BIN_PATH,
     help='Path to PyCharm binary. Set to "" to disable PyCharm integration'
   )
   parser.add_argument(
-    '--debug', action='store_true', default=False, help='Debug level logging'
+    '--debug', action='store_true', help='Debug level logging'
   )
 
   args = parser.parse_args()

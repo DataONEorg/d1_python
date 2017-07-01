@@ -152,9 +152,7 @@ def print_effective_subjects(primary_subject, subjects):
 
 def main():
   parser = optparse.OptionParser()
-  parser.add_option(
-    '--verbose', action='store_true', default=False, dest='verbose'
-  )
+  parser.add_option('--verbose', action='store_true', dest='verbose')
 
   (options, args) = parser.parse_args()
 

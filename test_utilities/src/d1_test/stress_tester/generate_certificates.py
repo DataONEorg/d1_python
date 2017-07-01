@@ -64,7 +64,9 @@ def main():
   # Command line opts.
   parser = optparse.OptionParser('usage: %prog [options]')
   parser.add_option(
-    '--verbose', dest='verbose', action='store_true', default=False
+    '--verbose',
+    dest='verbose',
+    action='store_true',
   )
   (options, arguments) = parser.parse_args()
 

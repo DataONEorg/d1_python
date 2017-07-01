@@ -52,7 +52,7 @@ def main():
 
   parser = optparse.OptionParser('%prog [options]')
   parser.add_option(
-    '-v', '--version', dest='version', action='store_true', default=False,
+    '-v', '--version', dest='version', action='store_true',
     help='Display version information and exit'
   )
 
@@ -70,12 +70,11 @@ def main():
         if v:
           parser.add_option(
             '--disable-{}'.format(k.lower().replace('_', '-')),
-            action='store_false', default=True, dest=k.lower(), metavar=v
+            action='store_false', dest=k.lower(), metavar=v
           )
         else:
           parser.add_option(
-            param_name, action='store_true', default=False, dest=k.lower(),
-            metavar=v
+            param_name, action='store_true', dest=k.lower(), metavar=v
           )
 
   (options, arguments) = parser.parse_args()

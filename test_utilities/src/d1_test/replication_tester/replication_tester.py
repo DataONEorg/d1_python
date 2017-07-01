@@ -131,21 +131,21 @@ def main():
   )
 
   parser.add_option(
-    '--only-src', action='store_true', default=False, dest='only_src',
+    '--only-src', action='store_true', dest='only_src',
     help='Test only the source MN'
   )
 
   parser.add_option(
-    '--only-dst', action='store_true', default=False, dest='only_dst',
+    '--only-dst', action='store_true', dest='only_dst',
     help='Test only the destination MN'
   )
 
   parser.add_option(
-    '--server-mode', action='store_true', default=False, dest='server_mode',
+    '--server-mode', action='store_true', dest='server_mode',
     help='Do not run any tests. Just serve the supported CN and MN APIs'
   )
 
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option('--debug', action='store_true', dest='debug')
 
   (options, args) = parser.parse_args()
 
