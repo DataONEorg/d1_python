@@ -12,7 +12,7 @@ Remove the default ssl.conf file containing a default vhost::
 
 Copy over and edit gmn2-ssl.conf virtual host file::
 
-    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/deployment/gmn2-ssl.conf /etc/httpd/conf.d/
+    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/gmn2-ssl.conf /etc/httpd/conf.d/
     $ sudo vi gmn2-ssl.conf
 
 Change the ServerName to your domain, which should already be pointed at your server’s IP. This must be consistent with the domain as it will be expressed when registering an SSL certificate.
@@ -47,7 +47,7 @@ Add the below text to the top of the file, above the start of the
 
 Load additional config file for http to https forwarding in the "/etc/httpd/conf.d" directory::
 
-    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/deployment/forward_http_to_https.conf /etc/httpd/conf.d/
+    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/forward_http_to_https.conf /etc/httpd/conf.d/
 
 Don’t try to restart apache yet!
 Ordinarily, one might expect to restart apache at this point. However, the custom .conf file just copied over contains several references to certificate files and directories we have not yet created, so a restart would fail at this point.

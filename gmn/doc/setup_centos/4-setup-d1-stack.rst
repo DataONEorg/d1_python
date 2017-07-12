@@ -31,7 +31,7 @@ Setup directories::
     $ cd /var/local/dataone
     $ sudo chown gmn:apache gmn_venv
 
-Create an activate a virtual environment in the gmn_venv directory::
+Create and activate a virtual environment in the gmn_venv directory::
 
     $ sudo su gmn
     $ virtualenv gmn_venv

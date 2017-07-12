@@ -17,7 +17,7 @@ Initialize the database
     $ sudo su gmn
     $ cd /var/local/dataone/
     $ source gmn_venv/bin/activate
-    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py migrate --run-syncdb
+    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/manage.py migrate --run-syncdb
     $ exit
 
 
