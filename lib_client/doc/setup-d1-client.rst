@@ -20,9 +20,6 @@ Installing DataONE Client Library for Python
   Install the DataONE Client Library for Python and all its dependencies. This
   will also automatically build several Python C extensions::
 
-    $ sudo pip install dataone.libclient
+    $ pip install dataone.libclient
 
 
-The library can be tested by running one of the included usage examples. The examples can be found in the `dist-packages` folder, for instance::
-
-  /usr/local/lib/python2.6/dist-packages/examples/
