@@ -85,8 +85,8 @@ def decode_id(f):
   # this can be fixed. Update this accordingly.
   @functools.wraps(f)
   def wrapper(request, did, *args, **kwargs):
-    # return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
-    return f(request, did, *args, **kwargs)
+    return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
+    # return f(request, did, *args, **kwargs)
 
   return wrapper
 
