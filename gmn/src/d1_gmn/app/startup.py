@@ -50,7 +50,7 @@ class GMNStartupChecks(django.apps.AppConfig):
       ('DEBUG_GMN', False),
       ('DEBUG_PYCHARM', False),
       ('DEBUG_ALLOW_INTEGRATION_TESTS', False),
-      ('STAND_ALONE', True),
+      ('STAND_ALONE', False),
     ]
     for setting_str, setting_safe in safe_settings_list:
       setting_current = getattr(django.conf.settings, setting_str)

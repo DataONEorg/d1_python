@@ -565,8 +565,8 @@ ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
   'django.contrib.staticfiles',
-  'd1_gmn.app.startup.GMNStartupChecks',
   'd1_gmn.app',
+  'd1_gmn.app.startup.GMNStartupChecks',
 ]
 
 # Django uses SECRET_KEY for a number of security related features, such as
