@@ -149,7 +149,7 @@ The Member Node information is submitted to DataONE in a Node document. GMN auto
   generated::
 
     $ su gmn
-    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py register_node_with_dataone --view
+    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/manage.py node view
 
   If the Node document is successfully generated, an XML document will be
   displayed. For more information about this document, refer to
@@ -163,7 +163,7 @@ The Member Node information is submitted to DataONE in a Node document. GMN auto
 
   ::
 
-    $ python lib/python2.7/site-packages/gmn/manage.py register_node_with_dataone
+    $ python lib/python2.7/site-packages/d1_gmn/manage.py node register
 
   * Check for a message saying that the registration was successful.
 
