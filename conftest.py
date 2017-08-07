@@ -50,7 +50,7 @@ DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
 
 
 def pytest_addoption(parser):
-  """Add command line switches for pytest comstomization. See README.md for
+  """Add command line switches for pytest customization. See README.md for
   info.
   """
   parser.addoption(
@@ -75,8 +75,12 @@ def pytest_addoption(parser):
     'failure'
   )
   parser.addoption(
-    '--refresh-fixture', action='store_true',
+    '--fixture-refresh', action='store_true',
     help='Force reloading the template fixture'
+  )
+  parser.addoption(
+    '--fixture-regen', action='store_true',
+    help='Force regenerating the template fixture JSON files'
   )
 
 
@@ -220,12 +224,18 @@ def django_db_setup(django_db_blocker):
   template_db_name = django.conf.settings.DATABASES[template_db_key]['NAME']
 
   with django_db_blocker.unblock():
+    if pytest.config.getoption('--fixture-regen'):
+      drop_database(test_db_name)
+      create_blank_db(test_db_key, test_db_name)
+      django.db.connections[test_db_key].commit()
+      pytest.exit('Now run mk_db_fixture')
+
     try:
       load_template_fixture(template_db_key, template_db_name)
     except psycopg2.DatabaseError as e:
       logging.debug(str(e))
     logging.debug('Dropping test DB')
-    run_sql('postgres', 'drop database if exists {};'.format(test_db_name))
+    drop_database(test_db_name)
     logging.debug('Creating test DB from template')
     run_sql(
       'postgres',
@@ -243,17 +253,10 @@ def load_template_fixture(template_db_key, template_db_name):
   """Load DB fixture from compressed JSON file to template database"""
   logging.info('Loading template DB fixture')
   fixture_file_path = d1_test.sample.get_path('db_fixture.json.bz2')
-  if pytest.config.getoption("--refresh-fixture"):
+  if pytest.config.getoption("--fixture-refresh"):
     # django.core.management.call_command('flush', database=template_db_key)
-    run_sql('postgres', "drop database if exists {};".format(template_db_name))
-  logging.debug('Creating blank DB')
-  run_sql(
-    'postgres', "create database {} encoding 'utf-8';".format(template_db_name)
-  )
-  logging.debug('Creating GMN tables')
-  django.core.management.call_command(
-    'migrate', '--run-syncdb', database=template_db_key
-  )
+    drop_database(template_db_name)
+  create_blank_db(template_db_key, template_db_name)
   logging.debug('Populating tables with fixture data')
   django.core.management.call_command(
     'loaddata', fixture_file_path, database=template_db_key, commit=True
@@ -261,6 +264,20 @@ def load_template_fixture(template_db_key, template_db_name):
   django.db.connections[template_db_key].commit()
   for connection in django.db.connections.all():
     connection.close()
+
+
+def drop_database(db_name):
+  logging.debug('Dropping database: {}'.format(db_name))
+  run_sql('postgres', "drop database if exists {};".format(db_name))
+
+
+def create_blank_db(db_key, db_name):
+  logging.debug('Creating blank DB: {}'.format(db_name))
+  run_sql('postgres', "create database {} encoding 'utf-8';".format(db_name))
+  logging.debug('Creating GMN tables')
+  django.core.management.call_command(
+    'migrate', '--run-syncdb', database=db_key
+  )
 
 
 def run_sql(db, sql):
