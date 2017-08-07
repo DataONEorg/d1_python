@@ -21,7 +21,12 @@
 """Mock:
 
 CNCore.listNodes() → NodeList
-https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.listNodes
+https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
+#CNCore.listNodes
+
+Note: CN /node returns a list of Node elements, while MN /node returns a single
+Node element. Since the endpoint is the same, care must be taken to not add
+callbacks for both getCapabilities() and listNodes() within the same test.
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py

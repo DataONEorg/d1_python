@@ -21,8 +21,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import logging
-
 import responses
 
 import d1_test.d1_test_case
@@ -34,9 +32,7 @@ class TestMockNodeList(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, cn_client_v1_v2):
     """mock_api.listNodes() returns a DataONE ObjectList PyXB object"""
     list_nodes.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    logging.debug(type(cn_client_v1_v2.listNodes()))
-    logging.debug(type(cn_client_v1_v2.bindings.NodeList))
-    if not isinstance(
-        cn_client_v1_v2.listNodes(), cn_client_v1_v2.bindings.NodeList
-    ):
-      pass
+    node_list_pyxb = cn_client_v1_v2.listNodes()
+    self.sample.assert_equals(
+      node_list_pyxb, 'mock_list_nodes', cn_client_v1_v2
+    )
