@@ -24,6 +24,7 @@ from __future__ import absolute_import
 import logging
 
 import d1_common.const
+import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.util
 
@@ -77,6 +78,25 @@ class CoordinatingNodeClient_2_0(
   def delete(self, pid):
     response = self.deleteResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')
+
+  #=========================================================================
+  # CNRead
+  #=========================================================================
+
+  # CNRead.synchronize(session, pid) → boolean
+  # POST /synchronize
+
+  @d1_common.util.utf8_to_unicode
+  def synchronizeResponse(self, pid, vendorSpecific=None):
+    mmp_dict = {
+      'pid': pid,
+    }
+    return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
+
+  @d1_common.util.utf8_to_unicode
+  def synchronize(self, pid, vendorSpecific=None):
+    response = self.synchronizeResponse(pid, vendorSpecific)
+    return self._read_boolean_response(response)
 
   #=========================================================================
   # CNView
