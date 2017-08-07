@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>39</serialVersion>
-  <identifier>PID_GMNFXT_zbatvxsdwqqm</identifier>
-  <formatId>-//ecoinformatics.org//eml-software-2.0.0beta4//EN</formatId>
+  <serialVersion>28</serialVersion>
+  <identifier>PID_GMNFXT_yzgzxiakqqyt</identifier>
+  <formatId>application/vnd.ms-excel.sheet.binary.macroEnabled.12</formatId>
   <size>961516091269</size>
   <checksum algorithm="SHA-1">29a0e06238731d283d6b82bb6bcdc9da43de8c97</checksum>
-  <submitter>subj_pi</submitter>
+  <submitter>subj_c</submitter>
   <rightsHolder>subj_kj</rightsHolder>
   <accessPolicy>
     <allow>
@@ -25,39 +25,57 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="1" replicationAllowed="true">
-    <preferredMemberNode>mn_bt</preferredMemberNode>
-    <blockedMemberNode>mn_dt</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_dq</preferredMemberNode>
+    <preferredMemberNode>mn_q</preferredMemberNode>
+    <preferredMemberNode>mn_s</preferredMemberNode>
+    <blockedMemberNode>mn_c</blockedMemberNode>
+    <blockedMemberNode>mn_d</blockedMemberNode>
+    <blockedMemberNode>mn_fy</blockedMemberNode>
   </replicationPolicy>
+  <obsoletes>PID_GMNFXT_dkwvhzvtepdi</obsoletes>
   <archived>false</archived>
-  <dateUploaded>2008-10-04T16:36:12</dateUploaded>
-  <dateSysMetadataModified>2008-10-14T16:36:12</dateSysMetadataModified>
-  <originMemberNode>mn_b</originMemberNode>
-  <authoritativeMemberNode>mn_i</authoritativeMemberNode>
+  <dateUploaded>1997-12-20T14:51:02</dateUploaded>
+  <dateSysMetadataModified>1997-12-30T14:51:02</dateSysMetadataModified>
+  <originMemberNode>mn_d</originMemberNode>
+  <authoritativeMemberNode>mn_gg</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_k</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>1991-11-05T16:01:13Z</replicaVerified>
+    <replicaMemberNode>mn_zf</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>1991-11-19T05:37:30Z</replicaVerified>
   </replica>
-  <seriesId>SID_ndralusbhcvv</seriesId>
-  <mediaType name="media_type_tu">
-    <property name="prop_ih">vb</property>
-    <property name="prop_ip">fk</property>
-    <property name="prop_jy">ab</property>
-    <property name="prop_nc">hz</property>
-    <property name="prop_zg">rq</property>
-  </mediaType>
-  <fileName>file_dbn</fileName>
+  <replica>
+    <replicaMemberNode>mn_l</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2106-05-02T06:02:05Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_y</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2141-10-23T11:38:18Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_o</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2206-05-31T00:35:02Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_od</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2211-09-01T03:46:10Z</replicaVerified>
+  </replica>
+  <seriesId>SID_gutntswdklza</seriesId>
+  <fileName>file_ahs</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>71</serialVersion>
-  <identifier>PID_GMNFXT_rkcoitiibrkx</identifier>
-  <formatId>application/vnd.openxmlformats-officedocument.wordprocessingml.document</formatId>
+  <serialVersion>51</serialVersion>
+  <identifier>PID_GMNFXT_repijjridngx</identifier>
+  <formatId>audio/x-ms-wma</formatId>
   <size>35066282782</size>
   <checksum algorithm="MD5">ce2a035df7bc6d5cfa8fbbacf521e6cf</checksum>
-  <submitter>subj_zj</submitter>
+  <submitter>subj_j</submitter>
   <rightsHolder>subj_h</rightsHolder>
   <accessPolicy>
     <allow>
@@ -71,42 +89,53 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_am</preferredMemberNode>
-    <preferredMemberNode>mn_n</preferredMemberNode>
-    <blockedMemberNode>mn_gv</blockedMemberNode>
-    <blockedMemberNode>mn_j</blockedMemberNode>
-    <blockedMemberNode>mn_v</blockedMemberNode>
+  <replicationPolicy numberReplicas="8" replicationAllowed="true">
+    <preferredMemberNode>mn_d</preferredMemberNode>
+    <preferredMemberNode>mn_mg</preferredMemberNode>
+    <preferredMemberNode>mn_q</preferredMemberNode>
+    <preferredMemberNode>mn_yp</preferredMemberNode>
+    <blockedMemberNode>mn_k</blockedMemberNode>
   </replicationPolicy>
-  <obsoletes>PID_GMNFXT_agyozdluvmsq</obsoletes>
   <archived>false</archived>
-  <dateUploaded>2040-03-23T19:04:52</dateUploaded>
-  <dateSysMetadataModified>2040-04-02T19:04:52</dateSysMetadataModified>
-  <originMemberNode>mn_p</originMemberNode>
-  <authoritativeMemberNode>mn_b</authoritativeMemberNode>
+  <dateUploaded>2020-06-10T00:25:25</dateUploaded>
+  <dateSysMetadataModified>2020-06-20T00:25:25</dateSysMetadataModified>
+  <originMemberNode>mn_o</originMemberNode>
+  <authoritativeMemberNode>mn_ld</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_zh</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2025-08-12T21:00:42Z</replicaVerified>
+    <replicaMemberNode>mn_hn</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2123-03-13T21:20:18Z</replicaVerified>
   </replica>
-  <seriesId>SID_yyawzuoxyyro</seriesId>
-  <mediaType name="media_type_lj">
-    <property name="prop_ae">sm</property>
-    <property name="prop_ox">eo</property>
-    <property name="prop_qe">io</property>
-    <property name="prop_qs">js</property>
+  <replica>
+    <replicaMemberNode>mn_ni</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2180-07-02T04:38:38Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_fr</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2194-11-06T15:59:11Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_rd</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2261-10-14T12:41:42Z</replicaVerified>
+  </replica>
+  <seriesId>SID_qdsxtzftrhfg</seriesId>
+  <mediaType name="media_type_kb">
+    <property name="prop_wl">of</property>
   </mediaType>
-  <fileName>file_uki</fileName>
+  <fileName>file_yts</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>20</serialVersion>
-  <identifier>PID_GMNFXT_llhtqsvumrfn</identifier>
-  <formatId>eml://ecoinformatics.org/eml-2.1.1</formatId>
+  <serialVersion>66</serialVersion>
+  <identifier>PID_GMNFXT_kwvhhioqxftv</identifier>
+  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
   <size>419269600671</size>
   <checksum algorithm="MD5">ab8a2aa03e9f67434832b4d6203cf8c5</checksum>
-  <submitter>subj_w</submitter>
+  <submitter>subj_ia</submitter>
   <rightsHolder>subj_ro</rightsHolder>
   <accessPolicy>
     <allow>
@@ -120,47 +149,43 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="5" replicationAllowed="true">
-    <blockedMemberNode>mn_d</blockedMemberNode>
-    <blockedMemberNode>mn_q</blockedMemberNode>
-    <blockedMemberNode>mn_r</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_a</blockedMemberNode>
   </replicationPolicy>
-  <obsoletes>PID_GMNFXT_arnzportneee</obsoletes>
+  <obsoletes>PID_GMNFXT_aauqtaobyiur</obsoletes>
   <archived>false</archived>
-  <dateUploaded>1989-12-24T11:23:58</dateUploaded>
-  <dateSysMetadataModified>1990-01-03T11:23:58</dateSysMetadataModified>
-  <originMemberNode>mn_m</originMemberNode>
-  <authoritativeMemberNode>mn_vh</authoritativeMemberNode>
+  <dateUploaded>2035-06-24T03:17:34</dateUploaded>
+  <dateSysMetadataModified>2035-07-04T03:17:34</dateSysMetadataModified>
+  <originMemberNode>mn_v</originMemberNode>
+  <authoritativeMemberNode>mn_mu</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_y</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2067-03-04T16:32:25Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_h</replicaMemberNode>
+    <replicaMemberNode>mn_oi</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2089-12-15T08:51:27Z</replicaVerified>
+    <replicaVerified>1970-12-11T09:48:46Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_a</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2178-11-20T04:53:52Z</replicaVerified>
+    <replicaMemberNode>mn_lp</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2001-02-18T21:37:46Z</replicaVerified>
   </replica>
-  <seriesId>SID_feetibnnanjx</seriesId>
-  <mediaType name="media_type_pu">
-    <property name="prop_df">dl</property>
+  <mediaType name="media_type_hb">
+    <property name="prop_ah">sx</property>
+    <property name="prop_fj">it</property>
+    <property name="prop_gt">gi</property>
+    <property name="prop_jz">tp</property>
+    <property name="prop_op">so</property>
   </mediaType>
-  <fileName>file_uba</fileName>
+  <fileName>file_hec</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>57</serialVersion>
-  <identifier>PID_GMNFXT_lofijyxaqhnh</identifier>
-  <formatId>application/x-python</formatId>
+  <serialVersion>60</serialVersion>
+  <identifier>PID_GMNFXT_kyjzhgdnoyhd</identifier>
+  <formatId>CF-1.1</formatId>
   <size>77698856506</size>
   <checksum algorithm="SHA1">30cf70b531adb808ab07db8f09036926670d660d</checksum>
-  <submitter>subj_ro</submitter>
+  <submitter>subj_h</submitter>
   <rightsHolder>subj_wd</rightsHolder>
   <accessPolicy>
     <allow>
@@ -172,50 +197,31 @@
     </allow>
   </accessPolicy>
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_b</preferredMemberNode>
-    <preferredMemberNode>mn_fv</preferredMemberNode>
-    <preferredMemberNode>mn_j</preferredMemberNode>
-    <preferredMemberNode>mn_sx</preferredMemberNode>
-    <blockedMemberNode>mn_a</blockedMemberNode>
-    <blockedMemberNode>mn_et</blockedMemberNode>
+    <preferredMemberNode>mn_l</preferredMemberNode>
+    <preferredMemberNode>mn_xr</preferredMemberNode>
+    <blockedMemberNode>mn_k</blockedMemberNode>
+    <blockedMemberNode>mn_yc</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_GMNFXT_jpjldsfqeapv</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2026-09-04T20:22:47</dateUploaded>
-  <dateSysMetadataModified>2002-12-26T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_k</originMemberNode>
-  <authoritativeMemberNode>mn_j</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_u</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>1994-06-14T08:17:10Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_lt</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2066-08-30T12:03:58Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_qm</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2105-06-02T02:09:13Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_mc</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2252-03-12T15:39:38Z</replicaVerified>
-  </replica>
-  <fileName>file_adu</fileName>
+  <dateUploaded>2029-06-02T09:45:26</dateUploaded>
+  <dateSysMetadataModified>2029-06-12T09:45:26</dateSysMetadataModified>
+  <originMemberNode>mn_v</originMemberNode>
+  <authoritativeMemberNode>mn_wl</authoritativeMemberNode>
+  <mediaType name="media_type_pc">
+    <property name="prop_hd">er</property>
+    <property name="prop_oh">ax</property>
+  </mediaType>
+  <fileName>file_ylb</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>57</serialVersion>
-  <identifier>PID_GMNFXT_zrdnjihvydwa</identifier>
-  <formatId>image/png</formatId>
+  <serialVersion>95</serialVersion>
+  <identifier>PID_GMNFXT_zpvmdfdtvtlq</identifier>
+  <formatId>video/mpeg</formatId>
   <size>10928768847</size>
   <checksum algorithm="SHA1">94310543893ec7558f0cfe44de205f959adf612d</checksum>
-  <submitter>subj_h</submitter>
+  <submitter>subj_il</submitter>
   <rightsHolder>subj_vs</rightsHolder>
   <accessPolicy>
     <allow>
@@ -236,49 +242,48 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="9" replicationAllowed="true">
-    <blockedMemberNode>mn_k</blockedMemberNode>
-    <blockedMemberNode>mn_q</blockedMemberNode>
-    <blockedMemberNode>mn_uh</blockedMemberNode>
+  <replicationPolicy numberReplicas="7" replicationAllowed="true">
+    <preferredMemberNode>mn_d</preferredMemberNode>
+    <blockedMemberNode>mn_xl</blockedMemberNode>
   </replicationPolicy>
+  <obsoletedBy>PID_GMNFXT_nkzvicawnaqg</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2026-05-04T14:43:01</dateUploaded>
-  <dateSysMetadataModified>2026-05-14T14:43:01</dateSysMetadataModified>
-  <originMemberNode>mn_e</originMemberNode>
-  <authoritativeMemberNode>mn_d</authoritativeMemberNode>
+  <dateUploaded>2064-10-18T00:24:48</dateUploaded>
+  <dateSysMetadataModified>2002-01-01T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_n</originMemberNode>
+  <authoritativeMemberNode>mn_j</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_yf</replicaMemberNode>
+    <replicaMemberNode>mn_c</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2029-09-28T18:03:42Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_x</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2065-09-06T09:24:01Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_p</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2099-09-03T20:38:20Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_h</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2211-01-04T14:14:24Z</replicaVerified>
+    <replicaVerified>2116-08-16T22:36:00Z</replicaVerified>
   </replica>
-  <replica>
-    <replicaMemberNode>mn_nr</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2260-09-01T01:35:58Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_px</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2266-10-01T11:00:57Z</replicaVerified>
-  </replica>
-  <mediaType name="media_type_vw">
-    <property name="prop_nn">as</property>
-    <property name="prop_nu">mg</property>
-    <property name="prop_ok">yg</property>
-    <property name="prop_sn">hv</property>
-    <property name="prop_up">ef</property>
-  </mediaType>
-  <fileName>file_egp</fileName>
+  <seriesId>SID_czjtvbfitqox</seriesId>
+  <fileName>file_ixs</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>6</serialVersion>
-  <identifier>PID_GMNFXT_nfrendookiyl</identifier>
-  <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta6//EN</formatId>
+  <serialVersion>45</serialVersion>
+  <identifier>PID_GMNFXT_mkwzhfdbnsta</identifier>
+  <formatId>CF-1.0</formatId>
   <size>742476629710</size>
   <checksum algorithm="SHA1">0388da71e580c524ee2c28d452d14defb78d59f0</checksum>
-  <submitter>subj_a</submitter>
+  <submitter>subj_y</submitter>
   <rightsHolder>subj_lc</rightsHolder>
   <accessPolicy>
     <allow>
@@ -298,33 +303,32 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="4" replicationAllowed="true">
-    <preferredMemberNode>mn_g</preferredMemberNode>
-    <preferredMemberNode>mn_g</preferredMemberNode>
-    <preferredMemberNode>mn_z</preferredMemberNode>
+  <replicationPolicy numberReplicas="2" replicationAllowed="true">
+    <blockedMemberNode>mn_jo</blockedMemberNode>
+    <blockedMemberNode>mn_la</blockedMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+    <blockedMemberNode>mn_ra</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_GMNFXT_ptprcshwosou</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>1975-11-14T05:51:27</dateUploaded>
-  <dateSysMetadataModified>2002-05-09T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_l</originMemberNode>
-  <authoritativeMemberNode>mn_z</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_z</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>1975-01-17T15:47:45Z</replicaVerified>
-  </replica>
-  <fileName>file_amm</fileName>
+  <dateUploaded>2014-03-15T23:54:12</dateUploaded>
+  <dateSysMetadataModified>2014-03-25T23:54:12</dateSysMetadataModified>
+  <originMemberNode>mn_gn</originMemberNode>
+  <authoritativeMemberNode>mn_x</authoritativeMemberNode>
+  <mediaType name="media_type_tx">
+    <property name="prop_hp">hg</property>
+    <property name="prop_np">yy</property>
+  </mediaType>
+  <fileName>file_det</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>2</serialVersion>
-  <identifier>PID_GMNFXT_ukgvgvlxqjsc</identifier>
-  <formatId>-//ecoinformatics.org//eml-project-2.0.0beta4//EN</formatId>
+  <serialVersion>23</serialVersion>
+  <identifier>PID_GMNFXT_ufqfpkpfujft</identifier>
+  <formatId>FGDC-STD-001-1998</formatId>
   <size>614458606833</size>
   <checksum algorithm="SHA1">56dcc5aa5fb76bb53fbc9ae297ba1f8f38dc6afd</checksum>
-  <submitter>subj_hf</submitter>
+  <submitter>subj_k</submitter>
   <rightsHolder>subj_f</rightsHolder>
   <accessPolicy>
     <allow>
@@ -352,50 +356,54 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_cz</preferredMemberNode>
-    <preferredMemberNode>mn_gi</preferredMemberNode>
-    <preferredMemberNode>mn_h</preferredMemberNode>
-    <preferredMemberNode>mn_tz</preferredMemberNode>
+  <replicationPolicy numberReplicas="6" replicationAllowed="true">
+    <preferredMemberNode>mn_ac</preferredMemberNode>
+    <preferredMemberNode>mn_i</preferredMemberNode>
+    <preferredMemberNode>mn_sg</preferredMemberNode>
+    <blockedMemberNode>mn_m</blockedMemberNode>
   </replicationPolicy>
-  <obsoletes>PID_GMNFXT_pbbbtqnkzzqe</obsoletes>
+  <obsoletedBy>PID_GMNFXT_lgxhdiapvavn</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>1971-08-08T12:43:49</dateUploaded>
-  <dateSysMetadataModified>1971-08-18T12:43:49</dateSysMetadataModified>
-  <originMemberNode>mn_oc</originMemberNode>
-  <authoritativeMemberNode>mn_pd</authoritativeMemberNode>
+  <dateUploaded>1992-02-13T01:24:50</dateUploaded>
+  <dateSysMetadataModified>2003-09-18T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_hp</originMemberNode>
+  <authoritativeMemberNode>mn_w</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_kz</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>1990-12-20T16:49:04Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_j</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2193-02-03T18:13:05Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_nl</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2223-05-18T09:50:18Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicaMemberNode>mn_w</replicaMemberNode>
     <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2267-08-13T00:18:07Z</replicaVerified>
+    <replicaVerified>1979-06-19T19:25:12Z</replicaVerified>
   </replica>
-  <seriesId>SID_ctelhtkmenkz</seriesId>
-  <fileName>file_hpy</fileName>
+  <replica>
+    <replicaMemberNode>mn_wo</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2099-03-06T12:23:02Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_o</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2212-05-29T08:58:34Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_a</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2215-10-30T08:56:32Z</replicaVerified>
+  </replica>
+  <seriesId>SID_wzqudtjnigtp</seriesId>
+  <mediaType name="media_type_cx">
+    <property name="prop_af">tr</property>
+    <property name="prop_mv">it</property>
+  </mediaType>
+  <fileName>file_rkm</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>3</serialVersion>
-  <identifier>PID_GMNFXT_fuwolvmtvavw</identifier>
-  <formatId>http://www.w3.org/2005/Atom</formatId>
+  <serialVersion>69</serialVersion>
+  <identifier>PID_GMNFXT_fqevogatmekg</identifier>
+  <formatId>application/MATLAB</formatId>
   <size>89934074446</size>
   <checksum algorithm="SHA1">a966380d322957eee4778d9e804a890c7287ba3d</checksum>
-  <submitter>subj_xc</submitter>
+  <submitter>subj_d</submitter>
   <rightsHolder>subj_ro</rightsHolder>
   <accessPolicy>
     <allow>
@@ -404,31 +412,56 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_f</preferredMemberNode>
-    <preferredMemberNode>mn_o</preferredMemberNode>
-    <preferredMemberNode>mn_w</preferredMemberNode>
-    <blockedMemberNode>mn_h</blockedMemberNode>
-    <blockedMemberNode>mn_kr</blockedMemberNode>
-    <blockedMemberNode>mn_m</blockedMemberNode>
-    <blockedMemberNode>mn_wf</blockedMemberNode>
+  <replicationPolicy numberReplicas="4" replicationAllowed="true">
+    <preferredMemberNode>mn_g</preferredMemberNode>
+    <preferredMemberNode>mn_u</preferredMemberNode>
+    <blockedMemberNode>mn_g</blockedMemberNode>
+    <blockedMemberNode>mn_i</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
-  <dateUploaded>1972-02-17T03:24:42</dateUploaded>
-  <dateSysMetadataModified>1972-02-27T03:24:42</dateSysMetadataModified>
-  <originMemberNode>mn_p</originMemberNode>
-  <authoritativeMemberNode>mn_ia</authoritativeMemberNode>
-  <fileName>file_pjb</fileName>
+  <dateUploaded>2038-09-24T11:53:52</dateUploaded>
+  <dateSysMetadataModified>2038-10-04T11:53:52</dateSysMetadataModified>
+  <originMemberNode>mn_wn</originMemberNode>
+  <authoritativeMemberNode>mn_rk</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_u</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2017-12-15T09:51:37Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_e</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2053-12-07T05:54:41Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_yd</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2153-09-13T09:02:39Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_bf</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2251-06-17T14:19:15Z</replicaVerified>
+  </replica>
+  <seriesId>SID_rsiwmeswbuqt</seriesId>
+  <mediaType name="media_type_sk">
+    <property name="prop_el">mq</property>
+    <property name="prop_hi">gw</property>
+    <property name="prop_ip">ad</property>
+    <property name="prop_kt">in</property>
+    <property name="prop_xv">xw</property>
+  </mediaType>
+  <fileName>file_spt</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>62</serialVersion>
-  <identifier>PID_GMNFXT_skqviydneuhr</identifier>
-  <formatId>image/svg xml</formatId>
+  <serialVersion>22</serialVersion>
+  <identifier>PID_GMNFXT_sbspxjppifyx</identifier>
+  <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
   <size>1079267011212</size>
   <checksum algorithm="SHA1">c24417fa1d85e37c3ddb8348745f67625c58233a</checksum>
-  <submitter>subj_u</submitter>
+  <submitter>subj_i</submitter>
   <rightsHolder>subj_rq</rightsHolder>
   <accessPolicy>
     <allow>
@@ -451,76 +484,88 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_jk</preferredMemberNode>
-  </replicationPolicy>
+  <obsoletedBy>PID_GMNFXT_lfaecqjzzbwp</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2031-02-18T13:56:21</dateUploaded>
-  <dateSysMetadataModified>2031-02-28T13:56:21</dateSysMetadataModified>
-  <originMemberNode>mn_n</originMemberNode>
-  <authoritativeMemberNode>mn_an</authoritativeMemberNode>
+  <dateUploaded>1991-07-17T09:13:00</dateUploaded>
+  <dateSysMetadataModified>2001-09-26T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_zx</originMemberNode>
+  <authoritativeMemberNode>mn_qq</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_y</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2047-07-20T12:28:04Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_gb</replicaMemberNode>
+    <replicaMemberNode>mn_u</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2168-05-27T10:29:43Z</replicaVerified>
+    <replicaVerified>2025-10-09T08:27:34Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_kx</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2219-12-09T02:48:03Z</replicaVerified>
+    <replicaMemberNode>mn_ah</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2044-02-20T09:18:13Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_my</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2222-01-27T04:58:37Z</replicaVerified>
+    <replicaMemberNode>mn_st</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2063-11-02T08:09:46Z</replicaVerified>
   </replica>
-  <seriesId>SID_kzgnmprnpgqb</seriesId>
-  <mediaType name="media_type_nn">
-    <property name="prop_eo">al</property>
-    <property name="prop_gd">pm</property>
-    <property name="prop_nl">wx</property>
-    <property name="prop_pi">ax</property>
-    <property name="prop_xx">tv</property>
+  <replica>
+    <replicaMemberNode>mn_xo</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2104-12-19T07:31:35Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_rs</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2142-08-10T20:24:55Z</replicaVerified>
+  </replica>
+  <mediaType name="media_type_sl">
+    <property name="prop_dh">py</property>
+    <property name="prop_hf">rx</property>
   </mediaType>
-  <fileName>file_hvt</fileName>
+  <fileName>file_bkg</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>87</serialVersion>
-  <identifier>PID_GMNFXT_cfowclzaveii</identifier>
-  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+  <serialVersion>6</serialVersion>
+  <identifier>PID_GMNFXT_bovgbbwceaxy</identifier>
+  <formatId>http://www.loc.gov/METS/</formatId>
   <size>1023513219380</size>
   <checksum algorithm="SHA1">c42d6ab8289d223377dd3b7717592cb66493536c</checksum>
-  <submitter>subj_tv</submitter>
+  <submitter>subj_k</submitter>
   <rightsHolder>subj_xw</rightsHolder>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_fe</preferredMemberNode>
-    <preferredMemberNode>mn_lh</preferredMemberNode>
-    <blockedMemberNode>mn_hv</blockedMemberNode>
-    <blockedMemberNode>mn_l</blockedMemberNode>
+  <replicationPolicy numberReplicas="8" replicationAllowed="true">
+    <preferredMemberNode>mn_jp</preferredMemberNode>
+    <preferredMemberNode>mn_q</preferredMemberNode>
+    <blockedMemberNode>mn_g</blockedMemberNode>
+    <blockedMemberNode>mn_hw</blockedMemberNode>
+    <blockedMemberNode>mn_u</blockedMemberNode>
   </replicationPolicy>
-  <obsoletes>PID_GMNFXT_yqaitrerpnqn</obsoletes>
   <archived>false</archived>
-  <dateUploaded>2056-06-30T18:43:39</dateUploaded>
-  <dateSysMetadataModified>2056-07-10T18:43:39</dateSysMetadataModified>
-  <originMemberNode>mn_s</originMemberNode>
-  <authoritativeMemberNode>mn_u</authoritativeMemberNode>
+  <dateUploaded>1975-07-16T09:29:53</dateUploaded>
+  <dateSysMetadataModified>1975-07-26T09:29:53</dateSysMetadataModified>
+  <originMemberNode>mn_j</originMemberNode>
+  <authoritativeMemberNode>mn_ty</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_m</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2191-07-01T07:20:04Z</replicaVerified>
+    <replicaMemberNode>mn_ey</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2005-10-28T05:39:51Z</replicaVerified>
   </replica>
-  <seriesId>SID_ebopxzgwtzzi</seriesId>
-  <mediaType name="media_type_qp">
-    <property name="prop_fi">tp</property>
-    <property name="prop_lv">hq</property>
-    <property name="prop_sv">hv</property>
+  <replica>
+    <replicaMemberNode>mn_r</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2225-12-19T10:26:25Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_k</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2248-08-31T16:38:37Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_eb</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2249-05-19T10:38:29Z</replicaVerified>
+  </replica>
+  <mediaType name="media_type_bk">
+    <property name="prop_hp">dl</property>
+    <property name="prop_xm">zr</property>
   </mediaType>
-  <fileName>file_sqp</fileName>
+  <fileName>file_nsj</fileName>
 </ns1:systemMetadata>

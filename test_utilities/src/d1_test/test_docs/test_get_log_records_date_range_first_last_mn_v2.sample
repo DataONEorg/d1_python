@@ -1,29 +1,29 @@
 PyXB object:
   <?xml version="1.0" encoding="utf-8"?>
-  <ns1:log count="1" start="0" total="12" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <ns1:log count="1" start="0" total="7" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
     <logEntry>
       <entryId>[volatile]</entryId>
-      <identifier>PID_GMNFXT_dwsnuwqctkjj</identifier>
+      <identifier>PID_GMNFXT_hpjftopmqdbg</identifier>
       <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+      <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
       <subject>disabled_auth_subj</subject>
-      <event>create</event>
-      <dateLogged>1979-12-30T23:08:28</dateLogged>
+      <event>update</event>
+      <dateLogged>1979-12-11T17:02:28</dateLogged>
       <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
     </logEntry>
   </ns1:log>
 
 PyXB object:
   <?xml version="1.0" encoding="utf-8"?>
-  <ns1:log count="1" start="11" total="12" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <ns1:log count="1" start="6" total="7" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
     <logEntry>
       <entryId>[volatile]</entryId>
-      <identifier>PID_GMNFXT_poduoycmecdp</identifier>
+      <identifier>PID_GMNFXT_pqfbmsqzuhes</identifier>
       <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+      <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
       <subject>disabled_auth_subj</subject>
       <event>create</event>
-      <dateLogged>1979-01-06T19:41:17</dateLogged>
+      <dateLogged>1979-01-15T17:25:21</dateLogged>
       <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
     </logEntry>
   </ns1:log>

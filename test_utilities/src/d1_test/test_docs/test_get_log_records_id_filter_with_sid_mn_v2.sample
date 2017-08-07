@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:log count="6" start="0" total="6" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>update</event>
+    <dateLogged>2055-10-27T04:21:53</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_wlgnnomriqyn</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>2055-10-27T04:21:53</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>2035-09-28T15:39:08</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36</userAgent>
+    <subject>subj_ia</subject>
+    <event>read</event>
+    <dateLogged>2007-07-10T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_zt</subject>
+    <event>read</event>
+    <dateLogged>2005-06-24T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_wlgnnomriqyn</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_yn</subject>
+    <event>read</event>
+    <dateLogged>2003-11-29T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+</ns1:log>

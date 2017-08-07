@@ -6,7 +6,11 @@
   <!--Optional:-->
   <services>
     <!--1 or more repetitions:-->
-    <service name="string" version="string" available="false">
+    <service name="MNCore" version="v1" available="true"/>
+    <service name="MNRead" version="v1" available="true"/>
+    <service name="MNAuthorization" version="v1" available="false"/>
+    <service name="MNStorage" version="v1" available="false"/>
+    <service name="MNReplication" version="v1" available="false">
       <!--Zero or more repetitions:-->
       <restriction methodName="string">
         <!--Zero or more repetitions:-->

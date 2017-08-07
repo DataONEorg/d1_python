@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:node replicate="false" state="up" synchronize="true" type="cn" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <identifier>string</identifier>
+  <name>string</name>
+  <description>string</description>
+  <baseURL>http://www.any.org/ventos/verrantque</baseURL>
+  <services>
+    <service available="true" name="MNCore" version="v1"/>
+    <service available="true" name="MNRead" version="v1"/>
+    <service available="true" name="MNAuthorization" version="v1"/>
+    <service available="true" name="MNStorage" version="v1"/>
+    <service available="true" name="MNReplication" version="v1"/>
+    <service available="true" name="MNCore" version="v2"/>
+    <service available="true" name="MNRead" version="v2"/>
+    <service available="true" name="MNAuthorization" version="v2"/>
+    <service available="true" name="MNStorage" version="v2"/>
+    <service available="true" name="MNReplication" version="v2">
+      <restriction methodName="string">
+        <subject>string</subject>
+      </restriction>
+    </service>
+  </services>
+  <synchronization>
+    <schedule hour="*" mday="*" min="0/3" mon="1" sec="0" wday="?" year="*"/>
+    <lastHarvested>2009-05-16T06:42:28</lastHarvested>
+    <lastCompleteHarvest>2003-08-09T00:18:37Z</lastCompleteHarvest>
+  </synchronization>
+  <nodeReplicationPolicy>
+    <maxObjectSize>11</maxObjectSize>
+    <spaceAllocated>11</spaceAllocated>
+    <allowedNode>string</allowedNode>
+    <allowedObjectFormat>string</allowedObjectFormat>
+  </nodeReplicationPolicy>
+  <ping lastSuccess="2002-06-24T15:46:32Z" success="false"/>
+  <subject>string</subject>
+  <contactSubject>string</contactSubject>
+  <property key="string" type="string">string</property>
+</ns1:node>

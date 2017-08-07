@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:log count="4" start="0" total="4" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_puuiloacmsst</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101 Firefox/52.0</userAgent>
+    <subject>subj_o</subject>
+    <event>read</event>
+    <dateLogged>2008-09-22T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_puuiloacmsst</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
+    <subject>subj_l</subject>
+    <event>read</event>
+    <dateLogged>2007-11-20T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_puuiloacmsst</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36</userAgent>
+    <subject>subj_h</subject>
+    <event>read</event>
+    <dateLogged>2003-12-22T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_puuiloacmsst</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>1972-05-28T02:52:49</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+</ns1:log>

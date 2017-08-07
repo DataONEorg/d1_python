@@ -1,153 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns1:log count="15" start="2000" total="3242" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="15" start="2000" total="3237" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_dztgxgsfwzyl</identifier>
+    <identifier>PID_GMNFXT_xetoocxnxztf</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>2006-01-02T17:33:07</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_juvzfnvmtiil</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
-    <subject>subj_d</subject>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko</userAgent>
+    <subject>subj_t</subject>
     <event>read</event>
-    <dateLogged>2006-01-02T00:00:00</dateLogged>
+    <dateLogged>2005-12-01T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_uxdotsrdrqjn</identifier>
+    <identifier>PID_GMNFXT_gqcbxdsgnwmt</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
-    <subject>subj_cf</subject>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0</userAgent>
+    <subject>subj_g</subject>
     <event>read</event>
-    <dateLogged>2006-01-01T00:00:00</dateLogged>
+    <dateLogged>2005-11-30T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_jywvrvvsyjkq</identifier>
+    <identifier>PID_GMNFXT_kyxsmrxpkdpq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
-    <subject>subj_l</subject>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_jh</subject>
     <event>read</event>
-    <dateLogged>2005-12-31T00:00:00</dateLogged>
+    <dateLogged>2005-11-29T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_fuczdcbjdcxe</identifier>
+    <identifier>PID_GMNFXT_uqbobzbyrmuq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
-    <subject>subj_gx</subject>
-    <event>read</event>
-    <dateLogged>2005-12-30T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_vahqtgynlahk</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5</userAgent>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
     <subject>subj_n</subject>
     <event>read</event>
-    <dateLogged>2005-12-29T00:00:00</dateLogged>
+    <dateLogged>2005-11-28T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_qenhmgidahmy</identifier>
+    <identifier>PID_GMNFXT_wpurfpthlhti</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36</userAgent>
-    <subject>subj_dw</subject>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
+    <subject>subj_gr</subject>
     <event>read</event>
-    <dateLogged>2005-12-28T00:00:00</dateLogged>
+    <dateLogged>2005-11-27T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_pecdqspvpylc</identifier>
+    <identifier>PID_GMNFXT_ouhatoqslvfv</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36</userAgent>
-    <subject>subj_jc</subject>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 OPR/45.0.2552.888</userAgent>
+    <subject>subj_ft</subject>
     <event>read</event>
-    <dateLogged>2005-12-27T00:00:00</dateLogged>
+    <dateLogged>2005-11-26T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_agrhnvkubxrt</identifier>
+    <identifier>PID_GMNFXT_pixrwinysqkw</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_dv</subject>
+    <event>read</event>
+    <dateLogged>2005-11-25T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_dhknojmqbtnc</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_r</subject>
+    <event>read</event>
+    <dateLogged>2005-11-24T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_olvbugmhmsxd</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0</userAgent>
+    <subject>subj_p</subject>
+    <event>read</event>
+    <dateLogged>2005-11-23T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_xhkajttgpebd</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
+    <subject>subj_gs</subject>
+    <event>read</event>
+    <dateLogged>2005-11-22T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_njoievyjcxcs</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
     <subject>subj_w</subject>
     <event>read</event>
-    <dateLogged>2005-12-26T00:00:00</dateLogged>
+    <dateLogged>2005-11-21T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_pqiyhzmuwdxw</identifier>
+    <identifier>PID_GMNFXT_ywftjiyyvsrq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <userAgent>Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
     <subject>subj_x</subject>
     <event>read</event>
-    <dateLogged>2005-12-25T00:00:00</dateLogged>
+    <dateLogged>2005-11-20T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_whomaqarxcmu</identifier>
+    <identifier>PID_GMNFXT_liuwrqlevjzo</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
     <subject>subj_v</subject>
     <event>read</event>
-    <dateLogged>2005-12-24T00:00:00</dateLogged>
+    <dateLogged>2005-11-19T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_skqviydneuhr</identifier>
+    <identifier>PID_GMNFXT_pxnskuqpflks</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36</userAgent>
-    <subject>subj_lh</subject>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393</userAgent>
+    <subject>subj_u</subject>
     <event>read</event>
-    <dateLogged>2005-12-23T00:00:00</dateLogged>
+    <dateLogged>2005-11-18T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_vqjlcjvhlxgr</identifier>
+    <identifier>PID_GMNFXT_skvblikjhfvl</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (iPad; CPU OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1</userAgent>
-    <subject>subj_y</subject>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_ge</subject>
     <event>read</event>
-    <dateLogged>2005-12-22T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_bcpjlhkefzov</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36</userAgent>
-    <subject>subj_kg</subject>
-    <event>read</event>
-    <dateLogged>2005-12-21T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_ptnlaijwycpb</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
-    <subject>subj_i</subject>
-    <event>read</event>
-    <dateLogged>2005-12-20T00:00:00</dateLogged>
+    <dateLogged>2005-11-17T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
 </ns1:log>

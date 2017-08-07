@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:log count="4" start="0" total="4" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_kdtnbqvgrykf</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7</userAgent>
+    <subject>subj_h</subject>
+    <event>read</event>
+    <dateLogged>2008-07-02T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_kdtnbqvgrykf</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
+    <subject>subj_t</subject>
+    <event>read</event>
+    <dateLogged>2006-01-02T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_kdtnbqvgrykf</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0</userAgent>
+    <subject>subj_vx</subject>
+    <event>read</event>
+    <dateLogged>2003-11-09T00:00:00</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_kdtnbqvgrykf</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>1981-04-21T08:19:48</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+</ns1:log>

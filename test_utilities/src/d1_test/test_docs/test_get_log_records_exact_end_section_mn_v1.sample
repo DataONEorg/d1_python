@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns1:log count="1" start="3241" total="3242" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<ns1:log count="1" start="3236" total="3237" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_ovhjundgzyef</identifier>
+    <identifier>PID_GMNFXT_edbuuvapkixu</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-01-05T09:08:09</dateLogged>
+    <dateLogged>1970-01-11T01:09:30</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
 </ns1:log>

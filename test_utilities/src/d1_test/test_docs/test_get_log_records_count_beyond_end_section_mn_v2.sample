@@ -1,103 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns1:log count="10" start="3232" total="3242" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="10" start="3227" total="3237" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_khjijauqvyvd</identifier>
+    <identifier>PID_GMNFXT_zzwapkcoywot</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1971-06-05T08:21:49</dateLogged>
+    <dateLogged>1970-07-18T23:58:38</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_sbwouvxvzbzg</identifier>
+    <identifier>PID_GMNFXT_aggkcqhapjlc</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>1971-06-05T08:21:49</dateLogged>
+    <dateLogged>1970-07-05T21:35:38</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_wchmvwgdpduc</identifier>
+    <identifier>PID_GMNFXT_iivcmpyfmeor</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-10-10T08:03:08</dateLogged>
+    <dateLogged>1970-07-05T21:35:38</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_gatulxyfoysv</identifier>
+    <identifier>PID_GMNFXT_xjzdjwfjbqld</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-09-30T23:09:39</dateLogged>
+    <dateLogged>1970-04-17T09:06:58</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_axxxqvbrjkvi</identifier>
+    <identifier>PID_GMNFXT_smnuibtfvbqc</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>1970-03-31T06:38:25</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_hrnxbssmxucw</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>1970-02-22T01:28:39</dateLogged>
+    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_xzksqwwfouni</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>1970-06-02T07:27:24</dateLogged>
+    <dateLogged>1970-02-22T01:28:39</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_snowmvemmccm</identifier>
+    <identifier>PID_GMNFXT_hkkwdkbfgtfm</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>1970-06-02T07:27:24</dateLogged>
+    <event>update</event>
+    <dateLogged>1970-02-09T03:26:33</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_wiydifqgjeme</identifier>
+    <identifier>PID_GMNFXT_zbbdpttxjnzm</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-03-16T21:02:33</dateLogged>
+    <dateLogged>1970-02-09T03:26:33</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_dsplpgotofuy</identifier>
+    <identifier>PID_GMNFXT_edbuuvapkixu</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-02-18T03:09:16</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_wppuuottmgsl</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>1970-02-14T19:55:12</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_ovhjundgzyef</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.0rc1</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>1970-01-05T09:08:09</dateLogged>
+    <dateLogged>1970-01-11T01:09:30</dateLogged>
     <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
   </logEntry>
 </ns1:log>

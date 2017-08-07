@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns1:objectList count="0" start="0" total="0" xmlns:ns1="http://ns.dataone.org/service/types/v1"/>
+<ns1:objectList count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>PID_GMNFXT_xkxsjmvhaecg</identifier>
+    <formatId>-//ecoinformatics.org//eml-software-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">534b07e528e99a658775c8833627a3273f166e53</checksum>
+    <dateSysMetadataModified>2025-11-13T05:31:34</dateSysMetadataModified>
+    <size>280</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_tkpzbfsslubo</identifier>
+    <formatId>audio/x-ms-wma</formatId>
+    <checksum algorithm="SHA-1">d1874ed35bbb9bdcb2c673bae48121fd1fc742e7</checksum>
+    <dateSysMetadataModified>2003-03-22T00:00:00</dateSysMetadataModified>
+    <size>247</size>
+  </objectInfo>
+</ns1:objectList>
