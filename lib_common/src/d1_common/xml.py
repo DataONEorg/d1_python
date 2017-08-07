@@ -279,20 +279,27 @@ def is_valid_utf8(s):
     return True
 
 
-def get_value(sysmeta_pyxb, sysmeta_attr):
-  """Get a Simple Content value from PyXB
+def get_opt_val(obj_pyxb, sysmeta_attr):
+  """Get an optional Simple Content value from PyXB
 
-  PyXB validation will fail if required elements are missing. Optional elements
-  that are not present are represented with attributes that are present but set
-  to None."""
+  The attributes for elements that are optional according to the schema and
+  not set in the PyXB object are present and set to None.
+
+  PyXB validation will fail if required elements are missing.
+  """
   try:
-    return uvalue(getattr(sysmeta_pyxb, sysmeta_attr))
+    return get_req_val(getattr(obj_pyxb, sysmeta_attr))
   except (ValueError, AttributeError):
     return None
 
 
-def uvalue(obj_pyxb):
-  """Getting a Simple Content value from PyXB with .value() returns a PyXB type
+def get_req_val(obj_pyxb):
+  """Get a required Simple Content value from PyXB
+
+  The attributes for elements that are required according to the schema are
+  always present, and provide a value() method.
+
+  Getting a Simple Content value from PyXB with .value() returns a PyXB type
   that lazily evaluates to a native unicode string. This confused parts of the
   Django ORM that check types before passing values to the database. This
   function forces immediate conversion to unicode.

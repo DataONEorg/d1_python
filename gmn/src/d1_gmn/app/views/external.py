@@ -656,7 +656,7 @@ def post_generate_identifier(request):
 def delete_object(request, pid):
   """MNStorage.delete(session, did) → Identifier
   """
-  d1_gmn.app.delete.delete_sciobj(pid)
+  return d1_gmn.app.delete.delete_sciobj(pid)
 
 
 @d1_gmn.app.restrict_to_verb.put
@@ -689,7 +689,7 @@ def post_replicate(request):
   d1_gmn.app.local_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )
-  pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+  pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
   d1_gmn.app.views.asserts.is_unused(pid)
   d1_gmn.app.local_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb

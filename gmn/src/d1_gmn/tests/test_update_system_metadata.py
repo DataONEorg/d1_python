@@ -200,7 +200,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Get sysmeta
       sciobj_str, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
       # Update rightsHolder
-      assert d1_common.xml.uvalue(
+      assert d1_common.xml.get_req_val(
         sysmeta_pyxb.rightsHolder
       ) == 'rights_holder_subj'
       sysmeta_pyxb.rightsHolder = 'newRightsHolder'

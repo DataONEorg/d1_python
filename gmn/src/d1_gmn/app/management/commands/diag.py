@@ -153,7 +153,7 @@ class ClearDb(object):
   #   parser.add_argument('path', type=str, help='Path to export file')
 
   def run(self):
-    d1_gmn.app.delete.clear_db()
+    d1_gmn.app.delete.delete_all_from_db()
 
 
 class ExportObjectIdentifiers(object):
@@ -390,7 +390,7 @@ class UpdateSystemMetadata(object):
         )
     ):
       self._events.count('SystemMetadata objects discovered')
-      pid = d1_common.xml.uvalue(discovered_sysmeta_pyxb.identifier)
+      pid = d1_common.xml.get_req_val(discovered_sysmeta_pyxb.identifier)
       if pid_rx and not re.search(pid_rx, pid):
         skip_msg = 'Skipped: --pidrx mismatch'
         self._events.count(skip_msg)

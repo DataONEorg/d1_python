@@ -83,7 +83,7 @@ def create_or_update(sysmeta_pyxb, url=None):
   - Any supplied SID is verified to be valid for the given operation. E.g., with
   d1_gmn.app.views.asserts.is_valid_sid_for_chain().
   """
-  pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+  pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
   try:
     sci_model = d1_gmn.app.util.get_sci_model(pid)
@@ -179,28 +179,28 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
   sci_model.modified_timestamp = sysmeta_pyxb.dateSysMetadataModified
   sci_model.format = d1_gmn.app.models.format(sysmeta_pyxb.formatId)
   sci_model.filename = getattr(sysmeta_pyxb, 'fileName', None)
-  sci_model.checksum = d1_common.xml.uvalue(sysmeta_pyxb.checksum)
+  sci_model.checksum = d1_common.xml.get_req_val(sysmeta_pyxb.checksum)
   sci_model.checksum_algorithm = d1_gmn.app.models.checksum_algorithm(
     sysmeta_pyxb.checksum.algorithm
   )
   sci_model.size = sysmeta_pyxb.size
   if sysmeta_pyxb.submitter:
     sci_model.submitter = d1_gmn.app.models.subject(
-      d1_common.xml.uvalue(sysmeta_pyxb.submitter)
+      d1_common.xml.get_req_val(sysmeta_pyxb.submitter)
     )
   sci_model.rights_holder = d1_gmn.app.models.subject(
-    d1_common.xml.uvalue(sysmeta_pyxb.rightsHolder)
+    d1_common.xml.get_req_val(sysmeta_pyxb.rightsHolder)
   )
   sci_model.origin_member_node = d1_gmn.app.models.node(
-    d1_common.xml.uvalue(sysmeta_pyxb.originMemberNode)
+    d1_common.xml.get_req_val(sysmeta_pyxb.originMemberNode)
   )
   sci_model.authoritative_member_node = d1_gmn.app.models.node(
-    d1_common.xml.uvalue(sysmeta_pyxb.authoritativeMemberNode)
+    d1_common.xml.get_req_val(sysmeta_pyxb.authoritativeMemberNode)
   )
   d1_gmn.app.revision.set_revision_by_model(
     sci_model,
-    d1_common.xml.get_value(sysmeta_pyxb, 'obsoletes'),
-    d1_common.xml.get_value(sysmeta_pyxb, 'obsoletedBy'),
+    d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes'),
+    d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy'),
   )
   sci_model.is_archived = sysmeta_pyxb.archived or False
 
@@ -270,7 +270,7 @@ def _media_type_pyxb_to_model(sci_model, sysmeta_pyxb):
 
 def _delete_existing_media_type(sysmeta_pyxb):
   d1_gmn.app.models.MediaType.objects.filter(
-    sciobj__pid__did=d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+    sciobj__pid__did=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
   ).delete()
 
 
@@ -285,7 +285,8 @@ def _insert_media_type_name_row(sci_model, media_type_pyxb):
 def _insert_media_type_property_rows(media_type_model, media_type_pyxb):
   for p in media_type_pyxb.property_:
     media_type_property_model = d1_gmn.app.models.MediaTypeProperty(
-      media_type=media_type_model, name=p.name, value=d1_common.xml.uvalue(p)
+      media_type=media_type_model, name=p.name,
+      value=d1_common.xml.get_req_val(p)
     )
     media_type_property_model.save()
 
@@ -349,7 +350,7 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
   )
   allow_rights_holder.permission.append(permission)
   allow_rights_holder.subject.append(
-    d1_common.xml.uvalue(sysmeta_pyxb.rightsHolder)
+    d1_common.xml.get_req_val(sysmeta_pyxb.rightsHolder)
   )
   top_level = _get_highest_level_action_for_rule(allow_rights_holder)
   _insert_permission_rows(sci_model, allow_rights_holder, top_level)
@@ -373,7 +374,7 @@ def _has_access_policy_pyxb(sysmeta_pyxb):
 
 def _delete_existing_access_policy(sysmeta_pyxb):
   d1_gmn.app.models.Permission.objects.filter(
-    sciobj__pid__did=d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+    sciobj__pid__did=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
   ).delete()
 
 
@@ -390,7 +391,7 @@ def _insert_permission_rows(sci_model, allow_rule, top_level):
   for s in allow_rule.subject:
     permission_model = d1_gmn.app.models.Permission(
       sciobj=sci_model,
-      subject=d1_gmn.app.models.subject(d1_common.xml.uvalue(s)),
+      subject=d1_gmn.app.models.subject(d1_common.xml.get_req_val(s)),
       level=top_level
     )
     permission_model.save()
@@ -446,7 +447,7 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
       #   urn=rep_node_urn.value()
       # )[0]
       node_urn_model = d1_gmn.app.models.node(
-        d1_common.xml.uvalue(rep_node_urn)
+        d1_common.xml.get_req_val(rep_node_urn)
       )
       rep_node_obj = rep_node_model()
       rep_node_obj.node = node_urn_model
@@ -528,7 +529,7 @@ def replica_pyxb_to_model(sciobj_model, sysmeta_pyxb):
 def _register_remote_replica(sciobj_model, replica_pyxb):
   replica_info_model = d1_gmn.app.models.replica_info(
     status_str=replica_pyxb.replicationStatus,
-    source_node_urn=d1_common.xml.uvalue(replica_pyxb.replicaMemberNode),
+    source_node_urn=d1_common.xml.get_req_val(replica_pyxb.replicaMemberNode),
     timestamp=replica_pyxb.replicaVerified,
   )
   d1_gmn.app.models.remote_replica(

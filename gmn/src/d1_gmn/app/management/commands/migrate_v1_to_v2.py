@@ -34,6 +34,7 @@ import shutil
 import zlib
 
 import d1_gmn.app.auth
+import d1_gmn.app.delete
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
@@ -45,6 +46,7 @@ import d1_gmn.app.views.asserts
 import d1_gmn.app.views.diagnostics
 import d1_gmn.app.views.util
 
+import d1_common.revision
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
@@ -123,7 +125,7 @@ class Command(django.core.management.base.BaseCommand):
       )
     self._db.connect(self._opt['dsn'])
 
-    d1_gmn.app.views.diagnostics.delete_all_objects()
+    d1_gmn.app.delete.delete_all()
     self._validate()
     self._migrate_filesystem()
     self._migrate_sciobj()
@@ -132,7 +134,7 @@ class Command(django.core.management.base.BaseCommand):
     self._update_node_doc()
 
   def _v2_db_is_empty(self):
-    return not d1_gmn.app.models.IdNamespace.objects.exists()
+    return util.is_db_empty()
 
   def _validate(self):
     self._assert_path_is_dir(self._opt['d1root'])
@@ -173,7 +175,7 @@ class Command(django.core.management.base.BaseCommand):
     for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    topo_revision_list = util.topological_sort(
+    topo_revision_list = d1_common.revision.topological_sort(
       obsoletes_pid_list, self._events, UNCONNECTED_CHAINS_PATH
     )
     self._create_sciobj(topo_revision_list)
@@ -197,7 +199,7 @@ class Command(django.core.management.base.BaseCommand):
       except django.core.management.base.CommandError as e:
         self._events.log_and_count(str(e))
         continue
-      revision_list.append(util.get_identifiers(sysmeta_pyxb))
+      revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
     return revision_list
 
   def _create_sciobj(self, topo_revision_list):

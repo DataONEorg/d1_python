@@ -233,8 +233,9 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1120(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): idFilter with SID returns records for all objects
-    in chain.
+    """MNRead.getLogRecords(): v1: SID is not resolved, so idFilter with SID
+    returns empty list. v2: SID is resolved, so idFilter returns records for all
+    objects in chain.
     """
     sid = self.get_sid_with_min_chain_length()
     with d1_gmn.tests.gmn_mock.disable_auth():

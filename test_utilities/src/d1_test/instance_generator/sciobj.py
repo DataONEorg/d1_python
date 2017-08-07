@@ -29,7 +29,7 @@ def generate_reproducible(client, pid=None, option_dict=None):
       )
     )
     return (
-      pid, d1_common.xml.get_value(sysmeta_pyxb, 'seriesId'), sciobj_str,
+      pid, d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId'), sciobj_str,
       sysmeta_pyxb
     )
 

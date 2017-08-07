@@ -133,7 +133,7 @@ def add_sid_or_string_begins_with_filter(
 ):
   did = request.GET.get(param_name, None)
   if did is None:
-    return
+    return query
   if d1_gmn.app.revision.is_sid(did):
     return d1_gmn.app.db_filter.add_sid_filter(
       query, request, column_name, param_name

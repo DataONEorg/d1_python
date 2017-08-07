@@ -208,7 +208,7 @@ class ReplicationQueueProcessor(object):
     node_list = self._get_node_list()
     discovered_nodes = []
     for node in node_list.node:
-      discovered_node_id = d1_common.xml.uvalue(node.identifier)
+      discovered_node_id = d1_common.xml.get_req_val(node.identifier)
       discovered_nodes.append(discovered_node_id)
       if discovered_node_id == source_node:
         return node.baseURL
@@ -230,7 +230,7 @@ class ReplicationQueueProcessor(object):
     revision chains and SIDs. So this create sequence differs significantly
     from the regular one that is accessed through MNStorage.create().
     """
-    pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+    pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     self._assert_is_pid_of_local_unprocessed_replica(pid)
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
@@ -244,7 +244,7 @@ class ReplicationQueueProcessor(object):
   def _check_and_create_replica_revision(self, sysmeta_pyxb, attr_str):
     revision_attr = getattr(sysmeta_pyxb, attr_str)
     if revision_attr is not None:
-      pid = d1_common.xml.uvalue(revision_attr)
+      pid = d1_common.xml.get_req_val(revision_attr)
       self._assert_pid_is_unknown_or_replica(pid)
       self._create_replica_revision_reference(pid)
 

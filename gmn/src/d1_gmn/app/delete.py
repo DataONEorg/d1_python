@@ -37,21 +37,17 @@ import django.conf
 def delete_sciobj(pid):
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   url_split = urlparse.urlparse(sciobj.url)
-  _delete_from_filesystem(url_split, pid)
-  _delete_sciobj_from_database(pid)
+  delete_sciobj_from_filesystem(url_split, pid)
+  delete_sciobj_from_database(pid)
   return pid
 
 
-def _delete_from_filesystem(url_split, pid):
-  if url_split.scheme == 'file':
-    sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
-    try:
-      os.unlink(sciobj_path)
-    except EnvironmentError:
-      pass
+def delete_all():
+  delete_all_sciobj_from_filesystem()
+  delete_all_from_db()
 
 
-def clear_db():
+def delete_all_from_db():
   """Clear the database. Used for testing and debugging.
   """
   # The models.CASCADE property is set on all ForeignKey fields, so tables can
@@ -69,7 +65,7 @@ def clear_db():
   # not cause any issues and will be reused if they are needed again.
 
 
-def delete_all_sciobj_files():
+def delete_all_sciobj_from_filesystem():
   if os.path.exists(django.conf.settings.OBJECT_STORE_PATH):
     shutil.rmtree(django.conf.settings.OBJECT_STORE_PATH)
   d1_gmn.app.util.create_missing_directories(
@@ -77,7 +73,16 @@ def delete_all_sciobj_files():
   )
 
 
-def _delete_sciobj_from_database(pid):
+def delete_sciobj_from_filesystem(url_split, pid):
+  if url_split.scheme == 'file':
+    sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+    try:
+      os.unlink(sciobj_path)
+    except EnvironmentError:
+      pass
+
+
+def delete_sciobj_from_database(pid):
   sciobj_model = d1_gmn.app.util.get_sci_model(pid)
   if d1_gmn.app.revision.is_in_revision_chain(sciobj_model):
     d1_gmn.app.revision.cut_from_chain(sciobj_model)

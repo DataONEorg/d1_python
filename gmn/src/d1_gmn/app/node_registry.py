@@ -96,7 +96,7 @@ def get_cn_subjects_from_dataone_root():
       for service in services:
         if service.name == 'CNCore':
           for subject in node.subject:
-            cn_subjects.add(d1_common.xml.uvalue(subject))
+            cn_subjects.add(d1_common.xml.get_req_val(subject))
           break
   return cn_subjects
 

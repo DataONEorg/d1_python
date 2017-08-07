@@ -228,7 +228,7 @@ def django_db_setup(django_db_blocker):
       drop_database(test_db_name)
       create_blank_db(test_db_key, test_db_name)
       django.db.connections[test_db_key].commit()
-      pytest.exit('Now run mk_db_fixture')
+      pytest.exit('Database dropped and reinitialized. Now run mk_db_fixture')
 
     try:
       load_template_fixture(template_db_key, template_db_name)

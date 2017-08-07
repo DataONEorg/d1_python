@@ -37,7 +37,7 @@ def has_sid(sysmeta_pyxb):
 
 
 def get_sid(sysmeta_pyxb):
-  return d1_common.xml.get_value(sysmeta_pyxb, 'seriesId')
+  return d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
 
 
 # DB
@@ -53,14 +53,6 @@ def create_chain(sid, pid):
   - {pid} must exist and be verified to be a PID.
     d1_gmn.app.views.asserts.is_pid()
   """
-  # sid_model = d1_gmn.app.models.did(sid) if sid else None
-  # pid_model = d1_gmn.app.models.did(pid)
-  # chain_model = d1_gmn.app.models.Chain(sid=sid_model, head_pid=pid_model)
-  # chain_model.save()
-  # pid_to_chain_model = d1_gmn.app.models.ChainMember(
-  #   chain=chain_model, pid=pid_model
-  # )
-  # pid_to_chain_model.save()
   chain_model = _get_or_create_chain_for_pid(pid)
   _map_sid_to_pid(chain_model, sid, pid)
 
@@ -241,24 +233,6 @@ def get_sid_by_pid(pid):
   sid_model = d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain.sid
   if sid_model:
     return sid_model.did
-
-
-# def get_pids_in_revision_chain(pid):
-#   """Given the PID of any object in a chain, return a list of all PIDs in the
-#   chain. The returned list is in the same order as the chain. The initial PID is
-#   typically obtained by resolving a SID. If the given PID is not in a chain, a
-#   list containing the single object is returned.
-#   """
-#   sci_model = d1_gmn.app.util.get_sci_model(pid)
-#   while sci_model.obsoletes:
-#     sci_model = d1_gmn.app.util.get_sci_model(sci_model.obsoletes.pid.did)
-#   chain_pid_list = [sci_model.pid.did]
-#   while sci_model.obsoleted_by:
-#     sci_model = d1_gmn.app.util.get_sci_model(
-#       sci_model.obsoleted_by.pid.did
-#     )
-#     chain_pid_list.append(sci_model.pid.did)
-#   return chain_pid_list
 
 
 def is_sid(did):

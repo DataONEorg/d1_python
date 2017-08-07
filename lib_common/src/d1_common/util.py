@@ -27,6 +27,7 @@ import email.message
 import email.utils
 import errno
 import functools
+import json
 import logging
 import os
 import sys
@@ -181,3 +182,15 @@ def print_logging():
   root_logger.removeHandler(stream_handler)
   for h, level in zip(root_logger.handlers, old_level_list):
     h.setLevel(level)
+
+
+def save_json(unsorted_dict, json_path):
+  with open(json_path, 'w') as f:
+    json.dump(
+      unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
+    )
+
+
+def load_json(json_path):
+  with open(json_path, 'r') as f:
+    return json.load(f)
