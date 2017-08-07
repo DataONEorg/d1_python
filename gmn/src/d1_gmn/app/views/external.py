@@ -24,14 +24,13 @@ from __future__ import absolute_import
 
 import datetime
 import logging
-import os
-import urlparse
 import uuid
 
 import requests
 
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
+import d1_gmn.app.delete
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 import d1_gmn.app.models
@@ -125,6 +124,8 @@ def get_monitor_ping(request):
 # infrastructure.
 @d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.get_log_records_access
+# Cannot use the resolve_sid decorator here since the SID/PID filter is passed
+# as a query parameter and the parameter changes names between v1 and v2.
 def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
@@ -145,20 +146,16 @@ def get_log(request):
   query = d1_gmn.app.db_filter.add_string_filter(
     query, request, 'event__event', 'event'
   )
-  # Cannot use the resolve_sid decorator here since the SID/PID filter is passed
-  # as a query parameter and the parameter changes names between v1 and v2.
   if d1_gmn.app.views.util.is_v1_api(request):
-    id_filter_str = 'pidFilter'
+    query = d1_gmn.app.db_filter.add_string_begins_with_filter(
+      query, request, 'sciobj__pid__did', 'pidFilter'
+    )
   elif d1_gmn.app.views.util.is_v2_api(request):
-    id_filter_str = 'idFilter'
+    query = d1_gmn.app.db_filter.add_sid_or_string_begins_with_filter(
+      query, request, 'sciobj__pid__did', 'idFilter'
+    )
   else:
     assert False, u'Unable to determine API version'
-  # did = request.GET.get('idFilter', None)
-  # if did is not None:
-  #   request.GET[id_filter_str] = d1_gmn.app.views.asserts.resolve_sid_func(did)
-  query = d1_gmn.app.db_filter.add_string_begins_with_filter(
-    query, request, 'sciobj__pid__did', id_filter_str
-  )
   query_unsliced = query
   query, start, count = d1_gmn.app.db_filter.add_slice_filter(query, request)
   return {
@@ -191,7 +188,7 @@ def _content_type_from_format(format):
   try:
     return OBJECT_FORMAT_INFO.content_type_from_format_id(format)
   except KeyError:
-    return d1_common.const.CONTENT_TYPE_OCTETSTREAM
+    return d1_common.const.CONTENT_TYPE_OCTET_STREAM
 
 
 def _add_object_properties_to_response_header(response, sciobj):
@@ -241,7 +238,7 @@ def _get_sciobj_iter(sciobj):
 
 
 def _get_sciobj_iter_local(pid):
-  file_in_path = d1_gmn.app.util.sciobj_file_path(pid)
+  file_in_path = d1_gmn.app.util.get_sciobj_file_path(pid)
   # Can't use "with".
   sciobj_file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
@@ -617,7 +614,7 @@ def put_object(request, old_pid):
   d1_gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
-  # d1_gmn.app.sysmeta_revision.update_or_create_sid_to_pid_map(sid, new_pid)
+  # d1_gmn.app.revision.update_sid_to_head_pid_map(new_pid)
   d1_gmn.app.event_log.update(
     old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
   )
@@ -659,31 +656,7 @@ def post_generate_identifier(request):
 def delete_object(request, pid):
   """MNStorage.delete(session, did) → Identifier
   """
-  sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-  url_split = urlparse.urlparse(sciobj.url)
-  _delete_from_filesystem(url_split, pid)
-  _delete_from_database(pid)
-  return pid
-
-
-def _delete_from_filesystem(url_split, pid):
-  if url_split.scheme == 'file':
-    sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
-    try:
-      os.unlink(sciobj_path)
-    except EnvironmentError:
-      pass
-
-
-def _delete_from_database(pid):
-  sciobj_model = d1_gmn.app.util.get_sci_model(pid)
-  if d1_gmn.app.revision.is_in_revision_chain(sciobj_model):
-    d1_gmn.app.revision.cut_from_chain(sciobj_model)
-  d1_gmn.app.revision.delete_chain(pid)
-  # The models.CASCADE property is set on all ForeignKey fields, so most object
-  # related info is deleted when deleting the IdNamespace "root".
-  d1_gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
-  d1_gmn.app.util.delete_unused_subjects()
+  d1_gmn.app.delete.delete_sciobj(pid)
 
 
 @d1_gmn.app.restrict_to_verb.put
