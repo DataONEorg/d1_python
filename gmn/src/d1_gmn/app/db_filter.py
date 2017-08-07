@@ -125,6 +125,25 @@ def add_string_begins_with_filter(query, request, column_name, param_name):
   return query.filter(**{filter_arg: value})
 
 
+def add_sid_or_string_begins_with_filter(
+    query,
+    request,
+    column_name,
+    param_name,
+):
+  did = request.GET.get(param_name, None)
+  if did is None:
+    return
+  if d1_gmn.app.revision.is_sid(did):
+    return d1_gmn.app.db_filter.add_sid_filter(
+      query, request, column_name, param_name
+    )
+  else:
+    return d1_gmn.app.db_filter.add_string_begins_with_filter(
+      query, request, column_name, param_name
+    )
+
+
 def add_slice_filter(query, request):
   """Create a slice of a query based on request start and count parameters.
   """
