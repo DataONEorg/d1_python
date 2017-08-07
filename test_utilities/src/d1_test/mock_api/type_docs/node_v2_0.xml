@@ -1,0 +1,53 @@
+<v2:node replicate="false" synchronize="true" type="cn" state="up" xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <identifier>string</identifier>
+  <name>string</name>
+  <description>string</description>
+  <baseURL>http://www.any.org/ventos/verrantque</baseURL>
+  <!--Optional:-->
+  <services>
+    <!--1 or more repetitions:-->
+    <service name="MNCore" version="v1" available="true"/>
+    <service name="MNRead" version="v1" available="true"/>
+    <service name="MNAuthorization" version="v1" available="true"/>
+    <service name="MNStorage" version="v1" available="true"/>
+    <service name="MNReplication" version="v1" available="true"/>
+    <service name="MNCore" version="v2" available="true"/>
+    <service name="MNRead" version="v2" available="true"/>
+    <service name="MNAuthorization" version="v2" available="true"/>
+    <service name="MNStorage" version="v2" available="true"/>
+    <service name="MNReplication" version="v2" available="true">
+      <!--Zero or more repetitions:-->
+      <restriction methodName="string">
+        <!--Zero or more repetitions:-->
+        <subject>string</subject>
+      </restriction>
+    </service>
+  </services>
+  <!--Optional:-->
+  <synchronization>
+    <schedule hour="*" mday="*" min="0/3" mon="1" sec="0" wday="?" year="*"/>
+    <!--Optional:-->
+    <lastHarvested>2009-05-16T06:42:28</lastHarvested>
+    <!--Optional:-->
+    <lastCompleteHarvest>2003-08-08T18:18:37-06:00</lastCompleteHarvest>
+  </synchronization>
+  <!--Optional:-->
+  <nodeReplicationPolicy>
+    <!--Optional:-->
+    <maxObjectSize>11</maxObjectSize>
+    <!--Optional:-->
+    <spaceAllocated>11</spaceAllocated>
+    <!--Zero or more repetitions:-->
+    <allowedNode>string</allowedNode>
+    <!--Zero or more repetitions:-->
+    <allowedObjectFormat>string</allowedObjectFormat>
+  </nodeReplicationPolicy>
+  <!--Optional:-->
+  <ping success="false" lastSuccess="2002-06-24T09:46:32-06:00"/>
+  <!--Zero or more repetitions:-->
+  <subject>string</subject>
+  <!--1 or more repetitions:-->
+  <contactSubject>string</contactSubject>
+  <!--Zero or more repetitions:-->
+  <property key="string" type="string">string</property>
+</v2:node>
