@@ -9,90 +9,35 @@
     <rightsHolder>subj_d</rightsHolder>
     <accessPolicy>
       <allow>
--       <subject>subj1</subject>
-?                    ^
-
-+       <subject>subj_ag</subject>
-?                    ^^^
-
--       <permission>read</permission>
--     </allow>
--     <allow>
--       <subject>subj4</subject>
-?                    ^
-
-+       <subject>subj_az</subject>
-?                    ^^^
-
+        <subject>subj1</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
++       <subject>subj2</subject>
++       <subject>subj3</subject>
+        <subject>subj4</subject>
 -       <subject>subj3</subject>
-?                    ^
-
-+       <subject>subj_bh</subject>
-?                    ^^^
-
 -       <subject>subj2</subject>
-?                    ^
-
-+       <subject>subj_ce</subject>
-?                    ^^^
-
 -       <permission>read</permission>
-+       <subject>subj_dg</subject>
-+       <subject>subj_fa</subject>
-+       <subject>subj_nk</subject>
-+       <subject>subj_ns</subject>
-+       <subject>subj_rr</subject>
-+       <subject>subj_vw</subject>
         <permission>write</permission>
       </allow>
       <allow>
--       <subject>subj5</subject>
-?                    ^
-
-+       <subject>subj_hs</subject>
-?                    ^^^
-
--       <subject>subj7</subject>
-?                    ^
-
-+       <subject>subj_ix</subject>
-?                    ^^^
-
++       <subject>subj10</subject>
++       <subject>subj11</subject>
++       <subject>subj12</subject>
+        <subject>subj5</subject>
++       <subject>subj6</subject>
+        <subject>subj7</subject>
 -       <subject>subj6</subject>
-?                    ^
-
-+       <subject>subj_nu</subject>
-?                    ^^^
-
--       <subject>subj8</subject>
-?                    ^
-
-+       <subject>subj_oq</subject>
-?                    ^^^
-
+        <subject>subj8</subject>
 -       <permission>read</permission>
 -       <permission>changePermission</permission>
 -     </allow>
 -     <allow>
 -       <subject>subj11</subject>
--       <subject>subj9</subject>
-?                    ^
-
-+       <subject>subj_pk</subject>
-?                    ^^^
-
+        <subject>subj9</subject>
 -       <subject>subj10</subject>
-?                    ^^
-
-+       <subject>subj_sn</subject>
-?                    ^^^
-
 -       <subject>subj12</subject>
-?                    ^^
-
-+       <subject>subj_st</subject>
-?                    ^^^
-
         <permission>changePermission</permission>
       </allow>
     </accessPolicy>

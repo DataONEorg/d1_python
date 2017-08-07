@@ -9,46 +9,33 @@
     <rightsHolder>subj_ot</rightsHolder>
     <accessPolicy>
       <allow>
--       <subject>subj1</subject>
-?                    ^
-
-+       <subject>subj_du</subject>
-?                    ^^^
-
-+       <subject>subj_fj_group</subject>
-+       <subject>subj_lj</subject>
-+       <subject>subj_nb</subject>
-+       <subject>subj_tq</subject>
+        <subject>subj1</subject>
         <permission>read</permission>
       </allow>
       <allow>
--       <subject>subj4</subject>
-?                    ^
-
-+       <subject>subj_kf</subject>
-?                    ^^^
-
++       <subject>subj2</subject>
++       <subject>subj3</subject>
+        <subject>subj4</subject>
 -       <subject>subj3</subject>
 -       <subject>subj2</subject>
 -       <permission>read</permission>
         <permission>write</permission>
       </allow>
       <allow>
--       <subject>subj5</subject>
-?                    ^
-
-+       <subject>subj_xf</subject>
-?                    ^^^
-
--       <subject>subj7</subject>
++       <subject>subj10</subject>
++       <subject>subj11</subject>
++       <subject>subj12</subject>
+        <subject>subj5</subject>
++       <subject>subj6</subject>
+        <subject>subj7</subject>
 -       <subject>subj6</subject>
--       <subject>subj8</subject>
+        <subject>subj8</subject>
 -       <permission>read</permission>
 -       <permission>changePermission</permission>
 -     </allow>
 -     <allow>
 -       <subject>subj11</subject>
--       <subject>subj9</subject>
+        <subject>subj9</subject>
 -       <subject>subj10</subject>
 -       <subject>subj12</subject>
         <permission>changePermission</permission>

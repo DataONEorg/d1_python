@@ -9,72 +9,33 @@
     <rightsHolder>subj_i</rightsHolder>
     <accessPolicy>
       <allow>
--       <subject>subj1</subject>
-?                    ^
-
-+       <subject>subj_fk</subject>
-?                    ^^^
-
--       <permission>read</permission>
--     </allow>
--     <allow>
--       <subject>subj4</subject>
-?                    ^
-
-+       <subject>subj_fm</subject>
-?                    ^^^
-
+        <subject>subj1</subject>
+        <permission>read</permission>
+      </allow>
+      <allow>
++       <subject>subj2</subject>
++       <subject>subj3</subject>
+        <subject>subj4</subject>
 -       <subject>subj3</subject>
-?                    ^
-
-+       <subject>subj_hw</subject>
-?                    ^^^
-
 -       <subject>subj2</subject>
-?                    ^
-
-+       <subject>subj_jl</subject>
-?                    ^^^
-
 -       <permission>read</permission>
-+       <subject>subj_ni</subject>
-+       <subject>subj_ov</subject>
-+       <subject>subj_rn</subject>
-+       <subject>subj_rw</subject>
-+       <subject>subj_xp_group</subject>
         <permission>write</permission>
       </allow>
       <allow>
--       <subject>subj5</subject>
-?                    ^
-
-+       <subject>subj_ac</subject>
-?                    ^^^
-
--       <subject>subj7</subject>
-?                    ^
-
-+       <subject>subj_da</subject>
-?                    ^^^
-
++       <subject>subj10</subject>
++       <subject>subj11</subject>
++       <subject>subj12</subject>
+        <subject>subj5</subject>
++       <subject>subj6</subject>
+        <subject>subj7</subject>
 -       <subject>subj6</subject>
-?                    ^
-
-+       <subject>subj_eq</subject>
-?                    ^^^
-
--       <subject>subj8</subject>
-?                    ^
-
-+       <subject>subj_gi_group</subject>
-?                    ^^^^^^^^^
-
+        <subject>subj8</subject>
 -       <permission>read</permission>
 -       <permission>changePermission</permission>
 -     </allow>
 -     <allow>
 -       <subject>subj11</subject>
--       <subject>subj9</subject>
+        <subject>subj9</subject>
 -       <subject>subj10</subject>
 -       <subject>subj12</subject>
         <permission>changePermission</permission>
@@ -161,5 +122,5 @@
 -     <property name="prop_ec">jf</property>
 -     <property name="prop_ea">wu</property>
     </mediaType>
--   <fileName>file_bmq</fileName>
+    <fileName>file_bmq</fileName>
   </ns1:systemMetadata>
