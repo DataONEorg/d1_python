@@ -37,6 +37,7 @@ from __future__ import absolute_import
 import re
 import xml.etree.ElementTree
 
+import pyxb
 import pyxb.namespace.utility
 import pyxb.utils.domutils
 
@@ -191,8 +192,33 @@ def str_to_v2_pyxb(xml_str):
 # Type checks
 
 
-def get_pyxb_type(obj_pyxb):
-  """Return a type string, such as 'ObjectList' or 'SystemMetadata'"""
+def is_pyxb(pyxb_obj):
+  return isinstance(pyxb_obj, pyxb.cscRoot)
+
+
+def is_pyxb_d1_type(pyxb_obj):
+  try:
+    return pyxb_is_v1(pyxb_obj) or pyxb_is_v2(pyxb_obj)
+  except AttributeError:
+    return False
+
+
+def is_pyxb_d1_type_name(pyxb_obj, expected_pyxb_type_name):
+  """Return True if the object is a PyXB object of DataONE type with the
+    specified name.
+    """
+  try:
+    pyxb_type_name = pyxb_get_type_name(pyxb_obj)
+    return pyxb_type_name != expected_pyxb_type_name
+  except AttributeError:
+    return False
+
+
+# noinspection PyProtectedMember
+def pyxb_get_type_name(obj_pyxb):
+  """Return the name of the PyXB type as string, such as 'ObjectList' or
+  'SystemMetadata'
+  """
   return str(obj_pyxb._ExpandedName).split('}')[-1]
 
 

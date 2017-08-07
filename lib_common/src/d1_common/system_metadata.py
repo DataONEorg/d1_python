@@ -90,6 +90,7 @@ import logging
 
 import d1_common.access_policy
 import d1_common.date_time
+import d1_common.type_conversions
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
@@ -100,6 +101,13 @@ SYSMETA_ROOT_CHILD_LIST = [
   'originMemberNode', 'authoritativeMemberNode', 'replica', 'seriesId',
   'mediaType', 'fileName'
 ]
+
+
+def is_sysmeta_pyxb(sysmeta_pyxb):
+  return (
+    d1_common.type_conversions.is_pyxb_d1_type(sysmeta_pyxb) and
+    d1_common.type_conversions.pyxb_get_type_name(sysmeta_pyxb) == 'SystemMetadata'
+  )
 
 
 def normalize(sysmeta_pyxb, reset_timestamps=False):

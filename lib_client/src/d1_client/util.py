@@ -50,3 +50,19 @@ def get_client_type(d1_client_obj):
     return 'cn'
   else:
     assert False, 'Unable to determine d1_client type'
+
+
+def get_api_major_by_base_url(base_url):
+  """Read the Node document from a node and return an int containing the latest
+  D1 API version supported by the node
+
+  The Node document can always be reached through the v1 API and will list
+  services for v1 and any later APIs versions supported by the node.
+  """
+  api_major = 0
+  client = d1_client.mnclient.MemberNodeClient(base_url)
+  node_pyxb = client.getCapabilities()
+  for service_pyxb in node_pyxb.services.service:
+    if service_pyxb.available:
+      api_major = max(api_major, int(service_pyxb.version[-1]))
+  return api_major

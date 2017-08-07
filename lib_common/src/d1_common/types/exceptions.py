@@ -65,9 +65,21 @@ import pyxb
 import pyxb.binding.datatypes as XS
 import pyxb.utils.domutils
 
+import d1_common.type_conversions
 import d1_common.util
 import d1_common.xml
 from d1_common.types import dataoneErrors
+
+
+def xml_is_dataone_exception(xml_str):
+  try:
+    return pyxb_is_dataone_exception(deserialize(xml_str))
+  except ServiceFailure:
+    return False
+
+
+def pyxb_is_dataone_exception(obj_pyxb):
+  return isinstance(obj_pyxb, DataONEException)
 
 
 def deserialize(dataone_exception_xml):
