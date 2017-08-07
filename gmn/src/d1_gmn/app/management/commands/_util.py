@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 import fcntl
+import json
 import logging
 import os
 import sys
@@ -31,6 +32,8 @@ import tempfile
 import psycopg2
 
 import d1_gmn.app.models
+
+import d1_common.xml
 
 import django.conf
 import django.core.management.base
@@ -122,3 +125,63 @@ class Db(object):
       return self.cur.fetchall()
     except psycopg2.DatabaseError:
       return None
+
+
+def log_progress(event_counter, msg, i, n, pid):
+  logging.info(
+    '{} - {}/{} ({:.2f}%) - {}'.
+    format(msg, i + 1, n, (i + 1) / float(n) * 100, pid)
+  )
+  event_counter.count(msg)
+
+
+def get_identifiers(sysmeta_pyxb):
+  pid = d1_common.xml.get_value(sysmeta_pyxb, 'identifier')
+  sid = d1_common.xml.get_value(sysmeta_pyxb, 'seriesId')
+  obsoletes_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletes')
+  obsoleted_by_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletedBy')
+  return pid, sid, obsoletes_pid, obsoleted_by_pid
+
+
+def topological_sort(unsorted_list, event_counter, unconnected_chains_path):
+  """Perform a topological sort by repeatedly iterating over an unsorted list
+  of PIDs and moving PIDs to the sorted list as they become available. A PID
+  is available to be moved to the sorted list if it does not obsolete a PID or
+  if the PID it obsoletes is already in the sorted list.
+  """
+  sorted_list = []
+  sorted_set = set()
+  unsorted_dict = dict(unsorted_list)
+  while unsorted_dict:
+    is_connected = False
+    for pid, obsoletes_pid in unsorted_dict.items():
+      if obsoletes_pid is None or obsoletes_pid in sorted_set:
+        event_counter.log_and_count('Sorting revision chains')
+        is_connected = True
+        sorted_list.append(pid)
+        sorted_set.add(pid)
+        del unsorted_dict[pid]
+    if not is_connected:
+      save_json(unsorted_dict, unconnected_chains_path)
+      event_counter.log_and_count(
+        'Skipped one or more unconnected revision chains. '
+        'See {}'.format(unconnected_chains_path)
+      )
+      break
+  return sorted_list
+
+
+def save_json(unsorted_dict, json_path):
+  with open(json_path, 'w') as f:
+    json.dump(
+      unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
+    )
+
+
+def load_json(json_path):
+  with open(json_path, 'r') as f:
+    return json.load(f)
+
+
+def is_db_empty():
+  return not d1_gmn.app.models.IdNamespace.objects.exists()
