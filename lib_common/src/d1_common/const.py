@@ -49,7 +49,7 @@ DEFAULT_LISTOBJECTS = 100
 RESPONSE_TIMEOUT = 30.0
 
 # HTTP User Agent that this software is known as.
-USER_AGENT = 'pyd1/%s +http://dataone.org/{}'.format(VERSION)
+USER_AGENT = 'DataONE_Python/{} +http://dataone.org/'.format(VERSION)
 
 # The system wide default checksum algorithm.
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
@@ -60,7 +60,7 @@ DEFAULT_NUMBER_OF_REPLICAS = 3
 # MIME types.
 CONTENT_TYPE_HTML = 'text/html'
 CONTENT_TYPE_JSON = 'application/json'
-CONTENT_TYPE_OCTETSTREAM = 'application/octet-stream'
+CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream'
 CONTENT_TYPE_TEXT = 'text/plain'
 CONTENT_TYPE_XHTML = 'text/html'
 CONTENT_TYPE_XML = 'application/xml'
@@ -96,3 +96,5 @@ ORE_NAMESPACE_DICT = {
 }
 
 ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)
+
+DEFAULT_CHUNK_SIZE = 1024
