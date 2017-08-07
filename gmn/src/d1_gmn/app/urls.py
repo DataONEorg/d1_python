@@ -218,11 +218,6 @@ if django.conf.settings.DEBUG_GMN:
       name='exception'
     ),
     url(
-      r'^diag/delete_all_objects$',
-      d1_gmn.app.views.diagnostics.delete_all_objects_view,
-      name='delete_all_objects_view',
-    ),
-    url(
       r'^diag/trusted_subjects$',
       d1_gmn.app.views.diagnostics.trusted_subjects,
       name='trusted_subjects',

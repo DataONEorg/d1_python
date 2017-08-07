@@ -28,10 +28,7 @@ from __future__ import absolute_import
 import cgi
 import csv
 import json
-import os
 import pprint
-import shutil
-import urlparse
 
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
@@ -57,25 +54,6 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
-from django.shortcuts import reverse
-
-# ------------------------------------------------------------------------------
-# Diagnostics portal.
-# ------------------------------------------------------------------------------
-
-
-@d1_gmn.app.restrict_to_verb.get
-def diagnostics(request):
-  if 'clear_db' in request.GET:
-    delete_all_objects()
-    _clear_db()
-    return redirect(reverse('diag') + '?done')
-  return render_to_response(
-    'diag.html',
-    context={'done': 1},
-    content_type=d1_common.const.CONTENT_TYPE_XHTML,
-  )
-
 
 # ------------------------------------------------------------------------------
 # Replication.
@@ -213,67 +191,6 @@ def get_setting(request, setting_str):
 #@mn.restrict_to_verb.post
 def echo_raw_post_data(request):
   return HttpResponse(request.raw_post_data)
-
-
-#
-# Delete
-#
-
-
-# noinspection PyUnusedLocal
-@d1_gmn.app.restrict_to_verb.get
-def delete_all_objects_view(request):
-  delete_all_objects()
-  return d1_gmn.app.views.util.http_response_with_boolean_true_type()
-
-
-def delete_all_objects():
-  _clear_db()
-  _delete_all_sciobj_files()
-
-
-def _clear_db():
-  """Clear the database. Used for testing and debugging.
-  """
-  # The models.CASCADE property is set on all ForeignKey fields, so tables can
-  # be deleted in any order without breaking constraints.
-  for model in django.apps.apps.get_models():
-    model.objects.all().delete()
-  # mn.models.IdNamespace.objects.filter(did=pid).delete()
-  # The SysMeta object is left orphaned in the filesystem to be cleaned by an
-  # asynchronous process later. If the same object that was just deleted is
-  # recreated, the old SysMeta object will be overwritten instead of being
-  # cleaned up by the async process.
-  #
-  # This causes associated permissions to be deleted, but any subjects
-  # that are no longer needed are not deleted. The orphaned subjects should
-  # not cause any issues and will be reused if they are needed again.
-
-
-def _delete_all_sciobj_files():
-  if os.path.exists(django.conf.settings.OBJECT_STORE_PATH):
-    shutil.rmtree(django.conf.settings.OBJECT_STORE_PATH)
-  d1_gmn.app.util.create_missing_directories(
-    django.conf.settings.OBJECT_STORE_PATH
-  )
-
-
-def _delete_subjects_and_permissions():
-  d1_gmn.app.models.Permission.objects.all().delete()
-  d1_gmn.app.models.Subject.objects.all().delete()
-
-
-def _delete_object_from_filesystem(sci_obj):
-  # If the object is proxied, there's nothing to delete in the filesystem.
-  pid = sci_obj.pid.did
-  url_split = urlparse.urlparse(sci_obj.url)
-  if url_split.scheme == 'file':
-    sci_obj_path = d1_gmn.app.util.sciobj_file_path(pid)
-    try:
-      os.unlink(sci_obj_path)
-    except EnvironmentError:
-      # TODO: Log this
-      pass
 
 
 # ------------------------------------------------------------------------------
