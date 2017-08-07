@@ -350,9 +350,16 @@ def get_object_list(request):
   query = d1_gmn.app.db_filter.add_string_filter(
     query, request, 'format__format', 'formatId'
   )
-  query = d1_gmn.app.db_filter.add_string_filter(
-    query, request, 'pid__did', 'identifier'
-  )
+  did = request.GET.get('identifier', None)
+  if did is not None:
+    if d1_gmn.app.revision.is_sid(did):
+      query = d1_gmn.app.db_filter.add_sid_filter(
+        query, request, 'pid__did', 'identifier'
+      )
+    else:
+      query = d1_gmn.app.db_filter.add_string_filter(
+        query, request, 'pid__did', 'identifier'
+      )
   query = d1_gmn.app.db_filter.add_replica_filter(query, request)
   query_unsliced = query
   query, start, count = d1_gmn.app.db_filter.add_slice_filter(query, request)

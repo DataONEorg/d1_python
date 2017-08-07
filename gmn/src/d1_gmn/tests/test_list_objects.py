@@ -149,9 +149,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       sid = random.choice(self.get_sid_list())
-      object_list_pyxb = cn_mn_client_v1_v2.listObjects(
-        identifier=sid, count=10
-      )
+      object_list_pyxb = cn_mn_client_v1_v2.listObjects(identifier=sid)
       self.sample.assert_equals(
         object_list_pyxb, 'sid_filter', cn_mn_client_v1_v2
       )

@@ -40,6 +40,7 @@ from __future__ import absolute_import
 import re
 
 import d1_gmn.app.models
+import d1_gmn.app.revision
 import d1_gmn.app.views.asserts
 import d1_gmn.app.views.util
 
@@ -106,6 +107,14 @@ def add_string_filter(query, request, column_name, param_name):
   if value is None:
     return query
   return query.filter(**{column_name: value})
+
+
+def add_sid_filter(query, request, column_name, param_name):
+  sid = request.GET.get(param_name, None)
+  filter_arg = '{}__in'.format(column_name)
+  return query.filter(
+    **{filter_arg: d1_gmn.app.revision.get_all_pid_by_sid(sid)}
+  )
 
 
 def add_string_begins_with_filter(query, request, column_name, param_name):

@@ -138,10 +138,17 @@ class EventCounter(object):
     self._event_dict.setdefault(event_str, 0)
     self._event_dict[event_str] += inc_int
 
-  def log(self):
-    logging.info('Counted events:')
-    for event_str, count_int in sorted(self._event_dict.items()):
-      logging.info('  {}: {}'.format(event_str, count_int))
+  def log_and_count(self, event_str, inc_int=1):
+    logging.info(event_str)
+    self.count(event_str, inc_int)
+
+  def dump_to_log(self):
+    if self._event_dict:
+      logging.info('Events:')
+      for event_str, count_int in sorted(self._event_dict.items()):
+        logging.info('  {}: {}'.format(event_str, count_int))
+    else:
+      logging.info('No Events')
 
 
 #===============================================================================
