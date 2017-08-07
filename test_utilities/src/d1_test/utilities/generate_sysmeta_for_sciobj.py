@@ -93,12 +93,12 @@ def processDoc(fname, options={}):
 if __name__ == '__main__':
   parser = optparse.OptionParser()
   parser.add_option(
-    '-f', '--fname', action='store', type='string', default=None,
+    '-f', '--fname', action='store', type='string',
     help='File name of target object'
   )
   parser.add_option(
     '-i', '--id', dest='identifier', action='store', type='string',
-    default=None, help='Identifier of target object'
+    help='Identifier of target object'
   )
   parser.add_option(
     '-t', '--format', action='store', type='string',
@@ -111,7 +111,6 @@ if __name__ == '__main__':
   )
   parser.add_option(
     '-r', '--rights', dest='rightsHolder', action='store', type='string',
-    default=None,
     help='Subject of the object rights holder, defaults to submitter.'
   )
   parser.add_option(

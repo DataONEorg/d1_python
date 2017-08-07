@@ -167,8 +167,7 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
           )
         log_list = log_stream.getvalue().splitlines()
         self.sample.assert_equals(
-          '\n'.join(log_list[log_list.index('Counted events:'):]),
-          'migrate_v1_to_v2',
+          '\n'.join(log_list[log_list.index('Events:'):]), 'migrate_v1_to_v2'
         )
 
     finally:

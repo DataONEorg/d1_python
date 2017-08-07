@@ -56,7 +56,7 @@ def main():
     action='store',
     type='string',
     default=MN_BASE_URL,
-    help='the base URL for the Member Node to populate',
+    help='The base URL for the Member Node to populate',
   )
   parser.add_option(
     '--cert-pub',
@@ -64,7 +64,7 @@ def main():
     action='store',
     type='string',
     default=CERT_PUB_PEM_PATH,
-    help='path to PEM formatted public key of certificate',
+    help='Path to PEM formatted public key of certificate',
   )
   parser.add_option(
     '--cert-key',
@@ -72,7 +72,7 @@ def main():
     action='store',
     type='string',
     default=CERT_KEY_PEM_PATH,
-    help='path to PEM formatted private key of certificate',
+    help='Path to PEM formatted private key of certificate',
   )
   parser.add_option(
     '--timeout',
@@ -80,43 +80,43 @@ def main():
     action='store',
     type='float',
     default=TIMEOUT_SEC,
-    help='amount of time to wait for calls to complete (seconds)',
+    help='Amount of time to wait for calls to complete (seconds)',
   )
   parser.add_option(
     '--num-objects',
     action='store',
     type='int',
     default=NUM_OBJECTS,
-    help='number of objects to create',
+    help='Number of objects to create',
   )
   parser.add_option(
     '--num-min-bytes',
     action='store',
     type='int',
     default=NUM_MIN_BYTES,
-    help='minimum number of bytes in each object',
+    help='Minimum number of bytes in each object',
   )
   parser.add_option(
     '--num-max-bytes',
     action='store',
     type='int',
     default=NUM_MAX_BYTES,
-    help='maximum number of bytes in each object',
+    help='Maximum number of bytes in each object',
   )
   parser.add_option(
     '--disable-tls-validate',
     action='store_true',
-    help='disable validation of server side certificate',
+    help='Disable validation of server side certificate',
   )
   parser.add_option(
     '--use-v1',
     action='store_true',
-    help='use the v1 API (v2 is default)',
+    help='Use the v1 API (v2 is default)',
   )
   parser.add_option(
     '--debug',
     action='store_true',
-    help='debug level logging',
+    help='Debug level logging',
   )
 
   (options, args) = parser.parse_args()

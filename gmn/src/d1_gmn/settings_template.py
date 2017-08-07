@@ -467,7 +467,7 @@ STATIC_URL = '/static/'
 if DEBUG or DEBUG_GMN:
   LOG_LEVEL = 'DEBUG'
 else:
-  LOG_LEVEL = 'WARNING'
+  LOG_LEVEL = 'INFO'
 
 LOGGING = {
   'version': 1,

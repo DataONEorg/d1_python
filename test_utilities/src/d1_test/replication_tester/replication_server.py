@@ -267,7 +267,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def _generate_response_OctetStream(self, pid):
     self._logger.debug('Responding with: science object bytes')
     self.send_response(200)
-    self.send_header('Content-type', d1_common.const.CONTENT_TYPE_OCTETSTREAM)
+    self.send_header('Content-type', d1_common.const.CONTENT_TYPE_OCTET_STREAM)
     self.end_headers()
     object_bytes = test_object_generator.generate_science_object_with_sysmeta(
       pid

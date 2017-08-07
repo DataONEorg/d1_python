@@ -82,7 +82,9 @@ def create_cert(options, args):
 def main():
   parser = optparse.OptionParser()
   parser.add_option(
-    '--subject-info-path', action='store', type='string', default=None
+    '--subject-info-path',
+    action='store',
+    type='string',
   )
   parser.add_option(
     '--subject-alt-name', action='store', type='string',

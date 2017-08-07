@@ -98,7 +98,7 @@ def _create_headers(sciobj_str, sysmeta_pyxb):
     'Content-Length':
       str(sysmeta_pyxb.size),
     'Content-Type':
-      d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+      d1_common.const.CONTENT_TYPE_OCTET_STREAM,
     'Last-Modified':
       str(d1_common.date_time.utc_now()),
     'DataONE-FormatId':

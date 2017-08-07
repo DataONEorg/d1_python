@@ -60,7 +60,7 @@ class Command(django.core.management.base.BaseCommand):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug', action='store_true', help='debug level logging'
+      '--debug', action='store_true', help='Debug level logging'
     )
 
   def handle(self, *args, **opt):
@@ -252,7 +252,7 @@ class ReplicationQueueProcessor(object):
     d1_gmn.app.models.replica_revision_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_stream):
-    sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
+    sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
     d1_gmn.app.util.create_missing_directories(sciobj_path)
     with open(sciobj_path, 'wb') as f:
       for chunk in sciobj_stream.iter_content(

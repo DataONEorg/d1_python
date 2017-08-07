@@ -97,6 +97,12 @@ DATABASES = {
     'HOST': '',
     'PORT': '',
     # Transactions
+    #
+    # ATOMIC_REQUESTS is always True when running in production as implicit
+    # transactions form the basis of concurrency control in GMN. However,
+    # during debugging, uncommitted changes are hidden inside the transaction,
+    # making it impossible (?) to see the changes made so far by the code bein
+    # debugged.
     'ATOMIC_REQUESTS': False,
     'AUTOCOMMIT': False,
   },
@@ -107,7 +113,6 @@ DATABASES = {
     'PASSWORD': '',
     'HOST': '',
     'PORT': '',
-    # Transactions
     'ATOMIC_REQUESTS': False,
     'AUTOCOMMIT': False,
   },

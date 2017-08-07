@@ -62,11 +62,11 @@ class Command(django.core.management.base.BaseCommand):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug', action='store_true', help='debug level logging'
+      '--debug', action='store_true', help='Debug level logging'
     )
-    parser.add_argument('command', choices=['view', 'whitelist'], help='action')
+    parser.add_argument('command', choices=['view', 'whitelist'], help='Action')
     parser.add_argument(
-      'cert_pem_path', help='path to DataONE X.509 PEM certificate file'
+      'cert_pem_path', help='Path to DataONE X.509 PEM certificate file'
     )
 
   def handle(self, *args, **opt):

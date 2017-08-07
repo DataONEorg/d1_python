@@ -135,7 +135,7 @@ def main():
       if args.debug:
         raise
 
-  event_counter.log()
+  event_counter.dump_to_log()
 
 
 def clean_module(module_path, show_diff, write_update):

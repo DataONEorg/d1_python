@@ -57,10 +57,10 @@ def main():
     formatter_class=argparse.RawDescriptionHelpFormatter,
   )
   parser.add_argument(
-    'command', nargs='+', help='setup command (e.g., build sdist bdist_wheel)'
+    'command', nargs='+', help='Setup command (e.g., build sdist bdist_wheel)'
   )
   parser.add_argument(
-    '--root', help='repository root. for bootstrap install in Travis CI'
+    '--root', help='Repository root. for bootstrap install in Travis CI'
   )
   args = parser.parse_args()
 

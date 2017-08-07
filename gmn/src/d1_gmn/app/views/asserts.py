@@ -79,8 +79,8 @@ def is_valid_for_update(pid):
 
 
 def is_valid_sid_for_chain(pid, sid):
-  """Assert that any SID in {sysmeta_pyxb} can be assigned to the single object
-  {pid} or to the chain to which {pid} belongs.
+  """Assert that {sid} can be assigned to the single object {pid} or to the
+  chain to which {pid} belongs.
 
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.

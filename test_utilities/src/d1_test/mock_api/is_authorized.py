@@ -69,7 +69,7 @@ def _request_callback(request):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
   # Return regular response
   header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
   }
   return 200, header_dict, 'OK'
 

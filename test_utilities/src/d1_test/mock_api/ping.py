@@ -63,6 +63,6 @@ def _request_callback(request):
   # Return regular response
   body_str = 'OK'
   header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
   }
   return 200, header_dict, body_str

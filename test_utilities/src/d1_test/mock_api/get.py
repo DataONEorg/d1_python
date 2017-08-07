@@ -95,7 +95,7 @@ def _request_callback(request):
   pid, sid, sciobj_str, sysmeta_pyxb = \
     d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
   header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTETSTREAM,
+    'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
   }
   return 200, header_dict, sciobj_str
 

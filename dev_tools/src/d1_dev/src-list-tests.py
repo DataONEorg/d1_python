@@ -76,7 +76,7 @@ def main():
       if args.debug:
         raise
 
-  event_counter.log()
+  event_counter.dump_to_log()
 
 
 def list_tests_module(module_path, event_counter):

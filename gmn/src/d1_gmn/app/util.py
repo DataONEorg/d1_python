@@ -32,6 +32,8 @@ import urlparse
 
 import d1_gmn.app
 
+import d1_common.url
+
 import django.conf
 
 
@@ -54,7 +56,7 @@ def create_missing_directories(file_path):
     pass
 
 
-def sciobj_file_path(pid):
+def get_sciobj_file_path(pid):
   """Determine the local path to the file holding an object's bytes.
 
   Because it may be inefficient to store millions of files in a single folder
@@ -70,6 +72,10 @@ def sciobj_file_path(pid):
     hash_str[2:4],
     hash_str,
   )
+
+
+def get_sciobj_file_url(pid):
+  return u'file:///{}'.format(d1_common.url.encodePathElement(pid))
 
 
 class fixed_chunk_size_iterator(object):

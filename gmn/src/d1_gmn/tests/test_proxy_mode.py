@@ -85,7 +85,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Check
 
       # Object was not stored locally
-      sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
+      sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
       assert not os.path.isfile(sciobj_path)
       # self.assertEquals(os.path.getsize(sciobj_path), 0)
       # received_sciobj_str, received_sysmeta_pyxb = self.get_obj(client, pid)
