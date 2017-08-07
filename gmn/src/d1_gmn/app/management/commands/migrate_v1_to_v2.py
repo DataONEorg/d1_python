@@ -28,7 +28,6 @@ The existing GMN v1 instance is not modified in any way.
 from __future__ import absolute_import
 
 import argparse
-import json
 import logging
 import os
 import shutil
@@ -84,23 +83,23 @@ class Command(django.core.management.base.BaseCommand):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument(
-      '--debug', action='store_true', help='debug level logging'
+      '--debug', action='store_true', help='Debug level logging'
     )
     parser.add_argument(
       '--force', action='store_true', help='Overwrite existing v2 database'
     )
     parser.add_argument(
-      '--dsn', default=DSN_STR, help='database connection string'
+      '--dsn', default=DSN_STR, help='Database connection string'
     )
     parser.add_argument(
-      '--d1root', default=ROOT_PATH, help='path to local DataONE root'
+      '--d1root', default=ROOT_PATH, help='Path to local DataONE root'
     )
     parser.add_argument(
       '--v1sysmeta', default=V1_SYSMETA_PATH,
-      help='path to GMN v1 System Metadata store root'
+      help='Path to GMN v1 System Metadata store root'
     )
     parser.add_argument(
-      '--v1obj', default=V1_OBJ_PATH, help='path to GMN v1 Object store root'
+      '--v1obj', default=V1_OBJ_PATH, help='Path to GMN v1 Object store root'
     )
 
   def handle(self, *args, **opt):
@@ -113,12 +112,12 @@ class Command(django.core.management.base.BaseCommand):
     try:
       self._handle()
     except d1_common.types.exceptions.DataONEException as e:
-      self._log(str(e))
+      self._events.log_and_count(str(e))
       raise django.core.management.base.CommandError(str(e))
-    self._events.log()
+    self._events.dump_to_log()
 
   def _handle(self):
-    if not self._opt['force'] and not self._v2_db_is_empty():
+    if not self._opt['force'] and not util.is_db_empty():
       raise django.core.management.base.CommandError(
         'There is already data in the v2 database. Use --force to overwrite.'
       )
@@ -153,14 +152,14 @@ class Command(django.core.management.base.BaseCommand):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
-        new_file_path = d1_gmn.app.util.sciobj_file_path(pid)
+        new_file_path = d1_gmn.app.util.get_sciobj_file_path(pid)
         d1_gmn.app.util.create_missing_directories(new_file_path)
         new_dir_path = os.path.dirname(new_file_path)
         if self._are_on_same_disk(old_file_path, new_dir_path):
-          self._log('Creating SciObj hard link')
+          self._events.log_and_count('Creating SciObj hard link')
           os.link(old_file_path, new_file_path)
         else:
-          self._log('Copying SciObj file')
+          self._events.log_and_count('Copying SciObj file')
           shutil.copyfile(old_file_path, new_file_path)
 
   # Science Objects
@@ -171,10 +170,12 @@ class Command(django.core.management.base.BaseCommand):
     # self._dump_json(revision_list, UNSORTED_CHAINS_PATH)
     obsoletes_pid_list = []
     obsoleted_by_pid_list = []
-    for pid, obsoletes_pid, obsoleted_by_pid in revision_list:
+    for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    topo_revision_list = self._topological_sort(obsoletes_pid_list)
+    topo_revision_list = util.topological_sort(
+      obsoletes_pid_list, self._events, UNCONNECTED_CHAINS_PATH
+    )
     self._create_sciobj(topo_revision_list)
     self._update_obsoleted_by(obsoleted_by_pid_list)
 
@@ -188,13 +189,15 @@ class Command(django.core.management.base.BaseCommand):
     )
     n = len(sciobj_row_list)
     for i, sciobj_row in enumerate(sciobj_row_list):
-      self._log_pid_info('Retrieving revision chains', i, n, sciobj_row['pid'])
+      util.log_progress(
+        self._events, 'Retrieving revision chains', i, n, sciobj_row['pid']
+      )
       try:
         sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
-        self._log(str(e))
+        self._events.log_and_count(str(e))
         continue
-      revision_list.append(self._identifiers(sysmeta_pyxb))
+      revision_list.append(util.get_identifiers(sysmeta_pyxb))
     return revision_list
 
   def _create_sciobj(self, topo_revision_list):
@@ -208,11 +211,13 @@ class Command(django.core.management.base.BaseCommand):
       try:
         sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
       except django.core.management.base.CommandError as e:
-        self._log(str(e))
+        self._events.log_and_count(str(e))
         continue
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_pyxb.obsoletedBy = None
-      self._log_pid_info('Creating SciObj DB representation', i, n, pid)
+      util.log_progress(
+        self._events, 'Creating SciObj DB representation', i, n, pid
+      )
       d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
@@ -223,64 +228,10 @@ class Command(django.core.management.base.BaseCommand):
         if d1_gmn.app.sysmeta.is_did(pid) and d1_gmn.app.sysmeta.is_did(
             obsoleted_by_pid
         ):
-          self._log_pid_info('Updating obsoletedBy', i, n, pid)
+          util.log_progress(self._events, 'Updating obsoletedBy', i, n, pid)
           d1_gmn.app.revision.set_revision(
             pid, obsoleted_by_pid=obsoleted_by_pid
           )
-
-  def _identifiers(self, sysmeta_pyxb):
-    pid = d1_common.xml.get_value(sysmeta_pyxb, 'identifier')
-    obsoletes_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = d1_common.xml.get_value(sysmeta_pyxb, 'obsoletedBy')
-    return pid, obsoletes_pid, obsoleted_by_pid
-
-  def _topological_sort(self, unsorted_list):
-    """Perform a topological sort by repeatedly iterating over an unsorted list
-    of PIDs and moving PIDs to the sorted list as they become available. A PID
-    is available to be moved to the sorted list if it does not obsolete a PID or
-    if the PID it obsoletes is already in the sorted list.
-    """
-    sorted_list = []
-    sorted_set = set()
-    unsorted_dict = dict(unsorted_list)
-    while unsorted_dict:
-      is_connected = False
-      for pid, obsoletes_pid in unsorted_dict.items():
-        if obsoletes_pid is None or obsoletes_pid in sorted_set:
-          self._log('Sorting revision chains')
-          is_connected = True
-          sorted_list.append(pid)
-          sorted_set.add(pid)
-          del unsorted_dict[pid]
-      if not is_connected:
-        self._save_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
-        self._log(
-          'Skipped one or more unconnected revision chains. '
-          'See {}'.format(UNCONNECTED_CHAINS_PATH)
-        )
-        break
-    return sorted_list
-
-  def _save_json(self, unsorted_dict, json_path):
-    with open(json_path, 'w') as f:
-      json.dump(
-        unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
-      )
-
-  def _load_json(self, json_path):
-    with open(json_path, 'r') as f:
-      return json.load(f)
-
-  def _log_pid_info(self, msg, i, n, pid):
-    logging.info(
-      '{} - {}/{} ({:.2f}%) - {}'.
-      format(msg, i + 1, n, (i + 1) / float(n) * 100, pid)
-    )
-    self._events.count(msg)
-
-  def _log(self, msg):
-    logging.info(msg)
-    self._events.count(msg)
 
   def _sysmeta_pyxb_by_sciobj_row(self, sciobj_row):
     sysmeta_xml_path = self._file_path(
@@ -326,8 +277,8 @@ class Command(django.core.management.base.BaseCommand):
       """,
     )
     for i, event_row in enumerate(event_row_list):
-      self._log_pid_info(
-        'Processing event logs', i,
+      util.log_progress(
+        self._events, 'Processing event logs', i,
         len(event_row_list),
         '{} {}'.format(event_row['event'], event_row['pid'])
       )
@@ -388,7 +339,7 @@ class Command(django.core.management.base.BaseCommand):
             django.conf.settings.DATAONE_ROOT and
             django.conf.settings.CLIENT_CERT_PATH and
             django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH):
-      self._log(
+      self._events.log_and_count(
         'Skipped Node registry update on CN because this MN does not appear '
         'to be registered in a DataONE environment yet.'
       )
@@ -407,7 +358,7 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         'Node registry update failed. error="{}"'.format(str(e))
       )
-    self._log('Successful Node registry update')
+    self._events.log_and_count('Successful Node registry update')
 
   def _create_cn_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(

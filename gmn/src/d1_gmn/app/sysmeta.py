@@ -73,20 +73,16 @@ def serialize_pretty(sysmeta_pyxb):
   return d1_common.xml.pretty_xml(serialize(sysmeta_pyxb))
 
 
-# ------------------------------------------------------------------------------
-
-
 def create_or_update(sysmeta_pyxb, url=None):
   """Create or update database representation of a System Metadata object and
   closely related internal state.
 
   Preconditions:
-  - For Create, PID is verified not to exist. E.g., with
+  - For create(), PID is verified not to exist. E.g., with
   d1_gmn.app.views.asserts.is_unused(pid).
   - Any supplied SID is verified to be valid for the given operation. E.g., with
   d1_gmn.app.views.asserts.is_valid_sid_for_chain().
   """
-
   pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
 
   try:
@@ -207,11 +203,6 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
     d1_common.xml.get_value(sysmeta_pyxb, 'obsoletedBy'),
   )
   sci_model.is_archived = sysmeta_pyxb.archived or False
-  # series_id = d1_gmn.app.util.get_value(sysmeta_pyxb, 'seriesId')
-  # if series_id:
-  #   d1_gmn.app.sysmeta_revision.update_or_create_sid_to_pid_map(
-  #     series_id, d1_common.xml.uvalue(sysmeta_pyxb.identifier)
-  #   )
 
 
 def _base_model_to_pyxb(sciobj_model):

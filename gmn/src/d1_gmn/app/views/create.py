@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""High level object create.
+"""High level object create
 """
 from __future__ import absolute_import
 
@@ -26,6 +26,7 @@ import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
 
+import d1_common.const
 import d1_common.url
 import d1_common.xml
 
@@ -33,7 +34,7 @@ import django.core.files.move
 
 
 def create(request, sysmeta_pyxb):
-  """Create a new native object.
+  """Create a new native science object
 
   Preconditions:
   - PID is verified not to be unused, E.g., with
@@ -51,7 +52,7 @@ def create(request, sysmeta_pyxb):
     # http://en.wikipedia.org/wiki/File_URI_scheme
     pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
-    _object_pid_post_store_local(request, pid)
+    _save_sciobj_bytes_from_request(request, pid)
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
   # Log the create event for this object.
   d1_gmn.app.event_log.create(
@@ -60,7 +61,49 @@ def create(request, sysmeta_pyxb):
   )
 
 
-def _object_pid_post_store_local(request, pid):
+def create_native_sciobj_from_response(sciobj_response, sysmeta_pyxb):
+  """Create a new native, locally stored, non-proxied, science object
+
+  {sciobj_response} must be a Requests Response object that holds a stream
+  (typically created via the d1_client wrapper for MNRead.get() with
+  stream=True.)
+
+  This method does not add any events to the event log.
+
+  Preconditions:
+  - PID is verified not to be unused, E.g., with
+  d1_gmn.app.views.asserts.is_unused().
+
+  Postconditions:
+  - A new file and new database entries are created.
+  """
+  pid = d1_common.xml.uvalue(sysmeta_pyxb.identifier)
+  _save_sciobj_bytes_from_response(pid, sciobj_response)
+  d1_gmn.app.sysmeta.create_or_update(
+    sysmeta_pyxb, d1_gmn.app.util.get_sciobj_file_url(pid)
+  )
+
+
+def _save_sciobj_bytes_from_response(pid, sciobj_response):
+  """{sciobj_response} must be a Requests Response object that holds a stream,
+  typically created with MNRead.get(stream=True).
+
+  The file is created in GMNs nested object storage structure.
+  """
+  sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+  d1_gmn.app.util.create_missing_directories(sciobj_path)
+  try:
+    with open(sciobj_path, 'wb') as f:
+      for chunk_str in sciobj_response.iter_content(
+          chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
+      ):
+        if chunk_str:
+          f.write(chunk_str)
+  finally:
+    sciobj_response.close()
+
+
+def _save_sciobj_bytes_from_request(request, pid):
   """Django stores small uploads in memory and streams large uploads directly to
   disk. Uploads stored in memory are represented by UploadedFile and on disk,
   TemporaryUploadedFile. To store an UploadedFile on disk, it's iterated and
@@ -68,7 +111,7 @@ def _object_pid_post_store_local(request, pid):
   temporary to the final location. Django automatically handles this when using
   the file related fields in the models.
   """
-  sciobj_path = d1_gmn.app.util.sciobj_file_path(pid)
+  sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
   d1_gmn.app.util.create_missing_directories(sciobj_path)
   try:
     django.core.files.move.file_move_safe(
