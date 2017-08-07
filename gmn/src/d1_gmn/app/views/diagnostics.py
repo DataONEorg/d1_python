@@ -56,6 +56,18 @@ from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 
 # ------------------------------------------------------------------------------
+# Diagnostics portal.
+# ------------------------------------------------------------------------------
+
+
+@d1_gmn.app.restrict_to_verb.get
+def diagnostics(request):
+  return render_to_response(
+    'diag.html', content_type=d1_common.const.CONTENT_TYPE_XHTML
+  )
+
+
+# ------------------------------------------------------------------------------
 # Replication.
 # ------------------------------------------------------------------------------
 

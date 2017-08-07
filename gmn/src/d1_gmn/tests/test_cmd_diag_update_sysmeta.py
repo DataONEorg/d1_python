@@ -23,6 +23,8 @@ from __future__ import absolute_import
 
 import tempfile
 
+import pytest
+
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
@@ -39,6 +41,8 @@ import django.utils.six
 N_SYSMETA_DOCS = 10
 
 
+# TODO:
+@pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
 @d1_test.d1_test_case.reproducible_random_decorator('TestCmdUpdateSysMeta')
 class TestCmdUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _create_test_dir_with_sysmeta_docs(self, client):

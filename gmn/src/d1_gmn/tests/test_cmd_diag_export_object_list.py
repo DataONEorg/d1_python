@@ -23,6 +23,8 @@ from __future__ import absolute_import
 
 import tempfile
 
+import pytest
+
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
@@ -31,6 +33,8 @@ import django.core.management
 import django.utils.six
 
 
+# TODO:
+@pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
 class TestCmdExportObjectList(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self):
     """diag_export_object_list
