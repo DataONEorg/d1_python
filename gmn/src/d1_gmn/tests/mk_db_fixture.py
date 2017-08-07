@@ -57,12 +57,14 @@ import os
 import random
 import StringIO
 
-# import freezegun
+import freezegun
 import responses
 
 import django
+import django.core.management
+import django.db
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "d1_gmn.settings_test")
+os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings_test'
 django.setup()
 
 import d1_gmn.settings_test
@@ -70,13 +72,13 @@ import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.system_metadata
 import d1_test.instance_generator.user_agent
-import d1_test.instance_generator.sciobj
-import d1_test.instance_generator.random_data
-import freezegun
-import d1_test.instance_generator.identifier
 
+TEST_DB_KEY = 'default'
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
 
@@ -100,14 +102,17 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.clear_db()
         self.create_objects(freeze_time)
         self.create_read_events(freeze_time)
-        self.save_compressed_db_fixture('db_fixture.json.bz2')
+        self.commit()
+        self.save_compressed_db_fixture()
         self.save_pid_list_sample()
 
   def clear_db(self):
-    test_db_key = 'default'
     django.core.management.call_command(
-      'flush', interactive=False, database=test_db_key
+      'flush', interactive=False, database=TEST_DB_KEY
     )
+
+  def commit(self):
+    django.db.connections[TEST_DB_KEY].commit()
 
   def create_objects(self, freeze_time):
     client = self.client_v2
