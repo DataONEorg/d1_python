@@ -35,6 +35,7 @@ import requests
 
 import d1_gmn.app
 import d1_gmn.app.models
+import d1_gmn.app.revision
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_client
 
@@ -242,7 +243,7 @@ class GMNTestCase(
 
   def create_revision_chain(self, client, chain_len, sid=None, *args, **kwargs):
     """Create a revision chain with a total of {chain_len} objects. If
-    client is v2, assign a SID to the chain. Return the SID (None for v1)
+    client is v2, can assign a SID to the chain. Return the SID (None for v1)
     and a list of the PIDs in the chain. The first PID in the list is the
     tail and the last is the head.
     """
@@ -447,6 +448,16 @@ class GMNTestCase(
   def get_sid_list(self):
     """Get list of all SIDs in the DB fixture"""
     return json.loads(self.sample.load('db_fixture_sid.json', 'rb'))
+
+  def get_sid_with_min_chain_length(self, min_len=2):
+    """Get list of all SIDs in the DB fixture"""
+    sid_list = self.get_sid_list()
+    random.shuffle(sid_list)
+    for sid in sid_list:
+      pid_list = d1_gmn.app.revision.get_all_pid_by_sid(sid)
+      print pid_list
+      if len(pid_list) >= min_len:
+        return sid
 
   def get_total_log_records(self, client, **filters):
     return client.getLogRecords(start=0, count=0, **filters).total

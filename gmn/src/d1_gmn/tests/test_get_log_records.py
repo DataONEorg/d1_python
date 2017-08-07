@@ -38,8 +38,6 @@ import d1_common.types
 import d1_common.types.exceptions
 import d1_common.xml
 
-import d1_test.d1_test_case
-import d1_test.instance_generator.system_metadata
 import d1_test.sample
 
 
@@ -232,3 +230,13 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         'new_create_event',
         mn_client_v1_v2,
       )
+
+  @responses.activate
+  def test_1120(self, mn_client_v1_v2):
+    """MNRead.getLogRecords(): idFilter with SID returns records for all objects
+    in chain.
+    """
+    sid = self.get_sid_with_min_chain_length()
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      log = mn_client_v1_v2.getLogRecords(idFilter=sid)
+      self.sample.assert_equals(log, 'id_filter_with_sid', mn_client_v1_v2)

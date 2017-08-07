@@ -41,109 +41,92 @@ import d1_common.xml
 
 class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self):
+  def test_1000(self, mn_client_v2):
     """MNStorage.update(): Reusing SID when creating two standalone objects
     raises IdentifierNotUnique
     """
-
-    def test(client):
-      other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-        pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-          client, sid=other_sid
-        )
-
-    test(self.client_v2)
+    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+      self.create_obj(mn_client_v2, sid=other_sid)
 
   @responses.activate
-  def test_1010(self):
+  def test_1010(self, mn_client_v2):
     """MNStorage.update(): Reusing PID as SID when creating two standalone
     objects raises IdentifierNotUnique
     """
-
-    def test(client):
-      other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-        pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-          client, sid=other_pid
-        )
-
-    test(self.client_v2)
+    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+      self.create_obj(mn_client_v2, sid=other_pid)
 
   @responses.activate
-  def test_1020(self):
+  def test_1020(self, mn_client_v2):
     """MNStorage.update(): Updating standalone object that has SID with SID
     belonging to another object or chain raises InvalidRequest
     """
-
-    def test(client):
-      other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-        pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-          client, old_pid, sid=other_pid
-        )
-
-    test(self.client_v2)
+    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+      self.update_obj(mn_client_v2, old_pid, sid=other_pid)
 
   @responses.activate
-  def test_1030(self):
+  def test_1030(self, mn_client_v2):
     """MNStorage.update(): Updating standalone object that does not have SID,
     with SID belonging to another object or chain raises InvalidRequest
     """
-
-    def test(client):
-      other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=None
-      )
-      with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-        pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-          client, old_pid, sid=other_pid
-        )
-
-    test(self.client_v2)
+    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=None
+    )
+    with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+      self.update_obj(mn_client_v2, old_pid, sid=other_pid)
 
   @responses.activate
-  def test_1040(self):
+  def test_1040(self, mn_client_v2):
     """A chain can be created by updating a standalone object, when neither
     objects have a SID
     """
-
-    def test(client):
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=None
-      )
-      pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, old_pid, sid=None
-      )
-      self.assert_valid_chain(client, [old_pid, pid], sid=None)
-
-    test(self.client_v2)
+    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=None
+    )
+    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+      mn_client_v2, old_pid, sid=None
+    )
+    self.assert_valid_chain(mn_client_v2, [old_pid, pid], sid=None)
 
   @responses.activate
-  def test_1050(self):
+  def test_1050(self, mn_client_v2):
     """MNStorage.update(): Updating a object that has a SID without specifying a
     SID in the update causes the SID to be retained in both objects
     """
+    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+      mn_client_v2, old_pid, sid=None
+    )
+    self.assert_valid_chain(mn_client_v2, [old_pid, pid], sid=old_sid)
 
-    def test(client):
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, old_pid, sid=None
-      )
-      self.assert_valid_chain(client, [old_pid, pid], sid=old_sid)
-
-    test(self.client_v2)
+  @responses.activate
+  def test_1060(self, mn_client_v2):
+    """MNStorage.update(): Updating a chain that does not have a SID with an
+    object that has a SID causes the SID to be retained in all objects of the
+    chain.
+    """
+    sid, pid_chain_list = self.create_revision_chain(
+      mn_client_v2, chain_len=7, sid=False
+    )
+    new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
+      mn_client_v2, pid_chain_list[-1], sid=True
+    )
+    pid_chain_list.append(new_pid)
+    self.assert_valid_chain(mn_client_v2, pid_chain_list, sid=new_sid)
