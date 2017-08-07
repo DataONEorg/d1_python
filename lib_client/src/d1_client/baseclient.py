@@ -389,6 +389,25 @@ class DataONEBaseClient(
     response = self.getResponse(pid, vendorSpecific)
     return self._read_stream_response(response)
 
+  def get_and_save(self, pid, sciobj_path, vendorSpecific=None):
+    """Like MNRead.get(), but also retrieve the object bytes and store them in a
+    local file at {sciobj_path}. This method does not have the potential issue
+    with excessive memory usage that get() with {stream}=False has.
+    """
+    response = None
+    try:
+      response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
+      with open(sciobj_path, 'wb') as f:
+        for chunk_str in response.iter_content(
+            chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
+        ):
+          if chunk_str:
+            f.write(chunk_str)
+    finally:
+      if response:
+        response.close()
+    return response
+
   # CNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getSystemMetadata
   # MNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
