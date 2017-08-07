@@ -283,8 +283,38 @@ def remote_replica(sciobj_model, replica_info_model):
 # Revision Chains and Series ID (SID)
 # ------------------------------------------------------------------------------
 
+# We want to keep track of which objects belong in the same chain since walking
+# the chain to discover objects is slow and does not allow us to handle chains
+# with missing elements.
+#
+# Typically, a chain is associated with a SID, but chains and SIDs can each
+# exist without the other, so we need a way to keep track of chains without
+# associating them with SIDs. We do that by introducing the concept of a
+# ChainId.
+#
+# A standalone object is an object where both the obsoletes and obsoletedBy
+# references are unset. Whenever we create a standalone object, we create a new
+# ChainId and associate it with the object. Later, if and when the object is
+# updated, the new objects are associated with the existing ChainId.
+#
+# Also, we want to be able to resolve SIDs to their currently associated PIDs
+# (heads of chains) without walking the chains or relying on timestamps.
+#
+# Putting these requirements together, we need to store a ChainId, a reference
+# to the head of the chain, and, optionally, a SID, for each chain. Then we need
+# to store references to the chainId for each object that is a member of the
+# chain.
+#
+# A simple way to create new unique IDs on demand in Django is to add a model
+# for it, and use the primary key implicitly created by Django. So, we combine
+# ChainId, SID and head PID in one model, using the primary key, available under
+# the name of "id", as the ChainId. Then we add objects to the chain by using a
+# second model to map PIDs to ChainIds.
 
-class ChainIdToSeriesID(models.Model):
+
+# Represent a single chain
+class Chain(models.Model):
+  # id = ChainId
   sid = models.ForeignKey(
     IdNamespace,
     models.CASCADE,
@@ -296,17 +326,13 @@ class ChainIdToSeriesID(models.Model):
   )
 
 
-class PersistentIdToChainID(models.Model):
-  chain = models.ForeignKey(ChainIdToSeriesID, models.CASCADE)
+# Represent all members of a single chain
+class ChainMember(models.Model):
+  chain = models.ForeignKey(Chain, models.CASCADE)
   pid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
   )
 
-
-# def sid_to_pid(sid, pid):
-#   return ChainIdToSeriesID.objects.get_or_create(
-#     sid=did(sid), head_pid=did(pid)
-#   )[0]
 
 #     SeriesIdToHeadPersistentId.objects.get_or_create(
 #       sid=did(sid), defaults={'pid': did(pid)}
