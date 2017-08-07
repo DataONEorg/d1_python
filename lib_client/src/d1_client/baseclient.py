@@ -159,11 +159,14 @@ class DataONEBaseClient(
     )
 
   # noinspection PyProtectedMember
-  def _assert_correct_dataone_type(self, response, pyxb_obj, d1_type_name):
-    s = str(pyxb_obj._ExpandedName).split('}')[-1]
-    if s != d1_type_name:
+  def _assert_correct_dataone_type(
+      self, response, pyxb_obj, expected_pyxb_type_name
+  ):
+    if d1_common.type_conversions.is_pyxb_d1_type_name(
+        pyxb_obj, expected_pyxb_type_name
+    ):
       self._raise_service_failure_incorrect_dataone_type(
-        response, d1_type_name, s
+        response, expected_pyxb_type_name, expected_pyxb_type_name
       )
 
   def _raise_dataone_exception(self, response):
@@ -382,11 +385,25 @@ class DataONEBaseClient(
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.get
 
   @d1_common.util.utf8_to_unicode
-  def getResponse(self, pid, vendorSpecific=None):
-    return self.GET(['object', pid], headers=vendorSpecific)
+  def getResponse(self, pid, stream=False, vendorSpecific=None):
+    return self.GET(['object', pid], headers=vendorSpecific, stream=stream)
 
-  def get(self, pid, vendorSpecific=None):
-    response = self.getResponse(pid, vendorSpecific)
+  def get(self, pid, stream=False, vendorSpecific=None):
+    """Initiate a MNRead.get(). Return a Requests Response object from which the
+    object bytes can be retrieved.
+
+    When {stream} is False, Requests buffers the entire object in memory before
+    returning the Response. This can exhaust available memory on the local
+    machine when retrieving large science objects. The solution is to set
+    {stream} to True, which causes the returned Response object to contain a
+    a stream.
+
+    {stream} = False by default because failure to read all data from the stream
+    can cause connections to be blocked. See
+    http://docs.python-requests.org/en/master/user/advanced/
+    body-content-workflow. Also see get_and_save() in this module.
+    """
+    response = self.getResponse(pid, stream, vendorSpecific)
     return self._read_stream_response(response)
 
   def get_and_save(self, pid, sciobj_path, vendorSpecific=None):
