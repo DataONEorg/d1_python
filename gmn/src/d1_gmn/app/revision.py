@@ -40,7 +40,7 @@ def get_sid(sysmeta_pyxb):
   return d1_common.xml.get_value(sysmeta_pyxb, 'seriesId')
 
 
-# DB updates
+# DB
 
 
 def create_chain(sid, pid):
@@ -53,16 +53,16 @@ def create_chain(sid, pid):
   - {pid} must exist and be verified to be a PID.
     d1_gmn.app.views.asserts.is_pid()
   """
-  sid_model = d1_gmn.app.models.did(sid) if sid else None
-  pid_model = d1_gmn.app.models.did(pid)
-  chain_model = d1_gmn.app.models.ChainIdToSeriesID(
-    sid=sid_model, head_pid=pid_model
-  )
-  chain_model.save()
-  pid_to_chain_model = d1_gmn.app.models.PersistentIdToChainID(
-    chain=chain_model, pid=pid_model
-  )
-  pid_to_chain_model.save()
+  # sid_model = d1_gmn.app.models.did(sid) if sid else None
+  # pid_model = d1_gmn.app.models.did(pid)
+  # chain_model = d1_gmn.app.models.Chain(sid=sid_model, head_pid=pid_model)
+  # chain_model.save()
+  # pid_to_chain_model = d1_gmn.app.models.ChainMember(
+  #   chain=chain_model, pid=pid_model
+  # )
+  # pid_to_chain_model.save()
+  chain_model = _get_or_create_chain_for_pid(pid)
+  _map_sid_to_pid(chain_model, sid, pid)
 
 
 def add_pid_to_chain(sid, old_pid, new_pid):
@@ -75,21 +75,9 @@ def add_pid_to_chain(sid, old_pid, new_pid):
   - Both {old_pid} and {new_pid} must exist and be verified to be PIDs
     d1_gmn.app.views.asserts.is_pid()
   """
-  old_pid_to_chain_model = d1_gmn.app.models.PersistentIdToChainID.objects.get(
-    pid__did=old_pid
-  )
-  new_pid_to_chain_model = d1_gmn.app.models.PersistentIdToChainID(
-    chain=old_pid_to_chain_model.chain,
-    pid=d1_gmn.app.models.IdNamespace.objects.get(did=new_pid)
-  )
-  new_pid_to_chain_model.save()
-
-  if sid:
-    chain_model = d1_gmn.app.models.ChainIdToSeriesID.objects.get(sid__did=sid)
-    assert chain_model.sid is None or chain_model.sid.did == sid, \
-      'Cannot change SID for existing chain'
-    chain_model.sid = d1_gmn.app.models.did(sid)
-    chain_model.save()
+  chain_model = _get_or_create_chain_for_pid(old_pid)
+  _add_pid_to_chain(chain_model, new_pid)
+  _map_sid_to_pid(chain_model, sid, new_pid)
 
 
 def update_sid_to_head_pid_map(pid):
@@ -104,21 +92,16 @@ def update_sid_to_head_pid_map(pid):
   sci_model = d1_gmn.app.util.get_sci_model(pid)
   while sci_model.obsoleted_by is not None:
     sci_model = d1_gmn.app.util.get_sci_model(sci_model.obsoleted_by.did)
-  chain_model = d1_gmn.app.models.PersistentIdToChainID.objects.get(
-    pid__did=pid
-  ).chain
+  chain_model = d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain
   chain_model.head_pid = sci_model.pid
   chain_model.save()
 
 
 def delete_chain(pid):
-  """"""
-  pid_to_chain_model = d1_gmn.app.models.PersistentIdToChainID.objects.get(
-    pid__did=pid
-  )
+  pid_to_chain_model = d1_gmn.app.models.ChainMember.objects.get(pid__did=pid)
   chain_model = pid_to_chain_model.chain
   pid_to_chain_model.delete()
-  if not d1_gmn.app.models.PersistentIdToChainID.objects.filter(
+  if not d1_gmn.app.models.ChainMember.objects.filter(
       chain=chain_model,
   ).exists():
     if chain_model.sid:
@@ -127,6 +110,40 @@ def delete_chain(pid):
                                                    ).delete()
     else:
       chain_model.delete()
+
+
+def get_all_pid_by_sid(sid):
+  return [c.pid.did for c in _get_all_chain_member_queryset_by_sid(sid)]
+
+
+def _get_or_create_chain_for_pid(pid):
+  try:
+    return d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain
+  except d1_gmn.app.models.ChainMember.DoesNotExist:
+    chain_model = d1_gmn.app.models.Chain(head_pid=d1_gmn.app.models.did(pid))
+    chain_model.save()
+    _add_pid_to_chain(chain_model, pid)
+    return chain_model
+
+
+def _add_pid_to_chain(chain_model, pid):
+  chain_member_model = d1_gmn.app.models.ChainMember(
+    chain=chain_model, pid=d1_gmn.app.models.did(pid)
+  )
+  chain_member_model.save()
+
+
+def _map_sid_to_pid(chain_model, sid, pid):
+  if sid is not None:
+    chain_model.sid = d1_gmn.app.models.did(sid)
+  chain_model.head_pid = d1_gmn.app.models.did(pid)
+  chain_model.save()
+
+
+def _get_all_chain_member_queryset_by_sid(sid):
+  return d1_gmn.app.models.ChainMember.objects.filter(
+    chain=d1_gmn.app.models.Chain.objects.get(sid=d1_gmn.app.models.did(sid))
+  )
 
 
 def set_revision(pid, obsoletes_pid=None, obsoleted_by_pid=None):
@@ -142,11 +159,10 @@ def set_revision_by_model(sciobj_model, obsoletes_pid, obsoleted_by_pid):
     sciobj_model.obsoleted_by = d1_gmn.app.models.did(obsoleted_by_pid)
 
 
-# Cut
-
-
 def cut_from_chain(sciobj_model):
   """Remove an object from a revision chain.
+
+  The object can be at any location in the chain, including the head or tail.
 
   Preconditions:
   - The object with the pid is verified to exist and to be a member of an
@@ -154,8 +170,6 @@ def cut_from_chain(sciobj_model):
 
   d1_gmn.app.views.asserts.is_pid(pid)
   d1_gmn.app.views.asserts.is_in_revision_chain(pid)
-
-  - The object can be at any location in the chain, including the head or tail.
 
   Postconditions:
   - The given object is a standalone object with empty obsoletes, obsoletedBy
@@ -205,33 +219,26 @@ def _cut_embedded_from_chain(sciobj_model):
   next_model.save()
 
 
-# DB queries
-
-
 def resolve_sid(sid):
   """Get the PID to which the {sid} currently maps.
 
   Preconditions:
   - {sid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
   """
-  return d1_gmn.app.models.ChainIdToSeriesID.objects.get(
-    sid__did=sid
-  ).head_pid.did
+  return d1_gmn.app.models.Chain.objects.get(sid__did=sid).head_pid.did
 
 
 def get_sid_by_pid(pid):
   """Given the {pid} of the object in a chain, return the SID for the chain.
   Return None if there is no SID for the chain. This operation is also valid
-  for standalone objects which may or may not have SID.
+  for standalone objects which may or may not have a SID.
 
   This is the reverse of resolve.
 
   Preconditions:
   - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_pid().
   """
-  sid_model = d1_gmn.app.models.PersistentIdToChainID.objects.get(
-    pid__did=pid
-  ).chain.sid
+  sid_model = d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain.sid
   if sid_model:
     return sid_model.did
 
@@ -255,8 +262,7 @@ def get_sid_by_pid(pid):
 
 
 def is_sid(did):
-  return d1_gmn.app.models.ChainIdToSeriesID.objects.filter(sid__did=did
-                                                            ).exists()
+  return d1_gmn.app.models.Chain.objects.filter(sid__did=did).exists()
 
 
 def is_obsoleted(pid):
