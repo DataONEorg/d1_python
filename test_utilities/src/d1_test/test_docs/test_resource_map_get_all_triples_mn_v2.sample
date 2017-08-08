@@ -82,7 +82,7 @@
   [
     "https://cn.dataone.org/cn/v2/resolve/ore_pid", 
     "http://purl.org/dc/terms/creator", 
-    "DataONE.org Python ITK 2.3.4"
+    "DataONE.org Python ITK 2.3.5"
   ], 
   [
     "https://cn.dataone.org/cn/v2/resolve/ore_pid", 
