@@ -52,8 +52,8 @@ def start_tidy():
   logging.info('Moving files to tidy dir')
   sample_dir_path = os.path.join(d1_common.util.abs_path('test_docs'))
   tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
-  d1_common.util.ensure_dir_exists(sample_dir_path)
-  d1_common.util.ensure_dir_exists(tidy_dir_path)
+  d1_common.util.create_missing_directories(sample_dir_path)
+  d1_common.util.create_missing_directories(tidy_dir_path)
   i = 0
   for i, item_name in enumerate(os.listdir(sample_dir_path)):
     sample_path = os.path.join(sample_dir_path, item_name)

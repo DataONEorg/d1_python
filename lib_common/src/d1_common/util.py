@@ -65,12 +65,16 @@ def abs_path(rel_path):
   )
 
 
-def ensure_dir_exists(dir_path):
+def create_missing_directories(dir_path):
   try:
     os.makedirs(dir_path)
   except OSError as e:
     if e.errno != errno.EEXIST:
       raise
+
+
+def create_missing_directories_for_file(file_path):
+  create_missing_directories(os.path.dirname(file_path))
 
 
 def get_content_type(content_type):
@@ -139,8 +143,11 @@ class EventCounter(object):
     self._event_dict.setdefault(event_str, 0)
     self._event_dict[event_str] += inc_int
 
-  def log_and_count(self, event_str, inc_int=1):
-    logging.info(event_str)
+  def log_and_count(self, event_str, log_str=None, inc_int=1):
+    """{event_str} is both a key for the count and part of the log message.
+    {log_str} is a message with details that may change for each call
+    """
+    logging.info(event_str + ('. ' + log_str if log_str else ''))
     self.count(event_str, inc_int)
 
   def dump_to_log(self):
