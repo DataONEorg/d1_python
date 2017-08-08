@@ -116,6 +116,11 @@ Typically, it is not desirable to track generated files in Git. However, althoug
 
 Also implemented is a simple process for cleaning out unused sample files. Sample files are often orphaned when their corresponding tests are removed or refactored. The default storage location for sample files is a directory called `test_docs`. To clean out unused files, move all the files from `test_docs` to `test_docs_tidy`, and run the tests. Any files that are accessed by the tests will automatically be moved back to `test_docs`, and any files remaining in `test_docs_tidy` after a complete test run can be untracked and deleted.
 
+When staging `test_docs`, stage the directory, so that new files are included, and deleted files get deleted on the server:
+
+    $ git add test_utilities/src/d1_test/test_docs
+    $ git commit -m 'Update sample docs'
+
 #### DataONE Client to Django test adapter
 
 GMN tests are based on an adapter that enables using d1_client with the Django test framework. The adapter mocks Requests to issue requests through the Django test client.

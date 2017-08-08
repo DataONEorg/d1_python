@@ -29,7 +29,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='2.3.4',
+    version='2.3.5',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -45,6 +45,12 @@ def main():
       #'dataone.cli == 2.3.0rc1',
       #'dataone.common == 2.3.0rc1',
       #'dataone.libclient == 2.3.0rc1',
+      #
+      # This is a hack to force a version of idna that is compatible with both
+      # asn1crypto and requests. Without this, if asn1crypto is installed first,
+      # it will install idna 2.6, and requests will fails due to the fact that
+      # Python doesn't have a real package manager.
+      'idna == 2.5',
       #
       'baron == 0.6.6',
       'pip == 9.0.1',

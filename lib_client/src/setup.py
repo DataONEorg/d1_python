@@ -28,7 +28,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.libclient',
-    version='2.3.4',
+    version='2.3.5',
     description='A DataONE client library for Python',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -37,12 +37,12 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.3.4',
+      'dataone.common == 2.3.5',
       #
       'cachecontrol == 0.12.3',
       'pyxb == 1.2.5',
       'requests-toolbelt == 0.8.0',
-      'requests[security] == 2.18.1',
+      'requests[security] == 2.18.3',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

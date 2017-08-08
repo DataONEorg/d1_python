@@ -77,10 +77,8 @@ def main():
 
 def run_setup(setup_dir_path, command_list):
   try:
-    subprocess.check_call(
-      ['python', 'setup.py'] + command_list,
-      cwd=setup_dir_path,
-    )
+    subprocess.check_call(['python', 'setup.py'] + command_list,
+                          cwd=setup_dir_path)
   except subprocess.CalledProcessError as e:
     logging.error('Setup failed. error="{}"'.format(str(e)))
     raise
