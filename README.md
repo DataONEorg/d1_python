@@ -72,6 +72,17 @@ Notes:
 
 * If the `YAPF`, `isort` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. The modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
+  A convenient command to "restage" the files modified by pre-commit:
+
+      $ git update-index --again
+
+  Or, to add a shortcut:
+
+      $ git config --global alias.restage "update-index --again"
+
+      $ git restage
+
+
 * `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring the files to be staged and commited again.
 
 * If desired, the number of extra staging and commits caused by reformatting and validation can be reduced with workflow adjustments:
@@ -149,6 +160,21 @@ We have added some custom functionality to pytest which can be enabled to launch
 * The tests use `settings_test.py` for GMN and Django configuration.
 
 * Pytest-django forces `settings.DEBUG` to `False` in `pytest_django/plugin.py`. To set `settings.DEBUG`, override it close to where it will be read, e.g., wit `@django.test.override_settings(DEBUG=True)`.
+
+
+#### Django database test fixture
+
+After changing any of the ORM classes in models.py, the database test fixture must be regenerated. This will often cause sample files to have to be updated as well.
+
+Regenerated the fixture files:
+
+    $ pytest --fixture-regen
+    $ ./d1_python/gmn/src/d1_gmn/tests/mk_db_fixture.py
+
+Fixtures can be loaded directly into the test database from the JSON files but it's much faster to keep an extra copy of the db as a template and create the test db as needed with Postgres' "create database from template" function. So we only load the fixtures into a template database and reuse the template. This is implemented in `./conftest.py`.
+
+Note that science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs get(), getChecksum() and replica() to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
+
 
 ### Setting up the development environment
 
