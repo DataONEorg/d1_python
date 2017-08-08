@@ -49,13 +49,6 @@ def assert_readable_file(file_path):
     )
 
 
-def create_missing_directories(file_path):
-  try:
-    os.makedirs(os.path.dirname(file_path))
-  except OSError:
-    pass
-
-
 def get_sciobj_file_path(pid):
   """Determine the local path to the file holding an object's bytes.
 

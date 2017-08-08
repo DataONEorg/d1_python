@@ -155,7 +155,7 @@ class Command(django.core.management.base.BaseCommand):
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
         new_file_path = d1_gmn.app.util.get_sciobj_file_path(pid)
-        d1_gmn.app.util.create_missing_directories(new_file_path)
+        d1_common.util.create_missing_directories_for_file(new_file_path)
         new_dir_path = os.path.dirname(new_file_path)
         if self._are_on_same_disk(old_file_path, new_dir_path):
           self._events.log_and_count('Creating SciObj hard link')

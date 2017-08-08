@@ -36,7 +36,7 @@ def _log(pid, request, event, timestamp=None):
   """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = d1_gmn.app.auth.get_trusted_subjects_string()
+  subject = d1_gmn.app.auth.format_active_subjects()
 
   # Support logging events that are not associated with an object.
   object_model = None

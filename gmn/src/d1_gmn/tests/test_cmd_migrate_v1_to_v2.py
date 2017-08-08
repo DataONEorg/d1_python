@@ -102,7 +102,7 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     logging.debug('save: {}'.format(sysmeta_path))
     shared_dict['pid_to_path'][pid] = sysmeta_path
-    d1_common.util.ensure_dir_exists(os.path.split(sysmeta_path)[0])
+    d1_common.util.create_missing_directories(os.path.split(sysmeta_path)[0])
     with open(sysmeta_path, 'wb') as f:
       f.write(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
     if sciobj_str is not None:

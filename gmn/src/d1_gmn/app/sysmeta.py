@@ -107,6 +107,13 @@ def create_or_update(sysmeta_pyxb, url=None):
 
   replica_pyxb_to_model(sci_model, sysmeta_pyxb)
 
+  sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
+  obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
+  if not obsoletes_pid:
+    d1_gmn.app.revision.create_chain(sid, pid)
+  else:
+    d1_gmn.app.revision.add_pid_to_chain(sid, obsoletes_pid, pid)
+
   return sci_model
 
 

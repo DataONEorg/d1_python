@@ -30,6 +30,8 @@ import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.util
 
+import d1_common.util
+
 import django.apps
 import django.conf
 
@@ -68,7 +70,7 @@ def delete_all_from_db():
 def delete_all_sciobj_from_filesystem():
   if os.path.exists(django.conf.settings.OBJECT_STORE_PATH):
     shutil.rmtree(django.conf.settings.OBJECT_STORE_PATH)
-  d1_gmn.app.util.create_missing_directories(
+  d1_common.util.create_missing_directories_for_file(
     django.conf.settings.OBJECT_STORE_PATH
   )
 

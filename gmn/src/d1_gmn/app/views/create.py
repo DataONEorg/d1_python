@@ -22,12 +22,14 @@
 from __future__ import absolute_import
 
 import d1_gmn.app.event_log
+import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
 
 import d1_common.const
 import d1_common.url
+import d1_common.util
 import d1_common.xml
 
 import django.core.files.move
@@ -61,8 +63,12 @@ def create(request, sysmeta_pyxb):
   )
 
 
-def create_native_sciobj_from_response(sciobj_response, sysmeta_pyxb):
-  """Create a new native, locally stored, non-proxied, science object
+def create_native_sciobj(sysmeta_pyxb):
+  """Create the db entries for a new native, locally stored (non-proxied)
+  science object
+
+  This assumes that the file containing the sciobj bytes has already been
+  created.
 
   {sciobj_response} must be a Requests Response object that holds a stream
   (typically created via the d1_client wrapper for MNRead.get() with
@@ -73,34 +79,15 @@ def create_native_sciobj_from_response(sciobj_response, sysmeta_pyxb):
   Preconditions:
   - PID is verified not to be unused, E.g., with
   d1_gmn.app.views.asserts.is_unused().
+  - Sciobj bytes are saved to a file in the correct location.
 
   Postconditions:
   - A new file and new database entries are created.
   """
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-  _save_sciobj_bytes_from_response(pid, sciobj_response)
   d1_gmn.app.sysmeta.create_or_update(
     sysmeta_pyxb, d1_gmn.app.util.get_sciobj_file_url(pid)
   )
-
-
-def _save_sciobj_bytes_from_response(pid, sciobj_response):
-  """{sciobj_response} must be a Requests Response object that holds a stream,
-  typically created with MNRead.get(stream=True).
-
-  The file is created in GMNs nested object storage structure.
-  """
-  sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
-  d1_gmn.app.util.create_missing_directories(sciobj_path)
-  try:
-    with open(sciobj_path, 'wb') as f:
-      for chunk_str in sciobj_response.iter_content(
-          chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
-      ):
-        if chunk_str:
-          f.write(chunk_str)
-  finally:
-    sciobj_response.close()
 
 
 def _save_sciobj_bytes_from_request(request, pid):
@@ -112,7 +99,7 @@ def _save_sciobj_bytes_from_request(request, pid):
   the file related fields in the models.
   """
   sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
-  d1_gmn.app.util.create_missing_directories(sciobj_path)
+  d1_common.util.create_missing_directories_for_file(sciobj_path)
   try:
     django.core.files.move.file_move_safe(
       request.FILES['object'].temporary_file_path(), sciobj_path

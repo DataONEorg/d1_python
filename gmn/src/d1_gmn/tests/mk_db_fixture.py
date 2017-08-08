@@ -27,22 +27,12 @@ Objects are randomly distributed between categories:
   - Chain, SID
 
 This creates the db entries by calling the GMN D1 APIs, then uses Django to dump
-the database to JSON. The test db can then be loaded directly from the JSON file
-but it's much faster to keep an extra copy of the db and then create the test db
-as needed with Postgres' "create database from template" function. So we keep
-this db after generating the JSON and use a procedure, implemented in
-./conftest.py, to only load the db from JSON when required.
-
-Though object bytes are also created, they are not captured in the db fixture.
-So if a test needs get(), getChecksum() and replica() to work, it must first
-create the correct file in GMN's object store or mock object store reads. The
-bytes are predetermined for a given test PID. See
-d1_test.d1_test_case.generate_reproducible_sciobj_str() and
-d1_gmn.app.util.sciobj_file_path().
+the database to JSON. Though object bytes are also created, they are not
+captured in the db fixture. See the README.md for more info on the fixtures.
 
 The django init needs to occur before the django and gmn_test_case imports, so
 we're stuck with a bit of a messy import section that isort and flake8 don't
-like.
+like:
 
 isort:skip_file
 """

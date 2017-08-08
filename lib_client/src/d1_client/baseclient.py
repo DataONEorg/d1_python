@@ -323,7 +323,7 @@ class DataONEBaseClient(
       pidFilter=None, # v1
       idFilter=None, # v2
       start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
       vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
@@ -351,7 +351,7 @@ class DataONEBaseClient(
       pidFilter=None, # v1
       idFilter=None, # v2
       start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
       vendorSpecific=None
   ):
     response = self.getLogRecordsResponse(
@@ -406,7 +406,9 @@ class DataONEBaseClient(
     response = self.getResponse(pid, stream, vendorSpecific)
     return self._read_stream_response(response)
 
-  def get_and_save(self, pid, sciobj_path, vendorSpecific=None):
+  def get_and_save(
+      self, pid, sciobj_path, create_missing_dirs=False, vendorSpecific=None
+  ):
     """Like MNRead.get(), but also retrieve the object bytes and store them in a
     local file at {sciobj_path}. This method does not have the potential issue
     with excessive memory usage that get() with {stream}=False has.
@@ -414,6 +416,8 @@ class DataONEBaseClient(
     response = None
     try:
       response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
+      if create_missing_dirs:
+        d1_common.util.create_missing_directories_for_file(sciobj_path)
       with open(sciobj_path, 'wb') as f:
         for chunk_str in response.iter_content(
             chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
@@ -471,7 +475,7 @@ class DataONEBaseClient(
   def listObjectsResponse(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS, vendorSpecific=None
+      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE, vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -491,7 +495,7 @@ class DataONEBaseClient(
   def listObjects(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS, vendorSpecific=None
+      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE, vendorSpecific=None
   ):
     response = self.listObjectsResponse(
       fromDate, toDate, formatId, identifier, replicaStatus, nodeId, start,

@@ -578,7 +578,7 @@ def post_object_list(request):
   if sid:
     d1_gmn.app.views.asserts.is_unused(sid)
   _create(request, sysmeta_pyxb, new_pid)
-  d1_gmn.app.revision.create_chain(sid, new_pid)
+  # d1_gmn.app.revision.create_chain(sid, new_pid)
   return new_pid
 
 
@@ -611,7 +611,7 @@ def put_object(request, old_pid):
   # SID
   sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
   d1_gmn.app.views.asserts.is_valid_sid_for_chain(old_pid, sid)
-  d1_gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
+  # d1_gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
   # d1_gmn.app.revision.update_sid_to_head_pid_map(new_pid)
