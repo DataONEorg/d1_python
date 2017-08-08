@@ -23,42 +23,42 @@
 An iterator that provides a convenient way to retrieve log records from a
 DataONE node and iterate over the results. Log records are automatically
 retrieved from the node in batches as required. The returned log records can be
-filtered by providing arguments to getLogRecords() via the getlogRecords_dict
-parameter.
+filtered by providing arguments to getLogRecords() via the
+get_log_records_arg_dict parameter.
 """
+
+import d1_common.const
 
 
 class LogRecordIterator(object):
   def __init__(
       self,
       client,
-      getlogRecords_dict=None,
+      get_log_records_arg_dict=None,
       start=0,
-      count=1000,
+      count=d1_common.const.DEFAULT_GETLOGRECORDS_PAGE_SIZE,
   ):
-    """
-    :param client: The client that will be used for calling getlogRecords()
-    :param getlogRecords_dict: Parameters for getLogRecords()
-    :param start: Index of first record to retrieve, default 0
-    :param pageSize: Number of records to retrieve in each batch, default 1000
-    """
-    self._getLogRecords_dict = getlogRecords_dict or {}
+    self._get_log_records_arg_dict = get_log_records_arg_dict or {}
     self._client = client
     self._start = start
     self._count = count
-    assert 'start' not in self._getLogRecords_dict
-    assert 'count' not in self._getLogRecords_dict
+    assert 'start' not in self._get_log_records_arg_dict
+    assert 'count' not in self._get_log_records_arg_dict
+    self.total = self._get_log_records().total
 
   def __iter__(self):
     start = self._start
     while True:
-      log_pyxb = self._client.getLogRecords(
-        start=start, count=self._count, **self._getLogRecords_dict
-      )
+      log_pyxb = self._get_log_records(start, self._count)
       for log_entry_pyxb in log_pyxb.logEntry:
         yield log_entry_pyxb
 
       start += log_pyxb.count
 
-      if start >= log_pyxb.total:
+      if start >= self.total:
         break
+
+  def _get_log_records(self, start=0, count=0):
+    return self._client.getLogRecords(
+      start=start, count=count, **self._get_log_records_arg_dict
+    )
