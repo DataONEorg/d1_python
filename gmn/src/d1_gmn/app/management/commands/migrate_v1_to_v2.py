@@ -170,16 +170,26 @@ class Command(django.core.management.base.BaseCommand):
     revision_list = self._get_revision_list()
     # revision_list = self._load_json(UNSORTED_CHAINS_PATH)
     # self._dump_json(revision_list, UNSORTED_CHAINS_PATH)
-    obsoletes_pid_list = []
-    obsoleted_by_pid_list = []
-    for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list:
-      obsoletes_pid_list.append((pid, obsoletes_pid))
-      obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    topo_revision_list = d1_common.revision.topological_sort(
-      obsoletes_pid_list, self._events, UNCONNECTED_CHAINS_PATH
+    obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
+      revision_list
     )
-    self._create_sciobj(topo_revision_list)
-    self._update_obsoleted_by(obsoleted_by_pid_list)
+    topo_list, unconnected_dict = d1_common.revision.topological_sort(
+      obsoletes_dict
+    )
+    #
+    # obsoletes_pid_list = []
+    # obsoleted_by_pid_list = []
+    # for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list:
+    #   obsoletes_pid_list.append((pid, obsoletes_pid))
+    #   obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
+    # topo_list = d1_common.revision.topological_sort(
+    #   obsoletes_pid_list
+    # )
+    self._create_sciobj(topo_list)
+    obsoleted_by_dict = d1_common.revision.revision_list_to_obsoleted_by_dict(
+      revision_list
+    )
+    self._update_obsoleted_by(obsoleted_by_dict)
 
   def _get_revision_list(self):
     revision_list = []
@@ -202,9 +212,9 @@ class Command(django.core.management.base.BaseCommand):
       revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
     return revision_list
 
-  def _create_sciobj(self, topo_revision_list):
-    n = len(topo_revision_list)
-    for i, pid in enumerate(topo_revision_list):
+  def _create_sciobj(self, topo_list):
+    n = len(topo_list)
+    for i, pid in enumerate(topo_list):
       # noinspection SqlResolve
       sciobj_row = self._db.run(
         'select * from mn_scienceobject where pid = %s;',
@@ -222,9 +232,9 @@ class Command(django.core.management.base.BaseCommand):
       )
       d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_row['url'])
 
-  def _update_obsoleted_by(self, obsoleted_by_pid_list):
-    n = len(obsoleted_by_pid_list)
-    for i, pid_tup in enumerate(obsoleted_by_pid_list):
+  def _update_obsoleted_by(self, obsoleted_by_dict):
+    n = len(obsoleted_by_dict)
+    for i, pid_tup in enumerate(obsoleted_by_dict.items()):
       pid, obsoleted_by_pid = pid_tup
       if obsoleted_by_pid is not None:
         if d1_gmn.app.sysmeta.is_did(pid) and d1_gmn.app.sysmeta.is_did(

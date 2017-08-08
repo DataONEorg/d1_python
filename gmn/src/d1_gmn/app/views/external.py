@@ -604,13 +604,17 @@ def put_object(request, old_pid):
   )
   new_pid = request.POST['newPid']
   sysmeta_pyxb.obsoletes = old_pid
-  _create(request, sysmeta_pyxb, new_pid)
-  # The create event for the new object is added in _create(). The update event
-  # on the old object is added here.
-  d1_gmn.app.revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
+
   # SID
   sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
   d1_gmn.app.views.asserts.is_valid_sid_for_chain(old_pid, sid)
+
+  _create(request, sysmeta_pyxb, new_pid)
+
+  # The create event for the new object is added in _create(). The update event
+  # on the old object is added here.
+  d1_gmn.app.revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
+
   # d1_gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)

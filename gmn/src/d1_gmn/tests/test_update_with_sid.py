@@ -88,7 +88,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       mn_client_v2, sid=None
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-      self.update_obj(mn_client_v2, old_pid, sid=other_pid)
+      self.update_obj(mn_client_v2, old_pid, sid=other_sid)
 
   @responses.activate
   def test_1040(self, mn_client_v2):

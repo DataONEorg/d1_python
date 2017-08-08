@@ -93,3 +93,17 @@ def get_pids_in_revision_chain(client, did):
     sysmeta_pyxb = client.getSystemMetadata(opt(sysmeta_pyxb, 'obsoletedBy'))
     chain_pid_list.append(req(sysmeta_pyxb.identifier))
   return chain_pid_list
+
+
+def revision_list_to_obsoletes_dict(revision_list):
+  return {
+    pid: obsoletes_pid
+    for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list
+  }
+
+
+def revision_list_to_obsoleted_by_dict(revision_list):
+  return {
+    pid: obsoleted_by_pid
+    for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list
+  }

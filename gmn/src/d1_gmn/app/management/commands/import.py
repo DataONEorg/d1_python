@@ -275,7 +275,9 @@ class Command(django.core.management.base.BaseCommand):
       inc_int=len(revision_list)
     )
 
-    obsoletes_dict = self._revision_list_to_obsoletes_dict(revision_list)
+    obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
+      revision_list
+    )
     topo_list, unconnected_dict = d1_common.revision.topological_sort(
       obsoletes_dict
     )
@@ -411,9 +413,3 @@ class Command(django.core.management.base.BaseCommand):
     return d1_client.util.get_client_class_by_version_tag(self._api_major)(
       self._opt['baseurl'], **self._get_client_args_dict()
     )
-
-  def _revision_list_to_obsoletes_dict(self, revision_list):
-    return {
-      pid: obsoletes_pid
-      for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list
-    }

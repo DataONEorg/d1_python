@@ -36,7 +36,6 @@ def _log(pid, request, event, timestamp=None):
   """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = d1_gmn.app.auth.format_active_subjects()
 
   # Support logging events that are not associated with an object.
   object_model = None
@@ -51,7 +50,7 @@ def _log(pid, request, event, timestamp=None):
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   event_log_model = create_log_entry(
-    object_model, event, ip_address, user_agent, subject
+    object_model, event, ip_address, user_agent, request.primary_subject_str
   )
 
   # The datetime is an optional parameter. If it is not provided, a
