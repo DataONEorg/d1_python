@@ -74,6 +74,9 @@ class SystemMetadataIteratorMulti(object):
     self._client_dict = client_dict or {}
     self._list_objects_dict = list_objects_dict or {}
     self._getSysMeta_dic = get_sysmeta_dict or {}
+    self.total = _get_total_object_count(
+      base_url, api_major, self._client_dict, self._list_objects_dict
+    )
 
   def __iter__(self):
     manager = multiprocessing.Manager()

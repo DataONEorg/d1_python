@@ -67,7 +67,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(
       client,
-      getlogRecords_dict={
+      get_log_records_arg_dict={
         'fromDate': from_date,
         'toDate': to_date,
       },
