@@ -251,6 +251,7 @@ Commit and push the changes, and check the build on Travis.
 After successful build, clone a fresh copy, which will be used for building the release packages:
 
     $ cd ~
+    $ rm -rf ~/d1_python_build
     $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
 
 Building the release packages from a fresh clone is a simple way of ensuring that only tracked files are released. It is a workaround for the way setuptools works, which is basically that it vacuums up everything that looks like a Python script in anything that looks like a package, which makes it easy to publish local files by accident.
