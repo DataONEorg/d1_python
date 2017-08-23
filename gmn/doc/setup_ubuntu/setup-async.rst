@@ -22,9 +22,9 @@ Set up cron jobs
     PYTHON_BIN = $GMN_ROOT/bin/python
 
     # Process the replication request queue
-    0 * * * * sleep $(expr $RANDOM \% $(( 30 * 60 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_replication_queue >> gmn_replication.log 2>&1
+    * * * * * sleep $(expr $RANDOM \% $(( 30 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_replication_queue >> gmn_replication.log 2>&1
     # Process the System Metadata refresh queue
-    30 * * * * sleep $(expr $RANDOM \% $(( 30 * 60 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_refresh_queue >> gmn_sysmeta.log 2>&1
+    * * * * * sleep $(expr $RANDOM \% $(( 30 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_refresh_queue >> gmn_sysmeta.log 2>&1
 
   This sets the processes to run once every hour, with a random delay that distributes network traffic and CN load over time. To alter the schedule, consult
   the crontab manual::
