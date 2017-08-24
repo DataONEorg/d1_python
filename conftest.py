@@ -245,6 +245,9 @@ def django_db_setup(django_db_blocker):
     # closing the implicit transaction here so that template fixture remains
     # available.
     django.db.connections[test_db_key].commit()
+
+    migrate_db(test_db_key)
+
     logging.debug('Test DB ready')
     yield
 
@@ -262,6 +265,15 @@ def load_template_fixture(template_db_key, template_db_name):
     'loaddata', fixture_file_path, database=template_db_key, commit=True
   )
   django.db.connections[template_db_key].commit()
+  for connection in django.db.connections.all():
+    connection.close()
+
+
+def migrate_db(test_db_key):
+  django.core.management.call_command(
+    'migrate', database=test_db_key, commit=True
+  )
+  django.db.connections[test_db_key].commit()
   for connection in django.db.connections.all():
     connection.close()
 
