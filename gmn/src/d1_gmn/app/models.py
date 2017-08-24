@@ -498,3 +498,21 @@ class PreferredMemberNode(models.Model):
 class BlockedMemberNode(models.Model):
   node = models.ForeignKey(Node, models.CASCADE)
   replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
+
+
+# ------------------------------------------------------------------------------
+# OAI-ORE Resource Map
+# ------------------------------------------------------------------------------
+
+
+class ResourceMap(models.Model):
+  pid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  )
+
+
+class ResourceMapMember(models.Model):
+  ResourceMap = models.ForeignKey(ResourceMap, models.CASCADE)
+  did = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_did'
+  )

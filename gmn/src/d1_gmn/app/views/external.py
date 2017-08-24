@@ -203,6 +203,7 @@ def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Type'] = _content_type_from_format(sciobj.format.format)
   response['Last-Modified'
            ] = d1_common.date_time.to_http_datetime(sciobj.modified_timestamp)
+  response['DataONE-GMN'] = d1_gmn.__version__
   response['DataONE-FormatId'] = sciobj.format.format
   response['DataONE-Checksum'] = '{},{}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
@@ -211,6 +212,15 @@ def _add_object_properties_to_response_header(response, sciobj):
   d1_gmn.app.views.util.add_http_date_to_response_header(
     response, datetime.datetime.utcnow()
   )
+  if d1_common.url.isHttpOrHttps(sciobj.url):
+    response['DataONE-Proxy'] = sciobj.url
+  if sciobj.obsoletes:
+    response['DataONE-Obsoletes'] = sciobj.obsoletes.did
+  if sciobj.obsoleted_by:
+    response['DataONE-ObsoletedBy'] = sciobj.obsoleted_by.did
+  sid = d1_gmn.app.revision.get_sid_by_pid(sciobj.pid.did)
+  if sid:
+    response['DataONE-SeriesId'] = sid
 
 
 @d1_gmn.app.restrict_to_verb.get

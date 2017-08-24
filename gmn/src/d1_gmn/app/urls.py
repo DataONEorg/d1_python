@@ -147,6 +147,30 @@ urlpatterns = [
   ),
 
   #
+  # Home page and Web UI
+  #
+  url(r'^home/?$', d1_gmn.app.views.internal.home, name='home'),
+  # url(
+  #   r'^home/replication?$', d1_gmn.app.views.internal.replication_queue,
+  #   name='home_replication'
+  # ),
+  # Environment (discovered CNs, etc))
+  # url(
+  #   r'^home/env',
+  #   d1_gmn.app.views.home.d1env,
+  #   name='d1env',
+  # ),
+
+  #
+  # GMN API extensions
+  #
+  url(
+    r'^ext/object/$?',
+    d1_gmn.app.views.ext.get_object_list_json,
+    name='get_object_list_json',
+  ),
+
+  #
   # GMN diagnostic APIs
   #
   url(
@@ -188,3 +212,4 @@ urlpatterns = [
 #       d1_gmn.app.views.diagnostics.get_setting,
 #       name='get_setting',
 #     ),
+#   ])
