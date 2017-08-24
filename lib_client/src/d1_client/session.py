@@ -77,7 +77,9 @@ class Session(object):
     :type cert_key_path: string
 
     :param timeout_sec: Time in seconds that requests will wait for a response.
-    :type timeout_sec: float or int
+      None, 0, 0.0 disables timeouts. Default is RESPONSE_TIMEOUT, currently 60
+      seconds.
+    :type timeout_sec: float, int, None
 
     :param retries: Set number of times to try a request before failing. If not
       set, retries are still performed, using the default number of retries. To
@@ -282,16 +284,22 @@ class Session(object):
     )
 
   def _prep_request_kwargs(self, kwargs_in_dict):
-    # kwargs that require translation
+    # TODO: Check if per-call args get the same processing as client create args
     kwargs_dict = {
-      'timeout': kwargs_in_dict.pop('timeout_sec', None),
-      'stream': kwargs_in_dict.pop('use_stream', None),
-      'verify': kwargs_in_dict.pop('verify_tls', None),
-      'params': self._format_query_values(kwargs_in_dict.pop('query', {})),
+      'timeout':
+        self._timeout_to_float(kwargs_in_dict.pop('timeout_sec', 0.0)),
+      'stream':
+        kwargs_in_dict.pop('use_stream', None),
+      'verify':
+        kwargs_in_dict.pop('verify_tls', None),
+      'params':
+        self._format_query_values(kwargs_in_dict.pop('query', {})),
     }
     kwargs_dict.update(kwargs_in_dict)
     kwargs_dict = self._remove_none_value_items(kwargs_dict)
     result_dict = copy.deepcopy(self._default_request_arg_dict)
+    if result_dict['timeout'] in (0, 0.0):
+      result_dict['timeout'] = None
     self.nested_update(result_dict, kwargs_dict)
     return result_dict
 
@@ -303,6 +311,21 @@ class Session(object):
       else:
         d[k] = u[k]
     return d
+
+  def _timeout_to_float(self, timeout):
+    """Convert timeout to float. Return None if timeout is None, 0 or 0.0.
+    timeout=None disables timeouts in Requests.
+    """
+    if timeout is not None:
+      try:
+        timeout_float = float(timeout)
+      except ValueError:
+        raise ValueError(
+          'timeout_sec must be a valid number or None. timeout="{}"'.
+          format(timeout)
+        )
+      if timeout_float:
+        return timeout_float
 
   def _format_query_values(self, query_dict):
     return self._bool_to_string(
