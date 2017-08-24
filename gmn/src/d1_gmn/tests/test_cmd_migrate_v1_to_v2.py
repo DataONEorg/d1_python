@@ -102,7 +102,9 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     logging.debug('save: {}'.format(sysmeta_path))
     shared_dict['pid_to_path'][pid] = sysmeta_path
-    d1_common.util.create_missing_directories(os.path.split(sysmeta_path)[0])
+    d1_common.util.create_missing_directories_for_dir(
+      os.path.split(sysmeta_path)[0]
+    )
     with open(sysmeta_path, 'wb') as f:
       f.write(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
     if sciobj_str is not None:
@@ -143,6 +145,7 @@ class TestCmdMigrateV1toV2(d1_gmn.tests.gmn_test_case.GMNTestCase):
     fixture_path = self.sample.get_path('db_fixture_gmn1.gz')
     self.pg_load('postgres', test_db_name, fixture_path)
 
+    root_path = None
     try:
       root_path = tempfile.mkdtemp()
       sysmeta_root_path = tempfile.mkdtemp(dir=root_path)

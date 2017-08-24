@@ -23,7 +23,6 @@
 from __future__ import absolute_import
 
 import base64
-import hashlib
 import inspect
 import logging
 import os
@@ -31,8 +30,6 @@ import traceback
 import urlparse
 
 import d1_gmn.app
-
-import d1_common.url
 
 import django.conf
 
@@ -47,28 +44,6 @@ def assert_readable_file(file_path):
     raise ValueError(
       'Unable to read file. path="{}" error="{}"'.format(file_path, e.message)
     )
-
-
-def get_sciobj_file_path(pid):
-  """Determine the local path to the file holding an object's bytes.
-
-  Because it may be inefficient to store millions of files in a single folder
-  and because such a folder is hard to deal with when performing backups and
-  maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
-  holding 256 folders, for a total of 65536 folders. The location in the
-  hierarchy for a given object is based on its PID.
-  """
-  hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
-  return os.path.join(
-    django.conf.settings.OBJECT_STORE_PATH,
-    hash_str[:2],
-    hash_str[2:4],
-    hash_str,
-  )
-
-
-def get_sciobj_file_url(pid):
-  return u'file:///{}'.format(d1_common.url.encodePathElement(pid))
 
 
 class fixed_chunk_size_iterator(object):

@@ -40,6 +40,7 @@ import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
@@ -154,7 +155,7 @@ class Command(django.core.management.base.BaseCommand):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
-        new_file_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+        new_file_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
         d1_common.util.create_missing_directories_for_file(new_file_path)
         new_dir_path = os.path.dirname(new_file_path)
         if self._are_on_same_disk(old_file_path, new_dir_path):
@@ -228,7 +229,7 @@ class Command(django.core.management.base.BaseCommand):
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_pyxb.obsoletedBy = None
       util.log_progress(
-        self._events, 'Creating SciObj DB representation', i, n, pid
+        self._events, 'Creating SciObj DB representations', i, n, pid
       )
       d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_row['url'])
 

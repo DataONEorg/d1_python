@@ -38,6 +38,7 @@ import d1_gmn.app.node
 import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.restrict_to_verb
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
@@ -226,7 +227,7 @@ def get_object(request, pid):
   )
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
-  d1_gmn.app.event_log.read(pid, request)
+  d1_gmn.app.event_log.log_read_event(pid, request)
   # Since the iterator that generates data for StreamingHttpResponse runs
   # after the view has returned, it is not protected by the implicit transaction
   # around a request. However, in the unlikely event that a request is made to
@@ -244,7 +245,7 @@ def _get_sciobj_iter(sciobj):
 
 
 def _get_sciobj_iter_local(pid):
-  file_in_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+  file_in_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
   # Can't use "with".
   sciobj_file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
@@ -274,7 +275,7 @@ def _get_sciobj_iter_remote(url):
 def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
-  d1_gmn.app.event_log.read(pid, request)
+  d1_gmn.app.event_log.log_read_event(pid, request)
   return d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
     request, pid
   )
@@ -290,8 +291,7 @@ def head_object(request, pid):
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   response = django.http.HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
-  # Log the access of this object.
-  d1_gmn.app.event_log.read(pid, request)
+  d1_gmn.app.event_log.log_read_event(pid, request)
   return response
 
 
@@ -327,7 +327,7 @@ def get_checksum(request, pid):
   )
   # Log the access of this object.
   # TODO: look into log type other than 'read'
-  d1_gmn.app.event_log.read(pid, request)
+  d1_gmn.app.event_log.log_read_event(pid, request)
   return django.http.HttpResponse(
     checksum_obj.toxml('utf-8'), d1_common.const.CONTENT_TYPE_XML
   )
@@ -384,7 +384,7 @@ def get_replica(request, pid):
   response._container = _get_sciobj_iter(sciobj)
   response._is_str = False
   # Log the replication of this object.
-  d1_gmn.app.event_log.replicate(pid, request)
+  d1_gmn.app.event_log.log_replicate_event(pid, request)
   return response
 
 
@@ -437,7 +437,7 @@ def put_meta(request):
     sid = d1_gmn.app.revision.get_sid(new_sysmeta_pyxb)
     d1_gmn.app.views.asserts.is_valid_sid_for_chain(pid, sid)
     d1_gmn.app.revision.update_sid_to_head_pid_map(pid)
-  d1_gmn.app.event_log.update(
+  d1_gmn.app.event_log.log_update_event(
     pid, request, timestamp=new_sysmeta_pyxb.dateUploaded
   )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
@@ -592,7 +592,7 @@ def put_object(request, old_pid):
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
   # d1_gmn.app.revision.update_sid_to_head_pid_map(new_pid)
-  d1_gmn.app.event_log.update(
+  d1_gmn.app.event_log.log_update_event(
     old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
   )
   d1_gmn.app.sysmeta.update_modified_timestamp(old_pid)
@@ -619,7 +619,6 @@ def post_generate_identifier(request):
       0, u'Only the UUID scheme is currently supported'
     )
   fragment = request.POST.get('fragment', None)
-  return 'UUID-FROM-GMN'
   while True:
     pid = (fragment if fragment else u'') + uuid.uuid4().hex
     if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():

@@ -26,6 +26,7 @@ import logging
 import random
 import string
 
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.util
 
 import d1_common.util
@@ -42,6 +43,7 @@ class GMNStartupChecks(django.apps.AppConfig):
     self._check_cert_file('CLIENT_CERT_PATH')
     self._check_cert_file('CLIENT_CERT_PRIVATE_KEY_PATH')
     self._warn_unsafe_for_prod()
+    self._create_sciobj_store_root()
 
   def _warn_unsafe_for_prod(self):
     """Warn on settings that are not safe for production"""
@@ -49,7 +51,6 @@ class GMNStartupChecks(django.apps.AppConfig):
       ('DEBUG', False),
       ('DEBUG_GMN', False),
       ('DEBUG_PYCHARM', False),
-      ('DEBUG_ALLOW_INTEGRATION_TESTS', False),
       ('STAND_ALONE', False),
     ]
     for setting_str, setting_safe in safe_settings_list:
@@ -104,3 +105,26 @@ class GMNStartupChecks(django.apps.AppConfig):
         u'Generated new secret key file. path="{}"'.format(secret_file_path)
       )
     return secret_key_str
+
+  def _create_sciobj_store_root(self):
+    if d1_gmn.app.sciobj_store.is_tmp():
+      d1_gmn.app.sciobj_store.create_clean_tmp_store()
+    if d1_gmn.app.sciobj_store.is_existing_store():
+      return
+    try:
+      d1_gmn.app.sciobj_store.create_store()
+    except EnvironmentError as e:
+      raise django.core.exceptions.ImproperlyConfigured(
+        u'Configuration error: Invalid object store root path. '
+        u'OBJECT_STORE_PATH="{}". msg="{}"'.format(
+          django.conf.settings.OBJECT_STORE_PATH, str(e)
+        )
+      )
+    if not d1_gmn.app.sciobj_store.is_matching_version():
+      logging.warning(
+        u'Configuration error: Incorrect object store version. '
+        u'store="{}" gmn="{}"'.format(
+          d1_gmn.app.sciobj_store.get_store_version(),
+          d1_gmn.app.sciobj_store.get_gmn_version(),
+        )
+      )

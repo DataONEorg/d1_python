@@ -23,6 +23,7 @@ from __future__ import absolute_import
 
 import d1_gmn.app.event_log
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
@@ -86,7 +87,7 @@ def create_native_sciobj(sysmeta_pyxb):
   """
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
   d1_gmn.app.sysmeta.create_or_update(
-    sysmeta_pyxb, d1_gmn.app.util.get_sciobj_file_url(pid)
+    sysmeta_pyxb, d1_gmn.app.sciobj_store.get_sciobj_file_url(pid)
   )
 
 
@@ -98,7 +99,7 @@ def _save_sciobj_bytes_from_request(request, pid):
   temporary to the final location. Django automatically handles this when using
   the file related fields in the models.
   """
-  sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+  sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
   d1_common.util.create_missing_directories_for_file(sciobj_path)
   try:
     django.core.files.move.file_move_safe(

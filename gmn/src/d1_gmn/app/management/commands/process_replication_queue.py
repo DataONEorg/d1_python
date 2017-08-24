@@ -35,6 +35,7 @@ import d1_gmn.app.local_replica
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.util
@@ -252,7 +253,7 @@ class ReplicationQueueProcessor(object):
     d1_gmn.app.models.replica_revision_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_stream):
-    sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+    sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
     d1_common.util.create_missing_directories_for_file(sciobj_path)
     with open(sciobj_path, 'wb') as f:
       for chunk in sciobj_stream.iter_content(
