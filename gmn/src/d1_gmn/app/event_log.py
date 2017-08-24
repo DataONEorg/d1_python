@@ -77,25 +77,29 @@ def create(pid, request, timestamp=None):
   return _log(pid, request, 'create', timestamp)
 
 
-def read(pid, request, timestamp=None):
+def log_read_event(pid, request, timestamp=None):
   return _log(pid, request, 'read', timestamp)
 
 
-def update(pid, request, timestamp=None):
+def log_update_event(pid, request, timestamp=None):
   return _log(pid, request, 'update', timestamp)
 
 
-def delete(pid, request, timestamp=None):
+def log_delete_event(pid, request, timestamp=None):
   return _log(pid, request, 'delete', timestamp)
 
 
-def replicate(pid, request, timestamp=None):
+def log_replicate_event(pid, request, timestamp=None):
   return _log(pid, request, 'replicate', timestamp)
 
 
-def synchronization_failed(pid, request, timestamp=None):
+def log_synchronization_failed_event(pid, request, timestamp=None):
   return _log(pid, request, 'synchronization_failed', timestamp)
 
 
-def replication_failed(pid, request, timestamp=None):
+def log_replication_failed_event(pid, request, timestamp=None):
   return _log(pid, request, 'replication_failed', timestamp)
+
+
+def has_event_log(pid):
+  return d1_gmn.app.models.EventLog.objects.filter(sciobj__pid__did=pid).exists()

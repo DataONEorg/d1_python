@@ -54,8 +54,6 @@ DEBUG = False
 #   debugging. Use only when there is no sensitive information on the MN.
 # - Clients can override all access control rules and authentication checks, and
 #   retrieve, delete or replace any object on the MN.
-# - Required for running the integration tests (gmn_integration_tests.py). Also
-#   see DEBUG_ALLOW_INTEGRATION_TESTS.
 # False (default):
 # - Use for production.
 DEBUG_GMN = False
@@ -88,19 +86,18 @@ DEBUG_PYCHARM_BIN = 'pycharm.sh'
 # Only available when DEBUG_GMN is set to True.
 DEBUG_ECHO_REQUEST = False
 
-# Allow integration tests.
+# Enable SQL profiling.
 # True:
-# - Destructive integration tests will be allowed to run.
+# - Requests are processed as normal up to the point where the response would be
+#   returned to the client. At that point, the response is discarded and a page
+#   with timing information about the SQL queries that were used during
+#   processing of the request is returned instead.
+# - When GMN_DEBUG = True, this functionality is also available on a call by
+#   call basis by including an HTTP header with key VENDOR-PROFILE-SQL in the
+#   request.
 # False (default):
-# - Destructive integration tests will not run.
-# GMN comes with a set of integration tests, in gmn_integration_tests.py. These
-# are destructive. They put the MN into a known state by erasing all objects and
-# populating the MN with a specific set of test objects. The integration tests
-# check that both DEBUG_GMN and this setting are set to True before running.
-# This helps prevent accidental deletion of objects on a MN that is in the
-# process of being deployed, and still has DEBUG_GMN set to True while also
-# holding objects that are intended to be used in production.
-DEBUG_ALLOW_INTEGRATION_TESTS = False
+# - The request is processed as normal.
+DEBUG_PROFILE_SQL = False
 
 # Enable stand-alone mode.
 # True (default):
@@ -140,17 +137,6 @@ TRUST_CLIENT_AUTHORITATIVEMEMBERNODE = False
 TRUST_CLIENT_DATESYSMETADATAMODIFIED = False
 TRUST_CLIENT_SERIALVERSION = False
 TRUST_CLIENT_DATEUPLOADED = False
-
-# Enable monitoring.
-# True (default):
-# - Aspects of internal GMN operations can be monitored by public subjects.
-# False:
-# - Prevent public subjects from accessing monitoring functions.
-# This function does not expose any sensitive information and should
-# be safe to keep enabled in production.
-# When DEBUG_GMN is True, this setting is ignored and monitoring is always
-# enabled.
-MONITOR = True
 
 # Hosts/domain names that are valid for this site.
 # Ignored if DEBUG is True. Required if DEBUG is False.

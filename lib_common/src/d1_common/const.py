@@ -42,6 +42,9 @@ VERSION = '2.3.5'
 # Maximum number of entries per list objects request
 MAX_LISTOBJECTS = 1000
 
+# Default number of items in a single page of a multi-page result set
+DEFAULT_SLICE_SIZE = 1000
+
 # Default number of objects to retrieve in a list objects request
 DEFAULT_LISTOBJECTS_PAGE_SIZE = 100
 
@@ -49,7 +52,7 @@ DEFAULT_LISTOBJECTS_PAGE_SIZE = 100
 DEFAULT_GETLOGRECORDS_PAGE_SIZE = 100
 
 # HTTP Response timeout in seconds, float.
-RESPONSE_TIMEOUT = 30.0
+RESPONSE_TIMEOUT = 60.0
 
 # HTTP User Agent that this software is known as.
 USER_AGENT = 'DataONE_Python/{} +http://dataone.org/'.format(VERSION)

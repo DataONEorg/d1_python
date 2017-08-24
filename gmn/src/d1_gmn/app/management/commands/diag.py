@@ -73,6 +73,20 @@ class Command(django.core.management.base.BaseCommand):
 
     self._events = d1_common.util.EventCounter()
 
+  # TODO: Add getpath command that returns local path of sciobj file in store
+
+  # url(
+  #   r'^diag/clear_replication_queue$',
+  #   d1_gmn.app.views.diagnostics.clear_replication_queue,
+  #   name='clear_replication_queue',
+  # ),
+
+  # url(
+  #   r'^diag/delete-event-log$',
+  #   d1_gmn.app.views.diagnostics.delete_event_log,
+  #   name='delete_event_log',
+  # ),
+
   # def create_parser(self, prog_name, subcommand):
   #     """
   #     Create and return the ``ArgumentParser`` which will be used to

@@ -26,7 +26,6 @@ not true.
 from __future__ import absolute_import
 
 import contextlib
-import urlparse
 
 import requests
 
@@ -44,6 +43,7 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types
 import d1_common.types.exceptions
+import d1_common.url
 import d1_common.xml
 
 import django.conf
@@ -330,8 +330,7 @@ def date_is_utc(date_time):
 
 
 def url_is_http_or_https(url):
-  url_split = urlparse.urlparse(url)
-  if url_split.scheme not in ('http', 'https'):
+  if not d1_common.url.isHttpOrHttps(url):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'URL specified for remote storage must be HTTP or HTTPS. url="{}"'.

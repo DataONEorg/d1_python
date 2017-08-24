@@ -22,12 +22,11 @@
 
 from __future__ import absolute_import
 
-import d1_gmn.app.views.diagnostics
+import d1_gmn.app.views.diag
+import d1_gmn.app.views.ext
 import d1_gmn.app.views.external
 import d1_gmn.app.views.internal
 
-import django.conf
-# Django
 from django.conf.urls import url
 
 urlpatterns = [
@@ -146,106 +145,46 @@ urlpatterns = [
     d1_gmn.app.views.external.post_replicate,
     name='post_replicate',
   ),
+
+  #
+  # GMN diagnostic APIs
+  #
+  url(
+    r'^diag/echo-session/?$',
+    d1_gmn.app.views.diag.echo_session,
+    name='echo_session',
+  ),
+  url(
+    r'^diag/echo-request/?$',
+    d1_gmn.app.views.diag.echo_request,
+    name='echo_request_object',
+  ),
+  url(
+    r'^diag/echo-exception/(.+?)$', d1_gmn.app.views.diag.echo_exception,
+    name='echo_exception'
+  ),
 ]
 
-urlpatterns.extend(
-  [url(r'^home/?$', d1_gmn.app.views.internal.home, name='home')]
-)
+#
+# Functionality only available in debug mode
+#
 
-# Diagnostic APIs that can be made available in production.
-
-if django.conf.settings.DEBUG_GMN or django.conf.settings.MONITOR:
-  urlpatterns.extend([
-    # Replication.
-    url(
-      r'^diag/get_replication_queue/?$',
-      d1_gmn.app.views.diagnostics.get_replication_queue,
-      name='get_replication_queue',
-    ),
-    # Authentication.
-    url(
-      r'^diag/echo_session/?$',
-      d1_gmn.app.views.diagnostics.echo_session,
-      name='echo_session',
-    ),
-    # Misc.
-    url(
-      r'^diag/echo_request_object/?$',
-      d1_gmn.app.views.diagnostics.echo_request_object,
-      name='echo_request_object',
-    ),
-    url(
-      r'^diag/echo_raw_post_data/?$',
-      d1_gmn.app.views.diagnostics.echo_raw_post_data,
-      name='echo_raw_post_data',
-    ),
-  ])
-
-# Diagnostic APIs that should only be available in debug mode.
-
-if django.conf.settings.DEBUG_GMN:
-  urlpatterns.extend([
-    # Diagnostics portal
-    url(
-      r'^diag$',
-      d1_gmn.app.views.diagnostics.diagnostics,
-      name='diag',
-    ),
-    # Replication.
-    url(
-      r'^diag/get_replication_queue$',
-      d1_gmn.app.views.diagnostics.get_replication_queue,
-      name='get_replication_queue',
-    ),
-    url(
-      r'^diag/clear_replication_queue$',
-      d1_gmn.app.views.diagnostics.clear_replication_queue,
-      name='clear_replication_queue',
-    ),
-    # Misc.
-    url(
-      r'^diag/create/(.+)$',
-      d1_gmn.app.views.diagnostics.create,
-      name='create',
-    ),
-    url(
-      r'^diag/slash/(.+?)/(.+?)/(.+?)$',
-      d1_gmn.app.views.diagnostics.slash,
-      name='slash',
-    ),
-    url(
-      r'^diag/exception/(.+?)$', d1_gmn.app.views.diagnostics.exception,
-      name='exception'
-    ),
-    url(
-      r'^diag/trusted_subjects$',
-      d1_gmn.app.views.diagnostics.trusted_subjects,
-      name='trusted_subjects',
-    ),
-    url(
-      r'^diag/whitelist_subject$',
-      d1_gmn.app.views.diagnostics.whitelist_subject,
-      name='whitelist_subject',
-    ),
-    url(
-      r'^diag/object_permissions/(.+?)$',
-      d1_gmn.app.views.diagnostics.object_permissions,
-      name='object_permissions',
-    ),
-    url(
-      r'^diag/get_setting/(.+)$',
-      d1_gmn.app.views.diagnostics.get_setting,
-      name='get_setting',
-    ),
-    # Event Log.
-    url(
-      r'^diag/delete_event_log$',
-      d1_gmn.app.views.diagnostics.delete_event_log,
-      name='delete_event_log',
-    ),
-    url(
-      r'^diag/inject_fictional_event_log$',
-      d1_gmn.app.views.diagnostics.inject_fictional_event_log,
-      name='inject_fictional_event_log',
-    ),
-  ])
+# if django.conf.settings.DEBUG_GMN:
+#   urlpatterns.extend([
+#     # UI tabs
+#     url(
+#       r'^diag/trusted-subjects$',
+#       d1_gmn.app.views.diagnostics.trusted_subjects,
+#       name='trusted_subjects',
+#     ),
+#     # Diagnostic APIs
+#     url(
+#       r'^diag/object-permissions/(.+?)$',
+#       d1_gmn.app.views.diagnostics.object_permissions,
+#       name='object_permissions',
+#     ),
+#     url(
+#       r'^diag/get-setting/(.+)$',
+#       d1_gmn.app.views.diagnostics.get_setting,
+#       name='get_setting',
+#     ),

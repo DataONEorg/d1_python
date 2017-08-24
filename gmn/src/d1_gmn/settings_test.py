@@ -29,7 +29,7 @@ DEBUG_GMN = True
 DEBUG_PYCHARM = False
 DEBUG_PYCHARM_BIN = 'pycharm.sh'
 DEBUG_ECHO_REQUEST = False
-DEBUG_ALLOW_INTEGRATION_TESTS = False
+DEBUG_PROFILE_SQL = False
 
 STAND_ALONE = True
 
@@ -47,9 +47,9 @@ ALLOWED_HOSTS = [
   #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
   #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
 ]
-NODE_IDENTIFIER = 'urn:node:MyMemberNode'
-NODE_NAME = 'My Member Node'
-NODE_DESCRIPTION = 'Test Member Node'
+NODE_IDENTIFIER = 'urn:node:GMNUnitTestInstance'
+NODE_NAME = 'GMN Unit Test Instance'
+NODE_DESCRIPTION = 'GMN instance launched via pytest'
 NODE_BASEURL = 'https://localhost/mn'
 NODE_SYNCHRONIZE = True
 
@@ -61,8 +61,8 @@ NODE_SYNC_SCHEDULE_HOUR = '*'
 NODE_SYNC_SCHEDULE_MINUTE = '42'
 NODE_SYNC_SCHEDULE_SECOND = '0'
 
-NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
-NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+NODE_SUBJECT = 'CN=urn:node:GMNUnitTestInstance,DC=dataone,DC=org'
+NODE_CONTACT_SUBJECT = 'CN=NodeContactSubject,O=Google,C=US,DC=cilogon,DC=org'
 NODE_STATE = 'up'
 
 CLIENT_CERT_PATH = None
@@ -75,13 +75,14 @@ REPLICATION_SPACEALLOCATED = 10 * 1024**3
 REPLICATION_ALLOWEDNODE = ()
 REPLICATION_ALLOWEDOBJECTFORMAT = ()
 REPLICATION_MAX_ATTEMPTS = 24
+REPLICATION_ALLOW_ONLY_PUBLIC = False
 
 SYSMETA_REFRESH_MAX_ATTEMPTS = 24
 
 DATAONE_ROOT = 'http://mock/root/cn'
 DATAONE_TRUSTED_SUBJECTS = set([])
 
-ADMINS = (('Test Admin', 'admin@test.tld'),)
+ADMINS = (('GMN Unit Test Admin', 'admin@test.tld'),)
 
 PUBLIC_OBJECT_LIST = True
 PUBLIC_LOG_RECORDS = True
