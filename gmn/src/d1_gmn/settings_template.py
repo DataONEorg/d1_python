@@ -230,9 +230,9 @@ CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopas
 #   this setting by refusing calls to MNReplication.replicate().
 NODE_REPLICATE = False
 
-# The maximum size, in octets (8-bit bytes), of each object this node is willing to
-# accept for replication. Set to -1 to allow objects of any size.
-# E.g. for a maximum object size of 1GiB: 1024**3
+# The maximum size, in octets (8-bit bytes), of each object this node is willing
+# to accept for replication. Set to -1 to allow objects of any size. E.g. for a
+# maximum object size of 1GiB: 1024**3
 REPLICATION_MAXOBJECTSIZE = -1
 
 # The total space, in octets (8-bit bytes), that this node is providing for
@@ -256,6 +256,14 @@ REPLICATION_ALLOWEDOBJECTFORMAT = ()
 # processing occurs once per hour, so a value of 24 (default) causes replication
 # to be retried for 24 hours.
 REPLICATION_MAX_ATTEMPTS = 24
+
+# Accept only public objects for replication
+# True:
+# - This node will deny any replication requests for access controlled objects.
+# False (default):
+# - Replication requests are accepted for access controlled objects provided
+# that all other criteria are met.
+REPLICATION_ALLOW_ONLY_PUBLIC = False
 
 # The maximum number of attempts to complete a CN System Metadata refresh
 # request. When this number is exceeded, the request is recorded as failed and

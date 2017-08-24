@@ -78,10 +78,23 @@ and
 
 from __future__ import absolute_import
 
+import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
 ORDERED_PERMISSION_LIST = ['read', 'write', 'changePermission']
+
+
+def has_access_policy(sysmeta_pyxb):
+  return bool(getattr(sysmeta_pyxb, 'accessPolicy', False))
+
+
+def is_public(sysmeta_pyxb):
+  return (
+    has_access_policy(sysmeta_pyxb) and is_subject_allowed(
+      sysmeta_pyxb.accessPolicy, d1_common.const.SUBJECT_PUBLIC, 'read'
+    )
+  )
 
 
 def normalize(access_policy_pyxb):
@@ -109,11 +122,10 @@ def get_normalized_permission_list(access_policy_pyxb):
 
 def get_effective_permission_list(access_policy_pyxb, subject_str):
   """Returns a list of permissions for {subject}. E.g., ['read', 'write'].
-  Handles implicit permissions. E.g., if {access_policy} specifies only
-  'write', returns ['read', 'write']. If {subject} is not in {access_policy},
-  returns [].
+  Handles implicit permissions. E.g., if {access_policy} specifies only 'write',
+  returns ['read', 'write']. If {subject} is not in {access_policy}, returns [].
   """
-  return get_effective_permission_dict(access_policy_pyxb)[subject_str]
+  return get_effective_permission_dict(access_policy_pyxb).get(subject_str, [])
 
 
 def get_effective_permission_dict(access_policy_pyxb):

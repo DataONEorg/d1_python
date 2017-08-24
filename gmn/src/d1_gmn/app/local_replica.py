@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 import d1_gmn.app.models
 
+import d1_common.access_policy
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
@@ -150,4 +151,10 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept objects of specified format. format="{}"'
         .format(d1_common.xml.get_req_val(sysmeta_pyxb.formatId))
+      )
+
+  if django.conf.settings.REPLICATION_ALLOW_ONLY_PUBLIC:
+    if not d1_common.access_policy.is_public(sysmeta_pyxb):
+      raise d1_common.types.exceptions.InvalidRequest(
+        0, u'This node does not accept access controlled objects'
       )

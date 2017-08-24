@@ -34,6 +34,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
 import d1_common
+import d1_common.const
 import d1_common.types.exceptions
 
 import django.test
@@ -106,4 +107,60 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
       with d1_gmn.tests.gmn_mock.disable_auth():
         with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+          mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  parameterize_dict = {
+    'test_1050': [
+      dict(true_or_false=True),
+      dict(true_or_false=False),
+    ],
+  }
+
+  @responses.activate
+  def test_1050(self, mn_client_v1_v2, true_or_false):
+    """MNReplication.replicate(): Request to replicate public object is accepted
+    if REPLICATION_ALLOW_ONLY_PUBLIC is True or False
+    """
+    with django.test.override_settings(
+        NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=true_or_false
+    ):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+        mn_client_v1_v2, permission_list=[
+          ([d1_common.const.SUBJECT_PUBLIC], ['read']),
+          (['subj2', 'subj3', 'subj4'], ['write']),
+        ]
+      )
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  @responses.activate
+  def test_1060(self, mn_client_v1_v2):
+    """MNReplication.replicate(): Request to replicate access control is
+    accepted if REPLICATION_ALLOW_ONLY_PUBLIC is False
+    """
+    with django.test.override_settings(
+        NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=False
+    ):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+        mn_client_v1_v2, permission_list=[
+          ([d1_common.const.SUBJECT_PUBLIC], ['read']),
+          (['subj2', 'subj3', 'subj4'], ['write']),
+        ]
+      )
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+
+  @responses.activate
+  def test_1070(self, mn_client_v1_v2):
+    """MNReplication.replicate(): Request to replicate access controlled object
+    raises InvalidRequest if REPLICATION_ALLOW_ONLY_PUBLIC is True
+    """
+    with django.test.override_settings(
+        NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=True
+    ):
+      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+        mn_client_v1_v2
+      )
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        with pytest.raises(d1_common.types.exceptions.InvalidRequest):
           mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
