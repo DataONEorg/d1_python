@@ -8,7 +8,7 @@
     <subject>subj_t</subject>
     <event>read</event>
     <dateLogged>2005-12-01T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -18,7 +18,7 @@
     <subject>subj_g</subject>
     <event>read</event>
     <dateLogged>2005-11-30T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -28,7 +28,7 @@
     <subject>subj_jh</subject>
     <event>read</event>
     <dateLogged>2005-11-29T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -38,7 +38,7 @@
     <subject>subj_n</subject>
     <event>read</event>
     <dateLogged>2005-11-28T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -48,7 +48,7 @@
     <subject>subj_gr</subject>
     <event>read</event>
     <dateLogged>2005-11-27T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -58,7 +58,7 @@
     <subject>subj_ft</subject>
     <event>read</event>
     <dateLogged>2005-11-26T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -68,7 +68,7 @@
     <subject>subj_dv</subject>
     <event>read</event>
     <dateLogged>2005-11-25T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -78,7 +78,7 @@
     <subject>subj_r</subject>
     <event>read</event>
     <dateLogged>2005-11-24T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -88,7 +88,7 @@
     <subject>subj_p</subject>
     <event>read</event>
     <dateLogged>2005-11-23T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -98,7 +98,7 @@
     <subject>subj_gs</subject>
     <event>read</event>
     <dateLogged>2005-11-22T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -108,7 +108,7 @@
     <subject>subj_w</subject>
     <event>read</event>
     <dateLogged>2005-11-21T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -118,7 +118,7 @@
     <subject>subj_x</subject>
     <event>read</event>
     <dateLogged>2005-11-20T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -128,7 +128,7 @@
     <subject>subj_v</subject>
     <event>read</event>
     <dateLogged>2005-11-19T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -138,7 +138,7 @@
     <subject>subj_u</subject>
     <event>read</event>
     <dateLogged>2005-11-18T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -148,6 +148,6 @@
     <subject>subj_ge</subject>
     <event>read</event>
     <dateLogged>2005-11-17T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

@@ -2,23 +2,23 @@
 <ns1:log count="6" start="0" total="6" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>update</event>
-    <dateLogged>2055-10-27T04:21:53</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_wlgnnomriqyn</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2055-10-27T04:21:53</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_GMNFXT_bjfwtatgujfy</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>pyd1/%s +http://dataone.org/2.3.4</userAgent>
+    <subject>disabled_auth_subj</subject>
+    <event>update</event>
+    <dateLogged>2055-10-27T04:21:53</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -28,7 +28,7 @@
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2035-09-28T15:39:08</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -38,7 +38,7 @@
     <subject>subj_ia</subject>
     <event>read</event>
     <dateLogged>2007-07-10T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -48,7 +48,7 @@
     <subject>subj_zt</subject>
     <event>read</event>
     <dateLogged>2005-06-24T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -58,6 +58,6 @@
     <subject>subj_yn</subject>
     <event>read</event>
     <dateLogged>2003-11-29T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

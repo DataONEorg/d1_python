@@ -66,7 +66,7 @@ create_event: <?xml version="1.0" encoding="utf-8"?>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2388-08-28T00:00:00</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>
 

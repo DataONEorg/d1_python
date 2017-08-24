@@ -8,7 +8,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2039-07-23T11:04:11</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -18,6 +18,6 @@
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2023-10-06T06:29:16</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

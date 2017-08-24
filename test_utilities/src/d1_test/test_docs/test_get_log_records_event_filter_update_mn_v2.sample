@@ -8,7 +8,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-07-22T01:37:28</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -18,7 +18,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-06-07T04:27:07</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -28,7 +28,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2068-08-11T23:36:34</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -38,7 +38,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2068-06-28T09:23:07</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -48,7 +48,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2068-03-11T10:55:58</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -58,7 +58,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2067-06-29T08:16:07</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -68,7 +68,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2067-02-20T13:48:34</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -78,7 +78,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2066-12-13T03:56:40</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -88,7 +88,7 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2065-10-21T06:54:37</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[volatile]</entryId>
@@ -98,6 +98,6 @@
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2065-01-20T21:54:47</dateLogged>
-    <nodeIdentifier>urn:node:MyMemberNode</nodeIdentifier>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>
