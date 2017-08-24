@@ -165,6 +165,7 @@ import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
@@ -172,6 +173,7 @@ import d1_gmn.app.views.create
 import d1_gmn.app.views.diagnostics
 import d1_gmn.app.views.util
 
+import d1_common.const
 import d1_common.revision
 import d1_common.system_metadata
 import d1_common.type_conversions
@@ -240,6 +242,16 @@ class Command(django.core.management.base.BaseCommand):
       '--workers', type=int, action='store', default=DEFAULT_N_WORKERS,
       help='Max number of concurrent connections made to the source MN'
     )
+    parser.add_argument(
+      '--object-page-size', type=int, action='store',
+      default=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
+      help='Number of objects to retrieve in each listObjects() call'
+    )
+    parser.add_argument(
+      '--log-page-size', type=int, action='store',
+      default=d1_common.const.DEFAULT_GETLOGRECORDS_PAGE_SIZE,
+      help='Number of log records to retrieve in each getLogRecords() call'
+    )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
   def handle(self, *args, **opt):
@@ -264,7 +276,7 @@ class Command(django.core.management.base.BaseCommand):
         'Use --force to import anyway.'
       )
     if self._opt['clear']:
-      d1_gmn.app.delete.delete_all()
+      d1_gmn.app.delete.delete_all_from_db()
       self._events.log_and_count('Cleared database')
 
     revision_list = self._find_revision_chains()
@@ -274,7 +286,6 @@ class Command(django.core.management.base.BaseCommand):
       'revision_list', 'path="{}"'.format(REVISION_LIST_PATH),
       inc_int=len(revision_list)
     )
-
     obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
       revision_list
     )
@@ -290,8 +301,8 @@ class Command(django.core.management.base.BaseCommand):
       'unconnected_dict', 'path="{}"'.format(UNCONNECTED_DICT_PATH),
       inc_int=len(unconnected_dict)
     )
-
     imported_pid_list = self._import_objects(topo_list)
+    # imported_pid_list = d1_common.util.load_json(IMPORTED_LIST_PATH)
     d1_common.util.save_json(imported_pid_list, IMPORTED_LIST_PATH)
     self._events.log_and_count(
       'imported_pid_list', 'path="{}"'.format(IMPORTED_LIST_PATH),
@@ -334,19 +345,19 @@ class Command(django.core.management.base.BaseCommand):
     return imported_pid_list
 
   def _import_object(self, pid):
-    if d1_gmn.app.sysmeta.is_did(pid):
+    if d1_gmn.app.sysmeta.is_pid_of_existing_object(pid):
       self._events.log_and_count(
         'Skipped object that already exists', 'pid="{}"'.format(pid)
       )
       return
     sysmeta_pyxb = self._get_source_sysmeta(pid)
-    self._download_source_sciobj_bytes_to_store(pid)
+    # self._download_source_sciobj_bytes_to_store(pid)
     d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
 
   def _import_logs(self, imported_pid_list):
     client = self._create_source_client()
     log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(
-      client,
+      client, count=self._opt['log_page_size']
     )
     imported_pid_set = set(imported_pid_list)
     for i, log_record in enumerate(log_record_iterator):
@@ -357,6 +368,16 @@ class Command(django.core.management.base.BaseCommand):
       if pid not in imported_pid_set:
         self._events.log_and_count(
           'Skipped object that was not imported', 'pid="{}"'.format(pid)
+        )
+        continue
+      # if d1_gmn.app.event_log.has_event_log(pid):
+      #   self._events.log_and_count(
+      #     'Skipped object that already had one or more event records', 'pid="{}"'.format(pid)
+      #   )
+      #   continue
+      if not d1_gmn.app.sysmeta.is_pid_of_existing_object(pid):
+        self._events.log_and_count(
+          'Skipped object that does not exist', 'pid="{}"'.format(pid)
         )
         continue
       self._create_log_entry(log_record)
@@ -382,7 +403,13 @@ class Command(django.core.management.base.BaseCommand):
     return client.getgetSystemMetadata(pid)
 
   def _download_source_sciobj_bytes_to_store(self, pid):
-    sciobj_path = d1_gmn.app.util.get_sciobj_file_path(pid)
+    sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+    if os.path.isfile(sciobj_path):
+      self._events.log_and_count(
+        'Skipped download of existing sciobj bytes',
+        'pid="{}" path="{}"'.format(pid, sciobj_path)
+      )
+      return
     d1_common.util.create_missing_directories_for_file(sciobj_path)
     client = self._create_source_client()
     client.get_and_save(pid, sciobj_path)
@@ -390,6 +417,8 @@ class Command(django.core.management.base.BaseCommand):
   def _get_client_args_dict(self):
     client_args_dict = {
       'timeout_sec': self._opt['timeout'],
+      'verify_tls': False,
+      'suppress_verify_warnings': True,
     }
     if not self._opt['public']:
       client_args_dict.update({
