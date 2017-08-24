@@ -24,7 +24,6 @@ from __future__ import absolute_import
 
 import logging
 
-import pytest
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -35,19 +34,15 @@ import d1_common.system_metadata
 import d1_test.sample
 
 
-# TODO:
-@pytest.mark.skip(
-  'Behaves differently under test. Tests pass when running against service.'
-)
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   parameterize_dict = {
-    'test_1000': [
-      {
+    'test_1000':
+      [{
         'unicode_pid': s.split('\t')[0]
       }
-      for s in d1_test.sample.
-      load_utf8_to_unicode('tricky_identifiers_unicode.utf8.txt').splitlines()
-    ],
+       for s in d1_test.sample.
+       load_utf8_to_unicode('tricky_identifiers_unicode.utf8.txt').splitlines()
+       if not s.startswith('#')],
   }
 
   @responses.activate

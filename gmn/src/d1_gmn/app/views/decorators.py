@@ -75,17 +75,20 @@ def resolve_sid_func(request, did):
 
 
 def decode_id(f):
-  """Decorator that decodes the SID or PID extracted from URL path segment
-  by Django.
+  """Decorator that decodes "%2f" ("/") in SID or PID extracted from URL path
+  segment by Django.
+
+  Django decodes URL elements before passing them to views, but passes "%2f"
+  ("/") through undecoded. Why..?
   """
-  # TODO: Currently, Django passes percent-encoded params to views when they
-  # were extracted from URL path segments by the Django URL regex parser and
-  # dispatcher. IMO, that's a bug and I'm working with Django devs to see if
-  # this can be fixed. Update this accordingly.
+
   @functools.wraps(f)
   def wrapper(request, did, *args, **kwargs):
-    return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
-    # return f(request, did, *args, **kwargs)
+    return f(
+      request, did.replace('%2f', '/').replace('%2F', '/'), *args, **kwargs
+    )
+    # return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
+    #return f(request, did, *args, **kwargs)
 
   return wrapper
 

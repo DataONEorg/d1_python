@@ -65,7 +65,7 @@ def abs_path(rel_path):
   )
 
 
-def create_missing_directories(dir_path):
+def create_missing_directories_for_dir(dir_path):
   try:
     os.makedirs(dir_path)
   except OSError as e:
@@ -74,7 +74,7 @@ def create_missing_directories(dir_path):
 
 
 def create_missing_directories_for_file(file_path):
-  create_missing_directories(os.path.dirname(file_path))
+  create_missing_directories_for_dir(os.path.dirname(file_path))
 
 
 def get_content_type(content_type):
@@ -147,7 +147,9 @@ class EventCounter(object):
     """{event_str} is both a key for the count and part of the log message.
     {log_str} is a message with details that may change for each call
     """
-    logging.info(u'{} - {}: {}'.format(event_str, msg_str, inc_int))
+    logging.info(
+      u' - '.join([v for v in (event_str, msg_str, str(inc_int)) if v])
+    )
     self.count(event_str, inc_int)
 
   def dump_to_log(self):
@@ -191,13 +193,22 @@ def print_logging():
     h.setLevel(level)
 
 
-def save_json(unsorted_dict, json_path):
+def save_json(py_obj, json_path):
   with open(json_path, 'w') as f:
-    json.dump(
-      unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
-    )
+    f.write(format_normalized_pretty_json(py_obj))
 
 
 def load_json(json_path):
   with open(json_path, 'r') as f:
     return json.load(f)
+
+
+def format_normalized_pretty_json(py_obj):
+  return json.dumps(py_obj, sort_keys=True, indent=2, cls=SetToList)
+
+
+class SetToList(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, set):
+      return sorted(list(obj))
+    return json.JSONEncoder.default(self, obj)

@@ -28,7 +28,10 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_test.d1_test_case
 
+
+@d1_test.d1_test_case.reproducible_random_decorator('TestGenerateIdentifier')
 class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
@@ -36,7 +39,7 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     matches scheme and fragment
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      fragment = 'test_fragment'
+      fragment = 'test_fragment_volatile_'
       identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
       self.sample.assert_equals(identifier_pyxb, 'valid_did_1', mn_client_v1_v2)
 
@@ -46,7 +49,7 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     when called second time
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      fragment = 'test_fragment'
+      fragment = 'test_fragment_volatile_'
       identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
       self.sample.assert_equals(
         identifier_pyxb, 'valid_did_unique_1', mn_client_v1_v2

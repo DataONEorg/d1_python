@@ -20,7 +20,6 @@ import bz2
 # limitations under the License.
 import codecs
 import contextlib
-import json
 import logging
 import os
 import re
@@ -40,6 +39,8 @@ import d1_common.xml
 import d1_client.util
 
 import django
+import django.core
+import django.core.management
 
 
 def start_tidy():
@@ -52,8 +53,8 @@ def start_tidy():
   logging.info('Moving files to tidy dir')
   sample_dir_path = os.path.join(d1_common.util.abs_path('test_docs'))
   tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
-  d1_common.util.create_missing_directories(sample_dir_path)
-  d1_common.util.create_missing_directories(tidy_dir_path)
+  d1_common.util.create_missing_directories_for_dir(sample_dir_path)
+  d1_common.util.create_missing_directories_for_dir(tidy_dir_path)
   i = 0
   for i, item_name in enumerate(os.listdir(sample_dir_path)):
     sample_path = os.path.join(sample_dir_path, item_name)
@@ -196,7 +197,7 @@ def obj_to_pretty_str(o):
       if '\n' in str(o):
         return str(o)
     with ignore_exceptions():
-      return json.dumps(o, sort_keys=True, indent=2, cls=SetToList)
+      return d1_common.util.format_normalized_pretty_json(o)
     with ignore_exceptions():
       return str(o)
     return repr(o)
@@ -214,6 +215,10 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=<entryId>)\d+', '[volatile]', o_str)
   # TODO: This shouldn't be needed...
   o_str = re.sub(r'(?<=Content-Type:).*', '[volatile]', o_str)
+  # The uuid module uses MAC address etc
+  o_str = re.sub(
+    r'(?<=test_fragment_volatile_)[0-9a-fA-F]+', '[volatile]', o_str
+  )
   return o_str
 
 
@@ -376,13 +381,3 @@ def save_compressed_db_fixture(filename):
 
 class SampleException(Exception):
   pass
-
-
-# ==============================================================================
-
-
-class SetToList(json.JSONEncoder):
-  def default(self, obj):
-    if isinstance(obj, set):
-      return sorted(list(obj))
-    return json.JSONEncoder.default(self, obj)

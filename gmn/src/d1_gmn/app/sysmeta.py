@@ -121,6 +121,10 @@ def is_did(did):
   return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
 
 
+def get_did(sciobj_fk):
+  return getattr(sciobj_fk, 'did', None)
+
+
 def is_pid(did):
   """An identifier is a PID if it exists in IdNamespace and is not a SID.
   Includes unprocessed replicas and revision chain placeholders for remote
@@ -130,8 +134,7 @@ def is_pid(did):
 
 
 def is_pid_of_existing_object(pid):
-  """Excludes SIDs, unprocessed replicas and revision chain placeholders for
-  remote objects.
+  """Excludes SIDs, unprocessed replicas and revision chain placeholders.
   """
   return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists()
 
@@ -213,11 +216,6 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
 
 
 def _base_model_to_pyxb(sciobj_model):
-  def sub_sciobj(sub_sciobj_model):
-    if sub_sciobj_model is None:
-      return None
-    return sub_sciobj_model.did
-
   base_pyxb = d1_common.types.dataoneTypes.systemMetadata()
   base_pyxb.identifier = d1_common.types.dataoneTypes.Identifier(
     sciobj_model.pid.did
@@ -236,8 +234,8 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.rightsHolder = sciobj_model.rights_holder.subject
   base_pyxb.originMemberNode = sciobj_model.origin_member_node.urn
   base_pyxb.authoritativeMemberNode = sciobj_model.authoritative_member_node.urn
-  base_pyxb.obsoletes = sub_sciobj(sciobj_model.obsoletes)
-  base_pyxb.obsoletedBy = sub_sciobj(sciobj_model.obsoleted_by)
+  base_pyxb.obsoletes = get_did(sciobj_model.obsoletes)
+  base_pyxb.obsoletedBy = get_did(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
   base_pyxb.seriesId = d1_gmn.app.revision.get_sid_by_pid(sciobj_model.pid.did)
   return base_pyxb
