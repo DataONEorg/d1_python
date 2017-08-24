@@ -49,7 +49,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 
-def add_access_policy_filter(query, request, column_name):
+def add_access_policy_filter(request, query, column_name):
   q = (
     d1_gmn.app.models.Subject.objects.filter(
       subject__in=request.all_subjects_set
@@ -59,7 +59,7 @@ def add_access_policy_filter(query, request, column_name):
   return query.filter(**{filter_arg: q})
 
 
-def add_replica_filter(query, request):
+def add_replica_filter(request, query):
   param_name = 'replicaStatus'
   bool_val = request.GET.get(param_name, True)
   if bool_val is None:
@@ -70,7 +70,7 @@ def add_replica_filter(query, request):
   return query
 
 
-def add_bool_filter(query, request, column_name, param_name):
+def add_bool_filter(request, query, column_name, param_name):
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
@@ -81,7 +81,7 @@ def add_bool_filter(query, request, column_name, param_name):
   )
 
 
-def add_datetime_filter(query, request, column_name, param_name, operator):
+def add_datetime_filter(request, query, column_name, param_name, operator):
   date_str = request.GET.get(param_name, None)
   if date_str is None:
     return query
@@ -102,14 +102,14 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
   return query.filter(**{filter_arg: date})
 
 
-def add_string_filter(query, request, column_name, param_name):
+def add_string_filter(request, query, column_name, param_name):
   value = request.GET.get(param_name, None)
   if value is None:
     return query
   return query.filter(**{column_name: value})
 
 
-def add_sid_filter(query, request, column_name, param_name):
+def add_sid_filter(request, query, column_name, param_name):
   sid = request.GET.get(param_name, None)
   filter_arg = '{}__in'.format(column_name)
   return query.filter(
@@ -117,7 +117,7 @@ def add_sid_filter(query, request, column_name, param_name):
   )
 
 
-def add_string_begins_with_filter(query, request, column_name, param_name):
+def add_string_begins_with_filter(request, query, column_name, param_name):
   value = request.GET.get(param_name, None)
   if value is None:
     return query
@@ -126,46 +126,16 @@ def add_string_begins_with_filter(query, request, column_name, param_name):
 
 
 def add_sid_or_string_begins_with_filter(
-    query,
-    request,
-    column_name,
-    param_name,
+    request, query, column_name, param_name
 ):
   did = request.GET.get(param_name, None)
   if did is None:
     return query
   if d1_gmn.app.revision.is_sid(did):
     return d1_gmn.app.db_filter.add_sid_filter(
-      query, request, column_name, param_name
+      request, query, column_name, param_name
     )
   else:
     return d1_gmn.app.db_filter.add_string_begins_with_filter(
-      query, request, column_name, param_name
+      request, query, column_name, param_name
     )
-
-
-def add_slice_filter(query, request):
-  """Create a slice of a query based on request start and count parameters.
-  """
-  try:
-    start = int(request.GET['start'])
-    if start < 0:
-      raise ValueError
-  except (KeyError, ValueError):
-    start = 0
-  try:
-    count = int(request.GET['count'])
-    if count < 0:
-      raise ValueError
-  except (KeyError, ValueError):
-    count = d1_common.const.MAX_LISTOBJECTS
-  if start == 0 and count == 0:
-    query = query.none()
-  elif start and count:
-    query = query[start:start + count]
-  elif start:
-    query = query[start:]
-  elif count:
-    query = query[:count]
-
-  return query, start, count

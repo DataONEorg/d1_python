@@ -147,6 +147,10 @@ class ScienceObject(models.Model):
   # Internal fields (not used in System Metadata)
   url = models.CharField(max_length=1024, unique=True)
 
+  class Meta:
+    # The slice module must be updated if ordering is modified
+    ordering = ['-modified_timestamp', 'id'] # pid__did
+
 
 # ------------------------------------------------------------------------------
 # MediaType
@@ -403,6 +407,12 @@ class EventLog(models.Model):
   subject = models.ForeignKey(Subject, models.CASCADE)
   timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
+  class Meta:
+    # The slice module must be updated if ordering is modified
+    ordering = ['-timestamp', 'id']
+
+
+# EventLog.objects.filter(times)
 
 # ------------------------------------------------------------------------------
 # System Metadata refresh queue

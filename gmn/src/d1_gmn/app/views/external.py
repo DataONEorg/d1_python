@@ -43,13 +43,15 @@ import d1_gmn.app.util
 import d1_gmn.app.views.asserts
 import d1_gmn.app.views.create
 import d1_gmn.app.views.decorators
+import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes_v1_1
+import d1_common.revision
 import d1_common.types.exceptions
+import d1_common.url
 import d1_common.xml
 
 import d1_client.cnclient
@@ -129,40 +131,44 @@ def get_monitor_ping(request):
 def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
+
+  Sorted by timestamp, id (see EventLog.Meta).
   """
-  query = d1_gmn.app.models.EventLog.objects.order_by(
-    '-timestamp', 'sciobj__pid__did'
-  ).select_related()
+  # TODO: Check if select_related() gives better performance
+  query = d1_gmn.app.models.EventLog.objects.all().select_related(
+  ) # order_by('-timestamp', 'id'
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(
-      query, request, 'sciobj__id'
+      request, query, 'sciobj__id'
     )
   query = d1_gmn.app.db_filter.add_datetime_filter(
-    query, request, 'timestamp', 'fromDate', 'gte'
+    request, query, 'timestamp', 'fromDate', 'gte'
   )
   query = d1_gmn.app.db_filter.add_datetime_filter(
-    query, request, 'timestamp', 'toDate', 'lt'
+    request, query, 'timestamp', 'toDate', 'lt'
   )
   query = d1_gmn.app.db_filter.add_string_filter(
-    query, request, 'event__event', 'event'
+    request, query, 'event__event', 'event'
   )
   if d1_gmn.app.views.util.is_v1_api(request):
     query = d1_gmn.app.db_filter.add_string_begins_with_filter(
-      query, request, 'sciobj__pid__did', 'pidFilter'
+      request, query, 'sciobj__pid__did', 'pidFilter'
     )
   elif d1_gmn.app.views.util.is_v2_api(request):
     query = d1_gmn.app.db_filter.add_sid_or_string_begins_with_filter(
-      query, request, 'sciobj__pid__did', 'idFilter'
+      request, query, 'sciobj__pid__did', 'idFilter'
     )
   else:
     assert False, u'Unable to determine API version'
-  query_unsliced = query
-  query, start, count = d1_gmn.app.db_filter.add_slice_filter(query, request)
+  total_int = query.count()
+  query, start, count = d1_gmn.app.views.slice.add_slice_filter(
+    request, query, total_int
+  )
   return {
     'query': query,
     'start': start,
     'count': count,
-    'total': query_unsliced.count(),
+    'total': total_int,
     'type': 'log'
   }
 
@@ -333,40 +339,7 @@ def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, identifier][, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
-  query = d1_gmn.app.models.ScienceObject.objects.order_by(
-    '-modified_timestamp', 'pid__did'
-  ).select_related()
-  if not d1_gmn.app.auth.is_trusted_subject(request):
-    query = d1_gmn.app.db_filter.add_access_policy_filter(query, request, 'id')
-  query = d1_gmn.app.db_filter.add_datetime_filter(
-    query, request, 'modified_timestamp', 'fromDate', 'gte'
-  )
-  query = d1_gmn.app.db_filter.add_datetime_filter(
-    query, request, 'modified_timestamp', 'toDate', 'lt'
-  )
-  query = d1_gmn.app.db_filter.add_string_filter(
-    query, request, 'format__format', 'formatId'
-  )
-  did = request.GET.get('identifier', None)
-  if did is not None:
-    if d1_gmn.app.revision.is_sid(did):
-      query = d1_gmn.app.db_filter.add_sid_filter(
-        query, request, 'pid__did', 'identifier'
-      )
-    else:
-      query = d1_gmn.app.db_filter.add_string_filter(
-        query, request, 'pid__did', 'identifier'
-      )
-  query = d1_gmn.app.db_filter.add_replica_filter(query, request)
-  query_unsliced = query
-  query, start, count = d1_gmn.app.db_filter.add_slice_filter(query, request)
-  return {
-    'query': query,
-    'start': start,
-    'count': count,
-    'total': query_unsliced.count(),
-    'type': 'object'
-  }
+  return d1_gmn.app.views.util.query_object_list(request, 'object_list')
 
 
 @d1_gmn.app.restrict_to_verb.post

@@ -32,6 +32,31 @@ import d1_common.const
 # ==============================================================================
 
 
+def parseUrl(url):
+  """Return a dict containing scheme, netloc, url, params, query, fragment keys
+
+  query is a dict where the values are always lists. If the query key appears
+  only once in the URL, the list will have a single value.
+  """
+  scheme, netloc, url, params, query, fragment = urlparse.urlparse(url)
+  query_dict = {
+    k: sorted(v) if len(v) > 1 else v[0]
+    for k, v in urlparse.parse_qs(query).items()
+  }
+  return dict(
+    scheme=scheme, netloc=netloc, url=url, params=params, query=query_dict,
+    fragment=fragment
+  )
+
+
+def isHttpOrHttps(url):
+  """URL is HTTP or HTTPS protocol
+
+  Upper and lower case protocol names are recognized.
+  """
+  return urlparse.urlparse(url).scheme in ('http', 'https')
+
+
 def encodePathElement(element):
   """Encode a URL path element according to RFC3986.
   """

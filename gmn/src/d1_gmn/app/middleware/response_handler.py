@@ -28,6 +28,7 @@ from __future__ import absolute_import
 import datetime
 import logging
 
+import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
 import d1_common.const
@@ -38,8 +39,8 @@ import d1_common.types.exceptions
 
 import django.conf
 import django.db
+import django.db.models
 import django.http
-from django.db.models import Max
 
 
 class ResponseHandler(object):
@@ -51,7 +52,7 @@ class ResponseHandler(object):
     """
     if isinstance(view_result, django.http.response.HttpResponseBase):
       response = view_result
-    elif isinstance(view_result, dict):
+    elif isinstance(view_result, (list, dict)):
       response = self._serialize_object(request, view_result)
     elif isinstance(view_result, basestring):
       response = self._http_response_with_identifier_type(request, view_result)
@@ -60,9 +61,11 @@ class ResponseHandler(object):
         'View exception: '.format(type(view_result), str(view_result))
       )
       return view_result
-      # response = view_result
-    self._debug_mode_responses(request, response)
-    return response
+    else:
+      raise d1_common.types.exceptions.ServiceFailure(
+        0, u'Unknown view result. view_result="{}"'.format(repr(view_result))
+      )
+    return self._debug_mode_responses(request, response)
 
   def _debug_mode_responses(self, request, response):
     """Extra functionality available in debug mode.
@@ -74,32 +77,61 @@ class ResponseHandler(object):
     if django.conf.settings.DEBUG_GMN:
       if 'pretty' in request.GET:
         response['Content-Type'] = d1_common.const.CONTENT_TYPE_TEXT
-      if 'HTTP_VENDOR_PROFILE_SQL' in request.META:
+      if (
+        'HTTP_VENDOR_PROFILE_SQL' in request.META or
+        django.conf.settings.DEBUG_PROFILE_SQL
+      ):
         response_list = []
         for query in django.db.connection.queries:
           response_list.append(u'{}\n{}'.format(query['time'], query['sql']))
-          django.http.HttpResponse(
-            u'\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
-          )
+        return django.http.HttpResponse(
+          u'\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
+        )
+    return response
 
   def _serialize_object(self, request, view_result):
     response = django.http.HttpResponse()
     name_to_func_map = {
-      'object': (self._generate_object_list, 'modified_timestamp'),
-      'log': (self._generate_log_records, 'timestamp'),
+      'object_list': (self._generate_object_list, ['modified_timestamp', 'id']),
+      'object_list_json':
+        (self._generate_object_field_json, ['modified_timestamp', 'id']),
+      'log': (self._generate_log_records, ['timestamp', 'id']),
     }
-    d1_type_generator, d1_type_date_field = name_to_func_map[view_result['type']]
+    d1_type_generator, sort_field_list = name_to_func_map[view_result['type']]
     d1_type = d1_type_generator(
       request, view_result['query'], view_result['start'], view_result['total']
     )
     d1_type_latest_date = self._latest_date(
-      view_result['query'], d1_type_date_field
+      view_result['query'], sort_field_list
+    )
+    d1_gmn.app.views.slice.cache_add_last_in_slice(
+      request, view_result['query'], view_result['total'], sort_field_list
     )
     response.write(d1_type.toxml('utf-8'))
     self._set_headers(response, d1_type_latest_date, response.tell())
     return response
 
   def _generate_object_list(self, request, db_query, start, total):
+    objectList = d1_gmn.app.views.util.dataoneTypes(request).objectList()
+    for row in db_query:
+      objectInfo = d1_gmn.app.views.util.dataoneTypes(request).ObjectInfo()
+      objectInfo.identifier = row.pid.did
+      objectInfo.formatId = row.format.format
+      checksum = d1_gmn.app.views.util.dataoneTypes(request
+                                                    ).Checksum(row.checksum)
+      checksum.algorithm = row.checksum_algorithm.checksum_algorithm
+      objectInfo.checksum = checksum
+      objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
+        row.modified_timestamp
+      )
+      objectInfo.size = row.size
+      objectList.objectInfo.append(objectInfo)
+    objectList.start = start
+    objectList.count = len(objectList.objectInfo)
+    objectList.total = total
+    return objectList
+
+  def _generate_object_field_json(self, request, db_query, start, total):
     objectList = d1_gmn.app.views.util.dataoneTypes(request).objectList()
     for row in db_query:
       objectInfo = d1_gmn.app.views.util.dataoneTypes(request).ObjectInfo()
@@ -147,5 +179,5 @@ class ResponseHandler(object):
     response['Content-Length'] = content_length
     response['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
 
-  def _latest_date(self, query, field):
-    return query.aggregate(Max(field))
+  def _latest_date(self, query, sort_field_list):
+    return query.aggregate(django.db.models.Max(sort_field_list[0]))

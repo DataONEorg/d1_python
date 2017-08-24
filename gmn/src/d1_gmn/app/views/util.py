@@ -25,6 +25,7 @@ from __future__ import absolute_import
 import datetime
 import re
 
+import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
 import d1_gmn.app.event_log
@@ -33,6 +34,7 @@ import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
+import d1_gmn.app.views.slice
 
 import d1_common.const
 import d1_common.date_time
@@ -168,3 +170,41 @@ def http_response_with_boolean_true_type():
 
 def add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
+
+
+def query_object_list(request, type_name):
+  query = d1_gmn.app.models.ScienceObject.objects.all().select_related(
+  ) # order_by('-modified_timestamp', 'pid__did')
+  if not d1_gmn.app.auth.is_trusted_subject(request):
+    query = d1_gmn.app.db_filter.add_access_policy_filter(request, query, 'id')
+  query = d1_gmn.app.db_filter.add_datetime_filter(
+    request, query, 'modified_timestamp', 'fromDate', 'gte'
+  )
+  query = d1_gmn.app.db_filter.add_datetime_filter(
+    request, query, 'modified_timestamp', 'toDate', 'lt'
+  )
+  query = d1_gmn.app.db_filter.add_string_filter(
+    request, query, 'format__format', 'formatId'
+  )
+  did = request.GET.get('identifier', None)
+  if did is not None:
+    if d1_gmn.app.revision.is_sid(did):
+      query = d1_gmn.app.db_filter.add_sid_filter(
+        request, query, 'pid__did', 'identifier'
+      )
+    else:
+      query = d1_gmn.app.db_filter.add_string_filter(
+        request, query, 'pid__did', 'identifier'
+      )
+  query = d1_gmn.app.db_filter.add_replica_filter(request, query)
+  total_int = query.count()
+  query, start, count = d1_gmn.app.views.slice.add_slice_filter(
+    request, query, total_int
+  )
+  return {
+    'query': query,
+    'start': start,
+    'count': count,
+    'total': total_int,
+    'type': type_name
+  }

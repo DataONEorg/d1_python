@@ -81,7 +81,6 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       n_objects = self.get_total_objects(cn_mn_client_v1_v2)
-      # Slice indexes are zero based.
       object_list_pyxb = cn_mn_client_v1_v2.listObjects(
         start=n_objects - 1, count=1
       )
@@ -106,18 +105,12 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1050(self, cn_mn_client_v1_v2):
-    """listObjects(): Slicing: Specifying start above available objects
-    returns an empty list
+    """listObjects(): Slicing: Specifying start above raises InvalidRequest
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      n_objects = self.get_total_objects(cn_mn_client_v1_v2)
-      # Slice indexes are zero based.
-      object_list_pyxb = cn_mn_client_v1_v2.listObjects(
-        start=n_objects + 1234, count=10000
-      )
-      self.sample.assert_equals(
-        object_list_pyxb, 'start_beyond_end_section', cn_mn_client_v1_v2
-      )
+      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+        n_objects = self.get_total_objects(cn_mn_client_v1_v2)
+        cn_mn_client_v1_v2.listObjects(start=n_objects + 1234, count=10000)
 
   @responses.activate
   def test_1060(self, cn_mn_client_v1_v2):

@@ -82,7 +82,6 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       n_events = self.get_total_log_records(mn_client_v1_v2)
-      # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
       self.norm_entry_id(log)
       self.sample.assert_equals(log, 'exact_end_section', mn_client_v1_v2)
@@ -94,7 +93,6 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       n_events = self.get_total_log_records(mn_client_v1_v2)
-      # Slice indexes are zero based.
       log = mn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
       self.norm_entry_id(log)
       self.sample.assert_equals(
@@ -104,16 +102,12 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1050(self, mn_client_v1_v2):
     """getLogRecords(): Slicing: Specifying start above available events
-    returns an empty list
+    raises InvalidRequest
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       n_events = self.get_total_log_records(mn_client_v1_v2)
-      # Slice indexes are zero based.
-      log = mn_client_v1_v2.getLogRecords(start=n_events + 1234, count=10000)
-      self.norm_entry_id(log)
-      self.sample.assert_equals(
-        log, 'start_beyond_end_section', mn_client_v1_v2
-      )
+      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+        mn_client_v1_v2.getLogRecords(start=n_events + 1234, count=10000)
 
   @responses.activate
   def test_1060(self, mn_client_v1_v2):
