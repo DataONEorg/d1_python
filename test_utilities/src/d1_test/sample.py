@@ -219,6 +219,10 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(
     r'(?<=test_fragment_volatile_)[0-9a-fA-F]+', '[volatile]', o_str
   )
+  # Version numbers
+  o_str = re.sub(r'(?<=DataONE_Python/)[\d.]+', '[volatile]', o_str)
+  o_str = re.sub(r'(?<=DataONE-GMN:)\s*[\d.]+', '[volatile]', o_str)
+
   return o_str
 
 

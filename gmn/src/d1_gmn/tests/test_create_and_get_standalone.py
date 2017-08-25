@@ -106,7 +106,6 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """create() / get(): Object with no explicit permissions can be retrieved
     by a trusted subject
     """
-
     pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
     self.get_obj(
       mn_client_v1_v2,

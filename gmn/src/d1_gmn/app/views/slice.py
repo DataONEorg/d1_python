@@ -22,7 +22,6 @@
 
 import copy
 import hashlib
-import logging
 
 import d1_common.const
 import d1_common.types
@@ -33,21 +32,23 @@ import d1_common.util
 import django.core.cache
 import django.db.models
 
+# import logging
+
 
 def add_slice_filter(request, query, total_int):
   url_dict = d1_common.url.parseUrl(request.get_full_path())
   query_dict = url_dict['query']
-  logging.error(query_dict)
+  # logging.debug(query_dict)
   start_int, count_int, total_int = (
     _convert_and_sanity_check_slice_params(query_dict, total_int)
   )
-  logging.error(query_dict)
-  logging.error(url_dict)
+  # logging.debug(query_dict)
+  # logging.debug(url_dict)
   authn_subj_set = _get_authenticated_subjects(request)
-  logging.debug(
-    'Adding slice filter. start={} count={} total={} subj={}'
-    .format(start_int, count_int, total_int, ','.join(list(authn_subj_set)))
-  )
+  # logging.debug(
+  #   'Adding slice filter. start={} count={} total={} subj={}'
+  #   .format(start_int, count_int, total_int, ','.join(list(authn_subj_set)))
+  # )
   last_tup = _cache_get_last_in_slice(url_dict, authn_subj_set)
   if last_tup:
     query = _add_fast_slice_filter(query, last_tup, count_int)
@@ -70,7 +71,7 @@ def cache_add_last_in_slice(request, query, total_int, sort_field_list):
   else:
     last_tup = None
   django.core.cache.cache.set(key_str, last_tup)
-  logging.debug('Cache set. key="{}" last={}'.format(key_str, last_tup))
+  # logging.debug('Cache set. key="{}" last={}'.format(key_str, last_tup))
 
 
 #
@@ -128,9 +129,9 @@ def _get_authenticated_subjects(request):
 
 
 def _add_fast_slice_filter(query, last_tup, count_int):
-  logging.debug(
-    'Adding fast slice filter. last={} count={}'.format(last_tup, count_int)
-  )
+  # logging.debug(
+  #   'Adding fast slice filter. last={} count={}'.format(last_tup, count_int)
+  # )
   last_timestamp, last_id = last_tup
   return query.filter(
     django.db.models.Q(timestamp__lt=last_timestamp) |
@@ -145,10 +146,10 @@ def _add_fallback_slice_filter(query, url_dict):
   to run very slowly on large result sets.
   """
   start_int, count_int, total_int = _get_slice_params(url_dict['query'])
-  logging.debug(
-    'Adding fallback slice filter. start={} count={}'.
-    format(start_int, count_int)
-  )
+  # logging.debug(
+  #   'Adding fallback slice filter. start={} count={}'.
+  #   format(start_int, count_int)
+  # )
   if not start_int and not count_int:
     return query.none()
   else:
@@ -163,7 +164,7 @@ def _cache_get_last_in_slice(url_dict, authn_subj_set):
     last_tup = django.core.cache.cache.get(key_str)
   except KeyError:
     last_tup = None
-  logging.debug('Cache get. key="{}" -> last_tup={}'.format(key_str, last_tup))
+  # logging.debug('Cache get. key="{}" -> last_tup={}'.format(key_str, last_tup))
   return last_tup
 
 
@@ -191,7 +192,7 @@ def _gen_cache_key_for_slice(url_dict, authn_subj_set, result_record_count=0):
   hash of the JSON is used for better distribution in a hash map and to avoid
   the 256 bytes limit on keys in some caches.
   """
-  logging.debug('Gen key. result_record_count={}'.format(result_record_count))
+  # logging.debug('Gen key. result_record_count={}'.format(result_record_count))
   key_url_dict = copy.deepcopy(url_dict)
   key_url_dict['query']['start'] += result_record_count
   del key_url_dict['query']['count']

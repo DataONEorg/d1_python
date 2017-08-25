@@ -72,33 +72,37 @@ class GMNTestCase(
     d1_test.d1_test_case.D1TestCase,
 ):
   def setup_class(self):
+    """Run for each test class that derives from GMNTestCase"""
     if ENABLE_SQL_PROFILING:
       connection.queries = []
 
   def teardown_class(self):
+    """Run for each test class that derives from GMNTestCase"""
     GMNTestCase.capture_exception()
     if ENABLE_SQL_PROFILING:
-      logging.debug('SQL queries by all methods:')
-      map(logging.debug, connection.queries)
+      logging.info('SQL queries by all methods:')
+      map(logging.info, connection.queries)
 
   def setup_method(self, method):
+    """Run for each test method that derivces from GMNTestCase"""
+    # logging.error('GMNTestCase.setup_method()')
     d1_test.mock_api.django_client.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
-    d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    # d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
-    self.test_client = d1_gmn.tests.gmn_test_client.GMNTestClient(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
+    # self.test_client = d1_gmn.tests.gmn_test_client.GMNTestClient(
+    #   d1_test.d1_test_case.MOCK_BASE_URL
+    # )
     self.v1 = d1_common.types.dataoneTypes_v1_1
     self.v2 = d1_common.types.dataoneTypes_v2_0
-    # Remove limit on max diff to show. This can cause debug output to
-    # explode...
+    # # Remove limit on max diff to show. This can cause debug output to
+    # # explode...
     self.maxDiff = None
 
   @property

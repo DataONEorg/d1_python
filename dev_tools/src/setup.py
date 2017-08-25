@@ -29,7 +29,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='2.3.5',
+    version='2.3.6',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -50,7 +50,7 @@ def main():
       # asn1crypto and requests. Without this, if asn1crypto is installed first,
       # it will install idna 2.6, and requests will fails due to the fact that
       # Python doesn't have a real package manager.
-      'idna == 2.5',
+      'idna == 2.6',
       #
       'baron == 0.6.6',
       'pip == 9.0.1',

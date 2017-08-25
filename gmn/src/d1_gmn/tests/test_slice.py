@@ -27,6 +27,8 @@ from __future__ import absolute_import
 import datetime
 import random
 
+# import logging
+# import pytest
 import responses
 
 import d1_gmn.app.models
@@ -36,15 +38,20 @@ import d1_gmn.tests.gmn_test_case
 
 import d1_test.sample
 
-# import logging
-
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSlice')
-# @freezegun.freeze_time('1978-05-27')
+# @pytest.mark.skip('SLOOOOOW')
 class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def norm_entry_id(self, log):
-    for log_entry_pyxb in log.logEntry:
-      log_entry_pyxb.entryId = '1'
+  # def setup_class(self):
+  #   with d1_gmn.tests.gmn_mock.disable_auth():
+  #     self._total_int = mn_client_v1_v2.getLogRecords(
+  #       start=0, count=0, fromDate=fromDate
+  #     ).total
+  #     assert self._total_int >= 2000, 'Need >= 2000 logEntry records for testing'
+  #     single_slice_log = mn_client_v1_v2.getLogRecords(
+  #       start=0, count=self._total_int, fromDate=fromDate
+  #     )
+  #     assert len(single_slice_log.logEntry) == self._total_int
 
   def _test(self, mn_client_v1_v2, fromDate=None, vary_size=False):
     count_int = 789

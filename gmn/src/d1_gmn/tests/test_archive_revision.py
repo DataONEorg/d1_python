@@ -32,28 +32,31 @@ class TestArchiveRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, cn_mn_client_v1_v2):
     """archive(): Archived flag correctly set and represented"""
+
+    def assert_archived(client, pid):
+      unarchived_sysmeta_pyxb = client.getSystemMetadata(pid)
+      assert not unarchived_sysmeta_pyxb.archived
+      pid_archived = client.archive(pid)
+      assert pid == pid_archived.value()
+      archived_sysmeta_pyxb = client.getSystemMetadata(pid)
+      assert archived_sysmeta_pyxb.archived
+      self.assert_eq_sysmeta_sid(
+        unarchived_sysmeta_pyxb,
+        archived_sysmeta_pyxb,
+      )
+
+    # archive() is supported on both CNs and MNs. Since this test creates a
+    # revision chain, and create() is only supported on MNs, we use the MN
+    # client to create the objects when testing both CN and MN archive().
+
+    # mock_get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+
     with d1_gmn.tests.gmn_mock.disable_auth():
-
-      def assert_archived(client, pid):
-        unarchived_sysmeta_pyxb = client.getSystemMetadata(pid)
-        assert not unarchived_sysmeta_pyxb.archived
-        pid_archived = client.archive(pid)
-        assert pid == pid_archived.value()
-        archived_sysmeta_pyxb = client.getSystemMetadata(pid)
-        assert archived_sysmeta_pyxb.archived
-        self.assert_eq_sysmeta_sid(
-          unarchived_sysmeta_pyxb,
-          archived_sysmeta_pyxb,
-        )
-
-      # archive() is supported on both CNs and MNs. Since this test creates a
-      # revision chain, and create() is only supported on MNs, we use the MN
-      # client to create the objects when testing both CN and MN archive().
-      # with d1_gmn.tests.gmn_mock.disable_auth():
 
       base_sid, pid_chain_list = self.create_revision_chain(
         self.client_v2, chain_len=5, sid=True, disable_auth=False
       )
+
       self.assert_valid_chain(self.client_v2, pid_chain_list, base_sid)
 
       # Archive head

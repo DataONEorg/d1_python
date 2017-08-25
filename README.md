@@ -110,16 +110,16 @@ When unit tests are being run as part of CI or as a normal guard against regress
 
 The normal procedure for writing a sample based unit test is to just write the test as if the sample already exists, then running the test with `--sample-ask` and viewing and approving the resulting sample, which is then automatically written to a file. The sample file name is displayed, making it easy to find the file in order to add it to tracking so that it can be committed along with the test module.
 
-When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-write`, which automatically writes or updates samples to match the current results. Then, running the tests with `--sample-review` before committing.  
+When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-write`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
 
 Typically, it is not desirable to track generated files in Git. However, although the sample files are generated, they are an integral part of the units tests, and should be tracked just like the unit tests themselves.
 
-Also implemented is a simple process for cleaning out unused sample files. Sample files are often orphaned when their corresponding tests are removed or refactored. The default storage location for sample files is a directory called `test_docs`. To clean out unused files, move all the files from `test_docs` to `test_docs_tidy`, and run the tests. Any files that are accessed by the tests will automatically be moved back to `test_docs`, and any files remaining in `test_docs_tidy` after a complete test run can be untracked and deleted.
+Also implemented is a simple process for cleaning out unused sample files. Sample files are often orphaned when their corresponding tests are removed or refactored. The process is activated with the `--sample-tidy` switch. When active, the test session starts by moving all sample files from their default directory, `test_docs`, to `test_docs_tidy`. As the sample files are accessed by tests, they are automatically moved back to `test_docs`, and any files remaining in `test_docs_tidy` after a complete test run can be untracked and deleted.
 
 When staging `test_docs`, stage the directory, so that new files are included, and deleted files get deleted on the server:
 
     $ git add test_utilities/src/d1_test/test_docs
-    $ git commit -m 'Update sample docs'
+    $ git commit -m 'Update samples'
 
 #### DataONE Client to Django test adapter
 
@@ -226,7 +226,9 @@ Edit `~/.pypirc`:
 
 ### Creating a new release
 
-The stack should pass all the tests with the most recent available versions of all the dependencies.
+#### Updating dependencies
+
+Update all packages managed by pip:
 
     $ cd d1_python
     $ sudo ./dev_tools/src/d1_dev/pip-update-all.py
@@ -244,9 +246,11 @@ Check that there are no package version conflicts:
 
 Some sample files contain the version tag and must be updated when the version changes.  
 
-    $ pytest --sample-ask
+    $ pytest -xvs --sample-ask
 
 Commit and push the changes, and check the build on Travis.
+
+#### Building the release packages
 
 After successful build, clone a fresh copy, which will be used for building the release packages:
 
