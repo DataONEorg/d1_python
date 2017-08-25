@@ -1,44 +1,74 @@
 # Change Log
 
+## [2.3.6](https://github.com/DataONEorg/d1_python/tree/2.3.6) (2017-08-24)
+[Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.5...2.3.6)
+
+* Update all dependencies to current versions as of 2017-08-24
+* GMN:
+  * Add extended listObjects() API
+      * Fast method for retrieving large number of selected sysmeta values
+      * Returns JSON
+      * Quickly generated and parsed
+      * No schema
+      * Minimal document size
+      * Part of a new API class, "ext", which will holds GMN specific APIs
+  * Optimize slicing / paging of multi-page result set in
+  * Add support for proxied objects in bulk importer
+  * Add support for rejecting replication requests for non-public objects
+  * Keep track of ownership and versioning of sciobj filesystem store
+  * Check every minute instead of every hour for new replication and sysmeta
+    refresh tasks
+  * Ongoing refactoring of diagnostics
+* Other:
+  * Add support for disabling timeout in d1_client by passing timeout=None, 0
+    or 0.0
+* Testing:
+  * Add various small unit test improvements
+  * Add automatic migration of test database
+  * Update samples
+  * Ensure that files deleted after previous build are not included in later
+  releases
+
+
 ## [2.3.5](https://github.com/DataONEorg/d1_python/tree/2.3.5) (2017-08-08)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.4...2.3.5)
 
 * Update all dependencies to current versions as of 2017-08-07
 
 * Add general bulk importer management command
-    * Allows upgrading from any earlier version of GMN or other MN stack
+  * Allows upgrading from any earlier version of GMN or other MN stack
 
 * Add shared module for handling obsolescence chains / revisions
-    * `d1_common/revision.py`
+  * `d1_common/revision.py`
 
 * Rename methods for creating missing directory names
-    * `d1_common/util.py`
+  * `d1_common/util.py`
 
 * Add default page size of 100 records for getLogRecords()
-    * `d1_common/const.py`
+  * `d1_common/const.py`
 
 * Expose a ".total" attribute in iterators
-    * Clients can read the value from .total to keep track of progress. Earlier, clients had to perform a separate query using filter parameters matching those used by the iterator. There was also a potential race, in that the total could change between query by the iterator and by the client.
+  * Clients can read the value from .total to keep track of progress. Earlier, clients had to perform a separate query using filter parameters matching those used by the iterator. There was also a potential race, in that the total could change between query by the iterator and by the client.
 
 * Change iterator arguments:
-    * ObjectListIterator: listObjects_args_dict -> list_objects_args
-    * LogRecordIterator: getLogRecords_dict -> get_log_records_arg_dict
+  * ObjectListIterator: listObjects_args_dict -> list_objects_args
+  * LogRecordIterator: getLogRecords_dict -> get_log_records_arg_dict
 
 * Add get_and_save() wrapper for MNRead.get()
-    * This is a convenience method added because correctly saving the result
+  * This is a convenience method added because correctly saving the result
 from get() to a file is a bit tricky, while it is also the most common
 use of get().
-    * Add option to create missing directories for MNRead.get_and_save()
+  * Add option to create missing directories for MNRead.get_and_save()
 
 * Add section in README.md about db fixtures for GMN, how they're used, how to generate them
-    * Improve procedure for regenerating db fixture
+  * Improve procedure for regenerating db fixture
 
 * Add mock API handlers
-    * MNCore.getCapabilities()
-    * CNCore.listNodes()
+  * MNCore.getCapabilities()
+  * CNCore.listNodes()
 
 * Fix bug: SID did not resolve correctly
-    * Add tests for SID resolve
+  * Add tests for SID resolve
 
 * Update default User-Agent to DataONE_Python/x.y.z +http://dataone.org/
 
