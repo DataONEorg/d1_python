@@ -12,7 +12,7 @@
       * No schema
       * Minimal document size
       * Part of a new API class, "ext", which will holds GMN specific APIs
-  * Optimize slicing / paging of multi-page result set in
+  * Optimize slicing / paging of multi-page result sets
   * Add support for proxied objects in bulk importer
   * Add support for rejecting replication requests for non-public objects
   * Keep track of ownership and versioning of sciobj filesystem store
