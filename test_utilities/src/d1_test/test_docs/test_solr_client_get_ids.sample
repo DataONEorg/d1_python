@@ -10,6 +10,166 @@
   "response": {
     "docs": [
       {
+        "authoritativeMN": "urn:node:IARC", 
+        "checksum": "efea346b7f5baccc5b4e988ebe52022b59013cbc", 
+        "checksumAlgorithm": "SHA-1", 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "datasource": "urn:node:IARC", 
+        "dateModified": "2016-12-23T20:48:32.719Z", 
+        "dateUploaded": "2016-12-23T20:45:29.229Z", 
+        "formatId": "http://www.openarchives.org/ore/terms", 
+        "formatType": "RESOURCE", 
+        "id": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "identifier": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
+        "isPublic": true, 
+        "isService": false, 
+        "numberReplicas": 3, 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:IARC", 
+          "urn:node:CN", 
+          "urn:node:NKN", 
+          "urn:node:NMEPSCOR", 
+          "urn:node:mnUNM1", 
+          "urn:node:US_MPC"
+        ], 
+        "replicaVerifiedDate": [
+          "2016-12-23T20:48:32.122Z", 
+          "2016-12-23T20:48:32.127Z", 
+          "2016-12-26T12:29:23.229Z", 
+          "2016-12-26T12:29:26.215Z", 
+          "2017-02-02T12:43:34.505Z", 
+          "2017-02-13T10:15:05.012Z"
+        ], 
+        "replicationAllowed": true, 
+        "rightsHolder": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
+        "serviceCoupling": "false", 
+        "size": 2908, 
+        "submitter": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
+        "updateDate": "2016-12-23T20:45:29.229Z"
+      }, 
+      {
+        "abstract": "This dataset contains the streams derived from the Digital Elevation Model (DEM) for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. The HDMA database provides comprehensive and consistent global coverage of raster and vector topographically derived layers, including raster layers of digital elevation model (DEM) data, flow direction, flow accumulation, slope, and compound topographic index (CTI); and vector layers of streams and catchment boundaries. The coverage of the data is global (-180\u00ba, 180\u00ba, -90\u00ba, 90\u00ba) with the underlying DEM being a hybrid of three datasets: HydroSHEDS (Hydrological data and maps based on SHuttle Elevation Derivatives at multiple Scales), Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010) and the Shuttle Radar Topography Mission (SRTM). For most of the globe south of 60\u00ba North, the raster resolution of the data is 3-arc-seconds, corresponding to the resolution of the SRTM. For the areas North of 60\u00ba, the resolution is 7.5-arc-seconds (the smallest resolution of the GMTED2010 dataset) except for Greenland, where the resolution is 30-arc-seconds. The streams and catchments are attributed with Pfafstetter codes, based on a hierarchical numbering system, that carry important topological information.", 
+        "attribute": [
+          "OBJECTID  Unknown", 
+          "flow_acc  Drainage area upstream of pour point of stream in square kilometers", 
+          "PF_TYPE  Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
+          "Shape_Leng  Unknown", 
+          "PFAF_CODE  the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
+        ], 
+        "attributeDescription": [
+          "Unknown", 
+          "Drainage area upstream of pour point of stream in square kilometers", 
+          "Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
+          "Unknown", 
+          "the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
+        ], 
+        "attributeName": [
+          "OBJECTID", 
+          "flow_acc", 
+          "PF_TYPE", 
+          "Shape_Leng", 
+          "PFAF_CODE"
+        ], 
+        "author": "Kristine L. Verdin", 
+        "authorSurName": "Kristine L. Verdin", 
+        "authorSurNameSort": "Kristine L. Verdin", 
+        "authoritativeMN": "urn:node:USGS_SDC", 
+        "checksum": "c87fa30f498c0e356b9f000f63dc74b5", 
+        "checksumAlgorithm": "MD5", 
+        "contactOrganization": [
+          "U.S. Geological Survey, Southwest Region"
+        ], 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "datasource": "urn:node:USGS_SDC", 
+        "dateModified": "2017-07-20T05:06:05.547Z", 
+        "datePublished": "2017-01-01T00:00:00Z", 
+        "dateUploaded": "2017-07-15T07:08:27Z", 
+        "eastBoundCoord": 53.76125, 
+        "fileID": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "formatId": "FGDC-STD-001.1-1999", 
+        "formatType": "METADATA", 
+        "geoform": "Vector Digital Data Set (Polygon)", 
+        "geohash_1": [
+          "s"
+        ], 
+        "geohash_2": [
+          "s2"
+        ], 
+        "geohash_3": [
+          "s2j"
+        ], 
+        "geohash_4": [
+          "s2jp"
+        ], 
+        "geohash_5": [
+          "s2jp1"
+        ], 
+        "geohash_6": [
+          "s2jp13"
+        ], 
+        "geohash_7": [
+          "s2jp13b"
+        ], 
+        "geohash_8": [
+          "s2jp13bu"
+        ], 
+        "geohash_9": [
+          "s2jp13buq"
+        ], 
+        "id": "abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "identifier": "abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "investigator": [
+          "Kristine L. Verdin"
+        ], 
+        "isPublic": true, 
+        "isService": false, 
+        "keywords": [
+          "dem stream hydrologic derivatives pfafstetter", 
+          "Pfafstetter", 
+          "streams", 
+          "digital elevation models", 
+          "elevation", 
+          "inlandWaters", 
+          "Africa"
+        ], 
+        "northBoundCoord": 37.205418, 
+        "origin": [
+          "Kristine L. Verdin"
+        ], 
+        "placeKey": [
+          "Africa"
+        ], 
+        "presentationCat": "Vector Digital Data Set (Polygon)", 
+        "pubDate": "2017-01-01T00:00:00Z", 
+        "purpose": "This dataset contains the DEM-derived streams for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. This dataset is appropriate for use in continental-scale modeling effort.  The Pfafstetter codes provide topological information that can be useful for upstream and downstream tracing.", 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:USGS_SDC", 
+          "urn:node:CN"
+        ], 
+        "replicaVerifiedDate": [
+          "2017-07-20T05:06:05.05Z", 
+          "2017-07-20T05:06:05.095Z"
+        ], 
+        "replicationAllowed": false, 
+        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
+        "serviceCoupling": "false", 
+        "size": 18111, 
+        "southBoundCoord": -34.72375, 
+        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
+        "title": "Streams layers from the Hydrologic Derivatives for Modeling and Analysis (HDMA) database -- Africa", 
+        "updateDate": "2017-07-15T07:08:27Z", 
+        "webUrl": [
+          "https://doi.org/10.5066/F7S180ZP"
+        ], 
+        "westBoundCoord": -17.08625
+      }, 
+      {
         "abstract": "The Remote Sensing Phenology (RSP) collection is a set of nine annual phenological metrics for the conterminous United States.  Researchers at the USGS EROS Center utilize data gathered by satellite sensors to track seasonal changes in vegetation.  The satellite sensors that provide the raw data are the Moderate Resolution Imaging Spectroradiometer (MODIS) carried aboard National Aeronautics and Space Administration (NASA) Terra and Aqua satellites.  The satellite data are initially transformed into Normalized Difference Vegetation Index (NDVI) values.  eMODIS NDVI provide the foundation for the phenology metrics.  Time-series NDVI can be summarized and analyzed to produce nine key phenological indicators.  These data represent a powerful tool for documenting plant life-cycle trends and detecting the impacts of climate change on ecosystems.\nThe complete set of phenological metrics are as follows: 1. Start of Season Time (SOST): starting time of the onset of the growing season (in day of the year). 2. Start of Season NDVI (SOSN): NDVI value at the starting time of the onset of the growing season (unitless- based on NDVI units). 3. End of Season Time (EOST): ending time of the growing season (in day of the year). 4. End of Season NDVI (EOSN): NDVI value at the ending time of the growing season (unitless-based on NDVI units). 5. Maximum Time (MAXT): the day of the year when the NDVI reaches its maximum during the growing season (in day of the year). 6. Maximum NDVI (MAXN): the highest (or peak) value in NDVI observed in a growing season (unitless-based on NDVI units). 7. Duration (DUR): the length of the growing season-the time between the start of season and end of season (in number of days). 8. Amplitude (AMP): the difference between the Maximum NDVI and NDVI at the day of start of season (unitless-based on NDVI units). 9. Time Integrated NDVI (TIN): the cumulative value of NDVI from the start to the end of the growing season (unitless-based on accumulated NDVI unit", 
         "author": "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center", 
         "authorSurName": "U.S. Geological Survey (USGS), Earth Resources Observation System (EROS) Center", 
@@ -224,166 +384,6 @@
           "http://mrdata.usgs.gov/magnetic/show-survey.php?id=0123"
         ], 
         "westBoundCoord": -104.0
-      }, 
-      {
-        "authoritativeMN": "urn:node:IARC", 
-        "checksum": "efea346b7f5baccc5b4e988ebe52022b59013cbc", 
-        "checksumAlgorithm": "SHA-1", 
-        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc96506-7781-4a1c-ab1a-ae581474713b_0", 
-        "datasource": "urn:node:IARC", 
-        "dateModified": "2016-12-23T20:48:32.719Z", 
-        "dateUploaded": "2016-12-23T20:45:29.229Z", 
-        "formatId": "http://www.openarchives.org/ore/terms", 
-        "formatType": "RESOURCE", 
-        "id": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
-        "identifier": "abc96506-7781-4a1c-ab1a-ae581474713b_0", 
-        "isPublic": true, 
-        "isService": false, 
-        "numberReplicas": 3, 
-        "readPermission": [
-          "public"
-        ], 
-        "replicaMN": [
-          "urn:node:IARC", 
-          "urn:node:CN", 
-          "urn:node:NKN", 
-          "urn:node:NMEPSCOR", 
-          "urn:node:mnUNM1", 
-          "urn:node:US_MPC"
-        ], 
-        "replicaVerifiedDate": [
-          "2016-12-23T20:48:32.122Z", 
-          "2016-12-23T20:48:32.127Z", 
-          "2016-12-26T12:29:23.229Z", 
-          "2016-12-26T12:29:26.215Z", 
-          "2017-02-02T12:43:34.505Z", 
-          "2017-02-13T10:15:05.012Z"
-        ], 
-        "replicationAllowed": true, 
-        "rightsHolder": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
-        "serviceCoupling": "false", 
-        "size": 2908, 
-        "submitter": "CN=jlong,O=International Arctic Research Center,ST=AK,C=US", 
-        "updateDate": "2016-12-23T20:45:29.229Z"
-      }, 
-      {
-        "abstract": "This dataset contains the streams derived from the Digital Elevation Model (DEM) for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. The HDMA database provides comprehensive and consistent global coverage of raster and vector topographically derived layers, including raster layers of digital elevation model (DEM) data, flow direction, flow accumulation, slope, and compound topographic index (CTI); and vector layers of streams and catchment boundaries. The coverage of the data is global (-180\u00ba, 180\u00ba, -90\u00ba, 90\u00ba) with the underlying DEM being a hybrid of three datasets: HydroSHEDS (Hydrological data and maps based on SHuttle Elevation Derivatives at multiple Scales), Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010) and the Shuttle Radar Topography Mission (SRTM). For most of the globe south of 60\u00ba North, the raster resolution of the data is 3-arc-seconds, corresponding to the resolution of the SRTM. For the areas North of 60\u00ba, the resolution is 7.5-arc-seconds (the smallest resolution of the GMTED2010 dataset) except for Greenland, where the resolution is 30-arc-seconds. The streams and catchments are attributed with Pfafstetter codes, based on a hierarchical numbering system, that carry important topological information.", 
-        "attribute": [
-          "OBJECTID  Unknown", 
-          "flow_acc  Drainage area upstream of pour point of stream in square kilometers", 
-          "PF_TYPE  Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
-          "Shape_Leng  Unknown", 
-          "PFAF_CODE  the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
-        ], 
-        "attributeDescription": [
-          "Unknown", 
-          "Drainage area upstream of pour point of stream in square kilometers", 
-          "Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
-          "Unknown", 
-          "the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
-        ], 
-        "attributeName": [
-          "OBJECTID", 
-          "flow_acc", 
-          "PF_TYPE", 
-          "Shape_Leng", 
-          "PFAF_CODE"
-        ], 
-        "author": "Kristine L. Verdin", 
-        "authorSurName": "Kristine L. Verdin", 
-        "authorSurNameSort": "Kristine L. Verdin", 
-        "authoritativeMN": "urn:node:USGS_SDC", 
-        "checksum": "c87fa30f498c0e356b9f000f63dc74b5", 
-        "checksumAlgorithm": "MD5", 
-        "contactOrganization": [
-          "U.S. Geological Survey, Southwest Region"
-        ], 
-        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "datasource": "urn:node:USGS_SDC", 
-        "dateModified": "2017-07-20T05:06:05.547Z", 
-        "datePublished": "2017-01-01T00:00:00Z", 
-        "dateUploaded": "2017-07-15T07:08:27Z", 
-        "eastBoundCoord": 53.76125, 
-        "fileID": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "formatId": "FGDC-STD-001.1-1999", 
-        "formatType": "METADATA", 
-        "geoform": "Vector Digital Data Set (Polygon)", 
-        "geohash_1": [
-          "s"
-        ], 
-        "geohash_2": [
-          "s2"
-        ], 
-        "geohash_3": [
-          "s2j"
-        ], 
-        "geohash_4": [
-          "s2jp"
-        ], 
-        "geohash_5": [
-          "s2jp1"
-        ], 
-        "geohash_6": [
-          "s2jp13"
-        ], 
-        "geohash_7": [
-          "s2jp13b"
-        ], 
-        "geohash_8": [
-          "s2jp13bu"
-        ], 
-        "geohash_9": [
-          "s2jp13buq"
-        ], 
-        "id": "abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "identifier": "abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "investigator": [
-          "Kristine L. Verdin"
-        ], 
-        "isPublic": true, 
-        "isService": false, 
-        "keywords": [
-          "dem stream hydrologic derivatives pfafstetter", 
-          "Pfafstetter", 
-          "streams", 
-          "digital elevation models", 
-          "elevation", 
-          "inlandWaters", 
-          "Africa"
-        ], 
-        "northBoundCoord": 37.205418, 
-        "origin": [
-          "Kristine L. Verdin"
-        ], 
-        "placeKey": [
-          "Africa"
-        ], 
-        "presentationCat": "Vector Digital Data Set (Polygon)", 
-        "pubDate": "2017-01-01T00:00:00Z", 
-        "purpose": "This dataset contains the DEM-derived streams for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. This dataset is appropriate for use in continental-scale modeling effort.  The Pfafstetter codes provide topological information that can be useful for upstream and downstream tracing.", 
-        "readPermission": [
-          "public"
-        ], 
-        "replicaMN": [
-          "urn:node:USGS_SDC", 
-          "urn:node:CN"
-        ], 
-        "replicaVerifiedDate": [
-          "2017-07-20T05:06:05.05Z", 
-          "2017-07-20T05:06:05.095Z"
-        ], 
-        "replicationAllowed": false, 
-        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
-        "serviceCoupling": "false", 
-        "size": 18111, 
-        "southBoundCoord": -34.72375, 
-        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
-        "title": "Streams layers from the Hydrologic Derivatives for Modeling and Analysis (HDMA) database -- Africa", 
-        "updateDate": "2017-07-15T07:08:27Z", 
-        "webUrl": [
-          "https://doi.org/10.5066/F7S180ZP"
-        ], 
-        "westBoundCoord": -17.08625
       }
     ], 
     "numFound": 4, 
