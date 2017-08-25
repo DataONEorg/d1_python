@@ -165,7 +165,7 @@ urlpatterns = [
   # GMN API extensions
   #
   url(
-    r'^ext/object/$?',
+    r'^ext/object/?$',
     d1_gmn.app.views.ext.get_object_list_json,
     name='get_object_list_json',
   ),
