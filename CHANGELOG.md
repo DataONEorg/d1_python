@@ -15,19 +15,19 @@
   * Optimize slicing / paging of multi-page result sets
   * Add support for proxied objects in bulk importer
   * Add support for rejecting replication requests for non-public objects
+  * Add Proxy, Obsoletes, ObsoletedBy and SeriesId to the custom headers returned by most D1 API methods
+    * Proxy header allows clients to determine if an object is proxied and, if so, where the original object resides
+    * Obsoletes, ObsoletedBy headers allow clients to determine if object is part of a revision chain
   * Keep track of ownership and versioning of sciobj filesystem store
-  * Check every minute instead of every hour for new replication and sysmeta
-    refresh tasks
+  * Check every minute instead of every hour for new replication and sysmeta refresh tasks
   * Ongoing refactoring of diagnostics
 * Other:
-  * Add support for disabling timeout in d1_client by passing timeout=None, 0
-    or 0.0
+  * Add support for disabling timeout in d1_client by passing timeout=None, 0 or 0.0
 * Testing:
   * Add various small unit test improvements
   * Add automatic migration of test database
   * Update samples
-  * Ensure that files deleted after previous build are not included in later
-  releases
+  * Ensure that files deleted after previous build are not included in later releases
 
 
 ## [2.3.5](https://github.com/DataONEorg/d1_python/tree/2.3.5) (2017-08-08)
