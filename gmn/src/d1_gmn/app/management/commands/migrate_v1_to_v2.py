@@ -31,6 +31,7 @@ import argparse
 import logging
 import os
 import shutil
+import time
 import zlib
 
 import d1_gmn.app.auth
@@ -201,9 +202,12 @@ class Command(django.core.management.base.BaseCommand):
       """
     )
     n = len(sciobj_row_list)
+    start_sec = time.time()
     for i, sciobj_row in enumerate(sciobj_row_list):
+      time.sleep(5)
       util.log_progress(
-        self._events, 'Retrieving revision chains', i, n, sciobj_row['pid']
+        self._events, 'Retrieving revision chains', i, n, sciobj_row['pid'],
+        start_sec
       )
       try:
         sysmeta_pyxb = self._sysmeta_pyxb_by_sciobj_row(sciobj_row)
@@ -215,6 +219,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _create_sciobj(self, topo_list):
     n = len(topo_list)
+    start_sec = time.time()
     for i, pid in enumerate(topo_list):
       # noinspection SqlResolve
       sciobj_row = self._db.run(
@@ -229,19 +234,22 @@ class Command(django.core.management.base.BaseCommand):
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_pyxb.obsoletedBy = None
       util.log_progress(
-        self._events, 'Creating SciObj DB representations', i, n, pid
+        self._events, 'Creating SciObj DB representations', i, n, pid, start_sec
       )
       d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_dict):
     n = len(obsoleted_by_dict)
+    start_sec = time.time()
     for i, pid_tup in enumerate(obsoleted_by_dict.items()):
       pid, obsoleted_by_pid = pid_tup
       if obsoleted_by_pid is not None:
         if d1_gmn.app.sysmeta.is_did(pid) and d1_gmn.app.sysmeta.is_did(
             obsoleted_by_pid
         ):
-          util.log_progress(self._events, 'Updating obsoletedBy', i, n, pid)
+          util.log_progress(
+            self._events, 'Updating obsoletedBy', i, n, pid, start_sec
+          )
           d1_gmn.app.revision.set_revision(
             pid, obsoleted_by_pid=obsoleted_by_pid
           )
@@ -289,11 +297,12 @@ class Command(django.core.management.base.BaseCommand):
         ;
       """,
     )
+    start_sec = time.time()
     for i, event_row in enumerate(event_row_list):
       util.log_progress(
         self._events, 'Processing event logs', i,
         len(event_row_list),
-        '{} {}'.format(event_row['event'], event_row['pid'])
+        '{} {}'.format(event_row['event'], event_row['pid']), start_sec
       )
       if d1_gmn.app.sysmeta.is_did(event_row['pid']):
         sciobj_model = d1_gmn.app.models.ScienceObject.objects.get(
