@@ -156,6 +156,7 @@ from __future__ import absolute_import
 import argparse
 import logging
 import os
+import time
 
 import d1_gmn.app.auth
 import d1_gmn.app.delete
@@ -355,16 +356,30 @@ class Command(django.core.management.base.BaseCommand):
     d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
 
   def _import_logs(self, imported_pid_list):
-    client = self._create_source_client()
-    log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(
-      client, count=self._opt['log_page_size']
+    log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
+      base_url=self._opt['baseurl'],
+      page_size=self._opt['log_page_size'],
+      max_workers=self._opt['workers'],
+      api_major=self._api_major,
+      client_args_dict=self._get_client_args_dict(),
+      get_log_records_arg_dict={},
     )
     imported_pid_set = set(imported_pid_list)
+    start_sec = time.time()
     for i, log_record in enumerate(log_record_iterator):
-      pid = d1_common.xml.get_req_val(log_record.identifier)
+      is_error = False
+      try:
+        pid = d1_common.xml.get_req_val(log_record.identifier)
+      except Exception as e:
+        self._events.log_and_count('Log record iterator error', str(e))
+        is_error = True
+        pid = 'Error'
       util.log_progress(
-        self._events, 'Importing event logs', i, log_record_iterator.total, pid
+        self._events, 'Importing event logs', i, log_record_iterator.total, pid,
+        start_sec
       )
+      if is_error:
+        continue
       if pid not in imported_pid_set:
         self._events.log_and_count(
           'Skipped object that was not imported', 'pid="{}"'.format(pid)
