@@ -45,25 +45,34 @@ The GMN stack contains binary components that are built automatically during the
     $ sudo chown gmn:www-data gmn_venv
     $ sudo su gmn
 
-    $ virtualenv --distribute gmn_venv
+    $ virtualenv gmn_venv
     $ . ./gmn_venv/bin/activate
     $ pip install dataone.gmn
 
-  For convenience when logged in as the gmn user, edit `.bashrc`::
 
-    $ nano /home/gmn/.bashrc
+Shortcuts
+~~~~~~~~~~
 
+Edit `~/.bashrc` for the gmn user.
 
-  Edit
-  ::
+Close to the top, just after the section that exits if not running
+interactively, add::
 
+  # DataONE paths
+  export D1_ROOT_DIR="/var/local/dataone"
+  export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn2_venv"
+  export GMN_PKG_DIR="${GMN_VENV_DIR}/lib/python2.7/site-packages/d1_gmn"
 
-  Use the GMN Python virtual environment by default for the gmn user:
-  Close to the top, just after the section that exits if not running
-  interactively, add::
+  # Use these as shortcuts from the shell. E.g., "cd $d1"
+  export d1="${D1_ROOT_DIR}"
+  export gmndir="${GMN_PKG_DIR}"
 
-    PATH=/var/local/dataone/gmn_venv/bin/:$PATH
+  # Use the GMN Python virtual environment by default for the gmn user, so there
+  # is no need to "activate".
+  export PATH="${GMN_VENV_DIR}/bin/:${PATH}"
 
-
-
-
+  # Type "gmnv" to CD to the GMN package dir and activate the GMN venv
+  gmnv () {
+    cd "${GMN_PKG_DIR}"
+    . ../../../../bin/activate
+  }
