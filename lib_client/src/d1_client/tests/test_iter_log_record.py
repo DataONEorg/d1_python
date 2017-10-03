@@ -31,8 +31,13 @@ import d1_test.d1_test_case
 import d1_test.mock_api.get_log_records as mock_get_log_records
 
 import d1_client.cnclient
-import d1_client.iter.logrecord_multi
+import d1_client.iter.logrecord
 import d1_client.mnclient
+
+# These tests are disabled because they require a MN that permits access to
+# log records.
+
+MAX_OBJECTS = 20
 
 
 class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
@@ -40,41 +45,51 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """PageSize=5, start=0"""
     mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    self._log_record_iterator_test(5)
+    self._log_record_iterator_test(5, 0)
 
   def _test_110(self):
     """PageSize=1, start=63"""
-    self._log_record_iterator_test(1)
+    self._log_record_iterator_test(1, 6)
 
   def _test_130(self):
     """PageSize=5, start=10, fromDate=2005-01-01"""
     self._log_record_iterator_test(
-      2000, from_date=datetime.datetime(2005, 1, 1)
+      2000, 0, from_date=datetime.datetime(2005, 1, 1)
     )
 
-  def _log_record_iterator_test(self, page_size, from_date=None, to_date=None):
-    log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
-      base_url=d1_test.d1_test_case.MOCK_BASE_URL,
-      # base_url='https://gmn2/mn',
-      page_size=page_size,
-      api_major=2, # api_major = d1_client.util.get_version_tag_by_d1_client(mn_client_v1_v2)
-      client_args_dict={
-        'verify_tls': False,
-        'timeout_sec': 0,
-      },
+  def _log_record_iterator_test(
+      self, page_size, start, from_date=None, to_date=None
+  ):
+    client = d1_client.mnclient.MemberNodeClient(
+      base_url=d1_test.d1_test_case.MOCK_BASE_URL
+    )
+    total = self._get_log_total_count(client, from_date, to_date)
+    log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(
+      client,
       get_log_records_arg_dict={
         'fromDate': from_date,
         'toDate': to_date,
       },
     )
     cnt = 0
-    for log_entry in log_record_iterator:
-      assert isinstance(log_entry, dataoneTypes.LogEntry)
-      # logging.info("Event      = {}".format(log_entry.event))
-      # logging.info("Timestamp  = {}".format(log_entry.dateLogged.isoformat()))
-      # logging.info("IP Address = {}".format(log_entry.ipAddress))
-      # logging.info("Identifier = {}".format(log_entry.identifier.value()))
-      # logging.info("User agent = {}".format(log_entry.userAgent))
-      # logging.info("Subject    = {}".format(log_entry.subject.value()))
+    for event in log_record_iterator:
+      assert isinstance(event.event, dataoneTypes.Event)
+      # logging.info("Event      = {}".format(event.event))
+      # logging.info("Timestamp  = {}".format(event.dateLogged.isoformat()))
+      # logging.info("IP Addres  = {}".format(event.ipAddress))
+      # logging.info("Identifier = {}".format(event.identifier.value()))
+      # logging.info("User agent = {}".format(event.userAgent))
+      # logging.info("Subject    = {}".format(event.subject.value()))
       # logging.info('-' * 100)
       cnt += 1
+
+      if cnt == MAX_OBJECTS:
+        total = MAX_OBJECTS
+        break
+
+    assert cnt == total - start
+
+  def _get_log_total_count(self, client, from_date, to_date):
+    return client.getLogRecords(
+      start=0, count=0, fromDate=from_date, toDate=to_date
+    ).total
