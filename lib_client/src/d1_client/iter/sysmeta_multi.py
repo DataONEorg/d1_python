@@ -47,11 +47,11 @@ import d1_client.mnclient_1_1
 import d1_client.mnclient_2_0
 
 # Defaults
-OBJECT_LIST_PAGE_SIZE = 100
-MAX_WORKERS = 10
+OBJECT_LIST_PAGE_SIZE = 1000
+MAX_WORKERS = 16
 MAX_QUEUE_SIZE = 100
 API_MAJOR = 2
-POOL_SIZE_FACTOR = 10
+POOL_SIZE_FACTOR = 100
 
 
 class SystemMetadataIteratorMulti(object):
@@ -89,7 +89,7 @@ class SystemMetadataIteratorMulti(object):
       args=(
         queue, namespace, self._base_url, self._page_size, self._max_workers,
         self._api_major, self._client_dict, self._list_objects_dict,
-        self._getSysMeta_dic
+        self._getSysMeta_dic, self.total
       ),
     )
 
@@ -119,7 +119,7 @@ class SystemMetadataIteratorMulti(object):
 def _get_total_object_count(
     base_url, api_major, client_dict, list_objects_dict
 ):
-  client = create_client(base_url, api_major, client_dict)
+  client = _create_client(base_url, api_major, client_dict)
   args_dict = list_objects_dict.copy()
   args_dict['count'] = 0
   return client.listObjects(**args_dict).total
@@ -127,13 +127,10 @@ def _get_total_object_count(
 
 def _get_all_pages(
     queue, namespace, base_url, page_size, max_workers, api_major, client_dict,
-    list_objects_dict, get_sysmeta_dict
+    list_objects_dict, get_sysmeta_dict, n_total
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_total = _get_total_object_count(
-    base_url, api_major, client_dict, list_objects_dict
-  )
   n_pages = (n_total - 1) / page_size + 1
 
   for page_idx in range(n_pages):
@@ -169,7 +166,7 @@ def _get_page(
 ):
   if namespace.stop:
     return
-  client = create_client(base_url, api_major, client_dict)
+  client = _create_client(base_url, api_major, client_dict)
   try:
     object_list_pyxb = client.listObjects(
       start=page_idx * page_size, count=page_size, **list_objects_dict
@@ -199,10 +196,12 @@ def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
     queue.put({'pid': pid, 'error': e.name})
   else:
     logging.debug('getSystemMetadata() ok. pid="{}"'.format(pid))
+    # There is a bottleneck somewhere in this iterator, but it's not
+    # pickle/unpickle of sysmeta_pyxb.
     queue.put(sysmeta_pyxb)
 
 
-def create_client(base_url, api_major, client_dict):
+def _create_client(base_url, api_major, client_dict):
   if api_major <= 1:
     return d1_client.mnclient_1_1.MemberNodeClient_1_1(base_url, **client_dict)
   else:
