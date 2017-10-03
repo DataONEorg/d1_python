@@ -30,14 +30,14 @@ import d1_common.type_conversions
 import d1_common.util
 
 import d1_client.baseclient_2_0
-import d1_client.mnclient_1_1
+import d1_client.mnclient_1_2
 
 
 class MemberNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
-    d1_client.mnclient_1_1.MemberNodeClient_1_1,
+    d1_client.mnclient_1_2.MemberNodeClient_1_2,
 ):
-  """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_1 with functionality
+  """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_2 with functionality
   for Member nodes that was added in v2.0 of the DataONE infrastructure.
 
   For details on how to use these methods, see:

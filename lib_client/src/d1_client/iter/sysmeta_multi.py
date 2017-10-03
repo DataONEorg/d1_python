@@ -43,7 +43,7 @@ import time
 import d1_common.type_conversions
 import d1_common.types.exceptions
 
-import d1_client.mnclient_1_1
+import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 # Defaults
@@ -203,6 +203,6 @@ def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
 
 def _create_client(base_url, api_major, client_dict):
   if api_major <= 1:
-    return d1_client.mnclient_1_1.MemberNodeClient_1_1(base_url, **client_dict)
+    return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
   else:
     return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)

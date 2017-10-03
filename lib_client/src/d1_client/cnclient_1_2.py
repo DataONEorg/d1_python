@@ -23,38 +23,32 @@ from __future__ import absolute_import
 
 import logging
 
-import d1_common
 import d1_common.type_conversions
 
 import d1_client.baseclient_1_2
+import d1_client.cnclient
 
 
-class DataONEBaseClient_2_0(
+class CoordinatingNodeClient_1_2(
     d1_client.baseclient_1_2.DataONEBaseClient_1_2,
+    d1_client.cnclient.CoordinatingNodeClient,
 ):
-  """Extend DataONEBaseClient_1_2 with functionality common between Member and
-  Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
+  """Extend DataONEBaseClient_1_2 and CoordinatingNodeClient with functionality
+  for Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
 
   For details on how to use these methods, see:
 
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
   https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
   """
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
-    super(DataONEBaseClient_2_0, self).__init__(*args, **kwargs)
+    super(CoordinatingNodeClient_1_2, self).__init__(*args, **kwargs)
 
     self.logger = logging.getLogger(__file__)
 
-    self._api_major = 2
-    self._api_minor = 0
+    self._api_major = 1
+    self._api_minor = 2
     self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
       self._api_major, self._api_minor
     )
-
-  #=============================================================================
-  # v2.0 APIs shared between CNs and MNs.
-  #=============================================================================
-
-  # TODO: Implement or move shared methods here.

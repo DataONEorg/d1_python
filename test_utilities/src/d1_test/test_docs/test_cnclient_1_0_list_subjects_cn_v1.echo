@@ -11,7 +11,7 @@
     "version_tag": "v1"
   }, 
   "wrapper": {
-    "class_name": "CoordinatingNodeClient_1_1", 
+    "class_name": "CoordinatingNodeClient_1_2", 
     "expected_type": "SubjectInfo", 
     "received_303_redirect": false, 
     "vendor_specific_dict": null

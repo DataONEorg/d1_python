@@ -46,7 +46,7 @@ import logging
 import random
 from xml.sax.saxutils import quoteattr
 
-import d1_client.baseclient_1_1
+import d1_client.baseclient_1_2
 
 FIELD_TYPE_CONVERSION_MAP = {
   't': 'text',
@@ -73,8 +73,8 @@ RESERVED_CHAR_LIST = [
 ]
 
 
-class SolrClient(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
-  """Extend DataONEBaseClient_1_1 with functions for querying Solr indexes
+class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
+  """Extend DataONEBaseClient_1_2 with functions for querying Solr indexes
   hosted on CNs and MNs.
 
   For details on how to use these methods, see:
@@ -90,7 +90,7 @@ class SolrClient(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
     header_dict.setdefault(
       'Content-Type', 'application/x-www-form-urlencoded; charset=utf-8'
     )
-    d1_client.baseclient_1_1.DataONEBaseClient_1_1.__init__(
+    d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
       self, headers=header_dict, *args, **kwargs
     )
 

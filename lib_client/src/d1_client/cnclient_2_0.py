@@ -29,14 +29,14 @@ import d1_common.types.dataoneTypes_v2_0
 import d1_common.util
 
 import d1_client.baseclient_2_0
-import d1_client.cnclient_1_1
+import d1_client.cnclient_1_2
 
 
 class CoordinatingNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
-    d1_client.cnclient_1_1.CoordinatingNodeClient_1_1,
+    d1_client.cnclient_1_2.CoordinatingNodeClient_1_2,
 ):
-  """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_1 with functionality
+  """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_2 with functionality
   for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
 
   Updated in v2:

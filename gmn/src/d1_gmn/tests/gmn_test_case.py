@@ -58,7 +58,7 @@ import d1_test.mock_api.django_client
 import d1_test.mock_api.get
 
 import d1_client.mnclient
-import d1_client.mnclient_1_1
+import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 import d1_client.session
 
@@ -90,7 +90,7 @@ class GMNTestCase(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     # d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    self.client_v1 = d1_client.mnclient_1_1.MemberNodeClient_1_1(
+    self.client_v1 = d1_client.mnclient_1_2.MemberNodeClient_1_2(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
     self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -17,19 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Combine all PyXB bindings required for handling DataONE types up to and
-including v2.0.
+"""Test MNPackage.getPackage()
 """
 
 from __future__ import absolute_import
 
-import logging
+import responses
 
-from d1_common.types.generated.dataoneTypes_v1 import *
-from d1_common.types.generated.dataoneTypes_v1_1 import *
-# from d1_common.types.generated.dataoneTypes_v1_2 import *
-from d1_common.types.generated.dataoneTypes_v2_0 import *
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
-# flake8: noqa: F403
 
-logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+class TestGetCapabilities(d1_gmn.tests.gmn_test_case.GMNTestCase):
+  @responses.activate
+  def test_1000(self, mn_client_v1_v2):
+    """MNPackage.getPackage(): Returns a valid package"""

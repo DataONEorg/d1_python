@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Combine all PyXB bindings required for handling DataONE types up to and
-including v2.0.
+including v1.1.
 """
 
 from __future__ import absolute_import
@@ -27,8 +27,8 @@ import logging
 
 from d1_common.types.generated.dataoneTypes_v1 import *
 from d1_common.types.generated.dataoneTypes_v1_1 import *
+
 # from d1_common.types.generated.dataoneTypes_v1_2 import *
-from d1_common.types.generated.dataoneTypes_v2_0 import *
 
 # flake8: noqa: F403
 

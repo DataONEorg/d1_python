@@ -24,14 +24,14 @@ import d1_common.type_conversions
 
 import d1_client.cnclient
 import d1_client.mnclient
-import d1_client.mnclient_1_1
+import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 
 def get_client_class_by_version_tag(api_major):
   api_major = str(api_major)
   if api_major in ('v1', '1'):
-    return d1_client.mnclient_1_1.MemberNodeClient_1_1
+    return d1_client.mnclient_1_2.MemberNodeClient_1_2
   elif api_major in ('v2', '2'):
     return d1_client.mnclient_2_0.MemberNodeClient_2_0
   else:

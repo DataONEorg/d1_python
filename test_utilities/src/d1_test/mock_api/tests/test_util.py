@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 
-import d1_common.types.dataoneTypes_v1_1 as v1_1
+import d1_common.types.dataoneTypes_v1_2 as v1_2
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 
 import d1_test.d1_test_case
@@ -37,7 +37,7 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
     assert endpoint_str == 'log'
     assert param_list == []
     assert query_dict == {}
-    assert client.bindings.Namespace == v1_1.Namespace
+    assert client.bindings.Namespace == v1_2.Namespace
 
   def test_1010(self):
     """parse_rest_url() 2"""

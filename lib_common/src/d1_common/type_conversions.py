@@ -43,6 +43,7 @@ import pyxb.utils.domutils
 
 import d1_common.types.dataoneTypes_v1 as v1_0
 import d1_common.types.dataoneTypes_v1_1 as v1_1
+import d1_common.types.dataoneTypes_v1_2 as v1_2
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 import d1_common.util
 
@@ -52,12 +53,14 @@ PYXB_BINDING = d1_common.types.dataoneTypes_v1
 NS_DICT = {
   'v1': str(v1_0.Namespace),
   'v1_1': str(v1_1.Namespace),
+  'v1_2': str(v1_2.Namespace),
   'v2': str(v2_0.Namespace),
 }
 
 BINDING_TO_VERSION_TAG_DICT = {
   v1_0: 'v1',
   v1_1: 'v1',
+  v1_2: 'v1',
   v2_0: 'v2',
 }
 
@@ -82,7 +85,7 @@ def get_bindings_by_version_tag(api_major):
   """
   api_major = str(api_major)
   if api_major in ('v1', '1'):
-    return v1_1
+    return v1_2
   elif api_major in ('v2', '2'):
     return v2_0
   else:
@@ -107,6 +110,8 @@ def get_bindings_by_api_version(api_major, api_minor=0):
     return d1_common.types.dataoneTypes_v1
   elif version_tup == (1, 1):
     return d1_common.types.dataoneTypes_v1_1
+  elif version_tup == (1, 2):
+    return d1_common.types.dataoneTypes_v1_2
   elif version_tup == (2, 0):
     return d1_common.types.dataoneTypes_v2_0
   else:

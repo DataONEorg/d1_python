@@ -31,9 +31,9 @@ import pytest
 
 import d1_test.sample
 
-from d1_client.cnclient_1_1 import CoordinatingNodeClient_1_1 as cn_v1
+from d1_client.cnclient_1_2 import CoordinatingNodeClient_1_2 as cn_v1
 from d1_client.cnclient_2_0 import CoordinatingNodeClient_2_0 as cn_v2
-from d1_client.mnclient_1_1 import MemberNodeClient_1_1 as mn_v1
+from d1_client.mnclient_1_2 import MemberNodeClient_1_2 as mn_v1
 from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 
 import django.conf

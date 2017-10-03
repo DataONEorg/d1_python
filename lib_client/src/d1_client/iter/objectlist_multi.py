@@ -25,7 +25,7 @@ from __future__ import absolute_import
 import logging
 import multiprocessing
 
-import d1_client.mnclient_1_1
+import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 # Defaults
