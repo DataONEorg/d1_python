@@ -21,134 +21,13 @@
 
 Copy from a running MN:
 
-- Science objects
-- Permissions
-- Subjects
-- Event logs
+- Science objects - Permissions - Subjects - Event logs
 
-This function can be used for setting up a new instance of GMN to take over
-for an existing MN. The import has been tested with other versions of GMN but
-should also work with other node stacks.
+This function can be used for setting up a new instance of GMN to take over for
+an existing MN. The import has been tested with other versions of GMN but should
+also work with other node stacks.
 
-This command can be run before the new GMN instance has been set up to run as
-a web service, so the procedure does not require two web servers to run at the
-same time.
-
-The new GMN instance can be installed on the same server as the source MN or on a
-different server.
-
-When replacing an older GMN instance by installing a new instance on the same
-server, the general procedure is:
-
-- Install the new GMN instance using the regular install procedure, with the
-following exceptions:
-
-    - Install the new GMN instance to a different virtualenv by using a
-    different virtualenv directory name for the new instance.
-
-    - Skip all Apache related steps.
-
-    - Skip all certificate related steps.
-
-    - Use a separate database for the new instance by modifying the database
-    name in settings.py and using the new name when initializing the database.
-
-- Manually copy individual settings from settings.py / settings_site.py of the
-old instance to settings.py of the new instance. The new instance will be using
-the same settings as the old one, including client side certificate paths and
-science object storage root.
-
-- To make sure that all the settings were correctly copied from the old
-instance, Generate a Node document in the new instance and compare it with the
-version registered in the DataONE environment for the old instance.
-
-    $ manage.py node view
-
-- If a certificate is specified with the `--cert-pub` and (optionally)
-`--cert-key` command line switches, GMN will connect to the source MN using that
-certificate. Else, GMN will connect using its client side certificate, if one
-has been set up via CLIENT_CERT_PATH and CLIENT_CERT_PRIVATE_KEY_PATH in
-settings.py. Else, GMN connects to the source MN without using a certificate.
-
-The `--public` switch causes GMN to ignore any available certificates and
-connect as the public user. This is useful if the source MN has only public
-objects and a certificate that would be accepted by the source MN is not
-available.
-
-After the certificate provided by GMN is accepted by the source MN, GMN is
-authenticated on the source MN for the subject(s) contained in the certificate.
-If no certificate was provided, only objects and APIs that are available to the
-public user are accessible
-
-The importer depends on the source MN `listObjects()` API being accessible to
-one or more of the authenticated subjects, or to the public subject if no
-certificate was provided. Also, for MNs that filter results from
-`listObjects()`, only objects that are both returned by `listObjects()` and are
-readable by one or more of the authenticated subjects(s) can be imported.
-
-If the source MN is a GMN instance, `PUBLIC_OBJECT_LIST` in its settings.py
-controls access to `listObjects()`. For regular authenticated subjects, results
-returned by `listObjects()` are filtered to include only objects for which one
-or more of the subjects have read or access or better. Subjects that are
-whitelisted for create, update and delete access in GMN, and subjects
-authenticated as Coordinating Nodes, have unfiltered access to `listObjects()`.
-See settings.py for more information.
-
-Member Nodes keep an event log, where operations on objects, such as reads, are
-stored together with associated details. After completed object import, the
-importer will attempt to import the events for all successfully imported
-objects. For event logs, `getLogRecords()` provides functionality equivalent to
-what `listObjects` provides for objects, with the same access control related
-restrictions.
-
-If the source MN is a GMN instance, `PUBLIC_LOG_RECORDS` in settings.py controls
-access to `getLogRecords()` and is equivalent to `PUBLIC_OBJECT_LIST`.
-
-- Start the import. Since the new instance has been set up to use the same
-object storage location as the old instance, use the `--no-bytes` switch, which
-tells GMN not to copy the object bytes and instead assume that they are already
-available in the object storage location.
-
-    $ manage.py import --no-bytes
-
-- Temporarily start the new MN with connect to it and check that all data is
-showing as expected.
-
-    $ manage.py runserver
-
-- Stop the source MN by stopping Apache.
-
-- Modify the VirtualHost file for the source MN, e.g.,
-`/etc/apache2/sites-available/gmn2-ssl.conf`, to point to the new instance,
-e.g., by changing `gmn_venv` to the new virtualenv location.
-
-- Start the new instance by starting Apache.
-
-- From the point of view of the CNs and other nodes in the environment, the node
-will not have changed, as it will be serving the same objects as before, so no
-further processing or synchronization is required.
-
-If the new instance is set up on a different server, extra steps likely to be
-required include:
-
-- Modify the BaseURL in settings.py
-
-- Update the Node registration
-
-    $ manage.py node update
-
-
-Notes:
-
-- Any replica requests that have been accepted but not yet processed by the
-source MN will not be completed. However, requests expire and are automatically
-reissued by the CN after a certain amount of time, so this should be handled
-gracefully by the system.
-
-- Any changes on the source MN that occur during the import may or may not be
-included in the import. To avoid issues such as lost objects, events and system
-metadata updates, it may be necessary to restrict access to the source MN during
-the transition.
+See the GMN setup documentation for more information on how to use this command.
 """
 
 from __future__ import absolute_import
@@ -184,7 +63,7 @@ import d1_common.util
 import d1_common.xml
 
 import d1_client.cnclient_2_0
-import d1_client.iter.logrecord
+import d1_client.iter.logrecord_multi
 import d1_client.iter.objectlist_multi
 import d1_client.iter.sysmeta_multi
 import d1_client.mnclient
@@ -192,6 +71,9 @@ import d1_client.util
 
 import django.conf
 import django.core.management.base
+
+# import multiprocessing
+# import cProfile as profile
 
 ROOT_PATH = '/var/local/dataone'
 REVISION_LIST_PATH = os.path.join(ROOT_PATH, 'import_revision_list.json')
@@ -253,6 +135,10 @@ class Command(django.core.management.base.BaseCommand):
       default=d1_common.const.DEFAULT_GETLOGRECORDS_PAGE_SIZE,
       help='Number of log records to retrieve in each getLogRecords() call'
     )
+    parser.add_argument(
+      '--major', type=int, action='store',
+      help='Use API major version instead of finding by connecting to CN'
+    )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
   def handle(self, *args, **opt):
@@ -262,8 +148,10 @@ class Command(django.core.management.base.BaseCommand):
     )
     util.exit_if_other_instance_is_running(__name__)
     self._opt = opt
-    self._api_major = d1_client.util.get_api_major_by_base_url(opt['baseurl'])
     try:
+      # profiler = profile.Profile()
+      # profiler.runcall(self._handle)
+      # profiler.print_stats()
       self._handle()
     except d1_common.types.exceptions.DataONEException as e:
       logging.error(str(e))
@@ -274,11 +162,18 @@ class Command(django.core.management.base.BaseCommand):
     if not self._opt['force'] and not util.is_db_empty():
       raise django.core.management.base.CommandError(
         'There are already objects in the local database. '
-        'Use --force to import anyway.'
+        'Use --force to import anyway'
       )
     if self._opt['clear']:
       d1_gmn.app.delete.delete_all_from_db()
       self._events.log_and_count('Cleared database')
+      # d1_gmn.app.models.EventLog.objects.all().delete()
+
+    if self._opt['major']:
+      self._api_major = (
+        self._opt['major']
+        if self._opt['major'] is not None else self._find_api_major()
+      )
 
     revision_list = self._find_revision_chains()
     # revision_list = d1_common.util.load_json(REVISION_LIST_PATH)
@@ -311,31 +206,43 @@ class Command(django.core.management.base.BaseCommand):
     )
     self._import_logs(imported_pid_list)
 
+  def _find_api_major(self):
+    return d1_client.util.get_api_major_by_base_url(self._opt['baseurl'])
+
   def _find_revision_chains(self):
     sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
-      self._opt['baseurl'],
+      base_url=self._opt['baseurl'],
       api_major=self._api_major,
       client_dict=self._get_client_args_dict(),
       list_objects_dict=self._get_list_objects_args_dict(),
       max_workers=self._opt['workers'],
+      max_queue_size=1000,
     )
     revision_list = []
+    start_sec = time.time()
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      util.log_progress(
-        self._events, 'Finding revision chains', i, sysmeta_iter.total,
-        d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-      )
-      if not d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
+      msg_str = 'Error'
+      if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
+        msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+        revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
+      elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
         logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-        continue
-      revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
+      else:
+        logging.error(str(sysmeta_pyxb))
+      util.log_progress(
+        self._events, 'Finding revision chains', i, sysmeta_iter.total, msg_str,
+        start_sec
+      )
+      # if i == 1000:
+      #   break
     return revision_list
 
   def _import_objects(self, topo_list):
     imported_pid_list = []
+    start_sec = time.time()
     for i, pid in enumerate(topo_list):
       util.log_progress(
-        self._events, 'Importing objects', i, len(topo_list), pid
+        self._events, 'Importing objects', i, len(topo_list), pid, start_sec
       )
       try:
         self._import_object(pid)
@@ -351,8 +258,8 @@ class Command(django.core.management.base.BaseCommand):
         'Skipped object that already exists', 'pid="{}"'.format(pid)
       )
       return
-    sysmeta_pyxb = self._get_source_sysmeta(pid)
     # self._download_source_sciobj_bytes_to_store(pid)
+    sysmeta_pyxb = self._get_source_sysmeta(pid)
     d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
 
   def _import_logs(self, imported_pid_list):
