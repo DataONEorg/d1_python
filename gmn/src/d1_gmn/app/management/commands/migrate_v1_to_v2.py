@@ -204,7 +204,6 @@ class Command(django.core.management.base.BaseCommand):
     n = len(sciobj_row_list)
     start_sec = time.time()
     for i, sciobj_row in enumerate(sciobj_row_list):
-      time.sleep(5)
       util.log_progress(
         self._events, 'Retrieving revision chains', i, n, sciobj_row['pid'],
         start_sec

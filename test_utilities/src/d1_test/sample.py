@@ -215,12 +215,12 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=<entryId>)\d+', '[volatile]', o_str)
   # TODO: This shouldn't be needed...
   o_str = re.sub(r'(?<=Content-Type:).*', '[volatile]', o_str)
-  # The uuid module uses MAC address etc
+  # The uuid module uses MAC address, etc
   o_str = re.sub(
     r'(?<=test_fragment_volatile_)[0-9a-fA-F]+', '[volatile]', o_str
   )
   # Version numbers
-  o_str = re.sub(r'(?<=DataONE_Python/)[\d.]+', '[volatile]', o_str)
+  o_str = re.sub(r'(?<=DataONE-Python/)[\d.]+', '[volatile]', o_str)
   o_str = re.sub(r'(?<=DataONE-GMN:)\s*[\d.]+', '[volatile]', o_str)
 
   return o_str

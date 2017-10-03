@@ -51,19 +51,19 @@ DEFAULT_LISTOBJECTS_PAGE_SIZE = 100
 # Default number of records to retrieve in a log records request
 DEFAULT_GETLOGRECORDS_PAGE_SIZE = 100
 
-# HTTP Response timeout in seconds, float.
+# HTTP Response timeout in seconds, float
 RESPONSE_TIMEOUT = 60.0
 
-# HTTP User Agent that this software is known as.
-USER_AGENT = 'DataONE_Python/{} +http://dataone.org/'.format(VERSION)
+# HTTP User Agent used by d1_python by default
+USER_AGENT = 'DataONE-Python/{} +http://dataone.org/'.format(VERSION)
 
-# The system wide default checksum algorithm.
+# The system wide default checksum algorithm
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 
 # Default number of replicas
 DEFAULT_NUMBER_OF_REPLICAS = 3
 
-# MIME types.
+# MIME types
 CONTENT_TYPE_HTML = 'text/html'
 CONTENT_TYPE_JSON = 'application/json'
 CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream'
@@ -83,7 +83,7 @@ DEFAULT_CHARSET = 'utf-8'
 URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
 URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 
-# Symbolic subjects.
+# Symbolic subjects
 SUBJECT_VERIFIED = 'verifiedUser'
 SUBJECT_AUTHENTICATED = 'authenticatedUser'
 SUBJECT_PUBLIC = 'public'

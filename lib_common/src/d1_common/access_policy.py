@@ -97,6 +97,35 @@ def is_public(sysmeta_pyxb):
   )
 
 
+def is_private(sysmeta_pyxb):
+  return (
+    not has_access_policy(sysmeta_pyxb) or (
+      has_access_policy(sysmeta_pyxb) and
+      not get_effective_permission_dict(sysmeta_pyxb.accessPolicy)
+    )
+  )
+
+
+def set_public_read(sysmeta_pyxb):
+  """Set access policy to a standard public read policy
+
+  This overrides any existing policy and can then be modified by adding write
+  and/or changePermission permissions to specific subjects.
+  """
+  sysmeta_pyxb.accessPolicy = get_access_policy_pyxb({
+    'read': [d1_common.const.SUBJECT_PUBLIC]
+  })
+
+
+def set_private(sysmeta_pyxb):
+  """Set access policy to a standard private (blank) policy
+
+  This overrides any existing policy and can then be modified by adding read,
+  write and/or changePermission permissions to specific subjects.
+  """
+  sysmeta_pyxb.accessPolicy = None
+
+
 def normalize(access_policy_pyxb):
   normalized_permission_list = get_normalized_permission_list(
     access_policy_pyxb
@@ -108,8 +137,10 @@ def normalize(access_policy_pyxb):
 
 
 def get_normalized_permission_list(access_policy_pyxb):
-  """Returns the briefest possible representation of a set of permissions for
-  subjects in alphabetical order. E.g.:
+  """Return the briefest possible representation of a set of permissions for
+  subjects in alphabetical order
+
+  E.g.:
   [
     ('subj1', 'read'),
     ('subj2', 'write'),
@@ -121,7 +152,8 @@ def get_normalized_permission_list(access_policy_pyxb):
 
 
 def get_effective_permission_list(access_policy_pyxb, subject_str):
-  """Returns a list of permissions for {subject}. E.g., ['read', 'write'].
+  """Return a list of permissions for {subject}. E.g., ['read', 'write']
+
   Handles implicit permissions. E.g., if {access_policy} specifies only 'write',
   returns ['read', 'write']. If {subject} is not in {access_policy}, returns [].
   """
@@ -129,8 +161,10 @@ def get_effective_permission_list(access_policy_pyxb, subject_str):
 
 
 def get_effective_permission_dict(access_policy_pyxb):
-  """Like get_effective_permission(), but returns a dict of subjects to
-  permissions. E.g.:
+  """Like get_effective_permission(), but return a dict of subjects to
+  permissions
+
+  E.g.:
   {
     'subj2': ['read'],
     'subj1': ['read', 'write'],
@@ -143,7 +177,8 @@ def get_effective_permission_dict(access_policy_pyxb):
 
 
 def get_access_policy_pyxb(grouped_permission_dict):
-  """Returns AccessPolicy PyXB representation of {grouped_permission_dict}.
+  """Return AccessPolicy PyXB representation of {grouped_permission_dict}
+
   Returns None if {grouped_permission_dict} is empty. The schema does not allow
   AccessPolicy to be empty, but in System Metadata, it can be left out
   altogether. So returning None instead of an empty AccessPolicy allows the
@@ -172,9 +207,10 @@ def get_access_policy_pyxb(grouped_permission_dict):
 
 
 def is_subject_allowed(access_policy_pyxb, subject_str, permission_str):
-  """Returns True if {subject} has {permission}, else False. Handles implicit
-  permissions. E.g., if {access_policy} specifies only 'write' for {subject},
-  and {permission} is 'read', returns True.
+  """Return True if {subject} has {permission}, else False
+
+  Handles implicit permissions. E.g., if {access_policy} specifies only 'write'
+  for {subject}, and {permission} is 'read', returns True.
   """
   return permission_str in get_effective_permission_list(
     access_policy_pyxb, subject_str
@@ -182,9 +218,10 @@ def is_subject_allowed(access_policy_pyxb, subject_str, permission_str):
 
 
 def get_effective_permission_list_from_iter(permission_iterable):
-  """Given an iterable of permissions, return effective permission list. E.g.,
-  ['write', 'changePermission'] returns ['read', 'write', 'changePermission'].
-  Returns None if the iterable is empty.
+  """Given an iterable of permissions, return effective permission list
+
+  E.g., ['write', 'changePermission'] returns ['read', 'write',
+  'changePermission']. Returns None if the iterable is empty.
   """
   for i in range(2, -1, -1):
     if ORDERED_PERMISSION_LIST[i] in permission_iterable:
