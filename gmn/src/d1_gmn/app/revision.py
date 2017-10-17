@@ -56,9 +56,8 @@ def delete_chain(pid):
   pid_to_chain_model = d1_gmn.app.models.ChainMember.objects.get(pid__did=pid)
   chain_model = pid_to_chain_model.chain
   pid_to_chain_model.delete()
-  if not d1_gmn.app.models.ChainMember.objects.filter(
-      chain=chain_model,
-  ).exists():
+  if not d1_gmn.app.models.ChainMember.objects.filter(chain=chain_model
+                                                      ).exists():
     if chain_model.sid:
       # Cascades back to chain_model.
       d1_gmn.app.models.IdNamespace.objects.filter(did=chain_model.sid.did
@@ -96,8 +95,6 @@ def cut_from_chain(sciobj_model):
   else:
     old_pid = sciobj_model.obsoleted_by.did
     _cut_embedded_from_chain(sciobj_model)
-  #print '9'*100
-  #print old_pid
   _update_sid_to_last_existing_pid_map(old_pid)
 
 
@@ -175,15 +172,10 @@ def _add_sciobj(pid, sid, obsoletes_pid, obsoleted_by_pid):
 
 def _add_standalone(pid, sid):
   # assert_sid_unused(sid)
-  #print '5'*100
-  #print 'pid={} sid={}'.format(pid, sid)
   _create_chain(pid, sid)
 
 
 def _add_to_chain(pid, sid, obsoletes_pid, obsoleted_by_pid):
-  #print '4'*100
-  #print 'pid={} sid={}'.format(pid, sid)
-  # print chain_model
   _assert_sid_is_in_chain(sid, obsoletes_pid)
   _assert_sid_is_in_chain(sid, obsoleted_by_pid)
   obsoletes_chain_model = _get_chain_by_pid(obsoletes_pid)
@@ -244,7 +236,6 @@ def _set_chain_sid(chain_model, sid):
   """
   if not sid:
     return
-  #print 'A'*100
   if chain_model.sid and chain_model.sid.did != sid:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'Attempted to modify existing SID. '
@@ -275,18 +266,11 @@ def _find_head_or_latest_connected(pid, last_pid=None):
   If chain is connected all the way to head and head exists, return the head.
   If chain ends in a dangling obsoletedBy, return the last existing object.
   """
-  # print '7'*100
-  # print '3 {} {}'.format(pid, last_pid)
   try:
     sci_model = d1_gmn.app.util.get_sci_model(pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
-    # print '1'
     return last_pid
-  # print '4'
-  # print sci_model.obsoletes.did
-  # print sci_model.obsoleted_by.did
   if sci_model.obsoleted_by is None:
-    # print '2'
     return pid
   return _find_head_or_latest_connected(sci_model.obsoleted_by.did, pid)
 
@@ -321,10 +305,6 @@ def _update_sid_to_last_existing_pid_map(pid):
   """
   last_pid = _find_head_or_latest_connected(pid)
   chain_model = _get_chain_by_pid(last_pid)
-  # print '8'*100
-  # print pid
-  # print last_pid
-  # print 'pid={} head={}'.format(pid, last_pid)
   chain_model.head_pid = d1_gmn.app.models.did(last_pid)
   chain_model.save()
 
