@@ -156,6 +156,12 @@ def enable_db_access(db):
 
 MOCK_BASE_URL = 'http://mock/node'
 
+
+@pytest.fixture(scope='function', params=[True, False])
+def true_false(request):
+  yield request.param
+
+
 # CN and MN (for baseclient)
 
 
