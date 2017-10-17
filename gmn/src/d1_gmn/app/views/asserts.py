@@ -73,7 +73,7 @@ def is_valid_for_update(pid):
   """Assert that the System Metadata for the object with the given {pid} can be
   updated.
   """
-  d1_gmn.app.sysmeta.is_pid_of_existing_object(pid)
+  d1_gmn.app.util.is_pid_of_existing_object(pid)
   is_not_replica(pid)
   is_not_archived(pid)
 
@@ -145,7 +145,7 @@ def is_did(did):
 
 
 def is_pid_of_existing_object(did):
-  if not d1_gmn.app.sysmeta.is_pid_of_existing_object(did):
+  if not d1_gmn.app.util.is_pid_of_existing_object(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Identifier is {}. Expected a Persistent ID (PID) for an existing '
       u'object. id="{}"'.format(

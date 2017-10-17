@@ -59,7 +59,7 @@ class TestSidResolve(d1_gmn.tests.gmn_test_case.GMNTestCase):
     SID in the new object, the SID resolves to the new object.
     """
     sid, pid_chain_list = self.create_revision_chain(
-      mn_client_v2, chain_len=7, sid=False
+      mn_client_v2, chain_len=7, sid=None
     )
     new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid_chain_list[-1], sid=True
@@ -73,7 +73,7 @@ class TestSidResolve(d1_gmn.tests.gmn_test_case.GMNTestCase):
     SID in the new object, the SID resolves to the new object.
     """
     sid, pid_chain_list = self.create_revision_chain(
-      mn_client_v2, chain_len=7, sid=False
+      mn_client_v2, chain_len=7, sid=None
     )
     new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid_chain_list[-1], sid=True

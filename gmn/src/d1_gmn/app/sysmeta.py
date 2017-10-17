@@ -83,6 +83,8 @@ def create_or_update(sysmeta_pyxb, url=None):
   - Any supplied SID is verified to be valid for the given operation. E.g., with
   d1_gmn.app.views.asserts.is_valid_sid_for_chain().
   """
+  # TODO: Make sure that old sections are removed if not included in update.
+
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
   try:
@@ -109,20 +111,21 @@ def create_or_update(sysmeta_pyxb, url=None):
 
   sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
   obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
-  if not obsoletes_pid:
-    d1_gmn.app.revision.create_chain(sid, pid)
-  else:
-    d1_gmn.app.revision.add_pid_to_chain(sid, obsoletes_pid, pid)
+  obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
+
+  d1_gmn.app.revision.set_revision_links(
+    sci_model, obsoletes_pid, obsoleted_by_pid
+  )
+
+  d1_gmn.app.revision.create_or_update_chain(
+    pid, sid, obsoletes_pid, obsoleted_by_pid
+  )
 
   return sci_model
 
 
 def is_did(did):
   return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
-
-
-def get_did(sciobj_fk):
-  return getattr(sciobj_fk, 'did', None)
 
 
 def is_pid(did):
@@ -133,14 +136,8 @@ def is_pid(did):
   return is_did(did) and not d1_gmn.app.revision.is_sid(did)
 
 
-def is_pid_of_existing_object(pid):
-  """Excludes SIDs, unprocessed replicas and revision chain placeholders.
-  """
-  return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists()
-
-
 def is_archived(pid):
-  return is_pid_of_existing_object(pid) \
+  return d1_gmn.app.util.is_pid_of_existing_object(pid) \
          and d1_gmn.app.util.get_sci_model(pid).is_archived
 
 
@@ -158,7 +155,7 @@ def get_identifier_type(did):
     return u'unused on this Member Node'
   elif d1_gmn.app.revision.is_sid(did):
     return u'a Series ID (SID)'
-  elif is_pid_of_existing_object(did):
+  elif d1_gmn.app.util.is_pid_of_existing_object(did):
     return u'a Persistent ID (PID) of an existing local object'
   elif d1_gmn.app.local_replica.is_local_replica(did):
     return u'a Persistent ID (PID) of a local replica'
@@ -207,11 +204,6 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
   sci_model.authoritative_member_node = d1_gmn.app.models.node(
     d1_common.xml.get_req_val(sysmeta_pyxb.authoritativeMemberNode)
   )
-  d1_gmn.app.revision.set_revision_by_model(
-    sci_model,
-    d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes'),
-    d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy'),
-  )
   sci_model.is_archived = sysmeta_pyxb.archived or False
 
 
@@ -234,10 +226,12 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.rightsHolder = sciobj_model.rights_holder.subject
   base_pyxb.originMemberNode = sciobj_model.origin_member_node.urn
   base_pyxb.authoritativeMemberNode = sciobj_model.authoritative_member_node.urn
-  base_pyxb.obsoletes = get_did(sciobj_model.obsoletes)
-  base_pyxb.obsoletedBy = get_did(sciobj_model.obsoleted_by)
+  base_pyxb.obsoletes = d1_gmn.app.util.get_did(sciobj_model.obsoletes)
+  base_pyxb.obsoletedBy = d1_gmn.app.util.get_did(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
-  base_pyxb.seriesId = d1_gmn.app.revision.get_sid_by_pid(sciobj_model.pid.did)
+  base_pyxb.seriesId = d1_gmn.app.revision.get_sid_by_pid(
+    d1_gmn.app.util.get_did(sciobj_model.pid)
+  )
   return base_pyxb
 
 

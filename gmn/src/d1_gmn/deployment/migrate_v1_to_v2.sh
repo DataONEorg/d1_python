@@ -12,7 +12,7 @@ v1p=${d1}/gmn/lib/python2.7/site-packages
 v2p=${d1}/gmn_venv/lib/python2.7/site-packages
 
 v1h=${v1p}/service
-v2h=${v2p}/gmn
+v2h=${v2p}/d1_gmn
 
 v1s=${v1h}/settings_site.py
 v2s=${v2h}/settings_site.py

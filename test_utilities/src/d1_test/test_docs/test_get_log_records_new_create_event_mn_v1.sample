@@ -57,7 +57,7 @@ sysmeta: <?xml version="1.0" encoding="utf-8"?>
 
 pid: PID_gxmjjxhpmzob
 create_event: <?xml version="1.0" encoding="utf-8"?>
-<ns1:log count="1" start="0" total="3238" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<ns1:log count="1" start="0" total="3237" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
     <entryId>[volatile]</entryId>
     <identifier>PID_gxmjjxhpmzob</identifier>

@@ -79,6 +79,14 @@ def abort_if_stand_alone_instance():
     )
 
 
+def abort_if_not_debug_mode():
+  if not django.conf.settings.DEBUG_GMN:
+    raise django.core.management.base.CommandError(
+      u'This command is only available when DEBUG_GMN is True in '
+      u'settings.py'
+    )
+
+
 # def get_command_name():
 #   for arg_str in sys.argv:
 #     if 'manage.py' not in arg_str and 'pytest' not in arg_str:

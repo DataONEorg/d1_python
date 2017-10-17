@@ -307,60 +307,50 @@
     "updateDate": "2016-01-28T15:58:45Z"
   }, 
   {
-    "abstract": "Illumina reverse reads, lane 2", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "abstract": "Perl script to filter raw illumina reads by name and length. Written by Stefan Kaluziak. Please contact Nathaniel Chu (nathanieldchu@gmail.com) for more information.", 
+    "author": "Chu, Nathaniel", 
+    "authorGivenName": "Nathaniel", 
+    "authorSurName": "Chu", 
+    "authorSurNameSort": "Chu", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "10e1d252a4649246cf1f2a760bf65112", 
+    "checksum": "1297f8ed3ccda7c4549a54aa2d163528", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F6%3Fver%3D2017-07-28T06%3A57%3A49.529-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.610dd%2F13%3Fver%3D2014-01-29T10%3A41%3A30.987-05%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:00:24.838Z", 
-    "datePublished": "2017-07-28T10:57:30Z", 
-    "dateUploaded": "2017-07-28T10:57:30Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F6%3Fver%3D2017-07-28T06%3A57%3A49.529-04%3A00", 
+    "dateModified": "2014-02-22T12:11:09.402Z", 
+    "datePublished": "2014-01-22T20:46:05Z", 
+    "dateUploaded": "2014-01-22T20:46:05Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.610dd%2F13%3Fver%3D2014-01-29T10%3A41%3A30.987-05%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/6?ver=2017-07-28T06:57:49.529-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/6?ver=2017-07-28T06:57:49.529-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.610dd/13?ver=2014-01-29T10:41:30.987-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.610dd/13?ver=2014-01-29T10:41:30.987-05:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Chu, Nathaniel", 
+      "Kaluziak, Stefan", 
+      "Trussell, Geoffrey", 
+      "Vollmer, Steven"
     ], 
     "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.610dd?ver=2014-01-29T10:41:31.019-05:00", 
+      "http://dx.doi.org/10.5061/dryad.610dd?ver=2014-03-26T16:33:42.441-04:00"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
       "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Ecological Genetics", 
+      "Phylogeography", 
+      "Population Genetics - Empirical", 
+      "Molluscs"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Chu, Nathaniel", 
+      "Kaluziak, Stefan", 
+      "Trussell, Geoffrey", 
+      "Vollmer, Steven"
     ], 
-    "pubDate": "2017-07-28T10:57:30Z", 
+    "pubDate": "2014-01-22T20:46:05Z", 
     "readPermission": [
       "public"
     ], 
@@ -369,81 +359,78 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:00:24.431Z", 
-      "2017-07-28T11:00:24.499Z"
+      "2014-02-22T12:11:08.532Z", 
+      "2014-02-22T12:11:08.611Z"
     ], 
     "replicationAllowed": false, 
     "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.610dd?format=d1rem&ver=2014-01-29T10:41:31.019-05:00", 
+      "http://dx.doi.org/10.5061/dryad.610dd?format=d1rem&ver=2014-03-26T16:33:42.441-04:00"
     ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Nucella lapillus"
     ], 
     "serviceCoupling": "false", 
     "site": [
-      "North America"
+      "North Atlantic", 
+      "Northwestern Atlantic", 
+      "Rhode Island", 
+      "Massachusetts", 
+      "Maine", 
+      "Canada", 
+      "United States"
     ], 
-    "size": 2161, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140114_I456_FCC3JBKACXX_L1_PJM_2_F_2.fq.gz", 
-    "updateDate": "2017-07-28T10:57:30Z"
+    "size": 2236, 
+    "submitter": "nathanieldchu@gmail.com", 
+    "title": "filter_read_names.fq", 
+    "updateDate": "2014-01-22T20:46:05Z"
   }, 
   {
-    "abstract": "Illumina forward reads, lane 1", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "abstract": "Compressed file containing Tomato SAM RNA-seq reads from HTR-method libraries (S_HTR_A5.fastq, S_HTR_A6.fastq, S_HTR_B6.fastq, S_HTR_B7.fastq)", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "d6324e661cd8da60c2b0f06ee6e6ed6a", 
+    "checksum": "42df93104e1883daae8b946b1d5876d9", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F3%3Fver%3D2017-07-28T06%3A57%3A42.187-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F2%3Fver%3D2015-05-15T15%3A07%3A54.117-04%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:00:19.768Z", 
-    "datePublished": "2017-07-28T10:57:28Z", 
-    "dateUploaded": "2017-07-28T10:57:28Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F3%3Fver%3D2017-07-28T06%3A57%3A42.187-04%3A00", 
+    "dateModified": "2015-05-15T19:09:48.165Z", 
+    "datePublished": "2015-05-15T19:01:31Z", 
+    "dateUploaded": "2015-05-15T19:01:31Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F2%3Fver%3D2015-05-15T15%3A07%3A54.117-04%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/3?ver=2017-07-28T06:57:42.187-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/3?ver=2017-07-28T06:57:42.187-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/2?ver=2015-05-15T15:07:54.117-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/2?ver=2015-05-15T15:07:54.117-04:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
     "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
-      "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
-    "pubDate": "2017-07-28T10:57:28Z", 
+    "pubDate": "2015-05-15T19:01:31Z", 
     "readPermission": [
       "public"
     ], 
@@ -452,81 +439,69 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:00:19.396Z", 
-      "2017-07-28T11:00:19.437Z"
+      "2015-05-15T19:09:46.775Z", 
+      "2015-05-15T19:09:46.837Z"
     ], 
     "replicationAllowed": false, 
     "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Solanum lycopersicum cv M82: LA3475"
     ], 
     "serviceCoupling": "false", 
-    "site": [
-      "North America"
-    ], 
-    "size": 2159, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140109_I1135_FCC2U5MACXX_L6_PJM_1_1.fq.gz", 
-    "updateDate": "2017-07-28T10:57:28Z"
+    "size": 1809, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "S_HTR.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:31Z"
   }, 
   {
-    "abstract": "llumina forward reads, lane 2", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "abstract": "Compressed file containing Tomato RNA-seq reads from BrAD-seq shotgun (SHO) type strand-specific libraries (SHO_22.fastq, SHO_23.fastq, SHO_24.fastq).", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "e80a63f218b2f7767dcca32e7e178661", 
+    "checksum": "58ef0a9339abc7bb5b302369497ac9eb", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F5%3Fver%3D2017-07-28T06%3A57%3A47.101-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F1%3Fver%3D2015-05-15T15%3A06%3A44.757-04%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:00:22.891Z", 
-    "datePublished": "2017-07-28T10:57:30Z", 
-    "dateUploaded": "2017-07-28T10:57:30Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F5%3Fver%3D2017-07-28T06%3A57%3A47.101-04%3A00", 
+    "dateModified": "2015-05-15T19:09:46.444Z", 
+    "datePublished": "2015-05-15T19:01:28Z", 
+    "dateUploaded": "2015-05-15T19:01:28Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F1%3Fver%3D2015-05-15T15%3A06%3A44.757-04%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/5?ver=2017-07-28T06:57:47.101-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/5?ver=2017-07-28T06:57:47.101-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/1?ver=2015-05-15T15:06:44.757-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/1?ver=2015-05-15T15:06:44.757-04:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
     "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
-      "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
-    "pubDate": "2017-07-28T10:57:30Z", 
+    "pubDate": "2015-05-15T19:01:28Z", 
     "readPermission": [
       "public"
     ], 
@@ -535,81 +510,69 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:00:22.559Z", 
-      "2017-07-28T11:00:22.598Z"
+      "2015-05-15T19:09:45.044Z", 
+      "2015-05-15T19:09:45.116Z"
     ], 
     "replicationAllowed": false, 
     "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Solanum lycopersicum cv M82: LA3475"
     ], 
     "serviceCoupling": "false", 
-    "site": [
-      "North America"
-    ], 
-    "size": 2160, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140114_I456_FCC3JBKACXX_L1_PJM_2_F_1.fq.gz", 
-    "updateDate": "2017-07-28T10:57:30Z"
+    "size": 1813, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "SHO.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:28Z"
   }, 
   {
-    "abstract": "Illumina reverse reads, lane 1", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "abstract": "Compressed file containing Tomato leaf RNA-seq reads from HTR-method libraries (L_HTR_A4.fastq, L_HTR_B5.fastq, L_HTR_C6.fastq, L_HTR_D7.fastq)", 
+    "author": "Townsley, Brad T.", 
+    "authorGivenName": "Brad T.", 
+    "authorSurName": "Townsley", 
+    "authorSurNameSort": "Townsley", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "406426152dcbe7dee07126f8fc20f8f0", 
+    "checksum": "6e5e885ed406a57a485e23aa473ce46b", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F4%3Fver%3D2017-07-28T06%3A57%3A44.633-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F3%3Fver%3D2015-05-15T15%3A08%3A54.474-04%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:00:21.512Z", 
-    "datePublished": "2017-07-28T10:57:29Z", 
-    "dateUploaded": "2017-07-28T10:57:29Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F4%3Fver%3D2017-07-28T06%3A57%3A44.633-04%3A00", 
+    "dateModified": "2015-05-15T19:09:49.56Z", 
+    "datePublished": "2015-05-15T19:01:34Z", 
+    "dateUploaded": "2015-05-15T19:01:34Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9mq14%2F3%3Fver%3D2015-05-15T15%3A08%3A54.474-04%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/4?ver=2017-07-28T06:57:44.633-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/4?ver=2017-07-28T06:57:44.633-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.9mq14/3?ver=2015-05-15T15:08:54.474-04:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9mq14/3?ver=2015-05-15T15:08:54.474-04:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
     "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
-      "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Strand-specific RNA-seq", 
+      "NGS", 
+      "Illumina"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Townsley, Brad T.", 
+      "Covington, Michael F.", 
+      "Ichihashi, Yasunori", 
+      "Zumstein, Kristina", 
+      "Sinha, Neelima R."
     ], 
-    "pubDate": "2017-07-28T10:57:29Z", 
+    "pubDate": "2015-05-15T19:01:34Z", 
     "readPermission": [
       "public"
     ], 
@@ -618,81 +581,77 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:00:21.118Z", 
-      "2017-07-28T11:00:21.157Z"
+      "2015-05-15T19:09:48.03Z", 
+      "2015-05-15T19:09:48.113Z"
     ], 
     "replicationAllowed": false, 
     "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T06:57:26.426-04:00"
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:08:54.530-04:00", 
+      "http://dx.doi.org/10.5061/dryad.9mq14?format=d1rem&ver=2015-05-15T15:11:00.690-04:00"
     ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Solanum lycopersicum cv M82: LA3475"
     ], 
     "serviceCoupling": "false", 
-    "site": [
-      "North America"
-    ], 
-    "size": 2159, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140109_I1135_FCC2U5MACXX_L6_PJM_1_2.fq.gz", 
-    "updateDate": "2017-07-28T10:57:29Z"
+    "size": 1810, 
+    "submitter": "mfcovington@gmail.com", 
+    "title": "L_HTR.FQ.tar.gz", 
+    "updateDate": "2015-05-15T19:01:34Z"
   }, 
   {
-    "abstract": "Illumina forward reads, lane 1", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "c29fc3cc92149d3fe98397f55be4ea39", 
+    "checksum": "2e81ed9e70e003cd66884ea384117d59", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F3%3Fver%3D2017-07-28T07%3A05%3A40.678-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F16%3Fver%3D2016-01-28T10%3A59%3A23.647-05%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:06:29.012Z", 
-    "datePublished": "2017-07-28T10:57:28Z", 
-    "dateUploaded": "2017-07-28T10:57:28Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F3%3Fver%3D2017-07-28T07%3A05%3A40.678-04%3A00", 
+    "dateModified": "2016-01-28T15:59:23.647Z", 
+    "datePublished": "2016-01-28T15:58:44Z", 
+    "dateUploaded": "2016-01-28T15:58:44Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F16%3Fver%3D2016-01-28T10%3A59%3A23.647-05%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/3?ver=2017-07-28T07:05:40.678-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/3?ver=2017-07-28T07:05:40.678-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/16?ver=2016-01-28T10:59:23.647-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/16?ver=2016-01-28T10:59:23.647-05:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter J.", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
-    ], 
-    "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T07:05:30.849-04:00"
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
       "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter J.", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
     ], 
-    "pubDate": "2017-07-28T10:57:28Z", 
+    "pubDate": "2016-01-28T15:58:44Z", 
     "readPermission": [
       "public"
     ], 
@@ -701,81 +660,73 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:06:28.56Z", 
-      "2017-07-28T11:06:28.621Z"
+      "2016-02-02T21:31:48.614Z", 
+      "2016-02-02T21:31:55.952Z"
     ], 
     "replicationAllowed": false, 
-    "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T07:05:30.849-04:00"
-    ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Bacteria"
     ], 
     "serviceCoupling": "false", 
-    "site": [
-      "North America"
-    ], 
-    "size": 2162, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140109_I1135_FCC2U5MACXX_L6_PJM_1_1.fq.gz", 
-    "updateDate": "2017-07-28T10:57:28Z"
+    "size": 1945, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "S-brine-T_2.fq", 
+    "updateDate": "2016-01-28T15:58:44Z"
   }, 
   {
-    "abstract": "llumina forward reads, lane 2", 
-    "author": "Ragland, Gregory", 
-    "authorGivenName": "Gregory", 
-    "authorSurName": "Ragland", 
-    "authorSurNameSort": "Ragland", 
+    "author": "Weipeng Zhang", 
+    "authorGivenName": "Weipeng Zhang", 
+    "authorSurName": "Weipeng Zhang", 
+    "authorSurNameSort": "Weipeng Zhang", 
     "authoritativeMN": "urn:node:DRYAD", 
-    "checksum": "8c72de8ac6c589a5a696f11b3b6860b6", 
+    "checksum": "616b5781e1c338eb9664cee3df86105a", 
     "checksumAlgorithm": "MD5", 
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F5%3Fver%3D2017-07-28T07%3A05%3A40.694-04%3A00", 
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F15%3Fver%3D2016-01-28T10%3A59%3A21.630-05%3A00", 
     "datasource": "urn:node:DRYAD", 
-    "dateModified": "2017-07-28T11:06:31.437Z", 
-    "datePublished": "2017-07-28T10:57:30Z", 
-    "dateUploaded": "2017-07-28T10:57:30Z", 
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.kn568%2F5%3Fver%3D2017-07-28T07%3A05%3A40.694-04%3A00", 
+    "dateModified": "2016-01-28T15:59:21.63Z", 
+    "datePublished": "2016-01-28T15:58:44Z", 
+    "dateUploaded": "2016-01-28T15:58:44Z", 
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.9ng87%2F15%3Fver%3D2016-01-28T10%3A59%3A21.630-05%3A00", 
     "formatId": "http://datadryad.org/profile/v3.1", 
     "formatType": "METADATA", 
-    "id": "http://dx.doi.org/10.5061/dryad.kn568/5?ver=2017-07-28T07:05:40.694-04:00", 
-    "identifier": "http://dx.doi.org/10.5061/dryad.kn568/5?ver=2017-07-28T07:05:40.694-04:00", 
+    "id": "http://dx.doi.org/10.5061/dryad.9ng87/15?ver=2016-01-28T10:59:21.630-05:00", 
+    "identifier": "http://dx.doi.org/10.5061/dryad.9ng87/15?ver=2016-01-28T10:59:21.630-05:00", 
     "investigator": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter J.", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
-    ], 
-    "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.kn568?ver=2017-07-28T07:05:30.849-04:00"
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
     ], 
     "isPublic": true, 
     "isService": false, 
     "keywords": [
       "Adaptation", 
-      "inversions", 
-      "linkage disequilibrium", 
-      "diapause", 
-      "Rhagoletis pomonella", 
-      "Speciation"
+      "Bioinfomatics/Phyloinfomatics", 
+      "Community Ecology", 
+      "Genomics/Proteomics"
     ], 
     "origin": [
-      "Ragland, Gregory", 
-      "Doellman, Meredith M.", 
-      "Meyers, Peter J.", 
-      "Hood, Glen R.", 
-      "Egan, Scott P.", 
-      "Powell, Thomas H. Q.", 
-      "Hahn, Daniel A.", 
-      "Nosil, Patrik", 
-      "Feder, Jeffrey L."
+      "Weipeng Zhang", 
+      "Renmao Tian", 
+      "Bo Yang", 
+      "Hui Luo Cao", 
+      "Lin Cai", 
+      "Lianguo Chen", 
+      "Guowei Zhou", 
+      "Jin Sun", 
+      "Xixiang Zhang", 
+      "Abdulaziz Al-Suwailem", 
+      "Pei-Yuan Qian"
     ], 
-    "pubDate": "2017-07-28T10:57:30Z", 
+    "pubDate": "2016-01-28T15:58:44Z", 
     "readPermission": [
       "public"
     ], 
@@ -784,24 +735,18 @@
       "urn:node:CN"
     ], 
     "replicaVerifiedDate": [
-      "2017-07-28T11:06:30.938Z", 
-      "2017-07-28T11:06:31.079Z"
+      "2016-02-02T21:31:46.739Z", 
+      "2016-02-02T21:31:47.838Z"
     ], 
     "replicationAllowed": false, 
-    "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.kn568?format=d1rem&ver=2017-07-28T07:05:30.849-04:00"
-    ], 
     "rightsHolder": "admin@datadryad.org", 
     "scientificName": [
-      "Rhagoletis pomonella"
+      "Bacteria"
     ], 
     "serviceCoupling": "false", 
-    "site": [
-      "North America"
-    ], 
-    "size": 2163, 
-    "submitter": "gregory.ragland@ucdenver.edu", 
-    "title": "140114_I456_FCC3JBKACXX_L1_PJM_2_F_1.fq.gz", 
-    "updateDate": "2017-07-28T10:57:30Z"
+    "size": 1945, 
+    "submitter": "erin.dryad@gmail.com", 
+    "title": "S-brine-T_1.fq", 
+    "updateDate": "2016-01-28T15:58:44Z"
   }
 ]

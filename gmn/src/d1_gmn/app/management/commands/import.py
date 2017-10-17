@@ -19,9 +19,7 @@
 # limitations under the License.
 """Bulk Import
 
-Copy from a running MN:
-
-- Science objects - Permissions - Subjects - Event logs
+Copy from a running MN: Science objects, Permissions, Subjects,  Event logs
 
 This function can be used for setting up a new instance of GMN to take over for
 an existing MN. The import has been tested with other versions of GMN but should
@@ -72,14 +70,17 @@ import d1_client.util
 import django.conf
 import django.core.management.base
 
+# import shutil
+# import zlib
+
 # import multiprocessing
 # import cProfile as profile
 
-ROOT_PATH = '/var/local/dataone'
-REVISION_LIST_PATH = os.path.join(ROOT_PATH, 'import_revision_list.json')
-TOPO_LIST_PATH = os.path.join(ROOT_PATH, 'import_topo_list.json')
-IMPORTED_LIST_PATH = os.path.join(ROOT_PATH, 'import_imported_list.json')
-UNCONNECTED_DICT_PATH = os.path.join(ROOT_PATH, 'import_unconnected.json')
+# ROOT_PATH = '/var/local/dataone'
+# REVISION_LIST_PATH = os.path.join(ROOT_PATH, 'import_revision_list.json')
+# TOPO_LIST_PATH = os.path.join(ROOT_PATH, 'import_topo_list.json')
+# IMPORTED_LIST_PATH = os.path.join(ROOT_PATH, 'import_imported_list.json')
+# UNCONNECTED_DICT_PATH = os.path.join(ROOT_PATH, 'import_unconnected.json')
 
 DEFAULT_TIMEOUT_SEC = 3 * 60
 DEFAULT_N_WORKERS = 10
@@ -175,41 +176,70 @@ class Command(django.core.management.base.BaseCommand):
         if self._opt['major'] is not None else self._find_api_major()
       )
 
-    revision_list = self._find_revision_chains()
+    # revision_list = self._find_revision_chains()
     # revision_list = d1_common.util.load_json(REVISION_LIST_PATH)
-    d1_common.util.save_json(revision_list, REVISION_LIST_PATH)
-    self._events.log_and_count(
-      'revision_list', 'path="{}"'.format(REVISION_LIST_PATH),
-      inc_int=len(revision_list)
-    )
-    obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
-      revision_list
-    )
-    topo_list, unconnected_dict = d1_common.revision.topological_sort(
-      obsoletes_dict
-    )
-    d1_common.util.save_json(topo_list, TOPO_LIST_PATH)
-    self._events.log_and_count(
-      'topo_list', 'path="{}"'.format(TOPO_LIST_PATH), inc_int=len(topo_list)
-    )
-    d1_common.util.save_json(unconnected_dict, UNCONNECTED_DICT_PATH)
-    self._events.log_and_count(
-      'unconnected_dict', 'path="{}"'.format(UNCONNECTED_DICT_PATH),
-      inc_int=len(unconnected_dict)
-    )
-    imported_pid_list = self._import_objects(topo_list)
+    # d1_common.util.save_json(revision_list, REVISION_LIST_PATH)
+    # self._events.log_and_count(
+    #   'revision_list', 'path="{}"'.format(REVISION_LIST_PATH),
+    #   inc_int=len(revision_list)
+    # )
+    # obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
+    #   revision_list
+    # )
+    # topo_list, unconnected_dict = d1_common.revision.topological_sort(
+    #   obsoletes_dict
+    # )
+    # d1_common.util.save_json(topo_list, TOPO_LIST_PATH)
+    # self._events.log_and_count(
+    #   'topo_list', 'path="{}"'.format(TOPO_LIST_PATH), inc_int=len(topo_list)
+    # )
+    # d1_common.util.save_json(unconnected_dict, UNCONNECTED_DICT_PATH)
+    # self._events.log_and_count(
+    #   'unconnected_dict', 'path="{}"'.format(UNCONNECTED_DICT_PATH),
+    #   inc_int=len(unconnected_dict)
+    # )
+    # imported_pid_list = self._import_objects(topo_list)
     # imported_pid_list = d1_common.util.load_json(IMPORTED_LIST_PATH)
-    d1_common.util.save_json(imported_pid_list, IMPORTED_LIST_PATH)
-    self._events.log_and_count(
-      'imported_pid_list', 'path="{}"'.format(IMPORTED_LIST_PATH),
-      inc_int=len(imported_pid_list)
-    )
+    # d1_common.util.save_json(imported_pid_list, IMPORTED_LIST_PATH)
+    # self._events.log_and_count(
+    #   'imported_pid_list', 'path="{}"'.format(IMPORTED_LIST_PATH),
+    #   inc_int=len(imported_pid_list)
+    # )
+    imported_pid_list = self._import_objects()
     self._import_logs(imported_pid_list)
 
   def _find_api_major(self):
     return d1_client.util.get_api_major_by_base_url(self._opt['baseurl'])
 
-  def _find_revision_chains(self):
+  # def _find_revision_chains(self):
+  #   sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
+  #     base_url=self._opt['baseurl'],
+  #     api_major=self._api_major,
+  #     client_dict=self._get_client_args_dict(),
+  #     list_objects_dict=self._get_list_objects_args_dict(),
+  #     max_workers=self._opt['workers'],
+  #     max_queue_size=1000,
+  #   )
+  #   revision_list = []
+  #   start_sec = time.time()
+  #   for i, sysmeta_pyxb in enumerate(sysmeta_iter):
+  #     msg_str = 'Error'
+  #     if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
+  #       msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+  #       revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
+  #     elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
+  #       logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
+  #     else:
+  #       logging.error(str(sysmeta_pyxb))
+  #     util.log_progress(
+  #       self._events, 'Finding revision chains', i, sysmeta_iter.total, msg_str,
+  #       start_sec
+  #     )
+  #     # if i == 1000:
+  #     #   break
+  #   return revision_list
+
+  def _import_objects(self):
     sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
       base_url=self._opt['baseurl'],
       api_major=self._api_major,
@@ -218,49 +248,36 @@ class Command(django.core.management.base.BaseCommand):
       max_workers=self._opt['workers'],
       max_queue_size=1000,
     )
-    revision_list = []
-    start_sec = time.time()
-    for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      msg_str = 'Error'
-      if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
-        msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-        revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
-      elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
-        logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-      else:
-        logging.error(str(sysmeta_pyxb))
-      util.log_progress(
-        self._events, 'Finding revision chains', i, sysmeta_iter.total, msg_str,
-        start_sec
-      )
-      # if i == 1000:
-      #   break
-    return revision_list
 
-  def _import_objects(self, topo_list):
     imported_pid_list = []
     start_sec = time.time()
-    for i, pid in enumerate(topo_list):
-      util.log_progress(
-        self._events, 'Importing objects', i, len(topo_list), pid, start_sec
-      )
-      try:
-        self._import_object(pid)
-      except d1_common.types.exceptions.DataONEException as e:
-        logging.error(d1_common.xml.pretty_pyxb(e))
-        continue
-      imported_pid_list.append(pid)
-    return imported_pid_list
 
-  def _import_object(self, pid):
-    if d1_gmn.app.sysmeta.is_pid_of_existing_object(pid):
-      self._events.log_and_count(
-        'Skipped object that already exists', 'pid="{}"'.format(pid)
+    for i, sysmeta_pyxb in enumerate(sysmeta_iter):
+
+      msg_str = 'Error'
+
+      if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
+
+        try:
+          d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+        except d1_common.types.exceptions.DataONEException as e:
+          logging.error(d1_common.xml.pretty_pyxb(e))
+        else:
+          msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+          imported_pid_list.append(sysmeta_pyxb)
+
+      elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
+        logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
+
+      else:
+        logging.error(str(sysmeta_pyxb))
+
+      util.log_progress(
+        self._events, 'Importing objects', i, sysmeta_iter.total, msg_str,
+        start_sec
       )
-      return
-    # self._download_source_sciobj_bytes_to_store(pid)
-    sysmeta_pyxb = self._get_source_sysmeta(pid)
-    d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+
+    return imported_pid_list
 
   def _import_logs(self, imported_pid_list):
     log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
@@ -297,7 +314,7 @@ class Command(django.core.management.base.BaseCommand):
       #     'Skipped object that already had one or more event records', 'pid="{}"'.format(pid)
       #   )
       #   continue
-      if not d1_gmn.app.sysmeta.is_pid_of_existing_object(pid):
+      if not d1_gmn.app.util.is_pid_of_existing_object(pid):
         self._events.log_and_count(
           'Skipped object that does not exist', 'pid="{}"'.format(pid)
         )
@@ -364,3 +381,38 @@ class Command(django.core.management.base.BaseCommand):
     return d1_client.util.get_client_class_by_version_tag(self._api_major)(
       self._opt['baseurl'], **self._get_client_args_dict()
     )
+
+  def _assert_path_is_dir(self, dir_path):
+    if not os.path.isdir(dir_path):
+      raise django.core.management.base.CommandError(
+        'Invalid dir path. path="{}"'.format(dir_path)
+      )
+
+  # def _migrate_filesystem(self):
+  #   for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):
+  #     for file_name in file_list:
+  #       pid = d1_common.url.decodePathElement(file_name)
+  #       old_file_path = os.path.join(dir_path, file_name)
+  #       new_file_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+  #       d1_common.util.create_missing_directories_for_file(new_file_path)
+  #       new_dir_path = os.path.dirname(new_file_path)
+  #       if self._are_on_same_disk(old_file_path, new_dir_path):
+  #         self._events.log_and_count('Creating SciObj hard link')
+  #         os.link(old_file_path, new_file_path)
+  #       else:
+  #         self._events.log_and_count('Copying SciObj file')
+  #         shutil.copyfile(old_file_path, new_file_path)
+  #
+  # def _are_on_same_disk(self, path_1, path_2):
+  #   return os.stat(path_1).st_dev == os.stat(path_2).st_dev
+  #
+  # def _file_path(self, root, pid):
+  #   z = zlib.adler32(pid.encode('utf-8'))
+  #   a = z & 0xff ^ (z >> 8 & 0xff)
+  #   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
+  #   return os.path.join(
+  #     root,
+  #     u'{0:03d}'.format(a),
+  #     u'{0:03d}'.format(b),
+  #     d1_common.url.encodePathElement(pid),
+  #   )

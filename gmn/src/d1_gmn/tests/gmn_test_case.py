@@ -252,29 +252,26 @@ class GMNTestCase(
     tail and the last is the head.
     """
 
-    def did(idx, is_sid=False):
+    def did(idx):
       return '#{:03d}_{}'.format(
-        idx,
-        d1_test.instance_generator.identifier.generate_sid()
-        if is_sid else d1_test.instance_generator.identifier.generate_pid()
+        idx, d1_test.instance_generator.identifier.generate_pid()
       )
 
-    base_pid, sid, sciobj_str, sysmeta_pyxb = (
-      self.create_obj(
-        client, pid=did(0), sid=did(0, True) if sid else None, *args, **kwargs
-      )
+    base_pid, base_sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      client, pid=did(0), sid=sid, *args, **kwargs
     )
+
     pid_chain_list = [base_pid]
     for i in range(1, chain_len):
       update_pid = did(i)
-      base_pid, sid, sciobj_str, sysmeta_pyxb = (
-        self.update_obj(
-          client, old_pid=base_pid, new_pid=update_pid, sid=sid, *args, **kwargs
-        )
+      self.update_obj(
+        client, old_pid=base_pid, new_pid=update_pid, sid=base_sid, *args,
+        **kwargs
       )
       pid_chain_list.append(update_pid)
       base_pid = update_pid
-    return sid, pid_chain_list
+
+    return base_sid, pid_chain_list
 
   def convert_to_replica(self, pid):
     """Convert a local sciobj to a simulated replica by adding a LocalReplica
@@ -377,6 +374,11 @@ class GMNTestCase(
       self, client, did, active_subj_list=True, trusted_subj_list=True,
       disable_auth=True, vendor_dict=None
   ):
+    """Combined MNRead.get() and MNRead.getSystemMetadata()
+    Parameters:
+      True: Use a default or generate a value
+      Other: Use the supplied value
+    """
     sciobj_str = self.call_d1_client(
       client.get, did, vendor_dict, active_subj_list=active_subj_list,
       trusted_subj_list=trusted_subj_list, disable_auth=disable_auth
@@ -459,7 +461,6 @@ class GMNTestCase(
     random.shuffle(sid_list)
     for sid in sid_list:
       pid_list = d1_gmn.app.revision.get_all_pid_by_sid(sid)
-      print pid_list
       if len(pid_list) >= min_len:
         return sid
 

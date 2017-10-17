@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:objectList count="1" start="0" total="1" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_aibdtbgxtwgo</identifier>
-    <formatId>text/html</formatId>
-    <checksum algorithm="SHA-1">ac7bacc00485a363f2e42bd31b6890370dc4b958</checksum>
-    <dateSysMetadataModified>2027-07-01T22:51:13</dateSysMetadataModified>
-    <size>282</size>
+    <identifier>PID_GMNFXT_rtymxmlmyune</identifier>
+    <formatId>application/x-python</formatId>
+    <checksum algorithm="SHA-1">00783177b53580b8959e6041204bc23e20004acd</checksum>
+    <dateSysMetadataModified>2030-05-24T13:53:06</dateSysMetadataModified>
+    <size>285</size>
   </objectInfo>
 </ns1:objectList>

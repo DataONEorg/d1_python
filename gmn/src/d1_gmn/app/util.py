@@ -162,3 +162,13 @@ def delete_unused_subjects():
     logging.debug(u'  {}'.format(s.subject))
 
   query.delete()
+
+
+def get_did(sciobj_fk):
+  return getattr(sciobj_fk, 'did', None)
+
+
+def is_pid_of_existing_object(pid):
+  """Excludes SIDs, unprocessed replicas and revision chain placeholders.
+  """
+  return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists()

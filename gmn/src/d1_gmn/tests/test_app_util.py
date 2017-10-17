@@ -32,7 +32,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_test.instance_generator.random_data
 
 
-class TestSysmetaUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
+class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _get_db_subj(self):
     return set([
       v['subject']

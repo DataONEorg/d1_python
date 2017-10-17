@@ -52,8 +52,8 @@ def create(request, sysmeta_pyxb):
     d1_gmn.app.views.asserts.url_is_http_or_https(url)
     d1_gmn.app.views.asserts.url_is_retrievable(url)
   else:
-    # http://en.wikipedia.org/wiki/File_URI_scheme
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+    # http://en.wikipedia.org/wiki/File_URI_scheme
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     _save_sciobj_bytes_from_request(request, pid)
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
@@ -70,10 +70,6 @@ def create_native_sciobj(sysmeta_pyxb):
 
   This assumes that the file containing the sciobj bytes has already been
   created.
-
-  {sciobj_response} must be a Requests Response object that holds a stream
-  (typically created via the d1_client wrapper for MNRead.get() with
-  stream=True.)
 
   This method does not add any events to the event log.
 

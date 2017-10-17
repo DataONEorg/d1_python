@@ -380,8 +380,45 @@ DATABASES = {
 }
 
 # Paths to the GMN object store. The bytes of all the objects handled by GMN are
-# stored in a directory hierarchy that starts below this folder.
+# stored in a directory hierarchy rooted in this folder.
 OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
+
+# This setting determines how Open Archives Initiative Object Reuse and Exchange
+# (OAI-ORE) Resource Maps are handled if one or more of the referenced objects
+# do not (yet) exist on this node.
+#
+# Resource Maps are documents that describe aggregations of web resources. In
+# DataONE, they are used for defining data packages, where a data package is a
+# collection of science objects. A data package can be downloaded as a
+# compressed archive with the MNPackage.getPackage() API method.
+#
+# For more information about data packages in DataONE, see
+# https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html
+#
+# To ensure that a Resource Map references only the intended objects, it should
+# reference only objects on this node and be created after all referenced
+# objects are created. This setting takes effect only when that is not the case.
+#
+# 'block' (default):
+# - Resource Maps can only be created if all referenced objects exist on this
+# node. This ensures that Resource Maps only reference the intended objects but
+# makes it impossible to create Resource Maps that include science objects on
+# remote nodes or any other web resources.
+#
+# 'reserve':
+# - Identifiers for referenced non-existing objects are reserved for use by the
+# same subject that uploaded the Resource Map. This ensures that the identifiers
+# remain available to the subject but will block the identifiers indefinitely if
+# they are not used by the subject.
+#
+# 'open':
+# - Identifiers for referenced non-existing objects remain open for use by any
+# subject. This may cause Resource Maps to reference unintended objects if the
+# referenced identifier is used for an unrelated object created
+# by another subject before the intended object is created by the Resource Map
+# subject.  the Resource Map contains an unintended reference and must be
+# discarded. However,
+RESOURCE_MAP_CREATE = 'block'
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of
 # providing an object for GMN to manage, the object can be left empty and the

@@ -319,11 +319,8 @@ def remote_replica(sciobj_model, replica_info_model):
 # Represent a single chain
 class Chain(models.Model):
   # id = ChainId
-  sid = models.ForeignKey(
-    IdNamespace,
-    models.CASCADE,
-    related_name='%(class)s_sid',
-    null=True,
+  sid = models.OneToOneField(
+    IdNamespace, models.CASCADE, related_name='%(class)s_sid', null=True
   )
   head_pid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_head_pid'

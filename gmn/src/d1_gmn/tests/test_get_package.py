@@ -28,8 +28,26 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_common.resource_map
 
-class TestGetCapabilities(d1_gmn.tests.gmn_test_case.GMNTestCase):
+import d1_test.instance_generator.identifier
+
+
+class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def _create_objects(self, client):
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      pid_list = []
+      for i in range(10):
+        pid, sid, send_sciobj_str, send_sysmeta_pyxb = (self.create_obj(client))
+        pid_list.append(pid)
+    return pid_list
+
+  def test_1000(self, mn_client_v2):
     """MNPackage.getPackage(): Returns a valid package"""
+    pid_list = self._create_objects(mn_client_v2)
+    ore_pid = d1_test.instance_generator.identifier.generate_pid('ORE_PID_')
+    ore = d1_common.resource_map.createSimpleResourceMap(
+      ore_pid, pid_list[0], pid_list[1:]
+    )
+    print ore.serialize()

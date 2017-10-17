@@ -90,6 +90,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     header_dict.setdefault(
       'Content-Type', 'application/x-www-form-urlencoded; charset=utf-8'
     )
+    self._query_engine = kwargs.pop('query_engine', 'solr')
     d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
       self, headers=header_dict, *args, **kwargs
     )

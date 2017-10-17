@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:objectList count="1" start="999" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_zbbdpttxjnzm</identifier>
-    <formatId>application/vnd.ms-excel.sheet.binary.macroEnabled.12</formatId>
-    <checksum algorithm="SHA-1">04eeb8b7ac3961906b475b52ed09cfd9d5338b08</checksum>
-    <dateSysMetadataModified>1970-02-19T03:26:33</dateSysMetadataModified>
+    <identifier>PID_GMNFXT_zeomgoufdbor</identifier>
+    <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta6//EN</formatId>
+    <checksum algorithm="SHA-1">4c6bd48700ff9a1bb5a6c065c290f718ea7f9c96</checksum>
+    <dateSysMetadataModified>1970-01-17T19:30:07</dateSysMetadataModified>
     <size>224</size>
   </objectInfo>
 </ns1:objectList>

@@ -105,8 +105,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1050(self, mn_client_v2):
-    """MNStorage.update(): Updating a object that has a SID without specifying a
-    SID in the update causes the SID to be retained in both objects
+    """MNStorage.update(): Updating an object that has a SID without specifying
+    a SID in the update causes the SID to be retained in both objects
     """
     old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
@@ -123,7 +123,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     chain.
     """
     sid, pid_chain_list = self.create_revision_chain(
-      mn_client_v2, chain_len=7, sid=False
+      mn_client_v2, chain_len=7, sid=None
     )
     new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid_chain_list[-1], sid=True
