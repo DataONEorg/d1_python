@@ -28,7 +28,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.test_utilities',
-    version='2.3.7',
+    version='2.3.8',
     description='Utilities for testing DataONE infrastructure components',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -37,18 +37,18 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.libclient == 2.3.7',
+      'dataone.libclient == 2.3.8',
       #
       'contextlib2 == 0.5.5',
       'decorator == 4.1.2',
       'freezegun == 0.3.9',
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',
-      'pyasn1 == 0.3.2',
-      'pyxb == 1.2.5',
+      'pyasn1 == 0.3.7',
+      'pyxb == 1.2.6',
       'rdflib == 4.2.2',
       'requests == 2.18.4',
-      'responses == 0.7.0',
+      'responses == 0.8.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

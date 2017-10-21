@@ -29,7 +29,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.tools',
-    version='2.3.7',
+    version='2.3.8',
     description='DataONE tools and examples',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -42,9 +42,9 @@ def main():
     },
     install_requires=[
       # These are not yet available when bootstrapping on Travis
-      'dataone.cli == 2.3.7',
-      'dataone.common == 2.3.7',
-      'dataone.libclient == 2.3.7',
+      'dataone.cli == 2.3.8',
+      'dataone.common == 2.3.8',
+      'dataone.libclient == 2.3.8',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
