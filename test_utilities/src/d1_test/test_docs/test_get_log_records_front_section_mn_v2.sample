@@ -4,7 +4,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_vhyupyuyynue</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-11-12T10:04:34</dateLogged>
@@ -14,7 +14,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_zwnynpxifcso</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-08-27T06:57:18</dateLogged>
@@ -24,7 +24,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_yhhzllteqkql</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-08-27T06:57:18</dateLogged>
@@ -34,7 +34,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_mooefnksgsed</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-28T01:40:40</dateLogged>
@@ -44,7 +44,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_ivsirfrbsign</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-08T03:56:28</dateLogged>
@@ -54,7 +54,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_qovowopypfqz</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-01T04:24:43</dateLogged>
@@ -64,7 +64,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_zzdibaczfixf</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-05-07T22:17:02</dateLogged>
@@ -74,7 +74,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_kzugpqolupbj</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-04-21T06:29:18</dateLogged>
@@ -84,7 +84,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_djjpuhehdcxk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-04-21T06:29:18</dateLogged>
@@ -94,7 +94,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_nojknbkqpzmn</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-04-15T22:36:37</dateLogged>
@@ -104,7 +104,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_edgohpjnhlzy</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-04-15T22:36:37</dateLogged>
@@ -114,7 +114,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_mmvlhsqdchyp</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-04-11T06:57:56</dateLogged>
@@ -124,7 +124,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_uspzjwjlidxg</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-04-11T06:57:56</dateLogged>
@@ -134,7 +134,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_jmhrlxmlmdeq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-03-01T02:04:58</dateLogged>
@@ -144,7 +144,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_marbhlcwxmid</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-01-18T18:21:10</dateLogged>
@@ -154,7 +154,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_bvlrxvishnoe</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2068-12-04T15:14:53</dateLogged>
@@ -164,7 +164,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_hzvuiktedlje</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2068-09-17T11:04:41</dateLogged>
@@ -174,7 +174,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_afhsrbvbjlva</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2068-08-15T12:15:02</dateLogged>
@@ -184,7 +184,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_trwzyplyhtuh</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2068-08-15T12:15:02</dateLogged>
@@ -194,7 +194,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_psrediyxtphf</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2068-05-28T09:10:30</dateLogged>
@@ -204,7 +204,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_pbdustnfvehi</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2068-04-17T14:15:59</dateLogged>

@@ -7,7 +7,7 @@
       "Charset": "utf-8", 
       "Connection": "keep-alive", 
       "Content-Length": "2240", 
-      "User-Agent": "DataONE-Python/[volatile] +http://dataone.org/"
+      "User-Agent": "DataONE-Python/[volatile]
     }, 
     "param_list": [
       "object"

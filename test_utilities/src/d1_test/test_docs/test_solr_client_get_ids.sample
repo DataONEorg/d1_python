@@ -268,6 +268,125 @@
         "westBoundCoord": -104.0
       }, 
       {
+        "abstract": "This dataset contains the streams derived from the Digital Elevation Model (DEM) for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. The HDMA database provides comprehensive and consistent global coverage of raster and vector topographically derived layers, including raster layers of digital elevation model (DEM) data, flow direction, flow accumulation, slope, and compound topographic index (CTI); and vector layers of streams and catchment boundaries. The coverage of the data is global (-180\u00ba, 180\u00ba, -90\u00ba, 90\u00ba) with the underlying DEM being a hybrid of three datasets: HydroSHEDS (Hydrological data and maps based on SHuttle Elevation Derivatives at multiple Scales), Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010) and the Shuttle Radar Topography Mission (SRTM). For most of the globe south of 60\u00ba North, the raster resolution of the data is 3-arc-seconds, corresponding to the resolution of the SRTM. For the areas North of 60\u00ba, the resolution is 7.5-arc-seconds (the smallest resolution of the GMTED2010 dataset) except for Greenland, where the resolution is 30-arc-seconds. The streams and catchments are attributed with Pfafstetter codes, based on a hierarchical numbering system, that carry important topological information.", 
+        "attribute": [
+          "OBJECTID  Unknown", 
+          "flow_acc  Drainage area upstream of pour point of stream in square kilometers", 
+          "PF_TYPE  Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
+          "Shape_Leng  Unknown", 
+          "PFAF_CODE  the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
+        ], 
+        "attributeDescription": [
+          "Unknown", 
+          "Drainage area upstream of pour point of stream in square kilometers", 
+          "Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
+          "Unknown", 
+          "the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
+        ], 
+        "attributeName": [
+          "OBJECTID", 
+          "flow_acc", 
+          "PF_TYPE", 
+          "Shape_Leng", 
+          "PFAF_CODE"
+        ], 
+        "author": "Kristine L. Verdin", 
+        "authorSurName": "Kristine L. Verdin", 
+        "authorSurNameSort": "Kristine L. Verdin", 
+        "authoritativeMN": "urn:node:USGS_SDC", 
+        "checksum": "c87fa30f498c0e356b9f000f63dc74b5", 
+        "checksumAlgorithm": "MD5", 
+        "contactOrganization": [
+          "U.S. Geological Survey, Southwest Region"
+        ], 
+        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "datasource": "urn:node:USGS_SDC", 
+        "dateModified": "2017-07-20T05:06:05.547Z", 
+        "datePublished": "2017-01-01T00:00:00Z", 
+        "dateUploaded": "2017-07-15T07:08:27Z", 
+        "eastBoundCoord": 53.76125, 
+        "fileID": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "formatId": "FGDC-STD-001.1-1999", 
+        "formatType": "METADATA", 
+        "geoform": "Vector Digital Data Set (Polygon)", 
+        "geohash_1": [
+          "s"
+        ], 
+        "geohash_2": [
+          "s2"
+        ], 
+        "geohash_3": [
+          "s2j"
+        ], 
+        "geohash_4": [
+          "s2jp"
+        ], 
+        "geohash_5": [
+          "s2jp1"
+        ], 
+        "geohash_6": [
+          "s2jp13"
+        ], 
+        "geohash_7": [
+          "s2jp13b"
+        ], 
+        "geohash_8": [
+          "s2jp13bu"
+        ], 
+        "geohash_9": [
+          "s2jp13buq"
+        ], 
+        "id": "abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "identifier": "abc429e4-515a-43ce-9758-fb3f962e451d", 
+        "investigator": [
+          "Kristine L. Verdin"
+        ], 
+        "isPublic": true, 
+        "isService": false, 
+        "keywords": [
+          "dem stream hydrologic derivatives pfafstetter", 
+          "Pfafstetter", 
+          "streams", 
+          "digital elevation models", 
+          "elevation", 
+          "inlandWaters", 
+          "Africa"
+        ], 
+        "northBoundCoord": 37.205418, 
+        "origin": [
+          "Kristine L. Verdin"
+        ], 
+        "placeKey": [
+          "Africa"
+        ], 
+        "presentationCat": "Vector Digital Data Set (Polygon)", 
+        "pubDate": "2017-01-01T00:00:00Z", 
+        "purpose": "This dataset contains the DEM-derived streams for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. This dataset is appropriate for use in continental-scale modeling effort.  The Pfafstetter codes provide topological information that can be useful for upstream and downstream tracing.", 
+        "readPermission": [
+          "public"
+        ], 
+        "replicaMN": [
+          "urn:node:USGS_SDC", 
+          "urn:node:CN"
+        ], 
+        "replicaVerifiedDate": [
+          "2017-07-20T05:06:05.05Z", 
+          "2017-07-20T05:06:05.095Z"
+        ], 
+        "replicationAllowed": false, 
+        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
+        "serviceCoupling": "false", 
+        "size": 18111, 
+        "southBoundCoord": -34.72375, 
+        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
+        "title": "Streams layers from the Hydrologic Derivatives for Modeling and Analysis (HDMA) database -- Africa", 
+        "updateDate": "2017-07-15T07:08:27Z", 
+        "webUrl": [
+          "https://doi.org/10.5066/F7S180ZP"
+        ], 
+        "westBoundCoord": -17.08625
+      }, 
+      {
         "abstract": "Data provided from the Virginia Department of Environmental Quality (DEQ) including simulated values of 72 hydrologic metrics, or indicators of hydrologic alteration (IHA), 37 fish metrics, and 64 benthic invertebrate metrics were reviewed to assess significant flow-ecology relations that may be developed. Hydrologic alteration was represented by simulation of streamflow record for a pre-water-withdrawal condition (baseline) without dams or developed land, compared to the simulated recent-flow condition (2008) including withdrawals, dams and altered landscape to calculate a percent-alteration of flow.  Biological samples used represent a median condition of the biological community from 1972 to 2010.    This study reviewed more than 7,272 linear regression models that relate altered flow conditions to biological sample metrics in Virginia.  Decreasing flow conditions were the focus of this evaluation because of their relevance to the water-supply permitting process. The data tables highlight relations which may be significant and useful in future study and were further explored in the companion report; and relations that do not meet basic assumptions for valid linear regressions which were noted and omitted from the companion report. The three regions in Virginia defined by major drainage and physiographic boundaries as the Ohio River Drainages, Atlantic non-Coastal Plain, and Atlantic Coastal Plain were evaluated as well as a statewide grouping for fish and benthic data.     This extensive dataset provided the opportunity for hypothesis testing and prioritization of flow-ecology relations that have the potential to explain the effect(s) hydrologic alteration has on biological metrics in Virginia.", 
         "attribute": [
           "HydroMetric  General name for flow statistics or Index of Hydrologic Alteration calculated using modeled baseline and recent-condition streamflow simulations. 1-day maximum 1-day minimum 3-day maximum 3-day minimum 30-day maximum 30-day minimum 7-day maximum 7-day minimum 7Q10 90-day maximum 90-day minimum April April     Low Flow August August    Low Flow Base flow index Date of maximum Date of minimum December December  Low Flow Extreme low duration Extreme low freq_ Extreme low peak Extreme low timing Fall rate February February  Low Flow High flow duration High flow fall rate High flow frequency High flow peak High flow rise rate High flow timing High pulse count High pulse duration High Pulse Threshold January January   Low Flow July July      Low Flow June June      Low Flow Large flood duration Large flood fallrate Large flood peak Large flood riserate Large flood timing Low pulse count Low pulse duration Low Pulse Threshold March March     Low Flow May May       Low Flow Mean annual flow November November  Low Flow Number of reversals October October   Low Flow RBI Rise rate September September Low Flow Small Flood duration Small Flood fallrate Small Flood peak Small Flood riserate Small Flood timing", 
@@ -532,125 +651,6 @@
           "https://doi.org/10.5066/F7ZW1J42"
         ], 
         "westBoundCoord": -83.78174
-      }, 
-      {
-        "abstract": "This dataset contains the streams derived from the Digital Elevation Model (DEM) for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. The HDMA database provides comprehensive and consistent global coverage of raster and vector topographically derived layers, including raster layers of digital elevation model (DEM) data, flow direction, flow accumulation, slope, and compound topographic index (CTI); and vector layers of streams and catchment boundaries. The coverage of the data is global (-180\u00ba, 180\u00ba, -90\u00ba, 90\u00ba) with the underlying DEM being a hybrid of three datasets: HydroSHEDS (Hydrological data and maps based on SHuttle Elevation Derivatives at multiple Scales), Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010) and the Shuttle Radar Topography Mission (SRTM). For most of the globe south of 60\u00ba North, the raster resolution of the data is 3-arc-seconds, corresponding to the resolution of the SRTM. For the areas North of 60\u00ba, the resolution is 7.5-arc-seconds (the smallest resolution of the GMTED2010 dataset) except for Greenland, where the resolution is 30-arc-seconds. The streams and catchments are attributed with Pfafstetter codes, based on a hierarchical numbering system, that carry important topological information.", 
-        "attribute": [
-          "OBJECTID  Unknown", 
-          "flow_acc  Drainage area upstream of pour point of stream in square kilometers", 
-          "PF_TYPE  Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
-          "Shape_Leng  Unknown", 
-          "PFAF_CODE  the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
-        ], 
-        "attributeDescription": [
-          "Unknown", 
-          "Drainage area upstream of pour point of stream in square kilometers", 
-          "Level at which the stream segment is assigned to a \"basin\" in the Pfafstetter codification", 
-          "Unknown", 
-          "the Pfafstetter code associated with the stream segment.  This field is twelve digits long with the first digit indicating the continent; the following 11 digits are the Pfafstetter code."
-        ], 
-        "attributeName": [
-          "OBJECTID", 
-          "flow_acc", 
-          "PF_TYPE", 
-          "Shape_Leng", 
-          "PFAF_CODE"
-        ], 
-        "author": "Kristine L. Verdin", 
-        "authorSurName": "Kristine L. Verdin", 
-        "authorSurNameSort": "Kristine L. Verdin", 
-        "authoritativeMN": "urn:node:USGS_SDC", 
-        "checksum": "c87fa30f498c0e356b9f000f63dc74b5", 
-        "checksumAlgorithm": "MD5", 
-        "contactOrganization": [
-          "U.S. Geological Survey, Southwest Region"
-        ], 
-        "dataUrl": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "datasource": "urn:node:USGS_SDC", 
-        "dateModified": "2017-07-20T05:06:05.547Z", 
-        "datePublished": "2017-01-01T00:00:00Z", 
-        "dateUploaded": "2017-07-15T07:08:27Z", 
-        "eastBoundCoord": 53.76125, 
-        "fileID": "https://cn.dataone.org/cn/v2/resolve/abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "formatId": "FGDC-STD-001.1-1999", 
-        "formatType": "METADATA", 
-        "geoform": "Vector Digital Data Set (Polygon)", 
-        "geohash_1": [
-          "s"
-        ], 
-        "geohash_2": [
-          "s2"
-        ], 
-        "geohash_3": [
-          "s2j"
-        ], 
-        "geohash_4": [
-          "s2jp"
-        ], 
-        "geohash_5": [
-          "s2jp1"
-        ], 
-        "geohash_6": [
-          "s2jp13"
-        ], 
-        "geohash_7": [
-          "s2jp13b"
-        ], 
-        "geohash_8": [
-          "s2jp13bu"
-        ], 
-        "geohash_9": [
-          "s2jp13buq"
-        ], 
-        "id": "abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "identifier": "abc429e4-515a-43ce-9758-fb3f962e451d", 
-        "investigator": [
-          "Kristine L. Verdin"
-        ], 
-        "isPublic": true, 
-        "isService": false, 
-        "keywords": [
-          "dem stream hydrologic derivatives pfafstetter", 
-          "Pfafstetter", 
-          "streams", 
-          "digital elevation models", 
-          "elevation", 
-          "inlandWaters", 
-          "Africa"
-        ], 
-        "northBoundCoord": 37.205418, 
-        "origin": [
-          "Kristine L. Verdin"
-        ], 
-        "placeKey": [
-          "Africa"
-        ], 
-        "presentationCat": "Vector Digital Data Set (Polygon)", 
-        "pubDate": "2017-01-01T00:00:00Z", 
-        "purpose": "This dataset contains the DEM-derived streams for the African continent from the Hydrological Derivatives for Modeling and Analysis (HDMA) database. This dataset is appropriate for use in continental-scale modeling effort.  The Pfafstetter codes provide topological information that can be useful for upstream and downstream tracing.", 
-        "readPermission": [
-          "public"
-        ], 
-        "replicaMN": [
-          "urn:node:USGS_SDC", 
-          "urn:node:CN"
-        ], 
-        "replicaVerifiedDate": [
-          "2017-07-20T05:06:05.05Z", 
-          "2017-07-20T05:06:05.095Z"
-        ], 
-        "replicationAllowed": false, 
-        "rightsHolder": "CN=USGSMN,DC=dataone,DC=org", 
-        "serviceCoupling": "false", 
-        "size": 18111, 
-        "southBoundCoord": -34.72375, 
-        "submitter": "CN=USGSMN,DC=dataone,DC=org", 
-        "title": "Streams layers from the Hydrologic Derivatives for Modeling and Analysis (HDMA) database -- Africa", 
-        "updateDate": "2017-07-15T07:08:27Z", 
-        "webUrl": [
-          "https://doi.org/10.5066/F7S180ZP"
-        ], 
-        "westBoundCoord": -17.08625
       }
     ], 
     "numFound": 5, 

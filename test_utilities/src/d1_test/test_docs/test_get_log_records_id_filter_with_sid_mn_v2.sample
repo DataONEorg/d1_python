@@ -4,7 +4,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_zxeatcdlmqix</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2032-08-15T20:29:14</dateLogged>
@@ -54,7 +54,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_vkijltjtcpsh</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>1971-12-18T03:55:33</dateLogged>
@@ -64,7 +64,7 @@
     <entryId>[volatile]</entryId>
     <identifier>PID_GMNFXT_zxeatcdlmqix</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>1971-12-18T03:55:33</dateLogged>
