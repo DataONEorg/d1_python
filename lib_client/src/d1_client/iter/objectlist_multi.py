@@ -17,7 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multithreaded ObjectList iterator
+"""Multiprocessed ObjectList Iterator
+
+Fast retrieval of ObjectInfo from a DataONE Node.
 """
 
 from __future__ import absolute_import
@@ -36,11 +38,6 @@ API_MAJOR = 2
 
 
 class ObjectListIteratorMulti(object):
-  """Multiprocessed ObjectList Iterator
-
-  Fast retrieval of ObjectInfo from a DataONE Node.
-  """
-
   def __init__(
       self,
       base_url,
@@ -59,6 +56,9 @@ class ObjectListIteratorMulti(object):
     self._client_args_dict = client_args_dict or {}
     self._list_objects_args_dict = list_objects_args_dict or {}
     # d1_common.type_conversions.set_default_pyxb_namespace(api_major)
+    self.total = _get_total_object_count(
+      base_url, api_major, self._client_args_dict, self._list_objects_args_dict
+    )
 
   def __iter__(self):
     manager = multiprocessing.Manager()
@@ -68,7 +68,7 @@ class ObjectListIteratorMulti(object):
       target=_get_all_pages,
       args=(
         queue, self._base_url, self._page_size, self._max_workers,
-        self._client_args_dict, self._list_objects_args_dict
+        self._client_args_dict, self._list_objects_args_dict, self.total
       ),
     )
 
@@ -84,10 +84,10 @@ class ObjectListIteratorMulti(object):
     process.join()
 
 
-def _get_total_object_count(base_url, client_args_dict, list_objects_args_dict):
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    base_url, **client_args_dict
-  )
+def _get_total_object_count(
+    base_url, api_major, client_args_dict, list_objects_args_dict
+):
+  client = _create_client(base_url, api_major, client_args_dict)
   args_dict = list_objects_args_dict.copy()
   args_dict['count'] = 0
   return client.listObjects(**args_dict).total
@@ -95,13 +95,10 @@ def _get_total_object_count(base_url, client_args_dict, list_objects_args_dict):
 
 def _get_all_pages(
     queue, base_url, page_size, max_workers, client_args_dict,
-    list_objects_args_dict
+    list_objects_args_dict, n_total
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_total = _get_total_object_count(
-    base_url, client_args_dict, list_objects_args_dict
-  )
   n_pages = (n_total - 1) / page_size + 1
 
   for page_idx in range(n_pages):
@@ -142,3 +139,10 @@ def _get_page(
       'Failed to retrieve page: {}/{}. Error: {}'.
       format(page_idx + 1, n_pages, e.message)
     )
+
+
+def _create_client(base_url, api_major, client_dict):
+  if api_major <= 1:
+    return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
+  else:
+    return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)

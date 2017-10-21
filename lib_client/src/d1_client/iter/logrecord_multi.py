@@ -17,7 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multithreaded LogRecord iterator
+"""Multiprocessed LogRecord Iterator
+
+Fast retrieval of event log records from a DataONE Node.
 """
 
 from __future__ import absolute_import
@@ -36,11 +38,6 @@ API_MAJOR = 2
 
 
 class LogRecordIteratorMulti(object):
-  """Multiprocessed LogRecord Iterator
-
-  Fast retrieval of event log records from a DataONE Node.
-  """
-
   def __init__(
       self,
       base_url,

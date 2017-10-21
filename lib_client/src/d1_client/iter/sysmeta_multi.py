@@ -112,6 +112,7 @@ class SystemMetadataIteratorMulti(object):
       # If generator is exited before exhausted, provide clean shutdown of the
       # generator by signaling processes to stop, then waiting for them.
       namespace.stop = True
+      logging.debug('Stop flag set')
 
     process.join()
 
@@ -135,6 +136,7 @@ def _get_all_pages(
 
   for page_idx in range(n_pages):
     if namespace.stop:
+      logging.debug('Stop flag detected')
       return
     logging.debug(
       'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
@@ -150,9 +152,13 @@ def _get_all_pages(
     # necessary.
     # noinspection PyProtectedMember
     while pool._taskqueue.qsize() > max_workers * POOL_SIZE_FACTOR:
+      if namespace.stop:
+        logging.debug('Stop flag detected while waiting to queue task')
+        break
       time.sleep(1)
-  # Prevent any more tasks from being submitted to the pool. Once all the
-  # tasks have been completed the worker processes will exit.
+      # logging.debug('Waiting to queue task')
+    # Prevent any more tasks from being submitted to the pool. Once all the
+    # tasks have been completed the worker processes will exit.
   pool.close()
   # Wait for the worker processes to exit
   pool.join()
