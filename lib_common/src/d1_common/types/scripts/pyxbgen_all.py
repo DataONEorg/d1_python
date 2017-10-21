@@ -33,7 +33,7 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option(
     '--schemas', dest='schema_dir', action='store', type='string',
-    default='./d1_schemas'
+    default='./d1_common/types/schemas'
   )
   parser.add_option(
     '--bindings', dest='binding_dir', action='store', type='string',
@@ -44,7 +44,7 @@ def main():
 
   if not os.path.exists(options.schema_dir):
     print('Could not find the schema folder: {}'.format(options.schema_dir))
-    print('This script should be run from ./d1_common_python/src')
+    print('This script should be run from ./lib_common/src')
     exit()
 
   if not os.path.exists(options.binding_dir):
@@ -52,45 +52,53 @@ def main():
       'Could not find the bindings destination folder: {}'.
       format(options.schema_dir)
     )
-    print('This script should be run from ./d1_common_python/src')
+    print('This script should be run from ./lib_common/src')
     exit()
 
   g = GenerateBindings(options.schema_dir, options.binding_dir)
 
   # Generate bindings for 1.0. Also create a types archive for use by the the
   # 1.1 bindings.
-  # g.generate_bindings([
-  #  '--schema-location=dataoneTypes.xsd',
-  #  '--module=dataoneTypes',
-  #  '--archive-to-file dataoneTypes.wxs',
-  #  '--schema-stripped-prefix=
-  # \'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
-  #])
+  g.generate_bindings([
+    '--schema-location=dataoneTypes.xsd',
+    '--module=dataoneTypes_v1',
+    '--archive-to-file dataoneTypes.wxs',
+    '--schema-stripped-prefix='
+    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_V1/\'',
+  ])
 
   # Generate additional bindings for 1.1. Pull 1.0 dependencies from archive.
-  # g.generate_bindings([
-  #  '--schema-location=dataoneTypes_v1.1.xsd',
-  #  '--module=dataoneTypes_1_1',
-  #  '--archive-path .:+',
-  #  '--schema-stripped-prefix=
-  # \'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
-  #])
+  g.generate_bindings([
+    '--schema-location=dataoneTypes_v1.1.xsd',
+    '--module=dataoneTypes_v1_1',
+    '--archive-path .:+',
+    '--schema-stripped-prefix='
+    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+  ])
 
   # Generate additional bindings for 2.0. Pull 1.1 dependencies from archive.
   g.generate_bindings([
     '--schema-location=dataoneTypes_v2.0.xsd',
-    '--module=dataoneTypes',
-    '--archive-to-file dataoneTypes.wxs',
-    #'--archive-path .:+',
-    '--schema-stripped-prefix=\'http://ns.dataone.org/service/types/\'',
+    '--module=dataoneTypes_v2_0',
+    '--archive-path .:+',
+    '--schema-stripped-prefix='
+    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
   ])
 
+  # g.generate_bindings([
+  #  '--schema-location=dataoneErrors.xsd',
+  #  '--module=dataoneErrors',
+  #  '--archive-path .:+',
+  #  '--schema-stripped-prefix='
+  #   '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
+  # ])
 
-## Generate bindings for the exception types.
-#g.generate_bindings([
-#  '--schema-location=dataoneErrors.xsd',
-#  '--module=dataoneErrors',
-#])
+  # Generate bindings for the exception types.
+  g.generate_bindings([
+    '--schema-location=dataoneErrors.xsd',
+    '--module=dataoneErrors',
+  ])
+
 
 # Generate version text files for the bindings, using the Subversion
 # revision numbers from the schema files.

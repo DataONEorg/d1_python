@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Combine all PyXB bindings required for handling DataONE types up to and
-including v2.0.
+"""Combine the PyXB bindings required for handling all DataONE types
 """
 
 from __future__ import absolute_import
@@ -32,4 +31,13 @@ from d1_common.types.generated.dataoneTypes_v2_0 import *
 
 # flake8: noqa: F403
 
+# Suppress PyXB warnings, such as the following:
+#
+# WARNING:pyxb.binding.basis:Unable to convert DOM node value at
+# <unknown>[1:209] to binding
+#
+# This warning occurs because traceInformation is an xs:anyType, which can
+# hold any XML structure so no bindings can be generated.
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+
+# TODO: Add a replacement for CreateFromDocument() that raises DataONEExceptions.
