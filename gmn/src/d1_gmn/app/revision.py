@@ -305,6 +305,8 @@ def _update_sid_to_last_existing_pid_map(pid):
   """
   last_pid = _find_head_or_latest_connected(pid)
   chain_model = _get_chain_by_pid(last_pid)
+  if not chain_model:
+    return
   chain_model.head_pid = d1_gmn.app.models.did(last_pid)
   chain_model.save()
 

@@ -56,7 +56,7 @@ def get_sciobj_file_path(pid):
 
 
 def get_gmn_version():
-  return map(int, d1_gmn.__version__.split('.'))
+  return map(lambda x: int(re.sub(r'\D', '', x)), d1_gmn.__version__.split('.'))
 
 
 def is_matching_version():

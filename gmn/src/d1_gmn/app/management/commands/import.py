@@ -170,80 +170,17 @@ class Command(django.core.management.base.BaseCommand):
       self._events.log_and_count('Cleared database')
       # d1_gmn.app.models.EventLog.objects.all().delete()
 
-    if self._opt['major']:
-      self._api_major = (
-        self._opt['major']
-        if self._opt['major'] is not None else self._find_api_major()
-      )
-
-    # revision_list = self._find_revision_chains()
-    # revision_list = d1_common.util.load_json(REVISION_LIST_PATH)
-    # d1_common.util.save_json(revision_list, REVISION_LIST_PATH)
-    # self._events.log_and_count(
-    #   'revision_list', 'path="{}"'.format(REVISION_LIST_PATH),
-    #   inc_int=len(revision_list)
-    # )
-    # obsoletes_dict = d1_common.revision.revision_list_to_obsoletes_dict(
-    #   revision_list
-    # )
-    # topo_list, unconnected_dict = d1_common.revision.topological_sort(
-    #   obsoletes_dict
-    # )
-    # d1_common.util.save_json(topo_list, TOPO_LIST_PATH)
-    # self._events.log_and_count(
-    #   'topo_list', 'path="{}"'.format(TOPO_LIST_PATH), inc_int=len(topo_list)
-    # )
-    # d1_common.util.save_json(unconnected_dict, UNCONNECTED_DICT_PATH)
-    # self._events.log_and_count(
-    #   'unconnected_dict', 'path="{}"'.format(UNCONNECTED_DICT_PATH),
-    #   inc_int=len(unconnected_dict)
-    # )
-    # imported_pid_list = self._import_objects(topo_list)
-    # imported_pid_list = d1_common.util.load_json(IMPORTED_LIST_PATH)
-    # d1_common.util.save_json(imported_pid_list, IMPORTED_LIST_PATH)
-    # self._events.log_and_count(
-    #   'imported_pid_list', 'path="{}"'.format(IMPORTED_LIST_PATH),
-    #   inc_int=len(imported_pid_list)
-    # )
-    imported_pid_list = self._import_objects()
-    self._import_logs(imported_pid_list)
-
-  def _find_api_major(self):
-    return d1_client.util.get_api_major_by_base_url(self._opt['baseurl'])
-
-  # def _find_revision_chains(self):
-  #   sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
-  #     base_url=self._opt['baseurl'],
-  #     api_major=self._api_major,
-  #     client_dict=self._get_client_args_dict(),
-  #     list_objects_dict=self._get_list_objects_args_dict(),
-  #     max_workers=self._opt['workers'],
-  #     max_queue_size=1000,
-  #   )
-  #   revision_list = []
-  #   start_sec = time.time()
-  #   for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-  #     msg_str = 'Error'
-  #     if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
-  #       msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-  #       revision_list.append(d1_common.revision.get_identifiers(sysmeta_pyxb))
-  #     elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
-  #       logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-  #     else:
-  #       logging.error(str(sysmeta_pyxb))
-  #     util.log_progress(
-  #       self._events, 'Finding revision chains', i, sysmeta_iter.total, msg_str,
-  #       start_sec
-  #     )
-  #     # if i == 1000:
-  #     #   break
-  #   return revision_list
+    # if self._opt['major']:
+    self._api_major = (
+      self._opt['major']
+      if self._opt['major'] is not None else self._find_api_major()
+    )
 
   def _import_objects(self):
     sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
       base_url=self._opt['baseurl'],
       api_major=self._api_major,
-      client_dict=self._get_client_args_dict(),
+      client_dict=self._get_client_dict(),
       list_objects_dict=self._get_list_objects_args_dict(),
       max_workers=self._opt['workers'],
       max_queue_size=1000,
@@ -253,18 +190,21 @@ class Command(django.core.management.base.BaseCommand):
     start_sec = time.time()
 
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
+      # if i > 100:
+      #   break
 
       msg_str = 'Error'
 
       if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
-
+        pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
         try:
           d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+          self._download_source_sciobj_bytes_to_store(pid)
         except d1_common.types.exceptions.DataONEException as e:
           logging.error(d1_common.xml.pretty_pyxb(e))
         else:
-          msg_str = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-          imported_pid_list.append(sysmeta_pyxb)
+          msg_str = pid
+          imported_pid_list.append(pid)
 
       elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
         logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
@@ -284,8 +224,9 @@ class Command(django.core.management.base.BaseCommand):
       base_url=self._opt['baseurl'],
       page_size=self._opt['log_page_size'],
       max_workers=self._opt['workers'],
+      max_queue_size=1000,
       api_major=self._api_major,
-      client_args_dict=self._get_client_args_dict(),
+      client_args_dict=self._get_client_dict(),
       get_log_records_arg_dict={},
     )
     imported_pid_set = set(imported_pid_list)
@@ -353,33 +294,32 @@ class Command(django.core.management.base.BaseCommand):
     client = self._create_source_client()
     client.get_and_save(pid, sciobj_path)
 
-  def _get_client_args_dict(self):
-    client_args_dict = {
+  def _get_client_dict(self):
+    client_dict = {
       'timeout_sec': self._opt['timeout'],
       'verify_tls': False,
       'suppress_verify_warnings': True,
     }
     if not self._opt['public']:
-      client_args_dict.update({
+      client_dict.update({
         'cert_pem_path':
           self._opt['cert_pem_path'] or django.conf.settings.CLIENT_CERT_PATH,
         'cert_key_path':
           self._opt['cert_key_path'] or
           django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
       })
-    return client_args_dict
+    return client_dict
 
   def _get_list_objects_args_dict(self):
     return {
       # Restrict query for faster debugging
       # 'fromDate': datetime.datetime(2017, 1, 1),
       # 'toDate': datetime.datetime(2017, 1, 3),
-      # 'start': 83880,
     }
 
   def _create_source_client(self):
     return d1_client.util.get_client_class_by_version_tag(self._api_major)(
-      self._opt['baseurl'], **self._get_client_args_dict()
+      self._opt['baseurl'], **self._get_client_dict()
     )
 
   def _assert_path_is_dir(self, dir_path):
