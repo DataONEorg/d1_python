@@ -32,7 +32,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.onedrive',
-    version='2.3.7',
+    version='2.3.8',
     description='Filesystem access to the DataONE Workspace',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -41,12 +41,12 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.3.7',
-      'dataone.libclient == 2.3.7',
+      'dataone.common == 2.3.8',
+      'dataone.libclient == 2.3.8',
       #
       'fusepy == 2.0.4',
-      'pyxb == 1.2.5',
-      'pyzotero == 1.2.13',
+      'pyxb == 1.2.6',
+      'pyzotero == 1.2.14',
       'rdflib == 4.2.2',
       'requests == 2.18.4',
     ],
