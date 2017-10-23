@@ -1,5 +1,26 @@
 # Change Log
 
++## [2.3.8](https://github.com/DataONEorg/d1_python/tree/2.3.8) (2017-10-20)
++[Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.6...2.3.8)
+
+* Update all dependencies to current versions as of 2017-10-20
+* GMN:
+  * Add support for storing partial and out-of-order revision chains
+    * Automatically combine chain fragments that are found to be part of the
+    same chain
+    * Tests for various revision and SID related corner cases
+  * Add migrations to latest db  
+  * Improve progress information in management commands
+  * Add diagnostics management command to migrate and repair revision chains
+  * Add support for general migrations to bulk importer
+  * Remove old migrate_v1_to_v2 command
+  * Update database test fixtures and sample docs
+* Add misc methods, docstrings and tests to d1_common access_policy module
+* Update PyXB bindings to PyXB 1.2.6 and update generator script
+* Add multiprocessed log record iterator
+* Refactor multiprocessed iterators to improve reliability
+* Add API v1.2 MN method wrappers (view and package methods)
+
 ## [2.3.6](https://github.com/DataONEorg/d1_python/tree/2.3.6) (2017-08-24)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.5...2.3.6)
 
