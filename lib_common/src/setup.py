@@ -47,6 +47,7 @@ def main():
       'pyasn1 == 0.3.7',
       'pyxb == 1.2.6',
       'rdflib == 4.2.2',
+      'zipstream == 1.1.4',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

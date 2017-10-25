@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import
 
-import datetime
 import re
 
 import d1_gmn.app
@@ -131,37 +130,6 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   return django.http.HttpResponse(
     sysmeta_xml_str, d1_common.const.CONTENT_TYPE_XML
   )
-
-
-def set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
-  """See the description of TRUST_CLIENT_* in settings.py.
-  """
-  now_datetime = datetime.datetime.utcnow()
-
-  default_value_list = [
-    ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
-    ('authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
-    ('dateSysMetadataModified', now_datetime, False),
-    ('serialVersion', 1, False),
-    ('dateUploaded', now_datetime, False),
-  ]
-
-  if update_submitter:
-    default_value_list.append(('submitter', request.primary_subject_str, True))
-  else:
-    sysmeta_pyxb.submitter = None
-
-  for attr_str, default_value, is_simple_content in default_value_list:
-    is_trusted_from_client = getattr(
-      django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
-    )
-    override_value = None
-    if is_trusted_from_client:
-      override_value = (
-        d1_common.xml.get_opt_val(sysmeta_pyxb, attr_str)
-        if is_simple_content else getattr(sysmeta_pyxb, attr_str, None)
-      )
-    setattr(sysmeta_pyxb, attr_str, override_value or default_value)
 
 
 def http_response_with_boolean_true_type():

@@ -126,6 +126,10 @@ def is_existing_store():
   return os.path.isdir(get_root_path())
 
 
+def is_existing_sciobj_file(pid):
+  return os.path.isfile(get_sciobj_file_path(pid))
+
+
 def is_tmp():
   return get_root_path().startswith('/tmp/')
 

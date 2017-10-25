@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 import logging
+import os
 import random
 import string
 
@@ -69,7 +70,7 @@ class GMNStartupChecks(django.apps.AppConfig):
       )
       return
     try:
-      d1_gmn.app.util.assert_readable_file(cert_pem_path)
+      self._assert_readable_file(cert_pem_path)
     except ValueError as e:
       raise django.core.exceptions.ImproperlyConfigured(
         u'Configuration error: Invalid certificate path. '
@@ -127,4 +128,16 @@ class GMNStartupChecks(django.apps.AppConfig):
           d1_gmn.app.sciobj_store.get_store_version(),
           d1_gmn.app.sciobj_store.get_gmn_version(),
         )
+      )
+
+  def _assert_readable_file(self, file_path):
+    if not os.path.isfile(file_path):
+      raise ValueError('Not a valid file path. path="{}"'.format(file_path))
+    try:
+      with open(file_path, 'r') as f:
+        f.read(1)
+    except EnvironmentError as e:
+      raise ValueError(
+        'Unable to read file. path="{}" error="{}"'.
+        format(file_path, e.message)
       )

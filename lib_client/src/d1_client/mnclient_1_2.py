@@ -24,6 +24,7 @@ from __future__ import absolute_import
 import logging
 
 import d1_common
+import d1_common.const
 import d1_common.type_conversions
 import d1_common.util
 
@@ -83,10 +84,16 @@ class MemberNodeClient_1_2(
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
   @d1_common.util.utf8_to_unicode
-  def getPackageResponse(self, packageType, did, **kwargs):
+  def getPackageResponse(
+      self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
+      **kwargs
+  ):
     return self.GET(['packages', packageType, did], query=kwargs)
 
   @d1_common.util.utf8_to_unicode
-  def getPackage(self, packageType, did, **kwargs):
-    response = self.getPackageResponse(packageType, did, **kwargs)
+  def getPackage(
+      self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
+      **kwargs
+  ):
+    response = self.getPackageResponse(did, packageType, **kwargs)
     return self._read_stream_response(response)

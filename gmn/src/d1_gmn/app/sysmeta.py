@@ -37,6 +37,7 @@ import d1_gmn.app.revision
 import d1_gmn.app.util
 
 import d1_common.access_policy
+import d1_common.const
 import d1_common.date_time
 import d1_common.types
 import d1_common.types.dataoneTypes
@@ -84,6 +85,9 @@ def create_or_update(sysmeta_pyxb, url=None):
   d1_gmn.app.views.asserts.is_valid_sid_for_chain().
   """
   # TODO: Make sure that old sections are removed if not included in update.
+
+  # import logging
+  # logging.debug(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
 
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
@@ -432,12 +436,15 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
 
   replication_policy_model = d1_gmn.app.models.ReplicationPolicy()
   replication_policy_model.sciobj = sciobj_model
-  replication_policy_model.replication_is_allowed = (
-    sysmeta_pyxb.replicationPolicy.replicationAllowed
+  replication_policy_model.replication_is_allowed = d1_common.xml.get_opt_attr(
+    sysmeta_pyxb.replicationPolicy, 'replicationAllowed',
+    d1_common.const.DEFAULT_REPLICATION_ALLOWED
   )
-  replication_policy_model.desired_number_of_replicas = (
-    sysmeta_pyxb.replicationPolicy.numberReplicas
+  replication_policy_model.desired_number_of_replicas = d1_common.xml.get_opt_attr(
+    sysmeta_pyxb.replicationPolicy, 'numberReplicas',
+    d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
   )
+
   replication_policy_model.save()
 
   def add(node_ref_pyxb, rep_node_model):

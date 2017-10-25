@@ -384,8 +384,8 @@ DATABASES = {
 OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 # This setting determines how Open Archives Initiative Object Reuse and Exchange
-# (OAI-ORE) Resource Maps are handled if one or more of the referenced objects
-# do not (yet) exist on this node.
+# (OAI-ORE) Resource Maps are handled if one or more of the objects referenced
+# in the Resource Map do not (yet) exist on this node.
 #
 # Resource Maps are documents that describe aggregations of web resources. In
 # DataONE, they are used for defining data packages, where a data package is a
@@ -393,7 +393,8 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # compressed archive with the MNPackage.getPackage() API method.
 #
 # For more information about data packages in DataONE, see
-# https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html
+# https://releases.dataone.org/online/api-documentation-v2.0.1/design
+# /DataPackage.html
 #
 # To ensure that a Resource Map references only the intended objects, it should
 # reference only objects on this node and be created after all referenced
@@ -416,8 +417,7 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # subject. This may cause Resource Maps to reference unintended objects if the
 # referenced identifier is used for an unrelated object created
 # by another subject before the intended object is created by the Resource Map
-# subject.  the Resource Map contains an unintended reference and must be
-# discarded. However,
+# subject.
 RESOURCE_MAP_CREATE = 'block'
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of

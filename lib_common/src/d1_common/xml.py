@@ -279,7 +279,19 @@ def is_valid_utf8(s):
     return True
 
 
-def get_opt_val(obj_pyxb, sysmeta_attr):
+def get_opt_attr(obj_pyxb, sysmeta_attr, default_val=None):
+  """Get an optional attribute value
+
+  The attributes for elements that are optional according to the schema and
+  not set in the PyXB object are present and set to None.
+
+  PyXB validation will fail if required elements are missing.
+  """
+  v = getattr(obj_pyxb, sysmeta_attr, default_val)
+  return v if v is not None else default_val
+
+
+def get_opt_val(obj_pyxb, sysmeta_attr, default_val=None):
   """Get an optional Simple Content value from PyXB
 
   The attributes for elements that are optional according to the schema and
@@ -290,7 +302,7 @@ def get_opt_val(obj_pyxb, sysmeta_attr):
   try:
     return get_req_val(getattr(obj_pyxb, sysmeta_attr))
   except (ValueError, AttributeError):
-    return None
+    return default_val
 
 
 def get_req_val(obj_pyxb):

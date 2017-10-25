@@ -23,6 +23,14 @@ tasks for Resource Maps.
 For more information about how Resource Maps are used in DataONE, see:
 
 https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.html
+
+<objectFormat>
+  <formatId>http://www.openarchives.org/ore/terms</formatId>
+  <formatName>Object Reuse and Exchange Vocabulary</formatName>
+  <formatType>RESOURCE</formatType>
+  <mediaType name="application/rdf+xml"/>
+  <extension>rdf</extension>
+</objectFormat>
 """
 
 from __future__ import absolute_import
@@ -143,6 +151,33 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     """
     return super(ResourceMap,
                  self).serialize(format=doc_format, *args, **kwargs)
+
+  def deserialize(self, *args, **kwargs):
+    """Deserialize a Resource Map document
+
+    The source is specified using one of source, location, file or
+    data.
+
+    :Parameters:
+
+    - `source`: An InputSource, file-like object, or string. In the case of a
+    string the string is the location of the source.
+    - `location`: A string indicating the relative or absolute URL of the
+    source. Graph's absolutize method is used if a relative location is
+    specified.
+    - `file`: A file-like object.
+    - `data`: A string containing the data to be parsed.
+    - `format`: Used if format can not be determined from source. Defaults to
+    rdf/xml. Format support can be extended with plugins, but 'xml', 'n3', 'nt',
+    'trix', 'rdfa' are built in.
+    - `publicID`: the logical URI to use as the document base. If None specified
+    the document location is used (at least in the case where there is a
+    document location).
+
+    Raises xml.sax.SAXException based exception on parse error.
+    """
+    self.parse(*args, **kwargs)
+    self._ore_initialized = True
 
   def getAggregation(self):
     """Return the URIRef of the Aggregation entity."""
@@ -338,9 +373,9 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
   # Private
 
-  def _parse(self, rdf_xml_doc):
+  def _parse(self, rdf_xml_doc, doc_format):
     """Parse a unicode containing a OAI-ORE document."""
-    self.parse(data=rdf_xml_doc)
+    self.parse(data=rdf_xml_doc, format=doc_format)
     self._ore_initialized = True
     return self
 

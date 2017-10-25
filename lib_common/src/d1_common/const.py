@@ -60,7 +60,8 @@ USER_AGENT = 'DataONE-Python/{} +http://dataone.org/'.format(VERSION)
 # The system wide default checksum algorithm
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 
-# Default number of replicas
+# Replicas
+DEFAULT_REPLICATION_ALLOWED = True
 DEFAULT_NUMBER_OF_REPLICAS = 3
 
 # MIME types
@@ -92,7 +93,6 @@ SUBJECT_PUBLIC = 'public'
 DEFAULT_SEARCH_ENGINE = 'solr'
 
 # OAI-ORE Resource Maps
-
 ORE_NAMESPACE_DICT = {
   u'cito': u'http://purl.org/spar/cito/',
   u'dc': u'http://purl.org/dc/elements/1.1/',
@@ -100,7 +100,11 @@ ORE_NAMESPACE_DICT = {
   u'ore': u'http://www.openarchives.org/ore/terms/',
   u'foaf': u'http://xmlns.com/foaf/0.1/',
 }
-
+ORE_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
 ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)
 
+# Data Package
+DEFAULT_DATA_PACKAGE_FORMAT_ID = 'application/bagit-097'
+
+# Streams
 DEFAULT_CHUNK_SIZE = 1024

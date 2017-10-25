@@ -25,25 +25,12 @@ from __future__ import absolute_import
 import base64
 import inspect
 import logging
-import os
 import traceback
 import urlparse
 
 import d1_gmn.app
 
 import django.conf
-
-
-def assert_readable_file(file_path):
-  if not os.path.isfile(file_path):
-    raise ValueError('Not a valid file path. path="{}"'.format(file_path))
-  try:
-    with open(file_path, 'r') as f:
-      f.read(1)
-  except EnvironmentError as e:
-    raise ValueError(
-      'Unable to read file. path="{}" error="{}"'.format(file_path, e.message)
-    )
 
 
 class fixed_chunk_size_iterator(object):
@@ -143,6 +130,12 @@ def is_proxy_url(url):
 
 def get_sci_model(pid):
   return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
+
+
+def get_pids_for_all_locally_stored_objects():
+  return d1_gmn.app.models.ScienceObject.objects.all().values_list(
+    'pid__did', flat=True
+  )
 
 
 def delete_unused_subjects():

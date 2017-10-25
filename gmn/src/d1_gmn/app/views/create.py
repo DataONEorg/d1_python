@@ -21,50 +21,51 @@
 """
 from __future__ import absolute_import
 
+import datetime
+
 import d1_gmn.app.event_log
+import d1_gmn.app.resource_map
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.asserts
+import d1_gmn.app.views.util
 
 import d1_common.const
 import d1_common.url
 import d1_common.util
 import d1_common.xml
 
+import django.conf
 import django.core.files.move
 
 
-def create(request, sysmeta_pyxb):
-  """Create a new native science object
+def create_sciobj(request, sysmeta_pyxb):
+  """Create object file and database entries for a new native science object
 
   Preconditions:
   - PID is verified not to be unused, E.g., with
   d1_gmn.app.views.asserts.is_unused().
 
   Postconditions:
-  - Files and database rows are added as necessary to add a new object.
+  - File containing sciobj bytes and database rows are added as necessary to add
+  a new object.
   """
-  # Proxy object vendor specific extension.
-  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
-    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    d1_gmn.app.views.asserts.url_is_http_or_https(url)
-    d1_gmn.app.views.asserts.url_is_retrievable(url)
-  else:
-    pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-    # http://en.wikipedia.org/wiki/File_URI_scheme
-    url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
-    _save_sciobj_bytes_from_request(request, pid)
+  pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+  _set_mn_controlled_values(request, sysmeta_pyxb)
+  _sanity_check_sciobj(pid, request, sysmeta_pyxb)
+  url = _save_or_link_sciobj_bytes(request, pid)
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
-  # Log the create event for this object.
+  if d1_gmn.app.resource_map.is_resource_map_pyxb(sysmeta_pyxb):
+    d1_gmn.app.resource_map.create_or_update(pid)
   d1_gmn.app.event_log.create(
     d1_common.xml.get_req_val(sysmeta_pyxb.identifier), request,
     timestamp=sysmeta_pyxb.dateUploaded
   )
 
 
-def create_native_sciobj(sysmeta_pyxb):
+def create_sciobj_models(sysmeta_pyxb):
   """Create the db entries for a new native, locally stored (non-proxied)
   science object
 
@@ -87,6 +88,44 @@ def create_native_sciobj(sysmeta_pyxb):
   )
 
 
+def _sanity_check_sciobj(pid, request, sysmeta_pyxb):
+  d1_gmn.app.views.asserts.is_unused(pid)
+  d1_gmn.app.views.asserts.sysmeta_sanity_checks(request, sysmeta_pyxb, pid)
+  # d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
+
+
+def _save_or_link_sciobj_bytes(request, pid):
+  if _is_proxy_sciobj(request):
+    url = _get_sciobj_proxy_url(request)
+    _sanity_check_proxy_url(url)
+  else:
+    url = _get_sciobj_file_url(pid)
+    _save_sciobj_bytes_from_request(request, pid)
+  return url
+
+
+def _is_proxy_sciobj(request):
+  """Return True if sciobj is being created with the proxy vendor specific
+  extension
+  """
+  return 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META
+
+
+def _sanity_check_proxy_url(url):
+  d1_gmn.app.views.asserts.url_is_http_or_https(url)
+  d1_gmn.app.views.asserts.url_is_retrievable(url)
+
+
+def _get_sciobj_proxy_url(request):
+  # http://en.wikipedia.org/wiki/File_URI_scheme
+  return request.META['HTTP_VENDOR_GMN_REMOTE_URL']
+
+
+def _get_sciobj_file_url(pid):
+  url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
+  return url
+
+
 def _save_sciobj_bytes_from_request(request, pid):
   """Django stores small uploads in memory and streams large uploads directly to
   disk. Uploads stored in memory are represented by UploadedFile and on disk,
@@ -105,3 +144,34 @@ def _save_sciobj_bytes_from_request(request, pid):
     with open(sciobj_path, 'wb') as f:
       for chunk in request.FILES['object'].chunks():
         f.write(chunk)
+
+
+def _set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
+  """See the description of TRUST_CLIENT_* in settings.py.
+  """
+  now_datetime = datetime.datetime.utcnow()
+
+  default_value_list = [
+    ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
+    ('authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
+    ('dateSysMetadataModified', now_datetime, False),
+    ('serialVersion', 1, False),
+    ('dateUploaded', now_datetime, False),
+  ]
+
+  if update_submitter:
+    default_value_list.append(('submitter', request.primary_subject_str, True))
+  else:
+    sysmeta_pyxb.submitter = None
+
+  for attr_str, default_value, is_simple_content in default_value_list:
+    is_trusted_from_client = getattr(
+      django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
+    )
+    override_value = None
+    if is_trusted_from_client:
+      override_value = (
+        d1_common.xml.get_opt_val(sysmeta_pyxb, attr_str)
+        if is_simple_content else getattr(sysmeta_pyxb, attr_str, None)
+      )
+    setattr(sysmeta_pyxb, attr_str, override_value or default_value)

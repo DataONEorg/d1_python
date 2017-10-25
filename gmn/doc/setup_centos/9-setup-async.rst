@@ -18,7 +18,7 @@ Set up cron jobs
   Add::
 
     GMN_ROOT = /var/local/dataone/gmn_venv
-    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/gmn
+    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/d1_gmn
     PYTHON_BIN = $GMN_ROOT/bin/python
 
     # Process the replication request queue

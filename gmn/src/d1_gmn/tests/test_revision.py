@@ -117,7 +117,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
     # self.dump_pyxb(sysmeta_pyxb)
     expected_pid_set = set(a_chain_list + b_chain_list + [pid])
     got_pid_set = set(d1_gmn.app.revision.get_all_pid_by_sid(a_sid))
@@ -137,7 +137,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
     with pytest.raises(d1_common.types.exceptions.ServiceFailure):
-      d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
 
   @responses.activate
   def test_1030(self, mn_client_v2):
@@ -154,7 +154,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
     with pytest.raises(d1_common.types.exceptions.ServiceFailure):
-      d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
 
   @responses.activate
   def test_1040(self, mn_client_v2):
@@ -169,7 +169,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
     pid_list = a_chain_list + b_chain_list + [pid]
     for pid in pid_list:
       sysmeta_pyxb = self.call_d1_client(mn_client_v2.getSystemMetadata, pid)
@@ -184,11 +184,11 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_pid, a_sid, a_sciobj_str, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=sid
     )
-    d1_gmn.app.views.create.create_native_sciobj(a_sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(a_sysmeta_pyxb)
     b_pid, b_sid, b_sciobj_str, b_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=sid
     )
-    d1_gmn.app.views.create.create_native_sciobj(b_sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(b_sysmeta_pyxb)
     chain_model = d1_gmn.app.models.Chain.objects.get(sid__did=sid)
     member_query_set = d1_gmn.app.models.ChainMember.objects.filter(
       chain=chain_model
@@ -205,7 +205,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
     sysmeta_pyxb.obsoletedBy = d1_test.instance_generator.identifier.generate_pid()
-    d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
 
   @responses.activate
   def test_1070(self, mn_client_v2):
@@ -221,7 +221,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
     last_pid = b_chain_list[-1]
     sysmeta_pyxb = self.call_d1_client(mn_client_v2.getSystemMetadata, a_sid)
     assert sysmeta_pyxb.identifier.value() == last_pid

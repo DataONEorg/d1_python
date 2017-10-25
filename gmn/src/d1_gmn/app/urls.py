@@ -145,6 +145,13 @@ urlpatterns = [
     d1_gmn.app.views.external.post_replicate,
     name='post_replicate',
   ),
+  # Package API
+  # MNPackage.getPackage() - GET /package
+  url(
+    r'^v2/packages/(?P<package_type>.+)/(?P<pid>.+)/?$',
+    d1_gmn.app.views.external.get_package,
+    name='get_package',
+  ),
 
   #
   # Home page and Web UI

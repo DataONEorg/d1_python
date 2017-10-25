@@ -36,6 +36,7 @@ import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.psycopg_adapter
+import d1_gmn.app.resource_map
 import d1_gmn.app.restrict_to_verb
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
@@ -47,6 +48,7 @@ import d1_gmn.app.views.decorators
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
+import d1_common.bagit
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
@@ -438,7 +440,7 @@ def put_meta(request):
   d1_gmn.app.views.asserts.is_valid_for_update(pid)
   new_sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
-  d1_gmn.app.views.util.set_mn_controlled_values(
+  d1_gmn.app.views.create._set_mn_controlled_values(
     request, new_sysmeta_pyxb, update_submitter=False
   )
   d1_gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
@@ -560,7 +562,7 @@ def post_object_list(request):
   # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
   if sid:
     d1_gmn.app.views.asserts.is_unused(sid)
-  _create(request, sysmeta_pyxb, new_pid)
+  d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
   # d1_gmn.app.revision.create_chain(sid, new_pid)
   return new_pid
 
@@ -592,7 +594,7 @@ def put_object(request, old_pid):
   sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
   d1_gmn.app.views.asserts.is_valid_sid_for_chain(old_pid, sid)
 
-  _create(request, sysmeta_pyxb, new_pid)
+  d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
 
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
@@ -608,14 +610,6 @@ def put_object(request, old_pid):
   d1_gmn.app.sysmeta.update_modified_timestamp(old_pid)
 
   return new_pid
-
-
-def _create(request, sysmeta_pyxb, new_pid):
-  d1_gmn.app.views.asserts.is_unused(new_pid)
-  d1_gmn.app.views.asserts.sysmeta_sanity_checks(request, sysmeta_pyxb, new_pid)
-  d1_gmn.app.views.util.set_mn_controlled_values(request, sysmeta_pyxb)
-  #d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
-  d1_gmn.app.views.create.create(request, sysmeta_pyxb)
 
 
 # No locking. Public access.
@@ -681,3 +675,40 @@ def post_replicate(request):
     request.POST['sourceNode'], sysmeta_pyxb
   )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
+
+
+# ------------------------------------------------------------------------------
+# Package API.
+# ------------------------------------------------------------------------------
+
+
+def get_package(request, pid, package_type):
+  # Change args from keyword to positional
+  return _get_package(request, pid, package_type)
+
+
+@d1_gmn.app.restrict_to_verb.get
+@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.resolve_sid
+@d1_gmn.app.views.decorators.read_permission
+def _get_package(request, pid, package_type):
+  """MNPackage.getPackage(session, packageType, id) → OctetStream
+  """
+  if package_type != d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, u'Unsupported Data Package format. '
+      u'Currently, only BagIt (formatId={}) is supported'.
+      format(d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID)
+    )
+  pid_list = d1_gmn.app.resource_map.get_resource_map_members(pid)
+  path_list = [
+    d1_gmn.app.sciobj_store.get_sciobj_file_path(p)
+    for p in pid_list if d1_gmn.app.sciobj_store.is_existing_sciobj_file(p)
+  ]
+  zip_file = d1_common.bagit.create_bagit_stream(path_list)
+  response = django.http.StreamingHttpResponse(
+    zip_file, content_type='application/zip'
+  )
+  response['Content-Disposition'
+           ] = 'attachment; filename={}'.format('files.zip')
+  return response
