@@ -121,9 +121,17 @@ def trigger_all_pre_commit_hooks(trigger_path_list):
 
 def trigger_pre_commit_hook(trigger_path):
   try:
-    res_str = subprocess.check_output([
-      'pre-commit', 'run', '--verbose', '--no-stash', '--files', trigger_path
-    ], stderr=subprocess.STDOUT)
+    res_str = subprocess.check_output(
+      [
+        # '--no-stash',
+        'pre-commit',
+        'run',
+        '--verbose',
+        '--files',
+        trigger_path
+      ],
+      stderr=subprocess.STDOUT
+    )
   except subprocess.CalledProcessError as e:
     res_str = e.output
 
