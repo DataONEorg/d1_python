@@ -140,6 +140,9 @@ class Command(django.core.management.base.BaseCommand):
       '--major', type=int, action='store',
       help='Use API major version instead of finding by connecting to CN'
     )
+    parser.add_argument(
+      '--only-log', action='store_true', help='Only import event logs'
+    )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
   def handle(self, *args, **opt):
@@ -166,49 +169,49 @@ class Command(django.core.management.base.BaseCommand):
         'Use --force to import anyway'
       )
     if self._opt['clear']:
-      d1_gmn.app.delete.delete_all_from_db()
-      self._events.log_and_count('Cleared database')
-      # d1_gmn.app.models.EventLog.objects.all().delete()
+      if not self._opt['only_log']:
+        self._events.log_and_count('Clearing database')
+        d1_gmn.app.delete.delete_all_from_db()
+      else:
+        self._events.log_and_count('Clearing event log records')
+        d1_gmn.app.models.EventLog.objects.all().delete()
 
-    # if self._opt['major']:
     self._api_major = (
       self._opt['major']
       if self._opt['major'] is not None else self._find_api_major()
     )
 
+    if not self._opt['only_log']:
+      self._import_objects()
+
+    self._import_logs()
+
   def _import_objects(self):
     sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
       base_url=self._opt['baseurl'],
+      page_size=self._opt['log_page_size'],
+      max_workers=self._opt['workers'],
+      max_queue_size=10,
       api_major=self._api_major,
       client_dict=self._get_client_dict(),
       list_objects_dict=self._get_list_objects_args_dict(),
-      max_workers=self._opt['workers'],
-      max_queue_size=1000,
     )
-
-    imported_pid_list = []
     start_sec = time.time()
-
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
       # if i > 100:
       #   break
-
       msg_str = 'Error'
-
       if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
         pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
         try:
-          d1_gmn.app.views.create.create_native_sciobj(sysmeta_pyxb)
+          d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
           self._download_source_sciobj_bytes_to_store(pid)
         except d1_common.types.exceptions.DataONEException as e:
           logging.error(d1_common.xml.pretty_pyxb(e))
         else:
           msg_str = pid
-          imported_pid_list.append(pid)
-
       elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
         logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-
       else:
         logging.error(str(sysmeta_pyxb))
 
@@ -217,50 +220,38 @@ class Command(django.core.management.base.BaseCommand):
         start_sec
       )
 
-    return imported_pid_list
-
-  def _import_logs(self, imported_pid_list):
+  def _import_logs(self):
     log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
       base_url=self._opt['baseurl'],
       page_size=self._opt['log_page_size'],
       max_workers=self._opt['workers'],
-      max_queue_size=1000,
+      max_queue_size=10,
       api_major=self._api_major,
       client_args_dict=self._get_client_dict(),
-      get_log_records_arg_dict={},
     )
-    imported_pid_set = set(imported_pid_list)
     start_sec = time.time()
     for i, log_record in enumerate(log_record_iterator):
-      is_error = False
+      msg_str = 'Error'
       try:
         pid = d1_common.xml.get_req_val(log_record.identifier)
       except Exception as e:
         self._events.log_and_count('Log record iterator error', str(e))
-        is_error = True
-        pid = 'Error'
+      else:
+        if d1_gmn.app.util.is_pid_of_existing_object(pid):
+          self._create_log_entry(log_record)
+          msg_str = pid
+        else:
+          self._events.log_and_count(
+            'Skipped object that does not exist', 'pid="{}"'.format(pid)
+          )
+          msg_str = 'Skipped object that was not imported', 'pid="{}"'.format(
+            pid
+          )
+
       util.log_progress(
-        self._events, 'Importing event logs', i, log_record_iterator.total, pid,
-        start_sec
+        self._events, 'Importing event logs', i, log_record_iterator.total,
+        msg_str, start_sec
       )
-      if is_error:
-        continue
-      if pid not in imported_pid_set:
-        self._events.log_and_count(
-          'Skipped object that was not imported', 'pid="{}"'.format(pid)
-        )
-        continue
-      # if d1_gmn.app.event_log.has_event_log(pid):
-      #   self._events.log_and_count(
-      #     'Skipped object that already had one or more event records', 'pid="{}"'.format(pid)
-      #   )
-      #   continue
-      if not d1_gmn.app.util.is_pid_of_existing_object(pid):
-        self._events.log_and_count(
-          'Skipped object that does not exist', 'pid="{}"'.format(pid)
-        )
-        continue
-      self._create_log_entry(log_record)
 
   def _create_log_entry(self, log_record):
     event_log_model = d1_gmn.app.event_log.create_log_entry(
@@ -327,6 +318,9 @@ class Command(django.core.management.base.BaseCommand):
       raise django.core.management.base.CommandError(
         'Invalid dir path. path="{}"'.format(dir_path)
       )
+
+  def _find_api_major(self):
+    return d1_client.util.get_api_major_by_base_url(self._opt['baseurl'])
 
   # def _migrate_filesystem(self):
   #   for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):
