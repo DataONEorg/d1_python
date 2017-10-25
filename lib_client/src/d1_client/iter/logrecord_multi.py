@@ -55,7 +55,6 @@ class LogRecordIteratorMulti(object):
     self._api_major = api_major
     self._client_args_dict = client_args_dict or {}
     self._get_log_records_arg_dict = get_log_records_arg_dict or {}
-    # d1_common.type_conversions.set_default_pyxb_namespace(api_major)
     self.total = _get_total_object_count(
       base_url, api_major, self._client_args_dict,
       self._get_log_records_arg_dict
@@ -69,7 +68,8 @@ class LogRecordIteratorMulti(object):
       target=_get_all_pages,
       args=(
         queue, self._base_url, self._page_size, self._max_workers,
-        self._client_args_dict, self._get_log_records_arg_dict, self.total,
+        self._api_major, self._client_args_dict, self._get_log_records_arg_dict,
+        self.total,
       ),
     )
 
@@ -85,17 +85,8 @@ class LogRecordIteratorMulti(object):
     process.join()
 
 
-def _get_total_object_count(
-    base_url, api_major, client_args_dict, get_log_records_arg_dict
-):
-  client = _create_client(base_url, api_major, client_args_dict)
-  args_dict = get_log_records_arg_dict.copy()
-  args_dict['count'] = 0
-  return client.getLogRecords(**args_dict).total
-
-
 def _get_all_pages(
-    queue, base_url, page_size, max_workers, client_args_dict,
+    queue, base_url, page_size, max_workers, api_major, client_args_dict,
     get_log_records_arg_dict, n_total
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
@@ -108,8 +99,8 @@ def _get_all_pages(
     )
     pool.apply_async(
       _get_page, args=(
-        queue, base_url, page_idx, n_pages, page_size, client_args_dict,
-        get_log_records_arg_dict
+        queue, base_url, page_idx, n_pages, page_size, api_major,
+        client_args_dict, get_log_records_arg_dict
       )
     )
   # Prevent any more tasks from being submitted to the pool. Once all the
@@ -122,13 +113,15 @@ def _get_all_pages(
 
 
 def _get_page(
-    queue, base_url, page_idx, n_pages, page_size, client_args_dict,
+    queue, base_url, page_idx, n_pages, page_size, api_major, client_args_dict,
     get_log_records_arg_dict
 ):
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    base_url, **client_args_dict
-  )
+  client = _create_client(base_url, api_major, client_args_dict)
   try:
+    logging.debug(
+      'Retrieving Log with getLogRecords(). page={}/{}'.
+      format(page_idx, n_pages)
+    )
     log_records_pyxb = client.getLogRecords(
       start=page_idx * page_size, count=page_size, **get_log_records_arg_dict
     )
@@ -143,7 +136,17 @@ def _get_page(
 
 
 def _create_client(base_url, api_major, client_dict):
+  logging.debug('Creating v{} client'.format(1 if api_major <= 1 else 2))
   if api_major <= 1:
     return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
   else:
     return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
+
+
+def _get_total_object_count(
+    base_url, api_major, client_args_dict, get_log_records_arg_dict
+):
+  client = _create_client(base_url, api_major, client_args_dict)
+  args_dict = get_log_records_arg_dict.copy()
+  args_dict['count'] = 0
+  return client.getLogRecords(**args_dict).total

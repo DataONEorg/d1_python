@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multithreaded SystemMetadata iterator
+"""Multiprocessed System Metadata iterator
 
 Parallel download of a set of SystemMetadata documents from a CN or MN. The
 SystemMetadata to download can be selected by the filters that are available in
@@ -73,7 +73,7 @@ class SystemMetadataIteratorMulti(object):
     self._api_major = api_major
     self._client_dict = client_dict or {}
     self._list_objects_dict = list_objects_dict or {}
-    self._getSysMeta_dic = get_sysmeta_dict or {}
+    self._get_sysmeta_dict = get_sysmeta_dict or {}
     self.total = _get_total_object_count(
       base_url, api_major, self._client_dict, self._list_objects_dict
     )
@@ -89,7 +89,7 @@ class SystemMetadataIteratorMulti(object):
       args=(
         queue, namespace, self._base_url, self._page_size, self._max_workers,
         self._api_major, self._client_dict, self._list_objects_dict,
-        self._getSysMeta_dic, self.total
+        self._get_sysmeta_dict, self.total
       ),
     )
 
@@ -111,19 +111,10 @@ class SystemMetadataIteratorMulti(object):
     except GeneratorExit:
       # If generator is exited before exhausted, provide clean shutdown of the
       # generator by signaling processes to stop, then waiting for them.
+      logging.debug('Setting stop flag')
       namespace.stop = True
-      logging.debug('Stop flag set')
 
     process.join()
-
-
-def _get_total_object_count(
-    base_url, api_major, client_dict, list_objects_dict
-):
-  client = _create_client(base_url, api_major, client_dict)
-  args_dict = list_objects_dict.copy()
-  args_dict['count'] = 0
-  return client.listObjects(**args_dict).total
 
 
 def _get_all_pages(
@@ -136,17 +127,20 @@ def _get_all_pages(
 
   for page_idx in range(n_pages):
     if namespace.stop:
-      logging.debug('Stop flag detected')
+      logging.debug('Stop flag detected in page iterator')
       return
     logging.debug(
       'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
     )
+    # try:
     pool.apply_async(
       _get_page, args=(
         queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
         client_dict, list_objects_dict, get_sysmeta_dict
       )
     )
+    # except Exception as e:
+    #   logging.debug('pool.apply_async() error="{}"'.format(str(e)))
     # The pool does not support a clean way to limit the number of queued tasks
     # so we have to access the internals to check the queue size and wait if
     # necessary.
@@ -155,10 +149,10 @@ def _get_all_pages(
       if namespace.stop:
         logging.debug('Stop flag detected while waiting to queue task')
         break
-      time.sleep(1)
       # logging.debug('Waiting to queue task')
-    # Prevent any more tasks from being submitted to the pool. Once all the
-    # tasks have been completed the worker processes will exit.
+      time.sleep(1)
+  # Prevent any more tasks from being submitted to the pool. Once all the
+  # tasks have been completed the worker processes will exit.
   pool.close()
   # Wait for the worker processes to exit
   pool.join()
@@ -171,21 +165,26 @@ def _get_page(
     client_dict, list_objects_dict, get_sysmeta_dict
 ):
   if namespace.stop:
+    logging.debug('Stop flag detected in _get_page() start')
     return
   client = _create_client(base_url, api_major, client_dict)
   try:
+    logging.debug(
+      'Retrieving ObjectList with listObjects(). page_idx={} page_total={}'.
+      format(page_idx, n_pages)
+    )
     object_list_pyxb = client.listObjects(
       start=page_idx * page_size, count=page_size, **list_objects_dict
     )
   except Exception as e:
     logging.error(
-      'Failed to retrieve page: {}/{}. Error: {}'.
-      format(page_idx + 1, n_pages, str(e))
+      'Failed to retrieve page. page_idx={} page_total={} error="{}"'.
+      format(page_idx, n_pages, str(e))
     )
   else:
-    logging.debug('Retrieved page: {}/{}'.format(page_idx + 1, n_pages))
     for object_info_pyxb in object_list_pyxb.objectInfo:
       if namespace.stop:
+        logging.debug('Stop flag detected in _get_page() objectInfo iter')
         return
       _get_sysmeta(
         client, queue, object_info_pyxb.identifier.value(), get_sysmeta_dict
@@ -208,7 +207,17 @@ def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
 
 
 def _create_client(base_url, api_major, client_dict):
+  logging.debug('Creating v{} client'.format(1 if api_major <= 1 else 2))
   if api_major <= 1:
     return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
   else:
     return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
+
+
+def _get_total_object_count(
+    base_url, api_major, client_dict, list_objects_dict
+):
+  client = _create_client(base_url, api_major, client_dict)
+  args_dict = list_objects_dict.copy()
+  args_dict['count'] = 0
+  return client.listObjects(**args_dict).total
