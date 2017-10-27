@@ -42,18 +42,6 @@ import d1_test.instance_generator.system_metadata
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v2):
-    """MNStorage.create(): Submitting a resource map to create() causes the
-    ResourceMap models to be populated
-    """
-    pid_list = self.create_objects(mn_client_v2)
-    ore_pid = self.create_resource_map(mn_client_v2, pid_list)
-    member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
-      ore_pid
-    )
-    assert sorted(pid_list) == sorted(member_list)
-
-  @responses.activate
   def test_1010(self, mn_client_v2):
     """MNPackage.getPackage(): Returns a valid package"""
     pid_list = self.create_objects(mn_client_v2)
@@ -75,7 +63,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return pid_list
 
   def create_resource_map(self, mn_client_v2, pid_list):
-    ore_pid = d1_test.instance_generator.identifier.generate_pid('ORE_PID_')
+    ore_pid = d1_test.instance_generator.identifier.generate_pid('PID_ORE_')
     ore = d1_common.resource_map.createSimpleResourceMap(
       ore_pid, pid_list[0], pid_list[1:]
     )

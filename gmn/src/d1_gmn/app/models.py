@@ -27,29 +27,25 @@ from __future__ import absolute_import
 
 import datetime
 
+# Any information we need to keep about a PID without having a native object
+# is related directly to IdNamespace. The remaining information is related
+# to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
+# related to its PID in IdNamespace.
+from d1_gmn.app.did import get_or_create_did
+
 # Django
 from django.db import models
 
 # D1
-
 # Django automatically creates:
 # - "id" serial NOT NULL PRIMARY KEY
 # - Index on primary key
 # - Index on ForeignKey
 # - Index on unique=True
 
-# Any information we need to keep about a PID without having a native object
-# is related directly to IdNamespace. The remaining information is related
-# to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
-# related to its PID in IdNamespace.
-
 
 class IdNamespace(models.Model):
   did = models.CharField(max_length=800, unique=True)
-
-
-def did(id_str):
-  return IdNamespace.objects.get_or_create(did=id_str)[0]
 
 
 # ------------------------------------------------------------------------------
@@ -181,7 +177,7 @@ class ReplicaRevisionChainReference(models.Model):
 
 
 def replica_revision_chain_reference(pid):
-  pid_model = did(pid)
+  pid_model = get_or_create_did(pid)
   ref_model = ReplicaRevisionChainReference(pid=pid_model)
   ref_model.save()
   return ref_model
@@ -231,7 +227,7 @@ class LocalReplica(models.Model):
 
 def local_replica(pid, replica_info_model):
   local_replica_model = LocalReplica(
-    pid=did(pid),
+    pid=get_or_create_did(pid),
     info=replica_info_model,
   )
   local_replica_model.save()

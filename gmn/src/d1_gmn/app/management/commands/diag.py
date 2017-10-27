@@ -31,13 +31,14 @@ import re
 import d1_gmn.app.auth
 import d1_gmn.app.delete
 # noinspection PyProtectedMember
+import d1_gmn.app.did
 import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.diagnostics
 
 import d1_common.file_iterator
@@ -324,7 +325,7 @@ class UpdateSystemMetadata(object):
         logging.info('{}: {}'.format(skip_msg, pid))
         continue
 
-      if not d1_gmn.app.util.is_pid_of_existing_object(pid):
+      if not d1_gmn.app.did.is_pid_of_existing_object(pid):
         skip_msg = 'Skipped: Unknown on local node'
         self._events.count(skip_msg)
         logging.info('{}: {}'.format(skip_msg, pid))

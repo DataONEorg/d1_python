@@ -27,6 +27,7 @@ import re
 import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
+import d1_gmn.app.did
 import d1_gmn.app.event_log
 import d1_gmn.app.models
 import d1_gmn.app.psycopg_adapter
@@ -156,7 +157,7 @@ def query_object_list(request, type_name):
   )
   did = request.GET.get('identifier', None)
   if did is not None:
-    if d1_gmn.app.revision.is_sid(did):
+    if d1_gmn.app.did.is_sid(did):
       query = d1_gmn.app.db_filter.add_sid_filter(
         request, query, 'pid__did', 'identifier'
       )

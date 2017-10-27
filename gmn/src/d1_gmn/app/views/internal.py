@@ -36,7 +36,7 @@ import d1_gmn.app.event_log
 import d1_gmn.app.models
 import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.util
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.util
 
 import d1_common.const

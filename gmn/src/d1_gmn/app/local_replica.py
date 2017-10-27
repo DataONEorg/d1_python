@@ -38,27 +38,6 @@ from django.db.models import Sum
 # ------------------------------------------------------------------------------
 
 
-def is_local_replica(pid):
-  """Includes unprocessed replication requests."""
-  return d1_gmn.app.models.LocalReplica.objects.filter(pid__did=pid).exists()
-
-
-def is_unprocessed_local_replica(pid):
-  """Is local replica with status "queued"."""
-  return d1_gmn.app.models.LocalReplica.objects.filter(
-    pid__did=pid,
-    info__status__status='queued',
-  ).exists()
-
-
-def is_revision_chain_placeholder(pid):
-  """For replicas, the PIDs referenced in revision chains are reserved for
-  use by other replicas."""
-  return d1_gmn.app.models.ReplicaRevisionChainReference.objects.filter(
-    pid__did=pid
-  ).exists()
-
-
 def get_total_size_of_replicas():
   return get_total_size_of_completed_replicas() + \
          get_total_size_of_queued_replicas()

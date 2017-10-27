@@ -28,6 +28,7 @@ import random
 import pytest
 import responses
 
+import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.util
@@ -50,7 +51,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
       # Is in chain
       sciobj_model = d1_gmn.app.util.get_sci_model(pid)
-      assert d1_gmn.app.revision.is_in_revision_chain(sciobj_model)
+      assert d1_gmn.app.did.is_in_revision_chain(sciobj_model)
       # Cut from the chain
       logging.debug(
         'cut_from_chain() pid="{}" chain_len="{}"'.
@@ -58,7 +59,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       d1_gmn.app.revision.cut_from_chain(sciobj_model)
       # Is no longer in chain
-      assert not d1_gmn.app.revision.is_in_revision_chain(sciobj_model)
+      assert not d1_gmn.app.did.is_in_revision_chain(sciobj_model)
       # New chain is valid
       pid_chain_list.remove(pid)
       self.assert_valid_chain(client, pid_chain_list, sid)
@@ -93,7 +94,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
     # Last one now not in chain even though not explicitly cut
     sciobj_model = d1_gmn.app.util.get_sci_model(pid_chain_list[0])
-    assert not d1_gmn.app.revision.is_in_revision_chain(sciobj_model)
+    assert not d1_gmn.app.did.is_in_revision_chain(sciobj_model)
 
   def _create_test_objects(self, mn_client_v2, a_sid, b_sid):
     a_sid, a_chain_list = self.create_revision_chain(

@@ -73,7 +73,7 @@ identifiers.
 
   Example stream:
 
-  ore_pid_value
+  PID_ORE_value
   sci_meta_pid_value
   data_pid_1
   data_pid_2

@@ -25,7 +25,7 @@ from __future__ import absolute_import
 import pprint
 
 import d1_gmn.app.restrict_to_verb
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.util
 

@@ -39,9 +39,10 @@ from __future__ import absolute_import
 
 import re
 
+import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.util
 
 import d1_common.const
@@ -64,7 +65,7 @@ def add_replica_filter(request, query):
   bool_val = request.GET.get(param_name, True)
   if bool_val is None:
     return query
-  d1_gmn.app.views.asserts.is_bool_param(param_name, bool_val)
+  d1_gmn.app.views.assert_db.is_bool_param(param_name, bool_val)
   if d1_gmn.app.views.util.is_false_param(bool_val):
     query = query.filter(pid__localreplica_pid__isnull=True)
   return query
@@ -74,7 +75,7 @@ def add_bool_filter(request, query, column_name, param_name):
   bool_val = request.GET.get(param_name, None)
   if bool_val is None:
     return query
-  d1_gmn.app.views.asserts.is_bool_param(param_name, bool_val)
+  d1_gmn.app.views.assert_db.is_bool_param(param_name, bool_val)
   filter_arg = column_name
   return query.filter(
     **{filter_arg: d1_gmn.app.views.util.is_true_param(bool_val)}
@@ -96,7 +97,7 @@ def add_datetime_filter(request, query, column_name, param_name, operator):
       0, u'Invalid date format for parameter. parameter="{}" date="{}", '
       u'parse_error="{}"'.format(param_name, date_str, str(e))
     )
-  d1_gmn.app.views.asserts.date_is_utc(date)
+  d1_gmn.app.views.assert_db.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
   filter_arg = '{}__{}'.format(column_name, operator)
   return query.filter(**{filter_arg: date})
@@ -131,7 +132,7 @@ def add_sid_or_string_begins_with_filter(
   did = request.GET.get(param_name, None)
   if did is None:
     return query
-  if d1_gmn.app.revision.is_sid(did):
+  if d1_gmn.app.did.is_sid(did):
     return d1_gmn.app.db_filter.add_sid_filter(
       request, query, column_name, param_name
     )

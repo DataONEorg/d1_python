@@ -189,7 +189,7 @@ def no_client_trust_decorator(func):
 
 @contextlib2.contextmanager
 def disable_sysmeta_sanity_checks():
-  with mock.patch('d1_gmn.app.views.asserts.sysmeta_sanity_checks'):
+  with mock.patch('d1_gmn.app.views.assert_sysmeta.sanity'):
     yield
 
 

@@ -37,6 +37,7 @@ import time
 
 import d1_gmn.app.auth
 import d1_gmn.app.delete
+import d1_gmn.app.did
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
@@ -46,7 +47,7 @@ import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.create
 import d1_gmn.app.views.diagnostics
 import d1_gmn.app.views.util
@@ -237,7 +238,7 @@ class Command(django.core.management.base.BaseCommand):
       except Exception as e:
         self._events.log_and_count('Log record iterator error', str(e))
       else:
-        if d1_gmn.app.util.is_pid_of_existing_object(pid):
+        if d1_gmn.app.did.is_pid_of_existing_object(pid):
           self._create_log_entry(log_record)
           msg_str = pid
         else:

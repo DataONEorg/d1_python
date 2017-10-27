@@ -30,6 +30,7 @@ from __future__ import absolute_import
 import argparse
 import logging
 
+import d1_gmn.app.did
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 # noinspection PyProtectedMember
@@ -262,16 +263,14 @@ class ReplicationQueueProcessor(object):
         f.write(chunk)
 
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
-    if not d1_gmn.app.local_replica.is_unprocessed_local_replica(pid):
+    if not d1_gmn.app.did.is_unprocessed_local_replica(pid):
       raise django.core.management.base.CommandError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
       )
 
   def _assert_pid_is_unknown_or_replica(self, pid):
-    if d1_gmn.app.sysmeta.is_did(
-        pid
-    ) and not d1_gmn.app.local_replica.is_local_replica(pid):
+    if d1_gmn.app.did.is_did(pid) and not d1_gmn.app.did.is_local_replica(pid):
       raise django.core.management.base.CommandError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)

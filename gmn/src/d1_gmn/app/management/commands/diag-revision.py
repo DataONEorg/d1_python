@@ -36,6 +36,7 @@ import argparse
 import logging
 import time
 
+import d1_gmn.app.did
 import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.util
 
@@ -92,8 +93,12 @@ class Command(django.core.management.base.BaseCommand):
       )
 
       # sid = d1_gmn.app.util.get_did(sciobj_model.sid)
-      obsoletes_pid = d1_gmn.app.util.get_did(sciobj_model.obsoletes)
-      obsoleted_by_pid = d1_gmn.app.util.get_did(sciobj_model.obsoleted_by)
+      obsoletes_pid = d1_gmn.app.did.get_did_by_foreign_key(
+        sciobj_model.obsoletes
+      )
+      obsoleted_by_pid = d1_gmn.app.did.get_did_by_foreign_key(
+        sciobj_model.obsoleted_by
+      )
 
       d1_gmn.app.revision.set_revision_links(
         sciobj_model, obsoletes_pid, obsoleted_by_pid

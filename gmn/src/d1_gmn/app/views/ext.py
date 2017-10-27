@@ -27,7 +27,7 @@ import json
 
 import d1_gmn.app.restrict_to_verb
 import d1_gmn.app.sysmeta
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util

@@ -24,9 +24,11 @@ from __future__ import absolute_import
 import functools
 
 import d1_gmn.app.auth
+import d1_gmn.app.did
 import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
+import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.util
 
 import d1_common.const
@@ -59,12 +61,12 @@ def resolve_sid(f):
 
 def resolve_sid_func(request, did):
   if d1_gmn.app.views.util.is_v1_api(request):
-    d1_gmn.app.views.asserts.is_pid_of_existing_object(did)
+    d1_gmn.app.views.assert_db.is_pid_of_existing_object(did)
     return did
   elif d1_gmn.app.views.util.is_v2_api(request):
-    if d1_gmn.app.sysmeta.is_pid(did):
+    if d1_gmn.app.did.is_pid(did):
       return did
-    elif d1_gmn.app.revision.is_sid(did):
+    elif d1_gmn.app.did.is_sid(did):
       return d1_gmn.app.revision.resolve_sid(did)
     else:
       raise d1_common.types.exceptions.NotFound(

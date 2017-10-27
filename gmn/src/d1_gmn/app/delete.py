@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 import urlparse
 
+import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
@@ -57,7 +58,7 @@ def delete_all_from_db():
 
 def delete_sciobj_from_database(pid):
   sciobj_model = d1_gmn.app.util.get_sci_model(pid)
-  if d1_gmn.app.revision.is_in_revision_chain(sciobj_model):
+  if d1_gmn.app.did.is_in_revision_chain(sciobj_model):
     d1_gmn.app.revision.cut_from_chain(sciobj_model)
   d1_gmn.app.revision.delete_chain(pid)
   # The models.CASCADE property is set on all ForeignKey fields, so most object

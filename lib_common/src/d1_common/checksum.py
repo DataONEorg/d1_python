@@ -131,6 +131,10 @@ def is_supported_algorithm(algorithm_str):
   return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP
 
 
+def get_supported_algorithms():
+  return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+
+
 # Format
 
 

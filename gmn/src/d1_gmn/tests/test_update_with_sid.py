@@ -65,7 +65,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1020(self, mn_client_v2):
     """MNStorage.update(): Updating standalone object that has SID with SID
-    belonging to another object or chain raises InvalidRequest
+    belonging to another object or chain raises IdentifierNotUnique
     """
     other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
@@ -73,13 +73,13 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
-    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+    with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
       self.update_obj(mn_client_v2, old_pid, sid=other_pid)
 
   @responses.activate
   def test_1030(self, mn_client_v2):
     """MNStorage.update(): Updating standalone object that does not have SID,
-    with SID belonging to another object or chain raises InvalidRequest
+    with SID belonging to another object or chain raises IdentifierNotUnique
     """
     other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
