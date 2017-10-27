@@ -36,6 +36,8 @@ import django.apps
 import django.conf
 import django.core.exceptions
 
+RESOURCE_MAP_CREATE_MODE_LIST = ['block', 'open']
+
 
 class GMNStartupChecks(django.apps.AppConfig):
   name = 'd1_gmn.app.startup'
@@ -44,6 +46,7 @@ class GMNStartupChecks(django.apps.AppConfig):
     self._check_cert_file('CLIENT_CERT_PATH')
     self._check_cert_file('CLIENT_CERT_PRIVATE_KEY_PATH')
     self._warn_unsafe_for_prod()
+    self._check_resource_map_create()
     self._create_sciobj_store_root()
 
   def _warn_unsafe_for_prod(self):
@@ -75,6 +78,18 @@ class GMNStartupChecks(django.apps.AppConfig):
       raise django.core.exceptions.ImproperlyConfigured(
         u'Configuration error: Invalid certificate path. '
         u'setting="{}". msg="{}"'.format(cert_pem_setting, str(e))
+      )
+
+  def _check_resource_map_create(self):
+    if (
+      django.conf.settings.RESOURCE_MAP_CREATE not in RESOURCE_MAP_CREATE_MODE_LIST
+    ):
+      raise django.core.exceptions.ImproperlyConfigured(
+        u'Configuration error: Invalid RESOURCE_MAP_CREATE setting. valid="{}" current="{}"'.
+        format(
+          ', '.join(RESOURCE_MAP_CREATE_MODE_LIST),
+          django.conf.settings.RESOURCE_MAP_CREATE
+        )
       )
 
   def _set_secret_key(self):

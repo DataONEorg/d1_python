@@ -31,6 +31,7 @@ import requests
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
 import d1_gmn.app.delete
+import d1_gmn.app.did
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 import d1_gmn.app.models
@@ -42,7 +43,8 @@ import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
-import d1_gmn.app.views.asserts
+import d1_gmn.app.views.assert_db
+import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.create
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.slice
@@ -359,7 +361,9 @@ def get_object_list(request):
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
-  d1_gmn.app.views.asserts.post_has_mime_parts(request, (('file', 'message'),))
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
+    request, (('file', 'message'),)
+  )
   try:
     synchronization_failed = d1_gmn.app.views.util.deserialize(
       request.FILES['message']
@@ -432,14 +436,16 @@ def put_meta(request):
   working with SIDs and chains.
   """
   d1_gmn.app.util.coerce_put_post(request)
-  d1_gmn.app.views.asserts.post_has_mime_parts(
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'sysmeta'))
   )
   pid = request.POST['pid']
   d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
-  d1_gmn.app.views.asserts.is_valid_for_update(pid)
+  d1_gmn.app.views.assert_db.is_valid_for_update(pid)
   new_sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
-  d1_gmn.app.views.asserts.has_matching_modified_timestamp(new_sysmeta_pyxb)
+  d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(
+    new_sysmeta_pyxb
+  )
   d1_gmn.app.views.create._set_mn_controlled_values(
     request, new_sysmeta_pyxb, update_submitter=False
   )
@@ -484,11 +490,11 @@ def post_refresh_system_metadata(request):
   """MNStorage.systemMetadataChanged(session, did, serialVersion,
                                      dateSysMetaLastModified) → boolean
   """
-  d1_gmn.app.views.asserts.post_has_mime_parts(
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'pid'), ('field', 'serialVersion'),
               ('field', 'dateSysMetaLastModified'),)
   )
-  d1_gmn.app.views.asserts.is_pid_of_existing_object(request.POST['pid'])
+  d1_gmn.app.views.assert_db.is_pid_of_existing_object(request.POST['pid'])
   d1_gmn.app.models.sysmeta_refresh_queue(
     request.POST['pid'],
     request.POST['serialVersion'],
@@ -551,19 +557,17 @@ def post_refresh_system_metadata(request):
 def post_object_list(request):
   """MNStorage.create(session, did, object, sysmeta) → Identifier
   """
-  d1_gmn.app.views.asserts.post_has_mime_parts(
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
   sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
-  d1_gmn.app.views.asserts.obsoletes_not_specified(sysmeta_pyxb)
+  d1_gmn.app.views.assert_sysmeta.obsoletes_not_specified(sysmeta_pyxb)
   new_pid = request.POST['pid']
-  d1_gmn.app.views.asserts.is_unused(new_pid)
-  sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
-  # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
+  d1_gmn.app.views.assert_db.is_valid_pid_for_create(new_pid)
+  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
   if sid:
-    d1_gmn.app.views.asserts.is_unused(sid)
+    d1_gmn.app.views.assert_db.is_unused(sid)
   d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
-  # d1_gmn.app.revision.create_chain(sid, new_pid)
   return new_pid
 
 
@@ -578,37 +582,28 @@ def put_object(request, old_pid):
   if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
     d1_gmn.app.auth.assert_create_update_delete_permission(request)
   d1_gmn.app.util.coerce_put_post(request)
-  d1_gmn.app.views.asserts.post_has_mime_parts(
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'newPid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  d1_gmn.app.views.asserts.is_valid_for_update(old_pid)
-  d1_gmn.app.views.asserts.is_not_obsoleted(old_pid)
+  d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(old_pid)
   sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
-  d1_gmn.app.views.asserts.obsoletes_matches_pid_if_specified(
+  d1_gmn.app.views.assert_sysmeta.obsoletes_matches_pid_if_specified(
     sysmeta_pyxb, old_pid
   )
   new_pid = request.POST['newPid']
+  d1_gmn.app.views.assert_db.is_valid_pid_for_update(new_pid)
   sysmeta_pyxb.obsoletes = old_pid
-
   # SID
-  sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
-  d1_gmn.app.views.asserts.is_valid_sid_for_chain(old_pid, sid)
-
+  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
+  d1_gmn.app.views.assert_db.is_valid_sid_for_chain(old_pid, sid)
+  #
   d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
-
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
-  # d1_gmn.app.revision.set_revision(old_pid, obsoleted_by_pid=new_pid)
-
-  # d1_gmn.app.revision.add_pid_to_chain(sid, old_pid, new_pid)
-  # if d1_gmn.app.sysmeta_revision.has_sid(sysmeta_pyxb):
-  #   sid = d1_gmn.app.sysmeta_revision.get_sid(sysmeta_pyxb)
-  # d1_gmn.app.revision.update_sid_to_head_pid_map(new_pid)
   d1_gmn.app.event_log.log_update_event(
     old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
   )
   d1_gmn.app.sysmeta.update_modified_timestamp(old_pid)
-
   return new_pid
 
 
@@ -617,7 +612,9 @@ def put_object(request, old_pid):
 def post_generate_identifier(request):
   """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
   """
-  d1_gmn.app.views.asserts.post_has_mime_parts(request, (('field', 'scheme'),))
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
+    request, (('field', 'scheme'),)
+  )
   if request.POST['scheme'] != 'UUID':
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Only the UUID scheme is currently supported'
@@ -646,8 +643,8 @@ def delete_object(request, pid):
 def put_archive(request, pid):
   """MNStorage.archive(session, did) → Identifier
   """
-  d1_gmn.app.views.asserts.is_not_replica(pid)
-  d1_gmn.app.views.asserts.is_not_archived(pid)
+  d1_gmn.app.views.assert_db.is_not_replica(pid)
+  d1_gmn.app.views.assert_db.is_not_archived(pid)
   d1_gmn.app.sysmeta.archive_object(pid)
   return pid
 
@@ -662,7 +659,7 @@ def put_archive(request, pid):
 def post_replicate(request):
   """MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   """
-  d1_gmn.app.views.asserts.post_has_mime_parts(
+  d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
   sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
@@ -670,7 +667,7 @@ def post_replicate(request):
     sysmeta_pyxb
   )
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-  d1_gmn.app.views.asserts.is_unused(pid)
+  d1_gmn.app.views.assert_db.is_unused(pid)
   d1_gmn.app.local_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb
   )

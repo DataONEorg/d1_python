@@ -31,6 +31,7 @@ import pyxb
 
 import d1_gmn.app
 import d1_gmn.app.auth
+import d1_gmn.app.did
 import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.revision
@@ -86,7 +87,6 @@ def create_or_update(sysmeta_pyxb, url=None):
   """
   # TODO: Make sure that old sections are removed if not included in update.
 
-  # import logging
   # logging.debug(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
 
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
@@ -95,7 +95,7 @@ def create_or_update(sysmeta_pyxb, url=None):
     sci_model = d1_gmn.app.util.get_sci_model(pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     sci_model = d1_gmn.app.models.ScienceObject()
-    sci_model.pid = d1_gmn.app.models.did(pid)
+    sci_model.pid = d1_gmn.app.did.get_or_create_did(pid)
     sci_model.url = url
     sci_model.serial_version = sysmeta_pyxb.serialVersion
     sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
@@ -113,7 +113,7 @@ def create_or_update(sysmeta_pyxb, url=None):
 
   replica_pyxb_to_model(sci_model, sysmeta_pyxb)
 
-  sid = d1_gmn.app.revision.get_sid(sysmeta_pyxb)
+  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
   obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
   obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
 
@@ -128,23 +128,6 @@ def create_or_update(sysmeta_pyxb, url=None):
   return sci_model
 
 
-def is_did(did):
-  return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
-
-
-def is_pid(did):
-  """An identifier is a PID if it exists in IdNamespace and is not a SID.
-  Includes unprocessed replicas and revision chain placeholders for remote
-  objects.
-  """
-  return is_did(did) and not d1_gmn.app.revision.is_sid(did)
-
-
-def is_archived(pid):
-  return d1_gmn.app.util.is_pid_of_existing_object(pid) \
-         and d1_gmn.app.util.get_sci_model(pid).is_archived
-
-
 def update_modified_timestamp(pid):
   sci_model = d1_gmn.app.util.get_sci_model(pid)
   _update_modified_timestamp(sci_model)
@@ -152,23 +135,6 @@ def update_modified_timestamp(pid):
 
 def model_to_pyxb(pid):
   return _model_to_pyxb(pid)
-
-
-def get_identifier_type(did):
-  if not is_did(did):
-    return u'unused on this Member Node'
-  elif d1_gmn.app.revision.is_sid(did):
-    return u'a Series ID (SID)'
-  elif d1_gmn.app.util.is_pid_of_existing_object(did):
-    return u'a Persistent ID (PID) of an existing local object'
-  elif d1_gmn.app.local_replica.is_local_replica(did):
-    return u'a Persistent ID (PID) of a local replica'
-  elif d1_gmn.app.local_replica.is_revision_chain_placeholder(did):
-    return \
-      u'a Persistent ID (PID) that is reserved due to being referenced in ' \
-      u'the revision chain of a local replica'
-  else:
-    assert False, u'Unable to classify identifier'
 
 
 def _model_to_pyxb(pid):
@@ -230,12 +196,14 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.rightsHolder = sciobj_model.rights_holder.subject
   base_pyxb.originMemberNode = sciobj_model.origin_member_node.urn
   base_pyxb.authoritativeMemberNode = sciobj_model.authoritative_member_node.urn
-  base_pyxb.obsoletes = d1_gmn.app.util.get_did(sciobj_model.obsoletes)
-  base_pyxb.obsoletedBy = d1_gmn.app.util.get_did(sciobj_model.obsoleted_by)
-  base_pyxb.archived = sciobj_model.is_archived
-  base_pyxb.seriesId = d1_gmn.app.revision.get_sid_by_pid(
-    d1_gmn.app.util.get_did(sciobj_model.pid)
+  base_pyxb.obsoletes = d1_gmn.app.did.get_did_by_foreign_key(
+    sciobj_model.obsoletes
   )
+  base_pyxb.obsoletedBy = d1_gmn.app.did.get_did_by_foreign_key(
+    sciobj_model.obsoleted_by
+  )
+  base_pyxb.archived = sciobj_model.is_archived
+  base_pyxb.seriesId = d1_gmn.app.revision.get_sid_by_pid(sciobj_model.pid.did)
   return base_pyxb
 
 

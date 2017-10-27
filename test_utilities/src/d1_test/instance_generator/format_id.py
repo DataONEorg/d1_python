@@ -25,6 +25,8 @@ from __future__ import absolute_import
 
 import random
 
+import d1_common.const
+
 import d1_test.d1_test_case
 import d1_test.sample
 
@@ -39,6 +41,10 @@ class Generate(object):
         o.formatId
         for o in d1_test.sample.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
       ]
+      # This method is used from functions that don't generate resource maps.
+      # Since resource maps are parsed in GMN, we don't want to submit invalid
+      # resource maps in general tests.
+      self._format_id_list.remove(d1_common.const.ORE_FORMAT_ID)
 
     return random.choice(self._format_id_list)
 

@@ -30,6 +30,7 @@ import shutil
 import d1_gmn.app
 import d1_gmn.app.util
 
+import d1_common.checksum
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.url
@@ -169,3 +170,9 @@ def delete_sciobj(url_split, pid):
     os.unlink(sciobj_path)
   except EnvironmentError:
     pass
+
+
+def calculate_checksum(request, checksum_calculator):
+  for chunk in request.FILES['object'].chunks():
+    checksum_calculator.update(chunk)
+  return checksum_calculator.hexdigest()

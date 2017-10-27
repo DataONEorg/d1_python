@@ -82,6 +82,11 @@ def assert_equals(
   if diff_str is None:
     return
 
+  logging.info(
+    '\nSample file: {0}\n{1} Sample mismatch. GOT <-> EXPECTED {1}\n{2}'.
+    format(filename, '-' * 10, diff_str)
+  )
+
   if pytest.config.getoption('--sample-write'):
     save(got_str, filename)
     return
@@ -223,7 +228,8 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=DataONE-Python/).+', '[volatile]', o_str)
   o_str = re.sub(r'(?<=DataONE-GMN:).+', '[volatile]', o_str)
   o_str = re.sub(r'(?<=Python ITK ).+', '[volatile]', o_str)
-
+  # ETA
+  o_str = re.sub(r'\d{1,3}h\d{2}m\d{2}s', '[volatile]', o_str)
   return o_str
 
 

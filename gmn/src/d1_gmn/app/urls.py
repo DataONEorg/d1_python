@@ -48,7 +48,8 @@ urlpatterns = [
     d1_gmn.app.views.external.get_log,
     name='get_log',
   ),
-  # MNCore.getCapabilities() - GET / and GET /node
+  # MNCore.getCapabilities() - GET /node
+  # Also available via Apache redirect from /
   url(
     r'^v[12]/?$',
     d1_gmn.app.views.external.get_node,
@@ -57,6 +58,7 @@ urlpatterns = [
   url(
     r'^v[12]/node/?$',
     d1_gmn.app.views.external.get_node,
+    name='get_node',
   ),
 
   # Tier 1: Read API (MNRead)
@@ -195,28 +197,3 @@ urlpatterns = [
     name='echo_exception'
   ),
 ]
-
-#
-# Functionality only available in debug mode
-#
-
-# if django.conf.settings.DEBUG_GMN:
-#   urlpatterns.extend([
-#     # UI tabs
-#     url(
-#       r'^diag/trusted-subjects$',
-#       d1_gmn.app.views.diagnostics.trusted_subjects,
-#       name='trusted_subjects',
-#     ),
-#     # Diagnostic APIs
-#     url(
-#       r'^diag/object-permissions/(.+?)$',
-#       d1_gmn.app.views.diagnostics.object_permissions,
-#       name='object_permissions',
-#     ),
-#     url(
-#       r'^diag/get-setting/(.+)$',
-#       d1_gmn.app.views.diagnostics.get_setting,
-#       name='get_setting',
-#     ),
-#   ])

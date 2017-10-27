@@ -1,3 +1,10 @@
+ssh -R3141:localhost:3141 pangaea-dev-orc-1.test.dataone.org
+
+$ export PIP_INDEX_URL=http://localhost:3141/dahl/dev/+simple/
+
+$ . gmn_venv/bin/activate
+$ pip install --upgrade --trusted-host localhost dataone.gmn
+
 #!/usr/bin/env bash
 
 DIR="${BASH_SOURCE%/*}"

@@ -552,7 +552,7 @@ LOGGING = {
 }
 
 MIDDLEWARE_CLASSES = (
-  # Custom GMN middleware.
+  # Custom GMN middleware
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
   'd1_gmn.app.middleware.response_handler.ResponseHandler',
@@ -566,20 +566,13 @@ TEMPLATES = [
     'DIRS': [
       d1_common.util.abs_path('./app/templates'), # noqa: F405
     ],
-    # 'APP_DIRS': True,
+    'APP_DIRS': True,
     'OPTIONS': {
       'context_processors': [
-        'django.contrib.auth.context_processors.auth',
         'django.template.context_processors.debug',
-        'django.template.context_processors.i18n',
-        'django.template.context_processors.media',
-        'django.template.context_processors.static',
-        'django.template.context_processors.tz',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
         'django.contrib.messages.context_processors.messages',
-      ],
-      'loaders': [
-        'django.template.loaders.filesystem.Loader',
-        # 'django.template.loaders.app_directories.Loader',
       ],
     },
   },
@@ -595,7 +588,11 @@ CACHES = {
 ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
-  'django.contrib.staticfiles',
+  # In Django 1.11, these are required in order for 404 not to trigger 500 when
+  # DEBUG=False
+  'django.contrib.auth',
+  'django.contrib.contenttypes',
+  #
   'd1_gmn.app',
   'd1_gmn.app.startup.GMNStartupChecks',
 ]

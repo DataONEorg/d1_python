@@ -47,7 +47,7 @@ import d1_test.d1_test_case
 #   # Blank rows are ignored
 #   # White space is stripped from start and end of rows.
 #
-#   ore_pid_value
+#   PID_ORE_value
 #   sci_meta_pid_value
 #   data_pid_1
 #   data_pid_2
@@ -73,7 +73,7 @@ import d1_test.d1_test_case
 #   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > <rdf:Description
 #   rdf:about="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value">
 #   <ore:isAggregatedBy
-#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation"/>
 #   <dcterms:identifier>sci_meta_pid_value</dcterms:identifier> <cito:documents
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
 #   <cito:documents
@@ -81,20 +81,20 @@ import d1_test.d1_test_case
 #   <cito:documents
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
 #   </rdf:Description> <rdf:Description
-#   rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value"> <rdf:type
+#   rdf:about="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value"> <rdf:type
 #   rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
 #   <ore:describes
-#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
-#   <dcterms:identifier>ore_pid_value</dcterms:identifier>
+#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation"/>
+#   <dcterms:identifier>PID_ORE_value</dcterms:identifier>
 #   <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
 #   </rdf:Description> <rdf:Description
 #   rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_1">
 #   <dcterms:identifier>data_pid_1</dcterms:identifier> <ore:isAggregatedBy
-#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation"/>
 #   <cito:isDocumentedBy
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
 #   </rdf:Description> <rdf:Description
-#   rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation">
+#   rdf:about="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation">
 #   <ore:aggregates
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
 #   <ore:aggregates
@@ -107,13 +107,13 @@ import d1_test.d1_test_case
 #   </rdf:Description> <rdf:Description
 #   rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_3">
 #   <dcterms:identifier>data_pid_3</dcterms:identifier> <ore:isAggregatedBy
-#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation"/>
 #   <cito:isDocumentedBy
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
 #   </rdf:Description> <rdf:Description
 #   rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_2">
 #   <dcterms:identifier>data_pid_2</dcterms:identifier> <ore:isAggregatedBy
-#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+#   rdf:resource="https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation"/>
 #   <cito:isDocumentedBy
 #   rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
 #   </rdf:Description> <rdf:Description
@@ -132,12 +132,12 @@ import d1_test.d1_test_case
 #
 #   OAI-ORE Description
 #
-#   Resource Map Document PID: ore_pid_value
-#                          ID: https://cn.dataone.org/cn/v2/resolve/ore_pid_value
+#   Resource Map Document PID: PID_ORE_value
+#                          ID: https://cn.dataone.org/cn/v2/resolve/PID_ORE_value
 #
 #   Aggregations
 #
-#   1: https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation
+#   1: https://cn.dataone.org/cn/v2/resolve/PID_ORE_value#aggregation
 #      Contents:
 #       1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_1
 #          pid: data_pid_1

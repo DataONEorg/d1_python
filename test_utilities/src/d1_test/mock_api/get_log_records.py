@@ -97,7 +97,7 @@ def _generate_log_records(client, n_start, n_count):
     logEntry = client.bindings.LogEntry()
 
     logEntry.entryId = str(i)
-    logEntry.identifier = 'object#{}'.format(n_start + i)
+    logEntry.identifier = 'object#{:04d}'.format(n_start + i)
     logEntry.ipAddress = '1.2.3.4'
     logEntry.userAgent = 'Mock getLogRecords() UserAgent #{}'.format(i)
     logEntry.subject = 'Mock getLogRecords() Subject #{}'.format(i)
