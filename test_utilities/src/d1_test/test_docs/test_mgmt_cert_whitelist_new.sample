@@ -1,0 +1,3 @@
+Enabled create, update and delete for subject: CN=cn-ucsb-1.dataone.org,DC=dataone,DC=org
+Subjects in whitelist:
+  CN=cn-ucsb-1.dataone.org,DC=dataone,DC=org
