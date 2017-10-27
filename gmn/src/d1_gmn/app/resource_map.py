@@ -26,19 +26,63 @@ import xml.sax
 
 import d1_gmn.app
 import d1_gmn.app.auth
+import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.util
+from d1_gmn.app.did import is_resource_map_db
+from d1_gmn.app.did import is_resource_map_member
 
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
 import d1_common.xml
 
+import django.conf
 
-def create_or_update(map_pid):
-  resource_map_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(map_pid)
-  resource_map = _parse_resource_map(resource_map_path)
+
+def assert_map_is_valid_for_create_by_str(resource_map_xml):
+  resource_map = parse_resource_map_from_str(resource_map_xml)
+  assert_map_is_valid_for_create(resource_map)
+
+
+def assert_map_is_valid_for_create_by_file(resource_map_path):
+  resource_map = _parse_resource_map_from_file(resource_map_path)
+  assert_map_is_valid_for_create(resource_map)
+
+
+def assert_map_is_valid_for_create(resource_map):
+  if not _is_map_valid_for_create(resource_map):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0,
+      u'Resource Map must be created after after creating the objects that it '
+      u'aggregates'
+    )
+
+
+def _is_map_valid_for_create(resource_map):
+  if django.conf.settings.RESOURCE_MAP_CREATE == 'block':
+    return _is_map_valid_for_block_mode_create(resource_map)
+  elif django.conf.settings.RESOURCE_MAP_CREATE == 'open':
+    return _is_map_valid_for_open_mode_create(resource_map)
+  return False
+
+
+def _is_map_valid_for_block_mode_create(resource_map):
+  member_pid_list = resource_map.getAggregatedPids()
+  for member_pid in member_pid_list:
+    if not d1_gmn.app.did.is_pid_of_existing_object(member_pid):
+      return False
+  return True
+
+
+def _is_map_valid_for_open_mode_create(resource_map):
+  return True
+
+
+def create_or_update(map_pid, resource_map):
+  # resource_map_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(map_pid)
+  # resource_map = _parse_resource_map_from_file(resource_map_path)
   member_pid_list = resource_map.getAggregatedPids()
   _create_or_update_map(map_pid, member_pid_list)
 
@@ -70,25 +114,8 @@ def get_resource_map_members_by_member(member_pid):
   ).values_list('did__did', flat=True)
 
 
-def is_resource_map_request(request):
-  return 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META
-
-
-def is_resource_map_xml(sysmeta_pyxb):
+def is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
   return sysmeta_pyxb.formatId == d1_common.const.ORE_FORMAT_ID
-
-
-def is_resource_map_pyxb(sysmeta_pyxb):
-  return sysmeta_pyxb.formatId == d1_common.const.ORE_FORMAT_ID
-
-
-def is_resource_map_db(pid):
-  return d1_gmn.app.models.ResourceMap.objects.filter(pid__did=pid).exists()
-
-
-def is_resource_map_member(pid):
-  return d1_gmn.app.models.ResourceMapMember.objects.filter(did__did=pid
-                                                            ).exists()
 
 
 #
@@ -96,11 +123,22 @@ def is_resource_map_member(pid):
 #
 
 
-def _parse_resource_map(resource_map_path):
+def _parse_resource_map_from_file(resource_map_path):
   resource_map = d1_common.resource_map.ResourceMap()
   try:
     with open(resource_map_path, 'rb') as f:
       resource_map.deserialize(file=f, format='xml')
+  except xml.sax.SAXException as e:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, u'Invalid Resource Map. error="{}"'.format(str(e))
+    )
+  return resource_map
+
+
+def parse_resource_map_from_str(resource_map_xml):
+  resource_map = d1_common.resource_map.ResourceMap()
+  try:
+    resource_map.deserialize(data=resource_map_xml, format='xml')
   except xml.sax.SAXException as e:
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'Invalid Resource Map. error="{}"'.format(str(e))
@@ -115,7 +153,7 @@ def _create_or_update_map(map_pid, member_pid_list):
 
 def _get_or_create_map(map_pid):
   return d1_gmn.app.models.ResourceMap.objects.get_or_create(
-    pid=d1_gmn.app.models.did(map_pid)
+    pid=d1_gmn.app.models.get_or_create_did(map_pid)
   )[0]
 
 
@@ -128,7 +166,7 @@ def _update_map(map_model, member_pid_list):
                                                      ).delete()
   for member_pid in member_pid_list:
     member_model = d1_gmn.app.models.ResourceMapMember(
-      ResourceMap=map_model, did=d1_gmn.app.models.did(member_pid)
+      ResourceMap=map_model, did=d1_gmn.app.did.get_or_create_did(member_pid)
     )
     member_model.save()
 
