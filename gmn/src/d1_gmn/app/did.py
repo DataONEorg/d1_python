@@ -77,8 +77,9 @@ def is_pid_of_existing_object(did):
   """Return True if PID is for an object for which science bytes are stored
   locally
 
-  This excludes SIDs and PIDs for unprocessed replica requests, remote or non-existing
-  revisions of local replicas and objects aggregated in Resource Maps.
+  This excludes SIDs and PIDs for unprocessed replica requests, remote or
+  non-existing revisions of local replicas and objects aggregated in Resource
+  Maps.
   """
   return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=did).exists()
 
@@ -131,7 +132,7 @@ def classify_identifier(did):
   Return <UNKNOWN> if the DID could not be classified. This should not
   normally happen and may indicate that the DID was orphaned in the database.
   """
-  if not is_unused_did(did):
+  if is_unused_did(did):
     return u'unused on this Member Node'
   elif is_sid(did):
     return u'a Series ID (SID) of a revision chain'
@@ -177,6 +178,10 @@ def is_valid_pid_for_update(did):
   """Return True if {did} is the PID of an object that can be created as an
   update with MNStorage.update()
   """
+  # print is_pid_of_existing_object(did)
+  # print is_sid(did)
+  # print is_local_replica(did)
+
   return (
     not is_pid_of_existing_object(did) and not is_sid(did) and
     not is_local_replica(did)

@@ -236,7 +236,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1090(self):
     """MNStorage.update(): Update an object with existing PID raises
-    IdentifierNotUnique
+    InvalidRequest
     """
 
     def test(client):
@@ -246,7 +246,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
         client, sid=True
       )
-      with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
         new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
           client, old_pid, new_pid=other_pid
         )

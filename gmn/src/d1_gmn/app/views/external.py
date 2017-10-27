@@ -441,7 +441,7 @@ def put_meta(request):
   )
   pid = request.POST['pid']
   d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
-  d1_gmn.app.views.assert_db.is_valid_for_update(pid)
+  # d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(pid)
   new_sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(
     new_sysmeta_pyxb

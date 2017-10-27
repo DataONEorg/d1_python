@@ -37,9 +37,6 @@ import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.revision
-# ------------------------------------------------------------------------------
-# Identifier
-# ------------------------------------------------------------------------------
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
@@ -83,16 +80,18 @@ def is_valid_pid_for_create(did):
 def is_valid_pid_for_update(did):
   if not d1_gmn.app.did.is_valid_pid_for_update(did):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Identifier cannot be used for an update. It is {}. did="{}"'
-      .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
+      0,
+      u'Identifier cannot be used for an update. did="{}" cause="Object is {}"'
+      .format(did, d1_gmn.app.did.classify_identifier(did)), identifier=did
     )
 
 
 def is_valid_pid_to_be_updated(did):
   if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Identifier cannot be used for an update. It is {}. did="{}"'
-      .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
+      0,
+      u'Identifier cannot be used for an update. did="{}" cause="Object is {}"'
+      .format(did, d1_gmn.app.did.classify_identifier(did)), identifier=did
     )
 
 
@@ -255,16 +254,4 @@ def is_not_archived(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'The object has been archived and cannot be updated. '
       u'pid="{}"'.format(pid), identifier=pid
-    )
-
-
-def is_valid_for_update(did):
-  """Assert that the object with the given {pid} can be
-  updated.
-  """
-  if not d1_gmn.app.did.is_valid_pid_for_update(did):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, u'The provided identifier is not the PID of an object that can be '
-      u'updated. The identifier "{}" is {}.'
-      .format(did, d1_gmn.app.did.classify_identifier(did))
     )
