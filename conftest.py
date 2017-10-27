@@ -44,6 +44,13 @@ import django.db.utils
 # from django.db import django.db.connections
 
 DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
+D1_SKIP = 'd1/skip'
+
+# Allow redefinition of functions. Pytest allows multiple hooks with the same
+# name.
+# flake8: noqa: F811
+
+# flake8: noqa: F403
 
 # import d1_common.util
 # d1_common.util.log_setup(True)
@@ -82,12 +89,17 @@ def pytest_addoption(parser):
     '--fixture-regen', action='store_true',
     help='Force regenerating the template fixture JSON files'
   )
+  parser.addoption(
+    '--clear-skip', action='store_true', help='Force running all tests'
+  )
 
 
 def pytest_sessionstart(session):
   """Run before session.main()"""
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
+  if pytest.config.getoption('--clear-skip'):
+    pytest.config.cache.set(D1_SKIP, [])
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -130,6 +142,16 @@ def pytest_runtest_makereport(item, call):
       )
 
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+  outcome = yield
+  rep = outcome.get_result()
+  if rep.when == "call" and (rep.passed or rep.skipped):
+    passed_set = set(pytest.config.cache.get(D1_SKIP, []))
+    passed_set.add(item.nodeid)
+    pytest.config.cache.set(D1_SKIP, list(passed_set))
+
+
 def pytest_generate_tests(metafunc):
   """Parameterize test functions via parameterize_dict class member"""
   try:
@@ -141,6 +163,25 @@ def pytest_generate_tests(metafunc):
     arg_names,
     [[func_args[name] for name in arg_names] for func_args in func_arg_list]
   )
+
+
+def pytest_collection_modifyitems(session, config, items):
+  passed_set = set(pytest.config.cache.get(D1_SKIP, []))
+  new_item_list = []
+  for item in items:
+    if item.nodeid not in passed_set:
+      new_item_list.append(item)
+  if new_item_list:
+    logging.info(
+      "Skipping {} previously passed tests".
+      format(len(items) - len(new_item_list))
+    )
+    items[:] = new_item_list
+  else:
+    logging.info(
+      "All tests have passed. Starting complete session".format(len(items))
+    )
+    pytest.config.cache.set(D1_SKIP, [])
 
 
 # Fixtures
