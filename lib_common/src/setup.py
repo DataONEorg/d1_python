@@ -28,7 +28,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.common',
-    version='2.3.9rc1',
+    version='2.3.9',
     description=(
       'Contains functionality common to projects that interact with '
       'the DataONE infrastructure via Python'
