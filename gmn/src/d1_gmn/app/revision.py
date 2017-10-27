@@ -24,23 +24,12 @@ from __future__ import absolute_import
 
 import d1_gmn.app
 import d1_gmn.app.auth
+import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.util
 
 import d1_common.types.exceptions
 import d1_common.xml
-
-# PyXB
-
-# def has_sid(sysmeta_pyxb):
-#   return get_sid(sysmeta_pyxb) is not None
-
-
-def get_sid(sysmeta_pyxb):
-  return d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
-
-
-# DB
 
 
 def create_or_update_chain(pid, sid, obsoletes_pid, obsoleted_by_pid):
@@ -118,43 +107,35 @@ def resolve_sid(sid):
 
 
 def get_sid_by_pid(pid):
-  """Given the {pid} of the object in a chain, return the SID for the chain.
+  """Given the {pid} of the object in a chain, return the SID for the chain
+
   Return None if there is no SID for the chain. This operation is also valid
   for standalone objects which may or may not have a SID.
 
   This is the reverse of resolve.
 
+  All known PIDs are associated with a chain.
+
   Preconditions:
   - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_pid().
   """
-  chain_model = _get_chain_by_pid(pid)
-  return d1_gmn.app.util.get_did(chain_model.sid)
+  return d1_gmn.app.did.get_did_by_foreign_key(_get_chain_by_pid(pid).sid)
 
 
 def set_revision_links(sciobj_model, obsoletes_pid=None, obsoleted_by_pid=None):
   if obsoletes_pid:
-    sciobj_model.obsoletes = d1_gmn.app.models.did(obsoletes_pid)
+    sciobj_model.obsoletes = d1_gmn.app.did.get_or_create_did(obsoletes_pid)
     _set_revision_reverse(
       sciobj_model.pid.did, obsoletes_pid, is_obsoletes=False
     )
   if obsoleted_by_pid:
-    sciobj_model.obsoleted_by = d1_gmn.app.models.did(obsoleted_by_pid)
+    sciobj_model.obsoleted_by = d1_gmn.app.did.get_or_create_did(
+      obsoleted_by_pid
+    )
     _set_revision_reverse(
       sciobj_model.pid.did, obsoleted_by_pid, is_obsoletes=True
     )
   sciobj_model.save()
-
-
-def is_obsoleted(pid):
-  return d1_gmn.app.util.get_sci_model(pid).obsoleted_by is not None
-
-
-def is_in_revision_chain(sciobj_model):
-  return bool(sciobj_model.obsoleted_by or sciobj_model.obsoletes)
-
-
-def is_sid(did):
-  return d1_gmn.app.models.Chain.objects.filter(sid__did=did).exists()
 
 
 #
@@ -214,7 +195,9 @@ def _merge_chains(chain_model_a, chain_model_b):
   this point, the two chains need to be merged. Merging the chains causes A
   to take on the SID of B.
   """
-  _set_chain_sid(chain_model_a, d1_gmn.app.util.get_did(chain_model_b.sid))
+  _set_chain_sid(
+    chain_model_a, d1_gmn.app.did.get_did_by_foreign_key(chain_model_b.sid)
+  )
   for member_model in _get_all_chain_member_queryset_by_chain(chain_model_b):
     member_model.chain = chain_model_a
     member_model.save()
@@ -223,7 +206,7 @@ def _merge_chains(chain_model_a, chain_model_b):
 
 def _add_pid_to_chain(chain_model, pid):
   chain_member_model = d1_gmn.app.models.ChainMember(
-    chain=chain_model, pid=d1_gmn.app.models.did(pid)
+    chain=chain_model, pid=d1_gmn.app.did.get_or_create_did(pid)
   )
   chain_member_model.save()
 
@@ -241,7 +224,7 @@ def _set_chain_sid(chain_model, sid):
       0, u'Attempted to modify existing SID. '
       u'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid)
     )
-  chain_model.sid = d1_gmn.app.models.did(sid)
+  chain_model.sid = d1_gmn.app.did.get_or_create_did(sid)
   chain_model.save()
 
 
@@ -277,7 +260,8 @@ def _find_head_or_latest_connected(pid, last_pid=None):
 
 def _get_chain_by_pid(pid):
   """Find chain by pid
-  Return None if not found
+
+  Return None if not found.
   """
   try:
     return d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain
@@ -286,7 +270,8 @@ def _get_chain_by_pid(pid):
 
 
 def _get_chain_by_sid(sid):
-  """Return None if not found"""
+  """Return None if not found
+  """
   try:
     return d1_gmn.app.models.Chain.objects.get(sid__did=sid)
   except d1_gmn.app.models.Chain.DoesNotExist:
@@ -307,7 +292,7 @@ def _update_sid_to_last_existing_pid_map(pid):
   chain_model = _get_chain_by_pid(last_pid)
   if not chain_model:
     return
-  chain_model.head_pid = d1_gmn.app.models.did(last_pid)
+  chain_model.head_pid = d1_gmn.app.did.get_or_create_did(last_pid)
   chain_model.save()
 
 
@@ -321,7 +306,7 @@ def _create_chain(pid, sid):
   """
   chain_model = d1_gmn.app.models.Chain(
     # sid=d1_gmn.app.models.did(sid) if sid else None,
-    head_pid=d1_gmn.app.models.did(pid)
+    head_pid=d1_gmn.app.did.get_or_create_did(pid)
   )
   chain_model.save()
   _add_pid_to_chain(chain_model, pid)
@@ -338,8 +323,8 @@ def _create_chain(pid, sid):
 
 def _map_sid_to_pid(chain_model, sid, pid):
   if sid is not None:
-    chain_model.sid = d1_gmn.app.models.did(sid)
-  chain_model.head_pid = d1_gmn.app.models.did(pid)
+    chain_model.sid = d1_gmn.app.did.get_or_create_did(sid)
+  chain_model.head_pid = d1_gmn.app.did.get_or_create_did(pid)
   chain_model.save()
 
 
@@ -394,9 +379,9 @@ def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
     sciobj_model = d1_gmn.app.util.get_sci_model(from_pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     return
-  if not d1_gmn.app.util.is_pid_of_existing_object(to_pid):
+  if not d1_gmn.app.did.is_pid_of_existing_object(to_pid):
     return
-  did_model = d1_gmn.app.models.did(to_pid)
+  did_model = d1_gmn.app.did.get_or_create_did(to_pid)
   if is_obsoletes:
     sciobj_model.obsoletes = did_model
   else:
