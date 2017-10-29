@@ -312,8 +312,8 @@ def remote_replica(sciobj_model, replica_info_model):
 # second model to map PIDs to ChainIds.
 
 
-# Represent a single chain
 class Chain(models.Model):
+  """Represent a single chain"""
   # id = ChainId
   sid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_sid', null=True
@@ -323,36 +323,13 @@ class Chain(models.Model):
   )
 
 
-# Represent all members of a single chain
 class ChainMember(models.Model):
+  """Represent all members of a single chain"""
   chain = models.ForeignKey(Chain, models.CASCADE)
   pid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
   )
 
-
-#     SeriesIdToHeadPersistentId.objects.get_or_create(
-#       sid=did(sid), defaults={'pid': did(pid)}
-#     )
-
-# class SeriesIdToPersistentId(models.Model):
-#   sid = models.ForeignKey(
-#     IdNamespace, models.CASCADE, related_name='%(class)s_sid'
-#   )
-
-# def sid_to_pid(sid, pid):
-#   return SeriesIdToPersistentId.objects.get_or_create(
-#     sid=did(sid), pid=did(pid)
-#   )[0]
-
-# class SeriesIdToHeadPersistentId(models.Model):
-#   # For fast resolve of SID to the current head of a chain.
-#   sid = models.OneToOneField(
-#     IdNamespace, models.CASCADE, related_name='%(class)s_sid'
-#   )
-#   pid = models.OneToOneField(
-#     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
-#   )
 
 # ------------------------------------------------------------------------------
 # Access Log
@@ -505,7 +482,8 @@ class ResourceMap(models.Model):
 
 
 class ResourceMapMember(models.Model):
-  ResourceMap = models.ForeignKey(ResourceMap, models.CASCADE)
-  did = models.OneToOneField(
+  resource_map = models.ForeignKey(ResourceMap, models.CASCADE)
+  # Any number of Resource Maps can aggregate the same DIDs
+  did = models.ForeignKey(
     IdNamespace, models.CASCADE, related_name='%(class)s_did'
   )

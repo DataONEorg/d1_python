@@ -74,9 +74,7 @@ def cache_add_last_in_slice(request, query, total_int, sort_field_list):
   # logging.debug('Cache set. key="{}" last={}'.format(key_str, last_tup))
 
 
-#
 # Private
-#
 
 
 def _convert_and_sanity_check_slice_params(query_dict, total_int):

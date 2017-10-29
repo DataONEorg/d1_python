@@ -55,9 +55,7 @@ class AccessControl():
   def clear(self):
     self.allow.clear()
 
-  #
   # Private.
-  #
 
   def _get_valid_permissions(self):
     """List of permissions, in increasing order."""
