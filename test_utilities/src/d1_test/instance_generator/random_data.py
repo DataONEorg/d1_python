@@ -140,3 +140,49 @@ def random_email():
 
 def random_bool():
   return bool(random.randint(0, 1))
+
+
+def random_bool_factor(f=0.5):
+  """Return random bool value that is more likely to be True the closer {f} is
+  to 1.0
+
+  - {f} == [0, 1)
+  - {f} = 1.0: Always return True
+  - {f} = 0.1: Return True 10% of the time
+  """
+  return random.random() < f
+
+
+def random_sized_sample(seq, min_size=1, max_size=10):
+  """Return a random number of randomly selected values from {seq}
+
+  If it's not possible to meet the min_size and/or max_size criteria due to the
+  number of values in {seq}, a best effort is made.
+  """
+  min_size = min(min_size, len(seq))
+  max_size = min(max_size, len(seq))
+  if min_size >= max_size:
+    return []
+  return random.sample(seq, random.randint(min_size, max_size))
+
+
+def random_sized_sample_pop(seq, min_size=1, max_size=10):
+  """Return a random number of randomly selected values from {seq}, then remove
+  them from {seq}.
+
+  If it's not possible to meet the min_size and/or max_size criteria due to the
+  number of values in {seq}, a best effort is made.
+  """
+  s = random_sized_sample(seq, min_size, max_size)
+  if isinstance(seq, set):
+    seq.difference_update(s)
+  else:
+    for a in s:
+      seq.remove(a)
+  return s
+
+
+def random_choice_pop(seq):
+  v = random.choice(seq)
+  seq.remove(v)
+  return v
