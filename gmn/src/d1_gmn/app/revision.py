@@ -35,7 +35,7 @@ import d1_common.xml
 def create_or_update_chain(pid, sid, obsoletes_pid, obsoleted_by_pid):
   chain_model = _get_chain_by_pid(pid)
   if chain_model:
-    _update_chain(chain_model, pid, sid, obsoletes_pid, obsoleted_by_pid)
+    _set_chain_sid(chain_model, sid)
   else:
     _add_sciobj(pid, sid, obsoletes_pid, obsoleted_by_pid)
   _update_sid_to_last_existing_pid_map(pid)
@@ -64,7 +64,7 @@ def cut_from_chain(sciobj_model):
   - The object with the pid is verified to exist and to be a member of an
   revision chain. E.g., with:
 
-  d1_gmn.app.views.asserts.is_pid(pid)
+  d1_gmn.app.views.asserts.is_existing_object(pid)
   d1_gmn.app.views.asserts.is_in_revision_chain(pid)
 
   Postconditions:
@@ -117,7 +117,7 @@ def get_sid_by_pid(pid):
   All known PIDs are associated with a chain.
 
   Preconditions:
-  - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_pid().
+  - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
   """
   return d1_gmn.app.did.get_did_by_foreign_key(_get_chain_by_pid(pid).sid)
 
@@ -138,9 +138,37 @@ def set_revision_links(sciobj_model, obsoletes_pid=None, obsoleted_by_pid=None):
   sciobj_model.save()
 
 
-#
-# Private
-#
+def is_obsoletes_pid(pid):
+  """Return True if {pid} is referenced in the obsoletes field of any object
+
+  This will return True even if the PID is in the obsoletes field of an object
+  that does not exist on the local MN, such as replica that is in an incomplete
+  chain.
+  """
+  return d1_gmn.app.models.ScienceObject.objects.filter(obsoletes__did=pid
+                                                        ).exists()
+
+
+def is_obsoleted_by_pid(pid):
+  """Return True if {pid} is referenced in the obsoletedBy field of any object
+
+  This will return True even if the PID is in the obsoletes field of an object
+  that does not exist on the local MN, such as replica that is in an incomplete
+  chain.
+  """
+  return d1_gmn.app.models.ScienceObject.objects.filter(obsoleted_by__did=pid
+                                                        ).exists()
+
+
+def is_revision(pid):
+  """Return True if {pid} is referenced in the obsoletes or obsoletedBy field of
+  any object
+
+  This will return True even if the PID is in the obsoletes field of an object
+  that does not exist on the local MN, such as replica that is in an incomplete
+  chain.
+  """
+  return is_obsoletes_pid(pid) or is_obsoleted_by_pid(pid)
 
 
 def _add_sciobj(pid, sid, obsoletes_pid, obsoleted_by_pid):
@@ -172,10 +200,6 @@ def _add_to_chain(pid, sid, obsoletes_pid, obsoleted_by_pid):
   _add_pid_to_chain(chain_model, pid)
   _set_chain_sid(chain_model, sid)
   return True
-
-
-def _update_chain(chain_model, pid, sid, obsoletes_pid, obsoleted_by_pid):
-  _set_chain_sid(chain_model, sid)
 
 
 def _merge_chains(chain_model_a, chain_model_b):
@@ -286,7 +310,7 @@ def _update_sid_to_last_existing_pid_map(pid):
 
   Preconditions:
   - {pid} must exist and be verified to be a PID.
-    d1_gmn.app.views.asserts.is_pid()
+    d1_gmn.app.views.asserts.is_existing_object()
   """
   last_pid = _find_head_or_latest_connected(pid)
   chain_model = _get_chain_by_pid(last_pid)
@@ -301,8 +325,8 @@ def _create_chain(pid, sid):
   be called in MNStorage.create().
 
   Preconditions:
-  - {sid} must either be None or be previously unused.
-    d1_gmn.app.views.asserts.is_unused()
+  - {sid} must be verified to be available to be assigned to a new standalone
+  object. E.g., with is_valid_sid_for_new_standalone().
   """
   chain_model = d1_gmn.app.models.Chain(
     # sid=d1_gmn.app.models.did(sid) if sid else None,
@@ -379,7 +403,7 @@ def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
     sciobj_model = d1_gmn.app.util.get_sci_model(from_pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     return
-  if not d1_gmn.app.did.is_pid_of_existing_object(to_pid):
+  if not d1_gmn.app.did.is_existing_object(to_pid):
     return
   did_model = d1_gmn.app.did.get_or_create_did(to_pid)
   if is_obsoletes:

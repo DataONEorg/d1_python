@@ -51,227 +51,177 @@ import d1_test.instance_generator.identifier
 @freezegun.freeze_time('1955-05-15')
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self):
+  def test_1000(self, mn_client_v1_v2):
     """update(): Raises NotAuthorized if none of the trusted subjects are
-    active"""
-
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
-      with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-        self.update_obj(
-          client, pid, active_subj_list=['subj1', 'subj2', 'subj3'],
-          trusted_subj_list=['subj4', 'subj5'], disable_auth=False
-        )
-
-    test(self.client_v1)
-    test(self.client_v2)
-
-  @responses.activate
-  def test_1010(self):
-    """update(): Non-existing object raises NotFound"""
-
-    def test(client):
-      with pytest.raises(d1_common.types.exceptions.NotFound):
-        self.get_obj(client, '_invalid_pid_')
-
-    test(self.client_v1)
-    test(self.client_v2)
-
-  @responses.activate
-  def test_1020(self):
-    """update(): updates the object if one or more trusted subjects are active"""
-
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
+    active
+    """
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      mn_client_v1_v2, sid=True
+    )
+    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
       self.update_obj(
-        client, pid, active_subj_list=['subj1', 'subj2', 'subj3'],
-        trusted_subj_list=['subj2', 'subj5'], disable_auth=False
+        mn_client_v1_v2, pid, active_subj_list=['subj1', 'subj2', 'subj3'],
+        trusted_subj_list=['subj4', 'subj5'], disable_auth=False
       )
 
-    test(self.client_v1)
-    test(self.client_v2)
+  @responses.activate
+  def test_1010(self, mn_client_v1_v2):
+    """update(): Non-existing object raises NotFound"""
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      self.get_obj(mn_client_v1_v2, '_invalid_pid_')
 
   @responses.activate
-  def test_1030(self):
+  def test_1020(self, mn_client_v1_v2):
+    """update(): updates the object if one or more trusted subjects are active"""
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      mn_client_v1_v2, sid=True
+    )
+    self.update_obj(
+      mn_client_v1_v2, pid, active_subj_list=['subj1', 'subj2', 'subj3'],
+      trusted_subj_list=['subj2', 'subj5'], disable_auth=False
+    )
+
+  @responses.activate
+  def test_1030(self, mn_client_v1_v2):
     """update() / get(): Object with no explicit permissions can be retrieved
     by a trusted subject
     """
 
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
-      pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(client, pid)
-      self.get_obj(
-        client,
-        pid,
-        active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
-        trusted_subj_list=['active_and_trusted_subj', 'subj4'],
-        disable_auth=False,
-      )
-
-    test(self.client_v1)
-    test(self.client_v2)
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      mn_client_v1_v2, sid=True
+    )
+    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(mn_client_v1_v2, pid)
+    self.get_obj(
+      mn_client_v1_v2,
+      pid,
+      active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
+      trusted_subj_list=['active_and_trusted_subj', 'subj4'],
+      disable_auth=False,
+    )
 
   @responses.activate
-  def test_1040(self):
+  def test_1040(self, mn_client_v1_v2):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by non-trusted subjects
     """
-
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
-      pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, pid, permission_list=None
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      mn_client_v1_v2, sid=True
+    )
+    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+      mn_client_v1_v2, pid, permission_list=None
+    )
+    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+      self.get_obj(
+        mn_client_v1_v2,
+        pid,
+        active_subj_list=['subj1', 'subj2', 'shared_subj', 'subj4'],
+        trusted_subj_list=['subj5', 'subj6'],
+        disable_auth=False,
       )
-      with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-        self.get_obj(
-          client,
-          pid,
-          active_subj_list=['subj1', 'subj2', 'shared_subj', 'subj4'],
-          trusted_subj_list=['subj5', 'subj6'],
-          disable_auth=False,
-        )
-
-    test(self.client_v1)
-    test(self.client_v2)
 
   @responses.activate
-  def test_1050(self):
+  def test_1050(self, mn_client_v1_v2):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by the submitter
     """
-
-    def test(client):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client, sid=True)
-      pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, pid, permission_list=None
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      mn_client_v1_v2, sid=True
+    )
+    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+      mn_client_v1_v2, pid, permission_list=None
+    )
+    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+      self.get_obj(
+        mn_client_v1_v2,
+        pid,
+        active_subj_list=[sysmeta_pyxb.submitter.value()],
+        trusted_subj_list=None,
+        disable_auth=False,
       )
-      with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-        self.get_obj(
-          client,
-          pid,
-          active_subj_list=[sysmeta_pyxb.submitter.value()],
-          trusted_subj_list=None,
-          disable_auth=False,
-        )
-
-    test(self.client_v1)
-    test(self.client_v2)
 
   @responses.activate
-  def test_1060(self):
+  def test_1060(self, mn_client_v1_v2):
     """update() of object records an update event on the obsoleted object and a
     create event on the new object
     """
-
-    def test(client):
-      pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      pid_update, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, pid_create, permission_list=None
-      )
-      # Obsoleted object has a create and an update event
-      log = client.getLogRecords(pidFilter=pid_create)
-      self.sample.assert_equals(log, 'update_records_event', client)
-
-    with d1_test.d1_test_case.reproducible_random_context(
-        'update_records_event'
-    ):
-      with d1_gmn.tests.gmn_mock.disable_auth():
-        with d1_test.d1_test_case.reproducible_random_context():
-          test(self.client_v1)
-          test(self.client_v2)
-
-  @responses.activate
-  def test_1070(self):
-    """update() correctly adjusts sysmeta on obsoleted object"""
-
-    def test(client):
-      pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      sysmeta_before_update_pyxb = client.getSystemMetadata(pid_create)
-      # Make sure that datetime.now() changes between create() and update().
-      time.sleep(0.2)
-      pid_update, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, pid_create, permission_list=None
-      )
-      sysmeta_after_update_pyxb = client.getSystemMetadata(pid_create)
-      # dateSysMetadataModified is updated on obsoleted object
-      # dateUploaded remains unchanged on obsoleted object
-      self.sample.assert_equals(
-        sysmeta_before_update_pyxb, 'update_adjusts_obsoleted_obj_before',
-        client
-      )
-      self.sample.assert_equals(
-        sysmeta_after_update_pyxb, 'update_adjusts_obsoleted_obj_after', client
-      )
-
     with d1_gmn.tests.gmn_mock.disable_auth():
       with d1_test.d1_test_case.reproducible_random_context():
-
-        test(self.client_v1)
-        test(self.client_v2)
+        pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+          mn_client_v1_v2, sid=True
+        )
+        self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
+        # Obsoleted object has a create and an update event
+        log = mn_client_v1_v2.getLogRecords(pidFilter=pid_create)
+        self.sample.assert_equals(log, 'update_records_event', mn_client_v1_v2)
 
   @responses.activate
-  def test_1080(self):
-    """MNStorage.update(): Obsoleted object raises InvalidRequest"""
-
-    def test(client):
-      pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
-        client, sid=True
-      )
-      pid_update, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-        client, pid_create, permission_list=None
-      )
-      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-        pid_update, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
-          client, pid_create, permission_list=None
+  def test_1070(self, mn_client_v1_v2):
+    """update() correctly adjusts sysmeta on obsoleted object"""
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      with d1_test.d1_test_case.reproducible_random_context():
+        pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+          mn_client_v1_v2, sid=True
+        )
+        sysmeta_before_update_pyxb = mn_client_v1_v2.getSystemMetadata(
+          pid_create
+        )
+        # Make sure that datetime.now() changes between create() and update().
+        time.sleep(0.2)
+        self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
+        sysmeta_after_update_pyxb = mn_client_v1_v2.getSystemMetadata(
+          pid_create
+        )
+        # dateSysMetadataModified is updated on obsoleted object
+        # dateUploaded remains unchanged on obsoleted object
+        self.sample.assert_equals(
+          sysmeta_before_update_pyxb, 'update_adjusts_obsoleted_obj_before',
+          mn_client_v1_v2
+        )
+        self.sample.assert_equals(
+          sysmeta_after_update_pyxb, 'update_adjusts_obsoleted_obj_after',
+          mn_client_v1_v2
         )
 
+  @responses.activate
+  def test_1080(self, mn_client_v1_v2):
+    """MNStorage.update(): Obsoleted object raises InvalidRequest"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+        mn_client_v1_v2, sid=True
+      )
+      self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
+      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
+        self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
 
   @responses.activate
-  def test_1090(self):
+  def test_1090(self, mn_client_v1_v2):
     """MNStorage.update(): Update an object with existing PID raises
-    InvalidRequest
+    IdentifierNotUnique
     """
-
-    def test(client):
+    with d1_gmn.tests.gmn_mock.disable_auth():
       other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
-        client, sid=True
+        mn_client_v1_v2, sid=True
       )
       old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=True
+        mn_client_v1_v2, sid=True
       )
-      with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-        new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
-          client, old_pid, new_pid=other_pid
-        )
-
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+      with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
+        self.update_obj(mn_client_v1_v2, old_pid, new_pid=other_pid)
 
   @responses.activate
-  def test_1100(self):
+  def test_1100(self, mn_client_v1_v2):
     """MNStorage.update(): Update an object with URL PID not matching SysMeta
     raises InvalidSystemMetadata
     """
-
-    def test(client):
+    with d1_gmn.tests.gmn_mock.disable_auth():
       old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
-        client, sid=True
+        mn_client_v1_v2, sid=True
       )
       pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-        client
+        mn_client_v1_v2
       )
       sysmeta_pyxb.identifier = d1_test.instance_generator.identifier.generate_pid()
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
-        client.update(old_pid, StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb)
-
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+        mn_client_v1_v2.update(
+          old_pid, StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb
+        )

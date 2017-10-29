@@ -238,7 +238,7 @@ class Command(django.core.management.base.BaseCommand):
       except Exception as e:
         self._events.log_and_count('Log record iterator error', str(e))
       else:
-        if d1_gmn.app.did.is_pid_of_existing_object(pid):
+        if d1_gmn.app.did.is_existing_object(pid):
           self._create_log_entry(log_record)
           msg_str = pid
         else:

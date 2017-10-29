@@ -325,7 +325,7 @@ class UpdateSystemMetadata(object):
         logging.info('{}: {}'.format(skip_msg, pid))
         continue
 
-      if not d1_gmn.app.did.is_pid_of_existing_object(pid):
+      if not d1_gmn.app.did.is_existing_object(pid):
         skip_msg = 'Skipped: Unknown on local node'
         self._events.count(skip_msg)
         logging.info('{}: {}'.format(skip_msg, pid))

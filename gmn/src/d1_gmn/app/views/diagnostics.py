@@ -151,7 +151,7 @@ from __future__ import absolute_import
 
 # @d1_gmn.app.restrict_to_verb.get
 # def object_permissions(request, pid):
-#   d1_gmn.app.views.asserts.is_pid_of_existing_object(pid)
+#   d1_gmn.app.views.asserts.is_existing_object(pid)
 #   subjects = []
 #   permissions = d1_gmn.app.models.Permission.objects.filter(
 #     sciobj__pid__did=pid

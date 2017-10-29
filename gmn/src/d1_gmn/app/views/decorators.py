@@ -61,10 +61,10 @@ def resolve_sid(f):
 
 def resolve_sid_func(request, did):
   if d1_gmn.app.views.util.is_v1_api(request):
-    d1_gmn.app.views.assert_db.is_pid_of_existing_object(did)
+    d1_gmn.app.views.assert_db.is_existing_object(did)
     return did
   elif d1_gmn.app.views.util.is_v2_api(request):
-    if d1_gmn.app.did.is_pid(did):
+    if d1_gmn.app.did.is_existing_object(did):
       return did
     elif d1_gmn.app.did.is_sid(did):
       return d1_gmn.app.revision.resolve_sid(did)

@@ -63,8 +63,8 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
   asynchronously.
 
   Preconditions:
-  - sysmeta_pyxb.identifier is verified not to exist. E.g., with
-  d1_gmn.app.views.asserts.is_unused(pid).
+  - sysmeta_pyxb.identifier is verified to be available for create. E.g., with
+  d1_gmn.app.views.is_valid_pid_for_create(pid).
 
   Postconditions:
   - The database is set up to track a new replica, with initial status,

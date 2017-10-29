@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import
 
+import logging
 import StringIO
 
 import pytest
@@ -36,13 +37,29 @@ import d1_common.const
 import d1_common.resource_map
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.identifier
-import d1_test.instance_generator.system_metadata
+import d1_test.instance_generator.identifier as identifier
+import d1_test.instance_generator.random_data as random_data
+import d1_test.instance_generator.system_metadata as sysmeta
 
+import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 import django
 import django.test
+
+# Long test
+NUM_CREATE = 1000
+MAX_AGGR_SIZE = 50
+MAX_REDUCE_SIZE = 10
+# 0.2 = 20% chance of creating a resource map
+MAP_CHANCE = 0.2
+
+# Fast test
+# NUM_CREATE = 100
+# MAX_AGGR_SIZE = 5
+# MAX_REDUCE_SIZE = 10
+# 0.2 = 20% chance of creating a resource map
+# MAP_CHANCE = 0.2
 
 
 class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
@@ -56,14 +73,19 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         pid_list.append(pid)
     return pid_list
 
-  def _create_resource_map(self, mn_client_v2, pid_list):
-    ore_pid = d1_test.instance_generator.identifier.generate_pid('PID_ORE_')
+  def _create_objects_by_list(self, client, pid_list):
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      for pid in pid_list:
+        self.create_obj(client, pid, sid=None)
+
+  def _create_resource_map(self, client, pid_list, ore_pid=None):
+    ore_pid = (ore_pid or identifier.generate_pid('PID_ORE_'))
     ore = d1_common.resource_map.createSimpleResourceMap(
-      ore_pid, pid_list[0], pid_list[1:]
+      ore_pid, scimeta_pid=pid_list[0], sciobj_pid_list=pid_list[1:]
     )
     ore_xml = ore.serialize()
-    sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
-      mn_client_v2,
+    sysmeta_pyxb = sysmeta.generate_from_file(
+      client,
       StringIO.StringIO(ore_xml),
       {
         'identifier': ore_pid,
@@ -73,7 +95,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     # self.dump_pyxb(sysmeta_pyxb)
     self.call_d1_client(
-      mn_client_v2.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
+      client.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
     )
     return ore_pid
 
@@ -107,10 +129,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
-    pid_list = [
-      d1_test.instance_generator.identifier.generate_pid('PID_AGGR_')
-      for _ in range(10)
-    ]
+    pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       self._create_resource_map(mn_client_v2, pid_list)
 
@@ -144,12 +163,58 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
-    pid_list = [
-      d1_test.instance_generator.identifier.generate_pid('PID_AGGR_')
-      for _ in range(10)
-    ]
+    pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
     ore_pid = self._create_resource_map(mn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
     assert sorted(pid_list) == sorted(member_list)
+
+  @responses.activate
+  @django.test.override_settings(
+    RESOURCE_MAP_CREATE='open',
+  )
+  def test_1040(self):
+    """MNStorage.create(): "open" mode: Creating a random series of objects
+    and resource maps
+
+    - Some PIDs aggregated in multiple maps
+    - Some maps aggregating each other
+    - Maps created both before and after their aggregated PIDs
+    - Some maps containing references to themselves
+    """
+
+    def _test(client, sid):
+      avail_pid_set = [identifier.generate_pid() for _ in range(NUM_CREATE)]
+      uncreated_pid_set = avail_pid_set[:]
+
+      while True:
+        pid = random_data.random_choice_pop(uncreated_pid_set)
+        aggr_list = random_data.random_sized_sample(
+          avail_pid_set, 2, max_size=MAX_AGGR_SIZE
+        )
+        if not uncreated_pid_set or not aggr_list:
+          break
+        random_data.random_sized_sample_pop(
+          avail_pid_set, 0, max_size=MAX_REDUCE_SIZE
+        )
+        is_ore = random_data.random_bool_factor(MAP_CHANCE)
+        if is_ore:
+          self._create_resource_map(client, aggr_list, pid)
+        else:
+          self.create_obj(client, pid, sid=sid)
+        logging.info(
+          'uncreated={} available={} ORE={} aggr_list={}'.format(
+            len(uncreated_pid_set), len(avail_pid_set), is_ore, len(aggr_list)
+          )
+        )
+
+    _test(
+      d1_client.mnclient_1_2.
+      MemberNodeClient_1_2(d1_test.d1_test_case.MOCK_BASE_URL), None
+    )
+
+    _test(
+      d1_client.mnclient_2_0.
+      MemberNodeClient_2_0(d1_test.d1_test_case.MOCK_BASE_URL), True
+    )

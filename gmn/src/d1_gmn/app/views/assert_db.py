@@ -51,38 +51,31 @@ import d1_common.xml
 
 import django.conf
 
-
-def is_unused(did):
-  """Assert that the {did} is currently unused and so is available to be
-  assigned to a new object.
-
-  To be unused, the DID:
-  - Must not exist as a PID or SID.
-  - Must not have been accepted for replication.
-  - Must not be referenced as obsoletes or obsoleted_by in any object
-  - Must not be referenced in any resource map
-  """
-  if d1_gmn.app.did.is_did(did):
-    raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, u'Identifier is already in use as {}. id="{}"'
-      .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
-    )
+# def is_unused(did):
+#   """Assert that the {did} is currently unused and so is available to be
+#   assigned to a new object.
+#
+#   To be unused, the DID:
+#   - Must not exist as a PID or SID.
+#   - Must not have been accepted for replication.
+#   - Must not be referenced as obsoletes or obsoleted_by in any object
+#   - Must not be referenced in any resource map
+#   """
+#   if d1_gmn.app.did._is_did(did):
+#     raise d1_common.types.exceptions.IdentifierNotUnique(
+#       0, u'Identifier is already in use as {}. id="{}"'
+#       .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
+#     )
 
 
 def is_valid_pid_for_create(did):
+  """Assert that {did} can be used as a PID for creating a new object with
+  MNStorage.create() or MNStorage.update().
+  """
   if not d1_gmn.app.did.is_valid_pid_for_create(did):
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, u'Identifier is already in use as {}. did="{}"'
       .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
-    )
-
-
-def is_valid_pid_for_update(did):
-  if not d1_gmn.app.did.is_valid_pid_for_update(did):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'Identifier cannot be used for an update. did="{}" cause="Object is {}"'
-      .format(did, d1_gmn.app.did.classify_identifier(did)), identifier=did
     )
 
 
@@ -95,33 +88,15 @@ def is_valid_pid_to_be_updated(did):
     )
 
 
-def is_valid_sid_for_chain(pid, sid):
-  """Assert that {sid} can be assigned to the single object {pid} or to the
-  chain to which {pid} belongs.
-
-  - If the chain does not have a SID, the new SID must be previously unused.
-  - If the chain already has a SID, the new SID must match the existing SID.
-  """
-  if not d1_gmn.app.did.is_valid_sid_for_chain(pid, sid):
-    existing_sid = d1_gmn.app.revision.get_sid_by_pid(pid)
-    raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, u'A different SID is already assigned to the revision chain to which '
-      u'the object being created or updated belongs. A SID cannot be changed '
-      u'once it has been assigned to a chain. '
-      u'existing_sid="{}", new_sid="{}", pid="{}"'
-      .format(existing_sid, sid, pid)
-    )
-
-
 def is_did(did):
-  if not d1_gmn.app.did.is_did(did):
+  if not d1_gmn.app.did._is_did(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Unknown identifier. id="{}"'.format(did), identifier=did
     )
 
 
-def is_pid_of_existing_object(did):
-  if not d1_gmn.app.did.is_pid_of_existing_object(did):
+def is_existing_object(did):
+  if not d1_gmn.app.did.is_existing_object(did):
     raise d1_common.types.exceptions.NotFound(
       0, u'Identifier is {}. Expected a Persistent ID (PID) for an existing '
       u'object. id="{}"'.format(d1_gmn.app.did.classify_identifier(did), did),

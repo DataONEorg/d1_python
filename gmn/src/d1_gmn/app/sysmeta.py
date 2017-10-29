@@ -80,10 +80,7 @@ def create_or_update(sysmeta_pyxb, url=None):
   closely related internal state.
 
   Preconditions:
-  - For create(), PID is verified not to exist. E.g., with
-  d1_gmn.app.views.asserts.is_unused(pid).
-  - Any supplied SID is verified to be valid for the given operation. E.g., with
-  d1_gmn.app.views.asserts.is_valid_sid_for_chain().
+  - All values in {sysmeta_pyxb} must be valid for the operation being performed
   """
   # TODO: Make sure that old sections are removed if not included in update.
 
@@ -101,6 +98,7 @@ def create_or_update(sysmeta_pyxb, url=None):
     sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
 
   _base_pyxb_to_model(sci_model, sysmeta_pyxb)
+
   sci_model.save()
 
   if _has_media_type_pyxb(sysmeta_pyxb):
@@ -112,18 +110,9 @@ def create_or_update(sysmeta_pyxb, url=None):
     _replication_policy_pyxb_to_model(sci_model, sysmeta_pyxb)
 
   replica_pyxb_to_model(sci_model, sysmeta_pyxb)
+  revision_pyxb_to_model(sci_model, sysmeta_pyxb, pid)
 
-  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
-  obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
-  obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
-
-  d1_gmn.app.revision.set_revision_links(
-    sci_model, obsoletes_pid, obsoleted_by_pid
-  )
-
-  d1_gmn.app.revision.create_or_update_chain(
-    pid, sid, obsoletes_pid, obsoleted_by_pid
-  )
+  sci_model.save()
 
   return sci_model
 
@@ -525,3 +514,20 @@ def replica_model_to_pyxb(sciobj_model):
     )
     replica_pyxb_list.append(replica_pyxb)
   return replica_pyxb_list
+
+
+# ------------------------------------------------------------------------------
+# Remote Replica
+# ------------------------------------------------------------------------------
+
+
+def revision_pyxb_to_model(sci_model, sysmeta_pyxb, pid):
+  sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
+  obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
+  obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
+  d1_gmn.app.revision.set_revision_links(
+    sci_model, obsoletes_pid, obsoleted_by_pid
+  )
+  d1_gmn.app.revision.create_or_update_chain(
+    pid, sid, obsoletes_pid, obsoleted_by_pid
+  )

@@ -30,8 +30,6 @@ import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.util
-from d1_gmn.app.did import is_resource_map_db
-from d1_gmn.app.did import is_resource_map_member
 
 import d1_common.const
 import d1_common.resource_map
@@ -40,15 +38,14 @@ import d1_common.xml
 
 import django.conf
 
-
-def assert_map_is_valid_for_create_by_str(resource_map_xml):
-  resource_map = parse_resource_map_from_str(resource_map_xml)
-  assert_map_is_valid_for_create(resource_map)
-
-
-def assert_map_is_valid_for_create_by_file(resource_map_path):
-  resource_map = _parse_resource_map_from_file(resource_map_path)
-  assert_map_is_valid_for_create(resource_map)
+# def assert_map_is_valid_for_create_by_str(resource_map_xml):
+#   resource_map = parse_resource_map_from_str(resource_map_xml)
+#   assert_map_is_valid_for_create(resource_map)
+#
+#
+# def assert_map_is_valid_for_create_by_file(resource_map_path):
+#   resource_map = _parse_resource_map_from_file(resource_map_path)
+#   assert_map_is_valid_for_create(resource_map)
 
 
 def assert_map_is_valid_for_create(resource_map):
@@ -56,27 +53,34 @@ def assert_map_is_valid_for_create(resource_map):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Resource Map must be created after after creating the objects that it '
-      u'aggregates'
+      u'aggregates. See the RESOURCE_MAP_CREATE setting'
     )
 
 
+def is_sciobj_valid_for_create():
+  """When RESOURCE_MAP_CREATE == 'reserve', objects that are created and that
+  are also aggregated in one or more resource maps can only be created by
+  a DataONE subject that has write or changePermission on the resource map.
+  """
+  # TODO
+  return True
+
+
 def _is_map_valid_for_create(resource_map):
+  # When RESOURCE_MAP_CREATE == 'block', a map may be blocked from being
+  # created, depending on its contents. This validation is in addition to the
+  # validation that is applied to all sciobjs. Only "block" mode adds validation
+  # to the creation of maps.
   if django.conf.settings.RESOURCE_MAP_CREATE == 'block':
     return _is_map_valid_for_block_mode_create(resource_map)
-  elif django.conf.settings.RESOURCE_MAP_CREATE == 'open':
-    return _is_map_valid_for_open_mode_create(resource_map)
-  return False
+  return True
 
 
 def _is_map_valid_for_block_mode_create(resource_map):
   member_pid_list = resource_map.getAggregatedPids()
   for member_pid in member_pid_list:
-    if not d1_gmn.app.did.is_pid_of_existing_object(member_pid):
+    if not d1_gmn.app.did.is_existing_object(member_pid):
       return False
-  return True
-
-
-def _is_map_valid_for_open_mode_create(resource_map):
   return True
 
 
@@ -90,9 +94,9 @@ def create_or_update(map_pid, resource_map):
 def get_resource_map_members(pid):
   """{pid} is the PID of a Resource Map or the PID of a member of a Resource Map
   """
-  if is_resource_map_db(pid):
+  if d1_gmn.app.did.is_resource_map_db(pid):
     return get_resource_map_members_by_map(pid)
-  elif is_resource_map_member(pid):
+  elif d1_gmn.app.did.is_resource_map_member(pid):
     return get_resource_map_members_by_member(pid)
   else:
     raise d1_common.types.exceptions.InvalidRequest(
@@ -103,24 +107,19 @@ def get_resource_map_members(pid):
 def get_resource_map_members_by_map(map_pid):
   map_model = _get_map(map_pid)
   return d1_gmn.app.models.ResourceMapMember.objects.filter(
-    ResourceMap=map_model
+    resource_map=map_model
   ).values_list('did__did', flat=True)
 
 
 def get_resource_map_members_by_member(member_pid):
   map_model = _get_resource_map_by_member(member_pid)
   return d1_gmn.app.models.ResourceMapMember.objects.filter(
-    ResourceMap=map_model
+    resource_map=map_model
   ).values_list('did__did', flat=True)
 
 
 def is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
   return sysmeta_pyxb.formatId == d1_common.const.ORE_FORMAT_ID
-
-
-#
-# Private
-#
 
 
 def _parse_resource_map_from_file(resource_map_path):
@@ -162,11 +161,11 @@ def _get_map(map_pid):
 
 
 def _update_map(map_model, member_pid_list):
-  d1_gmn.app.models.ResourceMapMember.objects.filter(ResourceMap=map_model
+  d1_gmn.app.models.ResourceMapMember.objects.filter(resource_map=map_model
                                                      ).delete()
   for member_pid in member_pid_list:
     member_model = d1_gmn.app.models.ResourceMapMember(
-      ResourceMap=map_model, did=d1_gmn.app.did.get_or_create_did(member_pid)
+      resource_map=map_model, did=d1_gmn.app.did.get_or_create_did(member_pid)
     )
     member_model.save()
 
@@ -174,5 +173,5 @@ def _update_map(map_model, member_pid_list):
 def _get_resource_map_by_member(member_pid):
   map_model = d1_gmn.app.models.ResourceMapMember.objects.filter(
     pid=member_pid
-  ).ResourceMap
+  ).resource_map
   return map_model

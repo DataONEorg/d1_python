@@ -211,3 +211,12 @@ def round_date_time(dt, n_round_sec=1):
   n_sec = (dt - dt.min).seconds
   n_half_round_sec = (n_sec + n_round_sec / 2) // n_round_sec**2
   return dt + datetime.timedelta(0, n_half_round_sec - n_sec, -dt.microsecond)
+
+
+def are_equal(ts1, ts2, n_round_sec=1):
+  """Compare two datetimes for equality with fuzz factor
+
+  Since different systems may handle and store timestamps with different
+  resolution, they often cannot be safely compared directly.
+  """
+  return round_date_time(ts1, n_round_sec) == round_date_time(ts2, n_round_sec)

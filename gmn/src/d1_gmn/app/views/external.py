@@ -435,13 +435,14 @@ def put_meta(request):
   need to clarify what can be modified and what the behavior should be when
   working with SIDs and chains.
   """
+  if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
+    d1_gmn.app.auth.assert_create_update_delete_permission(request)
   d1_gmn.app.util.coerce_put_post(request)
   d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'sysmeta'))
   )
   pid = request.POST['pid']
   d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
-  # d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(pid)
   new_sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(
     new_sysmeta_pyxb
@@ -450,11 +451,6 @@ def put_meta(request):
     request, new_sysmeta_pyxb, update_submitter=False
   )
   d1_gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
-  # # SID
-  # if d1_gmn.app.revision.has_sid(new_sysmeta_pyxb):
-  #   sid = d1_gmn.app.revision.get_sid(new_sysmeta_pyxb)
-  #   d1_gmn.app.views.asserts.is_valid_sid_for_chain(pid, sid)
-  #   d1_gmn.app.revision.update_sid_to_last_existing_pid_map(pid)
   d1_gmn.app.event_log.log_update_event(
     pid, request, timestamp=new_sysmeta_pyxb.dateUploaded
   )
@@ -494,7 +490,7 @@ def post_refresh_system_metadata(request):
     request, (('field', 'pid'), ('field', 'serialVersion'),
               ('field', 'dateSysMetaLastModified'),)
   )
-  d1_gmn.app.views.assert_db.is_pid_of_existing_object(request.POST['pid'])
+  d1_gmn.app.views.assert_db.is_existing_object(request.POST['pid'])
   d1_gmn.app.models.sysmeta_refresh_queue(
     request.POST['pid'],
     request.POST['serialVersion'],
@@ -561,14 +557,12 @@ def post_object_list(request):
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
   sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
+  url_pid = request.POST['pid']
   d1_gmn.app.views.assert_sysmeta.obsoletes_not_specified(sysmeta_pyxb)
-  new_pid = request.POST['pid']
-  d1_gmn.app.views.assert_db.is_valid_pid_for_create(new_pid)
-  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
-  if sid:
-    d1_gmn.app.views.assert_db.is_unused(sid)
+  d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, url_pid)
+  d1_gmn.app.views.assert_sysmeta.is_valid_sid_for_new_standalone(sysmeta_pyxb)
   d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
-  return new_pid
+  return url_pid
 
 
 @d1_gmn.app.restrict_to_verb.put
@@ -587,19 +581,17 @@ def put_object(request, old_pid):
   )
   d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(old_pid)
   sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
+  new_pid = request.POST['newPid']
+  d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, new_pid)
   d1_gmn.app.views.assert_sysmeta.obsoletes_matches_pid_if_specified(
     sysmeta_pyxb, old_pid
   )
-  new_pid = request.POST['newPid']
-  d1_gmn.app.views.assert_db.is_valid_pid_for_update(new_pid)
   sysmeta_pyxb.obsoletes = old_pid
-  # SID
-  sid = d1_gmn.app.did.get_sid_pyxb(sysmeta_pyxb)
-  d1_gmn.app.views.assert_db.is_valid_sid_for_chain(old_pid, sid)
-  #
+  sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
+  d1_gmn.app.views.assert_sysmeta.is_valid_sid_for_chain(old_pid, sid)
   d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
-  # The create event for the new object is added in _create(). The update event
-  # on the old object is added here.
+  # The create event for the new object is added in create_sciobj(). The update
+  # event on the old object is added here.
   d1_gmn.app.event_log.log_update_event(
     old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
   )
@@ -667,7 +659,7 @@ def post_replicate(request):
     sysmeta_pyxb
   )
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-  d1_gmn.app.views.assert_db.is_unused(pid)
+  d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
   d1_gmn.app.local_replica.add_to_replication_queue(
     request.POST['sourceNode'], sysmeta_pyxb
   )

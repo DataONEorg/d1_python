@@ -407,17 +407,18 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # remote nodes or any other web resources.
 #
 # 'reserve':
-# - Identifiers for referenced non-existing objects are reserved for use by the
-# same subject that uploaded the Resource Map. This ensures that the identifiers
-# remain available to the subject but will block the identifiers indefinitely if
-# they are not used by the subject.
+# - Resource Maps are created like regular objects. Identifiers for referenced
+# non-existing objects are reserved for use by the same subject that uploaded
+# the Resource Map. This ensures that the identifiers remain available to the
+# subject but will block the identifiers indefinitely if they are not used by
+# the subject.
 #
 # 'open':
-# - Identifiers for referenced non-existing objects remain open for use by any
-# subject. This may cause Resource Maps to reference unintended objects if the
-# referenced identifier is used for an unrelated object created
-# by another subject before the intended object is created by the Resource Map
-# subject.
+# - Resource Maps are created like regular objects. Identifiers for referenced
+# non-existing objects remain open for use by any subject. This may cause
+# Resource Maps to reference unintended objects if the referenced identifier is
+# used for an unrelated object created by another subject before the intended
+# object is created by the Resource Map subject.
 RESOURCE_MAP_CREATE = 'block'
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of

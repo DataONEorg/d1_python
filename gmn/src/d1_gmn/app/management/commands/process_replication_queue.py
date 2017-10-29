@@ -270,7 +270,7 @@ class ReplicationQueueProcessor(object):
       )
 
   def _assert_pid_is_unknown_or_replica(self, pid):
-    if d1_gmn.app.did.is_did(pid) and not d1_gmn.app.did.is_local_replica(pid):
+    if d1_gmn.app.did._is_did(pid) and not d1_gmn.app.did.is_local_replica(pid):
       raise django.core.management.base.CommandError(
         u'The identifier is already in use on the local Member Node. '
         u'pid="{}"'.format(pid)
