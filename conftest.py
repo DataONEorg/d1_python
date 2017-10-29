@@ -41,19 +41,13 @@ import django.core.management
 import django.db
 import django.db.utils
 
-# from django.db import django.db.connections
-
 DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
-D1_SKIP = 'd1/skip'
+D1_SKIP_LIST = 'skip_passed/list'
+D1_SKIP_COUNT = 'skip_passed/count'
 
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
 # flake8: noqa: F811
-
-# flake8: noqa: F403
-
-# import d1_common.util
-# d1_common.util.log_setup(True)
 
 
 def pytest_addoption(parser):
@@ -99,12 +93,15 @@ def pytest_sessionstart(session):
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
   if pytest.config.getoption('--clear-skip'):
-    pytest.config.cache.set(D1_SKIP, [])
+    _reset_skip_cache()
 
 
 def pytest_sessionfinish(session, exitstatus):
   """Run after all tests"""
-  pass
+  if exitstatus != 2:
+    skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+    if skipped_count:
+      logging.warn('Skipped {} previously passed tests'.format(skipped_count))
 
 
 # Hooks
@@ -112,44 +109,42 @@ def pytest_sessionfinish(session, exitstatus):
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-  """Attempt to open error locations in PyCharm. Use with -x / --exitfirst"""
   outcome = yield
-  if not pytest.config.getoption("--pycharm"):
+  rep = outcome.get_result()
+  if rep.when != 'call':
     return
-  rep = outcome.get_result()
-  if rep.when == "call" and rep.failed:
-    # src_path, src_line, func_name = rep.location
-    src_path = call.excinfo.traceback[-1].path
-    src_line = call.excinfo.traceback[-1].lineno + 1
-    logging.info('src_path="{}", src_line={}'.format(src_path, src_line))
-    # return
-    if src_path == '<string>':
-      logging.debug('Unable to find location of error')
-      return
-    try:
-      subprocess.call([
-        DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)
-      ])
-    except subprocess.CalledProcessError as e:
-      logging.warn(
-        'Unable to open in PyCharm. error="{}" src_path="{}", src_line={}'.
-        format(str(e), src_path, src_line)
-      )
-    else:
-      logging.debug(
-        'Opened in PyCharm. src_path="{}", src_line={}'.
-        format(src_path, src_line)
-      )
-
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-  outcome = yield
-  rep = outcome.get_result()
-  if rep.when == "call" and (rep.passed or rep.skipped):
-    passed_set = set(pytest.config.cache.get(D1_SKIP, []))
+  if rep.passed or rep.skipped:
+    passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
     passed_set.add(item.nodeid)
-    pytest.config.cache.set(D1_SKIP, list(passed_set))
+    pytest.config.cache.set(D1_SKIP_LIST, list(passed_set))
+  elif rep.failed:
+    if pytest.config.getoption('--pycharm'):
+      _open_error_in_pycharm(call)
+
+
+def _open_error_in_pycharm(call):
+  """Attempt to open error locations in PyCharm. Use with -x / --exitfirst"""
+  # src_path, src_line, func_name = rep.location
+  src_path = call.excinfo.traceback[-1].path
+  src_line = call.excinfo.traceback[-1].lineno + 1
+  logging.info('src_path="{}", src_line={}'.format(src_path, src_line))
+  if src_path == '<string>':
+    logging.debug('Unable to find location of error')
+    return
+  try:
+    subprocess.call(
+      [DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)]
+    )
+  except subprocess.CalledProcessError as e:
+    logging.warn(
+      'Unable to open in PyCharm. error="{}" src_path="{}", src_line={}'.
+      format(str(e), src_path, src_line)
+    )
+  else:
+    logging.debug(
+      'Opened in PyCharm. src_path="{}", src_line={}'.
+      format(src_path, src_line)
+    )
 
 
 def pytest_generate_tests(metafunc):
@@ -166,22 +161,24 @@ def pytest_generate_tests(metafunc):
 
 
 def pytest_collection_modifyitems(session, config, items):
-  passed_set = set(pytest.config.cache.get(D1_SKIP, []))
+  passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
   new_item_list = []
   for item in items:
     if item.nodeid not in passed_set:
       new_item_list.append(item)
   if new_item_list:
-    logging.info(
-      "Skipping {} previously passed tests".
-      format(len(items) - len(new_item_list))
-    )
+    skip_count = len(items) - len(new_item_list)
+    pytest.config.cache.set(D1_SKIP_COUNT, skip_count)
+    logging.info('Skipping {} previously passed tests'.format(skip_count))
     items[:] = new_item_list
   else:
-    logging.info(
-      "All tests have passed. Starting complete session".format(len(items))
-    )
-    pytest.config.cache.set(D1_SKIP, [])
+    logging.info('All tests have passed. Starting complete session')
+    _reset_skip_cache()
+
+
+def _reset_skip_cache():
+  pytest.config.cache.set(D1_SKIP_LIST, [])
+  pytest.config.cache.set(D1_SKIP_COUNT, 0)
 
 
 # Fixtures
@@ -292,9 +289,7 @@ def django_db_setup(django_db_blocker):
     # closing the implicit transaction here so that template fixture remains
     # available.
     django.db.connections[test_db_key].commit()
-
     migrate_db(test_db_key)
-
     logging.debug('Test DB ready')
     yield
 
@@ -303,7 +298,7 @@ def load_template_fixture(template_db_key, template_db_name):
   """Load DB fixture from compressed JSON file to template database"""
   logging.info('Loading template DB fixture')
   fixture_file_path = d1_test.sample.get_path('db_fixture.json.bz2')
-  if pytest.config.getoption("--fixture-refresh"):
+  if pytest.config.getoption('--fixture-refresh'):
     # django.core.management.call_command('flush', database=template_db_key)
     drop_database(template_db_name)
   create_blank_db(template_db_key, template_db_name)
@@ -327,7 +322,7 @@ def migrate_db(test_db_key):
 
 def drop_database(db_name):
   logging.debug('Dropping database: {}'.format(db_name))
-  run_sql('postgres', "drop database if exists {};".format(db_name))
+  run_sql('postgres', 'drop database if exists {};'.format(db_name))
 
 
 def create_blank_db(db_key, db_name):
