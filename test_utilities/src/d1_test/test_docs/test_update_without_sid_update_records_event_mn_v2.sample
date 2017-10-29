@@ -2,22 +2,22 @@
 <ns1:log count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_pwhwsulxembq</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>2006-07-23T02:01:31</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_pwhwsulxembq</identifier>
+    <identifier>PID_eomsxomxrjwk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>1997-01-17T12:49:20</dateLogged>
+    <dateLogged>2039-07-23T11:04:11</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[volatile]</entryId>
+    <identifier>PID_eomsxomxrjwk</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[volatile]
+    <subject>disabled_auth_subj</subject>
+    <event>create</event>
+    <dateLogged>2023-10-06T06:29:16</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

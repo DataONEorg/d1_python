@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>37</serialVersion>
-  <identifier>PID_pwhwsulxembq</identifier>
-  <formatId>http://digir.net/schema/conceptual/darwin/2003/1.0/darwin2.xsd</formatId>
-  <size>253</size>
-  <checksum algorithm="SHA-1">5d3a76ce96965cbe18a361b317cbb48faed05770</checksum>
-  <submitter>subj_am</submitter>
-  <rightsHolder>subj_gw</rightsHolder>
+  <serialVersion>54</serialVersion>
+  <identifier>PID_eomsxomxrjwk</identifier>
+  <formatId>video/quicktime</formatId>
+  <size>271</size>
+  <checksum algorithm="SHA-1">6833ddfa045845dab74d885ba13508a7c1a00217</checksum>
+  <submitter>subj_rv</submitter>
+  <rightsHolder>subj_dp</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,45 +30,35 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="2" replicationAllowed="true">
-    <preferredMemberNode>mn_jq</preferredMemberNode>
-    <blockedMemberNode>mn_a</blockedMemberNode>
-    <blockedMemberNode>mn_fq</blockedMemberNode>
-    <blockedMemberNode>mn_v</blockedMemberNode>
-    <blockedMemberNode>mn_z</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_h</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_znsekzemylsq</obsoletedBy>
+  <obsoletedBy>PID_buqxyitgzycp</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2006-07-23T02:01:31</dateUploaded>
+  <dateUploaded>2023-10-06T06:29:16</dateUploaded>
   <dateSysMetadataModified>1955-05-15T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_sp</originMemberNode>
-  <authoritativeMemberNode>mn_tc</authoritativeMemberNode>
+  <originMemberNode>mn_xc</originMemberNode>
+  <authoritativeMemberNode>mn_r</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_x</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>1990-11-01T12:51:25.000159Z</replicaVerified>
+    <replicaMemberNode>mn_fg</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2049-03-21T09:30:20.000282Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2077-12-10T21:11:27.000126Z</replicaVerified>
+    <replicaMemberNode>mn_w</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2055-10-24T05:53:50.000091Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_g</replicaMemberNode>
+    <replicaMemberNode>mn_y</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2123-05-17T12:13:53.000685Z</replicaVerified>
+    <replicaVerified>2096-11-01T12:06:50.00063Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_zy</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2198-02-27T19:38:59.000148Z</replicaVerified>
+    <replicaMemberNode>mn_s</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2281-08-12T11:31:24.000241Z</replicaVerified>
   </replica>
-  <seriesId>SID_muiujdvmhwkn</seriesId>
-  <mediaType name="media_type_ct">
-    <property name="prop_be">pn</property>
-    <property name="prop_ek">xt</property>
-    <property name="prop_og">kw</property>
-    <property name="prop_vp">yn</property>
-  </mediaType>
-  <fileName>file_iyd</fileName>
+  <seriesId>SID_ohsliegxctoh</seriesId>
+  <fileName>file_jxh</fileName>
 </ns1:systemMetadata>
