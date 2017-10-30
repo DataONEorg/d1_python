@@ -42,7 +42,7 @@ import d1_test.instance_generator.system_metadata
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1010(self, mn_client_v2):
+  def test_1000(self, mn_client_v2):
     """MNPackage.getPackage(): Returns a valid package"""
     pid_list = self.create_objects(mn_client_v2)
     ore_pid = self.create_resource_map(mn_client_v2, pid_list)

@@ -47,19 +47,19 @@ import d1_client.mnclient_2_0
 import django
 import django.test
 
-# Long test
-NUM_CREATE = 1000
-MAX_AGGR_SIZE = 50
+# # Long test
+# NUM_CREATE = 1000
+# MAX_AGGR_SIZE = 50
+# MAX_REDUCE_SIZE = 10
+# # 0.2 = 20% chance of creating a resource map
+# MAP_CHANCE = 0.2
+
+# Fast test
+NUM_CREATE = 100
+MAX_AGGR_SIZE = 5
 MAX_REDUCE_SIZE = 10
 # 0.2 = 20% chance of creating a resource map
 MAP_CHANCE = 0.2
-
-# Fast test
-# NUM_CREATE = 100
-# MAX_AGGR_SIZE = 5
-# MAX_REDUCE_SIZE = 10
-# 0.2 = 20% chance of creating a resource map
-# MAP_CHANCE = 0.2
 
 
 class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):

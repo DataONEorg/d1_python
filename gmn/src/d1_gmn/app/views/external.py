@@ -431,9 +431,9 @@ def _assert_node_is_authorized(request, pid):
 def put_meta(request):
   """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
 
-  TODO: Currently, this call allows making breaking changes to SysMeta. We
-  need to clarify what can be modified and what the behavior should be when
-  working with SIDs and chains.
+  TODO: Currently, this call allows making breaking changes to SysMeta. We need
+  to clarify what can be modified and what the behavior should be when working
+  with SIDs and chains.
   """
   if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
     d1_gmn.app.auth.assert_create_update_delete_permission(request)
