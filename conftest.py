@@ -161,19 +161,25 @@ def pytest_generate_tests(metafunc):
 
 
 def pytest_collection_modifyitems(session, config, items):
+  """Called by pytest after collecting tests. The collected tests and the order
+  in which they will be run are in {items}, which can be manipulated in place.
+  """
   passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
   new_item_list = []
   for item in items:
     if item.nodeid not in passed_set:
       new_item_list.append(item)
-  if new_item_list:
-    skip_count = len(items) - len(new_item_list)
-    pytest.config.cache.set(D1_SKIP_COUNT, skip_count)
-    logging.info('Skipping {} previously passed tests'.format(skip_count))
-    items[:] = new_item_list
-  else:
-    logging.info('All tests have passed. Starting complete session')
+
+  prev_skip_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+  cur_skip_count = len(items) - len(new_item_list)
+
+  if prev_skip_count == cur_skip_count:
+    logging.info('No tests were run. Restarting with complete test set')
     _reset_skip_cache()
+  else:
+    pytest.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
+    logging.info('Skipping {} previously passed tests'.format(cur_skip_count))
+    items[:] = new_item_list
 
 
 def _reset_skip_cache():
