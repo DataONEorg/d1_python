@@ -41,7 +41,7 @@ def main():
     include_package_data=True,
     install_requires=[
       'contextlib2 == 0.5.5',
-      'cryptography == 2.1.1',
+      'cryptography == 2.1.3',
       'iso8601 == 0.1.12',
       'PyJWT == 1.5.3',
       'pyasn1 == 0.3.7',

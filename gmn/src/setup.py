@@ -47,9 +47,9 @@ def main():
       'dataone.common == 2.3.11',
       'dataone.libclient == 2.3.11',
       #
-      'django == 1.11.6',
+      'django == 1.11.7',
       'iso8601 == 0.1.12',
-      'psycopg2 == 2.7.3.1',
+      'psycopg2 == 2.7.3.2',
       'PyJWT == 1.5.3',
       'pyxb == 1.2.6',
       'requests == 2.18.4',

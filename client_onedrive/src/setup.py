@@ -46,7 +46,7 @@ def main():
       #
       'fusepy == 2.0.4',
       'pyxb == 1.2.6',
-      'pyzotero == 1.2.14',
+      'pyzotero == 1.2.15',
       'rdflib == 4.2.2',
       'requests == 2.18.4',
     ],
