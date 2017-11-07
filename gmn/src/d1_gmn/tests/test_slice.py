@@ -25,6 +25,8 @@ Slicing is tested via getLogRecords().
 from __future__ import absolute_import
 
 import datetime
+import logging
+import multiprocessing
 import random
 
 # import logging
@@ -36,95 +38,126 @@ import d1_gmn.app.util
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_common.xml
+
 import d1_test.sample
+
+SLICE_COUNT = 7
+
+
+def _assert_pyxb_objects_are_equivalent(arg_tup):
+  a_pyxb, b_pyxb, i, item_count = arg_tup
+  # logging.debug('Checking sliced items. {}/{}'.format(i + 1, item_count))
+  assert d1_common.xml.is_equivalent_pyxb(a_pyxb, b_pyxb)
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSlice')
-# @pytest.mark.skip('SLOOOOOW')
 class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  # def setup_class(self):
-  #   with d1_gmn.tests.gmn_mock.disable_auth():
-  #     self._total_int = mn_client_v1_v2.getLogRecords(
-  #       start=0, count=0, fromDate=fromDate
-  #     ).total
-  #     assert self._total_int >= 2000, 'Need >= 2000 logEntry records for testing'
-  #     single_slice_log = mn_client_v1_v2.getLogRecords(
-  #       start=0, count=self._total_int, fromDate=fromDate
-  #     )
-  #     assert len(single_slice_log.logEntry) == self._total_int
+  def _test(
+      self, mn_client_v1_v2, useGetLogRecords=False, fromDate=None,
+      randomize_slice_counts=False
+  ):
+    if useGetLogRecords:
+      slicable_api_func = mn_client_v1_v2.getLogRecords
+      iterable_attr = 'logEntry'
+    else:
+      slicable_api_func = mn_client_v1_v2.listObjects
+      iterable_attr = 'objectInfo'
 
-  def _test(self, mn_client_v1_v2, fromDate=None, vary_size=False):
-    count_int = 789
     with d1_gmn.tests.gmn_mock.disable_auth():
-      total_int = mn_client_v1_v2.getLogRecords(
-        start=0, count=0, fromDate=fromDate
-      ).total
-      # logging.debug('total_int={}'.format(total_int))
-      assert total_int >= 2000, 'Need >= 2000 logEntry records for testing'
-      single_slice_log = mn_client_v1_v2.getLogRecords(
+      total_int = slicable_api_func(start=0, count=0, fromDate=fromDate).total
+      logging.debug('total_int={}'.format(total_int))
+      assert total_int >= 500, 'Insufficient number of objects available for test'
+      single_slice_pyxb = slicable_api_func(
         start=0, count=total_int, fromDate=fromDate
       )
-      assert len(single_slice_log.logEntry) == total_int
+      # The single slice contains the same number of items as was returned as
+      # the total.
+      single_slice_pyxb_list = getattr(single_slice_pyxb, iterable_attr)
+      assert len(single_slice_pyxb_list) == total_int
 
+      count_int = total_int / SLICE_COUNT
       start_int = 0
-      multi_slice_list = []
+      multi_slice_pyxb_list = []
       while True:
         # logging.debug('in_start={}'.format(start_int))
-        vary_count_in = count_int + (random.randint(0, 2) if vary_size else 0)
-        log_pyxb = mn_client_v1_v2.getLogRecords(
+        vary_count_in = count_int + (
+          random.randint(0, 2) if randomize_slice_counts else 0
+        )
+        multiple_slice_pyxb = slicable_api_func(
           start=start_int, count=vary_count_in, fromDate=fromDate
         )
         # self.dump_pyxb(log_pyxb)
-        multi_slice_list.extend(log_pyxb.logEntry)
+        multi_slice_pyxb_list.extend(
+          getattr(multiple_slice_pyxb, iterable_attr)
+        )
         # logging.debug(
         #   'out_start={} out_count={} out_total={}'.
         #   format(log_pyxb.start, log_pyxb.count, log_pyxb.total)
         # )
-        start_int += log_pyxb.count
-        if start_int >= log_pyxb.total:
+        start_int += multiple_slice_pyxb.count
+        if start_int >= multiple_slice_pyxb.total:
           break
 
-      i = 0
-      for a, b in zip(single_slice_log.logEntry, multi_slice_list):
-        i += 1
-        # print i
-        a_xml = self.format_pyxb(a)
-        b_xml = self.format_pyxb(b)
-        assert a_xml == b_xml
+      assert len(single_slice_pyxb_list) == len(multi_slice_pyxb_list), (
+        'Retrieving multiple smaller slices did not give the same item count '
+        'as retrieving a single large slice'
+      )
+
+      item_count = len(multi_slice_pyxb_list)
+      arg_list = zip(
+        single_slice_pyxb_list,
+        multi_slice_pyxb_list,
+        range(item_count),
+        [item_count] * item_count,
+      )
+      logging.info(
+        'Comparing PyXB object pairs. pair_count={}'.format(len(arg_list))
+      )
+      pool = multiprocessing.Pool()
+      pool.map(_assert_pyxb_objects_are_equivalent, arg_list)
+
+      # i = 0
+      # for a_pyxb, b_pyxb in zip(getattr(single_slice_pyxb, iterable_attr), multi_slice_pyxb_list):
+      #   i += 1
+      #   logging.debug('Checking sliced items. {}/{}'.format(i + 1, len(multi_slice_pyxb_list)))
+      #   assert d1_common.xml.is_equivalent_pyxb(a_pyxb, b_pyxb)
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, mn_client_v1_v2, true_false):
     """Retrieving an *unfiltered* result set in many small slices of *equal* size
     (except for the last one which is smaller), gives the same result as
     retrieving everything in a single call without slicing.
     """
-    self._test(mn_client_v1_v2)
+    self._test(mn_client_v1_v2, true_false)
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, mn_client_v1_v2, true_false):
     """Retrieving a *filtered* result set in many small slices of *equal* size
     (except for the last one which is smaller), gives the same result as
     retrieving everything in a single call without slicing.
     """
     self._test(
-      mn_client_v1_v2, fromDate=datetime.datetime(2000, 5, 6, 15, 16, 17, 18)
+      mn_client_v1_v2, true_false,
+      fromDate=datetime.datetime(2000, 5, 6, 15, 16, 17, 18)
     )
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
-    """Retrieving an *unfiltered* result set in many small slices of *varying* size
-    (except for the last one which is smaller), gives the same result as
+  def test_1020(self, mn_client_v1_v2, true_false):
+    """Retrieving an *unfiltered* result set in many small slices of *varying*
+    size (except for the last one which is smaller), gives the same result as
     retrieving everything in a single call without slicing.
     """
-    self._test(mn_client_v1_v2, vary_size=True)
+    self._test(mn_client_v1_v2, true_false, randomize_slice_counts=True)
 
   @responses.activate
-  def test_1030(self, mn_client_v1_v2):
+  def test_1030(self, mn_client_v1_v2, true_false):
     """Retrieving a *filtered* result set in many small slices of *varying* size
     (except for the last one which is smaller), gives the same result as
     retrieving everything in a single call without slicing.
     """
     self._test(
-      mn_client_v1_v2, fromDate=datetime.datetime(2000, 5, 6, 15, 16, 17, 18),
-      vary_size=True
+      mn_client_v1_v2, true_false,
+      fromDate=datetime.datetime(2000, 5, 6, 15, 16, 17, 18),
+      randomize_slice_counts=True
     )

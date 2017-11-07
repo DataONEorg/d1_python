@@ -101,8 +101,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1020(self, mn_client_v2):
-    """After updating a chain that has a SID without specifying a
-    SID in the new object, the SID resolves to the new object
+    """After updating a chain that has a SID without specifying a SID in the new
+    object, the SID resolves to the new object
     """
     sid, pid_chain_list = self.create_revision_chain(
       mn_client_v2, chain_len=7, sid=None
@@ -143,8 +143,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1040(self, mn_client_v2):
-    """create_native_sciobj(): Separate chains are joined when an object that
-    joins the chains is created
+    """Separate chains are joined when an object that joins the chains is
+    created
     """
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, None
@@ -162,8 +162,11 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1050(self, mn_client_v2):
-    """create_native_sciobj(): Attempt to join chains with conflicting SID
-    raises exception: Chains with different SIDs, join with no SID
+    """Attempt to join chains with conflicting SID using a joining object with
+    no SID raises exception
+
+    Attempt to create second chain with SID already in use is caught by the
+    initial create() call for the first object in the new chain.
     """
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, True
@@ -178,25 +181,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1060(self, mn_client_v2):
-    """create_native_sciobj(): Attempt to join chains with conflicting SID
-    raises exception: Chains with same SIDs, join with different SID
-    """
-    sid = d1_test.instance_generator.identifier.generate_sid()
-    a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
-      mn_client_v2, sid, None
-    )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-      mn_client_v2, sid=True
-    )
-    sysmeta_pyxb.obsoletes = a_chain_list[-1]
-    sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    with pytest.raises(d1_common.types.exceptions.ServiceFailure):
-      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
-
-  @responses.activate
-  def test_1070(self, mn_client_v2):
-    """create_native_sciobj(): All objects in the joined chains receive the
-    new SID
+    """All objects in the joined chains receive the new SID
     """
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, None, None
@@ -213,9 +198,9 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       assert sysmeta_pyxb.seriesId.value() == sid
 
   @responses.activate
-  def test_1080(self, mn_client_v2):
-    """create_native_sciobj(): Objects sharing the same SID are assigned to the
-    same chain even if they are disconnected
+  def test_1070(self, mn_client_v2):
+    """Objects sharing the same SID are assigned to the same chain even if they
+    are disconnected
     """
     sid = d1_test.instance_generator.identifier.generate_sid()
     a_pid, a_sid, a_sciobj_str, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
@@ -233,9 +218,9 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert {m.pid.did for m in member_query_set} == {a_pid, b_pid}
 
   @responses.activate
-  def test_1090(self, mn_client_v2):
-    """create_native_sciobj(): Object with references to non-existing obsoletes
-    and obsoletedBy can be created and retrieved
+  def test_1080(self, mn_client_v2):
+    """Object with references to non-existing obsoletes and obsoletedBy can be
+    created and retrieved
     """
     a_pid, a_sid, a_sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=True
@@ -245,10 +230,10 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
 
   @responses.activate
-  def test_1100(self, mn_client_v2):
-    """create_native_sciobj(): When chains are joined, SID is updated to resolve
-    to the most recent, existing object that can be reached by walking the chain
-    from current towards the head
+  def test_1090(self, mn_client_v2):
+    """When chains are joined, SID is updated to resolve to the most recent,
+    existing object that can be reached by walking the chain from current
+    towards the head
     """
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, None
