@@ -18,11 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.updateSystemMetadata() and access policy enforcement
-
-MNStorage.updateSystemMetadata() is a convenient place to check GMN enforcement
-of access policies, though it's not the only channel through which policy
-changes can arrive
+"""Test MNStorage.updateSystemMetadata()
 """
 
 from __future__ import absolute_import
@@ -71,50 +67,13 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ):
       self.client_v2.get(pid)
 
-  def create_default(self):
-    """Create object with default access policy:
-    'subj1': 'read'
-    'subj2', 'subj3', 'subj4': 'read', 'write'
-    'subj5', 'subj6', 'subj7', 'subj8': 'read', 'changePermission'
-    'subj9', 'subj10', 'subj11', 'subj12': 'changePermission'
-    """
-    return self.create_obj(self.client_v2, sid=True)
-
   @responses.activate
-  def test_1000(self):
-    """Read access: Single unknown subject raises NotAuthorized"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-      self._get(pid, ['unk_subj'])
-
-  @responses.activate
-  def test_1010(self):
-    """Read access: Multiple unknown subject raise NotAuthorized"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-      self._get(pid, ['unk_subj', 'subj2_', '_subj33', 'subj12!'])
-
-  @responses.activate
-  def test_1020(self):
-    """Read access: A single known subject allows access"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    self._get(pid, ['subj12'])
-
-  @responses.activate
-  def test_1030(self):
-    """Read access: A single known subject allows access even if there are also
-    unknown subjects
-    """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    self._get(pid, ['unk_subj', 'subj2_', '_subj33', 'subj12!', 'subj1'])
-
-  @responses.activate
-  def test_1040(self):
+  def test_1040(self, mn_client_v2):
     """updateSystemMetadata(): Access Policy adjustment
     - Remove permissions for subj1-4
     - Lower permissions for subj9-12 from changePermission to write
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
+    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v2)
     new_permission_list = [
       (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
       (['subj9', 'subj10', 'subj11'], ['write']),
@@ -133,41 +92,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     for subject_str in [['subj5', 'subj6', 'subj7', 'subj8'],
                         ['subj9', 'subj10'], ['subj11']]:
       self._get(pid, subject_str)
-
-  @responses.activate
-  def test_1050(self):
-    """isAuthorized(): Returns False for unknown subject"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
-      assert not self.client_v2.isAuthorized(pid, 'read')
-      assert not self.client_v2.isAuthorized(pid, 'write')
-      assert not self.client_v2.isAuthorized(pid, 'changePermission')
-
-  @responses.activate
-  def test_1060(self):
-    """isAuthorized(): Raises InvalidRequest for bogus permission"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-      self.client_v2.isAuthorized(pid, '_bogus_permission_')
-
-  @responses.activate
-  def test_1070(self):
-    """isAuthorized(): Returns False for known subject with inadequate
-    permission level
-    """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with d1_gmn.tests.gmn_mock.set_auth_context(['subj2'], ['trusted_subj']):
-      assert not self.client_v2.isAuthorized(pid, 'changePermission')
-
-  @responses.activate
-  def test_1080(self):
-    """isAuthorized(): Returns True for known subject with adequate permission
-    level
-    """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_default()
-    with d1_gmn.tests.gmn_mock.set_auth_context(['subj5'], ['trusted_subj']):
-      assert self.client_v2.isAuthorized(pid, 'changePermission')
-      assert self.client_v2.isAuthorized(pid, 'write')
 
   @responses.activate
   def test_1090(self, mn_client_v2):

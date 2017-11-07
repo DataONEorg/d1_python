@@ -120,7 +120,7 @@ def touch(module_path, times=None):
 
 
 # Modified version of the class at baron/dumper.py which seems to fix handling
-# of UTF-8 sources.
+# of utf-8 sources.
 class UnicodeRenderWalker(baron.render.RenderWalker):
   def __init__(self, *args, **kwargs):
     super(UnicodeRenderWalker, self).__init__(*args, **kwargs)

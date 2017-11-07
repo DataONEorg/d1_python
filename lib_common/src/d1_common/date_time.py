@@ -25,22 +25,15 @@ from __future__ import absolute_import
 import calendar
 import datetime
 import email.utils
-import sys
 
-# 3rd party
-try:
-  import iso8601
-except ImportError as e:
-  sys.stderr.write('Import error: {}\n'.format(str(e)))
-  sys.stderr.write('pip install iso8601\n')
-  raise
+import iso8601
 
 
-# D1
 class UTC(datetime.tzinfo):
   """Date-times in DataONE are required to have timezone information that is
   fixed to UTC. A naive Python datetime can be fixed to UTC by attaching it
-  to this tzinfo based class."""
+  to this tzinfo based class.
+  """
 
   def utcoffset(self, dt):
     return datetime.timedelta(0)

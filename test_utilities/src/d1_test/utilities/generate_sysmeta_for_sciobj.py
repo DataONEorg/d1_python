@@ -85,7 +85,7 @@ def processDoc(fname, options={}):
   root = etree.fromstring(sysm.toxml('utf-8'))
   root.insert(0, comment)
   pxml = etree.tostring(
-    root, pretty_print=True, encoding='UTF-8', xml_declaration=True
+    root, pretty_print=True, encoding='utf-8', xml_declaration=True
   )
   return pxml
 

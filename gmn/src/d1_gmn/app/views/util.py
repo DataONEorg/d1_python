@@ -48,6 +48,7 @@ import d1_common.xml
 
 import django.conf
 import django.core.files.move
+import django.db.models
 import django.http
 
 
@@ -94,7 +95,7 @@ def read_utf8_xml(stream_obj):
   except IOError as e:
     msg = u'Read failed on XML stream. error="{}"'.format(str(e))
   except UnicodeDecodeError as e:
-    msg = u'XML stream encoding is invalid. Must be UTF-8. error="{}"'.format(
+    msg = u'XML stream encoding is invalid. Must be utf-8. error="{}"'.format(
       str(e)
     )
   raise d1_common.types.exceptions.ServiceFailure(0, msg)
@@ -142,8 +143,10 @@ def add_http_date_to_response_header(response, date_time):
 
 
 def query_object_list(request, type_name):
-  query = d1_gmn.app.models.ScienceObject.objects.all().select_related(
-  ) # order_by('-modified_timestamp', 'pid__did')
+  # Assumes ScienceObject ordering = ['-modified_timestamp', 'id'] (set in model class)
+  query = d1_gmn.app.models.ScienceObject.objects.all().select_related().annotate(
+    timestamp=django.db.models.F('modified_timestamp')
+  )
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(request, query, 'id')
   query = d1_gmn.app.db_filter.add_datetime_filter(

@@ -85,11 +85,11 @@ def get_content_type(content_type):
 
 def utf8_to_unicode(f):
   """Decorator that converts string arguments to Unicode. Assumes that strings
-  contains ASCII or UTF-8. All other argument types are passed through
+  contains ASCII or utf-8. All other argument types are passed through
   untouched.
 
   A UnicodeDecodeError raised here means that the wrapped function was called
-  with a string argument that did not contain ASCII or UTF-8. In such a case,
+  with a string argument that did not contain ASCII or utf-8. In such a case,
   the user is required to convert the string to Unicode before passing it to the
   function.
   """

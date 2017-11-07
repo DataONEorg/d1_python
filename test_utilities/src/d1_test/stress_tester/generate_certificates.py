@@ -44,7 +44,7 @@ logger = logging.getLogger()
 
 # The SubjectInfo to include in the certificate.
 subject_info_template = (
-  """<?xml version="1.0" encoding="UTF-8"?>
+  """<?xml version="1.0" encoding="utf-8"?>
   <d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
     <person>
       <subject>%subject%</subject>

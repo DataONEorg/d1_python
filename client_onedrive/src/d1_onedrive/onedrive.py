@@ -136,7 +136,7 @@ def log_setup(options):
   # Log to a file
   if options.log_file_path is not None:
     file_logger = logging.FileHandler(
-      options.log_file_path, 'a', encoding='UTF-8'
+      options.log_file_path, 'a', encoding='utf-8'
     )
     file_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(file_logger)

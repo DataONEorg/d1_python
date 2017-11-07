@@ -106,7 +106,7 @@ def file_iter(
   shell expand glob patterns to directly specified files and dirs. E.g., to use
   a glob to select all .py files in a subdir, the command may be called with
   sub/dir/*.py, which the shell expands to a list of files, which are then
-  passed to this function. The paths should be Unicode or UTF-8 strings. Tilde
+  passed to this function. The paths should be Unicode or utf-8 strings. Tilde
   ("~") to home expansion is performed on the paths.
 
   The shell can also expand glob patterns to dir paths or a mix of file and

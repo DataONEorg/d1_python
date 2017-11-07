@@ -54,7 +54,7 @@ class Test310Create(d1_test_case.D1TestCase):
   def generate_sysmeta(
       self, pid, size, checksum_algorithm, checksum, create_date
   ):
-    return u"""<?xml version="1.0" encoding="UTF-8"?>
+    return u"""<?xml version="1.0" encoding="utf-8"?>
 <D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>{0}</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>

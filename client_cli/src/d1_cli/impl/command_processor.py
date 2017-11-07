@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import
 
+import htmlentitydefs
 import os
 import re
 import StringIO
@@ -36,7 +37,6 @@ import d1_cli.impl.nodes as nodes
 import d1_cli.impl.operation_maker as operation_maker
 import d1_cli.impl.operation_queue as operation_queue
 import d1_cli.impl.session as session
-import htmlentitydefs
 import requests
 
 import d1_common.const
@@ -264,9 +264,9 @@ class CommandProcessor():
 
   def _pretty(self, xml_doc):
     # As far as I can tell from the docs, it should not be necessary to encode
-    # to UTF-8 before using the xml doc to construct the dom. But if I don't
+    # to utf-8 before using the xml doc to construct the dom. But if I don't
     # do this, toxml() and toprettyxml() fail with ascii encoding errors.
-    dom = xml.dom.minidom.parseString(xml_doc.encode('UTF-8'))
+    dom = xml.dom.minidom.parseString(xml_doc.encode('utf-8'))
     return dom.toprettyxml(indent='  ')
 
   def _system_metadata_print(self, metadata, path=None):

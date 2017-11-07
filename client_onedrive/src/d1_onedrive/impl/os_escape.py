@@ -38,7 +38,7 @@ escaped name, so the escaping must be reversible. This is because the filesystem
 driver (e.g., FUSE), passes the escaped name back to ONEDrive when the user
 interacts with the file or folder.
 
-The current implementation simply uses URL percent-encoding of an UTF-8 encoding
+The current implementation simply uses URL percent-encoding of an utf-8 encoding
 of the Unicode strings.
 
 Quote and unquote are somewhat borrowed from python urllib standard library.

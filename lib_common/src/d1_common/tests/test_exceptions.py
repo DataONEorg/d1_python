@@ -34,7 +34,7 @@ TRACE_SECTION = """  <traceInformation>
     <value>traceInformation2</value>
   </traceInformation>"""
 
-VALID_ERROR_DOC = """<?xml version="1.0" encoding="UTF-8"?>
+VALID_ERROR_DOC = """<?xml version="1.0" encoding="utf-8"?>
 <error  detailCode="123.456.789"
         errorCode="456"
         identifier="SomeDataONEPID"
@@ -44,7 +44,7 @@ VALID_ERROR_DOC = """<?xml version="1.0" encoding="UTF-8"?>
 </error>
 """
 
-VALID_ERROR_DOC_NOTFOUND = """<?xml version="1.0" encoding="UTF-8"?>
+VALID_ERROR_DOC_NOTFOUND = """<?xml version="1.0" encoding="utf-8"?>
 <error detailCode="1800" errorCode="404" name="NotFound">
     <description>No system metadata could be found for given PID: something_bogus/</description>
 </error>
@@ -70,7 +70,7 @@ VALID_ERROR_DOC_NOTFOUND_3 = """<?xml version="1.0"?>
 
 # Missing detailCode.
 INVALID_ERROR_DOC = (
-  """<?xml version="1.0" encoding="UTF-8"?>
+  """<?xml version="1.0" encoding="utf-8"?>
   <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions"

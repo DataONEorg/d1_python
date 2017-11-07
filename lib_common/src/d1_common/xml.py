@@ -47,7 +47,7 @@ def deserialize(doc_xml, bindings=None):
   else:
     if not is_valid_utf8(doc_xml):
       raise ValueError(
-        'Invalid XML doc encoding. Must be unicode or UTF-8. str="{}"'
+        'Invalid XML doc encoding. Must be unicode or utf-8. str="{}"'
         .format(doc_xml.decode('utf-8', error='replace'))
       )
   try:
@@ -101,8 +101,13 @@ def pretty_pyxb(doc_pyxb):
   return pretty_xml(serialize(doc_pyxb))
 
 
-def is_equivalent(a_xml, b_xml, encoding='UTF-8'):
-  """Return True if two XML docs are semantically equivalent, else False.
+def is_equivalent_pyxb(a_pyxb, b_pyxb):
+  """Return True if two PyXB objects are semantically equivalent, else False"""
+  return is_equivalent(serialize(a_pyxb), serialize(b_pyxb))
+
+
+def is_equivalent(a_xml, b_xml, encoding='utf-8'):
+  """Return True if two XML docs are semantically equivalent, else False
 
   Using a_xml to determine the requirements for b_xml, this checks the
   following in b_xml:

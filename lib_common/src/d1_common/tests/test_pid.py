@@ -30,7 +30,7 @@ import d1_common.types
 import d1_test.d1_test_case
 
 EG_PID_GMN = (
-  '<?xml version="1.0" encoding="UTF-8"?>\n'
+  '<?xml version="1.0" encoding="utf-8"?>\n'
   '<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"\n'
   ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
   ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
@@ -43,7 +43,7 @@ EG_PID_KNB = ("""""", '',)
 
 # Blank pid.
 EG_BAD_PID_1 = (
-  '<?xml version="1.0" encoding="UTF-8"?>\n'
+  '<?xml version="1.0" encoding="utf-8"?>\n'
   '<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"\n'
   ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
   ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
@@ -52,7 +52,7 @@ EG_BAD_PID_1 = (
 )
 
 # Missing identifier.
-EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid',)
+EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="utf-8"?>""", 'testpid',)
 
 
 class TestPID(d1_test.d1_test_case.D1TestCase):

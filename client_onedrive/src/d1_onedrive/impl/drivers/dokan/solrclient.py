@@ -57,13 +57,12 @@ from __future__ import print_function
 import codecs
 #===============================================================================
 import datetime
+import httplib
 import logging
 import random
 import socket
 import urllib
 import xml.dom.minidom
-
-import httplib
 
 
 class SolrException(Exception):
@@ -119,7 +118,7 @@ class SolrConnection:
     self.persistent = persistent
     self.reconnects = 0
     self.encoder = codecs.getencoder('utf-8')
-    #responses from Solr will always be in UTF-8
+    #responses from Solr will always be in utf-8
     self.decoder = codecs.getdecoder('utf-8')
     #a real connection to the server is not opened at this point.
     self.conn = httplib.HTTPConnection(self.host)

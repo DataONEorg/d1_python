@@ -139,7 +139,7 @@ if __name__ == "__main__":
         print("SubjectInfo:")
         print(
           etree.tostring(
-            root, pretty_print=True, encoding='UTF-8', xml_declaration=True
+            root, pretty_print=True, encoding='utf-8', xml_declaration=True
           )
         )
       else:

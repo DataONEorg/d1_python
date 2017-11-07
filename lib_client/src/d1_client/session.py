@@ -113,7 +113,7 @@ class Session(object):
     :type user_agent: str
 
     :param charset: Override the default Charset used by d1client.
-      (default: UTF-8)
+      (default: utf-8)
     :type charset: str
 
     :returns: None

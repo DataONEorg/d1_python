@@ -164,7 +164,7 @@ def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
 
 def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
   """Normalizes then compares SystemMetadata XML docs for equivalency.
-  {a_xml} and {b_xml} should be UTF-8 encoded DataONE System Metadata XML
+  {a_xml} and {b_xml} should be utf-8 encoded DataONE System Metadata XML
   documents.
   """
   return is_equivalent_pyxb(

@@ -21,8 +21,8 @@
 """
 In the DataONE Python stack, XML docs are represented in a few different ways.
 
-- Received and transmitted as UTF-8 text documents.
-- On the borders of the Python domain, handled as UTF-8 or Unicode strings.
+- Received and transmitted as utf-8 text documents.
+- On the borders of the Python domain, handled as utf-8 or Unicode strings.
 - Schema validation and manipulation in Python code as PyXB binding objects.
 - General processing as ElementTrees.
 
