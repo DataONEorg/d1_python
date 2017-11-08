@@ -46,19 +46,18 @@ sysmeta: <?xml version="1.0" encoding="utf-8"?>
   <replica>
     <replicaMemberNode>mn_b</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2115-02-04T19:49:39.000792Z</replicaVerified>
+    <replicaVerified>2015-10-04T10:45:39.709439Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicaMemberNode>mn_ai</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2080-08-02T01:59:02.000882Z</replicaVerified>
+    <replicaVerified>2004-11-15T17:33:50.016535Z</replicaVerified>
   </replica>
-  <mediaType name="media_type_gm">
-    <property name="prop_jz">yn</property>
-    <property name="prop_wy">pj</property>
-    <property name="prop_uz">rx</property>
+  <mediaType name="media_type_wh">
+    <property name="prop_ly">rb</property>
+    <property name="prop_nz">ig</property>
   </mediaType>
-  <fileName>file_yyf</fileName>
+  <fileName>file_mky</fileName>
 </ns1:systemMetadata>
 
 pid: PID_gxmjjxhpmzob
@@ -69,7 +68,7 @@ create_event: <?xml version="1.0" encoding="utf-8"?>
     <identifier>PID_gxmjjxhpmzob</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[volatile]
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2388-08-28T00:00:00</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>

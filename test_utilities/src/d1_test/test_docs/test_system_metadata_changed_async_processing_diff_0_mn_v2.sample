@@ -50,28 +50,23 @@
       <blockedMemberNode>mn_z</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
--   <dateUploaded>2003-04-18T15:36:08Z</dateUploaded>
-?                                    -
-
-+   <dateUploaded>2003-04-18T15:36:08</dateUploaded>
--   <dateSysMetadataModified>2003-04-28T15:36:08Z</dateSysMetadataModified>
-?                                               -
-
-+   <dateSysMetadataModified>2003-04-28T15:36:08</dateSysMetadataModified>
+    <dateUploaded>2003-04-18T15:36:08.111426Z</dateUploaded>
+    <dateSysMetadataModified>2003-04-28T15:36:08.111426Z</dateSysMetadataModified>
     <originMemberNode>mn_uu</originMemberNode>
     <authoritativeMemberNode>mn_jn</authoritativeMemberNode>
     <replica>
       <replicaMemberNode>mn_w</replicaMemberNode>
       <replicationStatus>queued</replicationStatus>
-      <replicaVerified>2132-12-03T05:00:04.000191Z</replicaVerified>
+      <replicaVerified>2021-05-18T21:04:08.375354Z</replicaVerified>
     </replica>
     <seriesId>SID_oyvfbdjqidbp</seriesId>
-    <mediaType name="media_type_ts">
--     <property name="prop_tj">vy</property>
-      <property name="prop_em">ru</property>
-      <property name="prop_qv">ye</property>
-+     <property name="prop_tj">vy</property>
-      <property name="prop_ul">vl</property>
+    <mediaType name="media_type_jt">
+      <property name="prop_it">bv</property>
++     <property name="prop_lq">ny</property>
+      <property name="prop_te">lr</property>
+-     <property name="prop_lq">ny</property>
+      <property name="prop_tu">kv</property>
+      <property name="prop_wd">uo</property>
     </mediaType>
-    <fileName>file_odw</fileName>
+    <fileName>file_bgx</fileName>
   </ns1:systemMetadata>

@@ -50,19 +50,13 @@
       <blockedMemberNode>mn_z</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
--   <dateUploaded>2003-04-18T15:36:08Z</dateUploaded>
-?                                    -
-
-+   <dateUploaded>2003-04-18T15:36:08</dateUploaded>
--   <dateSysMetadataModified>2003-04-28T15:36:08Z</dateSysMetadataModified>
-?                                               -
-
-+   <dateSysMetadataModified>2003-04-28T15:36:08</dateSysMetadataModified>
+    <dateUploaded>2003-04-18T15:36:08.111426Z</dateUploaded>
+    <dateSysMetadataModified>2003-04-28T15:36:08.111426Z</dateSysMetadataModified>
     <originMemberNode>mn_uu</originMemberNode>
     <authoritativeMemberNode>mn_jn</authoritativeMemberNode>
     <replica>
       <replicaMemberNode>mn_w</replicaMemberNode>
       <replicationStatus>queued</replicationStatus>
-      <replicaVerified>2132-12-03T05:00:04.000191Z</replicaVerified>
+      <replicaVerified>2021-05-18T21:04:08.375354Z</replicaVerified>
     </replica>
   </ns1:systemMetadata>

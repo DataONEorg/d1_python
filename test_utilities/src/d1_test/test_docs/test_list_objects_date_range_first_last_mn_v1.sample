@@ -5,7 +5,7 @@ PyXB object:
       <identifier>PID_GMNFXT_drmdnmgglfll</identifier>
       <formatId>http://www.openarchives.org/ore/terms</formatId>
       <checksum algorithm="SHA-1">cc33011a5ef145609425be45e298666cc748e746</checksum>
-      <dateSysMetadataModified>1980-12-20T17:46:08</dateSysMetadataModified>
+      <dateSysMetadataModified>1980-12-20T17:46:08Z</dateSysMetadataModified>
       <size>235</size>
     </objectInfo>
   </ns1:objectList>
@@ -17,7 +17,7 @@ PyXB object:
       <identifier>PID_GMNFXT_gygvbvbovkyb</identifier>
       <formatId>-//ecoinformatics.org//eml-dataset-2.0.0beta6//EN</formatId>
       <checksum algorithm="SHA-1">7c1e090f2bd6f23b2114197cc80eadfe71d7f4bf</checksum>
-      <dateSysMetadataModified>1980-02-14T08:33:29</dateSysMetadataModified>
+      <dateSysMetadataModified>1980-02-14T08:33:29Z</dateSysMetadataModified>
       <size>234</size>
     </objectInfo>
   </ns1:objectList>

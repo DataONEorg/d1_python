@@ -51,34 +51,28 @@
 -     <blockedMemberNode>mn_fj</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
--   <dateUploaded>2007-11-30T21:48:29Z</dateUploaded>
-?                                    -
-
-+   <dateUploaded>2007-11-30T21:48:29</dateUploaded>
--   <dateSysMetadataModified>2007-12-10T21:48:29Z</dateSysMetadataModified>
-?                                               -
-
-+   <dateSysMetadataModified>2007-12-10T21:48:29</dateSysMetadataModified>
+    <dateUploaded>2007-11-30T21:48:29.078665Z</dateUploaded>
+    <dateSysMetadataModified>2007-12-10T21:48:29.078665Z</dateSysMetadataModified>
     <originMemberNode>mn_na</originMemberNode>
     <authoritativeMemberNode>mn_h</authoritativeMemberNode>
-+   <replica>
-+     <replicaMemberNode>mn_p</replicaMemberNode>
-+     <replicationStatus>completed</replicationStatus>
-+     <replicaVerified>2103-11-25T09:52:21.000226Z</replicaVerified>
-+   </replica>
     <replica>
++     <replicaMemberNode>mn_ep</replicaMemberNode>
++     <replicationStatus>completed</replicationStatus>
++     <replicaVerified>2012-03-23T19:27:09.546179Z</replicaVerified>
++   </replica>
++   <replica>
       <replicaMemberNode>mn_jg</replicaMemberNode>
       <replicationStatus>queued</replicationStatus>
-      <replicaVerified>2251-09-14T02:18:34.000774Z</replicaVerified>
+      <replicaVerified>2058-11-02T02:31:45.521857Z</replicaVerified>
 -   </replica>
 -   <replica>
--     <replicaMemberNode>mn_p</replicaMemberNode>
+-     <replicaMemberNode>mn_ep</replicaMemberNode>
 -     <replicationStatus>completed</replicationStatus>
--     <replicaVerified>2103-11-25T09:52:21.000226Z</replicaVerified>
+-     <replicaVerified>2012-03-23T19:27:09.546179Z</replicaVerified>
     </replica>
     <seriesId>SID_fjnserbtqzzr</seriesId>
-    <mediaType name="media_type_yw">
-      <property name="prop_bh">us</property>
+    <mediaType name="media_type_yu">
+      <property name="prop_xv">wk</property>
     </mediaType>
-    <fileName>file_tin</fileName>
+    <fileName>file_ald</fileName>
   </ns1:systemMetadata>

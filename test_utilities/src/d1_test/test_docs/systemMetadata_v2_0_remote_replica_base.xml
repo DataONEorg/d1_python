@@ -1,0 +1,47 @@
+<v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>11</serialVersion>
+  <identifier>replica_test_base</identifier>
+  <formatId>test_format_id</formatId>
+  <size>11</size>
+  <checksum algorithm="SHA1">SHA1</checksum>
+  <submitter>test_submitter</submitter>
+  <rightsHolder>test_rights_holder</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj1</subject>
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj4</subject>
+      <permission>read</permission>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj5</subject>
+      <subject>subj6</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
+    <preferredMemberNode>node1</preferredMemberNode>
+    <preferredMemberNode>node2</preferredMemberNode>
+    <preferredMemberNode>node3</preferredMemberNode>
+    <blockedMemberNode>node4</blockedMemberNode>
+    <blockedMemberNode>node5</blockedMemberNode>
+  </replicationPolicy>
+  <obsoletes>test_obsoletes_pid</obsoletes>
+  <obsoletedBy>test_obsoleted_by</obsoletedBy>
+  <archived>true</archived>
+  <dateUploaded>2014-09-18T17:18:33Z</dateUploaded>
+  <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
+  <originMemberNode>test_originating_mn</originMemberNode>
+  <authoritativeMemberNode>test_authoritative_mn</authoritativeMemberNode>
+  <seriesId>test_series_id</seriesId>
+  <mediaType name="test_media_type">
+    <property name="property_name_1">property_value_1</property>
+    <property name="property_name_2">property_value_2</property>
+    <property name="property_name_3">property_value_3</property>
+  </mediaType>
+  <fileName>string</fileName>
+</v2:systemMetadata>

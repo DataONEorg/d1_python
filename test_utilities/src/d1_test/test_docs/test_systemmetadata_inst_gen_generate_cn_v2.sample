@@ -57,33 +57,34 @@
     <blockedMemberNode>mn_wr</blockedMemberNode>
     <blockedMemberNode>mn_d</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2024-05-18T05:36:37Z</dateUploaded>
-  <dateSysMetadataModified>2024-05-28T05:36:37Z</dateSysMetadataModified>
+  <dateUploaded>2024-05-18T05:36:37.263706Z</dateUploaded>
+  <dateSysMetadataModified>2024-05-28T05:36:37.263706Z</dateSysMetadataModified>
   <originMemberNode>mn_s</originMemberNode>
   <authoritativeMemberNode>mn_i</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_c</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2256-11-17T03:13:00.000326Z</replicaVerified>
+    <replicaVerified>2060-06-20T11:06:49.212283Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_ua</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>1993-01-02T22:35:04.000683Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_n</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2219-11-15T01:38:50.000318Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_a</replicaMemberNode>
+    <replicaMemberNode>mn_q</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2174-12-08T09:22:35.000648Z</replicaVerified>
+    <replicaVerified>1972-12-10T16:54:23.307319Z</replicaVerified>
   </replica>
-  <mediaType name="media_type_wh">
-    <property name="prop_ua">op</property>
-    <property name="prop_bu">ix</property>
+  <replica>
+    <replicaMemberNode>mn_br</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2021-04-18T23:50:05.169122Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_ui</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>1973-01-01T09:23:20.409895Z</replicaVerified>
+  </replica>
+  <mediaType name="media_type_sl">
+    <property name="prop_op">wh</property>
+    <property name="prop_ix">ua</property>
+    <property name="prop_ub">bu</property>
   </mediaType>
-  <fileName>file_uba</fileName>
+  <fileName>file_gye</fileName>
 </ns1:systemMetadata>

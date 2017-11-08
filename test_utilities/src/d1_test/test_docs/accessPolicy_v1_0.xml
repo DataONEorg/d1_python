@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<v1:accessPolicy xmlns:v1="http://ns.dataone.org/service/types/v1">
+  <allow>
+    <subject>public</subject>
+    <permission>read</permission>
+  </allow>
+  <allow>
+    <subject>subj1</subject>
+    <subject>subj4</subject>
+    <subject>subj3</subject>
+    <permission>write</permission>
+  </allow>
+  <allow>
+    <subject>subj5</subject>
+    <subject>subj6</subject>
+    <subject>subj2</subject>
+    <subject>subj3</subject>
+    <permission>changePermission</permission>
+  </allow>
+</v1:accessPolicy>

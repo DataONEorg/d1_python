@@ -2,5 +2,5 @@
 <ns1:replica xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <replicaMemberNode>mn_o</replicaMemberNode>
   <replicationStatus>completed</replicationStatus>
-  <replicaVerified>2072-06-28T08:17:10.00012Z</replicaVerified>
+  <replicaVerified>2002-04-28T07:04:58.3542Z</replicaVerified>
 </ns1:replica>

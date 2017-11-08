@@ -1,0 +1,25 @@
+[                                                                  [
+  [                                                                  [
+    "read",                                                     <
+    [                                                           <
+      "public"                                                  <
+    ]                                                           <
+  ],                                                            <
+  [                                                             <
+    "write",                                                           "write", 
+    [                                                                  [
+      "subj1",                                                           "subj1", 
+      "subj4"                                                            "subj4"
+    ]                                                                  ]
+  ],                                                                 ], 
+  [                                                                  [
+    "changePermission",                                                "changePermission", 
+    [                                                                  [
+                                                                >        "public", 
+      "subj2",                                                           "subj2", 
+      "subj3",                                                           "subj3", 
+      "subj5",                                                           "subj5", 
+      "subj6"                                                            "subj6"
+    ]                                                                  ]
+  ]                                                                  ]
+]                                                                  ]

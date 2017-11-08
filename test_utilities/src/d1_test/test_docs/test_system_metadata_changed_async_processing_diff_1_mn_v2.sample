@@ -47,27 +47,16 @@
       <blockedMemberNode>mn_r</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
--   <dateUploaded>2028-12-06T00:35:25Z</dateUploaded>
-?                                    -
-
-+   <dateUploaded>2028-12-06T00:35:25</dateUploaded>
--   <dateSysMetadataModified>2028-12-16T00:35:25Z</dateSysMetadataModified>
-?                                               -
-
-+   <dateSysMetadataModified>2028-12-16T00:35:25</dateSysMetadataModified>
+    <dateUploaded>2028-12-06T00:35:24.696889Z</dateUploaded>
+    <dateSysMetadataModified>2028-12-16T00:35:24.696889Z</dateSysMetadataModified>
     <originMemberNode>mn_pn</originMemberNode>
     <authoritativeMemberNode>mn_g</authoritativeMemberNode>
     <replica>
-+     <replicaMemberNode>mn_an</replicaMemberNode>
-+     <replicationStatus>invalidated</replicationStatus>
-+     <replicaVerified>2006-09-25T21:27:43.00034Z</replicaVerified>
-+   </replica>
-+   <replica>
 -     <replicaMemberNode>mn_dh</replicaMemberNode>
 ?                           ^^
 
-+     <replicaMemberNode>mn_r</replicaMemberNode>
-?                           ^
++     <replicaMemberNode>mn_gx</replicaMemberNode>
+?                           ^^
 
 -     <replicationStatus>completed</replicationStatus>
 ?                        ^^^^ --
@@ -75,21 +64,26 @@
 +     <replicationStatus>failed</replicationStatus>
 ?                        ^^^
 
--     <replicaVerified>2199-11-17T21:56:38.000943Z</replicaVerified>
-?                       ^^    ^^ --- ^^^^^     -
+-     <replicaVerified>2042-06-30T05:30:11.779721Z</replicaVerified>
+?                      ^^^^  ^  ---- ^^  ^ ^^^^
 
-+     <replicaVerified>2049-01-07T11:07:40.000893Z</replicaVerified>
-?                       ^^  ++++++  ^^  ^^    +
++     <replicaVerified>1973-08-14T23:47:18.621357Z</replicaVerified>
+?                      ^^^^  ^ ++++  ^^  ^ ^  +++
 
     </replica>
     <replica>
-      <replicaMemberNode>mn_ri</replicaMemberNode>
-      <replicationStatus>completed</replicationStatus>
-      <replicaVerified>2055-04-12T04:16:15.000907Z</replicaVerified>
+      <replicaMemberNode>mn_wr</replicaMemberNode>
+      <replicationStatus>requested</replicationStatus>
+      <replicaVerified>2023-11-05T11:20:25.020399Z</replicaVerified>
     </replica>
     <replica>
--     <replicaMemberNode>mn_r</replicaMemberNode>
-?                           ^
+      <replicaMemberNode>mn_x</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2035-07-03T19:42:09.673155Z</replicaVerified>
+    </replica>
+    <replica>
+-     <replicaMemberNode>mn_gx</replicaMemberNode>
+?                           ^^
 
 +     <replicaMemberNode>mn_dh</replicaMemberNode>
 ?                           ^^
@@ -100,27 +94,18 @@
 +     <replicationStatus>completed</replicationStatus>
 ?                        ^^^^ ++
 
--     <replicaVerified>2049-01-07T11:07:40.000893Z</replicaVerified>
-?                       ^^  ^  ^  ^  ^^ ^^    -
-
-+     <replicaVerified>2199-11-17T21:56:38.000943Z</replicaVerified>
-?                       ^^  ^  ^  ^  ^^ ^^     +
-
--   </replica>
--   <replica>
--     <replicaMemberNode>mn_an</replicaMemberNode>
--     <replicationStatus>invalidated</replicationStatus>
--     <replicaVerified>2006-09-25T21:27:43.00034Z</replicaVerified>
+-     <replicaVerified>1973-08-14T23:47:18.621357Z</replicaVerified>
++     <replicaVerified>2042-06-30T05:30:11.779721Z</replicaVerified>
     </replica>
     <seriesId>SID_cqkaeewauixy</seriesId>
-    <mediaType name="media_type_lc">
-+     <property name="prop_ea">wu</property>
-+     <property name="prop_ec">jf</property>
-+     <property name="prop_lq">jv</property>
-      <property name="prop_xw">uf</property>
--     <property name="prop_lq">jv</property>
--     <property name="prop_ec">jf</property>
--     <property name="prop_ea">wu</property>
+    <mediaType name="media_type_ig">
++     <property name="prop_ch">sd</property>
++     <property name="prop_jg">qt</property>
++     <property name="prop_wl">ft</property>
+      <property name="prop_xz">eu</property>
+-     <property name="prop_jg">qt</property>
+-     <property name="prop_ch">sd</property>
+-     <property name="prop_wl">ft</property>
     </mediaType>
-    <fileName>file_bmq</fileName>
+    <fileName>file_vdl</fileName>
   </ns1:systemMetadata>

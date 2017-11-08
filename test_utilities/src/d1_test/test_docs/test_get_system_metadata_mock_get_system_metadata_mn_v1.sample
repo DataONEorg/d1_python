@@ -27,18 +27,18 @@
     <blockedMemberNode>mn_ru</blockedMemberNode>
     <blockedMemberNode>mn_vr</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2008-07-06T03:33:45Z</dateUploaded>
-  <dateSysMetadataModified>2008-07-16T03:33:45Z</dateSysMetadataModified>
+  <dateUploaded>2008-07-06T03:33:44.966355Z</dateUploaded>
+  <dateSysMetadataModified>2008-07-16T03:33:44.966355Z</dateSysMetadataModified>
   <originMemberNode>mn_ou</originMemberNode>
   <authoritativeMemberNode>mn_l</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_qg</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2064-12-26T07:18:17.000165Z</replicaVerified>
+    <replicaVerified>1999-12-15T21:07:52.173696Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_rp</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2247-01-29T02:43:51.000513Z</replicaVerified>
+    <replicaMemberNode>mn_v</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2028-06-16T12:22:03.486021Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

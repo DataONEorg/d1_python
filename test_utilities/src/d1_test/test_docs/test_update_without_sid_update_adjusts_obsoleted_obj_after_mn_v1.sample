@@ -35,28 +35,28 @@
   </replicationPolicy>
   <obsoletedBy>PID_buqxyitgzycp</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2023-10-06T06:29:16</dateUploaded>
-  <dateSysMetadataModified>1955-05-15T00:00:00</dateSysMetadataModified>
+  <dateUploaded>2023-10-06T06:29:15.53565Z</dateUploaded>
+  <dateSysMetadataModified>1955-05-15T00:00:00Z</dateSysMetadataModified>
   <originMemberNode>mn_xc</originMemberNode>
   <authoritativeMemberNode>mn_r</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_fg</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2049-03-21T09:30:20.000282Z</replicaVerified>
+    <replicaMemberNode>mn_g</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>1970-02-15T17:41:27.750349Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_w</replicaMemberNode>
+    <replicaMemberNode>mn_o</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>1994-06-28T05:32:13.655424Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_lw</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2055-10-24T05:53:50.000091Z</replicaVerified>
+    <replicaVerified>1997-01-23T02:10:28.775632Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_y</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2096-11-01T12:06:50.00063Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_s</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2281-08-12T11:31:24.000241Z</replicaVerified>
+    <replicaVerified>2009-12-31T12:38:12.883952Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

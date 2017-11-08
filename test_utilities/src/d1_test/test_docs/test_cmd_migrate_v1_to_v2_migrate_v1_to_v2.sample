@@ -1,6 +1,0 @@
-Events:
-  Creating SciObj DB representations: 200
-  Retrieving revision chains: 200
-  Skipped Node registry update on CN because this MN does not appear to be registered in a DataONE environment yet.: 1
-  Updating obsoletedBy: 42
-  Whitelisted subject: 2

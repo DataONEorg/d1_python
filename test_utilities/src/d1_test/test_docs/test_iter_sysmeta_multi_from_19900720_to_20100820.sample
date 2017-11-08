@@ -50,20 +50,16 @@
     <blockedMemberNode>mn_lf</blockedMemberNode>
     <blockedMemberNode>mn_p</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>1994-08-15T20:02:49Z</dateUploaded>
-  <dateSysMetadataModified>1994-08-25T20:02:49Z</dateSysMetadataModified>
+  <dateUploaded>1994-08-15T20:02:49.047769Z</dateUploaded>
+  <dateSysMetadataModified>1994-08-25T20:02:49.047769Z</dateSysMetadataModified>
   <originMemberNode>mn_dr</originMemberNode>
   <authoritativeMemberNode>mn_vg</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_r</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2231-10-02T05:18:55.000512Z</replicaVerified>
+    <replicaVerified>2052-07-18T02:47:51.265202Z</replicaVerified>
   </replica>
-  <seriesId>SID_bbzyfgxayymg</seriesId>
-  <mediaType name="media_type_zy">
-    <property name="prop_mt">uf</property>
-  </mediaType>
-  <fileName>file_ufr</fileName>
+  <fileName>file_bbz</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
@@ -88,8 +84,8 @@
     <blockedMemberNode>mn_m</blockedMemberNode>
     <blockedMemberNode>mn_b</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2008-02-12T12:23:23Z</dateUploaded>
-  <dateSysMetadataModified>2008-02-22T12:23:23Z</dateSysMetadataModified>
+  <dateUploaded>2008-02-12T12:23:23.458099Z</dateUploaded>
+  <dateSysMetadataModified>2008-02-22T12:23:23.458099Z</dateSysMetadataModified>
   <originMemberNode>mn_ns</originMemberNode>
   <authoritativeMemberNode>mn_q</authoritativeMemberNode>
   <seriesId>SID_pjucnszugsvh</seriesId>

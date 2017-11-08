@@ -20,18 +20,18 @@
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
     <blockedMemberNode>mn_or</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2007-01-12T04:14:20Z</dateUploaded>
-  <dateSysMetadataModified>2007-01-22T04:14:20Z</dateSysMetadataModified>
+  <dateUploaded>2007-01-12T04:14:19.961217Z</dateUploaded>
+  <dateSysMetadataModified>2007-01-22T04:14:19.961217Z</dateSysMetadataModified>
   <originMemberNode>mn_fd</originMemberNode>
   <authoritativeMemberNode>mn_yw</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_sp</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2260-06-16T00:40:08.0004Z</replicaVerified>
+    <replicaVerified>2061-08-06T14:31:21.675804Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_e</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2280-03-04T07:50:43.000103Z</replicaVerified>
+    <replicaMemberNode>mn_h</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2056-03-21T15:16:39.611381Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

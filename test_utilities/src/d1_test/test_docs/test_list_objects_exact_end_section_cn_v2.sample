@@ -4,7 +4,7 @@
     <identifier>PID_GMNFXT_zeomgoufdbor</identifier>
     <formatId>-//ecoinformatics.org//eml-attribute-2.0.0beta6//EN</formatId>
     <checksum algorithm="SHA-1">4c6bd48700ff9a1bb5a6c065c290f718ea7f9c96</checksum>
-    <dateSysMetadataModified>1970-01-17T19:30:07</dateSysMetadataModified>
+    <dateSysMetadataModified>1970-01-17T19:30:07Z</dateSysMetadataModified>
     <size>224</size>
   </objectInfo>
 </ns1:objectList>

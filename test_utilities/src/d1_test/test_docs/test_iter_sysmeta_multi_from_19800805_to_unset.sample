@@ -14,41 +14,37 @@
     <preferredMemberNode>mn_h</preferredMemberNode>
     <blockedMemberNode>mn_d</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>1981-04-25T05:46:30Z</dateUploaded>
-  <dateSysMetadataModified>1981-05-05T05:46:30Z</dateSysMetadataModified>
+  <dateUploaded>1981-04-25T05:46:30.861414Z</dateUploaded>
+  <dateSysMetadataModified>1981-05-05T05:46:30.861414Z</dateSysMetadataModified>
   <originMemberNode>mn_zy</originMemberNode>
   <authoritativeMemberNode>mn_io</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_yx</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2209-07-23T14:23:37.000881Z</replicaVerified>
+    <replicaVerified>2045-07-18T22:15:52.700933Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_m</replicaMemberNode>
+    <replicaMemberNode>mn_im</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2143-04-05T07:41:59.000758Z</replicaVerified>
+    <replicaVerified>2024-08-21T09:32:09.987187Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_m</replicaMemberNode>
+    <replicaMemberNode>mn_mm</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2245-04-03T01:30:30.000917Z</replicaVerified>
+    <replicaVerified>2056-10-20T10:07:45.993371Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_nk</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2280-08-26T08:05:11.000635Z</replicaVerified>
+    <replicaMemberNode>mn_pn</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2040-04-18T20:03:56.977132Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_go</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2264-03-18T12:11:52.000311Z</replicaVerified>
+    <replicaMemberNode>mn_qp</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2026-07-29T03:19:25.163645Z</replicaVerified>
   </replica>
-  <seriesId>SID_nupddrcxvavs</seriesId>
-  <mediaType name="media_type_fm">
-    <property name="prop_vc">rr</property>
-    <property name="prop_tq">vh</property>
-  </mediaType>
-  <fileName>file_aer</fileName>
+  <seriesId>SID_ikinupddrcxv</seriesId>
+  <fileName>file_smk</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
@@ -86,22 +82,25 @@
     <blockedMemberNode>mn_l</blockedMemberNode>
     <blockedMemberNode>mn_ew</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2040-10-13T15:31:00Z</dateUploaded>
-  <dateSysMetadataModified>2040-10-23T15:31:00Z</dateSysMetadataModified>
+  <dateUploaded>2040-10-13T15:30:59.298354Z</dateUploaded>
+  <dateSysMetadataModified>2040-10-23T15:30:59.298354Z</dateSysMetadataModified>
   <originMemberNode>mn_yj</originMemberNode>
   <authoritativeMemberNode>mn_tq</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>mn_m</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2173-04-14T00:09:24.000925Z</replicaVerified>
+    <replicaVerified>2034-02-08T20:25:55.732489Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_d</replicaMemberNode>
+    <replicaMemberNode>mn_ld</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2210-02-14T14:36:21.000604Z</replicaVerified>
+    <replicaVerified>2045-09-21T21:28:17.259104Z</replicaVerified>
   </replica>
-  <mediaType name="media_type_ax">
-    <property name="prop_at">mf</property>
+  <mediaType name="media_type_ua">
+    <property name="prop_aa">hm</property>
+    <property name="prop_xo">ci</property>
+    <property name="prop_iu">qv</property>
+    <property name="prop_og">xg</property>
   </mediaType>
-  <fileName>file_igx</fileName>
+  <fileName>file_qna</fileName>
 </ns1:systemMetadata>
