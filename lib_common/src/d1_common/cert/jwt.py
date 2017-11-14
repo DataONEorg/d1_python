@@ -169,7 +169,7 @@ def ts_to_dt(jwt_dict):
   d = jwt_dict.copy()
   for k, v in [v[:2] for v in CLAIM_LIST if v[2]]:
     if k in jwt_dict:
-      d[k] = d1_common.date_time.ts_to_dt(jwt_dict[k])
+      d[k] = d1_common.date_time.dt_from_ts(jwt_dict[k])
   return d
 
 

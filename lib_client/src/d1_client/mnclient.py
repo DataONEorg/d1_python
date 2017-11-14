@@ -172,7 +172,7 @@ class MemberNodeClient(
       'serialVersion':
         str(serialVersion),
       'dateSysMetaLastModified':
-        d1_common.date_time.to_xsd_datetime(dateSysMetaLastModified),
+        d1_common.date_time.xsd_datetime_str_from_dt(dateSysMetaLastModified),
     }
     return self.POST(
       'dirtySystemMetadata', fields=mmp_dict, headers=vendorSpecific

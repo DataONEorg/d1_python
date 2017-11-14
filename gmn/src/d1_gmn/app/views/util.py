@@ -39,6 +39,7 @@ import d1_gmn.app.views.slice
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
+import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
@@ -139,7 +140,7 @@ def http_response_with_boolean_true_type():
 
 
 def add_http_date_to_response_header(response, date_time):
-  response['Date'] = d1_common.date_time.to_http_datetime(date_time)
+  response['Date'] = d1_common.date_time.http_datetime_str_from_dt(date_time)
 
 
 def query_object_list(request, type_name):
@@ -180,3 +181,11 @@ def query_object_list(request, type_name):
     'total': total_int,
     'type': type_name
   }
+
+
+def naive_to_utc(dt):
+  if d1_common.date_time.has_tz(dt):
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, u'Unexpected timezone information in datetime. dt="{}"'.format(dt)
+    )
+  return d1_common.date_time.cast_datetime_to_utc(dt)

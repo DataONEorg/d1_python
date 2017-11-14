@@ -21,7 +21,7 @@ script:
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check
-  - pytest --capture=no --cov=. --cov-report=term --cov-report=xml
+  - pytest --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.
   # Coveralls has a requirement for requests >= 1.0.0, so we install it after

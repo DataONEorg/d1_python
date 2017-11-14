@@ -112,7 +112,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1060(self, mn_client_v1_v2):
     """MNRead.getLogRecords(): event type filter: Unknown event returns an empty
-    list.
+    list
 
     In v2, event type is not an enum.
     """

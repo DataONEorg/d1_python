@@ -36,8 +36,8 @@ import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.util
+import d1_gmn.app.views.util
 
-import d1_common.access_policy
 import d1_common.const
 import d1_common.date_time
 import d1_common.types
@@ -45,6 +45,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.wrap.access_policy
 import d1_common.xml
 
 
@@ -64,7 +65,7 @@ def archive_object(pid):
 
 def serialize(sysmeta_pyxb):
   try:
-    return sysmeta_pyxb.toxml('utf-8')
+    return d1_common.xml.serialize(sysmeta_pyxb)
   except pyxb.IncompleteElementContentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
@@ -172,8 +173,12 @@ def _base_model_to_pyxb(sciobj_model):
     sciobj_model.pid.did
   )
   base_pyxb.serialVersion = sciobj_model.serial_version
-  base_pyxb.dateSysMetadataModified = sciobj_model.modified_timestamp
-  base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
+  base_pyxb.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
+    sciobj_model.modified_timestamp
+  )
+  base_pyxb.dateUploaded = d1_gmn.app.views.util.naive_to_utc(
+    sciobj_model.uploaded_timestamp
+  )
   base_pyxb.formatId = sciobj_model.format.format
   base_pyxb.fileName = sciobj_model.filename
   base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(
@@ -373,7 +378,7 @@ def _access_policy_model_to_pyxb(sciobj_model):
     access_rule_pyxb.subject.append(permission_model.subject.subject)
     access_policy_pyxb.allow.append(access_rule_pyxb)
   if len(access_policy_pyxb.allow):
-    return d1_common.access_policy.normalize(access_policy_pyxb)
+    return d1_common.wrap.access_policy.get_normalized_pyxb(access_policy_pyxb)
 
 
 # ------------------------------------------------------------------------------

@@ -342,8 +342,9 @@ class CommandProcessor():
     fromdate = self._session.get(session.FROM_DATE_NAME)
     todate = self._session.get(session.TO_DATE_NAME)
     return u' dateModified:[{} TO {}]'.format(
-      d1_common.date_time.to_http_datetime(fromdate) if fromdate else u'*',
-      d1_common.date_time.to_http_datetime(todate) if todate else u'*'
+      d1_common.date_time.http_datetime_str_from_dt(fromdate)
+      if fromdate else u'*',
+      d1_common.date_time.http_datetime_str_from_dt(todate) if todate else u'*'
     )
 
   def _object_format_to_solr_filter(self, line):

@@ -111,32 +111,32 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
   def count(self, q='*:*', fq=None, **query_args):
     """Return the number of entries that match query."""
-    response_dict = self._get_query(q=q, rows=0, fq=fq, **query_args)
-    return response_dict['response']['numFound']
+    resp_dict = self._get_query(q=q, rows=0, fq=fq, **query_args)
+    return resp_dict['response']['numFound']
 
   # noinspection PyMethodOverriding
   def get(self, doc_id):
     """Retrieve the specified document."""
-    response_dict = self.get_query(q='id:{}'.format(doc_id))
-    if response_dict['response']['numFound'] > 0:
-      return response_dict['response']['docs'][0]
+    resp_dict = self.get_query(q='id:{}'.format(doc_id))
+    if resp_dict['response']['numFound'] > 0:
+      return resp_dict['response']['docs'][0]
 
   # noinspection PyTypeChecker
   def get_ids(self, q='*:*', fq=None, start=0, rows=1000, **query_args):
-    response_dict = {
+    resp_dict = {
       'matches': 0,
       'start': start,
       'failed': True,
       'ids': [],
     }
-    response_dict.update(
+    resp_dict.update(
       self._get_query(q=q, fq=fq, start=start, rows=rows, **query_args)
     )
-    response_dict['failed'] = False
-    response_dict['matches'] = response_dict['response']['numFound']
-    for doc in response_dict['response']['docs']:
-      response_dict['ids'].append(doc['id'][0])
-    return response_dict
+    resp_dict['failed'] = False
+    resp_dict['matches'] = resp_dict['response']['numFound']
+    for doc in resp_dict['response']['docs']:
+      resp_dict['ids'].append(doc['id'][0])
+    return resp_dict
 
   #
   # POST queries
@@ -218,9 +218,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
       'facet.sort': str(sort).lower(),
       'fq': fq,
     }
-    response_dict = self._post_query(query_dict, **query_args)
-    result_dict = response_dict['facet_counts']['facet_fields']
-    result_dict['numFound'] = response_dict['response']['numFound']
+    resp_dict = self._post_query(query_dict, **query_args)
+    result_dict = resp_dict['facet_counts']['facet_fields']
+    result_dict['numFound'] = resp_dict['response']['numFound']
     return result_dict
 
   def get_field_min_max(self, name, q='*:*', fq=None, **query_args):
@@ -242,12 +242,12 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
       'fq': fq,
     }
     try:
-      min_response_dict = self._post_query(query_dict, **query_args)
+      min_resp_dict = self._post_query(query_dict, **query_args)
       query_dict['sort'] = '%s desc' % name
-      max_response_dict = self._post_query(query_dict, **query_args)
+      max_resp_dict = self._post_query(query_dict, **query_args)
       return (
-        min_response_dict['response']['docs'][0][name],
-        max_response_dict['response']['docs'][0][name],
+        min_resp_dict['response']['docs'][0][name],
+        max_resp_dict['response']['docs'][0][name],
       )
     except Exception:
       self.logger.exception('Exception')
@@ -346,9 +346,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         'facet.mincount': 1,
         'facet.query': [sq.encode('utf-8') for sq in q_bin],
       }
-      response_dict = self._post_query(query_dict, **query_args)
+      resp_dict = self._post_query(query_dict, **query_args)
       for i in xrange(len(bin_list)):
-        v = response_dict['facet_counts']['facet_queries'][q_bin[i]]
+        v = resp_dict['facet_counts']['facet_queries'][q_bin[i]]
         bin_list[i][2] = v
         if include_queries:
           bin_list[i].append(q_bin[i])
@@ -746,9 +746,9 @@ class SolrValuesResponseIterator(object):
       'facet.zeros': 'false',
       'fq': self.fq,
     }
-    response_dict = self.client._post_query(query_dict, **self.query_args)
+    resp_dict = self.client._post_query(query_dict, **self.query_args)
     try:
-      self.res = response_dict['facet_counts']['facet_fields'][self.field]
+      self.res = resp_dict['facet_counts']['facet_fields'][self.field]
       self.logger.debug(self.res)
     except:
       self.res = []

@@ -65,7 +65,7 @@ def obsoletes_not_specified(sysmeta_pyxb):
   if obsoletes_pid is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, u'obsoletes cannot be specified in System Metadata for this method. '
-      u'obsoletes="{}'.format(obsoletes_pid)
+      u'obsoletes="{}"'.format(obsoletes_pid)
     )
 
 

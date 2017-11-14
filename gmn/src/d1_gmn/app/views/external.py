@@ -205,8 +205,9 @@ def _content_type_from_format(format):
 def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
   response['Content-Type'] = _content_type_from_format(sciobj.format.format)
-  response['Last-Modified'
-           ] = d1_common.date_time.to_http_datetime(sciobj.modified_timestamp)
+  response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
+    d1_gmn.app.views.util.naive_to_utc(sciobj.modified_timestamp)
+  )
   response['DataONE-GMN'] = d1_gmn.__version__
   response['DataONE-FormatId'] = sciobj.format.format
   response['DataONE-Checksum'] = '{},{}'.format(

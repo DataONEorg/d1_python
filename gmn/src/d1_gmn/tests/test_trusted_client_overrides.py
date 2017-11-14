@@ -22,13 +22,14 @@ to pass values to GMN that are normally controlled by MNs
 """
 from __future__ import absolute_import
 
-import datetime
 import StringIO
 
 import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
+
+import d1_common.date_time
 
 import django.test
 
@@ -42,10 +43,13 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
       (True, 'authoritativeMemberNode', 'urn:node:OverrideAuthMN'),
       (
         False, 'dateSysMetadataModified',
-        datetime.datetime(1980, 1, 1, 1, 1, 1)
+        d1_common.date_time.create_utc_datetime(1980, 1, 1, 1, 1, 1)
       ),
       (False, 'serialVersion', 99),
-      (False, 'dateUploaded', datetime.datetime(1981, 1, 1, 1, 1, 1)),
+      (
+        False, 'dateUploaded',
+        d1_common.date_time.create_utc_datetime(1981, 1, 1, 1, 1, 1)
+      ),
     ]
 
     with d1_gmn.tests.gmn_mock.disable_auth():

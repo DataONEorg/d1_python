@@ -134,7 +134,7 @@ class FUSECallbacks(fuse.Operations):
       self._raise_error_no_such_file_or_directory(path)
 
   def _stat_from_attributes(self, attributes):
-    date_time = d1_common.date_time.to_seconds_since_epoch(
+    date_time = d1_common.date_time.ts_from_dt(
       attributes.date()
     ) if attributes.date() is not None else self._start_time
     return dict(

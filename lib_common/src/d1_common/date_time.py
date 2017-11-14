@@ -18,22 +18,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for handling date-times in DataONE
+
+These functions are guaranteed not to modify their datetime arguments (datetime
+objects are immutable).
 """
 
 from __future__ import absolute_import
 
-import calendar
 import datetime
 import email.utils
+import logging
 
 import iso8601
 
 
 class UTC(datetime.tzinfo):
-  """Date-times in DataONE are required to have timezone information that is
-  fixed to UTC. A naive Python datetime can be fixed to UTC by attaching it
-  to this tzinfo based class.
+  """timezoneinfo derived class that represents the UTC timezone
+
+  - Date-times in DataONE should have timezone information that is fixed to
+  UTC. A naive Python datetime can be fixed to UTC by attaching it to this
+  timezoneinfo based class.
   """
+
+  def __repr__(self):
+    return self.tzname(0)
 
   def utcoffset(self, dt):
     return datetime.timedelta(0)
@@ -48,45 +56,123 @@ class UTC(datetime.tzinfo):
 # ==============================================================================
 
 
-def to_seconds_since_epoch(dt):
-  """Convert datetime to epoch time / Unix timestamp. This is the number of
-  seconds since Midnight, January 1st, 1970, UTC.
-  - Takes timezone information into account if included in the datetime.
-  - A naive datetime (no timezone information) is assumed to be in UTC.
+class FixedOffset(datetime.tzinfo):
+  """timezoneinfo derived class that represents any timezone as fixed offset in
+  minutes east from UTC
+
+  - Date-times in DataONE should have timezone information that is fixed to
+  UTC. A naive Python datetime can be fixed to UTC by attaching it to this
+  timezoneinfo based class.
+  - See the UTC class for representing timezone in UTC.
   """
-  return calendar.timegm(dt.utctimetuple())
+
+  def __init__(self, name, offset_hours=0, offset_minutes=0):
+    self.__offset = datetime.timedelta(
+      hours=offset_hours, minutes=offset_minutes
+    )
+    self.__name = name
+
+  def __repr__(self):
+    return '{} {}'.format(str(self.__offset), self.__name)
+
+  def utcoffset(self, dt):
+    return self.__offset
+
+  def tzname(self, dt):
+    return self.__name
+
+  def dst(self, dt):
+    return datetime.timedelta(0)
 
 
-def ts_to_dt(ts, tz=None):
+# ==============================================================================
+
+#
+# Checks
+#
+
+
+def has_tz(dt):
+  """Return True if datetime has timezone (is not naive)"""
+  return dt.tzinfo is not None
+
+
+def is_utc(dt):
+  """Return True if datetime has timezone and the timezone is in UTC
+  """
+  return dt.utcoffset() == datetime.timedelta(0)
+
+
+def are_equal(a_dt, b_dt, n_round_sec=1):
+  """Compare two datetimes for equality with fuzz factor
+
+  - A naive datetime (no timezone information) is assumed to be in in UTC.
+  - Since different systems may handle and store timestamps with different
+  resolution, they often cannot be safely compared directly.
+  """
+  ra_dt = round_to_nearest(a_dt, n_round_sec)
+  rb_dt = round_to_nearest(b_dt, n_round_sec)
+  logging.debug('Rounded:')
+  logging.debug('{} -> {}'.format(a_dt, ra_dt))
+  logging.debug('{} -> {}'.format(b_dt, rb_dt))
+  return cast_naive_datetime_to_utc(ra_dt) == cast_naive_datetime_to_utc(rb_dt)
+
+
+#
+# Conversions
+#
+
+
+def ts_from_dt(dt):
+  """Convert datetime to Unix timestamp
+
+  - A Unix timestamp is the number of seconds since Midnight, January 1st, 1970,
+  UTC.
+  - If the datetime contains sub-second values, the returned value will be a
+  float with fraction.
+  - Timezone is included if present.
+  - A naive datetime (no timezone information) is assumed to be in in UTC.
+  """
+  dt = normalize_datetime_to_utc(dt)
+  return (dt - create_utc_datetime(1970, 1, 1)).total_seconds()
+
+
+def dt_from_ts(ts, tz=None):
+  """Convert Unix timestamp to datetime
+
+  - A Unix timestamp is the number of seconds since Midnight, January 1st, 1970,
+  UTC.
+  - If timezone is supplied, the datetime is returned set to that timezone.
+  - If timezone is not supplied, a naive datetime is returned.
+  """
   return datetime.datetime.fromtimestamp(ts, tz)
 
 
-def to_http_datetime(dt):
+def http_datetime_str_from_dt(dt):
   """Format datetime to the preferred HTTP Full Date format, which is a
-  fixed-length subset of that defined by RFC 1123.
+  fixed-length subset of that defined by RFC 1123
+
   - http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
-  - Takes timezone information into account if included in the datetime.
-  - A naive datetime (no timezone information) is assumed to be in UTC.
+  - Timezone is included if present.
+  - A naive datetime (no timezone information) is assumed to be in in UTC.
   """
-  epoch_seconds = to_seconds_since_epoch(dt)
+  epoch_seconds = ts_from_dt(dt)
   return email.utils.formatdate(epoch_seconds, localtime=False, usegmt=True)
 
 
-def to_xsd_datetime(dt):
-  """Format datetime to a valid xs:dateTime. (YYYY-MM-DDTHH:MM:SS.mmm+00:00)
-  The date_time must be UTC.
-  :arg dt: Native Python datetime in UTC.
-  :type dt: Python datetime with tzinfo set to UTC.
-  :returns: xs:dateTime
-  :return type: str
+def xsd_datetime_str_from_dt(dt):
+  """Format datetime to a xs:dateTime string
+  (YYYY-MM-DDATETIMEHH:MM:SS.mmm+00:00)
+
+  - Timezone is included if present.
   """
-  if not is_utc(dt):
-    raise Exception('date_time must be UTC')
   return dt.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00')
 
 
-def from_http_datetime(http_full_datetime):
-  """Parse HTTP Full Date formats. Each of the allowed formats are supported:
+def dt_from_http_datetime_str(http_full_datetime):
+  """Parse HTTP Full Date formats and return as datetime
+
+  - Each of the allowed formats are supported:
   Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
   Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
   Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
@@ -101,115 +187,103 @@ def from_http_datetime(http_full_datetime):
   return create_utc_datetime(year, *date_parts[1:])
 
 
-def from_iso8601(iso8601_string):
-  """Create Python datetime from ISO8601 formatted string.
+def dt_from_iso8601_str(iso8601_string, tz=UTC()):
+  """Create Python datetime from ISO8601 formatted string
+
   Can raise d1_common.date_time.iso8601.ParseError.
+
+  - A naive datetime (no timezone information) is assumed to be in {tz}, which
+  is UTC by default.
+  - {tz}=None: Return naive ISO8601 string as naive datetime.
   """
-  return iso8601.parse_date(iso8601_string)
+  return iso8601.parse_date(iso8601_string, tz)
 
 
-def is_utc(dt):
-  """Check that datetime contains time zone information and that the
-  timezone is UTC.
-  """
-  if dt.tzinfo is None:
-    return False
-  try:
-    utc_offset = dt.utcoffset()
-  except:
-    return False
-  if utc_offset:
-    return False
-  return True
+#
+# Timezone operations
+#
 
 
-def create_utc_datetime(*datetime_parts):
-  return datetime.datetime(*datetime_parts, tzinfo=UTC())
-
-
-def normalize_datetime_to_utc(dt, timezone=None):
+def normalize_datetime_to_utc(dt):
   """Adjust datetime to UTC by applying the timezone offset to the datetime and
-  setting the timezone to UTC.
+  setting the timezone to UTC
 
-  :param dt: Datetime with or without timezone information.
-  :type dt: datetime.datetime
-  :param timezone: Timezone specified as offset from UTC in minutes.
-  :type timezone: int
-
-  - Raises TypeError if datetime contains timezone, the timezone parameter is
-    provided, and the two are in conflict.
-  - Raises TypeError if datetime does not contain timezone information and the
-    timezone parameter is not provided.
-  - If datetime does not contain timezone information, the timezone parameter
-    must be provided.
-  - If datetime is already UTC, does nothing.
+  - If timezone is already in UTC, returns the datetime unmodified.
+  - A naive datetime (no timezone information) is assumed to be in in UTC.
   """
-  tz_dt_present = dt.tzinfo is not None
-  tz_arg_present = timezone is not None
-
-  if not tz_dt_present and not tz_arg_present:
-    raise TypeError(
-      'Timezone information must be provided either within '
-      'datetime or as timezone argument'
-    )
-
-  if tz_dt_present and tz_arg_present and dt.utcoffset() != \
-      datetime.timedelta(minutes=timezone):
-    raise TypeError(
-      'Timezone information was provided both within datetime '
-      'and as timezone argument and the two were in conflict'
-    )
-
-  if tz_dt_present:
+  if has_tz(dt):
     dt -= dt.utcoffset()
-
-  if tz_arg_present:
-    dt -= datetime.timedelta(minutes=timezone)
-
   return cast_datetime_to_utc(dt)
 
 
+def normalize_datetime_to_naive_utc(dt):
+  """Adjust datetime to naive UTC by applying any timezone offset to the
+  datetime and removing the timezone
+
+  - If timezone already in UTC, only removes the timezone.
+  - If timezone is not set, returns the datetime unmodified.
+  """
+  dt = normalize_datetime_to_utc(dt)
+  return strip_timezone(dt)
+
+
 def cast_datetime_to_utc(dt):
-  """Set timezone to UTC without adjusting the date-time. Warning: If the
-  date-time is naive and not in UTC, or if it is aware and not at UTC, this
-  will change the actual moment in time that is represented. See also
+  """Set timezone to UTC without adjusting the date-time
+
+  - Warning: This will change the actual moment in time that is represented if
+  the datetime is set to another timezone or if it is a naive datetime that
+  represents a date and time not in UTC.
+  was intended to represent.
+
+  date-time is naive and not in UTC, or if it is aware and not in UTC, . See also
   normalize_datetime_to_utc()."""
   return dt.replace(tzinfo=UTC())
 
 
+def cast_naive_datetime_to_utc(dt):
+  """If datetime is naive, set it to UTC
+
+  - datetime with timezone remain unchanged
+  - Warning: This will change the actual moment in time that is represented if
+  the datetime is naive and represents a date and time not in UTC.
+  - See also normalize_datetime_to_utc().
+  """
+  if has_tz(dt):
+    return dt
+  return dt.replace(tzinfo=UTC())
+
+
 def strip_timezone(dt):
-  """Create a naive datetime by stripping away any timezone information. This
-  is necessary for passing the datetime to some functions that cannot handle
-  timezone information. Warning: If the date-time is not in UTC, this will
-  change the actual moment in time that is represented."""
+  """Set datetime to naive by stripping away any timezone information
+  """
   return dt.replace(tzinfo=None)
 
 
+#
+# Misc
+#
+
+
 def utc_now():
-  """Now in the UTC timezone."""
+  """Return the current time in the UTC timezone"""
   return cast_datetime_to_utc(datetime.datetime.utcnow())
 
 
-def round_date_time(dt, n_round_sec=1):
-  """Round a datetime to {round_seconds}.
-  E.g.:
-  1 = closest second
-  60 = closest minute
+def create_utc_datetime(*datetime_parts):
+  """Create a datetime with timezone set to UTC"""
+  return datetime.datetime(*datetime_parts, tzinfo=UTC())
+
+
+def round_to_nearest(dt, n_round_sec=1.0):
+  """Round datetime up or down to nearest {n_round_sec}.
+
+  Any timezone is preserved but ignored in the rounding.
+
+  Examples:
+  {n_round_sec}=0.1: nearest 10th of a second.
+  {n_round_sec}=1: nearest second.
+  {n_round_sec}=30: nearest half hour.
   """
-  # assert is_utc(dt), (
-  #   'All date-times used in DataONE types are required to be timezone-aware '
-  #   'and be set to UTC'
-  # )
-  dt = strip_timezone(dt)
-  n_sec = (dt - dt.min).seconds
-  n_half_round_sec = (n_sec + n_round_sec / 2) // n_round_sec**2
-  return dt + datetime.timedelta(0, n_half_round_sec - n_sec, -dt.microsecond)
-
-
-def are_equal(ts1, ts2, n_round_sec=1):
-  """Compare two datetimes for equality with fuzz factor
-
-  Since different systems may handle and store timestamps with different
-  resolution, they often cannot be safely compared directly.
-  """
-  return round_date_time(ts1, n_round_sec) == round_date_time(ts2, n_round_sec)
+  ts = ts_from_dt(strip_timezone(dt)) + n_round_sec / 2.0
+  res = dt_from_ts(ts - (ts % n_round_sec))
+  return res.replace(tzinfo=dt.tzinfo)

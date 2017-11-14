@@ -69,13 +69,14 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
   # Private.
   #
 
-  def _parse_http_date_to_native_date_time(self, describe_response_dict):
+  def _parse_http_date_to_native_date_time(self, describe_resp_dict):
     date_fields = ['date', 'date']
     for date_field in date_fields:
-      if date_field in describe_response_dict:
-        describe_response_dict[date_field] = d1_common.date_time.from_http_datetime(
-          describe_response_dict[date_field]
-        )
+      if date_field in describe_resp_dict:
+        describe_resp_dict[date_field
+                           ] = d1_common.date_time.dt_from_http_datetime_str(
+                             describe_resp_dict[date_field]
+                           )
 
   def _close_open_date_ranges(self, record):
     """If a date range is missing the start or end date, close it by copying
@@ -97,7 +98,8 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
     for date_field in date_fields:
       if date_field in record:
         try:
-          record[date_field
-                 ] = d1_common.date_time.from_iso8601(record[date_field])
+          record[date_field] = d1_common.date_time.dt_from_iso8601_str(
+            record[date_field]
+          )
         except Exception as e:
           logging.exception(e)

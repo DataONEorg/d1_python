@@ -43,10 +43,14 @@ def parseUrl(url):
     k: sorted(v) if len(v) > 1 else v[0]
     for k, v in urlparse.parse_qs(query).items()
   }
-  return dict(
-    scheme=scheme, netloc=netloc, url=url, params=params, query=query_dict,
-    fragment=fragment
-  )
+  return {
+    'scheme': scheme,
+    'netloc': netloc,
+    'url': url,
+    'params': params,
+    'query': query_dict,
+    'fragment': fragment
+  }
 
 
 def isHttpOrHttps(url):

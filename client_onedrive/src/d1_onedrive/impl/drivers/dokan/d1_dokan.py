@@ -219,7 +219,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
   def _stat_from_attributes(self, attributes):
     #log.debug(u'_stat_from_attributes(): attributes={0}'.format(attributes))
 
-    date_time = d1_common.date_time.to_seconds_since_epoch(
+    date_time = d1_common.date_time.ts_from_dt(
       attributes.date()
     ) if attributes.date() is not None else self.start_time
 
