@@ -88,10 +88,10 @@ from __future__ import absolute_import
 import datetime
 import logging
 
-import d1_common.access_policy
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes
+import d1_common.wrap.access_policy
 import d1_common.xml
 
 SYSMETA_ROOT_CHILD_LIST = [
@@ -111,9 +111,9 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
 
 
 def normalize(sysmeta_pyxb, reset_timestamps=False):
-  """Normalizes {sysmeta_pyxb} in place.
+  """Normalize {sysmeta_pyxb} in place
   """
-  sysmeta_pyxb.accessPolicy = d1_common.access_policy.normalize(
+  sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
     sysmeta_pyxb.accessPolicy
   )
   if getattr(sysmeta_pyxb, 'mediaType', False):
@@ -125,8 +125,9 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
     d1_common.xml.sort_value_list_pyxb(
       sysmeta_pyxb.replicationPolicy.blockedMemberNode
     )
-  d1_common.xml.sort_elements_by_child_value(
-    sysmeta_pyxb.replica, 'replicaMemberNode'
+  d1_common.xml.sort_elements_by_child_values(
+    sysmeta_pyxb.replica,
+    ['replicaMemberNode', 'replicationStatus', 'replicaVerified']
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
   if reset_timestamps:
@@ -136,14 +137,14 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
     for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
       replica_pyxb.replicaVerified = epoch_dt
   else:
-    sysmeta_pyxb.dateUploaded = d1_common.date_time.round_date_time(
+    sysmeta_pyxb.dateUploaded = d1_common.date_time.round_to_nearest(
       sysmeta_pyxb.dateUploaded
     )
-    sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_date_time(
+    sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_to_nearest(
       sysmeta_pyxb.dateSysMetadataModified
     )
     for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
-      replica_pyxb.replicaVerified = d1_common.date_time.round_date_time(
+      replica_pyxb.replicaVerified = d1_common.date_time.round_to_nearest(
         replica_pyxb.replicaVerified
       )
 

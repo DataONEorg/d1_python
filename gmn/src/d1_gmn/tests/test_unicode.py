@@ -26,6 +26,7 @@ import logging
 
 import responses
 
+import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_common
