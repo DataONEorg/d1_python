@@ -80,7 +80,7 @@ class Test060Describe(d1_test_case.D1TestCase):
         # reported by listObjects.
         assert int(headers_lower['content-length']) == object_info.size
         # Verify that date is a valid date.
-        assert d1_common.date_time.from_iso8601(headers_lower['date'])
+        assert d1_common.date_time.dt_from_iso8601_str(headers_lower['date'])
         # Verify that date matches what was reported by listObjects.
         # TODO: Fails with: TypeError: can't compare offset-naive and
         # offset-aware datetimes

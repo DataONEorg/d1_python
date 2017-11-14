@@ -142,7 +142,7 @@ class Test310Create(d1_test_case.D1TestCase):
     headers_lower = dict((header.lower(), value) for header, value in headers)
     # Check for the required headers.
     # Verify that date is a valid date.
-    assert d1_common.date_time.from_iso8601(headers_lower['date'])
+    assert d1_common.date_time.dt_from_iso8601_str(headers_lower['date'])
     assert 'content-type' in headers_lower
     assert 'content-length' in headers_lower
 
