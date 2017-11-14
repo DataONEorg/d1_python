@@ -88,8 +88,11 @@ def pytest_addoption(parser):
   )
 
 
+# Hooks
+
+
 def pytest_sessionstart(session):
-  """Run before session.main()"""
+  """Called by pytest before calling session.main()"""
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
   if pytest.config.getoption('--clear-skip'):
@@ -97,20 +100,19 @@ def pytest_sessionstart(session):
 
 
 def pytest_sessionfinish(session, exitstatus):
-  """Run after all tests"""
+  """Called by pytest after the test session ends"""
   if exitstatus != 2:
     skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
     if skipped_count:
       logging.warn('Skipped {} previously passed tests'.format(skipped_count))
 
 
-# Hooks
-
-
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+  """Called by pytest after setup, after call and after teardown of each test"""
   outcome = yield
   rep = outcome.get_result()
+  # Ignore setup and teardown
   if rep.when != 'call':
     return
   if rep.passed or rep.skipped:
@@ -120,6 +122,33 @@ def pytest_runtest_makereport(item, call):
   elif rep.failed:
     if pytest.config.getoption('--pycharm'):
       _open_error_in_pycharm(call)
+
+
+def pytest_collection_modifyitems(session, config, items):
+  """Called by pytest after collecting tests. The collected tests and the order
+  in which they will be called are in {items}, which can be manipulated in place.
+  """
+  passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
+  new_item_list = []
+  for item in items:
+    if item.nodeid not in passed_set:
+      new_item_list.append(item)
+
+  prev_skip_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+  cur_skip_count = len(items) - len(new_item_list)
+
+  if prev_skip_count == cur_skip_count:
+    logging.info('No tests were run. Restarting with complete test set')
+    _reset_skip_cache()
+  else:
+    pytest.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
+    logging.info('Skipping {} previously passed tests'.format(cur_skip_count))
+    items[:] = new_item_list
+
+
+def _reset_skip_cache():
+  pytest.config.cache.set(D1_SKIP_LIST, [])
+  pytest.config.cache.set(D1_SKIP_COUNT, 0)
 
 
 def _open_error_in_pycharm(call):
@@ -147,6 +176,9 @@ def _open_error_in_pycharm(call):
     )
 
 
+# Fixtures
+
+
 def pytest_generate_tests(metafunc):
   """Parameterize test functions via parameterize_dict class member"""
   try:
@@ -158,36 +190,6 @@ def pytest_generate_tests(metafunc):
     arg_names,
     [[func_args[name] for name in arg_names] for func_args in func_arg_list]
   )
-
-
-def pytest_collection_modifyitems(session, config, items):
-  """Called by pytest after collecting tests. The collected tests and the order
-  in which they will be run are in {items}, which can be manipulated in place.
-  """
-  passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
-  new_item_list = []
-  for item in items:
-    if item.nodeid not in passed_set:
-      new_item_list.append(item)
-
-  prev_skip_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
-  cur_skip_count = len(items) - len(new_item_list)
-
-  if prev_skip_count == cur_skip_count:
-    logging.info('No tests were run. Restarting with complete test set')
-    _reset_skip_cache()
-  else:
-    pytest.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
-    logging.info('Skipping {} previously passed tests'.format(cur_skip_count))
-    items[:] = new_item_list
-
-
-def _reset_skip_cache():
-  pytest.config.cache.set(D1_SKIP_LIST, [])
-  pytest.config.cache.set(D1_SKIP_COUNT, 0)
-
-
-# Fixtures
 
 
 @pytest.fixture(autouse=True)
@@ -203,6 +205,11 @@ MOCK_BASE_URL = 'http://mock/node'
 
 @pytest.fixture(scope='function', params=[True, False])
 def true_false(request):
+  yield request.param
+
+
+@pytest.fixture(scope='function', params=['v1', 'v2'])
+def tag_v1_v2(request):
   yield request.param
 
 

@@ -35,7 +35,7 @@ def _log(pid, request, event, timestamp=None):
   """Log an operation that was performed on a sciobj.
   """
   ip_address = request.META['REMOTE_ADDR']
-  user_agent = request.META['HTTP_USER_AGENT']
+  user_agent = request.META.get('HTTP_USER_AGENT', '<not provided>')
 
   # Support logging events that are not associated with an object.
   object_model = None
