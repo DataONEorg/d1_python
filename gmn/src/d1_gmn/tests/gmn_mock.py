@@ -31,8 +31,13 @@ import logging
 
 import contextlib2
 import mock
+import pytest
+import requests
+
+import d1_gmn.tests
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.random_data
 
 import django.test
 
@@ -137,6 +142,7 @@ def set_auth_decorator(func):
 def set_auth_context(
     active_subj_list=None, trusted_subj_list=None, do_disable_auth=False
 ):
+  """Set the active and trusted subjects for an GMN API call"""
   if do_disable_auth:
     with disable_auth():
       yield
@@ -146,6 +152,44 @@ def set_auth_context(
         yield
 
 
+@contextlib2.contextmanager
+def isolated_trusted_subj():
+  isolated_subj = 'ISOLATED_{}'.format(
+    d1_test.instance_generator.random_data.random_subj(fixed_len=12)
+  )
+  with set_auth_context(
+      active_subj_list=[isolated_subj], trusted_subj_list=[isolated_subj],
+      do_disable_auth=False
+  ):
+    yield isolated_subj
+
+
+@contextlib2.contextmanager
+def set_auth_context_with_defaults(
+    active_subj_list=True, trusted_subj_list=True, disable_auth=True
+):
+  """Set the active and trusted subjects for an GMN API call
+
+  {disable_auth}=True: The other subj lists are ignored and GMN sees all calls
+  as comming from a fully trusted subject.
+  {param}=True: Use a default list of subjects.
+  """
+  with d1_gmn.tests.gmn_mock.set_auth_context(
+    ['active_subj_1', 'active_subj_2', 'active_subj_3']
+      if active_subj_list is True else active_subj_list,
+    ['trusted_subj_1', 'trusted_subj_2']
+      if trusted_subj_list is True else trusted_subj_list,
+      disable_auth,
+  ):
+    try:
+      yield
+    except requests.exceptions.ConnectionError as e:
+      pytest.fail(
+        'Check that the test function is decorated with '
+        '"@responses.activate". error="{}"'.format(str(e))
+      )
+
+
 # -----------------
 
 # disable_auth
@@ -153,12 +197,14 @@ def set_auth_context(
 
 @contextlib2.contextmanager
 def disable_auth():
-  """Context manager that makes GMN think that all calls are issued by a trusted
-  subject """
+  """Context manager that makes GMN think that all calls are issued by a fully
+  trusted subject, "trusted_subj". This subject can call any API and received
+  unfiltered results.
+  """
   logging.debug('ContextManager: disable_auth()')
   with mock.patch(
       'd1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set',
-      return_value=('disabled_auth_subj', {'disabled_auth_subj'}),
+      return_value=('trusted_subj', {'trusted_subj'}),
   ):
     with mock.patch(
         'd1_gmn.app.auth.is_trusted_subject',
@@ -166,7 +212,7 @@ def disable_auth():
     ):
       with mock.patch(
           'd1_gmn.app.auth.get_trusted_subjects_string',
-          return_value='disabled_auth_subj',
+          return_value='trusted_subj',
       ):
         yield
 

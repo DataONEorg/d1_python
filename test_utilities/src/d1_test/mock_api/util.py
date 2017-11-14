@@ -165,7 +165,7 @@ def generate_object_list(
 def _generate_system_metadata_for_sciobj_str(client, pid, sciobj_str):
   size = len(sciobj_str)
   md5 = hashlib.md5(sciobj_str).hexdigest()
-  now = d1_test.instance_generator.date_time.from_did(pid)
+  now = d1_test.instance_generator.date_time.reproducible_datetime(pid)
   sysmeta_pyxb = _generate_sysmeta_pyxb(client, pid, size, md5, now)
   return sysmeta_pyxb
 

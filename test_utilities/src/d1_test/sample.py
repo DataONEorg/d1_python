@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import bz2
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -18,6 +17,7 @@ import bz2
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import bz2
 import codecs
 import contextlib
 import logging
@@ -63,6 +63,19 @@ def start_tidy():
       os.unlink(tidy_path)
     os.rename(sample_path, tidy_path)
   logging.info('Moved {} files'.format(i))
+
+
+def assert_diff_equals(
+    a_obj, b_obj, name_postfix_str, client=None, extension_str='sample'
+):
+  """Check that the difference between two objects, typically captured before
+  and after some operation, is as expected"""
+  a_str = obj_to_pretty_str(a_obj)
+  b_str = obj_to_pretty_str(b_obj)
+  diff_str = _get_sxs_diff_str(a_str, b_str)
+  if diff_str is None:
+    return
+  return assert_equals(diff_str, name_postfix_str, client, extension_str)
 
 
 def assert_equals(

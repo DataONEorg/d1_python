@@ -82,8 +82,10 @@ def generate_random(client, option_dict=None):
   # archived
 
   sysmeta_pyxb.dateUploaded = option_dict.get(
-    'dateUploaded', date_time.from_did(sysmeta_pyxb.identifier.value())
+    'dateUploaded',
+    date_time.reproducible_datetime(sysmeta_pyxb.identifier.value())
   )
+  # Set dateSysMetadataModified to a fixed time after dateUploaded
   sysmeta_pyxb.dateSysMetadataModified = option_dict.get(
     'dateSysMetadataModified',
     sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10)

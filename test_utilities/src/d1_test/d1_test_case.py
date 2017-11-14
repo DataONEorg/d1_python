@@ -26,6 +26,7 @@ import datetime
 import inspect
 import logging
 import os
+import pprint
 import random
 import StringIO
 import sys
@@ -283,12 +284,15 @@ class D1TestCase(object):
   def dump_pyxb(self, type_pyxb):
     map(logging.debug, self.format_pyxb(type_pyxb).splitlines())
 
+  def dump(self, o):
+    map(logging.debug, pprint.pformat(o).splitlines())
+
   def format_pyxb(self, type_pyxb):
     ss = StringIO.StringIO()
     ss.write('PyXB object:\n')
     ss.write(
       '\n'.join([
-        u'  {}'.format(s)
+        '  {}'.format(s)
         for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines()
       ])
     )

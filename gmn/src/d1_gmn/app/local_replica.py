@@ -24,10 +24,10 @@ from __future__ import absolute_import
 
 import d1_gmn.app.models
 
-import d1_common.access_policy
 import d1_common.checksum
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.wrap.access_policy
 import d1_common.xml
 
 import django.conf
@@ -133,7 +133,7 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
       )
 
   if django.conf.settings.REPLICATION_ALLOW_ONLY_PUBLIC:
-    if not d1_common.access_policy.is_public(sysmeta_pyxb):
+    if not d1_common.wrap.access_policy.is_public(sysmeta_pyxb.accessPolicy):
       raise d1_common.types.exceptions.InvalidRequest(
         0, u'This node does not accept access controlled objects'
       )

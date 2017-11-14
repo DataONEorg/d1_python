@@ -72,9 +72,9 @@ def add_callback(base_url, n_total=N_TOTAL):
         n_start,
         n_count,
         n_total,
-        from_date=d1_common.date_time.from_iso8601(from_date[0])
+        from_date=d1_common.date_time.dt_from_iso8601_str(from_date[0])
         if from_date else None,
-        to_date=d1_common.date_time.from_iso8601(to_date[0])
+        to_date=d1_common.date_time.dt_from_iso8601_str(to_date[0])
         if to_date else None,
       ),
     )

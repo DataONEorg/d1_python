@@ -37,10 +37,10 @@ class TestMockQuery(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, mn_client_v1_v2):
     """mock_api.query() returns a JSON doc with expected structure"""
     mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    response_dict = mn_client_v1_v2.query('query_engine', 'query_string')
-    assert isinstance(response_dict, dict)
-    assert u'User-Agent' in response_dict['header_dict']
-    del response_dict['header_dict']['User-Agent']
+    resp_dict = mn_client_v1_v2.query('query_engine', 'query_string')
+    assert isinstance(resp_dict, dict)
+    assert u'User-Agent' in resp_dict['header_dict']
+    del resp_dict['header_dict']['User-Agent']
     expected_dict = {
       u'body_base64': u'PG5vIGJvZHk+',
       u'query_dict': {},
@@ -51,7 +51,7 @@ class TestMockQuery(d1_test.d1_test_case.D1TestCase):
         u'Accept': u'*/*',
       }
     }
-    assert response_dict == expected_dict
+    assert resp_dict == expected_dict
 
   @responses.activate
   def test_1010(self, mn_client_v1_v2):

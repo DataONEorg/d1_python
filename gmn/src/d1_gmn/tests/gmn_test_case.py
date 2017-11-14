@@ -20,6 +20,7 @@
 
 from __future__ import absolute_import
 
+import copy
 import datetime
 import json
 import logging
@@ -45,6 +46,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
+import d1_common.url
 import d1_common.util
 import d1_common.xml
 
@@ -62,9 +64,9 @@ import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 import d1_client.session
 
-from django.db import connection
+import django.db
+import django.test
 
-HTTPBIN_SERVER_STR = 'http://httpbin.org'
 ENABLE_SQL_PROFILING = False
 
 
@@ -74,17 +76,17 @@ class GMNTestCase(
   def setup_class(self):
     """Run for each test class that derives from GMNTestCase"""
     if ENABLE_SQL_PROFILING:
-      connection.queries = []
+      django.db.connection.queries = []
 
   def teardown_class(self):
     """Run for each test class that derives from GMNTestCase"""
     GMNTestCase.capture_exception()
     if ENABLE_SQL_PROFILING:
       logging.info('SQL queries by all methods:')
-      map(logging.info, connection.queries)
+      map(logging.info, django.db.connection.queries)
 
   def setup_method(self, method):
-    """Run for each test method that derivces from GMNTestCase"""
+    """Run for each test method that derives from GMNTestCase"""
     # logging.error('GMNTestCase.setup_method()')
     d1_test.mock_api.django_client.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
@@ -111,13 +113,13 @@ class GMNTestCase(
 
   @classmethod
   def capture_exception(cls):
-    """If GMN responds with something that cannot be parsed by d1_client as
-    a valid response for the particular call, d1_client raises a DataONE
+    """If GMN responds with something that cannot be parsed by d1_client as a
+    valid response for the particular call, d1_client raises a DataONE
     ServiceFailure exception with the response stored in the traceInformation
     member. The Django diagnostics page triggers this behavior, so, in order to
     access the diagnostics page, we check for unhandled DataONEExceptions here
-    and write any provided traceInformation to temporary storage,
-    typically /tmp.
+    and write any provided traceInformation to temporary storage, typically
+    /tmp.
 
     For convenience, we also maintain a link to the latest traceInformation.
     Together with the "--exitfirst" parameter for pytest, it allows just
@@ -318,8 +320,10 @@ class GMNTestCase(
         return api_func(*arg_list, **arg_dict)
       except requests.exceptions.ConnectionError as e:
         pytest.fail(
-          'Check that the test function is decorated with '
-          '"@responses.activate". error="{}"'.format(str(e))
+          'Make sure: Test function is decorated with "@responses.activate", '
+          'class derives from GMNTestCase, '
+          'class setup_method() calls super(). '
+          'error="{}"'.format(str(e))
         )
         # coercing to Unicode: need string or buffer, NoneType found:
         # Check that authentication has been disabled
@@ -391,6 +395,40 @@ class GMNTestCase(
     self.assert_sci_obj_size_matches_sysmeta(sciobj_str, sysmeta_pyxb)
     self.assert_sci_obj_checksum_matches_sysmeta(sciobj_str, sysmeta_pyxb)
     return sciobj_str, sysmeta_pyxb
+
+  # create(), update(), get() with provided sysmeta
+
+  def create_obj_by_sysmeta(
+      self, client, sysmeta_pyxb, active_subj_list=True, trusted_subj_list=True,
+      disable_auth=True, vendor_dict=None
+  ):
+    """Generate a test object and call MNStorage.create()
+    Parameters:
+      True: Use a default or generated value
+      Other: Use the supplied value
+    """
+    pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+    send_sciobj_str = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_str(
+      pid
+    )
+    send_sysmeta_pyxb = copy.deepcopy(sysmeta_pyxb)
+    send_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
+      send_sciobj_str, sysmeta_pyxb.checksum.algorithm
+    )
+    send_sysmeta_pyxb.size = len(send_sciobj_str)
+    send_sysmeta_pyxb.obsoletes = None
+    send_sysmeta_pyxb.obsoletedBy = None
+    # self.dump_pyxb(send_sysmeta_pyxb)
+    with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+      self.call_d1_client(
+        client.create, pid,
+        StringIO.StringIO(send_sciobj_str), send_sysmeta_pyxb, vendor_dict,
+        active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
+        disable_auth=disable_auth
+      )
+    return send_sciobj_str, send_sysmeta_pyxb
+
+  #
 
   def generate_sciobj_with_defaults(
       self, client, pid=True, sid=None, submitter=True, rights_holder=True,

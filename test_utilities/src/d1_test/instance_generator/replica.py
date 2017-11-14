@@ -52,5 +52,5 @@ def generate_single():
   replica_pyxb = d1_common.types.dataoneTypes.replica()
   replica_pyxb.replicaMemberNode = d1_test.instance_generator.random_data.random_mn()
   replica_pyxb.replicationStatus = random.choice(REPLICA_STATUS_LIST)
-  replica_pyxb.replicaVerified = d1_test.instance_generator.date_time.random_date()
+  replica_pyxb.replicaVerified = d1_test.instance_generator.date_time.random_datetime()
   return replica_pyxb

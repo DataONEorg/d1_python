@@ -216,9 +216,12 @@ def update_replica_status(replica_info_model, status_str, timestamp=None):
 
 
 class LocalReplica(models.Model):
-  # Relate directly to IdNamespace because tracking of local replicas starts
-  # before there is a local object (when the replica is first requested by the
-  # CN).
+  """Keep track of replication requests and locally stored replicas
+
+  Relate directly to IdNamespace because tracking of local replicas starts
+  before there is a local object (when the replica is first requested by the
+  CN)
+  """
   pid = models.OneToOneField(
     IdNamespace, models.CASCADE, related_name='%(class)s_pid'
   )
