@@ -25,13 +25,13 @@ Serialize DataONE response objects according to Accept header and set header
 
 from __future__ import absolute_import
 
-import datetime
 import logging
 
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
@@ -102,10 +102,11 @@ class ResponseHandler(object):
       request, view_result['query'], view_result['start'], view_result['total']
     )
     d1_type_latest_date = self._latest_date(
-      view_result['query'], sort_field_list
+      view_result['query'], sort_field_list[0]
     )
     d1_gmn.app.views.slice.cache_add_last_in_slice(
-      request, view_result['query'], view_result['total'], sort_field_list
+      request, view_result['query'], view_result['start'], view_result['total'],
+      sort_field_list
     )
     response.write(d1_type.toxml('utf-8'))
     self._set_headers(response, d1_type_latest_date, response.tell())
@@ -121,7 +122,7 @@ class ResponseHandler(object):
                                                     ).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
-      objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
+      objectInfo.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
         row.modified_timestamp
       )
       objectInfo.size = row.size
@@ -141,8 +142,8 @@ class ResponseHandler(object):
                                                     ).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
-      objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
-        row.modified_timestamp
+      objectInfo.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
+        d1_common.date_time.row.modified_timestamp
       )
       objectInfo.size = row.size
       objectList.objectInfo.append(objectInfo)
@@ -175,9 +176,17 @@ class ResponseHandler(object):
     return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
   def _set_headers(self, response, content_modified_timestamp, content_length):
-    response['Last-Modified'] = content_modified_timestamp
+    if content_modified_timestamp is not None:
+      response['Last-Modified'] = d1_gmn.app.views.util.naive_to_utc(
+        content_modified_timestamp
+      )
     response['Content-Length'] = content_length
     response['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
 
-  def _latest_date(self, query, sort_field_list):
-    return query.aggregate(django.db.models.Max(sort_field_list[0]))
+  def _latest_date(self, query, datetime_field_name):
+    """Given a QuerySet and the name of field containing datetimes, return the
+    latest (most recent) date
+
+    Return None if QuerySet is empty.
+    """
+    return query.aggregate(django.db.models.Max(datetime_field_name)).values()[0]

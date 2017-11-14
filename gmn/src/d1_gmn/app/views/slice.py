@@ -38,36 +38,41 @@ import django.db.models
 
 def add_slice_filter(request, query, total_int):
   url_dict = d1_common.url.parseUrl(request.get_full_path())
-  query_dict = url_dict['query']
-  start_int, count_int, total_int = (
-    _convert_and_sanity_check_slice_params(query_dict, total_int)
+  start_int = _get_and_assert_slice_param(url_dict, 'start', 0)
+  count_int = _get_and_assert_slice_param(
+    url_dict, 'count', d1_common.const.DEFAULT_SLICE_SIZE
   )
-  authn_subj_set = _get_authenticated_subjects(request)
+  _assert_valid_start(start_int, count_int, total_int)
+  count_int = _adjust_count_if_required(start_int, count_int, total_int)
+  authn_subj_list = _get_authenticated_subj_list(request)
   logging.debug(
     'Adding slice filter. start={} count={} total={} subj={}'
-    .format(start_int, count_int, total_int, ','.join(list(authn_subj_set)))
+    .format(start_int, count_int, total_int, ','.join(authn_subj_list))
   )
-  last_ts_tup = _cache_get_last_in_slice(url_dict, authn_subj_set)
+  last_ts_tup = _cache_get_last_in_slice(
+    url_dict, start_int, total_int, authn_subj_list
+  )
   if last_ts_tup:
     query = _add_fast_slice_filter(query, last_ts_tup, count_int)
   else:
-    query = _add_fallback_slice_filter(query, url_dict)
+    query = _add_fallback_slice_filter(query, start_int, count_int, total_int)
   return query, start_int, count_int
 
 
-def cache_add_last_in_slice(request, query, total_int, sort_field_list):
+def cache_add_last_in_slice(
+    request, query, start_int, total_int, sort_field_list
+):
+  """"""
   url_dict = d1_common.url.parseUrl(request.get_full_path())
-  query_dict = url_dict['query']
-  _convert_and_sanity_check_slice_params(query_dict, total_int)
-  authn_subj_set = _get_authenticated_subjects(request)
-  key_str = _gen_cache_key_for_slice(url_dict, authn_subj_set, query.count())
-  # query.last() does not work together with queryset slicing
+  authn_subj_list = _get_authenticated_subj_list(request)
+  key_str = _gen_cache_key_for_slice(
+    url_dict, start_int + query.count(), total_int, authn_subj_list
+  )
   last_model = query[query.count() - 1] if query.count() else None
-  if last_model:
-    # last_ts_tup = last_model.timestamp, last_model.id
-    last_ts_tup = tuple([getattr(last_model, f) for f in sort_field_list])
-  else:
-    last_ts_tup = None
+  last_ts_tup = (
+    tuple([getattr(last_model, f) for f in sort_field_list])
+    if last_model else None
+  )
   django.core.cache.cache.set(key_str, last_ts_tup)
   logging.debug('Cache set. key="{}" last={}'.format(key_str, last_ts_tup))
 
@@ -75,53 +80,58 @@ def cache_add_last_in_slice(request, query, total_int, sort_field_list):
 # Private
 
 
-def _convert_and_sanity_check_slice_params(query_dict, total_int):
-  """Ensure that start, count (and total if provided) are non-negative ints.
-  Perform basic sanity checks and raise InvalidRequest on failure.
+def _get_and_assert_slice_param(url_dict, param_name, default_int):
+  """Return {param_str} converted to an int. If str cannot be converted to int
+  or int is not zero or positive, raise InvalidRequest.
   """
-
-  def assert_int(n):
-    try:
-      n = int(n)
-    except ValueError:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, 'slicing parameter is not a valid integer. param="{}"'.format(n)
+  param_str = url_dict['query'].get(param_name, default_int)
+  try:
+    n = int(param_str)
+  except ValueError:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Slice parameter is not a valid integer. {}="{}"'.format(
+        param_name, param_str
       )
-    if n < 0:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0,
-        'slicing parameter cannot be a negative number. param="{}"'.format(n)
+    )
+  if n < 0:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Slice parameter cannot be a negative number. {}="{}"'.format(
+        param_name, param_str
       )
-    return n
+    )
+  return n
 
-  start_int = assert_int(query_dict.get('start', 0))
-  count_int = assert_int(
-    query_dict.get('count', d1_common.const.DEFAULT_SLICE_SIZE)
-  )
-  total_int = assert_int(total_int)
 
+def _assert_valid_start(start_int, count_int, total_int):
+  """Assert that the number of objects visible to the active subject is higher
+  than the requested start position for the slice. This ensures that it's
+  possible to create a valid slice.
+  """
+  if total_int and start_int >= total_int:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Requested a non-existing slice. start={} count={} total={}'.format(
+        start_int, count_int, total_int
+      )
+    )
+
+
+def _adjust_count_if_required(start_int, count_int, total_int):
+  """Adjust requested object count down if there are not enough objects visible
+  to the active subjects to cover the requested slice start and count.
+  Preconditions: start is verified to be lower than the number of visible
+  objects, making it possible to create a valid slice by adjusting count.
+  """
   if start_int + count_int > total_int:
-    if total_int - start_int < 0:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, 'Specified non-existing slice. start={} count={} total={}'.format(
-          start_int, count_int, total_int
-        )
-      )
     count_int = total_int - start_int
-
-  query_dict['start'] = start_int
-  query_dict['count'] = count_int
-  query_dict['total'] = total_int
-
-  return start_int, count_int, total_int
+  return count_int
 
 
-def _get_slice_params(query_dict):
-  return query_dict['start'], query_dict['count'], query_dict['total']
+# def _get_slice_params(query_dict):
+#   return query_dict['start'], query_dict['count']
 
 
-def _get_authenticated_subjects(request):
-  return request.all_subjects_set
+def _get_authenticated_subj_list(request):
+  return list(sorted(request.all_subjects_set))
 
 
 def _add_fast_slice_filter(query, last_ts_tup, count_int):
@@ -135,26 +145,27 @@ def _add_fast_slice_filter(query, last_ts_tup, count_int):
   )[:count_int]
 
 
-def _add_fallback_slice_filter(query, url_dict):
+def _add_fallback_slice_filter(query, start_int, count_int, total_int):
   """Create a slice of a query based on request start and count parameters.
 
   This adds `OFFSET <start> LIMIT <count>` to the SQL query, which causes
   slicing to run very slowly on large result sets.
   """
-  start_int, count_int, total_int = _get_slice_params(url_dict['query'])
   logging.debug(
-    'Adding fallback slice filter. start={} count={}'.
-    format(start_int, count_int)
+    'Adding fallback slice filter. start={} count={} total={} '.
+    format(start_int, count_int, total_int)
   )
-  if not start_int and not count_int:
+  if not count_int:
     return query.none()
   else:
     return query[start_int:start_int + count_int]
 
 
-def _cache_get_last_in_slice(url_dict, authn_subj_set):
+def _cache_get_last_in_slice(url_dict, start_int, total_int, authn_subj_list):
   """Return None if cache entry does not exist"""
-  key_str = _gen_cache_key_for_slice(url_dict, authn_subj_set)
+  key_str = _gen_cache_key_for_slice(
+    url_dict, start_int, total_int, authn_subj_list
+  )
   # TODO: Django docs state that cache.get() should return None on unknown key.
   try:
     last_ts_tup = django.core.cache.cache.get(key_str)
@@ -166,10 +177,17 @@ def _cache_get_last_in_slice(url_dict, authn_subj_set):
   return last_ts_tup
 
 
-def _gen_cache_key_for_slice(url_dict, authn_subj_set, result_record_count=0):
+def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
   """Generate cache key for the REST URL the client is currently accessing or is
   expected to access in order to get the slice starting at the given {start_int}
   of a multi-slice result set.
+
+  When used for finding the key to check in the current call, {start_int} is
+  0, or the start that was passed in the current call.
+
+  When used for finding the key to set for the anticipated call, {start_int} is
+  current {start_int} + {count_int}, the number of objects the current call will
+  return.
 
   The URL for the slice is the same as for the current slice, except that the
   `start` query parameter has been increased by the number of items returned in
@@ -177,8 +195,8 @@ def _gen_cache_key_for_slice(url_dict, authn_subj_set, result_record_count=0):
 
   Except for advancing the start value and potentially adjusting the desired
   slice size, it doesn't make sense for the client to change the REST URL during
-  slicing. The first query after such a change will work, but will trigger a
-  potentially expensive database query to find the current slice position.
+  slicing, but such queries are supported. They will, however, trigger
+  potentially expensive database queries to find the current slice position.
 
   To support adjustments in desired slice size during slicing, the count is not
   used when generating the key.
@@ -192,11 +210,13 @@ def _gen_cache_key_for_slice(url_dict, authn_subj_set, result_record_count=0):
   """
   # logging.debug('Gen key. result_record_count={}'.format(result_record_count))
   key_url_dict = copy.deepcopy(url_dict)
-  key_url_dict['query']['start'] += result_record_count
-  del key_url_dict['query']['count']
-  key_json = d1_common.util.format_normalized_pretty_json({
-    'url': key_url_dict,
-    'subject': authn_subj_set
+  key_url_dict['query'].pop('start', None)
+  key_url_dict['query'].pop('count', None)
+  key_json = d1_common.util.format_normalized_compact_json({
+    'url_dict': key_url_dict,
+    'start': start_int,
+    'total': total_int,
+    'subject': authn_subj_list
   })
   logging.debug('key_json={}'.format(key_json))
   return hashlib.sha256(key_json).hexdigest()
