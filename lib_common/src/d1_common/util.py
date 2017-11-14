@@ -207,6 +207,12 @@ def format_normalized_pretty_json(py_obj):
   return json.dumps(py_obj, sort_keys=True, indent=2, cls=SetToList)
 
 
+def format_normalized_compact_json(py_obj):
+  return json.dumps(
+    py_obj, sort_keys=True, separators=(',', ':'), cls=SetToList
+  )
+
+
 class SetToList(json.JSONEncoder):
   def default(self, obj):
     if isinstance(obj, set):

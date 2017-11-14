@@ -69,3 +69,15 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
     valid_xml = self.sample.load('test_xml_valid_xml')
     syntax_error_xml = self.sample.load('test_xml_syntax_error_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, syntax_error_xml)
+
+  def test_1065(self):
+    """get_element_text(): Returns correct text from element in XML doc"""
+    valid_xml = self.sample.load('node_list_gmn_valid.xml')
+    assert d1_common.xml.get_element_text(valid_xml, 'lastHarvested') == \
+     '2006-05-04T18:13:51.0Z'
+
+  def test_1070(self):
+    """get_attr_text(): Returns correct attribute text from XML doc"""
+    valid_xml = self.sample.load('node_list_gmn_valid.xml')
+    assert d1_common.xml.get_attr_text(valid_xml, 'lastSuccess') == \
+     '2006-05-04T18:13:51.0Z'

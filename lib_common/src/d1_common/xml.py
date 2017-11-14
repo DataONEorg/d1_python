@@ -33,6 +33,7 @@ import xml.sax
 
 import pyxb
 
+import d1_common.date_time
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 
@@ -89,10 +90,10 @@ def pretty_xml(doc_xml):
   if isinstance(doc_xml, unicode):
     doc_xml = doc_xml.encode('utf-8')
   try:
-    xml_obj = xml.dom.minidom.parseString(doc_xml)
+    dom_obj = xml.dom.minidom.parseString(doc_xml)
   except TypeError:
-    xml_obj = xml.dom.minidom.parse(doc_xml)
-  pretty_xml_str = xml_obj.toprettyxml(indent='  ', encoding='utf-8')
+    dom_obj = xml.dom.minidom.parse(doc_xml)
+  pretty_xml_str = dom_obj.toprettyxml(indent='  ', encoding='utf-8')
   # Remove empty lines in the result caused by a bug in toprettyxml().
   return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
 
@@ -109,38 +110,40 @@ def is_equivalent_pyxb(a_pyxb, b_pyxb):
 def is_equivalent(a_xml, b_xml, encoding='utf-8'):
   """Return True if two XML docs are semantically equivalent, else False
 
-  Using a_xml to determine the requirements for b_xml, this checks the
-  following in b_xml:
-
-  - All elements are present and in the same order
-  - All attributes are present and contain the correct values
-  - All element text values are present and are the same
-  - All elements that exist in one document also exist in the other
-
   TODO: Include test for tails. Skipped for now because tails are not used
   in any D1 types.
   """
-  assert isinstance(a_xml, basestring)
-  assert isinstance(b_xml, basestring)
-  parser1 = xml.etree.ElementTree.XMLParser(encoding=encoding)
-  parser2 = xml.etree.ElementTree.XMLParser(encoding=encoding)
-  a_tree = xml.etree.ElementTree.ElementTree(
-    xml.etree.ElementTree.fromstring(a_xml, parser=parser1)
-  )
-  b_tree = xml.etree.ElementTree.ElementTree(
-    xml.etree.ElementTree.fromstring(b_xml, parser=parser2)
-  )
-  return _is_equivalent(a_tree, b_tree) and _is_equivalent(b_tree, a_tree)
+  a_tree = etree_from_xml(a_xml, encoding)
+  b_tree = etree_from_xml(b_xml, encoding)
+  return is_equal_or_superset(a_tree,
+                              b_tree) and is_equal_or_superset(b_tree, a_tree)
 
 
-def _is_equivalent(a_tree, b_tree):
+def is_equal_or_superset(superset_tree, base_tree):
+  """Return True if {superset_tree} is equal to or a superset of {base_tree}
+
+  - Checks that all elements and attributes in {superset_tree} are present and
+  contain the same values as in {base_tree}. For elements, also checks that the
+  order is the same.
+  - Can be used for checking if one XML document is based on another, as long as
+  all the information in {base_tree} is also present and unmodified in
+  {superset_tree}.
+  """
   try:
-    _compare_attr(a_tree, b_tree)
-    _compare_text(a_tree, b_tree)
+    _compare_attr(superset_tree, base_tree)
+    _compare_text(superset_tree, base_tree)
   except CompareError as e:
     logging.debug(str(e))
     return False
   return True
+
+
+def etree_from_xml(xml_str, encoding='utf-8'):
+  """Parse an XML doc to an ElementTree"""
+  parser = xml.etree.ElementTree.XMLParser(encoding=encoding)
+  return xml.etree.ElementTree.ElementTree(
+    xml.etree.ElementTree.fromstring(xml_str, parser=parser)
+  )
 
 
 def _compare_attr(a_tree, b_tree):
