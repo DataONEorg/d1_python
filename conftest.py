@@ -54,6 +54,8 @@ def pytest_addoption(parser):
   """Add command line switches for pytest customization. See README.md for
   info.
   """
+  # Sample files
+
   parser.addoption(
     '--sample-ask', action='store_true',
     help='Prompt to update or write new test sample files on failures'
@@ -75,6 +77,9 @@ def pytest_addoption(parser):
     help='Attempt to move the cursor in PyCharm to location of most recent test '
     'failure'
   )
+
+  # GMN database fixture
+
   parser.addoption(
     '--fixture-refresh', action='store_true',
     help='Force reloading the template fixture'
@@ -83,8 +88,18 @@ def pytest_addoption(parser):
     '--fixture-regen', action='store_true',
     help='Force regenerating the template fixture JSON files'
   )
+
+  # Skip passed tests
+
   parser.addoption(
-    '--clear-skip', action='store_true', help='Force running all tests'
+    '--skip', action='store_true',
+    help='Skip tests that are in the list of passed tests'
+  )
+  parser.addoption(
+    '--skip-clear', action='store_true', help='Clear the list of passed tests'
+  )
+  parser.addoption(
+    '--skip-list', action='store_true', help='Print the list of passed tests'
   )
 
 
@@ -95,16 +110,18 @@ def pytest_sessionstart(session):
   """Called by pytest before calling session.main()"""
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
-  if pytest.config.getoption('--clear-skip'):
-    _reset_skip_cache()
+  if pytest.config.getoption('--skip-clear'):
+    _clear_skip_list()
+  if pytest.config.getoption('--skip-list'):
+    _print_skip_list()
 
 
 def pytest_sessionfinish(session, exitstatus):
   """Called by pytest after the test session ends"""
-  if exitstatus != 2:
-    skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
-    if skipped_count:
-      logging.warn('Skipped {} previously passed tests'.format(skipped_count))
+  # if exitstatus != 2:
+  skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+  if skipped_count:
+    logging.warn('Skipped {} previously passed tests'.format(skipped_count))
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -128,6 +145,9 @@ def pytest_collection_modifyitems(session, config, items):
   """Called by pytest after collecting tests. The collected tests and the order
   in which they will be called are in {items}, which can be manipulated in place.
   """
+  if not pytest.config.getoption('--skip'):
+    return
+
   passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
   new_item_list = []
   for item in items:
@@ -138,17 +158,25 @@ def pytest_collection_modifyitems(session, config, items):
   cur_skip_count = len(items) - len(new_item_list)
 
   if prev_skip_count == cur_skip_count:
-    logging.info('No tests were run. Restarting with complete test set')
-    _reset_skip_cache()
+    logging.info(
+      'No tests were run (--skip). Restarting with complete test set'
+    )
+    _clear_skip_list()
   else:
     pytest.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
-    logging.info('Skipping {} previously passed tests'.format(cur_skip_count))
+    logging.info(
+      'Skipping {} previously passed tests (--skip)'.format(cur_skip_count)
+    )
     items[:] = new_item_list
 
 
-def _reset_skip_cache():
+def _clear_skip_list():
   pytest.config.cache.set(D1_SKIP_LIST, [])
   pytest.config.cache.set(D1_SKIP_COUNT, 0)
+
+
+def _print_skip_list():
+  map(logging.info, sorted(pytest.config.cache.get(D1_SKIP_LIST, [])))
 
 
 def _open_error_in_pycharm(call):
