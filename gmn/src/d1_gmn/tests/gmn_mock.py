@@ -69,12 +69,10 @@ import django.test
 
 @contextlib2.contextmanager
 def active_subjects_context(active_subject_set):
-  """Override list of active subjects that GMN detects for authentication. the Active
-  subjects is a list of DataONE subject strings for which the currently connected
-  client is authenticated. They are derived from are the list of In
-  regular operation, acti
-  production, active subare passed to GMN by clients via certificates and
-  tokens, as part of the REST calls.
+  """Override list of active subjects that GMN detects for authentication. the
+  Active subjects is a list of DataONE subject strings for which the currently
+  connected client is authenticated. Normally, the active subject list is
+  derived from certificates and tokens passed by the client.
   """
   expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(
     active_subject_set
@@ -85,22 +83,6 @@ def active_subjects_context(active_subject_set):
       return_value=(sorted(expanded_set)[0], expanded_set),
   ):
     yield
-
-
-# class disable_auth(decorator.ContextManager):
-#   def __init__(self, *args, **kwargs):
-#     self._args = args
-#     self._kwargs = kwargs
-#     self.p1 = mock.patch(
-#
-#     )
-#
-#   def __enter__(self):
-#     self.p1.start()
-#
-#   def __exit__(self, *exc):
-#     self.p1.stop()
-#     return False
 
 
 @contextlib2.contextmanager
@@ -116,13 +98,20 @@ def trusted_subjects_context(trusted_subject_set):
     yield
 
 
-# def trusted_subjects_decorator(func):
-#   @functools.wraps(func)
-#   def wrapper(trusted_subj_set, *args, **kwargs):
-#     with trusted_subjects_context(trusted_subj_set):
-#       return func(*args, **kwargs)
-#
-#   return wrapper
+@contextlib2.contextmanager
+def whitelisted_subjects_context(whitelisted_subject_iter):
+  """Override list of whitelists subjects that GMN detects as having access to
+  create, update and delete APIs
+  """
+  # def mock(request):
+  #   return d1_test.d1_test_case.D1TestCase.expand_subjects(whitelisted_subject_set)
+  logging.debug('ContextManager: whitelisted_subjects_context()')
+  with mock.patch(
+      'd1_gmn.app.auth.get_whitelisted_subject_set', return_value=d1_test.
+      d1_test_case.D1TestCase.expand_subjects(whitelisted_subject_iter)
+  ):
+    yield
+
 
 # set_auth
 
@@ -130,9 +119,12 @@ def trusted_subjects_context(trusted_subject_set):
 def set_auth_decorator(func):
   @functools.wraps(func)
   def wrapper(
-      active_subj_list, trusted_subj_list, disable_auth, *args, **kwargs
+      active_subj_list, trusted_subj_list, whitelisted_subj_list, disable_auth,
+      *args, **kwargs
   ):
-    with set_auth_context(active_subj_list, trusted_subj_list, disable_auth):
+    with set_auth_context(
+        active_subj_list, trusted_subj_list, whitelisted_subj_list, disable_auth
+    ):
       return func(*args, **kwargs)
 
   return wrapper
@@ -140,7 +132,8 @@ def set_auth_decorator(func):
 
 @contextlib2.contextmanager
 def set_auth_context(
-    active_subj_list=None, trusted_subj_list=None, do_disable_auth=False
+    active_subj_list=None, trusted_subj_list=None, whitelisted_subj_list=None,
+    do_disable_auth=False
 ):
   """Set the active and trusted subjects for an GMN API call"""
   if do_disable_auth:
@@ -149,26 +142,31 @@ def set_auth_context(
   else:
     with active_subjects_context(active_subj_list):
       with trusted_subjects_context(trusted_subj_list):
-        yield
+        with whitelisted_subjects_context(whitelisted_subj_list):
+          yield
 
 
 @contextlib2.contextmanager
-def isolated_trusted_subj():
+def isolated_whitelisted_subj():
+  """Create a unique subject and override GMN auth so that the subject appears
+  as single active and whitelisted, but not trusted, in API calls.
+  """
   isolated_subj = 'ISOLATED_{}'.format(
     d1_test.instance_generator.random_data.random_subj(fixed_len=12)
   )
   with set_auth_context(
-      active_subj_list=[isolated_subj], trusted_subj_list=[isolated_subj],
-      do_disable_auth=False
+      active_subj_list=isolated_subj, trusted_subj_list=None,
+      whitelisted_subj_list=isolated_subj, do_disable_auth=False
   ):
     yield isolated_subj
 
 
 @contextlib2.contextmanager
 def set_auth_context_with_defaults(
-    active_subj_list=True, trusted_subj_list=True, disable_auth=True
+    active_subj_list=True, trusted_subj_list=True, whitelisted_subj_list=True,
+    disable_auth=True
 ):
-  """Set the active and trusted subjects for an GMN API call
+  """Set the active, trusted and whitelisted subjects for an GMN API call
 
   {disable_auth}=True: The other subj lists are ignored and GMN sees all calls
   as comming from a fully trusted subject.
@@ -179,6 +177,8 @@ def set_auth_context_with_defaults(
       if active_subj_list is True else active_subj_list,
     ['trusted_subj_1', 'trusted_subj_2']
       if trusted_subj_list is True else trusted_subj_list,
+    ['whitelisted_subj_1', 'whitelisted_subj_2']
+      if whitelisted_subj_list is True else whitelisted_subj_list,
       disable_auth,
   ):
     try:

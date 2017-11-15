@@ -307,6 +307,7 @@ class GMNTestCase(
     # functools.partial(func[,*args][, **keywords]).
     active_subj_list = arg_dict.pop('active_subj_list', True)
     trusted_subj_list = arg_dict.pop('trusted_subj_list', True)
+    whitelisted_subj_list = arg_dict.pop('whitelisted_subj_list', True)
     disable_auth = arg_dict.pop('disable_auth', True)
 
     with d1_gmn.tests.gmn_mock.set_auth_context(
@@ -314,6 +315,8 @@ class GMNTestCase(
         if active_subj_list is True else active_subj_list,
       ['trusted_subj_1', 'trusted_subj_2']
         if trusted_subj_list is True else trusted_subj_list,
+      ['whitelisted_subj_1', 'whitelisted_subj_2']
+        if whitelisted_subj_list is True else whitelisted_subj_list,
         disable_auth,
     ):
       try:
