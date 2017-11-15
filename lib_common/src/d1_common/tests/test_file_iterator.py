@@ -22,7 +22,7 @@ from __future__ import absolute_import
 
 import tempfile
 
-import d1_common.file_iterator
+import d1_common.iter.dir
 
 import d1_test.d1_test_case
 
@@ -42,6 +42,6 @@ class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """file_iter(): Returns all files in dir"""
     tmp_dir_path, tmp_file_list = self._create_test_dir()
-    itr = d1_common.file_iterator.file_iter([tmp_dir_path])
+    itr = d1_common.iter.dir.dir_iter([tmp_dir_path])
     iter_file_list = list(itr)
     assert sorted(iter_file_list) == sorted(tmp_file_list)

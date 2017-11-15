@@ -339,45 +339,5 @@ def get_req_val(obj_pyxb):
   return unicode(obj_pyxb.value())
 
 
-def get_element_list_by_tag(xml_str, el_name):
-  return xml.etree.ElementTree.fromstring(xml_str
-                                          ).findall('.//{}'.format(el_name))
-
-
-def get_element_list_by_attr_key(attr_name, xml_str):
-  return xml.etree.ElementTree.fromstring(xml_str).findall(
-    './/*[@{}]'.format(attr_name)
-  )
-
-
-def get_element_text(xml_str, el_name):
-  """Return the text of the first element matching {el_name}"""
-  return get_element_list_by_tag(xml_str, el_name)[0].text
-
-
-def get_attr_text(xml_str, attr_name):
-  """Return the text of the first attribute matching {attr_name}"""
-  return get_element_list_by_attr_key(attr_name, xml_str)[0].attrib[attr_name]
-
-
-def get_element_dt(xml_doc, el_name, tz=None):
-  """Return the datetime of the first element matching {el_name}, where
-  the element holds an ISO8601 formatted datetime
-
-  - If dt is naive (does not have have timezone specified), it is set to
-  {tz}, which should be a class derived from datetime.tzinfo.
-  - If dt has timezone, the {tz} parameter is ignored.
-  - {tz}=None: Prevent naive dt from being set to a timezone.
-  - {tz}=d1_common.date_time.UTC(): Set naive dt to UTC.
-  - Warning: Using {tz} other that None will change the actual moment in time
-  that is represented if the dt was not originally recorded in that timezone.
-  With {tz}=None, naive dt is left naive, and exact time cannot be known, unless
-  other contextual information is available.
-  """
-  return d1_common.date_time.dt_from_iso8601_str(
-    get_element_text(xml_doc, el_name), tz
-  )
-
-
 class CompareError(Exception):
   pass

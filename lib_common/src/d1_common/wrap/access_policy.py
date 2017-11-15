@@ -21,7 +21,7 @@
 
 Example:
 
-with d1_common.access_policy.sysmeta_access_policy(self.sysmeta_pyxb) as ap:
+with d1_common.wrap.access_policy.wrap(self.sysmeta_pyxb) as ap:
   ap.clear()
   ap.add_perm('subj1', 'read')
 
@@ -177,7 +177,6 @@ comparing access policies and creating uniform PyXB objects:
 @contextlib2.contextmanager
 def wrap(access_pyxb, read_only=False):
   """Work with the AccessPolicy in a SystemMetadata PyXB object
-
   - When only a single AccessPolicy operation is needed, there's no need to use
   this context manager. Instead, use the generated context manager wrappers.
   """
@@ -190,10 +189,8 @@ def wrap(access_pyxb, read_only=False):
 @contextlib2.contextmanager
 def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
   """Work with the AccessPolicy in a SystemMetadata PyXB object
-
   - When only a single AccessPolicy operation is needed, there's no need to use
   this context manager. Instead, use the generated context manager wrappers.
-
   - There is no clean way in Python to make a context manager that allows client
   code to replace the object that is passed out of the manager. The AccessPolicy
   schema does not allow the AccessPolicy element to be empty. However, the
@@ -327,15 +324,13 @@ class AccessPolicyWrapper(object):
 
   def add_authenticated_read(self):
     """Add read perm for all authenticated subj
-    - Public read is removed if present.
-    """
+    - Public read is removed if present. """
     self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
     self.add_perm(d1_common.const.SUBJECT_AUTHENTICATED, 'read')
 
   def add_verified_read(self):
     """Add read perm for all verified subj
-    - Public read is removed if present.
-    """
+    - Public read is removed if present. """
     self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
     self.add_perm(d1_common.const.SUBJECT_VERIFIED, 'read')
 
@@ -354,8 +349,7 @@ class AccessPolicyWrapper(object):
     """Remove all permissions for {subj_str}
     - {subj_str} may still have access to the obj, e.g., if the obj has public
     access or {subj_str} is is in a group or has an equivalent subj that has
-    access.
-    """
+    access. """
     for subj_set in self._perm_dict.values():
       subj_set -= {subj_str}
 
@@ -369,7 +363,7 @@ class AccessPolicyWrapper(object):
     return self._perm_dict_from_subj_dict(subj_dict)
 
   def _perm_dict_from_subj_dict(self, subj_dict):
-    """Return dict where keys and values if {subj_dict} have been flipped
+    """Return dict where keys and values of {subj_dict} have been flipped
     around"""
     perm_dict = {}
     for subj_str, perm_set in subj_dict.items():

@@ -21,6 +21,7 @@
 
 from __future__ import absolute_import
 
+import d1_common.wrap.simple_xml
 import d1_common.xml
 
 import d1_test.d1_test_case
@@ -47,37 +48,25 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
     assert not d1_common.xml.is_equivalent(valid_xml, missing_count_xml)
 
   def test_1030(self):
-    """Verify that comparison fails when an element is missing"""
+    """is_equivalent(): False when an element is missing"""
     valid_xml = self.sample.load('test_xml_valid_xml')
     missing_entry_xml = self.sample.load('test_xml_missing_entry_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, missing_entry_xml)
 
   def test_1040(self):
-    """Verify that comparison fails when to elements appear in the wrong order"""
+    """is_equivalent(): False when elements are in wrong order"""
     valid_xml = self.sample.load('test_xml_valid_xml')
     wrong_order_xml = self.sample.load('test_xml_wrong_order_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, wrong_order_xml)
 
   def test_1050(self):
-    """Verify that comparison fails when an element is missing text"""
+    """is_equivalent(): False when an element is missing text"""
     valid_xml = self.sample.load('test_xml_valid_xml')
     missing_text_xml = self.sample.load('test_xml_missing_text_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, missing_text_xml)
 
   def test_1060(self):
-    """Verify that comparison fails when the document is not well formed"""
+    """is_equivalent(): False when the document is not well formed"""
     valid_xml = self.sample.load('test_xml_valid_xml')
     syntax_error_xml = self.sample.load('test_xml_syntax_error_xml')
     assert not d1_common.xml.is_equivalent(valid_xml, syntax_error_xml)
-
-  def test_1065(self):
-    """get_element_text(): Returns correct text from element in XML doc"""
-    valid_xml = self.sample.load('node_list_gmn_valid.xml')
-    assert d1_common.xml.get_element_text(valid_xml, 'lastHarvested') == \
-     '2006-05-04T18:13:51.0Z'
-
-  def test_1070(self):
-    """get_attr_text(): Returns correct attribute text from XML doc"""
-    valid_xml = self.sample.load('node_list_gmn_valid.xml')
-    assert d1_common.xml.get_attr_text(valid_xml, 'lastSuccess') == \
-     '2006-05-04T18:13:51.0Z'
