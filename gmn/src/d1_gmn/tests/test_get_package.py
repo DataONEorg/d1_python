@@ -33,6 +33,7 @@ import d1_gmn.app.resource_map
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_common.bagit
 import d1_common.const
 import d1_common.resource_map
 
@@ -41,20 +42,10 @@ import d1_test.instance_generator.system_metadata
 
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_1000(self, mn_client_v2):
-    """MNPackage.getPackage(): Returns a valid package"""
-    pid_list = self.create_objects(mn_client_v2)
-    ore_pid = self.create_resource_map(mn_client_v2, pid_list)
-    response = self.call_d1_client(mn_client_v2.getPackage, ore_pid)
-    with tempfile.NamedTemporaryFile() as tmp_file:
-      tmp_file.write(response.content)
-      tmp_file.seek(0)
-      assert zipfile.is_zipfile(tmp_file.name)
-    # response = mn_client_v2.getPackage(ore_pid)
-    # print len(response.content)
+  def _extract_zip(self, zip_path, dst_path):
+    zipfile.ZipFile(zip_path).extractall(dst_path)
 
-  def create_objects(self, client):
+  def _create_objects(self, client):
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid_list = []
       for i in range(10):
@@ -62,7 +53,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
         pid_list.append(pid)
     return pid_list
 
-  def create_resource_map(self, mn_client_v2, pid_list):
+  def _create_resource_map(self, mn_client_v2, pid_list):
     ore_pid = d1_test.instance_generator.identifier.generate_pid('PID_ORE_')
     ore = d1_common.resource_map.createSimpleResourceMap(
       ore_pid, pid_list[0], pid_list[1:]
@@ -82,3 +73,16 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
       mn_client_v2.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
     )
     return ore_pid
+
+  @responses.activate
+  def test_1000(self, mn_client_v2):
+    """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
+    pid_list = self._create_objects(mn_client_v2)
+    ore_pid = self._create_resource_map(mn_client_v2, pid_list)
+    response = self.call_d1_client(mn_client_v2.getPackage, ore_pid)
+    with tempfile.NamedTemporaryFile() as tmp_file:
+      tmp_file.write(response.content)
+      tmp_file.seek(0)
+      d1_common.bagit.validate_bagit_file(tmp_file.name)
+      # self._extract_zip(tmp_file, '/home/dahl/dev/d1_python/bag')
+      # shutil.copy(tmp_file.name, '/home/dahl/dev/d1_python/bag.zip')
