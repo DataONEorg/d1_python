@@ -7,7 +7,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-11-12T10:04:34</dateLogged>
+    <dateLogged>2069-11-12T10:04:34Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -17,7 +17,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-08-27T06:57:18</dateLogged>
+    <dateLogged>2069-08-27T06:57:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -27,7 +27,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2069-08-27T06:57:18</dateLogged>
+    <dateLogged>2069-08-27T06:57:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -37,7 +37,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-06-28T01:40:40</dateLogged>
+    <dateLogged>2069-06-28T01:40:40Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -47,7 +47,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-06-08T03:56:28</dateLogged>
+    <dateLogged>2069-06-08T03:56:28Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -57,7 +57,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-06-01T04:24:43</dateLogged>
+    <dateLogged>2069-06-01T04:24:43Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -67,7 +67,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-05-07T22:17:02</dateLogged>
+    <dateLogged>2069-05-07T22:17:02Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -77,7 +77,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-04-21T06:29:18</dateLogged>
+    <dateLogged>2069-04-21T06:29:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -87,7 +87,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2069-04-21T06:29:18</dateLogged>
+    <dateLogged>2069-04-21T06:29:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -97,7 +97,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-04-15T22:36:37</dateLogged>
+    <dateLogged>2069-04-15T22:36:37Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -107,7 +107,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2069-04-15T22:36:37</dateLogged>
+    <dateLogged>2069-04-15T22:36:37Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -117,7 +117,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-04-11T06:57:56</dateLogged>
+    <dateLogged>2069-04-11T06:57:56Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -127,7 +127,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2069-04-11T06:57:56</dateLogged>
+    <dateLogged>2069-04-11T06:57:56Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -137,7 +137,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-03-01T02:04:58</dateLogged>
+    <dateLogged>2069-03-01T02:04:58Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -147,7 +147,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2069-01-18T18:21:10</dateLogged>
+    <dateLogged>2069-01-18T18:21:10Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -157,7 +157,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2068-12-04T15:14:53</dateLogged>
+    <dateLogged>2068-12-04T15:14:53Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -167,7 +167,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2068-09-17T11:04:41</dateLogged>
+    <dateLogged>2068-09-17T11:04:41Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -177,7 +177,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2068-08-15T12:15:02</dateLogged>
+    <dateLogged>2068-08-15T12:15:02Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -187,7 +187,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>2068-08-15T12:15:02</dateLogged>
+    <dateLogged>2068-08-15T12:15:02Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -197,7 +197,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2068-05-28T09:10:30</dateLogged>
+    <dateLogged>2068-05-28T09:10:30Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -207,7 +207,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2068-04-17T14:15:59</dateLogged>
+    <dateLogged>2068-04-17T14:15:59Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

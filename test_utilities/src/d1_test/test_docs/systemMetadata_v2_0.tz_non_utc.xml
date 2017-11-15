@@ -46,17 +46,17 @@
   <replica>
     <replicaMemberNode>node2</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2014-05-21T19:02:49.111111-06:00</replicaVerified>
+    <replicaVerified>2014-05-21T19:02:49.111111-10:30</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>node1</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2013-05-21T19:02:49.111111-06:00</replicaVerified>
+    <replicaVerified>2013-05-21T19:02:49.111111+11:30</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>node3</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2015-05-21T19:02:49.111111-06:00</replicaVerified>
+    <replicaVerified>2015-05-21T19:02:49.111111+12:30</replicaVerified>
   </replica>
   <seriesId>test_series_id</seriesId>
   <mediaType name="test_media_type">

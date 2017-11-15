@@ -7,7 +7,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2032-08-15T20:29:14</dateLogged>
+    <dateLogged>2032-08-15T20:29:14Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -17,7 +17,7 @@
     <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
     <subject>subj_ys</subject>
     <event>read</event>
-    <dateLogged>2008-08-16T00:00:00</dateLogged>
+    <dateLogged>2008-08-16T00:00:00Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -27,7 +27,7 @@
     <userAgent>Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
     <subject>subj_oc</subject>
     <event>read</event>
-    <dateLogged>2007-12-16T00:00:00</dateLogged>
+    <dateLogged>2007-12-16T00:00:00Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -37,7 +37,7 @@
     <userAgent>Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0</userAgent>
     <subject>subj_k</subject>
     <event>read</event>
-    <dateLogged>2006-11-20T00:00:00</dateLogged>
+    <dateLogged>2006-11-20T00:00:00Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -47,7 +47,7 @@
     <userAgent>Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko</userAgent>
     <subject>subj_a</subject>
     <event>read</event>
-    <dateLogged>2006-02-17T00:00:00</dateLogged>
+    <dateLogged>2006-02-17T00:00:00Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -57,7 +57,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1971-12-18T03:55:33</dateLogged>
+    <dateLogged>1971-12-18T03:55:33Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -67,7 +67,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>update</event>
-    <dateLogged>1971-12-18T03:55:33</dateLogged>
+    <dateLogged>1971-12-18T03:55:33Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

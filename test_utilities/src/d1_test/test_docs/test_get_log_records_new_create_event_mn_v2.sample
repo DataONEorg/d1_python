@@ -70,7 +70,7 @@ create_event: <?xml version="1.0" encoding="utf-8"?>
     <userAgent>DataONE-Python/[volatile]
     <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>2388-08-28T00:00:00</dateLogged>
+    <dateLogged>2388-08-28T00:00:00Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

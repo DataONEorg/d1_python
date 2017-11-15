@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>11</serialVersion>
   <identifier>test_pid</identifier>
@@ -6,8 +7,6 @@
   <checksum algorithm="SHA1">SHA1</checksum>
   <submitter>test_submitter</submitter>
   <rightsHolder>test_rights_holder</rightsHolder>
-
-  <!-- public read -->
   <accessPolicy>
     <allow>
       <subject>public</subject>
@@ -27,36 +26,32 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-
-  <replicationPolicy replicationAllowed="true" numberReplicas="3">
+  <replicationPolicy numberReplicas="3" replicationAllowed="true">
     <preferredMemberNode>node3</preferredMemberNode>
     <preferredMemberNode>node1</preferredMemberNode>
-    <preferredMemberNode>node2</preferredMemberNode>
+    <preferredMemberNode>__preferredMemberNode__2__</preferredMemberNode>
     <blockedMemberNode>node5</blockedMemberNode>
     <blockedMemberNode>node4</blockedMemberNode>
   </replicationPolicy>
   <archived>true</archived>
-
-  <!-- Naive timestamps -->
-  <dateUploaded>1933-03-03T13:13:13.3333</dateUploaded>
-  <dateSysMetadataModified>1944-04-04T14:14:14.4444</dateSysMetadataModified>
-
+  <dateUploaded>1933-03-03T13:13:13.3333-11:33</dateUploaded>
+  <dateSysMetadataModified>1944-04-04T14:14:14.4444+11:44</dateSysMetadataModified>
   <originMemberNode>test_originating_mn</originMemberNode>
   <authoritativeMemberNode>test_authoritative_mn</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>node2</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2014-05-21T19:02:49.111111</replicaVerified>
+    <replicaVerified>2014-05-21T19:02:49.111111-10:30</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>node1</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2013-05-21T19:02:49.222222</replicaVerified>
+    <replicaVerified>2013-05-21T19:02:49.111111+11:30</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>node3</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2015-05-21T19:02:49.333333</replicaVerified>
+    <replicaVerified>2015-05-21T19:02:49.111111+12:30</replicaVerified>
   </replica>
   <seriesId>test_series_id</seriesId>
   <mediaType name="test_media_type">

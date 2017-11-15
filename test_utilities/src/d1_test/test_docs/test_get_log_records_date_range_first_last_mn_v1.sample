@@ -8,7 +8,7 @@ PyXB object:
       <userAgent>DataONE-Python/[volatile]
       <subject>disabled_auth_subj</subject>
       <event>create</event>
-      <dateLogged>1979-11-23T23:03:36</dateLogged>
+      <dateLogged>1979-11-23T23:03:36Z</dateLogged>
       <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
     </logEntry>
   </ns1:log>
@@ -23,7 +23,7 @@ PyXB object:
       <userAgent>DataONE-Python/[volatile]
       <subject>disabled_auth_subj</subject>
       <event>create</event>
-      <dateLogged>1979-01-01T10:11:34</dateLogged>
+      <dateLogged>1979-01-01T10:11:34Z</dateLogged>
       <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
     </logEntry>
   </ns1:log>

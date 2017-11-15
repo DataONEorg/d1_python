@@ -7,7 +7,7 @@
     <userAgent>DataONE-Python/[volatile]
     <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>1970-01-07T19:30:07</dateLogged>
+    <dateLogged>1970-01-07T19:30:07Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>
