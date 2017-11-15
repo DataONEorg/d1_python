@@ -122,7 +122,7 @@ class ResponseHandler(object):
                                                     ).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
-      objectInfo.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
+      objectInfo.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(
         row.modified_timestamp
       )
       objectInfo.size = row.size
@@ -162,7 +162,9 @@ class ResponseHandler(object):
       logEntry.userAgent = row.user_agent.user_agent
       logEntry.subject = row.subject.subject
       logEntry.event = row.event.event
-      logEntry.dateLogged = row.timestamp
+      logEntry.dateLogged = d1_common.date_time.normalize_datetime_to_utc(
+        row.timestamp
+      )
       logEntry.nodeIdentifier = django.conf.settings.NODE_IDENTIFIER
       log.logEntry.append(logEntry)
     log.start = start
@@ -177,7 +179,7 @@ class ResponseHandler(object):
 
   def _set_headers(self, response, content_modified_timestamp, content_length):
     if content_modified_timestamp is not None:
-      response['Last-Modified'] = d1_gmn.app.views.util.naive_to_utc(
+      response['Last-Modified'] = d1_common.date_time.normalize_datetime_to_utc(
         content_modified_timestamp
       )
     response['Content-Length'] = content_length

@@ -32,31 +32,31 @@ import d1_gmn.app
 
 import django.conf
 
-
-class fixed_chunk_size_iterator(object):
-  """Create a file iterator that iterates through file-like object using fixed
-  size chunks.
-  """
-
-  def __init__(self, f, chunk_size=1024**2, length=None):
-    self.f = f
-    self.chunk_size = chunk_size
-    self.length = length
-
-  def __len__(self):
-    if self.length is None:
-      return len(self.f)
-    return self.length
-
-  def next(self):
-    data = self.f.read(self.chunk_size)
-    if data:
-      return data
-    else:
-      raise StopIteration
-
-  def __iter__(self):
-    return self
+# class FixedChunkSizeIterator(object):
+#   """Create a file iterator that iterates through file-like object using fixed
+#   size chunks.
+#   """
+#
+#   def __init__(self, f, chunk_size=1024**2, length=None):
+#     self.f = f
+#     self.chunk_size = chunk_size
+#     self.length = length
+#
+#   def __len__(self):
+#     if self.length is None:
+#       return len(self.f)
+#     return self.length
+#
+#   def next(self):
+#     data = self.f.read(self.chunk_size)
+#     if data:
+#       return data
+#     else:
+#       self.f.close()
+#       raise StopIteration
+#
+#   def __iter__(self):
+#     return self
 
 
 # This is from django-piston/piston/utils.py

@@ -173,10 +173,10 @@ def _base_model_to_pyxb(sciobj_model):
     sciobj_model.pid.did
   )
   base_pyxb.serialVersion = sciobj_model.serial_version
-  base_pyxb.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
+  base_pyxb.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(
     sciobj_model.modified_timestamp
   )
-  base_pyxb.dateUploaded = d1_gmn.app.views.util.naive_to_utc(
+  base_pyxb.dateUploaded = d1_common.date_time.normalize_datetime_to_utc(
     sciobj_model.uploaded_timestamp
   )
   base_pyxb.formatId = sciobj_model.format.format

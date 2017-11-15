@@ -41,7 +41,8 @@ import d1_gmn.app.util
 import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.diagnostics
 
-import d1_common.file_iterator
+import d1_common.iter.dir
+import d1_common.iter.file
 import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
@@ -357,7 +358,7 @@ class UpdateSystemMetadata(object):
       )
 
   def _discovered_sysmeta_file_iter(self, sysmeta_path):
-    for xml_path in d1_common.file_iterator.file_iter(
+    for xml_path in d1_common.iter.dir.dir_iter(
         path_list=[sysmeta_path],
         include_glob_list=['*.xml'],
     ):

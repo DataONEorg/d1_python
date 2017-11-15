@@ -25,9 +25,10 @@ from __future__ import absolute_import
 import d1_gmn.app.views.diag
 import d1_gmn.app.views.ext
 import d1_gmn.app.views.external
+import d1_gmn.app.views.get_package
 import d1_gmn.app.views.internal
 
-from django.conf.urls import url
+import django.conf.urls as urls
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP verb into account, so in the
@@ -37,25 +38,25 @@ urlpatterns = [
 
   # Tier 1: Core API (MNCore)
   # MNCore.ping() - GET /monitor/ping
-  url(
+  urls.url(
     r'^v[12]/monitor/ping/?$',
     d1_gmn.app.views.external.get_monitor_ping,
     name='get_monitor_ping',
   ),
   # MNCore.getLogRecords() - GET /log
-  url(
+  urls.url(
     r'^v[12]/log/?$',
     d1_gmn.app.views.external.get_log,
     name='get_log',
   ),
   # MNCore.getCapabilities() - GET /node
   # Also available via Apache redirect from /
-  url(
+  urls.url(
     r'^v[12]/?$',
     d1_gmn.app.views.external.get_node,
     name='get_node',
   ),
-  url(
+  urls.url(
     r'^v[12]/node/?$',
     d1_gmn.app.views.external.get_node,
     name='get_node',
@@ -63,19 +64,19 @@ urlpatterns = [
 
   # Tier 1: Read API (MNRead)
   # MNRead.get() - GET /object/{did}
-  url(
+  urls.url(
     r'^v[12]/object/(.+)$',
     d1_gmn.app.views.external.dispatch_object,
     name='dispatch_object',
   ),
   # MNRead.getSystemMetadata() - GET /meta/{did}
-  url(
+  urls.url(
     r'^v[12]/meta/(.+)$',
     d1_gmn.app.views.external.get_meta,
     name='get_meta',
   ),
   # MNStorage.updateSystemMetadata() - PUT /meta
-  url(
+  urls.url(
     r'^v2/meta$',
     d1_gmn.app.views.external.put_meta,
     name='put_meta',
@@ -83,25 +84,25 @@ urlpatterns = [
   # MNRead.describe() - HEAD /object/{did}
   # (handled by object dispatcher)
   # MNRead.getChecksum() - GET /checksum/{did}
-  url(
+  urls.url(
     r'^v[12]/checksum/(.+)$',
     d1_gmn.app.views.external.get_checksum,
     name='get_checksum',
   ),
   # MNRead.listObjects() - GET /object
-  url(
+  urls.url(
     r'^v[12]/object/?$',
     d1_gmn.app.views.external.dispatch_object_list,
     name='dispatch_object_list',
   ),
   # MNRead.synchronizationFailed() - POST /error
-  url(
+  urls.url(
     r'^v[12]/error/?$',
     d1_gmn.app.views.external.post_error,
     name='post_error',
   ),
   # MNRead.getReplica() - GET /replica/{did}
-  url(
+  urls.url(
     r'^v[12]/replica/(.+)/?$',
     d1_gmn.app.views.external.get_replica,
     name='get_replica',
@@ -109,13 +110,13 @@ urlpatterns = [
 
   # Tier 2: Authorization API  (MNAuthorization)
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{did}
-  url(
+  urls.url(
     r'^v[12]/isAuthorized/(.+)/?$',
     d1_gmn.app.views.external.get_is_authorized,
     name='get_is_authorized',
   ),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{did}
-  url(
+  urls.url(
     r'^v[12]/dirtySystemMetadata/?$',
     d1_gmn.app.views.external.post_refresh_system_metadata,
     name='post_refresh_system_metadata',
@@ -127,7 +128,7 @@ urlpatterns = [
   # MNStorage.update() - PUT /object/{did}
   # (handled by object dispatcher)
   # MNStorage.generateIdentifier()
-  url(
+  urls.url(
     r'^v[12]/generate/?$',
     d1_gmn.app.views.external.post_generate_identifier,
     name='post_generate_identifier',
@@ -135,30 +136,30 @@ urlpatterns = [
   # MNStorage.delete() - DELETE /object/{did}
   # (handled by object dispatcher)
   # MNStorage.archive() - PUT /archive/{did}
-  url(
+  urls.url(
     r'^v[12]/archive/(.+)/?$',
     d1_gmn.app.views.external.put_archive,
     name='put_archive',
   ),
   # Tier 4: Replication API (MNReplication)
   # MNReplication.replicate() - POST /replicate
-  url(
+  urls.url(
     r'^v[12]/replicate/?$',
     d1_gmn.app.views.external.post_replicate,
     name='post_replicate',
   ),
   # Package API
   # MNPackage.getPackage() - GET /package
-  url(
+  urls.url(
     r'^v2/packages/(?P<package_type>.+)/(?P<pid>.+)/?$',
-    d1_gmn.app.views.external.get_package,
+    d1_gmn.app.views.get_package.get_package,
     name='get_package',
   ),
 
   #
   # Home page and Web UI
   #
-  url(r'^home/?$', d1_gmn.app.views.internal.home, name='home'),
+  urls.url(r'^home/?$', d1_gmn.app.views.internal.home, name='home'),
   # url(
   #   r'^home/replication?$', d1_gmn.app.views.internal.replication_queue,
   #   name='home_replication'
@@ -173,7 +174,7 @@ urlpatterns = [
   #
   # GMN API extensions
   #
-  url(
+  urls.url(
     r'^ext/object/?$',
     d1_gmn.app.views.ext.get_object_list_json,
     name='get_object_list_json',
@@ -182,17 +183,17 @@ urlpatterns = [
   #
   # GMN diagnostic APIs
   #
-  url(
+  urls.url(
     r'^diag/echo-session/?$',
     d1_gmn.app.views.diag.echo_session,
     name='echo_session',
   ),
-  url(
+  urls.url(
     r'^diag/echo-request/?$',
     d1_gmn.app.views.diag.echo_request,
     name='echo_request_object',
   ),
-  url(
+  urls.url(
     r'^diag/echo-exception/(.+?)$', d1_gmn.app.views.diag.echo_exception,
     name='echo_exception'
   ),
