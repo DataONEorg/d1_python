@@ -80,7 +80,7 @@ class MemberNodeClient_1_2(
     response = self.listViewsResponse(**kwargs)
     return self._read_dataone_type_response(response, 'OptionList')
 
-  # NPackage.getPackage(session, packageType, id) → OctetStream
+  # MNPackage.getPackage(session, packageType, id) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
   @d1_common.util.utf8_to_unicode

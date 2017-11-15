@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNRead.getLogRecords()
+"""Test MNCore.getLogRecords()
 """
 
 from __future__ import absolute_import
@@ -111,7 +111,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1060(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): event type filter: Unknown event returns an empty
+    """MNCore.getLogRecords(): event type filter: Unknown event returns an empty
     list
 
     In v2, event type is not an enum.
@@ -123,7 +123,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1070(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): event type filter: known event returns list of
+    """MNCore.getLogRecords(): event type filter: known event returns list of
     requested size with total equal to the number of events of the type
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -133,7 +133,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1080(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): Date range query: Get all events from 1979
+    """MNCore.getLogRecords(): Date range query: Get all events from 1979
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       newest_log = mn_client_v1_v2.getLogRecords(
@@ -157,7 +157,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1090(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): Date range query: Using a date range in the
+    """MNCore.getLogRecords(): Date range query: Using a date range in the
     future returns empty list
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -174,7 +174,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1100(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): Date range query: End date before start date
+    """MNCore.getLogRecords(): Date range query: End date before start date
     raises InvalidRequest
     """
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
@@ -187,7 +187,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   @freezegun.freeze_time('2388-08-28')
   def test_1110(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): create() of object causes a new create event to
+    """MNCore.getLogRecords(): create() of object causes a new create event to
     be added for the given PID
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -227,7 +227,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1120(self, mn_client_v1_v2):
-    """MNRead.getLogRecords(): v1: SID is not resolved, so idFilter with SID
+    """MNCore.getLogRecords(): v1: SID is not resolved, so idFilter with SID
     returns empty list. v2: SID is resolved, so idFilter returns records for all
     objects in chain.
     """

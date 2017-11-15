@@ -84,7 +84,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
 
   @responses.activate
   def test_1030(self, cn_mn_client_v1):
-    """MNRead.getLogRecords(): Returned type is Log"""
+    """MNCore.getLogRecords(): Returned type is Log"""
     d1_test.mock_api.get_log_records.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
     )
@@ -94,7 +94,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
 
   @responses.activate
   def test_1040(self, cn_mn_client_v1):
-    """MNRead.getLogRecords(): Log has at least two entries"""
+    """MNCore.getLogRecords(): Log has at least two entries"""
     d1_test.mock_api.get_log_records.add_callback(
       d1_test.d1_test_case.MOCK_BASE_URL
     )

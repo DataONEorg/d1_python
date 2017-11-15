@@ -233,17 +233,14 @@ def cast_datetime_to_utc(dt):
   - Warning: This will change the actual moment in time that is represented if
   the datetime is set to another timezone or if it is a naive datetime that
   represents a date and time not in UTC.
-  was intended to represent.
-
-  date-time is naive and not in UTC, or if it is aware and not in UTC, . See also
-  normalize_datetime_to_utc()."""
+  - See also normalize_datetime_to_utc()."""
   return dt.replace(tzinfo=UTC())
 
 
 def cast_naive_datetime_to_utc(dt):
   """If datetime is naive, set it to UTC
 
-  - datetime with timezone remain unchanged
+  - datetime with timezone remain unchanged.
   - Warning: This will change the actual moment in time that is represented if
   the datetime is naive and represents a date and time not in UTC.
   - See also normalize_datetime_to_utc().
@@ -251,6 +248,21 @@ def cast_naive_datetime_to_utc(dt):
   if has_tz(dt):
     return dt
   return dt.replace(tzinfo=UTC())
+
+
+def cast_naive_datetime_to_tz(dt, tz=UTC()):
+  """If datetime is naive, set it to {tz}
+
+  - {tz} should be a class derived from datetime.tzinfo.
+  - {tz=None}: Set to UTC.
+  - datetime with timezone remain unchanged.
+  - Warning: This will change the actual moment in time that is represented if
+  the datetime is naive and represents a date and time not in UTC.
+  - See also normalize_datetime_to_utc().
+  """
+  if has_tz(dt):
+    return dt
+  return dt.replace(tzinfo=tz)
 
 
 def strip_timezone(dt):
@@ -267,6 +279,11 @@ def strip_timezone(dt):
 def utc_now():
   """Return the current time in the UTC timezone"""
   return cast_datetime_to_utc(datetime.datetime.utcnow())
+
+
+def date_utc_now():
+  """Return the current date as an ISO 8601 string in the UTC timezone"""
+  return utc_now().date().isoformat()
 
 
 def create_utc_datetime(*datetime_parts):

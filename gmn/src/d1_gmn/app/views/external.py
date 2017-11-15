@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import
 
-import datetime
 import logging
 import uuid
 
@@ -54,6 +53,7 @@ import d1_common.bagit
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
+import d1_common.iter.file
 import d1_common.revision
 import d1_common.types.exceptions
 import d1_common.url
@@ -120,9 +120,7 @@ def get_monitor_ping(request):
   """MNCore.ping() → Boolean
   """
   response = d1_gmn.app.views.util.http_response_with_boolean_true_type()
-  d1_gmn.app.views.util.add_http_date_to_response_header(
-    response, datetime.datetime.utcnow()
-  )
+  d1_gmn.app.views.util.add_http_date_to_response_header(response)
   return response
 
 
@@ -206,7 +204,7 @@ def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
   response['Content-Type'] = _content_type_from_format(sciobj.format.format)
   response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
-    d1_gmn.app.views.util.naive_to_utc(sciobj.modified_timestamp)
+    d1_common.date_time.normalize_datetime_to_utc(sciobj.modified_timestamp)
   )
   response['DataONE-GMN'] = d1_gmn.__version__
   response['DataONE-FormatId'] = sciobj.format.format
@@ -214,9 +212,7 @@ def _add_object_properties_to_response_header(response, sciobj):
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
   )
   response['DataONE-SerialVersion'] = sciobj.serial_version
-  d1_gmn.app.views.util.add_http_date_to_response_header(
-    response, datetime.datetime.utcnow()
-  )
+  d1_gmn.app.views.util.add_http_date_to_response_header(response)
   if d1_common.url.isHttpOrHttps(sciobj.url):
     response['DataONE-Proxy'] = sciobj.url
   if sciobj.obsoletes:
@@ -261,10 +257,7 @@ def _get_sciobj_iter(sciobj):
 
 def _get_sciobj_iter_local(pid):
   file_in_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-  # Can't use "with".
-  sciobj_file = open(file_in_path, 'rb')
-  # Return an iterator that iterates over the raw bytes of the object in chunks.
-  return d1_gmn.app.util.fixed_chunk_size_iterator(sciobj_file)
+  return d1_common.iter.file.FileIterator(file_in_path)
 
 
 def _get_sciobj_iter_remote(url):
@@ -670,35 +663,3 @@ def post_replicate(request):
 # ------------------------------------------------------------------------------
 # Package API.
 # ------------------------------------------------------------------------------
-
-
-def get_package(request, pid, package_type):
-  # Change args from keyword to positional
-  return _get_package(request, pid, package_type)
-
-
-@d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
-@d1_gmn.app.views.decorators.resolve_sid
-@d1_gmn.app.views.decorators.read_permission
-def _get_package(request, pid, package_type):
-  """MNPackage.getPackage(session, packageType, id) → OctetStream
-  """
-  if package_type != d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Unsupported Data Package format. '
-      u'Currently, only BagIt (formatId={}) is supported'.
-      format(d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID)
-    )
-  pid_list = d1_gmn.app.resource_map.get_resource_map_members(pid)
-  path_list = [
-    d1_gmn.app.sciobj_store.get_sciobj_file_path(p)
-    for p in pid_list if d1_gmn.app.sciobj_store.is_existing_sciobj_file(p)
-  ]
-  zip_file = d1_common.bagit.create_bagit_stream(path_list)
-  response = django.http.StreamingHttpResponse(
-    zip_file, content_type='application/zip'
-  )
-  response['Content-Disposition'
-           ] = 'attachment; filename={}'.format('files.zip')
-  return response

@@ -24,7 +24,6 @@
 from __future__ import absolute_import
 
 import datetime
-import logging
 import time
 
 import pytest
@@ -163,7 +162,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1120(self, mn_client_v2):
-    """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata()
+    """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata():
     A series of updates and downloads using the same mn_client_v2 and network
     connection correctly frees up the connection
     """
@@ -183,8 +182,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   @responses.activate
   def test_1130(self, mn_client_v2):
-    """MNStorage.updateSystemMetadata()
-    Using updateSystemMetadata() to add new preferred and blocked nodes
+    """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes
     """
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -192,8 +190,8 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       base_pid, sid, sciobj_str, ver1_sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True
       )
-      for r in ver1_sysmeta_pyxb.replica:
-        logging.error(r.toxml())
+      # for r in ver1_sysmeta_pyxb.replica:
+      #   logging.error(r.toxml())
       ver2_sciobj_str, ver2_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
       # Add a new preferred node
       d1_common.replication_policy.sysmeta_add_preferred(
@@ -201,7 +199,12 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
       ver3_sciobj_str, ver3_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
+      # self.dump_pyxb(ver1_sysmeta_pyxb)
+      # self.dump_pyxb(ver3_sysmeta_pyxb)
       # Check that the count of preferred nodes increased by one
+
+      # TODO: Had this test fail randomly here. Was unable to reproduce.
+
       assert len(ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode) + 1 == \
         len(ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode)
       # Second round of changes

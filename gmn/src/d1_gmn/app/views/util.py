@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 
+import datetime
 import re
 
 import d1_gmn.app
@@ -139,8 +140,11 @@ def http_response_with_boolean_true_type():
   return django.http.HttpResponse('OK', d1_common.const.CONTENT_TYPE_TEXT)
 
 
-def add_http_date_to_response_header(response, date_time):
-  response['Date'] = d1_common.date_time.http_datetime_str_from_dt(date_time)
+def add_http_date_to_response_header(response, date_time=None):
+  response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
+    d1_common.date_time.normalize_datetime_to_utc(date_time)
+    if date_time else datetime.datetime.utcnow()
+  )
 
 
 def query_object_list(request, type_name):
@@ -181,11 +185,3 @@ def query_object_list(request, type_name):
     'total': total_int,
     'type': type_name
   }
-
-
-def naive_to_utc(dt):
-  if d1_common.date_time.has_tz(dt):
-    raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unexpected timezone information in datetime. dt="{}"'.format(dt)
-    )
-  return d1_common.date_time.cast_datetime_to_utc(dt)
