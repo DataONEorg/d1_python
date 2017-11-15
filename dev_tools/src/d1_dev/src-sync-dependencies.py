@@ -41,7 +41,7 @@ import pkg_resources
 
 import d1_dev.util
 
-import d1_common.file_iterator as file_iterator
+import d1_common.iter.file as file_iterator
 import d1_common.util
 
 
@@ -77,7 +77,7 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for setup_path in file_iterator.file_iter(
+  for setup_path in file_iterator.dir_iter(
       path_list=[args.path],
       include_glob_list=['setup.py'],
       exclude_glob_list=args.exclude,

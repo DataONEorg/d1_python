@@ -46,7 +46,7 @@ import subprocess
 import d1_dev.util
 import git
 
-import d1_common.file_iterator
+import d1_common.iter.dir
 import d1_common.util
 
 # Path to PyCharm, for automatically moving to errors in the IDE
@@ -97,7 +97,7 @@ def main():
 def get_specified_file_path_list(args):
   specified_file_path_list = [
     os.path.realpath(p)
-    for p in d1_common.file_iterator.file_iter(
+    for p in d1_common.iter.dir.dir_iter(
       path_list=args.path,
       include_glob_list=args.include,
       exclude_glob_list=args.exclude,

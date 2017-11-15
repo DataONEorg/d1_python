@@ -478,7 +478,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       received_event_log_pyxb = v2.CreateFromDocument(f.read())
     client = d1_client.mnclient.MemberNodeClient('http://responses/cn')
     expected_event_log_pyxb = client.getLogRecords()
-    now = datetime.datetime.now()
+    now = datetime.datetime.utcnow()
     for log_entry in received_event_log_pyxb.logEntry:
       log_entry.dateLogged = now
     for log_entry in expected_event_log_pyxb.logEntry:

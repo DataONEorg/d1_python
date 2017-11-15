@@ -30,7 +30,7 @@ from __future__ import absolute_import
 import argparse
 import logging
 
-import d1_common.file_iterator as file_iterator
+import d1_common.iter.dir
 import d1_common.util
 
 
@@ -61,7 +61,7 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for file_path in file_iterator.file_iter(
+  for file_path in d1_common.iter.dir.dir_iter(
       path_list=args.path,
       include_glob_list=args.include,
       exclude_glob_list=args.exclude,

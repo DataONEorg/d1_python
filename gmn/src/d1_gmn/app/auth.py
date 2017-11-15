@@ -181,9 +181,20 @@ def is_allowed(request, level, pid):
 
 
 def has_create_update_delete_permission(request):
-  return d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
-    subject__subject__in=request.all_subjects_set).exists() \
-         or is_trusted_subject(request)
+  whitelisted_subject_set = get_whitelisted_subject_set()
+  logging.debug(
+    'Whitelisted subjects: {}'.format(', '.join(whitelisted_subject_set))
+  )
+  return is_trusted_subject(request) or not request.all_subjects_set.isdisjoint(
+    whitelisted_subject_set
+  )
+
+
+def get_whitelisted_subject_set():
+  return set(
+    d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.
+    values_list('subject__subject', flat=True)
+  )
 
 
 def assert_create_update_delete_permission(request):
