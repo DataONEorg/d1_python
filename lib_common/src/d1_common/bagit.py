@@ -80,8 +80,9 @@ def _parse_tab_separated_file(bagit_zip, tag_path):
 
 def _get_manifest_info_list(bagit_zip):
   manifest_info_list = []
-  for member_path in bagit_zip.namelist():
-    m = re.match(r'(tag)?manifest-(.*).txt', member_path)
+  for member_file in bagit_zip.filelist:
+    member_path = member_file.filename
+    m = re.search(r'/(tag)?manifest-(.*).txt', member_path)
     if not m:
       continue
     checksum_algo_str = m.group(2).upper()
@@ -128,31 +129,34 @@ def _calculate_checksum_of_member(bagit_zip, manifest_info):
     )
 
 
-def create_bagit_stream(payload_info_list):
+def create_bagit_stream(dir_name, payload_info_list):
   """Create a stream containing a BagIt zip archive
 
+  - {dir_name} is the name of the root directory in the zip file, under which
+  all the files are placed (avoids "zip bombs").
   - payload_info_dict keys: pid, filename, iter, checksum, checksum_algorithm
   - If the filename is None, the pid is used for the filename.
   """
   zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
-  _add_path(payload_info_list)
+  _add_path(dir_name, payload_info_list)
   payload_byte_count, payload_file_count = _add_payload_files(
     zip_file, payload_info_list
   )
   tag_info_list = _add_tag_files(
-    zip_file, payload_info_list, payload_byte_count, payload_file_count
+    zip_file, dir_name, payload_info_list, payload_byte_count,
+    payload_file_count
   )
-  _add_manifest_files(zip_file, payload_info_list, tag_info_list)
+  _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list)
   _add_tag_manifest_file(zip_file, tag_info_list)
   return zip_file
 
 
-def _add_path(payload_info_list):
+def _add_path(dir_name, payload_info_list):
   """Add a key with the path to each payload_info_dict"""
   for payload_info_dict in payload_info_list:
     file_name = payload_info_dict['filename'] or payload_info_dict['pid']
     payload_info_dict['path'] = os.path.join(
-      'data', _get_safe_filename(file_name)
+      _get_safe_filename(dir_name), 'data', _get_safe_filename(file_name)
     )
 
 
@@ -168,26 +172,28 @@ def _add_payload_files(zip_file, payload_info_list):
 
 
 def _add_tag_files(
-    zip_file, payload_info_list, payload_byte_count, payload_file_count
+    zip_file, dir_name, payload_info_list, payload_byte_count,
+    payload_file_count
 ):
   """Generate the tag files and add them to the zip"""
   tag_info_list = []
-  _add_tag_file(zip_file, tag_info_list, _get_bagit_txt_file_iter())
+  _add_tag_file(zip_file, dir_name, tag_info_list, _get_bagit_txt_file_iter())
   _add_tag_file(
-    zip_file, tag_info_list,
+    zip_file, dir_name, tag_info_list,
     _get_bag_info_file_iter(payload_byte_count, payload_file_count)
   )
   _add_tag_file(
-    zip_file, tag_info_list, _get_pid_mapping_file_iter(payload_info_list)
+    zip_file, dir_name, tag_info_list,
+    _get_pid_mapping_file_iter(payload_info_list)
   )
   return tag_info_list
 
 
-def _add_manifest_files(zip_file, payload_info_list, tag_info_list):
+def _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list):
   """Generate the manifest files and add them to the zip"""
   for checksum_algorithm in _get_checksum_algorithm_set(payload_info_list):
     _add_tag_file(
-      zip_file, tag_info_list,
+      zip_file, dir_name, tag_info_list,
       _get_manifest_file_iter(payload_info_list, checksum_algorithm)
     )
 
@@ -197,10 +203,12 @@ def _add_tag_manifest_file(zip_file, tag_info_list):
   zip_file.write_iter(*_get_tag_manifest_file_iter(tag_info_list))
 
 
-def _add_tag_file(zip_file, tag_info_list, tag_tup):
+def _add_tag_file(zip_file, dir_name, tag_info_list, tag_tup):
   """Add a tag file to zip_file and record info for the tag manifest file"""
   tag_path, tag_iter = tag_tup
-  zip_file.write_iter(tag_path, tag_iter)
+  zip_file.write_iter(
+    os.path.join(_get_safe_filename(dir_name), tag_path), tag_iter
+  )
   tag_info_list.append({
     'path':
       tag_path,

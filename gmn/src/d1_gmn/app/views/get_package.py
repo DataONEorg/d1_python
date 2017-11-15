@@ -50,7 +50,7 @@ def _get_package(request, pid, package_type):
     )
   pid_list = d1_gmn.app.resource_map.get_resource_map_members(pid)
   sciobj_info_list = _create_sciobj_info_list(pid_list)
-  bagit_file = d1_common.bagit.create_bagit_stream(sciobj_info_list)
+  bagit_file = d1_common.bagit.create_bagit_stream(pid, sciobj_info_list)
   response = django.http.StreamingHttpResponse(
     bagit_file, content_type='application/zip'
   )
