@@ -47,7 +47,7 @@ class Transaction(transaction.Transaction):
     return log.total
 
   def d1_mn_api_call(self):
-    """MNRead.getLogRecords(), paged, called by CN"""
+    """MNCore.getLogRecords(), paged, called by CN"""
     client = self.create_client_for_cn()
     start = random.randint(0, self.total - 1)
     count = settings.PAGE_SIZE

@@ -84,5 +84,5 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
       tmp_file.write(response.content)
       tmp_file.seek(0)
       d1_common.bagit.validate_bagit_file(tmp_file.name)
-      self._extract_zip(tmp_file, '/home/dahl/dev/d1_python/bag')
+      # self._extract_zip(tmp_file, '/home/dahl/dev/d1_python/bag')
       # shutil.copy(tmp_file.name, '/home/dahl/dev/d1_python/bag.zip')
