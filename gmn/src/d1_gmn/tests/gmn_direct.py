@@ -40,8 +40,10 @@ import xml.etree.ElementTree
 import d1_gmn.app.views.util
 import d1_gmn.tests.gmn_mock
 
+import d1_common.type_conversions
 import d1_common.url
 import d1_common.util
+import d1_common.wrap.simple_xml
 import d1_common.xml
 
 import django.test
@@ -50,15 +52,16 @@ import django.test
 def create(version_tag, sciobj_str, sysmeta_xml):
   """Call MNStorage.create()"""
   with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-    return _get_resp_dict(
-      django.test.Client().post(
-        d1_common.url.joinPathElements('/', version_tag, 'object'), {
-          'pid': d1_common.xml.get_element_text(sysmeta_xml, 'identifier'),
-          'object': ('content.bin', StringIO.StringIO(sciobj_str)),
-          'sysmeta': ('sysmeta.xml', StringIO.StringIO(sysmeta_xml)),
-        }
+    with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
+      return _get_resp_dict(
+        django.test.Client().post(
+          d1_common.url.joinPathElements('/', version_tag, 'object'), {
+            'pid': xml.get_element_text('identifier'),
+            'object': ('content.bin', StringIO.StringIO(sciobj_str)),
+            'sysmeta': ('sysmeta.xml', StringIO.StringIO(sysmeta_xml)),
+          }
+        )
       )
-    )
 
 
 def get(version_tag, pid):
@@ -98,6 +101,23 @@ def list_objects(version_tag, pid=None, start=None, count=None):
   return _get_resp_dict(django.test.Client().get(url_str))
 
 
+def get_log_records(version_tag, pid=None, start=None, count=None):
+  """Call MNCore.getLogRecords()"""
+  url_path = d1_common.url.joinPathElements('/', version_tag, 'log')
+
+  query_dict = {}
+  if pid is not None:
+    query_dict['identifier'] = pid
+  if start is not None:
+    query_dict['start'] = start
+  if count is not None:
+    query_dict['count'] = count
+
+  url_str = _add_query(query_dict, url_path)
+
+  return _get_resp_dict(django.test.Client().get(url_str))
+
+
 def _add_query(query_dict, url_path):
   if query_dict:
     url_str = u'{}?{}'.format(url_path, d1_common.url.urlencode(query_dict))
@@ -108,8 +128,7 @@ def _add_query(query_dict, url_path):
 
 def get_object_count(version_tag):
   """Get total number of objects for which one or more subj in
-  {active_subj_list} have read access or better.
-  """
+  {active_subj_list} have read access or better. """
   url_path = d1_common.url.joinPathElements('/', version_tag, 'object')
   # url_path += "?identifier={}".format(d1_common.url.encodeQueryElement(pid))
   resp_dict = _get_resp_dict(django.test.Client().get(url_path))
