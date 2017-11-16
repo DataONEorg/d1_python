@@ -14,7 +14,6 @@ before_install:
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
-  #- pip install coverage pytest-cov pytest-django
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
@@ -28,5 +27,4 @@ after_success:
   # Coveralls has a requirement for requests >= 1.0.0, so we install it after
   # our packages to prevent it from pulling in the latest version, which is
   # likely to conflict with the fixed version our packages pull in.
-#  - pip install coveralls
   - coveralls
