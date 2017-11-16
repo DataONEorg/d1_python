@@ -82,23 +82,37 @@ def capture_std():
     sys.stdout, sys.stderr = old_out, old_err
 
 
-@contextlib.contextmanager
-def capture_log(log_level=logging.DEBUG):
-  """Capture anything output by the logging module. Uses a handler that does not
-  not include any context, such as date-time or originating module to help keep
-  the result stable over time.
+# @contextlib.contextmanager
+# def capture_log(log_level=logging.DEBUG):
+#   """Capture anything output by the logging module. Uses a handler that does not
+#   not include any context, such as timestamp and module name, so that the
+#   result is reproducible over time.
+#   """
+#   stream = StringIO.StringIO()
+#   logger = None
+#   stream_handler = None
+#   try:
+#     logger = logging.getLogger()
+#     logger.level = log_level
+#     stream_handler = logging.StreamHandler(stream)
+#     logger.addHandler(stream_handler)
+#     yield stream
+#   finally:
+#     logger.removeHandler(stream_handler)
+
+
+def get_caplog_text(caplog, logger_name=None):
+  """Return the log messages currently captured by the caplog fixture
+  If {module_name} is set, only messages from the given module are returned.
   """
-  stream = StringIO.StringIO()
-  logger = None
-  stream_handler = None
-  try:
-    logger = logging.getLogger()
-    logger.level = log_level
-    stream_handler = logging.StreamHandler(stream)
-    logger.addHandler(stream_handler)
-    yield stream
-  finally:
-    logger.removeHandler(stream_handler)
+  return '\n'.join([
+    r.getMessage()
+    for r in caplog.records if (logger_name is None) or logger_name == r.name
+  ])
+
+
+def clear_caplog(caplog):
+  caplog.handler.records = []
 
 
 @contextlib.contextmanager

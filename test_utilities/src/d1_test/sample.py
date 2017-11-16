@@ -25,6 +25,7 @@ import os
 import re
 import subprocess
 import tempfile
+import thread
 import traceback
 
 import pytest
@@ -41,6 +42,8 @@ import d1_client.util
 import django
 import django.core
 import django.core.management
+
+tidy_lock = thread.allocate_lock()
 
 
 def start_tidy():
@@ -129,16 +132,17 @@ def assert_no_diff(a_obj, b_obj):
 
 
 def get_path(filename):
-  path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
-  if os.path.isfile(path):
+  with tidy_lock:
+    path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
+    if os.path.isfile(path):
+      return path
+    tidy_file_path = os.path.join(
+      d1_common.util.abs_path('test_docs_tidy'), filename
+    )
+    if os.path.isfile(tidy_file_path):
+      os.rename(tidy_file_path, path)
+      logging.info('Moved from tidy: {} -> {}'.format(tidy_file_path, path))
     return path
-  tidy_file_path = os.path.join(
-    d1_common.util.abs_path('test_docs_tidy'), filename
-  )
-  if os.path.isfile(tidy_file_path):
-    os.rename(tidy_file_path, path)
-    logging.info('Moved from tidy: {} -> {}'.format(tidy_file_path, path))
-  return path
 
 
 def load(filename, mode_str='rb'):
@@ -254,7 +258,7 @@ def _get_or_create_path(filename):
   See the test docs for usage.
   """
   path = get_path(filename)
-  logging.info('Sample path: {}'.format(path))
+  logging.debug('Sample path: {}'.format(path))
   if not os.path.isfile(path):
     logging.info('Write new blank file: {}'.format(path))
     with open(path, 'w') as f:

@@ -32,38 +32,37 @@ import django.utils.six
 
 
 class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def _cert_whitelist(self):
+  def _cert_whitelist(self, caplog):
     cert_path = self.sample.get_path(
       'cert_cn_ucsb_1_dataone_org_20150709_180838.pem'
     )
     with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.capture_log() as log_stream:
-        with d1_test.d1_test_case.disable_debug_level_logging():
-          django.core.management.call_command('cert', 'whitelist', cert_path)
-          django.core.management.call_command('whitelist', 'view', cert_path)
-      return log_stream.getvalue()
+      with d1_test.d1_test_case.disable_debug_level_logging():
+        django.core.management.call_command('cert', 'whitelist', cert_path)
+        django.core.management.call_command('whitelist', 'view', cert_path)
+      return d1_test.d1_test_case.get_caplog_text(caplog)
 
-  def test_1000(self):
+  def test_1000(self, caplog):
     """cert view <pem>: Lists subjects from DN and SubjectInfo
     """
-    # print (logging.Logger.manager.loggerDict.keys())
     cert_path = self.sample.get_path('cert_with_full_subject_info.pem')
-    with d1_test.d1_test_case.capture_log() as log_stream:
-      with self.mock.disable_management_command_logging():
-        with d1_test.d1_test_case.disable_debug_level_logging():
-          django.core.management.call_command('cert', 'view', cert_path)
-    self.sample.assert_equals(log_stream.getvalue(), 'view')
+    with self.mock.disable_management_command_logging():
+      with d1_test.d1_test_case.disable_debug_level_logging():
+        django.core.management.call_command('cert', 'view', cert_path)
+    self.sample.assert_equals(
+      d1_test.d1_test_case.get_caplog_text(caplog), 'view'
+    )
 
-  def test_1010(self):
+  def test_1010(self, caplog):
     """cert whitelist <pem>: Whitelists subj from cert if not already whitelisted
     """
-    log_str = self._cert_whitelist()
+    log_str = self._cert_whitelist(caplog)
     self.sample.assert_equals(log_str, 'whitelist_new')
 
-  def test_1020(self):
+  def test_1020(self, caplog):
     """cert whitelist <pem>: Raise on cert with subj already whitelisted
     """
-    self._cert_whitelist()
+    self._cert_whitelist(caplog)
     with pytest.raises(django.core.management.CommandError) as exc_info:
-      self._cert_whitelist()
+      self._cert_whitelist(caplog)
     assert 'already enabled' in str(exc_info.value)

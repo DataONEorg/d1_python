@@ -153,11 +153,13 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
     ) is None
 
   @freezegun.freeze_time('2021-01-01')
-  def test_1080(self):
+  def test_1080(self, caplog):
     """log_jwt_bu64_info(): Outputs expected log"""
     jwt_bu64 = self.sample.load('jwt_token_20170612_232523.base64')
-    with d1_test.d1_test_case.capture_log() as log_stream:
+    with caplog.at_level(logging.INFO):
+      d1_test.d1_test_case.clear_caplog(caplog)
       d1_common.cert.jwt.log_jwt_bu64_info(logging.info, "test msg", jwt_bu64)
     self.sample.assert_equals(
-      log_stream.getvalue(), 'jwt_token_log_jwt_bu64_info_expected'
+      d1_test.d1_test_case.get_caplog_text(caplog),
+      'jwt_token_log_jwt_bu64_info_expected'
     )

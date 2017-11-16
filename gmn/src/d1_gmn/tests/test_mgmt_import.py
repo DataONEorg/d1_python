@@ -21,6 +21,8 @@
 """
 from __future__ import absolute_import
 
+import logging
+
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -38,21 +40,22 @@ import django.core.management
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self):
-    mock_object_list.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-    mock_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-    mock_get_system_metadata.add_callback(
-      d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
-    )
-    mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+  def test_1000(self, caplog):
+    with caplog.at_level(logging.INFO):
+      mock_object_list.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+      mock_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+      mock_get_system_metadata.add_callback(
+        d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+      )
+      mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
 
-    with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.capture_log() as log_stream:
+      with self.mock.disable_management_command_logging():
         with d1_test.d1_test_case.disable_debug_level_logging():
           django.core.management.call_command(
             'import', '--force', '--major=2',
             d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
           )
 
-    log_str = log_stream.getvalue()
-    self.sample.assert_equals(log_str, 'import')
+    self.sample.assert_equals(
+      d1_test.d1_test_case.get_caplog_text(caplog), 'import'
+    )

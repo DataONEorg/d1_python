@@ -24,11 +24,15 @@ from __future__ import print_function
 import logging
 import os
 import subprocess
+import tempfile
 
 import psycopg2
 import psycopg2.extensions
 import pytest
 
+import d1_gmn.app.sciobj_store
+
+import d1_test.instance_generator.random_data
 import d1_test.sample
 
 from d1_client.cnclient_1_2 import CoordinatingNodeClient_1_2 as cn_v1
@@ -102,7 +106,7 @@ def pytest_addoption(parser):
     '--skip-clear', action='store_true', help='Clear the list of passed tests'
   )
   parser.addoption(
-    '--skip-list', action='store_true', help='Print the list of passed tests'
+    '--skip-print', action='store_true', help='Print the list of passed tests'
   )
 
 
@@ -113,18 +117,20 @@ def pytest_sessionstart(session):
   """Called by pytest before calling session.main()"""
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
+    pytest.exit('Tidy started. Run complete to complete')
   if pytest.config.getoption('--skip-clear'):
     _clear_skip_list()
-  if pytest.config.getoption('--skip-list'):
+  if pytest.config.getoption('--skip-print'):
     _print_skip_list()
 
 
 def pytest_sessionfinish(session, exitstatus):
   """Called by pytest after the test session ends"""
   # if exitstatus != 2:
-  skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
-  if skipped_count:
-    logging.warn('Skipped {} previously passed tests'.format(skipped_count))
+  if pytest.config.getoption('--skip'):
+    skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+    if skipped_count:
+      logging.warn('Skipped {} previously passed tests'.format(skipped_count))
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -298,6 +304,22 @@ def mn_client_v1_v2(request):
   yield request.param(MOCK_BASE_URL)
 
 
+# Settings
+
+
+@pytest.fixture(scope='session', autouse=True)
+def set_unique_sciobj_store_path(request):
+  tmp_store_path = os.path.join(
+    tempfile.gettempdir(), 'gmn_test_obj_store_{}{}'.format(
+      d1_test.instance_generator.random_data.random_lower_ascii(
+        min_len=12, max_len=12
+      ), get_xdist_suffix(request)
+    )
+  )
+  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+
 # DB fixtures
 
 
@@ -305,13 +327,11 @@ def mn_client_v1_v2(request):
 def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
   """
-  xdist_suffix = getattr(request.config, 'slaveinput', {}).get('slaveid', '')
-
   logging.info('Setting up DB fixture')
 
   test_db_key = 'default'
   test_db_name = django.conf.settings.DATABASES[test_db_key]['NAME']
-  test_db_name += xdist_suffix
+  test_db_name += get_xdist_suffix(request)
   django.conf.settings.DATABASES[test_db_key]['NAME'] = test_db_name
 
   template_db_key = 'template'
@@ -337,6 +357,15 @@ def django_db_setup(request, django_db_blocker):
     migrate_db(test_db_key)
     logging.debug('Test DB ready')
     yield
+
+
+def get_xdist_suffix(request):
+  """When running in parallel with xdist, each thread gets a different suffix.
+  - In parallel run, return '_gw1', etc.
+  - In single run, return ''.
+  """
+  s = getattr(request.config, 'slaveinput', {}).get('slaveid')
+  return '_{}'.format(s) if s is not None else ''
 
 
 def create_db_from_template(test_db_name, template_db_name):

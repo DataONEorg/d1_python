@@ -43,7 +43,7 @@ def page_size(request):
   yield request.param
 
 
-@pytest.fixture(scope='function', params=[1, 4, 11])
+@pytest.fixture(scope='function', params=[1, 5])
 def n_workers(request):
   yield request.param
 

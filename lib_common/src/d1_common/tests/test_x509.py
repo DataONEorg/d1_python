@@ -108,11 +108,13 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     }, 'primary_and_equivalent_without_subject_info')
 
   @freezegun.freeze_time('2021-01-01')
-  def test_1060(self):
+  def test_1060(self, caplog):
     """log_cert_info(): Outputs expected log"""
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    with d1_test.d1_test_case.capture_log() as log_stream:
+    with caplog.at_level(logging.WARN):
       d1_common.cert.x509.log_cert_info(logging.warn, 'test msg', cert_obj)
-    self.sample.assert_equals(log_stream.getvalue(), 'log_cert_info_expected')
+    self.sample.assert_equals(
+      d1_test.d1_test_case.get_caplog_text(caplog), 'log_cert_info_expected'
+    )
