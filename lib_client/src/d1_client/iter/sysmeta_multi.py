@@ -32,6 +32,9 @@ returned instead.
 Will create the same number of DataONE clients and HTTP or HTTPS connections as
 the number of workers. A single connection is reused, first for retrieving a
 page of results, then all System Metadata objects in the result.
+
+There is a bottleneck somewhere in this iterator, but it's not pickle/unpickle
+of sysmeta_pyxb.
 """
 
 from __future__ import absolute_import
@@ -109,11 +112,14 @@ class SystemMetadataIteratorMulti(object):
         else:
           yield error_dict_or_sysmeta_pyxb
     except GeneratorExit:
-      # If generator is exited before exhausted, provide clean shutdown of the
-      # generator by signaling processes to stop, then waiting for them.
-      logging.debug('Setting stop flag')
-      namespace.stop = True
+      pass
 
+    # If generator is exited before exhausted, provide clean shutdown of the
+    # generator by signaling processes to stop, then waiting for them.
+    logging.debug('Setting stop flag')
+    namespace.stop = True
+
+    # Prevent parent from leaving zombie children behind.
     process.join()
 
 
@@ -128,19 +134,16 @@ def _get_all_pages(
   for page_idx in range(n_pages):
     if namespace.stop:
       logging.debug('Stop flag detected in page iterator')
-      return
-    logging.debug(
-      'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
-    )
-    # try:
-    pool.apply_async(
-      _get_page, args=(
-        queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
-        client_dict, list_objects_dict, get_sysmeta_dict
+      break
+    try:
+      pool.apply_async(
+        _get_page, args=(
+          queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
+          client_dict, list_objects_dict, get_sysmeta_dict
+        )
       )
-    )
-    # except Exception as e:
-    #   logging.debug('pool.apply_async() error="{}"'.format(str(e)))
+    except RuntimeError as e:
+      logging.debug('pool.apply_async() error="{}"'.format(str(e)))
     # The pool does not support a clean way to limit the number of queued tasks
     # so we have to access the internals to check the queue size and wait if
     # necessary.
@@ -149,7 +152,7 @@ def _get_all_pages(
       if namespace.stop:
         logging.debug('Stop flag detected while waiting to queue task')
         break
-      # logging.debug('Waiting to queue task')
+      logging.debug('Waiting to queue task')
       time.sleep(1)
   # Prevent any more tasks from being submitted to the pool. Once all the
   # tasks have been completed the worker processes will exit.
@@ -164,28 +167,22 @@ def _get_page(
     queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
     client_dict, list_objects_dict, get_sysmeta_dict
 ):
-  if namespace.stop:
-    logging.debug('Stop flag detected in _get_page() start')
-    return
+  logging.debug('_get_page(): page_idx={} n_pages={}'.format(page_idx, n_pages))
   client = _create_client(base_url, api_major, client_dict)
   try:
-    logging.debug(
-      'Retrieving ObjectList with listObjects(). page_idx={} page_total={}'.
-      format(page_idx, n_pages)
-    )
     object_list_pyxb = client.listObjects(
       start=page_idx * page_size, count=page_size, **list_objects_dict
     )
-  except Exception as e:
+  except RuntimeError as e:
     logging.error(
-      'Failed to retrieve page. page_idx={} page_total={} error="{}"'.
-      format(page_idx, n_pages, str(e))
+      '_get_page(): listObjects() failed. page_idx={} page_total={} error="{}"'
+      .format(page_idx, n_pages, str(e))
     )
   else:
     for object_info_pyxb in object_list_pyxb.objectInfo:
       if namespace.stop:
-        logging.debug('Stop flag detected in _get_page() objectInfo iter')
-        return
+        logging.debug('_get_page(): Received stop flag')
+        break
       _get_sysmeta(
         client, queue, object_info_pyxb.identifier.value(), get_sysmeta_dict
       )
@@ -196,18 +193,23 @@ def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
     sysmeta_pyxb = client.getSystemMetadata(pid, get_sysmeta_dict)
   except d1_common.types.exceptions.DataONEException as e:
     logging.debug(
-      'getSystemMetadata() failed. pid="{}" error="{}"'.format(pid, str(e))
+      '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'
+      .format(pid, str(e))
     )
     queue.put({'pid': pid, 'error': e.name})
+  except RuntimeError as e:
+    logging.debug(
+      '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'
+      .format(pid, str(e))
+    )
   else:
-    logging.debug('getSystemMetadata() ok. pid="{}"'.format(pid))
-    # There is a bottleneck somewhere in this iterator, but it's not
-    # pickle/unpickle of sysmeta_pyxb.
     queue.put(sysmeta_pyxb)
 
 
 def _create_client(base_url, api_major, client_dict):
-  logging.debug('Creating v{} client'.format(1 if api_major <= 1 else 2))
+  logging.debug(
+    '_create_client(): api="v{}"'.format(1 if api_major <= 1 else 2)
+  )
   if api_major <= 1:
     return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
   else:

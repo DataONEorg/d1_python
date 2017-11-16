@@ -25,9 +25,9 @@ import os
 import re
 import subprocess
 import tempfile
-import thread
 import traceback
 
+import posix_ipc
 import pytest
 import requests.structures
 
@@ -42,8 +42,6 @@ import d1_client.util
 import django
 import django.core
 import django.core.management
-
-tidy_lock = thread.allocate_lock()
 
 
 def start_tidy():
@@ -132,7 +130,13 @@ def assert_no_diff(a_obj, b_obj):
 
 
 def get_path(filename):
-  with tidy_lock:
+  # When tidying, get_path() may move samples, which can cause concurrent calls
+  # to receive different paths for the same file. This is resolved by
+  # serializing calls to get_path(). Regular multiprocessing.Lock() does not
+  # seem to work under pytest-xdist.
+  with posix_ipc.Semaphore(
+      '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
+  ):
     path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
     if os.path.isfile(path):
       return path
@@ -141,7 +145,6 @@ def get_path(filename):
     )
     if os.path.isfile(tidy_file_path):
       os.rename(tidy_file_path, path)
-      logging.info('Moved from tidy: {} -> {}'.format(tidy_file_path, path))
     return path
 
 

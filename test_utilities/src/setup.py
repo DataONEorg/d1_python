@@ -46,6 +46,7 @@ def main():
       'freezegun == 0.3.9',
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',
+      'posix-ipc == 1.0.0',
       'pyasn1 == 0.3.7',
       'pytest == 3.2.3',
       'pytest-catchlog == 1.2.2',

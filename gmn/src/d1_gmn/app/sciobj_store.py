@@ -149,7 +149,7 @@ def assert_sciobj_store_exists():
   if not is_existing_store():
     raise d1_common.types.exceptions.ServiceFailure(
       0, u'Attempted to access non-existing filesystem science object store. '
-      'store_path="{}"'.format(get_store_version_path())
+      u'store_path="{}"'.format(get_store_version_path())
     )
 
 

@@ -21,11 +21,15 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import datetime
 import logging
+import multiprocessing
 import os
 import subprocess
+import sys
 import tempfile
 
+import posix_ipc
 import psycopg2
 import psycopg2.extensions
 import pytest
@@ -49,9 +53,19 @@ DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
+TEMPLATE_DB_KEY = 'template'
+TEST_DB_KEY = 'default'
+
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
 # flake8: noqa: F811
+
+# template_db_lock = threading.Lock()
+template_db_lock = multiprocessing.Lock()
+
+# Hack to get access to print and logging output when running under pytest-xdist
+# and pytest-catchlog. Without this, only output from failed tests is displayed.
+sys.stdout = sys.stderr
 
 
 def pytest_addoption(parser):
@@ -110,14 +124,35 @@ def pytest_addoption(parser):
   )
 
 
+def pytest_configure():
+  logging.debug('pytest_configure()')
+  tmp_store_path = os.path.join(
+    tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
+      d1_test.instance_generator.random_data.
+      random_lower_ascii(min_len=12, max_len=12)
+    )
+  )
+  logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
+  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+
 # Hooks
 
 
 def pytest_sessionstart(session):
-  """Called by pytest before calling session.main()"""
+  """Called by pytest before calling session.main()
+  When running in parallel with xdist, this is called once for each worker.
+  By default, the number of workers is the same as the number of CPU cores.
+  """
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
-    pytest.exit('Tidy started. Run complete to complete')
+    pytest.exit('Tidy started')
+
+  if pytest.config.getoption('--fixture-refresh'):
+    db_drop(TEMPLATE_DB_KEY)
+    pytest.exit('Template refresh started')
+
   if pytest.config.getoption('--skip-clear'):
     _clear_skip_list()
   if pytest.config.getoption('--skip-print'):
@@ -306,122 +341,154 @@ def mn_client_v1_v2(request):
 
 # Settings
 
+# @pytest.fixture(scope='session', autouse=True)
+# def set_unique_sciobj_store_path(request):
+#   tmp_store_path = os.path.join(
+#     tempfile.gettempdir(),
+#     'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
+#   )
+#   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
+#   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+#   d1_gmn.app.sciobj_store.create_clean_tmp_store()
 
-@pytest.fixture(scope='session', autouse=True)
-def set_unique_sciobj_store_path(request):
-  tmp_store_path = os.path.join(
-    tempfile.gettempdir(),
-    'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
-  )
-  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-  d1_gmn.app.sciobj_store.create_clean_tmp_store()
-
-
-# DB fixtures
+# Database setup
 
 
 @pytest.yield_fixture(scope='session')
 def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
   When running in parallel with xdist, this is called once for each worker.
-  By default, the number of workers is the same as the number of CPU cores.
   """
   logging.info('Setting up DB fixture')
 
-  test_db_key = 'default'
-  test_db_name = ''.join([
-    django.conf.settings.DATABASES[test_db_key]['NAME'],
-    get_xdist_unique_suffix(request),
-  ])
-  django.conf.settings.DATABASES[test_db_key]['NAME'] = test_db_name
-
-  template_db_key = 'template'
-  template_db_name = django.conf.settings.DATABASES[template_db_key]['NAME']
+  db_set_unique_db_name(request)
 
   with django_db_blocker.unblock():
 
-    if pytest.config.getoption('--fixture-regen'):
-      drop_database(test_db_name)
-      create_blank_db(test_db_key, test_db_name)
-      django.db.connections[test_db_key].commit()
-      pytest.exit('Database dropped and reinitialized. Now run mk_db_fixture')
+    # if pytest.config.getoption('--fixture-regen'):
+    #   db_drop(test_db_name)
+    #   db_create_blank(test_db_key, test_db_name)
+    #   django.db.connections[test_db_key].commit()
+    #   pytest.exit('Database dropped and reinitialized. Now run mk_db_fixture')
 
-    # try:
-    #   load_template_fixture(template_db_key, template_db_name)
-    # except psycopg2.DatabaseError as e:
-    #   logging.error(str(e))
+    # Regular multiprocessing.Lock() context manager did not work here. Also
+    # tried creating the lock at module scope, and also directly calling
+    # acquire() and release(). It's probably related to how the worker processes
+    # relate to each other when launched by pytest-xdist as compared to what the
+    # multiprocessing module expects.
+    with posix_ipc.Semaphore(
+        '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
+    ):
+      logging.warn(
+        'LOCK BEGIN {} {}'.
+        format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
+      )
 
-    drop_database(test_db_name)
-    create_db_from_template(test_db_name, template_db_name)
+      if not db_exists(TEMPLATE_DB_KEY):
+        db_create_blank(TEMPLATE_DB_KEY)
+        db_migrate(TEMPLATE_DB_KEY)
+        db_populate_by_json(TEMPLATE_DB_KEY)
+        db_migrate(TEMPLATE_DB_KEY)
+
+      logging.warn(
+        'LOCK END {} {}'.
+        format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
+      )
+
+    db_drop(TEST_DB_KEY)
+    db_create_from_template()
+    # db_migrate(TEST_DB_KEY)
 
     # # Haven't found out how to prevent transactions from being started, so
     # # closing the implicit transaction here so that template fixture remains
     # # available.
     # django.db.connections[test_db_key].commit()
 
-    migrate_db(test_db_key)
-
     yield
 
-    for connection in django.db.connections.all():
-      connection.close()
-
-    drop_database(test_db_name)
+    db_drop(TEST_DB_KEY)
 
 
-def create_db_from_template(test_db_name, template_db_name):
+def db_get_name_by_key(db_key):
+  logging.debug('db_get_name_by_key() {}'.format(db_key))
+  return django.conf.settings.DATABASES[db_key]['NAME']
+
+
+def db_set_unique_db_name(request):
+  logging.debug('db_set_unique_db_name()')
+  db_name = '_'.join([
+    db_get_name_by_key(TEST_DB_KEY),
+    get_xdist_unique_suffix(request),
+  ])
+  django.conf.settings.DATABASES[TEST_DB_KEY]['NAME'] = db_name
+
+
+def db_create_from_template():
+  logging.debug('db_create_from_template()')
+  new_db_name = db_get_name_by_key(TEST_DB_KEY)
+  template_db_name = db_get_name_by_key(TEMPLATE_DB_KEY)
   logging.info(
-    'Creating test DB from template. test_db="{}" template_db="{}"'.
-    format(test_db_name, template_db_name)
+    'Creating new db from template. new_db="{}" template_db="{}"'.
+    format(new_db_name, template_db_name)
   )
   run_sql(
     'postgres',
-    'create database {} template {};'.format(test_db_name, template_db_name)
+    'create database {} template {};'.format(new_db_name, template_db_name)
   )
 
 
-def load_template_fixture(template_db_key, template_db_name):
+def db_populate_by_json(db_key):
   """Load DB fixture from compressed JSON file to template database"""
-  logging.info('Loading template DB fixture')
+  logging.debug('db_populate_by_json() {}'.format(db_key))
   fixture_file_path = d1_test.sample.get_path('db_fixture.json.bz2')
-  if pytest.config.getoption('--fixture-refresh'):
-    # django.core.management.call_command('flush', database=template_db_key)
-    drop_database(template_db_name)
-  create_blank_db(template_db_key, template_db_name)
-  logging.debug('Populating tables with fixture data')
+  # loaddata used to have a 'commit' arg, but it appears to have been removed.
   django.core.management.call_command(
-    'loaddata', fixture_file_path, database=template_db_key, commit=True
+    'loaddata', fixture_file_path, database=db_key, commit=True
   )
-  django.db.connections[template_db_key].commit()
-  for connection in django.db.connections.all():
-    connection.close()
+  db_commit_and_close(db_key)
 
 
-def migrate_db(test_db_key):
-  django.core.management.call_command(
-    'migrate', database=test_db_key, commit=True
-  )
-  django.db.connections[test_db_key].commit()
-  for connection in django.db.connections.all():
-    connection.close()
-
-
-def drop_database(db_name):
-  logging.debug('Dropping database: {}'.format(db_name))
-
-  for connection in django.db.connections.all():
-    connection.close()
-
-  run_sql('postgres', 'drop database if exists {};'.format(db_name))
-
-
-def create_blank_db(db_key, db_name):
-  logging.debug('Creating blank DB: {}'.format(db_name))
-  run_sql('postgres', "create database {} encoding 'utf-8';".format(db_name))
-  logging.debug('Creating GMN tables')
+def db_migrate(db_key):
+  logging.debug('db_migrate() {}'.format(db_key))
   django.core.management.call_command(
     'migrate', '--run-syncdb', database=db_key
   )
+  db_commit_and_close(db_key)
+
+
+def db_drop(db_key):
+  logging.debug('db_drop() {}'.format(db_key))
+  db_name = db_get_name_by_key(db_key)
+  logging.debug('Dropping database: {}'.format(db_name))
+  db_commit_and_close(db_key)
+  run_sql('postgres', 'drop database if exists {};'.format(db_name))
+
+
+def db_commit_and_close(db_key):
+  logging.debug('db_commit_and_close() {}'.format(db_key))
+  django.db.connections[db_key].commit()
+  for connection in django.db.connections.all():
+    connection.close()
+
+
+def db_create_blank(db_key):
+  logging.debug('db_create_blank() {}'.format(db_key))
+  db_name = db_get_name_by_key(db_key)
+  logging.debug('Creating blank database: {}'.format(db_name))
+  run_sql('postgres', "create database {} encoding 'utf-8';".format(db_name))
+
+
+def db_exists(db_key):
+  logging.debug('db_exists() {}'.format(db_key))
+  db_name = db_get_name_by_key(db_key)
+  exists_bool = bool(
+    run_sql(
+      'postgres',
+      "select 1 from pg_database WHERE datname='{}'".format(db_name)
+    )
+  )
+  logging.debug('db_exists(): {}'.format(exists_bool))
+  return exists_bool
 
 
 def run_sql(db, sql):
@@ -431,7 +498,7 @@ def run_sql(db, sql):
     cur = conn.cursor()
     cur.execute(sql)
   except psycopg2.DatabaseError as e:
-    logging.debug('SQL query result="{}"'.format(str(e)))
+    logging.debug('SQL query error: {}'.format(str(e)))
     raise
   try:
     return cur.fetchall()
@@ -444,17 +511,18 @@ def run_sql(db, sql):
 
 
 def get_xdist_unique_suffix(request):
-  return ''.join([
-    d1_test.instance_generator.random_data.random_lower_ascii(
-      min_len=12, max_len=12
-    ), get_xdist_suffix(request)
-  ])
+  return '_'.join([get_random_ascii_string(), get_xdist_suffix(request)])
+
+
+def get_random_ascii_string():
+  return d1_test.instance_generator.random_data.random_lower_ascii(
+    min_len=12, max_len=12
+  )
 
 
 def get_xdist_suffix(request):
-  """When running in parallel with xdist, each thread gets a different suffix.
-  - In parallel run, return '_gw1', etc.
-  - In single run, return ''.
-  """
+  """Return a different string for each worker when running in parallel under
+  pytest-xdist, else return an empty string. Returned strings are on the form,
+  "gwN"."""
   s = getattr(request.config, 'slaveinput', {}).get('slaveid')
-  return '_{}'.format(s) if s is not None else ''
+  return s if s is not None else ''
