@@ -18,14 +18,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Global settings for GMN
-
-This file contains settings that are specific to an instance of GMN.
 """
+
+# noinspection PyUnresolvedReferences
+# flake8: noqa: F403,F401
 
 from __future__ import absolute_import
 
-# noinspection PyUnresolvedReferences
-import d1_common.const
+#import logging
+#import d1_common.const
+from d1_gmn.app.settings_default import *
+
 import d1_common.util
 
 # ==============================================================================
@@ -606,3 +609,8 @@ INSTALLED_APPS = [
 # persistent SECRET_KEY, which is used instead of the placeholder value
 # specified here. The key is stored in secret_key.txt.
 SECRET_KEY = '<Do not modify this placeholder value>'
+
+# Set the maximum number of items that can be returned in a single page of
+# results from listObjects (ObjectList) and getLogRecords (Log). A lower number
+# reduces memory usage, but causes more round-trips between client and server.
+MAX_SLICE_ITEMS = 5000

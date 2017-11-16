@@ -15,8 +15,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test settings for GMN
-- These settings are in effect when GMN is called through unit tests.
+"""Default settings for GMN
+- These settings are only used as fallbacks in case the corresponding settings
+in settings.py are missing.
+- This allows settings to be added without having to add them in settings.py
+in existing deployments.
 """
 
 # noinspection PyUnresolvedReferences
@@ -24,15 +27,15 @@
 
 from __future__ import absolute_import
 
-import logging
-
 from d1_gmn.app.settings_default import *
 
-import d1_common.const
 import d1_common.util
 
-DEBUG = True
-DEBUG_GMN = True
+#import logging
+#import d1_common.const
+
+DEBUG = False
+DEBUG_GMN = False
 DEBUG_PYCHARM = False
 DEBUG_PYCHARM_BIN = 'pycharm.sh'
 DEBUG_ECHO_REQUEST = False
@@ -40,23 +43,21 @@ DEBUG_PROFILE_SQL = False
 
 STAND_ALONE = True
 
-TRUST_CLIENT_SUBMITTER = True
-TRUST_CLIENT_ORIGINMEMBERNODE = True
-TRUST_CLIENT_AUTHORITATIVEMEMBERNODE = True
-TRUST_CLIENT_DATESYSMETADATAMODIFIED = True
-TRUST_CLIENT_SERIALVERSION = True
-TRUST_CLIENT_DATEUPLOADED = True
+TRUST_CLIENT_SUBMITTER = False
+TRUST_CLIENT_ORIGINMEMBERNODE = False
+TRUST_CLIENT_AUTHORITATIVEMEMBERNODE = False
+TRUST_CLIENT_DATESYSMETADATAMODIFIED = False
+TRUST_CLIENT_SERIALVERSION = False
+TRUST_CLIENT_DATEUPLOADED = False
 
-MONITOR = True
 ALLOWED_HOSTS = [
   'localhost',
-  '127.0.0.1', # Allow local connections.
-  #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
-  #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
+  '127.0.0.1',
 ]
-NODE_IDENTIFIER = 'urn:node:GMNUnitTestInstance'
-NODE_NAME = 'GMN Unit Test Instance'
-NODE_DESCRIPTION = 'GMN instance launched via pytest'
+
+NODE_IDENTIFIER = 'urn:node:MyMemberNode'
+NODE_NAME = 'My Member Node'
+NODE_DESCRIPTION = 'Test Member Node'
 NODE_BASEURL = 'https://localhost/mn'
 NODE_SYNCHRONIZE = True
 
@@ -68,12 +69,12 @@ NODE_SYNC_SCHEDULE_HOUR = '*'
 NODE_SYNC_SCHEDULE_MINUTE = '42'
 NODE_SYNC_SCHEDULE_SECOND = '0'
 
-NODE_SUBJECT = 'CN=urn:node:GMNUnitTestInstance,DC=dataone,DC=org'
-NODE_CONTACT_SUBJECT = 'CN=NodeContactSubject,O=Google,C=US,DC=cilogon,DC=org'
+NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 NODE_STATE = 'up'
 
-CLIENT_CERT_PATH = None
-CLIENT_CERT_PRIVATE_KEY_PATH = None
+CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
+CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopassword.pem'
 
 NODE_REPLICATE = False
 
@@ -86,47 +87,27 @@ REPLICATION_ALLOW_ONLY_PUBLIC = False
 
 SYSMETA_REFRESH_MAX_ATTEMPTS = 24
 
-DATAONE_ROOT = 'http://mock/root/cn'
+DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
+
 DATAONE_TRUSTED_SUBJECTS = set([])
 
-ADMINS = (('GMN Unit Test Admin', 'admin@test.tld'),)
-
+ADMINS = (('My Name', 'my_address@my_email.tld'),)
 PUBLIC_OBJECT_LIST = True
 PUBLIC_LOG_RECORDS = True
-
 REQUIRE_WHITELIST_FOR_UPDATE = True
-
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'test_gmn2',
+    'NAME': 'gmn2',
     'USER': '',
     'PASSWORD': '',
     'HOST': '',
     'PORT': '',
-    # Transactions
-    #
-    # ATOMIC_REQUESTS is always True when running in production as implicit
-    # transactions form the basis of concurrency control in GMN. However,
-    # during debugging, uncommitted changes are hidden inside the transaction,
-    # making it impossible (?) to see the changes made so far by the code bein
-    # debugged.
-    'ATOMIC_REQUESTS': False,
-    'AUTOCOMMIT': False,
-  },
-  'template': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'test_gmn2_templ',
-    'USER': '',
-    'PASSWORD': '',
-    'HOST': '',
-    'PORT': '',
-    'ATOMIC_REQUESTS': False,
-    'AUTOCOMMIT': False,
-  },
+    'ATOMIC_REQUESTS': True,
+  }
 }
 
-OBJECT_STORE_PATH = '/tmp/gmn_test_obj_store'
+OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 RESOURCE_MAP_CREATE = 'block'
 
@@ -135,7 +116,8 @@ PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
-LOG_PATH = d1_common.util.abs_path('/tmp/gmn_test.log')
+LOG_PATH = d1_common.util.abs_path('./gmn.log')
+
 MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 NUM_CHUNK_BYTES = 1024**2
 SESSION_COOKIE_SECURE = True
@@ -145,7 +127,11 @@ USE_I18N = False
 MEDIA_URL = ''
 STATIC_URL = '/static/'
 
-# Capture everything that is logged
+if DEBUG or DEBUG_GMN:
+  LOG_LEVEL = 'DEBUG'
+else:
+  LOG_LEVEL = 'INFO'
+
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': True,
@@ -156,36 +142,47 @@ LOGGING = {
         '%(process)d %(thread)d %(message)s',
       'datefmt': '%Y-%m-%d %H:%M:%S'
     },
+    'simple': {
+      'format': '%(levelname)s %(message)s'
+    },
   },
   'handlers': {
-    'console': {
-      'class': 'logging.StreamHandler',
-      'formatter': 'verbose',
-      'level': logging.DEBUG,
-      'stream': 'ext://sys.stdout',
+    'file': {
+      'level': LOG_LEVEL,
+      'class': 'logging.FileHandler',
+      'filename': LOG_PATH,
+      'formatter': 'verbose'
+    },
+    'null': {
+      'level': LOG_LEVEL,
+      'class': 'logging.NullHandler',
     },
   },
   'loggers': {
+    # The "catch all" logger is denoted by ''.
     '': {
-      'handlers': ['console'],
-      'level': 'DEBUG',
-      'class': 'logging.StreamHandler',
+      'handlers': ['file'],
+      'propagate': True,
+      'level': LOG_LEVEL,
     },
-    # SQL query profiling
-    # 'django.db.backends': {
-    #   'handlers': ['console'],
-    #   'level': logging.DEBUG,
-    #   'propagate': False,
-    # },
-    # 'django.db.backends.schema': {
-    #   # don't log schema queries, django >= 1.7
-    #   'propagate': False,
-    # },
+    # Django uses this logger.
+    'django': {
+      'handlers': ['file'],
+      'propagate': False,
+      'level': LOG_LEVEL
+    },
+    # Messages relating to the interaction of code with the database. For
+    # example, every SQL statement executed by a request is logged at the DEBUG
+    # level to this logger.
+    'django.db.backends': {
+      'handlers': ['null'],
+      'level': 'WARNING',
+      'propagate': False
+    },
   }
 }
 
 MIDDLEWARE_CLASSES = (
-  # Custom GMN middleware.
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
   'd1_gmn.app.middleware.response_handler.ResponseHandler',
@@ -199,20 +196,13 @@ TEMPLATES = [
     'DIRS': [
       d1_common.util.abs_path('./app/templates'), # noqa: F405
     ],
-    # 'APP_DIRS': True,
+    'APP_DIRS': True,
     'OPTIONS': {
       'context_processors': [
-        'django.contrib.auth.context_processors.auth',
         'django.template.context_processors.debug',
-        'django.template.context_processors.i18n',
-        'django.template.context_processors.media',
-        'django.template.context_processors.static',
-        'django.template.context_processors.tz',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
         'django.contrib.messages.context_processors.messages',
-      ],
-      'loaders': [
-        'django.template.loaders.filesystem.Loader',
-        # 'django.template.loaders.app_directories.Loader',
       ],
     },
   },
@@ -228,7 +218,8 @@ CACHES = {
 ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
-  'django.contrib.staticfiles',
+  'django.contrib.auth',
+  'django.contrib.contenttypes',
   'd1_gmn.app',
   'd1_gmn.app.startup.GMNStartupChecks',
 ]
