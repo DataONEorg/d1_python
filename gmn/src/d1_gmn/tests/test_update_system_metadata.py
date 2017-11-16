@@ -57,7 +57,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       sciobj_str, sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       sysmeta_pyxb.accessPolicy = access_policy_pyxb
-      # self.dump_pyxb(sysmeta_pyxb)
+      # self.dump(sysmeta_pyxb)
       self.client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
   def _get(self, pid, active_subj_list):
@@ -147,14 +147,14 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       # Get sysmeta
       old_sciobj_str, old_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
-      self.dump_pyxb(old_sysmeta_pyxb)
+      self.dump(old_sysmeta_pyxb)
       old_sysmeta_pyxb.formatId = 'new_format_id'
       # Ensure update gets a new dateSysMetadataModified
       time.sleep(.2)
       assert self.client_v2.updateSystemMetadata(pid, old_sysmeta_pyxb)
       new_sciobj_str, new_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
-      # self.dump_pyxb(old_sysmeta_pyxb)
-      self.dump_pyxb(new_sysmeta_pyxb)
+      # self.dump(old_sysmeta_pyxb)
+      self.dump(new_sysmeta_pyxb)
       assert old_sysmeta_pyxb.formatId == new_sysmeta_pyxb.formatId
       assert old_sysmeta_pyxb.dateUploaded == new_sysmeta_pyxb.dateUploaded
       assert new_sysmeta_pyxb.dateSysMetadataModified > \
@@ -199,8 +199,8 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
       ver3_sciobj_str, ver3_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
-      # self.dump_pyxb(ver1_sysmeta_pyxb)
-      # self.dump_pyxb(ver3_sysmeta_pyxb)
+      # self.dump(ver1_sysmeta_pyxb)
+      # self.dump(ver3_sysmeta_pyxb)
       # Check that the count of preferred nodes increased by one
 
       # TODO: Had this test fail randomly here. Was unable to reproduce.

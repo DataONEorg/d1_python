@@ -155,7 +155,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
     d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
-    # self.dump_pyxb(sysmeta_pyxb)
+    # self.dump(sysmeta_pyxb)
     expected_pid_set = set(a_chain_list + b_chain_list + [pid])
     got_pid_set = set(d1_gmn.app.revision.get_all_pid_by_sid(a_sid))
     assert expected_pid_set == got_pid_set

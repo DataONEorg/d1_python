@@ -93,7 +93,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         'replica': None,
       },
     )
-    # self.dump_pyxb(sysmeta_pyxb)
+    # self.dump(sysmeta_pyxb)
     self.call_d1_client(
       client.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
     )

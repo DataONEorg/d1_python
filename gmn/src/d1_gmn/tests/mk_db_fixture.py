@@ -123,9 +123,9 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
           )
 
         sciobj_file = StringIO.StringIO(sciobj_str)
-        # self.dump_pyxb(sysmeta_pyxb)
+        # self.dump(sysmeta_pyxb)
         # recv_sysmeta_pyxb = client.getSystemMetadata(pid)
-        # self.dump_pyxb(recv_sysmeta_pyxb)
+        # self.dump(recv_sysmeta_pyxb)
 
         if not do_chain:
           client.create(pid, sciobj_file, sysmeta_pyxb)

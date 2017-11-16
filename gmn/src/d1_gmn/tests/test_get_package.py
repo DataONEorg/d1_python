@@ -68,7 +68,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
         'replica': None,
       },
     )
-    # self.dump_pyxb(sysmeta_pyxb)
+    # self.dump(sysmeta_pyxb)
     self.call_d1_client(
       mn_client_v2.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
     )

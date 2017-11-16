@@ -178,6 +178,9 @@ class GMNTestCase(
   # assert
   #
 
+  # TODO: Move the "assert" keyword over to the calling code. It's easier to
+  # find the errors when they're asserted in the caller.
+
   def assert_sysmeta_pid_and_sid(self, sysmeta_pyxb, pid, sid):
     self.assert_sysmeta_pid(sysmeta_pyxb, pid)
     self.assert_sysmeta_sid(sysmeta_pyxb, sid)
@@ -242,6 +245,17 @@ class GMNTestCase(
       assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') == next_pid
       assert self.get_pyxb_value(sysmeta_pyxb, 'seriesId') == sid
       i += 1
+
+  def are_equivalent_pyxb(self, a_pyxb, b_pyxb):
+    a_xml = d1_common.xml.serialize_pretty(a_pyxb)
+    b_xml = d1_common.xml.serialize_pretty(b_pyxb)
+    if not d1_common.xml.is_equivalent(a_xml, b_xml):
+      self.dump(
+        'PyXB objects are not equivalent.\na_xml="{}"\nb_xml="{}"\n'
+        .format(a_xml, b_xml)
+      )
+      return False
+    return True
 
   #
   # CRUD
@@ -421,7 +435,7 @@ class GMNTestCase(
     send_sysmeta_pyxb.size = len(send_sciobj_str)
     send_sysmeta_pyxb.obsoletes = None
     send_sysmeta_pyxb.obsoletedBy = None
-    # self.dump_pyxb(send_sysmeta_pyxb)
+    # self.dump(send_sysmeta_pyxb)
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
       self.call_d1_client(
         client.create, pid,

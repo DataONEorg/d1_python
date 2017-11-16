@@ -84,6 +84,10 @@ def serialize(obj_pyxb):
     raise
 
 
+def serialize_pretty(obj_pyxb):
+  return pretty_xml(serialize(obj_pyxb))
+
+
 def pretty_xml(doc_xml):
   """Pretty formatting of XML
   """

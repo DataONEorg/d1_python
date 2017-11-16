@@ -26,7 +26,6 @@ import datetime
 import inspect
 import logging
 import os
-import pprint
 import random
 import StringIO
 import sys
@@ -281,11 +280,11 @@ class D1TestCase(object):
   # def random_tag(self, tag_str):
   #   return '{}_{}'.format(tag_str, self.random_str())
 
-  def dump_pyxb(self, type_pyxb):
-    map(logging.debug, self.format_pyxb(type_pyxb).splitlines())
-
-  def dump(self, o):
-    map(logging.debug, pprint.pformat(o).splitlines())
+  def dump(self, o, log_func=logging.debug):
+    map(
+      log_func,
+      d1_test.sample.obj_to_pretty_str(o, no_clobber=True).splitlines()
+    )
 
   def format_pyxb(self, type_pyxb):
     ss = StringIO.StringIO()

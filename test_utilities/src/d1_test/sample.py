@@ -191,7 +191,7 @@ def gui_sxs_diff(a_obj, b_obj):
   )
 
 
-def obj_to_pretty_str(o):
+def obj_to_pretty_str(o, no_clobber=False):
   # noinspection PyUnreachableCode
   def serialize(o):
     logging.debug('Serializing object. type="{}"'.format(type(o)))
@@ -220,7 +220,10 @@ def obj_to_pretty_str(o):
       return str(o)
     return repr(o)
 
-  return clobber_uncontrolled_volatiles(serialize(o)).rstrip() + '\n'
+  s = serialize(o).rstrip() + '\n'
+  if not no_clobber:
+    s = clobber_uncontrolled_volatiles(s)
+  return s
 
 
 def clobber_uncontrolled_volatiles(o_str):
