@@ -60,12 +60,12 @@ create_event: <?xml version="1.0" encoding="utf-8"?>
 <ns1:log count="1" start="0" total="3237" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
     <entryId>[volatile]</entryId>
-    <identifier>PID_gxmjjxhpmzob</identifier>
+    <identifier>PID_GMNFXT_zeomgoufdbor</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[volatile]
-    <subject>trusted_subj</subject>
+    <subject>disabled_auth_subj</subject>
     <event>create</event>
-    <dateLogged>2388-08-28T00:00:00Z</dateLogged>
+    <dateLogged>1970-01-07T19:30:07Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

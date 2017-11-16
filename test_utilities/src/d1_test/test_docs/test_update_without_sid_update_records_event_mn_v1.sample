@@ -6,8 +6,8 @@
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[volatile]
     <subject>trusted_subj</subject>
-    <event>update</event>
-    <dateLogged>2039-07-23T11:04:11.23266Z</dateLogged>
+    <event>create</event>
+    <dateLogged>2023-10-06T06:29:15.53565Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
@@ -16,8 +16,8 @@
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[volatile]
     <subject>trusted_subj</subject>
-    <event>create</event>
-    <dateLogged>2023-10-06T06:29:15.53565Z</dateLogged>
+    <event>update</event>
+    <dateLogged>2039-07-23T11:04:11.23266Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

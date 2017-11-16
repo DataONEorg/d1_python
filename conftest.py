@@ -72,6 +72,9 @@ def pytest_addoption(parser):
     '--sample-tidy', action='store_true',
     help='Move unused sample files to test_docs_tidy'
   )
+
+  # PyCharm
+
   parser.addoption(
     '--pycharm', action='store_true',
     help='Attempt to move the cursor in PyCharm to location of most recent test '

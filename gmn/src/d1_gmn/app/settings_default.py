@@ -29,6 +29,7 @@ from __future__ import absolute_import
 
 from d1_gmn.app.settings_default import *
 
+import d1_common.const
 import d1_common.util
 
 #import logging
