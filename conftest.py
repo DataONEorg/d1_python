@@ -299,12 +299,18 @@ def mn_client_v1_v2(request):
 
 
 @pytest.yield_fixture(scope='session')
-def django_db_setup(django_db_blocker):
+def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
   """
+  xdist_suffix = getattr(request.config, 'slaveinput', {}).get('slaveid', '')
+
   logging.info('Setting up DB fixture')
+
   test_db_key = 'default'
   test_db_name = django.conf.settings.DATABASES[test_db_key]['NAME']
+  test_db_name += xdist_suffix
+  django.conf.settings.DATABASES[test_db_key]['NAME'] = test_db_name
+
   template_db_key = 'template'
   template_db_name = django.conf.settings.DATABASES[template_db_key]['NAME']
 
@@ -318,14 +324,9 @@ def django_db_setup(django_db_blocker):
     try:
       load_template_fixture(template_db_key, template_db_name)
     except psycopg2.DatabaseError as e:
-      logging.debug(str(e))
-    logging.debug('Dropping test DB')
+      logging.error(str(e))
     drop_database(test_db_name)
-    logging.debug('Creating test DB from template')
-    run_sql(
-      'postgres',
-      'create database {} template {};'.format(test_db_name, template_db_name)
-    )
+    create_db_from_template(test_db_name, template_db_name)
     # Haven't found out how to prevent transactions from being started, so
     # closing the implicit transaction here so that template fixture remains
     # available.
@@ -333,6 +334,17 @@ def django_db_setup(django_db_blocker):
     migrate_db(test_db_key)
     logging.debug('Test DB ready')
     yield
+
+
+def create_db_from_template(test_db_name, template_db_name):
+  logging.info(
+    'Creating test DB from template. test_db="{}" template_db="{}"'.
+    format(test_db_name, template_db_name)
+  )
+  run_sql(
+    'postgres',
+    'create database {} template {};'.format(test_db_name, template_db_name)
+  )
 
 
 def load_template_fixture(template_db_key, template_db_name):
