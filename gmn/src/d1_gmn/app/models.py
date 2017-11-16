@@ -145,7 +145,7 @@ class ScienceObject(models.Model):
 
   class Meta:
     # The slice module must be updated if ordering is modified
-    ordering = ['-modified_timestamp', 'id'] # pid__did
+    ordering = ['modified_timestamp', 'id'] # pid__did
 
 
 # ------------------------------------------------------------------------------
@@ -382,7 +382,7 @@ class EventLog(models.Model):
 
   class Meta:
     # The slice module must be updated if ordering is modified
-    ordering = ['-timestamp', 'id']
+    ordering = ['timestamp', 'id']
 
 
 # EventLog.objects.filter(times)

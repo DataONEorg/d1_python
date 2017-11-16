@@ -30,6 +30,7 @@ import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
 
+import django.conf
 import django.core.cache
 import django.db.models
 
@@ -123,6 +124,7 @@ def _adjust_count_if_required(start_int, count_int, total_int):
   """
   if start_int + count_int > total_int:
     count_int = total_int - start_int
+  count_int = min(count_int, django.conf.settings.MAX_SLICE_ITEMS)
   return count_int
 
 
@@ -140,7 +142,7 @@ def _add_fast_slice_filter(query, last_ts_tup, count_int):
   )
   last_timestamp, last_id = last_ts_tup
   return query.filter(
-    django.db.models.Q(timestamp__lt=last_timestamp) |
+    django.db.models.Q(timestamp__gt=last_timestamp) |
     django.db.models.Q(timestamp__exact=last_timestamp, id__gt=last_id)
   )[:count_int]
 
