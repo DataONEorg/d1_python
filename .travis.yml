@@ -9,7 +9,8 @@ python:
 before_install:
   - sudo apt-get -q update
   - sudo apt-get -q install -y build-essential python-dev libssl-dev libxml2-dev
-    libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl
+    libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl libsmbclient-dev
+    librsync-dev
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools

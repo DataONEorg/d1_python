@@ -31,7 +31,7 @@ def main():
   # noinspection PyUnresolvedReferences
   setuptools.setup(
     name='dataone.gmn',
-    version='2.3.11',
+    version='2.4.0',
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -43,9 +43,9 @@ def main():
       '': ['settings.py'],
     },
     install_requires=[
-      'dataone.cli == 2.3.11',
-      'dataone.common == 2.3.11',
-      'dataone.libclient == 2.3.11',
+      'dataone.cli == 2.4.0',
+      'dataone.common == 2.4.0',
+      'dataone.libclient == 2.4.0',
       #
       'django == 1.11.7',
       'iso8601 == 0.1.12',

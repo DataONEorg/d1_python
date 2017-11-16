@@ -27,8 +27,8 @@ http://stackoverflow.com/a/3452888/353337
 
 from __future__ import absolute_import
 
-import datetime
 import os
+import subprocess
 import sys
 
 
@@ -38,19 +38,13 @@ def main():
   except EnvironmentError:
     sys.exit('Must be root')
 
-  os.system(
-    "pip freeze > pip_freeze_{}.txt"
-    .format(datetime.datetime.now().isoformat())
-  )
+  freeze_str = subprocess.check_output(['pip', 'freeze'])
 
-  os.system(
-    "pip freeze --local | "
-    "grep -v '^\-e' | "
-    "cut -d = -f 1 | "
-    "xargs -n1 pip install -U"
-  )
+  for line_str in freeze_str.splitlines():
+    pkg_str, ver_str = line_str.strip().split('==')
+    print subprocess.check_output(['pip', 'install', '--upgrade', pkg_str])
 
-  os.system("pip check")
+  print subprocess.check_output(['pip', 'check'])
 
 
 if __name__ == '__main__':
