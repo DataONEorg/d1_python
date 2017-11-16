@@ -37,14 +37,25 @@ import d1_gmn.tests.gmn_test_case
 import d1_common.xml
 
 import d1_test.d1_test_case
+import d1_test.sample
 
-SLICE_COUNT = 7
+import django.test
+
+SLICE_COUNT = 23
 
 
 def _assert_pyxb_objects_are_equivalent(arg_tup):
   a_pyxb, b_pyxb, i, item_count = arg_tup
-  # logging.debug('Checking sliced items. {}/{}'.format(i + 1, item_count))
-  assert d1_common.xml.is_equivalent_pyxb(a_pyxb, b_pyxb)
+  if not d1_common.xml.is_equivalent(
+      d1_common.xml.serialize(a_pyxb),
+      d1_common.xml.serialize(b_pyxb),
+  ):
+    raise AssertionError(
+      'PyXB objects are not equivalent.\na="{}"\nb="{}"\n'.format(
+        d1_common.xml.serialize_pretty(a_pyxb),
+        d1_common.xml.serialize_pretty(b_pyxb),
+      )
+    )
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSlice')
@@ -58,16 +69,19 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
   Slicing is tested through getLogRecords() and listObjects().
   """
 
+  def _get_api_func(self, client, use_get_log_records):
+    if use_get_log_records:
+      return client.getLogRecords, 'logEntry'
+    else:
+      return client.listObjects, 'objectInfo'
+
   @responses.activate
   def test_1000(self, mn_client_v1_v2, true_false):
     from_date = datetime.datetime(2000, 5, 6, 15, 16, 17, 18)
 
-    if true_false:
-      slicable_api_func = mn_client_v1_v2.getLogRecords
-      iterable_attr = 'logEntry'
-    else:
-      slicable_api_func = mn_client_v1_v2.listObjects
-      iterable_attr = 'objectInfo'
+    slicable_api_func, iterable_attr = self._get_api_func(
+      mn_client_v1_v2, use_get_log_records=true_false
+    )
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       total_int = slicable_api_func(start=0, count=0, fromDate=from_date).total
@@ -90,7 +104,7 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
         multiple_slice_pyxb = slicable_api_func(
           start=start_int, count=vary_count_in, fromDate=from_date
         )
-        # self.dump_pyxb(log_pyxb)
+        # self.dump(log_pyxb)
         multi_slice_pyxb_list.extend(
           getattr(multiple_slice_pyxb, iterable_attr)
         )
@@ -120,3 +134,15 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       pool = multiprocessing.Pool()
       pool.map(_assert_pyxb_objects_are_equivalent, arg_list)
+
+  @responses.activate
+  def test_1010(self, mn_client_v1_v2, true_false):
+    """"""
+    slicable_api_func, iterable_attr = self._get_api_func(
+      mn_client_v1_v2, use_get_log_records=true_false
+    )
+    with django.test.override_settings(MAX_SLICE_ITEMS=5):
+      with d1_gmn.tests.gmn_mock.disable_auth():
+        slice_pyxb = slicable_api_func(start=0, count=100)
+        iterable_pyxb = getattr(slice_pyxb, iterable_attr)
+        assert len(iterable_pyxb) == 5
