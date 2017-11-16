@@ -64,6 +64,7 @@ import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 import d1_client.session
 
+import django.core.management
 import django.db
 import django.test
 
@@ -534,3 +535,9 @@ class GMNTestCase(
       ],
       n_pids,
     )
+
+  def call_management_command(self, *args, **kwargs):
+    with self.mock.disable_management_command_logging():
+      with self.mock.disable_management_command_concurrent_instance_check():
+        #with d1_test.d1_test_case.disable_debug_level_logging():
+        django.core.management.call_command(*args, **kwargs)

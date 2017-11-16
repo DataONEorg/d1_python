@@ -27,11 +27,6 @@ import pytest
 
 import d1_gmn.tests.gmn_test_case
 
-import d1_test.d1_test_case
-
-import django.core.management
-import django.utils.six
-
 
 # TODO:
 @pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
@@ -40,11 +35,9 @@ class TestMgMtExportObjectList(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """diag_export_object_list
     """
     with tempfile.NamedTemporaryFile() as exp_f:
-      with self.mock.disable_management_command_logging():
-        with d1_test.d1_test_case.disable_debug_level_logging():
-          django.core.management.call_command(
-            'diag_export_object_list', '--limit', 10, exp_f.name
-          )
+      self.call_management_command(
+        'diag_export_object_list', '--limit', 10, exp_f.name
+      )
       exp_f.seek(0)
       obj_list = exp_f.read()
       self.sample.assert_equals(obj_list, 'diag_export_object_list')

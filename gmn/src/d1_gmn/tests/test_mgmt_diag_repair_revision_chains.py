@@ -31,18 +31,13 @@ import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
 
-import django.core.management
-import django.utils.six
-
 
 # TODO:
 @pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtFixChains')
 class TestMgmtFixChains(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _call_diag_repair_revision_chains(self):
-    with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.disable_debug_level_logging():
-        django.core.management.call_command('diag_repair_revision_chains')
+    self.call_management_command('diag_repair_revision_chains')
 
   def _get_rev_list(self):
     return [(

@@ -245,3 +245,12 @@ def disable_management_command_logging():
   log messages when the commands are launched multiple times"""
   with mock.patch('d1_gmn.app.management.commands._util.log_setup'):
     yield
+
+
+@contextlib2.contextmanager
+def disable_management_command_concurrent_instance_check():
+  """Allow concurrent instances of the same management command"""
+  with mock.patch(
+      'd1_gmn.app.management.commands._util.exit_if_other_instance_is_running'
+  ):
+    yield

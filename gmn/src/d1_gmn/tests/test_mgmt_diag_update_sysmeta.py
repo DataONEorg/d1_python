@@ -35,9 +35,6 @@ import d1_common.xml
 import d1_test.d1_test_case
 import d1_test.instance_generator.system_metadata
 
-import django.core.management
-import django.utils.six
-
 N_SYSMETA_DOCS = 10
 
 
@@ -62,11 +59,9 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return tmp_dir_path, tmp_file_list, rnd_pid_list
 
   def _call_diag_update_sysmeta(self, *args, **kwargs):
-    with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.disable_debug_level_logging():
-        django.core.management.call_command(
-          'diag_update_sysmeta', '--debug', *args, **kwargs
-        )
+    self.call_management_command(
+      'diag_update_sysmeta', '--debug', *args, **kwargs
+    )
 
   def test_1000(self, mn_client_v2):
     """diag_update_sysmeta: local XML docs

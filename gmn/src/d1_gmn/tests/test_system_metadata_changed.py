@@ -36,12 +36,15 @@ import d1_gmn.tests.gmn_test_client
 
 import d1_common
 import d1_common.date_time
+import d1_common.types.exceptions
 import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.mock_api.get_system_metadata
 
 import django
+import django.conf
+import django.core.management
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSystemMetadataChanged')
@@ -51,9 +54,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     d1_test.mock_api.get_system_metadata.add_callback(
       django.conf.settings.DATAONE_ROOT
     )
-    with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.disable_debug_level_logging():
-        django.core.management.call_command('process_refresh_queue', '--debug')
+    self.call_management_command('process_refresh_queue', '--debug')
 
   @responses.activate
   def test_1000(self, mn_client_v1_v2):

@@ -33,9 +33,6 @@ import d1_test.mock_api.get_log_records as mock_log_records
 import d1_test.mock_api.get_system_metadata as mock_get_system_metadata
 import d1_test.mock_api.list_objects as mock_object_list
 
-import django
-import django.core.management
-
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
@@ -49,12 +46,10 @@ class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
 
-      with self.mock.disable_management_command_logging():
-        with d1_test.d1_test_case.disable_debug_level_logging():
-          django.core.management.call_command(
-            'import', '--force', '--major=2',
-            d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
-          )
+      self.call_management_command(
+        'import', '--force', '--major=2',
+        d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+      )
 
     self.sample.assert_equals(
       d1_test.d1_test_case.get_caplog_text(caplog), 'import'

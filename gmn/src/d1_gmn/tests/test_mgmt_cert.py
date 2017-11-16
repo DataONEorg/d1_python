@@ -38,17 +38,15 @@ class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     with self.mock.disable_management_command_logging():
       with d1_test.d1_test_case.disable_debug_level_logging():
-        django.core.management.call_command('cert', 'whitelist', cert_path)
-        django.core.management.call_command('whitelist', 'view', cert_path)
+        self.call_management_command('cert', 'whitelist', cert_path)
+        self.call_management_command('whitelist', 'view', cert_path)
       return d1_test.d1_test_case.get_caplog_text(caplog)
 
   def test_1000(self, caplog):
     """cert view <pem>: Lists subjects from DN and SubjectInfo
     """
     cert_path = self.sample.get_path('cert_with_full_subject_info.pem')
-    with self.mock.disable_management_command_logging():
-      with d1_test.d1_test_case.disable_debug_level_logging():
-        django.core.management.call_command('cert', 'view', cert_path)
+    self.call_management_command('cert', 'view', cert_path)
     self.sample.assert_equals(
       d1_test.d1_test_case.get_caplog_text(caplog), 'view'
     )

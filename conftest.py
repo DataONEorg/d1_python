@@ -310,11 +310,8 @@ def mn_client_v1_v2(request):
 @pytest.fixture(scope='session', autouse=True)
 def set_unique_sciobj_store_path(request):
   tmp_store_path = os.path.join(
-    tempfile.gettempdir(), 'gmn_test_obj_store_{}{}'.format(
-      d1_test.instance_generator.random_data.random_lower_ascii(
-        min_len=12, max_len=12
-      ), get_xdist_suffix(request)
-    )
+    tempfile.gettempdir(),
+    'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
   )
   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
   d1_gmn.app.sciobj_store.create_clean_tmp_store()
@@ -326,46 +323,50 @@ def set_unique_sciobj_store_path(request):
 @pytest.yield_fixture(scope='session')
 def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
+  When running in parallel with xdist, this is called once for each worker.
+  By default, the number of workers is the same as the number of CPU cores.
   """
   logging.info('Setting up DB fixture')
 
   test_db_key = 'default'
-  test_db_name = django.conf.settings.DATABASES[test_db_key]['NAME']
-  test_db_name += get_xdist_suffix(request)
+  test_db_name = ''.join([
+    django.conf.settings.DATABASES[test_db_key]['NAME'],
+    get_xdist_unique_suffix(request),
+  ])
   django.conf.settings.DATABASES[test_db_key]['NAME'] = test_db_name
 
   template_db_key = 'template'
   template_db_name = django.conf.settings.DATABASES[template_db_key]['NAME']
 
   with django_db_blocker.unblock():
+
     if pytest.config.getoption('--fixture-regen'):
       drop_database(test_db_name)
       create_blank_db(test_db_key, test_db_name)
       django.db.connections[test_db_key].commit()
       pytest.exit('Database dropped and reinitialized. Now run mk_db_fixture')
 
-    try:
-      load_template_fixture(template_db_key, template_db_name)
-    except psycopg2.DatabaseError as e:
-      logging.error(str(e))
+    # try:
+    #   load_template_fixture(template_db_key, template_db_name)
+    # except psycopg2.DatabaseError as e:
+    #   logging.error(str(e))
+
     drop_database(test_db_name)
     create_db_from_template(test_db_name, template_db_name)
-    # Haven't found out how to prevent transactions from being started, so
-    # closing the implicit transaction here so that template fixture remains
-    # available.
-    django.db.connections[test_db_key].commit()
+
+    # # Haven't found out how to prevent transactions from being started, so
+    # # closing the implicit transaction here so that template fixture remains
+    # # available.
+    # django.db.connections[test_db_key].commit()
+
     migrate_db(test_db_key)
-    logging.debug('Test DB ready')
+
     yield
 
+    for connection in django.db.connections.all():
+      connection.close()
 
-def get_xdist_suffix(request):
-  """When running in parallel with xdist, each thread gets a different suffix.
-  - In parallel run, return '_gw1', etc.
-  - In single run, return ''.
-  """
-  s = getattr(request.config, 'slaveinput', {}).get('slaveid')
-  return '_{}'.format(s) if s is not None else ''
+    drop_database(test_db_name)
 
 
 def create_db_from_template(test_db_name, template_db_name):
@@ -407,6 +408,10 @@ def migrate_db(test_db_key):
 
 def drop_database(db_name):
   logging.debug('Dropping database: {}'.format(db_name))
+
+  for connection in django.db.connections.all():
+    connection.close()
+
   run_sql('postgres', 'drop database if exists {};'.format(db_name))
 
 
@@ -436,3 +441,20 @@ def run_sql(db, sql):
     conn.close()
     for connection in django.db.connections.all():
       connection.close()
+
+
+def get_xdist_unique_suffix(request):
+  return ''.join([
+    d1_test.instance_generator.random_data.random_lower_ascii(
+      min_len=12, max_len=12
+    ), get_xdist_suffix(request)
+  ])
+
+
+def get_xdist_suffix(request):
+  """When running in parallel with xdist, each thread gets a different suffix.
+  - In parallel run, return '_gw1', etc.
+  - In single run, return ''.
+  """
+  s = getattr(request.config, 'slaveinput', {}).get('slaveid')
+  return '_{}'.format(s) if s is not None else ''
