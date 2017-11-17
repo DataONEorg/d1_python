@@ -1,4 +1,5 @@
-# GMN
+# d1_python
+_ignore/
 certificates/
 certs/
 d1_objects/
@@ -77,3 +78,4 @@ pip-delete-this-directory.txt
 # Translations
 *.mo
 *.pot
+
