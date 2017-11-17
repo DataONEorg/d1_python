@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.4.0](https://github.com/DataONEorg/d1_python/tree/2.4.0) (2017-10-20)
+## [2.4.0](https://github.com/DataONEorg/d1_python/tree/2.4.0) (2017-11-16)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.8...2.4.0)
 
 * GMN
