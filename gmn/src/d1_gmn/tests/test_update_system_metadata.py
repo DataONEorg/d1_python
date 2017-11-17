@@ -24,8 +24,8 @@
 from __future__ import absolute_import
 
 import datetime
-import time
 
+import freezegun
 import pytest
 import responses
 
@@ -41,11 +41,14 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestUpdateSystemMetadata')
+@freezegun.freeze_time('1988-10-10')
 class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
   # MNStorage.updateSystemMetadata(). Method was added in v2.
   # @d1_gmn.tests.gmn_mock.trusted_subjects_decorator(['trusted_subj'])
@@ -149,16 +152,16 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       old_sciobj_str, old_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       self.dump(old_sysmeta_pyxb)
       old_sysmeta_pyxb.formatId = 'new_format_id'
-      # Ensure update gets a new dateSysMetadataModified
-      time.sleep(.2)
       assert self.client_v2.updateSystemMetadata(pid, old_sysmeta_pyxb)
       new_sciobj_str, new_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       # self.dump(old_sysmeta_pyxb)
       self.dump(new_sysmeta_pyxb)
       assert old_sysmeta_pyxb.formatId == new_sysmeta_pyxb.formatId
       assert old_sysmeta_pyxb.dateUploaded == new_sysmeta_pyxb.dateUploaded
-      assert new_sysmeta_pyxb.dateSysMetadataModified > \
+      assert (
+        new_sysmeta_pyxb.dateSysMetadataModified ==
         old_sysmeta_pyxb.dateSysMetadataModified
+      )
 
   @responses.activate
   def test_1120(self, mn_client_v2):
@@ -202,8 +205,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # self.dump(ver1_sysmeta_pyxb)
       # self.dump(ver3_sysmeta_pyxb)
       # Check that the count of preferred nodes increased by one
-
-      # TODO: Had this test fail randomly here. Was unable to reproduce.
 
       assert len(ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode) + 1 == \
         len(ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode)
