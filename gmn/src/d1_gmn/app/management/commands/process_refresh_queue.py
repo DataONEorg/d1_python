@@ -164,14 +164,14 @@ class Command(django.core.management.base.BaseCommand):
     d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
 
   def _assert_is_pid_of_native_object(self, pid):
-    if not d1_gmn.app.util.is_existing_object(pid):
+    if not d1_gmn.app.did.is_existing_object(pid):
       raise django.core.management.base.CommandError(
         u'Object referenced by PID does not exist or is not valid target for'
         u'System Metadata refresh. pid="{}"'.format(pid)
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
-    if d1_common.xml.uvalue(sysmeta_pyxb.identifier) != pid:
+    if d1_common.xml.get_rep_val(sysmeta_pyxb.identifier) != pid:
       raise django.core.management.base.CommandError(
         u'PID in retrieved System Metadata does not match the object for which '
         u'refresh was requested. pid="{}"'.format(pid)
