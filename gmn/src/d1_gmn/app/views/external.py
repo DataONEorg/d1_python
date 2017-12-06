@@ -256,8 +256,9 @@ def _get_sciobj_iter(sciobj):
 
 
 def _get_sciobj_iter_local(pid):
-  file_in_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-  return d1_common.iter.file.FileIterator(file_in_path)
+  return d1_common.iter.file.FileIterator(
+    d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+  )
 
 
 def _get_sciobj_iter_remote(url):

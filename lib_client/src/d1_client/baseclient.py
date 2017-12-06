@@ -413,9 +413,8 @@ class DataONEBaseClient(
     local file at {sciobj_path}. This method does not have the potential issue
     with excessive memory usage that get() with {stream}=False has.
     """
-    response = None
+    response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
     try:
-      response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
       if create_missing_dirs:
         d1_common.util.create_missing_directories_for_file(sciobj_path)
       with open(sciobj_path, 'wb') as f:
@@ -425,8 +424,7 @@ class DataONEBaseClient(
           if chunk_str:
             f.write(chunk_str)
     finally:
-      if response:
-        response.close()
+      response.close()
     return response
 
   # CNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
