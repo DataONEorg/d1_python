@@ -29,6 +29,7 @@ import subprocess
 import sys
 import tempfile
 
+import mock
 import posix_ipc
 import psycopg2
 import psycopg2.extensions
@@ -124,18 +125,23 @@ def pytest_addoption(parser):
   )
 
 
-def pytest_configure():
-  logging.debug('pytest_configure()')
-  tmp_store_path = os.path.join(
-    tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
-      d1_test.instance_generator.random_data.
-      random_lower_ascii(min_len=12, max_len=12)
-    )
-  )
-  logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
-  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-  d1_gmn.app.sciobj_store.create_clean_tmp_store()
-
+# def pytest_configure(config):
+#   """Allows plugins and conftest files to perform initial configuration.
+#   This hook is called for every plugin and initial conftest file after command
+#   line options have been parsed.
+#   After that, the hook is called for other conftest files as they are imported.
+#   """
+#   logging.debug('pytest_configure()')
+#   tmp_store_path = os.path.join(
+#     tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
+#       d1_test.instance_generator.random_data.
+#       random_lower_ascii(min_len=12, max_len=12)
+#     )
+#   )
+#   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
+#   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+#   d1_gmn.app.sciobj_store.create_clean_tmp_store()
+#   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
 
 # Hooks
 
@@ -350,6 +356,22 @@ def mn_client_v1_v2(request):
 #   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
 #   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
 #   d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+
+@pytest.yield_fixture(scope='session')
+def django_sciobj_store_setup(request, settings):
+  logging.debug('django_sciobj_store_setup()')
+  tmp_store_path = os.path.join(
+    tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
+      d1_test.instance_generator.random_data.
+      random_lower_ascii(min_len=12, max_len=12)
+    )
+  )
+  logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
+  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+  mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
+
 
 # Database setup
 

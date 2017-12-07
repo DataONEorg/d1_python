@@ -49,8 +49,6 @@ def main():
       'posix-ipc == 1.0.0',
       'pyasn1 == 0.4.2',
       'pytest == 3.3.1',
-      'pytest-catchlog == 1.2.2',
-      'pytest-cov == 2.5.1',
       'pytest-cov == 2.5.1',
       'pytest-django == 3.1.2',
       'pytest-forked == 0.2',
