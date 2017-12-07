@@ -25,6 +25,7 @@ import datetime
 import logging
 import multiprocessing
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -360,15 +361,23 @@ def mn_client_v1_v2(request):
 
 @pytest.yield_fixture(scope='session')
 def django_sciobj_store_setup(request, settings):
-  logging.debug('django_sciobj_store_setup()')
   tmp_store_path = os.path.join(
     tempfile.gettempdir(),
     'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
   )
-  logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
-  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-  d1_gmn.app.sciobj_store.create_clean_tmp_store()
   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
+  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+  logging.debug(
+    'Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
+  )
+  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+  yield
+
+  logging.debug(
+    'Deleting sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
+  )
+  shutil.rmtree(tmp_store_path)
 
 
 # Database setup
