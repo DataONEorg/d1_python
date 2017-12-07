@@ -81,12 +81,12 @@ def pytest_addoption(parser):
     help='Prompt to update or write new test sample files on failures'
   )
   parser.addoption(
-    '--sample-write', action='store_true',
+    '--sample-update', action='store_true',
     help='Automatically update or write sample files on failures'
   )
   parser.addoption(
     '--sample-review', action='store_true',
-    help='Review samples (use after --sample-write)'
+    help='Review samples (use after --sample-update)'
   )
   parser.addoption(
     '--sample-tidy', action='store_true',

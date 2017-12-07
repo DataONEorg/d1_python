@@ -110,7 +110,7 @@ When unit tests are being run as part of CI or as a normal guard against regress
 
 The normal procedure for writing a sample based unit test is to just write the test as if the sample already exists, then running the test with `--sample-ask` and viewing and approving the resulting sample, which is then automatically written to a file. The sample file name is displayed, making it easy to find the file in order to add it to tracking so that it can be committed along with the test module.
 
-When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-write`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
+When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-update`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
 
 Typically, it is not desirable to track generated files in Git. However, although the sample files are generated, they are an integral part of the units tests, and should be tracked just like the unit tests themselves.
 

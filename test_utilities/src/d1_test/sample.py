@@ -101,7 +101,7 @@ def assert_equals(
     format(filename, '-' * 10, diff_str)
   )
 
-  if pytest.config.getoption('--sample-write'):
+  if pytest.config.getoption('--sample-update'):
     save(got_str, filename)
     return
 

@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import
 
+import freezegun
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -37,6 +38,7 @@ import django.test
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestTemplates')
+@freezegun.freeze_time('1961-11-22')
 class TestTemplates(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self):
