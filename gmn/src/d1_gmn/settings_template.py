@@ -596,7 +596,7 @@ INSTALLED_APPS = [
   # DEBUG=False
   'django.contrib.auth',
   'django.contrib.contenttypes',
-  #
+  'django.contrib.staticfiles',
   'd1_gmn.app',
   'd1_gmn.app.startup.GMNStartupChecks',
 ]

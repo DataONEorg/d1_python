@@ -21,8 +21,8 @@ script:
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check || true
-  - pytest --help
-  - pytest --fixtures
+  # - pytest --help
+  # - pytest --fixtures
   - pytest -n auto --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.

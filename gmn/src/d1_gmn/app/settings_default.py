@@ -219,8 +219,11 @@ CACHES = {
 ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
+  # In Django 1.11, these are required in order for 404 not to trigger 500 when
+  # DEBUG=False
   'django.contrib.auth',
   'django.contrib.contenttypes',
+  'django.contrib.staticfiles',
   'd1_gmn.app',
   'd1_gmn.app.startup.GMNStartupChecks',
 ]
