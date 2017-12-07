@@ -253,6 +253,8 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=Python ITK ).+', '[volatile]', o_str)
   # ETA
   o_str = re.sub(r'\d{1,3}h\d{2}m\d{2}s', '[volatile]', o_str)
+  # Disk space
+  o_str = re.sub(r'[\s\d.]{2,4}GiB', '[volatile]', o_str)
   return o_str
 
 

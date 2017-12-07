@@ -103,7 +103,7 @@
       </tr>
       <tr>
         <td>Storage used / remaining:</td>
-        <td>0 GiB / 22 GiB</td>
+        <td>[volatile] /[volatile]</td>
       </tr>
       <tr>
         <td>Science objects by Format:</td>
