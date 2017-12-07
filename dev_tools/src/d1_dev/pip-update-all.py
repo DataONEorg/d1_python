@@ -27,9 +27,12 @@ http://stackoverflow.com/a/3452888/353337
 
 from __future__ import absolute_import
 
+import logging
 import os
 import subprocess
 import sys
+
+NO_UPGRADE_LIST = ['Django']
 
 
 def main():
@@ -42,6 +45,11 @@ def main():
 
   for line_str in freeze_str.splitlines():
     pkg_str, ver_str = line_str.strip().split('==')
+    if pkg_str in NO_UPGRADE_LIST:
+      logging.warn(
+        'Skipped package in NO_UPGRADE_LIST. pkg_str="{}"'.format(pkg_str)
+      )
+      continue
     print subprocess.check_output(['pip', 'install', '--upgrade', pkg_str])
 
   print subprocess.check_output(['pip', 'check'])
