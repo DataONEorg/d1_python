@@ -15,6 +15,8 @@ install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
 script:
+  # The bare Travis image comes with: Python 2.7.13, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
+  - pip uninstall pytest
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
   - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
@@ -22,6 +24,7 @@ script:
   - pip freeze
   - pip check || true
   - pytest --help
+  - pytest --fixtures
   - pytest -n auto --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.

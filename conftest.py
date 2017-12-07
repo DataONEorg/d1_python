@@ -362,10 +362,8 @@ def mn_client_v1_v2(request):
 def django_sciobj_store_setup(request, settings):
   logging.debug('django_sciobj_store_setup()')
   tmp_store_path = os.path.join(
-    tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
-      d1_test.instance_generator.random_data.
-      random_lower_ascii(min_len=12, max_len=12)
-    )
+    tempfile.gettempdir(),
+    'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
   )
   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
