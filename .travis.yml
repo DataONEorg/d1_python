@@ -16,7 +16,7 @@ install:
   - pip install --upgrade setuptools
 script:
   # The bare Travis image comes with: Python 2.7.13, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
-  - pip uninstall --yes pytest
+  - pip uninstall --yes pytest py
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
   - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
