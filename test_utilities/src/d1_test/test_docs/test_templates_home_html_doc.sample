@@ -1,0 +1,128 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/start/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+  <script type="text/javascript">
+
+      $(function () {
+          $("#tabs").tabs();
+      });
+
+  </script>
+
+  <style type="text/css">
+    table {
+    }
+
+    td {
+      vertical-align: top;
+      padding-right: 10px;
+    }
+
+    div.description {
+      font-size: medium;
+    }
+
+    div.logoheader {
+      background: transparent url("/static/images/preface-wrapper-bg.png") repeat-x top left;
+      height: 101px;
+    }
+
+    div.logoheader h1 {
+      background: transparent url("/static/images/d1_logo.png") no-repeat top left;
+      margin: 10px 9px;
+      width: 333px;
+      height: 77px;
+      float: left;
+    }
+
+  </style>
+
+</head>
+
+<body>
+<div class="logoheader"><h1></h1></div>
+
+<div id="tabs">
+
+  <ul>
+    <li><a href="#memberNode">Member Node Details</a></li>
+    <li><a href="#description">Description</a></li>
+  </ul>
+
+  <div id="memberNode">
+    <table>
+      <tbody>
+      <tr>
+        <td>Node ID:</td>
+        <td>urn:node:GMNUnitTestInstance</td>
+      </tr>
+      <tr>
+        <td>Name:</td>
+        <td>GMN Unit Test Instance</td>
+      </tr>
+      <tr>
+        <td>GMN version:</td>
+        <td>2.4.1</td>
+      </tr>
+      <tr>
+        <td>Django version:</td>
+        <td>1, 11, 7, final, 0</td>
+      </tr>
+      <tr>
+        <td>Average size of Science objects:</td>
+        <td>273 bytes</td>
+      </tr>
+      <tr>
+        <td>Objects:</td>
+        <td>1,000</td>
+      </tr>
+      <tr>
+        <td>Operations, total:</td>
+        <td>3,236</td>
+      </tr>
+      <tr>
+        <td>Operations, last hour:</td>
+        <td>632</td>
+      </tr>
+      <tr>
+        <td>Subjects:</td>
+        <td>1,156</td>
+      </tr>
+      <tr>
+        <td>Permissions:</td>
+        <td>8,045</td>
+      </tr>
+      <tr>
+        <td>Server time:</td>
+        <td>Dec. 7, 2017, 4:19 p.m.</td>
+      </tr>
+      <tr>
+        <td>Storage used / remaining:</td>
+        <td>0 GiB / 22 GiB</td>
+      </tr>
+      <tr>
+        <td>Science objects by Format:</td>
+        <td>
+          <table>
+            <tbody>
+            
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="description" class="description">
+    GMN instance launched via pytest
+  </div>
+
+</div>
+</body>
+</html>
