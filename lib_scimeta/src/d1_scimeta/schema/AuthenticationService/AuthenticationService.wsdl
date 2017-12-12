@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name ="AuthenticationService" 
+             targetNamespace="http://ecoinformatics.org/authenticationservice-1.0.0"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://ecoinformatics.org/authenticationservice-1.0.0" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+   <types>
+	  <schema targetNamespace="http://ecoinformatics.org/authenticationservice-1.0.0"
+        attributeFormDefault="qualified"
+        elementFormDefault="qualified"
+        xmlns="http://www.w3.org/2001/XMLSchema">
+
+
+      <!-- for login() operation -->
+        <element name="AuthenticationServiceLoginRequestElement" type="tns:AuthenticationServiceLoginRequestElementType"/>
+        <complexType name="AuthenticationServiceLoginRequestElementType">
+             <sequence>
+               <element name="userName" type="xsd:string"/>
+               <element name="passWd" type="xsd:string"/>
+             </sequence>
+        </complexType>
+
+        <element name="AuthenticationServiceLoginResponseElement" type="xsd:string"/>
+
+      <!-- for logout() operation -->
+        <element name="AuthenticationServiceLogoutRequestElement" type="xsd:string"/>
+        <element name="AuthenticationServiceLogoutResponseElement" type="xsd:string"/>
+
+	<!-- for ValidateSession() operation -->
+        <element name="AuthenticationServiceValidateSessionRequestElement" type="xsd:string"/>
+        <element name="AuthenticationServiceValidateSessionResponseElement" type="xsd:string"/>
+     </schema>
+     
+  </types>
+  
+
+  <message name="AuthenticationServiceLoginRequestMessage">
+        <part name="parameter" element="tns:AuthenticationServiceLoginRequestElement"/>
+  </message>
+   
+  <message name="AuthenticationServiceLoginResponseMessage">
+        <part name="parameter" element="tns:AuthenticationServiceLoginResponseElement"/>
+  </message>
+
+  <message name="AuthenticationServiceLogoutRequestMessage">
+        <part name="parameter" element="tns:AuthenticationServiceLogoutRequestElement"/>
+  </message>
+
+  <message name="AuthenticationServiceLogoutResponseMessage">
+        <part name="parameter" element="tns:AuthenticationServiceLogoutResponseElement"/>
+  </message>
+  
+  <message name="AuthenticationServiceValidateSessionRequestMessage">
+        <part name="parameter" element="tns:AuthenticationServiceValidateSessionRequestElement"/>
+  </message>
+   
+  <message name="AuthenticationServiceValidateSessionResponseMessage">
+        <part name="parameter" element="tns:AuthenticationServiceValidateSessionResponseElement"/>
+  </message>
+   
+  <portType name="AuthenticationServicePortType">
+        <operation name="login">
+            <input message="tns:AuthenticationServiceLoginRequestMessage"/>
+            <output message="tns:AuthenticationServiceLoginResponseMessage"/>
+        </operation>
+        <operation name="logout">
+            <input message="tns:AuthenticationServiceLogoutRequestMessage"/>
+            <output message="tns:AuthenticationServiceLogoutResponseMessage"/>
+        </operation>
+        <operation name="validateSession">
+            <input message="tns:AuthenticationServiceValidateSessionRequestMessage"/>
+            <output message="tns:AuthenticationServiceValidateSessionResponseMessage"/>
+        </operation>
+  </portType>
+
+  <binding name="AuthenticationService"
+         type="tns:AuthenticationServicePortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="login">
+    <soap:operation soapAction="http://ecoinformatics.org/authenticationservice-1.0.0#login"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="logout">
+    <soap:operation soapAction="http://ecoinformatics.org/authenticationservice-1.0.0#logout"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="validateSession">
+    <soap:operation soapAction="http://ecoinformatics.org/authenticationservice-1.0.0#validateSession"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authenticationservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+</binding>
+
+<service name="AuthenticationService">
+  <port binding="tns:AuthenticationService" name="Login">
+     <soap:address location="http://localhost:8080/axis/services/"/>
+  </port>
+</service>
+  
+</definitions>

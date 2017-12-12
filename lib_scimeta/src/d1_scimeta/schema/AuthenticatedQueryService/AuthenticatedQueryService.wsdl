@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="AuthenticatedQueryService"
+ targetNamespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0"
+ xmlns="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:queryns="http://ecoinformatics.org/query-1.0.1"
+ xmlns:resultns="http://ecoinformatics.org/resultset-1.0.1"
+ xmlns:tns="http://ecoinformatics.org/authenticatedqueryservice-1.0.0"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+<import location="query.xsd" namespace="http://ecoinformatics.org/query-1.0.1"/>
+<import location="resultset.xsd" namespace="http://ecoinformatics.org/resultset-1.0.1"/>
+
+<types>
+  <schema targetNamespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0"
+          attributeFormDefault="qualified"
+          elementFormDefault="qualified"
+          xmlns="http://www.w3.org/2001/XMLSchema">
+
+    <element name="get" type="xsd:string"/>
+    <complexType name="Get">
+      <sequence>
+         <element name="identifier" type="xsd:string"/>
+      </sequence>
+    </complexType>    
+    
+    <element name="getElement" type="tns:GetElementType"/>
+    <complexType name="GetElementType">
+      <sequence>
+         <element name="identifier" type="xsd:string"/>
+         <element name="sessionId" type="xsd:string"/>
+      </sequence>
+    </complexType>
+    
+    <element name="queryElement" type="tns:QueryElementType"/>
+    <complexType name="QueryElementType">
+      <sequence>
+         <element name="query" type="queryns:QueryType"/>
+         <element name="sessionId" type="xsd:string"/>
+      </sequence>
+    </complexType>
+	
+    <element name="getResponseElement" type="xsd:base64Binary"/>
+  </schema>
+</types>
+  
+<message name="queryResponse">
+  <part element="resultns:resultset" name="parameter"/>
+</message>
+<message name="queryRequest">
+  <part element="tns:queryElement" name="parameter"/>
+</message>
+
+<message name="getResponse">
+  <part name="parameter" element="tns:getResponseElement"/>
+</message>
+<message name="getRequest">
+  <part name="parameter" element="tns:getElement"/>
+</message>
+
+<portType name="AuthenticatedQueryServicePortType">
+
+  <operation name="query">
+    <input message="tns:queryRequest"/>
+    <output message="tns:queryResponse"/>
+  </operation>
+  <operation name="get">
+    <input message="tns:getRequest"/>
+    <output message="tns:getResponse"/>
+  </operation>
+</portType>
+
+<binding name="AuthenticatedQueryService"
+         type="tns:AuthenticatedQueryServicePortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="query">
+    <soap:operation soapAction="http://ecoinformatics.org/authenticatedqueryservice-1.0.0#query"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="get">
+    <soap:operation soapAction="http://ecoinformatics.org/authenticatedqueryservice-1.0.0#get"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authenticatedqueryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+</binding>
+
+<service name="AuthenticatedQueryService">
+  <port binding="tns:AuthenticatedQueryService"
+        name="Query">
+     <soap:address location="AuthenticatedQueryService"/>
+  </port>
+</service>
+
+</definitions>

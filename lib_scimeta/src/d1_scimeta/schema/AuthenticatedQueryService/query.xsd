@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    targetNamespace="http://ecoinformatics.org/query-1.0.1" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns="http://ecoinformatics.org/query-1.0.1">
+    <xs:annotation>
+        <xs:documentation>
+       '$RCSfile: query.xsd,v $'
+       Copyright: 2003 Partnership for Biodiversity Informatics
+         Project: http://seek.ecoinformatics.org/
+
+        '$Author: tao $'
+          '$Date: 2008-04-23 16:25:50 $'
+      '$Revision: 1.10 $'
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    </xs:documentation>
+    </xs:annotation>
+    <xs:element name="query" type="QueryType"/>
+    <xs:complexType name="QueryType">
+        <xs:annotation>
+            <xs:documentation>An XML-based query structure for combining XPath 
+            pattern matching expressions using logical operators.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="namespace" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>The namespace element identifies
+                        the scope for the query by giving one or more 
+                        namespaces to which the query conditions should be 
+                        applied.  For example, to query EML documents, one 
+                        would indicate a namespace of 
+                        "eml://ecoinformatics.org/eml-2.0.0". When more than
+                        one namespace is given, then the query conditions 
+                        should be applied to all of those document types within
+                        the EcoGrid repository node.
+                        </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="prefix" 
+                                type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="returnField" type="xs:string" minOccurs="0" 
+                maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>An optional limited XPath expression that
+                    defines a field that should be returned in the resultset 
+                    document.  The result record constructed will contain a 
+                    well-formed xml file that combines all of the returnfields 
+                    into a single tree structure.  If a returnfield is specified
+                    as a leaf node that is a SimpleType, the value and all 
+                    parent elements leading to that value will be included in 
+                    the result.  If a specified returnfield is not a leaf node, 
+                    then all element and value content below that node will be 
+                    included in the result along with the parent elements 
+                    leading to the matched node.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="title" type="xs:string" minOccurs="0" 
+                maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>An optional title that names and 
+                    describes the query.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice>
+                <xs:element name="AND" type="ANDType"/>
+                <xs:element name="OR" type="ORType"/>
+                <xs:element name="condition" type="ConditionType"/>
+            </xs:choice>
+            <!--
+                <xs:element name="resultStruct" type="xs:string" 
+                    minOccurs="1" maxOccurs="1"/>
+                -->
+        </xs:sequence>
+        <xs:attribute name="queryId" type="xs:string" use="required"/>
+        <xs:attribute name="system" type="xs:anyURI" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="ANDType">
+        <xs:annotation>
+            <xs:documentation>A type of logical operator that requires all of 
+            its child conditions to evaluate to true in order for the whole 
+            clause to evaluate to true.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="AND" type="ANDType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="OR" type="ORType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="condition" type="ConditionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ORType">
+        <xs:annotation>
+            <xs:documentation>A type of logical operator that evaluates to true 
+            if any one or more of its child conditions evaluate to true.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="AND" type="ANDType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="OR" type="ORType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="condition" type="ConditionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ConditionType">
+        <xs:annotation>
+            <xs:documentation>The condition represents a portion of the query
+            that restricts the set of documents that match the query.  The
+            content of the condition element is the value that should be 
+            matched. The symbol '%' should be interpreted as a wildcard that 
+            matches any character.  The "operator" determines how the match is 
+            performed (e.g., whether numeric equality or string equality is 
+            used), and the "concept" determines the field to which the 
+            restriction is applied (e.g., for XML sources this will be a 
+            relative or absolute path expression).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="operator" type="OperatorType" 
+                    use="required"/>
+                <xs:attribute name="concept" type="LimitedXPathExpression" 
+                    use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="OperatorType">
+        <xs:annotation>
+            <xs:documentation>The OperatorType defines the set of allowable 
+            values for the match operator in a condition.  The match operator
+            determines the semantics of how matches occur for that condition.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LIKE">
+                <xs:annotation>
+                    <xs:documentation>Matches string containing value exactly
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NOT LIKE">
+                <xs:annotation>
+                    <xs:documentation>Matches string not containing value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="EQUALS">
+                <xs:annotation>
+                    <xs:documentation>Matches if numerically equal to value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NOT EQUALS">
+                <xs:annotation>
+                    <xs:documentation>Matches if numerically not equal to value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LESS THAN">
+                <xs:annotation>
+                    <xs:documentation>Matches if less than value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LESS THAN OR EQUALS">
+                <xs:annotation>
+                    <xs:documentation>Matches if less than or equal to value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="GREATER THAN">
+                <xs:annotation>
+                    <xs:documentation>Matches if greater than value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="GREATER THAN OR EQUALS">
+                <xs:annotation>
+                    <xs:documentation>Matches if greater than or equal to value
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LimitedXPathExpression">
+        <xs:annotation>
+            <xs:documentation>A simple type that provides a restricted version 
+            of standard XPath expressions.  These expressions are the valid path 
+			expressions that can be used to express condition concepts and 
+			returnfield paths, and represent a subset of the full XPath syntax.
+			</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="((/*)@?[a-zA-Z0-9]*)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

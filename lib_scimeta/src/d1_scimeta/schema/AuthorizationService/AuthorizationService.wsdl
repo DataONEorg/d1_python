@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name ="AuthorizationService" 
+             targetNamespace="http://ecoinformatics.org/authorizationservice-1.0.0"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://ecoinformatics.org/authorizationservice-1.0.0" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+   <types>
+	  <schema targetNamespace="http://ecoinformatics.org/authorizationservice-1.0.0"
+        attributeFormDefault="qualified"
+        elementFormDefault="qualified"
+        xmlns="http://www.w3.org/2001/XMLSchema">
+
+      <!-- for isAuthorized() operation -->
+        <element name="AuthorizationServiceIsAuthorizedRequestElement" type="tns:AuthorizationServiceIsAuthorizedRequestElementType"/>
+        <complexType name="AuthorizationServiceIsAuthorizedRequestElementType">
+          <sequence>
+            <element name="resourceLsid" type="xsd:string"/>
+			<element name="permission" type="xsd:string"/>
+            <element name="sessionId" type="xsd:string"/>
+          </sequence>
+       </complexType>
+        
+        <element name="AuthorizationServiceIsAuthorizedResponseElement" type="xsd:string"/>
+     </schema>
+     
+  </types>
+  
+  <message name="AuthorizationServiceIsAuthorizedRequestMessage">
+        <part name="parameter" element="tns:AuthorizationServiceIsAuthorizedRequestElement"/>
+  </message>
+   
+  <message name="AuthorizationServiceIsAuthorizedResponseMessage">
+        <part name="parameter" element="tns:AuthorizationServiceIsAuthorizedResponseElement"/>
+  </message>
+   
+  <portType name="AuthorizationServicePortType">
+        <operation name="isAuthorized">
+            <input message="tns:AuthorizationServiceIsAuthorizedRequestMessage"/>
+            <output message="tns:AuthorizationServiceIsAuthorizedResponseMessage"/>
+        </operation>
+  </portType>
+
+  <binding name="AuthorizationService"
+         type="tns:AuthorizationServicePortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="isAuthorized">
+    <soap:operation soapAction="http://ecoinformatics.org/authorizationservice-1.0.0#isAuthorized"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/authorizationservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/authorizationservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+</binding>
+
+<service name="AuthorizationService">
+  <port binding="tns:AuthorizationService" name="Authorize">
+     <soap:address location="http://localhost:8080/axis/services/"/>
+  </port>
+</service>
+  
+</definitions>

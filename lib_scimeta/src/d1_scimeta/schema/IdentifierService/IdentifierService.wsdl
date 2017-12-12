@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name ="IdentifierService" 
+             targetNamespace="http://ecoinformatics.org/identifierservice-1.0.0"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://ecoinformatics.org/identifierservice-1.0.0" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+  
+  <types>
+	  <xsd:schema targetNamespace="http://ecoinformatics.org/identifierservice-1.0.0"
+        attributeFormDefault="qualified"
+        elementFormDefault="qualified"
+        xmlns="http://www.w3.org/2001/XMLSchema">
+
+        
+
+        <xsd:element name="EcogridInputElement" type="xsd:string"/>
+        <xsd:element name="EcogridResponseElement" type="xsd:string"/>
+     </xsd:schema>
+     
+  </types>
+  
+  
+  <message name="lsidInput">
+        <part name="parameter" element="tns:EcogridInputElement"/>
+  </message>
+
+  <message name="response">
+        <part name="parameter" element="tns:EcogridResponseElement"/>
+  </message>
+  
+  <message name="partialLSIDInput">
+    <part name="parameter" element="tns:EcogridInputElement"/>
+  </message>
+   
+  <portType name="IdentifierServicePortType">
+        <operation name="isRegistered">
+            <input message="tns:lsidInput"/>
+            <output message="tns:response"/>
+        </operation>
+        
+        <operation name="addLSID">
+            <input message="tns:lsidInput"/>
+            <output message="tns:response"/>
+        </operation>
+        
+        <operation name="getNextRevision">
+            <input message="tns:lsidInput"/>
+            <output message="tns:response"/>
+        </operation>
+        
+        <operation name="getNextObject">
+            <input message="tns:lsidInput"/>
+            <output message="tns:response"/>
+        </operation>
+        
+        <operation name="getAllIds">
+            <input message="tns:partialLSIDInput"/>
+            <output message="tns:response"/>
+        </operation>
+  </portType>
+  
+  <binding name="IdentifierService"
+         type="tns:IdentifierServicePortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="isRegistered">
+      <soap:operation soapAction="http://ecoinformatics.org/identifierservice-1.0.0#isRegistered"/>
+      <input>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </input>
+      <output>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </output>
+    </operation>
+    
+    <operation name="addLSID">
+      <soap:operation soapAction="http://ecoinformatics.org/identifierservice-1.0.0#addLSID"/>
+      <input>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </input>
+      <output>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </output>
+    </operation>
+    
+    <operation name="getNextRevision">
+      <soap:operation soapAction="http://ecoinformatics.org/identifierservice-1.0.0#getNextRevision"/>
+      <input>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </input>
+      <output>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </output>
+    </operation>
+    
+    <operation name="getNextObject">
+      <soap:operation soapAction="http://ecoinformatics.org/identifierservice-1.0.0#getNextObject"/>
+      <input>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </input>
+      <output>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </output>
+    </operation>
+    
+     <operation name="getAllIds">
+      <soap:operation soapAction="http://ecoinformatics.org/identifierservice-1.0.0#getAllIds"/>
+      <input>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </input>
+      <output>
+        <soap:body namespace="http://ecoinformatics.org/identifierservice-1.0.0" use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="IdentifierService">
+    <port binding="tns:IdentifierService" name="Identifier">
+       <soap:address location="http://localhost:8080/axis/services/"/>
+    </port>
+  </service>
+
+</definitions>
