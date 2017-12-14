@@ -198,7 +198,8 @@ Download the source from GitHub:
 
 Add the DataONE packages to the Python path, and install their dependencies:
 
-    $ sh $D1ROOT/dev_tools/develop.sh
+    cd ~/d1_python
+    sudo dev_tools/src/d1_dev/setup-all.py --root . develop
 
 Run the following commands, except, change the "createuser" line to:
 
@@ -208,7 +209,7 @@ Run the following commands, except, change the "createuser" line to:
 
 Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
 
-    $ sudo cp /home/dahl/d1_python/d1_mn_generic/src/deployment/openssl.cnf .
+    $ sudo cp <your_d1_python_path>/d1_mn_generic/src/deployment/openssl.cnf .
 
   https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
 

@@ -43,11 +43,60 @@ class GMNStartupChecks(django.apps.AppConfig):
   name = 'd1_gmn.app.startup'
 
   def ready(self):
-    self._check_cert_file('CLIENT_CERT_PATH')
-    self._check_cert_file('CLIENT_CERT_PRIVATE_KEY_PATH')
+    self._assert_readable_file_if_set('CLIENT_CERT_PATH')
+    self._assert_readable_file_if_set('CLIENT_CERT_PRIVATE_KEY_PATH')
+
+    self._assert_is_type('SCIMETA_VALIDATION_ENABLED', bool)
+    self._assert_is_type('SCIMETA_VALIDATION_MAX_SIZE', int)
+    self._assert_is_in(
+      'SCIMETA_VALIDATION_OVER_SIZE_ACTION', ('reject', 'accept')
+    )
+
     self._warn_unsafe_for_prod()
     self._check_resource_map_create()
     self._create_sciobj_store_root()
+
+  def _assert_is_type(self, setting_name, valid_type):
+    v = getattr(django.conf.settings, setting_name, None)
+    if not isinstance(v, valid_type):
+      self.raise_config_error(setting_name, valid_type)
+
+  def _assert_is_in(self, setting_name, valid_list):
+    if getattr(django.conf.settings, setting_name, None) not in valid_list:
+      self.raise_config_error(setting_name, valid_list)
+
+  def _assert_readable_file_if_set(self, setting_name):
+    v = getattr(django.conf.settings, setting_name, None)
+    if v is None:
+      return
+    self._assert_is_type(setting_name, str)
+    if not os.path.isfile(v):
+      self.raise_config_error(
+        setting_name, v, str, valid_str='a path to a readable file'
+      )
+    try:
+      with open(v, 'r') as f:
+        f.read(1)
+    except EnvironmentError as e:
+      self.raise_config_error(
+        setting_name, v, str, valid_str='a path to a readable file. error="{}"'
+        .format(str(e))
+      )
+
+  def raise_config_error(self, setting_name, cur_val, exp_type, valid_str=None):
+    valid_str = valid_str or (
+      'a whole number' if isinstance(exp_type, int) else 'a number'
+      if isinstance(exp_type, float) else 'a string'
+      if isinstance(exp_type, str) else 'True or False' if
+      isinstance(exp_type, bool) else 'one of {}'.format(', '.join(exp_type))
+      if isinstance(exp_type,
+                    (list, tuple)) else 'of type {}'.format(exp_type.__name__)
+    )
+    msg_str = u'Configuration error: Setting {} must be {}. current="{}"'.format(
+      setting_name, valid_str, str(cur_val)
+    )
+    logging.error(msg_str)
+    raise django.core.exceptions.ImproperlyConfigured(msg_str)
 
   def _warn_unsafe_for_prod(self):
     """Warn on settings that are not safe for production"""
@@ -64,21 +113,6 @@ class GMNStartupChecks(django.apps.AppConfig):
           'Setting is unsafe for use in production. setting="{}" current="{}" '
           'safe="{}"'.format(setting_str, setting_current, setting_safe)
         )
-
-  def _check_cert_file(self, cert_pem_setting):
-    cert_pem_path = getattr(django.conf.settings, cert_pem_setting, None)
-    if cert_pem_path is None:
-      logging.warn(
-        'Certificate path not set. setting="{}"'.format(cert_pem_setting)
-      )
-      return
-    try:
-      self._assert_readable_file(cert_pem_path)
-    except ValueError as e:
-      raise django.core.exceptions.ImproperlyConfigured(
-        u'Configuration error: Invalid certificate path. '
-        u'setting="{}". msg="{}"'.format(cert_pem_setting, str(e))
-      )
 
   def _check_resource_map_create(self):
     if (
@@ -143,16 +177,4 @@ class GMNStartupChecks(django.apps.AppConfig):
           d1_gmn.app.sciobj_store.get_store_version(),
           d1_gmn.app.sciobj_store.get_gmn_version(),
         )
-      )
-
-  def _assert_readable_file(self, file_path):
-    if not os.path.isfile(file_path):
-      raise ValueError('Not a valid file path. path="{}"'.format(file_path))
-    try:
-      with open(file_path, 'r') as f:
-        f.read(1)
-    except EnvironmentError as e:
-      raise ValueError(
-        'Unable to read file. path="{}" error="{}"'.
-        format(file_path, e.message)
       )

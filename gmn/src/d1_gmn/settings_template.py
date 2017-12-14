@@ -424,6 +424,53 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # object is created by the Resource Map subject.
 RESOURCE_MAP_CREATE = 'block'
 
+# Validate Science Metadata objects against local XML Schema (XSD)
+# True (default):
+# - When a SciMeta format that is recognized and parsed by CNs is
+#   received in MNStorage.create() or MNStorage.update(), GMN rejects the
+#   operation and returns an InvalidRequest with details to the client if the
+#   object is not well formed, valid, and matching the SysMeta formatId.
+# False:
+# - SciMeta objects are not validated. This is not recommended, as any invalid
+#   objects will be rejected by the CN during synchronization.
+# Notes:
+# - Objects affected by this setting have formatType of METADATA in the CN's
+# objectFormatList.
+# - Actual validation is performed by the d1_sciobj package, which may not
+#   support all SciMeta formats. Validation is silently skipped for any
+#   unsupported formats.
+# - Objects that are stored remotely (using GMN's proxy support), are not
+#   validated.
+SCIMETA_VALIDATION_ENABLED = True
+
+# The maximum size in bytes of SciMeta objects received in MNStorage.create()
+# and MNStorage.update() that will be validated. SciMeta objects larger than
+# this size are not validated and are handled according to the
+# SCIMETA_VALIDATION_OVER_SIZE_ACTION setting.
+#
+# This setting applies only when SCIMETA_VALIDATION is set to True.
+#
+# As SciMeta documents are read into memory for validation, limiting the maximum
+# size of objects that will be validated helps reduce the chance of the server
+# running out of memory.
+#
+# E.g.: 100 MiB = 1024**2 (default)
+# To validate SciMeta of any size, set to -1 (not recommended).
+SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024**2
+
+# The action to perform for SciMeta objects received in MNStorage.create()
+# and MNStorage.update() larger than size set in SCIMETA_VALIDATION_MAX_SIZE.
+#
+# This setting applies only when SCIMETA_VALIDATION_ENABLED is set to True and
+# SCIMETA_VALIDATION_MAX_SIZE is not set to -1.
+#
+# - 'reject' (default): SciMeta over Max Size is rejected and GMN returns an
+#   InvalidRequest with explanation to the client.
+# - 'accept': SciMeta over Max Size is accepted but not validated. This is not
+#   recommended, as any invalid objects will later be rejected by the CN during
+#   synchronization.
+SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'
+
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of
 # providing an object for GMN to manage, the object can be left empty and the
 # URL of the object on a 3rd party server be provided instead. In that case, GMN

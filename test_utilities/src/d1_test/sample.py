@@ -20,6 +20,7 @@
 import bz2
 import codecs
 import contextlib
+import json
 import logging
 import os
 import re
@@ -160,13 +161,18 @@ def load_utf8_to_unicode(filename):
 
 
 def load_xml_to_pyxb(filename, mode_str='r'):
-  logging.debug('Reading sample XML file. filename="{}"'.format(filename))
+  logging.debug('Loading sample XML file. filename="{}"'.format(filename))
   xml_str = load(filename, mode_str)
   return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
 
+def load_json(filename, mode_str='r'):
+  logging.debug('Loading sample JSON file. filename="{}"'.format(filename))
+  return json.loads(load(filename, mode_str))
+
+
 def save(got_str, filename, mode_str='wb'):
-  logging.info('Writing sample file. filename="{}"'.format(filename))
+  logging.info('Saving sample file. filename="{}"'.format(filename))
   with open(_get_or_create_path(filename), mode_str) as f:
     return f.write(got_str)
 

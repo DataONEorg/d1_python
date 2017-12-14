@@ -29,6 +29,7 @@ import os
 import random
 import StringIO
 import sys
+import tempfile
 import traceback
 import xml
 
@@ -192,6 +193,24 @@ def reproducible_random_context(seed=None):
   random.seed(seed)
   yield
   random.setstate(state)
+
+
+#===============================================================================
+
+
+@contextlib.contextmanager
+def large_file(gib=0, mib=0, kib=0, b=0):
+  """Context manager providing a temporary file of size {gib} GiB + {mib} MiB +
+  {kib} KiB + {b} bytes
+  - The file is created as a sparse empty file in tmp, so does not allocate any
+  actual space on disk.
+  - Intended for use when large test files are needed
+  """
+  with tempfile.TemporaryFile() as f:
+    f.seek(gib * 1024**3 + mib * 1024**2 + kib * 1024 + b - 1)
+    f.write(b'0')
+    f.seek(0)
+    yield f
 
 
 #===============================================================================

@@ -21,9 +21,9 @@
 
 Usage:
 
-import d1_scimeta.scimeta
+import d1_scimeta.xml_schema
 try:
-  d1_scimeta.scimeta.validate(format_id, xml_str)
+  d1_scimeta.xml_schema.validate(format_id, xml_str)
 except lxml.etree.DocumentInvalid as e:
   # err
 """
@@ -62,9 +62,29 @@ class Validate(object):
       # self.dump(
       #   'format_id_to_schema_root_dict', self._format_id_to_schema_root_dict
       # )
-    # Parse and check that XML doc is well formed
-    xml_tree = self.parse_xml_str(xml_str)
-    # Prepare parser
+    self.validate(format_id, xml_str)
+
+  def validate(self, format_id, xml_str):
+    try:
+      xml_tree = self.parse_xml_str(xml_str)
+    except lxml.etree.XMLSyntaxError as e:
+      self.raise_validation_error(e, format_id)
+    xml_schema = self.gen_xml_schema(format_id, xml_tree)
+    try:
+      xml_schema.assertValid(xml_tree)
+    except (lxml.etree.DocumentInvalid, lxml.etree.XMLSyntaxError) as e:
+      self.raise_validation_error(
+        u'{}\n{}'.format(str(e), '\n'.join(map(str, xml_schema.error_log))),
+        format_id
+      )
+
+  def raise_validation_error(self, e, format_id):
+    raise SciMetaValidationError(
+      'XML Schema (XSD) validation failed. format_id="{}" error="{}"'.
+      format(format_id, str(e))
+    )
+
+  def gen_xml_schema(self, format_id, xml_tree):
     schema_root_path = self.get_schema_root_path(SCHEMA_ROOT_PATH, format_id)
     # self.dump('schema_root_path', schema_root_path)
     xsd_path_list = self.find_xsd_files(schema_root_path)
@@ -82,15 +102,27 @@ class Validate(object):
     # self.dump_tree(xsd_tree)
     # self.dump_tree_to_file(xsd_tree, 'dump.xsd')
     xml_schema = lxml.etree.XMLSchema(xsd_tree)
-    # Validate against XSD
+    return xml_schema
+
+  def is_installed_scimeta_format_id(self, format_id):
+    """Return True if:
+    - {format_id} is formatId of a Science Metadata format that is recognized
+    and parsed by CNs (in the objectFormatList, the objectFormat has a
+    formatType of METADATA)
+    - And the XML Schema (XSD) files required for validating the object is
+    installed in this validator's local schema store.
+    """
     try:
-      xml_schema.assertValid(xml_tree)
-    except lxml.etree.DocumentInvalid as e:
-      logging.error(str(e))
-      map(logging.error, xml_schema.error_log)
-      raise
+      self.get_schema_root_path('/', format_id)
+    except SciMetaValidationError:
+      return False
+    return True
 
   def get_schema_root_path(self, schema_store_root_path, format_id):
+    if self._format_id_to_schema_root_dict is None:
+      self._format_id_to_schema_root_dict = (
+        self.load_format_id_to_schema_root_dict(FORMAT_ID_JSON_PATH)
+      )
     try:
       schema_root_path = self._format_id_to_schema_root_dict[format_id]
     except LookupError:
@@ -252,3 +284,7 @@ class SciMetaValidationError(Exception):
 
 
 validate = Validate()
+
+
+def is_installed_scimeta_format_id(format_id):
+  return validate.is_installed_scimeta_format_id(format_id)

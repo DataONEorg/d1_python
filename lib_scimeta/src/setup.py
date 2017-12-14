@@ -29,7 +29,7 @@ def main():
   setuptools.setup(
     name='dataone.scimeta',
     version='2.4.1',
-    description='Validate Science Metadata',
+    description='Utilities for processing Science Metadata',
     author='DataONE Project',
     author_email='developers@dataone.org',
     url='https://github.com/DataONEorg/d1_python',

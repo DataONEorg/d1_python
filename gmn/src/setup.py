@@ -46,6 +46,7 @@ def main():
       'dataone.cli == 2.4.1',
       'dataone.common == 2.4.1',
       'dataone.libclient == 2.4.1',
+      'dataone.scimeta == 2.4.1',
       #
       'django == 1.11.7',
       'iso8601 == 0.1.12',

@@ -21,7 +21,7 @@
 
 from __future__ import absolute_import
 
-import d1_scimeta.scimeta as scimeta
+import d1_scimeta.xml_schema as scimeta
 import lxml
 import lxml.etree
 import pytest
@@ -73,27 +73,20 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
       scimeta.validate(format_id, xml_str)
 
   def test_1050(self):
-    """SciMeta.validate(): onedcx validates successfully as DataONE Dublin Core
-    Extended"""
-    xml_str = self.sample.load('scimeta_dc_1.xml')
-    format_id = 'http://ns.dataone.org/metadata/schema/onedcx/v1.0'
-    scimeta.validate(format_id, xml_str)
-
-  def test_1051(self):
     """SciMeta.validate(): Valid EML 2.1.1"""
     xml_str = self.sample.load('scimeta_eml_valid.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
     scimeta.validate(format_id, xml_str)
 
-  def test_1052(self):
+  def test_1060(self):
     """SciMeta.validate(): Invalid EML 2.1.1: Unexpected element"""
     xml_str = self.sample.load('scimeta_eml_invalid_1.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
     with pytest.raises(lxml.etree.DocumentInvalid, match='unexpectedElement'):
       scimeta.validate(format_id, xml_str)
 
-  def test_1053(self):
-    """SciMeta.validate(): Invalid EML 2.1.1: Unexpected element"""
+  def test_1070(self):
+    """SciMeta.validate(): Invalid EML 2.1.1: Missing child element"""
     xml_str = self.sample.load('scimeta_eml_invalid_2.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
     with pytest.raises(

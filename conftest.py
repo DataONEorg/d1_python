@@ -51,7 +51,9 @@ import django.core.management
 import django.db
 import django.db.utils
 
-DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
+DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser(
+  '~/bin/JetBrains/pycharm.sh'
+)
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
@@ -240,6 +242,8 @@ def _open_error_in_pycharm(call):
     logging.debug('Unable to find location of error')
     return
   try:
+    assert os.path.isfile(DEFAULT_DEBUG_PYCHARM_BIN_PATH), \
+      'Path to PyCharm is incorrect'
     subprocess.call(
       [DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)]
     )

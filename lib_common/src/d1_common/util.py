@@ -65,6 +65,17 @@ def abs_path(rel_path):
   )
 
 
+def abs_path_from_base(base_path, rel_path):
+  """Join {rel_path} to {base_path} and return an absolute path to the resulting
+  location
+  """
+  return os.path.abspath(
+    os.path.join(
+      os.path.dirname(sys._getframe(1).f_code.co_filename), base_path, rel_path
+    )
+  )
+
+
 def create_missing_directories_for_dir(dir_path):
   try:
     os.makedirs(dir_path)

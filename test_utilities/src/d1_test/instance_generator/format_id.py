@@ -37,14 +37,16 @@ class Generate(object):
 
   def __call__(self):
     if self._format_id_list is None:
-      self._format_id_list = [
+      format_id_set = {
         o.formatId
         for o in d1_test.sample.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
-      ]
-      # This method is used from functions that don't generate resource maps.
-      # Since resource maps are parsed in GMN, we don't want to submit invalid
-      # resource maps in general tests.
-      self._format_id_list.remove(d1_common.const.ORE_FORMAT_ID)
+      }
+      # Remove the formatIds for object types that are parsed by GMN
+      format_id_set.remove(d1_common.const.ORE_FORMAT_ID)
+      format_id_set -= set(
+        d1_test.sample.load_json('scimeta_format_id_list.json')
+      )
+      self._format_id_list = sorted(format_id_set)
 
     return random.choice(self._format_id_list)
 

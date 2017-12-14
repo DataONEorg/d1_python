@@ -41,6 +41,7 @@ else:
 PKG_PATH_LIST = [
   'dev_tools',
   'lib_common',
+  'lib_scimeta',
   'lib_client',
   'client_cli',
   'client_onedrive',
