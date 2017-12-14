@@ -1,5 +1,31 @@
 # Change Log
 
+## [2.4.1](https://github.com/DataONEorg/d1_python/tree/2.4.1) (2017-12-14)
+[Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.4.0...2.4.1)
+
+* GMN
+  * Add XML Schema (XSD) validation of incoming Science Metadata documents
+    * Applies to calls to MNStorage.create() and MNStorage.update()
+    * Controlled by new SCIMETA_VALIDATION_* settings
+  * Update jQuery UI to latest and switch from static to hotlinked
+  * Fix mistake in cron setup instructions
+  * Fix bug that prevented process_refresh_queue from running
+  * Improve error handling and logging in bulk importer
+
+* d1_common
+  * Add new package for validating Science Metadata
+    * The required schemas are included in the package
+  * Improve error handling in multiprocessed iterators
+  * Update all dependencies to current as of 2017-12-06
+  * Misc refactoring
+
+* Tests and test framework
+  * Misc smaller test framework improvements
+  * Add basic test for GMN home/status page
+
+* Misc  
+  * Remove accidentically added duplicates
+
 ## [2.4.0](https://github.com/DataONEorg/d1_python/tree/2.4.0) (2017-11-16)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.3.8...2.4.0)
 
