@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>38</serialVersion>
   <identifier>an_unchanging_pid</identifier>
-  <formatId>application/mathematica</formatId>
+  <formatId>application/xml</formatId>
   <size>255</size>
   <checksum algorithm="SHA-1">97acc710723b02c8d3b6273705e94b56e6b445f9</checksum>
   <submitter>subj_s</submitter>

@@ -9,8 +9,8 @@
     <field name="mediaTypeProperty">prop_wy nh</field>
     <field name="mediaTypeProperty">prop_db on</field>
     <field name="mediaTypeProperty">prop_gi sj</field>
-    <field name="formatId">video/mp4</field>
-    <field name="formatType">DATA</field>
+    <field name="formatId">http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html</field>
+    <field name="formatType">RESOURCE</field>
     <field name="size">270</field>
     <field name="checksum">dac2de2790d5259e3b0f777c09338dc9d57ef034</field>
     <field name="submitter">subj_m</field>

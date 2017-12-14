@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>39</serialVersion>
   <identifier>test_pid</identifier>
-  <formatId>nexus/1997</formatId>
+  <formatId>application/x-bzip2</formatId>
   <size>247</size>
   <checksum algorithm="SHA-1">c6be21e6c1764485898fb518fa4bffe6139f3e30</checksum>
   <submitter>subj_e</submitter>

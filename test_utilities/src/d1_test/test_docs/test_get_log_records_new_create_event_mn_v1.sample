@@ -2,7 +2,7 @@ sysmeta: <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>100</serialVersion>
   <identifier>PID_gxmjjxhpmzob</identifier>
-  <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
+  <formatId>anvl/erc-v02</formatId>
   <size>317</size>
   <checksum algorithm="SHA-1">48db7126cd315bfd6bca04be1595d0b5f5af6b55</checksum>
   <submitter>subj_i</submitter>

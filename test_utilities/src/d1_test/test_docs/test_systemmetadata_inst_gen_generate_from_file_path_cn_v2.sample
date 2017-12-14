@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>44</serialVersion>
   <identifier>PID_lsbhgrsljqbj</identifier>
-  <formatId>http://www.esri.com/metadata/esriprof80.dtd</formatId>
+  <formatId>CF-1.2</formatId>
   <size>3012</size>
   <checksum algorithm="SHA-1">765e797b097d17da3cd5e8ccfe33c004303fb7f5</checksum>
   <submitter>subj_q</submitter>

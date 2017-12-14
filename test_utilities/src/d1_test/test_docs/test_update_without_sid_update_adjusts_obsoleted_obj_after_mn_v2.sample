@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>54</serialVersion>
   <identifier>PID_eomsxomxrjwk</identifier>
-  <formatId>video/quicktime</formatId>
+  <formatId>application/zip</formatId>
   <size>271</size>
   <checksum algorithm="SHA-1">6833ddfa045845dab74d885ba13508a7c1a00217</checksum>
   <submitter>subj_rv</submitter>

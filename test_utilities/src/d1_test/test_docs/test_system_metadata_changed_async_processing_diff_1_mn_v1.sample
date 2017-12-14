@@ -2,7 +2,7 @@
   <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <serialVersion>59</serialVersion>
     <identifier>PID_bixtbcchrkzz</identifier>
-    <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+    <formatId>netCDF-3</formatId>
     <size>276</size>
     <checksum algorithm="SHA-1">d6cd77e7d4ed5727def6b2e8b8a7fdb56a9315df</checksum>
     <submitter>subj_wc</submitter>

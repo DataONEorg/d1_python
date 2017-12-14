@@ -1,0 +1,909 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml packageId="knb-lter-nin.19.1" scope="system"
+  system="https://pasta.lternet.edu"
+  xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 https://nis.lternet.edu/schemas/eml/eml-2.1.1/eml.xsd">
+  <access authSystem="https://pasta.lternet.edu/authentication"
+    order="allowFirst" system="https://pasta.lternet.edu">
+    <allow>
+      <principal>uid=NIN,o=LTER,dc=ecoinformatics,dc=org</principal>
+      <permission>all</permission>
+    </allow>
+    <allow>
+      <principal>public</principal>
+      <permission>read</permission>
+    </allow>
+  </access>
+  <dataset>
+    <title>Daily Water Sample Nutrient Data for North Inlet Estuary, South Carolina, from 1978 to 1992, North Inlet LTER</title>
+    <creator>
+      <individualName>
+        <salutation>Dr.</salutation>
+        <givenName>F.</givenName>
+        <givenName>John</givenName>
+        <surName>Vernberg</surName>
+      </individualName>
+    </creator>
+    <creator>
+      <individualName>
+        <salutation>Dr.</salutation>
+        <givenName>Elizabeth</givenName>
+        <surName>Blood</surName>
+      </individualName>
+    </creator>
+    <metadataProvider>
+      <organizationName>LTER Network Office</organizationName>
+      <address>
+        <deliveryPoint>UNM Biology Department, MSC03-2020</deliveryPoint>
+        <deliveryPoint>1 University of New Mexico</deliveryPoint>
+        <city>Albuquerque</city>
+        <administrativeArea>NM</administrativeArea>
+        <postalCode>87131-0001</postalCode>
+        <country>USA</country>
+      </address>
+      <phone phonetype="voice">505 277 2535</phone>
+      <phone phonetype="fax">505 277 2541</phone>
+      <electronicMailAddress>tech-support@lternet.edu</electronicMailAddress>
+      <onlineUrl>http://www.lternet.edu</onlineUrl>
+    </metadataProvider>
+    <pubDate>2006</pubDate>
+    <language>english</language>
+    <abstract>
+      <para>This data package consists of Daily Water Sample Nutrient Data for North Inlet
+                Estuary, South Carolina, from 1978 to 1992, North Inlet LTER. Its purpose is to
+                establish a long term data base on the nutrient dynamics of a salt marsh estuarine
+                system. This data can be used in correlation with a number of other estuarine data
+                sets to obtain a broader definition of the over all estuarine ecosystem.</para>
+    </abstract>
+    <keywordSet>
+      <keyword keywordType="theme">nutrient dynamics</keyword>
+      <keyword keywordType="place">North Inlet Estuary</keyword>
+      <keyword keywordType="place">Baruch Institute</keyword>
+      <keyword keywordType="place">Georgetown, South Carolina</keyword>
+    </keywordSet>
+    <intellectualRights>
+      <section>
+        <title>LTER Network Data Access Requirements</title>
+        <para> The access to all LTER data is subject to requirements set forth by this
+                    policy document to enable data providers to track usage, evaluate its impact in
+                    the community, and confirm users' acceptance of the terms of acceptable use.
+                    These requirements are standardized across the LTER Network to provide
+                    contractual exchange of data between Site Data Providers, Network Data
+                    Providers, and Data Users that can be encoded into electronic form and exchanged
+                    between computers. This will allow direct access to data via a common portal
+                    once these requirements have been fulfilled. The following information may be
+                    required directly or by proxy prior to the transference of any data object: <itemizedlist>
+            <listitem>
+              <para> Registration </para>
+            </listitem>
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para> Name </para>
+                </listitem>
+                <listitem>
+                  <para> Affiliation </para>
+                </listitem>
+                <listitem>
+                  <para> Email address </para>
+                </listitem>
+                <listitem>
+                  <para> Full Contact Info </para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+            <listitem>
+              <para> Acceptance of the General Public Use Agreement or Restricted Data
+                                Use Agreement, as applicable </para>
+            </listitem>
+            <listitem>
+              <para> A Statement of Intended Use that is compliant with the above
+                                agreements. Such statements may be made submitted explicitly or made
+                                implicitly via the data access portal interface. </para>
+            </listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      <section>
+        <title>Conditions of Data Use</title>
+        <para> The re-use of scientific data has the potential to greatly increase
+                    communication, collaboration and synthesis within and among disciplines, and
+                    thus is fostered, supported and encouraged. Permission to use this dataset is
+                    granted to the Data User free of charge subject to the following terms: <itemizedlist>
+            <listitem>
+              <para> Acceptable Use. Use of the dataset will be restricted to
+                                academic, research, educational, government, recreational, or other
+                                not-for-profit professional purposes. The Data User is permitted to
+                                produce and distribute derived works from this dataset provided that
+                                they are released under the same license terms as those accompanying
+                                this Data Set. Any other uses for the Data Set or its derived
+                                products will require explicit permission from the dataset owner.
+                            </para>
+            </listitem>
+            <listitem>
+              <para> Redistribution. The data are provided for use by the Data User.
+                                The metadata and this license must accompany all copies made and be
+                                available to all users of this Data Set. The Data User will not
+                                redistribute the original Data Set beyond this collaboration sphere.
+                            </para>
+            </listitem>
+            <listitem>
+              <para> Citation. It is considered a matter of professional ethics to
+                                acknowledge the work of other scientists. Thus, the Data User will
+                                properly cite the Data Set in any publications or in the metadata of
+                                any derived data products that were produced using the Data Set.
+                                Citation should take the following general form: Creator, Year of
+                                Data Publication, Title of Dataset, Publisher, Dataset identifier.
+                            </para>
+            </listitem>
+            <listitem>
+              <para> Acknowledgement. The Data User should acknowledge any
+                                institutional support or specific funding awards referenced in the
+                                metadata accompanying this dataset in any publications where the
+                                Data Set contributed significantly to its content. Acknowledgements
+                                should identify the supporting party, the party that received the
+                                support, and any identifying information such as grant numbers.
+                            </para>
+            </listitem>
+            <listitem>
+              <para> Notification. The Data User will notify the Data Set Contact when
+                                any derivative work or publication based on or derived from the Data
+                                Set is distributed. The Data User will provide the data contact with
+                                two reprints of any publications resulting from use of the Data Set
+                                and will provide copies, or on-line access to, any derived digital
+                                products. Notification will include an explanation of how the Data
+                                Set was used to produce the derived work. </para>
+            </listitem>
+            <listitem>
+              <para> Collaboration. The Data Set has been released in the spirit of
+                                open scientific collaboration. Data Users are thus strongly
+                                encouraged to consider consultation, collaboration and/or
+                                co-authorship with the Data Set Creator. </para>
+            </listitem>
+          </itemizedlist> By accepting this Data Set, the Data User agrees to abide by the
+                    terms of this agreement. The Data Owner shall have the right to terminate this
+                    agreement immediately by written notice upon the Data User's breach of, or
+                    non-compliance with, any of its terms. The Data User may be held responsible for
+                    any misuse that is caused or encouraged by the Data User's failure to abide by
+                    the terms of this agreement. </para>
+      </section>
+      <section>
+        <title>Disclaimer</title>
+        <para> While substantial efforts are made to ensure the accuracy of data and
+                    documentation contained in this Data Set, complete accuracy of data and metadata
+                    cannot be guaranteed. All data and metadata are made available "as is". The Data
+                    User holds all parties involved in the production or distribution of the Data
+                    Set harmless for damages resulting from its use or interpretation. </para>
+      </section>
+    </intellectualRights>
+    <coverage>
+      <geographicCoverage>
+        <geographicDescription>North Inlet encompasses about 2,630 hectares of tidal marshes
+                    and wetlands near Georgetown, South Carolina, USA. North Inlet-Winyah Bay
+                    features high quality, ocean-dominated waters and salt marshes in North Inlet,
+                    contrasting with the brackish waters and marshes of Winyah Bay. The bay estuary
+                    is dominated by riverine discharges from a watershed impacted by agricultural,
+                    municipal and industrial development. Former rice fields and canals provide
+                    another system for study within the Reserve. The Debidue site is located at the
+                    confluence of Town Creek and Debidue Creek. The Bread and Butter site is located
+                    along the western shoreline of Town Creek adjacent to the mouth of Clambank
+                    Creek. Town Creek water samples -- 33.19'38" Lat., 79.10'0" Long. Clambank Creek
+                    water samples -- 33.20'0" Lat., 79.11'33" Long. Oyster Landing water samples in
+                    Crab Haul Creek -- 33.21'2" Lat., 79.11'27" Long.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-79.2936</westBoundingCoordinate>
+          <eastBoundingCoordinate>-79.1002</eastBoundingCoordinate>
+          <northBoundingCoordinate>33.357</northBoundingCoordinate>
+          <southBoundingCoordinate>33.1925</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <temporalCoverage>
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>1978-09-01</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>1992-04-21</calendarDate>
+          </endDate>
+        </rangeOfDates>
+      </temporalCoverage>
+    </coverage>
+    <maintenance>
+      <description>
+        <section>
+          <title>Entry verification</title>
+          <para> Known Nutrient parameters are entered into a "Raw Nutrient Run Book" for
+                        every tray of samples that are run. This book contains parameters, and
+                        pertinent notes associated with each tray. The following parameters are in
+                        the "Raw Nutrient Run Book": Tray Number Chemistry Std. Cup.# Std. Cal.#
+                        Dummy Std. Conc. Sample Chem.# (sample ID) Drift Dilution This book is
+                        basically a NOTE book for the chemist running the samples. When a tray is
+                        run, raw peak height numbers are written onto the ticker tape or printout,
+                        which is kept in the chemistry lab. This data is hand copied into a "Master
+                        Nutrient Raw Peak Height Book". ** NOTE ** (There is no re-editing of the
+                        data that is written into the "Master Nutrient Raw Peak Height Book".) The
+                        ticker tape and "Raw Nutrient Run Book" are kept in the fire proof cabinet
+                        at the Baruch Marine Lab, Georgetown, SC. A "Nutrient Parameter Book" and
+                        the "Master Nurtient Raw Peak Height Book" are kept in the chemistry lab at
+                        the Baruch Marine Lab, Georgetown SC. The following data is in the "Nutrient
+                        Parameter Book": Tray# Average Peak Height of standard Cups Oxidizer Reagent
+                        Blank Drift Standard Concentration This book is necessary to run the
+                        correction programs. At this point, a Data Manager entered the information
+                        from the "Master Nutrient Raw Peak Height Book" into a CMS file. This data,
+                        once entered was verified for typographical errors by the Data Manager.
+                    </para>
+        </section>
+        <section>
+          <title>Date of last update while at North Inlet LTER</title>
+          <para>October 1992</para>
+        </section>
+        <section>
+          <title>Last modification at LTER Network Office</title>
+          <para>Individual data files (LTER.NIN.DWS.1978.txt, LTER.NIN.DWS.1979.txt,
+                        LTER.NIN.DWS.1980.txt, LTER.NIN.DWS.1981.txt, LTER.NIN.DWS.1982.txt,
+                        LTER.NIN.DWS.1983.txt, LTER.NIN.DWS.1984.txt, LTER.NIN.DWS.1985.txt,
+                        LTER.NIN.DWS.1986.txt, LTER.NIN.DWS.1987.txt, LTER.NIN.DWS.1988.txt,
+                        LTER.NIN.DWS.1989.txt, LTER.NIN.DWS.1990.txt, LTER.NIN.DWS.1991.txt,
+                        LTER.NIN.DWS.1992.txt) were concatenated into a single file spanning the
+                        dates from 1978 to 1992. Original fixed column format was changed to comma
+                        separated value format. These changes occured in March 2012</para>
+        </section>
+      </description>
+    </maintenance>
+    <contact>
+      <positionName>Information Manager</positionName>
+      <organizationName>LTER Network Office</organizationName>
+      <address>
+        <deliveryPoint>UNM Biology Department, MSC03-2020</deliveryPoint>
+        <deliveryPoint>1 University of New Mexico</deliveryPoint>
+        <city>Albuquerque</city>
+        <administrativeArea>NM</administrativeArea>
+        <postalCode>87131-0001</postalCode>
+        <country>USA</country>
+      </address>
+      <phone phonetype="voice">505 277 2535</phone>
+      <phone phonetype="fax">505 277 2541</phone>
+      <electronicMailAddress>tech-support@lternet.edu</electronicMailAddress>
+      <onlineUrl>http://www.lternet.edu</onlineUrl>
+    </contact>
+    <publisher>
+      <organizationName>LTER Network Office</organizationName>
+      <address>
+        <deliveryPoint>UNM Biology Department, MSC03-2020</deliveryPoint>
+        <deliveryPoint>1 University of New Mexico</deliveryPoint>
+        <city>Albuquerque</city>
+        <administrativeArea>NM</administrativeArea>
+        <postalCode>87131-0001</postalCode>
+        <country>USA</country>
+      </address>
+      <phone phonetype="voice">505 277 2535</phone>
+      <phone phonetype="fax">505 277 2541</phone>
+      <electronicMailAddress>tech-support@lternet.edu</electronicMailAddress>
+      <onlineUrl>http://www.lternet.edu</onlineUrl>
+    </publisher>
+    <pubPlace>Long Term Ecological Research Network Office</pubPlace>
+    <dataTable id="dailyWaterSample">
+      <entityName>DailyWaterSample-NIN-LTER-1978-1992</entityName>
+      <entityDescription>Daily Water Sample Nutrient Data for North Inlet Estuary, South Carolina, from 1978 to 1992, North Inlet LTER</entityDescription>
+      <physical>
+        <objectName>LTER.NIN.DWS.csv</objectName>
+        <size unit="byte">924291</size>
+        <dataFormat>
+          <textFormat>
+            <numHeaderLines>1</numHeaderLines>
+            <recordDelimiter>\r\n</recordDelimiter>
+            <physicalLineDelimiter>\n</physicalLineDelimiter>
+            <attributeOrientation>column</attributeOrientation>
+            <simpleDelimited>
+              <fieldDelimiter>,</fieldDelimiter>
+            </simpleDelimited>
+          </textFormat>
+        </dataFormat>
+        <distribution>
+          <online>
+            <url function="download">https://pasta-s.lternet.edu/package/data/eml/knb-lter-nin/19/1/67e99349d1666e6f4955e9dda42c3cc2</url>
+          </online>
+          <access authSystem="https://pasta.lternet.edu/authentication"
+            order="allowFirst" system="https://pasta.lternet.edu">
+            <allow>
+              <principal>uid=NIN,o=LTER,dc=ecoinformatics,dc=org</principal>
+              <permission>all</permission>
+            </allow>
+            <allow>
+              <principal>public</principal>
+              <permission>read</permission>
+            </allow>
+          </access>
+        </distribution>
+      </physical>
+      <coverage>
+        <geographicCoverage>
+          <geographicDescription>North Inlet encompasses about 2,630 hectares of tidal marshes
+                  and wetlands near Georgetown, South Carolina, USA. North Inlet-Winyah Bay
+                  features high quality, ocean-dominated waters and salt marshes in North Inlet,
+                  contrasting with the brackish waters and marshes of Winyah Bay. The bay estuary
+                  is dominated by riverine discharges from a watershed impacted by agricultural,
+                  municipal and industrial development. Former rice fields and canals provide
+                  another system for study within the Reserve. The Debidue site is located at the
+                  confluence of Town Creek and Debidue Creek. The Bread and Butter site is located
+                  along the western shoreline of Town Creek adjacent to the mouth of Clambank
+                  Creek. Town Creek water samples -- 33.19'38" Lat., 79.10'0" Long. Clambank Creek
+                  water samples -- 33.20'0" Lat., 79.11'33" Long. Oyster Landing water samples in
+                  Crab Haul Creek -- 33.21'2" Lat., 79.11'27" Long.</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-79.2936</westBoundingCoordinate>
+            <eastBoundingCoordinate>-79.1002</eastBoundingCoordinate>
+            <northBoundingCoordinate>33.357</northBoundingCoordinate>
+            <southBoundingCoordinate>33.1925</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <geographicCoverage>
+          <geographicDescription>Town Creek 33.19'38" Lat., 79.10'0" Long.</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-79.1000</westBoundingCoordinate>
+            <eastBoundingCoordinate>-79.1000</eastBoundingCoordinate>
+            <northBoundingCoordinate>33.2005</northBoundingCoordinate>
+            <southBoundingCoordinate>33.2005</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <geographicCoverage>
+          <geographicDescription>Clambank Creek 33.20'0" Lat., 79.11'33" Long.</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-79.1192</westBoundingCoordinate>
+            <eastBoundingCoordinate>-79.1192</eastBoundingCoordinate>
+            <northBoundingCoordinate>33.2000</northBoundingCoordinate>
+            <southBoundingCoordinate>33.2000</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <geographicCoverage>
+          <geographicDescription>Oyster Landing in
+                  Crab Haul Creek 33.21'2" Lat., 79.11'27" Long.</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-79.1175</westBoundingCoordinate>
+            <eastBoundingCoordinate>-79.1175</eastBoundingCoordinate>
+            <northBoundingCoordinate>33.2106</northBoundingCoordinate>
+            <southBoundingCoordinate>33.2106</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <temporalCoverage>
+          <rangeOfDates>
+            <beginDate>
+              <calendarDate>1978-09-01</calendarDate>
+            </beginDate>
+            <endDate>
+              <calendarDate>1992-04-21</calendarDate>
+            </endDate>
+          </rangeOfDates>
+        </temporalCoverage>
+      </coverage>
+      <methods>
+        <methodStep>
+          <description>
+            <section>
+              <title>Research methods</title>
+              <para> The Daily Water Sample program was started in 1978 to moniter the
+                                daily nutrient cycling within the North Inlet Estuary System. The
+                                original sampling site was at Town Creek. Later samples were taken
+                                at Clambank and Oyster Landing as well. Samples were taken 365 days
+                                a year at the same time every day, approximately 10:00 AM EST. The
+                                samples were filtered at the Lab to separate the particulates from
+                                the water. The filtered water was then run through a colorimeter and
+                                the nutrient value peak heights derived were recorded on a ticker
+                                tape type printout. These values were recorded into a master
+                                nutrient note book, and entered onto a CMS file by the Data
+                                Management Department at the lab. The filters that were used in the
+                                filtering process were first weighted, burnt off and cleaned, then
+                                they were weighted with the particulates dried onto them. These
+                                filters were then cooked again for 24 hours at 450 degrees. This was
+                                done to determine the inorganic particulates that were left. All
+                                data files have since been stored on a SUN workstation and backed up
+                                on 8mm tapes at both the field lab and the data management office at
+                                the University of South Carolina.</para>
+              <para>Analysis methods for the individual variables are described
+                                below:</para>
+            </section>
+            <section>
+              <title>Ortho-Phosphate</title>
+              <para>The basic method was the Technicon Industrial Method No. 155-71W
+                                (1973), which was a modification of the Murphy and Riley (1962)
+                                single solution method. The method depended on the formation of a
+                                phospomolybdate blue complex, the color of which is read at a
+                                wavelength of 880 mm.</para>
+            </section>
+            <section>
+              <title>Sulfate</title>
+              <para>For this automated procedure for sulfate (Technicon Industrial
+                                Method No. 118-71W/B), the sample was first passed through a
+                                cation-exchange column to remove interferences. The sample
+                                containing sulfate was then reacted with barium chloride at a pH of
+                                2.5-3.0 to form barium sulfate. Excess barium reacted with
+                                methylthmol blue to form a blue-colored was gray; if it was all
+                                chelated with barium, the color was blue. Initially, the barium
+                                chloride and methylthymol blue were equimolar and equivalent to the
+                                highest concentration of sulfate ion expected; thus the amount of
+                                uncomplexed methylthymol blue, measured at 460 mm, was equal to the
+                                sulfate present.</para>
+            </section>
+            <section>
+              <title>Nitrate/Nitrite</title>
+              <para>The basic method was Technicon Industrial Method No. 158-71W/B,
+                                which utilized the reaction in which nitrate was reduced to nitrite
+                                by a copper- cadmium reductor column. The nitrite ion then reacted
+                                with sulfanilamide under acidic conditions to form a diazo compound.
+                                This compound then coupled with N-1-napthylethylenediamine
+                                dihydrochloride to form a reddish-purple azo dye.</para>
+            </section>
+            <section>
+              <title>Chlorides</title>
+              <para>The basic method was Technicon Industrial Method No. 99-70W/B.
+                                This automated procedure for the determination of chloride depended
+                                upon the the liberation of thiocyanate ion from mercuric thiocyanate
+                                by the formation of unionized but soluble mercuric chloride. In the
+                                presence of ferric ion, the liberated thiocyanate formed a highly
+                                colored ferric thiocyanate proportional to the original chloride
+                                concentration.</para>
+            </section>
+            <section>
+              <title>Ammonia</title>
+              <para>This method was from "The Automated Analysis of Nutrients in
+                                Seawater: A Manual of Techniques" by Gilbert and Loder (1977), a
+                                Woods Hole Oceanographic Institution publication No. WHO-77-47. This
+                                method was dependent upon the Berthelot Reaction, during which the
+                                formation of a blue colored compound closely related to indophenol
+                                occurred when the solution of an ammonium salt was added to sodium
+                                phenoxide, followed by the addition of sodium hypochlorite. A
+                                solution of potassium sodium tartrate and sodium citrate was added
+                                to the sample stream to eliminate the precipitation of the
+                                hydroxides of calcium and magnesium. Total Nitrogen - Total
+                                Phosphorus The procedure consisted of an alkaline persulfate
+                                oxidation followed by automated analysis for nitrogen (as nitrate)
+                                and phosphorus (as phosphate) on a Technicon Auto Analyzer. With
+                                alkaline persulfate digestion, all nitrogen in the sample was
+                                oxidized to nitrate, which was then reduced by cadmium and analyzed
+                                as nitrite. The precision and recovery of this method compared
+                                favorably with a Kjeldahl procedure (D'Elia et al., 1977). The main
+                                advantage of the persulfate oxidation was the speed and convenience
+                                with which it was accomplished. Unlike the Kjeldahl method, which
+                                recovered only organic and NH4 - nitrogen, the persulfate oxidation
+                                also included NO3 and NO2 nitrogen. The procedure described by
+                                D'Elia (1977) has been so the digest could be analyzed using an
+                                autoanalyzer (Gilbert et al., 1977). This semi- automated procedure
+                                combined the persulfate oxidation with automated nitrate and
+                                phosphate analysis to provide simultaneous analysis for total
+                                persulfate nitrogen (TPN) and total persulfate phosphorus (TPP).
+                                Gilbert's procedure was further modified to use a smaller sample
+                                size so that the digestion flask could double as the sampler tray
+                                cup (Loder, 1978). Using this method, many samples could be run
+                                quickly with a minimum of handling. Carbon (prior to September 1989)
+                                Particulate Carbon 20 ml of daily water sample was filtered through
+                                a precombusted (24 hr @ 450 C) Whatman GFF 0.7 micron glass filter.
+                                The filter was waved over concentrated HCl to eliminate inorganic
+                                carbon, then placed in a precombusted ampule and frozen. Batches
+                                were dried at 60 C for 48 hrs. 0.1 gr of precombusted (48 hr @ 750
+                                C) reagent grade CuO was added to each ampule, the ampule was then
+                                purged with pure oxygen and sealed, using an Oceanigraphics
+                                International Purging and Sealing Unit #524PS. Ampules were etched,
+                                then heated to 580 C for 4 hrs. Sorted ampules were then analyzed on
+                                an Oceanigraphics International #524C TOC Analyzer by comparing
+                                infrared absorption peak heights (Horiba PIR 2000) on an LDC strip
+                                chart recorder with those of KHP (Potassium Hydrogen Phthalate)
+                                standards. Standards were prepared by microsyringing a series of
+                                volumes of a KHP solution into ampules and processing them as
+                                samples. Reagent blanks were subtracted and average concentration of
+                                duplicate samples was calculated for each DWS site. Dissolved
+                                Organic Carbon The daily water sample was filtered through a
+                                precombusted (24 hr @ 450 C) Whatman GFF 0.7 micron glass filter. An
+                                aliquot of filtrate was refrigerated. Samples were purged of
+                                inorganic carbon by adding 25percent phosphoric acid to lower the pH
+                                to 2 and bubbling for 10 minutes with pure oxygen. The pH was then
+                                neutralized using ammonium hydroxide to protect the oxidizing
+                                catalyst. Every 5 minutes, using a Hamilton CR-700-200 spring loaded
+                                syringe, a 100 microliter sample was injected into a Beckman 915A
+                                TOC Analyzer and infrared absorption peak heights were compared to
+                                those of KHP standard solutions to calculate carbon concentration.
+                                Carbon (after September 1989) Dissolved Organic Carbon Water samples
+                                were filtered through a precombusted Whatman GFF 7.0 micron glass
+                                filter. Samples were purged of inorganic carbon by adding 10 percent
+                                HCl and sparged with ultra zero grade air. A 40 microliter aliquot
+                                was injected, via a autosampler, into a Shimadzu TOC-500 organic
+                                carbon analyzer. A non-dispersive infrared gas analyzer was utilized
+                                to measure the carbon dioxide produced and samples were run in
+                                triplicate with means reported. ***NOTE*** A Whatman GFF 7.0 micron
+                                glass fiber filter was used throughout the LTER Daily Water Sample
+                                analysis. </para>
+            </section>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <section>
+              <title>Experimental Design</title>
+              <para> Water samples are taken daily at three stations in the North
+                                Inlet Estuary System at 10:00 AM EST, 365 days a year. </para>
+            </section>
+          </description>
+        </methodStep>
+      </methods>
+      <attributeList>
+        <attribute id="dailyWaterSample.DATE">
+          <attributeName>DATE</attributeName>
+          <attributeLabel>Date</attributeLabel>
+          <attributeDefinition>Date when sample collected</attributeDefinition>
+          <storageType typeSystem="http://www.w3.org/2001/XMLSchema-datatypes">date</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>YYYY-MM-DD</formatString>
+            </dateTime>
+          </measurementScale>
+        </attribute>
+        <attribute id="dailyWaterSample.transect">
+          <attributeName>transect</attributeName>
+          <attributeLabel>transect</attributeLabel>
+          <attributeDefinition>The transect identifier string</attributeDefinition>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <enumeratedDomain>
+                  <codeDefinition>
+                    <code>TC</code>
+                    <definition>Town Creek</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>CB</code>
+                    <definition>Clambank</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>OL</code>
+                    <definition>Oyster Landing</definition>
+                  </codeDefinition>
+                </enumeratedDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute id="dailyWaterSample.water_temp">
+          <attributeName>water_temp</attributeName>
+          <attributeLabel>Water Temperature</attributeLabel>
+          <attributeDefinition>Temperature of the water </attributeDefinition>
+          <measurementScale>
+            <interval>
+              <unit>
+                <standardUnit>celsius</standardUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0 </minimum>
+                  <maximum exclusive="false">50</maximum>
+                </bounds>
+              </numericDomain>
+            </interval>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.SAL">
+          <attributeName>SAL</attributeName>
+          <attributeLabel>Salinity</attributeLabel>
+          <attributeDefinition>Salinity</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>partPerThousand</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">36</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.TNW">
+          <attributeName>TNW</attributeName>
+          <attributeLabel>Total Nitrogen Whole</attributeLabel>
+          <attributeDefinition>Total Nitrogen Whole</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0 </minimum>
+                  <maximum exclusive="false">129</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>99.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.TNF">
+          <attributeName>TNF</attributeName>
+          <attributeLabel>Total Nitrogen Filtered</attributeLabel>
+          <attributeDefinition>Total Nitrogen Filtered</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">133</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>99.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.TPW">
+          <attributeName>TPW</attributeName>
+          <attributeLabel>Total Phosphorus Whole</attributeLabel>
+          <attributeDefinition>Total Phosphorus Whole</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">10.6</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.TPF">
+          <attributeName>TPF</attributeName>
+          <attributeLabel>Total Phosphorus Filtered</attributeLabel>
+          <attributeDefinition>Total Phosphorus Filtered </attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">10.4</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.POP">
+          <attributeName>POP</attributeName>
+          <attributeLabel>OrthoPhosphate</attributeLabel>
+          <attributeDefinition>OrthoPhosphate concentration</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.001</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">9.999</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.999</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.NHN">
+          <attributeName>NHN</attributeName>
+          <attributeLabel>Ammonia</attributeLabel>
+          <attributeDefinition>Ammonia Concentrate</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">31.7</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.NNN">
+          <attributeName>NNN</attributeName>
+          <attributeLabel>Nitrate/Nitrite</attributeLabel>
+          <attributeDefinition>Concentration of Nitrate/Nitrite </attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">9.32</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.99</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.CHEM">
+          <attributeName>CHEM</attributeName>
+          <attributeLabel>Chemistry Number</attributeLabel>
+          <attributeDefinition>Chemistry number </attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>micromolePerLiter</customUnit>
+              </unit>
+              <precision>1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">9.32</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-999</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.TOC">
+          <attributeName>TOC</attributeName>
+          <attributeLabel>Total Organic Carbon</attributeLabel>
+          <attributeDefinition>Total Organic Carbon</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>milligramsPerLiter</standardUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">22.6</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.DOC">
+          <attributeName>DOC</attributeName>
+          <attributeLabel>Dissolved Organic Carbon</attributeLabel>
+          <attributeDefinition>Dissolved Organic Carbon</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>milligramsPerLiter</standardUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">38.6</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="dailyWaterSample.POC">
+          <attributeName>POC</attributeName>
+          <attributeLabel>Particulate Organic Carbon</attributeLabel>
+          <attributeDefinition>Particulate Organic Carbon</attributeDefinition>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>milligramsPerLiter</standardUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">16.6</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-9.9</code>
+            <codeExplanation>missing value</codeExplanation>
+          </missingValueCode>
+        </attribute>
+      </attributeList>
+      <numberOfRecords>13176</numberOfRecords>
+    </dataTable>
+  </dataset>
+  <additionalMetadata>
+    <unexpectedElement>INVALID_TEXT</unexpectedElement>
+    <metadata>
+      <stmml:unitList xmlns="http://www.xml-cml.org/schema/stmml"
+        xmlns:sch="http://www.ascc.net/xml/schematron"
+        xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xml-cml.org/schema/stmml-1.1 http://nis.lternet.edu/schemas/eml/eml-2.1.0/stmml.xsd">
+        <stmml:unit abbreviation="ppt" constantToSI="0"
+          id="partPerThousand" multiplierToSI="0.001"
+          name="partPerThousand" parentSI="numberPerNumber" unitType="dimensionless">
+          <stmml:description>ratio of two quantities as parts per thousand
+                        (1:1000)</stmml:description>
+        </stmml:unit>
+        <stmml:unit abbreviation="μmol/L" constantToSI="0"
+          id="micromolePerLiter" multiplierToSI="0.001"
+          name="micromolePerLiter" parentSI="molePerMeterCubed" unitType="amountOfSubstanceConcentration">
+          <stmml:description>concentration, same magnitude as micromolar (for a dissolved
+                        constituent)</stmml:description>
+        </stmml:unit>
+      </stmml:unitList>
+    </metadata>
+  </additionalMetadata>
+  <additionalMetadata>
+    <metadata>
+      <replicationPolicy numberReplicas="1" replicationAllowed="true">
+        <preferredMemberNode>urn:node:mnTestADC</preferredMemberNode>
+      </replicationPolicy>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

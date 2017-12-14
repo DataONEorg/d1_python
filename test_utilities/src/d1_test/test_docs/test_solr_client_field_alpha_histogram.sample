@@ -8,7 +8,7 @@
   [
     "http://datadryad.org/profile/v3.1", 
     "http://datadryad.org/profile/v3.1", 
-    939, 
+    940, 
     "formatId:\"http\\://datadryad.org/profile/v3.1\""
   ], 
   [
@@ -56,7 +56,7 @@
   [
     "eml://ecoinformatics.org/eml-2.0.0", 
     "http://purl.org/ornl/schema/mercury/terms/v1.0", 
-    3250, 
+    3251, 
     "formatId:[\"eml\\://ecoinformatics.org/eml\\-2.0.0\" TO *]"
   ]
 ]

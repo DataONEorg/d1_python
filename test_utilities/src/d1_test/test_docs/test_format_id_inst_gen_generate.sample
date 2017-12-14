@@ -1,12 +1,12 @@
 [
-  "application/x-bzip2", 
-  "application/R", 
-  "-//ecoinformatics.org//eml-access-2.0.0beta4//EN", 
-  "image/svg xml", 
-  "application/x-bzip2", 
-  "audio/mpeg", 
-  "image/gif", 
-  "application/vnd.ms-excel.sheet.binary.macroEnabled.12", 
-  "http://purl.org/dryad/terms/", 
-  "application/x-fasta"
+  "http://www.nexml.org/2009", 
+  "video/quicktime", 
+  "http://www.w3.org/TR/rdfa-syntax", 
+  "application/postscript", 
+  "http://www.nexml.org/2009", 
+  "audio/x-wav", 
+  "application/octet-stream", 
+  "http://www.w3.org/TR/rdf-syntax-grammar", 
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+  "application/x-gzip"
 ]

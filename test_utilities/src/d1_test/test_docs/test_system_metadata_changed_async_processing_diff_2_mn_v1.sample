@@ -2,7 +2,7 @@
   <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <serialVersion>38</serialVersion>
     <identifier>PID_eudvrgeivqjd</identifier>
-    <formatId>audio/mpeg</formatId>
+    <formatId>audio/x-wav</formatId>
     <size>255</size>
     <checksum algorithm="SHA-1">3c80cdbdcae02ca7e72d3724072c2e42273b1ac5</checksum>
     <submitter>subj_h</submitter>

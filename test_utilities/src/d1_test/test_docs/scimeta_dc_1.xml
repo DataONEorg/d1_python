@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://ns.dataone.org/metadata/schema/onedcx/v1.0" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ns.dataone.org/metadata/schema/onedcx/v1.0 http://ns.dataone.org/metadata/schema/onedcx/v1.0/onedcx_v1.0.xsd">
+  <simpleDc>
+    <dcterms:type>package</dcterms:type>
+    <dcterms:creator>Minnesota Population Center</dcterms:creator>
+    <dcterms:title>IPUMS-International: Bolivia 1976 Census</dcterms:title>
+    <dcterms:identifier>ipumsi_6.3_bo_1976_DC.xml</dcterms:identifier>
+    <dcterms:subject>Census</dcterms:subject>
+    <dcterms:subject>Technical Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Group Quarters Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Geography Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Economic Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Utilities Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Dwelling Characteristics Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Constructed Household Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Other Variables -- HOUSEHOLD</dcterms:subject>
+    <dcterms:subject>Technical Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Constructed Family Interrelationship Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Demographic Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Fertility and Mortality Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Nativity and Birthplace Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Ethnicity and Language Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Education Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Work Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Migration Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Work: Occupation Variables -- PERSON</dcterms:subject>
+    <dcterms:subject>Work: Industry Variables -- PERSON</dcterms:subject>
+  </simpleDc>
+  <dcTerms>
+    <dcterms:dateSubmitted>2014-09-15</dcterms:dateSubmitted>
+    <dcterms:available>2014-07-01</dcterms:available>
+    <dcterms:abstract>IPUMS-International is an effort to inventory, preserve, harmonize, and disseminate census microdata from around the world. The project has collected the world's largest archive of publicly available census samples. The data are coded and documented consistently across countries and over time to facilitate comparative research. IPUMS-International makes these data available to qualified researchers free of charge through a web dissemination system. The IPUMS project is a collaboration of the Minnesota Population Center, National Statistical Offices, and international data archives. Major funding is provided by the U.S. National Science Foundation and the Demographic and Behavioral Sciences Branch of the National Institute of Child Health and Human Development. Additional support is provided by the University of Minnesota Office of the Vice President for Research, the Minnesota Population Center, and Sun Microsystems. Detailed metadata will be found in ipumsi_6.3_bo_1976_ddic.html within the Data Package. The related metadata describes the content of the extraction of the specified sample from the IPUMS International on-line extraction system.</dcterms:abstract>
+    <dcterms:tableOfContents>Record type; Country; Year; IPUMS sample identifier; Household serial number; Number of person records in the household; Household weight; Subsample number; Group quarters status; Number of unrelated persons; Urban-rural status; Continent and region of country; 1st subnational geographic level, world [consistent boundaries over time]; Department, Bolivia [Level 1; consistent boundaries over time]; Province, Bolivia [Level 2; inconsistent boundaries, harmonized by name]; Ownership of dwelling [general version]; Ownership of dwelling [detailed version]; Electricity; Water supply; Sewage; Number of rooms; Number of bedrooms; Kitchen or cooking facilities; Toilet; Bathing facilities; Floor material; Wall or building material; Roof material; Household classification; Number of families in household; Number of married couples in household; Number of mothers in household; Number of fathers in household; Head's location in household; Dwelling number; Number of persons in household; Dwelling created by splitting apart a large dwelling or household; Department; Urban-rural; Type of dwelling; Condition of occupancy; Roof; Walls; Floors; Water supply; Water source; Use of sanitary services; Drains-sanitary services; Shower, bathtub; Electricity; Rooms; Bedrooms; Kitchen; Ownership; Language spoken in family; Dwelling type; Record type [person version]; Country [person version]; Year [person version]; IPUMS sample identifier [person version]; Household serial number [person version]; Person number; Person weight; Mother's location in household; Father's location in household; Spouse's location in household; Rule for linking parent; Rule for linking spouse; Probable stepmother; Probable stepfather; Man with more than one wife linked; Woman is second or higher order wife; Family unit membership; Number of own family members in household; Number of own children in household; Number of own children under age 5 in household; Age of eldest own child in household; Age of youngest own child in household; Relationship to household head [general version]; Relationship to household head [detailed version]; Age; Age, grouped into intervals; Sex; Marital status [general version]; Marital status [detailed version]; Children ever born; Children surviving; Month of last birth; Year of last birth; Nativity status; Country of birth; Province of birth, Bolivia; Speaks indigenous language; Language spoken, Bolivia; School attendance; Literacy; Educational attainment, international recode [general version]; Educational attainment, international recode [detailed version]; Years of schooling; Educational attainment, Bolivia; Employment status [general version]; Employment status [detailed version]; Occupation, ISCO general; Occupation, unrecoded; Industry, general recode; Industry, unrecoded; Class of worker [general version]; Class of worker [detailed version]; Migration status, 5 years; Country of residence 5 years ago; Province of residence 5 years ago, Bolivia; Person number (within household); Relationship; Sex; Age; Province or country of birth; Province or country of usual residence; Residence five years ago; Native language spoken; Literacy; School attendance; Education level; Activity last week; Occupation, 2 digits; Industry; Category of worker; Children born alive; Children surviving; Month of last child born; Year of last child born; Marital Status; </dcterms:tableOfContents>
+    <dcterms:spatial>Bolivia</dcterms:spatial>
+    <dcterms:spatial xsi:type="dcterms:Box">northlimit=-9.679191; eastlimit=-57.521118; southlimit=-22.901109; westlimit=-69.656191; name=Bolivia;</dcterms:spatial>
+    <dcterms:temporal>1976</dcterms:temporal>
+    <dcterms:references>http://international.ipums.org</dcterms:references>
+    <dcterms:hasPart>ipumsi_6.3_bo_1976_ddic.xml</dcterms:hasPart>
+    <dcterms:hasPart>ipumsi_6.3_bo_1976_ddic_xml.html</dcterms:hasPart>
+    <dcterms:accessRights>IPUMS-International distributes integrated microdata of individuals and households only by agreement of collaborating national statistical offices and under the strictest of confidence. Before data may be distributed to an individual researcher, an electronic license agreement must be signed and approved. (see http://international.ipums.org)</dcterms:accessRights>
+    <dcterms:modified>2014-12-10T00:00:00</dcterms:modified>
+  </dcTerms>  
+</metadata>
