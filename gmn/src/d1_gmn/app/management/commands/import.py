@@ -147,6 +147,10 @@ class Command(django.core.management.base.BaseCommand):
     parser.add_argument(
       '--only-log', action='store_true', help='Only import event logs'
     )
+    parser.add_argument(
+      '--max-obj', type=int, action='store',
+      help='Limit number of objects to import'
+    )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
   def handle(self, *args, **opt):
@@ -203,6 +207,12 @@ class Command(django.core.management.base.BaseCommand):
     )
     start_sec = time.time()
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
+      if self._opt['max_obj'] is not None and i >= self._opt['max_obj']:
+        self._events.log_and_count(
+          'Limiting import to {} objects (--max-obj)'
+          .format(self._opt['max_obj'])
+        )
+        break
       if not d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
         if isinstance(
             sysmeta_pyxb, d1_common.types.exceptions.DataONEException
