@@ -285,8 +285,10 @@ def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
   d1_gmn.app.event_log.log_read_event(pid, request)
-  return d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
-    request, pid
+  return django.http.HttpResponse(
+    d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
+      request, pid
+    ), d1_common.const.CONTENT_TYPE_XML
   )
 
 

@@ -126,14 +126,11 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   sysmeta_pyxb = d1_gmn.app.sysmeta.model_to_pyxb(pid)
   sysmeta_xml_str = d1_gmn.app.sysmeta.serialize(sysmeta_pyxb)
   if is_v1_api(request):
-    sysmeta_xml_str = d1_common.type_conversions.str_to_v1_str(sysmeta_xml_str)
+    return d1_common.type_conversions.str_to_v1_str(sysmeta_xml_str)
   elif is_v2_api(request):
-    sysmeta_xml_str = d1_common.type_conversions.str_to_v2_str(sysmeta_xml_str)
+    return d1_common.type_conversions.str_to_v2_str(sysmeta_xml_str)
   else:
     assert False, u'Unable to determine API version'
-  return django.http.HttpResponse(
-    sysmeta_xml_str, d1_common.const.CONTENT_TYPE_XML
-  )
 
 
 def http_response_with_boolean_true_type():
