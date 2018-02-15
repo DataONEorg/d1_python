@@ -24,8 +24,8 @@ Usage:
 import d1_scimeta.xml_schema
 try:
   d1_scimeta.xml_schema.validate(format_id, xml_str)
-except lxml.etree.DocumentInvalid as e:
-  # err
+except d1_scimeta.xml_schema.SciMetaValidationError as e:
+  ...
 """
 import inspect
 import json
