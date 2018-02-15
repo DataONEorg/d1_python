@@ -245,10 +245,6 @@ Check that there are no package version conflicts:
 
     $ pip check
 
-Some sample files contain the version tag and must be updated when the version changes.  
-
-    $ pytest -xvs --sample-ask
-
 Commit and push the changes, and check the build on Travis.
 
 #### Building the release packages

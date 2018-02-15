@@ -28,7 +28,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.cli',
-    version='2.4.1',
+    version='2.4.2',
     description='Command-Line Interface (CLI) for DataONE',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -37,8 +37,8 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.4.1',
-      'dataone.libclient == 2.4.1',
+      'dataone.common == 2.4.2',
+      'dataone.libclient == 2.4.2',
       #
       'requests == 2.18.4',
     ],

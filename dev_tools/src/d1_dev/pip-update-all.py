@@ -32,7 +32,11 @@ import os
 import subprocess
 import sys
 
-NO_UPGRADE_LIST = ['Django']
+NO_UPGRADE_LIST = [
+  'Django', # We're on the last version that supports Python 2.
+  'pygobject', # build error
+  'zope.interface', # build error
+]
 
 
 def main():
@@ -44,7 +48,12 @@ def main():
   freeze_str = subprocess.check_output(['pip', 'freeze'])
 
   for line_str in freeze_str.splitlines():
-    pkg_str, ver_str = line_str.strip().split('==')
+    print '#### {}'.format(line_str)
+    try:
+      pkg_str, ver_str = line_str.strip().split('==')
+    except ValueError:
+      print 'Skipped'
+      continue
     if pkg_str in NO_UPGRADE_LIST:
       logging.warn(
         'Skipped package in NO_UPGRADE_LIST. pkg_str="{}"'.format(pkg_str)
