@@ -254,3 +254,10 @@ def disable_management_command_concurrent_instance_check():
       'd1_gmn.app.management.commands._util.exit_if_other_instance_is_running'
   ):
     yield
+
+
+@contextlib2.contextmanager
+def disable_sciobj_store_write():
+  """"""
+  with mock.patch('d1_gmn.app.views.assert_sysmeta.sanity'):
+    yield

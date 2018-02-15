@@ -64,6 +64,21 @@ def create(version_tag, sciobj_str, sysmeta_xml):
       )
 
 
+def create_stream(version_tag, sciobj_stream, sysmeta_xml):
+  """Call MNStorage.create()"""
+  with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+    with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
+      return _get_resp_dict(
+        django.test.Client().post(
+          d1_common.url.joinPathElements('/', version_tag, 'object'), {
+            'pid': xml.get_element_text('identifier'),
+            'object': ('content.bin', sciobj_stream),
+            'sysmeta': ('sysmeta.xml', StringIO.StringIO(sysmeta_xml)),
+          }
+        )
+      )
+
+
 def get(version_tag, pid):
   """Call MNRead.get()"""
   return _get_resp_dict(
