@@ -233,7 +233,7 @@ def _print_skip_list():
 
 
 def _open_error_in_pycharm(call):
-  """Attempt to open error locations in PyCharm. Use with -x / --exitfirst"""
+  """Attempt to open error locations in PyCharm. Use with --exitfirst (-x)"""
   # src_path, src_line, func_name = rep.location
   src_path = call.excinfo.traceback[-1].path
   src_line = call.excinfo.traceback[-1].lineno + 1
