@@ -134,7 +134,8 @@ def create_bagit_stream(dir_name, payload_info_list):
 
   - {dir_name} is the name of the root directory in the zip file, under which
   all the files are placed (avoids "zip bombs").
-  - payload_info_dict keys: pid, filename, iter, checksum, checksum_algorithm
+  - payload_info_list: A list of payload_info_dict, each dict describing a file.
+    keys: pid, filename, iter, checksum, checksum_algorithm
   - If the filename is None, the pid is used for the filename.
   """
   zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)

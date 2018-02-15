@@ -56,23 +56,3 @@ class MemberNodeClient_2_0(
     self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
       self._api_major, self._api_minor
     )
-
-  # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
-  # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
-
-  @d1_common.util.utf8_to_unicode
-  def updateSystemMetadataResponse(
-      self, pid, sysmeta_pyxb, vendorSpecific=None
-  ):
-    mmp_dict = {
-      'pid': pid.encode('utf-8'),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
-    }
-    return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
-
-  @d1_common.util.utf8_to_unicode
-  def updateSystemMetadata(self, pid, sysmeta_pyxb, vendorSpecific=None):
-    response = self.updateSystemMetadataResponse(
-      pid, sysmeta_pyxb, vendorSpecific
-    )
-    return self._read_boolean_response(response)
