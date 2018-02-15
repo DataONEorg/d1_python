@@ -47,6 +47,7 @@ def main():
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',
       'posix-ipc == 1.0.0',
+      'psutil == 5.4.3',
       'pyasn1 == 0.4.2',
       'pytest == 3.3.1',
       'pytest-cov == 2.5.1',
