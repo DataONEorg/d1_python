@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 
+import collections
 import logging
 import os
 import random
@@ -59,41 +60,48 @@ class GMNStartupChecks(django.apps.AppConfig):
   def _assert_is_type(self, setting_name, valid_type):
     v = getattr(django.conf.settings, setting_name, None)
     if not isinstance(v, valid_type):
-      self.raise_config_error(setting_name, valid_type)
+      self.raise_config_error(setting_name, v, valid_type)
 
   def _assert_is_in(self, setting_name, valid_list):
-    if getattr(django.conf.settings, setting_name, None) not in valid_list:
-      self.raise_config_error(setting_name, valid_list)
+    v = getattr(django.conf.settings, setting_name, None)
+    if v not in valid_list:
+      self.raise_config_error(setting_name, v, valid_list)
 
   def _assert_readable_file_if_set(self, setting_name):
     v = getattr(django.conf.settings, setting_name, None)
     if v is None:
       return
-    self._assert_is_type(setting_name, str)
+    self._assert_is_type(setting_name, basestring)
     if not os.path.isfile(v):
       self.raise_config_error(
-        setting_name, v, str, valid_str='a path to a readable file'
+        setting_name, v, basestring, 'a path to a readable file',
+        is_none_allowed=True
       )
     try:
       with open(v, 'r') as f:
         f.read(1)
     except EnvironmentError as e:
       self.raise_config_error(
-        setting_name, v, str, valid_str='a path to a readable file. error="{}"'
-        .format(str(e))
+        setting_name, v, basestring, 'a path to a readable file. error="{}"'
+        .format(str(e), is_none_allowed=True)
       )
 
-  def raise_config_error(self, setting_name, cur_val, exp_type, valid_str=None):
-    valid_str = valid_str or (
-      'a whole number' if isinstance(exp_type, int) else 'a number'
-      if isinstance(exp_type, float) else 'a string'
-      if isinstance(exp_type, str) else 'True or False' if
-      isinstance(exp_type, bool) else 'one of {}'.format(', '.join(exp_type))
-      if isinstance(exp_type,
-                    (list, tuple)) else 'of type {}'.format(exp_type.__name__)
-    )
-    msg_str = u'Configuration error: Setting {} must be {}. current="{}"'.format(
-      setting_name, valid_str, str(cur_val)
+  def raise_config_error(
+      self, setting_name, cur_val, exp_type, valid_str=None,
+      is_none_allowed=False
+  ):
+    valid_str = valid_str if valid_str is not None else \
+      'a whole number' if exp_type is int else \
+      'a number' if exp_type is float else \
+      'a string' if (exp_type is str or exp_type is basestring) else \
+      'True or False' if exp_type is bool else \
+      ' or '.join(['"{}"'.format(s) for s in exp_type]) \
+        if isinstance(exp_type, collections.Iterable) else \
+      'of type {}'.format(exp_type.__name__)
+
+    msg_str = u'Configuration error: {} {} must be {}. current="{}"'.format(
+      'If set, setting'
+      if is_none_allowed else 'Setting', setting_name, valid_str, str(cur_val)
     )
     logging.error(msg_str)
     raise django.core.exceptions.ImproperlyConfigured(msg_str)
