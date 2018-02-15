@@ -13,7 +13,7 @@ import d1_test.instance_generator.system_metadata
 
 def generate_reproducible(client, pid=None, option_dict=None):
   """Generate science object bytes and a random, fully populated System Metadata
-  object that are always the same for a given PID.
+  object that is always the same for a given PID.
 
   The PID can be seen as a handle through which the same science object bytes
   and sysmeta can always be retrieved.

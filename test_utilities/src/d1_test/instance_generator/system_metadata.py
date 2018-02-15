@@ -54,64 +54,73 @@ def generate_random(client, option_dict=None):
 
   sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.serialVersion = random.randint(1, 100)
-  sysmeta_pyxb.identifier = option_dict.get(
-    'identifier', identifier.generate_pid()
+  sysmeta_pyxb.identifier = lazy_get(
+    option_dict, 'identifier', identifier.generate_pid
   )
-  sysmeta_pyxb.formatId = option_dict.get(
-    'formatId', d1_test.instance_generator.format_id.generate()
+  sysmeta_pyxb.formatId = lazy_get(
+    option_dict, 'formatId', d1_test.instance_generator.format_id.generate
   )
-  sysmeta_pyxb.size = option_dict.get('size', random.randint(1, 1024**4))
-  sysmeta_pyxb.checksum = option_dict.get(
-    'checksum', checksum_generator.generate()
+  sysmeta_pyxb.size = lazy_get(option_dict, 'size', random.randint, 1, 1024**4)
+  sysmeta_pyxb.checksum = lazy_get(
+    option_dict, 'checksum', checksum_generator.generate
   )
-  sysmeta_pyxb.submitter = option_dict.get(
-    'submitter', random_data.random_subj()
+  sysmeta_pyxb.submitter = lazy_get(
+    option_dict, 'submitter', random_data.random_subj
   )
-  sysmeta_pyxb.rightsHolder = option_dict.get(
-    'rightsHolder', random_data.random_subj()
+  sysmeta_pyxb.rightsHolder = lazy_get(
+    option_dict, 'rightsHolder', random_data.random_subj
   )
-  sysmeta_pyxb.accessPolicy = option_dict.get(
-    'accessPolicy', access_policy.generate(min_rules=0)
+  sysmeta_pyxb.accessPolicy = lazy_get(
+    option_dict, 'accessPolicy', access_policy.generate, min_rules=0
   )
-  sysmeta_pyxb.replicationPolicy = option_dict.get(
-    'replicationPolicy', replication_policy.generate()
+  sysmeta_pyxb.replicationPolicy = lazy_get(
+    option_dict, 'replicationPolicy', replication_policy.generate
   )
 
   # obsoletes
   # obsoletedBy
   # archived
 
-  sysmeta_pyxb.dateUploaded = option_dict.get(
-    'dateUploaded',
-    date_time.reproducible_datetime(sysmeta_pyxb.identifier.value())
+  sysmeta_pyxb.dateUploaded = lazy_get(
+    option_dict, 'dateUploaded', date_time.reproducible_datetime,
+    sysmeta_pyxb.identifier.value()
   )
   # Set dateSysMetadataModified to a fixed time after dateUploaded
   sysmeta_pyxb.dateSysMetadataModified = option_dict.get(
     'dateSysMetadataModified',
     sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10)
   )
-  sysmeta_pyxb.originMemberNode = option_dict.get(
-    'originMemberNode', random_data.random_mn()
+  sysmeta_pyxb.originMemberNode = lazy_get(
+    option_dict, 'originMemberNode', random_data.random_mn
   )
-  sysmeta_pyxb.authoritativeMemberNode = option_dict.get(
-    'authoritativeMemberNode', random_data.random_mn()
+  sysmeta_pyxb.authoritativeMemberNode = lazy_get(
+    option_dict, 'authoritativeMemberNode', random_data.random_mn
   )
-  sysmeta_pyxb.replica = option_dict.get(
-    'replica', d1_test.instance_generator.replica.generate()
+  sysmeta_pyxb.replica = lazy_get(
+    option_dict, 'replica', d1_test.instance_generator.replica.generate
   )
-  sysmeta_pyxb.seriesId = option_dict.get(
-    'seriesId', identifier.generate_sid(probability=0.5)
+  sysmeta_pyxb.seriesId = lazy_get(
+    option_dict, 'seriesId', identifier.generate_sid, probability=0.5
   )
-  sysmeta_pyxb.mediaType = option_dict.get(
-    'mediaType', d1_test.instance_generator.media_type.generate()
+  sysmeta_pyxb.mediaType = lazy_get(
+    option_dict, 'mediaType', d1_test.instance_generator.media_type.generate
   )
-  sysmeta_pyxb.fileName = option_dict.get(
-    'fileName', 'file_{}'.format(
-      d1_test.instance_generator.random_data.
-      random_lower_ascii(min_len=3, max_len=3)
+  sysmeta_pyxb.fileName = lazy_get(
+    option_dict, 'fileName', 'file_{}'.format,
+    d1_test.instance_generator.random_data.random_lower_ascii(
+      min_len=12, max_len=12
     )
   )
   return sysmeta_pyxb
+
+
+def lazy_get(d, key, func, *args, **kwargs):
+  """dict.get(k, f()) will evaluate b() even if s exists. This is a workaround
+  """
+  try:
+    return d[key]
+  except KeyError:
+    return func(*args, **kwargs)
 
 
 def generate_from_file(client, f, option_dict=None):
