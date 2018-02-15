@@ -40,9 +40,13 @@ def generate(min_properties=0, max_properties=5):
   )
   for _ in range(n_properties):
     property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
-      d1_test.instance_generator.random_data.random_lower_ascii(),
-      name='prop_{}'.
-      format(d1_test.instance_generator.random_data.random_lower_ascii()),
+      d1_test.instance_generator.random_data.random_lower_ascii(
+        min_len=12, max_len=12
+      ),
+      name='prop_{}'.format(
+        d1_test.instance_generator.random_data.
+        random_lower_ascii(min_len=12, max_len=12)
+      ),
     )
     media_type_pyxb.property_.append(property_pyxb)
   return media_type_pyxb
