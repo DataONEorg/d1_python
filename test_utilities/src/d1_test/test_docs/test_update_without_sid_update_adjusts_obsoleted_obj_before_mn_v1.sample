@@ -2,11 +2,11 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>54</serialVersion>
   <identifier>PID_eomsxomxrjwk</identifier>
-  <formatId>application/zip</formatId>
+  <formatId>http://www.w3.org/TR/rdf-syntax-grammar</formatId>
   <size>271</size>
   <checksum algorithm="SHA-1">6833ddfa045845dab74d885ba13508a7c1a00217</checksum>
-  <submitter>subj_rv</submitter>
-  <rightsHolder>subj_dp</rightsHolder>
+  <submitter>subj_x</submitter>
+  <rightsHolder>subj_j</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,32 +30,23 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <blockedMemberNode>mn_h</blockedMemberNode>
+  <replicationPolicy numberReplicas="2" replicationAllowed="true">
+    <preferredMemberNode>mn_d</preferredMemberNode>
+    <preferredMemberNode>mn_eq</preferredMemberNode>
+    <preferredMemberNode>mn_p</preferredMemberNode>
+    <preferredMemberNode>mn_vh</preferredMemberNode>
+    <blockedMemberNode>mn_l</blockedMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+    <blockedMemberNode>mn_rv</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2023-10-06T06:29:15.53565Z</dateUploaded>
   <dateSysMetadataModified>2023-10-16T06:29:15.53565Z</dateSysMetadataModified>
-  <originMemberNode>mn_xc</originMemberNode>
-  <authoritativeMemberNode>mn_r</authoritativeMemberNode>
+  <originMemberNode>mn_la</originMemberNode>
+  <authoritativeMemberNode>mn_cm</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_g</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>1970-02-15T17:41:27.750349Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_o</replicaMemberNode>
+    <replicaMemberNode>mn_h</replicaMemberNode>
     <replicationStatus>queued</replicationStatus>
-    <replicaVerified>1994-06-28T05:32:13.655424Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_lw</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>1997-01-23T02:10:28.775632Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_y</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2009-12-31T12:38:12.883952Z</replicaVerified>
+    <replicaVerified>2050-01-06T08:39:39.645396Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

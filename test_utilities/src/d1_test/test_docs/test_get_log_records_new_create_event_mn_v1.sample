@@ -2,11 +2,11 @@ sysmeta: <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>100</serialVersion>
   <identifier>PID_gxmjjxhpmzob</identifier>
-  <formatId>anvl/erc-v02</formatId>
+  <formatId>application/xml</formatId>
   <size>317</size>
   <checksum algorithm="SHA-1">48db7126cd315bfd6bca04be1595d0b5f5af6b55</checksum>
-  <submitter>subj_i</submitter>
-  <rightsHolder>subj_z</rightsHolder>
+  <submitter>subj_cx</submitter>
+  <rightsHolder>subj_y</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -35,23 +35,20 @@ sysmeta: <?xml version="1.0" encoding="utf-8"?>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="2" replicationAllowed="true">
-    <blockedMemberNode>mn_y</blockedMemberNode>
-    <blockedMemberNode>mn_ea</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_q</preferredMemberNode>
+    <preferredMemberNode>mn_zh</preferredMemberNode>
+    <preferredMemberNode>mn_j</preferredMemberNode>
+    <preferredMemberNode>mn_b</preferredMemberNode>
   </replicationPolicy>
   <dateUploaded>2388-08-28T00:00:00</dateUploaded>
   <dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_c</originMemberNode>
-  <authoritativeMemberNode>mn_g</authoritativeMemberNode>
+  <originMemberNode>mn_r</originMemberNode>
+  <authoritativeMemberNode>mn_i</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_b</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2015-10-04T10:45:39.709439Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_ai</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2004-11-15T17:33:50.016535Z</replicaVerified>
+    <replicaMemberNode>mn_z</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>1973-07-22T16:06:55.293208Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>
 

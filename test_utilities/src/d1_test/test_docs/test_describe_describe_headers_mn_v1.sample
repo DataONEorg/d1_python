@@ -2,6 +2,6 @@
   "Content-Length": "247", 
   "Content-Type": "application/octet-stream", 
   "DataONE-Checksum": "SHA-1,c6be21e6c1764485898fb518fa4bffe6139f3e30", 
-  "DataONE-FormatId": "application/x-bzip2", 
+  "DataONE-FormatId": "image/jp2", 
   "DataONE-SerialVersion": "3"
 }

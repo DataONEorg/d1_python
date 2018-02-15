@@ -2,11 +2,11 @@
   <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <serialVersion>59</serialVersion>
     <identifier>PID_bixtbcchrkzz</identifier>
-    <formatId>netCDF-3</formatId>
+    <formatId>http://www.w3.org/2005/Atom</formatId>
     <size>276</size>
     <checksum algorithm="SHA-1">d6cd77e7d4ed5727def6b2e8b8a7fdb56a9315df</checksum>
-    <submitter>subj_wc</submitter>
-    <rightsHolder>subj_i</rightsHolder>
+    <submitter>subj_q</submitter>
+    <rightsHolder>subj_tw</rightsHolder>
     <accessPolicy>
       <allow>
         <subject>subj1</subject>
@@ -42,59 +42,39 @@
       </allow>
     </accessPolicy>
     <replicationPolicy numberReplicas="0" replicationAllowed="false">
-      <blockedMemberNode>mn_j</blockedMemberNode>
-      <blockedMemberNode>mn_oa</blockedMemberNode>
-      <blockedMemberNode>mn_r</blockedMemberNode>
+      <preferredMemberNode>mn_m</preferredMemberNode>
+      <preferredMemberNode>mn_yz</preferredMemberNode>
++     <blockedMemberNode>mn_hy</blockedMemberNode>
++     <blockedMemberNode>mn_i</blockedMemberNode>
++     <blockedMemberNode>mn_wc</blockedMemberNode>
+      <blockedMemberNode>mn_wx</blockedMemberNode>
+-     <blockedMemberNode>mn_i</blockedMemberNode>
+-     <blockedMemberNode>mn_hy</blockedMemberNode>
+-     <blockedMemberNode>mn_wc</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
     <dateUploaded>2028-12-06T00:35:24.696889Z</dateUploaded>
     <dateSysMetadataModified>2028-12-16T00:35:24.696889Z</dateSysMetadataModified>
-    <originMemberNode>mn_pn</originMemberNode>
-    <authoritativeMemberNode>mn_g</authoritativeMemberNode>
-    <replica>
--     <replicaMemberNode>mn_dh</replicaMemberNode>
-?                           ^^
-
-+     <replicaMemberNode>mn_gx</replicaMemberNode>
-?                           ^^
-
+    <originMemberNode>mn_p</originMemberNode>
+    <authoritativeMemberNode>mn_u</authoritativeMemberNode>
+-   <replica>
+-     <replicaMemberNode>mn_ac</replicaMemberNode>
 -     <replicationStatus>completed</replicationStatus>
-?                        ^^^^ --
-
-+     <replicationStatus>failed</replicationStatus>
-?                        ^^^
-
--     <replicaVerified>2042-06-30T05:30:11.779721Z</replicaVerified>
-?                      ^^^^  ^  ---- ^^  ^ ^^^^
-
-+     <replicaVerified>1973-08-14T23:47:18.621357Z</replicaVerified>
-?                      ^^^^  ^ ++++  ^^  ^ ^  +++
-
-    </replica>
+-     <replicaVerified>2019-01-21T08:32:08.379276Z</replicaVerified>
+-   </replica>
     <replica>
-      <replicaMemberNode>mn_wr</replicaMemberNode>
-      <replicationStatus>requested</replicationStatus>
-      <replicaVerified>2023-11-05T11:20:25.020399Z</replicaVerified>
-    </replica>
-    <replica>
-      <replicaMemberNode>mn_x</replicaMemberNode>
+      <replicaMemberNode>mn_a</replicaMemberNode>
       <replicationStatus>queued</replicationStatus>
-      <replicaVerified>2035-07-03T19:42:09.673155Z</replicaVerified>
+      <replicaVerified>2006-04-13T17:20:36.986911Z</replicaVerified>
     </replica>
     <replica>
--     <replicaMemberNode>mn_gx</replicaMemberNode>
-?                           ^^
-
-+     <replicaMemberNode>mn_dh</replicaMemberNode>
-?                           ^^
-
--     <replicationStatus>failed</replicationStatus>
-?                        ^^^
-
-+     <replicationStatus>completed</replicationStatus>
-?                        ^^^^ ++
-
--     <replicaVerified>1973-08-14T23:47:18.621357Z</replicaVerified>
-+     <replicaVerified>2042-06-30T05:30:11.779721Z</replicaVerified>
+      <replicaMemberNode>mn_i</replicaMemberNode>
+      <replicationStatus>queued</replicationStatus>
+      <replicaVerified>2007-11-04T22:10:34.805679Z</replicaVerified>
     </replica>
++   <replica>
++     <replicaMemberNode>mn_ac</replicaMemberNode>
++     <replicationStatus>completed</replicationStatus>
++     <replicaVerified>2019-01-21T08:32:08.379276Z</replicaVerified>
++   </replica>
   </ns1:systemMetadata>

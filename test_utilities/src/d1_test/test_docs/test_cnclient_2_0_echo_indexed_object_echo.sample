@@ -6,7 +6,7 @@
       "Accept-Encoding": "gzip, deflate", 
       "Charset": "utf-8", 
       "Connection": "keep-alive", 
-      "Content-Length": "2302", 
+      "Content-Length": "2211", 
       "User-Agent": "DataONE-Python/[volatile]
     }, 
     "param_list": [
