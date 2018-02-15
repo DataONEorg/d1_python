@@ -58,10 +58,13 @@ from __future__ import absolute_import
 import logging
 import re
 
+import mock
 import requests_toolbelt
 import responses
 
 import django.test
+
+# import django.test.client
 
 base_url_list = []
 
@@ -108,23 +111,38 @@ def _request_callback(request):
     .format(base_url, url_path)
   )
 
+  # This is a workaround for a bug in the Django test client. To determine if
+  # the body is a multipart document, the Django test client checks Content-Type
+  # for an exact match to a string that is hard coded in the client. When a
+  # match is not found, the client turns the MultipartEncoder into its string
+  # repr, that is used for debugging, and passes that on as the body.
+  # MultipartEncoder generates a unique boundary value for the Content-Type each
+  # time a multipart document is created, and there's no clean way to pass in
+  # the hard coded string, that the Django test client expects, through
+  # d1_client. So the buggy function in the Django test client is disabled here.
+
   if isinstance(request.body, requests_toolbelt.MultipartEncoder):
     data = request.body.read()
+    # data = request.body
   else:
     data = request.body
 
-  django_client = django.test.Client()
-  try:
-    django_response = getattr(django_client, request.method.lower())(
-      url_path, data=data, content_type=request.headers.get('Content-Type'),
-      **_headers_to_wsgi_env(request.headers or {})
-    )
-  except Exception:
-    logging.exception(
-      'Django test client raised exception. base_url="{}" url_path="{}"'
-      .format(base_url, url_path)
-    )
-    raise
+  with mock.patch(
+      'django.test.RequestFactory._encode_data',
+      return_value=data,
+  ):
+    django_client = django.test.Client()
+    try:
+      django_response = getattr(django_client, request.method.lower())(
+        url_path, data=data, content_type=request.headers.get('Content-Type'),
+        **_headers_to_wsgi_env(request.headers or {})
+      )
+    except Exception:
+      logging.exception(
+        'Django test client raised exception. base_url="{}" url_path="{}"'
+        .format(base_url, url_path)
+      )
+      raise
 
   django_response.setdefault('HTTP-Version', 'HTTP/1.1')
   return (
