@@ -12,8 +12,8 @@ before_install:
     libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl libsmbclient-dev
     librsync-dev
 install:
-  - pip install --upgrade pip
-  - pip install --upgrade setuptools
+  - pip install --upgrade pip setuptools
+  - pip uninstall -y pytest py
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
@@ -21,6 +21,8 @@ script:
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check || true
+  - pytest --help
+  - pytest --fixtures
   - pytest -n auto --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.

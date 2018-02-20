@@ -2,11 +2,11 @@
   <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <serialVersion>34</serialVersion>
     <identifier>PID_kjcabbpycbla</identifier>
-    <formatId>application/x-python</formatId>
+    <formatId>application/pdf</formatId>
     <size>250</size>
     <checksum algorithm="SHA-1">a1628208290deb09a678fc375beae826443a6afb</checksum>
-    <submitter>subj_h</submitter>
-    <rightsHolder>subj_ot</rightsHolder>
+    <submitter>subj_vb</submitter>
+    <rightsHolder>subj_eu</rightsHolder>
     <accessPolicy>
       <allow>
         <subject>subj1</subject>
@@ -42,21 +42,18 @@
       </allow>
     </accessPolicy>
     <replicationPolicy numberReplicas="0" replicationAllowed="false">
-+     <blockedMemberNode>mn_oe</blockedMemberNode>
-+     <blockedMemberNode>mn_ta</blockedMemberNode>
-      <blockedMemberNode>mn_yy</blockedMemberNode>
--     <blockedMemberNode>mn_ta</blockedMemberNode>
--     <blockedMemberNode>mn_oe</blockedMemberNode>
-      <blockedMemberNode>mn_z</blockedMemberNode>
+      <preferredMemberNode>mn_l</preferredMemberNode>
+      <blockedMemberNode>mn_g</blockedMemberNode>
+      <blockedMemberNode>mn_mn</blockedMemberNode>
     </replicationPolicy>
 +   <archived>false</archived>
     <dateUploaded>2003-04-18T15:36:08.111426Z</dateUploaded>
     <dateSysMetadataModified>2003-04-28T15:36:08.111426Z</dateSysMetadataModified>
-    <originMemberNode>mn_uu</originMemberNode>
-    <authoritativeMemberNode>mn_jn</authoritativeMemberNode>
+    <originMemberNode>mn_fu</originMemberNode>
+    <authoritativeMemberNode>mn_f</authoritativeMemberNode>
     <replica>
-      <replicaMemberNode>mn_w</replicaMemberNode>
-      <replicationStatus>queued</replicationStatus>
-      <replicaVerified>2021-05-18T21:04:08.375354Z</replicaVerified>
+      <replicaMemberNode>mn_ot</replicaMemberNode>
+      <replicationStatus>failed</replicationStatus>
+      <replicaVerified>1988-07-09T12:21:48.394336Z</replicaVerified>
     </replica>
   </ns1:systemMetadata>

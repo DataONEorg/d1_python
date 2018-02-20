@@ -2,36 +2,61 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>38</serialVersion>
   <identifier>an_unchanging_pid</identifier>
-  <formatId>application/mathematica</formatId>
+  <formatId>audio/x-wav</formatId>
   <size>255</size>
   <checksum algorithm="SHA-1">97acc710723b02c8d3b6273705e94b56e6b445f9</checksum>
-  <submitter>subj_s</submitter>
-  <rightsHolder>subj_gu</rightsHolder>
+  <submitter>subj_wg</submitter>
+  <rightsHolder>subj_i</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>subj_bg</subject>
-      <subject>subj_tp</subject>
-      <subject>subj_fr_group</subject>
-      <subject>subj_ze</subject>
-      <subject>subj_nt</subject>
+      <subject>subj_ju</subject>
+      <subject>subj_wh</subject>
+      <subject>subj_qu</subject>
+      <subject>subj_xg</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_zb</subject>
+      <subject>subj_rt</subject>
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <blockedMemberNode>mn_or</blockedMemberNode>
+  <replicationPolicy numberReplicas="2" replicationAllowed="true">
+    <preferredMemberNode>mn_r</preferredMemberNode>
+    <preferredMemberNode>mn_g</preferredMemberNode>
+    <preferredMemberNode>mn_eu</preferredMemberNode>
+    <blockedMemberNode>mn_n</blockedMemberNode>
+    <blockedMemberNode>mn_id</blockedMemberNode>
+    <blockedMemberNode>mn_s</blockedMemberNode>
+    <blockedMemberNode>mn_re</blockedMemberNode>
   </replicationPolicy>
   <dateUploaded>2007-01-12T04:14:19.961217Z</dateUploaded>
   <dateSysMetadataModified>2007-01-22T04:14:19.961217Z</dateSysMetadataModified>
-  <originMemberNode>mn_fd</originMemberNode>
-  <authoritativeMemberNode>mn_yw</authoritativeMemberNode>
+  <originMemberNode>mn_s</originMemberNode>
+  <authoritativeMemberNode>mn_wk</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_sp</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2061-08-06T14:31:21.675804Z</replicaVerified>
+    <replicaMemberNode>mn_pn</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2010-01-03T02:10:58.300795Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_h</replicaMemberNode>
+    <replicaMemberNode>mn_e</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2067-10-25T14:33:44.979781Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_v</replicaMemberNode>
     <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2056-03-21T15:16:39.611381Z</replicaVerified>
+    <replicaVerified>1990-05-11T00:27:40.906867Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_im</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2018-04-11T09:25:00.906629Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_t</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1971-05-12T17:57:53.29787Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

@@ -40,3 +40,10 @@ class StringIterator(object):
       if not chunk_str:
         break
       yield chunk_str
+
+  def __len__(self):
+    return len(self._string)
+
+  @property
+  def size(self):
+    return len(self._string)

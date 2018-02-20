@@ -1,0 +1,45 @@
+<!--
+  * ecogridregistry.dtd
+  *
+  *      Authors: Jing Tao
+  * Organization: National Center for Ecological Analysis and Synthesis
+  *    Copyright: 2000 Regents of the University of California and the
+  *               National Center for Ecological Analysis and Synthesis
+  *  For Details: http://www.nceas.ucsb.edu/
+  *      Created: 1 Nov 2005
+  *    File Info: '$Id: ecogridregistry.205.22.dtd,v 1.1 2006-04-25 23:49:02 tao Exp $'
+  *
+  * This DTD describes the structure and content of XML documents used
+  * to represent, store, and exchange a simple path-based query expression.
+  * This syntax represents a small subset of the capabilities of the XPath 
+  * language (http://www.w3.org/TR/xpath), and is intended as a simple
+  * query language for the metadata catalog database (mcdb).  It is 
+  * intended that all expressions in this language can be mapped directly
+  * into XPath syntax, but not all Xpath expressions can be mapped into this
+  * syntax.
+  *
+-->
+
+
+<!ELEMENT dataset (registry*)>
+
+
+<!ELEMENT  registry (identifier*, metadata*)>
+
+
+<!ELEMENT identifier (name*, resource*)>
+
+
+<!ELEMENT name (#PCDATA)>
+
+
+<!ELEMENT resource (#PCDATA)>
+
+
+<!ELEMENT metadata (information*)>
+
+
+<!ELEMENT information (#PCDATA)>
+
+
+<!-- End of file -->

@@ -2,80 +2,91 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>12</serialVersion>
   <identifier>object#0000</identifier>
-  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta6//EN</formatId>
+  <formatId>application/vnd.ms-excel.sheet.binary.macroEnabled.12</formatId>
   <size>223</size>
   <checksum algorithm="SHA-1">8dbd04cb51725de25325d0e580f437251b67a049</checksum>
-  <submitter>subj_bp</submitter>
-  <rightsHolder>subj_tg</rightsHolder>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_lk</preferredMemberNode>
-    <preferredMemberNode>mn_qk</preferredMemberNode>
-    <preferredMemberNode>mn_mc</preferredMemberNode>
-    <preferredMemberNode>mn_h</preferredMemberNode>
-    <blockedMemberNode>mn_d</blockedMemberNode>
+  <submitter>subj_ls</submitter>
+  <rightsHolder>subj_nk</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_bu</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_nk</subject>
+      <subject>subj_pq</subject>
+      <subject>subj_az</subject>
+      <subject>subj_lk</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj_kh_group</subject>
+      <subject>subj_mp</subject>
+      <subject>subj_ui</subject>
+      <permission>write</permission>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="5" replicationAllowed="true">
+    <preferredMemberNode>mn_xl</preferredMemberNode>
+    <preferredMemberNode>mn_wi</preferredMemberNode>
+    <preferredMemberNode>mn_x</preferredMemberNode>
+    <preferredMemberNode>mn_tm</preferredMemberNode>
+    <blockedMemberNode>mn_g</blockedMemberNode>
+    <blockedMemberNode>mn_xp</blockedMemberNode>
   </replicationPolicy>
   <dateUploaded>1981-04-25T05:46:30.861414Z</dateUploaded>
   <dateSysMetadataModified>1981-05-05T05:46:30.861414Z</dateSysMetadataModified>
-  <originMemberNode>mn_zy</originMemberNode>
-  <authoritativeMemberNode>mn_io</authoritativeMemberNode>
+  <originMemberNode>mn_zq</originMemberNode>
+  <authoritativeMemberNode>mn_go</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_yx</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2045-07-18T22:15:52.700933Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_im</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2024-08-21T09:32:09.987187Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_mm</replicaMemberNode>
+    <replicaMemberNode>mn_ik</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2056-10-20T10:07:45.993371Z</replicaVerified>
+    <replicaVerified>2023-07-26T07:35:43.211737Z</replicaVerified>
   </replica>
-  <replica>
-    <replicaMemberNode>mn_pn</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2040-04-18T20:03:56.977132Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_qp</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2026-07-29T03:19:25.163645Z</replicaVerified>
-  </replica>
-  <seriesId>SID_ikinupddrcxv</seriesId>
-  <fileName>file_smk</fileName>
+  <mediaType name="media_type_dr">
+    <property name="prop_vcavhstqnaer">xvavsmkfmurr</property>
+    <property name="prop_ypylpjhrfppl">mrsbdnqennfe</property>
+    <property name="prop_rqahthpyyifp">ybqsdftyufca</property>
+  </mediaType>
+  <fileName>file_zpzmdzsqjgtm</fileName>
 </ns1:systemMetadata>
 
 <?xml version="1.0" encoding="utf-8"?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>71</serialVersion>
   <identifier>object#0001</identifier>
-  <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta4//EN</formatId>
+  <formatId>http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html</formatId>
   <size>283</size>
   <checksum algorithm="SHA-1">f73a8d3cac9b9677cc9758615e9aef8ecf0dff78</checksum>
-  <submitter>subj_h</submitter>
-  <rightsHolder>subj_r</rightsHolder>
+  <submitter>subj_rv</submitter>
+  <rightsHolder>subj_e</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>subj_sw</subject>
-      <subject>subj_td</subject>
-      <subject>subj_sc_group</subject>
-      <subject>subj_iy</subject>
-      <subject>subj_fp_group</subject>
-      <permission>write</permission>
-      <permission>read</permission>
+      <subject>subj_yo</subject>
+      <subject>subj_qo</subject>
+      <subject>subj_bo</subject>
+      <subject>subj_hr</subject>
+      <subject>subj_pm</subject>
+      <permission>changePermission</permission>
     </allow>
     <allow>
-      <subject>subj_wo</subject>
-      <subject>subj_uj</subject>
-      <subject>subj_an</subject>
+      <subject>subj_yt</subject>
+      <subject>subj_ks_group</subject>
+      <subject>subj_yi</subject>
+      <subject>subj_hf</subject>
+      <subject>subj_sl</subject>
+      <permission>changePermission</permission>
+    </allow>
+    <allow>
+      <subject>subj_qu</subject>
+      <subject>subj_ta</subject>
+      <subject>subj_wl</subject>
       <permission>write</permission>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
   <replicationPolicy numberReplicas="5" replicationAllowed="true">
-    <preferredMemberNode>mn_qk</preferredMemberNode>
     <preferredMemberNode>mn_em</preferredMemberNode>
     <preferredMemberNode>mn_p</preferredMemberNode>
     <preferredMemberNode>mn_ds</preferredMemberNode>
@@ -97,10 +108,10 @@
     <replicaVerified>2045-09-21T21:28:17.259104Z</replicaVerified>
   </replica>
   <mediaType name="media_type_ua">
-    <property name="prop_aa">hm</property>
-    <property name="prop_xo">ci</property>
-    <property name="prop_iu">qv</property>
-    <property name="prop_og">xg</property>
+    <property name="prop_veiukxggogeq">hmfaatcigxom</property>
+    <property name="prop_nfrhoichjxft">adhhtdhwacxj</property>
+    <property name="prop_yzifsdxofseh">tnfztvhsgxjh</property>
+    <property name="prop_dyvjinjmuric">lbnvrilcaxmu</property>
   </mediaType>
-  <fileName>file_qna</fileName>
+  <fileName>file_zdzpvjitlxsd</fileName>
 </ns1:systemMetadata>

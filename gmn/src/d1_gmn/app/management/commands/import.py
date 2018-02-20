@@ -84,7 +84,10 @@ import django.core.management.base
 # UNCONNECTED_DICT_PATH = os.path.join(ROOT_PATH, 'import_unconnected.json')
 
 DEFAULT_TIMEOUT_SEC = 3 * 60
-DEFAULT_N_WORKERS = 10
+DEFAULT_N_WORKERS = 8
+# See notes in sysmeta iterator docstring before changing
+MAX_RESULT_QUEUE_SIZE = 100
+MAX_TASK_QUEUE_SIZE = 16
 
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
@@ -125,7 +128,7 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument(
       '--workers', type=int, action='store', default=DEFAULT_N_WORKERS,
-      help='Max number of concurrent connections made to the source MN'
+      help='Max number workers making concurrent connections to the source MN'
     )
     parser.add_argument(
       '--object-page-size', type=int, action='store',
@@ -143,6 +146,10 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument(
       '--only-log', action='store_true', help='Only import event logs'
+    )
+    parser.add_argument(
+      '--max-obj', type=int, action='store',
+      help='Limit number of objects to import'
     )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
@@ -190,80 +197,110 @@ class Command(django.core.management.base.BaseCommand):
   def _import_objects(self):
     sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
       base_url=self._opt['baseurl'],
-      page_size=self._opt['log_page_size'],
+      page_size=self._opt['object_page_size'],
       max_workers=self._opt['workers'],
-      max_queue_size=10,
+      max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
+      max_task_queue_size=MAX_TASK_QUEUE_SIZE,
       api_major=self._api_major,
       client_dict=self._get_client_dict(),
       list_objects_dict=self._get_list_objects_args_dict(),
     )
     start_sec = time.time()
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      # if i > 100:
-      #   break
-      msg_str = 'Error'
-      if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
-        pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-        try:
-          d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
-          self._download_source_sciobj_bytes_to_store(pid)
-        except d1_common.types.exceptions.DataONEException as e:
-          logging.error(d1_common.xml.pretty_pyxb(e))
-        else:
-          msg_str = pid
-      elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
-        logging.error(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-      else:
-        logging.error(str(sysmeta_pyxb))
+      if self._opt['max_obj'] is not None and i >= self._opt['max_obj']:
+        self._events.log_and_count(
+          'Limiting import to {} objects (--max-obj)'
+          .format(self._opt['max_obj'])
+        )
+        break
+      if not d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
+        if isinstance(
+            sysmeta_pyxb, d1_common.types.exceptions.DataONEException
+        ):
+          self._events.log_and_count(
+            'Unable to get SysMeta', 'error="{}"'.format(str(sysmeta_pyxb))
+          )
+          continue
+        elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
+          self._events.log_and_count(
+            'Unexpected PyXB object',
+            'pyxb="{}"'.format(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
+          )
+          continue
+
+      pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
       util.log_progress(
-        self._events, 'Importing objects', i, sysmeta_iter.total, msg_str,
-        start_sec
+        self._events, 'Importing objects', i, sysmeta_iter.total, pid, start_sec
       )
+
+      if d1_gmn.app.did.is_existing_object(pid):
+        self._events.log_and_count(
+          'Object already exists', 'pid="{}"'.format(pid)
+        )
+        continue
+
+      try:
+        self._download_source_sciobj_bytes_to_store(pid)
+      except d1_common.types.exceptions.DataONEException as e:
+        self._events.log_and_count(
+          'Unable to get SciObj', 'error="{}"'.format(str(e))
+        )
+        continue
+
+      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
 
   def _import_logs(self):
     log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
       base_url=self._opt['baseurl'],
       page_size=self._opt['log_page_size'],
       max_workers=self._opt['workers'],
-      max_queue_size=10,
+      max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
+      max_task_queue_size=MAX_TASK_QUEUE_SIZE,
       api_major=self._api_major,
-      client_args_dict=self._get_client_dict(),
+      client_dict=self._get_client_dict(),
     )
     start_sec = time.time()
-    for i, log_record in enumerate(log_record_iterator):
-      msg_str = 'Error'
-      try:
-        pid = d1_common.xml.get_req_val(log_record.identifier)
-      except Exception as e:
-        self._events.log_and_count('Log record iterator error', str(e))
-      else:
-        if d1_gmn.app.did.is_existing_object(pid):
-          self._create_log_entry(log_record)
-          msg_str = pid
-        else:
-          self._events.log_and_count(
-            'Skipped object that does not exist', 'pid="{}"'.format(pid)
-          )
-          msg_str = 'Skipped object that was not imported', 'pid="{}"'.format(
-            pid
-          )
+    for i, log_record_pyxb in enumerate(log_record_iterator):
+      if isinstance(
+          log_record_pyxb, d1_common.types.exceptions.DataONEException
+      ):
+        self._events.log_and_count(
+          'Unable to get SysMeta', 'error="{}"'.format(str(log_record_pyxb))
+        )
+        continue
+      elif not d1_common.type_conversions.is_pyxb(log_record_pyxb):
+        self._events.log_and_count(
+          'Unexpected object',
+          'obj="{}"'.format(d1_common.xml.pretty_pyxb(log_record_pyxb))
+        )
+        continue
+
+      pid = d1_common.xml.get_req_val(log_record_pyxb.identifier)
 
       util.log_progress(
-        self._events, 'Importing event logs', i, log_record_iterator.total,
-        msg_str, start_sec
+        self._events, 'Importing event logs', i, log_record_iterator.total, pid,
+        start_sec
       )
 
-  def _create_log_entry(self, log_record):
+      if not d1_gmn.app.did.is_existing_object(pid):
+        self._events.log_and_count(
+          'Skipped object that does not exist', 'pid="{}"'.format(pid)
+        )
+        continue
+
+      self._create_log_entry(log_record_pyxb)
+
+  def _create_log_entry(self, log_record_pyxb):
     event_log_model = d1_gmn.app.event_log.create_log_entry(
       d1_gmn.app.util.
-      get_sci_model(d1_common.xml.get_req_val(log_record.identifier)),
-      log_record.event,
-      log_record.ipAddress,
-      log_record.userAgent,
-      log_record.subject.value(),
+      get_sci_model(d1_common.xml.get_req_val(log_record_pyxb.identifier)),
+      log_record_pyxb.event,
+      log_record_pyxb.ipAddress,
+      log_record_pyxb.userAgent,
+      log_record_pyxb.subject.value(),
     )
-    event_log_model.timestamp = log_record.dateLogged
+    event_log_model.timestamp = log_record_pyxb.dateLogged
     event_log_model.save()
 
   def _get_source_sysmeta(self, pid):

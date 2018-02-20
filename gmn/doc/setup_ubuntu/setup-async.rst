@@ -18,13 +18,12 @@ Set up cron jobs
   Add::
 
     GMN_ROOT = /var/local/dataone/gmn_venv
-    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/d1_gmn
-    PYTHON_BIN = $GMN_ROOT/bin/python
+    SERVICE_ROOT = /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn
+    PYTHON_BIN = /var/local/dataone/gmn_venv/bin/python
 
-    # Process the replication request queue
-    * * * * * sleep $(expr $RANDOM \% $(( 30 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_replication_queue >> gmn_replication.log 2>&1
+    * * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_replication_queue >> $SERVICE_ROOT/gmn_replication.log 1>&1
     # Process the System Metadata refresh queue
-    * * * * * sleep $(expr $RANDOM \% $(( 30 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_refresh_queue >> gmn_sysmeta.log 2>&1
+    * * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_refresh_queue >> $SERVICE_ROOT/gmn_sysmeta.log 2>&1
 
   This sets the processes to run once every hour, with a random delay that distributes network traffic and CN load over time. To alter the schedule, consult
   the crontab manual::

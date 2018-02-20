@@ -58,11 +58,11 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
       # base_url='https://gmn2/mn',
       page_size=page_size,
       api_major=2, # api_major = d1_client.util.get_version_tag_by_d1_client(mn_client_v1_v2)
-      client_args_dict={
+      client_dict={
         'verify_tls': False,
         'timeout_sec': 0,
       },
-      get_log_records_arg_dict={
+      get_log_records_dict={
         'fromDate': from_date,
         'toDate': to_date,
       },

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    targetNamespace="http://ecoinformatics.org/resultset-1.0.1"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://ecoinformatics.org/resultset-1.0.1">
+    <xs:annotation>
+        <xs:documentation>
+       '$RCSfile: resultset.xsd,v $'
+       Copyright: 2003 Partnership for Biodiversity Informatics
+         Project: http://seek.ecoinformatics.org/
+
+        '$Author: tao $'
+          '$Date: 2008-04-23 16:28:57 $'
+      '$Revision: 1.18 $'
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    </xs:documentation>
+    </xs:annotation>
+    <xs:element name="resultset" type="ResultsetType"/>
+    <xs:complexType name="ResultsetType">
+        <xs:annotation>
+            <xs:documentation>A type used to represent the results of a query
+            in XML format, including both the metadata about the set of result
+            records, the identifiers for each record, and optionally an extract
+            of the record itself in XML format.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="resultsetMetadata" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Documentation about the entire set of
+                    results.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="sendTime" type="xs:dateTime">
+                            <xs:annotation>
+                                <xs:documentation>The time the resultset was
+                                generated and sent to the client.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="startRecord" type="xs:long">
+                            <xs:annotation>
+                                <xs:documentation>An integer number indicating
+                                the index number of the first record included
+                                in this batch of records.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="endRecord" type="xs:long">
+                            <xs:annotation>
+                                <xs:documentation>An integer indicating the
+                                index number of the last record included in
+                                this batch of records.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="recordCount" type="xs:long">
+                            <xs:annotation>
+                                <xs:documentation>The total count of records
+                                that were matched by the query, which may be
+                                greater than the number of records returned in
+                                this particular request for records.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="system" minOccurs="0" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>The system from which this record
+                                  was matched, indicating the system from which the
+                                  record originated.  This is used to provide a unique
+                                  naming scope for the identifier attribute for the
+                                  records.  The system and identifier together can be
+                                  used to uniquely refer to a record.
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:anyURI">
+                                        <xs:attribute name="id" 
+                                            type="xs:string" use="required"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="namespace" minOccurs="0" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>Namespace for the "name" attributes 
+																in each returnField record.
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="prefix" 
+                                            type="xs:string" use="optional"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="recordStructure" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>This element is used to describe returnfields to 
+                                reduce the amount of replicated data.</xs:documentation>
+                            </xs:annotation>
+                             <xs:complexType>
+                                <xs:sequence>
+                                  <xs:element name="returnField" minOccurs="0" maxOccurs="unbounded">
+                                    <xs:annotation>
+                                        <xs:documentation>Identifies a single field in the resultset
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                    <xs:complexType>
+                                       <xs:attribute name="id" type="xs:string" use="required">
+                                         <xs:annotation>
+                                             <xs:documentation>Identifies the appropriate "recordStructure" element in the metacat data.
+                                                               Used to reduce the amount of duplicated information in multiple return fields.
+                                             </xs:documentation>
+                                         </xs:annotation>
+                                       </xs:attribute>
+                                       <xs:attribute name="pathns" type="xs:string" use="optional">
+                                         <xs:annotation>
+                                           <xs:documentation>Namespace specially for the path attribute. 
+                                             Optional because it may be indicated by "namespace" attribute in the 
+                                             metadata element</xs:documentation>
+                                         </xs:annotation>
+                                       </xs:attribute>
+                                       <xs:attribute name="name" type="xs:string" use="required">
+                                         <xs:annotation>
+                                           <xs:documentation>Name of return field.</xs:documentation>
+					 </xs:annotation>
+                                       </xs:attribute>
+                                     </xs:complexType>
+                                  </xs:element>
+                                </xs:sequence>
+                             </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="record" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>An individual record from the query
+                    providing a relative index into the resultset for this
+                    record, the identifier which can be used to retrieve the
+                    whole record, and optionally some element content from the
+                    record.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="returnField" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                          <xs:documentation>Identifies a single field in the resultset</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+		         <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                               <xs:attribute name="id" type="xs:string" use="required">
+                                  <xs:annotation>
+                                     <xs:documentation>Identifies the appropriate "recordStructure" element in the metacat data.
+										                Used to reduce the amount of duplicated information in multiple return fields.</xs:documentation>
+                                  </xs:annotation>
+                               </xs:attribute>
+			    </xs:extension>
+			  </xs:simpleContent>
+                       </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="number" type="xs:long" use="required">
+                      <xs:annotation>
+                          <xs:documentation>The number attribute indicates the
+                          relative index number of this record in the resultset,
+                          with the first record is 1, the second is 2, etc.  This
+                          number can be used to reference a particular record or
+                          range of records in the result set, and is used
+                          particularly when retrieving a partial set of records
+                          from a large result set.</xs:documentation>
+                      </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="system" type="xs:string" use="required">
+                      <xs:annotation>
+                          <xs:documentation>Id reference to system element in the metadata.</xs:documentation>
+                      </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="identifier" type="xs:string" use="required">
+                      <xs:annotation>
+                          <xs:documentation>The label that is used to uniquely
+                          refer to this record within the system named in the
+                          "system" attribute. </xs:documentation>
+                      </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="lastModifiedDate" type="xs:dateTime"
+                      use="optional">
+                      <xs:annotation>
+                          <xs:documentation>The date and time on which this
+                          record was last modified in the system.
+                          </xs:documentation>
+                      </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="creationDate" type="xs:dateTime"
+                      use="optional">
+                      <xs:annotation>
+                          <xs:documentation>The date and time at which the
+                          record was originally created within the system.
+                          </xs:documentation>
+                      </xs:annotation>
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="system" type="xs:anyURI" use="required">
+            <xs:annotation>
+                <xs:documentation>The query system from which this result set
+                was generated.  This is used to provide a unique naming scope
+                for the resultset identifier attribute for the set of results.
+                The system and resultsetId together can be used to uniquely
+                refer to the results form a query.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resultsetId" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>The label used to uniquely refer to this
+                result set within the query system from which this result set
+                was generated.  The system and resultsetId together can be
+                used to uniquely refer to the results form a query.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="attrs" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The label used to uniquely refer to this
+                result set within the query system from which this result set
+                was generated.  The system and resultsetId together can be
+                used to uniquely refer to the results form a query.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+
+</xs:schema>

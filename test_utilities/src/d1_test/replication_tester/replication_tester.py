@@ -40,8 +40,6 @@ import StringIO
 import sys
 import time
 
-import requests
-
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.url
@@ -189,11 +187,11 @@ def main():
         while True:
           time.sleep(.1)
       else:
-        assert requests.get(
-          d1_common.url.joinPathElements(
-            options.src_base_url, 'diag', 'clear_replication_queue'
-          )
-        ).ok
+        # assert requests.get(
+        #   d1_common.url.joinPathElements(
+        #     options.src_base_url, 'diag', 'clear_replication_queue'
+        #   )
+        # ).ok
         # An existing PID that returns approved on isNodeAuthorized()
         create_test_object_on_mn(options.src_base_url, src_existing_pid_approve)
         # An existing PID that returns denied on isNodeAuthorized()

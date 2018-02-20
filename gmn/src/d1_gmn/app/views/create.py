@@ -26,6 +26,7 @@ import datetime
 import d1_gmn.app.event_log
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
+import d1_gmn.app.scimeta
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
@@ -75,6 +76,7 @@ def create_sciobj(request, sysmeta_pyxb):
       _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, url)
     else:
       _save_sciobj_bytes_from_request(request, sciobj_path)
+      d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, sciobj_path)
 
   d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
 

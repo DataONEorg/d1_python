@@ -27,13 +27,16 @@ import inspect
 import logging
 import os
 import random
+import resource
 import StringIO
 import sys
+import tempfile
 import traceback
 import xml
 
 import decorator
 import mock
+import psutil
 import psycopg2
 import pyxb
 import pyxb.binding.basis
@@ -103,7 +106,7 @@ def capture_std():
 
 def get_caplog_text(caplog, logger_name=None):
   """Return the log messages currently captured by the caplog fixture
-  If {module_name} is set, only messages from the given module are returned.
+  - If {logger_name} is set, only messages from the given logger are returned.
   """
   return '\n'.join([
     r.getMessage()
@@ -192,6 +195,50 @@ def reproducible_random_context(seed=None):
   random.seed(seed)
   yield
   random.setstate(state)
+
+
+#===============================================================================
+
+
+@contextlib.contextmanager
+def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
+  """Context manager providing a temporary file of size {gib} GiB + {mib} MiB +
+  {kib} KiB + {b} bytes
+  - The file is created as a sparse empty file in tmp, so does not allocate
+  actual space on disk.
+  - Intended for use when large, empty (all zero), test files are needed.
+  """
+  with tempfile.TemporaryFile() as f:
+    f.seek(gib * 1024**3 + mib * 1024**2 + kib * 1024 + b - 1)
+    f.write(b'0')
+    f.seek(0)
+    yield f
+
+
+#===============================================================================
+
+
+@contextlib.contextmanager
+def memory_limit(max_mem_bytes):
+  """Raise MemoryError if code within the manager causes memory used by process
+  to increase by more than {max_mem_bytes}
+  - May not be very accurate.
+  """
+  process = psutil.Process(os.getpid())
+  old_limit_tup = resource.getrlimit(resource.RLIMIT_AS)
+  old_limit_bytes = process.memory_info().rss
+  new_limit_bytes = old_limit_bytes + max_mem_bytes
+  logging.debug(
+    'Setting new memory limit. old={:,} bytes, new={:,} bytes'.
+    format(old_limit_bytes, new_limit_bytes)
+  )
+  resource.setrlimit(resource.RLIMIT_AS, (new_limit_bytes, -1))
+  yield
+  logging.debug(
+    'Restoring old memory limit. old={:,} bytes, new={:,} bytes'.
+    format(old_limit_bytes, new_limit_bytes)
+  )
+  resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
 
 
 #===============================================================================

@@ -65,6 +65,17 @@ def abs_path(rel_path):
   )
 
 
+def abs_path_from_base(base_path, rel_path):
+  """Join {rel_path} to {base_path} and return an absolute path to the resulting
+  location
+  """
+  return os.path.abspath(
+    os.path.join(
+      os.path.dirname(sys._getframe(1).f_code.co_filename), base_path, rel_path
+    )
+  )
+
+
 def create_missing_directories_for_dir(dir_path):
   try:
     os.makedirs(dir_path)
@@ -143,14 +154,14 @@ class EventCounter(object):
     self._event_dict.setdefault(event_str, 0)
     self._event_dict[event_str] += inc_int
 
-  def log_and_count(self, event_str, msg_str=None, inc_int=1):
+  def log_and_count(self, event_str, msg_str=None, inc_int=None):
     """{event_str} is both a key for the count and part of the log message.
     {log_str} is a message with details that may change for each call
     """
     logging.info(
       u' - '.join([v for v in (event_str, msg_str, str(inc_int)) if v])
     )
-    self.count(event_str, inc_int)
+    self.count(event_str, inc_int or 1)
 
   def dump_to_log(self):
     if self._event_dict:

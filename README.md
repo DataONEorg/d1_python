@@ -110,7 +110,7 @@ When unit tests are being run as part of CI or as a normal guard against regress
 
 The normal procedure for writing a sample based unit test is to just write the test as if the sample already exists, then running the test with `--sample-ask` and viewing and approving the resulting sample, which is then automatically written to a file. The sample file name is displayed, making it easy to find the file in order to add it to tracking so that it can be committed along with the test module.
 
-When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-write`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
+When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-update`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
 
 Typically, it is not desirable to track generated files in Git. However, although the sample files are generated, they are an integral part of the units tests, and should be tracked just like the unit tests themselves.
 
@@ -198,7 +198,8 @@ Download the source from GitHub:
 
 Add the DataONE packages to the Python path, and install their dependencies:
 
-    $ sh $D1ROOT/dev_tools/develop.sh
+    cd ~/d1_python
+    sudo dev_tools/src/d1_dev/setup-all.py --root . develop
 
 Run the following commands, except, change the "createuser" line to:
 
@@ -208,7 +209,7 @@ Run the following commands, except, change the "createuser" line to:
 
 Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
 
-    $ sudo cp /home/dahl/d1_python/d1_mn_generic/src/deployment/openssl.cnf .
+    $ sudo cp <your_d1_python_path>/d1_mn_generic/src/deployment/openssl.cnf .
 
   https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
 
@@ -243,10 +244,6 @@ The `<version>` argument specifies what the version will be for the release. E.g
 Check that there are no package version conflicts:
 
     $ pip check
-
-Some sample files contain the version tag and must be updated when the version changes.  
-
-    $ pytest -xvs --sample-ask
 
 Commit and push the changes, and check the build on Travis.
 

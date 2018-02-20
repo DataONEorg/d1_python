@@ -21,7 +21,7 @@
 """Test MNReplication.replicate()
 
 These tests do NOT check if GMN acts on the request and actually performs the
-replication
+replication.
 """
 
 from __future__ import absolute_import

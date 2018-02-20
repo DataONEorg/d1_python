@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name ="RegistryService" 
+        targetNamespace="http://ecoinformatics.org/registryservice-1.0.0"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://ecoinformatics.org/registryservice-1.0.0"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:regentry="http://ecoinformatics.org/registryentry-1.0.0">
+
+   <import namespace="http://ecoinformatics.org/registryentry-1.0.0" location="RegistryEntryType.xsd"/>
+
+ <types>
+    <xsd:schema targetNamespace="http://ecoinformatics.org/registryservice-1.0.0" 
+          attributeFormDefault="qualified"
+          elementFormDefault="qualified"
+          xmlns="http://www.w3.org/2001/XMLSchema">
+
+       <xsd:element name="AddRequestElement">
+          <xsd:complexType>
+              <xsd:sequence>
+                  <xsd:element name="sessionId" type="xsd:string"/>
+                  <xsd:element name="registryEntry" type="regentry:RegistryEntryType"/>
+              </xsd:sequence>
+          </xsd:complexType>
+       </xsd:element>
+       <xsd:element name="AddResponseElement" type="xsd:string"/>
+
+
+       <xsd:element name="UpdateRequestElement">
+          <xsd:complexType>
+              <xsd:sequence>
+                  <xsd:element name="sessionId" type="xsd:string"/>
+                  <xsd:element name="docid" type="xsd:string"/>
+                  <xsd:element name="registryEntry" type="regentry:RegistryEntryType"/>
+              </xsd:sequence>
+          </xsd:complexType>
+       </xsd:element>
+       <xsd:element name="UpdateResponseElement" type="xsd:string"/>
+
+       <xsd:element name="RemoveRequestElement">
+           <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="sessionId" type="xsd:string"/>
+                  <xsd:element name="docid" type="xsd:string"/>
+               </xsd:sequence>
+           </xsd:complexType>
+       </xsd:element>
+       <xsd:element name="RemoveResponseElement" type="xsd:string"/>
+
+       <xsd:element name="ListRequestElement">
+           <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="sessionId" type="xsd:string"/>
+               </xsd:sequence>
+           </xsd:complexType>
+       </xsd:element>
+
+       <xsd:element name="ListResponseElement">
+            <xsd:complexType>
+               <xsd:sequence>
+                   <xsd:element name="ListReturn" type="regentry:RegistryEntryArrayType"/>
+               </xsd:sequence>
+            </xsd:complexType>
+       </xsd:element>
+
+      <!-- query field can one of ByName, ByType, ByUrl, ByClassification and ByEndpoint -->
+       <xsd:element name="QueryRequestElement">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="sessionId" type="xsd:string"/>
+                   <xsd:element name="queryField" type="xsd:string"/>
+                   <xsd:element name="queryString" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+       </xsd:element>
+
+       <xsd:element name="QueryResponseElement">
+            <xsd:complexType>
+               <xsd:sequence>
+                   <xsd:element name="QueryReturn" type="regentry:RegistryEntryArrayType"/>
+               </xsd:sequence>
+            </xsd:complexType>
+       </xsd:element>
+
+    </xsd:schema>
+ </types>
+
+   <message name="AddRequestMsg">
+      <part name="parameter" element="tns:AddRequestElement"/>
+   </message>
+
+   <message name="AddResponseMsg">
+      <part name="parameter" element="tns:AddResponseElement"/>
+   </message>
+
+   <message name="UpdateRequestMsg">
+      <part name="parameter" element="tns:UpdateRequestElement"/>
+   </message>
+
+   <message name="UpdateResponseMsg">
+      <part name="parameter" element="tns:UpdateResponseElement"/>
+   </message>
+
+   <message name="RemoveRequestMsg">
+      <part name="parameter" element="tns:RemoveRequestElement"/>
+   </message>
+
+   <message name="RemoveResponseMsg">
+      <part name="parameter" element="tns:RemoveResponseElement"/>
+   </message>
+
+   <message name="ListRequestMsg">
+      <part name="parameter" element="tns:ListRequestElement"/>
+   </message>
+
+   <message name="ListResponseMsg">
+      <part name="parameter" element="tns:ListResponseElement"/>
+   </message>
+
+   <message name="QueryRequestMsg">
+      <part name="parameter" element="tns:QueryRequestElement"/>
+   </message>
+
+   <message name="QueryResponseMsg">
+      <part name="parameter" element="tns:QueryResponseElement"/>
+   </message>
+
+
+   <portType name="RegistryServicePortType">
+
+      <operation name="add">
+         <input message="tns:AddRequestMsg"/>
+         <output message="tns:AddResponseMsg"/>
+      </operation>
+
+      <operation name="update">
+         <input message="tns:UpdateRequestMsg"/>
+         <output message="tns:UpdateResponseMsg"/>
+      </operation>
+
+      <operation name="remove">
+         <input message="tns:RemoveRequestMsg"/>
+         <output message="tns:RemoveResponseMsg"/>
+      </operation>
+
+      <operation name="list">
+         <input message="tns:ListRequestMsg"/>
+         <output message="tns:ListResponseMsg"/>
+      </operation>
+
+      <operation name="query">
+         <input message="tns:QueryRequestMsg"/>
+         <output message="tns:QueryResponseMsg"/>
+      </operation>
+
+   </portType>
+   
+   <binding name="RegistryService"
+         type="tns:RegistryServicePortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="add">
+    <soap:operation soapAction="http://ecoinformatics.org/registryservice-1.0.0#add"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="update">
+    <soap:operation soapAction="http://ecoinformatics.org/registryservice-1.0.0#update"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="remove">
+    <soap:operation soapAction="http://ecoinformatics.org/registryservice-1.0.0#remove"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  <operation name="list">
+    <soap:operation soapAction="http://ecoinformatics.org/registryservice-1.0.0#list"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+    <operation name="query">
+    <soap:operation soapAction="http://ecoinformatics.org/registryservice-1.0.0#query"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/registryservice-1.0.0" use="literal"/>
+    </output>
+  </operation>
+  
+  
+</binding>
+
+<service name="RegistryService">
+  <port binding="tns:RegistryService"
+        name="Add">
+     <soap:address location="http://localhost:8080/axis/services/"/>
+  </port>
+</service>
+
+</definitions>

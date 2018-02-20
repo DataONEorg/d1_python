@@ -35,7 +35,7 @@ The GMN stack contains binary components that are built automatically during the
   Set up packages::
 
     $ sudo apt install --yes build-essential python-dev libssl-dev libxml2-dev \
-    libxslt1-dev libffi-dev postgresql-server-dev-9.5 openssl curl
+    libxslt1-dev libffi-dev postgresql-server-dev-9.5 openssl curl python-pip
 
   Install the GMN software stack from PyPI into a Python virtual environment::
 

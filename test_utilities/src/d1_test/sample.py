@@ -20,6 +20,7 @@
 import bz2
 import codecs
 import contextlib
+import json
 import logging
 import os
 import re
@@ -101,7 +102,7 @@ def assert_equals(
     format(filename, '-' * 10, diff_str)
   )
 
-  if pytest.config.getoption('--sample-write'):
+  if pytest.config.getoption('--sample-update'):
     save(got_str, filename)
     return
 
@@ -160,13 +161,18 @@ def load_utf8_to_unicode(filename):
 
 
 def load_xml_to_pyxb(filename, mode_str='r'):
-  logging.debug('Reading sample XML file. filename="{}"'.format(filename))
+  logging.debug('Loading sample XML file. filename="{}"'.format(filename))
   xml_str = load(filename, mode_str)
   return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
 
 
+def load_json(filename, mode_str='r'):
+  logging.debug('Loading sample JSON file. filename="{}"'.format(filename))
+  return json.loads(load(filename, mode_str))
+
+
 def save(got_str, filename, mode_str='wb'):
-  logging.info('Writing sample file. filename="{}"'.format(filename))
+  logging.info('Saving sample file. filename="{}"'.format(filename))
   with open(_get_or_create_path(filename), mode_str) as f:
     return f.write(got_str)
 
@@ -253,6 +259,8 @@ def clobber_uncontrolled_volatiles(o_str):
   o_str = re.sub(r'(?<=Python ITK ).+', '[volatile]', o_str)
   # ETA
   o_str = re.sub(r'\d{1,3}h\d{2}m\d{2}s', '[volatile]', o_str)
+  # Disk space
+  o_str = re.sub(r'[\s\d.]{2,4}GiB', '[volatile]', o_str)
   return o_str
 
 

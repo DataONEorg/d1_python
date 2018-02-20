@@ -112,6 +112,10 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 RESOURCE_MAP_CREATE = 'block'
 
+SCIMETA_VALIDATION_ENABLED = True
+SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024**2
+SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'
+
 PROXY_MODE_BASIC_AUTH_ENABLED = False
 PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
@@ -219,8 +223,11 @@ CACHES = {
 ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
+  # In Django 1.11, these are required in order for 404 not to trigger 500 when
+  # DEBUG=False
   'django.contrib.auth',
   'django.contrib.contenttypes',
+  'django.contrib.staticfiles',
   'd1_gmn.app',
   'd1_gmn.app.startup.GMNStartupChecks',
 ]

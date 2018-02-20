@@ -256,8 +256,9 @@ def _get_sciobj_iter(sciobj):
 
 
 def _get_sciobj_iter_local(pid):
-  file_in_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-  return d1_common.iter.file.FileIterator(file_in_path)
+  return d1_common.iter.file.FileIterator(
+    d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+  )
 
 
 def _get_sciobj_iter_remote(url):
@@ -284,8 +285,10 @@ def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
   d1_gmn.app.event_log.log_read_event(pid, request)
-  return d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
-    request, pid
+  return django.http.HttpResponse(
+    d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(
+      request, pid
+    ), d1_common.const.CONTENT_TYPE_XML
   )
 
 

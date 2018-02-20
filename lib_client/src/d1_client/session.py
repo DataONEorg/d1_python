@@ -36,6 +36,7 @@ import requests_toolbelt.utils.dump
 import d1_common.const
 import d1_common.date_time
 import d1_common.url
+import d1_common.util
 
 DEFAULT_NUMBER_OF_RETRIES = 3
 DEFAULT_USE_CACHE = True
@@ -301,6 +302,10 @@ class Session(object):
     if result_dict['timeout'] in (0, 0.0):
       result_dict['timeout'] = None
     self.nested_update(result_dict, kwargs_dict)
+    logging.debug(
+      'Request kwargs:\n{}'.
+      format(d1_common.util.format_normalized_compact_json(result_dict))
+    )
     return result_dict
 
   def nested_update(self, d, u):

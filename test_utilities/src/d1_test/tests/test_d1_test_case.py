@@ -22,6 +22,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import pytest
+
 import d1_test.d1_test_case
 
 
@@ -36,3 +38,13 @@ class TestTestUtils(d1_test.d1_test_case.D1TestCase):
     received_prompt_str = out_stream.getvalue()
     assert expected_prompt_str == received_prompt_str
     assert expected_answer_str == received_answer_str
+
+  def test_1030(self):
+    """memory_limit context manager"""
+    # Passes because it uses less memory than the limit
+    with d1_test.d1_test_case.memory_limit(100 * 1024**2):
+      b'x' * (1 * 1024**2)
+    # Fails because it uses more memory than the limit
+    with d1_test.d1_test_case.memory_limit(100 * 1024**2):
+      with pytest.raises(MemoryError):
+        b'x' * (200 * 1024**2)

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name ="PutService" 
+             targetNamespace="http://ecoinformatics.org/putservice-1.0.0"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://ecoinformatics.org/putservice-1.0.0" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <types>
+	  <xsd:schema targetNamespace="http://ecoinformatics.org/putservice-1.0.0"
+        attributeFormDefault="qualified"
+        elementFormDefault="qualified"
+        xmlns="http://www.w3.org/2001/XMLSchema">
+
+        <xsd:complexType name="EcoGridFault">
+            <xsd:complexContent>
+                   <xsd:sequence>
+                        <xsd:element name="message" type="xsd:string"/>
+                    </xsd:sequence>
+            </xsd:complexContent>
+        </xsd:complexType>
+
+        <xsd:complexType name="InvalidSessionFault">
+            <xsd:complexContent>
+                <xsd:sequence>
+                        <xsd:element name="message" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexContent>
+        </xsd:complexType>
+
+        <xsd:element name="PutServiceElement" type="tns:PutServiceElementType"/>
+        <xsd:complexType name="PutServiceElementType">
+                <xsd:sequence>
+                     <xsd:element name="objData" type="xsd:base64Binary"/>
+                     <xsd:element name="objectId" type="xsd:string"/>
+                     <xsd:element name="objectName" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="objType" type="xsd:int"/>
+                     <xsd:element name="sessionId" type="xsd:string"/>
+                </xsd:sequence>
+        </xsd:complexType> 
+
+        <xsd:element name="PutServiceResponseElement" type="tns:PutServiceResponseElementType"/>
+        <xsd:complexType name="PutServiceResponseElementType">
+        </xsd:complexType>
+
+     </xsd:schema>
+     
+  </types>
+  
+  <message name="PutServiceRequestMessage">
+        <part name="parameters" element="tns:PutServiceElement"/>
+  </message>
+
+  <message name="PutServiceResponseMessage">
+        <part name="parameter" element="tns:PutServiceResponseElement"/>
+  </message>
+
+  <message name="EcoGridFaultMessage">
+        <part name="fault" type="tns:EcoGridFault"/>
+  </message>
+
+  <message name="InvalidSessionFaultMessage">
+        <part name="fault" type="tns:InvalidSessionFault"/>
+  </message>
+
+   
+  <portType name="PutServicePortType">
+        <operation name="put">
+            <input message="tns:PutServiceRequestMessage"/>
+            <output message="tns:PutServiceResponseMessage"/>
+             <fault name="EcoGridFault" message="tns:EcoGridFaultMessage"/>
+             <fault name="InvalidSessionFault" message="tns:InvalidSessionFaultMessage"/>
+        </operation>
+  </portType>
+  
+  <binding name="PutService"
+         type="tns:PutServicePortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="put">
+    <soap:operation soapAction="http://ecoinformatics.org/putservice-1.0.0#put"/>
+    <input>
+      <soap:body namespace="http://ecoinformatics.org/putservice-1.0.0" use="literal"/>
+    </input>
+    <output>
+      <soap:body namespace="http://ecoinformatics.org/putservice-1.0.0" use="literal"/>
+    </output>
+  
+  </operation>
+ 
+</binding>
+
+<service name="PutService">
+  <port binding="tns:PutService" name="Put">
+     <soap:address location="http://localhost:8080/axis/services/"/>
+  </port>
+</service>
+
+</definitions>

@@ -22,7 +22,6 @@
 """
 from __future__ import absolute_import
 
-import os
 import StringIO
 import sys
 import uuid
@@ -134,17 +133,16 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert len(out) > 100
     assert type(out) is str
 
-  def test_1110(self):
+  def test_1110(self, tmpdir):
     """Session is successfully saved and then loaded (pickled and unpickled)"""
-    tmp_pickle = './pickle.tmp'
-    try:
-      os.unlink(tmp_pickle)
-    except OSError:
-      pass
+    tmp_pickle_path = str(tmpdir.join('session.pickle'))
+    print type(tmp_pickle_path)
+    print dir(tmp_pickle_path)
+    print tmp_pickle_path
     s1 = session.Session(nodes, format_ids)
     u = str(uuid.uuid1())
     s1.set('rights-holder', u)
-    s1.save(tmp_pickle)
+    s1.save(tmp_pickle_path)
     s2 = session.Session(nodes, format_ids)
-    s2.load(tmp_pickle)
+    s2.load(tmp_pickle_path)
     assert s2.get('rights-holder') == u

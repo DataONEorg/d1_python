@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+       targetNamespace="http://ecoinformatics.org/registryentry-1.0.0"
+       xmlns="http://ecoinformatics.org/registryentry-1.0.0"
+       xmlns:tns="http://ecoinformatics.org/registryentry-1.0.0"
+       xmlns:xs="http://www.w3.org/2001/XMLSchema">
+       
+       <xs:annotation>
+          <xs:documentation>
+             Author: Bing Zhu, modified by Ben Leinfelder
+                     SEEK project
+                     San Diego Supercomputer Center
+             Date:   Oct 11, 2004 (modified for 1.0.0 jan 2008)
+          </xs:documentation>
+       </xs:annotation>
+
+       <xs:element name="RegistryEntry" type="RegistryEntryType"/>
+       
+       <xs:element name="RegistryEntryArray" type="RegistryEntryType"/>
+
+       <xs:complexType name="RegistryEntryType">
+          <xs:sequence>
+             <xs:element name="serviceName" type="xs:string"/>
+             <xs:element name="serviceGroup" type="xs:string"/>
+             <xs:element name="wsdlURL" type="xs:string"/>
+             <xs:element name="serviceType" type="xs:string"/>
+             <xs:element name="endPoint" type="xs:string"/>
+             <xs:element name="serviceClassification" type="xs:string" fixed="EcogridServiceRegistry"/>
+             <xs:element name="description"  type="xs:string"/>
+             <xs:element name="id" type="xs:string" minOccurs="0"/>
+
+             <xs:element name="documentType" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="namespace" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                     <xs:element name="label" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                   </xs:sequence>
+                </xs:complexType>
+             </xs:element>
+
+             <xs:element name="provider" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+
+          </xs:sequence>
+       </xs:complexType>
+
+       <xs:complexType name="RegistryEntryArrayType">
+          <xs:sequence>
+             <xs:element name="RegistryEntry" type="tns:RegistryEntryType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+       </xs:complexType>
+
+</xs:schema>

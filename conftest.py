@@ -25,10 +25,12 @@ import datetime
 import logging
 import multiprocessing
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 
+import mock
 import posix_ipc
 import psycopg2
 import psycopg2.extensions
@@ -49,7 +51,9 @@ import django.core.management
 import django.db
 import django.db.utils
 
-DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm')
+DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser(
+  '~/bin/JetBrains/pycharm.sh'
+)
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
@@ -79,12 +83,12 @@ def pytest_addoption(parser):
     help='Prompt to update or write new test sample files on failures'
   )
   parser.addoption(
-    '--sample-write', action='store_true',
+    '--sample-update', action='store_true',
     help='Automatically update or write sample files on failures'
   )
   parser.addoption(
     '--sample-review', action='store_true',
-    help='Review samples (use after --sample-write)'
+    help='Review samples (use after --sample-update)'
   )
   parser.addoption(
     '--sample-tidy', action='store_true',
@@ -124,18 +128,23 @@ def pytest_addoption(parser):
   )
 
 
-def pytest_configure():
-  logging.debug('pytest_configure()')
-  tmp_store_path = os.path.join(
-    tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
-      d1_test.instance_generator.random_data.
-      random_lower_ascii(min_len=12, max_len=12)
-    )
-  )
-  logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
-  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-  d1_gmn.app.sciobj_store.create_clean_tmp_store()
-
+# def pytest_configure(config):
+#   """Allows plugins and conftest files to perform initial configuration.
+#   This hook is called for every plugin and initial conftest file after command
+#   line options have been parsed.
+#   After that, the hook is called for other conftest files as they are imported.
+#   """
+#   logging.debug('pytest_configure()')
+#   tmp_store_path = os.path.join(
+#     tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
+#       d1_test.instance_generator.random_data.
+#       random_lower_ascii(min_len=12, max_len=12)
+#     )
+#   )
+#   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
+#   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+#   d1_gmn.app.sciobj_store.create_clean_tmp_store()
+#   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
 
 # Hooks
 
@@ -224,7 +233,7 @@ def _print_skip_list():
 
 
 def _open_error_in_pycharm(call):
-  """Attempt to open error locations in PyCharm. Use with -x / --exitfirst"""
+  """Attempt to open error locations in PyCharm. Use with --exitfirst (-x)"""
   # src_path, src_line, func_name = rep.location
   src_path = call.excinfo.traceback[-1].path
   src_line = call.excinfo.traceback[-1].lineno + 1
@@ -233,6 +242,8 @@ def _open_error_in_pycharm(call):
     logging.debug('Unable to find location of error')
     return
   try:
+    assert os.path.isfile(DEFAULT_DEBUG_PYCHARM_BIN_PATH), \
+      'Path to PyCharm is incorrect'
     subprocess.call(
       [DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)]
     )
@@ -350,6 +361,28 @@ def mn_client_v1_v2(request):
 #   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
 #   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
 #   d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+
+@pytest.yield_fixture(scope='session')
+def django_sciobj_store_setup(request, settings):
+  tmp_store_path = os.path.join(
+    tempfile.gettempdir(),
+    'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
+  )
+  mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
+  django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
+  logging.debug(
+    'Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
+  )
+  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+
+  yield
+
+  logging.debug(
+    'Deleting sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
+  )
+  shutil.rmtree(tmp_store_path)
+
 
 # Database setup
 
