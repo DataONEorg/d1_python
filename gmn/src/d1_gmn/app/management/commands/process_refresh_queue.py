@@ -171,7 +171,7 @@ class Command(django.core.management.base.BaseCommand):
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
-    if d1_common.xml.get_rep_val(sysmeta_pyxb.identifier) != pid:
+    if d1_common.xml.get_req_val(sysmeta_pyxb.identifier) != pid:
       raise django.core.management.base.CommandError(
         u'PID in retrieved System Metadata does not match the object for which '
         u'refresh was requested. pid="{}"'.format(pid)
