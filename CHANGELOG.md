@@ -1,5 +1,7 @@
 # Change Log
 
+
+
 ## [2.4.2](https://github.com/DataONEorg/d1_python/tree/2.4.2) (2018-02-15)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.4.1...2.4.2)
 
@@ -13,7 +15,6 @@
   * Move updateSystemMetadata() to baseclient to make it availble for CN calls
 
 * DataONE Common Library
-  * Update dependencies to current as of 2018-02-15
   * Improve StringIterator to allow for more general usage
 
 * Tests and test framework
@@ -25,6 +26,10 @@
     * Skip generating PyXB objects that will not be used in the final SysMeta object
   * Ensure unique media types in test objects
   * Check that dateSysMetadataModified of object obsoleted by update() is set to the GMN server's current datetime
+
+* Misc
+  * Update dependencies to current as of 2018-02-15
+
 
 ## [2.4.1](https://github.com/DataONEorg/d1_python/tree/2.4.1) (2017-12-14)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.4.0...2.4.1)
@@ -42,7 +47,6 @@
   * Add new package for validating Science Metadata
     * The required schemas are included in the package
   * Improve error handling in multiprocessed iterators
-  * Update all dependencies to current as of 2017-12-06
   * Misc refactoring
 
 * Tests and test framework
@@ -50,6 +54,7 @@
   * Add basic test for GMN home/status page
 
 * Misc  
+  * Update dependencies to current as of 2017-12-06
   * Remove accidentally added duplicates
 
 ## [2.4.0](https://github.com/DataONEorg/d1_python/tree/2.4.0) (2017-11-16)
