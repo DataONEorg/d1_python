@@ -60,7 +60,7 @@ interactively, add::
 
   # DataONE paths
   export D1_ROOT_DIR="/var/local/dataone"
-  export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn2_venv"
+  export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn_venv"
   export GMN_PKG_DIR="${GMN_VENV_DIR}/lib/python2.7/site-packages/d1_gmn"
 
   # Use these as shortcuts from the shell. E.g., "cd $d1"
