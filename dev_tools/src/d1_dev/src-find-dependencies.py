@@ -32,8 +32,6 @@ The scripts can be directly specified and/or discovered through filtered
 recursive searches.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import importlib
 import logging
@@ -74,9 +72,9 @@ def main():
   pkg_name_list = find_pkg_names(args)
 
   with d1_common.util.print_logging():
-    logging.info(u'Dependent on packages:')
+    logging.info('Dependent on packages:')
     for pkg_name_str in pkg_name_list:
-      logging.info(u'  {}'.format(pkg_name_str))
+      logging.info('  {}'.format(pkg_name_str))
 
 
 def find_pkg_names(args):
@@ -118,28 +116,28 @@ def find_deps_in_tree(r):
   ]
   from_import_list = []
   for from_n in r('FromImportNode'):
-    from_import_list.append(u'.'.join(v.value for v in from_n.value))
+    from_import_list.append('.'.join(v.value for v in from_n.value))
   return regular_import_list + from_import_list
 
 
 def get_import_node_dotted_name_list(import_node):
   # Is there a simpler way?
   return [
-    u'.'.join([n.value for n in dotted_node.value])
+    '.'.join([n.value for n in dotted_node.value])
     for dotted_node in import_node
   ]
 
 
 def get_pkg_name_set(dep_set):
-  dep_pkg_set = {v.split(u'.')[0] for v in dep_set}
+  dep_pkg_set = {v.split('.')[0] for v in dep_set}
   pip_pkg_set = {
-    v.key.split(u'==')[0].strip() for v in pip.get_installed_distributions()
+    v.key.split('==')[0].strip() for v in pip.get_installed_distributions()
   }
   return dep_pkg_set & pip_pkg_set
 
 
 def get_external_deps(dep_set):
-  return {n.split(u'.')[0] for n in dep_set if is_external_library(n)}
+  return {n.split('.')[0] for n in dep_set if is_external_library(n)}
 
 
 def is_external_library(module_name):

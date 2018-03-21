@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the CLI exceptions
 """
-from __future__ import absolute_import
 
 import d1_cli.impl.cli
 import d1_cli.impl.cli_client

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:node replicate="false" state="up" synchronize="true" type="cn" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <identifier>string</identifier>
   <name>string</name>

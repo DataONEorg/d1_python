@@ -1,117 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>12</serialVersion>
-  <identifier>object#0000</identifier>
-  <formatId>application/vnd.ms-excel.sheet.binary.macroEnabled.12</formatId>
-  <size>223</size>
-  <checksum algorithm="SHA-1">8dbd04cb51725de25325d0e580f437251b67a049</checksum>
-  <submitter>subj_ls</submitter>
-  <rightsHolder>subj_nk</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>subj_bu</subject>
-      <permission>read</permission>
-    </allow>
-    <allow>
-      <subject>subj_nk</subject>
-      <subject>subj_pq</subject>
-      <subject>subj_az</subject>
-      <subject>subj_lk</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>subj_kh_group</subject>
-      <subject>subj_mp</subject>
-      <subject>subj_ui</subject>
-      <permission>write</permission>
-      <permission>changePermission</permission>
-    </allow>
-  </accessPolicy>
-  <replicationPolicy numberReplicas="5" replicationAllowed="true">
-    <preferredMemberNode>mn_xl</preferredMemberNode>
-    <preferredMemberNode>mn_wi</preferredMemberNode>
-    <preferredMemberNode>mn_x</preferredMemberNode>
-    <preferredMemberNode>mn_tm</preferredMemberNode>
-    <blockedMemberNode>mn_g</blockedMemberNode>
-    <blockedMemberNode>mn_xp</blockedMemberNode>
-  </replicationPolicy>
-  <dateUploaded>1981-04-25T05:46:30.861414Z</dateUploaded>
-  <dateSysMetadataModified>1981-05-05T05:46:30.861414Z</dateSysMetadataModified>
-  <originMemberNode>mn_zq</originMemberNode>
-  <authoritativeMemberNode>mn_go</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_ik</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2023-07-26T07:35:43.211737Z</replicaVerified>
-  </replica>
-  <mediaType name="media_type_dr">
-    <property name="prop_vcavhstqnaer">xvavsmkfmurr</property>
-    <property name="prop_ypylpjhrfppl">mrsbdnqennfe</property>
-    <property name="prop_rqahthpyyifp">ybqsdftyufca</property>
-  </mediaType>
-  <fileName>file_zpzmdzsqjgtm</fileName>
-</ns1:systemMetadata>
-
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>71</serialVersion>
-  <identifier>object#0001</identifier>
-  <formatId>http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html</formatId>
-  <size>283</size>
-  <checksum algorithm="SHA-1">f73a8d3cac9b9677cc9758615e9aef8ecf0dff78</checksum>
-  <submitter>subj_rv</submitter>
-  <rightsHolder>subj_e</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>subj_yo</subject>
-      <subject>subj_qo</subject>
-      <subject>subj_bo</subject>
-      <subject>subj_hr</subject>
-      <subject>subj_pm</subject>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>subj_yt</subject>
-      <subject>subj_ks_group</subject>
-      <subject>subj_yi</subject>
-      <subject>subj_hf</subject>
-      <subject>subj_sl</subject>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>subj_qu</subject>
-      <subject>subj_ta</subject>
-      <subject>subj_wl</subject>
-      <permission>write</permission>
-      <permission>changePermission</permission>
-    </allow>
-  </accessPolicy>
-  <replicationPolicy numberReplicas="5" replicationAllowed="true">
-    <preferredMemberNode>mn_em</preferredMemberNode>
-    <preferredMemberNode>mn_p</preferredMemberNode>
-    <preferredMemberNode>mn_ds</preferredMemberNode>
-    <blockedMemberNode>mn_l</blockedMemberNode>
-    <blockedMemberNode>mn_ew</blockedMemberNode>
-  </replicationPolicy>
-  <dateUploaded>2040-10-13T15:30:59.298354Z</dateUploaded>
-  <dateSysMetadataModified>2040-10-23T15:30:59.298354Z</dateSysMetadataModified>
-  <originMemberNode>mn_yj</originMemberNode>
-  <authoritativeMemberNode>mn_tq</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_m</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2034-02-08T20:25:55.732489Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_ld</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2045-09-21T21:28:17.259104Z</replicaVerified>
-  </replica>
-  <mediaType name="media_type_ua">
-    <property name="prop_veiukxggogeq">hmfaatcigxom</property>
-    <property name="prop_nfrhoichjxft">adhhtdhwacxj</property>
-    <property name="prop_yzifsdxofseh">tnfztvhsgxjh</property>
-    <property name="prop_dyvjinjmuric">lbnvrilcaxmu</property>
-  </mediaType>
-  <fileName>file_zdzpvjitlxsd</fileName>
-</ns1:systemMetadata>
+VALID-UTF-8-BYTES:<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
+xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>95</serialVersion><identifier>object#0002</identifier><formatId>image/jp2</formatId><size>306</size><checksum
+algorithm="SHA-1">90c9bc3f0c42928f6abd6e140bfcfff69877b49f</checksum><submitter>subj_e</submitter><rightsHolder>subj_en</rightsHolder><accessPolicy><allow><subject>subj_nt</subject><subject>subj_wh</subject><permission>write</permission></allow><allow><subject>subj_an</subject><subject>subj_aq</subject><subject>subj_bf</subject><subject>subj_bk</subject><subject>subj_dd_group</subject><subject>subj_eh</subject><subject>subj_ib</subject><subject>subj_lx</subject><subject>subj_py_group</subject><subject>subj_qx</subject><subject>subj_ve</subject><subject>subj_wy</subject><permission>changePermission</permission></allow></accessPolicy><replicationPolicy
+numberReplicas="7"
+replicationAllowed="true"><preferredMemberNode>mn_ek</preferredMemberNode><preferredMemberNode>mn_on</preferredMemberNode><preferredMemberNode>mn_vn</preferredMemberNode><blockedMemberNode>mn_jt</blockedMemberNode><blockedMemberNode>mn_ws</blockedMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2044-02-29T15:43:39Z</dateUploaded><dateSysMetadataModified>2044-03-10T15:43:39Z</dateSysMetadataModified><originMemberNode>mn_q</originMemberNode><authoritativeMemberNode>mn_cs</authoritativeMemberNode><replica><replicaMemberNode>mn_a</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>2016-03-06T00:33:28Z</replicaVerified></replica><replica><replicaMemberNode>mn_i</replicaMemberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>1988-04-20T12:04:34Z</replicaVerified></replica><replica><replicaMemberNode>mn_su</replicaMemberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>2038-08-07T23:52:06Z</replicaVerified></replica><replica><replicaMemberNode>mn_vy</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>2004-07-14T05:01:51Z</replicaVerified></replica><mediaType
+name="media_type_lm"><property
+name="prop_vqyybavkoixj">yjxgmnvxaebg</property></mediaType><fileName>file_ffefffaoblcz</fileName></ns1:systemMetadata>
+<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
+xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>92</serialVersion><identifier>object#0003</identifier><formatId>text/html</formatId><size>303</size><checksum
+algorithm="SHA-1">07864f0be4c4cdfc1e1c19760385ca1c89971fd3</checksum><submitter>subj_a</submitter><rightsHolder>subj_z</rightsHolder><accessPolicy><allow><subject>subj_hi</subject><permission>write</permission></allow><allow><subject>subj_dl</subject><subject>subj_ry_group</subject><subject>subj_ui</subject><subject>subj_xj_group</subject><permission>changePermission</permission></allow></accessPolicy><replicationPolicy
+numberReplicas="1"
+replicationAllowed="true"><blockedMemberNode>mn_p</blockedMemberNode><blockedMemberNode>mn_uj</blockedMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2041-03-08T21:37:06Z</dateUploaded><dateSysMetadataModified>2041-03-18T21:37:06Z</dateSysMetadataModified><originMemberNode>mn_z</originMemberNode><authoritativeMemberNode>mn_e</authoritativeMemberNode><replica><replicaMemberNode>mn_f</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>2054-02-28T11:21:20Z</replicaVerified></replica><replica><replicaMemberNode>mn_q</replicaMemberNode><replicationStatus>completed</replicationStatus><replicaVerified>2020-08-22T13:34:56Z</replicaVerified></replica><replica><replicaMemberNode>mn_uv</replicaMemberNode><replicationStatus>requested</replicationStatus><replicaVerified>2002-08-27T15:24:57Z</replicaVerified></replica><mediaType
+name="media_type_dt"><property name="prop_gbsapuvzmlxe">qndxgyajtkle</property><property
+name="prop_wpcltchcpdbl">qvtxniqoirnl</property><property name="prop_cpgcjuifmbtl">vkypcueuwmcw</property><property
+name="prop_cxnvwhicqify">xetweuxphcpf</property></mediaType><fileName>file_idxwhlgoixqt</fileName></ns1:systemMetadata>

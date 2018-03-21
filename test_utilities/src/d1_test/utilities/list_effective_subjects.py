@@ -23,9 +23,6 @@ Given a DataONE X.509 v3 Certificate, list all subjects, equivalent identities
 and groups for which the certificate holder is authenticated.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import optparse
 
@@ -86,10 +83,10 @@ class get_subjects_from_certificate(object):
     for person in self.subject_info.person:
       if person.subject.value() == subject:
         return person
-    print(
+    print((
       'SubjectInfo does not have any Person records matching Subject: {}'
       .format(person.subject.value())
-    )
+    ))
     exit()
 
   def _add_person_is_member_of(self, person):
@@ -114,14 +111,14 @@ class get_subjects_from_certificate(object):
     try:
       return d1_certificate.certificate_extractor.extract(self.cert)
     except Exception as e:
-      print('Error processing certificate: {}'.format(str(e)))
+      print(('Error processing certificate: {}'.format(str(e))))
       exit()
 
   def _deserialize_subject_info(self, subject_info_xml):
     try:
       return dataoneTypes_v1.CreateFromDocument(subject_info_xml)
     except Exception as e:
-      print('Error deserializing SubjectInfo: {}'.format(str(e)))
+      print(('Error deserializing SubjectInfo: {}'.format(str(e))))
       exit()
 
 
@@ -139,15 +136,15 @@ def read_certificate_from_file(cert_pem_path):
     with open(cert_pem_path) as f:
       return f.read()
   except EnvironmentError as e:
-    print('Error reading certificate file: {}'.format(str(e)))
+    print(('Error reading certificate file: {}'.format(str(e))))
 
 
 def print_effective_subjects(primary_subject, subjects):
   print('Effective subjects for certificate:')
-  print('{} (primary)'.format(primary_subject))
+  print(('{} (primary)'.format(primary_subject)))
   for subject in sorted(list(subjects)):
     if subject != primary_subject:
-      print('{}'.format(subject))
+      print(('{}'.format(subject)))
 
 
 def main():

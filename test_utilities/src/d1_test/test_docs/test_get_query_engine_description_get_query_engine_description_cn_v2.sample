@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:queryEngineDescription xmlns:ns1="http://ns.dataone.org/service/types/v1.1">
   <queryEngineVersion>5.2.1</queryEngineVersion>
   <querySchemaVersion>1.1</querySchemaVersion>
@@ -31,7 +31,8 @@
   </queryField>
   <queryField>
     <name>attribute</name>
-    <description>Multi-valued field containing the text from attributeName, attributeLabel, attributeDescription, attributeUnit fields into a single searchable text field.</description>
+    <description>Multi-valued field containing the text from attributeName, attributeLabel, attributeDescription, attributeUnit
+fields into a single searchable text field.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -148,7 +149,8 @@
   </queryField>
   <queryField>
     <name>blockedReplicationMN</name>
-    <description>A multi-valued field that contains the node Ids of member nodes that are blocked from holding replicas of this object.</description>
+    <description>A multi-valued field that contains the node Ids of member nodes that are blocked from holding replicas of this
+object.</description>
     <type>string</type>
     <searchable>false</searchable>
     <returnable>true</returnable>
@@ -238,7 +240,8 @@
   </queryField>
   <queryField>
     <name>datePublished</name>
-    <description>Publication date for the dataset (this may or may not be coincident with when the content is added to DataONE).</description>
+    <description>Publication date for the dataset (this may or may not be coincident with when the content is added to
+DataONE).</description>
     <type>tdate</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -265,7 +268,8 @@
   </queryField>
   <queryField>
     <name>documents</name>
-    <description>Lists all PIDs that this object describes. Obtained by parsing all resource maps in which this object is referenced. Not set for data or resource map objects.</description>
+    <description>Lists all PIDs that this object describes. Obtained by parsing all resource maps in which this object is
+referenced. Not set for data or resource map objects.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -373,7 +377,8 @@
   </queryField>
   <queryField>
     <name>geohash_1</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -382,7 +387,8 @@
   </queryField>
   <queryField>
     <name>geohash_2</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -391,7 +397,8 @@
   </queryField>
   <queryField>
     <name>geohash_3</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -400,7 +407,8 @@
   </queryField>
   <queryField>
     <name>geohash_4</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -409,7 +417,8 @@
   </queryField>
   <queryField>
     <name>geohash_5</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -418,7 +427,8 @@
   </queryField>
   <queryField>
     <name>geohash_6</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -427,7 +437,8 @@
   </queryField>
   <queryField>
     <name>geohash_7</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -436,7 +447,8 @@
   </queryField>
   <queryField>
     <name>geohash_8</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -445,7 +457,8 @@
   </queryField>
   <queryField>
     <name>geohash_9</name>
-    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be used for searching and plotting.</description>
+    <description>An encoded string that represents the geographic coordinates of the centroid of a spatial extent. This can be
+used for searching and plotting.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -490,7 +503,8 @@
   </queryField>
   <queryField>
     <name>isDocumentedBy</name>
-    <description>Lists all PIDs that describe this object. Obtained by parsing all resource maps in which this object is referenced.</description>
+    <description>Lists all PIDs that describe this object. Obtained by parsing all resource maps in which this object is
+referenced.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -499,7 +513,8 @@
   </queryField>
   <queryField>
     <name>isPublic</name>
-    <description>Set to True if the DataONE `public user` is present in the list of subjects with readPermission on PID.</description>
+    <description>Set to True if the DataONE `public user` is present in the list of subjects with readPermission on
+PID.</description>
     <type>boolean</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -508,7 +523,8 @@
   </queryField>
   <queryField>
     <name>isService</name>
-    <description>Set to true if document is a member node service description document.  Use to filter search results for to exclude or include member node services.</description>
+    <description>Set to true if document is a member node service description document.  Use to filter search results for to
+exclude or include member node services.</description>
     <type>boolean</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -526,7 +542,8 @@
   </queryField>
   <queryField>
     <name>keyConcept</name>
-    <description>Terms drawn from a controlled vocabulary of concepts that are applicable to the content described by the metadata document.</description>
+    <description>Terms drawn from a controlled vocabulary of concepts that are applicable to the content described by the metadata
+document.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -535,7 +552,8 @@
   </queryField>
   <queryField>
     <name>keywords</name>
-    <description>Keywords recorded in the science metadata document. These may be controlled by the generator of the metadata or by the metadata standard of the document, but are effectively uncontrolled within the  DataONE context.</description>
+    <description>Keywords recorded in the science metadata document. These may be controlled by the generator of the metadata or
+by the metadata standard of the document, but are effectively uncontrolled within the  DataONE context.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -571,7 +589,8 @@
   </queryField>
   <queryField>
     <name>mediaType</name>
-    <description>The name attribute of the media type element in system metadata.  Indicates media type of the object.</description>
+    <description>The name attribute of the media type element in system metadata.  Indicates media type of the
+object.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -580,7 +599,8 @@
   </queryField>
   <queryField>
     <name>mediaTypeProperty</name>
-    <description>A list of properties describing the media type in system metadata.  The value is a concatenation of the property elements name attribute and the value of the property element.</description>
+    <description>A list of properties describing the media type in system metadata.  The value is a concatenation of the property
+elements name attribute and the value of the property element.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -598,7 +618,8 @@
   </queryField>
   <queryField>
     <name>noBoundingBox</name>
-    <description>Set to &quot;Y&quot; if there is no bounding box information available (i.e., the east, west, north, south most coordinates)</description>
+    <description>Set to &quot;Y&quot; if there is no bounding box information available (i.e., the east, west, north, south most
+coordinates)</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -723,7 +744,8 @@
   </queryField>
   <queryField>
     <name>placeKey</name>
-    <description>A place name keyword, assigned by the metadata creator. It is one keyword from the thesaurus named in &lt;placekt&gt;</description>
+    <description>A place name keyword, assigned by the metadata creator. It is one keyword from the thesaurus named in
+&lt;placekt&gt;</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -750,7 +772,8 @@
   </queryField>
   <queryField>
     <name>project</name>
-    <description>The authorized name of a research effort for which data is collected. This name is often reduced to a convenient abbreviation or acronym. All investigators involved in a project should use a common, agreed-upon name.</description>
+    <description>The authorized name of a research effort for which data is collected. This name is often reduced to a convenient
+abbreviation or acronym. All investigators involved in a project should use a common, agreed-upon name.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -768,7 +791,8 @@
   </queryField>
   <queryField>
     <name>prov_generated</name>
-    <description>A multi-valued field containing the identifiers of data objects that this program  generated based on the PROV wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
+    <description>A multi-valued field containing the identifiers of data objects that this program  generated based on the PROV
+wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -777,7 +801,8 @@
   </queryField>
   <queryField>
     <name>prov_generatedByExecution</name>
-    <description>A multi-valued field containing the identifiers of the executions that this data object was generated by based on the PROV wasGeneratedBy property.</description>
+    <description>A multi-valued field containing the identifiers of the executions that this data object was generated by based on
+the PROV wasGeneratedBy property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -786,7 +811,8 @@
   </queryField>
   <queryField>
     <name>prov_generatedByProgram</name>
-    <description>A multi-valued field containing the identifiers of the programs that this data object was generated by based on the PROV wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
+    <description>A multi-valued field containing the identifiers of the programs that this data object was generated by based on
+the PROV wasGeneratedBy, qualifiedAssociation, and hadPlan properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -795,7 +821,8 @@
   </queryField>
   <queryField>
     <name>prov_generatedByUser</name>
-    <description>A multi-valued field containing the identifiers of the users that this data object was generated by based on the PROV wasGeneratedBy, qualifiedAssociation, and agent properties.</description>
+    <description>A multi-valued field containing the identifiers of the users that this data object was generated by based on the
+PROV wasGeneratedBy, qualifiedAssociation, and agent properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -804,7 +831,8 @@
   </queryField>
   <queryField>
     <name>prov_hasDerivations</name>
-    <description>A multi-valued field containing the identifiers of the data objects that were derivations of the source data object described by this metadata object, based on the PROV wasDerivedBy property.</description>
+    <description>A multi-valued field containing the identifiers of the data objects that were derivations of the source data
+object described by this metadata object, based on the PROV wasDerivedBy property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -813,7 +841,8 @@
   </queryField>
   <queryField>
     <name>prov_hasSources</name>
-    <description>A multi-valued field containing the identifiers of the data objects that were sources to the derived data object described by this metadata object, based on the PROV wasDerivedBy property.</description>
+    <description>A multi-valued field containing the identifiers of the data objects that were sources to the derived data object
+described by this metadata object, based on the PROV wasDerivedBy property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -822,7 +851,8 @@
   </queryField>
   <queryField>
     <name>prov_instanceOfClass</name>
-    <description>A multi-valued field containing the identifiers of the semantic classes that this object is an instance of, based on the PROV, ProvONE, and other ontologies.</description>
+    <description>A multi-valued field containing the identifiers of the semantic classes that this object is an instance of, based
+on the PROV, ProvONE, and other ontologies.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -831,7 +861,8 @@
   </queryField>
   <queryField>
     <name>prov_used</name>
-    <description>A multi-valued field containing the identifiers of data objects that this program used based on the PROV used, qualifiedAssociation, and hadPlan properties.</description>
+    <description>A multi-valued field containing the identifiers of data objects that this program used based on the PROV used,
+qualifiedAssociation, and hadPlan properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -840,7 +871,8 @@
   </queryField>
   <queryField>
     <name>prov_usedByExecution</name>
-    <description>A multi-valued field containing the identifiers of the executions that used this data object based on the PROV used property.</description>
+    <description>A multi-valued field containing the identifiers of the executions that used this data object based on the PROV
+used property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -849,7 +881,8 @@
   </queryField>
   <queryField>
     <name>prov_usedByProgram</name>
-    <description>A multi-valued field containing the identifiers of the programs that used this data object based on the PROV used, qualifiedAssociation, and hadPlan properties.</description>
+    <description>A multi-valued field containing the identifiers of the programs that used this data object based on the PROV
+used, qualifiedAssociation, and hadPlan properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -858,7 +891,8 @@
   </queryField>
   <queryField>
     <name>prov_usedByUser</name>
-    <description>A multi-valued field containing the identifiers of the users that used this data object based on the PROV used, qualifiedAssociation, and agent properties.</description>
+    <description>A multi-valued field containing the identifiers of the users that used this data object based on the PROV used,
+qualifiedAssociation, and agent properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -867,7 +901,8 @@
   </queryField>
   <queryField>
     <name>prov_wasDerivedFrom</name>
-    <description>A multi-valued field containing the identifiers of data objects that this data object was derived from based on the PROV wasDerivedBy property.</description>
+    <description>A multi-valued field containing the identifiers of data objects that this data object was derived from based on
+the PROV wasDerivedBy property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -876,7 +911,8 @@
   </queryField>
   <queryField>
     <name>prov_wasExecutedByExecution</name>
-    <description>A multi-valued field containing the identifiers of the executions that used this program based on the PROV qualifiedAssociation, and hadPlan properties.</description>
+    <description>A multi-valued field containing the identifiers of the executions that used this program based on the PROV
+qualifiedAssociation, and hadPlan properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -885,7 +921,8 @@
   </queryField>
   <queryField>
     <name>prov_wasExecutedByUser</name>
-    <description>A multi-valued field containing the identifiers of the users that executed this program based on the PROV qualifiedAssociation, hadPlan, and agent properties.</description>
+    <description>A multi-valued field containing the identifiers of the users that executed this program based on the PROV
+qualifiedAssociation, hadPlan, and agent properties.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -894,7 +931,8 @@
   </queryField>
   <queryField>
     <name>prov_wasInformedBy</name>
-    <description>A multi-valued field containing the identifiers of executions that this execution was informed by based on the PROV wasInformedBy property.</description>
+    <description>A multi-valued field containing the identifiers of executions that this execution was informed by based on the
+PROV wasInformedBy property.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -903,7 +941,8 @@
   </queryField>
   <queryField>
     <name>pubDate</name>
-    <description>Publication date for the dataset (this may or may not be coincident with when the content is added to DataONE).</description>
+    <description>Publication date for the dataset (this may or may not be coincident with when the content is added to
+DataONE).</description>
     <type>tdate</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -912,7 +951,8 @@
   </queryField>
   <queryField>
     <name>purpose</name>
-    <description>The &quot;Purpose&quot; describes the &quot;why&quot; aspects of the data set (For example, why was the data set created?).</description>
+    <description>The &quot;Purpose&quot; describes the &quot;why&quot; aspects of the data set (For example, why was the data set
+created?).</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -982,7 +1022,8 @@
   </queryField>
   <queryField>
     <name>scientificName</name>
-    <description>Taxonomic scientific name(s) at the most precise level available for the organisms of relevance to the dataset</description>
+    <description>Taxonomic scientific name(s) at the most precise level available for the organisms of relevance to the
+dataset</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1050,7 +1091,9 @@
   </queryField>
   <queryField>
     <name>serviceCoupling</name>
-    <description>Either 'tight', 'mixed', or 'loose'.  Tight coupled service work only on the data described by this metadata document.  Loose coupling means service works on any data.  Mixed coupling means service works on data described by this metadata document but may work on other data.</description>
+    <description>Either 'tight', 'mixed', or 'loose'.  Tight coupled service work only on the data described by this metadata
+document.  Loose coupling means service works on any data.  Mixed coupling means service works on data described by this metadata
+document but may work on other data.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1059,7 +1102,8 @@
   </queryField>
   <queryField>
     <name>serviceDescription</name>
-    <description>A human readable description of the member node service to assist discovery and to evaluate applicability.</description>
+    <description>A human readable description of the member node service to assist discovery and to evaluate
+applicability.</description>
     <type>text_general</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1077,7 +1121,9 @@
   </queryField>
   <queryField>
     <name>serviceInput</name>
-    <description>Aspect of the service that accepts a digital entity.  Either a list of DataONE formatIds Urls or pid RESOLVE Urls that the member node service operates on.  A pid RESOLVE url indicates a 'tight' coupled service - while a list of formatIds indicates a loose coupled service.</description>
+    <description>Aspect of the service that accepts a digital entity.  Either a list of DataONE formatIds Urls or pid RESOLVE Urls
+that the member node service operates on.  A pid RESOLVE url indicates a 'tight' coupled service - while a list of formatIds
+indicates a loose coupled service.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1086,7 +1132,8 @@
   </queryField>
   <queryField>
     <name>serviceOutput</name>
-    <description>Aspect of the service that provides a digital entity resulting from operation of the service.  A listing of DataONE formatId which this member node service produces.</description>
+    <description>Aspect of the service that provides a digital entity resulting from operation of the service.  A listing of
+DataONE formatId which this member node service produces.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1140,7 +1187,8 @@
   </queryField>
   <queryField>
     <name>source</name>
-    <description>Also called &quot;platform.&quot; The mechanism used to support the sensor or instrument that gathers data</description>
+    <description>Also called &quot;platform.&quot; The mechanism used to support the sensor or instrument that gathers
+data</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1185,7 +1233,9 @@
   </queryField>
   <queryField>
     <name>term</name>
-    <description>A secondary subject area within which parameters can be categorized. Approved terms include &quot;agricultural chemicals&quot; and &quot;atmospheric chemistry,&quot; among many others. When entering a term in the LandVal Metadata Editor, users should select a standard expression from the pick list for terms if at all possible.</description>
+    <description>A secondary subject area within which parameters can be categorized. Approved terms include &quot;agricultural
+chemicals&quot; and &quot;atmospheric chemistry,&quot; among many others. When entering a term in the LandVal Metadata Editor,
+users should select a standard expression from the pick list for terms if at all possible.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>
@@ -1230,7 +1280,8 @@
   </queryField>
   <queryField>
     <name>topic</name>
-    <description>The most general subject area within which a parameter is categorized. Approved topics include &quot;agriculture,&quot; &quot;atmosphere,&quot; and &quot;hydrosphere,&quot; among others.</description>
+    <description>The most general subject area within which a parameter is categorized. Approved topics include
+&quot;agriculture,&quot; &quot;atmosphere,&quot; and &quot;hydrosphere,&quot; among others.</description>
     <type>string</type>
     <searchable>true</searchable>
     <returnable>true</returnable>

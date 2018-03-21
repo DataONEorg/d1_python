@@ -21,8 +21,6 @@
 """Pretty print an operation.
 """
 
-from __future__ import absolute_import
-
 import d1_cli.impl.cli_util as cli_util
 
 LEVEL_INDENT = 2
@@ -37,21 +35,21 @@ class OperationFormatter(object):
 
   def __init__(self):
     self._template = (
-      u'comment', u'operation', (u'CLI', u'verbose', u'editor',),
-      (u'Target Nodes', u'cn-url', u'mn-url'),
-      (u'Authentication', u'anonymous', u'cert-file',
-       u'key-file',), (u'Slicing', u'start', u'count',), (
-         u'Searching', u'query', u'query-type', u'from-date', u'to-date',
-         u'search-format-id',
+      'comment', 'operation', ('CLI', 'verbose', 'editor',),
+      ('Target Nodes', 'cn-url', 'mn-url'),
+      ('Authentication', 'anonymous', 'cert-file',
+       'key-file',), ('Slicing', 'start', 'count',), (
+         'Searching', 'query', 'query-type', 'from-date', 'to-date',
+         'search-format-id',
        ), (
-         u'Parameters', u'identifier', u'identifier-new', u'identifier-old',
-         u'identifier-package', u'identifier-science-meta',
-         u'identifier-science-data', u'science-file',
-         (u'Misc', u'format-id',
-          u'algorithm',), (u'Reference Nodes', u'authoritative-mn',),
-         (u'Subjects', u'rights-holder',), (u'Access Control', u'allow',), (
-           u'Replication', u'replication-allowed', u'number-of-replicas',
-           u'blocked-nodes', u'preferred-nodes',
+         'Parameters', 'identifier', 'identifier-new', 'identifier-old',
+         'identifier-package', 'identifier-science-meta',
+         'identifier-science-data', 'science-file',
+         ('Misc', 'format-id',
+          'algorithm',), ('Reference Nodes', 'authoritative-mn',),
+         ('Subjects', 'rights-holder',), ('Access Control', 'allow',), (
+           'Replication', 'replication-allowed', 'number-of-replicas',
+           'blocked-nodes', 'preferred-nodes',
          ),
        ),
     )
@@ -64,7 +62,7 @@ class OperationFormatter(object):
   def _format_operation(self, operation, template, indent):
     lines = []
     for v in template:
-      if isinstance(v, basestring):
+      if isinstance(v, str):
         lines.extend(self._format_value(operation, v, indent))
       else:
         lines_section = self._format_operation(
@@ -102,7 +100,7 @@ class OperationFormatter(object):
     return lines
 
   def _find_value(self, operation, key):
-    for k in operation.keys():
+    for k in list(operation.keys()):
       if k == key:
         return operation[k]
       if isinstance(operation[k], dict):

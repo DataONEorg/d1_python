@@ -19,9 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import cStringIO as StringIO
+import io as StringIO
 
 import rdflib
 import rdflib.compare
@@ -316,7 +314,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
   # def _norm_to_str(self, nt_str):
   #   return pprint.pformat(self._norm_nt(nt_str))
 
-  # def _assert_is_equal_nt(self, a_nt, b_nt):
+  # def _assert_are_equal_nt(self, a_nt, b_nt):
   #   assert self._norm_nt(a_nt) == self._norm_nt(b_nt)
 
   def _create(self):
@@ -326,7 +324,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
 
   def _sort_obj(self, obj):
     if isinstance(obj, dict):
-      return self._sort_obj(obj.items())
+      return self._sort_obj(list(obj.items()))
     elif isinstance(obj, list):
       return sorted(obj)
     return obj

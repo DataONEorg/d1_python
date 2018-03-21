@@ -1,0 +1,5 @@
+"b'DEBUG    test_msg'
+b'ERROR    test_msg'
+b'WARN     test_msg'
+b'         test_msg'
+"

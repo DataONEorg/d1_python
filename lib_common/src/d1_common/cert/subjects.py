@@ -25,8 +25,6 @@ session contains the primary identity, a list of equivalent identities and group
 memberships of the caller.
 """
 
-from __future__ import absolute_import
-
 import d1_common.cert.subject_info
 import d1_common.cert.x509
 

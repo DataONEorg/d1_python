@@ -25,8 +25,6 @@
 - Mount FUSE / Dokan
 """
 
-from __future__ import absolute_import
-
 import logging
 import optparse
 import platform
@@ -48,7 +46,7 @@ log = logging.getLogger(__name__)
 
 def main():
   if not check_dependencies.check_dependencies():
-    raise Exception(u'Dependency check failed')
+    raise Exception('Dependency check failed')
 
   parser = optparse.OptionParser('%prog [options]')
   parser.add_option(
@@ -57,7 +55,7 @@ def main():
   )
 
   # Add options to override defaults in settings.py.
-  for k, v in settings.__dict__.items():
+  for k, v in list(settings.__dict__.items()):
     # Only allow overriding strings, ints and bools.
     if k.isupper():
       param_name = '--{}'.format(k.lower().replace('_', '-'))
@@ -80,7 +78,7 @@ def main():
   (options, arguments) = parser.parse_args()
 
   # Copy non-string/int settings into options.
-  for k, v in settings.__dict__.items():
+  for k, v in list(settings.__dict__.items()):
     if not (type(v) is str or type(v) is int or type(v) is bool) and k.isupper():
       options.__dict__[k.lower()] = v
 
@@ -130,8 +128,8 @@ def main():
 def log_setup(options):
   # Set up logging.
   formatter = logging.Formatter(
-    u'%(asctime)s %(levelname)-8s %(name)s'
-    u'(%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
+    '%(asctime)s %(levelname)-8s %(name)s'
+    '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
   )
   # Log to a file
   if options.log_file_path is not None:

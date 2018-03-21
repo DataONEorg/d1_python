@@ -25,8 +25,6 @@ not versioned, and so there is no version tag (such as "v1") in the URL for
 these methods.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 

@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import tempfile
 
 import d1_common.iter.dir
@@ -27,7 +25,7 @@ import d1_common.iter.dir
 import d1_test.d1_test_case
 
 
-class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
+class TestFileIterator(d1_test.d1_test_case.D1TestCase):
   def _create_test_dir(self):
     tmp_dir_path = tempfile.mkdtemp()
     tmp_file_list = []
@@ -35,7 +33,7 @@ class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
       with tempfile.NamedTemporaryFile(
           dir=tmp_dir_path, suffix='.test', delete=False
       ) as tmp_file:
-        tmp_file.write('test_file_{}\n'.format(i))
+        tmp_file.write('test_file_{}\n'.format(i).encode('utf-8'))
         tmp_file_list.append(tmp_file.name)
     return tmp_dir_path, tmp_file_list
 

@@ -24,7 +24,7 @@ Note: Currently issues requests to cn.dataone.org
 
 TODO: Create Solr mockup
 """
-from __future__ import absolute_import
+import pytest
 
 import d1_common.const
 import d1_common.util
@@ -34,6 +34,10 @@ import d1_test.d1_test_case
 import d1_client.solr_client
 
 CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
+
+pytest.mark.xfail(
+  'Testing against live server. Results must be checked manually'
+)
 
 
 class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):

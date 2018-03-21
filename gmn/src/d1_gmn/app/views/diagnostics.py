@@ -23,8 +23,6 @@ These are used in various diagnostics, debugging and testing scenarios. Access
 is unrestricted in debug mode. Disabled in production.
 """
 
-from __future__ import absolute_import
-
 # import cgi
 # import csv
 # import json
@@ -171,7 +169,7 @@ from __future__ import absolute_import
 #   setting_obj = getattr(django.conf.settings, setting_str, '<UNKNOWN SETTING>')
 #   if isinstance(setting_obj, set):
 #     setting_obj = sorted(list(setting_obj))
-#   setting_json = json.dumps(setting_obj)
+#   setting_json = d1_common.util.serialize_to_normalized_pretty_json(setting_obj)
 #   return HttpResponse(setting_json, d1_common.const.CONTENT_TYPE_JSON)
 
 # ------------------------------------------------------------------------------

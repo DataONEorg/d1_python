@@ -23,8 +23,6 @@
 - Wrappers for creating frequently used models (adding rows to tables).
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 # Any information we need to keep about a PID without having a native object
@@ -189,7 +187,7 @@ class ReplicaStatus(models.Model):
 
 def replica_status(status_str):
   assert status_str in ['queued', 'requested', 'completed', 'failed', 'invalidated'], \
-    u'Invalid replication status. status="{}"'.format(status_str)
+    'Invalid replication status. status="{}"'.format(status_str)
   return ReplicaStatus.objects.get_or_create(status=status_str)[0]
 
 
@@ -349,7 +347,7 @@ def event(event_str):
   # remains the case.
   assert event_str in ['create', 'read', 'update', 'delete', 'replicate',
                        'synchronization_failed', 'replication_failed'], \
-    u'Invalid event type. event="{}"'.format(event_str)
+    'Invalid event type. event="{}"'.format(event_str)
   return Event.objects.get_or_create(event=event_str)[0]
 
 
@@ -398,7 +396,7 @@ class SystemMetadataRefreshQueueStatus(models.Model):
 
 def sysmeta_refresh_status(status_str):
   assert status_str in ['queued', 'completed', 'failed'], \
-    u'Invalid replication status. status="{}"'.format(status_str)
+    'Invalid replication status. status="{}"'.format(status_str)
   return SystemMetadataRefreshQueueStatus.objects.get_or_create(
     status=status_str
   )[0]

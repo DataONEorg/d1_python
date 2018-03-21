@@ -28,8 +28,6 @@
 http://self-issued.info/docs/draft-jones-json-web-token-01.html
 """
 
-from __future__ import absolute_import
-
 import base64
 import datetime
 import hashlib
@@ -104,7 +102,7 @@ def get_subject_without_validation(jwt_bu64):
 
 
 def get_bu64_tup(jwt_bu64):
-  return jwt_bu64.strip().split('.')
+  return jwt_bu64.strip().split(b'.')
 
 
 def get_jwt_tup(jwt_bu64):
@@ -112,14 +110,14 @@ def get_jwt_tup(jwt_bu64):
 
 
 def get_jwt_bu64(jwt_tup):
-  return '.'.join([encode_bu64(v) for v in jwt_tup])
+  return b'.'.join([encode_bu64(v) for v in jwt_tup])
 
 
 def get_jwt_dict(jwt_bu64):
   jwt_tup = get_jwt_tup(jwt_bu64)
   try:
-    jwt_dict = json.loads(jwt_tup[0])
-    jwt_dict.update(json.loads(jwt_tup[1]))
+    jwt_dict = json.loads(jwt_tup[0].decode('utf-8'))
+    jwt_dict.update(json.loads(jwt_tup[1].decode('utf-8')))
     jwt_dict['_sig_sha1'] = hashlib.sha1(jwt_tup[2]).hexdigest()
   except TypeError as e:
     raise JwtException('Decode failed. error="{}"'.format(e))
@@ -141,9 +139,11 @@ def log_jwt_dict_info(log, msg_str, jwt_dict):
   # Log known items in specific order, then the rest just sorted
   log_list = ([(b, d.pop(a)) for a, b, c in CLAIM_LIST if a in d] +
               [(k, d[k]) for k in sorted(d)])
-  map(
-    log,
-    ['{}:'.format(msg_str)] + ['  {}: {}'.format(k, v) for k, v in log_list]
+  list(
+    map(
+      log, ['{}:'.format(msg_str)] +
+      ['  {}: {}'.format(k, v) for k, v in log_list]
+    )
   )
 
 
@@ -156,7 +156,7 @@ def ts_to_str(jwt_dict):
   dates
   """
   d = ts_to_dt(jwt_dict)
-  for k, v in d.items():
+  for k, v in list(d.items()):
     if isinstance(v, datetime.datetime):
       d[k] = v.isoformat().replace('T', ' ')
   return d
@@ -174,7 +174,7 @@ def ts_to_dt(jwt_dict):
 
 
 def encode_bu64(arg):
-  s = base64.b64encode(arg)
+  s = base64.standard_b64encode(arg)
   s = s.rstrip('=')
   s = s.replace('+', '-')
   s = s.replace('/', '_')
@@ -183,18 +183,18 @@ def encode_bu64(arg):
 
 def decode_bu64(arg):
   s = arg
-  s = s.replace('-', '+')
-  s = s.replace('_', '/')
+  s = s.replace(b'-', b'+')
+  s = s.replace(b'_', b'/')
   p = len(s) % 4
   if p == 0:
     pass
   elif p == 2:
-    s += "=="
+    s += b'=='
   elif p == 3:
-    s += "="
+    s += b'='
   else:
     raise ValueError('Illegal base64url string')
-  return base64.b64decode(s)
+  return base64.standard_b64decode(s)
 
 
 class JwtException(Exception):

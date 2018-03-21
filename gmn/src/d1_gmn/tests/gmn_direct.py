@@ -31,10 +31,9 @@ These methods also allow testing handling of timezones in datetimes. Some such
 tests cannot be issued via d1_client because PyXB, being based on the XML DOM,
 automatically adjusts all non-naive datetimes to UTC.
 """
-from __future__ import absolute_import
 
+import io
 import logging
-import StringIO
 import xml.etree.ElementTree
 
 import d1_gmn.app.views.util
@@ -49,7 +48,7 @@ import d1_common.xml
 import django.test
 
 
-def create(version_tag, sciobj_str, sysmeta_xml):
+def create(version_tag, sciobj_bytes, sysmeta_xml):
   """Call MNStorage.create()"""
   with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
     with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
@@ -57,14 +56,14 @@ def create(version_tag, sciobj_str, sysmeta_xml):
         django.test.Client().post(
           d1_common.url.joinPathElements('/', version_tag, 'object'), {
             'pid': xml.get_element_text('identifier'),
-            'object': ('content.bin', StringIO.StringIO(sciobj_str)),
-            'sysmeta': ('sysmeta.xml', StringIO.StringIO(sysmeta_xml)),
+            'object': ('content.bin', io.BytesIO(sciobj_bytes)),
+            'sysmeta': ('sysmeta.xml', io.BytesIO(sysmeta_xml)),
           }
         )
       )
 
 
-def create_stream(version_tag, sciobj_stream, sysmeta_xml):
+def create_stream(version_tag, sciobj_byteseam, sysmeta_xml):
   """Call MNStorage.create()"""
   with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
     with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
@@ -72,8 +71,8 @@ def create_stream(version_tag, sciobj_stream, sysmeta_xml):
         django.test.Client().post(
           d1_common.url.joinPathElements('/', version_tag, 'object'), {
             'pid': xml.get_element_text('identifier'),
-            'object': ('content.bin', sciobj_stream),
-            'sysmeta': ('sysmeta.xml', StringIO.StringIO(sysmeta_xml)),
+            'object': ('content.bin', sciobj_byteseam),
+            'sysmeta': ('sysmeta.xml', io.StringIO(sysmeta_xml)),
           }
         )
       )
@@ -92,10 +91,8 @@ def get(version_tag, pid):
 def get_system_metadata(version_tag, pid):
   """Call MNRead.getSystemMetadata()"""
   return _get_resp_dict(
-    django.test.Client().get(
-      d1_common.url.
-      joinPathElements('/', version_tag, 'meta', pid.encode('utf-8'))
-    )
+    django.test.Client()
+    .get(d1_common.url.joinPathElements('/', version_tag, 'meta', pid))
   )
 
 
@@ -135,7 +132,7 @@ def get_log_records(version_tag, pid=None, start=None, count=None):
 
 def _add_query(query_dict, url_path):
   if query_dict:
-    url_str = u'{}?{}'.format(url_path, d1_common.url.urlencode(query_dict))
+    url_str = '{}?{}'.format(url_path, d1_common.url.urlencode(query_dict))
   else:
     url_str = url_path
   return url_str
@@ -154,7 +151,7 @@ def get_object_count(version_tag):
   resp_dict.pop('response', None)
   raise Exception(
     'Unable to get object count. resp_dict={}'.
-    format(d1_common.util.format_normalized_compact_json(resp_dict))
+    format(d1_common.util.serialize_to_normalized_compact_json(resp_dict))
   )
 
 
@@ -180,7 +177,7 @@ def _get_resp_dict(response):
   return {
     'is_ok': is_ok,
     'status_code_int': response.status_code,
-    'header_dict': dict(response.items()),
+    'header_dict': dict(list(response.items())),
     'body_str': body_str,
     'response': response,
   }

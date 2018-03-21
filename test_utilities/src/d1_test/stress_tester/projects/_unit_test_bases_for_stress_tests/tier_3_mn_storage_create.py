@@ -28,11 +28,9 @@
   - python 2.6
 """
 
-from __future__ import absolute_import
-
 import datetime
+import io
 import random
-import StringIO
 import uuid
 import xml.sax.saxutils
 
@@ -54,7 +52,7 @@ class Test310Create(d1_test_case.D1TestCase):
   def generate_sysmeta(
       self, pid, size, checksum_algorithm, checksum, create_date
   ):
-    return u"""<?xml version="1.0" encoding="utf-8"?>
+    return """<?xml version="1.0" encoding="utf-8"?>
 <D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>{0}</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -73,8 +71,8 @@ class Test310Create(d1_test_case.D1TestCase):
     ).encode('utf-8')
 
   def generate_random_file(self, num_bytes):
-    return StringIO.StringIO(
-      "".join(chr(random.randrange(0, 255)) for i in xrange(num_bytes))
+    return io.StringIO(
+      "".join(chr(random.randrange(0, 255)) for i in range(num_bytes))
     )
 
   def test_020_create_object(self):

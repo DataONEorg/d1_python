@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import freezegun
 import pytest
 import responses
@@ -35,6 +33,8 @@ import d1_test.d1_test_case
 import d1_test.mock_api.get_system_metadata as mock_sysmeta
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestMockSystemMetadata')
+@freezegun.freeze_time('1977-01-27')
 class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
@@ -55,7 +55,6 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
       )
 
   @responses.activate
-  @freezegun.freeze_time('1977-01-27')
   def test_1020(self, mn_client_v1_v2):
     """mock_api.getSystemMetadata() returns expected SysMeta values"""
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
@@ -63,4 +62,3 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
     self.sample.assert_equals(
       sysmeta_pyxb, 'mock_get_system_metadata', mn_client_v1_v2
     )
-    # assert 'http://ns.dataone.org/service/types/v2.0' in sysmeta_xml

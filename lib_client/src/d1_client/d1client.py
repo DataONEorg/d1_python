@@ -25,9 +25,6 @@ This class provides a more abstract interface that can be used for interacting
 with any DataONE node regardless of type and version.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import time
 
@@ -47,7 +44,7 @@ COMMANDS = ['resolve', 'total', 'list', 'meta', 'get']
 
 def showHelp():
   print('d1client command [options]')
-  print('Command = one of [%s]' % ",".join(COMMANDS))
+  print(('Command = one of [%s]' % ",".join(COMMANDS)))
 
 
 class DataONEObject(object):
@@ -180,7 +177,7 @@ class DataONEClient(object):
       self._authToken = None
     return self._authToken
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def resolve(self, pid):
     """
         :return type: list of base_url
@@ -193,7 +190,7 @@ class DataONEClient(object):
       res.append(location.baseURL)
     return res
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def get(self, pid):
     """Returns a stream open for reading that returns the bytes of the object
         identified by PID.
@@ -208,7 +205,7 @@ class DataONEClient(object):
         self._logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def create(
       self,
       targetNodeId=None,
@@ -217,7 +214,7 @@ class DataONEClient(object):
         """
     pass
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getSystemMetadata(self, pid):
     """
         """
@@ -227,7 +224,7 @@ class DataONEClient(object):
     self._sysmetacache[pid] = cn.getSystemMetadata(pid)
     return self._sysmetacache[pid]
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getRelatedObjects(self, pid):
     """
         :return type: list of DataONEObject
@@ -259,7 +256,7 @@ class DataONEClient(object):
     #      relations['describes'].append(pid.value())
     return relations
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def isData(self, pid):
     """Returns True is pid refers to a data object.
 
@@ -268,14 +265,14 @@ class DataONEClient(object):
     sysmeta_pyxb = self.getSystemMetadata(pid)
     return len(sysmeta_pyxb.describes) == 0
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def isScienceMetadata(self, pid):
     """return True if pid refers to a science metadata object
         """
     sysmeta_pyxb = self.getSystemMetadata(pid)
     return len(sysmeta_pyxb.describes) > 0
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getScienceMetadata(self, pid):
     """Retrieve the pid for science metadata object for the specified PID. If
         PID refers to a science metadata object, then that object is returned.
@@ -290,7 +287,7 @@ class DataONEClient(object):
       res.append(id.value())
     return res
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getData(self, pid):
     if self.isData(pid):
       return [

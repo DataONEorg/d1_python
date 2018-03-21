@@ -94,13 +94,13 @@ DEFAULT_SEARCH_ENGINE = 'solr'
 
 # OAI-ORE Resource Maps
 ORE_NAMESPACE_DICT = {
-  u'cito': u'http://purl.org/spar/cito/',
-  u'dc': u'http://purl.org/dc/elements/1.1/',
-  u'dcterms': u'http://purl.org/dc/terms/',
-  u'ore': u'http://www.openarchives.org/ore/terms/',
-  u'foaf': u'http://xmlns.com/foaf/0.1/',
+  'cito': 'http://purl.org/spar/cito/',
+  'dc': 'http://purl.org/dc/elements/1.1/',
+  'dcterms': 'http://purl.org/dc/terms/',
+  'ore': 'http://www.openarchives.org/ore/terms/',
+  'foaf': 'http://xmlns.com/foaf/0.1/',
 }
-ORE_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
+ORE_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
 ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)
 
 # Data Package

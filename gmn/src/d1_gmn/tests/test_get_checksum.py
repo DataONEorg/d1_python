@@ -20,9 +20,7 @@
 """Test MNRead.getChecksum()
 """
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import pytest
 import responses
@@ -41,11 +39,11 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self, mn_client_v1_v2):
     """MNRead.getChecksum(): Matching checksums"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(self.client_v2)
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(self.client_v2)
       recv_checksum_pyxb = mn_client_v1_v2.getChecksum(pid)
       assert isinstance(recv_checksum_pyxb, mn_client_v1_v2.bindings.Checksum)
       send_checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
-        sciobj_str, recv_checksum_pyxb.algorithm
+        sciobj_bytes, recv_checksum_pyxb.algorithm
       )
       self.assert_checksums_equal(send_checksum_pyxb, recv_checksum_pyxb)
 
@@ -55,15 +53,15 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
 
     def test(client, algorithm_str):
-      pid, sid, sciobj_str, send_sysmeta_pyxb = (
+      pid, sid, sciobj_bytes, send_sysmeta_pyxb = (
         self.generate_sciobj_with_defaults(client)
       )
       send_checksum = d1_common.checksum.create_checksum_object_from_string(
-        sciobj_str, algorithm_str
+        sciobj_bytes, algorithm_str
       )
       send_sysmeta_pyxb.checksum = send_checksum
       with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-        client.create(pid, StringIO.StringIO(sciobj_str), send_sysmeta_pyxb)
+        client.create(pid, io.BytesIO(sciobj_bytes), send_sysmeta_pyxb)
       recv_checksum = client.getChecksum(pid, algorithm_str)
       d1_common.checksum.are_checksums_equal(
         send_sysmeta_pyxb.checksum, recv_checksum
@@ -78,7 +76,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """getChecksum(): Unsupported algorithm returns InvalidRequest exception"""
 
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
       with pytest.raises(d1_common.types.exceptions.InvalidRequest):
         mn_client_v1_v2.getChecksum(pid, 'INVALID_ALGORITHM')
 

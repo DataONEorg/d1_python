@@ -18,15 +18,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import copy
 import datetime
+import io
 import json
 import logging
 import os
 import random
-import StringIO
 import sys
 import tempfile
 import traceback
@@ -84,7 +82,7 @@ class GMNTestCase(
     GMNTestCase.capture_exception()
     if ENABLE_SQL_PROFILING:
       logging.info('SQL queries by all methods:')
-      map(logging.info, django.db.connection.queries)
+      list(map(logging.info, django.db.connection.queries))
 
   def setup_method(self, method):
     """Run for each test method that derives from GMNTestCase"""
@@ -138,7 +136,7 @@ class GMNTestCase(
       return
     func_name_str = GMNTestCase.get_test_func_name()
     file_path = os.path.join(
-      tempfile.gettempdir(), u'gmn_test_failed_{}.txt'.format(func_name_str)
+      tempfile.gettempdir(), 'gmn_test_failed_{}.txt'.format(func_name_str)
     )
     # Dump the entire exception
     with open(file_path, 'w') as f:
@@ -146,7 +144,7 @@ class GMNTestCase(
     logging.error('Wrote exception to file. path="{}"'.format(file_path))
     # Dump any HTML (typically from the Django diags page)
     if exc_value.traceInformation:
-      ss = StringIO.StringIO()
+      ss = io.StringIO()
       is_in_html = False
       for line_str in exc_value.traceInformation.splitlines():
         if '<!DOCTYPE' in line_str or '<html' in line_str:
@@ -154,7 +152,7 @@ class GMNTestCase(
         if is_in_html:
           ss.write(line_str)
       if is_in_html:
-        file_path = os.path.join(tempfile.gettempdir(), u'gmn_test_failed.html')
+        file_path = os.path.join(tempfile.gettempdir(), 'gmn_test_failed.html')
         with open(file_path, 'w') as f:
           f.write(str(ss.getvalue()))
         logging.error(
@@ -168,8 +166,8 @@ class GMNTestCase(
       module_path = stack_trace[0]
       func_name = stack_trace[2]
       if func_name.startswith('test_'):
-        return u'{}_{}'.format(os.path.split(module_path)[1][:-3], func_name)
-    return u'<not a test>'
+        return '{}_{}'.format(os.path.split(module_path)[1][:-3], func_name)
+    return '<not a test>'
 
   # def disable_server_cert_validation(self):
   #   requests.packages.urllib3.disable_warnings()
@@ -214,14 +212,14 @@ class GMNTestCase(
     assert 'content-type' in response.headers
 
   def assert_valid_date(self, date_str):
-    assert datetime.datetime(*map(int, date_str.split('-')))
+    assert datetime.datetime(*list(map(int, date_str.split('-'))))
 
-  def assert_sci_obj_size_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
-    assert sysmeta_pyxb.size == len(sciobj_str)
+  def assert_sci_obj_size_matches_sysmeta(self, sciobj_bytes, sysmeta_pyxb):
+    assert sysmeta_pyxb.size == len(sciobj_bytes)
 
-  def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_str, sysmeta_pyxb):
+  def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_bytes, sysmeta_pyxb):
     checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
-      sciobj_str, sysmeta_pyxb.checksum.algorithm
+      sciobj_bytes, sysmeta_pyxb.checksum.algorithm
     )
     assert d1_common.checksum.are_checksums_equal(
       checksum_pyxb, sysmeta_pyxb.checksum
@@ -250,7 +248,7 @@ class GMNTestCase(
   def are_equivalent_pyxb(self, a_pyxb, b_pyxb):
     a_xml = d1_common.xml.serialize_pretty(a_pyxb)
     b_xml = d1_common.xml.serialize_pretty(b_pyxb)
-    if not d1_common.xml.is_equivalent(a_xml, b_xml):
+    if not d1_common.xml.are_equivalent(a_xml, b_xml):
       self.dump(
         'PyXB objects are not equivalent.\na_xml="{}"\nb_xml="{}"\n'
         .format(a_xml, b_xml)
@@ -274,7 +272,7 @@ class GMNTestCase(
         idx, d1_test.instance_generator.identifier.generate_pid()
       )
 
-    base_pid, base_sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    base_pid, base_sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       client, pid=did(0), sid=sid, *args, **kwargs
     )
 
@@ -356,18 +354,18 @@ class GMNTestCase(
       True: Use a default or generated value
       Other: Use the supplied value
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       client, pid, sid, submitter, rights_holder, permission_list, now_dt
     )
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
       self.call_d1_client(
         client.create, pid,
-        StringIO.StringIO(sciobj_str), sysmeta_pyxb, vendor_dict,
+        io.BytesIO(sciobj_bytes), sysmeta_pyxb, vendor_dict,
         active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
         disable_auth=disable_auth
       )
     assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
-    return pid, sid, sciobj_str, sysmeta_pyxb
+    return pid, sid, sciobj_bytes, sysmeta_pyxb
 
   def update_obj(
       self, client, old_pid, new_pid=True, sid=None, submitter=True,
@@ -379,18 +377,18 @@ class GMNTestCase(
       True: Use a default or generate a value
       Other: Use the supplied value
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       client, new_pid, sid, submitter, rights_holder, permission_list, now_dt
     )
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
       self.call_d1_client(
         client.update, old_pid,
-        StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb, vendor_dict,
+        io.BytesIO(sciobj_bytes), pid, sysmeta_pyxb, vendor_dict,
         active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
         disable_auth=disable_auth
       )
     assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
-    return pid, sid, sciobj_str, sysmeta_pyxb
+    return pid, sid, sciobj_bytes, sysmeta_pyxb
 
   def get_obj(
       self, client, did, active_subj_list=True, trusted_subj_list=True,
@@ -401,7 +399,7 @@ class GMNTestCase(
       True: Use a default or generate a value
       Other: Use the supplied value
     """
-    sciobj_str = self.call_d1_client(
+    sciobj_bytes = self.call_d1_client(
       client.get, did, vendor_dict, active_subj_list=active_subj_list,
       trusted_subj_list=trusted_subj_list, disable_auth=disable_auth
     ).content
@@ -410,9 +408,9 @@ class GMNTestCase(
       active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
       disable_auth=disable_auth
     )
-    self.assert_sci_obj_size_matches_sysmeta(sciobj_str, sysmeta_pyxb)
-    self.assert_sci_obj_checksum_matches_sysmeta(sciobj_str, sysmeta_pyxb)
-    return sciobj_str, sysmeta_pyxb
+    self.assert_sci_obj_size_matches_sysmeta(sciobj_bytes, sysmeta_pyxb)
+    self.assert_sci_obj_checksum_matches_sysmeta(sciobj_bytes, sysmeta_pyxb)
+    return sciobj_bytes, sysmeta_pyxb
 
   # create(), update(), get() with provided sysmeta
 
@@ -426,25 +424,25 @@ class GMNTestCase(
       Other: Use the supplied value
     """
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-    send_sciobj_str = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_str(
+    send_sciobj_bytes = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_bytes(
       pid
     )
     send_sysmeta_pyxb = copy.deepcopy(sysmeta_pyxb)
     send_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
-      send_sciobj_str, sysmeta_pyxb.checksum.algorithm
+      send_sciobj_bytes, sysmeta_pyxb.checksum.algorithm
     )
-    send_sysmeta_pyxb.size = len(send_sciobj_str)
+    send_sysmeta_pyxb.size = len(send_sciobj_bytes)
     send_sysmeta_pyxb.obsoletes = None
     send_sysmeta_pyxb.obsoletedBy = None
     # self.dump(send_sysmeta_pyxb)
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
       self.call_d1_client(
         client.create, pid,
-        StringIO.StringIO(send_sciobj_str), send_sysmeta_pyxb, vendor_dict,
+        io.BytesIO(send_sciobj_bytes), send_sysmeta_pyxb, vendor_dict,
         active_subj_list=active_subj_list, trusted_subj_list=trusted_subj_list,
         disable_auth=disable_auth
       )
-    return send_sciobj_str, send_sysmeta_pyxb
+    return send_sciobj_bytes, send_sysmeta_pyxb
 
   #
 
@@ -469,11 +467,12 @@ class GMNTestCase(
                      ('dateUploaded', now_dt),
                      ('dateSysMetadataModified', now_dt),) if v is not True
     }
-    pid, sid, sciobj_str, sysmeta_pyxb = \
-      d1_test.instance_generator.sciobj.generate_reproducible(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = (
+      d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
         client, None if pid is True else pid, option_dict
       )
-    return pid, sid, sciobj_str, sysmeta_pyxb
+    )
+    return pid, sid, sciobj_bytes, sysmeta_pyxb
 
   #
   # Misc
@@ -505,11 +504,11 @@ class GMNTestCase(
 
   def get_pid_list(self):
     """Get list of all PIDs in the DB fixture"""
-    return json.loads(self.sample.load('db_fixture_pid.json', 'rb'))
+    return json.loads(self.sample.load_utf8_to_str('db_fixture_pid.json', 'rb'))
 
   def get_sid_list(self):
     """Get list of all SIDs in the DB fixture"""
-    return json.loads(self.sample.load('db_fixture_sid.json', 'rb'))
+    return json.loads(self.sample.load_utf8_to_str('db_fixture_sid.json', 'rb'))
 
   def get_sid_with_min_chain_length(self, min_len=2):
     """Get list of all SIDs in the DB fixture"""

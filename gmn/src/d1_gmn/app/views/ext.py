@@ -20,10 +20,7 @@
 """REST call handlers for DataONE Member Node APIs
 """
 
-from __future__ import absolute_import
-
 import datetime
-import json
 
 import d1_gmn.app.restrict_to_verb
 import d1_gmn.app.sysmeta
@@ -72,11 +69,11 @@ def get_object_list_json(request):
   GMN specific API for fast retrieval of object sysmeta elements.
   """
   if 'f' not in request.GET:
-    field_list, lookup_list = zip(*SYSMETA_TO_MODEL_LIST)
+    field_list, lookup_list = list(zip(*SYSMETA_TO_MODEL_LIST))
   else:
     try:
-      field_list, lookup_list = zip(
-        *[(f, SYSMETA_TO_MODEL_DICT[f]) for f in request.GET.getlist('f')]
+      field_list, lookup_list = list(
+        zip(*[(f, SYSMETA_TO_MODEL_DICT[f]) for f in request.GET.getlist('f')])
       )
     except KeyError as e:
       raise d1_common.types.exceptions.InvalidRequest(
@@ -96,6 +93,8 @@ def get_object_list_json(request):
       return o.isoformat()
 
   return django.http.HttpResponse(
-    json.dumps(result_dict, indent=2, default=format_date),
+    d1_common.util.serialize_to_normalized_pretty_json(
+      result_dict, indent=2, default=format_date
+    ),
     d1_common.const.CONTENT_TYPE_JSON,
   )

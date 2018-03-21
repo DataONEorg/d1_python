@@ -20,8 +20,6 @@
 """URL to view mapping
 """
 
-from __future__ import absolute_import
-
 import d1_gmn.app.views.diag
 import d1_gmn.app.views.ext
 import d1_gmn.app.views.external

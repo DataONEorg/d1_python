@@ -24,8 +24,6 @@ These tests do NOT check if GMN acts on the request and actually performs the
 replication.
 """
 
-from __future__ import absolute_import
-
 import pytest
 import responses
 
@@ -51,7 +49,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNReplication.replicate(): Returns NotAuthorized on request from
     non-trusted subject
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       self.client_v2, sid=True
     )
     with django.test.override_settings(NODE_REPLICATE=True):
@@ -63,7 +61,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNReplication.replicate(): Returns InvalidRequest when not accepting
     replicas
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v1_v2
     )
     with django.test.override_settings(NODE_REPLICATE=False):
@@ -76,7 +74,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNReplication.replicate(): Returns InvalidRequest if requested replica
     is larger than local limit
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v1_v2
     )
     with django.test.override_settings(
@@ -91,7 +89,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNReplication.replicate(): Request to replicate new object returns 200
     OK
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v1_v2
     )
     with django.test.override_settings(NODE_REPLICATE=True):
@@ -104,7 +102,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     IdentifierNotUnique
     """
     with django.test.override_settings(NODE_REPLICATE=True):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
       with d1_gmn.tests.gmn_mock.disable_auth():
         with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
           mn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
@@ -124,7 +122,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with django.test.override_settings(
         NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=true_or_false
     ):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
         mn_client_v1_v2, permission_list=[
           ([d1_common.const.SUBJECT_PUBLIC], ['read']),
           (['subj2', 'subj3', 'subj4'], ['write']),
@@ -141,7 +139,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with django.test.override_settings(
         NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=False
     ):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
         mn_client_v1_v2, permission_list=[
           ([d1_common.const.SUBJECT_PUBLIC], ['read']),
           (['subj2', 'subj3', 'subj4'], ['write']),
@@ -158,7 +156,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with django.test.override_settings(
         NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=True
     ):
-      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
         mn_client_v1_v2
       )
       with d1_gmn.tests.gmn_mock.disable_auth():

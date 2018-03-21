@@ -19,7 +19,6 @@
 # limitations under the License.
 """View decorators
 """
-from __future__ import absolute_import
 
 import functools
 
@@ -70,10 +69,10 @@ def resolve_sid_func(request, did):
       return d1_gmn.app.revision.resolve_sid(did)
     else:
       raise d1_common.types.exceptions.NotFound(
-        0, u'Unknown identifier. id="{}"'.format(did), identifier=did
+        0, 'Unknown identifier. id="{}"'.format(did), identifier=did
       )
   else:
-    assert False, u'Unable to determine API version'
+    assert False, 'Unable to determine API version'
 
 
 def decode_id(f):
@@ -149,8 +148,8 @@ def get_log_records_access(f):
 def trusted(request):
   if not d1_gmn.app.auth.is_trusted_subject(request):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, u'Access allowed only for trusted subjects. active_subjects="{}", '
-      u'trusted_subjects="{}"'.format(
+      0, 'Access allowed only for trusted subjects. active_subjects="{}", '
+      'trusted_subjects="{}"'.format(
         d1_gmn.app.auth.format_active_subjects(request),
         d1_gmn.app.auth.get_trusted_subjects_string()
       )
@@ -179,8 +178,8 @@ def authenticated(f):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
         0,
-        u'Access allowed only for authenticated subjects. Please reconnect with '
-        u'a valid DataONE session certificate. active_subjects="{}"'.
+        'Access allowed only for authenticated subjects. Please reconnect with '
+        'a valid DataONE session certificate. active_subjects="{}"'.
         format(d1_gmn.app.auth.format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
@@ -196,10 +195,9 @@ def verified(f):
   def wrapper(request, *args, **kwargs):
     if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
-        0,
-        u'Access allowed only for verified accounts. Please reconnect with a '
-        u'valid DataONE session certificate in which the identity of the '
-        u'primary subject has been verified. active_subjects="{}"'
+        0, 'Access allowed only for verified accounts. Please reconnect with a '
+        'valid DataONE session certificate in which the identity of the '
+        'primary subject has been verified. active_subjects="{}"'
         .format(d1_gmn.app.auth.format_active_subjects(request))
       )
     return f(request, *args, **kwargs)

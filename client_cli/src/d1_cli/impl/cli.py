@@ -23,8 +23,6 @@
 - Simple command tokenizing and validation.
 """
 
-from __future__ import absolute_import
-
 import cmd
 import platform
 import shlex
@@ -40,8 +38,8 @@ class CLI(cmd.Cmd):
   def __init__(self):
     self._command_processor = command_processor.CommandProcessor()
     cmd.Cmd.__init__(self)
-    self.prefix = u''
-    self.prompt = u'> '
+    self.prefix = ''
+    self.prompt = '> '
     #self.intro = u'DataONE Command Line Interface'
     self.keep_looping = False
     self.interactive = False
@@ -64,7 +62,7 @@ class CLI(cmd.Cmd):
     Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
     """
     cmd.Cmd.postloop(self) # Clean up command completion
-    cli_util.print_info(u'Exiting...')
+    cli_util.print_info('Exiting...')
 
   def precmd(self, line):
     """This method is called after the line has been input but before
@@ -89,7 +87,7 @@ class CLI(cmd.Cmd):
     """Called on an input line when the command prefix is not recognized.
     """
     args = self._split_args(line, 0, 99)
-    cli_util.print_error(u'Unknown command: {}'.format(args[0]))
+    cli_util.print_error('Unknown command: {}'.format(args[0]))
 
   def run_command_line_arguments(self, cmd_line_list):
     for cmd_line_str in cmd_line_list:
@@ -115,7 +113,7 @@ class CLI(cmd.Cmd):
     """
     self._split_args(line, 0, 0)
     for idx, item in enumerate(self._history):
-      cli_util.print_info(u'{0: 3d} {1}'.format(idx, item))
+      cli_util.print_info('{0: 3d} {1}'.format(idx, item))
 
   def do_exit(self, line):
     """exit
@@ -480,7 +478,7 @@ be lost if you exit.""".format(n_remaining_operations)
     for the available search terms.
     """
     args = self._split_args(line, 0, -1)
-    query = u' '.join(filter(None, args))
+    query = ' '.join([_f for _f in args if _f])
     self._command_processor.search(query)
 
   def do_ping(self, line):
@@ -541,8 +539,8 @@ be lost if you exit.""".format(n_remaining_operations)
   #
 
   def _split_args(self, line, n_required, n_optional, pad=True):
-    # Workaround for issue with shlex.split() that was fixed in Python 2.7.
-    args = [a.decode('utf-8') for a in shlex.split(line.encode('utf-8'))]
+    # args = [a.decode('utf-8') for a in shlex.split(line.encode('utf-8'))]
+    args = shlex.split(line)
     n_optional_max = 1000 if n_optional == -1 else n_optional
     if len(args) < n_required or len(args) > n_required + n_optional_max:
       msg = self._text_description_of_required_and_optional(

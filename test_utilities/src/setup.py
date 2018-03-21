@@ -20,7 +20,6 @@
 # limitations under the License.
 """DataONE Test Utilities package
 """
-from __future__ import absolute_import
 
 import setuptools
 
@@ -44,6 +43,7 @@ def main():
       'coveralls == 1.2.0',
       'decorator == 4.2.1',
       'freezegun == 0.3.9',
+      'gitpython == 2.1.8',
       'mock == 2.0.0',
       'multi-mechanize == 1.2.0',
       'posix-ipc == 1.0.4',

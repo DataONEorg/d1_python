@@ -20,7 +20,6 @@
 # limitations under the License.
 """DataONE Command-Line Interface package
 """
-from __future__ import absolute_import
 
 import setuptools
 

@@ -29,8 +29,6 @@ original name. Any earlier backups are overwritten. Use clean-tree.py to delete
 the backups.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 
@@ -66,9 +64,8 @@ def main():
     help='Show diff and do not modify any files'
   )
   parser.add_argument(
-    '--update', action='store_true',
-    help='Apply the updates to the original files. By default, no files are '
-    'changed.'
+    '--dry-run', action='store_true',
+    help='Process files but do not write results'
   )
   parser.add_argument(
     '--debug', action='store_true', help='Debug level logging'
@@ -87,7 +84,7 @@ def main():
       default_excludes=args.default_excludes,
   ):
     try:
-      renumber_module(module_path, args.move, args.show_diff, args.update)
+      renumber_module(module_path, args.move, args.show_diff, args.dry_run)
     except Exception as e:
       logging.error(
         'Operation failed. error="{}" path="{}"'.format(str(e), module_path)
@@ -96,7 +93,7 @@ def main():
         raise
 
 
-def renumber_module(module_path, do_move, show_diff, write_update):
+def renumber_module(module_path, do_move, show_diff, dry_run):
   logging.info('Renumbering: {}'.format(module_path))
   r = d1_dev.util.redbaron_module_path_to_tree(module_path)
   if not d1_dev.util.has_test_class(r):
@@ -105,7 +102,7 @@ def renumber_module(module_path, do_move, show_diff, write_update):
     )
     return False
   renumber_all(r, do_move)
-  d1_dev.util.update_module_file(r, module_path, show_diff, write_update)
+  d1_dev.util.update_module_file(r, module_path, show_diff, dry_run)
 
 
 def renumber_all(r, do_move):
@@ -117,16 +114,17 @@ def renumber_all(r, do_move):
 
 
 def renumber_method(node, test_idx, do_move):
-  new_name = u'test_{:04d}'.format(test_idx)
-  with d1_common.util.print_logging():
-    logging.info('Method: {} -> {}'.format(node.name, new_name))
+  new_name = 'test_{:04d}'.format(test_idx)
+  if node.name != new_name:
+    with d1_common.util.print_logging():
+      logging.info('Method: {} -> {}'.format(node.name, new_name))
   node.name = new_name
   if not do_move:
     return
   test_name, test_trailing = d1_dev.util.split_func_name(node.name)
   old_doc_str = d1_dev.util.get_doc_str(node)
   new_doc_str = d1_dev.util.gen_doc_str(test_trailing, old_doc_str)
-  if new_doc_str != u'""""""':
+  if new_doc_str != '""""""':
     if d1_dev.util.has_doc_str(node):
       node.value[0].value = new_doc_str
     else:

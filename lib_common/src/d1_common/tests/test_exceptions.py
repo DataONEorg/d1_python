@@ -19,22 +19,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import xml.dom.minidom
 
 import pytest
 
+import d1_common.types.dataoneErrors
 from d1_common.types import exceptions
 
 import d1_test.d1_test_case
 
-TRACE_SECTION = """  <traceInformation>
-    <value>traceInformation0</value>
-    <value>traceInformation2</value>
-  </traceInformation>"""
+TRACE_SECTION = """<traceInformation>
+  <value>traceInformation0</value>
+  <value>traceInformation2</value>
+</traceInformation>"""
 
-VALID_ERROR_DOC = """<?xml version="1.0" encoding="utf-8"?>
+VALID_ERROR_DOC = """<?xml version="1.0"?>
 <error  detailCode="123.456.789"
         errorCode="456"
         identifier="SomeDataONEPID"
@@ -44,16 +43,16 @@ VALID_ERROR_DOC = """<?xml version="1.0" encoding="utf-8"?>
 </error>
 """
 
-VALID_ERROR_DOC_NOTFOUND = """<?xml version="1.0" encoding="utf-8"?>
+VALID_ERROR_DOC_NOTFOUND = """<?xml version="1.0"?>
 <error detailCode="1800" errorCode="404" name="NotFound">
-    <description>No system metadata could be found for given PID: something_bogus/</description>
+    <description>No system metadata could be found for given PID: invalid_pid</description>
 </error>
 """
 
 VALID_ERROR_DOC_NOTFOUND_2 = """<?xml version="1.0"?>
 <error detailCode="0" errorCode="404" name="NotFound" nodeId="urn:node:LTER">
 <description>Attempted to perform operation on non-existing object</description>
-<traceInformation><value>1. something_bogus
+<traceInformation><value>1. invalid_pid
 2. on two lines</value></traceInformation>
 </error>"""
 
@@ -64,13 +63,19 @@ VALID_ERROR_DOC_NOTFOUND_3 = """<?xml version="1.0"?>
 2. ναμ ετ νοσθερ σιμιλικυε.</value></traceInformation>
 </error>"""
 
-#  'SHA-1',
-#  '3f56de593b6ffc536253b799b429453e3673fc19'
-#)
+VALID_ERROR_DOC_NOTFOUND_4 = """<?xml version="1.0" encoding="utf-8"?>
+<error detailCode="0" errorCode="404" name="NotFound" nodeId="urn:node:LTER">
+<description>Attempted to perform operation on non-existing object</description>
+<traceInformation>A plain string
+With multiple lines
+and some
+Unicode
+ναμ ετ νοσθερ σιμιλικυε</traceInformation>
+</error>"""
 
 # Missing detailCode.
 INVALID_ERROR_DOC = (
-  """<?xml version="1.0" encoding="utf-8"?>
+  b"""<?xml version="1.0" encoding="utf-8"?>
   <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions"
@@ -82,8 +87,53 @@ INVALID_ERROR_DOC = (
 
 
 class TestExceptions(d1_test.d1_test_case.D1TestCase):
+  def test_0010(self):
+    """Serialize PyXB to XML str"""
+    err_pyxb = d1_common.types.dataoneErrors.error()
+    err_pyxb.name = 'TestError'
+    err_pyxb.errorCode = 123
+    err_pyxb.detailCode = '456'
+    err_pyxb.traceInformation = 'A plain string\nWith multiple lines\n' \
+                                'and some\nUnicode\nναμ ετ νοσθερ σιμιλικυε'
+    assert err_pyxb.toxml() == \
+      '<?xml version="1.0" ?><error detailCode="456" errorCode="123" ' \
+      'name="TestError"><traceInformation>A plain string\n' \
+      'With multiple lines\nand some\nUnicode\n' \
+      'ναμ ετ νοσθερ σιμιλικυε</traceInformation></error>'
+
+  def test_0011(self):
+    """Serialize PyXB to XML UTF-8 bytes"""
+    err_pyxb = d1_common.types.dataoneErrors.error()
+    err_pyxb.name = 'TestError'
+    err_pyxb.errorCode = 123
+    err_pyxb.detailCode = '456'
+    err_pyxb.traceInformation = 'A plain string\nWith multiple lines\n' \
+                                'and some\nUnicode\nναμ ετ νοσθερ σιμιλικυε'
+    assert err_pyxb.toxml('utf-8') == \
+      b'<?xml version="1.0" encoding="utf-8"?><error detailCode="456" ' \
+      b'errorCode="123" name="TestError">' \
+      b'<traceInformation>A plain string\nWith multiple lines\nand some\n' \
+      b'Unicode\n\xce\xbd\xce\xb1\xce\xbc \xce\xb5\xcf\x84 \xce\xbd\xce\xbf\xcf' \
+      b'\x83\xce\xb8\xce\xb5\xcf\x81 \xcf\x83\xce\xb9\xce\xbc\xce\xb9\xce\xbb' \
+      b'\xce\xb9\xce\xba\xcf\x85\xce\xb5</traceInformation></error>'
+
+  def test_0012(self):
+    """Deserialize XML to PyXB"""
+    err_pyxb = d1_common.types.dataoneErrors.CreateFromDocument(
+      VALID_ERROR_DOC_NOTFOUND_4
+    )
+    assert err_pyxb.errorCode == 404
+    assert err_pyxb.detailCode == '0'
+    assert '\n'.join(err_pyxb.traceInformation.content()) == (
+      'A plain string\n'
+      'With multiple lines\n'
+      'and some\n'
+      'Unicode\n'
+      'ναμ ετ νοσθερ σιμιλικυε'
+    )
+
   def test_1000(self):
-    """deserialize()"""
+    """deserialize() valid error XML doc"""
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
     assert isinstance(d1_exception, exceptions.IdentifierNotUnique)
     assert d1_exception.detailCode == '123.456.789'
@@ -95,7 +145,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert d1_exception.traceInformation == TRACE_SECTION.strip()
 
   def test_1010(self):
-    """deserialize, serialize, deserialize"""
+    """deserialize, serialize, deserialize round trip of valid error XML doc"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
@@ -106,10 +156,11 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.description == x2.description
     assert x1.nodeId == x2.nodeId
     assert x1.identifier == x2.identifier
-    assert x1.traceInformation == x2.traceInformation
+    self.sample.assert_equals(x1, 'valid_error_doc_notfound_1_round_trip_x1')
+    self.sample.assert_equals(x2, 'valid_error_doc_notfound_1_round_trip_x2')
 
   def test_1020(self):
-    """deserialize, serialize, deserialize"""
+    """deserialize, serialize, deserialize round trip 2"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
@@ -120,10 +171,11 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.description == x2.description
     assert x1.nodeId == x2.nodeId
     assert x1.identifier == x2.identifier
-    assert x1.traceInformation == x2.traceInformation
+    self.sample.assert_equals(x1, 'valid_error_doc_notfound_2_round_trip_x1')
+    self.sample.assert_equals(x2, 'valid_error_doc_notfound_2_round_trip_x2')
 
   def test_1030(self):
-    """deserialize, serialize, deserialize"""
+    """deserialize, serialize, deserialize round trip 3"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
     sxml = x1.serialize()
     x2 = exceptions.deserialize(sxml)
@@ -134,7 +186,8 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert x1.description == x2.description
     assert x1.nodeId == x2.nodeId
     assert x1.identifier == x2.identifier
-    assert x1.traceInformation == x2.traceInformation
+    self.sample.assert_equals(x1, 'valid_error_doc_notfound_3_round_trip_x1')
+    self.sample.assert_equals(x2, 'valid_error_doc_notfound_3_round_trip_x2')
 
   def test_1040(self):
     """deserialize() of bad document raises ServiceFailure"""
@@ -151,16 +204,12 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
   def test_1060(self):
     """create with only detailCode then serialize()"""
     e = exceptions.ServiceFailure(123)
-    assert e.serialize() == u'<?xml version="1.0" encoding="utf-8"?>' \
-      u'<error detailCode="123" errorCode="500" name="ServiceFailure"/>'
+    self.sample.assert_equals(e.serialize(), 'create_with_detail_code')
 
   def test_1070(self):
     """create with string detailCode and description, then serialize()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
-    se = e.serialize()
-    assert se == u'<?xml version="1.0" encoding="utf-8"?>' \
-      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">' \
-      u'<description>test description</description></error>'
+    self.sample.assert_equals(e.serialize(), 'create_with_description')
 
   def test_1080(self):
     """create with detailCode, description and traceInformation, then serialize()"""
@@ -168,11 +217,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
       '123.456.789', description='test description',
       traceInformation='test traceInformation'
     )
-    se = e.serialize()
-    assert se == u'<?xml version="1.0" encoding="utf-8"?>' \
-      u'<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">' \
-      u'<description>test description</description>' \
-      u'<traceInformation>test traceInformation</traceInformation></error>'
+    self.sample.assert_equals(e.serialize(), 'create_with_trace_information')
 
   def test_1090(self):
     """serialize_to_headers()"""
@@ -181,13 +226,13 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     )
     header_dict = e.serialize_to_headers()
     expected_dict = {
-      'DataONE-Exception-TraceInformation': u'test traceInformation',
-      'DataONE-Exception-DetailCode': u'123.456.789',
+      'DataONE-Exception-TraceInformation': 'test traceInformation',
+      'DataONE-Exception-DetailCode': '123.456.789',
       'DataONE-Exception-Name': 'ServiceFailure',
-      'DataONE-Exception-Description': u'test description',
+      'DataONE-Exception-Description': 'test description',
       'DataONE-Exception-NodeID': '',
       'DataONE-Exception-Identifier': '',
-      'DataONE-Exception-ErrorCode': u'500'
+      'DataONE-Exception-ErrorCode': '500'
     }
     assert header_dict == expected_dict
 
@@ -230,13 +275,13 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     # Check XML.
     dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild
-    assert root.tagName == u'error'
-    assert root.attributes['detailCode'].value == u'1010'
-    assert root.attributes['errorCode'].value == u'409'
-    assert root.attributes['name'].value == u'IdentifierNotUnique'
-    assert root.attributes['identifier'].value == u'test_pid'
+    assert root.tagName == 'error'
+    assert root.attributes['detailCode'].value == '1010'
+    assert root.attributes['errorCode'].value == '409'
+    assert root.attributes['name'].value == 'IdentifierNotUnique'
+    assert root.attributes['identifier'].value == 'test_pid'
     assert root.getElementsByTagName('description')[0].childNodes[0].nodeValue == \
-      u'description_test'
+           'description_test'
     # Disabled until we have decided how to encode traceInformation.
     #self.assertEqual(root.getElementsByTagName('traceInformation')[0]\
     #                 .childNodes[0].nodeValue, u'test trace information')

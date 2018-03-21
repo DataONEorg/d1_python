@@ -28,12 +28,10 @@
   - python 2.6
 """
 
-from __future__ import absolute_import
-
 import os
 
-import settings
-import subject_dn
+from . import settings
+from . import subject_dn
 
 
 def check_path(path):

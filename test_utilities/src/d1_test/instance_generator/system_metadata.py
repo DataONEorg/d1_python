@@ -21,13 +21,12 @@
 """Generate random SystemMetadata
 """
 
-from __future__ import absolute_import
-
 import datetime
 import os
 import random
 
 import d1_common.checksum
+import d1_common.system_metadata
 
 import d1_test.instance_generator.access_policy as access_policy
 import d1_test.instance_generator.checksum as checksum_generator
@@ -40,7 +39,7 @@ import d1_test.instance_generator.replica
 import d1_test.instance_generator.replication_policy as replication_policy
 
 
-def generate_random(client, option_dict=None):
+def generate_random(client, option_dict=None, normalize=True):
   """Generate a random System Metadata object.
 
   {options} is a set of key-value pairs that allow the caller to prevent
@@ -111,6 +110,8 @@ def generate_random(client, option_dict=None):
       min_len=12, max_len=12
     )
   )
+  if normalize:
+    d1_common.system_metadata.normalize_in_place(sysmeta_pyxb)
   return sysmeta_pyxb
 
 

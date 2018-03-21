@@ -24,8 +24,6 @@ refreshed and refresh them by pulling the latest version from a CN.
 
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 
@@ -64,7 +62,7 @@ class Command(django.core.management.base.BaseCommand):
     assert not args
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(__name__) # util.get_command_name())
+      'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     util.exit_if_other_instance_is_running(__name__)
     util.abort_if_stand_alone_instance()
@@ -86,25 +84,25 @@ class Command(django.core.management.base.BaseCommand):
 
   def _process_refresh_request(self, queue_model):
     logging.info('-' * 100)
-    logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid.did))
+    logging.info('Processing PID: {}'.format(queue_model.sciobj.pid.did))
     try:
       self._refresh(queue_model)
     except Exception:
-      logging.exception(u'System Metadata refresh failed with exception:')
+      logging.exception('System Metadata refresh failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
-        logging.warn(
-          u'SysMeta refresh failed and will be retried during next processing. '
-          u'failed_attempts={}, max_attempts={}'.format(
+        logging.warning(
+          'SysMeta refresh failed and will be retried during next processing. '
+          'failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts,
             django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS
           )
         )
       else:
-        logging.warn(
-          u'SysMeta refresh failed and has reached the maximum number of '
-          u'attempts. Recording the request as permanently failed and '
-          u'removing from queue. failed_attempts={}, max_attempts={}'.format(
+        logging.warning(
+          'SysMeta refresh failed and has reached the maximum number of '
+          'attempts. Recording the request as permanently failed and '
+          'removing from queue. failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts,
             django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS
           )
@@ -150,8 +148,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _get_system_metadata(self, queue_model):
     logging.debug(
-      u'Calling CNRead.getSystemMetadata(pid={})'.
-      format(queue_model.sciobj.pid)
+      'Calling CNRead.getSystemMetadata(pid={})'.format(queue_model.sciobj.pid)
     )
     return self.cn_client.getSystemMetadata(queue_model.sciobj.pid.did)
 
@@ -166,15 +163,15 @@ class Command(django.core.management.base.BaseCommand):
   def _assert_is_pid_of_native_object(self, pid):
     if not d1_gmn.app.did.is_existing_object(pid):
       raise django.core.management.base.CommandError(
-        u'Object referenced by PID does not exist or is not valid target for'
-        u'System Metadata refresh. pid="{}"'.format(pid)
+        'Object referenced by PID does not exist or is not valid target for'
+        'System Metadata refresh. pid="{}"'.format(pid)
       )
 
   def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
     if d1_common.xml.get_req_val(sysmeta_pyxb.identifier) != pid:
       raise django.core.management.base.CommandError(
-        u'PID in retrieved System Metadata does not match the object for which '
-        u'refresh was requested. pid="{}"'.format(pid)
+        'PID in retrieved System Metadata does not match the object for which '
+        'refresh was requested. pid="{}"'.format(pid)
       )
 
   def _assert_sysmeta_is_complete(self, sysmeta_pyxb):

@@ -44,12 +44,11 @@ of the Unicode strings.
 Quote and unquote are somewhat borrowed from python urllib standard library.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import os
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
@@ -76,39 +75,41 @@ def unquote(s):
     try:
       s += _hextochr[item[:2]] + item[2:]
     except KeyError:
-      s += u'%' + item
+      s += '%' + item
     except UnicodeDecodeError:
-      s += unichr(int(item[:2], 16)) + item[2:]
+      s += chr(int(item[:2], 16)) + item[2:]
   return s
 
 
-def quote(s, unsafe=u'/'):
+def quote(s, unsafe='/'):
   """Pass in a dictionary that has unsafe characters as the keys, and the
   percent encoded value as the value.
   """
-  res = s.replace(u'%', u'%25')
+  res = s.replace('%', '%25')
   for c in unsafe:
     res = res.replace(c, '%' + (hex(ord(c)).upper())[2:])
   return res
 
 
 def posix_filename_from_identifier(identifier):
-  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+  return urllib.parse.quote(
+    identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: '
+  )
 
 
 def posix_identifier_from_filename(filename):
-  return urllib.unquote(filename).decode('utf8')
+  return urllib.parse.unquote(filename)
 
 
 def windows_filename_from_identifier(identifier):
   """On Windows, the following characters are not allowed:
   \ / :  * ? " < > |
   """
-  return quote(identifier, u'\\/:*?"<>|')
+  return quote(identifier, '\\/:*?"<>|')
 
 
 def windows_identifier_from_filename(filename):
-  return urllib.unquote(filename).decode('utf8')
+  return urllib.parse.unquote(filename)
 
 
 identifier_from_filename = (

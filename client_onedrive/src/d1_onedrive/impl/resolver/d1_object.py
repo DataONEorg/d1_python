@@ -24,8 +24,6 @@ Determine what type of DataONE object a given PID references and branch out to a
 resolver that is specialized for that type.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 
@@ -49,24 +47,23 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     super(Resolver, self).__init__(options, object_tree)
 
     self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
-      csv_file=pkg_resources.resource_stream(
-        d1_client.__name__, 'mime_mappings.csv'
+      csv_file=open(
+        pkg_resources.
+        resource_filename(d1_client.__name__, 'mime_mappings.csv')
       )
     )
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
     return self._get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     return self._read_file(object_tree_root, path, size, offset)
@@ -114,7 +111,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return attributes.Attributes(
           size=record['size'], date=record['dateUploaded']
         )
-      elif filename == u"system.xml":
+      elif filename == "system.xml":
         sys_meta_xml = self._object_tree.get_system_metadata(pid)
         return attributes.Attributes(
           size=len(sys_meta_xml), date=record['dateUploaded']
@@ -129,14 +126,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     record = self._object_tree.get_object_record(pid)
     return [
       self._get_pid_filename(record['id'], record),
-      u'system.xml',
+      'system.xml',
       self._get_search_fields_filename(),
     ]
 
   def _read_file(self, object_tree_root, path, size, offset):
     pid, filename = path[0:2]
 
-    if filename == u"system.xml":
+    if filename == "system.xml":
       sys_meta_xml = self._object_tree.get_system_metadata(pid)
       return sys_meta_xml[offset:offset + size]
 
@@ -152,10 +149,10 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._raise_invalid_path()
 
   def _raise_invalid_pid(self, pid):
-    raise onedrive_exceptions.PathException(u'Invalid PID: {}'.format(pid))
+    raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
 
   def _raise_invalid_path(self):
-    raise onedrive_exceptions.PathException(u'Invalid path')
+    raise onedrive_exceptions.PathException('Invalid path')
 
   def _get_pid_filename(self, pid, record):
     try:
@@ -181,5 +178,6 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def _generate_search_fields_text(self, record):
     return util.os_format(
-      '\n'.join(sorted([u'{}: {}'.format(k, v) for k, v in record.items()]))
+      '\n'.
+      join(sorted(['{}: {}'.format(k, v) for k, v in list(record.items())]))
     )

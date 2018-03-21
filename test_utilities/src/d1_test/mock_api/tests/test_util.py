@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import d1_common.types.dataoneTypes_v1_2 as v1_2
 import d1_common.types.dataoneTypes_v2_0 as v2_0
 

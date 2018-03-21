@@ -32,12 +32,10 @@ verification on the node, the calls made through the connection are
 authenticated for the subject.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 
-import jwt
+from . import jwt
 
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
@@ -95,20 +93,20 @@ class Command(django.core.management.base.BaseCommand):
       raise jwt.InvalidTokenError('Missing "sub" key')
 
   def _view(self, primary_str):
-    logging.info(u'Primary subject:')
-    logging.info(u'  {}'.format(primary_str))
+    logging.info('Primary subject:')
+    logging.info('  {}'.format(primary_str))
 
   def _whitelist(self, primary_str):
     if d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
         subject=d1_gmn.app.models.subject(primary_str)
     ).exists():
       raise django.core.management.base.CommandError(
-        u'Create, update and delete already enabled for subject: {}'.
+        'Create, update and delete already enabled for subject: {}'.
         format(primary_str)
       )
     d1_gmn.app.models.whitelist_for_create_update_delete(primary_str)
     logging.info(
-      u'Enabled create, update and delete for subject: {}'.format(primary_str)
+      'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 
   def _read_jwt(self, jwt_path):

@@ -20,16 +20,16 @@
 # limitations under the License.
 """Test generation of AccessControl in SysMeta
 """
-
-from __future__ import absolute_import
-
 import d1_cli.impl.access_control as access_control
 import d1_cli.impl.cli_exceptions as cli_exceptions
+import freezegun
 import pytest
 
 import d1_test.d1_test_case
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestAccessControl')
+@freezegun.freeze_time('1967-05-27')
 class TestAccessControl(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """AccessControl(): __init__()"""
@@ -105,18 +105,19 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
-    actual = []
-    for s in str(a).split('\n'):
-      actual.append(s.strip())
-    assert actual[1] == 'read                          "subject_1"'
-    assert actual[2] == 'write                         "subject_2"'
-    assert actual[3] == 'changePermission              "subject_3"'
+    self.sample.assert_equals(str(a), 'string_repr')
+    # actual = []
+    # for s in str(a).split('\n'):
+    #   actual.append(s.strip())
+    # assert actual[1] == 'read                          "subject_1"'
+    # assert actual[2] == 'write                         "subject_2"'
+    # assert actual[3] == 'changePermission              "subject_3"'
 
   def test_1080(self):
     """_confirm_special_subject_write(): Allows setting if user answers 'yes"""
     a = access_control.AccessControl()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      with d1_test.d1_test_case.mock_raw_input('yes'):
+      with d1_test.d1_test_case.mock_input('yes'):
         a._confirm_special_subject_write('public', 'write')
     prompt_str = out_stream.getvalue()
     assert 'WARN     It is not recommended to give write access to public. ' \
@@ -127,7 +128,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
     'no"""
     a = access_control.AccessControl()
     with d1_test.d1_test_case.capture_std():
-      with d1_test.d1_test_case.mock_raw_input('no'):
+      with d1_test.d1_test_case.mock_input('no'):
         with pytest.raises(cli_exceptions.InvalidArguments):
           a._confirm_special_subject_write(
             'public',

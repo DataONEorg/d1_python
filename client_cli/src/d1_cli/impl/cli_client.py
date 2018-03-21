@@ -24,8 +24,6 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 """
 
-from __future__ import absolute_import
-
 import d1_client.cnclient
 
 

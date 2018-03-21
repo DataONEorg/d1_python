@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the OneDriveSolrClient
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
 

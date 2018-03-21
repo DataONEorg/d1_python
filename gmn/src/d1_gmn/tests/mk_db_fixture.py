@@ -38,14 +38,12 @@ isort:skip_file
 """
 # flake8:noqa:E402
 
-from __future__ import absolute_import
-
 import bz2
 import datetime
 import logging
 import os
 import random
-import StringIO
+import io
 
 import freezegun
 import responses
@@ -117,12 +115,12 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         do_chain = random.random() < 0.5
 
         pid = d1_test.instance_generator.identifier.generate_pid('PID_GMNFXT_')
-        pid, sid, sciobj_str, sysmeta_pyxb = \
-          d1_test.instance_generator.sciobj.generate_reproducible(
+        pid, sid, sciobj_bytes, sysmeta_pyxb = (
+          d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             client, pid
           )
-
-        sciobj_file = StringIO.StringIO(sciobj_str)
+        )
+        sciobj_file = io.BytesIO(sciobj_bytes)
         # self.dump(sysmeta_pyxb)
         # recv_sysmeta_pyxb = client.getSystemMetadata(pid)
         # self.dump(recv_sysmeta_pyxb)

@@ -24,9 +24,7 @@ The access control subsystem is mostly shared between the MNStorage methods, so
 most are tested in MNStorage.create()
 """
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 import time
 
 import freezegun
@@ -55,7 +53,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """update(): Raises NotAuthorized if none of the trusted subjects are
     active
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -73,7 +71,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1020(self, mn_client_v1_v2):
     """update(): updates the object if one or more trusted subjects are active"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, sid=True
     )
     self.update_obj(
@@ -87,10 +85,10 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     by a trusted subject
     """
 
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, sid=True
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(mn_client_v1_v2, pid)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.update_obj(mn_client_v1_v2, pid)
     self.get_obj(
       mn_client_v1_v2,
       pid,
@@ -104,10 +102,10 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by non-trusted subjects
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, sid=True
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.update_obj(
       mn_client_v1_v2, pid, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -124,10 +122,10 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """update() / get(): Object with no explicit permissions cannot be retrieved
     by the submitter
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, sid=True
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.update_obj(
       mn_client_v1_v2, pid, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -146,7 +144,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       with d1_test.d1_test_case.reproducible_random_context():
-        pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+        pid_create, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
           mn_client_v1_v2, sid=True
         )
         self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
@@ -159,7 +157,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """update() correctly adjusts sysmeta on obsoleted object"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       with d1_test.d1_test_case.reproducible_random_context():
-        pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+        pid_create, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
           mn_client_v1_v2, sid=True
         )
         sysmeta_before_update_pyxb = mn_client_v1_v2.getSystemMetadata(
@@ -186,7 +184,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1080(self, mn_client_v1_v2):
     """MNStorage.update(): Obsoleted object raises InvalidRequest"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid_create, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid_create, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, sid=True
       )
       self.update_obj(mn_client_v1_v2, pid_create, permission_list=None)
@@ -199,10 +197,10 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     IdentifierNotUnique
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+      other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, sid=True
       )
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, sid=True
       )
       with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
@@ -214,14 +212,14 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+      old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, sid=True
       )
-      pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
         mn_client_v1_v2
       )
       sysmeta_pyxb.identifier = d1_test.instance_generator.identifier.generate_pid()
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
         mn_client_v1_v2.update(
-          old_pid, StringIO.StringIO(sciobj_str), pid, sysmeta_pyxb
+          old_pid, io.BytesIO(sciobj_bytes), pid, sysmeta_pyxb
         )

@@ -22,8 +22,6 @@ testing and debugging scenarios but should not be needed and cannot be safely
 used on a production node.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 import re
@@ -190,7 +188,7 @@ class ExportObjectIdentifiers(object):
     parser.add_argument('path', type=str, help='Path to export file')
 
   def _handle(self, opt):
-    logging.info(u'Exported object list to: {}'.format(opt['path']))
+    logging.info('Exported object list to: {}'.format(opt['path']))
     with open(opt['path'], 'w') as f:
       for i, sciobj_model in enumerate(
           d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
@@ -271,7 +269,7 @@ class UpdateSystemMetadata(object):
   def handle(self, *args, **opt):
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(__name__) # util.get_command_name())
+      'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     util.exit_if_other_instance_is_running(__name__)
     self._check_debug_mode()

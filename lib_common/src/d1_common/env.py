@@ -20,8 +20,6 @@
 """Utilities for handling DataONE environments
 """
 
-from __future__ import absolute_import
-
 import d1_common.const
 
 D1_ENV_DICT = {
@@ -53,7 +51,7 @@ D1_ENV_DICT = {
 
 
 def get_d1env_keys():
-  return D1_ENV_DICT.keys()
+  return list(D1_ENV_DICT.keys())
 
 
 def get_d1env(k):

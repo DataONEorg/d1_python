@@ -18,14 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import collections
 import copy
 import datetime
 import logging
 import os
-import urlparse
+import urllib.parse
 
 import cachecontrol
 import requests
@@ -120,7 +118,7 @@ class Session(object):
     :returns: None
     """
     self._base_url = base_url
-    self._scheme, self._host, self._port, self._path = urlparse.urlparse(
+    self._scheme, self._host, self._port, self._path = urllib.parse.urlparse(
       base_url
     )[:4]
     self._api_major = 1
@@ -231,11 +229,11 @@ class Session(object):
     """Get request as cURL command line for debugging.
     """
     if kwargs.get('query'):
-      url = u'{}?{}'.format(url, d1_common.url.urlencode(kwargs['query']))
-    curl_cmd = [u'curl -X {}'.format(method)]
-    for k, v in kwargs['headers'].items():
-      curl_cmd.append(u'-H "{}: {}"'.format(k, v))
-    curl_cmd.append(u'{}'.format(url))
+      url = '{}?{}'.format(url, d1_common.url.urlencode(kwargs['query']))
+    curl_cmd = ['curl -X {}'.format(method)]
+    for k, v in sorted(list(kwargs['headers'].items())):
+      curl_cmd.append('-H "{}: {}"'.format(k, v))
+    curl_cmd.append('{}'.format(url))
     return ' '.join(curl_cmd)
 
   def dump_request_and_response(self, response):
@@ -276,7 +274,7 @@ class Session(object):
     return self._session.request(method, url, **kwargs)
 
   def _prep_url(self, rest_path_list):
-    if isinstance(rest_path_list, basestring):
+    if isinstance(rest_path_list, str):
       rest_path_list = [rest_path_list]
     return d1_common.url.joinPathElements(
       self._base_url,
@@ -304,12 +302,12 @@ class Session(object):
     self.nested_update(result_dict, kwargs_dict)
     logging.debug(
       'Request kwargs:\n{}'.
-      format(d1_common.util.format_normalized_compact_json(result_dict))
+      format(d1_common.util.serialize_to_normalized_compact_json(result_dict))
     )
     return result_dict
 
   def nested_update(self, d, u):
-    for k, v in u.iteritems():
+    for k, v in list(u.items()):
       if isinstance(v, collections.Mapping):
         r = self.nested_update(d.get(k, {}), v)
         d[k] = r
@@ -338,26 +336,27 @@ class Session(object):
     )
 
   def _remove_none_value_items(self, query_dict):
-    return {k: v for k, v in query_dict.items() if v is not None}
+    return {k: v for k, v in list(query_dict.items()) if v is not None}
 
   def _datetime_to_iso8601(self, query_dict):
     """Encode any datetime query parameters to ISO8601."""
     return {
       k: v if not isinstance(v, datetime.datetime) else v.isoformat()
-      for k, v in query_dict.items()
+      for k, v in list(query_dict.items())
     }
 
   def _bool_to_string(self, query_dict):
     return {
       k: 'true' if v is True else 'false' if v is False else v
-      for k, v in query_dict.items()
+      for k, v in list(query_dict.items())
     }
 
   def _encode_path_elements(self, path_element_list):
     return [
-      d1_common.url.encodePathElement(v) if isinstance(v,
-                                                       (int, basestring)) else
-      d1_common.url.encodePathElement(v.value()) for v in path_element_list
+      d1_common.url.encodePathElement(v)
+      if isinstance(v,
+                    (int, str)) else d1_common.url.encodePathElement(v.value())
+      for v in path_element_list
     ]
 
   def _get_api_version_path_element(self):

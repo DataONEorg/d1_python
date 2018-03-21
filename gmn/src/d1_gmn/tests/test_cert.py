@@ -19,7 +19,6 @@
 # limitations under the License.
 """Test subject extraction from certificate and SubjectInfo
 """
-from __future__ import absolute_import
 
 import responses
 
@@ -30,7 +29,7 @@ import d1_test.sample
 
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  cert_simple_subject_info_pem = d1_test.sample.load(
+  cert_simple_subject_info_pem = d1_test.sample.load_utf8_to_str(
     'cert_with_simple_subject_info.pem'
   )
 

@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
+import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.replica as replica
@@ -32,8 +32,10 @@ class TestReplica(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """generate()"""
     replica_list = replica.generate()
-    replica_xml_str = ''.join([r.toxml('utf-8') for r in replica_list])
-    self.sample.assert_equals(replica_xml_str, 'inst_gen_generate')
+    replica_xml_list = [
+      d1_common.xml.serialize_to_str(obj_pyxb) for obj_pyxb in replica_list
+    ]
+    self.sample.assert_equals(replica_xml_list, 'inst_gen_generate')
 
   def test_1010(self):
     """generate_single()"""

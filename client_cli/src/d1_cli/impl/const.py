@@ -29,12 +29,12 @@ class SessionVariable(object):
 
 
 # REST URLs
-REST_Version = u'v1'
-REST_URL_Get = u'object'
+REST_Version = 'v1'
+REST_URL_Get = 'object'
 
 # Science Metadata types - this should be pulled from the list.
 ALLOWABLE_SCIMETA_TYPES = (
-  u'eml://ecoinformatics.org/eml-2.0.0', u'eml://ecoinformatics.org/eml-2.0.1',
-  u'eml://ecoinformatics.org/eml-2.1.0', u'eml://ecoinformatics.org/eml-2.1.1',
-  u'FGDC-STD-001-1998', u'FGDC-STD-001.1-1999', u'FGDC-STD-001.2-1999',
+  'eml://ecoinformatics.org/eml-2.0.0', 'eml://ecoinformatics.org/eml-2.0.1',
+  'eml://ecoinformatics.org/eml-2.1.0', 'eml://ecoinformatics.org/eml-2.1.1',
+  'FGDC-STD-001-1998', 'FGDC-STD-001.1-1999', 'FGDC-STD-001.2-1999',
 )

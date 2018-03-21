@@ -24,8 +24,6 @@ Fast retrieval of event log records from a DataONE Node.
 See additional notes in SysMeta iter docstring.
 """
 
-from __future__ import absolute_import
-
 import logging
 import multiprocessing
 import time
@@ -127,7 +125,7 @@ def _get_all_pages(
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_pages = (n_total - 1) / page_size + 1
+  n_pages = (n_total - 1) // page_size + 1
 
   for page_idx in range(n_pages):
     if namespace.stop:
@@ -140,7 +138,7 @@ def _get_all_pages(
           client_dict, get_log_records_dict
         )
       )
-    except RuntimeError as e:
+    except Exception as e:
       logging.debug(
         '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
       )
@@ -189,7 +187,7 @@ def _get_page(
     log_records_pyxb = client.getLogRecords(
       start=page_idx * page_size, count=page_size, **get_log_records_dict
     )
-  except RuntimeError as e:
+  except Exception as e:
     logging.error(
       '_get_page(): getLogRecords() failed. page_idx={} page_total={} error="{}"'
       .format(page_idx, n_pages, str(e))

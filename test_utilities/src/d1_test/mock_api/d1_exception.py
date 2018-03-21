@@ -29,10 +29,9 @@ E.g.:
 client.create(..., vendorSpecific={'trigger': '401'})
 """
 
-from __future__ import absolute_import
-
 import re
 
+import d1_common.const
 import d1_common.types.exceptions
 
 
@@ -53,10 +52,10 @@ def trigger_by_header(request):
 
 
 def trigger_by_status_code(request, status_code_int):
-  if request.method != 'HEAD':
-    return create_regular_d1_exception(status_code_int)
-  else:
+  if request.method == 'HEAD':
     return create_header_d1_exception(status_code_int)
+  else:
+    return create_regular_d1_exception(status_code_int)
 
 
 def create_regular_d1_exception(status_code_int):

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <serialVersion>1</serialVersion>
-  <identifier>test_pid_burrito,carpingly,coloradoite</identifier>
+  <identifier>test_pid_suitability:nonstudent:proczarist</identifier>
   <formatId>test-format-id</formatId>
-  <size>49</size>
-  <checksum algorithm="SHA-1">c7c38cd0ae6270f2e5990511a0a4cddf340e2beb</checksum>
+  <size>53</size>
+  <checksum algorithm="SHA-1">8f51155093c2a122a09ec3b1029fb68f2dfa075c</checksum>
   <rightsHolder>test-rights-holder-subject</rightsHolder>
   <accessPolicy>
     <allow>

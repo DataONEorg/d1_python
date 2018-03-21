@@ -21,8 +21,6 @@
 """Basic tests for the template based pages
 """
 
-from __future__ import absolute_import
-
 import freezegun
 import responses
 

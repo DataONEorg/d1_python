@@ -185,6 +185,22 @@ Note that science object bytes are stored on disk, so they are not captured in t
 
 These instructions are tested on Linux Mint 18 and should also work on close derivatives.
 
+
+#### Python 3
+
+Install packaged dependencies:
+
+  $ sudo apt install python3-venv
+  $ python3 -m venv venv
+  $ . venv/bin/activate
+  $ ./dev_tools/src/d1_dev/setup-all.py --root . develop
+
+
+  $ 2to3 --write . | tee 2to3.log
+
+
+#### Python 2
+
 Install packaged dependencies:
 
     $ sudo apt-get update
@@ -278,3 +294,4 @@ Clear out the installed libraries and reinstall:
     $ sudo rm -rf /usr/local/lib/python2.7/dist-packages/d1_*
     $ sudo nano /usr/local/lib/python2.7/dist-packages/easy-install.pth
     Remove all lines that are: dataone.*.egg and that are paths to your d1_python.
+

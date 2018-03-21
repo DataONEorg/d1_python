@@ -18,11 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.systemMetadataChanged() and the process_refresh_queue mgmt
-command.
+"""Test MNStorage.systemMetadataChanged() and the process_refresh_queue
+management command
 """
-
-from __future__ import absolute_import
 
 import datetime
 
@@ -78,7 +76,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1020(self, mn_client_v1_v2):
     """systemMetadataChanged(): Succeeds when called with valid PID"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, sid=True
       )
       assert mn_client_v1_v2.systemMetadataChanged(
@@ -93,7 +91,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with freezegun.freeze_time('2014-12-14') as freeze_time:
       with d1_gmn.tests.gmn_mock.disable_auth():
         for i in range(3):
-          pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+          pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             mn_client_v1_v2, sid=True
           )
           assert mn_client_v1_v2.systemMetadataChanged(

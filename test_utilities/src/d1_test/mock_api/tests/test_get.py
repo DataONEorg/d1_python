@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import requests
 import responses
 
@@ -49,11 +47,11 @@ class TestMockGet(d1_test.d1_test_case.D1TestCase):
   def test_1020(self, mn_client_v1_v2):
     """mock_api.get(): Redirects"""
     mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    direct_sciobj_str = mn_client_v1_v2.get('test_pid_1').content
-    redirect_sciobj_str = mn_client_v1_v2.get(
+    direct_sciobj_bytes = mn_client_v1_v2.get('test_pid_1').content
+    redirect_sciobj_bytes = mn_client_v1_v2.get(
       '<REDIRECT:303:3>test_pid_1'
     ).content
-    assert direct_sciobj_str == redirect_sciobj_str
+    assert direct_sciobj_bytes == redirect_sciobj_bytes
 
   # @responses.activate
   # def test_0012(self):

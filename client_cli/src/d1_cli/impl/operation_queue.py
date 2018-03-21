@@ -21,8 +21,6 @@
 """Hold a queue of operations and perform commands on the queue.
 """
 
-from __future__ import absolute_import
-
 import json
 import os
 import subprocess
@@ -78,7 +76,7 @@ class OperationQueue(object):
         'You are about to perform {} queued write operations. Continue?'
         .format(len(self._operations)), default='yes'
     ):
-      raise cli_exceptions.InvalidArguments(u'Cancelled')
+      raise cli_exceptions.InvalidArguments('Cancelled')
     while len(self._operations):
       self._execute_operation(self._operations[0])
       self._operations = self._operations[1:]
@@ -113,12 +111,10 @@ class OperationQueue(object):
 
   def _write_to_tmp(self):
     self._update_comments(self._operations)
-    fi, path = tempfile.mkstemp(
-      prefix=u'dataone_cli.', suffix='.tmp', text=True
-    )
+    fi, path = tempfile.mkstemp(prefix='dataone_cli.', suffix='.tmp', text=True)
     with os.fdopen(fi, "w") as f:
       json.dump(
-        self._operations, f, sort_keys=True, indent=4, separators=(u',', ': ')
+        self._operations, f, sort_keys=True, indent=4, separators=(',', ': ')
       )
     return path
 
@@ -148,7 +144,7 @@ class OperationQueue(object):
     if editor:
       return editor
     try:
-      return os.environ[u'EDITOR']
+      return os.environ['EDITOR']
     except KeyError:
       return DEFAULT_EDITOR
 
@@ -156,37 +152,37 @@ class OperationQueue(object):
     for i, operation in enumerate(operations):
       j = i + 1
       k = len(operations)
-      if operation[u'operation'] == u'create':
-        pid = operation[u'parameters']['identifier']
-        path = operation[u'parameters']['science-file']
-        operation[u'_comment'] = '{} of {}: create({}, {})'.format(
+      if operation['operation'] == 'create':
+        pid = operation['parameters']['identifier']
+        path = operation['parameters']['science-file']
+        operation['_comment'] = '{} of {}: create({}, {})'.format(
           j, k, pid, path
         )
-      elif operation[u'operation'] == u'update':
-        pid_new = operation[u'parameters']['identifier-new']
-        pid_old = operation[u'parameters']['identifier-old']
-        path = operation[u'parameters']['science-file']
-        operation[u'_comment'] = '{} of {}: update({}, {}, {})'.format(
+      elif operation['operation'] == 'update':
+        pid_new = operation['parameters']['identifier-new']
+        pid_old = operation['parameters']['identifier-old']
+        path = operation['parameters']['science-file']
+        operation['_comment'] = '{} of {}: update({}, {}, {})'.format(
           j, k, pid_new, pid_old, path
         )
-      elif operation[u'operation'] == u'create_package':
-        pid_package = operation[u'parameters']['identifier-package']
-        pid_meta = operation[u'parameters'][u'identifier-science-meta']
-        pid_datas = operation[u'parameters'][u'identifier-science-data']
-        operation[u'_comment'] = '{} of {}: create_package({}, {}, {})'.format(
+      elif operation['operation'] == 'create_package':
+        pid_package = operation['parameters']['identifier-package']
+        pid_meta = operation['parameters']['identifier-science-meta']
+        pid_datas = operation['parameters']['identifier-science-data']
+        operation['_comment'] = '{} of {}: create_package({}, {}, {})'.format(
           j, k, pid_package, pid_meta, ', '.join(pid_datas)
         )
-      elif operation[u'operation'] == u'archive':
-        pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{} of {}: archive({})'.format(j, k, pid)
-      elif operation[u'operation'] == u'update_access_policy':
-        pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{} of {}: update_access_policy({})'.format(
+      elif operation['operation'] == 'archive':
+        pid = operation['parameters']['identifier']
+        operation['_comment'] = '{} of {}: archive({})'.format(j, k, pid)
+      elif operation['operation'] == 'update_access_policy':
+        pid = operation['parameters']['identifier']
+        operation['_comment'] = '{} of {}: update_access_policy({})'.format(
           j, k, pid
         )
-      elif operation[u'operation'] == u'update_replication_policy':
-        pid = operation[u'parameters']['identifier']
-        operation[u'_comment'] = '{} of {}: update_replication_policy({})'.format(
+      elif operation['operation'] == 'update_replication_policy':
+        pid = operation['parameters']['identifier']
+        operation['_comment'] = '{} of {}: update_replication_policy({})'.format(
           j, k, pid
         )
 
@@ -202,14 +198,14 @@ class OperationQueue(object):
   def _prompt_edit_or_cancel(self, err_msg):
     while True:
       cli_util.print_error(err_msg)
-      r = raw_input(u'Edit again or Cancel (E/C)? ').strip()
-      if r in (u'E', 'e'):
+      r = input('Edit again or Cancel (E/C)? ').strip()
+      if r in ('E', 'e'):
         return False
-      if r in (u'C', 'c'):
+      if r in ('C', 'c'):
         return True
 
   def _assert_queue_not_empty(self):
     if not len(self._operations):
       raise cli_exceptions.InvalidArguments(
-        u'There are no operations in the queue'
+        'There are no operations in the queue'
       )

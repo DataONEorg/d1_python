@@ -1,29 +1,10 @@
+"PyXB object:
+  b'<?xml version=\"1.0\" encoding=\"utf-8\"?><ns1:log count=\"1\" start=\"0\" total=\"27\"
+xmlns:ns1=\"http://ns.dataone.org/service/types/v1\"><logEntry><entryId>[ENTRY-
+ID]</entryId><identifier>PID_GMNFXT_eofwdzpwlmro</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>DataONE-Python/[VERSION]
++http://dataone.org/</userAgent><subject>disabled_auth_subj</subject><event>create</event><dateLogged>1979-01-01T10:11:34Z</dateLogged><nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier></logEntry></ns1:log>'
 PyXB object:
-  <?xml version="1.0" encoding="utf-8"?>
-  <ns1:log count="1" start="0" total="27" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-    <logEntry>
-      <entryId>[volatile]</entryId>
-      <identifier>PID_GMNFXT_eofwdzpwlmro</identifier>
-      <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>DataONE-Python/[volatile]
-      <subject>disabled_auth_subj</subject>
-      <event>create</event>
-      <dateLogged>1979-01-01T10:11:34Z</dateLogged>
-      <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-    </logEntry>
-  </ns1:log>
-
-PyXB object:
-  <?xml version="1.0" encoding="utf-8"?>
-  <ns1:log count="1" start="26" total="27" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-    <logEntry>
-      <entryId>[volatile]</entryId>
-      <identifier>PID_GMNFXT_zgvwaddsmrcw</identifier>
-      <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>DataONE-Python/[volatile]
-      <subject>disabled_auth_subj</subject>
-      <event>update</event>
-      <dateLogged>1979-11-23T23:03:36Z</dateLogged>
-      <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-    </logEntry>
-  </ns1:log>
+  b'<?xml version=\"1.0\" encoding=\"utf-8\"?><ns1:log count=\"1\" start=\"26\" total=\"27\"
+xmlns:ns1=\"http://ns.dataone.org/service/types/v1\"><logEntry><entryId>[ENTRY-
+ID]</entryId><identifier>PID_GMNFXT_zgvwaddsmrcw</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>DataONE-Python/[VERSION]
++http://dataone.org/</userAgent><subject>disabled_auth_subj</subject><event>update</event><dateLogged>1979-11-23T23:03:36Z</dateLogged><nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier></logEntry></ns1:log>'"

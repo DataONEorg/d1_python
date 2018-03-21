@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the CLI command processor
 """
-from __future__ import absolute_import
 
 import re
 
@@ -65,7 +64,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
     mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     # Must set these session variables after activating Responses because
     # they implicitly call listNodes, etc.
-    with d1_test.d1_test_case.mock_raw_input('yes'):
+    with d1_test.d1_test_case.mock_input('yes'):
       self.cp.get_session().set(
         session.CN_URL_NAME, d1_test.d1_test_case.MOCK_BASE_URL
       )

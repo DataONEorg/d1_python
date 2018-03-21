@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import logging
 import os
 import re
@@ -54,7 +52,7 @@ def redbaron_tree_to_module_str(baron_tree, strict=False):
 
 
 def update_module_file(
-    redbaron_tree, module_path, show_diff=False, update=False
+    redbaron_tree, module_path, show_diff=False, dry_run=False
 ):
   """Set show_diff to False to overwrite module_path with a new file generated
   from {redbaron_tree}.
@@ -71,14 +69,14 @@ def update_module_file(
     logging.debug('Source modified')
 
     tmp_file.seek(0)
-    diff_update_file(module_path, tmp_file.read(), show_diff, update)
+    diff_update_file(module_path, tmp_file.read(), show_diff, dry_run)
 
 
 def update_module_file_ast(
     ast_tree, module_path, show_diff=False, update=False
 ):
   with tempfile.NamedTemporaryFile() as tmp_file:
-    tmp_file.write(unicode(ast_tree))
+    tmp_file.write(str(ast_tree))
     tmp_file.seek(0)
     if are_files_equal(module_path, tmp_file.name):
       logging.debug('Source unchanged')
@@ -90,7 +88,7 @@ def update_module_file_ast(
     diff_update_file(module_path, tmp_file.read(), show_diff, update)
 
 
-def diff_update_file(module_path, module_str, show_diff=False, update=False):
+def diff_update_file(module_path, module_str, show_diff=False, dry_run=False):
   with tempfile.NamedTemporaryFile() as tmp_file:
     tmp_file.write(module_str)
     if show_diff:
@@ -101,7 +99,7 @@ def diff_update_file(module_path, module_str, show_diff=False, update=False):
         # subprocess.check_call(['condiff.sh', module_path, tmp_file.name])
       except subprocess.CalledProcessError:
         pass
-    if update:
+    if not dry_run:
       try:
         os.unlink(module_path + '~')
       except EnvironmentError:
@@ -119,6 +117,7 @@ def touch(module_path, times=None):
     os.utime(module_path, times)
 
 
+# TODO: Check if this is required in Py3
 # Modified version of the class at baron/dumper.py which seems to fix handling
 # of utf-8 sources.
 class UnicodeRenderWalker(baron.render.RenderWalker):
@@ -127,10 +126,10 @@ class UnicodeRenderWalker(baron.render.RenderWalker):
     self._dump = ''
 
   def before_string(self, string, key):
-    self._dump += string.decode('utf-8')
+    self._dump += string
 
   def before_constant(self, constant, key):
-    self._dump += constant.decode('utf-8')
+    self._dump += constant
 
   def dump(self, baron_tree):
     self.walk(baron_tree)
@@ -150,14 +149,14 @@ def split_func_name(func_name):
 
 
 def gen_doc_str(post_name_str, old_doc_str):
-  return u'"""{}{}"""'.format(
-    post_name_str.replace(u'_', u' ') + ': ' if post_name_str else u'',
+  return '"""{}{}"""'.format(
+    post_name_str.replace('_', ' ') + ': ' if post_name_str else '',
     old_doc_str.strip("""\r\n"\'"""),
   )
 
 
 def get_doc_str(node):
-  doc_str = node.value[0].value if has_doc_str(node) else u''
+  doc_str = node.value[0].value if has_doc_str(node) else ''
   doc_str = doc_str.strip('"\' \t\n\r')
   doc_str = re.sub(r'\s+', ' ', doc_str)
   return doc_str

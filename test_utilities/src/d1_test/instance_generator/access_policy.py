@@ -39,8 +39,6 @@ For example, an <allow> clause that contains any subject with the string
 "_read_" in it, should also contain the read permission entry.
 """
 
-from __future__ import absolute_import
-
 import random
 
 import d1_common.types.dataoneTypes
@@ -50,15 +48,15 @@ import d1_test.instance_generator.random_data
 
 # Map between permission labels and permissions.
 PERMISSIONS = {
-  u'read': d1_common.types.dataoneTypes.Permission.read,
-  u'write': d1_common.types.dataoneTypes.Permission.write,
-  u'changePermission': d1_common.types.dataoneTypes.Permission.changePermission,
+  'read': d1_common.types.dataoneTypes.Permission.read,
+  'write': d1_common.types.dataoneTypes.Permission.write,
+  'changePermission': d1_common.types.dataoneTypes.Permission.changePermission,
 }
 
 
 def random_set_of_permissions():
   return random.sample(
-    PERMISSIONS.keys(), random.randint(1, len(PERMISSIONS) - 1)
+    sorted(PERMISSIONS.keys()), random.randint(1, len(PERMISSIONS) - 1)
   )
 
 
@@ -89,7 +87,7 @@ def random_subjects_with_permission_labels(
     permissions, min_len=1, max_len=100, group_chance=0.1
 ):
   subjects = []
-  for i in xrange(random.randint(min_len, max_len)):
+  for i in range(random.randint(min_len, max_len)):
     subject = random_subject_with_permission_labels(permissions, group_chance)
     subjects.append(subject)
   return subjects
@@ -112,7 +110,7 @@ def generate(min_rules=1, max_rules=5, max_subjects=5):
     return None
   ap = d1_common.types.dataoneTypes.accessPolicy()
   rules = []
-  for i in xrange(0, n_rules):
+  for i in range(0, n_rules):
     ar = d1_common.types.dataoneTypes.accessRule()
     permissions = random_set_of_permissions()
     ar.subject = random_subject_list(max_len=max_subjects)

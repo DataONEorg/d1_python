@@ -1,148 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>25</serialVersion>
-  <identifier>object#0015</identifier>
-  <formatId>audio/mpeg</formatId>
-  <size>236</size>
-  <checksum algorithm="SHA-1">0f142c754ec44ea99b5f1cc18264807bb777567d</checksum>
-  <submitter>subj_jv</submitter>
-  <rightsHolder>subj_lo</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>subj_uh</subject>
-      <subject>subj_ea</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>subj_ug</subject>
-      <subject>subj_bw</subject>
-      <subject>subj_xu</subject>
-      <subject>subj_ze</subject>
-      <permission>write</permission>
-      <permission>read</permission>
-    </allow>
-    <allow>
-      <subject>subj_ak</subject>
-      <subject>subj_ot</subject>
-      <subject>subj_zh</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>subj_zk</subject>
-      <subject>subj_ly_group</subject>
-      <subject>subj_fj_group</subject>
-      <subject>subj_bo</subject>
-      <subject>subj_tz</subject>
-      <permission>changePermission</permission>
-      <permission>write</permission>
-    </allow>
-  </accessPolicy>
-  <dateUploaded>1994-08-15T20:02:49.047769Z</dateUploaded>
-  <dateSysMetadataModified>1994-08-25T20:02:49.047769Z</dateSysMetadataModified>
-  <originMemberNode>mn_v</originMemberNode>
-  <authoritativeMemberNode>mn_u</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_v</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>1982-05-15T06:17:28.786226Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_v</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2028-06-28T00:20:39.324557Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_l</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2052-10-18T14:15:09.304393Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_w</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2002-11-28T08:30:51.967872Z</replicaVerified>
-  </replica>
-  <seriesId>SID_phillozwnetk</seriesId>
-  <mediaType name="media_type_ux">
-    <property name="prop_fhplydrsvggf">rtlchvpwjcgv</property>
-  </mediaType>
-  <fileName>file_ovnbybbzyfgx</fileName>
-</ns1:systemMetadata>
-
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>39</serialVersion>
-  <identifier>object#0028</identifier>
-  <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
-  <size>250</size>
-  <checksum algorithm="SHA-1">fda25e9009dede1841828aeaffcb221ec941d2c8</checksum>
-  <submitter>subj_n</submitter>
-  <rightsHolder>subj_t</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>subj_db</subject>
-      <subject>subj_ug</subject>
-      <subject>subj_cg</subject>
-      <permission>read</permission>
-    </allow>
-    <allow>
-      <subject>subj_he</subject>
-      <subject>subj_lf</subject>
-      <subject>subj_gx</subject>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>subj_ya</subject>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>subj_xr</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>subj_cg</subject>
-      <subject>subj_uc</subject>
-      <subject>subj_zu</subject>
-      <subject>subj_vh</subject>
-      <permission>changePermission</permission>
-      <permission>read</permission>
-    </allow>
-  </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_uw</preferredMemberNode>
-    <preferredMemberNode>mn_vp</preferredMemberNode>
-    <preferredMemberNode>mn_xi</preferredMemberNode>
-    <preferredMemberNode>mn_e</preferredMemberNode>
-  </replicationPolicy>
-  <dateUploaded>2008-02-12T12:23:23.458099Z</dateUploaded>
-  <dateSysMetadataModified>2008-02-22T12:23:23.458099Z</dateSysMetadataModified>
-  <originMemberNode>mn_f</originMemberNode>
-  <authoritativeMemberNode>mn_qt</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_f</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2049-10-28T14:48:19.955053Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_vu</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2024-04-13T01:13:39.457599Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_ji</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2058-09-08T14:00:27.692545Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_qe</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>1988-06-30T08:27:28.226356Z</replicaVerified>
-  </replica>
-  <seriesId>SID_hjgzsibvohoh</seriesId>
-  <mediaType name="media_type_yk">
-    <property name="prop_vkvhxzxyagkq">jwadiztnglvc</property>
-    <property name="prop_egwdstiekunh">lpzqhnrnlnvv</property>
-    <property name="prop_zhotxlwzwmun">iutkeyahscwl</property>
-    <property name="prop_fehwzmoeynnb">mzmhrxiatapj</property>
-  </mediaType>
-  <fileName>file_naxpxbvtbubr</fileName>
-</ns1:systemMetadata>
+VALID-UTF-8-BYTES:<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
+xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>48</serialVersion><identifier>object#0024</identifier><formatId>http://www.w3.org/TR/rdfa-
+syntax</formatId><size>259</size><checksum
+algorithm="SHA-1">a631227eff1d502c9a4498fb47daeede022692b5</checksum><submitter>subj_o</submitter><rightsHolder>subj_t</rightsHolder><replicationPolicy
+numberReplicas="0"
+replicationAllowed="false"><preferredMemberNode>mn_o</preferredMemberNode><preferredMemberNode>mn_t</preferredMemberNode><preferredMemberNode>mn_z</preferredMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2007-05-10T14:08:58Z</dateUploaded><dateSysMetadataModified>2007-05-20T14:08:58Z</dateSysMetadataModified><originMemberNode>mn_cp</originMemberNode><authoritativeMemberNode>mn_eh</authoritativeMemberNode><replica><replicaMemberNode>mn_h</replicaMemberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>1972-08-30T19:24:16Z</replicaVerified></replica><replica><replicaMemberNode>mn_k</replicaMemberNode><replicationStatus>queued</replicationStatus><replicaVerified>2068-04-29T04:10:06Z</replicaVerified></replica><replica><replicaMemberNode>mn_x</replicaMemberNode><replicationStatus>completed</replicationStatus><replicaVerified>2021-01-29T19:45:28Z</replicaVerified></replica><seriesId>SID_knhmzilszxgr</seriesId><mediaType
+name="media_type_qr"><property name="prop_lyzowhfxuzrx">fwhamunfszpe</property><property
+name="prop_fcshxqshyaes">jttxvluznjiu</property><property name="prop_jqvgrbdzfmgh">ukemjhyergfr</property><property
+name="prop_bcqtaejgyfas">xhtnimxtwwvz</property></mediaType><fileName>file_pwnjbdbcjcjn</fileName></ns1:systemMetadata>
+<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
+xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>43</serialVersion><identifier>object#0028</identifier><formatId>http://www.w3.org/TR/rdfa-
+syntax</formatId><size>254</size><checksum
+algorithm="SHA-1">83c44b509ad842b77d48cb3e58c84c89a40991e5</checksum><submitter>subj_wa</submitter><rightsHolder>subj_ro</rightsHolder><accessPolicy><allow><subject>subj_ba</subject><subject>subj_eb</subject><subject>subj_yw</subject><permission>changePermission</permission></allow></accessPolicy><replicationPolicy
+numberReplicas="0"
+replicationAllowed="false"><preferredMemberNode>mn_vq</preferredMemberNode><blockedMemberNode>mn_gs</blockedMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2002-12-09T18:16:14Z</dateUploaded><dateSysMetadataModified>2002-12-19T18:16:14Z</dateSysMetadataModified><originMemberNode>mn_c</originMemberNode><authoritativeMemberNode>mn_n</authoritativeMemberNode><mediaType
+name="media_type_sn"><property name="prop_kvayiuheivfz">eusgezvzlzme</property><property
+name="prop_uqryqrqgzzdj">mquuqgpiffmr</property></mediaType><fileName>file_zjfnjlisblhp</fileName></ns1:systemMetadata>

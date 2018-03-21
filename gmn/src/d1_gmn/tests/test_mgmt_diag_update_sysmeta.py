@@ -19,7 +19,6 @@
 # limitations under the License.
 """Test the "diag_update_sysmeta" management command
 """
-from __future__ import absolute_import
 
 import tempfile
 
@@ -54,7 +53,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
           client
         )
         sysmeta_pyxb.identifier = pid
-        tmp_file.write(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
+        tmp_file.write(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb))
         tmp_file_list.append(tmp_file.name)
     return tmp_dir_path, tmp_file_list, rnd_pid_list
 
@@ -73,7 +72,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'
     )
     combined_sysmeta_xml = '\n'.join([
-      d1_common.xml.pretty_pyxb(d1_gmn.app.sysmeta.model_to_pyxb(pid))
+      d1_common.xml.format_pretty_pyxb(d1_gmn.app.sysmeta.model_to_pyxb(pid))
       for pid in rnd_pid_list
     ])
     self.sample.assert_equals(combined_sysmeta_xml, 'local_file_search')
@@ -88,7 +87,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'
     )
     combined_sysmeta_xml = '\n'.join([
-      d1_common.xml.pretty_pyxb(d1_gmn.app.sysmeta.model_to_pyxb(pid))
+      d1_common.xml.format_pretty_pyxb(d1_gmn.app.sysmeta.model_to_pyxb(pid))
       for pid in rnd_pid_list
     ])
     self.sample.assert_equals(combined_sysmeta_xml, 'remote_node')

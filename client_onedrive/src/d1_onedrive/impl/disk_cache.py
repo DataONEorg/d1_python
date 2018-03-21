@@ -26,12 +26,12 @@ be removed. The oldest object is the object that was added first of the objects
 still in the cache.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import pickle
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 
 log = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ class DiskCache(dict):
     )
 
   def _filename_from_key(self, key):
-    return urllib.quote(key.encode('utf-8'), safe='') # doseq=True
+    return urllib.parse.quote(key.encode('utf-8'), safe='') # doseq=True
 
   def _write_key_value_to_disk(self, key, value):
     with open(self._path_from_key(key), 'wb') as f:

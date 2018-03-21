@@ -26,8 +26,6 @@ The resolvers are a class of objects that translate filesystem paths to their
 corresponding files and folders.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 # App
@@ -37,7 +35,7 @@ from d1_onedrive.impl import onedrive_exceptions
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_FILENAME = u'readme.txt'
+README_FILENAME = 'readme.txt'
 
 
 class Resolver(object):
@@ -62,7 +60,7 @@ class Resolver(object):
       raise onedrive_exceptions.PathException(msg)
 
   def _raise_invalid_pid(self, pid):
-    raise onedrive_exceptions.PathException(u'Invalid PID: {}'.format(pid))
+    raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
 
   # Readme file.
 

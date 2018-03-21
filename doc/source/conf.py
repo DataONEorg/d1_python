@@ -22,8 +22,8 @@
 
 import better
 
-project = u'DataONE Python Products'
-copyright = u'2016 Participating institutions in DataONE'
+project = 'DataONE Python Products'
+copyright = '2016 Participating institutions in DataONE'
 
 source_suffix = '.rst'
 master_doc = 'index'

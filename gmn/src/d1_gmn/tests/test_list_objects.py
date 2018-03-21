@@ -22,8 +22,6 @@
 TODO: Test PUBLIC_OBJECT_LIST setting for both True and False
 """
 
-from __future__ import absolute_import
-
 import datetime
 import random
 

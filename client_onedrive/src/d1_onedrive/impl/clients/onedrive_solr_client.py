@@ -21,8 +21,6 @@
 """Extend d1_client.solr_client.SolrClient for OneDrive
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.onedrive_exceptions
@@ -56,7 +54,7 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
     return response['response']['docs']
 
   def get_solr_record(self, pid):
-    query = u'id:{}'.format(self._escape_query_term_string(pid))
+    query = 'id:{}'.format(self._escape_query_term_string(pid))
     response = self.run_solr_query(query)
     try:
       return response[0]

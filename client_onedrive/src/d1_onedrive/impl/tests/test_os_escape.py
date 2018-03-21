@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test OS specific escape functions
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.os_escape
 

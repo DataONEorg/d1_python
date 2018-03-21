@@ -26,8 +26,6 @@ https://releases.dataone.org/online/api-documentation-v2.0/
 apis/Types.html#Types.Node
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_client.cnclient_2_0

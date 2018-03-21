@@ -33,8 +33,6 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/design/DataPackage.
 </objectFormat>
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import rdflib
@@ -46,9 +44,9 @@ import d1_common.url
 import d1_common.util
 
 # RDFLib wrappers around the namespaces. Others are defined by RDFLib
-DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'dcterms'])
-CITO = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'cito'])
-ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT[u'ore'])
+DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['dcterms'])
+CITO = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['cito'])
+ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['ore'])
 
 
 def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
@@ -88,11 +86,11 @@ identifiers.
   if len(pids) < 2:
     raise ValueError('Insufficient identifiers provided.')
 
-  logging.info(u'Read {} identifiers'.format(len(pids)))
+  logging.info('Read {} identifiers'.format(len(pids)))
   ore = ResourceMap(base_url=base_url)
-  logging.info(u'ORE PID = {}'.format(pids[0]))
+  logging.info('ORE PID = {}'.format(pids[0]))
   ore.oreInitialize(pids[0])
-  logging.info(u'Metadata PID = {}'.format(pids[1]))
+  logging.info('Metadata PID = {}'.format(pids[1]))
   ore.addMetadataDocument(pids[1])
   ore.addDataDocuments(pids[2:], pids[1])
 
@@ -126,7 +124,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
   def oreInitialize(self, pid, ore_software_id=d1_common.const.ORE_SOFTWARE_ID):
     """Creates the basic ORE document structure."""
     # Set nice prefixes for the namespaces
-    for k in d1_common.const.ORE_NAMESPACE_DICT.keys():
+    for k in list(d1_common.const.ORE_NAMESPACE_DICT.keys()):
       self.bind(k, d1_common.const.ORE_NAMESPACE_DICT[k])
     # Create the ORE entity
     oid = self._pid_to_id(pid)
@@ -135,12 +133,12 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     self.add((ore, DCTERMS.identifier, rdflib.term.Literal(pid)))
     self.add((ore, DCTERMS.creator, rdflib.term.Literal(ore_software_id)))
     # Add an empty aggregation
-    ag = rdflib.URIRef(d1_common.url.joinPathElements(oid, u'aggregation'))
+    ag = rdflib.URIRef(d1_common.url.joinPathElements(oid, 'aggregation'))
     self.add((ore, ORE.describes, ag))
     self.add((ag, rdflib.RDF.type, ORE.Aggregation))
     self.add((ORE.Aggregation, rdflib.RDFS.isDefinedBy, ORE.term('')))
     self.add(
-      (ORE.Aggregation, rdflib.RDFS.label, rdflib.term.Literal(u'Aggregation'))
+      (ORE.Aggregation, rdflib.RDFS.label, rdflib.term.Literal('Aggregation'))
     )
     self._ore_initialized = True
 
@@ -382,7 +380,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
   def _pid_to_id(self, pid):
     """Converts a pid to a URI that can be used as an OAI-ORE identifier."""
     return d1_common.url.joinPathElements(
-      self._base_url, self._version_tag, u'resolve',
+      self._base_url, self._version_tag, 'resolve',
       d1_common.url.encodePathElement(pid)
     )
 

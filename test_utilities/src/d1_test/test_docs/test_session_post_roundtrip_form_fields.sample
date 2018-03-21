@@ -1,0 +1,22 @@
+{
+  "body_str": "[BOUNDARY]\r
+Content-Disposition: form-data; name=\"post_data_2\"\r
+\r
+5678\r
+[BOUNDARY]\r
+Content-Disposition: form-data; name=\"post_data_1\"\r
+\r
+1234\r
+[BOUNDARY]--\r
+",
+  "header_dict": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Charset": "utf-8",
+    "Connection": "keep-alive",
+    "Content-Length": "230",
+    "Content-Type": "multipart/form-data; boundary=[BOUNDARY]",
+    "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/"
+  },
+  "query_dict": {}
+}

@@ -23,8 +23,6 @@ Automatically creates and deletes a mount point for ONEDrive and passes some
 OS X specific options to ONEDrive.
 """
 
-from __future__ import absolute_import
-
 import os
 import sys
 

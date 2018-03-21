@@ -27,8 +27,6 @@
   DataONE (Dahl)
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.resolver.resolver_base
@@ -41,7 +39,7 @@ from d1_onedrive.impl import util
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u"""Taxa Folder
+README_TXT = """Taxa Folder
 
 This folder contains the items of the object_tree folder (the parent
 of this folder) grouped by their taxonomic classications.
@@ -84,9 +82,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
 
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
@@ -99,7 +95,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 2:
       return self._get_directory(object_tree_folder, path)
@@ -108,13 +104,13 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     if len(path) <= 2:
-      raise onedrive_exceptions.PathException(u'Invalid file')
+      raise onedrive_exceptions.PathException('Invalid file')
     return self._resource_map_resolver.read_file(path[2:], size, offset)
 
   # Private.
@@ -167,7 +163,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # an empty folder here can only be due to an invalid path.
     if not len(d):
       raise onedrive_exceptions.PathException(
-        u'Invalid taxonomic classification value'
+        'Invalid taxonomic classification value'
       )
     return d
 

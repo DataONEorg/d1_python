@@ -21,8 +21,6 @@
 """Generate random formatId
 """
 
-from __future__ import absolute_import
-
 import random
 
 import d1_common.const

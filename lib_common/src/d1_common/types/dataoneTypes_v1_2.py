@@ -21,8 +21,6 @@
 including v1.1.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 from d1_common.types.generated.dataoneTypes_v1 import *

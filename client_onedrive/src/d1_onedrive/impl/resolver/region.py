@@ -23,16 +23,14 @@
 Resolve a filesystem path pointing into a Region controlled hierarchy.
 """
 
-from __future__ import absolute_import
-
 import hashlib
+import http.client
 import json
 import logging
 import socket
 
 import d1_onedrive.impl.resolver.resolver_base
 import d1_onedrive.impl.resolver.resource_map
-import httplib
 # App
 from d1_onedrive.impl import attributes
 from d1_onedrive.impl import directory
@@ -48,7 +46,7 @@ log = logging.getLogger(__name__)
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
-README_TXT = u"""Region Folder
+README_TXT = """Region Folder
 
 This folder provides a geographically ordered view of science data objects
 for which the geographical area being covered is known to DataONE. Objects with
@@ -86,20 +84,18 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
 
     return self._get_attributes(object_tree_folder, path)
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
 
     return self._get_directory(object_tree_folder, path)
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
 
@@ -201,10 +197,10 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def _get_region_tree_for_geo_record(self, geo_record):
     try:
-      c = httplib.HTTPConnection(GAZETTEER_HOST)
+      c = http.client.HTTPConnection(GAZETTEER_HOST)
       c.request('GET', '/region_tree/{}/{}/{}/{}'.format(*geo_record[1:]))
       return json.loads(c.getresponse().read())
-    except (httplib.HTTPException, socket.error):
+    except (http.client.HTTPException, socket.error):
       return {'Reverse geocoding failed': {}}
 
   def _get_records_with_geo_bounding_box(self, object_tree_folder):
@@ -227,7 +223,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     the files are PIDs, this can only happen if a PID matches one of the
     geographical areas that the dataset covers and should be very rare. In such
     conflicts, the destination wins."""
-    for k, v in src_tree.items():
+    for k, v in list(src_tree.items()):
       # Prepend an underscore to the administrative area names, to make them
       # sort separately from the identifiers.
       #k = '_' + k
@@ -271,7 +267,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     if region_tree is None:
       return parent_key, path
     # Handle next level in path.
-    if path[0] in region_tree.keys():
+    if path[0] in list(region_tree.keys()):
       return self._get_region_tree_item_and_unconsumed_path(
         region_tree[path[0]], path[1:], path[0]
       )
@@ -284,4 +280,4 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     #  else:
 
   def _region_tree_item_is_pid(self, region_tree_item):
-    return isinstance(region_tree_item, basestring)
+    return isinstance(region_tree_item, str)

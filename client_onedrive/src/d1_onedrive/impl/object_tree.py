@@ -26,14 +26,12 @@ tree that is browsed through the ONEDrive filesystem.
 Cache the information on disk between runs of ONEDrive.
 """
 
-from __future__ import absolute_import
-
 import logging
 import pickle
 
-import clients.onedrive_d1_client as onedrive_d1_client
-import clients.onedrive_solr_client as onedrive_solr_client
-import onedrive_exceptions
+import d1_onedrive.impl.clients.onedrive_d1_client as onedrive_d1_client
+import d1_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
+import d1_onedrive.impl.onedrive_exceptions as onedrive_exceptions
 
 
 class ObjectTree():
@@ -106,7 +104,7 @@ class ObjectTree():
     return self._source_tree.get_filtered_sub_tree(path)
 
   def _get_individually_synced_object_pids(self):
-    return self._cache['individually_synced'].keys()
+    return list(self._cache['individually_synced'].keys())
 
   #
   # Private.

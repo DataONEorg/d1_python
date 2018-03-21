@@ -20,9 +20,8 @@
 # limitations under the License.
 """Test generation of ReplicationPolicy in SysMeta
 """
-from __future__ import absolute_import
 
-import StringIO
+import io
 import sys
 
 import d1_cli.impl.replication_policy as replication_policy
@@ -135,7 +134,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     s.set_number_of_replicas(5)
     s.set_replication_allowed(True)
     old = sys.stdout
-    sys.stdout = StringIO.StringIO()
+    sys.stdout = io.StringIO()
     # run print
     s.print_replication_policy()
     ## release stdout

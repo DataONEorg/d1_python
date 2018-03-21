@@ -23,8 +23,6 @@
 mappings are provided in a CSV file. Raises KeyError for unknown values.
 """
 
-from __future__ import absolute_import
-
 import csv
 
 import d1_common.util
@@ -39,7 +37,7 @@ class Singleton(object):
   def __new__(class_, *args, **kwargs):
     if class_ not in class_._instances:
       class_._instances[class_] = super(Singleton, class_)\
-        .__new__(class_, *args, **kwargs)
+        .__new__(class_)
     return class_._instances[class_]
 
 
@@ -49,7 +47,7 @@ class Singleton(object):
 class ObjectFormatInfo(Singleton):
   def __init__(self, csv_file=None):
     if csv_file is None:
-      self.csv_file = open(MIME_MAPPINGS_CSV_PATH)
+      self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')
     else:
       self.csv_file = csv_file
     self.read_csv_file()

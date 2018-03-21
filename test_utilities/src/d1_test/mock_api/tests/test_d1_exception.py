@@ -18,69 +18,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
+import d1_test.sample
 
 
 class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """trigger_by_status_code(): GET request returns DataONEException XML doc"""
 
-    def fake_request():
-      pass
+    class FakeRequest:
+      method = 'GET'
 
-    fake_request.method = 'GET'
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
-      fake_request, 413
+      FakeRequest(), 413
     )
-    assert exc_response_tup
-    status_code_int, header_dict, body_str = exc_response_tup
-    assert status_code_int == 413
-    assert header_dict == {'Content-Type': 'application/xml'}
-    assert '?xml' in body_str
+    d1_test.sample.assert_equals(
+      exc_response_tup, 'trigger_by_status_code_regular'
+    )
 
   def test_1010(self):
     """trigger_by_status_code(): HEAD request returns DataONEException headers"""
 
-    def fake_request():
-      pass
+    class FakeRequest:
+      method = 'HEAD'
 
-    fake_request.method = 'HEAD'
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
-      fake_request, 413
+      FakeRequest(), 413
     )
-    assert exc_response_tup
-    status_code_int, header_dict, body_str = exc_response_tup
-    assert isinstance(status_code_int, int)
-    assert isinstance(header_dict, dict)
-    assert isinstance(body_str, str)
-    expected_header_dict = {
-      'DataONE-Exception-TraceInformation': '',
-      'DataONE-Exception-DetailCode': u'0',
-      'DataONE-Exception-Name': 'InsufficientResources',
-      'DataONE-Exception-Description': u'',
-      'DataONE-Exception-NodeID': '',
-      'DataONE-Exception-Identifier': '',
-      'Content-Type': 'application/xml',
-      'DataONE-Exception-ErrorCode': u'413'
-    }
-    assert header_dict == expected_header_dict
+    d1_test.sample.assert_equals(
+      exc_response_tup, 'trigger_by_status_code_head'
+    )
 
   def test_1020(self):
     """trigger_by_pid()"""
 
-    def fake_request():
-      pass
+    class FakeRequest:
+      method = 'GET'
 
-    fake_request.method = 'GET'
     exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_pid(
-      fake_request, 'trigger_413'
+      FakeRequest, 'trigger_413'
     )
-    assert exc_response_tup
-    status_code_int, header_dict, body_str = exc_response_tup
-    assert status_code_int == 413
-    assert header_dict == {'Content-Type': 'application/xml'}
-    assert '?xml' in body_str
+    d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_pid')

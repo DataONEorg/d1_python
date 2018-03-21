@@ -1,0 +1,4 @@
+"access:
+  read                          \"subject_1\"
+  write                         \"subject_2\"
+  changePermission              \"subject_3\""

@@ -42,8 +42,6 @@ Example rp_dict:
 
 """
 
-from __future__ import absolute_import
-
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
@@ -122,12 +120,12 @@ def is_blocked(rp_pyxb, node_urn):
   return node_urn in get(rp_pyxb, 'block')
 
 
-def is_equivalent_pyxb(a_pyxb, b_pyxb):
+def are_equivalent_pyxb(a_pyxb, b_pyxb):
   return pyxb_to_dict(a_pyxb) == pyxb_to_dict(b_pyxb)
 
 
-def is_equivalent_xml(a_xml, b_xml):
-  return is_equivalent_pyxb(
+def are_equivalent_xml(a_xml, b_xml):
+  return are_equivalent_pyxb(
     d1_common.xml.deserialize(a_xml),
     d1_common.xml.deserialize(b_xml),
   )

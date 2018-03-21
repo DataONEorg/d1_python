@@ -19,7 +19,6 @@
 # limitations under the License.
 """Test the SimpleXML context manager
 """
-from __future__ import absolute_import
 
 import datetime
 import xml.etree.ElementTree as ET
@@ -37,7 +36,9 @@ import d1_test.sample
 
 class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
   def setup_method(self):
-    self.sysmeta_xml = d1_test.sample.load('systemMetadata_v2_0.tz_non_utc.xml')
+    self.sysmeta_xml = d1_test.sample.load_utf8_to_str(
+      'systemMetadata_v2_0.tz_non_utc.xml'
+    )
 
   def test_1000(self):
     """get_xml()"""

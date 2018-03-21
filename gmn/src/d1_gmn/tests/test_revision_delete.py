@@ -23,8 +23,6 @@ When an object in a revision chains is deleted, GMN repairs the chain by
 connecting any objects on either side of the deleted object with each other
 """
 
-from __future__ import absolute_import
-
 import pytest
 import responses
 
@@ -38,7 +36,7 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def assert_delete(self, client, pid, sid, pid_chain_list):
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Is retrievable
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(client, pid)
       self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
       # Delete
       identifier_pyxb = client.delete(pid)

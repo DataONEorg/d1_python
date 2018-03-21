@@ -35,8 +35,6 @@ register can only be used for the initial registration, after which update
 must be used.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 
@@ -80,7 +78,7 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, opt):
     node_pyxb = d1_gmn.app.node.get_pyxb()
     if opt['command'] == 'view':
-      logging.info(d1_common.xml.pretty_xml(node_pyxb.toxml('utf-8')))
+      logging.info(d1_common.xml.serialize_to_transport(node_pyxb))
     elif opt['command'] == 'register':
       self._register(node_pyxb)
     elif opt['command'] == 'update':

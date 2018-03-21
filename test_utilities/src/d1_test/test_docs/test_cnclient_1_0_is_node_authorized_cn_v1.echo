@@ -1,21 +1,21 @@
 {
   "request": {
-    "endpoint_str": "replicaAuthorizations", 
+    "endpoint_str": "replicaAuthorizations",
     "param_list": [
-      "DID_mwtfxqbbmwdidtdhwg"
-    ], 
-    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
+      "DID_jwgme"
+    ],
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1",
     "query_dict": {
       "targetNodeSubject": [
-        "urn:node:acfagq"
+        "urn:node:abapiw"
       ]
-    }, 
+    },
     "version_tag": "v1"
-  }, 
+  },
   "wrapper": {
-    "class_name": "CoordinatingNodeClient_1_2", 
-    "expected_type": null, 
-    "received_303_redirect": false, 
+    "class_name": "CoordinatingNodeClient_1_2",
+    "expected_type": null,
+    "received_303_redirect": false,
     "vendor_specific_dict": null
   }
 }

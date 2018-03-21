@@ -22,10 +22,8 @@ the object bytes to another web server (proxy mode). The mode is selectable on a
 per object basis
 """
 
-from __future__ import absolute_import
-
+import io
 import os
-import StringIO
 
 import pytest
 import requests
@@ -73,13 +71,13 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
       else:
         proxy_url = self.get_invalid_sciobj_url(pid, client)
 
-      pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
         client, pid
       )
       with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
         self.call_d1_client(
           client.create, pid,
-          StringIO.StringIO(send_sciobj_str), send_sysmeta_pyxb,
+          io.BytesIO(send_sciobj_bytes), send_sysmeta_pyxb,
           vendorSpecific=self.vendor_proxy_mode(proxy_url)
         )
 
@@ -89,14 +87,14 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
       assert not os.path.isfile(sciobj_path)
       # self.assertEquals(os.path.getsize(sciobj_path), 0)
-      # received_sciobj_str, received_sysmeta_pyxb = self.get_obj(client, pid)
+      # received_sciobj_bytes, received_sysmeta_pyxb = self.get_obj(client, pid)
 
-      received_sciobj_str = self.call_d1_client(
+      received_sciobj_bytes = self.call_d1_client(
         client.get, pid, vendorSpecific=self.vendor_proxy_mode(proxy_url)
       ).content
 
-      self.sample.assert_no_diff(send_sciobj_str, received_sciobj_str)
-      # assert send_sciobj_str == received_sciobj_str
+      self.sample.assert_equal_str(send_sciobj_bytes, received_sciobj_bytes)
+      # assert send_sciobj_bytes == received_sciobj_bytes
 
   def get_remote_sciobj_url(self, pid, client):
     return d1_common.url.joinPathElements(

@@ -22,8 +22,6 @@
 # noinspection PyUnresolvedReferences
 # flake8: noqa: F403,F401
 
-from __future__ import absolute_import
-
 import logging
 
 from d1_gmn.app.settings_default import *
@@ -184,12 +182,12 @@ LOGGING = {
   }
 }
 
-MIDDLEWARE_CLASSES = (
-  # Custom GMN middleware.
+MIDDLEWARE = (
+  # Custom GMN middleware
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
   'd1_gmn.app.middleware.response_handler.ResponseHandler',
-  'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
+  # 'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
   'd1_gmn.app.middleware.view_handler.ViewHandler',
 )
 

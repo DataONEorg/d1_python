@@ -21,8 +21,6 @@
 """Generate random Subject
 """
 
-from __future__ import absolute_import
-
 import d1_common.types.dataoneTypes
 
 import d1_test.instance_generator.random_data

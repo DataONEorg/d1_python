@@ -24,8 +24,6 @@ The access control subsystem is mostly shared between the MNStorage methods, so
 most are tested in MNStorage.create()
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import freezegun
@@ -52,7 +50,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.update(): Reusing SID when creating two standalone objects
     raises IdentifierNotUnique
     """
-    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+    other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
@@ -63,7 +61,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.update(): Reusing PID as SID when creating two standalone
     objects raises IdentifierNotUnique
     """
-    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+    other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
@@ -74,10 +72,10 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.update(): Updating standalone object that has SID with SID
     belonging to another object or chain raises IdentifierNotUnique
     """
-    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+    other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
-    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+    old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
@@ -88,10 +86,10 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.update(): Updating standalone object that does not have SID,
     with SID belonging to another object or chain raises IdentifierNotUnique
     """
-    other_pid, other_sid, other_sciobj_str, other_sysmeta_pyxb = self.create_obj(
+    other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
-    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+    old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=None
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
@@ -102,10 +100,10 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """A chain can be created by updating a standalone object, when neither
     objects have a SID
     """
-    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+    old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=None
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.update_obj(
       mn_client_v2, old_pid, sid=None
     )
     self.assert_valid_chain(mn_client_v2, [old_pid, pid], sid=None)
@@ -115,10 +113,10 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.update(): Updating an object that has a SID without specifying
     a SID in the update causes the SID to be retained in both objects
     """
-    old_pid, old_sid, old_sciobj_str, old_sysmeta_pyxb = self.create_obj(
+    old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.update_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.update_obj(
       mn_client_v2, old_pid, sid=None
     )
     self.assert_valid_chain(mn_client_v2, [old_pid, pid], sid=old_sid)
@@ -132,7 +130,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sid, pid_chain_list = self.create_revision_chain(
       mn_client_v2, chain_len=7, sid=None
     )
-    new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
+    new_pid, new_sid, new_sciobj_bytes, new_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid_chain_list[-1], sid=True
     )
     pid_chain_list.append(new_pid)
@@ -145,17 +143,18 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     # Create object with dateSysMetadataModified set to random, non-current
     # time.
-    first_pid, first_sid, first_sciobj_str, first_sysmeta_pyxb = self.create_obj(
+    first_pid, first_sid, first_sciobj_bytes, first_sysmeta_pyxb = self.create_obj(
       mn_client_v2, sid=True
     )
-    assert first_sysmeta_pyxb.dateSysMetadataModified.isoformat() == \
-           '1999-10-29T15:12:08.439309+00:00'
-    # Update object, and verify that its dateSysMetadataModified was set current
-    # time
+    # The time set in the freeze is not important, but a freeze is needed in
+    # order for the now() used within the update() to match the now() used in
+    # the test.
     with freezegun.freeze_time('1967-05-27T01:02:03', tz_offset=5):
-      second_pid, second_sid, second_sciobj_str, second_sysmeta_pyxb = self.update_obj(
+
+      self.update_obj(mn_client_v2, first_pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(
         mn_client_v2, first_pid
       )
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, first_pid)
-      assert datetime.datetime.now(d1_common.date_time.UTC()) == \
-             d1_common.date_time.create_utc_datetime(1967, 5, 27, 6, 2, 3)
+      assert recv_sysmeta_pyxb.dateSysMetadataModified == datetime.datetime.now(
+        datetime.timezone.utc
+      )

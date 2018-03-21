@@ -21,8 +21,6 @@
 """Test MNCore.getCapabilities()
 """
 
-from __future__ import absolute_import
-
 import responses
 
 import d1_gmn.tests.gmn_mock

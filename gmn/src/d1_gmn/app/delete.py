@@ -20,9 +20,7 @@
 """Delete science objects and metadata
 """
 
-from __future__ import absolute_import
-
-import urlparse
+import urllib.parse
 
 import d1_gmn.app.did
 import d1_gmn.app.models
@@ -36,7 +34,7 @@ import django.conf
 
 def delete_sciobj(pid):
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-  url_split = urlparse.urlparse(sciobj.url)
+  url_split = urllib.parse.urlparse(sciobj.url)
   d1_gmn.app.sciobj_store.delete_sciobj(url_split, pid)
   delete_sciobj_from_database(pid)
   return pid

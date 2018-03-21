@@ -20,8 +20,6 @@
 """Utilities for handling XML docs
 """
 
-from __future__ import absolute_import
-
 import difflib
 import logging
 import re
@@ -32,6 +30,8 @@ import xml.parsers.expat
 import xml.sax
 
 import pyxb
+import pyxb.binding.basis
+import pyxb.binding.datatypes
 
 import d1_common.date_time
 import d1_common.types.dataoneErrors
@@ -39,18 +39,18 @@ import d1_common.types.dataoneTypes
 
 
 def deserialize(doc_xml, bindings=None):
-  """Deserialize regular D1 XML types to PyXB. See deserialize_d1_exc
-  for deserializing D1 error types
+  """Deserialize regular D1 XML types to PyXB
+  See deserialize_d1_exc for deserializing D1 error types.
   """
   bindings = bindings or d1_common.types.dataoneTypes
-  if isinstance(doc_xml, unicode):
-    doc_xml = doc_xml.encode('utf-8')
-  else:
-    if not is_valid_utf8(doc_xml):
-      raise ValueError(
-        'Invalid XML doc encoding. Must be unicode or utf-8. str="{}"'
-        .format(doc_xml.decode('utf-8', error='replace'))
-      )
+  # if isinstance(doc_xml, str):
+  #   doc_xml = doc_xml.encode('utf-8')
+  # else:
+  #   if not is_valid_utf8(doc_xml):
+  #     raise ValueError(
+  #       'Invalid XML doc encoding. Must be unicode or utf-8. str="{}"'
+  #       .format(doc_xml.decode('utf-8', error='replace'))
+  #     )
   try:
     return bindings.CreateFromDocument(doc_xml)
   except pyxb.ValidationError as e:
@@ -61,7 +61,7 @@ def deserialize(doc_xml, bindings=None):
   except (pyxb.PyXBException, xml.sax.SAXParseException, Exception) as e:
     raise ValueError(
       'Unable to deserialize XML to PyXB. error="{}" xml="{}"'.
-      format(str(e.message), doc_xml)
+      format(str(e), doc_xml)
     )
 
 
@@ -69,61 +69,100 @@ def deserialize_d1_exc(doc_xml):
   return deserialize(doc_xml, bindings=d1_common.types.dataoneErrors)
 
 
-def serialize(obj_pyxb):
+def serialize_gen(obj_pyxb, encoding, pretty=False, strip_prolog=False):
+  """Serialize a PyXB object to XML
+  - If {pretty} is True, format for human readability.
+  - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
+  encoding="utf-8"?>), from the resulting string.
+  """
+  assert is_pyxb(obj_pyxb)
+  assert encoding in (None, 'utf-8')
   try:
-    return obj_pyxb.toxml('utf-8')
+    if pretty:
+      pretty_xml = obj_pyxb.toDOM().toprettyxml(indent='  ', encoding=encoding)
+      # Remove empty lines in the result caused by a bug in toprettyxml()
+      if encoding is None:
+        pretty_xml = re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
+      else:
+        pretty_xml = re.sub(b'^\s*$\n', b'', pretty_xml, flags=re.MULTILINE)
+    else:
+      pretty_xml = obj_pyxb.toxml(encoding)
+    if strip_prolog:
+      if encoding is None:
+        pretty_xml = re.sub(r'^<\?(.*)\?>', r'', pretty_xml)
+      else:
+        pretty_xml = re.sub(b'^<\?(.*)\?>', b'', pretty_xml)
+    return pretty_xml.strip()
   except pyxb.ValidationError as e:
     raise ValueError(
-      u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
+      'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
     )
   except pyxb.PyXBException as e:
     raise ValueError(
-      u'Unable to serialize PyXB to XML. error="{}"'.format(str(e))
+      'Unable to serialize PyXB to XML. error="{}"'.format(str(e))
     )
-  except Exception:
-    raise
 
 
-def serialize_pretty(obj_pyxb):
-  return pretty_xml(serialize(obj_pyxb))
-
-
-def pretty_xml(doc_xml):
-  """Pretty formatting of XML
+def serialize_to_transport(obj_pyxb, pretty=False, strip_prolog=False):
+  """Serialize a PyXB object to XML bytes (UTF-8)
+  - If {pretty} is True, format for human readability.
+  - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
+  encoding="utf-8"?>), from the resulting string.
   """
-  if isinstance(doc_xml, unicode):
-    doc_xml = doc_xml.encode('utf-8')
-  try:
-    dom_obj = xml.dom.minidom.parseString(doc_xml)
-  except TypeError:
-    dom_obj = xml.dom.minidom.parse(doc_xml)
-  pretty_xml_str = dom_obj.toprettyxml(indent='  ', encoding='utf-8')
-  # Remove empty lines in the result caused by a bug in toprettyxml().
-  return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
+  return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog)
 
 
-def pretty_pyxb(doc_pyxb):
-  return pretty_xml(serialize(doc_pyxb))
+def serialize_to_str(obj_pyxb, pretty=True, strip_prolog=False):
+  """Serialize a PyXB object to XML str (Unicode)
+  - If {pretty} is True, format for human readability.
+  - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
+  encoding="utf-8"?>), from the resulting string.
+  """
+  return serialize_gen(obj_pyxb, None, pretty, strip_prolog)
 
 
-def is_equivalent_pyxb(a_pyxb, b_pyxb):
+def format_pretty_xml(doc_xml):
+  """Pretty formatting of XML
+  - {doc_xml} must be a str (Unicode) containing a well formed XML doc
+  - Returns str.
+  """
+  assert isinstance(doc_xml, str)
+  dom_obj = xml.dom.minidom.parseString(doc_xml)
+  pretty_xml = dom_obj.toprettyxml(indent='  ')
+  # Remove empty lines in the result caused by a bug in toprettyxml()
+  return re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
+
+
+def format_pretty_pyxb(doc_pyxb):
+  return serialize_to_transport(doc_pyxb)
+
+
+def is_pyxb(doc_pyxb):
+  # return isinstance(doc_pyxb, pyxb.binding.datatypes.anyType)
+  return isinstance(doc_pyxb, pyxb.binding.basis.complexTypeDefinition)
+
+
+def are_equivalent_pyxb(a_pyxb, b_pyxb):
   """Return True if two PyXB objects are semantically equivalent, else False"""
-  return is_equivalent(serialize(a_pyxb), serialize(b_pyxb))
+  return are_equivalent(
+    serialize_to_transport(a_pyxb), serialize_to_transport(b_pyxb)
+  )
 
 
-def is_equivalent(a_xml, b_xml, encoding='utf-8'):
+def are_equivalent(a_xml, b_xml, encoding=None):
   """Return True if two XML docs are semantically equivalent, else False
-
-  TODO: Include test for tails. Skipped for now because tails are not used
+  - TODO: Include test for tails. Skipped for now because tails are not used
   in any D1 types.
   """
+  assert isinstance(a_xml, str)
+  assert isinstance(b_xml, str)
   a_tree = etree_from_xml(a_xml, encoding)
   b_tree = etree_from_xml(b_xml, encoding)
-  return is_equal_or_superset(a_tree,
-                              b_tree) and is_equal_or_superset(b_tree, a_tree)
+  return are_equal_or_superset(a_tree, b_tree
+                               ) and are_equal_or_superset(b_tree, a_tree)
 
 
-def is_equal_or_superset(superset_tree, base_tree):
+def are_equal_or_superset(superset_tree, base_tree):
   """Return True if {superset_tree} is equal to or a superset of {base_tree}
 
   - Checks that all elements and attributes in {superset_tree} are present and
@@ -153,7 +192,7 @@ def etree_from_xml(xml_str, encoding='utf-8'):
 def _compare_attr(a_tree, b_tree):
   for a_el in a_tree.getiterator():
     b_el = _find_corresponding_element(a_el, a_tree, b_tree)
-    for attr_name, attr_val in a_el.items():
+    for attr_name, attr_val in list(a_el.items()):
       _validate_element_attr(b_tree, b_el, attr_name, attr_val)
 
 
@@ -227,17 +266,17 @@ def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
     )
 
 
-def is_equal_xml(a_xml, b_xml):
+def are_equal_xml(a_xml, b_xml):
   a_dom = xml.dom.minidom.parseString(a_xml)
   b_dom = xml.dom.minidom.parseString(b_xml)
-  return is_equal_elements(a_dom.documentElement, b_dom.documentElement)
+  return are_equal_elements(a_dom.documentElement, b_dom.documentElement)
 
 
-def is_equal_pyxb(a_pyxb, b_pyxb):
-  return is_equal_xml(a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8'))
+def are_equal_pyxb(a_pyxb, b_pyxb):
+  return are_equal_xml(a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8'))
 
 
-def is_equal_elements(a_el, b_el):
+def are_equal_elements(a_el, b_el):
   if a_el.tagName != b_el.tagName:
     return False
   if sorted(a_el.attributes.items()) != sorted(b_el.attributes.items()):
@@ -249,7 +288,7 @@ def is_equal_elements(a_el, b_el):
       return False
     if a_child_el.nodeType == a_child_el.TEXT_NODE and a_child_el.data != b_child_el.data:
       return False
-    if a_child_el.nodeType == a_child_el.ELEMENT_NODE and not is_equal_elements(
+    if a_child_el.nodeType == a_child_el.ELEMENT_NODE and not are_equal_elements(
         a_child_el, b_child_el
     ):
       return False
@@ -269,8 +308,8 @@ def sort_elements_by_child_values(obj_pyxb, child_name_list):
 def format_diff_pyxb(a_pyxb, b_pyxb):
   return '\n'.join(
     difflib.ndiff(
-      pretty_pyxb(a_pyxb).splitlines(),
-      pretty_pyxb(b_pyxb).splitlines(),
+      serialize_to_str(a_pyxb).splitlines(),
+      serialize_to_str(b_pyxb).splitlines(),
     )
   )
 
@@ -278,8 +317,8 @@ def format_diff_pyxb(a_pyxb, b_pyxb):
 def format_diff_xml(a_xml, b_xml):
   return '\n'.join(
     difflib.ndiff(
-      pretty_xml(a_xml).splitlines(),
-      pretty_xml(b_xml).splitlines(),
+      format_pretty_xml(a_xml).splitlines(),
+      format_pretty_xml(b_xml).splitlines(),
     )
   )
 
@@ -340,7 +379,7 @@ def get_req_val(obj_pyxb):
   Django ORM that check types before passing values to the database. This
   function forces immediate conversion to unicode.
   """
-  return unicode(obj_pyxb.value())
+  return str(obj_pyxb.value())
 
 
 class CompareError(Exception):

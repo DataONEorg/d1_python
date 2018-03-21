@@ -38,8 +38,6 @@ Subjects are extracted from the SubjectInfo using the following algorithm:
           - Recursively add those subjects.
 """
 
-from __future__ import absolute_import
-
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
@@ -62,7 +60,7 @@ def _deserialize_subject_info(subject_info_xml):
     return d1_common.xml.deserialize(subject_info_xml)
   except ValueError as e:
     raise d1_common.types.exceptions.InvalidToken(
-      0, u'Could not deserialize SubjectInfo. subject_info="{}", error="{}"'
+      0, 'Could not deserialize SubjectInfo. subject_info="{}", error="{}"'
       .format(subject_info_xml, str(e))
     )
 

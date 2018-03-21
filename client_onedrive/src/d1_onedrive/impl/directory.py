@@ -21,8 +21,6 @@
 """Hold the list of files and folders for a directory
 """
 
-from __future__ import absolute_import
-
 import collections
 import logging
 
@@ -51,10 +49,10 @@ class Directory(collections.MutableSequence):
     self._list[i] = v
 
   def __unicode__(self):
-    return unicode(self._list)
+    return str(self._list)
 
   def __str__(self):
-    return unicode(self).encode('utf-8')
+    return str(self).encode('utf-8')
 
   def __repr__(self):
     return str(self)

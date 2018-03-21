@@ -29,8 +29,6 @@ The root resolver unescapes path entries before they are passed into the
 resolver hierarchy and escapes entries that are received.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 
@@ -56,18 +54,18 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self._resolvers = {
-      u"ObjectTree":
+      "ObjectTree":
         d1_onedrive.impl.resolver.object_tree_resolver.Resolver(
           options, object_tree_client
         ),
-      u"FlatSpace":
+      "FlatSpace":
         d1_onedrive.impl.resolver.flat_space.Resolver(
           options, object_tree_client
         ),
     }
 
   def get_attributes(self, path):
-    log.debug(u'get_attributes: {}'.format(path))
+    log.debug('get_attributes: {}'.format(path))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
@@ -75,7 +73,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_attributes(p)
 
   def get_directory(self, path):
-    log.debug(u'get_directory: {}'.format(path))
+    log.debug('get_directory: {}'.format(path))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
 
@@ -88,7 +86,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_directory(p)
 
   def read_file(self, path, size, offset):
-    log.debug(u'read_file: {}, {}, {}'.format(path, size, offset))
+    log.debug('read_file: {}, {}, {}'.format(path, size, offset))
     p = self._split_and_unescape_path(path)
     self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
@@ -115,7 +113,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def _resolve_root(self):
     dir = directory.Directory()
-    dir.extend(self._resolvers.keys())
+    dir.extend(list(self._resolvers.keys()))
     return dir
 
   def _dispatch_get_attributes(self, path):
@@ -151,13 +149,13 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     try:
       return self._resolvers[path[0]]
     except KeyError:
-      raise onedrive_exceptions.PathException(u'Invalid root directory')
+      raise onedrive_exceptions.PathException('Invalid root directory')
 
   def _raise_if_os_special_file(self, path):
     # For each file of "name", Finder on Mac OS X attempts to access ".name".
     if path[-1] in self._options.ignore_special:
       log.debug('Ignored file: {}'.format(path[-1]))
-      raise onedrive_exceptions.PathException(u'Ignored OS special file')
+      raise onedrive_exceptions.PathException('Ignored OS special file')
 
   def _is_root(self, path):
     return path == ['']

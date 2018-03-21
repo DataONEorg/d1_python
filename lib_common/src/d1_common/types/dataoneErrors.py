@@ -20,8 +20,6 @@
 """Import the PYXB bindings required for handling the DataONE Exception types
 """
 
-from __future__ import absolute_import
-
 import logging
 
 from d1_common.types.generated.dataoneErrors import *

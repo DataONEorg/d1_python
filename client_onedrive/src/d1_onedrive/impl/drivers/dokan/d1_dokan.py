@@ -25,8 +25,6 @@ Handle callbacks from Dokan.
 The callbacks are called by Dokan when actions are performed on the filesystem.
 """
 
-from __future__ import absolute_import
-
 import errno
 import fnmatch
 import logging
@@ -120,7 +118,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
     self.directory_cache = options.directory_cache
 
   def getFileInformation(self, fileName):
-    log.debug(u'getFileInformation(): fileName={}'.format(fileName))
+    log.debug('getFileInformation(): fileName={}'.format(fileName))
     if self._is_os_special_file(fileName):
       return None
     attributes = self._get_attributes_through_cache(fileName)
@@ -131,7 +129,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
 
   def findFilesWithPattern(self, path, searchPattern):
     log.debug(
-      u'findFilesWithPattern(): path={} searchPattern={}'.
+      'findFilesWithPattern(): path={} searchPattern={}'.
       format(path, searchPattern)
     )
 
@@ -164,7 +162,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
   # science metadata
 
   def readFile(self, path, size, offset):
-    log.debug(u'read(): {}'.format(path))
+    log.debug('read(): {}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
     except d1_onedrive.impl.onedrive_exceptions.PathException:
@@ -204,8 +202,8 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
       d1_onedrive.impl.drivers.dokan.const.FILE_CASE_PRESERVED_NAMES
     )
     return dict(
-      volumeNameBuffer=u'DataONE Disk', maximumComponentLength=260,
-      fileSystemFlags=fsFlags, fileSystemNameBuffer=u'DataONE File System'
+      volumeNameBuffer='DataONE Disk', maximumComponentLength=260,
+      fileSystemFlags=fsFlags, fileSystemNameBuffer='DataONE File System'
     )
 
   def _get_attributes_through_cache(self, path):
@@ -244,7 +242,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
     return len(set(path.split(os.path.sep)) & self._options.ignore_special)
 
   def _raise_error_no_such_file_or_directory(self, path):
-    log.debug(u'Error: No such file or directory: {}'.format(path))
+    log.debug('Error: No such file or directory: {}'.format(path))
     raise OSError(errno.ENOENT, '')
 
 

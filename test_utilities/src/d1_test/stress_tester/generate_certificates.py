@@ -25,9 +25,6 @@ subject list and two certificates are created for test subjects with special
 permissions.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import codecs
 import logging
 import optparse
@@ -86,10 +83,11 @@ def create_certificates():
     )
     subject_info = create_subject_info(subject)
     create_certificate(subject, subject_dn_tuple, subject_info)
-  print(
-    'Created {} client side certificates in {}'.
-    format(len(subjects), settings.CLIENT_CERT_DIR)
-  )
+  print((
+    'Created {} client side certificates in {}'.format(
+      len(subjects), settings.CLIENT_CERT_DIR
+    )
+  ))
 
 
 def get_subject_list():

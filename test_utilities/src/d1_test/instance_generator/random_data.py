@@ -21,19 +21,17 @@
 """Generate random data of various types
 """
 
-from __future__ import absolute_import
-
+import io
 import random
 import re
 import string
-import StringIO
 
 import d1_test.instance_generator.unicode_names
 import d1_test.instance_generator.words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
-unicode_characters = u''.join(
-  set(u''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES))
+unicode_characters = ''.join(
+  set(''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES))
 )
 unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
 
@@ -63,14 +61,27 @@ def random_lower_ascii(min_len=2, max_len=2):
   ])
 
 
-def random_bytes(n_bytes):
-  """Return a string containing random bytes"""
-  return bytearray(random.getrandbits(8) for _ in xrange(n_bytes))
+def random_bytes(num_bytes, max_bytes=None):
+  """Return a bytes object containing random bytes
+  - If only {num_bytes} is set, exactly {num_bytes} are returned.
+  - If both {num_bytes} and {max_bytes} is set, a random number of bytes between
+  {num_bytes} and {max_bytes} (including) is returned.
+  """
+  return bytearray(
+    random.getrandbits(8)
+    for _ in range(
+      num_bytes if max_bytes is None else random.randint(num_bytes, max_bytes)
+    )
+  )
 
 
-def random_bytes_file(n_bytes):
-  """Return a file-like object containing random bytes"""
-  return StringIO.StringIO(random_bytes(n_bytes))
+def random_bytes_file(num_bytes, max_bytes=None):
+  """Return a file-like object containing random bytes
+  - If only {num_bytes} is set, exactly {num_bytes} are returned.
+  - If both {num_bytes} and {max_bytes} is set, a random number of bytes between
+  {num_bytes} and {max_bytes} (including) is returned.
+  """
+  return io.BytesIO(random_bytes(num_bytes, max_bytes))
 
 
 def random_unicode_name():
@@ -127,7 +138,7 @@ def random_unicode_char_no_whitespace():
 
 
 def random_unicode_string_no_whitespace(min_len=5, max_len=20):
-  s = StringIO.StringIO()
+  s = io.StringIO()
   for i in range(random.randint(min_len, max_len)):
     s.write(random_unicode_char_no_whitespace())
   return s.getvalue()

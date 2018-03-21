@@ -23,8 +23,6 @@
 This resolver simply renders all objects into a single folder.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.resolver.resolver_base
@@ -38,7 +36,7 @@ from d1_onedrive.impl import util
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u"""All Folder
+README_TXT = """All Folder
 
 This folder contains all the items of the object_tree folder (the parent
 of this folder) combined into a single folder.
@@ -54,9 +52,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
     if not path:
       return attributes.Attributes(is_dir=True)
     if self._is_readme_file(path):
@@ -64,18 +60,18 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
     if not path:
       return self._get_directory(object_tree_root, path)
     return self._resource_map_resolver.get_directory(object_tree_root, path)
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if not path:
-      raise onedrive_exceptions.PathException(u'Invalid file')
+      raise onedrive_exceptions.PathException('Invalid file')
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     return self._resource_map_resolver.read_file(

@@ -21,9 +21,7 @@
 """Sanity checking of the values which are required by a given operation.
 """
 
-from __future__ import absolute_import
-
-import urlparse
+import urllib.parse
 
 import d1_cli.impl.cli_exceptions as cli_exceptions
 import d1_cli.impl.cli_util as cli_util
@@ -36,7 +34,7 @@ class OperationValidator(object):
     self._type_map = {
       int: 'number',
       bool: 'true or false value',
-      basestring: 'text string',
+      str: 'text string',
       list: 'list',
       dict: 'dictionary'
     }
@@ -45,20 +43,20 @@ class OperationValidator(object):
     #pprint.pprint(operation)
     self._assert_operation_has_valid_operation_type(operation)
     self._assert_valid_auth_parameter_combination(operation)
-    if operation[u'operation'] == 'create':
+    if operation['operation'] == 'create':
       self.assert_valid_create(operation)
-    elif operation[u'operation'] == 'update':
+    elif operation['operation'] == 'update':
       self.assert_valid_update(operation)
-    elif operation[u'operation'] == 'create_package':
+    elif operation['operation'] == 'create_package':
       self.assert_valid_create_package(operation)
-    elif operation[u'operation'] == 'archive':
+    elif operation['operation'] == 'archive':
       self.assert_valid_archive(operation)
-    elif operation[u'operation'] == 'update_access_policy':
+    elif operation['operation'] == 'update_access_policy':
       self.assert_valid_update_access_policy(operation)
-    elif operation[u'operation'] == 'update_replication_policy':
+    elif operation['operation'] == 'update_replication_policy':
       self.assert_valid_update_replication_policy(operation)
     else:
-      assert False, u'Invalid operation: {}'.format(operation[u'operation'])
+      assert False, 'Invalid operation: {}'.format(operation['operation'])
 
   def assert_valid_create(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
@@ -70,9 +68,7 @@ class OperationValidator(object):
       operation, 'parameters', 'authoritative-mn'
     )
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
-    self._assert_value_type(
-      operation, basestring, 'parameters', 'rights-holder'
-    )
+    self._assert_value_type(operation, str, 'parameters', 'rights-holder')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -87,9 +83,7 @@ class OperationValidator(object):
       operation, 'parameters', 'authoritative-mn'
     )
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
-    self._assert_value_type(
-      operation, basestring, 'parameters', 'rights-holder'
-    )
+    self._assert_value_type(operation, str, 'parameters', 'rights-holder')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -107,9 +101,7 @@ class OperationValidator(object):
     self._assert_valid_member_node_urn(
       operation, 'parameters', 'authoritative-mn'
     )
-    self._assert_value_type(
-      operation, basestring, 'parameters', 'rights-holder'
-    )
+    self._assert_value_type(operation, str, 'parameters', 'rights-holder')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -190,7 +182,7 @@ class OperationValidator(object):
       )
 
   def _assert_valid_identifier(self, operation, *keys):
-    self._assert_value_type(operation, basestring, *keys)
+    self._assert_value_type(operation, str, *keys)
     for key in keys:
       operation = operation[key]
     self._assert_valid_identifier_value(operation)
@@ -206,9 +198,7 @@ class OperationValidator(object):
     self._assert_value_type(operation, bool, 'authentication', 'anonymous')
     auth = operation['authentication']
     if not auth['anonymous']:
-      if not self._is_value_type(
-          operation, basestring, 'authentication', 'cert-file'
-      ):
+      if not self._is_value_type(operation, str, 'authentication', 'cert-file'):
         raise cli_exceptions.InvalidArguments(
           'Specified an authenticated connection without providing a certificate'
         )
@@ -235,7 +225,7 @@ class OperationValidator(object):
     cli_util.assert_file_exists(operation['authentication']['cert-file'])
 
   def _assert_valid_checksum_algorithm(self, operation):
-    self._assert_value_type(operation, basestring, 'parameters', 'algorithm')
+    self._assert_value_type(operation, str, 'parameters', 'algorithm')
     algorithm = operation['parameters']['algorithm']
     try:
       d1_common.checksum.get_checksum_calculator_by_dataone_designator(
@@ -247,13 +237,13 @@ class OperationValidator(object):
       )
 
   def _assert_valid_path(self, operation, *keys):
-    self._assert_value_type(operation, basestring, *keys)
+    self._assert_value_type(operation, str, *keys)
     for key in keys:
       operation = operation[key]
     cli_util.assert_file_exists(operation)
 
   def _assert_valid_format_id(self, operation, *keys):
-    self._assert_value_type(operation, basestring, *keys)
+    self._assert_value_type(operation, str, *keys)
     #TODO: Validate against list from CN.
 
   def _assert_valid_member_node_url(self, operation, *keys):
@@ -261,7 +251,7 @@ class OperationValidator(object):
     #TODO: Validate against member node list from CN.
 
   def _assert_valid_member_node_urn(self, operation, *keys):
-    self._assert_value_type(operation, basestring, *keys)
+    self._assert_value_type(operation, str, *keys)
     for key in keys:
       operation = operation[key]
     if not operation.startswith('urn:node'):
@@ -275,10 +265,10 @@ class OperationValidator(object):
     #TODO: Validate against member node list from CN.
 
   def _assert_valid_base_url(self, operation, *keys):
-    self._assert_value_type(operation, basestring, *keys)
+    self._assert_value_type(operation, str, *keys)
     for key in keys:
       operation = operation[key]
-    o = urlparse.urlparse(operation)
+    o = urllib.parse.urlparse(operation)
     if o.scheme not in ('http', 'https'):
       raise cli_exceptions.InvalidArguments(
         'Invalid BaseURL. Must use HTTP or HTTPS protocol. parameter={}, value={}'.

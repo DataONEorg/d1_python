@@ -19,7 +19,6 @@
 # limitations under the License.
 """Utilities for working with SIDs and PIDs
 """
-from __future__ import absolute_import
 
 import logging
 
@@ -143,26 +142,26 @@ def classify_identifier(did):
   normally happen and may indicate that the DID was orphaned in the database.
   """
   if _is_unused_did(did):
-    return u'unused on this Member Node'
+    return 'unused on this Member Node'
   elif is_sid(did):
-    return u'a Series ID (SID) of a revision chain'
+    return 'a Series ID (SID) of a revision chain'
   elif is_local_replica(did):
-    return u'a Persistent ID (PID) of a local replica'
+    return 'a Persistent ID (PID) of a local replica'
   elif is_resource_map_db(did):
-    return u'a Persistent ID (PID) of a local resource map'
+    return 'a Persistent ID (PID) of a local resource map'
   elif is_existing_object(did):
-    return u'a Persistent ID (PID) of an existing local object'
+    return 'a Persistent ID (PID) of an existing local object'
   elif is_revision_chain_placeholder(did):
     return (
-      u'a Persistent ID (PID) of a remote or non-existing revision of a local '
-      u'replica'
+      'a Persistent ID (PID) of a remote or non-existing revision of a local '
+      'replica'
     )
   elif is_resource_map_member(did):
     return (
-      u'a Persistent ID (PID) of a remote or non-existing object aggregated in '
-      u'a local Resource Map'
+      'a Persistent ID (PID) of a remote or non-existing object aggregated in '
+      'a local Resource Map'
     )
-  logging.warning(u'Unable to classify known identifier. did="{}"'.format(did))
+  logging.warning('Unable to classify known identifier. did="{}"'.format(did))
   return '<UNKNOWN>'
 
 

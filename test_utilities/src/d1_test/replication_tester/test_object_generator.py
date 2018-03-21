@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import datetime
 import random
 import string
@@ -70,14 +68,14 @@ def _create_science_object_bytes(pid):
 
 
 def _generate_system_metadata_for_science_object(
-    pid, sciobj_str, include_revision_bool=False
+    pid, sciobj_bytes, include_revision_bool=False
 ):
   now = datetime.datetime.now()
 
   sysmeta_pyxb = dataoneTypes.systemMetadata()
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy()
   sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
-    sciobj_str
+    sciobj_bytes
   )
   sysmeta_pyxb.dateSysMetadataModified = now
   sysmeta_pyxb.dateUploaded = now
@@ -85,7 +83,7 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb.identifier = pid
   sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
   # dataoneTypes.subject(rights_holder)
-  sysmeta_pyxb.size = len(sciobj_str)
+  sysmeta_pyxb.size = len(sciobj_bytes)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 
   if include_revision_bool:

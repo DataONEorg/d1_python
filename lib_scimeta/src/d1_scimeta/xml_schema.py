@@ -28,11 +28,12 @@ except d1_scimeta.xml_schema.SciMetaValidationError as e:
   ...
 """
 import inspect
+import io
 import json
 import logging
 import os
 import pprint
-import StringIO
+import re
 
 import lxml
 import lxml.etree
@@ -62,11 +63,12 @@ class Validate(object):
       # self.dump(
       #   'format_id_to_schema_root_dict', self._format_id_to_schema_root_dict
       # )
+    # self.validate(format_id, self.strip_xml_encoding_declaration(xml_str))
     self.validate(format_id, xml_str)
 
   def validate(self, format_id, xml_str):
     try:
-      xml_tree = self.parse_xml_str(xml_str)
+      xml_tree = self.parse_xml_bytes(xml_str)
     except lxml.etree.XMLSyntaxError as e:
       self.raise_validation_error(e, format_id)
     xml_schema = self.gen_xml_schema(format_id, xml_tree)
@@ -74,7 +76,7 @@ class Validate(object):
       xml_schema.assertValid(xml_tree)
     except (lxml.etree.DocumentInvalid, lxml.etree.XMLSyntaxError) as e:
       self.raise_validation_error(
-        u'{}\n{}'.format(str(e), '\n'.join(map(str, xml_schema.error_log))),
+        '{}\n{}'.format(str(e), '\n'.join(map(str, xml_schema.error_log))),
         format_id
       )
 
@@ -139,18 +141,18 @@ class Validate(object):
 
   def load_format_id_to_schema_root_dict(self, format_id_json_path):
     abs_format_id_json_path = d1_common.util.abs_path(format_id_json_path)
-    with open(abs_format_id_json_path, 'rb') as f:
-      return json.load(f, encoding='utf-8')
+    with open(abs_format_id_json_path, 'r') as f:
+      return json.load(f)
 
   def remove_imported(self, xsd_path_to_info_dict):
     indirect_import_set = {
       v[1]
-      for info_dict in xsd_path_to_info_dict.values()
+      for info_dict in list(xsd_path_to_info_dict.values())
       for v in info_dict['import_list']
     }
     # self.dump('indirect_import_set', indirect_import_set)
     direct_import_set = set()
-    for xsd_path, xsd_info in xsd_path_to_info_dict.items():
+    for xsd_path, xsd_info in list(xsd_path_to_info_dict.items()):
       if xsd_path not in indirect_import_set:
         direct_import_set.add(xsd_path)
         # self.dump('add', xsd_path)
@@ -170,17 +172,17 @@ class Validate(object):
 
   def gen_ns_to_xsd_dict(self, xsd_path_to_info_dict):
     ns_to_xsd_dict = {}
-    for xsd_path, xsd_info in xsd_path_to_info_dict.items():
+    for xsd_path, xsd_info in list(xsd_path_to_info_dict.items()):
       ns_to_xsd_dict.setdefault(xsd_info['target_ns'], []).append(xsd_path)
     return ns_to_xsd_dict
 
   def parse_xml_file(self, xml_path):
     with open(xml_path, 'rb') as f:
-      return self.parse_xml_str(f.read())
+      return self.parse_xml_bytes(f.read())
 
-  def parse_xml_str(self, xml_str):
+  def parse_xml_bytes(self, xml_bytes):
     xml_parser = lxml.etree.XMLParser(no_network=True)
-    xml_tree = lxml.etree.parse(StringIO.StringIO(xml_str), parser=xml_parser)
+    xml_tree = lxml.etree.parse(io.BytesIO(xml_bytes), parser=xml_parser)
     return xml_tree
 
   def find_xsd_files(self, schema_root_dir):
@@ -203,10 +205,10 @@ class Validate(object):
     flat_list = xsd_tree.xpath(
       '//xs:import/@namespace|xs:import/@schemaLocation', namespaces=NS_MAP
     )
-    return zip(flat_list[::2], flat_list[1::2])
+    return list(zip(flat_list[::2], flat_list[1::2]))
 
   def rel_to_abs_import_list(self, xsd_path_to_info_dict):
-    for xsd_path, info_dict in xsd_path_to_info_dict.iteritems():
+    for xsd_path, info_dict in list(xsd_path_to_info_dict.items()):
       info_dict['import_list'] = [
         (import_uri, self.normalize_path(xsd_path, import_path))
         for import_uri, import_path in info_dict['import_list']
@@ -251,6 +253,11 @@ class Validate(object):
     ns_list = xml_tree.xpath("/*/namespace::*")
     return ns_list
 
+  def strip_xml_encoding_declaration(self, xml_str):
+    # It's safe to do this with a regex since it operates only on the first
+    # line, containing the XML declaration, not on the XML doc itself.
+    return re.sub(r'\s*encoding\s*=\s*"UTF-8"\s*', '', xml_str, re.IGNORECASE)
+
   def dump_tree(self, xml_tree):
     self.dump(self.pretty_format_tree(xml_tree))
 
@@ -261,17 +268,19 @@ class Validate(object):
   def dump_ns_to_xsd_dict(self, ns_to_xsd_dict):
     for target_ns, xsd_list in sorted(ns_to_xsd_dict.items()):
       logging.debug('{}:'.format(target_ns))
-      map(logging.debug, ['  {}'.format(p) for p in xsd_list])
+      list(map(logging.debug, ['  {}'.format(p) for p in xsd_list]))
 
   def dump(self, msg_str, o):
     line_int = inspect.currentframe().f_back.f_lineno
-    map(
-      logging.debug, (
-        '{} LINE {} {}'.format('#' * 40, line_int, '#' * 40),
-        '{}:'.format(msg_str)
+    list(
+      map(
+        logging.debug, (
+          '{} LINE {} {}'.format('#' * 40, line_int, '#' * 40),
+          '{}:'.format(msg_str)
+        )
       )
     )
-    map(logging.debug, [s for s in pprint.pformat(o).splitlines()])
+    list(map(logging.debug, [s for s in pprint.pformat(o).splitlines()]))
 
   def pretty_format_tree(self, xml_tree):
     return lxml.etree.tostring(

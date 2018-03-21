@@ -1,0 +1,10 @@
+name: NotFound
+errorCode: 404
+detailCode: 0
+description: Attempted to perform operation on non-existing object
+traceInformation:
+  <traceInformation>
+    <value>1. invalid_pid
+  2. on two lines</value>
+  </traceInformation>
+<unset>nodeId: urn:node:LTER

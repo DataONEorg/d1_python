@@ -25,8 +25,6 @@ See the file_iterator module for details on the arguments.
 TODO: Matching directories in the root directory are not deleted.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import fnmatch
 import logging

@@ -28,8 +28,6 @@ also work with other node stacks.
 See the GMN setup documentation for more information on how to use this command.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 import os
@@ -156,7 +154,7 @@ class Command(django.core.management.base.BaseCommand):
   def handle(self, *args, **opt):
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(__name__) # util.get_command_name())
+      'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     util.exit_if_other_instance_is_running(__name__)
     self._opt = opt
@@ -224,7 +222,7 @@ class Command(django.core.management.base.BaseCommand):
         elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
           self._events.log_and_count(
             'Unexpected PyXB object',
-            'pyxb="{}"'.format(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
+            'pyxb="{}"'.format(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb))
           )
           continue
 
@@ -272,7 +270,7 @@ class Command(django.core.management.base.BaseCommand):
       elif not d1_common.type_conversions.is_pyxb(log_record_pyxb):
         self._events.log_and_count(
           'Unexpected object',
-          'obj="{}"'.format(d1_common.xml.pretty_pyxb(log_record_pyxb))
+          'obj="{}"'.format(d1_common.xml.format_pretty_pyxb(log_record_pyxb))
         )
         continue
 

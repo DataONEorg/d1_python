@@ -21,8 +21,6 @@
 """Create and manipulate replication policies.
 """
 
-from __future__ import absolute_import
-
 import d1_cli.impl.cli_exceptions
 import d1_cli.impl.cli_util
 
@@ -70,7 +68,7 @@ class ReplicationPolicy():
     elif self.number_of_replicas == 0:
       self.number_of_replicas = d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
       d1_cli.impl.cli_util.print_info(
-        u'Changed number of replicas to %d.' % self.number_of_replicas
+        'Changed number of replicas to %d.' % self.number_of_replicas
       )
 
   def get_replication_allowed(self):
@@ -87,7 +85,7 @@ class ReplicationPolicy():
         int(number_of_replicas)
       except ValueError:
         raise d1_cli.impl.cli_exceptions.InvalidArguments(
-          u'"Invalid number: {}'.format(number_of_replicas)
+          '"Invalid number: {}'.format(number_of_replicas)
         )
     self.number_of_replicas = int(number_of_replicas)
 
@@ -100,28 +98,28 @@ class ReplicationPolicy():
 
   def _pretty_format(self):
     lines = []
-    format_str = u'  {0: <30s}{1}'
+    format_str = '  {0: <30s}{1}'
 
     preferred_nodes = None
     if self.get_preferred():
-      preferred_nodes = u'"' + '", "'.join(self.get_preferred()) + '"'
+      preferred_nodes = '"' + '", "'.join(self.get_preferred()) + '"'
     else:
-      preferred_nodes = u'none'
-    lines.append(format_str.format(u'preferred member nodes', preferred_nodes))
+      preferred_nodes = 'none'
+    lines.append(format_str.format('preferred member nodes', preferred_nodes))
     blocked_nodes = None
     if self.get_blocked():
-      blocked_nodes = u'"' + '", "'.join(self.get_blocked()) + '"'
+      blocked_nodes = '"' + '", "'.join(self.get_blocked()) + '"'
     else:
-      blocked_nodes = u'none'
-    lines.append(format_str.format(u'blocked member nodes', blocked_nodes))
+      blocked_nodes = 'none'
+    lines.append(format_str.format('blocked member nodes', blocked_nodes))
 
     lines.append(
-      format_str.format(u'number of replicas', self.number_of_replicas)
+      format_str.format('number of replicas', self.number_of_replicas)
     )
     lines.append(
-      format_str.format(u'replication allowed', self.replication_allowed)
+      format_str.format('replication allowed', self.replication_allowed)
     )
-    return u'replication:\n' + '\n'.join(lines)
+    return 'replication:\n' + '\n'.join(lines)
 
   def _set_policy(self, mn, preferred):
     self._member_nodes[mn] = preferred
@@ -131,7 +129,7 @@ class ReplicationPolicy():
       del self._member_nodes[mn]
     except KeyError:
       raise d1_cli.impl.cli_exceptions.InvalidArguments(
-        u'Replication policy not set for MN: {}'.format(mn)
+        'Replication policy not set for MN: {}'.format(mn)
       )
 
   def _add_preferred(self, mn):

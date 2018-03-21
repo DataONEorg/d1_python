@@ -20,13 +20,10 @@
 """General utilities often needed by DataONE clients and servers.
 """
 
-from __future__ import absolute_import
-
 import contextlib
 import email.message
 import email.utils
 import errno
-import functools
 import json
 import logging
 import os
@@ -41,11 +38,11 @@ def log_setup(is_debug=False, is_multiprocess=False):
   Output only to stdout and stderr.
   """
   format_str = (
-    u'%(asctime)s %(name)s %(module)s %(process)4d %(levelname)-8s %(message)s'
+    '%(asctime)s %(name)s %(module)s %(process)4d %(levelname)-8s %(message)s'
     if is_multiprocess else
-    u'%(asctime)s %(name)s %(module)s %(levelname)-8s %(message)s'
+    '%(asctime)s %(name)s %(module)s %(levelname)-8s %(message)s'
   )
-  formatter = logging.Formatter(format_str, u'%Y-%m-%d %H:%M:%S')
+  formatter = logging.Formatter(format_str, '%Y-%m-%d %H:%M:%S')
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
@@ -94,49 +91,12 @@ def get_content_type(content_type):
   return m.get_content_type()
 
 
-def utf8_to_unicode(f):
-  """Decorator that converts string arguments to Unicode. Assumes that strings
-  contains ASCII or utf-8. All other argument types are passed through
-  untouched.
-
-  A UnicodeDecodeError raised here means that the wrapped function was called
-  with a string argument that did not contain ASCII or utf-8. In such a case,
-  the user is required to convert the string to Unicode before passing it to the
-  function.
-  """
-
-  @functools.wraps(f)
-  def wrapper(*args, **kwargs):
-    new_args = []
-    new_kwargs = {}
-    for arg in args:
-      if type(arg) is str:
-        # See function docstring if UnicodeDecodeError is raised here.
-        new_args.append(arg.decode('utf-8'))
-      else:
-        new_args.append(arg)
-    for key, arg in kwargs.items():
-      if type(arg) is str:
-        # See function docstring if UnicodeDecodeError is raised here.
-        new_kwargs[key] = arg.decode('utf-8')
-      else:
-        new_kwargs[key] = arg
-    return f(*new_args, **new_kwargs)
-
-  return wrapper
-
-
-def unicode_to_utf8(f):
-  @functools.wraps(f)
-  def wrapper(*args, **kwargs):
-    return f(
-      *[v.encode('utf-8') if isinstance(v, unicode) else v for v in args], **{
-        k: v.encode('utf-8') if isinstance(v, unicode) else v
-        for k, v in kwargs.items()
-      }
-    )
-
-  return wrapper
+def utf_8_bytes_to_str(b):
+  assert isinstance(b, bytes)
+  try:
+    return b.decode('utf-8')
+  except UnicodeDecodeError as e:
+    logging.error(str(e))
 
 
 #===============================================================================
@@ -159,7 +119,7 @@ class EventCounter(object):
     {log_str} is a message with details that may change for each call
     """
     logging.info(
-      u' - '.join([v for v in (event_str, msg_str, str(inc_int)) if v])
+      ' - '.join([v for v in (event_str, msg_str, str(inc_int)) if v])
     )
     self.count(event_str, inc_int or 1)
 
@@ -206,7 +166,7 @@ def print_logging():
 
 def save_json(py_obj, json_path):
   with open(json_path, 'w') as f:
-    f.write(format_normalized_pretty_json(py_obj))
+    f.write(serialize_to_normalized_pretty_json(py_obj))
 
 
 def load_json(json_path):
@@ -214,18 +174,26 @@ def load_json(json_path):
     return json.load(f)
 
 
-def format_normalized_pretty_json(py_obj):
-  return json.dumps(py_obj, sort_keys=True, indent=2, cls=SetToList)
+def format_json_to_normalized_pretty_json(json_str):
+  return serialize_to_normalized_pretty_json(json.loads(json_str))
 
 
-def format_normalized_compact_json(py_obj):
+def serialize_to_normalized_pretty_json(py_obj):
+  return json.dumps(py_obj, sort_keys=True, indent=2, cls=ToJsonCompatibleTypes)
+
+
+def serialize_to_normalized_compact_json(py_obj):
   return json.dumps(
-    py_obj, sort_keys=True, separators=(',', ':'), cls=SetToList
+    py_obj, sort_keys=True, separators=(',', ':'), cls=ToJsonCompatibleTypes
   )
 
 
-class SetToList(json.JSONEncoder):
-  def default(self, obj):
-    if isinstance(obj, set):
-      return sorted(list(obj))
-    return json.JSONEncoder.default(self, obj)
+class ToJsonCompatibleTypes(json.JSONEncoder):
+  def default(self, o):
+    # bytes -> str (assume UTF-8)
+    if isinstance(o, bytes):
+      return o.decode('utf-8', errors='replace')
+    # set -> sorted list
+    if isinstance(o, set):
+      return sorted([v for v in o])
+    return json.JSONEncoder.default(self, o)

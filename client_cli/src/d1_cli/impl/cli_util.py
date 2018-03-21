@@ -21,48 +21,44 @@
 """Utilities shared between components of the DataONE Command Line
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import os
 import shutil
-import string
 import sys
 
 import d1_cli.impl.cli_exceptions as cli_exceptions
 
 
-def confirm(prompt, default=u'no', allow_blank=False):
-  if default == u'no':
-    p = u' [yes/NO] '
+def confirm(prompt, default='no', allow_blank=False):
+  if default == 'no':
+    p = ' [yes/NO] '
     def_response = False
-  elif default == u'yes':
-    p = u' [YES/no] '
+  elif default == 'yes':
+    p = ' [YES/no] '
     def_response = True
   else:
-    default = u''
-    p = u''
+    default = ''
+    p = ''
     def_response = None
 
   while True:
     response = None
     try:
-      response = raw_input('{0:<9s}{1}{2}'.format('WARN', prompt, p))
+      response = input('{0:<9s}{1}{2}'.format('WARN', prompt, p))
     except (KeyboardInterrupt, EOFError):
       pass
     if (response is None) or (len(response) == 0):
-      response = string.lower(default)
+      response = default.lower()
     else:
-      response = string.lower(response)
-    if response == u'yes':
+      response = response.lower()
+    if response == 'yes':
       return True
-    elif response == u'no':
+    elif response == 'no':
       return False
     elif allow_blank:
       return def_response
     else:
       print_error(
-        u'Please type, "yes", "no" or press Enter to select the default'
+        'Please type, "yes", "no" or press Enter to select the default'
       )
 
 
@@ -73,25 +69,25 @@ def output(file_like_object, path, verbose=False):
       if verbose:
         print_info(line.rstrip())
       else:
-        print(line.rstrip())
+        print((line.rstrip()))
   else:
     try:
-      object_file = open(os.path.expanduser(path), u'wb')
+      object_file = open(os.path.expanduser(path), 'w', encoding='utf-8')
       shutil.copyfileobj(file_like_object, object_file)
       object_file.close()
     except EnvironmentError as xxx_todo_changeme:
       (errno, strerror) = xxx_todo_changeme.args
       error_line_list = [
-        u'Could not write to object_file: {}'.format(path),
-        u'I/O error({}): {}'.format(errno, strerror),
+        'Could not write to object_file: {}'.format(path),
+        'I/O error({}): {}'.format(errno, strerror),
       ]
-      error_message = u'\n'.join(error_line_list)
+      error_message = '\n'.join(error_line_list)
       raise cli_exceptions.CLIError(error_message)
 
 
 def assert_file_exists(path):
   if not os.path.isfile(os.path.expanduser(path)):
-    msg = u'Invalid file: {}'.format(path)
+    msg = 'Invalid file: {}'.format(path)
     raise cli_exceptions.InvalidArguments(msg)
 
 
@@ -100,9 +96,8 @@ def copy_file_like_object_to_file(file_like_object, path):
     fsrc = sys.stdin
     if file_like_object:
       fsrc = file_like_object
-
     if path:
-      fdst = open(os.path.expanduser(path), u'wb')
+      fdst = open(os.path.expanduser(path), 'w', encoding='utf-8')
       shutil.copyfileobj(fsrc, fdst)
       fdst.close()
     else:
@@ -111,25 +106,25 @@ def copy_file_like_object_to_file(file_like_object, path):
   except EnvironmentError as xxx_todo_changeme1:
     (errno, strerror) = xxx_todo_changeme1.args
     error_line_list = [
-      u'Could not write to object_file: {}'.format(path),
-      u'I/O error({}): {}'.format(errno, strerror),
+      'Could not write to object_file: {}'.format(path),
+      'I/O error({}): {}'.format(errno, strerror),
     ]
-    error_message = u'\n'.join(error_line_list)
+    error_message = '\n'.join(error_line_list)
     raise cli_exceptions.CLIError(error_message)
 
 
 def copy_requests_stream_to_file(response, path):
   try:
-    with open(os.path.expanduser(path), u'wb') as f:
+    with open(os.path.expanduser(path), 'wb') as f:
       for chunk_str in response.iter_content():
         f.write(chunk_str)
   except EnvironmentError as xxx_todo_changeme2:
     (errno, strerror) = xxx_todo_changeme2.args
     error_line_list = [
-      u'Could not write to object_file: {}'.format(path),
-      u'I/O error({}): {}'.format(errno, strerror),
+      'Could not write to object_file: {}'.format(path),
+      'I/O error({}): {}'.format(errno, strerror),
     ]
-    error_message = u'\n'.join(error_line_list)
+    error_message = '\n'.join(error_line_list)
     raise cli_exceptions.CLIError(error_message)
 
 
@@ -137,23 +132,23 @@ def copy_requests_stream_to_file(response, path):
 
 
 def print_debug(msg):
-  _print_level(u'DEBUG', unicode(msg))
+  _print_level('DEBUG', str(msg))
 
 
 def print_error(msg):
-  _print_level(u'ERROR', unicode(msg))
+  _print_level('ERROR', str(msg))
 
 
 def print_warn(msg):
-  _print_level(u'WARN', unicode(msg))
+  _print_level('WARN', str(msg))
 
 
 def print_info(msg):
-  _print_level(u'', unicode(msg))
+  _print_level('', str(msg))
 
 
 def _print_level(level, msg):
   """Print the information in Unicode safe manner.
   """
-  for l in unicode(msg.rstrip()).split(u'\n'):
-    print(u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8'))
+  for l in str(msg.rstrip()).split('\n'):
+    print(('{0:<9s}{1}'.format(level, str(l)).encode('utf-8')))

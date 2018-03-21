@@ -21,8 +21,6 @@
 """Check the dependencies by attempting to import them.
 """
 
-from __future__ import absolute_import
-
 import importlib
 import logging
 
@@ -40,7 +38,7 @@ def are_modules_importable(module_list=None):
       failed_import_list.append(module_str)
 
   if failed_import_list:
-    logging.critical(u'Importing of the following dependencies failed:')
+    logging.critical('Importing of the following dependencies failed:')
     logging.critical(', '.join(failed_import_list))
 
   return not bool(failed_import_list)

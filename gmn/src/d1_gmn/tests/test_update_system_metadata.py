@@ -21,8 +21,6 @@
 """Test MNStorage.updateSystemMetadata()
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import freezegun
@@ -58,7 +56,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       access_policy_pyxb = d1_test.instance_generator.access_policy.generate_from_permission_list(
         self.client_v2, permission_list
       )
-      sciobj_str, sysmeta_pyxb = self.get_obj(self.client_v2, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       sysmeta_pyxb.accessPolicy = access_policy_pyxb
       # self.dump(sysmeta_pyxb)
       self.client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
@@ -75,7 +73,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     - Remove permissions for subj1-4
     - Lower permissions for subj9-12 from changePermission to write
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v2)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v2)
     new_permission_list = [
       (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
       (['subj9', 'subj10', 'subj11'], ['write']),
@@ -102,11 +100,11 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True
       )
       # Get sysmeta
-      sciobj_str, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
       # Change something
       sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.now(
       ) + datetime.timedelta(1, 2)
@@ -120,11 +118,11 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.updateSystemMetadata(): Successful update"""
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True, rights_holder='rights_holder_subj'
       )
       # Get sysmeta
-      sciobj_str, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
       # Update rightsHolder
       assert d1_common.xml.get_req_val(
         sysmeta_pyxb.rightsHolder
@@ -132,7 +130,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sysmeta_pyxb.rightsHolder = 'newRightsHolder'
       assert mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
       # Verify
-      sciobj_str, new_sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, new_sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
       assert new_sysmeta_pyxb.rightsHolder.value() == 'newRightsHolder'
 
   @responses.activate
@@ -145,15 +143,15 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create base object with SID
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         self.client_v2, sid=True
       )
       # Get sysmeta
-      old_sciobj_str, old_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
+      old_sciobj_bytes, old_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       self.dump(old_sysmeta_pyxb)
       old_sysmeta_pyxb.formatId = 'new_format_id'
       assert self.client_v2.updateSystemMetadata(pid, old_sysmeta_pyxb)
-      new_sciobj_str, new_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
+      new_sciobj_bytes, new_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
       # self.dump(old_sysmeta_pyxb)
       self.dump(new_sysmeta_pyxb)
       assert old_sysmeta_pyxb.formatId == new_sysmeta_pyxb.formatId
@@ -172,7 +170,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create base object with SID
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True
       )
       for i in range(10):
@@ -190,18 +188,22 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create base object with SID
-      base_pid, sid, sciobj_str, ver1_sysmeta_pyxb = self.create_obj(
+      base_pid, sid, sciobj_bytes, ver1_sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True
       )
       # for r in ver1_sysmeta_pyxb.replica:
       #   logging.error(r.toxml())
-      ver2_sciobj_str, ver2_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
+      ver2_sciobj_bytes, ver2_sysmeta_pyxb = self.get_obj(
+        mn_client_v2, base_pid
+      )
       # Add a new preferred node
       d1_common.replication_policy.sysmeta_add_preferred(
         ver2_sysmeta_pyxb, 'new_node'
       )
       mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
-      ver3_sciobj_str, ver3_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
+      ver3_sciobj_bytes, ver3_sysmeta_pyxb = self.get_obj(
+        mn_client_v2, base_pid
+      )
       # self.dump(ver1_sysmeta_pyxb)
       # self.dump(ver3_sysmeta_pyxb)
       # Check that the count of preferred nodes increased by one
@@ -223,7 +225,9 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       mn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
       # Check
-      ver4_sciobj_str, ver4_sysmeta_pyxb = self.get_obj(mn_client_v2, base_pid)
-      assert d1_common.system_metadata.is_equivalent_pyxb(
+      ver4_sciobj_bytes, ver4_sysmeta_pyxb = self.get_obj(
+        mn_client_v2, base_pid
+      )
+      assert d1_common.system_metadata.are_equivalent_pyxb(
         ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
       )

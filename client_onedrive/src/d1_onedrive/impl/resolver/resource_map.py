@@ -23,8 +23,6 @@
 Resolve a filesystem path pointing to a resource map.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.resolver.d1_object
@@ -54,9 +52,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   # resource map, control is also handed to the d1_object resolver.
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
     is_resource_map = self._is_resource_map(path[0])
@@ -72,7 +68,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
       return self._d1_object_resolver.get_directory(object_tree_root, path)
@@ -87,7 +83,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):

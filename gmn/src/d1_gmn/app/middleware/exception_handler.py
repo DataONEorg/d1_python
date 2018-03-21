@@ -37,8 +37,6 @@ Responses to HEAD requests can not contain a body, so the exception is
 serialized to a set of HTTP headers for HEAD requests.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import subprocess
@@ -55,9 +53,12 @@ import django.conf
 import django.http
 
 
-class ExceptionHandler(object):
-  def __init__(self):
-    pass
+class ExceptionHandler:
+  def __init__(self, next_in_chain_func):
+    self.next_in_chain_func = next_in_chain_func
+
+  def __call__(self, request):
+    return self.next_in_chain_func(request)
 
   def process_exception(self, request, e):
     if isinstance(e, d1_common.types.exceptions.DataONEException):
@@ -112,7 +113,7 @@ class ExceptionHandler(object):
   def _wrap_internal_exception_in_dataone_exception(self, request):
     e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
     e.detailCode = str(
-      d1_gmn.app.middleware.detail_codes.dataone_exception_to_detail_code()
+      d1_gmn.app.middleware.detail_codes.DataoneExceptionToDetailCode()
       .detail_code(request, e)
     )
     e.traceInformation = self._traceback_to_text()
@@ -121,19 +122,19 @@ class ExceptionHandler(object):
   def _log_internal_exception(self):
     logging.error('Internal exception:')
     exc_class, exc_msgs, exc_traceback = sys.exc_info()
-    logging.error(u'  Name: {}'.format(exc_class.__name__))
-    logging.error(u'  Value: {}'.format(exc_msgs))
+    logging.error('  Name: {}'.format(exc_class.__name__))
+    logging.error('  Value: {}'.format(exc_msgs))
     if 'args' in exc_msgs.__dict__:
       exc_args = exc_msgs.__dict__['args']
     else:
       exc_args = "<no args>"
-    logging.error(u'  Args: {}'.format(exc_args))
-    logging.error(u'  TraceInfo:')
+    logging.error('  Args: {}'.format(exc_args))
+    logging.error('  TraceInfo:')
     for location_str in self._traceback_to_trace_info():
-      logging.error(u'    {}'.format(location_str))
+      logging.error('    {}'.format(location_str))
 
   def _traceback_to_text(self):
-    return u'\n'.join(self._traceback_to_trace_info())
+    return '\n'.join(self._traceback_to_trace_info())
 
   def _traceback_to_trace_info(self):
     exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -141,15 +142,15 @@ class ExceptionHandler(object):
     while exc_traceback:
       co = exc_traceback.tb_frame.f_code
       trace_info_list.append(
-        u'{}({})'.format(
+        '{}({})'.format(
           os.path.basename(co.co_filename),
-          traceback.tb_lineno(exc_traceback),
+          exc_traceback.tb_lineno,
         )
       )
       exc_traceback = exc_traceback.tb_next
     if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
-      trace_info_list.append(u'Type: {}'.format(exc_type))
-      trace_info_list.append(u'Value: {}'.format(exc_value))
+      trace_info_list.append('Type: {}'.format(exc_type))
+      trace_info_list.append('Value: {}'.format(exc_value))
     return trace_info_list
 
   # PyCharm debugging
@@ -162,7 +163,7 @@ class ExceptionHandler(object):
         '--line', src_line_num, src_path
       ])
     except subprocess.CalledProcessError as e:
-      logging.warn(
+      logging.warning(
         'PyCharm debugging is enabled but opening the location of the exception '
         'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
           e.message, src_path, src_line_num
@@ -183,6 +184,6 @@ class ExceptionHandler(object):
     while exc_traceback:
       co = exc_traceback.tb_frame.f_code
       if co.co_filename.startswith(django.conf.settings.BASE_DIR):
-        location_tup = co.co_filename, str(traceback.tb_lineno(exc_traceback))
+        location_tup = co.co_filename, str(exc_traceback.tb_lineno)
       exc_traceback = exc_traceback.tb_next
     return location_tup

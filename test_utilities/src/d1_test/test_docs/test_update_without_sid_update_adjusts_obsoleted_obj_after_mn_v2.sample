@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>54</serialVersion>
-  <identifier>PID_eomsxomxrjwk</identifier>
-  <formatId>http://www.w3.org/TR/rdf-syntax-grammar</formatId>
-  <size>271</size>
-  <checksum algorithm="SHA-1">6833ddfa045845dab74d885ba13508a7c1a00217</checksum>
-  <submitter>subj_x</submitter>
-  <rightsHolder>subj_j</rightsHolder>
+  <serialVersion>56</serialVersion>
+  <identifier>PID_rzfqevloxcky</identifier>
+  <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+  <size>272</size>
+  <checksum algorithm="SHA-1">9c5c8fc550c17a4f48a8542c0077f3252472e243</checksum>
+  <submitter>subj_q</submitter>
+  <rightsHolder>subj_e</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -30,29 +30,19 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="2" replicationAllowed="true">
-    <preferredMemberNode>mn_d</preferredMemberNode>
-    <preferredMemberNode>mn_eq</preferredMemberNode>
-    <preferredMemberNode>mn_p</preferredMemberNode>
-    <preferredMemberNode>mn_vh</preferredMemberNode>
-    <blockedMemberNode>mn_l</blockedMemberNode>
-    <blockedMemberNode>mn_o</blockedMemberNode>
-    <blockedMemberNode>mn_rv</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_th</preferredMemberNode>
+    <blockedMemberNode>mn_f</blockedMemberNode>
+    <blockedMemberNode>mn_ge</blockedMemberNode>
+    <blockedMemberNode>mn_s</blockedMemberNode>
+    <blockedMemberNode>mn_v</blockedMemberNode>
   </replicationPolicy>
-  <obsoletedBy>PID_buqxyitgzycp</obsoletedBy>
+  <obsoletedBy>PID_gnrxcixhsfxi</obsoletedBy>
   <archived>false</archived>
-  <dateUploaded>2023-10-06T06:29:15.53565Z</dateUploaded>
+  <dateUploaded>2013-08-10T05:54:39Z</dateUploaded>
   <dateSysMetadataModified>1955-05-15T00:00:00Z</dateSysMetadataModified>
-  <originMemberNode>mn_la</originMemberNode>
-  <authoritativeMemberNode>mn_cm</authoritativeMemberNode>
-  <replica>
-    <replicaMemberNode>mn_h</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2050-01-06T08:39:39.645396Z</replicaVerified>
-  </replica>
-  <seriesId>SID_ohsliegxctoh</seriesId>
-  <mediaType name="media_type_qw">
-    <property name="prop_rrfypkqlwohc">litnbgbhhqxc</property>
-  </mediaType>
-  <fileName>file_fglghasrzgwc</fileName>
+  <originMemberNode>mn_t</originMemberNode>
+  <authoritativeMemberNode>mn_e</authoritativeMemberNode>
+  <seriesId>SID_atzobzbmnprg</seriesId>
+  <fileName>file_jdhsdcngknxd</fileName>
 </ns1:systemMetadata>

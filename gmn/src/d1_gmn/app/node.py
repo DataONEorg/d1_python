@@ -20,8 +20,6 @@
 """Generate Node document based on the current settings for GMN.
 """
 
-from __future__ import absolute_import
-
 import d1_common.type_conversions
 import d1_common.util
 import d1_common.xml
@@ -55,12 +53,13 @@ import django.conf
 
 
 def get_pretty_xml(api_major_int=2):
-  node_xml = get_xml(api_major_int)
-  return d1_common.xml.pretty_xml(node_xml)
+  return d1_common.xml.serialize_to_transport(_get_pyxb(api_major_int))
 
 
 def get_xml(api_major_int):
-  return _get_pyxb(api_major_int).toxml('utf-8')
+  return d1_common.xml.serialize_to_transport(
+    _get_pyxb(api_major_int), pretty=False
+  )
 
 
 def get_pyxb(api_major_int=2):

@@ -21,10 +21,8 @@
 """Test MNStorage.create() and MNStorage.update() with Resource Map
 """
 
-from __future__ import absolute_import
-
+import io
 import logging
-import StringIO
 
 import pytest
 import responses
@@ -69,7 +67,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid_list = []
       for i in range(10):
-        pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(client)
+        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(client)
         pid_list.append(pid)
     return pid_list
 
@@ -86,7 +84,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ore_xml = ore.serialize()
     sysmeta_pyxb = sysmeta.generate_from_file(
       client,
-      StringIO.StringIO(ore_xml),
+      io.BytesIO(ore_xml),
       {
         'identifier': ore_pid,
         'formatId': d1_common.const.ORE_FORMAT_ID,
@@ -95,7 +93,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     # self.dump(sysmeta_pyxb)
     self.call_d1_client(
-      client.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
+      client.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
     )
     return ore_pid
 

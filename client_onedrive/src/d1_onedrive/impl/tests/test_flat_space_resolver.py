@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the Flat Space Resolver
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.resolver.flat_space as flat_space
 import d1_onedrive.impl.tests.object_tree_test_sample

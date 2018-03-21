@@ -21,8 +21,6 @@
 """Test MNAuthorization.isAuthorized()
 """
 
-from __future__ import absolute_import
-
 import pytest
 import responses
 
@@ -52,7 +50,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1050(self):
     """isAuthorized(): Returns False for unknown subject"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self._create_default()
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
     with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
       assert not self.client_v2.isAuthorized(pid, 'read')
       assert not self.client_v2.isAuthorized(pid, 'write')
@@ -61,7 +59,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1060(self):
     """isAuthorized(): Raises InvalidRequest for unknown permission"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self._create_default()
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       self.client_v2.isAuthorized(pid, 'unknownPermission')
 
@@ -70,7 +68,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """isAuthorized(): Returns False for known subject with inadequate
     permission level
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self._create_default()
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
     with d1_gmn.tests.gmn_mock.set_auth_context(['subj2'], ['trusted_subj']):
       assert not self.client_v2.isAuthorized(pid, 'changePermission')
 
@@ -79,7 +77,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """isAuthorized(): Returns True for known subject with adequate permission
     level
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self._create_default()
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
     with d1_gmn.tests.gmn_mock.set_auth_context(['subj5'], ['trusted_subj']):
       assert self.client_v2.isAuthorized(pid, 'changePermission')
       assert self.client_v2.isAuthorized(pid, 'write')

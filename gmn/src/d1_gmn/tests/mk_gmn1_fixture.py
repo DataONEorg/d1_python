@@ -21,8 +21,6 @@
 """
 """
 
-from __future__ import absolute_import
-
 import subprocess
 
 import responses
@@ -37,15 +35,18 @@ def main():
   make_db_fixture.run()
 
 
+# flake8: noqa: F124
 class MakeDbFixtureGMNv1(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def run(self):
-    print '# sciobj: {}'.format(
-      self.run_sql(
-        'select count(*) from mn_scienceobject;',
-        'gmn',
-      )[0][0]
-    )
+    print((
+      '# sciobj: {}'.format(
+        self.run_sql(
+          'SELECT count(*) FROM mn_scienceobject;',
+          'gmn',
+        )[0][0]
+      )
+    ))
 
     self.pg_dump('db_fixture_gmn1_before.gz')
 

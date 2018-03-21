@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_common
@@ -59,11 +57,11 @@ class MemberNodeClient_1_2(
   # MNView.view(session, theme, id) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.view
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def viewResponse(self, theme, did, **kwargs):
     return self.GET(['views', theme, did], query=kwargs)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def view(self, theme, did, **kwargs):
     response = self.viewResponse(theme, did, **kwargs)
     return self._read_stream_response(response)
@@ -71,11 +69,11 @@ class MemberNodeClient_1_2(
   # MNView.listViews(session) → OptionList
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.listViews
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def listViewsResponse(self, **kwargs):
     return self.GET(['view'], query=kwargs)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def listViews(self, **kwargs):
     response = self.listViewsResponse(**kwargs)
     return self._read_dataone_type_response(response, 'OptionList')
@@ -83,14 +81,14 @@ class MemberNodeClient_1_2(
   # MNPackage.getPackage(session, packageType, id) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getPackageResponse(
       self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
       **kwargs
   ):
     return self.GET(['packages', packageType, did], query=kwargs)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def getPackage(
       self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
       **kwargs

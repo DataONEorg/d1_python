@@ -21,8 +21,6 @@
 """Type that gets raised as exception for invalid paths
 """
 
-from __future__ import absolute_import
-
 import inspect
 import logging
 
@@ -34,19 +32,19 @@ log = logging.getLogger(__name__)
 class PathException(Exception):
   def __init__(self, message):
     Exception.__init__(self, message)
-    trace = u', '.join(
-      [u'{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
+    trace = ', '.join(
+      ['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
     )
-    log.debug(u'PathException("{}"): {}'.format(message, trace))
+    log.debug('PathException("{}"): {}'.format(message, trace))
 
 
 class ONEDriveException(Exception):
   def __init__(self, message):
     Exception.__init__(self, message)
-    trace = u', '.join(
-      [u'{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
+    trace = ', '.join(
+      ['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
     )
-    log.debug(u'ONEDriveException("{}"): {}'.format(message, trace))
+    log.debug('ONEDriveException("{}"): {}'.format(message, trace))
 
 
 class NoResultException(Exception):

@@ -1,10 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:objectList count="1" start="0" total="1" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<?xml version="1.0" ?>
+<ns1:objectList count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_jfanvlznuaeo</identifier>
-    <formatId>application/x-gzip</formatId>
-    <checksum algorithm="SHA-1">28c7f5978eace1b0a6a9f4f6f4364f78c91a9cd0</checksum>
-    <dateSysMetadataModified>2032-05-24T01:07:20Z</dateSysMetadataModified>
+    <identifier>PID_GMNFXT_geyfbqihecdt</identifier>
+    <formatId>FGDC-STD-001.2-1999</formatId>
+    <checksum algorithm="SHA-1">e5cfd73581e5558cc4d029acefb8096d3a1ae750</checksum>
+    <dateSysMetadataModified>2003-05-26T00:00:00Z</dateSysMetadataModified>
     <size>287</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>PID_GMNFXT_yvvyccvwebnq</identifier>
+    <formatId>-//ecoinformatics.org//eml-constraint-2.0.0beta4//EN</formatId>
+    <checksum algorithm="SHA-1">b9f8ddc71b3daf1503fef2724344e0a5eaafaa4b</checksum>
+    <dateSysMetadataModified>2027-10-05T04:37:22Z</dateSysMetadataModified>
+    <size>282</size>
   </objectInfo>
 </ns1:objectList>

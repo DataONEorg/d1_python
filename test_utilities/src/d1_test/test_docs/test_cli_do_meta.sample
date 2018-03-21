@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>91</serialVersion>
+  <identifier>test_pid_1234</identifier>
+  <formatId>text/tsv</formatId>
+  <size>304</size>
+  <checksum algorithm="SHA-1">aa90f5f324a67cb158760e4a5b8babf6083d97c0</checksum>
+  <submitter>subj_fv</submitter>
+  <rightsHolder>subj_wf</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_dj</subject>
+      <subject>subj_fq</subject>
+      <subject>subj_kv</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj_bc</subject>
+      <subject>subj_md</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="4" replicationAllowed="true">
+    <preferredMemberNode>mn_zm</preferredMemberNode>
+    <blockedMemberNode>mn_d</blockedMemberNode>
+    <blockedMemberNode>mn_i</blockedMemberNode>
+    <blockedMemberNode>mn_i</blockedMemberNode>
+    <blockedMemberNode>mn_jw</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2040-08-25T16:23:18Z</dateUploaded>
+  <dateSysMetadataModified>2040-09-04T16:23:18Z</dateSysMetadataModified>
+  <originMemberNode>mn_gg</originMemberNode>
+  <authoritativeMemberNode>mn_f</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_rt</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2058-01-07T19:13:35Z</replicaVerified>
+  </replica>
+</ns1:systemMetadata>

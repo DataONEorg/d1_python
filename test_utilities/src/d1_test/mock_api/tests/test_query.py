@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import pytest
 import responses
 
@@ -39,16 +37,16 @@ class TestMockQuery(d1_test.d1_test_case.D1TestCase):
     mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     resp_dict = mn_client_v1_v2.query('query_engine', 'query_string')
     assert isinstance(resp_dict, dict)
-    assert u'User-Agent' in resp_dict['header_dict']
+    assert 'User-Agent' in resp_dict['header_dict']
     del resp_dict['header_dict']['User-Agent']
     expected_dict = {
-      u'body_base64': u'PG5vIGJvZHk+',
-      u'query_dict': {},
-      u'header_dict': {
-        u'Connection': u'keep-alive',
-        u'Charset': u'utf-8',
-        u'Accept-Encoding': u'gzip, deflate',
-        u'Accept': u'*/*',
+      'body_base64': 'PG5vIGJvZHk+',
+      'query_dict': {},
+      'header_dict': {
+        'Connection': 'keep-alive',
+        'Charset': 'utf-8',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept': '*/*',
       }
     }
     assert resp_dict == expected_dict

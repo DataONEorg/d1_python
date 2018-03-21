@@ -45,10 +45,7 @@ def test_0010(self):
   ...
 """
 
-from __future__ import absolute_import
-
 import base64
-import json
 import logging
 import re
 
@@ -61,6 +58,7 @@ import d1_common.type_conversions
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.url
+import d1_common.util
 
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
@@ -108,7 +106,7 @@ def add_callback(base_url):
 
 
 def assert_expected_echo(received_echo_dict, name_postfix_str, client=None):
-  _dict_key_val_to_unicode(received_echo_dict)
+  # _dict_key_val_to_unicode(received_echo_dict)
   _delete_volatile_keys(received_echo_dict)
   d1_test.sample.assert_equals(
     received_echo_dict, name_postfix_str, client, 'echo'
@@ -141,23 +139,6 @@ def _delete_volatile_keys(echo_dict):
   del_key(echo_dict, ['request', 'header_dict', 'Content-Length'])
   del_key(echo_dict, ['request', 'header_dict', 'Content-Type'])
   del_key(echo_dict, ['request', 'header_dict'])
-
-
-def _dict_key_val_to_unicode(d):
-  if isinstance(d, dict):
-    return {
-      _str_to_unicode(k): _dict_key_val_to_unicode(v) for k, v in d.items()
-    }
-  elif isinstance(d, list):
-    return [_str_to_unicode(v) for v in d]
-  elif isinstance(d, basestring):
-    return _str_to_unicode(d)
-  else:
-    return d
-
-
-def _str_to_unicode(s):
-  return s if isinstance(s, unicode) else s.decode('utf-8')
 
 
 @classmethod
@@ -196,13 +177,24 @@ def _request_callback(request):
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
   }
+  if isinstance(body_str, str):
+    body_str = body_str.encode('utf-8')
   body_dict = {
-    'body_base64': base64.b64encode(body_str or ''),
-    'version_tag': version_tag,
-    'endpoint_str': endpoint_str,
-    'param_list': param_list,
-    'query_dict': query_dict,
-    'pyxb_namespace': str(client.bindings.Namespace),
-    'header_dict': dict(request.headers),
+    'body_base64':
+      str(base64.standard_b64encode(body_str)) if body_str else None,
+    'version_tag':
+      version_tag,
+    'endpoint_str':
+      endpoint_str,
+    'param_list':
+      param_list,
+    'query_dict':
+      query_dict,
+    'pyxb_namespace':
+      str(client.bindings.Namespace),
+    'header_dict':
+      dict(request.headers),
   }
-  return 200, header_dict, json.dumps(body_dict)
+  return 200, header_dict, d1_common.util.serialize_to_normalized_pretty_json(
+    body_dict
+  )

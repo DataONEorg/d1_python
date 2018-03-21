@@ -17,9 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Iterate over file contents"""
-
-from __future__ import absolute_import
+"""Generator that returns the bytes of a file in chunks
+"""
 
 import os
 
@@ -27,8 +26,6 @@ import d1_common.const
 
 
 class FileIterator(object):
-  """Generator that returns the bytes of a file in chunks"""
-
   def __init__(self, path, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
     self._path = path
     self._chunk_size = chunk_size

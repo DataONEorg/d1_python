@@ -20,12 +20,11 @@
 """Utilities for handling URLs in DataONE
 """
 
-from __future__ import absolute_import
-
 import re
 import sys
-import urllib
-import urlparse
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import d1_common.const
 
@@ -38,10 +37,10 @@ def parseUrl(url):
   query is a dict where the values are always lists. If the query key appears
   only once in the URL, the list will have a single value.
   """
-  scheme, netloc, url, params, query, fragment = urlparse.urlparse(url)
+  scheme, netloc, url, params, query, fragment = urllib.parse.urlparse(url)
   query_dict = {
     k: sorted(v) if len(v) > 1 else v[0]
-    for k, v in urlparse.parse_qs(query).items()
+    for k, v in list(urllib.parse.parse_qs(query).items())
   }
   return {
     'scheme': scheme,
@@ -58,14 +57,14 @@ def isHttpOrHttps(url):
 
   Upper and lower case protocol names are recognized.
   """
-  return urlparse.urlparse(url).scheme in ('http', 'https')
+  return urllib.parse.urlparse(url).scheme in ('http', 'https')
 
 
 def encodePathElement(element):
   """Encode a URL path element according to RFC3986.
   """
-  return urllib.quote((
-    element.encode('utf-8') if isinstance(element, unicode) else str(element)
+  return urllib.parse.quote((
+    element.encode('utf-8') if isinstance(element, str) else str(element)
     if isinstance(element, int) else element
   ), safe=d1_common.const.URL_PATHELEMENT_SAFE_CHARS)
 
@@ -73,14 +72,14 @@ def encodePathElement(element):
 def decodePathElement(element):
   """Decode a URL path element according to RFC3986.
   """
-  return urllib.unquote(element).decode('utf-8')
+  return urllib.parse.unquote(element)
 
 
 def encodeQueryElement(element):
   """Encode a URL query element according to RFC3986.
   """
-  return urllib.quote((
-    element.encode('utf-8') if isinstance(element, unicode) else str(element)
+  return urllib.parse.quote((
+    element.encode('utf-8') if isinstance(element, str) else str(element)
     if isinstance(element, int) else element
   ), safe=d1_common.const.URL_QUERYELEMENT_SAFE_CHARS)
 
@@ -88,7 +87,7 @@ def encodeQueryElement(element):
 def decodeQueryElement(element):
   """Decode a URL query element according to RFC3986.
   """
-  return urllib.unquote(element).decode('utf-8')
+  return urllib.parse.unquote(element).decode('utf-8')
 
 
 def stripElementSlashes(element):
@@ -153,16 +152,16 @@ def urlencode(query, doseq=0):
     # remove the the items directly. dict.keys() creates a copy of the
     # dictionary keys, making it safe to remove elements from the dictionary
     # while iterating.
-    for k in query.keys():
+    for k in list(query.keys()):
       if query[k] is None:
         del query[k]
     # mapping objects
-    query = query.items()
+    query = list(query.items())
   else:
     # Remove None parameters from query. Tuples are immutable, so we have to
     # build a new version that does not contain the elements we want to remove,
     # and replace the original with it.
-    query = filter((lambda x: x[1] is not None), query)
+    query = list(filter((lambda x: x[1] is not None), query))
     # it's a bother at times that strings and string-like objects are
     # sequences...
     try:
@@ -176,7 +175,8 @@ def urlencode(query, doseq=0):
       # preserved for consistency
     except TypeError:
       ty, va, tb = sys.exc_info()
-      raise TypeError, "not a valid non-string sequence or mapping object", tb
+      raise TypeError("not a valid non-string sequence or mapping object"
+                      ).with_traceback(tb)
 
   l = []
   if not doseq:
@@ -191,7 +191,7 @@ def urlencode(query, doseq=0):
       if isinstance(v, str):
         v = encodeQueryElement(v)
         l.append(k + '=' + v)
-      elif isinstance(v, unicode):
+      elif isinstance(v, str):
         # is there a reasonable way to convert to ASCII?
         # encode generates a string, but "replace" or "ignore"
         # lose information and "strict" can raise UnicodeError
@@ -209,13 +209,13 @@ def urlencode(query, doseq=0):
           # loop over the sequence
           for elt in v:
             l.append(k + '=' + encodeQueryElement(str(elt)))
-  return '&'.join(l)
+  return '&'.join(sorted(l))
 
 
 def makeCNBaseURL(url):
   """Attempt to create a valid CN BaseURL when one or more sections of the URL
   are missing"""
-  o = urlparse.urlparse(url, scheme=d1_common.const.DEFAULT_CN_PROTOCOL)
+  o = urllib.parse.urlparse(url, scheme=d1_common.const.DEFAULT_CN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc
     path = o.path
@@ -232,7 +232,7 @@ def makeCNBaseURL(url):
   else:
     netloc = d1_common.const.DEFAULT_CN_HOST
     path = d1_common.const.DEFAULT_CN_PATH
-  return urlparse.urlunparse(
+  return urllib.parse.urlunparse(
     (o.scheme, netloc, path, o.params, o.query, o.fragment)
   )
 
@@ -240,7 +240,7 @@ def makeCNBaseURL(url):
 def makeMNBaseURL(url):
   """Attempt to create a valid MN BaseURL when one or more sections of the URL
   are missing"""
-  o = urlparse.urlparse(url, scheme=d1_common.const.DEFAULT_MN_PROTOCOL)
+  o = urllib.parse.urlparse(url, scheme=d1_common.const.DEFAULT_MN_PROTOCOL)
   if o.netloc and o.path:
     netloc = o.netloc
     path = o.path
@@ -257,7 +257,7 @@ def makeMNBaseURL(url):
   else:
     netloc = d1_common.const.DEFAULT_MN_HOST
     path = d1_common.const.DEFAULT_MN_PATH
-  return urlparse.urlunparse(
+  return urllib.parse.urlunparse(
     (o.scheme, netloc, path, o.params, o.query, o.fragment)
   )
 
@@ -268,29 +268,29 @@ def find_url_mismatches(a_url, b_url):
   RFC 1738 for details.
   """
   diff_list = []
-  a_parts = urlparse.urlparse(a_url)
-  b_parts = urlparse.urlparse(b_url)
+  a_parts = urllib.parse.urlparse(a_url)
+  b_parts = urllib.parse.urlparse(b_url)
   # scheme
   if a_parts.scheme.lower() != b_parts.scheme.lower():
     diff_list.append(
-      u'Schemes differ. a="{}" b="{}" differ'.
+      'Schemes differ. a="{}" b="{}" differ'.
       format(a_parts.scheme.lower(), b_parts.scheme.lower())
     )
   # netloc
   if a_parts.netloc.lower() != b_parts.netloc.lower():
     diff_list.append(
-      u'Network locations differ. a="{}" b="{}"'.
+      'Network locations differ. a="{}" b="{}"'.
       format(a_parts.netloc.lower(), b_parts.netloc.lower)
     )
   # path
   if a_parts.path != b_parts.path:
     diff_list.append(
-      u'Paths differ: a="{}" b="{}"'.format(a_parts.path, b_parts.path)
+      'Paths differ: a="{}" b="{}"'.format(a_parts.path, b_parts.path)
     )
   # fragment
   if a_parts.fragment != b_parts.fragment:
     diff_list.append(
-      u'Fragments differ. a="{}" b="{}"'.
+      'Fragments differ. a="{}" b="{}"'.
       format(a_parts.fragment, b_parts.fragment)
     )
   # param
@@ -298,33 +298,33 @@ def find_url_mismatches(a_url, b_url):
   b_param_list = sorted(b_parts.params.split(";"))
   if a_param_list != b_param_list:
     diff_list.append(
-      u'Parameters differ. a="{}" b="{}"'.format(
-        u', '.join(a_param_list),
-        u', '.join(b_param_list),
+      'Parameters differ. a="{}" b="{}"'.format(
+        ', '.join(a_param_list),
+        ', '.join(b_param_list),
       )
     )
   # query
-  a_query_dict = urlparse.parse_qs(a_parts.query)
-  b_query_dict = urlparse.parse_qs(b_parts.query)
-  if len(a_query_dict.keys()) != len(b_query_dict.keys()):
+  a_query_dict = urllib.parse.parse_qs(a_parts.query)
+  b_query_dict = urllib.parse.parse_qs(b_parts.query)
+  if len(list(a_query_dict.keys())) != len(list(b_query_dict.keys())):
     diff_list.append(
       'Number of query keys differs. a={} b={}'.
-      format(len(a_query_dict.keys()), len(b_query_dict.keys()))
+      format(len(list(a_query_dict.keys())), len(list(b_query_dict.keys())))
     )
   for a_key in b_query_dict:
-    if a_key not in b_query_dict.keys():
+    if a_key not in list(b_query_dict.keys()):
       diff_list.append(
-        u'Query key in first missing in second. a_key="{}"'.format(a_key)
+        'Query key in first missing in second. a_key="{}"'.format(a_key)
       )
     elif sorted(a_query_dict[a_key]) != sorted(b_query_dict[a_key]):
       diff_list.append(
-        u'Query values differ. key="{}" a_value="{}" b_value="{}"'.
+        'Query values differ. key="{}" a_value="{}" b_value="{}"'.
         format(a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key]))
       )
   for b_key in b_query_dict:
     if b_key not in a_query_dict:
       diff_list.append(
-        u'Query key in second missing in first. b_key="{}"'.format(b_key)
+        'Query key in second missing in first. b_key="{}"'.format(b_key)
       )
   return diff_list
 

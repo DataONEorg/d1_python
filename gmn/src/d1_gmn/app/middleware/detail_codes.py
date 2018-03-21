@@ -20,14 +20,12 @@
 """Get Detail Code for DataONE exception based on REST call path
 """
 
-from __future__ import absolute_import
-
 import re
 
 
-class dataone_exception_to_detail_code(object):
+class DataoneExceptionToDetailCode(object):
   def __init__(self):
-    self.detail_codes_mapping = [
+    self.detail_codes_dict = [
       (r'', 'MN_authentication', 'login', 'NotImplemented', 501, 1600),
       (r'', 'MN_authentication', 'login', 'ServiceFailure', 500, 1620),
       (r'', 'MN_authentication', 'login', 'InvalidCredentials', 401, 1640),
@@ -130,7 +128,7 @@ class dataone_exception_to_detail_code(object):
 
   def detail_code(self, request, exception):
     for path_rx, module, method, exception_name, error_code, detail_code \
-        in self.detail_codes_mapping:
+        in self.detail_codes_dict:
       if path_rx == '':
         continue
       try:

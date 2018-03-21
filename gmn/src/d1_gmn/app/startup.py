@@ -20,8 +20,6 @@
 """Startup configuration and checks
 """
 
-from __future__ import absolute_import
-
 import collections
 import logging
 import os
@@ -71,18 +69,17 @@ class GMNStartupChecks(django.apps.AppConfig):
     v = getattr(django.conf.settings, setting_name, None)
     if v is None:
       return
-    self._assert_is_type(setting_name, basestring)
+    self._assert_is_type(setting_name, str)
     if not os.path.isfile(v):
       self.raise_config_error(
-        setting_name, v, basestring, 'a path to a readable file',
-        is_none_allowed=True
+        setting_name, v, str, 'a path to a readable file', is_none_allowed=True
       )
     try:
       with open(v, 'r') as f:
         f.read(1)
     except EnvironmentError as e:
       self.raise_config_error(
-        setting_name, v, basestring, 'a path to a readable file. error="{}"'
+        setting_name, v, str, 'a path to a readable file. error="{}"'
         .format(str(e), is_none_allowed=True)
       )
 
@@ -93,13 +90,13 @@ class GMNStartupChecks(django.apps.AppConfig):
     valid_str = valid_str if valid_str is not None else \
       'a whole number' if exp_type is int else \
       'a number' if exp_type is float else \
-      'a string' if (exp_type is str or exp_type is basestring) else \
+      'a string' if (exp_type is str or exp_type is str) else \
       'True or False' if exp_type is bool else \
       ' or '.join(['"{}"'.format(s) for s in exp_type]) \
         if isinstance(exp_type, collections.Iterable) else \
       'of type {}'.format(exp_type.__name__)
 
-    msg_str = u'Configuration error: {} {} must be {}. current="{}"'.format(
+    msg_str = 'Configuration error: {} {} must be {}. current="{}"'.format(
       'If set, setting'
       if is_none_allowed else 'Setting', setting_name, valid_str, str(cur_val)
     )
@@ -117,7 +114,7 @@ class GMNStartupChecks(django.apps.AppConfig):
     for setting_str, setting_safe in safe_settings_list:
       setting_current = getattr(django.conf.settings, setting_str)
       if setting_current != setting_safe:
-        logging.warn(
+        logging.warning(
           'Setting is unsafe for use in production. setting="{}" current="{}" '
           'safe="{}"'.format(setting_str, setting_current, setting_safe)
         )
@@ -127,7 +124,7 @@ class GMNStartupChecks(django.apps.AppConfig):
       django.conf.settings.RESOURCE_MAP_CREATE not in RESOURCE_MAP_CREATE_MODE_LIST
     ):
       raise django.core.exceptions.ImproperlyConfigured(
-        u'Configuration error: Invalid RESOURCE_MAP_CREATE setting. valid="{}" current="{}"'.
+        'Configuration error: Invalid RESOURCE_MAP_CREATE setting. valid="{}" current="{}"'.
         format(
           ', '.join(RESOURCE_MAP_CREATE_MODE_LIST),
           django.conf.settings.RESOURCE_MAP_CREATE
@@ -155,12 +152,12 @@ class GMNStartupChecks(django.apps.AppConfig):
         f.write(secret_key_str)
     except EnvironmentError:
       raise django.core.exceptions.ImproperlyConfigured(
-        u'Configuration error: Secret key file not found and unable to write '
-        u'new. path="{}"'.format(secret_file_path)
+        'Configuration error: Secret key file not found and unable to write '
+        'new. path="{}"'.format(secret_file_path)
       )
     else:
       logging.info(
-        u'Generated new secret key file. path="{}"'.format(secret_file_path)
+        'Generated new secret key file. path="{}"'.format(secret_file_path)
       )
     return secret_key_str
 
@@ -173,15 +170,15 @@ class GMNStartupChecks(django.apps.AppConfig):
       d1_gmn.app.sciobj_store.create_store()
     except EnvironmentError as e:
       raise django.core.exceptions.ImproperlyConfigured(
-        u'Configuration error: Invalid object store root path. '
-        u'OBJECT_STORE_PATH="{}". msg="{}"'.format(
+        'Configuration error: Invalid object store root path. '
+        'OBJECT_STORE_PATH="{}". msg="{}"'.format(
           django.conf.settings.OBJECT_STORE_PATH, str(e)
         )
       )
     if not d1_gmn.app.sciobj_store.is_matching_version():
       logging.warning(
-        u'Configuration error: Incorrect object store version. '
-        u'store="{}" gmn="{}"'.format(
+        'Configuration error: Incorrect object store version. '
+        'store="{}" gmn="{}"'.format(
           d1_gmn.app.sciobj_store.get_store_version(),
           d1_gmn.app.sciobj_store.get_gmn_version(),
         )

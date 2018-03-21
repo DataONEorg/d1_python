@@ -33,8 +33,6 @@ regular test procedures, based on django_client which wraps d1_client, and much
 of the GMNTestCase functionality unusable for most of these tests.
 """
 
-from __future__ import absolute_import
-
 # import freezegun
 # import pytest
 import logging
@@ -67,7 +65,7 @@ import d1_test.instance_generator.identifier
 @d1_test.d1_test_case.reproducible_random_decorator('TestTimeZone')
 class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _generate_sciobj(self, client, tz_type='utc'):
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       client
     )
 
@@ -81,7 +79,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sysmeta_pyxb.dateUploaded = uploaded_dt
     sysmeta_pyxb.dateSysMetadataModified = modified_dt
 
-    return pid, sid, sciobj_str, sysmeta_pyxb, uploaded_dt, modified_dt
+    return pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt
 
   def _assert_sysmeta_in_utc(self, version_tag, sysmeta_sample_name):
     send_sysmeta_xml = self.sample.load(sysmeta_sample_name)
@@ -102,10 +100,10 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         send_replica_verified_list = send_sysmeta.get_element_list_by_name(
           'replicaVerified'
         )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml()
+        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
 
       d1_gmn.tests.gmn_direct.create(
-        version_tag, 'body-contents', send_sysmeta_xml
+        version_tag, b'body-contents', send_sysmeta_xml
       )
       resp_dict = d1_gmn.tests.gmn_direct.get_system_metadata(version_tag, pid)
 
@@ -137,7 +135,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   def _assert_object_list_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.sample.load(sysmeta_sample_name)
+    send_sysmeta_xml = self.sample.load_utf8_to_str(sysmeta_sample_name)
     with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
       with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
         pid = d1_test.instance_generator.identifier.generate_pid()
@@ -148,10 +146,10 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           </allow></accessPolicy>
           '''.format(isolated_subj)
         )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml()
+        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
 
       d1_gmn.tests.gmn_direct.create(
-        version_tag, 'body-contents', send_sysmeta_xml
+        version_tag, b'body-contents', send_sysmeta_xml
       )
       resp_dict = d1_gmn.tests.gmn_direct.list_objects(version_tag)
 
@@ -165,7 +163,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           assert d1_common.date_time.is_utc(dt)
 
   def _assert_log_entry_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.sample.load(sysmeta_sample_name)
+    send_sysmeta_xml = self.sample.load_utf8_to_str(sysmeta_sample_name)
     with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
       with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
         pid = d1_test.instance_generator.identifier.generate_pid()
@@ -176,10 +174,10 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           </allow></accessPolicy>
           '''.format(isolated_subj)
         )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml()
+        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
 
       d1_gmn.tests.gmn_direct.create(
-        version_tag, 'body-contents', send_sysmeta_xml
+        version_tag, b'body-contents', send_sysmeta_xml
       )
       resp_dict = d1_gmn.tests.gmn_direct.get_log_records(version_tag)
 
@@ -196,7 +194,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """PyXB accepts dt with tz for xs:dateTime types and normalizes timezone to
     UTC
     """
-    pid, sid, sciobj_str, sysmeta_pyxb, uploaded_dt, modified_dt = (
+    pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
       self._generate_sciobj(mn_client_v1_v2, 'random_not_utc')
     )
     # Starting with dt that has tz but is not in UTC
@@ -218,7 +216,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """PyXB accepts dt without tz for xs:dateTime types and returns it
     unmodified and without tz
     """
-    pid, sid, sciobj_str, sysmeta_pyxb, uploaded_dt, modified_dt = (
+    pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
       self._generate_sciobj(mn_client_v2, 'naive')
     )
     # Starting with dt without tz
@@ -228,7 +226,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateUploaded)
     assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateSysMetadataModified)
     # Generating the XML doc, the xs:dateTime strings are still without tz
-    xml_doc = d1_common.xml.serialize(sysmeta_pyxb)
+    xml_doc = d1_common.xml.serialize_to_transport(sysmeta_pyxb)
     # print xml_doc
     # print uploaded_dt
     with d1_common.wrap.simple_xml.wrap(xml_doc) as xml:

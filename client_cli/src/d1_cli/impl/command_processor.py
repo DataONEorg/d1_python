@@ -21,13 +21,10 @@
 """Process and execute CLI operations.
 """
 
-from __future__ import absolute_import
-
-import htmlentitydefs
+import html.entities
+import io
 import os
 import re
-import StringIO
-import xml.dom.minidom
 
 import d1_cli.impl.cli_client as cli_client
 import d1_cli.impl.cli_exceptions as cli_exceptions
@@ -44,10 +41,11 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
+import d1_common.xml
 
-DEFAULT_PREFIX = u''
-DEFAULT_PROMPT = u'> '
-SOLR_FORMAT_ID_NAME = u'formatId'
+DEFAULT_PREFIX = ''
+DEFAULT_PROMPT = '> '
+SOLR_FORMAT_ID_NAME = 'formatId'
 
 
 class CommandProcessor():
@@ -93,7 +91,7 @@ class CommandProcessor():
   def search(self, line):
     """CN search.
     """
-    if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
+    if self._session.get(session.QUERY_ENGINE_NAME) == 'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
       'Unsupported query engine: {}'.
@@ -164,7 +162,7 @@ class CommandProcessor():
         self._output(response, path)
         return
 
-    raise cli_exceptions.CLIError(u'Could not find object: {}'.format(pid))
+    raise cli_exceptions.CLIError('Could not find object: {}'.format(pid))
 
   def system_metadata_get(self, pid, path):
     metadata = None
@@ -184,7 +182,9 @@ class CommandProcessor():
       except d1_common.types.exceptions.DataONEException:
         pass
     if metadata is None:
-      raise
+      raise cli_exceptions.CLIError(
+        'Unable to get System Metadata: {}'.format(pid)
+      )
     self._system_metadata_print(metadata, path)
 
   def log(self, path):
@@ -198,7 +198,7 @@ class CommandProcessor():
       count=self._session.get(session.COUNT_NAME)
     )
     object_log_xml = object_log.toxml('utf-8')
-    self._output(StringIO.StringIO(self._pretty(object_log_xml)), path)
+    self._output(io.BytesIO(self._pretty(object_log_xml).encode('utf-8')), path)
 
   def list_objects(self, path):
     client = cli_client.CLIMNClient(
@@ -212,7 +212,9 @@ class CommandProcessor():
       count=self._session.get(session.COUNT_NAME)
     )
     object_list_xml = object_list.toxml('utf-8')
-    self._output(StringIO.StringIO(self._pretty(object_list_xml)), path)
+    self._output(
+      io.BytesIO(self._pretty(object_list_xml).encode('utf-8')), path
+    )
 
   # Write operations (queued)
 
@@ -263,17 +265,13 @@ class CommandProcessor():
     cli_util.print_info('Created file: {}'.format(abs_path))
 
   def _pretty(self, xml_doc):
-    # As far as I can tell from the docs, it should not be necessary to encode
-    # to utf-8 before using the xml doc to construct the dom. But if I don't
-    # do this, toxml() and toprettyxml() fail with ascii encoding errors.
-    dom = xml.dom.minidom.parseString(xml_doc.encode('utf-8'))
-    return dom.toprettyxml(indent='  ')
+    return d1_common.xml.format_pretty_xml(xml_doc.decode('utf-8'))
 
   def _system_metadata_print(self, metadata, path=None):
     sci_meta_xml = metadata.toxml('utf-8')
     if path is not None:
       path = cli_util.os.path.expanduser(path)
-    self._output(StringIO.StringIO(self._pretty(sci_meta_xml)), path)
+    self._output(io.BytesIO(self._pretty(sci_meta_xml).encode('utf-8')), path)
 
   def _ping_base(self, base_url):
     result = cli_client.CLIBaseClient(base_url).ping()
@@ -306,23 +304,22 @@ class CommandProcessor():
         r"errorCode: (?P<error_code>\d+)%.*%Status code: (?P<status_code>\d+)"
       )
       result = regexp.search(e)
-      if ((result is not None) and (result.group(u'error_code') == '500') and
-          (result.group(u'status_code') == '400')): # noqa: E129
+      if ((result is not None) and (result.group('error_code') == '500') and
+          (result.group('status_code') == '400')): # noqa: E129
         result = re.search(
           r"<b>description</b> <u>(?P<description>[^<]+)</u>", e
         )
         msg = re.sub(
-          u'&([^;]+);', lambda m:
-          unichr(htmlentitydefs.name2codepoint[m.group(1)]),
-          result.group(u'description')
+          '&([^;]+);', lambda m: chr(html.entities.name2codepoint[m.group(1)]),
+          result.group('description')
         )
-        cli_util.print_info(u'Warning: %s' % msg)
+        cli_util.print_info('Warning: %s' % msg)
       else:
-        cli_util.print_error(u'Unexpected error:\n%s' % str(e))
+        cli_util.print_error('Unexpected error:\n%s' % str(e))
 
   def _create_solr_query(self, line):
     """Actual search - easier to test. """
-    p0 = u''
+    p0 = ''
     if line:
       p0 = line.strip()
     p1 = self._query_string_to_solr_filter(line)
@@ -333,32 +330,31 @@ class CommandProcessor():
 
   def _query_string_to_solr_filter(self, line):
     query = self._session.get(session.QUERY_STRING_NAME)
-    if not query or query == u'' or (query == '*:*' and len(line) > 0):
-      return u''
+    if not query or query == '' or (query == '*:*' and len(line) > 0):
+      return ''
     else:
-      return u' ' + query
+      return ' ' + query
 
   def _time_span_to_solr_filter(self):
     fromdate = self._session.get(session.FROM_DATE_NAME)
     todate = self._session.get(session.TO_DATE_NAME)
-    return u' dateModified:[{} TO {}]'.format(
+    return ' dateModified:[{} TO {}]'.format(
       d1_common.date_time.http_datetime_str_from_dt(fromdate)
-      if fromdate else u'*',
-      d1_common.date_time.http_datetime_str_from_dt(todate) if todate else u'*'
+      if fromdate else '*',
+      d1_common.date_time.http_datetime_str_from_dt(todate) if todate else '*'
     )
 
   def _object_format_to_solr_filter(self, line):
     search_format_id = self._session.get(session.SEARCH_FORMAT_NAME)
-    if not search_format_id or search_format_id == u'':
-      return u''
+    if not search_format_id or search_format_id == '':
+      return ''
     else:
       if line.find(SOLR_FORMAT_ID_NAME) >= 0:
         cli_util.print_warn(
-          u'Using query format restriction instead: {}'.
-          format(search_format_id)
+          'Using query format restriction instead: {}'.format(search_format_id)
         )
       else:
-        return u' %s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
+        return ' %s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
 
   def _mn_client_connect_params_from_session(self):
     return self._mn_cn_client_connect_params_from_session(session.MN_URL_NAME)

@@ -21,14 +21,12 @@
 """Populate a Member Node with randomly generated objects
 """
 
-from __future__ import absolute_import
-
+import io
 import logging
 import optparse
-import StringIO
 import sys
 
-import test_object_generator
+from . import test_object_generator
 
 import d1_common.types.exceptions
 
@@ -140,7 +138,7 @@ def main():
 
   for _ in range(options.num_objects):
     pid = test_object_generator.generate_random_ascii('pid')
-    sysmeta_pyxb, sciobj_str = (
+    sysmeta_pyxb, sciobj_bytes = (
       test_object_generator.generate_science_object_with_sysmeta(
         pid,
         options.num_min_bytes,
@@ -151,7 +149,7 @@ def main():
     try:
       mn_client.create(
         pid,
-        StringIO.StringIO(sciobj_str),
+        io.BytesIO(sciobj_bytes),
         sysmeta_pyxb,
       )
     except d1_common.types.exceptions.DataONEException as e:

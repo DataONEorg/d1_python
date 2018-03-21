@@ -23,8 +23,6 @@
 # noinspection PyUnresolvedReferences
 # flake8: noqa: F403,F401
 
-from __future__ import absolute_import
-
 #import logging
 #import d1_common.const
 from d1_gmn.app.settings_default import *

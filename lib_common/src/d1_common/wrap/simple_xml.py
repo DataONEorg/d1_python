@@ -69,8 +69,6 @@ with d1_common.wrap.simple_xml.wrap(my_xml_str) as xml:
   my_xml_str = xml.get_xml()
 """
 
-from __future__ import absolute_import
-
 import xml.etree.ElementTree as ET
 
 import contextlib2
@@ -105,16 +103,16 @@ class SimpleXMLWrapper(object):
   def parse_xml(self, xml_str):
     return ET.fromstring(xml_str)
 
-  def get_xml(self, encoding='utf-8'):
-    """Return current state of the wrapper as an XML string"""
+  def get_xml(self, encoding='unicode'):
+    """Return current state of the wrapper as XML"""
     return ET.tostring(self._root_el, encoding)
 
-  def get_pretty_xml(self, encoding='utf-8'):
+  def get_pretty_xml(self, encoding='unicode'):
     """Return current state of the wrapper as a pretty printed XML string"""
-    return d1_common.xml.pretty_xml(ET.tostring(self._root_el, encoding))
+    return d1_common.xml.format_pretty_xml(ET.tostring(self._root_el, encoding))
 
-  def get_xml_below_element(self, el_name, el_idx=0, encoding='utf-8'):
-    """Return an XML fragment rooted at {el}."""
+  def get_xml_below_element(self, el_name, el_idx=0, encoding='unicode'):
+    """Return an XML fragment rooted at {el}"""
     return ET.tostring(self.get_element(el_name, el_idx), encoding)
 
   def get_element_list_by_name(self, el_name):

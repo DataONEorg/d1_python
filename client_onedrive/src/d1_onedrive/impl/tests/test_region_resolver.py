@@ -21,8 +21,6 @@
 """Test the Region Resolver
 """
 
-from __future__ import absolute_import
-
 import tempfile
 
 import d1_onedrive.impl.resolver.region as region

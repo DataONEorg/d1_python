@@ -105,7 +105,7 @@ def fitness_and_quality_parsed(mime_type, parsed_ranges):
             (subtype == target_subtype or subtype == '*' or target_subtype == '*'):
       param_matches = reduce(
         lambda x, y: x + y, [
-          1 for (key, value) in target_params.iteritems()
+          1 for (key, value) in list(target_params.items())
           if key != 'q' and key in params and value == params[key]
         ], 0
       )

@@ -21,9 +21,7 @@
 """Execute queued write operations.
 """
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import d1_cli.impl.cli_client as cli_client
 import d1_cli.impl.cli_util as cli_util
@@ -39,28 +37,28 @@ class OperationExecuter(object):
 
   def execute(self, operation):
     self._operation_validator.assert_valid(operation)
-    if operation[u'operation'] == 'create':
+    if operation['operation'] == 'create':
       self._execute_create(operation)
-    elif operation[u'operation'] == 'update':
+    elif operation['operation'] == 'update':
       self._execute_update(operation)
-    elif operation[u'operation'] == 'create_package':
+    elif operation['operation'] == 'create_package':
       self._execute_create_package(operation)
-    elif operation[u'operation'] == 'archive':
+    elif operation['operation'] == 'archive':
       self._execute_archive(operation)
-    elif operation[u'operation'] == 'update_access_policy':
+    elif operation['operation'] == 'update_access_policy':
       self._execute_update_access_policy(operation)
-    elif operation[u'operation'] == 'update_replication_policy':
+    elif operation['operation'] == 'update_replication_policy':
       self._execute_update_replication_policy(operation)
     else:
-      assert False, u'Invalid operation: {}'.format(operation[u'operation'])
+      assert False, 'Invalid operation: {}'.format(operation['operation'])
 
   #
   # Private.
   #
 
   def _execute_create(self, operation):
-    pid = operation[u'parameters']['identifier']
-    path = operation[u'parameters']['science-file']
+    pid = operation['parameters']['identifier']
+    path = operation['parameters']['science-file']
     sys_meta = self._create_system_metadata(operation)
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
@@ -69,9 +67,9 @@ class OperationExecuter(object):
       client.create(pid, f, sys_meta)
 
   def _execute_update(self, operation):
-    pid_new = operation[u'parameters']['identifier-new']
-    pid_old = operation[u'parameters']['identifier-old']
-    path = operation[u'parameters']['science-file']
+    pid_new = operation['parameters']['identifier-new']
+    pid_old = operation['parameters']['identifier-old']
+    path = operation['parameters']['science-file']
     sys_meta = self._create_system_metadata_for_update(operation)
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
@@ -80,9 +78,9 @@ class OperationExecuter(object):
       client.update(pid_old, f, pid_new, sys_meta)
 
   def _execute_create_package(self, operation):
-    pid_package = operation[u'parameters']['identifier-package']
-    pid_sci_meta = operation[u'parameters']['identifier-science-meta']
-    pid_sci_datas = operation[u'parameters']['identifier-science-data']
+    pid_package = operation['parameters']['identifier-package']
+    pid_sci_meta = operation['parameters']['identifier-science-meta']
+    pid_sci_datas = operation['parameters']['identifier-science-data']
     resource_map = self._generate_resource_map(
       operation, pid_package, pid_sci_meta, pid_sci_datas
     )
@@ -90,17 +88,17 @@ class OperationExecuter(object):
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
     )
-    client.create(pid_package, StringIO.StringIO(resource_map), sys_meta)
+    client.create(pid_package, io.StringIO(resource_map), sys_meta)
 
   def _execute_archive(self, operation):
-    pid = operation[u'parameters']['identifier']
+    pid = operation['parameters']['identifier']
     client = cli_client.CLIMNClient(
       **self._mn_client_connect_params_from_operation(operation)
     )
     client.archive(pid)
 
   def _execute_update_access_policy(self, operation):
-    pid = operation[u'parameters']['identifier']
+    pid = operation['parameters']['identifier']
     policy = self._create_access_policy(operation)
     client = cli_client.CLICNClient(
       **self._cn_client_connect_params_from_operation(operation)
@@ -109,7 +107,7 @@ class OperationExecuter(object):
     client.setAccessPolicy(pid, policy, sys_meta.serialVersion)
 
   def _execute_update_replication_policy(self, operation):
-    pid = operation[u'parameters']['identifier']
+    pid = operation['parameters']['identifier']
     policy = self._create_replication_policy(operation)
     client = cli_client.CLICNClient(
       **self._cn_client_connect_params_from_operation(operation)
@@ -145,7 +143,7 @@ class OperationExecuter(object):
       self, operation, package_pid, pid_sci_meta, pid_sci_datas
   ):
     resource_map_generator = d1_common.resource_map.ResourceMapGenerator(
-      dataone_root=operation[u'parameters']['mn-url']
+      dataone_root=operation['parameters']['mn-url']
     )
     return resource_map_generator.simple_generate_resource_map(
       package_pid, pid_sci_meta, pid_sci_datas

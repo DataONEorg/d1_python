@@ -21,11 +21,11 @@
 """Create set of test certificates signed by the DataONE Test CA
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import OpenSSL
 
@@ -186,7 +186,7 @@ def create_cert_request(pkey, digest="md5", **name):
   req = OpenSSL.crypto.X509Req()
   subj = req.get_subject()
 
-  for (key, value) in name.items():
+  for (key, value) in list(name.items()):
     setattr(subj, key, value)
 
   req.set_pubkey(pkey)
@@ -292,7 +292,7 @@ def create_certificate(
 def main():
   logging.basicConfig(level=logging.DEBUG)
 
-  test_ca_pw = raw_input(
+  test_ca_pw = input(
     'Dataone Test CA private key pass phrase (in SystemPW.txt): '
   )
 
@@ -345,7 +345,7 @@ def main():
 
     # Write the private key to disk.
     out_cert_key_path = os.path.join(
-      cert_dir, '{}.key'.format(urllib.quote(subject, ''))
+      cert_dir, '{}.key'.format(urllib.parse.quote(subject, ''))
     )
     out_key_file = open(out_cert_key_path, 'w')
     out_key_file.write(
@@ -354,7 +354,7 @@ def main():
 
     # Write the cert to disk.
     out_cert_pem_path = os.path.join(
-      cert_dir, '{}.crt'.format(urllib.quote(subject, ''))
+      cert_dir, '{}.crt'.format(urllib.parse.quote(subject, ''))
     )
     out_cert_file = open(out_cert_pem_path, 'w')
     out_cert_file.write(

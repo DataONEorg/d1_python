@@ -24,19 +24,16 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-from __future__ import absolute_import
-
-import base64
-import json
 import logging
 import re
-import urlparse
+import urllib.parse
 
 import responses
 
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.url
+import d1_common.util
 
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
@@ -67,14 +64,14 @@ def _request_callback(request):
     body_str = request.body.read()
   except AttributeError:
     body_str = request.body
-  url_obj = urlparse.urlparse(request.url)
+  url_obj = urllib.parse.urlparse(request.url)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
   }
-  body_dict = {
-    'body_str': base64.b64encode(body_str or ''),
-    'query_dict': urlparse.parse_qs(url_obj.query),
+  body_json = d1_common.util.serialize_to_normalized_pretty_json({
+    #'body_str': base64.standard_b64encode(body_str or ''),
+    'body_str': body_str,
+    'query_dict': urllib.parse.parse_qs(url_obj.query),
     'header_dict': dict(request.headers),
-  }
-  body_json = json.dumps(body_dict)
+  })
   return 200, header_dict, body_json

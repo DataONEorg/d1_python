@@ -20,9 +20,8 @@
 # limitations under the License.
 """Test CLI utilities
 """
-from __future__ import absolute_import
 
-import StringIO
+import io
 import tempfile
 
 import d1_cli.impl.cli
@@ -105,7 +104,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   ):
     test_prompt = 'Test Prompt'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      with d1_test.d1_test_case.mock_raw_input(answer or ''):
+      with d1_test.d1_test_case.mock_input(answer or ''):
         is_confirmed = cli_util.confirm(
           test_prompt, default=default or '', allow_blank=allow_blank
         )
@@ -119,7 +118,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     """output(): Output to screen when no file path is provided"""
     msg_str = 'line1\nline2\n'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      cli_util.output(StringIO.StringIO(msg_str), path=None)
+      cli_util.output(io.StringIO(msg_str), path=None)
     assert msg_str == out_stream.getvalue()
 
   def test_1100(self):
@@ -128,7 +127,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
       with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file_path = tmp_file.name
-      cli_util.output(StringIO.StringIO(msg_str), path=tmp_file_path)
+      cli_util.output(io.StringIO(msg_str), path=tmp_file_path)
     assert '' == out_stream.getvalue()
     with open(tmp_file_path, 'r') as tmp_file:
       assert msg_str == tmp_file.read()
@@ -138,7 +137,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     msg_str = 'line1\nline2\n'
     with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
       cli_util.output(
-        StringIO.StringIO(msg_str),
+        io.StringIO(msg_str),
         path='/some/invalid/path',
       )
 
@@ -161,9 +160,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     msg_str = 'line1\nline2\n'
     with tempfile.NamedTemporaryFile() as tmp_file:
       tmp_file_path = tmp_file.name
-    cli_util.copy_file_like_object_to_file(
-      StringIO.StringIO(msg_str), tmp_file_path
-    )
+    cli_util.copy_file_like_object_to_file(io.StringIO(msg_str), tmp_file_path)
     with open(tmp_file_path, 'r') as tmp_file:
       assert msg_str == tmp_file.read()
 
@@ -185,10 +182,10 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     with tempfile.NamedTemporaryFile() as tmp_file:
       cli_util.copy_requests_stream_to_file(response, tmp_file.name)
       tmp_file.seek(0)
-      got_sciobj_str = tmp_file.read()
-      expected_sciobj_str = client.get('test_pid_1').content
-      self.sample.assert_equals(got_sciobj_str, 'copy_stream_to_file')
-      assert got_sciobj_str == expected_sciobj_str
+      got_sciobj_bytes = tmp_file.read()
+      expected_sciobj_bytes = client.get('test_pid_1').content
+      self.sample.assert_equals(got_sciobj_bytes, 'copy_stream_to_file')
+      assert got_sciobj_bytes == expected_sciobj_bytes
 
   @responses.activate
   def test_1170(self):
@@ -210,8 +207,9 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
       cli_util.print_error(msg)
       cli_util.print_warn(msg)
       cli_util.print_info(msg)
-    assert 'DEBUG    test_msg\n' \
-      'ERROR    test_msg\n' \
-      'WARN     test_msg\n' \
-      '         test_msg\n' == \
-      out_stream.getvalue()
+      self.sample.assert_equals(out_stream.getvalue(), 'print')
+    # assert 'DEBUG    test_msg\n' \
+    #   'ERROR    test_msg\n' \
+    #   'WARN     test_msg\n' \
+    #   '         test_msg\n' == \
+    #

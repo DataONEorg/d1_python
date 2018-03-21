@@ -20,8 +20,6 @@
 """Combine the PyXB bindings required for handling all DataONE types
 """
 
-from __future__ import absolute_import
-
 import logging
 
 from d1_common.types.generated.dataoneTypes_v1 import *

@@ -21,8 +21,6 @@
 """Test the Object Resolver
 """
 
-from __future__ import absolute_import
-
 import d1_onedrive.impl.resolver.d1_object as d1_object
 import d1_onedrive.impl.tests.object_tree_test_sample
 

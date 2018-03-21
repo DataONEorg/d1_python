@@ -19,12 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import base64
 import hashlib
 import logging
 
+import freezegun
 import pytest
 import requests
 import responses
@@ -36,10 +34,13 @@ import d1_common.util
 import d1_test.d1_test_case
 import d1_test.mock_api.get as mock_get
 import d1_test.mock_api.post as mock_post
+import d1_test.sample
 
 import d1_client.session as session
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestSession')
+@freezegun.freeze_time('1945-01-02')
 class TestSession(d1_test.d1_test_case.D1TestCase):
   def _get_hash(self, pid):
     mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
@@ -100,12 +101,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     """HTTP GET 404"""
     response = self._get_response('valid_pid', header_dict={'trigger': '404'})
     assert response.status_code == 404
-    expected_response_body_str = (
-      u'<?xml version="1.0" encoding="utf-8"?><error detailCode="0" '
-      u'errorCode="404" name="NotFound">'
-      u'<description></description></error>'
-    )
-    assert response.text == expected_response_body_str
+    self.sample.assert_equals(response.text, 'get_404')
 
   @responses.activate
   def test_1030(self):
@@ -122,35 +118,22 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     """HTTP POST is successful
     Roundtrip for body, headers and query params
     """
-    body_str = 'test_body'
-    query_dict = {'abcd': '1234', 'efgh': '5678'}
+    body_bytes = b'test_body'
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
-    response = self._post(query_dict, header_dict, body_str)
+    response = self._post({}, header_dict, body_bytes)
     r_dict = response.json()
-    assert base64.b64decode(r_dict['body_str']) == body_str
-    assert 'abcd' in r_dict['query_dict']
-    assert r_dict['query_dict']['abcd'] == ['1234']
-    assert 'ijkl' in r_dict['header_dict']
-    assert r_dict['header_dict']['ijkl'] == '9876'
-    assert 'mnop' in r_dict['header_dict']
-    assert r_dict['header_dict']['mnop'] == '5432'
-    assert 'Content-Length' in r_dict['header_dict']
-    assert r_dict['header_dict']['Content-Length'] == str(len(body_str))
+    d1_test.sample.assert_equals(r_dict, 'post_roundtrip')
 
   @responses.activate
   def test_1050(self):
     """Query params passed to Session() and individual POST are combined"""
     mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    body_str = 'test_body'
+    body_bytes = b'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
-    response = self._post(query_dict, header_dict, body_str)
+    response = self._post(query_dict, header_dict, body_bytes)
     r_dict = response.json()
-    assert base64.b64decode(r_dict['body_str']) == body_str
-    assert 'abcd' in r_dict['query_dict']
-    assert r_dict['query_dict']['abcd'] == ['1234']
-    assert 'default_query' in r_dict['query_dict']
-    assert r_dict['query_dict']['default_query'] == ['test']
+    d1_test.sample.assert_equals(r_dict, 'post_roundtrip_query')
 
   @responses.activate
   def test_1060(self):
@@ -161,13 +144,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     }
     response = self._post_fields(field_dict)
     r_dict = response.json()
-    body_str = base64.b64decode(r_dict['body_str'])
-    assert 'Content-Type' in r_dict['header_dict']
-    assert 'multipart/form-data' in r_dict['header_dict']['Content-Type']
-    assert 'post_data_1' in body_str
-    assert 'post_data_2' in body_str
-    assert '1234' in body_str
-    assert '5678' in body_str
+    d1_test.sample.assert_equals(r_dict, 'post_roundtrip_form_fields')
 
   @responses.activate
   def test_1070(self):
@@ -181,5 +158,4 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
       query=query_dict,
       headers=header_dict,
     )
-    assert curl_str == \
-      'curl -X POST -H "ijkl: 9876" -H "mnop: 5432" http://some.bogus.address?abcd=1234&efgh=5678'
+    d1_test.sample.assert_equals(curl_str, 'curl_command_line')

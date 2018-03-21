@@ -1,3 +1,21 @@
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-2018 DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import d1_gmn.app
 import d1_gmn.app.did
 import d1_gmn.app.models
@@ -32,9 +50,9 @@ def matches_url_pid(sysmeta_pyxb, url_pid):
   if sysmeta_pid != url_pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
-      u'PID specified in the URL parameter of the API call does not match the '
-      u'PID specified in the included System Metadata. '
-      u'url_pid="{}", sysmeta_pid="{}"'.format(url_pid, sysmeta_pid)
+      'PID specified in the URL parameter of the API call does not match the '
+      'PID specified in the included System Metadata. '
+      'url_pid="{}", sysmeta_pid="{}"'.format(url_pid, sysmeta_pid)
     )
 
 
@@ -45,9 +63,9 @@ def has_matching_modified_timestamp(new_sysmeta_pyxb):
   if not d1_common.date_time.are_equal(old_ts, new_ts):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
-      u'dateSysMetadataModified of updated System Metadata must match existing. '
-      u'pid="{}" old_ts="{}" new_ts="{}"'.format(pid, old_ts,
-                                                 new_ts), identifier=pid
+      'dateSysMetadataModified of updated System Metadata must match existing. '
+      'pid="{}" old_ts="{}" new_ts="{}"'.format(pid, old_ts,
+                                                new_ts), identifier=pid
     )
 
 
@@ -55,8 +73,8 @@ def _obsoleted_by_not_specified(sysmeta_pyxb):
   obsoleted_by = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
   if obsoleted_by is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'obsoletedBy cannot be specified in System Metadata for this method.'
-      u'obsoletedBy="{}"'.format(obsoleted_by)
+      0, 'obsoletedBy cannot be specified in System Metadata for this method.'
+      'obsoletedBy="{}"'.format(obsoleted_by)
     )
 
 
@@ -64,8 +82,8 @@ def obsoletes_not_specified(sysmeta_pyxb):
   obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
   if obsoletes_pid is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'obsoletes cannot be specified in System Metadata for this method. '
-      u'obsoletes="{}"'.format(obsoletes_pid)
+      0, 'obsoletes cannot be specified in System Metadata for this method. '
+      'obsoletes="{}"'.format(obsoletes_pid)
     )
 
 
@@ -73,9 +91,9 @@ def obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid):
   obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
   if obsoletes_pid is not None and obsoletes_pid != old_pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'Persistent ID (PID) specified in System Metadata "obsoletes" '
-      u'field does not match PID specified in URL. '
-      u'sysmeta_pyxb="{}", url="{}"'.format(obsoletes_pid, old_pid)
+      0, 'Persistent ID (PID) specified in System Metadata "obsoletes" '
+      'field does not match PID specified in URL. '
+      'sysmeta_pyxb="{}", url="{}"'.format(obsoletes_pid, old_pid)
     )
 
 
@@ -86,7 +104,7 @@ def is_valid_sid_for_new_standalone(sysmeta_pyxb):
   sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
   if not d1_gmn.app.did.is_valid_sid_for_new_standalone(sid):
     raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, u'Identifier is already in use as {}. did="{}"'
+      0, 'Identifier is already in use as {}. did="{}"'
       .format(d1_gmn.app.did.classify_identifier(sid), sid), identifier=sid
     )
 
@@ -101,10 +119,10 @@ def is_valid_sid_for_chain(pid, sid):
   if not d1_gmn.app.did.is_valid_sid_for_chain(pid, sid):
     existing_sid = d1_gmn.app.revision.get_sid_by_pid(pid)
     raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, u'A different SID is already assigned to the revision chain to which '
-      u'the object being created or updated belongs. A SID cannot be changed '
-      u'once it has been assigned to a chain. '
-      u'existing_sid="{}", new_sid="{}", pid="{}"'
+      0, 'A different SID is already assigned to the revision chain to which '
+      'the object being created or updated belongs. A SID cannot be changed '
+      'once it has been assigned to a chain. '
+      'existing_sid="{}", new_sid="{}", pid="{}"'
       .format(existing_sid, sid, pid)
     )
 
@@ -114,8 +132,8 @@ def _does_not_contain_replica_sections(sysmeta_pyxb):
   """
   if len(getattr(sysmeta_pyxb, 'replica', [])):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'A replica section was included. A new object object created via '
-      u'create() or update() cannot already have replicas. pid="{}"'.
+      0, 'A replica section was included. A new object object created via '
+      'create() or update() cannot already have replicas. pid="{}"'.
       format(d1_common.xml.get_req_val(sysmeta_pyxb.identifier)),
       identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     )
@@ -126,19 +144,18 @@ def _is_not_archived(sysmeta_pyxb):
   """
   if _is_archived(sysmeta_pyxb):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0,
-      u'Archived flag was set. A new object created via create() or update() '
-      u'cannot already be archived. pid="{}"'.format(
-        d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-      ), identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+      0, 'Archived flag was set. A new object created via create() or update() '
+      'cannot already be archived. pid="{}"'.
+      format(d1_common.xml.get_req_val(sysmeta_pyxb.identifier)),
+      identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     )
 
 
 def _has_correct_file_size(request, sysmeta_pyxb):
   if sysmeta_pyxb.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'Object size in System Metadata does not match that of the '
-      u'uploaded object. sysmeta_pyxb={} bytes, uploaded={} bytes'.format(
+      0, 'Object size in System Metadata does not match that of the '
+      'uploaded object. sysmeta_pyxb={} bytes, uploaded={} bytes'.format(
         sysmeta_pyxb.size, request.FILES['object'].size
       )
     )
@@ -156,8 +173,8 @@ def _is_correct_checksum(request, sysmeta_pyxb):
   if sysmeta_pyxb.checksum.value().lower() != checksum_str.lower():
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
-      u'Checksum in System Metadata does not match that of the uploaded object. '
-      u'sysmeta_pyxb="{}", uploaded="{}"'.format(
+      'Checksum in System Metadata does not match that of the uploaded object. '
+      'sysmeta_pyxb="{}", uploaded="{}"'.format(
         sysmeta_pyxb.checksum.value().lower(), checksum_str.lower()
       )
     )
@@ -174,7 +191,7 @@ def _is_supported_checksum_algorithm(sysmeta_pyxb):
   ):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
-      u'Checksum algorithm is unsupported. algorithm="{}" supported="{}"'.format(
+      'Checksum algorithm is unsupported. algorithm="{}" supported="{}"'.format(
         sysmeta_pyxb.checksum.algorithm,
         ', '.join(d1_common.checksum.get_supported_algorithms())
       )

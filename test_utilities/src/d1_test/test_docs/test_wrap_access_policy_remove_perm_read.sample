@@ -1,24 +1,24 @@
-[                                                                  [
+"[                                                                  [
   [                                                                  [
-    "read",                                                            "read", 
+    \"read\",                                                            \"read\",
     [                                                                  [
-      "public"                                                           "public"
+      \"public\"                                                           \"public\"
     ]                                                                  ]
-  ],                                                                 ], 
+  ],                                                                 ],
   [                                                                  [
-    "write",                                                           "write", 
+    \"write\",                                                           \"write\",
     [                                                                  [
-      "subj1",                                                  |        "subj1"
-      "subj4"                                                   <
+      \"subj1\",                                                  |        \"subj1\"
+      \"subj4\"                                                   <
     ]                                                                  ]
-  ],                                                                 ], 
+  ],                                                                 ],
   [                                                                  [
-    "changePermission",                                                "changePermission", 
+    \"changePermission\",                                                \"changePermission\",
     [                                                                  [
-      "subj2",                                                           "subj2", 
-      "subj3",                                                           "subj3", 
-      "subj5",                                                           "subj5", 
-      "subj6"                                                            "subj6"
+      \"subj2\",                                                           \"subj2\",
+      \"subj3\",                                                           \"subj3\",
+      \"subj5\",                                                           \"subj5\",
+      \"subj6\"                                                            \"subj6\"
     ]                                                                  ]
   ]                                                                  ]
-]                                                                  ]
+]                                                                  ]"

@@ -23,8 +23,6 @@ The Event Log is a log of all operations performed on sciobjs. It is retrieved
 with MNCore.getLogRecords() and aggregated by CNs.
 """
 
-from __future__ import absolute_import
-
 import d1_gmn.app.auth
 import d1_gmn.app.models
 
@@ -45,7 +43,7 @@ def _log(pid, request, event, timestamp=None):
         pid__did=pid
       )[0]
     except IndexError:
-      err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
+      err_msg = 'Attempted to create event log for non-existing object. pid="{}"'\
         .format(pid)
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 

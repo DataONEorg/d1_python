@@ -23,8 +23,6 @@
 The callbacks are called by FUSE when actions are performed on the filesystem.
 """
 
-from __future__ import absolute_import
-
 import errno
 import logging
 import os
@@ -81,7 +79,7 @@ class FUSECallbacks(fuse.Operations):
     """Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
     """
-    log.debug(u'readdir(): {}'.format(path))
+    log.debug('readdir(): {}'.format(path))
     try:
       dir = self._directory_cache[path]
     except KeyError:
@@ -93,7 +91,7 @@ class FUSECallbacks(fuse.Operations):
     """Called by FUSE when a file is opened.
     Determines if the provided path and open flags are valid.
     """
-    log.debug(u'open(): {}'.format(path))
+    log.debug('open(): {}'.format(path))
     # ONEDrive is currently read only. Anything but read access is denied.
     if (flags & self._READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
       self._raise_error_permission_denied(path)
@@ -102,7 +100,7 @@ class FUSECallbacks(fuse.Operations):
     return attribute.is_dir()
 
   def read(self, path, size, offset, fh):
-    log.debug(u'read(): {}'.format(path))
+    log.debug('read(): {}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
     except d1_onedrive.impl.onedrive_exceptions.PathException:
@@ -155,7 +153,7 @@ class FUSECallbacks(fuse.Operations):
       self._raise_error_no_such_file_or_directory(path)
 
   def _raise_error_no_such_file_or_directory(self, path):
-    log.debug(u'Error: No such file or directory: {}'.format(path))
+    log.debug('Error: No such file or directory: {}'.format(path))
     raise fuse.FuseOSError(errno.ENOENT)
 
   def _raise_error_permission_denied(self, path):

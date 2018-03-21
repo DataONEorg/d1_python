@@ -96,8 +96,6 @@ and
 </accessPolicy>
 """
 
-from __future__ import absolute_import
-
 import copy
 import inspect
 import logging
@@ -268,11 +266,13 @@ class AccessPolicyWrapper(object):
   def dump(self):
     """Dump the current state to debug level log"""
     logging.debug('AccessPolicy:')
-    map(
-      logging.debug, [
-        '  {}'.format(s)
-        for s in pprint.pformat(self.get_normalized_perm_list()).splitlines()
-      ]
+    list(
+      map(
+        logging.debug, [
+          '  {}'.format(s)
+          for s in pprint.pformat(self.get_normalized_perm_list()).splitlines()
+        ]
+      )
     )
 
   # Check current state
@@ -289,21 +289,21 @@ class AccessPolicyWrapper(object):
     """Return True if AccessPolicy does not grant access to any subjects"""
     return self.is_private()
 
-  def is_equivalent_pyxb(self, access_pyxb):
-    """Return True if the AccessPolicy PyXB object in {access_pyxb} grants the exact same
-    permissions as this one.
+  def are_equivalent_pyxb(self, access_pyxb):
+    """Return True if the AccessPolicy PyXB object in {access_pyxb} grants the
+    exact same permissions as this one.
     - Differences in how the permissions are represented in the XML docs are
     handled by transforming to normalized lists before comparison."""
     return (
       self.get_normalized_perm_list() == get_normalized_perm_list(access_pyxb)
     )
 
-  def is_equivalent_xml(self, access_xml):
+  def are_equivalent_xml(self, access_xml):
     """Return True if the AccessPolicy XML doc in {access_xml} grants the exact same
     permissions as this one.
     - Differences in how the permissions are represented in the XML docs are
     handled by transforming to normalized lists before comparison."""
-    return self.is_equivalent_pyxb(d1_common.xml.deserialize(access_xml))
+    return self.are_equivalent_pyxb(d1_common.xml.deserialize(access_xml))
 
   def subj_has_perm(self, subj_str, perm_str):
     """Return True if {subj_str} has perm equal to or higher than {perm_str} """
@@ -350,7 +350,7 @@ class AccessPolicyWrapper(object):
     - {subj_str} may still have access to the obj, e.g., if the obj has public
     access or {subj_str} is is in a group or has an equivalent subj that has
     access. """
-    for subj_set in self._perm_dict.values():
+    for subj_set in list(self._perm_dict.values()):
       subj_set -= {subj_str}
 
   #
@@ -366,7 +366,7 @@ class AccessPolicyWrapper(object):
     """Return dict where keys and values of {subj_dict} have been flipped
     around"""
     perm_dict = {}
-    for subj_str, perm_set in subj_dict.items():
+    for subj_str, perm_set in list(subj_dict.items()):
       for perm_str in perm_set:
         perm_dict.setdefault(perm_str, set()).add(subj_str)
     return perm_dict
@@ -438,7 +438,7 @@ class AccessPolicyWrapper(object):
     """Return a set containing only the permissions that are present in the
     {perm_dict} for {subj_str}
     """
-    return {p for p, s in perm_dict.items() if subj_str in s}
+    return {p for p, s in list(perm_dict.items()) if subj_str in s}
 
   def _highest_perm_from_iter(self, perm_iter):
     """Return the highest perm present in {perm_iter} or None if {perm_iter}
@@ -494,11 +494,11 @@ def update():
   pass
 
 
-def get_normalized_pyxb():
+def get_normalized_pyxb(access_pyxb):
   pass
 
 
-def get_normalized_perm_list():
+def get_normalized_perm_list(access_pyxb):
   pass
 
 
@@ -518,23 +518,23 @@ def dump():
   pass
 
 
-def is_public():
+def is_public(access_pyxb):
   pass
 
 
-def is_private():
+def is_private(access_pyxb):
   pass
 
 
-def is_empty():
+def is_empty(access_pyxb):
   pass
 
 
-def is_equivalent_pyxb(access_pyxb):
+def are_equivalent_pyxb(access_pyxb):
   pass
 
 
-def is_equivalent_xml(access_xml):
+def are_equivalent_xml(access_xml):
   pass
 
 
@@ -542,19 +542,19 @@ def subj_has_perm(subj_str, perm_str):
   pass
 
 
-def clear():
+def clear(access_pyxb):
   pass
 
 
-def add_public_read():
+def add_public_read(access_pyxb):
   pass
 
 
-def add_authenticated_read():
+def add_authenticated_read(access_pyxb):
   pass
 
 
-def add_verified_read():
+def add_verified_read(access_pyxb):
   pass
 
 
@@ -586,9 +586,7 @@ def mk_func(func_name):
   return func
 
 
-for method in inspect.getmembers(
-    AccessPolicyWrapper, predicate=inspect.ismethod
-):
+for method in inspect.getmembers(AccessPolicyWrapper):
   method_name, method_obj = method
   if not method_name.startswith('_'):
     setattr(sys.modules[__name__], method_name, mk_func(method_name))

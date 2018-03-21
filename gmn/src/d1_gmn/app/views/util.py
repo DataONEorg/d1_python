@@ -20,8 +20,6 @@
 """Utilities used in views
 """
 
-from __future__ import absolute_import
-
 import datetime
 import re
 
@@ -62,7 +60,7 @@ def dataoneTypes(request):
     return d1_common.types.dataoneTypes_v2_0
   else:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unknown version designator in URL. url="{}"'.format(request.path)
+      0, 'Unknown version designator in URL. url="{}"'.format(request.path)
     )
 
 
@@ -95,9 +93,9 @@ def read_utf8_xml(stream_obj):
     return stream_obj.read(django.conf.settings.MAX_XML_DOCUMENT_SIZE
                            ).decode('utf-8')
   except IOError as e:
-    msg = u'Read failed on XML stream. error="{}"'.format(str(e))
+    msg = 'Read failed on XML stream. error="{}"'.format(str(e))
   except UnicodeDecodeError as e:
-    msg = u'XML stream encoding is invalid. Must be utf-8. error="{}"'.format(
+    msg = 'XML stream encoding is invalid. Must be utf-8. error="{}"'.format(
       str(e)
     )
   raise d1_common.types.exceptions.ServiceFailure(0, msg)
@@ -109,7 +107,7 @@ def deserialize(xml_file):
   if xml_file.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
     raise d1_common.types.exceptions.InvalidRequest(
       0,
-      u'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
+      'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
       .format(xml_file.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
     )
   try:
@@ -130,7 +128,7 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   elif is_v2_api(request):
     return d1_common.type_conversions.str_to_v2_str(sysmeta_xml_str)
   else:
-    assert False, u'Unable to determine API version'
+    assert False, 'Unable to determine API version'
 
 
 def http_response_with_boolean_true_type():

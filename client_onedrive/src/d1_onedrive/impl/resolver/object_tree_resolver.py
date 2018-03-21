@@ -24,10 +24,8 @@ Resolve a filesystem path that points to a directory to the contents of the
 directory by querying the query engine.
 """
 
-from __future__ import absolute_import
-
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 import d1_onedrive.impl
 import d1_onedrive.impl.onedrive_exceptions
@@ -53,21 +51,21 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       options, object_tree
     )
     self._resolvers = {
-      u'All':
+      'All':
         d1_onedrive.impl.resolver.single.Resolver(options, object_tree),
-      u'Authors':
+      'Authors':
         d1_onedrive.impl.resolver.author.Resolver(options, object_tree),
-      u'Regions':
+      'Regions':
         d1_onedrive.impl.resolver.region.Resolver(options, object_tree),
-      u'Taxa':
+      'Taxa':
         d1_onedrive.impl.resolver.taxa.Resolver(options, object_tree),
-      u'TimePeriods':
+      'TimePeriods':
         d1_onedrive.impl.resolver.time_period.Resolver(options, object_tree),
     }
 
   def get_attributes(self, object_tree_root, path):
     log.debug(
-      u'get_attributes: {}'.
+      'get_attributes: {}'.
       format(d1_onedrive.impl.util.string_from_path_elements(path))
     )
 
@@ -108,9 +106,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         object_tree_path, object_tree_root
       )
     except d1_onedrive.impl.onedrive_exceptions.ONEDriveException:
-      raise d1_onedrive.impl.onedrive_exceptions.PathException(
-        u'Invalid folder'
-      )
+      raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid folder')
 
     if self._is_readme_file([root_name]):
       return self._get_readme_file_attributes(object_tree_path)
@@ -128,7 +124,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
     log.debug(
-      u'get_directory: {}'.
+      'get_directory: {}'.
       format(d1_onedrive.impl.util.string_from_path_elements(path))
     )
 
@@ -163,9 +159,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         object_tree_path, object_tree_root
       )
     except d1_onedrive.impl.onedrive_exceptions.ONEDriveException:
-      raise d1_onedrive.impl.onedrive_exceptions.PathException(
-        u'Invalid folder'
-      )
+      raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid folder')
 
     log.debug('controlled path: {}'.format(controlled_path))
     #log.debug('object_tree folder: {0}'.format(object_tree_folder))
@@ -179,7 +173,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.format(
+      'read_file: {}, {}, {}'.format(
         d1_onedrive.impl.util.string_from_path_elements(path), size, offset
       )
     )
@@ -193,7 +187,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         if path[-1] == object_tree_folder.get_help_name():
           return self._getFolderHelp(object_tree_folder, size, offset)
           #return object_tree_folder.get_help_text(size, offset)
-      raise d1_onedrive.impl.onedrive_exceptions.PathException(u'Invalid file')
+      raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid file')
 
     object_tree_path, root_name, controlled_path = self._split_path_by_reserved_name(
       path
@@ -204,9 +198,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         object_tree_path, object_tree_root
       )
     except d1_onedrive.impl.onedrive_exceptions.ONEDriveException:
-      raise d1_onedrive.impl.onedrive_exceptions.PathException(
-        u'Invalid folder'
-      )
+      raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid folder')
 
     if self._is_readme_file([root_name]):
       return self._generate_readme_text(object_tree_path)[offset:offset + size]
@@ -261,13 +253,13 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       if e in self._resolvers or e == self._get_readme_filename():
         return path[:i], path[i], path[i + 1:]
     raise d1_onedrive.impl.onedrive_exceptions.PathException(
-      u'Invalid folder: %s' % str(path)
+      'Invalid folder: %s' % str(path)
     )
 
   def _resolve_object_tree_folder(self, object_tree_folder):
     dir = d1_onedrive.impl.directory.Directory()
     self._append_folders(dir, object_tree_folder)
-    dir.extend(self._resolvers.keys())
+    dir.extend(list(self._resolvers.keys()))
     return dir
 
   def _append_folders(self, d, object_tree_folder):
@@ -292,34 +284,34 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       folder_name = object_tree_path[-1]
     else:
       folder_name = 'root'
-    header = u'ObjectTree Folder "{}"'.format(folder_name)
+    header = 'ObjectTree Folder "{}"'.format(folder_name)
     res.write(header + '\n')
     res.write('{}\n\n'.format('=' * len(header)))
     res.write(
-      u'The content present in object_tree folders is determined by a list\n'
+      'The content present in object_tree folders is determined by a list\n'
     )
     res.write(
-      u'of specific identifiers and by queries applied against the DataONE\n'
+      'of specific identifiers and by queries applied against the DataONE\n'
     )
-    res.write(u'search index.\n\n')
-    res.write(u'Queries:\n\n')
+    res.write('search index.\n\n')
+    res.write('Queries:\n\n')
     if len(wdef_folder['queries']):
       for query in wdef_folder['queries']:
-        res.write(u'- {}\n'.format(query))
+        res.write('- {}\n'.format(query))
     else:
-      res.write(u'No queries specified at this level.\n')
-    res.write(u'\n\n')
-    res.write(u'Identifiers:\n\n')
+      res.write('No queries specified at this level.\n')
+    res.write('\n\n')
+    res.write('Identifiers:\n\n')
     if len(wdef_folder['identifiers']):
       for pid in wdef_folder['identifiers']:
-        res.write(u'- {}\n'.format(pid))
+        res.write('- {}\n'.format(pid))
     else:
-      res.write(u'No individual identifiers selected at this level.\n')
-    res.write(u'\n\n')
-    res.write(u'Sub-folders:\n\n')
+      res.write('No individual identifiers selected at this level.\n')
+    res.write('\n\n')
+    res.write('Sub-folders:\n\n')
     if len(wdef_folder['collections']):
       for f in wdef_folder['collections']:
-        res.write(u'- {}\n'.format(f))
+        res.write('- {}\n'.format(f))
     else:
-      res.write(u'No object_tree sub-folders are specified at this level.\n')
+      res.write('No object_tree sub-folders are specified at this level.\n')
     return res.getvalue().encode('utf-8')

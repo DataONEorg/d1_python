@@ -21,13 +21,11 @@
 """Test CLI high level functionality
 """
 
-from __future__ import absolute_import
-
 import contextlib
 import datetime
+import io
 import os
 import re
-import StringIO
 import tempfile
 
 import d1_cli.impl.cli
@@ -104,7 +102,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1050(self, cn_client_v2):
     """do_help(): Valid command returns help string"""
     cli = d1_cli.impl.cli.CLI()
-    cli.stdout = StringIO.StringIO()
+    cli.stdout = io.StringIO()
     test_cmd_str = 'get'
     cli.do_help(test_cmd_str)
     assert 'The object is saved to <file>' in cli.stdout.getvalue()
@@ -137,7 +135,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
     fi, tmp_path = tempfile.mkstemp(
-      prefix=u'test_dataone_cli.', suffix='.tmp', text=True
+      prefix='test_dataone_cli.', suffix='.tmp', text=True
     )
     os.close(fi)
     cli.do_set('authoritative-mn urn:node:myTestMN')
@@ -147,7 +145,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     )
     cli._command_processor._operation_queue.append(create_operation)
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      with d1_test.d1_test_case.mock_raw_input(answer_str):
+      with d1_test.d1_test_case.mock_input(answer_str):
         with mock.patch('sys.exit', return_value='') as mock_method:
           cli.do_exit('')
           assert mock_method.call_count == exit_call_count
@@ -175,7 +173,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     cli = d1_cli.impl.cli.CLI()
     cli.preloop()
     fi, path = tempfile.mkstemp(
-      prefix=u'test_dataone_cli.', suffix='.tmp', text=True
+      prefix='test_dataone_cli.', suffix='.tmp', text=True
     )
     os.close(fi)
     # Reset, set some values and save to file
@@ -387,20 +385,15 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert not blocked_mn_list
 
   @responses.activate
-  def test_1260(self, cn_client_v2):
+  def test_1260(self, caplog):
     """list nodes: Gives expected output"""
     mock_list_nodes.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('cn-url http://responses/cn')
-    with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      cli.do_listnodes('')
-    node_line = (
-      '         cn \tcn-ucsb-1                               '
-      '\thttps://cn-ucsb-1.dataone.org/cn\n         cn '
-      '\tcn-unm-1                                '
-      '\thttps://cn-unm-1.dataone.org/cn\n'
+    cli.do_listnodes('')
+    self.sample.assert_equals(
+      d1_test.d1_test_case.get_caplog_text(caplog), 'list_nodes'
     )
-    assert node_line in out_stream.getvalue()
 
   @responses.activate
   def test_1270(self, cn_client_v2):
@@ -413,28 +406,22 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     pid_str = 'test_pid_1234'
     cli.do_get('{} {}'.format(pid_str, tmp_file_path))
     with open(tmp_file_path, 'rb') as f:
-      received_sciobj_str = f.read()
+      received_sciobj_bytes = f.read()
     client = d1_client.mnclient.MemberNodeClient('http://responses/cn')
-    expected_sciobj_str = client.get(pid_str).content
-    assert received_sciobj_str == expected_sciobj_str
+    expected_sciobj_bytes = client.get(pid_str).content
+    assert received_sciobj_bytes == expected_sciobj_bytes
 
   @responses.activate
-  def test_1280(self, cn_client_v2):
+  def test_1280(self, cn_client_v2, caplog):
     """do_meta(): Successful system metadata download"""
     mock_get_system_metadata.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('cn-url http://responses/cn')
-    with tempfile.NamedTemporaryFile() as tmp_file:
-      tmp_file_path = tmp_file.name
-    pid_str = 'test_pid_1234'
-    cli.do_meta('{} {}'.format(pid_str, tmp_file_path))
-    with open(tmp_file_path, 'rb') as f:
-      received_sysmeta_pyxb = v2.CreateFromDocument(f.read())
-    client = d1_client.cnclient.CoordinatingNodeClient('http://responses/cn')
-    expected_sysmeta_pyxb = client.getSystemMetadata(pid_str)
-    d1_common.system_metadata.is_equivalent_pyxb(
-      received_sysmeta_pyxb, expected_sysmeta_pyxb
-    )
+    with d1_test.d1_test_case.temp_file_name() as tmp_file_path:
+      cli.do_meta('test_pid_1234 {}'.format(tmp_file_path))
+      with open(tmp_file_path, 'rb') as f:
+        received_sysmeta_xml = f.read().decode('utf-8')
+    self.sample.assert_equals(received_sysmeta_xml, 'do_meta')
 
   @responses.activate
   def test_1290(self, cn_client_v2):
@@ -442,28 +429,11 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     mock_list_objects.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('mn-url http://responses/cn')
-    with tempfile.NamedTemporaryFile() as tmp_file:
-      tmp_file_path = tmp_file.name
-    cli.do_list(tmp_file_path)
-    with open(tmp_file_path, 'rb') as f:
-      received_object_list_xml = f.read()
-    client = d1_client.mnclient.MemberNodeClient('http://responses/cn')
-    received_object_list_xml = d1_common.xml.pretty_xml(
-      re.sub(
-        r'<dateSysMetadataModified>.*?</dateSysMetadataModified>',
-        '',
-        received_object_list_xml,
-      )
-    )
-    expected_object_list_xml = d1_common.xml.pretty_xml(
-      re.sub(
-        r'<dateSysMetadataModified>.*?</dateSysMetadataModified>',
-        '',
-        client.listObjects().toxml('utf-8'),
-      )
-    )
-    assert d1_common.xml. \
-      is_equal_xml(received_object_list_xml, expected_object_list_xml)
+    with d1_test.d1_test_case.temp_file_name() as tmp_file_path:
+      cli.do_list(tmp_file_path)
+      with open(tmp_file_path, 'rb') as f:
+        received_object_list_xml = f.read().decode('utf-8')
+    self.sample.assert_equals(received_object_list_xml, 'do_list')
 
   @responses.activate
   def test_1300(self, cn_client_v2):
@@ -484,7 +454,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     for log_entry in expected_event_log_pyxb.logEntry:
       log_entry.dateLogged = now
     assert d1_common.xml. \
-      is_equal_pyxb(received_event_log_pyxb, expected_event_log_pyxb)
+      are_equal_pyxb(received_event_log_pyxb, expected_event_log_pyxb)
 
   #
   # Write Operations
@@ -502,7 +472,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       self._assert_queued_operations(cli, 1, 'create')
       # Check cancel
       with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-        with d1_test.d1_test_case.mock_raw_input('no'):
+        with d1_test.d1_test_case.mock_input('no'):
           with pytest.raises(cli_exceptions.InvalidArguments):
             cli.do_run('')
           assert 'Continue' in out_stream.getvalue()
@@ -511,11 +481,11 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
           'd1_cli.impl.cli_client.CLIMNClient.create'
       ) as mock_client:
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-          with d1_test.d1_test_case.mock_raw_input('yes'):
+          with d1_test.d1_test_case.mock_input('yes'):
             cli.do_run('')
       name, args, kwargs = mock_client.mock_calls[0]
       create_pid_str, tmp_file, create_sysmeta_pyxb = args
-      d1_common.system_metadata.normalize(
+      d1_common.system_metadata.normalize_in_place(
         create_sysmeta_pyxb, reset_timestamps=True
       )
       self.sample.assert_equals(create_sysmeta_pyxb, 'do_create', cn_client_v2)
@@ -528,7 +498,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
           cli, cli.do_create, '{pid} {tmp_file_path}'
       ):
         self._assert_queued_operations(cli, 1, 'create')
-        with d1_test.d1_test_case.mock_raw_input('yes'):
+        with d1_test.d1_test_case.mock_input('yes'):
           cli.do_clearqueue('')
         self._assert_queue_empty(cli)
     assert 'You are about to clear' in out_stream.getvalue()
@@ -541,7 +511,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
           cli, cli.do_update, 'old_pid {pid} {tmp_file_path}'
       ):
         self._assert_queued_operations(cli, 1, 'update')
-        with d1_test.d1_test_case.mock_raw_input('yes'):
+        with d1_test.d1_test_case.mock_input('yes'):
           cli.do_clearqueue('')
         self._assert_queue_empty(cli)
     assert 'You are about to clear' in out_stream.getvalue()
@@ -604,7 +574,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
   def _clear_queue(self, cli):
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      with d1_test.d1_test_case.mock_raw_input('yes'):
+      with d1_test.d1_test_case.mock_input('yes'):
         cli.do_clearqueue('')
       assert 'You are about to clear' in out_stream.getvalue()
 
@@ -628,7 +598,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       d1_test.instance_generator.random_data.random_3_words()
     )
     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-      tmp_file.write('sciobj_for_{}'.format(pid_str))
+      tmp_file.write('sciobj_for_{}'.format(pid_str).encode('utf-8'))
     # Add a create task to the queue.
     kwargs_dict.update({
       'pid': pid_str,
@@ -658,7 +628,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1380(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = '*:* dateModified:[* TO *]'
-    args = ' '.join(filter(None, ()))
+    args = ' '.join([_f for _f in () if _f])
     cli = d1_cli.impl.cli.CLI()
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
@@ -666,7 +636,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1390(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* dateModified:[* TO *]'
-    args = ' '.join(filter(None, ('id:knb-lter*',)))
+    args = ' '.join([_f for _f in ('id:knb-lter*',) if _f])
     cli = d1_cli.impl.cli.CLI()
     actual = cli._command_processor._create_solr_query(args)
     assert expect == actual
@@ -674,7 +644,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1400(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
-    args = ' '.join(filter(None, ('id:knb-lter*',)))
+    args = ' '.join([_f for _f in ('id:knb-lter*',) if _f])
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('query abstract:water')
     actual = cli._command_processor._create_solr_query(args)
@@ -683,7 +653,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1410(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
-    args = ' '.join(filter(None, ('id:knb-lter*',)))
+    args = ' '.join([_f for _f in ('id:knb-lter*',) if _f])
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('query abstract:water')
     actual = cli._command_processor._create_solr_query(args)
@@ -692,7 +662,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   def test_1420(self, cn_client_v2):
     """search: Expected Solr query is generated"""
     expect = 'id:knb-lter* formatId:text/csv dateModified:[* TO *]'
-    args = ' '.join(filter(None, ('id:knb-lter*',)))
+    args = ' '.join([_f for _f in ('id:knb-lter*',) if _f])
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('query None')
     cli.do_set('search-format-id text/csv')

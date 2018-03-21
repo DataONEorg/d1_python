@@ -25,20 +25,20 @@
   DataPackage.html
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import re
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 import zipfile
 
 import zipstream
 
 import d1_common.checksum
 import d1_common.date_time
+import d1_common.iter.bytes
 import d1_common.iter.file
-import d1_common.iter.string
 import d1_common.types.exceptions
 
 BAGIT_MAJOR_INT = 0
@@ -75,7 +75,10 @@ def validate_bagit_file(bagit_path):
 
 def _parse_tab_separated_file(bagit_zip, tag_path):
   with bagit_zip.open(tag_path, 'r') as f:
-    return [tuple(s.strip() for s in l.split('\t')) for l in f.readlines()]
+    return [
+      tuple(s.strip().decode('utf-8') for s in l.split(b'\t'))
+      for l in f.readlines()
+    ]
 
 
 def _get_manifest_info_list(bagit_zip):
@@ -148,7 +151,7 @@ def create_bagit_stream(dir_name, payload_info_list):
     payload_file_count
   )
   _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list)
-  _add_tag_manifest_file(zip_file, tag_info_list)
+  _add_tag_manifest_file(zip_file, dir_name, tag_info_list)
   return zip_file
 
 
@@ -156,9 +159,7 @@ def _add_path(dir_name, payload_info_list):
   """Add a key with the path to each payload_info_dict"""
   for payload_info_dict in payload_info_list:
     file_name = payload_info_dict['filename'] or payload_info_dict['pid']
-    payload_info_dict['path'] = os.path.join(
-      _get_safe_filename(dir_name), 'data', _get_safe_filename(file_name)
-    )
+    payload_info_dict['path'] = _gen_safe_path(dir_name, 'data', file_name)
 
 
 def _add_payload_files(zip_file, payload_info_list):
@@ -178,14 +179,14 @@ def _add_tag_files(
 ):
   """Generate the tag files and add them to the zip"""
   tag_info_list = []
-  _add_tag_file(zip_file, dir_name, tag_info_list, _get_bagit_txt_file_iter())
+  _add_tag_file(zip_file, dir_name, tag_info_list, _gen_bagit_text_file_tup())
   _add_tag_file(
     zip_file, dir_name, tag_info_list,
-    _get_bag_info_file_iter(payload_byte_count, payload_file_count)
+    _gen_bag_info_file_tup(payload_byte_count, payload_file_count)
   )
   _add_tag_file(
     zip_file, dir_name, tag_info_list,
-    _get_pid_mapping_file_iter(payload_info_list)
+    _gen_pid_mapping_file_tup(payload_info_list)
   )
   return tag_info_list
 
@@ -195,21 +196,23 @@ def _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list):
   for checksum_algorithm in _get_checksum_algorithm_set(payload_info_list):
     _add_tag_file(
       zip_file, dir_name, tag_info_list,
-      _get_manifest_file_iter(payload_info_list, checksum_algorithm)
+      _gen_manifest_file_tup(payload_info_list, checksum_algorithm)
     )
 
 
-def _add_tag_manifest_file(zip_file, tag_info_list):
+def _add_tag_manifest_file(zip_file, dir_name, tag_info_list):
   """Generate the tag manifest file and add it to the zip"""
-  zip_file.write_iter(*_get_tag_manifest_file_iter(tag_info_list))
+  _add_tag_file(
+    zip_file, dir_name, tag_info_list,
+    _gen_tag_manifest_file_tup(tag_info_list)
+  )
 
 
 def _add_tag_file(zip_file, dir_name, tag_info_list, tag_tup):
   """Add a tag file to zip_file and record info for the tag manifest file"""
-  tag_path, tag_iter = tag_tup
-  zip_file.write_iter(
-    os.path.join(_get_safe_filename(dir_name), tag_path), tag_iter
-  )
+  tag_name, tag_str = tag_tup
+  tag_path = _gen_safe_path(dir_name, tag_name)
+  tag_iter = _create_and_add_tag_iter(zip_file, tag_path, tag_str)
   tag_info_list.append({
     'path':
       tag_path,
@@ -220,8 +223,14 @@ def _add_tag_file(zip_file, dir_name, tag_info_list, tag_tup):
   })
 
 
-def _get_bagit_txt_file_iter():
-  return 'bagit.txt', d1_common.iter.string.StringIterator(
+def _create_and_add_tag_iter(zip_file, tag_path, tag_str):
+  tag_iter = d1_common.iter.bytes.BytesIterator(tag_str.encode(BAGIT_ENCODING))
+  zip_file.write_iter(tag_path, tag_iter)
+  return tag_iter
+
+
+def _gen_bagit_text_file_tup():
+  return 'bagit.txt', (
     '\n'.join(
       [
         'BagIt-Version: {}.{}'.format(BAGIT_MAJOR_INT, BAGIT_MINOR_INT),
@@ -231,19 +240,19 @@ def _get_bagit_txt_file_iter():
   )
 
 
-def _get_bag_info_file_iter(payload_byte_count, payload_file_count):
-  return 'bag-info.txt', d1_common.iter.string.StringIterator(
+def _gen_bag_info_file_tup(payload_byte_count, payload_file_count):
+  return 'bag-info.txt', (
     '\n'.join(
       [
         'Payload-Oxum: {}.{}'.format(payload_byte_count, payload_file_count),
         'Bagging-Date: {}'.format(d1_common.date_time.date_utc_now()),
-        'Bag-Size: {}'.format(_get_friendly_size(payload_byte_count)),
+        'Bag-Size: {}'.format(_gen_friendly_size(payload_byte_count)),
       ],
     ) + '\n'
   )
 
 
-def _get_manifest_file_iter(payload_info_list, checksum_algorithm):
+def _gen_manifest_file_tup(payload_info_list, checksum_algorithm):
   manifest_list = []
   file_name = 'manifest-{}.txt'.format(
     checksum_algorithm.replace('-', '').lower()
@@ -251,36 +260,42 @@ def _get_manifest_file_iter(payload_info_list, checksum_algorithm):
   for payload_info_dict in payload_info_list:
     if payload_info_dict['checksum_algorithm'] == checksum_algorithm:
       manifest_list.append(
-        u'{}\t{}'.
+        '{}\t{}'.
         format(payload_info_dict['checksum'], payload_info_dict['path'])
       )
-  return file_name, d1_common.iter.string.StringIterator(
-    '\n'.join(manifest_list) + '\n'
+  return file_name, ('\n'.join(manifest_list) + '\n')
+
+
+# TODO: Fix this formatting issue (.style.yapf)
+# flake8: noqa: W503
+def _gen_pid_mapping_file_tup(payload_info_list):
+  return 'pid-mapping.txt', (
+    '\n'.join(['{}\t{}'.format(d['pid'], d['path']) for d in payload_info_list])
+    + '\n'
   )
 
 
-def _get_pid_mapping_file_iter(payload_info_list):
-  return 'pid-mapping.txt', d1_common.iter.string.StringIterator(
-    '\n'.
-    join([u'{}\t{}'.format(d['pid'], d['path']) for d in payload_info_list]) + '\n'
-  )
-
-
-def _get_tag_manifest_file_iter(tag_info_list):
+def _gen_tag_manifest_file_tup(tag_info_list):
   file_name = 'tagmanifest-{}.txt'.format(
     TAG_CHECKSUM_ALGO.replace('-', '').lower()
   )
-  return file_name, d1_common.iter.string.StringIterator(
-    '\n'.
-    join([u'{}\t{}'.format(d['checksum'], d['path']) for d in tag_info_list]) + '\n'
+  return file_name, (
+    '\n'.join(
+      ['{}\t{}'.format(d['checksum'], d['path']) for d in tag_info_list]
+    ) + '\n'
   )
 
 
-def _get_safe_filename(pid):
-  return urllib.quote(pid.encode('utf-8'), safe=FILENAME_SAFE_CHARS)
+def _gen_safe_path(*path_list):
+  return os.path.join(
+    *[
+      urllib.parse.quote(p.encode('utf-8'), safe=FILENAME_SAFE_CHARS)
+      for p in path_list
+    ]
+  )
 
 
-def _get_friendly_size(n, use_decimal=False):
+def _gen_friendly_size(n, use_decimal=False):
   for byte_count, decimal_str, binary_str in SIZE_UNIT_LIST:
     if n >= byte_count:
       return '{:.2f} {}'.format(

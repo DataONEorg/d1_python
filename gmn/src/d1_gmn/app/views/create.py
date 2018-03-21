@@ -19,7 +19,6 @@
 # limitations under the License.
 """Sciobj create for view methods
 """
-from __future__ import absolute_import
 
 import datetime
 
@@ -146,14 +145,14 @@ def _get_sciobj_proxy_url(request):
 
 def _get_sciobj_file_url(pid):
   # http://en.wikipedia.org/wiki/File_URI_scheme
-  url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
+  url = 'file:///{}'.format(d1_common.url.encodePathElement(pid))
   return url
 
 
 def _read_sciobj_bytes_from_request(request):
   request.FILES['object'].seek(0)
-  sciobj_str = request.FILES['object'].read()
-  return sciobj_str
+  sciobj_bytes = request.FILES['object'].read()
+  return sciobj_bytes
 
 
 def _save_sciobj_bytes_from_request(request, sciobj_path):

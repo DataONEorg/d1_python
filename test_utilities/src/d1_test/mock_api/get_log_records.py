@@ -30,8 +30,6 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-from __future__ import absolute_import
-
 import datetime
 import logging
 import re
@@ -111,5 +109,4 @@ def _generate_log_records(client, n_start, n_count):
   log.count = len(log.logEntry)
   log.total = N_TOTAL
 
-  #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
   return log.toxml('utf-8')

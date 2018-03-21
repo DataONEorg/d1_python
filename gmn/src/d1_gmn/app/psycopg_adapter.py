@@ -23,8 +23,6 @@ Registers custom adapters with Psycopg, which simplify reading and writing
 custom DataONE PyXB types to/from database models.
 """
 
-from __future__ import absolute_import
-
 import psycopg2.extensions
 import pyxb.binding.datatypes
 
@@ -36,7 +34,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 def adapt_pyxb_bindings(client):
   return psycopg2.extensions.AsIs(
-    u"'{}'".format(unicode(client).replace('\'', '\'\''))
+    "'{}'".format(str(client).replace('\'', '\'\''))
   )
   # An example uses adapt() here, but I could not get that to work with
   # casting to unicode. It works with casting to str.

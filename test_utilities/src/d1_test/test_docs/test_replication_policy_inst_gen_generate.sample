@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ns1:replicationPolicy numberReplicas="6" replicationAllowed="true" xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <preferredMemberNode>mn_r</preferredMemberNode>
-  <preferredMemberNode>mn_b</preferredMemberNode>
-  <preferredMemberNode>mn_a</preferredMemberNode>
-  <blockedMemberNode>mn_j</blockedMemberNode>
-  <blockedMemberNode>mn_ll</blockedMemberNode>
+<?xml version="1.0" ?>
+<ns1:replicationPolicy numberReplicas="1" replicationAllowed="true" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <preferredMemberNode>mn_gt</preferredMemberNode>
+  <preferredMemberNode>mn_ng</preferredMemberNode>
+  <blockedMemberNode>mn_w</blockedMemberNode>
+  <blockedMemberNode>mn_v</blockedMemberNode>
 </ns1:replicationPolicy>

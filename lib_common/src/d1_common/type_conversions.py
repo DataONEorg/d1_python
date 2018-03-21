@@ -32,8 +32,6 @@ In the DataONE Python stack, XML docs are represented in a few different ways.
 We select string as the "hub" representation for XML.
 """
 
-from __future__ import absolute_import
-
 import re
 import xml.etree.ElementTree
 
@@ -65,14 +63,13 @@ BINDING_TO_VERSION_TAG_DICT = {
 }
 
 # Register global namespace prefixes for use by ElementTree when serializing.
-for prefix_str, uri_str in NS_DICT.items():
+for prefix_str, uri_str in list(NS_DICT.items()):
   xml.etree.ElementTree.register_namespace(prefix_str, uri_str)
 
 # dom = etree.parse(io.BytesIO(content))
 # validateBinding(self)
 # dom = log.toDOM() # creates a xml.dom.minidom.Document
 # pyxb.utils.domutils.BindingDOMSupport.DeclareNamespace(v2.Namespace, 'v2')
-# pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(v1.Namespace)
 
 # etree_replace_namespace()
 
@@ -121,7 +118,7 @@ def get_bindings_by_api_version(api_major, api_minor=0):
 
 
 def get_version_tag(api_major):
-  return u'v{}'.format(api_major)
+  return 'v{}'.format(api_major)
 
 
 def get_version_tag_from_url(url):
@@ -129,13 +126,6 @@ def get_version_tag_from_url(url):
   if not m:
     return None
   return m.group(2)
-
-
-def set_default_pyxb_namespace(api_major):
-  pyxb_bindings = get_bindings_by_version_tag(api_major)
-  pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(
-    pyxb_bindings.Namespace
-  )
 
 
 def get_pyxb_namespaces():
@@ -324,7 +314,7 @@ def strip_v2_elements(etree_obj):
   elif etree_obj.tag == v2_0_tag('systemMetadata'):
     strip_systemMetadata(etree_obj)
   else:
-    assert False, u'Unknown root element. tag="{}"'.format(etree_obj.tag)
+    assert False, 'Unknown root element. tag="{}"'.format(etree_obj.tag)
 
 
 def strip_systemMetadata(etree_obj):

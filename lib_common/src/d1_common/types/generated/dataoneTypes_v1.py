@@ -4,7 +4,7 @@
 # Generated 2017-10-17 10:39:46.192050 by PyXB version 1.2.6 using Python 2.7.12.final.0
 # Namespace http://ns.dataone.org/service/types/v1
 
-from __future__ import unicode_literals
+
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer

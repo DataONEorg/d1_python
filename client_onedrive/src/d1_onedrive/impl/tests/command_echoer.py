@@ -21,8 +21,6 @@
 """Echo commands back for unit testing / TDD.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 # Set up logger for this module.

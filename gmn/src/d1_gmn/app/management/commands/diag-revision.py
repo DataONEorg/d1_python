@@ -30,8 +30,6 @@ in production, but it may happen during development or if the database is
 manipulated directly during testing.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 import time
@@ -65,7 +63,7 @@ class Command(django.core.management.base.BaseCommand):
   def handle(self, *args, **opt):
     util.log_setup(opt['debug'])
     logging.info('test')
-    logging.info(u'Running management command: {}'.format(__name__))
+    logging.info('Running management command: {}'.format(__name__))
     util.exit_if_other_instance_is_running(__name__)
     self._opt = opt
     try:

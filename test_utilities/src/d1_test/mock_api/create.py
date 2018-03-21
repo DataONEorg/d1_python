@@ -24,19 +24,18 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-from __future__ import absolute_import
-
 import base64
-import json
 import logging
 import re
-import urlparse
+import urllib.parse
 
 import responses
 
+import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.url
+import d1_common.util
 
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
@@ -67,19 +66,84 @@ def _request_callback(request):
     return exc_response_tup
   # Return regular response
   try:
-    body_str = request.body.read()
+    body_bytes = request.body.read()
   except AttributeError:
-    body_str = request.body
-  url_obj = urlparse.urlparse(request.url)
-  header_dict = {
+    body_bytes = request.body
+
+  assert isinstance(body_bytes, bytes)
+
+  url_obj = urllib.parse.urlparse(request.url)
+
+  # header_dict = {
+  #   'Content-Type':
+  #     d1_common.const.CONTENT_TYPE_XML,
+  #   'Echo-Body-Base64':
+  #     base64.standard_b64encode(body_bytes).decode('utf-8'),
+  #   'Echo-Query-Base64':
+  #     base64.standard_b64encode(
+  #       d1_common.util.serialize_to_normalized_pretty_json(
+  #         urllib.parse.parse_qs(url_obj.query)
+  #       ).encode('utf-8')
+  #     ).decode('utf-8'),
+  #   'Echo-Header-Base64':
+  #     base64.standard_b64encode(
+  #       d1_common.util.serialize_to_normalized_pretty_json(
+  #         dict(request.headers)
+  #       ).encode('utf-8')
+  #     ).decode('utf-8'),
+  # }
+
+  header_dict = pack_echo_header(body_bytes, request.headers, url_obj)
+
+  return (
+    200, header_dict,
+    d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8'),
+  )
+
+
+def pack_echo_header(body_bytes, headers, url_obj):
+  return {
     'Content-Type':
       d1_common.const.CONTENT_TYPE_XML,
-    'Echo-Body-Base64':
-      base64.b64encode(body_str),
-    'Echo-Query-Base64':
-      base64.b64encode(json.dumps(urlparse.parse_qs(url_obj.query))),
-    'Echo-Header-Base64':
-      base64.b64encode(json.dumps(dict(request.headers))),
+    'Echo-POST-JSON-Base64':
+      base64.standard_b64encode(
+        d1_common.util.serialize_to_normalized_pretty_json({
+          'query': urllib.parse.parse_qs(url_obj.query),
+          'headers': dict(headers),
+          # TODO: Need to include body, but it must be normalized. As it is, the
+          # MMP parts arrive in random order
+          # 'body': body_bytes,
+        }).encode('utf-8')
+      ).decode('ascii')
   }
-  body_str = d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8')
-  return 200, header_dict, body_str
+
+
+def unpack_echo_header(header_dict):
+  return (
+    base64.standard_b64decode(
+      header_dict['Echo-POST-JSON-Base64'].encode('ascii')
+    ).decode('utf-8')
+  )
+
+  # TODO: MMP normalization
+
+  # echo_dict = json.loads(
+  #   base64.standard_b64decode(header_dict['Echo-POST-JSON-Base64'].encode('ascii')).decode('utf-8')
+  # )
+  #
+  # multipart_decoder = requests_toolbelt.MultipartDecoder(
+  #   echo_dict['body'].encode('utf-8'),
+  #   echo_dict['headers']['Content-Type'],
+  # )
+  #
+  # serialized_mmp_list = [
+  #   (dict(p.headers), 'SHA-1/{}'.format(
+  #     d1_common.checksum.format_checksum(
+  #       d1_common.checksum.create_checksum_object_from_string(
+  #         p.text.encode('utf-8')
+  #       )
+  #     )
+  #   )) for p in multipart_decoder.parts
+  # ]
+  # echo_dict['body'] = serialized_mmp_list
+  # return echo_dict

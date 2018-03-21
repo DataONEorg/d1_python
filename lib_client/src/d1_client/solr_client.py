@@ -39,8 +39,6 @@ Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
 client/python/solr.py
 """
 
-from __future__ import absolute_import
-
 import datetime
 import logging
 import random
@@ -96,7 +94,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     )
 
   def __str__(self):
-    return u'SolrClient(base_url="{}")'.format(self._base_url)
+    return 'SolrClient(base_url="{}")'.format(self._base_url)
 
   #
   # GET queries
@@ -145,22 +143,21 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
   def delete(self, doc_id):
     return self.query(
       'solr',
-      u'<delete><id>' + self._escape_xml_entity(unicode(doc_id)) +
-      u'</id></delete>',
+      '<delete><id>' + self._escape_xml_entity(str(doc_id)) + '</id></delete>',
       do_post=True,
     )
 
   def delete_by_query(self, query):
     return self.query(
       'solr',
-      u'<delete><query>' + self._escape_xml_entity(query) + u'</query></delete>',
+      '<delete><query>' + self._escape_xml_entity(query) + '</query></delete>',
       do_post=True,
     )
 
   def add(self, **fields):
     return self.query(
       'solr',
-      u'<add>{}</add>'.format(self._format_add(fields)),
+      '<add>{}</add>'.format(self._format_add(fields)),
       do_post=True,
     )
 
@@ -169,7 +166,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     record."""
     return self.query(
       'solr',
-      u'<add>{}</add>'.
+      '<add>{}</add>'.
       format(''.join([self._format_add(fields) for fields in docs])),
       do_post=True,
     )
@@ -277,11 +274,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
       if n_values == n_bins:
         # Use equivalence instead of range queries to retrieve the
         # values
-        for i in xrange(n_bins):
+        for i in range(n_bins):
           a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-          bin_q = u'{}:{}'.format(
-            name, self._prepare_query_term(name, a_bin[0])
-          )
+          bin_q = '{}:{}'.format(name, self._prepare_query_term(name, a_bin[0]))
           q_bin.append(bin_q)
           bin_list.append(a_bin)
       else:
@@ -289,16 +284,16 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         if delta == 1:
           # Use equivalence queries, except the last one which includes the
           # remainder of terms
-          for i in xrange(n_bins - 1):
+          for i in range(n_bins - 1):
             a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-            bin_q = u'{}:{}'.format(
+            bin_q = '{}:{}'.format(
               name, self._prepare_query_term(name, a_bin[0])
             )
             q_bin.append(bin_q)
             bin_list.append(a_bin)
           term = f_vals[name][(n_bins - 1) * 2]
           a_bin = [term, f_vals[name][((n_values - 1) * 2)], 0]
-          bin_q = u'{}:[{} TO *]'.format(
+          bin_q = '{}:[{} TO *]'.format(
             name, self._prepare_query_term(name, term)
           )
           q_bin.append(bin_q)
@@ -309,22 +304,22 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
           # the edges
           c_offset = 0.0
           delta = float(n_values) / float(n_bins)
-          for i in xrange(n_bins):
+          for i in range(n_bins):
             idx_l = int(c_offset) * 2
             idx_u = (int(c_offset + delta) * 2) - 2
             a_bin = [f_vals[name][idx_l], f_vals[name][idx_u], 0]
             # logging.info(str(a_bin))
             try:
               if i == 0:
-                bin_q = u'{}:[* TO {}]'.format(
+                bin_q = '{}:[* TO {}]'.format(
                   name, self._prepare_query_term(name, a_bin[1])
                 )
               elif i == n_bins - 1:
-                bin_q = u'{}:[{} TO *]'.format(
+                bin_q = '{}:[{} TO *]'.format(
                   name, self._prepare_query_term(name, a_bin[0])
                 )
               else:
-                bin_q = u'{}:[{} TO {}]'.format(
+                bin_q = '{}:[{} TO {}]'.format(
                   name,
                   self._prepare_query_term(name, a_bin[0]),
                   self._prepare_query_term(name, a_bin[1])
@@ -347,7 +342,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         'facet.query': [sq.encode('utf-8') for sq in q_bin],
       }
       resp_dict = self._post_query(query_dict, **query_args)
-      for i in xrange(len(bin_list)):
+      for i in range(len(bin_list)):
         v = resp_dict['facet_counts']['facet_queries'][q_bin[i]]
         bin_list[i][2] = v
         if include_queries:
@@ -358,9 +353,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     return bin_list
 
   def _escape_query_term(self, term):
-    term = term.replace(u'\\', u'\\\\')
+    term = term.replace('\\', '\\\\')
     for c in RESERVED_CHAR_LIST:
-      term = term.replace(c, u'\{}'.format(c))
+      term = term.replace(c, '\{}'.format(c))
     return term
 
   def _prepare_query_term(self, field, term):
@@ -394,19 +389,19 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     if value is None:
       return None
     if field_type == 'string':
-      return unicode(value)
+      return str(value)
     elif field_type == 'text':
-      return unicode(value)
+      return str(value)
     elif field_type == 'int':
       try:
         v = int(value)
-        return unicode(v)
+        return str(v)
       except:
         return None
     elif field_type == 'float':
       try:
         v = float(value)
-        return unicode(v)
+        return str(v)
       except:
         return None
     elif field_type == 'date':
@@ -419,7 +414,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return v
       except:
         return None
-    return unicode(value)
+    return str(value)
 
   def _get_solr_type(self, field):
     """Returns the Solr type of the specified field name.
@@ -446,14 +441,14 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
   def _format_add(self, fields):
     el_list = ['<doc>']
-    for f, v in fields.items():
+    for f, v in list(fields.items()):
       field_type = self._get_solr_type(f)
       if isinstance(v, list):
         for vi in v:
           vi = self._coerce_type(field_type, vi)
           if vi is not None:
             el_list.append('<field name="')
-            el_list.append(self._escape_xml_entity(unicode(f)))
+            el_list.append(self._escape_xml_entity(str(f)))
             el_list.append('">')
             el_list.append(self._escape_xml_entity(vi))
             el_list.append('</field>')
@@ -461,7 +456,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         v = self._coerce_type(field_type, v)
         if v is not None:
           el_list.append('<field name="')
-          el_list.append(self._escape_xml_entity(unicode(f)))
+          el_list.append(self._escape_xml_entity(str(f)))
           el_list.append('">')
           el_list.append(self._escape_xml_entity(v))
           el_list.append('</field>')
@@ -596,7 +591,7 @@ class SolrSearchResponseIterator(object):
     """Override this method in derived classes to reformat the row response."""
     return row
 
-  def next(self):
+  def __next__(self):
     if self.done:
       raise StopIteration()
     if self.c_record > self.max_records:
@@ -668,10 +663,10 @@ class SolrSubsampleResponseIterator(SolrSearchResponseIterator):
       sample_size = n_samples / page_size
       if sample_size > n_pages:
         sample_size = n_pages
-      self._page_starts += random.sample(xrange(0, n_pages), sample_size)
+      self._page_starts += random.sample(list(range(0, n_pages)), sample_size)
       self._page_starts.sort()
 
-  def next(self):
+  def __next__(self):
     """Overrides the default iteration by sequencing through records within a
     page and when necessary selecting the next page from the randomly generated
     list."""
@@ -754,7 +749,7 @@ class SolrValuesResponseIterator(object):
       self.res = []
     self.index = 0
 
-  def next(self):
+  def __next__(self):
     if self.done:
       raise StopIteration()
     if len(self.res) == 0:

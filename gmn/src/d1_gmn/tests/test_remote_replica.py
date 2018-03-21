@@ -30,8 +30,6 @@
 [...]
 """
 
-from __future__ import absolute_import
-
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -71,14 +69,14 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
   # TODO: Many sysmeta tests could handily be refactored to this
   def _assert_sysmeta_round_trip(self, client, sysmeta_pyxb):
-    send_sciobj_str, send_sysmeta_pyxb = self.create_obj_by_sysmeta(
+    send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj_by_sysmeta(
       client, sysmeta_pyxb
     )
-    recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(
+    recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(
       client, d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     )
-    assert send_sciobj_str == recv_sciobj_str
-    assert d1_common.system_metadata.is_equivalent_pyxb(
+    assert send_sciobj_bytes == recv_sciobj_bytes
+    assert d1_common.system_metadata.are_equivalent_pyxb(
       send_sysmeta_pyxb, recv_sysmeta_pyxb
     )
 
@@ -135,7 +133,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     self.dump(recv_sysmeta_1_pyxb)
     assert send_sciobj_1_str == recv_sciobj_1_str
-    assert d1_common.system_metadata.is_equivalent_pyxb(
+    assert d1_common.system_metadata.are_equivalent_pyxb(
       send_sysmeta_1_pyxb, recv_sysmeta_1_pyxb
     )
     # Check that pid_2 retains initial replica info for node1 and node2
@@ -144,6 +142,6 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     self.dump(recv_sysmeta_2_pyxb)
     assert send_sciobj_2_str == recv_sciobj_2_str
-    assert d1_common.system_metadata.is_equivalent_pyxb(
+    assert d1_common.system_metadata.are_equivalent_pyxb(
       send_sysmeta_2_pyxb, recv_sysmeta_2_pyxb
     )

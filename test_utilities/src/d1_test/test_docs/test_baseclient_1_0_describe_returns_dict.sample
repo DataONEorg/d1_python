@@ -1,7 +1,7 @@
 {
-  "Content-Length": "229", 
-  "Content-Type": "application/octet-stream", 
-  "DataONE-Checksum": "SHA-1,1d713c42113e21733f33d1be84fa18bcb2d6fa20", 
-  "DataONE-FormatId": "audio/mpeg", 
+  "Content-Length": "210",
+  "Content-Type": "application/octet-stream",
+  "DataONE-Checksum": "SHA-1,a04842d34b7a62cfb5ee7d7b7abffe577240eab5",
+  "DataONE-FormatId": "text/csv",
   "DataONE-SerialVersion": "3"
 }

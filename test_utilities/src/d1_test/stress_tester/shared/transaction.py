@@ -21,16 +21,14 @@
 """Base class for Multi-Mechanize Transaction
 """
 
-from __future__ import absolute_import
-
 import codecs
 import os
 import random
 import time
 
-import certificate
-import settings
-import subject_dn
+from . import certificate
+from . import settings
+from . import subject_dn
 
 import d1_common.const
 import d1_common.util

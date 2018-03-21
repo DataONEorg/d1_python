@@ -23,8 +23,6 @@
 Resolve a filesystem path pointing into a TimePeriod controlled hierarchy.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.resolver.resolver_base
@@ -57,9 +55,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, object_tree_folder, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
 
@@ -71,7 +67,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     )
 
   def get_directory(self, object_tree_folder, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 2:
       return self._get_directory(object_tree_folder, path)
@@ -82,13 +78,13 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     if len(path) <= 2:
-      raise onedrive_exceptions.PathException(u'Invalid file')
+      raise onedrive_exceptions.PathException('Invalid file')
     return self._resource_map_resolver.read_file(
       object_tree_folder, path[2:], size, offset
     )
@@ -108,9 +104,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       try:
         year = int(path[1])
       except ValueError:
-        raise onedrive_exceptions.PathException(
-          u'Expected year element in path'
-        )
+        raise onedrive_exceptions.PathException('Expected year element in path')
       else:
         return self._resolve_objects_in_year(year, object_tree_folder)
 
@@ -186,7 +180,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
       begin_year = decade
     if end_year > decade + 9:
       end_year = decade + 9
-    return range(begin_year, end_year + 1)
+    return list(range(begin_year, end_year + 1))
 
   def _validate_and_split_decade_range(self, decade):
     try:
@@ -198,7 +192,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         raise ValueError
     except ValueError:
       raise onedrive_exceptions.PathException(
-        u'Expected decade range on form yyyy-yyyy'
+        'Expected decade range on form yyyy-yyyy'
       )
     else:
       return first_year, last_year

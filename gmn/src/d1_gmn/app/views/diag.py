@@ -20,8 +20,6 @@
 """REST call handlers for DataONE Member Node APIs
 """
 
-from __future__ import absolute_import
-
 import pprint
 
 import d1_gmn.app.restrict_to_verb
@@ -71,5 +69,5 @@ def echo_exception(request, exception_type):
     raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
   else:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'exception-type must be python or dataone'
+      0, 'exception-type must be python or dataone'
     )

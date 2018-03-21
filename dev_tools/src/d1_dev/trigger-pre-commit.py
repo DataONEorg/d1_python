@@ -35,7 +35,6 @@ in the IDE to the line that triggered the error.
 After fixing an error, hit Enter to retrigger the hooks in order to check if
 there more errors or S to skip directly to the next file.
 """
-from __future__ import absolute_import
 
 import argparse
 import logging
@@ -131,9 +130,9 @@ def trigger_pre_commit_hook(trigger_path):
         trigger_path
       ],
       stderr=subprocess.STDOUT
-    )
+    ).decode('utf-8')
   except subprocess.CalledProcessError as e:
-    res_str = e.output
+    res_str = e.output.decode('utf-8')
 
   for res_line in res_str.splitlines():
     logging.debug('line: {}'.format(res_line))
@@ -143,7 +142,7 @@ def trigger_pre_commit_hook(trigger_path):
       if DEFAULT_PYCHARM_BIN_PATH is not None:
         open_exception_location_in_pycharm(trigger_path, m.group(1))
       while True:
-        action_str = raw_input(
+        action_str = input(
           'Opened in PyCharm. Recheck: Enter, Skip file: s Enter: '
         )
         if action_str == '':
@@ -176,7 +175,7 @@ def open_exception_location_in_pycharm(src_path, src_line_num):
       DEFAULT_PYCHARM_BIN_PATH, '--line', src_line_num, src_path
     ])
   except subprocess.CalledProcessError as e:
-    logging.warn(
+    logging.warning(
       'PyCharm debugging is enabled but opening the location of the exception '
       'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
         e.message, src_path, src_line_num

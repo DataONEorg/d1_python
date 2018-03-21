@@ -21,8 +21,6 @@
 """Test MNStorage.create() and MNRead.get() with standalone objects
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import freezegun
@@ -51,7 +49,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """get(): Response contains expected headers"""
     with freezegun.freeze_time('1981-01-02'):
       with d1_gmn.tests.gmn_mock.disable_auth():
-        pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
+        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
           mn_client_v1_v2,
           pid='get_response',
           now_dt=datetime.datetime(2010, 10, 10, 10, 10, 10),
@@ -75,9 +73,11 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1020(self, mn_client_v1_v2):
     """get(): Read object back and do byte-by-byte comparison"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sent_sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
-      assert sent_sciobj_str == recv_sciobj_str
+      pid, sid, sent_sciobj_bytes, sysmeta_pyxb = self.create_obj(
+        mn_client_v1_v2
+      )
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
+      assert sent_sciobj_bytes == recv_sciobj_bytes
 
   @responses.activate
   def test_1030(self, mn_client_v1_v2):
@@ -106,7 +106,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """create() / get(): Object with no explicit permissions can be retrieved
     by a trusted subject
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
     self.get_obj(
       mn_client_v1_v2,
       pid,
@@ -122,7 +122,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     # This applies even when the non-trusted subjects were previously trusted
     # and allowed to create the object.
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -139,7 +139,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """create() / get(): Object with no explicit permissions cannot be retrieved
     by the submitter
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -156,7 +156,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """create() / get(): Object with no explicit permissions can be retrieved
     by the rightsHolder
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, permission_list=None
     )
     self.get_obj(
@@ -171,7 +171,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1090(self, mn_client_v1_v2):
     """create() / get(): Object that has read access for subject can be retrieved
     by that subject"""
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2,
       permission_list=[(['subj5'], ['read'])],
     )
@@ -187,7 +187,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """create() / get(): Object that has higher level access for subject also
     allows lower level access by subject
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
       mn_client_v1_v2, permission_list=[(['subj5'], ['changePermission'])]
     )
     self.get_obj(

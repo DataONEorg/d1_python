@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 # import d1_test.d1_test_case
 
 # TODO
@@ -30,11 +28,11 @@ from __future__ import absolute_import
 #   # https://releases.dataone.org/online/api-documentation-v2.0.1/
 #   # apis/MN_APIs.html#MNView.view
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def viewResponse(self, theme, did, **kwargs):
 #     return self.GET(['views', theme, did], query=kwargs)
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def view(self, theme, did, **kwargs):
 #     response = self.viewResponse(theme, did, **kwargs)
 #     return self._read_stream_response(response)
@@ -43,11 +41,11 @@ from __future__ import absolute_import
 #   # https://releases.dataone.org/online/api-documentation-v2.0.1/
 #   # apis/MN_APIs.html#MNView.listViews
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def listViewsResponse(self, **kwargs):
 #     return self.GET(['view'], query=kwargs)
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def listViews(self, **kwargs):
 #     response = self.listViewsResponse(**kwargs)
 #     return self._read_dataone_type_response(response, 'OptionList')
@@ -56,11 +54,11 @@ from __future__ import absolute_import
 #   # https://releases.dataone.org/online/api-documentation-v2.0.1/
 #   # apis/MN_APIs.html#MNPackage.getPackage
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def getPackageResponse(self, packageType, did, **kwargs):
 #     return self.GET(['packages', packageType, did], query=kwargs)
 #
-#   @d1_common.util.utf8_to_unicode
+#   #@d1_common.util.utf8_to_unicode
 #   def getPackage(self, packageType, did, **kwargs):
 #     response = self.getPackageResponse(packageType, did, **kwargs)
 #     return self._read_stream_response(response)

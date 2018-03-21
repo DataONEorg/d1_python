@@ -20,13 +20,11 @@
 """General utilities
 """
 
-from __future__ import absolute_import
-
 import base64
 import inspect
 import logging
 import traceback
-import urlparse
+import urllib.parse
 
 import d1_gmn.app
 
@@ -106,9 +104,9 @@ def add_basic_auth_header_if_enabled(headers):
 
 def _mk_http_basic_auth_header():
   return (
-    'Authorization', u'Basic {}'.format(
+    'Authorization', 'Basic {}'.format(
       base64.standard_b64encode(
-        u'{}:{}'.format(
+        '{}:{}'.format(
           django.conf.settings.PROXY_MODE_BASIC_AUTH_USERNAME,
           django.conf.settings.PROXY_MODE_BASIC_AUTH_PASSWORD
         )
@@ -124,7 +122,7 @@ def dump_stack():
 
 
 def is_proxy_url(url):
-  url_split = urlparse.urlparse(url)
+  url_split = urllib.parse.urlparse(url)
   return url_split.scheme in ('http', 'https')
 
 
@@ -152,6 +150,6 @@ def delete_unused_subjects():
 
   logging.debug('Deleting {} unused subjects:'.format(query.count()))
   for s in query.all():
-    logging.debug(u'  {}'.format(s.subject))
+    logging.debug('  {}'.format(s.subject))
 
   query.delete()

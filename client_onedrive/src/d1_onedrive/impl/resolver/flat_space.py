@@ -24,8 +24,6 @@ Resolve a filesystem path that points to a directory to the contents of the
 directory by querying the query engine.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_onedrive.impl.resolver.resolver_base
@@ -37,7 +35,7 @@ from d1_onedrive.impl import util
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = u"""Use FlatSpace to go directly to any DataONE object by typing
+README_TXT = """Use FlatSpace to go directly to any DataONE object by typing
 the PID in the path.
 
 E.g.,
@@ -58,9 +56,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, object_tree_root, path):
-    log.debug(
-      u'get_attributes: {}'.format(util.string_from_path_elements(path))
-    )
+    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
     if not path:
       return attributes.Attributes(is_dir=True)
     if self._is_readme_file(path):
@@ -69,7 +65,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
   def get_directory(self, object_tree_root, path):
-    log.debug(u'get_directory: {}'.format(util.string_from_path_elements(path)))
+    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
     if not path:
       return [self._get_readme_filename()] \
         + self._object_tree._get_individually_synced_object_pids()
@@ -79,7 +75,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
   def read_file(self, object_tree_root, path, size, offset):
     log.debug(
-      u'read_file: {}, {}, {}'.
+      'read_file: {}, {}, {}'.
       format(util.string_from_path_elements(path), size, offset)
     )
     if self._is_readme_file(path):

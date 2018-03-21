@@ -23,8 +23,6 @@ Functionality that is not part of the DataONE Member Node API yet is designed to
 be available when the MN is in production.
 """
 
-from __future__ import absolute_import
-
 import ctypes
 import datetime
 import os
@@ -90,8 +88,8 @@ def home(request):
     Sum('size')
   )['size__sum'] or 0
   n_storage_free = _get_free_space(django.conf.settings.OBJECT_STORE_PATH)
-  storage_space = u'{} GiB / {} GiB'.format(
-    n_storage_used / 1024**3, n_storage_free / 1024**3
+  storage_space = '{:.2f} GiB / {:.2f} GiB'.format(
+    float(n_storage_used) / 1024**3, float(n_storage_free) / 1024**3
   )
 
   n_permissions = '{:,}'.format(d1_gmn.app.models.Permission.objects.count())

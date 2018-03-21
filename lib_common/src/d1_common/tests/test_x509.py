@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import logging
 
 import cryptography.hazmat.backends.openssl.x509
@@ -28,6 +26,7 @@ import freezegun
 import d1_common.cert.subject_info
 import d1_common.cert.subjects
 import d1_common.cert.x509
+import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.sample

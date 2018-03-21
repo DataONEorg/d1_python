@@ -22,8 +22,6 @@
 
 Note: Can't use any other D1 packages here. They may not be installed yet.
 """
-from __future__ import absolute_import
-from __future__ import print_function
 
 import argparse
 import logging

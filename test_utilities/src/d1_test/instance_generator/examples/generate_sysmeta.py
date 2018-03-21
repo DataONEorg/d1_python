@@ -28,15 +28,14 @@ generate_sysmeta.py -f $OBJECT \
 
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import datetime
 import logging
 import optparse
 import os.path
 import sys
-import urllib2
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import d1_common.types.dataoneTypes as dataoneTypes
 
@@ -54,7 +53,7 @@ def getObjectFormatFromID(fmtid, default='application/octet-stream'):
     'https://repository.dataone.org/software/cicore/trunk/d1_common_java/src/'
     'main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml'
   )
-  doc = urllib2.urlopen(formatlistURL).read().decode('utf-8')
+  doc = urllib.request.urlopen(formatlistURL).read().decode('utf-8')
   formats = dataoneTypes.CreateFromDocument(doc)
   for format in formats.objectFormat:
     if format.formatId == fmtid:
@@ -139,7 +138,7 @@ if __name__ == '__main__':
     parser.print_help()
     sys.exit()
   if not os.path.exists(options.fname):
-    print('File %s not found' % options.fname)
+    print(('File %s not found' % options.fname))
     parser.print_help()
     sys.exit()
 
@@ -187,5 +186,5 @@ if __name__ == '__main__':
 
   logging.debug(str(oopts))
 
-  print(processDoc(oopts['fname'], oopts))
+  print((processDoc(oopts['fname'], oopts)))
   sys.exit()

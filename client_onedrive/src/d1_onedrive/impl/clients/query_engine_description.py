@@ -21,8 +21,6 @@
 """Cache and manipulate a queryEngineDescription
 """
 
-from __future__ import absolute_import
-
 import logging
 
 # Set up logger for this module.

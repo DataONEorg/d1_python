@@ -1,0 +1,10 @@
+name: NotFound
+errorCode: 404
+detailCode: 0
+description: Attempted to perform operation on non-existing object
+traceInformation:
+  <traceInformation>
+    <value>1. Σολυτα βωνορυμ θε κυο,
+  2. ναμ ετ νοσθερ σιμιλικυε.</value>
+  </traceInformation>
+<unset>nodeId: urn:node:LTER

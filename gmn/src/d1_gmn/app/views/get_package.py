@@ -29,6 +29,7 @@ import d1_gmn.app.views.util
 import d1_common.bagit
 import d1_common.checksum
 import d1_common.const
+import d1_common.iter.bytes
 import d1_common.iter.file
 import d1_common.iter.string
 import d1_common.types.exceptions
@@ -48,8 +49,8 @@ def get_package(request, pid, package_type):
 def _get_package(request, pid, package_type):
   if package_type != d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Unsupported Data Package format. '
-      u'Currently, only BagIt (formatId={}) is supported'.
+      0, 'Unsupported Data Package format. '
+      'Currently, only BagIt (formatId={}) is supported'.
       format(d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID)
     )
   pid_list = d1_gmn.app.resource_map.get_resource_map_members(pid)
@@ -91,7 +92,7 @@ def _create_sysmeta_info_dict(request, pid):
     'pid':
       pid,
     'filename':
-      u'{}.sysmeta.xml'.format(d1_gmn.app.util.get_sci_model(pid).filename),
+      '{}.sysmeta.xml'.format(d1_gmn.app.util.get_sci_model(pid).filename),
     'iter':
       sysmeta_iter,
     'checksum':
@@ -108,7 +109,7 @@ def _create_sciobj_iterator(pid):
 
 
 def _create_sysmeta_iterator(request, pid):
-  return d1_common.iter.string.StringIterator(
+  return d1_common.iter.bytes.BytesIterator(
     d1_gmn.app.views.util.
     generate_sysmeta_xml_matching_api_version(request, pid)
   )

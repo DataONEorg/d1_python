@@ -30,11 +30,10 @@ DataONE node. Data is retrieved from the target only when required.
 :Dependencies:
   - python 2.6
 """
-from __future__ import absolute_import
 
+import http.client
 import logging
 
-import httplib
 import pyxb
 
 import d1_common.types.exceptions
@@ -88,7 +87,7 @@ class ObjectListIterator(object):
   def __iter__(self):
     return self
 
-  def next(self):
+  def __next__(self):
     """Implements the next() method for the iterator.  Returns the next
     ObjectInfo instance. Loads more if at the end of the page and there's more
     pages to load.
@@ -120,7 +119,7 @@ class ObjectListIterator(object):
         start=start, count=self._pagesize, fromDate=self._fromDate,
         nodeId=self._nodeId
       )
-    except httplib.BadStatusLine as e:
+    except http.client.BadStatusLine as e:
       self.log.warn("Server responded with Bad Status Line. Retrying in 5sec")
       self._client.connection.close()
       if trys > 3:

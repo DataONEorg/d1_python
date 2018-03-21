@@ -19,7 +19,6 @@
 # limitations under the License.
 """Import PyXB bindings required for handling v1.0 DataONE types
 """
-from __future__ import absolute_import
 
 import logging
 

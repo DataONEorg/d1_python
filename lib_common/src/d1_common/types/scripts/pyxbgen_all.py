@@ -21,9 +21,6 @@
 """Generate PyXB binding classes from schemas
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import optparse
 import os
 
@@ -43,15 +40,15 @@ def main():
   (options, args) = parser.parse_args()
 
   if not os.path.exists(options.schema_dir):
-    print('Could not find the schema folder: {}'.format(options.schema_dir))
+    print(('Could not find the schema folder: {}'.format(options.schema_dir)))
     print('This script should be run from ./lib_common/src')
     exit()
 
   if not os.path.exists(options.binding_dir):
-    print(
+    print((
       'Could not find the bindings destination folder: {}'.
       format(options.schema_dir)
-    )
+    ))
     print('This script should be run from ./lib_common/src')
     exit()
 

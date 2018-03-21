@@ -21,9 +21,6 @@
 """Generate a list of test subjects
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import optparse
 import sys
@@ -59,9 +56,9 @@ def main():
 
   create_subject_list(n_subjects)
 
-  print(
+  print((
     '{} test subjects written to {}'.format(n_subjects, settings.SUBJECTS_PATH)
-  )
+  ))
 
 
 def create_subject_list(n_subjects):

@@ -23,14 +23,13 @@
 For debugging certificate processing logic, it is sometimes convenient to pass
 the certificates via HTTP headers instead of HTTPS.
 """
-from __future__ import absolute_import
 
-import StringIO
+import io
 
 
 def pem_in_string_to_pem_in_http_header(pem_str):
-  pem = StringIO.StringIO(pem_str)
-  header = StringIO.StringIO()
+  pem = io.StringIO(pem_str)
+  header = io.StringIO()
   for pem_line in pem:
     pem_line = pem_line.strip()
     if pem_line.startswith('-'):
@@ -43,8 +42,8 @@ def pem_in_string_to_pem_in_http_header(pem_str):
 
 
 def pem_in_http_header_to_pem_in_string(header_str):
-  header = StringIO.StringIO(header_str)
-  pem = StringIO.StringIO()
+  header = io.StringIO(header_str)
+  pem = io.StringIO()
   pem.write('-----BEGIN CERTIFICATE-----\n')
   while True:
     pem_line = header.read(64)

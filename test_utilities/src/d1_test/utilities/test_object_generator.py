@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import datetime
 import random
 import string
@@ -61,7 +59,7 @@ def generate_science_object_with_sysmeta(
   return sys_meta, sci_obj
 
 
-def _create_science_object_bytes(pid, num_min_bytes, num_max_bytes):
+def _create_science_object_bytes(pid, min_bytes, max_bytes):
   """Create a string of pseudo-random bytes that are always the same for a given
   {pid}. The length if set randomly between {num_min_bytes} and {num_max_bytes}
   including
@@ -69,12 +67,13 @@ def _create_science_object_bytes(pid, num_min_bytes, num_max_bytes):
   # Seeding the PRNG with the PID causes the same sequence to be generated each
   # time.
   random.seed(pid)
-  num_bytes = random.randint(num_min_bytes, num_max_bytes)
-  return d1_test.instance_generator.random_data.random_bytes(num_bytes)
+  return d1_test.instance_generator.random_data.random_bytes(
+    min_bytes, max_bytes
+  )
 
 
 def _generate_system_metadata_for_science_object(
-    pid, sciobj_str, format_id, include_revision_bool, use_v1_bool
+    pid, sciobj_bytes, format_id, include_revision_bool, use_v1_bool
 ):
   now = datetime.datetime.now()
   if use_v1_bool:
@@ -85,14 +84,14 @@ def _generate_system_metadata_for_science_object(
   sysmeta_pyxb = client.bindings.systemMetadata()
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
   sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
-    sciobj_str
+    sciobj_bytes
   )
   sysmeta_pyxb.dateSysMetadataModified = now
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.formatId = format_id
   sysmeta_pyxb.identifier = pid
   sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
-  sysmeta_pyxb.size = len(sciobj_str)
+  sysmeta_pyxb.size = len(sciobj_bytes)
   sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 
   if include_revision_bool:

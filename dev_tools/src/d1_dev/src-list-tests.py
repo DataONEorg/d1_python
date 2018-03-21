@@ -20,7 +20,6 @@
 # limitations under the License.
 """List tests and their docstrings
 """
-from __future__ import absolute_import
 
 import argparse
 import logging

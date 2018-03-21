@@ -19,9 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import pytest
 import responses
@@ -42,16 +40,14 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _create_and_check_scimeta(self, client, pid, format_id, xml_str):
     sysmeta_pyxb = sysmeta.generate_from_file(
       client,
-      StringIO.StringIO(xml_str),
+      io.BytesIO(xml_str),
       {
         'identifier': pid,
         'formatId': format_id,
         'replica': None,
       },
     )
-    self.call_d1_client(
-      client.create, pid, StringIO.StringIO(xml_str), sysmeta_pyxb
-    )
+    self.call_d1_client(client.create, pid, io.BytesIO(xml_str), sysmeta_pyxb)
     self.get_obj(client, pid)
 
   @responses.activate
@@ -62,7 +58,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       mn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'http://www.icpsr.umich.edu/DDI',
-      'not a valid XML doc',
+      b'not a valid XML doc',
     )
 
   @responses.activate
@@ -73,7 +69,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       mn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'unknown_format_id',
-      'not a valid XML doc',
+      b'not a valid XML doc',
     )
 
   @responses.activate

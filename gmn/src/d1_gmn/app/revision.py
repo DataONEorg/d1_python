@@ -20,8 +20,6 @@
 """Utilities for manipulating revision chains in the database
 """
 
-from __future__ import absolute_import
-
 import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.did
@@ -245,8 +243,8 @@ def _set_chain_sid(chain_model, sid):
     return
   if chain_model.sid and chain_model.sid.did != sid:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Attempted to modify existing SID. '
-      u'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid)
+      0, 'Attempted to modify existing SID. '
+      'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid)
     )
   chain_model.sid = d1_gmn.app.did.get_or_create_did(sid)
   chain_model.save()
@@ -260,8 +258,8 @@ def _assert_sid_is_in_chain(sid, pid):
     return
   if chain_model.sid.did != sid:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Attempted to create object in chain with non-matching SID. '
-      u'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid)
+      0, 'Attempted to create object in chain with non-matching SID. '
+      'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid)
     )
 
 

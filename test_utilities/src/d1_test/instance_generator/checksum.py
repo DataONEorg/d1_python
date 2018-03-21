@@ -21,8 +21,6 @@
 """Generate random Checksum
 """
 
-from __future__ import absolute_import
-
 import random
 
 import d1_common.checksum
@@ -35,7 +33,7 @@ import d1_test.instance_generator.random_data
 
 def random_checksum_algorithm():
   return random.choice(
-    d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+    sorted(d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
   )
 
 

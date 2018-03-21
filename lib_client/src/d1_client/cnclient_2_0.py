@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_common.const
@@ -70,11 +68,11 @@ class CoordinatingNodeClient_2_0(
   # CNCore.delete(session, id) → Identifier
   # DELETE /object/{id}
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def deleteResponse(self, pid):
     return self.DELETE(['object', pid])
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def delete(self, pid):
     response = self.deleteResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')
@@ -86,14 +84,14 @@ class CoordinatingNodeClient_2_0(
   # CNRead.synchronize(session, pid) → boolean
   # POST /synchronize
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def synchronizeResponse(self, pid, vendorSpecific=None):
     mmp_dict = {
       'pid': pid,
     }
     return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def synchronize(self, pid, vendorSpecific=None):
     response = self.synchronizeResponse(pid, vendorSpecific)
     return self._read_boolean_response(response)
@@ -105,11 +103,11 @@ class CoordinatingNodeClient_2_0(
   # CNView.view(session, theme, id) → OctetStream
   # GET /views/{theme}/{id}
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def viewResponse(self, theme, did):
     return self.GET(['views', theme, did])
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def view(self, theme, did):
     response = self.viewResponse(theme, did)
     return self._read_stream_response(response)
@@ -117,11 +115,11 @@ class CoordinatingNodeClient_2_0(
   # CNView.listViews(session) → OptionList
   # GET /views
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def listViewsResponse(self):
     return self.GET(['views'])
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def listViews(self):
     response = self.listViewsResponse()
     return self._read_dataone_type_response(response, 'OptionList')
@@ -133,11 +131,11 @@ class CoordinatingNodeClient_2_0(
   # CNDiagnostic.echoCredentials(session) → SubjectInfo
   # GET /diag/subject
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoCredentialsResponse(self):
     return self.GET(['diag', 'subject'])
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoCredentials(self):
     response = self.echoCredentialsResponse()
     return self._read_dataone_type_response(response, 'SubjectInfo')
@@ -145,14 +143,14 @@ class CoordinatingNodeClient_2_0(
   # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
   # POST /diag/sysmeta
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoSystemMetadataResponse(self, sysmeta_pyxb):
     mmp_dict = {
       'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
     }
     return self.POST(['diag', 'sysmeta'], fields=mmp_dict)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoSystemMetadata(self, sysmeta_pyxb):
     response = self.echoSystemMetadataResponse(sysmeta_pyxb)
     return self._read_dataone_type_response(response, 'SystemMetadata')
@@ -160,7 +158,7 @@ class CoordinatingNodeClient_2_0(
   # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
   # POST /diag/object
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj):
     mmp_dict = {
       'queryEngine': queryEngine.encode('utf-8'),
@@ -169,7 +167,7 @@ class CoordinatingNodeClient_2_0(
     }
     return self.POST(['diag', 'object'], fields=mmp_dict)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj):
     response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj)
     return self._read_stream_response(response)

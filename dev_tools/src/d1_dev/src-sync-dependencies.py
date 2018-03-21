@@ -29,8 +29,6 @@ and the new version number to use in the next release of the stack. We keep
 the version numbers for all the packages in the d1_python repository in sync.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 import os
@@ -110,7 +108,7 @@ def update_deps_on_file(args, setup_path, show_diff, d1_version):
     if args.debug:
       raise
   else:
-    d1_dev.util.update_module_file(r, setup_path, show_diff, update=True)
+    d1_dev.util.update_module_file(r, setup_path, show_diff, dry_run=True)
 
 
 def update_deps_on_tree(r, d1_version):
@@ -187,7 +185,7 @@ def update_version_const(base_name, path_list, d1_version, only_diff):
   for n in r('AssignmentNode'):
     if n.target.value in ('VERSION', '__version__'):
       n.value.value = "'{}'".format(d1_version)
-      d1_dev.util.update_module_file(r, module_path, only_diff, update=True)
+      d1_dev.util.update_module_file(r, module_path, only_diff, dry_run=True)
       break
 
 

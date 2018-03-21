@@ -20,8 +20,6 @@
 """Manage the filesystem tree in which science object bytes are stored
 """
 
-from __future__ import absolute_import
-
 import hashlib
 import os
 import re
@@ -57,7 +55,7 @@ def get_sciobj_file_path(pid):
 
 
 def get_gmn_version():
-  return map(lambda x: int(re.sub(r'\D', '', x)), d1_gmn.__version__.split('.'))
+  return [int(re.sub(r'\D', '', x)) for x in d1_gmn.__version__.split('.')]
 
 
 def is_matching_version():
@@ -90,7 +88,7 @@ def save_store_version():
     }, get_store_version_path())
   except EnvironmentError as e:
     raise EnvironmentError(
-      u'Unable to save object store version file. Error="{}"'.format(str(e))
+      'Unable to save object store version file. Error="{}"'.format(str(e))
     )
 
 
@@ -99,7 +97,7 @@ def get_store_version_path():
 
 
 def get_sciobj_file_url(pid):
-  return u'file:///{}'.format(d1_common.url.encodePathElement(pid))
+  return 'file:///{}'.format(d1_common.url.encodePathElement(pid))
 
 
 def create_store():
@@ -138,7 +136,7 @@ def is_tmp():
 def assert_sciobj_store_version_match():
   if not is_matching_version():
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Attempted to modify non-matching filesystem store version. '
+      0, 'Attempted to modify non-matching filesystem store version. '
       'store="{}" gmn="{}" store_path="{}"'.format(
         get_store_version(), get_gmn_version(), get_store_version_path()
       )
@@ -148,8 +146,8 @@ def assert_sciobj_store_version_match():
 def assert_sciobj_store_exists():
   if not is_existing_store():
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Attempted to access non-existing filesystem science object store. '
-      u'store_path="{}"'.format(get_store_version_path())
+      0, 'Attempted to access non-existing filesystem science object store. '
+      'store_path="{}"'.format(get_store_version_path())
     )
 
 

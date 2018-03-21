@@ -32,20 +32,18 @@ Expose a simple API to query and refresh the cache.
 # For syncing with finer granularity in the future:
 # https://www.zotero.org/support/dev/web_api/v3/syncing
 
-from __future__ import absolute_import
-
+import http.client
 import logging
 import os
 import re
 
 # App
 import d1_onedrive.impl.onedrive_exceptions
-import httplib
 # 3rd party
 import pyzotero
 
 try:
-  import cPickle as pickle
+  import pickle as pickle
 except ImportError:
   import pickle
 
@@ -258,7 +256,7 @@ class ZoteroClient(object):
     url = '/users/{}/items?limit=1&key={}&v=3'.format(
       self._user_id, self._api_access_key
     )
-    connection = httplib.HTTPSConnection(host)
+    connection = http.client.HTTPSConnection(host)
     connection.request('GET', url)
     if connection.getresponse().status == 403:
       raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
@@ -273,7 +271,7 @@ class ZoteroClient(object):
     url = '/users/{}/items?limit=1&format=versions&key={}&v=3'.format(
       self._user_id, self._api_access_key
     )
-    connection = httplib.HTTPSConnection(host)
+    connection = http.client.HTTPSConnection(host)
     connection.request('GET', url)
     response = connection.getresponse()
     return int(response.getheader('Last-Modified-Version'))

@@ -53,8 +53,6 @@ memory). So we convert streaming responses to string before passing them to
 Responses.
 """
 
-from __future__ import absolute_import
-
 import logging
 import re
 
@@ -134,7 +132,8 @@ def _request_callback(request):
     django_client = django.test.Client()
     try:
       django_response = getattr(django_client, request.method.lower())(
-        url_path, data=data, content_type=request.headers.get('Content-Type'),
+        url_path, data=data,
+        content_type=request.headers.get('Content-Type', ''),
         **_headers_to_wsgi_env(request.headers or {})
       )
     except Exception:
@@ -146,8 +145,8 @@ def _request_callback(request):
 
   django_response.setdefault('HTTP-Version', 'HTTP/1.1')
   return (
-    django_response.status_code, django_response.items(),
-    ''.join(django_response.streaming_content)
+    django_response.status_code, list(django_response.items()),
+    b''.join(django_response.streaming_content)
     if django_response.streaming else django_response.content
   )
 
@@ -155,6 +154,7 @@ def _request_callback(request):
 def _headers_to_wsgi_env(header_dict):
   wsgi_dict = header_dict.copy()
   wsgi_dict.update({
-    'HTTP_' + k.upper().replace('-', '_'): v for k, v in header_dict.items()
+    'HTTP_' + k.upper().replace('-', '_'): v
+    for k, v in list(header_dict.items())
   })
   return wsgi_dict

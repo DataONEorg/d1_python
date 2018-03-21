@@ -35,8 +35,6 @@ not that un-tracked files are not included. Still, what it does has some
 benefits, so we use it for all the packages in d1_python.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import sys
@@ -119,7 +117,7 @@ def check(setup_path, wheel_path):
 def open_repo(repo_path):
   repo = git.Repo(repo_path)
   if repo.is_dirty():
-    logging.warn('Working tree is dirty (has uncomitted changes)')
+    logging.warning('Working tree is dirty (has uncomitted changes)')
   if repo.bare:
     raise PackageError('Repository is bare (does not have a working tree')
   return repo

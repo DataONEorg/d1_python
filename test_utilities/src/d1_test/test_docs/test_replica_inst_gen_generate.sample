@@ -1,1 +1,14 @@
-"<?xml version=\"1.0\" encoding=\"utf-8\"?><ns1:replica xmlns:ns1=\"http://ns.dataone.org/service/types/v1\"><replicaMemberNode>mn_mi</replicaMemberNode><replicationStatus>queued</replicationStatus><replicaVerified>1973-05-23T03:49:47.830027Z</replicaVerified></ns1:replica><?xml version=\"1.0\" encoding=\"utf-8\"?><ns1:replica xmlns:ns1=\"http://ns.dataone.org/service/types/v1\"><replicaMemberNode>mn_qt</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>1986-08-01T06:57:18.441863Z</replicaVerified></ns1:replica>"
+[
+  "<?xml version=\"1.0\" ?>
+<ns1:replica xmlns:ns1=\"http://ns.dataone.org/service/types/v1\">
+  <replicaMemberNode>mn_qm</replicaMemberNode>
+  <replicationStatus>invalidated</replicationStatus>
+  <replicaVerified>2060-03-14T21:27:06.199878Z</replicaVerified>
+</ns1:replica>",
+  "<?xml version=\"1.0\" ?>
+<ns1:replica xmlns:ns1=\"http://ns.dataone.org/service/types/v1\">
+  <replicaMemberNode>mn_n</replicaMemberNode>
+  <replicationStatus>failed</replicationStatus>
+  <replicaVerified>1973-05-07T14:11:27.707166Z</replicaVerified>
+</ns1:replica>"
+]

@@ -31,9 +31,6 @@ Node. Test instances set up by DataONE will normally trust the DataONE Test CA.
 # sample_files/new_cert_public_key.pem --subject-info-path
 # sample_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import optparse
 import re
@@ -63,7 +60,7 @@ def read_subject_info(subject_info_path):
     with open(subject_info_path) as f:
       return f.read()
   except EnvironmentError as e:
-    print('Error reading subject info from file: {}'.format(str(e)))
+    print(('Error reading subject info from file: {}'.format(str(e))))
     exit()
 
 

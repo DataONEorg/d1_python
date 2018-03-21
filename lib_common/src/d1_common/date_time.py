@@ -23,8 +23,6 @@ These functions are guaranteed not to modify their datetime arguments (datetime
 objects are immutable).
 """
 
-from __future__ import absolute_import
-
 import datetime
 import email.utils
 import logging

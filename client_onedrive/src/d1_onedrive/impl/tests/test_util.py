@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test utility functions
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.util
 import mock
@@ -49,7 +48,7 @@ class TestUtil(d1_test.d1_test_case.D1TestCase):
     """os_format()"""
     with mock.patch('platform.system', return_value='Linux'):
       assert d1_onedrive.impl.util.os_format('a\nb\n') == \
-        'a\nb\n'
+        b'a\nb\n'
     with mock.patch('platform.system', return_value='Windows'):
       assert d1_onedrive.impl.util.os_format('a\nb\n') == \
-        '\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00'
+        b'\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00'

@@ -21,8 +21,6 @@
 """Retrieve, cache, manipulate list of known Object Format IDs.
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import d1_cli.impl.cli_client as cli_client

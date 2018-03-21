@@ -1,0 +1,18 @@
+{
+  "body_str": "test_body",
+  "header_dict": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Charset": "utf-8",
+    "Connection": "keep-alive",
+    "Content-Length": "9",
+    "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/",
+    "ijkl": "9876",
+    "mnop": "5432"
+  },
+  "query_dict": {
+    "default_query": [
+      "test"
+    ]
+  }
+}

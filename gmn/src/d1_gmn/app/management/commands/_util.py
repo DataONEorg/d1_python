@@ -20,8 +20,6 @@
 """Utilities for GMN management commands
 """
 
-from __future__ import absolute_import
-
 import fcntl
 import logging
 import os
@@ -44,8 +42,8 @@ def log_setup(debug_bool):
   file, redirect stdout to a log file when the script is executed from cron.
   """
   formatter = logging.Formatter(
-    u'%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
-    u'%Y-%m-%d %H:%M:%S',
+    '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
+    '%Y-%m-%d %H:%M:%S',
   )
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
@@ -67,23 +65,23 @@ def exit_if_other_instance_is_running(command_name_str):
     fcntl.lockf(single_instance_lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
   except IOError:
     raise django.core.management.base.CommandError(
-      u'Aborted: Another instance is still running'
+      'Aborted: Another instance is still running'
     )
 
 
 def abort_if_stand_alone_instance():
   if django.conf.settings.STAND_ALONE:
     raise django.core.management.base.CommandError(
-      u'Aborted: Command not applicable in stand-alone instance of GMN. '
-      u'See STAND_ALONE in settings.py.'
+      'Aborted: Command not applicable in stand-alone instance of GMN. '
+      'See STAND_ALONE in settings.py.'
     )
 
 
 def abort_if_not_debug_mode():
   if not django.conf.settings.DEBUG_GMN:
     raise django.core.management.base.CommandError(
-      u'This command is only available when DEBUG_GMN is True in '
-      u'settings.py'
+      'This command is only available when DEBUG_GMN is True in '
+      'settings.py'
     )
 
 
@@ -139,9 +137,9 @@ def log_progress(event_counter, msg, i, n, pid, start_sec=None):
     total_sec = float(n) / (i + 1) * elapsed_sec
     eta_sec = int(total_sec - elapsed_sec)
     s_int = eta_sec % 60
-    eta_sec /= 60
+    eta_sec //= 60
     m_int = eta_sec % 60
-    eta_sec /= 60
+    eta_sec //= 60
     h_int = eta_sec
     eta_str = ' {}h{:02d}m{:02d}s'.format(h_int, m_int, s_int)
   else:

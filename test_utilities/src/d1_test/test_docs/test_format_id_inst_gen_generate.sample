@@ -1,12 +1,12 @@
 [
-  "http://www.nexml.org/2009", 
-  "video/quicktime", 
-  "http://www.w3.org/TR/rdfa-syntax", 
-  "application/postscript", 
-  "http://www.nexml.org/2009", 
-  "audio/x-wav", 
-  "application/octet-stream", 
-  "http://www.w3.org/TR/rdf-syntax-grammar", 
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
-  "application/x-gzip"
+  "text/csv",
+  "application/octet-stream",
+  "netCDF-4",
+  "video/avi",
+  "application/SAS",
+  "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+  "audio/x-wav",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "netCDF-3",
+  "audio/mpeg"
 ]

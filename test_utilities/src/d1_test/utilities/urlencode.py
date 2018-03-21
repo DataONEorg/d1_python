@@ -42,8 +42,6 @@ Examples:
 
 """
 
-from __future__ import absolute_import
-
 import logging
 import optparse
 import sys
@@ -95,10 +93,10 @@ if __name__ == '__main__':
     for arg in sys.stdin:
       input = arg.decode(sys.getfilesystemencoding()).strip()
       res = process_input(input, options.decode, options.path)
-      print res
+      print(res)
   else:
     for arg in args[1:]:
       res = ""
       input = arg.decode(sys.getfilesystemencoding())
       res = process_input(input, options.decode, options.path)
-      print res
+      print(res)

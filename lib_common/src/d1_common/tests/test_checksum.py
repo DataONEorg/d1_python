@@ -3,7 +3,6 @@
 
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from __future__ import absolute_import
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
@@ -20,7 +19,7 @@ from __future__ import absolute_import
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-import json
+
 import xml.sax
 
 import pytest
@@ -44,8 +43,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
 
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize: XML -> Checksum"""
-    exp_json = self.sample.load(filename)
-    exp_dict = json.loads(exp_json)
+    exp_dict = self.sample.load_json(filename)
     try:
       checksum_pyxb = dataoneTypes.CreateFromDocument(exp_dict['xml'])
     except (pyxb.PyXBException, xml.sax.SAXParseException):
@@ -102,7 +100,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     calculator = d1_common.checksum.get_checksum_calculator_by_dataone_designator(
       'SHA-1'
     )
-    calculator.update('test')
+    calculator.update('test'.encode('utf8'))
     assert calculator.hexdigest()
 
   def test_1070(self):

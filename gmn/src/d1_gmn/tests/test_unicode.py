@@ -20,8 +20,6 @@
 """Test handling of Unicode in D1 REST URLs and type elements
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import responses
@@ -42,7 +40,7 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         'unicode_pid': s.split('\t')[0]
       }
        for s in d1_test.sample.
-       load_utf8_to_unicode('tricky_identifiers_unicode.utf8.txt').splitlines()
+       load_utf8_to_str('tricky_identifiers_unicode.utf8.txt').splitlines()
        if not s.startswith('#')],
   }
 
@@ -50,12 +48,12 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self, mn_client_v1_v2, unicode_pid):
     """Unicode: GMN and libraries handle Unicode correctly"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      logging.debug(u'Testing PID: {}'.format(unicode_pid))
-      pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(
+      logging.debug('Testing PID: {}'.format(unicode_pid))
+      pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, pid=unicode_pid, sid=True
       )
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
-      assert d1_common.system_metadata.is_equivalent_pyxb(
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
+      assert d1_common.system_metadata.are_equivalent_pyxb(
         send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
       )
       assert pid == unicode_pid

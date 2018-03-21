@@ -20,9 +20,7 @@
 """Test MNRead.getSystemMetadata()
 """
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import pytest
 import responses
@@ -65,13 +63,13 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         'systemMetadata_v2_0.xml'
       )
       pid = d1_test.instance_generator.identifier.generate_pid()
-      sciobj_str = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_str(
+      sciobj_bytes = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_bytes(
         pid
       )
       orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
-        sciobj_str
+        sciobj_bytes
       )
-      orig_sysmeta_pyxb.size = len(sciobj_str)
+      orig_sysmeta_pyxb.size = len(sciobj_bytes)
       orig_sysmeta_pyxb.obsoletes = None
       orig_sysmeta_pyxb.obsoletedBy = None
       orig_sysmeta_pyxb.identifier = pid
@@ -85,19 +83,19 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
         self.call_d1_client(
           self.client_v2.create, pid,
-          StringIO.StringIO(sciobj_str), orig_sysmeta_pyxb
+          io.BytesIO(sciobj_bytes), orig_sysmeta_pyxb
         )
       # Retrieve
       recv_sysmeta_pyxb = self.call_d1_client(
         self.client_v2.getSystemMetadata, pid
       )
       # Compare
-      d1_common.system_metadata.normalize(
+      d1_common.system_metadata.normalize_in_place(
         orig_sysmeta_pyxb, reset_timestamps=True
       )
-      d1_common.system_metadata.normalize(
+      d1_common.system_metadata.normalize_in_place(
         recv_sysmeta_pyxb, reset_timestamps=True
       )
       # self.kdiff_pyxb(orig_sysmeta_pyxb, recv_sysmeta_pyxb)
       assert d1_common.system_metadata. \
-        is_equivalent_pyxb(orig_sysmeta_pyxb, recv_sysmeta_pyxb)
+        are_equivalent_pyxb(orig_sysmeta_pyxb, recv_sysmeta_pyxb)

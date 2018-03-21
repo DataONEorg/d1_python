@@ -23,8 +23,6 @@ Decorators and functions that verify that a user has the permissions required
 for performing the attempted operation.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_gmn.app.models
@@ -73,7 +71,7 @@ def action_to_level(action):
     return ACTION_LEVEL_MAP[action]
   except LookupError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Unknown action. action="{}"'.format(action)
+      0, 'Unknown action. action="{}"'.format(action)
     )
 
 
@@ -84,7 +82,7 @@ def level_to_action(level):
     return LEVEL_ACTION_MAP[level]
   except LookupError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Unknown action level. level="{}"'.format(level)
+      0, 'Unknown action level. level="{}"'.format(level)
     )
 
 
@@ -98,7 +96,7 @@ def get_trusted_subjects():
 
 
 def get_trusted_subjects_string():
-  return u', '.join(sorted(get_trusted_subjects()))
+  return ', '.join(sorted(get_trusted_subjects()))
 
 
 # ------------------------------------------------------------------------------
@@ -138,8 +136,7 @@ def _get_client_side_certificate_pem():
     return open(client_cert_path, 'rb').read()
   except EnvironmentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0,
-      u'Error reading client side certificate. cert_pem_path="{}", error="{}"'
+      0, 'Error reading client side certificate. cert_pem_path="{}", error="{}"'
       .format(django.conf.settings.CLIENT_CERT_PATH, str(e))
     )
 
@@ -150,7 +147,7 @@ def _extract_subject_from_pem(cert_pem):
   except Exception as e:
     raise d1_common.types.exceptions.InvalidToken(
       0,
-      u'Could not extract session from certificate. error="{}"'.format(str(e))
+      'Could not extract session from certificate. error="{}"'.format(str(e))
     )
 
 
@@ -203,8 +200,8 @@ def assert_create_update_delete_permission(request):
   """
   if not has_create_update_delete_permission(request):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, u'Access allowed only for subjects with Create/Update/Delete '
-      u'permission. active_subjects="{}"'.
+      0, 'Access allowed only for subjects with Create/Update/Delete '
+      'permission. active_subjects="{}"'.
       format(format_active_subjects(request))
     )
 
@@ -217,12 +214,12 @@ def assert_allowed(request, level, pid):
   """
   if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.NotFound(
-      0, u'Attempted to perform operation on non-existing object. pid="{}"'.
+      0, 'Attempted to perform operation on non-existing object. pid="{}"'.
       format(pid)
     )
   if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, u'Operation is denied. level="{}", pid="{}", active_subjects="{}"'
+      0, 'Operation is denied. level="{}", pid="{}", active_subjects="{}"'
       .format(level_to_action(level), pid, format_active_subjects(request))
     )
 
@@ -231,8 +228,8 @@ def format_active_subjects(request):
   """Create a string listing active subjects for this connection, suitable
   for appending to authentication error messages.
   """
-  decorated_subject_list = [request.primary_subject_str + u' (primary)']
+  decorated_subject_list = [request.primary_subject_str + ' (primary)']
   for subject in request.all_subjects_set:
     if subject != request.primary_subject_str:
       decorated_subject_list.append(subject)
-  return u', '.join(decorated_subject_list)
+  return ', '.join(decorated_subject_list)

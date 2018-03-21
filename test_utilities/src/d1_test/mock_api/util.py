@@ -21,20 +21,18 @@
 """Utilities for mocking up DataONE API endpoints with Responses
 """
 
-from __future__ import absolute_import
-
 import base64
 import datetime
 import hashlib
-import json
 import re
-import urlparse
+import urllib.parse
 
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.url
+import d1_common.util
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.date_time
@@ -60,10 +58,10 @@ def parse_rest_url(rest_url):
   """
   # urlparse(): <scheme>://<netloc>/<path>;<params>?<query>#<fragment>
   version_tag, path = split_url_at_version_tag(rest_url)[1:]
-  url_obj = urlparse.urlparse(path)
+  url_obj = urllib.parse.urlparse(path)
   param_list = _decode_path_elements(url_obj.path)
   endpoint_str = param_list.pop(0)
-  query_dict = urlparse.parse_qs(url_obj.query) if url_obj.query else {}
+  query_dict = urllib.parse.parse_qs(url_obj.query) if url_obj.query else {}
   client = d1_client.util.get_client_class_by_version_tag(version_tag)(
     base_url='http://invalid/'
   )
@@ -108,16 +106,22 @@ def echo_get_callback(request):
     body_str = request.body.read()
   except AttributeError:
     body_str = request.body
-  url_obj = urlparse.urlparse(request.url)
+  url_obj = urllib.parse.urlparse(request.url)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,
   }
   body_dict = {
-    'body_base64': base64.b64encode(body_str or '<no body>'),
-    'query_dict': urlparse.parse_qs(url_obj.query),
-    'header_dict': dict(request.headers),
+    'body_base64':
+      base64.standard_b64encode((body_str or '<no body>').encode('utf-8'))
+      .decode('ascii'),
+    'query_dict':
+      urllib.parse.parse_qs(url_obj.query),
+    'header_dict':
+      dict(request.headers),
   }
-  return 200, header_dict, json.dumps(body_dict)
+  return 200, header_dict, d1_common.util.serialize_to_normalized_pretty_json(
+    body_dict
+  )
 
 
 def generate_object_list(
@@ -129,8 +133,11 @@ def generate_object_list(
     pid = 'object#{:04d}'.format(n_start + i)
 
     # freeze_time.tick(delta=datetime.timedelta(days=1))
-    pid, sid, sciobj_str, sysmeta_pyxb = \
-      d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = (
+      d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+        client, pid
+      )
+    )
 
     now_dt = sysmeta_pyxb.dateSysMetadataModified
 
@@ -162,9 +169,9 @@ def generate_object_list(
 #   """Generic callback that echoes POST requests"""
 
 
-def _generate_system_metadata_for_sciobj_str(client, pid, sciobj_str):
-  size = len(sciobj_str)
-  md5 = hashlib.md5(sciobj_str).hexdigest()
+def _generate_system_metadata_for_sciobj_bytes(client, pid, sciobj_bytes):
+  size = len(sciobj_bytes)
+  md5 = hashlib.md5(sciobj_bytes).hexdigest()
   now = d1_test.instance_generator.date_time.reproducible_datetime(pid)
   sysmeta_pyxb = _generate_sysmeta_pyxb(client, pid, size, md5, now)
   return sysmeta_pyxb

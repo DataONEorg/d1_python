@@ -23,8 +23,6 @@ Serialize DataONE response objects according to Accept header and set header
 (Size and Content-Type) accordingly.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_gmn.app.views.slice
@@ -43,18 +41,23 @@ import django.db.models
 import django.http
 
 
-class ResponseHandler(object):
-  def process_response(self, request, view_result):
+class ResponseHandler:
+  def __init__(self, next_in_chain_func):
+    self.next_in_chain_func = next_in_chain_func
+
+  def __call__(self, request):
     """Process return values from views
     - If view_result is a HttpResponse, return it unprocessed.
     - If response is a database query, run the query and create a response.
-    - If response is a plain or Unicode string, assume that it is a PID.
+    - If response is a string, assume that it is a PID.
     """
+    view_result = self.next_in_chain_func(request)
+
     if isinstance(view_result, django.http.response.HttpResponseBase):
       response = view_result
     elif isinstance(view_result, (list, dict)):
       response = self._serialize_object(request, view_result)
-    elif isinstance(view_result, basestring):
+    elif isinstance(view_result, str):
       response = self._http_response_with_identifier_type(request, view_result)
     elif isinstance(view_result, Exception):
       logging.error(
@@ -63,12 +66,13 @@ class ResponseHandler(object):
       return view_result
     else:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, u'Unknown view result. view_result="{}"'.format(repr(view_result))
+        0, 'Unknown view result. view_result="{}"'.format(repr(view_result))
       )
+
     return self._debug_mode_responses(request, response)
 
   def _debug_mode_responses(self, request, response):
-    """Extra functionality available in debug mode.
+    """Extra functionality available in debug mode
     - If pretty printed output was requested, force the content type to text.
     This causes the browser to not try to format the output in any way.
     - If SQL profiling is turned on, return a page with SQL query timing
@@ -83,9 +87,9 @@ class ResponseHandler(object):
       ):
         response_list = []
         for query in django.db.connection.queries:
-          response_list.append(u'{}\n{}'.format(query['time'], query['sql']))
+          response_list.append('{}\n{}'.format(query['time'], query['sql']))
         return django.http.HttpResponse(
-          u'\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
+          '\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
         )
     return response
 
@@ -191,4 +195,6 @@ class ResponseHandler(object):
 
     Return None if QuerySet is empty.
     """
-    return query.aggregate(django.db.models.Max(datetime_field_name)).values()[0]
+    return list(
+      query.aggregate(django.db.models.Max(datetime_field_name)).values()
+    )[0]

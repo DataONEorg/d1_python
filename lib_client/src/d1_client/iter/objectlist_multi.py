@@ -22,8 +22,6 @@
 Fast retrieval of ObjectInfo from a DataONE Node.
 """
 
-from __future__ import absolute_import
-
 import logging
 import multiprocessing
 
@@ -99,7 +97,7 @@ def _get_all_pages(
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_pages = (n_total - 1) / page_size + 1
+  n_pages = (n_total - 1) // page_size + 1
 
   for page_idx in range(n_pages):
     logging.debug(
@@ -142,7 +140,7 @@ def _get_page(
 
 
 def _create_client(base_url, api_major, client_dict):
-  if api_major <= 1:
+  if api_major in (1, '1', 'v1'):
     return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
   else:
     return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)

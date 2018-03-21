@@ -18,9 +18,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Request handler middleware
-"""
 
-from __future__ import absolute_import
+This handler runs first in the middleware chain. If DEBUG_ECHO_REQUEST is True,
+it will short circuit all other processing in GMN and return an echo of the
+request. Also see the description in settings.py.
+"""
 
 import logging
 import pprint
@@ -33,12 +35,20 @@ import django.conf
 import django.http
 
 
-class RequestHandler(object):
-  def process_request(self, request):
+class RequestHandler:
+  def __init__(self, next_in_chain_func):
+    self.next_in_chain_func = next_in_chain_func
+
+  def __call__(self, request):
     if django.conf.settings.DEBUG_GMN and django.conf.settings.DEBUG_ECHO_REQUEST:
-      logging.warn('django.conf.settings.DEBUG_ECHO_REQUEST=True')
-      pp = pprint.PrettyPrinter(indent=2)
-      return django.http.HttpResponse(
-        pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT
-      )
-    return None
+      return self.create_http_echo_response(request)
+    return self.next_in_chain_func(request)
+
+  def create_http_echo_response(self, request):
+    logging.warning(
+      'Echoing request (django.conf.settings.DEBUG_ECHO_REQUEST=True)'
+    )
+    pp = pprint.PrettyPrinter(indent=2)
+    return django.http.HttpResponse(
+      pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT
+    )

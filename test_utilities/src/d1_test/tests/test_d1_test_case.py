@@ -19,32 +19,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import pytest
 
 import d1_test.d1_test_case
 
 
-class TestTestUtils(d1_test.d1_test_case.D1TestCase):
-  def test_1020(self):
-    """mock_raw_input():"""
+class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
+  def test_1000(self):
+    """mock_input():"""
     expected_prompt_str = 'user prompt'
     expected_answer_str = 'user answer'
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      with d1_test.d1_test_case.mock_raw_input(expected_answer_str):
-        received_answer_str = raw_input(expected_prompt_str)
+      with d1_test.d1_test_case.mock_input(expected_answer_str):
+        received_answer_str = input(expected_prompt_str)
     received_prompt_str = out_stream.getvalue()
     assert expected_prompt_str == received_prompt_str
     assert expected_answer_str == received_answer_str
 
-  def test_1030(self):
+  # flake8: noqa: F841
+  def test_1010(self):
     """memory_limit context manager"""
     # Passes because it uses less memory than the limit
-    with d1_test.d1_test_case.memory_limit(100 * 1024**2):
-      b'x' * (1 * 1024**2)
-    # Fails because it uses more memory than the limit
-    with d1_test.d1_test_case.memory_limit(100 * 1024**2):
+    with d1_test.d1_test_case.memory_limit(10 * 1024**2):
+      # It's necessary to assign a name to the object here, or it does not
+      # get created, even with garbage collection disabled
+      a = bytearray(1 * 1024**2)
+    # Raises MemoryError since it uses more memory than the limit
+    with d1_test.d1_test_case.memory_limit(10 * 1024**2):
       with pytest.raises(MemoryError):
-        b'x' * (200 * 1024**2)
+        b = bytearray(20 * 1024**2)

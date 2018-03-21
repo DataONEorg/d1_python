@@ -21,8 +21,6 @@
 """Create and manipulate access control objects.
 """
 
-from __future__ import absolute_import
-
 import d1_cli.impl.cli_exceptions as cli_exceptions
 import d1_cli.impl.cli_util as cli_util
 
@@ -39,7 +37,7 @@ class AccessControl():
 
   def add_allowed_subject(self, subject, permission):
     if permission is None:
-      permission = u'read'
+      permission = 'read'
     self._assert_valid_permission(permission)
     self._confirm_special_subject_write(subject, permission)
     self._add_allowed_subject(subject, permission)
@@ -49,7 +47,7 @@ class AccessControl():
       del self.allow[subject]
     except KeyError:
       raise cli_exceptions.InvalidArguments(
-        u'Subject not in access control list: {}'.format(subject)
+        'Subject not in access control list: {}'.format(subject)
       )
 
   def clear(self):
@@ -72,18 +70,18 @@ class AccessControl():
       except KeyError:
         permissions[allow[1]] = [allow[0]]
     lines = []
-    for perm, perm_list in permissions.items():
+    for perm, perm_list in list(permissions.items()):
       lines.append(
-        u'  {0: <30s}{1}'.format(perm, u'"' + u'", "'.join(sorted(perm_list))) + u'"'
+        '  {0: <30s}{1}'.format(perm, '"' + '", "'.join(sorted(perm_list))) + '"'
       )
     if not len(lines):
       lines = ['  None']
-    return u'access:\n' + '\n'.join(lines)
+    return 'access:\n' + '\n'.join(lines)
 
   def _assert_valid_permission(self, permission):
     if permission not in self._get_valid_permissions():
-      msg = u'Invalid permission: {}. Must be one of: {}'\
-        .format(permission, u', '.join(self._get_valid_permissions()))
+      msg = 'Invalid permission: {}. Must be one of: {}'\
+        .format(permission, ', '.join(self._get_valid_permissions()))
       raise cli_exceptions.InvalidArguments(msg)
 
   def _confirm_special_subject_write(self, subject, permission):

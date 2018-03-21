@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:replicationPolicy numberReplicas="3" replicationAllowed="true" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <preferredMemberNode>add_urn</preferredMemberNode>
   <preferredMemberNode>node1</preferredMemberNode>

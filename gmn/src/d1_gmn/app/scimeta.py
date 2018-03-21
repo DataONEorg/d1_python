@@ -20,8 +20,6 @@
 """Utilities for Science Metadata
 """
 
-from __future__ import absolute_import
-
 import d1_scimeta.xml_schema
 
 import d1_common.const

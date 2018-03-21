@@ -32,8 +32,6 @@ A NotFound exception can be triggered by passing a formatId that starts with
 "<NotFound>".
 """
 
-from __future__ import absolute_import
-
 import logging
 import re
 

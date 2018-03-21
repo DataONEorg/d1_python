@@ -1,70 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <serialVersion>38</serialVersion>
+  <serialVersion>61</serialVersion>
   <identifier>an_unchanging_pid</identifier>
-  <formatId>audio/x-wav</formatId>
-  <size>255</size>
-  <checksum algorithm="SHA-1">97acc710723b02c8d3b6273705e94b56e6b445f9</checksum>
-  <submitter>subj_wg</submitter>
-  <rightsHolder>subj_i</rightsHolder>
+  <formatId>video/mpeg</formatId>
+  <size>278</size>
+  <checksum algorithm="SHA-1">1d8fdefc38a1ed81dae4f45356b2ff328fab3f55</checksum>
+  <submitter>subj_te</submitter>
+  <rightsHolder>subj_xn</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>subj_ju</subject>
-      <subject>subj_wh</subject>
-      <subject>subj_qu</subject>
-      <subject>subj_xg</subject>
-      <permission>write</permission>
-    </allow>
-    <allow>
-      <subject>subj_zb</subject>
-      <subject>subj_rt</subject>
-      <permission>read</permission>
+      <subject>subj_de</subject>
+      <subject>subj_ed</subject>
+      <subject>subj_ek</subject>
+      <subject>subj_mq</subject>
+      <subject>subj_nv</subject>
+      <subject>subj_tv</subject>
+      <subject>subj_vp</subject>
+      <subject>subj_wo</subject>
+      <subject>subj_xe</subject>
+      <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="2" replicationAllowed="true">
-    <preferredMemberNode>mn_r</preferredMemberNode>
-    <preferredMemberNode>mn_g</preferredMemberNode>
-    <preferredMemberNode>mn_eu</preferredMemberNode>
-    <blockedMemberNode>mn_n</blockedMemberNode>
-    <blockedMemberNode>mn_id</blockedMemberNode>
-    <blockedMemberNode>mn_s</blockedMemberNode>
-    <blockedMemberNode>mn_re</blockedMemberNode>
+  <replicationPolicy numberReplicas="1" replicationAllowed="true">
+    <preferredMemberNode>mn_ck</preferredMemberNode>
+    <blockedMemberNode>mn_jv</blockedMemberNode>
+    <blockedMemberNode>mn_u</blockedMemberNode>
+    <blockedMemberNode>mn_xj</blockedMemberNode>
   </replicationPolicy>
-  <dateUploaded>2007-01-12T04:14:19.961217Z</dateUploaded>
-  <dateSysMetadataModified>2007-01-22T04:14:19.961217Z</dateSysMetadataModified>
-  <originMemberNode>mn_s</originMemberNode>
-  <authoritativeMemberNode>mn_wk</authoritativeMemberNode>
+  <archived>false</archived>
+  <dateUploaded>2064-04-09T07:11:09Z</dateUploaded>
+  <dateSysMetadataModified>2064-04-19T07:11:09Z</dateSysMetadataModified>
+  <originMemberNode>mn_py</originMemberNode>
+  <authoritativeMemberNode>mn_y</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_pn</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2010-01-03T02:10:58.300795Z</replicaVerified>
+    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2014-03-24T12:20:33Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_e</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2067-10-25T14:33:44.979781Z</replicaVerified>
+    <replicaMemberNode>mn_wn</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2034-07-18T00:29:57Z</replicaVerified>
   </replica>
-  <replica>
-    <replicaMemberNode>mn_v</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>1990-05-11T00:27:40.906867Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_im</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2018-04-11T09:25:00.906629Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_t</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>1971-05-12T17:57:53.29787Z</replicaVerified>
-  </replica>
-  <mediaType name="media_type_ka">
-    <property name="prop_xrukzaoqzkfn">ockayphjxweb</property>
-    <property name="prop_bdyvimmtgvjd">twyeuxyzhmnt</property>
-    <property name="prop_ilxsddwyiyks">jolyxlbhjokw</property>
-    <property name="prop_barsxrluqnla">sztttygrbdyo</property>
-    <property name="prop_qdimlkgefrqv">dhvuosuxxcrj</property>
-  </mediaType>
-  <fileName>file_djdvkoobmcix</fileName>
+  <fileName>file_tkgnbidufoiy</fileName>
 </ns1:systemMetadata>

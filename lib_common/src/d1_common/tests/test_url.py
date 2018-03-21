@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import os
 
 import d1_common.url
@@ -32,14 +30,14 @@ HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):
-  _unicode_strings = d1_test.sample.load_utf8_to_unicode(
+  unicode_str_list = d1_test.sample.load_utf8_to_str(
     'testUnicodeStrings.utf8.txt'
   )
 
   def test_1000(self):
     """encodePathElement()"""
-    for row in self._unicode_strings.splitlines():
-      assert isinstance(row, unicode)
+    for row in self.unicode_str_list.splitlines():
+      assert isinstance(row, str)
       parts = row.split('\t')
       if len(parts) > 1:
         v = parts[0]
@@ -49,7 +47,7 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
 
   def test_1010(self):
     """encodeQueryElement()"""
-    for row in self._unicode_strings.splitlines():
+    for row in self.unicode_str_list.splitlines():
       parts = row.split('\t')
       if len(parts) > 1:
         v = parts[0]
@@ -165,16 +163,14 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
     a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
     b = "http://www.some.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
-    assert url_diff_list == [
-      u'Parameters differ. a="p1, p2, p3" b="p2, p3, p4"'
-    ]
+    assert url_diff_list == ['Parameters differ. a="p1, p2, p3" b="p2, p3, p4"']
 
   def test_1120(self):
     """Different params, p3 missing"""
     a = "http://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k2=abc#frag"
     b = "http://www.some.host:999/a/b/c/;p1;p2?k1=10&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
-    assert url_diff_list == [u'Parameters differ. a="p1, p2, p3" b="p1, p2"']
+    assert url_diff_list == ['Parameters differ. a="p1, p2, p3" b="p1, p2"']
 
   def test_1130(self):
     """Different query, second k11 key missing"""
@@ -182,7 +178,7 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
     b = "http://www.some.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
     assert url_diff_list == [
-      u'Query values differ. key="k1" a_value="[\'10\', \'11\']" b_value="[\'10\']"'
+      'Query values differ. key="k1" a_value="[\'10\', \'11\']" b_value="[\'10\']"'
     ]
 
   def test_1140(self):
@@ -191,5 +187,5 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
     b = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k3=dex&k1=10&k1=11&k2=abc#frag"
     url_diff_list = d1_common.url.find_url_mismatches(a, b)
     assert url_diff_list == [
-      u'Query values differ. key="k3" a_value="[\'def\']" b_value="[\'dex\']"'
+      'Query values differ. key="k3" a_value="[\'def\']" b_value="[\'dex\']"'
     ]

@@ -18,7 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test the AccessPolicy context manager"""
-from __future__ import absolute_import
 
 import d1_common.types.dataoneTypes
 import d1_common.wrap.access_policy
@@ -122,27 +121,29 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
       assert not ap.is_empty()
 
   def test_1090(self):
-    """is_equivalent_pyxb()"""
+    """are_equivalent_pyxb()"""
     with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(
         self.sysmeta_pyxb
     ) as ap:
       other_pyxb = self.sample.load_xml_to_pyxb(
         'systemMetadata_v2_0.tz_non_utc.xml'
       )
-      assert ap.is_equivalent_pyxb(other_pyxb.accessPolicy)
+      assert ap.are_equivalent_pyxb(other_pyxb.accessPolicy)
       other_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
-      assert not ap.is_equivalent_pyxb(other_pyxb.accessPolicy)
+      assert not ap.are_equivalent_pyxb(other_pyxb.accessPolicy)
 
   def test_1100(self):
-    """is_equivalent_xml()"""
+    """are_equivalent_xml()"""
     with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(
         self.sysmeta_pyxb
     ) as ap:
       # self.sample.save_obj(self.sysmeta_pyxb.accessPolicy, 'accessPolicy_v1_0.xml')
-      other_xml = self.sample.load('accessPolicy_v1_0.redundant.xml')
-      assert not ap.is_equivalent_xml(other_xml)
-      other_xml = self.sample.load('accessPolicy_v1_0.xml')
-      assert ap.is_equivalent_xml(other_xml)
+      other_xml = self.sample.load_utf8_to_str(
+        'accessPolicy_v1_0.redundant.xml'
+      )
+      assert not ap.are_equivalent_xml(other_xml)
+      other_xml = self.sample.load_utf8_to_str('accessPolicy_v1_0.xml')
+      assert ap.are_equivalent_xml(other_xml)
 
   def test_1110(self):
     """subj_has_perm()"""

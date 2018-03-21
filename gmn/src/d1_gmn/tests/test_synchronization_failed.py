@@ -21,8 +21,6 @@
 """Test MNStorage.synchronizationFailed()
 """
 
-from __future__ import absolute_import
-
 import pytest
 import responses
 

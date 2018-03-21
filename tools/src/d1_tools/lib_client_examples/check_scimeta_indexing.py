@@ -34,11 +34,8 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
   #CNDiagnostic.echoIndexedObject
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import argparse
-import StringIO
+import io
 
 import d1_common.const
 import d1_common.util
@@ -86,13 +83,13 @@ def main():
   )
 
   with open(args.path, 'rb') as f:
-    sciobj_str = f.read()
+    sciobj_bytes = f.read()
 
   response = cn_client.echoIndexedObject(
-    'solr', sysmeta_pyxb, StringIO.StringIO(sciobj_str)
+    'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
   )
 
-  print(d1_common.xml.pretty_xml(response.content))
+  print((d1_common.xml.format_pretty_xml(response.content)))
 
 
 if __name__ == '__main__':

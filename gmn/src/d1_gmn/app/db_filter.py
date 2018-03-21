@@ -35,8 +35,6 @@ return: Filtered query
 return: QuerySet
 """
 
-from __future__ import absolute_import
-
 import re
 
 import d1_gmn.app.did
@@ -94,8 +92,8 @@ def add_datetime_filter(request, query, column_name, param_name, operator):
     date = d1_common.date_time.dt_from_iso8601_str(date_str)
   except d1_common.date_time.iso8601.ParseError as e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Invalid date format for parameter. parameter="{}" date="{}", '
-      u'parse_error="{}"'.format(param_name, date_str, str(e))
+      0, 'Invalid date format for parameter. parameter="{}" date="{}", '
+      'parse_error="{}"'.format(param_name, date_str, str(e))
     )
   d1_gmn.app.views.assert_db.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)

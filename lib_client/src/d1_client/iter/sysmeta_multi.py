@@ -48,8 +48,6 @@ Each item in the queue is a potentially large SysMeta PyXB object, so we set a
 low max queue size.
 """
 
-from __future__ import absolute_import
-
 import logging
 import multiprocessing
 import time
@@ -154,7 +152,7 @@ def _get_all_pages(
 ):
   logging.info('Creating pool of {} workers'.format(max_workers))
   pool = multiprocessing.Pool(processes=max_workers)
-  n_pages = (n_total - 1) / page_size + 1
+  n_pages = (n_total - 1) // page_size + 1
 
   for page_idx in range(n_pages):
     if namespace.stop:
@@ -167,7 +165,7 @@ def _get_all_pages(
           client_dict, list_objects_dict, get_sysmeta_dict
         )
       )
-    except RuntimeError as e:
+    except Exception as e:
       logging.debug(
         '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
       )
@@ -216,7 +214,7 @@ def _get_page(
     object_list_pyxb = client.listObjects(
       start=page_idx * page_size, count=page_size, **list_objects_dict
     )
-  except RuntimeError as e:
+  except Exception as e:
     logging.error(
       '_get_page(): listObjects() failed. page_idx={} page_total={} error="{}"'
       .format(page_idx, n_pages, str(e))
@@ -250,7 +248,7 @@ def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
       .format(pid, str(e))
     )
     queue.put({'pid': pid, 'error': e.name})
-  except RuntimeError as e:
+  except Exception as e:
     logging.debug(
       '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'
       .format(pid, str(e))

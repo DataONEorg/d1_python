@@ -18,9 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import datetime
 import logging
 import multiprocessing
@@ -156,7 +153,7 @@ def pytest_sessionstart(session):
   """
   if pytest.config.getoption('--sample-tidy'):
     d1_test.sample.start_tidy()
-    pytest.exit('Tidy started')
+    pytest.exit('Sample tidy started')
 
   if pytest.config.getoption('--fixture-refresh'):
     db_drop(TEMPLATE_DB_KEY)
@@ -164,8 +161,11 @@ def pytest_sessionstart(session):
 
   if pytest.config.getoption('--skip-clear'):
     _clear_skip_list()
+    pytest.exit('Cleared list of passed tests')
+
   if pytest.config.getoption('--skip-print'):
     _print_skip_list()
+    pytest.exit('Printed list of passed tests')
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -174,7 +174,9 @@ def pytest_sessionfinish(session, exitstatus):
   if pytest.config.getoption('--skip'):
     skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
     if skipped_count:
-      logging.warn('Skipped {} previously passed tests'.format(skipped_count))
+      logging.warning(
+        'Skipped {} previously passed tests'.format(skipped_count)
+      )
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -223,13 +225,26 @@ def pytest_collection_modifyitems(session, config, items):
     items[:] = new_item_list
 
 
+# TODO: Implement side by side diff display for string compare failures
+# def pytest_assertrepr_compare(config, op, left, right):
+#   """Called by pytest on failed assert
+#   - Return custom assert error message as a list of strings
+#   - Return None to use pytest's default error message
+#   """
+#   if isinstance(left, str) and isinstance(right, str) and op == "==":
+#     # print('{0}\n{1}\n{0}\n{2}\n{0}\n'.format('~'*80, left, right))
+#     msg = d1_test.sample._get_sxs_diff_str(left, right)#.encode('utf-8')
+#     # print(msg)
+#     return msg.splitlines()
+
+
 def _clear_skip_list():
   pytest.config.cache.set(D1_SKIP_LIST, [])
   pytest.config.cache.set(D1_SKIP_COUNT, 0)
 
 
 def _print_skip_list():
-  map(logging.info, sorted(pytest.config.cache.get(D1_SKIP_LIST, [])))
+  list(map(logging.info, sorted(pytest.config.cache.get(D1_SKIP_LIST, []))))
 
 
 def _open_error_in_pycharm(call):
@@ -248,7 +263,7 @@ def _open_error_in_pycharm(call):
       [DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)]
     )
   except subprocess.CalledProcessError as e:
-    logging.warn(
+    logging.warning(
       'Unable to open in PyCharm. error="{}" src_path="{}", src_line={}'.
       format(str(e), src_path, src_line)
     )
@@ -412,7 +427,7 @@ def django_db_setup(request, django_db_blocker):
     with posix_ipc.Semaphore(
         '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
     ):
-      logging.warn(
+      logging.warning(
         'LOCK BEGIN {} {}'.
         format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
       )
@@ -423,7 +438,7 @@ def django_db_setup(request, django_db_blocker):
         db_populate_by_json(TEMPLATE_DB_KEY)
         db_migrate(TEMPLATE_DB_KEY)
 
-      logging.warn(
+      logging.warning(
         'LOCK END {} {}'.
         format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
       )

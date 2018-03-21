@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:log count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_eomsxomxrjwk</identifier>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_rzfqevloxcky</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>2023-10-06T06:29:15.53565Z</dateLogged>
+    <dateLogged>2013-08-10T05:54:39Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
-    <identifier>PID_eomsxomxrjwk</identifier>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_rzfqevloxcky</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>2039-07-23T11:04:11.23266Z</dateLogged>
+    <dateLogged>2063-06-25T19:19:10Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

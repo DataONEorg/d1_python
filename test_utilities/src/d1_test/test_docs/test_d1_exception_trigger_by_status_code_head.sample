@@ -1,0 +1,14 @@
+[
+  413,
+  {
+    "Content-Type": "application/xml",
+    "DataONE-Exception-Description": "",
+    "DataONE-Exception-DetailCode": "0",
+    "DataONE-Exception-ErrorCode": "413",
+    "DataONE-Exception-Identifier": "",
+    "DataONE-Exception-Name": "InsufficientResources",
+    "DataONE-Exception-NodeID": "",
+    "DataONE-Exception-TraceInformation": ""
+  },
+  ""
+]

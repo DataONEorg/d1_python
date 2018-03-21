@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the Root Resolver
 """
-from __future__ import absolute_import
 
 import tempfile
 

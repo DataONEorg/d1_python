@@ -22,15 +22,14 @@ implementation.  The main difference between the two is the caching
 mechanism.
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import time
-import urllib
-import urlparse
+import urllib.error
+import urllib.parse
+import urllib.request
 
-import solrclient
+from . import solrclient
 
 import d1_common.const
 
@@ -118,7 +117,7 @@ class D1FS():
     }
 
   def getSolrHost(self):
-    url_parts = urlparse.urlsplit(self.baseurl)
+    url_parts = urllib.parse.urlsplit(self.baseurl)
     return url_parts.netloc
 
   def getSolrClient(self, forceNew=True):
@@ -183,7 +182,7 @@ class D1FS():
         self.facets[facet]['n'] = []
         fname = self.facets[facet]['f']
         fvals = sc.fieldValues(fname, fq=self._filter_query)
-        for i in xrange(0, len(fvals[fname]), 2):
+        for i in range(0, len(fvals[fname]), 2):
           fv = self.encodePathName(fvals[fname][i])
           if len(fv) > 0:
             fc = fvals[fname][i + 1]
@@ -245,7 +244,7 @@ class D1FS():
     return ret
 
   def encodePathName(cls, name):
-    return urllib.quote(name.encode('utf-8'), safe=PATHELEMENT_SAFE_CHARS)
+    return urllib.parse.quote(name.encode('utf-8'), safe=PATHELEMENT_SAFE_CHARS)
 
   def getExtensionFromObjectFormat(cls, ofmt):
     formats = {

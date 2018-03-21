@@ -19,7 +19,6 @@
 # limitations under the License.
 """Utilities for working with revision / obsolescence chains
 """
-from __future__ import absolute_import
 
 import d1_common.util
 import d1_common.xml
@@ -61,7 +60,7 @@ def topological_sort(unsorted_dict):
   unconnected_dict = unsorted_dict.copy()
   while found:
     found = False
-    for pid, obsoletes_pid in unconnected_dict.items():
+    for pid, obsoletes_pid in list(unconnected_dict.items()):
       if obsoletes_pid is None or obsoletes_pid in sorted_set:
         found = True
         sorted_list.append(pid)

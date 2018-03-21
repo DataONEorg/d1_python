@@ -23,7 +23,6 @@ These are single objects that are not members of a revision chain (both
 obsoletes and obsoletedBy are unset). For v2, the objects may or may not have a
 SID
 """
-from __future__ import absolute_import
 
 import pytest
 import responses
@@ -40,11 +39,11 @@ class TestDeleteStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def _assert_delete(self, client, sid=None):
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, send_sciobj_str, send_sysmeta_pyxb = (
+      pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = (
         self.create_obj(client, sid=sid)
       )
       # Is retrievable
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(client, pid)
       self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
       # Delete
       identifier_pyxb = client.delete(pid)

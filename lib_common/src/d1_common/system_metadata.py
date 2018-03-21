@@ -83,8 +83,6 @@ Example v2 SystemMetadata XML document with all optional values included:
 </v2:systemMetadata>
 """
 
-from __future__ import absolute_import
-
 import datetime
 import logging
 
@@ -110,12 +108,13 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
   )
 
 
-def normalize(sysmeta_pyxb, reset_timestamps=False):
+def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
   """Normalize {sysmeta_pyxb} in place
   """
-  sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
-    sysmeta_pyxb.accessPolicy
-  )
+  if sysmeta_pyxb.accessPolicy is not None:
+    sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
+      sysmeta_pyxb.accessPolicy
+    )
   if getattr(sysmeta_pyxb, 'mediaType', False):
     d1_common.xml.sort_value_list_pyxb(sysmeta_pyxb.mediaType.property_)
   if getattr(sysmeta_pyxb, 'replicationPolicy', False):
@@ -149,26 +148,26 @@ def normalize(sysmeta_pyxb, reset_timestamps=False):
       )
 
 
-def is_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
+def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
   """Normalizes then compares SystemMetadata PyXB objects for equivalency.
   """
-  normalize(a_pyxb, ignore_timestamps)
-  normalize(b_pyxb, ignore_timestamps)
-  a_xml = a_pyxb.toxml('utf-8')
-  b_xml = b_pyxb.toxml('utf-8')
-  is_equivalent = d1_common.xml.is_equivalent(a_xml, b_xml)
-  if not is_equivalent:
+  normalize_in_place(a_pyxb, ignore_timestamps)
+  normalize_in_place(b_pyxb, ignore_timestamps)
+  a_xml = d1_common.xml.serialize_to_str(a_pyxb)
+  b_xml = d1_common.xml.serialize_to_str(b_pyxb)
+  are_equivalent = d1_common.xml.are_equivalent(a_xml, b_xml)
+  if not are_equivalent:
     logging.debug('XML documents not equivalent:')
     logging.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
-  return is_equivalent
+  return are_equivalent
 
 
-def is_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
+def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
   """Normalizes then compares SystemMetadata XML docs for equivalency.
   {a_xml} and {b_xml} should be utf-8 encoded DataONE System Metadata XML
   documents.
   """
-  return is_equivalent_pyxb(
+  return are_equivalent_pyxb(
     d1_common.xml.deserialize(a_xml),
     d1_common.xml.deserialize(b_xml), ignore_timestamps
   )

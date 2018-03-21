@@ -29,14 +29,12 @@ package on PyPI.
 # and target nodes. In this code, source/src and destination/dst is used
 # instead.
 
-from __future__ import absolute_import
-
+import io
 import logging
 import optparse
 import os
-import Queue
+import queue
 import socket
-import StringIO
 import sys
 import time
 
@@ -215,7 +213,7 @@ def create_test_object_on_mn(base_url, pid):
   )
   mn_client = d1_client.mnclient.MemberNodeClient(base_url, retries=1)
   # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
-  mn_client.create(pid, StringIO.StringIO(sci_obj), sys_meta)
+  mn_client.create(pid, io.StringIO(sci_obj), sys_meta)
 
 
 #===============================================================================
@@ -240,7 +238,7 @@ class ReplicationTester(object):
     self._src_existing_pid_deny = src_existing_pid_deny
     self._dst_existing_pid = dst_existing_pid
     self._validate_cert_paths()
-    self._queue = Queue.Queue()
+    self._queue = queue.Queue()
     self._http_server = replication_server.TestHTTPServer(
       self._options,
       pid_unknown,
@@ -464,7 +462,7 @@ class ReplicationTester(object):
       self._logger.debug('Waiting for call from MN: {}'.format(expected_call))
     try:
       call = self._queue.get(block, self._options.timeout_sec)
-    except Queue.Empty:
+    except queue.Empty:
       raise replication_error.ReplicationTesterError(
         'MN did not make expected call: {}'.format(expected_call)
       )

@@ -18,40 +18,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import base64
-import json
-import StringIO
+import io
 
 import responses
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.sciobj
 import d1_test.mock_api.create as mock_create
 import d1_test.mock_api.util
 
 
-class TestMockPost(d1_test.d1_test_case.D1TestCase):
+@d1_test.d1_test_case.reproducible_random_decorator('TestMockCreate')
+class TestMockCreate(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
     """mock_api.create(): Echoes the request"""
     mock_create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    pid, sid, sciobj_str, sysmeta_pyxb = \
-      d1_test.instance_generator.sciobj.generate_reproducible(mn_client_v1_v2, 'post_pid')
+    pid, sid, sciobj_bytes, sysmeta_pyxb = (
+      d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+        mn_client_v1_v2, 'post_pid'
+      )
+    )
     response = mn_client_v1_v2.createResponse(
-      'post_pid', StringIO.StringIO(sciobj_str), sysmeta_pyxb
+      'post_pid', io.BytesIO(sciobj_bytes), sysmeta_pyxb
     )
-    identifier_pyxb = mn_client_v1_v2.bindings.CreateFromDocument(
-      response.content
-    )
-    assert identifier_pyxb.value() == 'echo-post'
-    echo_body_str = base64.b64decode(response.headers['Echo-Body-Base64'])
-    echo_query_dict = json.loads(
-      base64.b64decode(response.headers['Echo-Query-Base64'])
-    )
-    echo_header_dict = json.loads(
-      base64.b64decode(response.headers['Echo-Header-Base64'])
-    )
-    assert isinstance(echo_body_str, basestring)
-    assert isinstance(echo_query_dict, dict)
-    assert isinstance(echo_header_dict, dict)
+    assert response.status_code == 200
+    echo_dict = d1_test.mock_api.create.unpack_echo_header(response.headers)
+    # TODO: echo_dict is currently a JSON str
+    # echo_dict['identifier'] = (
+    #   mn_client_v1_v2.bindings.CreateFromDocument(response.content).value()
+    # )
+    # del echo_dict['body']
+    self.sample.assert_equals(echo_dict, 'echoes_request', mn_client_v1_v2)

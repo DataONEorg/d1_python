@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the Resource Map Resolver
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.resolver.resource_map as resource_map
 import d1_onedrive.impl.tests.object_tree_test_sample

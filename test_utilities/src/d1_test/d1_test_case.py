@@ -19,16 +19,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for unit- and integration tests"""
-from __future__ import absolute_import
 
+import collections
 import contextlib
 import datetime
+import gc
 import inspect
+import io
 import logging
 import os
 import random
 import resource
-import StringIO
 import sys
 import tempfile
 import traceback
@@ -76,7 +77,7 @@ SUBJ_DICT = {
 
 @contextlib.contextmanager
 def capture_std():
-  new_out, new_err = StringIO.StringIO(), StringIO.StringIO()
+  new_out, new_err = io.StringIO(), io.StringIO()
   old_out, old_err = sys.stdout, sys.stderr
   try:
     sys.stdout, sys.stderr = new_out, new_err
@@ -119,13 +120,13 @@ def clear_caplog(caplog):
 
 
 @contextlib.contextmanager
-def mock_raw_input(answer_str):
+def mock_input(answer_str):
   def _log(prompt_str):
     sys.stdout.write(prompt_str)
     return mock.DEFAULT
 
   with mock.patch(
-      '__builtin__.raw_input',
+      'builtins.input',
       side_effect=_log,
       return_value=answer_str,
   ):
@@ -152,7 +153,7 @@ def reproducible_random_decorator(seed):
   def reproducible_random_decorator_real(cls_or_func):
     if inspect.isclass(cls_or_func):
       return _reproducible_random_class_decorator(cls_or_func, seed)
-    elif callable(cls_or_func):
+    elif isinstance(cls_or_func, collections.Callable):
       return _reproducible_random_func_decorator(cls_or_func, seed)
     else:
       raise ValueError(
@@ -163,12 +164,12 @@ def reproducible_random_decorator(seed):
 
 
 def _reproducible_random_class_decorator(cls, seed):
-  for test_name, test_func in cls.__dict__.items():
+  for test_name, test_func in list(cls.__dict__.items()):
     if test_name.startswith('test_'):
-      # logging.debug(
-      #   'Decorating: {}.{}: reproducible_random()'.
-      #   format(cls.__name__, test_name)
-      # )
+      logging.debug(
+        'Decorating: {}.{}: reproducible_random()'.
+        format(cls.__name__, test_name)
+      )
       setattr(
         cls, test_name, _reproducible_random_func_decorator(test_func, seed)
       )
@@ -177,9 +178,9 @@ def _reproducible_random_class_decorator(cls, seed):
 
 def _reproducible_random_func_decorator(func, seed):
   def wrapper(func2, *args, **kwargs):
-    # logging.debug(
-    #   'Decorating: {}: reproducible_random()'.format(func2.__name__)
-    # )
+    logging.debug(
+      'Decorating: {}: reproducible_random()'.format(func2.__name__)
+    )
     with reproducible_random_context(seed):
       return func2(*args, **kwargs)
 
@@ -215,7 +216,18 @@ def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
     yield f
 
 
-#===============================================================================
+@contextlib.contextmanager
+def temp_file_name():
+  """Provide a file path that can be used as the location of a temporary file,
+  and delete any file written to the path on exit
+  """
+  with tempfile.NamedTemporaryFile() as f:
+    temp_file_path = f.name
+  yield temp_file_path
+  try:
+    os.unlink(temp_file_path)
+  except EnvironmentError:
+    pass
 
 
 @contextlib.contextmanager
@@ -224,21 +236,31 @@ def memory_limit(max_mem_bytes):
   to increase by more than {max_mem_bytes}
   - May not be very accurate.
   """
-  process = psutil.Process(os.getpid())
-  old_limit_tup = resource.getrlimit(resource.RLIMIT_AS)
-  old_limit_bytes = process.memory_info().rss
-  new_limit_bytes = old_limit_bytes + max_mem_bytes
-  logging.debug(
-    'Setting new memory limit. old={:,} bytes, new={:,} bytes'.
-    format(old_limit_bytes, new_limit_bytes)
-  )
-  resource.setrlimit(resource.RLIMIT_AS, (new_limit_bytes, -1))
-  yield
-  logging.debug(
-    'Restoring old memory limit. old={:,} bytes, new={:,} bytes'.
-    format(old_limit_bytes, new_limit_bytes)
-  )
-  resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
+  try:
+    gc.collect()
+    gc.disable()
+
+    process = psutil.Process(os.getpid())
+    old_limit_tup = resource.getrlimit(resource.RLIMIT_AS)
+    current_used_bytes = process.memory_info().vms
+    limit_bytes = current_used_bytes + max_mem_bytes
+    logging.debug(
+      'Setting memory limit. current={:,} bytes, limit={:,} bytes'.
+      format(current_used_bytes, limit_bytes)
+    )
+    resource.setrlimit(
+      resource.RLIMIT_AS,
+      (limit_bytes, resource.RLIM_INFINITY)
+    )
+
+    yield
+
+    logging.debug('Removing memory limit. limit={:,} bytes'.format(limit_bytes))
+    resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
+
+  finally:
+    gc.enable()
+    gc.collect()
 
 
 #===============================================================================
@@ -317,7 +339,7 @@ class D1TestCase(object):
 
   def get_pyxb_value(self, inst_pyxb, inst_attr):
     try:
-      return unicode(getattr(inst_pyxb, inst_attr).value())
+      return str(getattr(inst_pyxb, inst_attr).value())
     except (ValueError, AttributeError):
       return None
 
@@ -342,18 +364,20 @@ class D1TestCase(object):
   #   return '{}_{}'.format(tag_str, self.random_str())
 
   def dump(self, o, log_func=logging.debug):
-    map(
-      log_func,
-      d1_test.sample.obj_to_pretty_str(o, no_clobber=True).splitlines()
+    list(
+      map(
+        log_func,
+        d1_test.sample.obj_to_pretty_str(o, no_clobber=True).splitlines()
+      )
     )
 
   def format_pyxb(self, type_pyxb):
-    ss = StringIO.StringIO()
+    ss = io.StringIO()
     ss.write('PyXB object:\n')
     ss.write(
       '\n'.join([
         '  {}'.format(s)
-        for s in d1_common.xml.pretty_pyxb(type_pyxb).splitlines()
+        for s in d1_common.xml.format_pretty_pyxb(type_pyxb).splitlines()
       ])
     )
     return ss.getvalue()
@@ -387,7 +411,7 @@ class D1TestCase(object):
 
   @staticmethod
   def expand_subjects(subj):
-    if isinstance(subj, basestring):
+    if isinstance(subj, str):
       subj = [subj]
     return {SUBJ_DICT[v] if v in SUBJ_DICT else v for v in subj or []}
 

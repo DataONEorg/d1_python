@@ -20,20 +20,18 @@
 """Generate random NodeReference
 """
 
-from __future__ import absolute_import
-
 import d1_common.types.dataoneTypes
 
 import d1_test.instance_generator.random_data
 
 
-def generate(prefix=u'urn:node:', min_len=5, max_len=20):
+def generate(prefix='urn:node:', min_len=5, max_len=20):
   """Generate instance of nodeReference holding a urn:node:<random> string"""
   s = generate_bare(prefix, min_len, max_len)
   return d1_common.types.dataoneTypes.nodeReference(s)
 
 
-def generate_bare(prefix=u'', min_len=5, max_len=20):
+def generate_bare(prefix='', min_len=5, max_len=20):
   """Generate a random unicode string"""
   len_prefix = len(prefix)
   if len_prefix >= max_len:

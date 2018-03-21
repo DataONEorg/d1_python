@@ -21,8 +21,6 @@
 """Test dependency checker
 """
 
-from __future__ import absolute_import
-
 import d1_cli.impl.check_dependencies
 
 import d1_test.d1_test_case

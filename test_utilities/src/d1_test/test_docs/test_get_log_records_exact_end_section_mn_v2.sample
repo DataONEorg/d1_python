@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:log count="1" start="3235" total="3236" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_vhyupyuyynue</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-11-12T10:04:34Z</dateLogged>

@@ -29,8 +29,6 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-from __future__ import absolute_import
-
 import logging
 import re
 
@@ -74,10 +72,12 @@ def _request_callback(request):
   if pid.startswith('<NotFound>'):
     return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
   # Return regular response
-  pid, sid, sciobj_str, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible(
-    client, pid
+  pid, sid, sciobj_bytes, sysmeta_pyxb = (
+    d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+      client, pid
+    )
   )
-  header_dict = _create_headers(sciobj_str, sysmeta_pyxb)
+  header_dict = _create_headers(sciobj_bytes, sysmeta_pyxb)
   return 200, header_dict, ''
 
 
@@ -90,9 +90,9 @@ def _parse_url(url):
   return param_list[0], client
 
 
-def _create_headers(sciobj_str, sysmeta_pyxb):
+def _create_headers(sciobj_bytes, sysmeta_pyxb):
   checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
-    sciobj_str
+    sciobj_bytes
   )
   return {
     'Content-Length':

@@ -1,0 +1,25 @@
+{   "body": "[BOUNDARY]\r\nContent-Disposition: form-data; name=\"object\"; filename=\"content.bin\"\r\n\r\nThese are the
+reproducible Science Object bytes for pid=\"post_pid\". What follows is 100 to 200 random bytes: b\ufffd\ufffd\fw\u0015\ufffdD\u00
+00\ufffd\ufffd\ufffd\u0435\ufffd~\u352c?\ufffd\ufffd\ufffdh\rZI\ufffdkJ\ufffd\"\u0002\u0006]Li\ufffd\ufffdP\ufffd<\ufffd\ufffd\uff
+fd\ta9\ufffd\ueaa8\ufffd\ufffd\ufffd#\\n}\ufffd \u0014\ufffd\u001e*&\u0015\ufffd\u000b\ufffd\ufffdg\ufffd\ufffd\ufffd\ufffd\ufffd[
+\ufffd\u0017v\ufffd\ufffd(<\uaad2\ufffd\ufffd\ufffd\ufffd}^#\u00035ktU\ufffdwC\u0004\ufffd2?\ufffd\ufffd\u007fW\t\ufffd\ufffd:\uff
+fd\u0277aF\ufffdO\u0014\u0000\ufffdP?;tn\ufffd\ufffdu\ufffdQ\u007f\ufffd\ufffd\ufffdO\ufffd\ufffd0\ufffd\u001d\ufffd\ufffd\u001c\u
+fffd@\ufffd\r\n[BOUNDARY]\r\nContent-Disposition: form-data; name=\"pid\"\r\n\r\npost_pid\r\n[BOUNDARY]\r\nContent-Disposition:
+form-data; name=\"sysmeta\"; filename=\"sysmeta.xml\"\r\n\r\n<?xml version=\"1.0\" encoding=\"utf-8\"?><ns1:systemMetadata xmlns:n
+s1=\"http://ns.dataone.org/service/types/v2.0\"><serialVersion>55</serialVersion><identifier>post_pid</identifier><formatId>applic
+ation/x-bzip2</formatId><size>263</size><checksum algorithm=\"SHA-1\">923662fe64faef9501486c7b4c7b5e06c3ae42c5</checksum><submitte
+r>subj_o</submitter><rightsHolder>subj_i</rightsHolder><replicationPolicy numberReplicas=\"0\" replicationAllowed=\"false\"><prefe
+rredMemberNode>mn_s</preferredMemberNode><preferredMemberNode>mn_bl</preferredMemberNode><preferredMemberNode>mn_yn</preferredMemb
+erNode><blockedMemberNode>mn_qe</blockedMemberNode><blockedMemberNode>mn_a</blockedMemberNode><blockedMemberNode>mn_jn</blockedMem
+berNode><blockedMemberNode>mn_hu</blockedMemberNode></replicationPolicy><dateUploaded>2012-03-23T03:21:03.025223Z</dateUploaded><d
+ateSysMetadataModified>2012-04-02T03:21:03.025223Z</dateSysMetadataModified><originMemberNode>mn_hv</originMemberNode><authoritati
+veMemberNode>mn_l</authoritativeMemberNode><replica><replicaMemberNode>mn_ec</replicaMemberNode><replicationStatus>invalidated</re
+plicationStatus><replicaVerified>1981-11-08T15:54:17.855847Z</replicaVerified></replica><replica><replicaMemberNode>mn_c</replicaM
+emberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>1974-07-16T01:18:32.247019Z</replicaVerified></replic
+a><replica><replicaMemberNode>mn_sq</replicaMemberNode><replicationStatus>completed</replicationStatus><replicaVerified>2041-11-10
+T22:39:07.24449Z</replicaVerified></replica><seriesId>SID_hvswpleagnok</seriesId><mediaType name=\"media_type_ia\"><property
+name=\"prop_arkhhonyozkp\">hpkbwhyzwmij</property><property name=\"prop_wsmkxakvnbkl\">rxgudyxdipkp</property><property
+name=\"prop_uawndwtvfsjs\">qkkknhiybmxn</property><property name=\"prop_ekpmuastdtuj\">qnpmuvxbuhim</property></mediaType><fileNam
+e>file_pdrffkqzestl</fileName></ns1:systemMetadata>\r\n[BOUNDARY]--\r\n",   "headers": {     "Accept": "*/*",     "Accept-
+Encoding": "gzip, deflate",     "Charset": "utf-8",     "Connection": "keep-alive",     "Content-Length": "2519",     "Content-
+Type": "multipart/form-data; boundary=[BOUNDARY]",     "User-Agent": "DataONE-Python/[VERSION]   },   "query": {} }

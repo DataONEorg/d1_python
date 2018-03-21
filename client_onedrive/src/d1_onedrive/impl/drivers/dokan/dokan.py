@@ -25,8 +25,6 @@ Exported classes:
 Dokan -- "no-op" Dokan implementation
 """
 
-from __future__ import absolute_import
-
 import ctypes
 import ctypes.wintypes as wintypes
 import functools

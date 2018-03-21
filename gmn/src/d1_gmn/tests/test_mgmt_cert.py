@@ -19,7 +19,6 @@
 # limitations under the License.
 """Test the "cert" management command
 """
-from __future__ import absolute_import
 
 import pytest
 

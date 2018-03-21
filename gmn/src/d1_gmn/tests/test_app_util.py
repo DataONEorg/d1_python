@@ -20,8 +20,6 @@
 """Test d1_gmn.app.util module
 """
 
-from __future__ import absolute_import
-
 import responses
 
 import d1_gmn.app.models
@@ -64,7 +62,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       obj_1_whitelist = obj_1_subj_list[2]
       obj_1_2_shared = obj_1_subj_list[3]
 
-      obj_1_pid, obj_1_sid, obj_1_sciobj_str, obj_1_sysmeta_pyxb = self.create_obj(
+      obj_1_pid, obj_1_sid, obj_1_sciobj_bytes, obj_1_sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True, submitter='obj_1_submitter',
         rights_holder=obj_1_rights_holder, permission_list=obj_1_perm_list
       )
@@ -79,7 +77,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       obj_2_subj_list = sorted(obj_2_subj_set)
       obj_2_rights_holder = obj_2_subj_list[1]
 
-      obj_2_pid, obj_2_sid, obj_2_sciobj_str, obj_2_sysmeta_pyxb = self.create_obj(
+      obj_2_pid, obj_2_sid, obj_2_sciobj_bytes, obj_2_sysmeta_pyxb = self.create_obj(
         mn_client_v2, sid=True, submitter='obj_2_submitter',
         rights_holder=obj_2_rights_holder, permission_list=obj_2_perm_list
       )

@@ -25,8 +25,6 @@ https://github.com/nschloe/pipdated
 http://stackoverflow.com/a/3452888/353337
 """
 
-from __future__ import absolute_import
-
 import logging
 import os
 import subprocess
@@ -48,20 +46,20 @@ def main():
   freeze_str = subprocess.check_output(['pip', 'freeze'])
 
   for line_str in freeze_str.splitlines():
-    print '#### {}'.format(line_str)
+    print(('#### {}'.format(line_str)))
     try:
       pkg_str, ver_str = line_str.strip().split('==')
     except ValueError:
-      print 'Skipped'
+      print('Skipped')
       continue
     if pkg_str in NO_UPGRADE_LIST:
-      logging.warn(
+      logging.warning(
         'Skipped package in NO_UPGRADE_LIST. pkg_str="{}"'.format(pkg_str)
       )
       continue
-    print subprocess.check_output(['pip', 'install', '--upgrade', pkg_str])
+    print((subprocess.check_output(['pip', 'install', '--upgrade', pkg_str])))
 
-  print subprocess.check_output(['pip', 'check'])
+  print((subprocess.check_output(['pip', 'check'])))
 
 
 if __name__ == '__main__':

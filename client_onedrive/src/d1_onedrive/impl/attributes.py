@@ -21,8 +21,6 @@
 """Hold the size and other attributes for a file or folder
 """
 
-from __future__ import absolute_import
-
 import logging
 
 log = logging.getLogger(__name__)

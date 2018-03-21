@@ -55,8 +55,6 @@
 #           replication allowed           True
 #
 
-from __future__ import absolute_import
-
 import ast
 import copy
 import os
@@ -73,49 +71,49 @@ import d1_common.checksum
 import d1_common.const
 
 # Names for variables.
-VERBOSE_NAME = u'verbose'
-EDITOR_NAME = u'editor'
-CN_URL_NAME = u'cn-url'
-MN_URL_NAME = u'mn-url'
-START_NAME = u'start'
-COUNT_NAME = u'count'
-ANONYMOUS_NAME = u'anonymous'
-CERT_FILENAME_NAME = u'cert-file'
-KEY_FILENAME_NAME = u'key-file'
-FORMAT_NAME = u'format-id'
-OWNER_NAME = u'rights-holder'
-AUTH_MN_NAME = u'authoritative-mn'
-CHECKSUM_NAME = u'algorithm'
-FROM_DATE_NAME = u'from-date'
-TO_DATE_NAME = u'to-date'
-SEARCH_FORMAT_NAME = u'search-format-id'
-QUERY_ENGINE_NAME = u'query-type'
-QUERY_STRING_NAME = u'query'
+VERBOSE_NAME = 'verbose'
+EDITOR_NAME = 'editor'
+CN_URL_NAME = 'cn-url'
+MN_URL_NAME = 'mn-url'
+START_NAME = 'start'
+COUNT_NAME = 'count'
+ANONYMOUS_NAME = 'anonymous'
+CERT_FILENAME_NAME = 'cert-file'
+KEY_FILENAME_NAME = 'key-file'
+FORMAT_NAME = 'format-id'
+OWNER_NAME = 'rights-holder'
+AUTH_MN_NAME = 'authoritative-mn'
+CHECKSUM_NAME = 'algorithm'
+FROM_DATE_NAME = 'from-date'
+TO_DATE_NAME = 'to-date'
+SEARCH_FORMAT_NAME = 'search-format-id'
+QUERY_ENGINE_NAME = 'query-type'
+QUERY_STRING_NAME = 'query'
 
 variable_type_map = {
   VERBOSE_NAME: bool,
-  EDITOR_NAME: unicode,
-  CN_URL_NAME: unicode,
-  MN_URL_NAME: unicode,
+  EDITOR_NAME: str,
+  CN_URL_NAME: str,
+  MN_URL_NAME: str,
   START_NAME: int,
   COUNT_NAME: int,
   ANONYMOUS_NAME: bool,
-  CERT_FILENAME_NAME: unicode,
-  KEY_FILENAME_NAME: unicode,
-  FORMAT_NAME: unicode,
-  OWNER_NAME: unicode,
-  AUTH_MN_NAME: unicode,
-  CHECKSUM_NAME: unicode,
-  FROM_DATE_NAME: unicode,
-  TO_DATE_NAME: unicode,
-  SEARCH_FORMAT_NAME: unicode,
-  QUERY_ENGINE_NAME: unicode,
-  QUERY_STRING_NAME: unicode,
+  CERT_FILENAME_NAME: str,
+  KEY_FILENAME_NAME: str,
+  FORMAT_NAME: str,
+  OWNER_NAME: str,
+  AUTH_MN_NAME: str,
+  CHECKSUM_NAME: str,
+  FROM_DATE_NAME: str,
+  TO_DATE_NAME: str,
+  SEARCH_FORMAT_NAME: str,
+  QUERY_ENGINE_NAME: str,
+  QUERY_STRING_NAME: str,
 }
 
 variable_defaults_map = {
   VERBOSE_NAME: True,
-  EDITOR_NAME: u'notepad' if platform.system() == 'Windows' else 'nano',
+  EDITOR_NAME: 'notepad' if platform.system() == 'Windows' else 'nano',
   CN_URL_NAME: d1_common.const.URL_DATAONE_ROOT,
   MN_URL_NAME: d1_common.const.DEFAULT_MN_BASEURL,
   START_NAME: 0,
@@ -131,7 +129,7 @@ variable_defaults_map = {
   TO_DATE_NAME: None,
   SEARCH_FORMAT_NAME: None,
   QUERY_ENGINE_NAME: d1_common.const.DEFAULT_SEARCH_ENGINE,
-  QUERY_STRING_NAME: u'*:*',
+  QUERY_STRING_NAME: '*:*',
 }
 
 
@@ -172,7 +170,7 @@ class Session(object):
       v = ast.literal_eval(value_string)
     except (ValueError, SyntaxError):
       v = value_string
-    if v is None or v == u'none':
+    if v is None or v == 'none':
       self._variables[variable] = None
     else:
       try:
@@ -184,7 +182,7 @@ class Session(object):
         self._variables[variable] = value
       except ValueError:
         raise cli_exceptions.InvalidArguments(
-          u'Invalid value for {}: {}'.format(variable, value_string)
+          'Invalid value for {}: {}'.format(variable, value_string)
         )
 
   def print_variable(self, variable):
@@ -195,23 +193,23 @@ class Session(object):
 
   def print_single_variable(self, variable):
     self._assert_valid_variable(variable)
-    cli_util.print_info(u'{}: {}'.format(variable, self.get(variable)))
+    cli_util.print_info('{}: {}'.format(variable, self.get(variable)))
 
   def print_all_variables(self):
     f = operation_formatter.OperationFormatter()
     d = copy.deepcopy(self._variables)
     d['replication'] = {
-      u'replication-allowed':
+      'replication-allowed':
         self._replication_policy.get_replication_allowed(),
-      u'preferred-nodes':
+      'preferred-nodes':
         self._replication_policy.get_preferred(),
-      u'blocked-nodes':
+      'blocked-nodes':
         self._replication_policy.get_blocked(),
-      u'number-of-replicas':
+      'number-of-replicas':
         self._replication_policy.get_number_of_replicas(),
     }
     d['access'] = {
-      u'allow': self._access_control.get_list(),
+      'allow': self._access_control.get_list(),
     }
     f.print_operation(d)
 
@@ -232,13 +230,13 @@ class Session(object):
     if pickle_file_path is None:
       pickle_file_path = self.get_default_pickle_file_path()
     try:
-      with open(cli_util.os.path.expanduser(pickle_file_path), u'rb') as f:
+      with open(cli_util.os.path.expanduser(pickle_file_path), 'rb') as f:
         self.__dict__.update(pickle.load(f))
       #self._verify_session_variables()
     except (NameError, IOError, ImportError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to load session from file: {}\n{}'.
+          'Unable to load session from file: {}\n{}'.
           format(pickle_file_path, str(e))
         )
 
@@ -246,12 +244,12 @@ class Session(object):
     if pickle_file_path is None:
       pickle_file_path = self.get_default_pickle_file_path()
     try:
-      with open(cli_util.os.path.expanduser(pickle_file_path), u'wb') as f:
+      with open(cli_util.os.path.expanduser(pickle_file_path), 'wb') as f:
         pickle.dump(self.__dict__, f, 2)
     except (NameError, IOError) as e:
       if not suppress_error:
         cli_util.print_error(
-          u'Unable to save session to file: {}\n{}'.
+          'Unable to save session to file: {}\n{}'.
           format(pickle_file_path, str(e))
         )
 
@@ -273,18 +271,18 @@ class Session(object):
   def _assert_valid_variable(self, variable):
     if variable not in self._variables:
       raise cli_exceptions.InvalidArguments(
-        u'Invalid session variable: {}'.format(variable)
+        'Invalid session variable: {}'.format(variable)
       )
 
   def _validate_variable_type(self, value, type_converter):
     # Make sure booleans are "sane"
     if isinstance(type_converter, bool):
-      if value in (u'true', u'True', u't', u'T', 1, u'1', u'yes', u'Yes'):
+      if value in ('true', 'True', 't', 'T', 1, '1', 'yes', 'Yes'):
         return True
-      elif value in (u'false', u'False', u'f', u'F', 0, u'0', u'no', u'No'):
+      elif value in ('false', 'False', 'f', 'F', 0, '0', 'no', 'No'):
         return False
       else:
-        raise ValueError(u'Invalid boolean value: {}'.format(value))
+        raise ValueError('Invalid boolean value: {}'.format(value))
     else:
       return value
 
@@ -294,7 +292,7 @@ class Session(object):
         d1_common.checksum.get_checksum_calculator_by_dataone_designator(value)
       except LookupError:
         raise cli_exceptions.InvalidArguments(
-          u'Invalid checksum algorithm: {}'.format(value)
+          'Invalid checksum algorithm: {}'.format(value)
         )
     elif variable == CN_URL_NAME:
       # TODO: Add warning if URL is not a known CN / environment
@@ -308,10 +306,10 @@ class Session(object):
             '"{}" is not a known DataONE Member Node. Use anyway?'.
             format(value)
         ):
-          raise cli_exceptions.InvalidArguments(u'Member Node update cancelled')
+          raise cli_exceptions.InvalidArguments('Member Node update cancelled')
     elif variable == FORMAT_NAME:
       cn_base_url = self.get(CN_URL_NAME)
       if value not in self._format_ids.get(cn_base_url):
         raise cli_exceptions.InvalidArguments(
-          u'Invalid Object Format ID: {}'.format(value)
+          'Invalid Object Format ID: {}'.format(value)
         )

@@ -24,8 +24,6 @@ environment in which this MN is registered.
 - Query the Node Registry.
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_common.xml
@@ -43,12 +41,12 @@ def get_cn_subjects():
 
   if django.conf.settings.STAND_ALONE:
     logging.info(
-      u'Running in stand-alone mode. Skipping node registry download.'
+      'Running in stand-alone mode. Skipping node registry download.'
     )
     set_empty_cn_subjects_cache()
   else:
     logging.info(
-      u'Running in environment: {}'.format(django.conf.settings.DATAONE_ROOT)
+      'Running in environment: {}'.format(django.conf.settings.DATAONE_ROOT)
     )
     set_cn_subjects_for_environment()
 
@@ -57,7 +55,7 @@ def get_cn_subjects():
 
 def set_empty_cn_subjects_cache():
   django.core.cache.cache.set('cn_subjects', set())
-  logging.info(u'CN Subjects set to empty list')
+  logging.info('CN Subjects set to empty list')
 
 
 def set_cn_subjects_for_environment():
@@ -66,22 +64,22 @@ def set_cn_subjects_for_environment():
   try:
     cn_subjects = get_cn_subjects_from_dataone_root()
   except Exception as e:
-    logging.warn(
-      u'Unable to get CN Subjects from the DataONE environment. '
-      u'If this server is being used for testing, see the STAND_ALONE setting. '
-      u'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT)
+    logging.warning(
+      'Unable to get CN Subjects from the DataONE environment. '
+      'If this server is being used for testing, see the STAND_ALONE setting. '
+      'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT)
     )
     cn_subjects = []
   else:
     logging.info(
-      u'CN Subjects successfully retrieved from the DataONE environment: {}'
-      .format(u', '.join(cn_subjects))
+      'CN Subjects successfully retrieved from the DataONE environment: {}'
+      .format(', '.join(cn_subjects))
     )
   django.core.cache.cache.set('cn_subjects', set(cn_subjects))
 
 
 def get_cn_subjects_string():
-  return u', '.join(sorted(list(get_cn_subjects())))
+  return ', '.join(sorted(list(get_cn_subjects())))
 
 
 def get_cn_subjects_from_dataone_root():
@@ -103,7 +101,7 @@ def get_cn_subjects_from_dataone_root():
 
 def download_node_registry():
   logging.info(
-    u'Downloading node registry from environment: {}'.
+    'Downloading node registry from environment: {}'.
     format(django.conf.settings.DATAONE_ROOT)
   )
   client = create_root_cn_client()

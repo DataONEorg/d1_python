@@ -19,11 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import d1_scimeta.xml_schema as scimeta
-import lxml
-import lxml.etree
 import pytest
 
 import d1_test.d1_test_case
@@ -33,7 +29,10 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
     """SciMeta.validate(): Uninstalled schema raises SciMetaValidationError with
     expected message"""
+    # xml_str = self.sample.load_utf8_to_str('scimeta_isotc211_1.xml')
     xml_str = self.sample.load('scimeta_isotc211_1.xml')
+    # print (xml_str)
+    # return
     format_id = 'http://www.icpsr.umich.edu/DDI'
     with pytest.raises(
         scimeta.SciMetaValidationError,
@@ -55,7 +54,10 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     """SciMeta.validate(): onedcx does not validate as EML"""
     xml_str = self.sample.load('scimeta_dc_1.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
-    with pytest.raises(lxml.etree.DocumentInvalid):
+    with pytest.raises(
+        scimeta.SciMetaValidationError,
+        match='No matching global declaration available for the validation root'
+    ):
       scimeta.validate(format_id, xml_str)
 
   def test_1030(self):
@@ -69,7 +71,10 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     """SciMeta.validate(): ISO/TC 211 does not validate as Dryad"""
     xml_str = self.sample.load('scimeta_isotc211_1.xml')
     format_id = 'http://datadryad.org/profile/v3.1'
-    with pytest.raises(lxml.etree.DocumentInvalid):
+    with pytest.raises(
+        scimeta.SciMetaValidationError,
+        match='No matching global declaration available for the validation root'
+    ):
       scimeta.validate(format_id, xml_str)
 
   def test_1050(self):
@@ -82,7 +87,9 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     """SciMeta.validate(): Invalid EML 2.1.1: Unexpected element"""
     xml_str = self.sample.load('scimeta_eml_invalid_1.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
-    with pytest.raises(lxml.etree.DocumentInvalid, match='unexpectedElement'):
+    with pytest.raises(
+        scimeta.SciMetaValidationError, match='unexpectedElement'
+    ):
       scimeta.validate(format_id, xml_str)
 
   def test_1070(self):
@@ -90,6 +97,6 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     xml_str = self.sample.load('scimeta_eml_invalid_2.xml')
     format_id = 'eml://ecoinformatics.org/eml-2.1.1'
     with pytest.raises(
-        lxml.etree.DocumentInvalid, match='Missing child element'
+        scimeta.SciMetaValidationError, match='Missing child element'
     ):
       scimeta.validate(format_id, xml_str)

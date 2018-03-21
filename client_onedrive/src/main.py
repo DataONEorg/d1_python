@@ -16,13 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import print_function
-
 
 def entrypoint0():
 
   import sys
-  print(sys.argv)
+  print((sys.argv))
   del sys.modules['__main__']
 
   entrypoint1()
@@ -30,5 +28,5 @@ def entrypoint0():
 
 def entrypoint1():
 
-  from d1_onedrive import d1_onedrive
+  from .d1_onedrive import d1_onedrive
   d1_onedrive.main()

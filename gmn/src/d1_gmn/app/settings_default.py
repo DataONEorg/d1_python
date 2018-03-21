@@ -25,8 +25,6 @@ in existing deployments.
 # noinspection PyUnresolvedReferences
 # flake8: noqa: F403,F401
 
-from __future__ import absolute_import
-
 from d1_gmn.app.settings_default import *
 
 import d1_common.const
@@ -92,7 +90,7 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 
 DATAONE_TRUSTED_SUBJECTS = set([])
 
-ADMINS = (('My Name', 'my_address@my_email.tld'),)
+ADMINS = (('unset', 'unset@unset.tld'),)
 PUBLIC_OBJECT_LIST = True
 PUBLIC_LOG_RECORDS = True
 REQUIRE_WHITELIST_FOR_UPDATE = True

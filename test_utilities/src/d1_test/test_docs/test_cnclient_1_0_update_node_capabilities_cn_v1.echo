@@ -1,17 +1,17 @@
 {
   "request": {
-    "endpoint_str": "node", 
+    "endpoint_str": "node",
     "param_list": [
-      "urn:node:acfagq"
-    ], 
-    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1", 
-    "query_dict": {}, 
+      "urn:node:abapiw"
+    ],
+    "pyxb_namespace": "http://ns.dataone.org/service/types/v1.1",
+    "query_dict": {},
     "version_tag": "v1"
-  }, 
+  },
   "wrapper": {
-    "class_name": "CoordinatingNodeClient_1_2", 
-    "expected_type": null, 
-    "received_303_redirect": false, 
+    "class_name": "CoordinatingNodeClient_1_2",
+    "expected_type": null,
+    "received_303_redirect": false,
     "vendor_specific_dict": null
   }
 }

@@ -20,8 +20,6 @@
 """Test MNCore.getLogRecords()
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import freezegun
@@ -194,7 +192,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       n_create_events_before = self.get_total_log_records(
         mn_client_v1_v2, event='create'
       )
-      pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
       )
       # # The event timestamp is set directly in the db, so it's not covered by
@@ -214,12 +212,14 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       event_pyxb = mn_client_v1_v2.getLogRecords(start=0, count=1)
       self.sample.assert_equals(
         '\n'.join(
-          '{}: {}'.format(k, v) for k, v in {
+          '{}: {}'.format(k, v) for k, v in list({
             'pid': pid,
             'sid': sid,
-            'sysmeta': d1_common.xml.pretty_pyxb(sysmeta_pyxb),
-            'create_event': d1_common.xml.pretty_pyxb(event_pyxb),
-          }.items()
+            'sysmeta': d1_common.xml.format_pretty_pyxb(sysmeta_pyxb
+                                                        ),
+            'create_event': d1_common.xml.format_pretty_pyxb(event_pyxb
+                                                             ),
+          }.items())
         ),
         'new_create_event',
         mn_client_v1_v2,

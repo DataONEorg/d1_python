@@ -21,8 +21,6 @@
 """Check that misconfigured settings.py is correctly detected and handled
 """
 
-from __future__ import absolute_import
-
 import logging
 
 import pytest

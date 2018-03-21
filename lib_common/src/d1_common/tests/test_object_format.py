@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import d1_common.object_format
 
 import d1_test.d1_test_case
@@ -35,11 +33,11 @@ class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
     assert len(ofl_dict) == 117
 
     expected_text_xml_dict = {
-      'extension': u'html',
-      'format_name': u'Hypertext Markup Language',
-      'format_type': u'DATA',
+      'extension': 'html',
+      'format_name': 'Hypertext Markup Language',
+      'format_type': 'DATA',
       'media_type': {
-        'name': u'text/html',
+        'name': 'text/html',
         'property_list': []
       }
     }

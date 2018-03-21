@@ -18,19 +18,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import cgi
+import http.server
 import logging
 import re
-import SocketServer
+import socketserver
 import threading
-import urllib
-import urlparse
+import urllib.error
+import urllib.parse
+import urllib.request
 
-import replication_error
-import SimpleHTTPServer
-import test_object_generator
+from . import replication_error
+from . import test_object_generator
 
 import d1_common.const
 import d1_common.types.dataoneTypes_v1 as dataoneTypes
@@ -66,17 +65,17 @@ class TestHTTPServer(threading.Thread):
     self.daemon = True
     # Some magic to prevent the socket from hanging for a minute after the
     # script exits.
-    SocketServer.TCPServer.allow_reuse_address = True
-    self.httpd = SocketServer.TCPServer((self._host, self._port), Handler)
+    socketserver.TCPServer.allow_reuse_address = True
+    self.httpd = socketserver.TCPServer((self._host, self._port), Handler)
 
   def run(self):
-    SocketServer.TCPServer._queue = self._queue
-    SocketServer.TCPServer._options = self._options
-    SocketServer.TCPServer.pid_unknown = self.pid_unknown
-    SocketServer.TCPServer.pid_not_authorized = self.pid_not_authorized
-    SocketServer.TCPServer.pid_known_and_authorized = self.pid_known_and_authorized
-    SocketServer.TCPServer.src_existing_pid_approve = self.src_existing_pid_approve
-    SocketServer.TCPServer.src_existing_pid_deny = self.src_existing_pid_deny
+    socketserver.TCPServer._queue = self._queue
+    socketserver.TCPServer._options = self._options
+    socketserver.TCPServer.pid_unknown = self.pid_unknown
+    socketserver.TCPServer.pid_not_authorized = self.pid_not_authorized
+    socketserver.TCPServer.pid_known_and_authorized = self.pid_known_and_authorized
+    socketserver.TCPServer.src_existing_pid_approve = self.src_existing_pid_approve
+    socketserver.TCPServer.src_existing_pid_deny = self.src_existing_pid_deny
 
     self._logger.info(
       'Starting HTTP Server. Host={} Port={}'.format(self._host, self._port)
@@ -88,7 +87,7 @@ class TestHTTPServer(threading.Thread):
     self.httpd.shutdown()
 
   def _get_host_and_port(self, default_port=80):
-    url_components = urlparse.urlparse(self._options.reptest_base_url)
+    url_components = urllib.parse.urlparse(self._options.reptest_base_url)
     return (
       url_components.netloc.split(':')[0], default_port
       if url_components.port is None else url_components.port
@@ -98,16 +97,16 @@ class TestHTTPServer(threading.Thread):
 #===============================================================================
 
 
-class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class Handler(http.server.SimpleHTTPRequestHandler):
   def __init__(self, request, client_address, server):
     self._logger = logging.getLogger(self.__class__.__name__)
-    SimpleHTTPServer.SimpleHTTPRequestHandler.__init__(
+    http.server.SimpleHTTPRequestHandler.__init__(
       self, request, client_address, server
     )
 
   def do_GET(self):
     self._logger.debug('Received HTTP GET: {}'.format(self.path))
-    url = urlparse.urlparse(urllib.unquote(self.path))
+    url = urllib.parse.urlparse(urllib.parse.unquote(self.path))
     if self._handle_isNodeAuthorized(url):
       return
     elif self._handle_getReplica(url):
@@ -123,7 +122,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   def do_PUT(self):
     self._logger.debug('Received HTTP PUT: {}'.format(self.path))
-    url = urlparse.urlparse(urllib.unquote(self.path))
+    url = urllib.parse.urlparse(urllib.parse.unquote(self.path))
     if self._handle_setReplicationStatus(url):
       return
     else:
@@ -141,7 +140,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     if not m:
       return False
     pid = m.group(1)
-    query = urlparse.parse_qs(url.query)
+    query = urllib.parse.parse_qs(url.query)
     target_node_subject = query['targetNodeSubject'][0]
     self._logger.debug(
       'Handling call: isNodeAuthorized() pid="{}", dst_node="{}")'

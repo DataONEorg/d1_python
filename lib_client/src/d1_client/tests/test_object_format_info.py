@@ -19,9 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import pytest
 
@@ -66,16 +64,16 @@ class TestObjectFormatInfo(d1_test.d1_test_case.D1TestCase):
 
   def test_1040(self):
     """read_csv_file(new_csv)"""
-    self.i.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
+    self.i.read_csv_file(io.StringIO(CSV_TEST_VALID))
     assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
   def test_1050(self):
     """singleton"""
     j = d1_client.object_format_info.ObjectFormatInfo()
-    j.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
+    j.read_csv_file(io.StringIO(CSV_TEST_VALID))
     assert self.i.filename_extension_from_format_id('abcd') == 'ijkl'
 
   def test_1060(self):
     """bad_csv_file"""
     with pytest.raises(Exception):
-      self.i.read_csv_file(StringIO.StringIO(CSV_TEST_INVALID))
+      self.i.read_csv_file(io.StringIO(CSV_TEST_INVALID))

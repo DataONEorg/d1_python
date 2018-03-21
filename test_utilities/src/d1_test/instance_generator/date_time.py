@@ -21,8 +21,6 @@
 """Generate random DateTime
 """
 
-from __future__ import absolute_import
-
 import datetime
 import random
 

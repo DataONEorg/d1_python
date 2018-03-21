@@ -19,9 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 
 import freezegun
 import OpenSSL
@@ -91,7 +89,7 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
     )
 
   def test_1050(self):
-    """echoCredentials(): Live test against prod env"""
+    """echoCredentials(): Live test against prod env: Invalid cert"""
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       base_url=d1_common.const.URL_DATAONE_ROOT,
       cert_pem_path=self.sample.get_path('cert_with_equivalents_and_group.pem')
@@ -127,10 +125,12 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   def test_1080(self, cn_client_v2):
     """echoIndexedObject(): Generates expected REST call"""
     d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    pid, sid, sciobj_str, sysmeta_pyxb = \
-      d1_test.instance_generator.sciobj.generate_reproducible(cn_client_v2)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = (
+      d1_test.instance_generator.sciobj.
+      generate_reproducible_sciobj_with_sysmeta(cn_client_v2)
+    )
     echo_dict = cn_client_v2.echoIndexedObject(
-      'solr', sysmeta_pyxb, StringIO.StringIO(sciobj_str)
+      'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
     )
     d1_test.mock_api.catch_all.delete_volatile_post_keys(echo_dict)
     self.sample.assert_equals(echo_dict, 'echo_indexed_object_echo')
@@ -142,9 +142,12 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       base_url=d1_common.const.URL_DATAONE_ROOT
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = \
-      d1_test.instance_generator.sciobj.generate_reproducible(live_client)
-    response = live_client.echoIndexedObject(
-      'solr', sysmeta_pyxb, StringIO.StringIO(sciobj_str)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = (
+      d1_test.instance_generator.sciobj.
+      generate_reproducible_sciobj_with_sysmeta(live_client)
     )
+    response = live_client.echoIndexedObject(
+      'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
+    )
+    #
     self.sample.assert_equals(response.content, 'echo_indexed_object_live')

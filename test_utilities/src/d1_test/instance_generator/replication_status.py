@@ -20,8 +20,6 @@
 """Generate random ReplicationStatus
 """
 
-from __future__ import absolute_import
-
 import random
 
 import d1_common.types.dataoneTypes

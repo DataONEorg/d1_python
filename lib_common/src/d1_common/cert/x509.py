@@ -20,13 +20,11 @@
 """Utilities for processing X.509 v3 certificates
 """
 
-from __future__ import absolute_import
-
 import logging
 import re
 import socket
 import ssl
-import urlparse
+import urllib.parse
 
 import contextlib2
 import cryptography.hazmat
@@ -156,7 +154,7 @@ def download_as_der(
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(timeout_sec)
   ssl_socket = ssl.SSLSocket(sock)
-  url_obj = urlparse.urlparse(base_url)
+  url_obj = urllib.parse.urlparse(base_url)
   ssl_socket.connect((url_obj.netloc, 443))
   return ssl_socket.getpeercert(binary_form=True)
 
@@ -258,31 +256,33 @@ def get_issuer_ca_cert_url(cert_obj):
 def log_cert_info(log, msg_str, cert_obj):
   """Log information from {cert_obj} to {log}.
   """
-  map(
-    log, ['{}:'.format(msg_str)] + [
-      '  {}'.format(v)
-      for v in [
-        'Subject: {}'.
-        format(get_val_str(cert_obj, ['subject', 'value'], reverse=True)),
-        'Issuer: {}'.
-        format(get_val_str(cert_obj, ['issuer', 'value'], reverse=True)),
-        'Not Valid Before: {}'.format(cert_obj.not_valid_before.isoformat()),
-        'Not Valid After: {}'.format(cert_obj.not_valid_after.isoformat()),
-        'Subject Alt Names: {}'.format(
-          get_ext_val_str(
-            cert_obj, 'SUBJECT_ALTERNATIVE_NAME', ['value', 'value']
-          )
-        ),
-        'CRL Distribution Points: {}'.format(
-          get_ext_val_str(
-            cert_obj, 'CRL_DISTRIBUTION_POINTS',
-            ['value', 'full_name', 'value', 'value']
-          )
-        ),
-        'Authority Access Location: {}'
-        .format(get_issuer_ca_cert_url(cert_obj) or '<not found>'),
+  list(
+    map(
+      log, ['{}:'.format(msg_str)] + [
+        '  {}'.format(v)
+        for v in [
+          'Subject: {}'.
+          format(get_val_str(cert_obj, ['subject', 'value'], reverse=True)),
+          'Issuer: {}'.
+          format(get_val_str(cert_obj, ['issuer', 'value'], reverse=True)),
+          'Not Valid Before: {}'.format(cert_obj.not_valid_before.isoformat()),
+          'Not Valid After: {}'.format(cert_obj.not_valid_after.isoformat()),
+          'Subject Alt Names: {}'.format(
+            get_ext_val_str(
+              cert_obj, 'SUBJECT_ALTERNATIVE_NAME', ['value', 'value']
+            )
+          ),
+          'CRL Distribution Points: {}'.format(
+            get_ext_val_str(
+              cert_obj, 'CRL_DISTRIBUTION_POINTS',
+              ['value', 'full_name', 'value', 'value']
+            )
+          ),
+          'Authority Access Location: {}'
+          .format(get_issuer_ca_cert_url(cert_obj) or '<not found>'),
+        ]
       ]
-    ]
+    )
   )
 
 

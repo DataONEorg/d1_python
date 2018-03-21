@@ -40,8 +40,6 @@ of desired redirects. E.g.:
 client.get('<REDIRECT:303:3>pid')
 """
 
-from __future__ import absolute_import
-
 import logging
 import re
 
@@ -72,7 +70,7 @@ def add_callback(base_url):
 
 def decorate_pid_for_redirect(pid, redirect_code=303, redirect_n=3):
   """Return a PID that will trigger redirects"""
-  return u'<REDIRECT:{}:{}>{}'.format(redirect_code, redirect_n, pid)
+  return '<REDIRECT:{}:{}>{}'.format(redirect_code, redirect_n, pid)
 
 
 def _request_callback(request):
@@ -92,12 +90,15 @@ def _request_callback(request):
     return redirect_tup
 
   # Return regular response
-  pid, sid, sciobj_str, sysmeta_pyxb = \
-    d1_test.instance_generator.sciobj.generate_reproducible(client, pid)
+  pid, sid, sciobj_bytes, sysmeta_pyxb = (
+    d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+      client, pid
+    )
+  )
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
   }
-  return 200, header_dict, sciobj_str
+  return 200, header_dict, sciobj_bytes
 
 
 def _parse_url(url):

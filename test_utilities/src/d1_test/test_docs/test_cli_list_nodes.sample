@@ -1,0 +1,6 @@
+"Decorating: test_1260: reproducible_random()
+Request kwargs:
+{\"headers\":{\"Charset\":\"utf-8\",\"User-Agent\":\"DataONE-Python/[VERSION]
++http://dataone.org/\"},\"params\":{},\"stream\":false,\"timeout\":60.0,\"verify\":\"/etc/ssl/certs/ca-certificates.crt\"}
+curl -X GET -H \"Charset: utf-8\" -H \"User-Agent: DataONE-Python/[VERSION] +http://dataone.org/\" http://responses/cn/v1/node
+Received callback. url=\"http://responses/cn/v1/node\""

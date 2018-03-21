@@ -1,0 +1,11 @@
+{
+  "body_str": null,
+  "header_dict": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Content-Length": "0",
+    "User-Agent": "python-requests/2.18.4"
+  },
+  "query_dict": {}
+}

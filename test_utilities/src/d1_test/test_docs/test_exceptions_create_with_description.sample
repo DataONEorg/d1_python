@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<error detailCode="123.456.789" errorCode="500" name="ServiceFailure">
+  <description>test description</description>
+</error>

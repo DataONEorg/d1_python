@@ -214,11 +214,11 @@ def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
   key_url_dict = copy.deepcopy(url_dict)
   key_url_dict['query'].pop('start', None)
   key_url_dict['query'].pop('count', None)
-  key_json = d1_common.util.format_normalized_compact_json({
+  key_json = d1_common.util.serialize_to_normalized_compact_json({
     'url_dict': key_url_dict,
     'start': start_int,
     'total': total_int,
     'subject': authn_subj_list
   })
   logging.debug('key_json={}'.format(key_json))
-  return hashlib.sha256(key_json).hexdigest()
+  return hashlib.sha256(key_json.encode('utf-8')).hexdigest()

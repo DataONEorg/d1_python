@@ -20,9 +20,8 @@
 """Test the ability of fully trusted clients, such as Slender Node adapters,
 to pass values to GMN that are normally controlled by MNs
 """
-from __future__ import absolute_import
 
-import StringIO
+import io
 
 import responses
 
@@ -53,7 +52,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ]
 
     with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_str, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
+      pid, sid, sciobj_bytes, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
         mn_client_v2, True, sid=True
       )
 
@@ -66,7 +65,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.call_d1_client(
           mn_client_v2.create,
           pid,
-          StringIO.StringIO(sciobj_str),
+          io.BytesIO(sciobj_bytes),
           send_sysmeta_pyxb,
         )
 

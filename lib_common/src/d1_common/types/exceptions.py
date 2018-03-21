@@ -41,6 +41,19 @@
 - PyXB based XML serialization and deserialization
 - Add deserialize to string and HTTP headers
 
+traceInformation:
+
+traceInformation is an xs:anyType, meaning that is essentially the root of a new
+XML document of arbitrary complexity. Since the contents of the elements are
+unknown at the time when the PyXB bindings are created, PyXB cannot
+automatically serialize and deserialize the traceInformation field together with
+the rest of the DataONEException XML type.
+
+To make it easier to use the traceInformation element, we support a special case
+where it can be read and written as a single string of bytes, where the contents
+are application specific. Any other content must be generated and parsed as XML by
+the user.
+
 Example of serialized DataONE Exception:
 
 <error detailCode="1020" errorCode="404" name="NotFound" identifier="testpid">
@@ -53,17 +66,9 @@ auth.py(315)
 </error>
 """
 
-from __future__ import absolute_import
-
+import io
 import logging
-import re
-import string
-import StringIO
 import traceback
-
-import pyxb
-import pyxb.binding.datatypes as XS
-import pyxb.utils.domutils
 
 import d1_common.type_conversions
 import d1_common.util
@@ -83,7 +88,7 @@ def pyxb_is_dataone_exception(obj_pyxb):
 
 
 def deserialize(dataone_exception_xml):
-  """Deserialize a DataONE Exception.
+  """Deserialize a DataONE Exception XML doc.
   """
   # logging.debug('dataone_exception_xml="{}"'
   # .format(d1_common.xml.pretty_xml(dataone_exception_xml)))
@@ -102,16 +107,15 @@ def deserialize(dataone_exception_xml):
       traceInformation=traceback.format_exc(),
     )
   else:
-    # logging.debug('dataone_exception_pyxb="{}"'
-    # .format(d1_common.xml.pretty_pyxb(dataone_exception_pyxb)))
-    return create_exception_by_name(
+    x = create_exception_by_name(
       dataone_exception_pyxb.name,
       dataone_exception_pyxb.detailCode,
       dataone_exception_pyxb.description,
-      getattr(dataone_exception_pyxb, 'traceInformation', None),
+      _get_trace_information_content(dataone_exception_pyxb),
       dataone_exception_pyxb.identifier,
       dataone_exception_pyxb.nodeId,
     )
+    return x
 
 
 def deserialize_from_headers(headers):
@@ -130,7 +134,9 @@ def deserialize_from_headers(headers):
 
 def _get_header(headers, header):
   lower_case_headers = dict(
-    zip(map(string.lower, headers.keys()), headers.values())
+    list(
+      zip(list(map(str.lower, list(headers.keys()))), list(headers.values()))
+    )
   )
   try:
     header = lower_case_headers[header.lower()]
@@ -173,34 +179,61 @@ def create_exception_by_error_code(
   )
 
 
+# def _prep_trace(trace_information):
+#   return xml.sax.saxutils.escape(trace_information)
+
+
+def _get_trace_information_content(err_pyxb):
+  assert d1_common.xml.is_pyxb(err_pyxb)
+  if err_pyxb.traceInformation is None:
+    return None
+  try:
+    return '\n'.join(err_pyxb.traceInformation.content())
+  except TypeError:
+    return d1_common.xml.serialize_to_str(
+      err_pyxb.traceInformation, strip_prolog=True
+    )
+
+
+# def _deserialize_trace_information(self, trace_information):
+#   """To PyXB TraceInformation
+#   <pyxb.binding.datatypes.anyType object at 0x7fe77a9c19b0>"""
+#   if trace_information is None:
+#     return None
+#   if isinstance(trace_information, str):
+#     import xml.dom.minidom
+#     return xml.dom.minidom.parseString(
+#       "<traceInformation><value>" + xml.sax.saxutils.escape(
+#         trace_information) + "</value></traceInformation>")
+#   return 111
+
 #===============================================================================
 
 
 class DataONEException(Exception):
   """Base class for exceptions raised by DataONE.
   """
-  #@d1_common.util.utf8_to_unicode
-  @d1_common.util.unicode_to_utf8
+
   def __init__(
       self, errorCode, detailCode='0', description='', traceInformation=None,
       identifier=None, nodeId=None
   ):
+    # self._traceInformation = None
     self.errorCode = errorCode
     self.detailCode = detailCode
     self.description = description
-    # trace information is stored internally as a unicode string that may or
-    # may not be XML. Serialization will use the XML structure if it is valid,
-    # otherwise it adds the content to the serialized structure as a
-    # string.
-    self._traceInformation = None
     self.traceInformation = traceInformation
     self.identifier = identifier
     self.nodeId = nodeId
 
   def __repr__(self):
     for attr_str in [
-        'errorCode', 'detailCode', 'description', 'identifier', 'nodeId',
-        'traceInformation'
+        'errorCode',
+        'detailCode',
+        'description',
+        'traceInformation',
+        'identifier',
+        'nodeId',
     ]:
       logging.error(type(getattr(self, attr_str)))
 
@@ -208,8 +241,12 @@ class DataONEException(Exception):
       self.__class__.__name__, ', '.join([
         '{}="{}"'.format(attr_str, getattr(self, attr_str))
         for attr_str in [
-          'errorCode', 'detailCode', 'description', 'identifier', 'nodeId',
-          'traceInformation'
+          'errorCode',
+          'detailCode',
+          'description',
+          'traceInformation',
+          'identifier',
+          'nodeId',
         ]
       ])
     )
@@ -227,7 +264,7 @@ class DataONEException(Exception):
       line 2
     Msg is truncated to 1024 chars.
     """
-    msg = StringIO.StringIO()
+    msg = io.StringIO()
     msg.write(self.fmt('name', self.name))
     msg.write(self.fmt('errorCode', self.errorCode))
     msg.write(self.fmt('detailCode', self.detailCode))
@@ -239,18 +276,13 @@ class DataONEException(Exception):
 
   def fmt(self, tag, msg):
     if msg is None:
-      return
-    # assert isinstance(tag, unicode)
-    # assert isinstance(msg, unicode)
-    if isinstance(msg, unicode):
-      msg = msg.encode('utf-8')
-    elif not isinstance(msg, basestring):
-      msg = str(msg)
+      return '<unset>'
+    msg = str(msg)
     msg = msg.strip()
     if not msg:
       return
     if len(msg) > 2048:
-      msg = msg.decode('utf-8')[:1024].encode('utf-8') + ' ...'
+      msg = msg[:1024] + '...'
     if msg.count('\n') <= 1:
       return '{}: {}\n'.format(tag, msg.strip())
     else:
@@ -268,29 +300,20 @@ class DataONEException(Exception):
     return self.fmt(self.name, msg)
 
   def serialize(self):
+    """Serialize to str"""
     dataone_exception_pyxb = dataoneErrors.error()
     dataone_exception_pyxb.name = self.__class__.__name__
     dataone_exception_pyxb.errorCode = self.errorCode
     dataone_exception_pyxb.detailCode = self.detailCode
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
-    if self._traceInformation is not None:
-      try:
-        trace_info_el = pyxb.utils.domutils.StringToDOM(self.traceInformation)
-      except Exception:
-        trace_info_el = pyxb.utils.domutils.StringToDOM(
-          u"<value>" + self.traceInformation + u"</value>"
-        )
-      dataone_exception_pyxb.traceInformation = (
-        trace_info_el.documentElement.firstChild
-      )
+    dataone_exception_pyxb.traceInformation = self.traceInformation
+
     if self.identifier is not None:
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
-    # TODO: Check if this is still needed
-    #pyxb.utils.domutils.BindingDOMSupport.SetDefaultNamespace(None)
-    return dataone_exception_pyxb.toxml('utf-8')
+    return dataone_exception_pyxb.toxml()
 
   def toxml(self):
     return self.serialize()
@@ -325,21 +348,6 @@ class DataONEException(Exception):
   @property
   def name(self):
     return self.__class__.__name__
-
-  @property
-  def traceInformation(self):
-    if self._traceInformation is None:
-      return None
-    return self._traceInformation
-
-  @traceInformation.setter
-  def traceInformation(self, trace_information):
-    if isinstance(trace_information, XS.anyType):
-      tmp = trace_information.toxml('utf-8')
-      # Remove the XML prolog from the start of the resulting string.
-      trace_information = re.sub(r'^<\?(.*)\?>', '', tmp)
-      trace_information = trace_information.strip()
-    self._traceInformation = trace_information
 
 
 #===============================================================================

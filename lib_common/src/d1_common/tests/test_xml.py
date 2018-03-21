@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import d1_common.wrap.simple_xml
 import d1_common.xml
 
@@ -31,42 +29,48 @@ import d1_test.d1_test_case
 
 class TestXml(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
-    """is_equivalent(): True for identical docs"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    assert d1_common.xml.is_equivalent(valid_xml, valid_xml)
+    """are_equivalent(): True for identical docs"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    assert d1_common.xml.are_equivalent(valid_xml, valid_xml)
 
   def test_1010(self):
-    """is_equivalent(): True for docs identical except for swapped attributes"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    valid_swapped_attr_xml = self.sample.load('test_xml_valid_swapped_attr_xml')
-    assert d1_common.xml.is_equivalent(valid_xml, valid_swapped_attr_xml)
+    """are_equivalent(): True for docs identical except for swapped attributes"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    valid_swapped_attr_xml = self.sample.load_utf8_to_str(
+      'test_xml_valid_swapped_attr_xml'
+    )
+    assert d1_common.xml.are_equivalent(valid_xml, valid_swapped_attr_xml)
 
   def test_1020(self):
-    """is_equivalent(): False when an attribute is missing"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    missing_count_xml = self.sample.load('test_xml_missing_count_xml')
-    assert not d1_common.xml.is_equivalent(valid_xml, missing_count_xml)
+    """are_equivalent(): False when an attribute is missing"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    missing_count_xml = self.sample.load_utf8_to_str(
+      'test_xml_missing_count_xml'
+    )
+    assert not d1_common.xml.are_equivalent(valid_xml, missing_count_xml)
 
   def test_1030(self):
-    """is_equivalent(): False when an element is missing"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    missing_entry_xml = self.sample.load('test_xml_missing_entry_xml')
-    assert not d1_common.xml.is_equivalent(valid_xml, missing_entry_xml)
+    """are_equivalent(): False when an element is missing"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    missing_entry_xml = self.sample.load_utf8_to_str(
+      'test_xml_missing_entry_xml'
+    )
+    assert not d1_common.xml.are_equivalent(valid_xml, missing_entry_xml)
 
   def test_1040(self):
-    """is_equivalent(): False when elements are in wrong order"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    wrong_order_xml = self.sample.load('test_xml_wrong_order_xml')
-    assert not d1_common.xml.is_equivalent(valid_xml, wrong_order_xml)
+    """are_equivalent(): False when elements are in wrong order"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    wrong_order_xml = self.sample.load_utf8_to_str('test_xml_wrong_order_xml')
+    assert not d1_common.xml.are_equivalent(valid_xml, wrong_order_xml)
 
   def test_1050(self):
-    """is_equivalent(): False when an element is missing text"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    missing_text_xml = self.sample.load('test_xml_missing_text_xml')
-    assert not d1_common.xml.is_equivalent(valid_xml, missing_text_xml)
+    """are_equivalent(): False when an element is missing text"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    missing_text_xml = self.sample.load_utf8_to_str('test_xml_missing_text_xml')
+    assert not d1_common.xml.are_equivalent(valid_xml, missing_text_xml)
 
   def test_1060(self):
-    """is_equivalent(): False when the document is not well formed"""
-    valid_xml = self.sample.load('test_xml_valid_xml')
-    syntax_error_xml = self.sample.load('test_xml_syntax_error_xml')
-    assert not d1_common.xml.is_equivalent(valid_xml, syntax_error_xml)
+    """are_equivalent(): False when the document is not well formed"""
+    valid_xml = self.sample.load_utf8_to_str('test_xml_valid_xml')
+    syntax_error_xml = self.sample.load_utf8_to_str('test_xml_syntax_error_xml')
+    assert not d1_common.xml.are_equivalent(valid_xml, syntax_error_xml)

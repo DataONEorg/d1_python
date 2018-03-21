@@ -23,8 +23,6 @@
 - Query the database for System Metadata properties.
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 import pyxb
@@ -63,17 +61,13 @@ def archive_object(pid):
   _update_modified_timestamp(sciobj_model)
 
 
-def serialize(sysmeta_pyxb):
+def serialize(sysmeta_pyxb, pretty=False):
   try:
-    return d1_common.xml.serialize(sysmeta_pyxb)
+    return d1_common.xml.serialize_to_transport(sysmeta_pyxb, pretty)
   except pyxb.IncompleteElementContentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
+      0, 'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
     )
-
-
-def serialize_pretty(sysmeta_pyxb):
-  return d1_common.xml.pretty_xml(serialize(sysmeta_pyxb))
 
 
 def create_or_update(sysmeta_pyxb, url=None):
@@ -202,7 +196,8 @@ def _base_model_to_pyxb(sciobj_model):
 
 
 def _update_modified_timestamp(sci_model):
-  sci_model.modified_timestamp = datetime.datetime.utcnow()
+  # sci_model.modified_timestamp = datetime.datetime.utcnow()
+  sci_model.modified_timestamp = datetime.datetime.now(datetime.timezone.utc)
   sci_model.save()
 
 

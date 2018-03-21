@@ -20,9 +20,8 @@
 # limitations under the License.
 """Test handling of session variables
 """
-from __future__ import absolute_import
 
-import StringIO
+import io
 import sys
 import uuid
 
@@ -122,7 +121,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     """print_all_variables() is available and appears to work"""
     # capture stdout
     old = sys.stdout
-    sys.stdout = StringIO.StringIO()
+    sys.stdout = io.StringIO()
     # run print
     s = session.Session(nodes, format_ids)
     s.print_all_variables()
@@ -136,9 +135,6 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
   def test_1110(self, tmpdir):
     """Session is successfully saved and then loaded (pickled and unpickled)"""
     tmp_pickle_path = str(tmpdir.join('session.pickle'))
-    print type(tmp_pickle_path)
-    print dir(tmp_pickle_path)
-    print tmp_pickle_path
     s1 = session.Session(nodes, format_ids)
     u = str(uuid.uuid1())
     s1.set('rights-holder', u)
@@ -146,3 +142,4 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     s2 = session.Session(nodes, format_ids)
     s2.load(tmp_pickle_path)
     assert s2.get('rights-holder') == u
+    # TODO: Use sample to check more of the pickled fields

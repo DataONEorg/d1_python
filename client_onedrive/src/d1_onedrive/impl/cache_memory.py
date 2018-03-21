@@ -26,11 +26,9 @@ be removed. The oldest object is the object that was added first of the objects
 still in the cache.
 """
 
-from __future__ import absolute_import
-
 import logging
 
-import util
+from . import util
 
 log = logging.getLogger(__name__)
 

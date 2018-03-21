@@ -20,8 +20,6 @@
 """Test handling of SIDs and revision chains
 """
 
-from __future__ import absolute_import
-
 import logging
 import random
 
@@ -56,7 +54,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _assert_cut_from_chain(self, client, pid, sid, pid_chain_list):
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Is retrievable
-      recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(client, pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(client, pid)
       self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
       # Is in chain
       sciobj_model = d1_gmn.app.util.get_sci_model(pid)
@@ -73,7 +71,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid_chain_list.remove(pid)
       self.assert_valid_chain(client, pid_chain_list, sid)
       # Cut object is still available but now standalone
-      sciobj_str, sysmeta_pyxb = self.get_obj(client, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(client, pid)
       assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletes') is None
       assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') is None
 
@@ -82,8 +80,10 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """After creating standalone object with SID, the SID
     resolves to that object
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v2, sid=True)
-    recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, sid)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, sid)
     assert recv_sysmeta_pyxb.identifier.value() == pid
 
   @responses.activate
@@ -92,11 +92,13 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     SID in the new object, the SID resolves to the new object (head of a new
     2-object chain).
     """
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(mn_client_v2, sid=True)
-    upd_pid, upd_sid, upd_sciobj_str, upd_sysmeta_pyxb = self.update_obj(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+      mn_client_v2, sid=True
+    )
+    upd_pid, upd_sid, upd_sciobj_bytes, upd_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid
     )
-    recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, sid)
+    recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, sid)
     assert recv_sysmeta_pyxb.identifier.value() == upd_pid
 
   @responses.activate
@@ -107,10 +109,10 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sid, pid_chain_list = self.create_revision_chain(
       mn_client_v2, chain_len=7, sid=None
     )
-    new_pid, new_sid, new_sciobj_str, new_sysmeta_pyxb = self.update_obj(
+    new_pid, new_sid, new_sciobj_bytes, new_sysmeta_pyxb = self.update_obj(
       mn_client_v2, pid_chain_list[-1], sid=True
     )
-    recv_sciobj_str, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, new_sid)
+    recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v2, new_sid)
     assert recv_sysmeta_pyxb.identifier.value() == new_pid
 
   @responses.activate
@@ -149,7 +151,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, None
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=None
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
@@ -171,7 +173,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, True
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=None
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
@@ -186,7 +188,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, None, None
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=True
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
@@ -203,11 +205,11 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     are disconnected
     """
     sid = d1_test.instance_generator.identifier.generate_sid()
-    a_pid, a_sid, a_sciobj_str, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    a_pid, a_sid, a_sciobj_bytes, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=sid
     )
     d1_gmn.app.views.create.create_sciobj_models(a_sysmeta_pyxb)
-    b_pid, b_sid, b_sciobj_str, b_sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    b_pid, b_sid, b_sciobj_bytes, b_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=sid
     )
     d1_gmn.app.views.create.create_sciobj_models(b_sysmeta_pyxb)
@@ -222,7 +224,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """Object with references to non-existing obsoletes and obsoletedBy can be
     created and retrieved
     """
-    a_pid, a_sid, a_sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    a_pid, a_sid, a_sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=True
     )
     sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
@@ -238,7 +240,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
       mn_client_v2, True, None
     )
-    pid, sid, sciobj_str, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
       mn_client_v2, sid=None
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]

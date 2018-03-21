@@ -20,8 +20,6 @@
 """REST call handlers for DataONE Member Node APIs
 """
 
-from __future__ import absolute_import
-
 import logging
 import uuid
 
@@ -162,7 +160,7 @@ def get_log(request):
       request, query, 'sciobj__pid__did', 'idFilter'
     )
   else:
-    assert False, u'Unable to determine API version'
+    assert False, 'Unable to determine API version'
   total_int = query.count()
   query, start, count = d1_gmn.app.views.slice.add_slice_filter(
     request, query, total_int
@@ -268,7 +266,7 @@ def _get_sciobj_iter_remote(url):
     )
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unable to open proxied object for streaming. error="{}"'.
+      0, 'Unable to open proxied object for streaming. error="{}"'.
       format(e.message)
     )
   else:
@@ -324,9 +322,11 @@ def get_checksum(request, pid):
 
   if not d1_common.checksum.is_supported_algorithm(algorithm):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
-        algorithm, u', '.join(
-          d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+      0, 'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
+        algorithm, ', '.join(
+          list(
+            d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+          )
         )
       )
     )
@@ -369,15 +369,15 @@ def post_error(request):
     # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
     # to the CN. Can only log the issue and return a 200 OK.
     logging.error(
-      u'Received notification of synchronization error from CN but was unable '
-      u'to deserialize the DataONE Exception passed by the CN. '
-      u'message="{}" error="{}"'.format(
+      'Received notification of synchronization error from CN but was unable '
+      'to deserialize the DataONE Exception passed by the CN. '
+      'message="{}" error="{}"'.format(
         d1_gmn.app.views.util.read_utf8_xml(request.FILES['message']), str(e)
       )
     )
   else:
     logging.error(
-      u'Received notification of synchronization error from CN:\n{}'.
+      'Received notification of synchronization error from CN:\n{}'.
       format(str(synchronization_failed))
     )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
@@ -409,15 +409,14 @@ def _assert_node_is_authorized(request, pid):
     client.isNodeAuthorized(request.primary_subject_str, pid)
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(
-      0,
-      u'A CN has not authorized the target MN to create a replica of object. '
-      u'target_mn="{}", pid="{}", cn_error="{}"'.format(
+      0, 'A CN has not authorized the target MN to create a replica of object. '
+      'target_mn="{}", pid="{}", cn_error="{}"'.format(
         request.primary_subject_str, pid, str(e)
       )
     )
   except Exception as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
+      0, 'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
         django.conf.settings.DATAONE_ROOT, e.message
       )
     )
@@ -468,7 +467,7 @@ def get_is_authorized(request, pid):
   """
   if 'action' not in request.GET:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Missing required parameter. required="action"'
+      0, 'Missing required parameter. required="action"'
     )
   # Convert action string to action level. Raises InvalidRequest if the
   # action string is not valid.
@@ -606,11 +605,11 @@ def post_generate_identifier(request):
   )
   if request.POST['scheme'] != 'UUID':
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Only the UUID scheme is currently supported'
+      0, 'Only the UUID scheme is currently supported'
     )
   fragment = request.POST.get('fragment', None)
   while True:
-    pid = (fragment if fragment else u'') + uuid.uuid4().hex
+    pid = (fragment if fragment else '') + uuid.uuid4().hex
     if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
       return pid
 

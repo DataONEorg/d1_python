@@ -20,10 +20,8 @@
 """View handler middleware
 """
 
-from __future__ import absolute_import
-
+import io
 import logging
-import StringIO
 
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.middleware.session_jwt
@@ -34,19 +32,22 @@ import d1_common.const
 import django.conf
 
 
-class ViewHandler(object):
+class ViewHandler:
+  def __init__(self, next_in_chain_func):
+    self.next_in_chain_func = next_in_chain_func
+
+  def __call__(self, request):
+    return self.next_in_chain_func(request)
+
   def process_view(self, request, view_func, view_args, view_kwargs):
-    # Log which view is about the be called.
     logging.info(
-      u'Calling view: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
+      'Calling view: func_name="{}", method="{}", args="{}", kwargs="{}", url="{}"'
       .format(
         view_func.__name__, request.method, view_args, view_kwargs, request.path_info
       )
     )
     # logging.debug(request.headers)
-    self.process_session(request)
 
-  def process_session(self, request):
     # For simulating an HTTPS connection with client authentication when
     # debugging via regular HTTP, two mechanisms are supported. (1) A full
     # client side certificate can be included and (2) a list of subjects can be
@@ -58,6 +59,8 @@ class ViewHandler(object):
     request.primary_subject_str, request.all_subjects_set = (
       self.get_active_subject_set(request)
     )
+    # Returning None causes Django to continue processing by calling any
+    # process_view() in other middleware classes then the view.
 
   def get_active_subject_set(self, request):
     """Get a set containing all subjects for which the current connection has
@@ -89,15 +92,15 @@ class ViewHandler(object):
         if cert_primary_str == d1_common.const.SUBJECT_PUBLIC:
           primary_subject_str = jwt_primary_str
         else:
-          logging.warn(
+          logging.warning(
             'Both a certificate and a JWT were provided and the primary '
             'subjects differ. Using the certificate for primary subject and'
             'the JWT as equivalent.'
           )
 
-    logging.info(u'Primary active subject: {}'.format(primary_subject_str))
+    logging.info('Primary active subject: {}'.format(primary_subject_str))
     logging.info(
-      u'All active subjects: {}'.format(', '.join(sorted(all_subjects_set)))
+      'All active subjects: {}'.format(', '.join(sorted(all_subjects_set)))
     )
 
     # Handle list of subjects in vendor specific extension:
@@ -111,8 +114,8 @@ class ViewHandler(object):
     return primary_subject_str, all_subjects_set
 
   def pem_in_http_header_to_pem_in_string(self, header_str):
-    header = StringIO.StringIO(header_str)
-    pem = StringIO.StringIO()
+    header = io.StringIO(header_str)
+    pem = io.StringIO()
     pem.write('-----BEGIN CERTIFICATE-----\n')
     while True:
       pem_line = header.read(64)

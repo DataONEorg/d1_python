@@ -21,9 +21,7 @@
 """Test MNPackage.getPackage()
 """
 
-from __future__ import absolute_import
-
-import StringIO
+import io
 import tempfile
 import zipfile
 
@@ -49,7 +47,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid_list = []
       for i in range(10):
-        pid, sid, send_sciobj_str, send_sysmeta_pyxb = self.create_obj(client)
+        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(client)
         pid_list.append(pid)
     return pid_list
 
@@ -61,7 +59,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ore_xml = ore.serialize()
     sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
       mn_client_v2,
-      StringIO.StringIO(ore_xml),
+      io.BytesIO(ore_xml),
       {
         'identifier': ore_pid,
         'formatId': d1_common.const.ORE_FORMAT_ID,
@@ -69,7 +67,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
       },
     )
     self.call_d1_client(
-      mn_client_v2.create, ore_pid, StringIO.StringIO(ore_xml), sysmeta_pyxb
+      mn_client_v2.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
     )
     return ore_pid
 

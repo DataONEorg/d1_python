@@ -19,17 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
-import base64
-import json
-
-import requests_toolbelt
 import responses
-
-import d1_common.const
-import d1_common.types.dataoneTypes
-import d1_common.util
 
 import d1_test.d1_test_case
 import d1_test.mock_api.create
@@ -58,50 +48,15 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
     d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
 
     response = mn_client_v1.createResponse(
-      '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
+      '1234', b'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )
     assert response.status_code == 200
-
-    identifier_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
-      response.content
-    )
-    assert identifier_pyxb.value() == 'echo-post'
-    echo_body_str = base64.b64decode(response.headers['Echo-Body-Base64'])
-    echo_query_dict = json.loads(
-      base64.b64decode(response.headers['Echo-Query-Base64'])
-    )
-    echo_header_dict = json.loads(
-      base64.b64decode(response.headers['Echo-Header-Base64'])
-    )
-    assert isinstance(echo_body_str, basestring)
-    assert isinstance(echo_query_dict, dict)
-    assert isinstance(echo_header_dict, dict)
-
-    multipart_decoder = requests_toolbelt.MultipartDecoder(
-      echo_body_str, echo_header_dict['Content-Type']
-    )
-
-    assert len(multipart_decoder.parts) == 3
-
-    assert dict(multipart_decoder.parts[0].headers) == \
-      {
-        'Content-Disposition':
-          'form-data; name="sysmeta"; filename="sysmeta.xml"'
-      }
-    assert '<?xml' in multipart_decoder.parts[0].content
-    assert '<identifier>BAYXXX_015ADCP015R00_20051215.50.9</identifier>' in \
-      multipart_decoder.parts[0].content
-
-    assert dict(multipart_decoder.parts[1].headers) == \
-      {
-        'Content-Disposition':
-          'form-data; name="object"; filename="content.bin"'
-      }
-    assert multipart_decoder.parts[1].content == 'BAYXXX_015ADCP015R00_20051215.50.9'
-
-    assert dict(multipart_decoder.parts[2].headers) == \
-      {'Content-Disposition': 'form-data; name="pid"'}
-    assert multipart_decoder.parts[2].content == '1234'
+    echo_dict = d1_test.mock_api.create.unpack_echo_header(response.headers)
+    # TODO: echo_dict is currently a JSON str
+    # echo_dict['identifier'] = (
+    #   d1_common.types.dataoneTypes.CreateFromDocument(response.content).value()
+    # )
+    self.sample.assert_equals(echo_dict, 'mmp_encoding', mn_client_v1)
 
   @responses.activate
   def test_1010(self, mn_client_v1):

@@ -4,7 +4,7 @@
 # Generated 2017-10-17 10:39:46.546406 by PyXB version 1.2.6 using Python 2.7.12.final.0
 # Namespace http://ns.dataone.org/service/types/v1.1
 
-from __future__ import unicode_literals
+
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -28,7 +28,7 @@ _module_typeBindings = pyxb.utils.utility.Object()
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
-import dataoneTypes_v1 as _ImportedBinding_dataoneTypes_v1
+from . import dataoneTypes_v1 as _ImportedBinding_dataoneTypes_v1
 
 # NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.NamespaceForURI('http://ns.dataone.org/service/types/v1.1', create_if_missing=True)

@@ -17,16 +17,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from __future__ import absolute_import
-from __future__ import print_function
-
+import freezegun
 import responses
 
 import d1_test.d1_test_case
 import d1_test.mock_api.list_nodes as list_nodes
 
 
+@d1_test.d1_test_case.reproducible_random_decorator('TestMockNodeList')
+@freezegun.freeze_time('1977-01-27')
 class TestMockNodeList(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self, cn_client_v1_v2):

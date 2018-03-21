@@ -1,100 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <ns1:log count="10" start="3226" total="3236" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_edgohpjnhlzy</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-04-15T22:36:37Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_kzugpqolupbj</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-04-21T06:29:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_djjpuhehdcxk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-04-21T06:29:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_zzdibaczfixf</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-05-07T22:17:02Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_qovowopypfqz</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-01T04:24:43Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_ivsirfrbsign</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-08T03:56:28Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_mooefnksgsed</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-06-28T01:40:40Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_zwnynpxifcso</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-08-27T06:57:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_yhhzllteqkql</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>update</event>
     <dateLogged>2069-08-27T06:57:18Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
-    <entryId>[volatile]</entryId>
+    <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_vhyupyuyynue</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[volatile]
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>disabled_auth_subj</subject>
     <event>create</event>
     <dateLogged>2069-11-12T10:04:34Z</dateLogged>

@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import xml.sax
 
 import pyxb
@@ -40,7 +38,7 @@ class TestNodeList(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize various NodeList XML docs"""
     try:
-      self.sample.load(filename)
+      self.sample.load_utf8_to_str(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if not raises_pyxb_exc:
         raise

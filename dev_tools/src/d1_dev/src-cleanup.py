@@ -29,8 +29,6 @@ original name. Any earlier backups are overwritten. Use clean-tree.py to delete
 the backups.
 """
 
-from __future__ import absolute_import
-
 import argparse
 import datetime
 import lib2to3.main

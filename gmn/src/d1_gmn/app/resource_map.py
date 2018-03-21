@@ -20,8 +20,6 @@
 """Utilities for manipulating resource maps
 """
 
-from __future__ import absolute_import
-
 import xml.sax
 
 import d1_gmn.app
@@ -52,8 +50,8 @@ def assert_map_is_valid_for_create(resource_map):
   if not _is_map_valid_for_create(resource_map):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
-      u'Resource Map must be created after after creating the objects that it '
-      u'aggregates. See the RESOURCE_MAP_CREATE setting'
+      'Resource Map must be created after after creating the objects that it '
+      'aggregates. See the RESOURCE_MAP_CREATE setting'
     )
 
 
@@ -100,7 +98,7 @@ def get_resource_map_members(pid):
     return get_resource_map_members_by_member(pid)
   else:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Not a Resource Map or Resource Map member. pid="{}"'.format(pid)
+      0, 'Not a Resource Map or Resource Map member. pid="{}"'.format(pid)
     )
 
 
@@ -129,7 +127,7 @@ def _parse_resource_map_from_file(resource_map_path):
       resource_map.deserialize(file=f, format='xml')
   except xml.sax.SAXException as e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Invalid Resource Map. error="{}"'.format(str(e))
+      0, 'Invalid Resource Map. error="{}"'.format(str(e))
     )
   return resource_map
 
@@ -140,7 +138,7 @@ def parse_resource_map_from_str(resource_map_xml):
     resource_map.deserialize(data=resource_map_xml, format='xml')
   except xml.sax.SAXException as e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, u'Invalid Resource Map. error="{}"'.format(str(e))
+      0, 'Invalid Resource Map. error="{}"'.format(str(e))
     )
   return resource_map
 

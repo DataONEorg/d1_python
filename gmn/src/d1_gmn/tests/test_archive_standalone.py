@@ -20,8 +20,6 @@
 """Test MNStorage.archive() for standalone objects
 """
 
-from __future__ import absolute_import
-
 import responses
 
 import d1_gmn.tests.gmn_mock
@@ -30,7 +28,7 @@ import d1_gmn.tests.gmn_test_case
 
 class TestArchiveStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _assert_archived_flag_set(self, client):
-    pid, sid, sciobj_str, sysmeta_pyxb = self.create_obj(client)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(client)
     assert not sysmeta_pyxb.archived
     pid_archived = client.archive(pid)
     assert pid == pid_archived.value()

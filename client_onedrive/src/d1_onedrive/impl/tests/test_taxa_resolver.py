@@ -20,7 +20,6 @@
 # limitations under the License.
 """Test the Taxa Resolver
 """
-from __future__ import absolute_import
 
 import d1_onedrive.impl.resolver.taxa as taxa
 import d1_onedrive.impl.tests.object_tree_test_sample

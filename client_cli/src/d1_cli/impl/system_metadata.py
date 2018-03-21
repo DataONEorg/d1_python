@@ -21,8 +21,6 @@
 """Create System Metadata documents based on session variables.
 """
 
-from __future__ import absolute_import
-
 import datetime
 import os
 
@@ -34,7 +32,7 @@ import d1_common.types.dataoneTypes as dataoneTypes
 
 # 3rd party
 
-RESOURCE_MAP_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
+RESOURCE_MAP_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
 
 
 class SystemMetadataCreator():
@@ -142,15 +140,13 @@ class SystemMetadataCreator():
   def _get_file_size(self, path):
     return os.path.getsize(os.path.expanduser(path))
 
-  def _get_file_checksum(
-      self, path, algorithm=u'SHA-1', block_size=1024 * 1024
-  ):
+  def _get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
     with open(os.path.expanduser(path), 'rb') as f:
       return d1_common.checksum.calculate_checksum_on_stream(
         f, algorithm, block_size
       )
 
-  def _get_string_checksum(self, string, algorithm=u'SHA-1', block_size=None):
+  def _get_string_checksum(self, string, algorithm='SHA-1', block_size=None):
     return d1_common.checksum.calculate_checksum_on_string(string, algorithm)
 
   #def _create_system_metadata(self, pid, path, format_id=None):

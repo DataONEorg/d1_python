@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import logging
 
 import d1_common
@@ -60,7 +58,7 @@ class DataONEBaseClient_2_0(
   # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
   # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def updateSystemMetadataResponse(
       self, pid, sysmeta_pyxb, vendorSpecific=None
   ):
@@ -70,7 +68,7 @@ class DataONEBaseClient_2_0(
     }
     return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
 
-  @d1_common.util.utf8_to_unicode
+  #@d1_common.util.utf8_to_unicode
   def updateSystemMetadata(self, pid, sysmeta_pyxb, vendorSpecific=None):
     response = self.updateSystemMetadataResponse(
       pid, sysmeta_pyxb, vendorSpecific

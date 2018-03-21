@@ -20,9 +20,6 @@
 """Utilities for handling checksums
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import hashlib
 
 import d1_common.const
@@ -39,15 +36,6 @@ DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
 # Checksum PyXB object creation
 
 
-def create_checksum_object_from_string(
-    o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
-):
-  checksum_str = calculate_checksum_on_string(o, algorithm)
-  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
-  checksum_pyxb.algorithm = algorithm
-  return checksum_pyxb
-
-
 def create_checksum_object_from_stream(
     f, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
@@ -61,6 +49,15 @@ def create_checksum_object_from_iterator(
     itr, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 ):
   checksum_str = calculate_checksum_on_iterator(itr, algorithm)
+  checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
+  checksum_pyxb.algorithm = algorithm
+  return checksum_pyxb
+
+
+def create_checksum_object_from_string(
+    o, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+):
+  checksum_str = calculate_checksum_on_string(o, algorithm)
   checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
   checksum_pyxb.algorithm = algorithm
   return checksum_pyxb
@@ -132,7 +129,7 @@ def is_supported_algorithm(algorithm_str):
 
 
 def get_supported_algorithms():
-  return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
+  return list(DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
 
 
 # Format

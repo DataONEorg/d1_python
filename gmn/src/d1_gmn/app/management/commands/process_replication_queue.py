@@ -25,8 +25,6 @@ command iterates over the requests and attempts to create the replicas.
   help = 'Process the queue of replication requests'
 """
 
-from __future__ import absolute_import
-
 import argparse
 import logging
 
@@ -69,7 +67,7 @@ class Command(django.core.management.base.BaseCommand):
     assert not args
     util.log_setup(opt['debug'])
     logging.info(
-      u'Running management command: {}'.format(__name__) # util.get_command_name())
+      'Running management command: {}'.format(__name__) # util.get_command_name())
     )
     util.exit_if_other_instance_is_running(__name__)
     util.abort_if_stand_alone_instance()
@@ -95,7 +93,7 @@ class ReplicationQueueProcessor(object):
       local_replica__info__status__status='queued'
     ).order_by('local_replica__info__timestamp', 'local_replica__pid__did')
     if not len(queue_queryset):
-      logging.debug(u'No replication requests to process')
+      logging.debug('No replication requests to process')
       return
     for queue_model in queue_queryset:
       self._process_replication_request(queue_model)
@@ -103,26 +101,24 @@ class ReplicationQueueProcessor(object):
 
   def _process_replication_request(self, queue_model):
     logging.info('-' * 100)
-    logging.info(
-      u'Processing PID: {}'.format(queue_model.local_replica.pid.did)
-    )
+    logging.info('Processing PID: {}'.format(queue_model.local_replica.pid.did))
     try:
       self._replicate(queue_model)
     except Exception as e:
-      logging.exception(u'Replication failed with exception:')
+      logging.exception('Replication failed with exception:')
       num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
       if num_failed_attempts < django.conf.settings.REPLICATION_MAX_ATTEMPTS:
-        logging.warn(
-          u'Replication failed and will be retried during next processing. '
-          u'failed_attempts={}, max_attempts={}'.format(
+        logging.warning(
+          'Replication failed and will be retried during next processing. '
+          'failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS
           )
         )
       else:
-        logging.warn(
-          u'Replication failed and has reached the maximum number of attempts. '
-          u'Recording the request as permanently failed and notifying the CN. '
-          u'failed_attempts={}, max_attempts={}'.format(
+        logging.warning(
+          'Replication failed and has reached the maximum number of attempts. '
+          'Recording the request as permanently failed and notifying the CN. '
+          'failed_attempts={}, max_attempts={}'.format(
             num_failed_attempts, django.conf.settings.REPLICATION_MAX_ATTEMPTS
           )
         )
@@ -135,8 +131,8 @@ class ReplicationQueueProcessor(object):
     with django.db.transaction.atomic():
       sysmeta_pyxb = self._get_system_metadata(queue_model)
       self._set_origin(queue_model, sysmeta_pyxb)
-      sciobj_stream = self._get_sciobj_stream(queue_model)
-      self._create_replica(sysmeta_pyxb, sciobj_stream)
+      sciobj_byteseam = self._get_sciobj_byteseam(queue_model)
+      self._create_replica(sysmeta_pyxb, sciobj_byteseam)
       self._update_request_status(queue_model, 'completed')
 
   def _set_origin(self, queue_model, sysmeta_pyxb):
@@ -189,10 +185,10 @@ class ReplicationQueueProcessor(object):
 
   def _get_system_metadata(self, queue_model):
     pid = queue_model.local_replica.pid.did
-    logging.debug(u'Calling CNRead.getSystemMetadata() pid={}'.format(pid))
+    logging.debug('Calling CNRead.getSystemMetadata() pid={}'.format(pid))
     return self.cn_client.getSystemMetadata(pid)
 
-  def _get_sciobj_stream(self, queue_model):
+  def _get_sciobj_byteseam(self, queue_model):
     source_node_base_url = self._resolve_source_node_id_to_base_url(
       queue_model.local_replica.info.member_node.urn
     )
@@ -202,7 +198,7 @@ class ReplicationQueueProcessor(object):
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
       retries=1,
     )
-    return self._open_sciobj_stream_on_member_node(
+    return self._open_sciobj_byteseam_on_member_node(
       mn_client, queue_model.local_replica.pid.did
     )
 
@@ -215,18 +211,18 @@ class ReplicationQueueProcessor(object):
       if discovered_node_id == source_node:
         return node.baseURL
     raise django.core.management.base.CommandError(
-      u'Unable to resolve Source Node ID. '
-      u'source_node="{}", discovered_nodes="{}"'
-      .format(source_node, u', '.join(discovered_nodes))
+      'Unable to resolve Source Node ID. '
+      'source_node="{}", discovered_nodes="{}"'
+      .format(source_node, ', '.join(discovered_nodes))
     )
 
   def _get_node_list(self):
     return self.cn_client.listNodes()
 
-  def _open_sciobj_stream_on_member_node(self, mn_client, pid):
+  def _open_sciobj_byteseam_on_member_node(self, mn_client, pid):
     return mn_client.getReplica(pid)
 
-  def _create_replica(self, sysmeta_pyxb, sciobj_stream):
+  def _create_replica(self, sysmeta_pyxb, sciobj_byteseam):
     """GMN handles replicas differently from native objects, with the main
     differences being related to handling of restrictions related to
     revision chains and SIDs. So this create sequence differs significantly
@@ -236,9 +232,9 @@ class ReplicationQueueProcessor(object):
     self._assert_is_pid_of_local_unprocessed_replica(pid)
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
-    url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
+    url = 'file:///{}'.format(d1_common.url.encodePathElement(pid))
     sciobj_model = d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
-    self._store_science_object_bytes(pid, sciobj_stream)
+    self._store_science_object_bytes(pid, sciobj_byteseam)
     d1_gmn.app.event_log.create_log_entry(
       sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
     )
@@ -253,11 +249,11 @@ class ReplicationQueueProcessor(object):
   def _create_replica_revision_reference(self, pid):
     d1_gmn.app.models.replica_revision_chain_reference(pid)
 
-  def _store_science_object_bytes(self, pid, sciobj_stream):
+  def _store_science_object_bytes(self, pid, sciobj_byteseam):
     sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
     d1_common.util.create_missing_directories_for_file(sciobj_path)
     with open(sciobj_path, 'wb') as f:
-      for chunk in sciobj_stream.iter_content(
+      for chunk in sciobj_byteseam.iter_content(
           chunk_size=django.conf.settings.NUM_CHUNK_BYTES
       ):
         f.write(chunk)
@@ -265,13 +261,13 @@ class ReplicationQueueProcessor(object):
   def _assert_is_pid_of_local_unprocessed_replica(self, pid):
     if not d1_gmn.app.did.is_unprocessed_local_replica(pid):
       raise django.core.management.base.CommandError(
-        u'The identifier is already in use on the local Member Node. '
-        u'pid="{}"'.format(pid)
+        'The identifier is already in use on the local Member Node. '
+        'pid="{}"'.format(pid)
       )
 
   def _assert_pid_is_unknown_or_replica(self, pid):
     if d1_gmn.app.did._is_did(pid) and not d1_gmn.app.did.is_local_replica(pid):
       raise django.core.management.base.CommandError(
-        u'The identifier is already in use on the local Member Node. '
-        u'pid="{}"'.format(pid)
+        'The identifier is already in use on the local Member Node. '
+        'pid="{}"'.format(pid)
       )

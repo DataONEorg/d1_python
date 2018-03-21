@@ -19,8 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import datetime
 
 import d1_test.d1_test_case
@@ -35,12 +33,12 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
     """random_date(): Returns random datetime.date objects"""
     random_date_list = [dates.random_date() for _ in range(10)]
     assert len(set(random_date_list)) >= 8
-    map(lambda x: isinstance(x, datetime.date), random_date_list)
+    list([isinstance(x, datetime.date) for x in random_date_list])
     self.sample.assert_equals(random_date_list, 'inst_gen_random_date')
 
   def test_10002(self):
     """random_datetime(): Returns random datetime.datetime objects"""
     random_datetime_list = [dates.random_datetime() for _ in range(10)]
     assert len(set(random_datetime_list)) >= 8
-    map(lambda x: isinstance(x, datetime.date), random_datetime_list)
+    list([isinstance(x, datetime.date) for x in random_datetime_list])
     self.sample.assert_equals(random_datetime_list, 'inst_gen_random_datetime')

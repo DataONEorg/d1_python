@@ -21,9 +21,6 @@
 """DataONE Command Line Interface
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import optparse
 import sys
@@ -53,12 +50,12 @@ import d1_common.types.exceptions
 
 def main():
   if not check_dependencies.are_modules_importable():
-    raise Exception(u'Dependency check failed')
+    raise Exception('Dependency check failed')
 
-  print(u'DataONE Command Line Interface ({})'.format(cli.__version__))
+  print(('DataONE Command Line Interface ({})'.format(cli.__version__)))
 
   parser = optparse.OptionParser(
-    usage=u'usage: %prog [command] ...', option_list=option_list
+    usage='usage: %prog [command] ...', option_list=option_list
   )
   options, commands = parser.parse_args()
 
@@ -113,7 +110,7 @@ def log_setup(debug):
     logging.getLogger('').setLevel(logging.DEBUG)
   else:
     logging.getLogger('').setLevel(logging.ERROR)
-  formatter = logging.Formatter(u'%(levelname)-8s %(message)s')
+  formatter = logging.Formatter('%(levelname)-8s %(message)s')
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
@@ -277,7 +274,7 @@ def handle_options(cli, options):
     if options.cn_url:
       cli.d1.session_set_parameter(session.CN_URL_NAME, options.cn_url)
     if options.cn_host:
-      url = u''.join((
+      url = ''.join((
         d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
         d1_common.const.DEFAULT_CN_PATH
       ))
@@ -289,7 +286,7 @@ def handle_options(cli, options):
     if options.mn_url:
       cli.d1.session_set_parameter(session.MN_URL_NAME, options.mn_url)
     if options.mn_host:
-      url = u''.join((
+      url = ''.join((
         d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
         d1_common.const.DEFAULT_MN_PATH
       ))
@@ -341,9 +338,9 @@ def handle_unexpected_exception(max_traceback_levels=100):
   """Suppress stack traces for common errors and provide hints for how to
   resolve them."""
   exc_type, exc_msgs = sys.exc_info()[:2]
-  if exc_type.__name__ == u'SSLError':
+  if exc_type.__name__ == 'SSLError':
     cli_util.print_error(
-      u"""HTTPS / TLS / SSL / X.509v3 Certificate Error:
+      """HTTPS / TLS / SSL / X.509v3 Certificate Error:
   An HTTPS connection could not be established. Verify that a DataONE node
   responds at the URL provided in the cn-url or mn-url session variable. If the
   URL is valid and if you intended to connect without authentication, make sure
@@ -355,9 +352,9 @@ def handle_unexpected_exception(max_traceback_levels=100):
   renewed after 18 hours.
 """
     )
-  elif exc_type.__name__ == u'timeout':
+  elif exc_type.__name__ == 'timeout':
     cli_util.print_error(
-      u"""Timeout error:
+      """Timeout error:
   A connection to a DataONE node timed out. Verify that a DataONE node responds
   at the URL provided in the cn-url or mn-url session variable.
 """
@@ -368,18 +365,18 @@ def handle_unexpected_exception(max_traceback_levels=100):
 
 def _print_unexpected_exception(max_traceback_levels=100):
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
-  cli_util.print_error(u'Error:')
-  cli_util.print_error(u'  Name: {}'.format(exc_class.__name__))
-  cli_util.print_error(u'  Value: {}'.format(exc_msgs))
+  cli_util.print_error('Error:')
+  cli_util.print_error('  Name: {}'.format(exc_class.__name__))
+  cli_util.print_error('  Value: {}'.format(exc_msgs))
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
-  cli_util.print_error(u'  Args: {}'.format(exc_args))
-  cli_util.print_error(u'  Traceback:')
+  cli_util.print_error('  Args: {}'.format(exc_args))
+  cli_util.print_error('  Traceback:')
   for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
-    cli_util.print_error(u'    {}'.format(tb))
+    cli_util.print_error('    {}'.format(tb))
 
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
   main()

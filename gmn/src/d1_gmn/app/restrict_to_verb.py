@@ -24,8 +24,6 @@ attempt to call the view with another verb causes a HttpResponseNotAllowed
 response.
 """
 
-from __future__ import absolute_import
-
 import functools
 
 import django.http
