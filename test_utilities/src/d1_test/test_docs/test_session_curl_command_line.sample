@@ -1,1 +1,1 @@
-"curl -X POST -H \"ijkl: 9876\" -H \"mnop: 5432\" http://some.bogus.address?abcd=1234&efgh=5678"
+curl -X POST -H "ijkl: 9876" -H "mnop: 5432" http://some.bogus.address?abcd=1234&efgh=5678

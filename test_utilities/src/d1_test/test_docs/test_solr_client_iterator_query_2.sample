@@ -868,110 +868,6 @@ format written and arranged just like the other states.",
     "westBoundCoord": -87.634964
   },
   {
-    "abstract": "This report contains bald eagle productivity data, and provides additional context for the posted dataset,
-including information about the collection, analysis, and organization of the data. Characteristics of this dataset include the
-following: \u2022 This dataset focuses on data related to bald eagle productivity collected as part of the cooperative NRDA
-process. \u2022 This dataset includes data collected cooperatively with the Trustees. \u2022 Before posting, extensive work was
-done independently by BP contractors to verify some aspects of the posted data (e.g., positional coordinates and field data). The
-focus of this data posting is bald eagle productivity observations made by observers working from aircraft flying over portions of
-coastal Florida, Mississippi, Alabama, and Louisiana. Visual observations of 471 bald eagle nests were made from January 2011
-through April 2011 under a work plan titled Pre-assessment Work Plan for Determining Injury to Bald Eagles from the Deepwater
-Horizon (MC 252) Oil Spill (Bird Study #9, Part 2). This work was conducted as part of NRDA studies agreed to and executed
-cooperatively by the U.S. Department of Interior (DOI), U.S. Fish and Wildlife Service (USFWS), other Trustees, and BP. This
-dataset includes bald eagle nest and productivity data visually collected by observers working from aircraft. The types of data
-included are observation date, nest ID and location, nest descriptors, adult activity, and productivity observations (egg counts,
-chick counts, and chick ages). \u2022 In the Area of Potential Impact (API, as defined by the work plan), observations were made
-from January 2011 through April 2011. Nine of the nests were observed in April. \u2022 In the Reference Area (as defined by the
-work plan), observations were made from December 2010 through April 2011. Thirty-four of the nests were observed in April. In
-addition to the temporal variation noted above, sampling variations may exist across observers, methods, and locations.",
-    "authoritativeMN": "urn:node:GRIIDC",
-    "beginDate": "2010-12-21T00:00:00Z",
-    "checksum": "0ea01a2f00dc8c1c671bfecdaae3df41",
-    "checksumAlgorithm": "MD5",
-    "contactOrganization": [
-      "Gulf of Mexico Research Initiative Information and Data Cooperative"
-    ],
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/BP-x750-000-0025-002",
-    "datasource": "urn:node:GRIIDC",
-    "dateModified": "2017-03-28T05:51:11.807Z",
-    "datePublished": "2017-01-04T17:07:44Z",
-    "dateUploaded": "2017-01-26T21:22:38.507Z",
-    "endDate": "2011-03-14T00:00:00Z",
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/BP-x750-000-0025-002",
-    "formatId": "http://www.isotc211.org/2005/gmd-noaa",
-    "formatType": "METADATA",
-    "id": "BP-x750-000-0025-002",
-    "identifier": "BP-x750-000-0025-002",
-    "isPublic": true,
-    "isService": true,
-    "keywords": [
-      "bald eagle",
-      "productivity",
-      "nests",
-      "observations",
-      "coastal",
-      "Florida",
-      "Alabama",
-      "Mississippi",
-      "Louisiana",
-      "Baldwin, AL",
-      "Mobile, AL",
-      "St. Bernard, LA",
-      "St. Charles, LA",
-      "Jefferson, LA",
-      "Lafourche, LA",
-      "St. Mary, LA",
-      "Orleans, LA",
-      "Plaquemines, LA",
-      "St. Tammany, LA",
-      "Terrebonne, LA",
-      "Harrison, MS",
-      "Jackson, MS",
-      "Bay, FL",
-      "Citrus, FL",
-      "Dixie, FL",
-      "Escambia, FL",
-      "Franklin, FL",
-      "Gulf, FL",
-      "Hernando, FL",
-      "Jefferson, FL",
-      "Levy, FL",
-      "Manatee, FL",
-      "Sarasota, FL",
-      "Okaloosa, FL",
-      "Pinellas, FL",
-      "Pasco, FL",
-      "Santa Rosa, FL",
-      "Taylor, FL",
-      "Wakulla, FL",
-      "Walton, FL"
-    ],
-    "obsoletes": "BP-x750-000-0025",
-    "pubDate": "2017-01-04T17:07:44Z",
-    "readPermission": [
-      "public"
-    ],
-    "replicaMN": [
-      "urn:node:GRIIDC",
-      "urn:node:CN"
-    ],
-    "replicaVerifiedDate": [
-      "2017-01-26T21:24:16.729Z",
-      "2017-01-26T21:24:16.761Z"
-    ],
-    "replicationAllowed": false,
-    "rightsHolder": "CN=Joe Holland A51071,O=Harte Research Institute,C=US,DC=cilogon,DC=org",
-    "serviceCoupling": "tight",
-    "serviceEndpoint": [
-      "https://data.gulfresearchinitiative.org/data/BP.x750.000:0025"
-    ],
-    "size": 28819,
-    "submitter": "CN=urn:node:GRIIDC,DC=dataone,DC=org",
-    "title": "Bald eagle productivity observations over portions of coastal Florida, Mississippi, Alabama, and Louisiana from
-January 2011 through April 2011",
-    "updateDate": "2017-01-26T21:22:38.507Z"
-  },
-  {
     "abstract": "Supplementary text",
     "author": "Magain, Nicolas",
     "authorGivenName": "Nicolas",
@@ -1106,5 +1002,76 @@ January 2011 through April 2011",
     "submitter": "ambikamath@gmail.com",
     "title": "sex",
     "updateDate": "2018-01-31T18:43:52Z"
+  },
+  {
+    "abstract": "list of offspring IDs and their mothers from the sampled population of Anolis sagrei lizards in Gainesville FL;
+offspring were laid in the laboratory, with known mothers.",
+    "author": "Kamath, Ambika",
+    "authorGivenName": "Ambika",
+    "authorSurName": "Kamath",
+    "authorSurNameSort": "Kamath",
+    "authoritativeMN": "urn:node:DRYAD",
+    "checksum": "6cd305bfba7b8ee4f0e5aa3cba941168",
+    "checksumAlgorithm": "MD5",
+    "dataUrl":
+"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F8%3Fver%3D2018-01-31T13%3A43%3A57.453-05%3A00",
+    "datasource": "urn:node:DRYAD",
+    "dateModified": "2018-01-31T18:45:31.689Z",
+    "datePublished": "2018-01-31T18:43:54Z",
+    "dateUploaded": "2018-01-31T18:43:54Z",
+    "fileID":
+"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F8%3Fver%3D2018-01-31T13%3A43%3A57.453-05%3A00",
+    "formatId": "http://datadryad.org/profile/v3.1",
+    "formatType": "METADATA",
+    "id": "https://doi.org/10.5061/dryad.kt387/8?ver=2018-01-31T13:43:57.453-05:00",
+    "identifier": "https://doi.org/10.5061/dryad.kt387/8?ver=2018-01-31T13:43:57.453-05:00",
+    "investigator": [
+      "Kamath, Ambika",
+      "Losos, Jonathan"
+    ],
+    "isDocumentedBy": [
+      "https://doi.org/10.5061/dryad.kt387?ver=2018-01-31T13:43:51.053-05:00"
+    ],
+    "isPublic": true,
+    "isService": false,
+    "keywords": [
+      "mating system",
+      "territoriality",
+      "territory",
+      "anole",
+      "encounter",
+      "female choice"
+    ],
+    "origin": [
+      "Kamath, Ambika",
+      "Losos, Jonathan"
+    ],
+    "pubDate": "2018-01-31T18:43:54Z",
+    "readPermission": [
+      "public"
+    ],
+    "replicaMN": [
+      "urn:node:DRYAD",
+      "urn:node:CN"
+    ],
+    "replicaVerifiedDate": [
+      "2018-01-31T18:45:31.228Z",
+      "2018-01-31T18:45:31.277Z"
+    ],
+    "replicationAllowed": false,
+    "resourceMap": [
+      "https://doi.org/10.5061/dryad.kt387?format=d1rem&ver=2018-01-31T13:43:51.053-05:00"
+    ],
+    "rightsHolder": "admin@datadryad.org",
+    "serviceCoupling": "false",
+    "site": [
+      "Gainesville",
+      "FL",
+      "USA"
+    ],
+    "size": 1828,
+    "submitter": "ambikamath@gmail.com",
+    "title": "offmom",
+    "updateDate": "2018-01-31T18:43:54Z"
   }
 ]

@@ -1,2 +1,3 @@
-"Setting is unsafe for use in production. setting=\"DEBUG_GMN\" current=\"True\" safe=\"False\"
-Setting is unsafe for use in production. setting=\"STAND_ALONE\" current=\"True\" safe=\"False\""
+Setting is unsafe for use in production. setting="DEBUG_GMN" current="True" safe="False"
+
+Setting is unsafe for use in production. setting="STAND_ALONE" current="True" safe="False"

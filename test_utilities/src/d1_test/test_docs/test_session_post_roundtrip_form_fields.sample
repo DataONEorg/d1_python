@@ -1,14 +1,8 @@
 {
-  "body_str": "[BOUNDARY]\r
-Content-Disposition: form-data; name=\"post_data_2\"\r
-\r
-5678\r
-[BOUNDARY]\r
-Content-Disposition: form-data; name=\"post_data_1\"\r
-\r
-1234\r
-[BOUNDARY]--\r
-",
+  "body_str": "form-data; name=\"post_data_1\"
+1234
+form-data; name=\"post_data_2\"
+5678",
   "header_dict": {
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate",

@@ -1,6 +1,46 @@
-"Decorating: test_1260: reproducible_random()
-Request kwargs:
-{\"headers\":{\"Charset\":\"utf-8\",\"User-Agent\":\"DataONE-Python/[VERSION]
-+http://dataone.org/\"},\"params\":{},\"stream\":false,\"timeout\":60.0,\"verify\":\"/etc/ssl/certs/ca-certificates.crt\"}
-curl -X GET -H \"Charset: utf-8\" -H \"User-Agent: DataONE-Python/[VERSION] +http://dataone.org/\" http://responses/cn/v1/node
-Received callback. url=\"http://responses/cn/v1/node\""
+         Set session variable cn-url to "http://responses/cn"
+         cn     cn                                              https://cn.dataone.org/cn
+         cn     cn-orc-1                                        https://cn-orc-1.dataone.org/cn
+         cn     cn-ucsb-1                                       https://cn-ucsb-1.dataone.org/cn
+         cn     cn-unm-1                                        https://cn-unm-1.dataone.org/cn
+         mn     A Member Node for University of Illinois at Chicago.    https://dataone.lib.uic.edu/metacat/d1/mn
+         mn     Arctic Data Center                              https://arcticdata.io/metacat/d1/mn
+         mn     Biological and Chemical Oceanography Data Management Office (BCO-DMO)   https://www.bco-dmo.org/d1/mn
+         mn     Cornell Lab of Ornithology - eBird              http://dataone.ornith.cornell.edu/metacat/d1/mn
+         mn     DataONE ORC Dedicated Replica Server            https://mn-orc-1.dataone.org/knb/d1/mn
+         mn     DataONE UCSB Dedicated Replica Server           https://mn-ucsb-1.dataone.org/knb/d1/mn
+         mn     DataONE UNM Dedicated Replica Server            https://mn-unm-1.dataone.org/knb/d1/mn
+         mn     Dryad Digital Repository                        https://datadryad.org/mn
+         mn     EDAC Gstore Repository                          https://gstore.unm.edu/dataone/
+         mn     ESA Data Registry                               https://data.esa.org/esa/d1/mn
+         mn     Environmental Data Initiative                   https://gmn.edirepository.org/mn
+         mn     Environmental Data for the Oak Ridge Area (EDORA)       http://mercury-ops2.ornl.gov/EDORA_MN/mn
+         mn     GLEON Data Repository                           https://poseidon.limnology.wisc.edu/metacat/d1/mn
+         mn     Gulf of Alaska Data Portal                      https://goa.nceas.ucsb.edu/goa/d1/mn
+         mn     Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)    https://dataone.tamucc.edu/mn
+         mn     IARC Data Archive                               https://trusty.iarc.uaf.edu/mn
+         mn     KNB Data Repository                             https://knb.ecoinformatics.org/knb/d1/mn
+         mn     LTER Europe Member Node                         https://data.lter-europe.net/knb/d1/mn
+         mn     Minnesota Population Center                     https://dataone-prod.pop.umn.edu/mn
+         mn     Montana IoE Data Repository                     https://data.rcg.montana.edu/catalog/d1/mn
+         mn     NEON Member Node                                http://dataone.neonscience.org/metacat/d1/mn
+         mn     NM EPSCoR Tier 4 Node                           https://nmepscor-d1.unm.edu/mn
+         mn     NOAA NCEI Oceanographic Data Archive            https://ncei-node.dataone.org/mn
+         mn     NRDC DataONE member node                        https://dataone.sensor.nevada.edu/mn
+         mn     Northwest Knowledge Network                     https://dataone.northwestknowledge.net/mn
+         mn     ONEShare DataONE Member Node                    https://oneshare.unm.edu/knb/d1/mn
+         mn     ORNL DAAC                                       http://mercury-ops2.ornl.gov/ornldaac/mn
+         mn     PISCO MN                                        http://data.piscoweb.org/catalog/d1/mn
+         mn     PPBio                                           https://ppbiodata.inpa.gov.br/metacat/d1/mn
+         mn     Regional and Global biogeochemical dynamics Data (RGD)  http://mercury-ops2.ornl.gov/RGD_MN/mn
+         mn     Rolling Deck to Repository (R2R)                https://r2r-node.dataone.org/mn
+         mn     SANParks Data Repository                        https://dataknp.sanparks.org/sanparks/d1/mn
+         mn     SEAD Virtual Archive                            http://seadva.d2i.indiana.edu:8081/sead/rest/mn
+         mn     TERN Australia                                  https://dataone.tern.org.au/mn
+         mn     TFRI Data Catalog                               https://metacat.tfri.gov.tw/tfri/d1/mn
+         mn     The Digital Archaeological Record               https://dataone.tdar.org/dataone/
+         mn     U.S. LTER Network                               https://gmn.lternet.edu/mn
+         mn     UC3 Merritt                                     https://merritt.cdlib.org:8084/knb/d1/mn
+         mn     USA National Phenology Network                  https://mynpn.usanpn.org/knb/d1/mn
+         mn     USGS Science Data Catalog                       http://usgs.ornl.gov/USGS_MN/mn
+         mn     University of Kansas - Biodiversity Institute   https://bidataone.nhm.ku.edu/mn

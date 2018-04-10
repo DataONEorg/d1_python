@@ -1,4 +1,3 @@
-"Running management command: d1_gmn.app.management.commands.import
 Importing objects - 1/100 (1.00% [ETA-HMS]) - object#0000
 Importing objects - 2/100 (2.00% [ETA-HMS]) - object#0001
 Importing objects - 3/100 (3.00% [ETA-HMS]) - object#0002
@@ -199,6 +198,3 @@ Importing event logs - 97/100 (97.00% [ETA-HMS]) - object#0096
 Importing event logs - 98/100 (98.00% [ETA-HMS]) - object#0097
 Importing event logs - 99/100 (99.00% [ETA-HMS]) - object#0098
 Importing event logs - 100/100 (100.00% [ETA-HMS]) - object#0099
-Events:
-  Importing event logs: 100
-  Importing objects: 100"
