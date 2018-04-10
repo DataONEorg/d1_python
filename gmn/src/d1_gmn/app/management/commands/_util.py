@@ -131,7 +131,7 @@ class Db(object):
       return None
 
 
-def log_progress(event_counter, msg, i, n, pid, start_sec=None):
+def format_progress(event_counter, msg, i, n, pid, start_sec=None):
   if start_sec:
     elapsed_sec = time.time() - start_sec
     total_sec = float(n) / (i + 1) * elapsed_sec
@@ -144,11 +144,10 @@ def log_progress(event_counter, msg, i, n, pid, start_sec=None):
     eta_str = ' {}h{:02d}m{:02d}s'.format(h_int, m_int, s_int)
   else:
     eta_str = ''
-  logging.info(
-    '{} - {}/{} ({:.2f}%{}) - {}'.
-    format(msg, i + 1, n, (i + 1) / float(n) * 100, eta_str, pid)
-  )
   event_counter.count(msg)
+  return '{} - {}/{} ({:.2f}%{}) - {}'.format(
+    msg, i + 1, n, (i + 1) / float(n) * 100, eta_str, pid
+  )
 
 
 def is_db_empty():

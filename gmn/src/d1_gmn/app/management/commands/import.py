@@ -228,8 +228,10 @@ class Command(django.core.management.base.BaseCommand):
 
       pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
-      util.log_progress(
-        self._events, 'Importing objects', i, sysmeta_iter.total, pid, start_sec
+      self.stdout.write(
+        util.format_progress(
+          self._events, 'Importing objects', i, sysmeta_iter.total, pid, start_sec
+        )
       )
 
       if d1_gmn.app.did.is_existing_object(pid):
@@ -276,9 +278,11 @@ class Command(django.core.management.base.BaseCommand):
 
       pid = d1_common.xml.get_req_val(log_record_pyxb.identifier)
 
-      util.log_progress(
-        self._events, 'Importing event logs', i, log_record_iterator.total, pid,
-        start_sec
+      self.stdout.write(
+        util.format_progress(
+          self._events, 'Importing event logs', i, log_record_iterator.total,
+          pid, start_sec
+        )
       )
 
       if not d1_gmn.app.did.is_existing_object(pid):

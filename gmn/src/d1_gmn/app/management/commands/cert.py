@@ -37,10 +37,8 @@ authenticated for the subjects.
 """
 
 import argparse
-import logging
 
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.models
 
@@ -59,9 +57,6 @@ class Command(django.core.management.base.BaseCommand):
   def add_arguments(self, parser):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
-    parser.add_argument(
-      '--debug', action='store_true', help='Debug level logging'
-    )
     parser.add_argument('command', choices=['view', 'whitelist'], help='Action')
     parser.add_argument(
       'cert_pem_path', help='Path to DataONE X.509 PEM certificate file'
@@ -69,7 +64,6 @@ class Command(django.core.management.base.BaseCommand):
 
   def handle(self, *args, **opt):
     assert not args
-    util.log_setup(opt['debug'])
     try:
       self._handle(opt)
     except d1_common.types.exceptions.DataONEException as e:
@@ -88,13 +82,13 @@ class Command(django.core.management.base.BaseCommand):
       assert False
 
   def _view(self, primary_str, equivalent_set):
-    logging.info('Primary subject:')
-    logging.info('  {}'.format(primary_str))
+    self.stdout.write('Primary subject:')
+    self.stdout.write('  {}'.format(primary_str))
     if equivalent_set:
-      logging.info('Equivalent subjects:')
+      self.stdout.write('Equivalent subjects:')
       for subject_str in sorted(equivalent_set):
         if subject_str != primary_str:
-          logging.info('  {}'.format(subject_str))
+          self.stdout.write('  {}'.format(subject_str))
 
   def _whitelist(self, primary_str):
     if d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
@@ -105,7 +99,7 @@ class Command(django.core.management.base.BaseCommand):
         format(primary_str)
       )
     d1_gmn.app.models.whitelist_for_create_update_delete(primary_str)
-    logging.info(
+    self.stdout.write(
       'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 

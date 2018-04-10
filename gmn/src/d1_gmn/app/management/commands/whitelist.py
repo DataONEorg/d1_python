@@ -32,7 +32,6 @@
 """
 
 import argparse
-import logging
 
 # noinspection PyProtectedMember
 from . import jwt
@@ -52,15 +51,11 @@ class Command(django.core.management.base.BaseCommand):
   def add_arguments(self, parser):
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
-    parser.add_argument(
-      '--debug', action='store_true', help='Debug level logging'
-    )
     parser.add_argument('command', choices=['view', 'add', 'remove', 'bulk'])
     parser.add_argument('command_arg', nargs='?', help='Subject or filename')
 
   def handle(self, *args, **opt):
     assert not args
-    util.log_setup(opt['debug'])
     try:
       self._handle(opt['command'], opt['command_arg'])
     except d1_common.types.exceptions.DataONEException as e:
@@ -81,12 +76,12 @@ class Command(django.core.management.base.BaseCommand):
       assert False
 
   def _view(self):
-    logging.info('Subjects in whitelist:')
+    self.stdout.write('Subjects in whitelist:')
     for whitelist_model in (
         d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.
         order_by('subject__subject')
     ):
-      logging.info('  {}'.format(whitelist_model.subject.subject))
+      self.stdout.write('  {}'.format(whitelist_model.subject.subject))
 
   def _add(self, subject_str):
     if subject_str is None:
@@ -98,7 +93,7 @@ class Command(django.core.management.base.BaseCommand):
         'Subject already in whitelist: {}'.format(subject_str)
       )
     d1_gmn.app.models.whitelist_for_create_update_delete(subject_str)
-    logging.info('Added subject to whitelist: {}'.format(subject_str))
+    self.stdout.write('Added subject to whitelist: {}'.format(subject_str))
 
   def _remove(self, subject_str):
     if subject_str is None:
@@ -112,7 +107,7 @@ class Command(django.core.management.base.BaseCommand):
     d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
       subject=d1_gmn.app.models.subject(subject_str)
     ).delete()
-    logging.info('Removed subject from whitelist: {}'.format(subject_str))
+    self.stdout.write('Removed subject from whitelist: {}'.format(subject_str))
 
   def _bulk(self, whitelist_file_path):
     if whitelist_file_path is None:
@@ -128,4 +123,6 @@ class Command(django.core.management.base.BaseCommand):
           continue
         d1_gmn.app.models.whitelist_for_create_update_delete(subject_str)
         subject_cnt += 1
-    logging.info('Created new whitelist with {} subjects'.format(subject_cnt))
+    self.stdout.write(
+      'Created new whitelist with {} subjects'.format(subject_cnt)
+    )

@@ -85,9 +85,11 @@ class Command(django.core.management.base.BaseCommand):
     for i, sciobj_model in enumerate(
         d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
     ):
-      util.log_progress(
-        self._events, 'Writing revision chains', i, total, sciobj_model.pid.did,
-        start_sec
+      self.stdout.write(
+        util.format_progress(
+          self._events, 'Writing revision chains', i, total,
+          sciobj_model.pid.did, start_sec
+        )
       )
 
       # sid = d1_gmn.app.util.get_did(sciobj_model.sid)
