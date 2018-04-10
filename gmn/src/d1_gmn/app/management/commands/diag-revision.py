@@ -49,7 +49,7 @@ import django.core.management.base
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
   def __init__(self, *args, **kwargs):
-    super(Command, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._db = util.Db()
     self._events = d1_common.util.EventCounter()
 

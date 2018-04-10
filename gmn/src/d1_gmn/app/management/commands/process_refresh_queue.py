@@ -47,7 +47,7 @@ from django.db import transaction
 # noinspection PyClassHasNoInit,PyProtectedMember
 class Command(django.core.management.base.BaseCommand):
   def __init__(self, *args, **kwargs):
-    super(Command, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._events = d1_common.util.EventCounter()
     self.cn_client = self._create_cn_client()
 

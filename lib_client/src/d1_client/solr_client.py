@@ -507,7 +507,7 @@ class SolrArrayTransformer(SolrRecordTransformerBase):
   """A transformer that returns a list of values for the specified columns."""
 
   def __init__(self, cols=None):
-    super(SolrArrayTransformer, self).__init__()
+    super().__init__()
     self.cols = cols or [
       'lng',
       'lat',

@@ -56,7 +56,7 @@ import django.core.management.base
 # noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   def __init__(self, *args, **kwargs):
-    super(Command, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):

@@ -51,7 +51,7 @@ PUBLIC_ACCESS_PERCENT = 25.0
 
 class Transaction(transaction.Transaction):
   def __init__(self):
-    super(Transaction, self).__init__()
+    super().__init__()
 
   def d1_mn_api_call(self):
     """MNStorage.create()"""

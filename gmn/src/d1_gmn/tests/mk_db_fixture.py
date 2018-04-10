@@ -78,7 +78,7 @@ def main():
 
 class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def __init__(self):
-    super(MakeDbFixture, self).setup_method(None)
+    super().setup_method(None)
 
   @responses.activate
   def run(self):

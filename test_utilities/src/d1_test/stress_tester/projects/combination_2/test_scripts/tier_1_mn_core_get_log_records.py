@@ -31,7 +31,7 @@ import transaction
 
 class Transaction(transaction.Transaction):
   def __init__(self):
-    super(Transaction, self).__init__()
+    super().__init__()
 
   def d1_mn_api_call(self):
     """MNCore.getLogRecords() for specific object called by regular subject"""

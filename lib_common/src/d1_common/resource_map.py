@@ -110,7 +110,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
       ore_software_id=d1_common.const.ORE_SOFTWARE_ID, *args, **kwargs
   ):
     """Initialize the Graph instance."""
-    super(ResourceMap, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._base_url = base_url
     self._version_tag = d1_common.type_conversions.get_version_tag(api_major)
     self._ore_initialized = False

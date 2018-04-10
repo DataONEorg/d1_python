@@ -48,7 +48,7 @@ Windows: O:\FlatSpace\MyObjectIdentifier
 
 class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   def __init__(self, options, object_tree):
-    super(Resolver, self).__init__(options, object_tree)
+    super().__init__(options, object_tree)
     self._object_tree = object_tree
     self._resource_map_resolver = d1_onedrive.impl.resolver.resource_map.Resolver(
       options, object_tree

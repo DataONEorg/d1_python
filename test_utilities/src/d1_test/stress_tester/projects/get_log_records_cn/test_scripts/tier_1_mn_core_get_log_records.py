@@ -36,7 +36,7 @@ import transaction
 
 class Transaction(transaction.Transaction):
   def __init__(self):
-    super(Transaction, self).__init__()
+    super().__init__()
     self.total = self.get_log_records_total()
 
   def get_log_records_total(self):

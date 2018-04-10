@@ -62,7 +62,7 @@ import django.core.management.base
 # noinspection PyClassHasNoInit
 class Command(django.core.management.base.BaseCommand):
   def __init__(self, *args, **kwargs):
-    super(Command, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
     self._command_class_map = {
       'cleardb': ClearDb,

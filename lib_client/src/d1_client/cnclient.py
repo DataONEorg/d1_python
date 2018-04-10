@@ -41,7 +41,7 @@ class CoordinatingNodeClient(
 
   def __init__(self, *args, **kwargs):
     """See d1_client.baseclient.DataONEBaseClient for args."""
-    super(CoordinatingNodeClient, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
     self.logger = logging.getLogger(__file__)
 

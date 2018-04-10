@@ -122,7 +122,7 @@ def touch(module_path, times=None):
 # of utf-8 sources.
 class UnicodeRenderWalker(baron.render.RenderWalker):
   def __init__(self, *args, **kwargs):
-    super(UnicodeRenderWalker, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._dump = ''
 
   def before_string(self, string, key):

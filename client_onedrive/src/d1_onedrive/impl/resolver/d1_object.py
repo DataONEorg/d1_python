@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 
 class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   def __init__(self, options, object_tree):
-    super(Resolver, self).__init__(options, object_tree)
+    super().__init__(options, object_tree)
 
     self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
       csv_file=open(

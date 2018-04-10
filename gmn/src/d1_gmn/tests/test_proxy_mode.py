@@ -47,7 +47,7 @@ import d1_test.mock_api.get
 
 class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def setup_method(self, method):
-    super(TestProxyMode, self).setup_method(method)
+    super().setup_method(method)
     d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
 
   def create_and_check_proxy_obj(

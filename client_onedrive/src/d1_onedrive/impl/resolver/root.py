@@ -50,7 +50,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
   def __init__(self, options, object_tree_client):
     # The command processor is shared between all resolvers. It holds db and
     # REST connections and caches items that may be shared between resolvers.
-    super(RootResolver, self).__init__(options, object_tree_client)
+    super().__init__(options, object_tree_client)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self._resolvers = {

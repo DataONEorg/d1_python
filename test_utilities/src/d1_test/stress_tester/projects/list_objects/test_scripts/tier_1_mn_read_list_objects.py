@@ -36,7 +36,7 @@ page_size = 1000
 
 class Transaction(transaction.Transaction):
   def __init__(self):
-    super(Transaction, self).__init__()
+    super().__init__()
     self.total = self.get_object_total()
 
   def get_object_total(self):

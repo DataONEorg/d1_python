@@ -37,7 +37,7 @@ import django.test
 @d1_test.d1_test_case.reproducible_random_decorator('TestSettings')
 class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def setup_method(self, method):
-    super(TestSettings, self).setup_method(method)
+    super().setup_method(method)
     self.s = django.apps.apps.get_app_config('startup')
 
   @django.test.override_settings(
