@@ -195,15 +195,6 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
         mn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
       )
-      # # The event timestamp is set directly in the db, so it's not covered by
-      # # freezegun. We just set it manually.
-      # sciobj_model = d1_gmn.app.util.get_sci_model(pid)
-      # event_log_model = d1_gmn.app.models.EventLog.objects.get(
-      #   sciobj=sciobj_model
-      # )
-      # event_log_model.timestamp = sysmeta_pyxb.dateUploaded
-      # event_log_model.save()
-      # #
       n_create_events_after = self.get_total_log_records(
         mn_client_v1_v2, event='create'
       )
@@ -211,16 +202,13 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Verify that the most recent record now matches the object that was created
       event_pyxb = mn_client_v1_v2.getLogRecords(start=0, count=1)
       self.sample.assert_equals(
-        '\n'.join(
-          '{}: {}'.format(k, v) for k, v in list({
-            'pid': pid,
-            'sid': sid,
-            'sysmeta': d1_common.xml.format_pretty_pyxb(sysmeta_pyxb
-                                                        ),
-            'create_event': d1_common.xml.format_pretty_pyxb(event_pyxb
-                                                             ),
-          }.items())
-        ),
+        '\n'.join([
+          'pid: {}'.format(pid),
+          'sid: {}'.format(sid),
+          'sysmeta: {}'.format(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb)),
+          'create_event: {}'.
+          format(d1_common.xml.format_pretty_pyxb(event_pyxb)),
+        ]),
         'new_create_event',
         mn_client_v1_v2,
       )

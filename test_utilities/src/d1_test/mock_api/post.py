@@ -31,6 +31,7 @@ import urllib.parse
 import responses
 
 import d1_common.const
+import d1_common.multipart
 import d1_common.types.dataoneTypes
 import d1_common.url
 import d1_common.util
@@ -52,7 +53,7 @@ def add_callback(base_url):
 
 
 def _request_callback(request):
-  """Echo a generic post.
+  """Echo a generic POST
   """
   logging.debug('Received callback. url="{}"'.format(request.url))
   # Return DataONEException if triggered
@@ -60,10 +61,18 @@ def _request_callback(request):
   if exc_response_tup:
     return exc_response_tup
   # Return regular response
+
   try:
     body_str = request.body.read()
   except AttributeError:
     body_str = request.body
+
+  if d1_common.multipart.is_multipart(request.headers):
+    body_part_tup = d1_common.multipart.parse_str(
+      body_str, request.headers['Content-Type']
+    )
+    body_str = d1_common.multipart.normalize(body_part_tup)
+
   url_obj = urllib.parse.urlparse(request.url)
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_JSON,

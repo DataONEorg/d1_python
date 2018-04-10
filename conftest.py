@@ -378,8 +378,8 @@ def mn_client_v1_v2(request):
 #   d1_gmn.app.sciobj_store.create_clean_tmp_store()
 
 
-@pytest.yield_fixture(scope='session')
-def django_sciobj_store_setup(request, settings):
+@pytest.yield_fixture(scope='session', autouse=True)
+def django_sciobj_store_setup(request):
   tmp_store_path = os.path.join(
     tempfile.gettempdir(),
     'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))

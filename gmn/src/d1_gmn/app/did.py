@@ -47,10 +47,10 @@ def is_valid_pid_for_create(did):
     - The DataONE subject that is making the call must have write or
     changePermission on the resource map.
   """
-  # print 'existing ', is_existing_object(did)
-  # print 'sid ', is_sid(did)
-  # print 'local_replica ', is_local_replica(did)
-  # print 'revision ', d1_gmn.app.revision.is_revision(did)
+  # logging.debug('existing: {}'.format(is_existing_object(did)))
+  # logging.debug('sid: {}'.format(is_sid(did)))
+  # logging.debug('local_replica: {}'.format(is_local_replica(did)))
+  # logging.debug('revision: {}'.format(d1_gmn.app.revision.is_revision(did)))
   return (
     not is_existing_object(did) and not is_sid(did) and
     not is_local_replica(did) and not d1_gmn.app.revision.is_revision(did) and

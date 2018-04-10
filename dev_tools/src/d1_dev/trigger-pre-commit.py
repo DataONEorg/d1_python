@@ -33,7 +33,7 @@ file instead of starting over.
 in the IDE to the line that triggered the error.
 
 After fixing an error, hit Enter to retrigger the hooks in order to check if
-there more errors or S to skip directly to the next file.
+there are more errors or S to skip directly to the next file.
 """
 
 import argparse
@@ -49,9 +49,7 @@ import d1_common.iter.dir
 import d1_common.util
 
 # Path to PyCharm, for automatically moving to errors in the IDE
-DEFAULT_PYCHARM_BIN_PATH = os.path.expanduser(
-  '~/bin/JetBrains/pycharm-2016.3/bin/pycharm.sh'
-)
+DEFAULT_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm.sh')
 
 
 def main():

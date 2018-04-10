@@ -160,7 +160,9 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     msg_str = 'line1\nline2\n'
     with tempfile.NamedTemporaryFile() as tmp_file:
       tmp_file_path = tmp_file.name
-    cli_util.copy_file_like_object_to_file(io.StringIO(msg_str), tmp_file_path)
+    cli_util.copy_file_like_object_to_file(
+      io.BytesIO(msg_str.encode('utf-8')), tmp_file_path
+    )
     with open(tmp_file_path, 'r') as tmp_file:
       assert msg_str == tmp_file.read()
 

@@ -39,7 +39,6 @@ class Transaction(transaction.Transaction):
     client = self.create_client_for_subject(subject)
     response = client.getLogRecordsResponse(pidFilter=obj)
     self.check_response(response)
-    #print response.read()
 
 
 if __name__ == '__main__':

@@ -226,7 +226,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     logging.debug(self.headers)
     param_dict = cgi.parse_header(self.headers.getheader('Content-Type'))[1]
     logging.debug(param_dict)
-    # print self.rfile.read()
     multipart_fields = cgi.parse_multipart(self.rfile, param_dict)
     logging.debug(multipart_fields)
     status = multipart_fields.get('status')[0]

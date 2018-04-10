@@ -66,7 +66,6 @@ class Transaction(transaction.Transaction):
       count = self.total - start
     response = client.listObjectsResponse(start=start, count=count)
     self.check_response(response)
-    #print response.read()
 
 
 if __name__ == '__main__':

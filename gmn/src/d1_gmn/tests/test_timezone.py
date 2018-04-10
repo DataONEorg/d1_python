@@ -227,8 +227,6 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateSysMetadataModified)
     # Generating the XML doc, the xs:dateTime strings are still without tz
     xml_doc = d1_common.xml.serialize_to_transport(sysmeta_pyxb)
-    # print xml_doc
-    # print uploaded_dt
     with d1_common.wrap.simple_xml.wrap(xml_doc) as xml:
       assert xml.get_element_dt('dateUploaded') == uploaded_dt
       assert xml.get_element_dt('dateSysMetadataModified') == modified_dt

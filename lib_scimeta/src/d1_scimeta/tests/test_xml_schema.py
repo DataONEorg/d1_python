@@ -31,8 +31,6 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     expected message"""
     # xml_str = self.sample.load_utf8_to_str('scimeta_isotc211_1.xml')
     xml_str = self.sample.load('scimeta_isotc211_1.xml')
-    # print (xml_str)
-    # return
     format_id = 'http://www.icpsr.umich.edu/DDI'
     with pytest.raises(
         scimeta.SciMetaValidationError,

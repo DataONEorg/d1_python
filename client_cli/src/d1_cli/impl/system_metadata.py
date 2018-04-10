@@ -106,9 +106,7 @@ class SystemMetadataCreator():
     sys_meta.replicationPolicy = self._create_replication_policy_pyxb_object(
       operation
     )
-    #print sys_meta
     #pyxb.RequireValidWhenGenerating(False)
-    #print sys_meta.toxml('utf-8')
     return sys_meta
 
   def _create_access_policy_pyxb_object(self, operation):

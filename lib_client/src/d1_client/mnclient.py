@@ -42,7 +42,7 @@ class MemberNodeClient(
 
   def __init__(self, *args, **kwargs):
     """See baseclient.DataONEBaseClient for args."""
-    super(MemberNodeClient, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
     self.logger = logging.getLogger(__file__)
 

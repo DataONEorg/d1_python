@@ -70,7 +70,7 @@ class AccessControl():
       except KeyError:
         permissions[allow[1]] = [allow[0]]
     lines = []
-    for perm, perm_list in list(permissions.items()):
+    for perm, perm_list in sorted(list(permissions.items())):
       lines.append(
         '  {0: <30s}{1}'.format(perm, '"' + '", "'.join(sorted(perm_list))) + '"'
       )

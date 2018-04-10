@@ -174,11 +174,16 @@ def load_json(filename, mode_str='r'):
   return json.loads(load_utf8_to_str(filename))
 
 
-def save(got_str, filename, mode_str='wb'):
-  logging.info('Saving sample file. filename="{}"'.format(filename))
+def save_path(got_str, exp_path, mode_str='wb'):
+  print(exp_path)
   assert isinstance(got_str, str)
-  with open(_get_or_create_path(filename), mode_str) as f:
-    return f.write(got_str.encode('utf-8'))
+  logging.info(
+    'Saving sample file. filename="{}"'.format(os.path.split(exp_path)[1])
+  )
+  with open(exp_path, mode_str) as f:
+    # UTF-8 BOM
+    # f.write(b'\xef\xbb\xbf')
+    f.write(got_str.encode('utf-8'))
 
 
 def save_obj(got_obj, filename, mode_str='wb'):
@@ -186,12 +191,9 @@ def save_obj(got_obj, filename, mode_str='wb'):
   save(got_str, filename, mode_str)
 
 
-def save_path(got_str, exp_path, mode_str='wb'):
-  logging.info(
-    'Saving sample file. filename="{}"'.format(os.path.split(exp_path)[1])
-  )
-  with open(exp_path, mode_str) as f:
-    return f.write(got_str.encode('utf-8'))
+def save(got_str, filename, mode_str='wb'):
+  path = _get_or_create_path(filename)
+  save_path(got_str, path, mode_str)
 
 
 def get_sxs_diff(a_obj, b_obj):
@@ -241,9 +243,16 @@ def obj_to_pretty_str(o, no_clobber=False):
     with ignore_exceptions():
       return 'VALID-UTF-8-BYTES:' + o.decode('utf-8')
     # Bytes that are not valid UTF-8
+    # - Sample files are always valid UTF-8, so binary is forced to UTF-8 by
+    # removing any sequences that are not valid UTF-8. This makes diffs more
+    # readable in case they contain some UTF-8.
+    # - In addition, a Base64 encoded version is included in order to be able to
+    # verify byte by byte equivalence.
+    # - It would be better to use errors='replace' here, but kdiff3 interprets
+    # the Unicode replacement char (�) as invalid Unicode.
     if isinstance(o, (bytes, bytearray)):
-      return 'BYTES-AS-UTF-8:{}\nBYTES-AS-BASE64:{}'.format(
-        o.decode('utf-8', errors='replace'),
+      return 'BINARY-BYTES-AS-UTF-8:{}\nBINARY-BYTES-AS-BASE64:{}'.format(
+        o.decode('utf-8', errors='ignore'),
         base64.standard_b64encode(o).decode('ascii')
       )
     # Valid XML str
@@ -252,6 +261,9 @@ def obj_to_pretty_str(o, no_clobber=False):
     # Valid JSON str
     with ignore_exceptions():
       return d1_common.util.format_json_to_normalized_pretty_json(o)
+    # Any str
+    if isinstance(o, str):
+      return o
     # PyXB object
     with ignore_exceptions():
       return d1_common.xml.serialize_to_str(o, pretty=True)
@@ -260,18 +272,22 @@ def obj_to_pretty_str(o, no_clobber=False):
       with ignore_exceptions():
         return d1_common.util.serialize_to_normalized_pretty_json(dict(o))
     # Any native object structure that can be serialized to JSON
+    # This covers only basic types that can be sorted. E.g., of not covered:
+    # datetime, mixed str and int keys.
     with ignore_exceptions():
       return d1_common.util.serialize_to_normalized_pretty_json(o)
     # Anything that has a str representation
     with ignore_exceptions():
       return str(o)
     # Fallback to internal representation
-    # Anything that looks like memory addresses is clobbered later
+    # Anything that looks like a memory address is clobbered later
     return repr(o)
 
   s = serialize(o).rstrip()
+  assert isinstance(s, str)
 
-  # Replace '\n' with actual newlines
+  # Replace '\n' with actual newlines since breaking text into multiple lines
+  # when possible helps with diffs.
   s = s.replace('\\n', '\n')
 
   if not no_clobber:
@@ -289,7 +305,7 @@ def wrap_and_preserve_newlines(s):
         textwrap.wrap(
           line, MAX_LINE_WIDTH, break_long_words=False, replace_whitespace=False
         )
-      ) for line in s.splitlines() if line.strip() != ''
+      ) for line in s.splitlines()
     ])
   )
 
@@ -448,7 +464,9 @@ def ignore_exceptions(*exception_list):
   try:
     yield
   except exception_list as e:
-    logging.debug('Ignoring exception: {}'.format(str(e)))
+    if e is SyntaxError:
+      raise
+    # logging.debug('Ignoring exception: {}'.format(str(e)))
 
 
 @contextlib.contextmanager

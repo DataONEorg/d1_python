@@ -20,8 +20,6 @@
 """Test the bulk importer management command
 """
 
-import logging
-
 import responses
 
 import d1_gmn.tests.gmn_test_case
@@ -36,20 +34,17 @@ import d1_test.mock_api.list_objects as mock_object_list
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, caplog):
-    with caplog.at_level(logging.INFO):
-      mock_object_list.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-      mock_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-      mock_get_system_metadata.add_callback(
-        d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
-      )
-      mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-
-      self.call_management_command(
-        'import', '--force', '--major=2',
-        d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
-      )
-
-    self.sample.assert_equals(
-      d1_test.d1_test_case.get_caplog_text(caplog), 'import'
+  def test_1000(self, capsys):
+    mock_object_list.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+    mock_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+    mock_get_system_metadata.add_callback(
+      d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
     )
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+
+    self.call_management_command(
+      'import', '--force', '--major=2',
+      d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+    )
+    stdout, stderr = capsys.readouterr()
+    self.sample.assert_equals(stdout, 'import')

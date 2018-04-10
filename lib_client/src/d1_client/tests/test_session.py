@@ -126,7 +126,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
 
   @responses.activate
   def test_1050(self):
-    """Query params passed to Session() and individual POST are combined"""
+    """Query params passed to Session() and individual POST are correctly
+    combined"""
     mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     body_bytes = b'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}

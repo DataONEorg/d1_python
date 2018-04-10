@@ -68,6 +68,7 @@ def generate_reproducible_sciobj_bytes(pid):
   with d1_test.d1_test_case.reproducible_random_context(undecorated_pid):
     return (
       'These are the reproducible Science Object bytes for pid="{}". '
-      'What follows is 100 to 200 random bytes: '.format(pid).encode('utf-8') +
+      'What follows is 100 to 200 random bytes: '.format(undecorated_pid
+                                                         ).encode('utf-8') +
       d1_test.instance_generator.random_data.random_bytes(100, 200)
     )

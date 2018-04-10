@@ -23,6 +23,7 @@ import copy
 import datetime
 import logging
 import os
+import re
 import urllib.parse
 
 import cachecontrol
@@ -237,9 +238,16 @@ class Session(object):
     return ' '.join(curl_cmd)
 
   def dump_request_and_response(self, response):
+    """Return a string containing a nicely formatted representation of the
+    request and response objects for logging and debugging
+    - Note: Does not work if the request or response body is a MultipartEncoder
+    object.
+    """
     if response.reason is None:
       response.reason = '<unknown>'
-    return requests_toolbelt.utils.dump.dump_response(response)
+    return self._normalize_request_response_dump(
+      requests_toolbelt.utils.dump.dump_response(response)
+    )
 
   #
   # Private
@@ -373,3 +381,31 @@ class Session(object):
       d1_common.const.DATAONE_SCHEMA_ATTRIBUTE_BASE,
       self._get_api_version_xml_type()
     )
+
+  def _normalize_request_response_dump(self, dump_str):
+    dump_list = dump_str.splitlines()
+    request_list = []
+    response_list = []
+    body_list = []
+
+    for i, s in enumerate(dump_list):
+      m = re.match(br'< (.*)', s)
+      if m:
+        if m.group(1):
+          request_list.append(s)
+        continue
+      m = re.match(br'> (.*)', s)
+      if m:
+        if m.group(1):
+          response_list.append(s)
+        continue
+      if not s:
+        continue
+      body_list = dump_list[i:]
+      break
+
+    return '\n\n'.join([
+      '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(request_list)]),
+      '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(response_list)]),
+      '\n'.join([s.decode('utf-8', 'ignore') for s in body_list]),
+    ])

@@ -108,6 +108,8 @@ def capture_std():
 def get_caplog_text(caplog, logger_name=None):
   """Return the log messages currently captured by the caplog fixture
   - If {logger_name} is set, only messages from the given logger are returned.
+  - This differs from `caplog.text` in that only the message part of the logs
+  are retrieved, not the timestamps, loggers and log levels.
   """
   return '\n'.join([
     r.getMessage()

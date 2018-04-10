@@ -30,10 +30,10 @@ import d1_test.instance_generator.unicode_names
 import d1_test.instance_generator.words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
-unicode_characters = ''.join(
-  set(''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES))
+UNICODE_CHARACTERS = ''.join(
+  d1_test.instance_generator.unicode_names.UNICODE_NAMES
 )
-unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
+UNICODE_CHARACTERS_NO_WHITESPACE = re.sub(r'\s', '', UNICODE_CHARACTERS)
 
 # Seed the PRNG one time, when this module is first imported. This instance is
 # shared between all importing modules.
@@ -64,14 +64,12 @@ def random_lower_ascii(min_len=2, max_len=2):
 def random_bytes(num_bytes, max_bytes=None):
   """Return a bytes object containing random bytes
   - If only {num_bytes} is set, exactly {num_bytes} are returned.
-  - If both {num_bytes} and {max_bytes} is set, a random number of bytes between
+  - If both {num_bytes} and {max_bytes} are set, a random number of bytes between
   {num_bytes} and {max_bytes} (including) is returned.
   """
   return bytearray(
     random.getrandbits(8)
-    for _ in range(
-      num_bytes if max_bytes is None else random.randint(num_bytes, max_bytes)
-    )
+    for _ in range(random_within_range(num_bytes, max_bytes))
   )
 
 
@@ -129,19 +127,24 @@ def random_word_unique_list(n_names):
 
 def random_unicode_char():
   """Return a random Unicode character (from a limited set)"""
-  return random.choice(unicode_characters)
+  return random.choice(UNICODE_CHARACTERS)
 
 
 def random_unicode_char_no_whitespace():
   """Return a random Unicode character (from a limited set, no whitespace)"""
-  return random.choice(unicode_characters_no_whitespace)
+  return random.choice(UNICODE_CHARACTERS_NO_WHITESPACE)
 
 
-def random_unicode_string_no_whitespace(min_len=5, max_len=20):
-  s = io.StringIO()
-  for i in range(random.randint(min_len, max_len)):
-    s.write(random_unicode_char_no_whitespace())
-  return s.getvalue()
+def random_unicode_str(num_chars=5, max_chars=None):
+  """Return a str containing random Unicode characters
+  - If only {num_chars} is set, exactly {num_chars} characters are returned.
+  - If both {num_chars} and {max_chars} are set, a random number of characters between
+  {num_chars} and {max_chars} (including) is returned.
+  """
+  return ''.join([
+    random_unicode_char()
+    for _ in range(random_within_range(num_chars, max_chars))
+  ])
 
 
 def random_email():
@@ -197,3 +200,14 @@ def random_choice_pop(seq):
   v = random.choice(seq)
   seq.remove(v)
   return v
+
+
+def random_within_range(num_bytes, max_bytes=None):
+  """Return a random int within range
+  - If only {num_bytes} is set, return {num_bytes}
+  - If both {num_bytes} and {max_bytes} are set, return random int within
+  between {num_bytes} and {max_bytes} (including).
+  """
+  return num_bytes if max_bytes is None else random.randint(
+    num_bytes, max_bytes
+  )

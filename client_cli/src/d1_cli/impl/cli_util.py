@@ -97,7 +97,8 @@ def copy_file_like_object_to_file(file_like_object, path):
     if file_like_object:
       fsrc = file_like_object
     if path:
-      fdst = open(os.path.expanduser(path), 'w', encoding='utf-8')
+      # fdst = open(os.path.expanduser(path), 'w', encoding='utf-8')
+      fdst = open(os.path.expanduser(path), 'wb')
       shutil.copyfileobj(fsrc, fdst)
       fdst.close()
     else:
@@ -151,4 +152,4 @@ def _print_level(level, msg):
   """Print the information in Unicode safe manner.
   """
   for l in str(msg.rstrip()).split('\n'):
-    print(('{0:<9s}{1}'.format(level, str(l)).encode('utf-8')))
+    print('{0:<9s}{1}'.format(level, str(l)))

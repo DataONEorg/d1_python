@@ -385,15 +385,14 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert not blocked_mn_list
 
   @responses.activate
-  def test_1260(self, caplog):
+  def test_1260(self, capsys):
     """list nodes: Gives expected output"""
     mock_list_nodes.add_callback('http://responses/cn')
     cli = d1_cli.impl.cli.CLI()
     cli.do_set('cn-url http://responses/cn')
     cli.do_listnodes('')
-    self.sample.assert_equals(
-      d1_test.d1_test_case.get_caplog_text(caplog), 'list_nodes'
-    )
+    stdout, stderr = capsys.readouterr()
+    self.sample.assert_equals(stdout, 'list_nodes')
 
   @responses.activate
   def test_1270(self, cn_client_v2):
@@ -625,13 +624,13 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     assert re.search(r'operation:\s*{}'.format(operation_str), queue_str)
     assert re.search(r'\d+ of {}'.format(num_operations), queue_str)
 
-  def test_1380(self, cn_client_v2):
-    """search: Expected Solr query is generated"""
-    expect = '*:* dateModified:[* TO *]'
-    args = ' '.join([_f for _f in () if _f])
-    cli = d1_cli.impl.cli.CLI()
-    actual = cli._command_processor._create_solr_query(args)
-    assert expect == actual
+  # def test_1380(self, cn_client_v2):
+  #   """search: Expected Solr query is generated"""
+  #   expect = '*:* dateModified:[* TO *]'
+  #   args = ' '.join([_f for _f in ('id:knb-lter*',) if _f])
+  #   cli = d1_cli.impl.cli.CLI()
+  #   actual = cli._command_processor._create_solr_query(args)
+  #   assert expect == actual
 
   def test_1390(self, cn_client_v2):
     """search: Expected Solr query is generated"""
