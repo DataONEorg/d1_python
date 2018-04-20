@@ -34,12 +34,12 @@ Install GMN v2 from PyPI::
 
 Configure GMN v2 instance and migrate settings from GMN v1::
 
-    $ sudo /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/deployment/migrate_v1_to_v2.sh
+    $ sudo /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/migrate_v1_to_v2.sh
 
 Migrate contents from GMN v1::
 
     $ sudo -u gmn /var/local/dataone/gmn_venv/bin/python \
-    /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py \
+    /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/manage.py \
     migrate_v1_to_v2
 
 Verify successful upgrade:
