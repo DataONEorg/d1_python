@@ -221,13 +221,13 @@ Run the following commands, except, change the "createuser" line to:
 
     $ sudo -u postgres createuser <youruser> ($ whoami)
 
-    https://pythonhosted.org/dataone.generic_member_node/setup-local-postgresql.html
+    https://dataone-python.readthedocs.io/en/latest/gmn/setup_ubuntu/setup-postgresql.html
 
 Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
 
     $ sudo cp <your_d1_python_path>/d1_mn_generic/src/deployment/openssl.cnf .
 
-  https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
+  https://dataone-python.readthedocs.io/en/latest/gmn/setup_ubuntu/setup-authn-ca.html
 
 Run the tests and verify that they all pass:
 
