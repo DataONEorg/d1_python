@@ -130,8 +130,8 @@ class DataONEBaseClient(
   #   -> raise ServiceFailure that wraps up information returned from Node.
 
   def _raise_service_failure(self, response, msg):
-    trace = self.dump_request_and_response(response)
-    e = d1_common.types.exceptions.ServiceFailure(0, msg, trace)
+    trace_str = self.dump_request_and_response(response)
+    e = d1_common.types.exceptions.ServiceFailure(0, msg, trace_str)
     logging.error('Raised: {}'.format(str(e)))
     raise e
 
@@ -158,24 +158,26 @@ class DataONEBaseClient(
 
   # noinspection PyProtectedMember
   def _assert_correct_dataone_type(
-      self, response, pyxb_obj, expected_pyxb_type_name
+      self, response, pyxb_obj, expected_pyxb_type_str
   ):
-    if d1_common.type_conversions.is_pyxb_d1_type_name(
-        pyxb_obj, expected_pyxb_type_name
-    ):
+    received_type_str = d1_common.type_conversions.pyxb_get_type_name(pyxb_obj)
+    if received_type_str != expected_pyxb_type_str:
       self._raise_service_failure_incorrect_dataone_type(
-        response, expected_pyxb_type_name, expected_pyxb_type_name
+        response, received_type_str, expected_pyxb_type_str
       )
 
   def _raise_dataone_exception(self, response):
-    response_body = response.content
     try:
-      d1_exception = d1_common.types.exceptions.deserialize(response_body)
+      d1_exception = d1_common.types.exceptions.deserialize(response.content)
     except d1_common.types.exceptions.DataONEException as e:
       self._raise_service_failure(
         response, 'Node returned an invalid response:\n{}\n'.format(str(e))
       )
     else:
+      try:
+        d1_exception.traceInformation = self.dump_request_and_response(response)
+      except TypeError:
+        pass
       raise d1_exception
 
   def _content_type_is_xml(self, response):
@@ -225,14 +227,14 @@ class DataONEBaseClient(
 
   def _read_boolean_response(self, response):
     if self._status_is_200_ok(response):
-      response.content
+      self._read_response_to_content(response)
       return True
     self._raise_exception(response)
 
   def _read_boolean_404_response(self, response):
     if self._status_is_200_ok(response
                               ) or self._status_is_404_not_found(response):
-      response.content
+      self._read_response_to_content(response)
       return self._status_is_200_ok(response)
     self._raise_exception(response)
 
@@ -240,7 +242,7 @@ class DataONEBaseClient(
     if self._status_is_200_ok(response) or self._status_is_401_not_authorized(
         response
     ):
-      response.content
+      self._read_response_to_content(response)
       return self._status_is_200_ok(response)
     self._raise_exception(response)
 
@@ -273,9 +275,12 @@ class DataONEBaseClient(
 
   def _read_header_response(self, response):
     if self._status_is_200_ok(response):
-      response.content
+      self._read_response_to_content(response)
       return response.headers
     raise d1_common.types.exceptions.deserialize_from_headers(response.headers)
+
+  def _read_response_to_content(self, response):
+    response.content
 
   # ----------------------------------------------------------------------------
   # Misc.
