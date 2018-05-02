@@ -29,8 +29,8 @@ import d1_gmn.tests.gmn_test_case
 
 class TestGetCapabilities(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """MNCore.getCapabilities(): Returns a valid Node Registry document"""
     with d1_gmn.tests.gmn_mock.disable_auth():
-      node = mn_client_v1_v2.getCapabilities()
-      assert isinstance(node, mn_client_v1_v2.bindings.Node)
+      node = gmn_client_v1_v2.getCapabilities()
+      assert isinstance(node, gmn_client_v1_v2.bindings.Node)

@@ -34,14 +34,14 @@ class TestMockCatchAll(d1_test.d1_test_case.D1TestCase):
   @mock_catch_all.activate
   def test_1000(self, cn_client_v2):
     """mock_api.catch_all: Returns a dict correctly echoing the request"""
-    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     echo_dict = cn_client_v2.getFormat('valid_format_id')
     mock_catch_all.assert_expected_echo(echo_dict, 'catch_all', cn_client_v2)
 
   @mock_catch_all.activate
   def test_1010(self, cn_client_v2):
     """mock_api.catch_all(): Passing a trigger header triggers a DataONEException"""
-    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_catch_all.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v2.getFormat(
         'valid_format_id', vendorSpecific={'trigger': '404'}

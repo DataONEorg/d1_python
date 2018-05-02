@@ -42,6 +42,12 @@ class GMNStartupChecks(django.apps.AppConfig):
   name = 'd1_gmn.app.startup'
 
   def ready(self):
+    # Stop the startup code from running automatically from pytest unit tests.
+    # When running tests in parallel with xdist, an instance of GMN is launched
+    # before thread specific settings have been applied.
+    # if hasattr(sys, '_running_in_pytest'):
+    #   return
+
     self._assert_readable_file_if_set('CLIENT_CERT_PATH')
     self._assert_readable_file_if_set('CLIENT_CERT_PRIVATE_KEY_PATH')
 
@@ -53,7 +59,8 @@ class GMNStartupChecks(django.apps.AppConfig):
 
     self._warn_unsafe_for_prod()
     self._check_resource_map_create()
-    self._create_sciobj_store_root()
+    if not d1_gmn.app.sciobj_store.is_existing_store():
+      self._create_sciobj_store_root()
 
   def _assert_is_type(self, setting_name, valid_type):
     v = getattr(django.conf.settings, setting_name, None)
@@ -162,10 +169,6 @@ class GMNStartupChecks(django.apps.AppConfig):
     return secret_key_str
 
   def _create_sciobj_store_root(self):
-    if d1_gmn.app.sciobj_store.is_tmp():
-      d1_gmn.app.sciobj_store.create_clean_tmp_store()
-    if d1_gmn.app.sciobj_store.is_existing_store():
-      return
     try:
       d1_gmn.app.sciobj_store.create_store()
     except EnvironmentError as e:

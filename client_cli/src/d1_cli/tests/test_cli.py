@@ -234,12 +234,18 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
   @d1_test.mock_api.catch_all.activate
   def test_1150(self, cn_client_v2):
-    """ping: Returns server status"""
-    d1_test.mock_api.catch_all.add_callback('http://mock/node')
+    """ping (no arguments): Ping the CN and MN that is specified in the session
+    """
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_MN_BASE_URL
+    )
     cli = d1_cli.impl.cli.CLI()
     with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
-      cli.do_set('cn-url http://mock/node')
-      cli.do_set('mn-url http://mock/node')
+      cli.do_set('cn-url {}'.format(d1_test.d1_test_case.MOCK_CN_BASE_URL))
+      cli.do_set('mn-url {}'.format(d1_test.d1_test_case.MOCK_MN_BASE_URL))
       cli.do_ping('')
 
   def test_1160(self, cn_client_v2):
@@ -463,7 +469,9 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
   @freezegun.freeze_time('1977-02-27')
   def test_1310(self, cn_client_v2):
     """do_create(): Expected REST call is issued"""
-    d1_test.mock_api.catch_all.add_callback('http://mock/node')
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_MN_BASE_URL
+    )
     cli = d1_cli.impl.cli.CLI()
     with self._add_write_operation_to_queue(
         cli, cli.do_create, '{pid} {tmp_file_path}'
@@ -591,8 +599,8 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     cli.do_set('authoritative-mn urn:node:myTestMN')
     cli.do_set('rights-holder test-rights-holder-subject')
     cli.do_set('format-id test-format-id')
-    cli.do_set('cn-url http://mock/node')
-    cli.do_set('mn-url http://mock/node')
+    cli.do_set('cn-url {}'.format(d1_test.d1_test_case.MOCK_CN_BASE_URL))
+    cli.do_set('mn-url {}'.format(d1_test.d1_test_case.MOCK_MN_BASE_URL))
     pid_str = 'test_pid_{}'.format(
       d1_test.instance_generator.random_data.random_3_words()
     )

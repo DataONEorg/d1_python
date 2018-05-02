@@ -53,6 +53,7 @@ def main():
       'pytest-cov == 2.5.1',
       'pytest-django == 3.1.2',
       'pytest-forked == 0.2',
+      'pytest-random-order == 0.7.0',
       'pytest-xdist == 1.22.0',
       'pyxb == 1.2.6',
       'rdflib == 4.2.2',

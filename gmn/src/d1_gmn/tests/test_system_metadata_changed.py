@@ -43,48 +43,51 @@ import d1_test.mock_api.get_system_metadata
 import django
 import django.conf
 import django.core.management
+import django.test
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSystemMetadataChanged')
 class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _call_process_refresh_queue(self):
-    django.conf.settings.STAND_ALONE = False
     d1_test.mock_api.get_system_metadata.add_callback(
       django.conf.settings.DATAONE_ROOT
     )
     self.call_management_command('process_refresh_queue', '--debug')
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized"""
     with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
       with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-        mn_client_v1_v2.systemMetadataChanged(
+        gmn_client_v1_v2.systemMetadataChanged(
           'test', 0, d1_common.date_time.utc_now()
         )
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, gmn_client_v1_v2):
     """systemMetadataChanged(): fails when called with invalid PID"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       with pytest.raises(d1_common.types.exceptions.NotFound):
-        mn_client_v1_v2.systemMetadataChanged(
+        gmn_client_v1_v2.systemMetadataChanged(
           '_bogus_pid_', 1, d1_common.date_time.utc_now()
         )
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
+  def test_1020(self, gmn_client_v1_v2):
     """systemMetadataChanged(): Succeeds when called with valid PID"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        mn_client_v1_v2, sid=True
+        gmn_client_v1_v2, sid=True
       )
-      assert mn_client_v1_v2.systemMetadataChanged(
+      assert gmn_client_v1_v2.systemMetadataChanged(
         pid, 1, d1_common.date_time.utc_now()
       )
 
   @responses.activate
-  def test_1030(self, mn_client_v1_v2):
+  @django.test.override_settings(
+    STAND_ALONE=False,
+  )
+  def test_1030(self, gmn_client_v1_v2):
     """systemMetadataChanged(): Async processing"""
     # Create 3 new objects and add them to the refresh queue
     sysmeta_pyxb_list = []
@@ -92,9 +95,9 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
       with d1_gmn.tests.gmn_mock.disable_auth():
         for i in range(3):
           pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-            mn_client_v1_v2, sid=True
+            gmn_client_v1_v2, sid=True
           )
-          assert mn_client_v1_v2.systemMetadataChanged(
+          assert gmn_client_v1_v2.systemMetadataChanged(
             pid, 1, d1_common.date_time.utc_now()
           )
           freeze_time.tick(delta=datetime.timedelta(days=1))
@@ -105,17 +108,20 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         # Verify that the objects were updated as refreshed
         for i, before_sysmeta_pyxb in enumerate(sysmeta_pyxb_list):
-          after_sysmeta_pyxb = mn_client_v1_v2.getSystemMetadata(
+          after_sysmeta_pyxb = gmn_client_v1_v2.getSystemMetadata(
             before_sysmeta_pyxb.identifier.value()
           )
           diff_str = d1_common.xml.format_diff_pyxb(
             before_sysmeta_pyxb, after_sysmeta_pyxb
           )
           self.sample.assert_equals(
-            diff_str, 'async_processing_diff_{}'.format(i), mn_client_v1_v2
+            diff_str, 'async_processing_diff_{}'.format(i), gmn_client_v1_v2
           )
 
   @responses.activate
+  @django.test.override_settings(
+    STAND_ALONE=False,
+  )
   def test_1040(self):
     """systemMetadataChanged(): Async processing, handling empty queue"""
     self._call_process_refresh_queue()

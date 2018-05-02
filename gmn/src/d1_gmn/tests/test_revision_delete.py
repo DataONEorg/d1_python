@@ -54,16 +54,18 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """MNStorage.delete(): Deleted flag correctly set and represented"""
     sid, pid_chain_list = self.create_revision_chain(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       chain_len=5,
     )
-    self.assert_valid_chain(mn_client_v1_v2, pid_chain_list, sid)
+    self.assert_valid_chain(gmn_client_v1_v2, pid_chain_list, sid)
     # Delete head
-    self.assert_delete(mn_client_v1_v2, pid_chain_list[-1], sid, pid_chain_list)
+    self.assert_delete(
+      gmn_client_v1_v2, pid_chain_list[-1], sid, pid_chain_list
+    )
     # Delete tail
-    self.assert_delete(mn_client_v1_v2, pid_chain_list[0], sid, pid_chain_list)
+    self.assert_delete(gmn_client_v1_v2, pid_chain_list[0], sid, pid_chain_list)
     # Delete center
-    self.assert_delete(mn_client_v1_v2, pid_chain_list[2], sid, pid_chain_list)
+    self.assert_delete(gmn_client_v1_v2, pid_chain_list[2], sid, pid_chain_list)

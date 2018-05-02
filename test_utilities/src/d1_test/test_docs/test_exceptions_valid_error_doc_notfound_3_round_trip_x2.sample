@@ -7,4 +7,5 @@ traceInformation:
     <value>1. Σολυτα βωνορυμ θε κυο,
   2. ναμ ετ νοσθερ σιμιλικυε.</value>
   </traceInformation>
-<unset>nodeId: urn:node:LTER
+identifier: <unset>
+nodeId: urn:node:LTER

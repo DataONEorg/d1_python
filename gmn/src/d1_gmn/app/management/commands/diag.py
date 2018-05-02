@@ -133,13 +133,6 @@ class Command(django.core.management.base.BaseCommand):
       'command', choices=sorted(self._command_class_map.keys())
     )
 
-    # subparsers = parser.add_subparsers()
-    #
-    # for cmd_str in sorted(self._command_class_map.keys()):
-    #   print cmd_str
-    #   p = subparsers.add_parser(cmd_str, '1', '2')
-    # #   self._command_class_map[cmd_str]().add_arguments(p)
-
   def handle(self, *args, **opt):
     assert not args
     util.log_setup(opt['debug'])

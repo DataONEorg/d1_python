@@ -34,15 +34,10 @@ import d1_gmn.tests.gmn_test_case
 import d1_common.const
 import d1_common.resource_map
 
-import d1_test.d1_test_case
 import d1_test.instance_generator.identifier as identifier
 import d1_test.instance_generator.random_data as random_data
 import d1_test.instance_generator.system_metadata as sysmeta
 
-import d1_client.mnclient_1_2
-import d1_client.mnclient_2_0
-
-import django
 import django.test
 
 # # Long test
@@ -101,16 +96,12 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='block',
   )
-  def test_1000(self):
+  def test_1000(self, gmn_client_v2):
     """MNStorage.create(): "block" mode: Creating a resource map after
     creating its aggregated objects is supported
     """
-    mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
-
-    pid_list = self._create_objects(mn_client_v2)
-    ore_pid = self._create_resource_map(mn_client_v2, pid_list)
+    pid_list = self._create_objects(gmn_client_v2)
+    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -120,31 +111,24 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='block',
   )
-  def test_1010(self):
+  def test_1010(self, gmn_client_v2):
     """MNStorage.create(): "block" mode: Creating a resource map before
     creating its aggregated objects raises InvalidRequest
     """
-    mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
     pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-      self._create_resource_map(mn_client_v2, pid_list)
+      self._create_resource_map(gmn_client_v2, pid_list)
 
   @responses.activate
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='open',
   )
-  def test_1020(self):
+  def test_1020(self, gmn_client_v2):
     """MNStorage.create(): "open" mode: Creating a resource map after
     creating its aggregated objects is supported
     """
-    mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
-
-    pid_list = self._create_objects(mn_client_v2)
-    ore_pid = self._create_resource_map(mn_client_v2, pid_list)
+    pid_list = self._create_objects(gmn_client_v2)
+    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -154,15 +138,12 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='open',
   )
-  def test_1030(self):
+  def test_1030(self, gmn_client_v2):
     """MNStorage.create(): "open" mode: Creating a resource map before
     creating its aggregated objects is supported
     """
-    mn_client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
     pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
-    ore_pid = self._create_resource_map(mn_client_v2, pid_list)
+    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -172,7 +153,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='open',
   )
-  def test_1040(self):
+  def test_1040(self, gmn_client_v1_v2, none_true):
     """MNStorage.create(): "open" mode: Creating a random series of objects
     and resource maps
 
@@ -181,38 +162,26 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     - Maps created both before and after their aggregated PIDs
     - Some maps containing references to themselves
     """
+    avail_pid_set = [identifier.generate_pid() for _ in range(NUM_CREATE)]
+    uncreated_pid_set = avail_pid_set[:]
 
-    def _test(client, sid):
-      avail_pid_set = [identifier.generate_pid() for _ in range(NUM_CREATE)]
-      uncreated_pid_set = avail_pid_set[:]
-
-      while True:
-        pid = random_data.random_choice_pop(uncreated_pid_set)
-        aggr_list = random_data.random_sized_sample(
-          avail_pid_set, 2, max_size=MAX_AGGR_SIZE
+    while True:
+      pid = random_data.random_choice_pop(uncreated_pid_set)
+      aggr_list = random_data.random_sized_sample(
+        avail_pid_set, 2, max_size=MAX_AGGR_SIZE
+      )
+      if not uncreated_pid_set or not aggr_list:
+        break
+      random_data.random_sized_sample_pop(
+        avail_pid_set, 0, max_size=MAX_REDUCE_SIZE
+      )
+      is_ore = random_data.random_bool_factor(MAP_CHANCE)
+      if is_ore:
+        self._create_resource_map(gmn_client_v1_v2, aggr_list, pid)
+      else:
+        self.create_obj(gmn_client_v1_v2, pid, sid=none_true)
+      logging.info(
+        'uncreated={} available={} ORE={} aggr_list={}'.format(
+          len(uncreated_pid_set), len(avail_pid_set), is_ore, len(aggr_list)
         )
-        if not uncreated_pid_set or not aggr_list:
-          break
-        random_data.random_sized_sample_pop(
-          avail_pid_set, 0, max_size=MAX_REDUCE_SIZE
-        )
-        is_ore = random_data.random_bool_factor(MAP_CHANCE)
-        if is_ore:
-          self._create_resource_map(client, aggr_list, pid)
-        else:
-          self.create_obj(client, pid, sid=sid)
-        logging.info(
-          'uncreated={} available={} ORE={} aggr_list={}'.format(
-            len(uncreated_pid_set), len(avail_pid_set), is_ore, len(aggr_list)
-          )
-        )
-
-    _test(
-      d1_client.mnclient_1_2.
-      MemberNodeClient_1_2(d1_test.d1_test_case.MOCK_BASE_URL), None
-    )
-
-    _test(
-      d1_client.mnclient_2_0.
-      MemberNodeClient_2_0(d1_test.d1_test_case.MOCK_BASE_URL), True
-    )
+      )

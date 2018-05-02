@@ -32,27 +32,29 @@ import d1_test.d1_test_case
 @d1_test.d1_test_case.reproducible_random_decorator('TestGenerateIdentifier')
 class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a valid identifier that
     matches scheme and fragment
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       fragment = 'test_fragment_volatile_'
-      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
-      self.sample.assert_equals(identifier_pyxb, 'valid_did_1', mn_client_v1_v2)
+      identifier_pyxb = gmn_client_v1_v2.generateIdentifier('UUID', fragment)
+      self.sample.assert_equals(
+        identifier_pyxb, 'valid_did_1', gmn_client_v1_v2
+      )
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, gmn_client_v1_v2):
     """MNStorage.generateIdentifier(): Returns a different, valid identifier
     when called second time
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       fragment = 'test_fragment_volatile_'
-      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
+      identifier_pyxb = gmn_client_v1_v2.generateIdentifier('UUID', fragment)
       self.sample.assert_equals(
-        identifier_pyxb, 'valid_did_unique_1', mn_client_v1_v2
+        identifier_pyxb, 'valid_did_unique_1', gmn_client_v1_v2
       )
-      identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID', fragment)
+      identifier_pyxb = gmn_client_v1_v2.generateIdentifier('UUID', fragment)
       self.sample.assert_equals(
-        identifier_pyxb, 'valid_did_unique_2', mn_client_v1_v2
+        identifier_pyxb, 'valid_did_unique_2', gmn_client_v1_v2
       )

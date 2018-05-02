@@ -40,8 +40,8 @@ import d1_test.mock_api.django_client as mock_django_client
 
 @responses.activate
 def test_1000(self):
-  mock_django_client.add_callback(MOCK_BASE_URL)
-  d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(MOCK_BASE_URL)
+  mock_django_client.add_callback(MOCK_MN_BASE_URL)
+  d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(MOCK_MN_BASE_URL)
   node_pyxb = d1_client.getCapabilities()
 
 Note: for get(), GMN returns a StreamingHttpResponse that Requests detects as a

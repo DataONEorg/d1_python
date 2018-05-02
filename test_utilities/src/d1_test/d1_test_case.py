@@ -56,7 +56,10 @@ import d1_test.sample
 
 CN_URL = d1_common.const.URL_DATAONE_ROOT
 
-MOCK_BASE_URL = 'http://mock/node'
+MOCK_MN_BASE_URL = 'http://mock.mn/node'
+MOCK_CN_BASE_URL = 'http://mock.cn/node'
+MOCK_CN_MN_BASE_URL = 'http://mock.cn.mn/node'
+
 MOCK_REMOTE_BASE_URL = 'http://mock/remote'
 MOCK_INVALID_BASE_URL = 'http://mock/invalid'
 
@@ -168,10 +171,10 @@ def reproducible_random_decorator(seed):
 def _reproducible_random_class_decorator(cls, seed):
   for test_name, test_func in list(cls.__dict__.items()):
     if test_name.startswith('test_'):
-      logging.debug(
-        'Decorating: {}.{}: reproducible_random()'.
-        format(cls.__name__, test_name)
-      )
+      # logging.debug(
+      #   'Decorating: {}.{}: reproducible_random()'.
+      #   format(cls.__name__, test_name)
+      # )
       setattr(
         cls, test_name, _reproducible_random_func_decorator(test_func, seed)
       )
@@ -180,9 +183,9 @@ def _reproducible_random_class_decorator(cls, seed):
 
 def _reproducible_random_func_decorator(func, seed):
   def wrapper(func2, *args, **kwargs):
-    logging.debug(
-      'Decorating: {}: reproducible_random()'.format(func2.__name__)
-    )
+    # logging.debug(
+    #   'Decorating: {}: reproducible_random()'.format(func2.__name__)
+    # )
     with reproducible_random_context(seed):
       return func2(*args, **kwargs)
 

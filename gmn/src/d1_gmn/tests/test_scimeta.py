@@ -51,102 +51,102 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     self.get_obj(client, pid)
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Uninstalled schema causes validation to be
     silently skipped"""
     self._create_and_check_scimeta(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'http://www.icpsr.umich.edu/DDI',
       b'not a valid XML doc',
     )
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Unknown formatId causes validation to be
     silently skipped"""
     self._create_and_check_scimeta(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'unknown_format_id',
       b'not a valid XML doc',
     )
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
+  def test_1020(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): onedcx does not validate as EML"""
     with pytest.raises(
         d1_common.types.exceptions.InvalidRequest, match='validation failed'
     ):
       self._create_and_check_scimeta(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
         self.sample.load('scimeta_dc_1.xml'),
       )
 
   @responses.activate
-  def test_1030(self, mn_client_v1_v2):
+  def test_1030(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): onedcx validates successfully as DataONE
     Dublin Core Extended"""
     self._create_and_check_scimeta(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'http://ns.dataone.org/metadata/schema/onedcx/v1.0',
       self.sample.load('scimeta_dc_1.xml'),
     )
 
   @responses.activate
-  def test_1040(self, mn_client_v1_v2):
+  def test_1040(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): ISO/TC 211 does not validate as Dryad"""
     with pytest.raises(
         d1_common.types.exceptions.InvalidRequest, match='validation failed'
     ):
       self._create_and_check_scimeta(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'http://datadryad.org/profile/v3.1',
         self.sample.load('scimeta_isotc211_1.xml'),
       )
 
   @responses.activate
-  def test_1050(self, mn_client_v1_v2):
+  def test_1050(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Valid EML 2.1.1"""
     self._create_and_check_scimeta(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'eml://ecoinformatics.org/eml-2.1.1',
       self.sample.load('scimeta_eml_valid.xml'),
     )
 
   @responses.activate
-  def test_1060(self, mn_client_v1_v2):
+  def test_1060(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Invalid EML 2.1.1: Unexpected element"""
     with pytest.raises(
         d1_common.types.exceptions.InvalidRequest, match='unexpectedElement'
     ):
       self._create_and_check_scimeta(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
         self.sample.load('scimeta_eml_invalid_1.xml'),
       )
 
   @responses.activate
-  def test_1070(self, mn_client_v1_v2):
+  def test_1070(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Invalid EML 2.1.1: Missing child element"""
     with pytest.raises(
         d1_common.types.exceptions.InvalidRequest, match='Missing child element'
     ):
       self._create_and_check_scimeta(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
         self.sample.load('scimeta_eml_invalid_2.xml'),
       )
 
   @responses.activate
-  def test_1080(self, mn_client_v1_v2):
+  def test_1080(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Test settings SCIMETA_VALIDATION_MAX_SIZE and
     SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'"""
     with django.test.override_settings(
@@ -158,14 +158,14 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
           match='above size limit for validation'
       ):
         self._create_and_check_scimeta(
-          mn_client_v1_v2,
+          gmn_client_v1_v2,
           identifier.generate_pid('PID_SCIMETA_'),
           'eml://ecoinformatics.org/eml-2.1.1',
           self.sample.load('scimeta_eml_invalid_2.xml'),
         )
 
   @responses.activate
-  def test_1090(self, mn_client_v1_v2):
+  def test_1090(self, gmn_client_v1_v2):
     """MNStorage.create(SciMeta): Test settings SCIMETA_VALIDATION_MAX_SIZE and
     SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'accept'"""
     with django.test.override_settings(
@@ -173,7 +173,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         SCIMETA_VALIDATION_OVER_SIZE_ACTION='accept',
     ):
       self._create_and_check_scimeta(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
         self.sample.load('scimeta_eml_invalid_2.xml'),

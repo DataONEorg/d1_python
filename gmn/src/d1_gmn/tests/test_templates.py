@@ -40,7 +40,8 @@ import django.test
 class TestTemplates(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self):
-    """home: Returns expected HTML document and status 200"""
+    """home: Returns expected XHTML document and status 200"""
     response = django.test.Client().get('/home')
     assert response.status_code == 200
-    self.sample.assert_equals(response.content, 'home_html_doc')
+    assert b'<html xmlns="http://www.w3.org/1999/xhtml"' in response.content
+    assert b'Member Node Details' in response.content

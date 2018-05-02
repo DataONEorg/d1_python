@@ -27,14 +27,10 @@ import d1_test.sample
 
 
 class TestMNClient(d1_test.d1_test_case.D1TestCase):
-  sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
-    'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-  )
-  sysmeta_xml = d1_test.sample.load_xml_to_pyxb(
-    'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-  )
-  obj = 'test'
-  pid = '1234'
+  def setup_class(self):
+    self.sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
+      'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+    )
 
   #=========================================================================
   # MNCore
@@ -45,7 +41,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
     """MNCore.createResponse(): Generates a correctly encoded Multipart document
     and Content-Type header
     """
-    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
     response = mn_client_v1.createResponse(
       '1234', b'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
@@ -61,7 +57,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1010(self, mn_client_v1):
     """MNCore.create(): Returned Identifier object is correctly parsed"""
-    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     identifier_pyxb = mn_client_v1.create(
       '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
     )

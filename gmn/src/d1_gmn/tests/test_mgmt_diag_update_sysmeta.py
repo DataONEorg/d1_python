@@ -62,11 +62,11 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       'diag_update_sysmeta', '--debug', *args, **kwargs
     )
 
-  def test_1000(self, mn_client_v2):
+  def test_1000(self, gmn_client_v2):
     """diag_update_sysmeta: local XML docs
     """
     tmp_dir_path, tmp_file_list, rnd_pid_list = self._create_test_dir_with_sysmeta_docs(
-      mn_client_v2
+      gmn_client_v2
     )
     self._call_diag_update_sysmeta(
       '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'
@@ -77,11 +77,11 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ])
     self.sample.assert_equals(combined_sysmeta_xml, 'local_file_search')
 
-  def test_1010(self, mn_client_v2):
+  def test_1010(self, gmn_client_v2):
     """diag_update_sysmeta: remote node
     """
     tmp_dir_path, tmp_file_list, rnd_pid_list = self._create_test_dir_with_sysmeta_docs(
-      mn_client_v2
+      gmn_client_v2
     )
     self._call_diag_update_sysmeta(
       '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'

@@ -45,17 +45,17 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   }
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2, unicode_pid):
+  def test_1000(self, gmn_client_v1_v2, unicode_pid):
     """Unicode: GMN and libraries handle Unicode correctly"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       logging.debug('Testing PID: {}'.format(unicode_pid))
       pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
-        mn_client_v1_v2, pid=unicode_pid, sid=True
+        gmn_client_v1_v2, pid=unicode_pid, sid=True
       )
-      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
       assert d1_common.system_metadata.are_equivalent_pyxb(
         send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
       )
       assert pid == unicode_pid
       assert recv_sysmeta_pyxb.identifier.value() == unicode_pid
-      mn_client_v1_v2.delete(pid)
+      gmn_client_v1_v2.delete(pid)

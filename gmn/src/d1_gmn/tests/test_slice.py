@@ -70,11 +70,11 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
       return client.listObjects, 'objectInfo'
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2, true_false):
+  def test_1000(self, gmn_client_v1_v2, true_false):
     from_date = datetime.datetime(2000, 5, 6, 15, 16, 17, 18)
 
     slicable_api_func, iterable_attr = self._get_api_func(
-      mn_client_v1_v2, use_get_log_records=true_false
+      gmn_client_v1_v2, use_get_log_records=true_false
     )
 
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -132,10 +132,10 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pool.map(_assert_pyxb_objects_are_equivalent, arg_list)
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2, true_false):
+  def test_1010(self, gmn_client_v1_v2, true_false):
     """"""
     slicable_api_func, iterable_attr = self._get_api_func(
-      mn_client_v1_v2, use_get_log_records=true_false
+      gmn_client_v1_v2, use_get_log_records=true_false
     )
     with django.test.override_settings(MAX_SLICE_ITEMS=5):
       with d1_gmn.tests.gmn_mock.disable_auth():

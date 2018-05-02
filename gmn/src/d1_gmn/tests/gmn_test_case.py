@@ -68,6 +68,8 @@ import django.test
 
 ENABLE_SQL_PROFILING = False
 
+MOCK_GMN_BASE_URL = 'http://gmn.client/node'
+
 
 class GMNTestCase(
     d1_test.d1_test_case.D1TestCase,
@@ -87,15 +89,13 @@ class GMNTestCase(
   def setup_method(self, method):
     """Run for each test method that derives from GMNTestCase"""
     # logging.error('GMNTestCase.setup_method()')
-    d1_test.mock_api.django_client.add_callback(
-      d1_test.d1_test_case.MOCK_BASE_URL
-    )
+    d1_test.mock_api.django_client.add_callback(MOCK_GMN_BASE_URL)
     # d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
     self.client_v1 = d1_client.mnclient_1_2.MemberNodeClient_1_2(
-      d1_test.d1_test_case.MOCK_BASE_URL
+      MOCK_GMN_BASE_URL
     )
     self.client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      d1_test.d1_test_case.MOCK_BASE_URL
+      MOCK_GMN_BASE_URL
     )
     # self.test_client = d1_gmn.tests.gmn_test_client.GMNTestClient(
     #   d1_test.d1_test_case.MOCK_BASE_URL
@@ -301,8 +301,8 @@ class GMNTestCase(
     """Issue d1_client calls under a mocked GMN authentication and authorization
     subsystem
 
-    Mock GMN authn and authz so calls are detected as having been made with
-    a specific set of active and trusted subjects. Then call GMN through
+    Mock GMN authn and authz so calls are detected as having been made with a
+    specific set of active and trusted subjects. Then call GMN through
     d1_client, which itself is typically mocked to issue calls through the
     Django test client.
 

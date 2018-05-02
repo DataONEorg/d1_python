@@ -223,7 +223,7 @@ def _add_object_properties_to_response_header(response, sciobj):
 
 
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
 def get_object(request, pid):
@@ -276,7 +276,7 @@ def _get_sciobj_iter_remote(url):
 
 
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
 def get_meta(request, pid):
@@ -291,7 +291,7 @@ def get_meta(request, pid):
 
 
 @d1_gmn.app.restrict_to_verb.head
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
 def head_object(request, pid):
@@ -305,7 +305,7 @@ def head_object(request, pid):
 
 
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
 def get_checksum(request, pid):
@@ -385,7 +385,7 @@ def post_error(request):
 
 # Access control is performed within function.
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 def get_replica(request, pid):
   """MNReplication.getReplica(session, did) → OctetStream
@@ -460,7 +460,7 @@ def put_meta(request):
 
 # Unrestricted.
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 def get_is_authorized(request, pid):
   """MNAuthorization.isAuthorized(did, action) -> Boolean
@@ -562,7 +562,7 @@ def post_object_list(request):
 
 
 @d1_gmn.app.restrict_to_verb.put
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 # TODO: Update by SID not supported. Check if by design
 # @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.write_permission # OLD object
@@ -615,7 +615,7 @@ def post_generate_identifier(request):
 
 
 @d1_gmn.app.restrict_to_verb.delete
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.assert_create_update_delete_permission
 def delete_object(request, pid):
@@ -625,7 +625,7 @@ def delete_object(request, pid):
 
 
 @d1_gmn.app.restrict_to_verb.put
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.write_permission
 def put_archive(request, pid):
@@ -660,8 +660,3 @@ def post_replicate(request):
     request.POST['sourceNode'], sysmeta_pyxb
   )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
-
-
-# ------------------------------------------------------------------------------
-# Package API.
-# ------------------------------------------------------------------------------

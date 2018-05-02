@@ -34,7 +34,7 @@ class TestMockPost(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self, mn_client_v1_v2):
     """mock_api.generateIdentifier(): Returns an Identifier D1 XML doc"""
-    mock_generate_identifier.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_generate_identifier.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     identifier_pyxb = mn_client_v1_v2.generateIdentifier('UUID')
     assert isinstance(identifier_pyxb, d1_common.types.dataoneTypes.Identifier)
     assert identifier_pyxb.value() == 'test_id'

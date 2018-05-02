@@ -51,14 +51,14 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
         pid_list.append(pid)
     return pid_list
 
-  def _create_resource_map(self, mn_client_v2, pid_list):
+  def _create_resource_map(self, gmn_client_v2, pid_list):
     ore_pid = d1_test.instance_generator.identifier.generate_pid('PID_ORE_')
     ore = d1_common.resource_map.createSimpleResourceMap(
       ore_pid, pid_list[0], pid_list[1:]
     )
     ore_xml = ore.serialize()
     sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
-      mn_client_v2,
+      gmn_client_v2,
       io.BytesIO(ore_xml),
       {
         'identifier': ore_pid,
@@ -67,16 +67,16 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
       },
     )
     self.call_d1_client(
-      mn_client_v2.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
+      gmn_client_v2.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
     )
     return ore_pid
 
   @responses.activate
-  def test_1000(self, mn_client_v2):
+  def test_1000(self, gmn_client_v2):
     """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
-    pid_list = self._create_objects(mn_client_v2)
-    ore_pid = self._create_resource_map(mn_client_v2, pid_list)
-    response = self.call_d1_client(mn_client_v2.getPackage, ore_pid)
+    pid_list = self._create_objects(gmn_client_v2)
+    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
+    response = self.call_d1_client(gmn_client_v2.getPackage, ore_pid)
     with tempfile.NamedTemporaryFile() as tmp_file:
       tmp_file.write(response.content)
       tmp_file.seek(0)

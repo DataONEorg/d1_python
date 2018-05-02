@@ -46,6 +46,8 @@ class Singleton(object):
 
 class ObjectFormatInfo(Singleton):
   def __init__(self, csv_file=None):
+    """{csv_file} is a file like object containing comma separate values (CSV)
+    """
     if csv_file is None:
       self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')
     else:
@@ -59,7 +61,7 @@ class ObjectFormatInfo(Singleton):
     return self.format_id_map[format_id][1]
 
   def read_csv_file(self, csv_file=None):
-    """Reinitialize the map from a csv file object"""
+    """Reinitialize the map from a csv file like object"""
     if csv_file is not None:
       self.csv_file = csv_file
     self._read_format_id_map_from_file()
@@ -71,9 +73,11 @@ class ObjectFormatInfo(Singleton):
   def _read_format_id_map_from_file(self):
     self.csv_file.seek(0)
     csv_reader = csv.reader(self.csv_file)
+    r = None
     try:
       self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
     except (csv.Error, Exception) as e:
       raise Exception(
-        'Error in csv file. Line: {}  Error: {}'.format(csv_reader.line_num, e)
+        'Error in csv file. row="{}" line={} error={}'.
+        format(r, csv_reader.line_num, str(e))
       )

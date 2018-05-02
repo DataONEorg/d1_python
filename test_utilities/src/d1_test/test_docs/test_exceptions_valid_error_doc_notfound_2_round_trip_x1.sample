@@ -7,4 +7,5 @@ traceInformation:
     <value>1. invalid_pid
   2. on two lines</value>
   </traceInformation>
-<unset>nodeId: urn:node:LTER
+identifier: <unset>
+nodeId: urn:node:LTER

@@ -43,28 +43,28 @@ import d1_client.session as session
 @freezegun.freeze_time('1945-01-02')
 class TestSession(d1_test.d1_test_case.D1TestCase):
   def _get_hash(self, pid):
-    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    s = session.Session(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     response = s.GET(['object', pid])
     return hashlib.sha1(response.content).hexdigest()
 
   def _get_response(self, pid, header_dict=None):
-    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    s = session.Session(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     return s.GET(['object', pid], headers=header_dict or {})
 
   def _post(self, query_dict, header_dict, body):
-    mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     s = session.Session(
-      d1_test.d1_test_case.MOCK_BASE_URL, query={
+      d1_test.d1_test_case.MOCK_MN_BASE_URL, query={
         'default_query': 'test',
       }
     )
     return s.POST(['post'], query=query_dict, headers=header_dict, data=body)
 
   def _post_fields(self, fields_dict):
-    mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    s = session.Session(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     return s.POST(['post'], fields=fields_dict)
 
   @responses.activate
@@ -128,7 +128,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
   def test_1050(self):
     """Query params passed to Session() and individual POST are correctly
     combined"""
-    mock_post.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     body_bytes = b'test_body'
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
@@ -152,7 +152,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     """cURL command line retains query parameters and headers"""
     query_dict = {'abcd': '1234', 'efgh': '5678'}
     header_dict = {'ijkl': '9876', 'mnop': '5432'}
-    s = session.Session(d1_test.d1_test_case.MOCK_BASE_URL)
+    s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     curl_str = s.get_curl_command_line(
       'POST',
       'http://some.bogus.address',

@@ -48,7 +48,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return set([subj_list[0] for subj_list, action_list in perm_list])
 
   @responses.activate
-  def test_1000(self, mn_client_v2):
+  def test_1000(self, gmn_client_v2):
     """delete_unused_subjects()"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create an object where a number of subjects that are unique for for the
@@ -63,7 +63,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       obj_1_2_shared = obj_1_subj_list[3]
 
       obj_1_pid, obj_1_sid, obj_1_sciobj_bytes, obj_1_sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True, submitter='obj_1_submitter',
+        gmn_client_v2, sid=True, submitter='obj_1_submitter',
         rights_holder=obj_1_rights_holder, permission_list=obj_1_perm_list
       )
 
@@ -78,7 +78,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       obj_2_rights_holder = obj_2_subj_list[1]
 
       obj_2_pid, obj_2_sid, obj_2_sciobj_bytes, obj_2_sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True, submitter='obj_2_submitter',
+        gmn_client_v2, sid=True, submitter='obj_2_submitter',
         rights_holder=obj_2_rights_holder, permission_list=obj_2_perm_list
       )
 
@@ -89,7 +89,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       assert obj_1_subj_set | obj_2_subj_set <= self._get_db_subj()
 
       # Delete the first object.
-      mn_client_v2.delete(obj_1_pid)
+      gmn_client_v2.delete(obj_1_pid)
 
       # Check that the database no longer holds the subjects that were only in
       # use for the first object.
@@ -102,7 +102,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
       assert not ({obj_1_whitelist, obj_1_2_shared} - self._get_db_subj())
 
       # Delete the second object.
-      mn_client_v2.delete(obj_2_pid)
+      gmn_client_v2.delete(obj_2_pid)
 
       # Verify that the only subject that remains of the ones that were
       # associated with the two objects is the one that was whitelisted.

@@ -32,10 +32,10 @@ import d1_test.mock_api.solr_query as mock_query
 
 class TestMockQuery(d1_test.d1_test_case.D1TestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, cn_client_v1_v2):
     """mock_api.query() returns a JSON doc with expected structure"""
-    mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    resp_dict = mn_client_v1_v2.query('query_engine', 'query_string')
+    mock_query.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+    resp_dict = cn_client_v1_v2.query('query_engine', 'query_string')
     assert isinstance(resp_dict, dict)
     assert 'User-Agent' in resp_dict['header_dict']
     del resp_dict['header_dict']['User-Agent']
@@ -52,10 +52,10 @@ class TestMockQuery(d1_test.d1_test_case.D1TestCase):
     assert resp_dict == expected_dict
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, cn_client_v1_v2):
     """mock_api.query(): Passing a trigger header triggers a DataONEException"""
-    mock_query.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_query.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-      mn_client_v1_v2.query(
+      cn_client_v1_v2.query(
         'query_engine', 'query_string', vendorSpecific={'trigger': '401'}
       )

@@ -275,8 +275,7 @@ class DataONEException(Exception):
     return msg.getvalue()
 
   def fmt(self, tag, msg):
-    if msg is None:
-      return '<unset>'
+    msg = msg or '<unset>'
     msg = str(msg)
     msg = msg.strip()
     if not msg:

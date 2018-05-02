@@ -41,27 +41,27 @@ import d1_test.instance_generator.identifier
 
 class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating a standalone object with new PID and SID
     does not raise exception
     """
-    self.create_obj(mn_client_v1_v2)
+    self.create_obj(gmn_client_v1_v2)
 
   @responses.activate
-  def test_1010(self, mn_client_v2):
+  def test_1010(self, gmn_client_v2):
     """MNStorage.create(): Reusing existing SID as PID when creating
     a standalone object raises IdentifierNotUnique
 
     Only applicable to v2.
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v2, sid=True
+      gmn_client_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-      self.create_obj(mn_client_v2, sid)
+      self.create_obj(gmn_client_v2, sid)
 
   @responses.activate
-  def test_1020(self, mn_client_v2):
+  def test_1020(self, gmn_client_v2):
     """MNStorage.create(): Attempting to reuse existing SID as SID when creating
     a standalone object raises IdentifierNotUnique
 
@@ -69,10 +69,10 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
 
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v2, sid=True
+      gmn_client_v2, sid=True
     )
     with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-      self.create_obj(mn_client_v2, sid=sid)
+      self.create_obj(gmn_client_v2, sid=sid)
 
   @responses.activate
   def test_1030(self):
@@ -108,68 +108,68 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sciobj_bytes, sysmeta_pyxb = self.get_obj(self.client_v1, sid)
 
   @responses.activate
-  def test_1060(self, mn_client_v1_v2):
+  def test_1060(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = (
-        self.create_obj(mn_client_v1_v2)
+        self.create_obj(gmn_client_v1_v2)
       )
       new_pid, sid, new_sciobj_bytes, new_sysmeta_pyxb = (
-        self.generate_sciobj_with_defaults(mn_client_v1_v2)
+        self.generate_sciobj_with_defaults(gmn_client_v1_v2)
       )
       new_sysmeta_pyxb.obsoletes = old_pid
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
-        mn_client_v1_v2.create(
+        gmn_client_v1_v2.create(
           new_pid, io.BytesIO(new_sciobj_bytes), new_sysmeta_pyxb
         )
 
   @responses.activate
-  def test_1070(self, mn_client_v1_v2):
+  def test_1070(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       new_pid, sid, sciobj_bytes, sysmeta_pyxb = (
-        self.generate_sciobj_with_defaults(mn_client_v1_v2)
+        self.generate_sciobj_with_defaults(gmn_client_v1_v2)
       )
       sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
-        mn_client_v1_v2.create(new_pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)
+        gmn_client_v1_v2.create(new_pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)
 
   @responses.activate
-  def test_1080(self, mn_client_v1_v2):
+  def test_1080(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = (
-        self.create_obj(mn_client_v1_v2)
+        self.create_obj(gmn_client_v1_v2)
       )
       new_pid, sid, new_sciobj_bytes, new_sysmeta_pyxb = (
-        self.generate_sciobj_with_defaults(mn_client_v1_v2)
+        self.generate_sciobj_with_defaults(gmn_client_v1_v2)
       )
       new_sysmeta_pyxb.obsoletedBy = old_pid
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
-        mn_client_v1_v2.create(
+        gmn_client_v1_v2.create(
           new_pid, io.BytesIO(new_sciobj_bytes), new_sysmeta_pyxb
         )
 
   @responses.activate
-  def test_1090(self, mn_client_v1_v2):
+  def test_1090(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
     sysmeta_pyxb.obsoletedBy pointing to unknown object raises InvalidSystemMetadata
     """
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       new_pid, sid, sciobj_bytes, sysmeta_pyxb = (
-        self.generate_sciobj_with_defaults(mn_client_v1_v2)
+        self.generate_sciobj_with_defaults(gmn_client_v1_v2)
       )
       sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
-        mn_client_v1_v2.create(new_pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)
+        gmn_client_v1_v2.create(new_pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)

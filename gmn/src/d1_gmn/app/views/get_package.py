@@ -43,10 +43,11 @@ def get_package(request, pid, package_type):
 
 
 @d1_gmn.app.restrict_to_verb.get
-@d1_gmn.app.views.decorators.decode_id
+@d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
 def _get_package(request, pid, package_type):
+  package_type = d1_gmn.app.views.decorators.decode_path_segment(package_type)
   if package_type != d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID:
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Unsupported Data Package format. '
@@ -61,6 +62,7 @@ def _get_package(request, pid, package_type):
   )
   response['Content-Disposition'
            ] = 'attachment; filename={}'.format('files.zip')
+
   return response
 
 

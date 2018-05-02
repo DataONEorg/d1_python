@@ -177,9 +177,10 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1160(self):
     """copy_requests_stream_to_file(): Copies Requests Response body to file when path is valid"""
-    responses_base_url = 'http://mock/node'
-    mock_get.add_callback(responses_base_url)
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(responses_base_url)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+      d1_test.d1_test_case.MOCK_MN_BASE_URL
+    )
     response = client.get('test_pid_1')
     with tempfile.NamedTemporaryFile() as tmp_file:
       cli_util.copy_requests_stream_to_file(response, tmp_file.name)
@@ -192,9 +193,10 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1170(self):
     """copy_requests_stream_to_file(): Raises InvalidArguments if path is invalid"""
-    responses_base_url = 'http://mock/node'
-    mock_get.add_callback(responses_base_url)
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(responses_base_url)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+      d1_test.d1_test_case.MOCK_MN_BASE_URL
+    )
     response = client.get('test_pid_1')
     with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
       cli_util.copy_requests_stream_to_file(response, '/an/invalid/path')

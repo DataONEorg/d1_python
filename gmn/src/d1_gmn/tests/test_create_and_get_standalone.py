@@ -45,70 +45,70 @@ import d1_test.d1_test_case
 )
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """get(): Response contains expected headers"""
     with freezegun.freeze_time('1981-01-02'):
       with d1_gmn.tests.gmn_mock.disable_auth():
         pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
-          mn_client_v1_v2,
+          gmn_client_v1_v2,
           pid='get_response',
           now_dt=datetime.datetime(2010, 10, 10, 10, 10, 10),
         )
-        response = mn_client_v1_v2.get(pid)
-        response_str = mn_client_v1_v2.dump_request_and_response(response)
+        response = gmn_client_v1_v2.get(pid)
+        response_str = gmn_client_v1_v2.dump_request_and_response(response)
         self.sample.assert_equals(
-          response_str, 'get_response_headers', mn_client_v1_v2
+          response_str, 'get_response_headers', gmn_client_v1_v2
         )
 
   @responses.activate
-  def test_1010(self, mn_client_v1_v2):
+  def test_1010(self, gmn_client_v1_v2):
     """get(): Non-existing object raises NotFound"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       with pytest.raises(d1_common.types.exceptions.NotFound):
-        mn_client_v1_v2.get(
+        gmn_client_v1_v2.get(
           d1_test.instance_generator.identifier.generate_pid()
         )
 
   @responses.activate
-  def test_1020(self, mn_client_v1_v2):
+  def test_1020(self, gmn_client_v1_v2):
     """get(): Read object back and do byte-by-byte comparison"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sent_sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        mn_client_v1_v2
+        gmn_client_v1_v2
       )
-      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(mn_client_v1_v2, pid)
+      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
       assert sent_sciobj_bytes == recv_sciobj_bytes
 
   @responses.activate
-  def test_1030(self, mn_client_v1_v2):
+  def test_1030(self, gmn_client_v1_v2):
     """create(): Raises NotAuthorized if none of the trusted subjects are
     active"""
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
       self.create_obj(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         active_subj_list=['subj1', 'subj2', 'subj3'],
         trusted_subj_list=['subj4', 'subj5'],
         disable_auth=False,
       )
 
   @responses.activate
-  def test_1040(self, mn_client_v1_v2):
+  def test_1040(self, gmn_client_v1_v2):
     """create(): Creates the object if one or more trusted subjects are active"""
     self.create_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
       trusted_subj_list=['active_and_trusted_subj', 'subj4'],
       disable_auth=False,
     )
 
   @responses.activate
-  def test_1050(self, mn_client_v1_v2):
+  def test_1050(self, gmn_client_v1_v2):
     """create() / get(): Object with no explicit permissions can be retrieved
     by a trusted subject
     """
-    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v1_v2)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
     self.get_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       pid,
       active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
       trusted_subj_list=['active_and_trusted_subj', 'subj4'],
@@ -116,18 +116,18 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
   @responses.activate
-  def test_1060(self, mn_client_v1_v2):
+  def test_1060(self, gmn_client_v1_v2):
     """create() / get(): Object with no explicit permissions cannot be retrieved
     by non-trusted subjects
     """
     # This applies even when the non-trusted subjects were previously trusted
     # and allowed to create the object.
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v1_v2, permission_list=None
+      gmn_client_v1_v2, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
       self.get_obj(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         pid,
         active_subj_list=['subj1', 'subj2', 'shared_subj', 'subj4'],
         trusted_subj_list=['subj5', 'subj6'],
@@ -135,16 +135,16 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1070(self, mn_client_v1_v2):
+  def test_1070(self, gmn_client_v1_v2):
     """create() / get(): Object with no explicit permissions cannot be retrieved
     by the submitter
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v1_v2, permission_list=None
+      gmn_client_v1_v2, permission_list=None
     )
     with pytest.raises(d1_common.types.exceptions.NotAuthorized):
       self.get_obj(
-        mn_client_v1_v2,
+        gmn_client_v1_v2,
         pid,
         active_subj_list=[sysmeta_pyxb.submitter.value()],
         trusted_subj_list=None,
@@ -152,15 +152,15 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1080(self, mn_client_v1_v2):
+  def test_1080(self, gmn_client_v1_v2):
     """create() / get(): Object with no explicit permissions can be retrieved
     by the rightsHolder
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v1_v2, permission_list=None
+      gmn_client_v1_v2, permission_list=None
     )
     self.get_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       pid,
       active_subj_list=[sysmeta_pyxb.rightsHolder.value()],
       trusted_subj_list=None,
@@ -168,30 +168,30 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
   @responses.activate
-  def test_1090(self, mn_client_v1_v2):
+  def test_1090(self, gmn_client_v1_v2):
     """create() / get(): Object that has read access for subject can be retrieved
     by that subject"""
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       permission_list=[(['subj5'], ['read'])],
     )
     self.get_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       pid,
       active_subj_list='subj5',
       disable_auth=False,
     )
 
   @responses.activate
-  def test_1100(self, mn_client_v1_v2):
+  def test_1100(self, gmn_client_v1_v2):
     """create() / get(): Object that has higher level access for subject also
     allows lower level access by subject
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-      mn_client_v1_v2, permission_list=[(['subj5'], ['changePermission'])]
+      gmn_client_v1_v2, permission_list=[(['subj5'], ['changePermission'])]
     )
     self.get_obj(
-      mn_client_v1_v2,
+      gmn_client_v1_v2,
       pid,
       active_subj_list='subj5',
       disable_auth=False,

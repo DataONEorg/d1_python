@@ -41,7 +41,9 @@ Blank line above.
 
 
 class TestObjectFormatInfo(d1_test.d1_test_case.D1TestCase):
-  i = d1_client.object_format_info.ObjectFormatInfo()
+  def setup_class(self):
+    # TODO: All setup_class() should be changed to fixtures.
+    self.i = d1_client.object_format_info.ObjectFormatInfo()
 
   def test_1000(self):
     """init()"""

@@ -35,7 +35,7 @@ import django.test
 
 class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def _test_override(self, mn_client_v2):
+  def _test_override(self, gmn_client_v2):
     override_list = [
       (True, 'submitter', 'override_submitter_subj'),
       (True, 'originMemberNode', 'urn:node:OverrideOriginMN'),
@@ -53,7 +53,7 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_bytes, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
-        mn_client_v2, True, sid=True
+        gmn_client_v2, True, sid=True
       )
 
       # Override PyXB with client values
@@ -63,13 +63,13 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Create obj with overrides
       with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
         self.call_d1_client(
-          mn_client_v2.create,
+          gmn_client_v2.create,
           pid,
           io.BytesIO(sciobj_bytes),
           send_sysmeta_pyxb,
         )
 
-      recv_sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
+      recv_sysmeta_pyxb = gmn_client_v2.getSystemMetadata(pid)
 
       self.dump(recv_sysmeta_pyxb)
 

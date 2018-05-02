@@ -42,7 +42,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self):
     """PageSize=5, start=0"""
-    mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     self._log_record_iterator_test(5, 0)
 
   def _test_110(self):
@@ -59,7 +59,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
       self, page_size, start, from_date=None, to_date=None
   ):
     client = d1_client.mnclient.MemberNodeClient(
-      base_url=d1_test.d1_test_case.MOCK_BASE_URL
+      base_url=d1_test.d1_test_case.MOCK_MN_BASE_URL
     )
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.iter.logrecord.LogRecordIterator(

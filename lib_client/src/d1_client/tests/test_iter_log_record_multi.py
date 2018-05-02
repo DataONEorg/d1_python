@@ -37,7 +37,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
   @responses.activate
   def test_1000(self):
     """PageSize=5, start=0"""
-    mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     self._log_record_iterator_test(5)
 
   def _test_110(self):
@@ -52,7 +52,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
 
   def _log_record_iterator_test(self, page_size, from_date=None, to_date=None):
     log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
-      base_url=d1_test.d1_test_case.MOCK_BASE_URL,
+      base_url=d1_test.d1_test_case.MOCK_MN_BASE_URL,
       # base_url='https://gmn2/mn',
       page_size=page_size,
       api_major=2, # api_major = d1_client.util.get_version_tag_by_d1_client(mn_client_v1_v2)

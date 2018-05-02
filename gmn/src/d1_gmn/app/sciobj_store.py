@@ -23,7 +23,6 @@
 import hashlib
 import os
 import re
-import shutil
 
 import d1_gmn.app
 import d1_gmn.app.util
@@ -104,13 +103,6 @@ def create_store():
   assert not is_existing_store()
   d1_common.util.create_missing_directories_for_dir(get_root_path())
   save_store_version()
-
-
-def create_clean_tmp_store():
-  assert is_tmp()
-  if is_existing_store():
-    shutil.rmtree(get_root_path())
-  create_store()
 
 
 def get_root_path():

@@ -28,7 +28,7 @@ import d1_gmn.tests.gmn_test_case
 
 class TestRevisionArchive(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
-  def test_1000(self, cn_mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """archive(): Archived flag correctly set and represented"""
 
     def assert_archived(client, pid):
@@ -58,8 +58,8 @@ class TestRevisionArchive(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.assert_valid_chain(self.client_v2, pid_chain_list, base_sid)
 
       # Archive head
-      assert_archived(cn_mn_client_v1_v2, pid_chain_list[-1])
+      assert_archived(gmn_client_v1_v2, pid_chain_list[-1])
       # Archive tail
-      assert_archived(cn_mn_client_v1_v2, pid_chain_list[0])
+      assert_archived(gmn_client_v1_v2, pid_chain_list[0])
       # Archive center
-      assert_archived(cn_mn_client_v1_v2, pid_chain_list[3])
+      assert_archived(gmn_client_v1_v2, pid_chain_list[3])

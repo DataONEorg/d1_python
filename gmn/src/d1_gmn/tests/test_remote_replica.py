@@ -81,17 +81,17 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
   @responses.activate
-  def test_1000(self, mn_client_v2):
+  def test_1000(self, gmn_client_v2):
     """Regular replica sections correctly represented"""
     sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
       'systemMetadata_v2_0_remote_replica_base.xml'
     )
     sysmeta_pyxb.identifier = 'remote_rep_pid_1'
     self._add_regular_replica_sections(sysmeta_pyxb)
-    self._assert_sysmeta_round_trip(mn_client_v2, sysmeta_pyxb)
+    self._assert_sysmeta_round_trip(gmn_client_v2, sysmeta_pyxb)
 
   @responses.activate
-  def test_1010(self, mn_client_v2):
+  def test_1010(self, gmn_client_v2):
     """Replica information is stored per PID
     - Two different PIDs can hold different replica info for the same replica
     nodes
@@ -109,7 +109,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sysmeta_1_pyxb, 'node2', 'failed', '2014-05-21T19:02:49-06:00'
     )
     send_sciobj_1_str, send_sysmeta_1_pyxb = self.create_obj_by_sysmeta(
-      mn_client_v2, sysmeta_1_pyxb
+      gmn_client_v2, sysmeta_1_pyxb
     )
 
     # Create obj with different replica info for node1 and node2 on pid_2
@@ -125,11 +125,11 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sysmeta_2_pyxb, 'node2', 'invalidated', '2114-05-21T19:02:49-06:00'
     )
     send_sciobj_2_str, send_sysmeta_2_pyxb = self.create_obj_by_sysmeta(
-      mn_client_v2, sysmeta_2_pyxb
+      gmn_client_v2, sysmeta_2_pyxb
     )
     # Check that pid_1 retains initial replica info for node1 and node2
     recv_sciobj_1_str, recv_sysmeta_1_pyxb = self.get_obj(
-      mn_client_v2, d1_common.xml.get_req_val(sysmeta_1_pyxb.identifier)
+      gmn_client_v2, d1_common.xml.get_req_val(sysmeta_1_pyxb.identifier)
     )
     self.dump(recv_sysmeta_1_pyxb)
     assert send_sciobj_1_str == recv_sciobj_1_str
@@ -138,7 +138,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     # Check that pid_2 retains initial replica info for node1 and node2
     recv_sciobj_2_str, recv_sysmeta_2_pyxb = self.get_obj(
-      mn_client_v2, d1_common.xml.get_req_val(sysmeta_2_pyxb.identifier)
+      gmn_client_v2, d1_common.xml.get_req_val(sysmeta_2_pyxb.identifier)
     )
     self.dump(recv_sysmeta_2_pyxb)
     assert send_sciobj_2_str == recv_sciobj_2_str

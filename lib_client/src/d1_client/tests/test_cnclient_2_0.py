@@ -49,7 +49,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1010(self, cn_client_v2):
     """delete(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     received_echo_dict = cn_client_v2.delete('valid_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'delete', cn_client_v2
@@ -60,7 +62,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1020(self, cn_client_v2):
     """view(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     received_echo_dict = cn_client_v2.view('valid_theme', 'valid_pid')
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'view', cn_client_v2
@@ -71,7 +75,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1030(self, cn_client_v2):
     """listViews(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     received_echo_dict = cn_client_v2.listViews()
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'list_views', cn_client_v2
@@ -82,7 +88,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1040(self, cn_client_v2):
     """echoCredentials(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     subject_info = cn_client_v2.echoCredentials()
     d1_test.mock_api.catch_all.assert_expected_echo(
       subject_info, 'echo_credentials_echo', cn_client_v2
@@ -103,7 +111,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1060(self, cn_client_v2):
     """echoSystemMetadata(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     sysmeta_pyxb = self.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
     recv_sysmeta_pyxb = cn_client_v2.echoSystemMetadata(sysmeta_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
@@ -124,7 +134,9 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   @d1_test.mock_api.catch_all.activate
   def test_1080(self, cn_client_v2):
     """echoIndexedObject(): Generates expected REST call"""
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
     pid, sid, sciobj_bytes, sysmeta_pyxb = (
       d1_test.instance_generator.sciobj.
       generate_reproducible_sciobj_with_sysmeta(cn_client_v2)

@@ -68,12 +68,12 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self.client_v2.get(pid)
 
   @responses.activate
-  def test_1040(self, mn_client_v2):
+  def test_1040(self, gmn_client_v2):
     """updateSystemMetadata(): Access Policy adjustment
     - Remove permissions for subj1-4
     - Lower permissions for subj9-12 from changePermission to write
     """
-    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(mn_client_v2)
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v2)
     new_permission_list = [
       (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
       (['subj9', 'subj10', 'subj11'], ['write']),
@@ -94,43 +94,43 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       self._get(pid, subject_str)
 
   @responses.activate
-  def test_1090(self, mn_client_v2):
+  def test_1090(self, gmn_client_v2):
     """MNStorage.updateSystemMetadata(): Update blocked due to modified
     timestamp mismatch
     """
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True
+        gmn_client_v2, sid=True
       )
       # Get sysmeta
-      sciobj_bytes, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
       # Change something
       sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.now(
       ) + datetime.timedelta(1, 2)
       sysmeta_pyxb.submitter = 'new_submitter'
       # Update
       with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-        mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
+        gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
   @responses.activate
-  def test_1100(self, mn_client_v2):
+  def test_1100(self, gmn_client_v2):
     """MNStorage.updateSystemMetadata(): Successful update"""
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True, rights_holder='rights_holder_subj'
+        gmn_client_v2, sid=True, rights_holder='rights_holder_subj'
       )
       # Get sysmeta
-      sciobj_bytes, sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
       # Update rightsHolder
       assert d1_common.xml.get_req_val(
         sysmeta_pyxb.rightsHolder
       ) == 'rights_holder_subj'
       sysmeta_pyxb.rightsHolder = 'newRightsHolder'
-      assert mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
+      assert gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
       # Verify
-      sciobj_bytes, new_sysmeta_pyxb = self.get_obj(mn_client_v2, pid)
+      sciobj_bytes, new_sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
       assert new_sysmeta_pyxb.rightsHolder.value() == 'newRightsHolder'
 
   @responses.activate
@@ -162,47 +162,47 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
   @responses.activate
-  def test_1120(self, mn_client_v2):
+  def test_1120(self, gmn_client_v2):
     """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata():
-    A series of updates and downloads using the same mn_client_v2 and network
+    A series of updates and downloads using the same gmn_client_v2 and network
     connection correctly frees up the connection
     """
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create base object with SID
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True
+        gmn_client_v2, sid=True
       )
       for i in range(10):
         random_subject_str = d1_test.instance_generator.random_data.random_subj()
-        sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
+        sysmeta_pyxb = gmn_client_v2.getSystemMetadata(pid)
         sysmeta_pyxb.rightsHolder = random_subject_str
-        assert mn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
-        new_sysmeta_pyxb = mn_client_v2.getSystemMetadata(pid)
+        assert gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
+        new_sysmeta_pyxb = gmn_client_v2.getSystemMetadata(pid)
         assert new_sysmeta_pyxb.rightsHolder.value() == random_subject_str
 
   @responses.activate
-  def test_1130(self, mn_client_v2):
+  def test_1130(self, gmn_client_v2):
     """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes
     """
     # Not relevant for v1
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Create base object with SID
       base_pid, sid, sciobj_bytes, ver1_sysmeta_pyxb = self.create_obj(
-        mn_client_v2, sid=True
+        gmn_client_v2, sid=True
       )
       # for r in ver1_sysmeta_pyxb.replica:
       #   logging.error(r.toxml())
       ver2_sciobj_bytes, ver2_sysmeta_pyxb = self.get_obj(
-        mn_client_v2, base_pid
+        gmn_client_v2, base_pid
       )
       # Add a new preferred node
       d1_common.replication_policy.sysmeta_add_preferred(
         ver2_sysmeta_pyxb, 'new_node'
       )
-      mn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
+      gmn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
       ver3_sciobj_bytes, ver3_sysmeta_pyxb = self.get_obj(
-        mn_client_v2, base_pid
+        gmn_client_v2, base_pid
       )
       # self.dump(ver1_sysmeta_pyxb)
       # self.dump(ver3_sysmeta_pyxb)
@@ -223,10 +223,10 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       d1_common.replication_policy.sysmeta_add_blocked(
         ver3_sysmeta_pyxb, 'blocked_2'
       )
-      mn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
+      gmn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
       # Check
       ver4_sciobj_bytes, ver4_sysmeta_pyxb = self.get_obj(
-        mn_client_v2, base_pid
+        gmn_client_v2, base_pid
       )
       assert d1_common.system_metadata.are_equivalent_pyxb(
         ver3_sysmeta_pyxb, ver4_sysmeta_pyxb

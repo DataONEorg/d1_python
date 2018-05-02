@@ -57,14 +57,14 @@ class TestDeleteStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       reused_sysmeta_pyxb = self.client_v2.getSystemMetadata(pid)
       self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
-  def test_1000(self, mn_client_v1):
+  def test_1000(self, gmn_client_v1):
     """MNStorage.delete(): Standalone object, SID unsupported in v1"""
-    self._assert_delete(mn_client_v1)
+    self._assert_delete(gmn_client_v1)
 
-  def test_1010(self, mn_client_v2):
+  def test_1010(self, gmn_client_v2):
     """MNStorage.delete(): Standalone object without SID"""
-    self._assert_delete(mn_client_v2)
+    self._assert_delete(gmn_client_v2)
 
-  def test_1020(self, mn_client_v2):
+  def test_1020(self, gmn_client_v2):
     """MNStorage.delete(): Standalone object with SID"""
-    self._assert_delete(mn_client_v2, sid=True)
+    self._assert_delete(gmn_client_v2, sid=True)

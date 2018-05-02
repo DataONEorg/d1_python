@@ -50,33 +50,32 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
   def _set_mock_session(self):
     # Must add Responses callbacks after activating @responses.activate
-    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_list_nodes.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_list_nodes.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_ping.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_list_formats.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_list_formats.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    mock_list_nodes.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+    mock_ping.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+    mock_ping.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+    mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+    mock_list_formats.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+    mock_resolve.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     # Must set these session variables after activating Responses because
     # they implicitly call listNodes, etc.
     with d1_test.d1_test_case.mock_input('yes'):
       self.cp.get_session().set(
-        session.CN_URL_NAME, d1_test.d1_test_case.MOCK_BASE_URL
+        session.CN_URL_NAME, d1_test.d1_test_case.MOCK_CN_BASE_URL
       )
       self.cp.get_session().set(
-        session.MN_URL_NAME, d1_test.d1_test_case.MOCK_BASE_URL
+        session.MN_URL_NAME, d1_test.d1_test_case.MOCK_MN_BASE_URL
       )
 
   def _set_mock_catch_all_session(self):
     # Note: The catch-all handler cannot be used together with the regular mock
     # APIs.
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
-    d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_CN_BASE_URL
+    )
+    d1_test.mock_api.catch_all.add_callback(
+      d1_test.d1_test_case.MOCK_MN_BASE_URL
+    )
 
   # get_*()
 
@@ -96,17 +95,22 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
     """ping(): Without list of hosts, pings CN and MN set in session"""
     stdout_str = self._ping()
     assert re.search(
-      r'Responded:.*{}'.format(d1_test.d1_test_case.MOCK_BASE_URL), stdout_str
+      r'Responded:.*{}'.format(d1_test.d1_test_case.MOCK_CN_BASE_URL),
+      stdout_str
     )
     assert re.search(
-      r'Responded:.*{}'.format(d1_test.d1_test_case.MOCK_BASE_URL), stdout_str
+      r'Responded:.*{}'.format(d1_test.d1_test_case.MOCK_MN_BASE_URL),
+      stdout_str
     )
 
   @responses.activate
   def test_1020(self):
     """ping(): With list of hosts, pings each host"""
     host_list = [
-      d1_test.d1_test_case.MOCK_BASE_URL + '/{}'.format(i) for i in range(10)
+      d1_test.d1_test_case.MOCK_MN_BASE_URL + '/mn1/',
+      d1_test.d1_test_case.MOCK_MN_BASE_URL + '/mn2/',
+      d1_test.d1_test_case.MOCK_CN_BASE_URL + '/cn1/',
+      d1_test.d1_test_case.MOCK_CN_BASE_URL + '/cn2/',
     ]
     for host_base_url in host_list:
       mock_ping.add_callback(host_base_url)

@@ -75,23 +75,25 @@ def resolve_sid_func(request, did):
     assert False, 'Unable to determine API version'
 
 
-def decode_id(f):
+def decode_did(f):
   """Decorator that decodes "%2f" ("/") in SID or PID extracted from URL path
   segment by Django.
-
-  Django decodes URL elements before passing them to views, but passes "%2f"
-  ("/") through undecoded. Why..?
   """
 
   @functools.wraps(f)
   def wrapper(request, did, *args, **kwargs):
-    return f(
-      request, did.replace('%2f', '/').replace('%2F', '/'), *args, **kwargs
-    )
+    return f(request, decode_path_segment(did), *args, **kwargs)
     # return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
     #return f(request, did, *args, **kwargs)
 
   return wrapper
+
+
+def decode_path_segment(s):
+  """Django decodes URL elements before passing them to views, but passes "%2f"
+  ("/") through undecoded. Why..?
+  """
+  return s.replace('%2f', '/').replace('%2F', '/')
 
 
 # ------------------------------------------------------------------------------

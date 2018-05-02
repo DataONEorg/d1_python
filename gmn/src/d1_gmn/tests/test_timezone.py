@@ -190,12 +190,12 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           assert d1_common.date_time.is_utc(dt)
 
   @responses.activate
-  def test_1000(self, mn_client_v1_v2):
+  def test_1000(self, gmn_client_v1_v2):
     """PyXB accepts dt with tz for xs:dateTime types and normalizes timezone to
     UTC
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
-      self._generate_sciobj(mn_client_v1_v2, 'random_not_utc')
+      self._generate_sciobj(gmn_client_v1_v2, 'random_not_utc')
     )
     # Starting with dt that has tz but is not in UTC
     assert d1_common.date_time.has_tz(uploaded_dt)
@@ -212,12 +212,12 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
   @responses.activate
-  def test_1010(self, mn_client_v2):
+  def test_1010(self, gmn_client_v2):
     """PyXB accepts dt without tz for xs:dateTime types and returns it
     unmodified and without tz
     """
     pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
-      self._generate_sciobj(mn_client_v2, 'naive')
+      self._generate_sciobj(gmn_client_v2, 'naive')
     )
     # Starting with dt without tz
     assert not d1_common.date_time.has_tz(uploaded_dt)

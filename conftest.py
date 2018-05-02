@@ -35,6 +35,7 @@ import pytest
 
 import d1_gmn.app.sciobj_store
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 import d1_test.sample
 
@@ -125,12 +126,19 @@ def pytest_addoption(parser):
   )
 
 
-# def pytest_configure(config):
-#   """Allows plugins and conftest files to perform initial configuration.
-#   This hook is called for every plugin and initial conftest file after command
-#   line options have been parsed.
-#   After that, the hook is called for other conftest files as they are imported.
-#   """
+# Hooks
+
+
+def pytest_configure(config):
+  """Allow plugins and conftest files to perform initial configuration
+  This hook is called for every plugin and initial conftest file after command
+  line options have been parsed. After that, the hook is called for other
+  conftest files as they are imported.
+  """
+  import sys
+  sys._running_in_pytest = True
+
+
 #   logging.debug('pytest_configure()')
 #   tmp_store_path = os.path.join(
 #     tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
@@ -143,7 +151,9 @@ def pytest_addoption(parser):
 #   d1_gmn.app.sciobj_store.create_clean_tmp_store()
 #   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
 
-# Hooks
+
+def pytest_unconfigure(config):
+  del sys._running_in_pytest
 
 
 def pytest_sessionstart(session):
@@ -296,13 +306,18 @@ def enable_db_access(db):
   pass
 
 
-# Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
+# mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
 
-MOCK_BASE_URL = 'http://mock/node'
+# Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
 
 
 @pytest.fixture(scope='function', params=[True, False])
 def true_false(request):
+  yield request.param
+
+
+@pytest.fixture(scope='function', params=[None, True])
+def none_true(request):
   yield request.param
 
 
@@ -316,17 +331,17 @@ def tag_v1_v2(request):
 
 @pytest.fixture(scope='function', params=[cn_v1, mn_v1])
 def cn_mn_client_v1(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[cn_v2, mn_v2])
 def cn_mn_client_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[cn_v1, mn_v1, cn_v2, mn_v2])
 def cn_mn_client_v1_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
 
 
 # CN clients
@@ -334,17 +349,17 @@ def cn_mn_client_v1_v2(request):
 
 @pytest.fixture(scope='function', params=[cn_v1])
 def cn_client_v1(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[cn_v2])
 def cn_client_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[cn_v1, cn_v2])
 def cn_client_v1_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_CN_BASE_URL)
 
 
 # MN clients
@@ -352,17 +367,17 @@ def cn_client_v1_v2(request):
 
 @pytest.fixture(scope='function', params=[mn_v1])
 def mn_client_v1(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[mn_v2])
 def mn_client_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
 @pytest.fixture(scope='function', params=[mn_v1, mn_v2])
 def mn_client_v1_v2(request):
-  yield request.param(MOCK_BASE_URL)
+  yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
 # Settings
@@ -389,7 +404,9 @@ def django_sciobj_store_setup(request):
   logging.debug(
     'Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
   )
-  d1_gmn.app.sciobj_store.create_clean_tmp_store()
+  d1_gmn.app.sciobj_store.create_store()
+  # d1_common.util.create_missing_directories_for_dir(tmp_store_path)
+  # save_store_version()
 
   yield
 
