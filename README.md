@@ -110,7 +110,7 @@ When unit tests are being run as part of CI or as a normal guard against regress
 
 The normal procedure for writing a sample based unit test is to just write the test as if the sample already exists, then running the test with `--sample-ask` and viewing and approving the resulting sample, which is then automatically written to a file. The sample file name is displayed, making it easy to find the file in order to add it to tracking so that it can be committed along with the test module.
 
-When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-update`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.  
+When working on large changes that cause many samples to become outdated, reviewing and approving samples can be deferred until the new code approaches stability. This is done by running the tests with `--sample-update`, which automatically writes or updates samples to match the current results. Then, view and approve the tests with `--sample-review` before committing.
 
 Typically, it is not desirable to track generated files in Git. However, although the sample files are generated, they are an integral part of the units tests, and should be tracked just like the unit tests themselves.
 
@@ -155,7 +155,7 @@ We have added some custom functionality to pytest which can be enabled to launch
 
 * Stopping a test that has hit a breakpoint in PyCharm can cause the test database to be left around. On the next run, Django will then prompt the user to type "yes" to remove the database. The prompt appears in the PyCharm debug console output. To disable the prompt, go to `Run / Debug Configurations > Edit Configurations > Defaults > Django tests > Options` and add `--noinput`. See the [question on SO](https://stackoverflow.com/questions/34244171) for details.
 
-* `pytest` by default captures `stdout` and `stderr` output for the tests and only shows the output for the tests that failed after all tests have been completed. Since a test that hits a breakpoint has not yet failed, this hides any output from tests being debugged and also hides output from the debug console prompt (where Python script can be evaluated in the current context). To see the output while debugging, go to `Run / Debug Configurations > Edit Configurations > Defaults > py.test > Additional Arguments` and add `--capture=no` (`-s`). Verbosity can also be increased by adding one or more `-v`.  
+* `pytest` by default captures `stdout` and `stderr` output for the tests and only shows the output for the tests that failed after all tests have been completed. Since a test that hits a breakpoint has not yet failed, this hides any output from tests being debugged and also hides output from the debug console prompt (where Python script can be evaluated in the current context). To see the output while debugging, go to `Run / Debug Configurations > Edit Configurations > Defaults > py.test > Additional Arguments` and add `--capture=no` (`-s`). Verbosity can also be increased by adding one or more `-v`.
 
 
 ### Django
@@ -185,28 +185,24 @@ Note that science object bytes are stored on disk, so they are not captured in t
 
 These instructions are tested on Linux Mint 18 and should also work on close derivatives.
 
+#### Install packaged dependencies
 
-#### Python 3
+  $ sudo apt update
+  $ sudo apt -fy dist-upgrade
+  $ sudo apt install -y python-setuptools libssl-dev postgresql postgresql-server-dev-all git
 
-Install packaged dependencies:
+##### Python 3
 
-  $ sudo apt install python3-venv
+  $ sudo apt install -y python3-dev python3-venv
   $ python3 -m venv venv
+
+##### Python 2
+
+  $ sudo apt install -y python-dev python-virtualenv
+
+##### Python 3 and Python 2
+
   $ . venv/bin/activate
-  $ ./dev_tools/src/d1_dev/setup-all.py --root . develop
-
-
-  $ 2to3 --write . | tee 2to3.log
-
-
-#### Python 2
-
-Install packaged dependencies:
-
-    $ sudo apt-get update
-    $ sudo apt-get -fy dist-upgrade
-    $ sudo apt-get install -y subversion python-setuptools python-dev \
-    libssl-dev postgresql-server-dev-all git
 
 Download the source from GitHub:
 
@@ -217,21 +213,37 @@ Add the DataONE packages to the Python path, and install their dependencies:
     cd ~/d1_python
     sudo dev_tools/src/d1_dev/setup-all.py --root . develop
 
-Run the following commands, except, change the "createuser" line to:
+#### Postgres
 
-    $ sudo -u postgres createuser <youruser> ($ whoami)
+:
 
-    https://pythonhosted.org/dataone.generic_member_node/setup-local-postgresql.html
+    $ sudo apt install --yes postgresql
+
+Set the password of the postgres superuser account:
+
+    $ sudo passwd -d postgres
+    $ sudo su postgres -c passwd
+
+When prompted for the password, enter a new superuser password (and remember it :-).
+
+:
+
+    $ sudo -u postgres createdb -E UTF8 gmn2
+    $ sudo -u postgres createuser --superuser `whoami`
+
+#### Certificates
 
 Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
 
     $ sudo cp <your_d1_python_path>/d1_mn_generic/src/deployment/openssl.cnf .
 
-  https://pythonhosted.org/dataone.generic_member_node/setup-local-authn-ca.html
+#### Tests
 
 Run the tests and verify that they all pass:
 
     $ pytest
+
+#### PyPI
 
 Set up credentials for working with the DataONE account on PyPI:
 
@@ -285,7 +297,7 @@ When `d1_python` is pushed to GitHub, a signal is sent by GitHub to [ReadTheDocs
 
 http://dataone-python.readthedocs.io/en/latest/
 
-So it is not absolutely necessary to have a local build environment set up for the documentation, but building locally provides faster feedback when making changes that need to be checked before publishing.  
+So it is not absolutely necessary to have a local build environment set up for the documentation, but building locally provides faster feedback when making changes that need to be checked before publishing.
 
 ### Troubleshooting
 
