@@ -16,7 +16,7 @@ Upgrading the GMN 2.x software stack to the latest release
     $ cd /var/local/dataone/gmn_venv
     $ . ./bin/activate
     $ pip install --upgrade dataone.gmn
-    $ ./lib/site-packages/gmn/manage.py migrate
+    $ ./lib/site-packages/d1_gmn/manage.py migrate
     $ exit
     $ sudo service apache2 restart
 
@@ -30,7 +30,7 @@ The Node document contains information specific to a Node, such as the Member No
 
 Make the desired updates to the Node information::
 
-    $ sudo editor /var/local/dataone/gmn_venv/lib/site-packages/gmn/settings_site.py
+    $ sudo editor /var/local/dataone/gmn_venv/lib/site-packages/d1_gmn/settings_site.py
     $ sudo service apache2 restart
 
 Publish the updated Node document::
@@ -38,5 +38,5 @@ Publish the updated Node document::
     $ sudo su gmn
     $ cd /var/local/dataone/gmn_venv
     $ . ./bin/activate
-    $ ./lib/site-packages/gmn/manage.py node update
+    $ ./lib/site-packages/d1_gmn/manage.py node update
     $ exit
