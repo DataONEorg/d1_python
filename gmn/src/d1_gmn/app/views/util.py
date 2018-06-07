@@ -20,7 +20,6 @@
 """Utilities used in views
 """
 
-import datetime
 import re
 
 import d1_gmn.app
@@ -33,6 +32,7 @@ import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
+import d1_gmn.app.views.external
 import d1_gmn.app.views.slice
 
 import d1_common.const
@@ -113,7 +113,7 @@ def deserialize(xml_file):
   try:
     xml_str = read_utf8_xml(xml_file)
   except d1_common.types.exceptions.ServiceFailure as e:
-    raise d1_common.types.exceptions.InvalidRequest(e.message)
+    raise d1_common.types.exceptions.InvalidRequest(str(e))
   try:
     return d1_common.xml.deserialize(xml_str)
   except ValueError as e:
@@ -133,13 +133,6 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
 
 def http_response_with_boolean_true_type():
   return django.http.HttpResponse('OK', d1_common.const.CONTENT_TYPE_TEXT)
-
-
-def add_http_date_to_response_header(response, date_time=None):
-  response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
-    d1_common.date_time.normalize_datetime_to_utc(date_time)
-    if date_time else datetime.datetime.utcnow()
-  )
 
 
 def query_object_list(request, type_name):
@@ -180,3 +173,12 @@ def query_object_list(request, type_name):
     'total': total_int,
     'type': type_name
   }
+
+
+def content_type_from_format(format_str):
+  try:
+    return d1_gmn.app.views.external.OBJECT_FORMAT_INFO.content_type_from_format_id(
+      format_str
+    )
+  except KeyError:
+    return d1_common.const.CONTENT_TYPE_OCTET_STREAM

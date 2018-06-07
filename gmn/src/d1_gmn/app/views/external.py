@@ -35,7 +35,6 @@ import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.psycopg_adapter
 import d1_gmn.app.resource_map
-import d1_gmn.app.restrict_to_verb
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
@@ -44,6 +43,7 @@ import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.create
 import d1_gmn.app.views.decorators
+import d1_gmn.app.views.headers
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
@@ -67,7 +67,7 @@ import django.utils.http
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
 # ==============================================================================
-# Secondary dispatchers (resolve on HTTP verb)
+# Secondary dispatchers (resolve on HTTP method)
 # ==============================================================================
 
 
@@ -85,10 +85,10 @@ def dispatch_object(request, did):
   elif request.method == 'DELETE':
     # MNStorage.delete()
     return delete_object(request, did)
-  else:
-    return django.http.HttpResponseNotAllowed(
-      ['GET', 'HEAD', 'POST', 'PUT', 'DELETE']
-    )
+  assert False, (
+    'Mismatch between handled and allowed HTTP methods. request="{}"'.
+    format(request.method)
+  )
 
 
 # Forward calls for /object URLs
@@ -99,8 +99,10 @@ def dispatch_object_list(request):
   elif request.method == 'POST':
     # MNStorage.create()
     return post_object_list(request)
-  else:
-    return django.http.HttpResponseNotAllowed(['GET', 'POST'])
+  assert False, (
+    'Mismatch between handled and allowed HTTP methods. request="{}"'.
+    format(request.method)
+  )
 
 
 # ==============================================================================
@@ -113,19 +115,17 @@ def dispatch_object_list(request):
 
 
 # Unrestricted access.
-@d1_gmn.app.restrict_to_verb.get
 def get_monitor_ping(request):
   """MNCore.ping() → Boolean
   """
   response = d1_gmn.app.views.util.http_response_with_boolean_true_type()
-  d1_gmn.app.views.util.add_http_date_to_response_header(response)
+  d1_gmn.app.views.headers.add_http_date_header_to_response(response)
   return response
 
 
 # Anyone can call getLogRecords but only objects to which they have read access
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.get_log_records_access
 # Cannot use the resolve_sid decorator here since the SID/PID filter is passed
 # as a query parameter and the parameter changes names between v1 and v2.
@@ -175,7 +175,6 @@ def get_log(request):
 
 
 # Unrestricted access.
-@d1_gmn.app.restrict_to_verb.get
 def get_node(request):
   """MNCore.getCapabilities() → Node
   """
@@ -191,38 +190,6 @@ def get_node(request):
 # ------------------------------------------------------------------------------
 
 
-def _content_type_from_format(format):
-  try:
-    return OBJECT_FORMAT_INFO.content_type_from_format_id(format)
-  except KeyError:
-    return d1_common.const.CONTENT_TYPE_OCTET_STREAM
-
-
-def _add_object_properties_to_response_header(response, sciobj):
-  response['Content-Length'] = sciobj.size
-  response['Content-Type'] = _content_type_from_format(sciobj.format.format)
-  response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
-    d1_common.date_time.normalize_datetime_to_utc(sciobj.modified_timestamp)
-  )
-  response['DataONE-GMN'] = d1_gmn.__version__
-  response['DataONE-FormatId'] = sciobj.format.format
-  response['DataONE-Checksum'] = '{},{}'.format(
-    sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
-  )
-  response['DataONE-SerialVersion'] = sciobj.serial_version
-  d1_gmn.app.views.util.add_http_date_to_response_header(response)
-  if d1_common.url.isHttpOrHttps(sciobj.url):
-    response['DataONE-Proxy'] = sciobj.url
-  if sciobj.obsoletes:
-    response['DataONE-Obsoletes'] = sciobj.obsoletes.did
-  if sciobj.obsoleted_by:
-    response['DataONE-ObsoletedBy'] = sciobj.obsoleted_by.did
-  sid = d1_gmn.app.revision.get_sid_by_pid(sciobj.pid.did)
-  if sid:
-    response['DataONE-SeriesId'] = sid
-
-
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
@@ -230,11 +197,15 @@ def get_object(request, pid):
   """MNRead.get(session, did) → OctetStream
   """
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-  content_type_str = _content_type_from_format(sciobj.format.format)
+  content_type_str = d1_gmn.app.views.util.content_type_from_format(
+    sciobj.format.format
+  )
   response = django.http.StreamingHttpResponse(
     _get_sciobj_iter(sciobj), content_type_str
   )
-  _add_object_properties_to_response_header(response, sciobj)
+  d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(
+    response, sciobj
+  )
   # Log the access of this object.
   d1_gmn.app.event_log.log_read_event(pid, request)
   # Since the iterator that generates data for StreamingHttpResponse runs
@@ -250,12 +221,12 @@ def _get_sciobj_iter(sciobj):
   if d1_gmn.app.util.is_proxy_url(sciobj.url):
     return _get_sciobj_iter_remote(sciobj.url)
   else:
-    return _get_sciobj_iter_local(sciobj.pid.did)
+    return _get_sciobj_iter_local(sciobj.url)
 
 
-def _get_sciobj_iter_local(pid):
+def _get_sciobj_iter_local(sciobj_url):
   return d1_common.iter.file.FileIterator(
-    d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+    d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_url(sciobj_url)
   )
 
 
@@ -266,8 +237,8 @@ def _get_sciobj_iter_remote(url):
     )
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, 'Unable to open proxied object for streaming. error="{}"'.
-      format(e.message)
+      0,
+      'Unable to open proxied object for streaming. error="{}"'.format(str(e))
     )
   else:
     return response.iter_content(
@@ -275,7 +246,6 @@ def _get_sciobj_iter_remote(url):
     )
 
 
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
@@ -290,7 +260,6 @@ def get_meta(request, pid):
   )
 
 
-@d1_gmn.app.restrict_to_verb.head
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
@@ -299,12 +268,13 @@ def head_object(request, pid):
   """
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   response = django.http.HttpResponse()
-  _add_object_properties_to_response_header(response, sciobj)
+  d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(
+    response, sciobj
+  )
   d1_gmn.app.event_log.log_read_event(pid, request)
   return response
 
 
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.read_permission
@@ -344,7 +314,6 @@ def get_checksum(request, pid):
   )
 
 
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.list_objects_access
 def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
@@ -353,7 +322,6 @@ def get_object_list(request):
   return d1_gmn.app.views.util.query_object_list(request, 'object_list')
 
 
-@d1_gmn.app.restrict_to_verb.post
 @d1_gmn.app.views.decorators.trusted_permission
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
@@ -384,7 +352,6 @@ def post_error(request):
 
 
 # Access control is performed within function.
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 def get_replica(request, pid):
@@ -393,7 +360,9 @@ def get_replica(request, pid):
   _assert_node_is_authorized(request, pid)
   sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
   response = django.http.HttpResponse()
-  _add_object_properties_to_response_header(response, sciobj)
+  d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(
+    response, sciobj
+  )
   response._container = _get_sciobj_iter(sciobj)
   response._is_str = False
   # Log the replication of this object.
@@ -417,12 +386,11 @@ def _assert_node_is_authorized(request, pid):
   except Exception as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
-        django.conf.settings.DATAONE_ROOT, e.message
+        django.conf.settings.DATAONE_ROOT, str(e)
       )
     )
 
 
-@d1_gmn.app.restrict_to_verb.put
 # TODO: Check if by update by SID not supported by design
 def put_meta(request):
   """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
@@ -459,7 +427,6 @@ def put_meta(request):
 
 
 # Unrestricted.
-@d1_gmn.app.restrict_to_verb.get
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 def get_is_authorized(request, pid):
@@ -476,7 +443,6 @@ def get_is_authorized(request, pid):
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
 
-@d1_gmn.app.restrict_to_verb.post
 @d1_gmn.app.views.decorators.trusted_permission
 def post_refresh_system_metadata(request):
   """MNStorage.systemMetadataChanged(session, did, serialVersion,
@@ -544,7 +510,6 @@ def post_refresh_system_metadata(request):
 # actual exception is not included.
 
 
-@d1_gmn.app.restrict_to_verb.post
 @d1_gmn.app.views.decorators.assert_create_update_delete_permission
 def post_object_list(request):
   """MNStorage.create(session, did, object, sysmeta) → Identifier
@@ -561,7 +526,6 @@ def post_object_list(request):
   return url_pid
 
 
-@d1_gmn.app.restrict_to_verb.put
 @d1_gmn.app.views.decorators.decode_did
 # TODO: Update by SID not supported. Check if by design
 # @d1_gmn.app.views.decorators.resolve_sid
@@ -596,7 +560,6 @@ def put_object(request, old_pid):
 
 
 # No locking. Public access.
-@d1_gmn.app.restrict_to_verb.post
 def post_generate_identifier(request):
   """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
   """
@@ -614,7 +577,6 @@ def post_generate_identifier(request):
       return pid
 
 
-@d1_gmn.app.restrict_to_verb.delete
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.assert_create_update_delete_permission
@@ -624,7 +586,6 @@ def delete_object(request, pid):
   return d1_gmn.app.delete.delete_sciobj(pid)
 
 
-@d1_gmn.app.restrict_to_verb.put
 @d1_gmn.app.views.decorators.decode_did
 @d1_gmn.app.views.decorators.resolve_sid
 @d1_gmn.app.views.decorators.write_permission
@@ -642,7 +603,6 @@ def put_archive(request, pid):
 # ------------------------------------------------------------------------------
 
 
-@d1_gmn.app.restrict_to_verb.post
 @d1_gmn.app.views.decorators.trusted_permission
 def post_replicate(request):
   """MNReplication.replicate(session, sysmeta, sourceNode) → boolean
