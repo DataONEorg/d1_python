@@ -1,287 +1,230 @@
 [
   {
-    "abstract": "List of the studied material indicating mode of preservation and size class according to the footprint length
-(FL) as: minute, FL < 10 cm; small, 10 cm < FL < 20 cm; medium, 20 cm < FL < 30 cm; large, 30 cm < FL < 45cm; very large, FL > 45
-cm.",
-    "author": "Castanera, Diego",
-    "authorGivenName": "Diego",
-    "authorSurName": "Castanera",
-    "authorSurNameSort": "Castanera",
-    "authoritativeMN": "urn:node:DRYAD",
-    "checksum": "ff0d999f1234cd638f0fd5b34eaab135",
-    "checksumAlgorithm": "MD5",
-    "dataUrl":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.v60t1%2F1%3Fver%3D2014-11-13T13%3A13%3A47.708-05%3A00",
-    "datasource": "urn:node:DRYAD",
-    "dateModified": "2014-11-13T23:15:24.46Z",
-    "datePublished": "2014-11-13T18:13:01Z",
-    "dateUploaded": "2014-11-13T18:13:01Z",
-    "fileID":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.v60t1%2F1%3Fver%3D2014-11-13T13%3A13%3A47.708-05%3A00",
-    "formatId": "http://datadryad.org/profile/v3.1",
-    "formatType": "METADATA",
-    "id": "http://dx.doi.org/10.5061/dryad.v60t1/1?ver=2014-11-13T13:13:47.708-05:00",
-    "identifier": "http://dx.doi.org/10.5061/dryad.v60t1/1?ver=2014-11-13T13:13:47.708-05:00",
-    "investigator": [
-      "Castanera, Diego",
-      "Colmenar, Jorge",
-      "Sauqu\u00e9, Victor",
-      "Canudo, Jos\u00e9 Ignacio"
-    ],
-    "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.v60t1?ver=2014-11-13T13:13:47.682-05:00",
-      "http://dx.doi.org/10.5061/dryad.v60t1?ver=2015-01-26T12:56:59.537-05:00"
-    ],
-    "isPublic": true,
-    "isService": false,
-    "keywords": [
-      "Principal components analysis",
-      "thin plate splines"
-    ],
-    "origin": [
-      "Castanera, Diego",
-      "Colmenar, Jorge",
-      "Sauqu\u00e9, Victor",
-      "Canudo, Jos\u00e9 Ignacio"
-    ],
-    "pubDate": "2014-11-13T18:13:01Z",
-    "readPermission": [
-      "public"
-    ],
-    "replicaMN": [
-      "urn:node:DRYAD",
-      "urn:node:CN"
-    ],
-    "replicaVerifiedDate": [
-      "2014-11-13T23:15:23.561Z",
-      "2014-11-13T23:15:23.621Z"
-    ],
-    "replicationAllowed": false,
-    "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.v60t1?format=d1rem&ver=2014-11-13T13:13:47.682-05:00",
-      "http://dx.doi.org/10.5061/dryad.v60t1?format=d1rem&ver=2015-01-26T12:56:59.537-05:00"
-    ],
-    "rightsHolder": "admin@datadryad.org",
-    "scientificName": [
-      "Kalhohipus bretunensis",
-      "Iberosauripus"
-    ],
-    "serviceCoupling": "false",
-    "site": [
-      "Soria (Spain)",
-      "Hu\u00e9rteles Formation"
-    ],
-    "size": 2240,
-    "submitter": "dcastanera@hotmail.es",
-    "title": "Appendix",
-    "updateDate": "2014-11-13T18:13:01Z"
-  },
-  {
-    "abstract": "Readme file for the following seven files: flPhenology.xy.C1.2005.csv, flPhenology.xy.C1.2006.csv,
-flPhenology.xy.C1.2007.csv, flPhenology.xy.C1.2005.r, flPhenology.xy.C1.2006.r, flPhenology.xy.C1.2007.r, and
-flPhenology.xy.C1.makeSixPanelFig.r.",
-    "author": "Ison, Jennifer L.",
-    "authorGivenName": "Jennifer L.",
-    "authorSurName": "Ison",
-    "authorSurNameSort": "Ison",
-    "authoritativeMN": "urn:node:DRYAD",
-    "checksum": "e13840e3ec5ddb1fbd559ba118727676",
-    "checksumAlgorithm": "MD5",
-    "dataUrl":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.6h82b%2F8%3Fver%3D2014-04-21T16%3A17%3A47.431-04%3A00",
-    "datasource": "urn:node:DRYAD",
-    "dateModified": "2014-05-15T23:02:24.618Z",
-    "datePublished": "2014-04-21T20:17:44Z",
-    "dateUploaded": "2014-04-21T20:17:44Z",
-    "fileID":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.6h82b%2F8%3Fver%3D2014-04-21T16%3A17%3A47.431-04%3A00",
-    "formatId": "http://datadryad.org/profile/v3.1",
-    "formatType": "METADATA",
-    "id": "http://dx.doi.org/10.5061/dryad.6h82b/8?ver=2014-04-21T16:17:47.431-04:00",
-    "identifier": "http://dx.doi.org/10.5061/dryad.6h82b/8?ver=2014-04-21T16:17:47.431-04:00",
-    "investigator": [
-      "Ison, Jennifer L.",
-      "Wagenius, Stuart"
-    ],
-    "isDocumentedBy": [
-      "http://dx.doi.org/10.5061/dryad.6h82b?ver=2014-04-21T16:17:22.523-04:00"
-    ],
-    "isPublic": true,
-    "isService": false,
-    "keywords": [
-      "Allee effect",
-      "edge effect",
-      "flowering phenology",
-      "habitat fragmentation",
-      "pollen limitation",
-      "reproductive ecology",
-      "seed set",
-      "spatial isolation",
-      "tallgrass prairie"
-    ],
-    "origin": [
-      "Ison, Jennifer L.",
-      "Wagenius, Stuart"
-    ],
-    "pubDate": "2014-04-21T20:17:44Z",
-    "readPermission": [
-      "public"
-    ],
-    "replicaMN": [
-      "urn:node:DRYAD",
-      "urn:node:CN"
-    ],
-    "replicaVerifiedDate": [
-      "2014-05-15T23:02:23.713Z",
-      "2014-05-15T23:02:23.783Z"
-    ],
-    "replicationAllowed": false,
-    "resourceMap": [
-      "http://dx.doi.org/10.5061/dryad.6h82b?format=d1rem&ver=2014-04-21T16:17:22.523-04:00"
-    ],
-    "rightsHolder": "admin@datadryad.org",
-    "scientificName": [
-      "Echinacea angustifolia"
-    ],
-    "serviceCoupling": "false",
-    "site": [
-      "Solem Township",
-      "Douglas County",
-      "Minnesota",
-      "USA"
-    ],
-    "size": 2474,
-    "submitter": "stuart.wagenius@gmail.com",
-    "title": "readMe file for flowering phenology datasets & analysis",
-    "updateDate": "2014-04-21T20:17:44Z"
-  },
-  {
-    "abstract":
-"\u83f2\u5f8b\u8cd3\u6a1f\u5728\u5206\u985e\u5730\u4f4d\u4e0a\u96b8\u5c6c\u65bc\u6a1f\u79d1\uff0c\u66fe\u88ab\u6b78\u985e\u65bc\u6968\u6960\u5c6c\u53ca\u916a\u68a8\u5c6c\u3002\u672c\u7814\u7a76\u5229\u7528\u65bc\u690d\u7269\u8449\u7da0\u9ad4DNA\u4e2d\u7684PetD~PetB\u57fa\u56e0\u9593\u5e8f\u5217\u3001TrnV~TrnM\u5e8f\u5217\u4ee5\u53caTrnS~TrnT\u5e8f\u5217\u5206\u6790\u83f2\u5f8b\u8cd3\u6a1f\u8207\u6a1f\u5c6c\u3001\u6968\u6960\u5c6c\u4ee5\u53ca\u916a\u68a8\u5c6c\u4e4b\u89aa\u7de3\u95dc\u4fc2\uff0c\u5df2\u78ba\u5b9a\u83f2\u5f8b\u8cd3\u6a1f\u7684\u5206\u985e\u6b78\u5c6c\u53ca\u6968\u6960\u5c6c\u548c\u916a\u68a8\u5c6c\u7684\u95dc\u4fc2\u3002",
-    "attribute": [
-      "\u4e2d\u540d  \u4e2d\u540d",
-      "\u5b78\u540d  \u5b78\u540d",
-      "\u63a1\u96c6\u5730  \u63a1\u96c6\u5730",
-      "(\u4f86\u6e90)  (\u4f86\u6e90)",
-      "Icon. Pl. Form. Hayata 1913  Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936  Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962  Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971  Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970  Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981  Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988  Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988  Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no  Primer no",
-      "Variation site  Variation site",
-      "variation  variation",
-      "L.n  L.n",
-      "M.j  M.j",
-      "M.z  M.z",
-      "P.a  P.a",
-      "C.c  C.c",
-      "C.s  C.s",
-      "M.t  M.t",
-      "C.p  C.p",
-      "species  species",
-      "C.s  C.s",
-      "C.c  C.c",
-      "C.p  C.p",
-      "M.j  M.j",
-      "M.z  M.z",
-      "L.n  L.n",
-      "M.t  M.t",
-      "P.a  P.a"
-    ],
-    "attributeDescription": [
-      "\u4e2d\u540d",
-      "\u5b78\u540d",
-      "\u63a1\u96c6\u5730",
-      "(\u4f86\u6e90)",
-      "Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no",
-      "Variation site",
-      "variation",
-      "L.n",
-      "M.j",
-      "M.z",
-      "P.a",
-      "C.c",
-      "C.s",
-      "M.t",
-      "C.p",
-      "species",
-      "C.s",
-      "C.c",
-      "C.p",
-      "M.j",
-      "M.z",
-      "L.n",
-      "M.t",
-      "P.a"
-    ],
-    "attributeName": [
-      "\u4e2d\u540d",
-      "\u5b78\u540d",
-      "\u63a1\u96c6\u5730",
-      "(\u4f86\u6e90)",
-      "Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no",
-      "Variation site",
-      "variation",
-      "L.n",
-      "M.j",
-      "M.z",
-      "P.a",
-      "C.c",
-      "C.s",
-      "M.t",
-      "C.p",
-      "species",
-      "C.s",
-      "C.c",
-      "C.p",
-      "M.j",
-      "M.z",
-      "L.n",
-      "M.t",
-      "P.a"
-    ],
-    "author": "Sheng-You Lu",
-    "authorGivenName": "Sheng-You",
-    "authorLastName": [
-      "Lu"
-    ],
-    "authorSurName": "Lu",
-    "authorSurNameSort": "Lu",
-    "authoritativeMN": "urn:node:TFRI",
-    "beginDate": "2006-01-01T00:00:00Z",
-    "checksum": "de47e23e6e20590f255862d6076e7dff",
+    "abstract": "The faunal data from Rowe Pueblo were originally analyzed by Linda Mick-O'Hara following the completion of the
+1984 season by the University of New Mexico Summer Field School. These data were re-entered into a digital format in 2012 by
+researchers from Arizona State University using the compiled inventory provided in the Rowe Ruin Project: A Preliminary Report by
+Linda Cordell (1989).",
+    "author": "Mick-O'Hara, Linda",
+    "authorSurName": "Mick-O'Hara, Linda",
+    "authorSurNameSort": "Mick-O'Hara, Linda",
+    "authoritativeMN": "urn:node:TDAR",
+    "checksum": "b64d191259a22320b8f1fc2826deddc2",
     "checksumAlgorithm": "MD5",
     "contactOrganization": [
-      "Division of Forestry Bioloy, Taiwan Forestry Research Institute"
+      "Mick-O'Hara, Linda"
     ],
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/lus.42.1",
-    "datasource": "urn:node:TFRI",
-    "dateModified": "2013-06-12T01:28:29.239Z",
-    "dateUploaded": "2007-11-08T00:00:00Z",
-    "eastBoundCoord": 125.625,
-    "endDate": "2006-01-01T00:00:00Z",
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/lus.42.1",
-    "formatId": "eml://ecoinformatics.org/eml-2.0.1",
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8571CXC_meta%24v%3D1387474885068",
+    "datasource": "urn:node:TDAR",
+    "dateModified": "2013-12-19T17:41:25.068Z",
+    "dateUploaded": "2013-12-19T17:41:25.068Z",
+    "eastBoundCoord": -105.638695,
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8571CXC_meta%24v%3D1387474885068",
+    "formatId": "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
+    "formatType": "METADATA",
+    "geohash_1": [
+      "9"
+    ],
+    "geohash_2": [
+      "9w"
+    ],
+    "geohash_3": [
+      "9wk"
+    ],
+    "geohash_4": [
+      "9wkc"
+    ],
+    "geohash_5": [
+      "9wkcg"
+    ],
+    "geohash_6": [
+      "9wkcgw"
+    ],
+    "geohash_7": [
+      "9wkcgww"
+    ],
+    "geohash_8": [
+      "9wkcgww9"
+    ],
+    "geohash_9": [
+      "9wkcgww92"
+    ],
+    "id": "doi:10.6067:XCV8571CXC_meta$v=1387474885068",
+    "identifier": "doi:10.6067:XCV8571CXC_meta$v=1387474885068",
+    "investigator": [
+      "Mick-O'Hara, Linda"
+    ],
+    "isPublic": true,
+    "isService": false,
+    "keywords": [
+      "Ancestral Puebloan",
+      "Data Recovery / Excavation",
+      "Rowe Pueblo",
+      "Domestic Structure or Architectural Complex",
+      "Fauna"
+    ],
+    "northBoundCoord": 35.51127,
+    "origin": [
+      "Mick-O'Hara, Linda"
+    ],
+    "readPermission": [
+      "public"
+    ],
+    "replicaMN": [
+      "urn:node:TDAR",
+      "urn:node:CN"
+    ],
+    "replicaVerifiedDate": [
+      "2017-01-12T09:03:35.107Z",
+      "2017-01-12T09:03:35.14Z"
+    ],
+    "replicationAllowed": false,
+    "rightsHolder": "CN=tdar-svn@lists.asu.edu,O=TDAR,DC=org",
+    "seriesId": "391763_meta",
+    "serviceCoupling": "false",
+    "size": 2262,
+    "southBoundCoord": 35.48835,
+    "submitter": "Tiffany Clark",
+    "title": "Rowe Pueblo Fauna",
+    "updateDate": "2013-12-19T17:41:25.068Z",
+    "westBoundCoord": -105.67646
+  },
+  {
+    "abstract": "Data underlying all analyses in De lisle & Rowe 2015 Am. Nat.",
+    "author": "De Lisle, Stephen Paul",
+    "authorGivenName": "Stephen Paul",
+    "authorSurName": "De Lisle",
+    "authorSurNameSort": "De Lisle",
+    "authoritativeMN": "urn:node:DRYAD",
+    "checksum": "32ac07c6123137e1c9923a75e9902e45",
+    "checksumAlgorithm": "MD5",
+    "dataUrl":
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.md23g%2F1%3Fver%3D2016-01-12T13%3A34%3A51.734-05%3A00",
+    "datasource": "urn:node:DRYAD",
+    "dateModified": "2016-01-12T18:34:51.734Z",
+    "datePublished": "2015-07-28T14:22:42Z",
+    "dateUploaded": "2015-07-28T14:22:42Z",
+    "fileID":
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.md23g%2F1%3Fver%3D2016-01-12T13%3A34%3A51.734-05%3A00",
+    "formatId": "http://datadryad.org/profile/v3.1",
+    "formatType": "METADATA",
+    "id": "http://dx.doi.org/10.5061/dryad.md23g/1?ver=2016-01-12T13:34:51.734-05:00",
+    "identifier": "http://dx.doi.org/10.5061/dryad.md23g/1?ver=2016-01-12T13:34:51.734-05:00",
+    "investigator": [
+      "De Lisle, Stephen Paul",
+      "Rowe, Locke"
+    ],
+    "isDocumentedBy": [
+      "http://dx.doi.org/10.5061/dryad.md23g?ver=2016-01-12T13:34:49.744-05:00"
+    ],
+    "isPublic": true,
+    "isService": false,
+    "keywords": [
+      "Adaptation",
+      "Competition",
+      "Morphology",
+      "Selection: natural",
+      "Sexual dimorphism",
+      "Statistics: multivariate",
+      "salamanders"
+    ],
+    "origin": [
+      "De Lisle, Stephen Paul",
+      "Rowe, Locke"
+    ],
+    "pubDate": "2015-07-28T14:22:42Z",
+    "readPermission": [
+      "public"
+    ],
+    "replicaMN": [
+      "urn:node:DRYAD",
+      "urn:node:CN"
+    ],
+    "replicaVerifiedDate": [
+      "2016-01-12T18:37:10.67Z",
+      "2016-01-12T18:37:11.664Z"
+    ],
+    "replicationAllowed": false,
+    "resourceMap": [
+      "http://dx.doi.org/10.5061/dryad.md23g?format=d1rem&ver=2016-01-12T13:34:49.744-05:00"
+    ],
+    "rightsHolder": "admin@datadryad.org",
+    "scientificName": [
+      "Notophthalmus viridescens"
+    ],
+    "serviceCoupling": "false",
+    "size": 1778,
+    "submitter": "s.delisle@utoronto.ca",
+    "title": "DeLisle&Rowe_DATA",
+    "updateDate": "2015-07-28T14:22:42Z"
+  },
+  {
+    "attribute": [
+      "Block  treatment",
+      "Row  row",
+      "Col  column",
+      "H8604  hight centimeter",
+      "H8705  hight centimeter",
+      "H8710  hight centimeter",
+      "H8806  hight centimeter",
+      "H8810  hight centimeter",
+      "H8904  hight centimeter",
+      "H9006  hight centimeter"
+    ],
+    "attributeDescription": [
+      "treatment",
+      "row",
+      "column",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight"
+    ],
+    "attributeName": [
+      "Block",
+      "Row",
+      "Col",
+      "H8604",
+      "H8705",
+      "H8710",
+      "H8806",
+      "H8810",
+      "H8904",
+      "H9006"
+    ],
+    "attributeUnit": [
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter"
+    ],
+    "author": "Yu han-ming",
+    "authorGivenName": "Yu",
+    "authorLastName": [
+      "han-ming"
+    ],
+    "authorSurName": "han-ming",
+    "authorSurNameSort": "han-ming",
+    "authoritativeMN": "urn:node:KNB",
+    "beginDate": "1997-04-01T00:00:00Z",
+    "checksum": "2f3003a9a4e834d011be0fa3c73f0b56",
+    "checksumAlgorithm": "MD5",
+    "contactOrganization": [
+      "Taiwan Forestry Research Institute"
+    ],
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.5063%2FAA%2Fyhm.3.2",
+    "datasource": "urn:node:KNB",
+    "dateModified": "2014-09-12T18:32:27.836Z",
+    "dateUploaded": "2005-03-16T00:00:00Z",
+    "eastBoundCoord": 121.875,
+    "endDate": "2001-06-01T00:00:00Z",
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.5063%2FAA%2Fyhm.3.2",
+    "formatId": "eml://ecoinformatics.org/eml-2.0.0",
     "formatType": "METADATA",
     "geohash_1": [
       "w"
@@ -290,416 +233,140 @@ flPhenology.xy.C1.makeSixPanelFig.r.",
       "ws"
     ],
     "geohash_3": [
-      "wsj"
+      "wsq"
     ],
     "geohash_4": [
-      "wsjy"
+      "wsqm"
     ],
     "geohash_5": [
-      "wsjyq"
+      "wsqmg"
     ],
     "geohash_6": [
-      "wsjyqs"
+      "wsqmg7"
     ],
     "geohash_7": [
-      "wsjyqsf"
+      "wsqmg7s"
     ],
     "geohash_8": [
-      "wsjyqsf3"
+      "wsqmg7sp"
     ],
     "geohash_9": [
-      "wsjyqsf3x"
+      "wsqmg7sp6"
     ],
-    "id": "lus.42.1",
-    "identifier": "lus.42.1",
+    "id": "doi:10.5063/AA/yhm.3.2",
+    "identifier": "doi:10.5063/AA/yhm.3.2",
     "investigator": [
-      "Lu"
+      "han-ming"
     ],
     "isPublic": true,
     "isService": false,
     "keywords": [
-      "\u6a1f\u5c6c",
-      "\u6968\u6960\u5c6c",
-      "\u83f2\u5f8b\u8cd3\u6a1f",
-      "\u8449\u7da0\u9ad4DNA",
-      "\u5206\u985e",
-      "Cinnanomum",
-      "Machilus",
-      "Cinnamomum philippinense",
-      "Chloroplast DNA",
-      "Systematics"
+      "silviculture",
+      "Cinnamomum Kenehirai Hayata",
+      "Taiwan"
     ],
-    "northBoundCoord": 26.25,
-    "obsoletedBy": "lus.42.15",
+    "northBoundCoord": 25.5,
+    "numberReplicas": 2,
+    "obsoletes": "doi:10.5063/AA/yhm.3.1",
     "origin": [
-      "Sheng-You Lu"
+      "Yu han-ming"
     ],
     "readPermission": [
       "public"
     ],
     "replicaMN": [
       "urn:node:CN",
-      "urn:node:TFRI"
+      "urn:node:mnUNM1",
+      "urn:node:mnORC1",
+      "urn:node:KNB"
     ],
     "replicaVerifiedDate": [
-      "2017-02-24T22:08:56.95Z",
-      "2017-10-03T13:19:46.32Z"
+      "2014-09-12T18:32:26.896Z",
+      "2014-09-12T15:03:51.084Z",
+      "2014-09-12T15:03:58.925Z",
+      "2014-09-12T15:04:06.46Z"
     ],
-    "replicationAllowed": false,
-    "rightsHolder": "uid=lus,o=TFRI,dc=ecoinformatics,dc=org",
+    "replicationAllowed": true,
+    "rightsHolder": "uid=yhm,o=unaffiliated,dc=ecoinformatics,dc=org",
     "serviceCoupling": "false",
     "site": [
-      "Taiwan"
+      "North of Taiwan"
     ],
-    "size": 15651,
-    "southBoundCoord": 21.0,
-    "submitter": "uid=lus,o=TFRI,dc=ecoinformatics,dc=org",
-    "title": "\u5229\u7528\u8449\u7da0\u9ad4DNA\u5e8f\u5217\u63a2\u8a0e\u83f2\u5f8b\u8cd3\u6a1f\u4e4b\u5206\u985e\u5730\u4f4d",
-    "updateDate": "2007-11-08T00:00:00Z",
-    "westBoundCoord": 116.125
+    "size": 6326,
+    "southBoundCoord": 24.375,
+    "submitter": "uid=yhm,o=unaffiliated,dc=ecoinformatics,dc=org",
+    "title": "Silviculture of Cinnamomum Kanehirai Hayata at North of Taiwan",
+    "updateDate": "2005-03-16T00:00:00Z",
+    "westBoundCoord": 121.0
   },
   {
-    "abstract": "Surface water bacterial production from near the mouth of Pensacola Bay, FL, Bay Jimmy, LA, and Apalachicola Bay,
-FL as an estimate of bacterial growth rates.",
-    "author": "Wade Jeffrey",
-    "authorSurName": "Wade Jeffrey",
-    "authorSurNameSort": "Wade Jeffrey",
-    "authoritativeMN": "urn:node:GRIIDC",
-    "beginDate": "2011-04-29T00:00:00Z",
-    "checksum": "5a92f90b6ca2e188078600b4e696b511",
-    "checksumAlgorithm": "MD5",
-    "contactOrganization": [
-      "University of West Florida"
-    ],
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/Y1-x043-000-0001-002",
-    "datasource": "urn:node:GRIIDC",
-    "dateModified": "2017-03-28T06:51:01.766Z",
-    "datePublished": "2014-04-18T00:00:00Z",
-    "dateUploaded": "2017-01-26T21:25:57.319Z",
-    "eastBoundCoord": -84.92502,
-    "endDate": "2011-05-01T00:00:00Z",
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/Y1-x043-000-0001-002",
-    "formatId": "http://www.isotc211.org/2005/gmd-noaa",
-    "formatType": "METADATA",
-    "geohash_1": [
-      "d"
-    ],
-    "geohash_2": [
-      "dj"
-    ],
-    "geohash_3": [
-      "dj3"
-    ],
-    "geohash_4": [
-      "dj3c"
-    ],
-    "geohash_5": [
-      "dj3cx"
-    ],
-    "geohash_6": [
-      "dj3cx1"
-    ],
-    "geohash_7": [
-      "dj3cx1q"
-    ],
-    "geohash_8": [
-      "dj3cx1qh"
-    ],
-    "geohash_9": [
-      "dj3cx1qhf"
-    ],
-    "id": "Y1-x043-000-0001-002",
-    "identifier": "Y1-x043-000-0001-002",
-    "investigator": [
-      "Wade Jeffrey"
-    ],
-    "isPublic": true,
-    "isService": true,
-    "keywords": [
-      "bacterial pollution",
-      "Bay Jimmy",
-      "Pensacola Bay",
-      "Apalachicola Bay"
-    ],
-    "northBoundCoord": 30.32837,
-    "obsoletes": "Y1-x043-000-0001",
-    "pubDate": "2014-04-18T00:00:00Z",
-    "readPermission": [
-      "public"
-    ],
-    "replicaMN": [
-      "urn:node:GRIIDC",
-      "urn:node:CN"
-    ],
-    "replicaVerifiedDate": [
-      "2017-01-26T21:39:49.924Z",
-      "2017-01-26T21:39:49.96Z"
-    ],
-    "replicationAllowed": false,
-    "rightsHolder": "CN=Joe Holland A51071,O=Harte Research Institute,C=US,DC=cilogon,DC=org",
-    "serviceCoupling": "tight",
-    "serviceEndpoint": [
-      "https://data.gulfresearchinitiative.org/data/Y1.x043.000:0001"
-    ],
-    "size": 27118,
-    "southBoundCoord": 29.27691,
-    "submitter": "CN=urn:node:GRIIDC,DC=dataone,DC=org",
-    "title": "Coastal bacterial production, Pensacola Bay, FL, Bay Jimmy, LA, and Apalachicola Bay, FL, Spring 2011.",
-    "updateDate": "2017-01-26T21:25:57.319Z",
-    "westBoundCoord": -89.52115
-  },
-  {
-    "abstract": "Surface water chlorophyll a concentration from near the mouth of Pensacola Bay, FL, Bay Jimmy, LA, and
-Apalachicola Bay, FL as an estimate of phytoplankton biomass.",
-    "author": "Wade Jeffrey",
-    "authorSurName": "Wade Jeffrey",
-    "authorSurNameSort": "Wade Jeffrey",
-    "authoritativeMN": "urn:node:GRIIDC",
-    "beginDate": "2011-04-29T00:00:00Z",
-    "checksum": "9f3f05e3b7147a73ee380aecb8b49abc",
-    "checksumAlgorithm": "MD5",
-    "contactOrganization": [
-      "University of West Florida"
-    ],
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/Y1-x043-000-0002-001",
-    "datasource": "urn:node:GRIIDC",
-    "dateModified": "2017-03-28T06:51:08.505Z",
-    "datePublished": "2014-04-18T00:00:00Z",
-    "dateUploaded": "2017-01-26T21:25:57.643Z",
-    "eastBoundCoord": -84.92502,
-    "endDate": "2011-05-01T00:00:00Z",
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/Y1-x043-000-0002-001",
-    "formatId": "http://www.isotc211.org/2005/gmd-noaa",
-    "formatType": "METADATA",
-    "geohash_1": [
-      "d"
-    ],
-    "geohash_2": [
-      "dj"
-    ],
-    "geohash_3": [
-      "dj3"
-    ],
-    "geohash_4": [
-      "dj3c"
-    ],
-    "geohash_5": [
-      "dj3cx"
-    ],
-    "geohash_6": [
-      "dj3cx1"
-    ],
-    "geohash_7": [
-      "dj3cx1q"
-    ],
-    "geohash_8": [
-      "dj3cx1qh"
-    ],
-    "geohash_9": [
-      "dj3cx1qhf"
-    ],
-    "id": "Y1-x043-000-0002-001",
-    "identifier": "Y1-x043-000-0002-001",
-    "investigator": [
-      "Wade Jeffrey"
-    ],
-    "isPublic": true,
-    "isService": true,
-    "keywords": [
-      "chla",
-      "Bay Jimmy",
-      "Pensacola Bay",
-      "Apalachicola Bay"
-    ],
-    "northBoundCoord": 30.32837,
-    "obsoletes": "Y1-x043-000-0002",
-    "pubDate": "2014-04-18T00:00:00Z",
-    "readPermission": [
-      "public"
-    ],
-    "replicaMN": [
-      "urn:node:GRIIDC",
-      "urn:node:CN"
-    ],
-    "replicaVerifiedDate": [
-      "2017-01-26T21:39:51.407Z",
-      "2017-01-26T21:39:51.453Z"
-    ],
-    "replicationAllowed": false,
-    "rightsHolder": "CN=Joe Holland A51071,O=Harte Research Institute,C=US,DC=cilogon,DC=org",
-    "serviceCoupling": "tight",
-    "serviceEndpoint": [
-      "https://data.gulfresearchinitiative.org/data/Y1.x043.000:0002"
-    ],
-    "size": 27116,
-    "southBoundCoord": 29.27691,
-    "submitter": "CN=urn:node:GRIIDC,DC=dataone,DC=org",
-    "title": "Coastal chlorophyll concentration,Pensacola Bay, FL, Bay Jimmy, LA, and Apalachicola Bay, FL, Spring 2011.",
-    "updateDate": "2017-01-26T21:25:57.643Z",
-    "westBoundCoord": -89.52115
-  },
-  {
-    "abstract":
-"\u83f2\u5f8b\u8cd3\u6a1f\u5728\u5206\u985e\u5730\u4f4d\u4e0a\u96b8\u5c6c\u65bc\u6a1f\u79d1\uff0c\u66fe\u88ab\u6b78\u985e\u65bc\u6968\u6960\u5c6c\u53ca\u916a\u68a8\u5c6c\u3002\u672c\u7814\u7a76\u5229\u7528\u65bc\u690d\u7269\u8449\u7da0\u9ad4DNA\u4e2d\u7684PetD~PetB\u57fa\u56e0\u9593\u5e8f\u5217\u3001TrnV~TrnM\u5e8f\u5217\u4ee5\u53caTrnS~TrnT\u5e8f\u5217\u5206\u6790\u83f2\u5f8b\u8cd3\u6a1f\u8207\u6a1f\u5c6c\u3001\u6968\u6960\u5c6c\u4ee5\u53ca\u916a\u68a8\u5c6c\u4e4b\u89aa\u7de3\u95dc\u4fc2\uff0c\u5df2\u78ba\u5b9a\u83f2\u5f8b\u8cd3\u6a1f\u7684\u5206\u985e\u6b78\u5c6c\u53ca\u6968\u6960\u5c6c\u548c\u916a\u68a8\u5c6c\u7684\u95dc\u4fc2\u3002",
     "attribute": [
-      "\u4e2d\u540d \u4e2d\u540d \u4e2d\u6587\u540d\u7a31",
-      "\u5b78\u540d \u5b78\u540d \u6b63\u5f0f\u540d\u7a31",
-      "\u63a1\u96c6\u5730 \u63a1\u96c6\u5730 \u63a1\u96c6\u5730\u9ede",
-      "(\u4f86\u6e90) (\u4f86\u6e90) \u690d\u7269\u4f86\u6e90",
-      "Icon. Pl. Form. Hayata 1913 Icon. Pl. Form. Hayata 1913 Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936 Form Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962 Reinwardtia Kostermans 1962 Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971 Woody Fl. Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970 Flora of Taiwan 1sted Chang 1970 Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981 Woody Fl. Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988 Flora of Taiwan 2nded Liao, Jih-Ching 1988 Flora of Taiwan 2nded Liao, Jih-Ching
-1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988 Woody Fl. Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no Primer no Primer no",
-      "Variation site Variation site Variation site",
-      "variation variation variation",
-      "L.n L.n L.n",
-      "M.j M.j M.j",
-      "M.z M.z M.z",
-      "P.a P.a P.a",
-      "C.c C.c C.c",
-      "C.s C.s C.s",
-      "M.t M.t M.t",
-      "C.p C.p C.p",
-      "species species \u690d\u7269\u5206\u985e\u7684\u6700\u5c0f\u55ae\u4f4d",
-      "C.s C.s C.s",
-      "C.c C.c C.c",
-      "C.p C.p C.p",
-      "M.j M.j M.j",
-      "M.z M.z M.z",
-      "L.n L.n L.n",
-      "M.t M.t M.t",
-      "P.a P.a P.a"
+      "Block  treatment",
+      "Row  row",
+      "Col  column",
+      "H8604  hight centimeter",
+      "H8705  hight centimeter",
+      "H8710  hight centimeter",
+      "H8806  hight centimeter",
+      "H8810  hight centimeter",
+      "H8904  hight centimeter",
+      "H9006  hight centimeter"
     ],
     "attributeDescription": [
-      "\u4e2d\u6587\u540d\u7a31",
-      "\u6b63\u5f0f\u540d\u7a31",
-      "\u63a1\u96c6\u5730\u9ede",
-      "\u690d\u7269\u4f86\u6e90",
-      "Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no",
-      "Variation site",
-      "variation",
-      "L.n",
-      "M.j",
-      "M.z",
-      "P.a",
-      "C.c",
-      "C.s",
-      "M.t",
-      "C.p",
-      "\u690d\u7269\u5206\u985e\u7684\u6700\u5c0f\u55ae\u4f4d",
-      "C.s",
-      "C.c",
-      "C.p",
-      "M.j",
-      "M.z",
-      "L.n",
-      "M.t",
-      "P.a"
-    ],
-    "attributeLabel": [
-      "\u4e2d\u540d",
-      "\u5b78\u540d",
-      "\u63a1\u96c6\u5730",
-      "(\u4f86\u6e90)",
-      "Icon. Pl. Form. Hayata 1913",
-      "Form",
-      "Reinwardtia Kostermans 1962",
-      "Woody Fl.",
-      "Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl.",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl.",
-      "Primer no",
-      "Variation site",
-      "variation",
-      "L.n",
-      "M.j",
-      "M.z",
-      "P.a",
-      "C.c",
-      "C.s",
-      "M.t",
-      "C.p",
-      "species",
-      "C.s",
-      "C.c",
-      "C.p",
-      "M.j",
-      "M.z",
-      "L.n",
-      "M.t",
-      "P.a"
+      "treatment",
+      "row",
+      "column",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight",
+      "hight"
     ],
     "attributeName": [
-      "\u4e2d\u540d",
-      "\u5b78\u540d",
-      "\u63a1\u96c6\u5730",
-      "(\u4f86\u6e90)",
-      "Icon. Pl. Form. Hayata 1913",
-      "Form. Tree rev. Kanehira 1936",
-      "Reinwardtia Kostermans 1962",
-      "Woody Fl. Taiwan Li, Hui-Lin 1971",
-      "Flora of Taiwan 1sted Chang 1970",
-      "Woody Fl. Taiwan Liao, Jih-Ching 1981",
-      "Flora of Taiwan 2nded Liao, Jih-Ching 1988",
-      "Woody Fl. Taiwan Liu, Yeh-Ching 1988",
-      "Primer no",
-      "Variation site",
-      "variation",
-      "L.n",
-      "M.j",
-      "M.z",
-      "P.a",
-      "C.c",
-      "C.s",
-      "M.t",
-      "C.p",
-      "species",
-      "C.s",
-      "C.c",
-      "C.p",
-      "M.j",
-      "M.z",
-      "L.n",
-      "M.t",
-      "P.a"
+      "Block",
+      "Row",
+      "Col",
+      "H8604",
+      "H8705",
+      "H8710",
+      "H8806",
+      "H8810",
+      "H8904",
+      "H9006"
     ],
-    "author": "Sheng-You Lu",
-    "authorGivenName": "Sheng-You",
+    "attributeUnit": [
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter",
+      "centimeter"
+    ],
+    "author": "Yu han-ming",
+    "authorGivenName": "Yu",
     "authorLastName": [
-      "Lu"
+      "han-ming"
     ],
-    "authorSurName": "Lu",
-    "authorSurNameSort": "Lu",
-    "authoritativeMN": "urn:node:TFRI",
-    "beginDate": "2006-01-01T00:00:00Z",
-    "checksum": "d4250e75c85abb65b6040e7840a1f65f",
+    "authorSurName": "han-ming",
+    "authorSurNameSort": "han-ming",
+    "authoritativeMN": "urn:node:KNB",
+    "beginDate": "1997-04-01T00:00:00Z",
+    "checksum": "9d02dcc04256a85b629cebbbf96c26a6",
     "checksumAlgorithm": "MD5",
     "contactOrganization": [
-      "Division of Forestry Bioloy, Taiwan Forestry Research Institute"
+      "Taiwan Forestry Research Institute"
     ],
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/lus.42.15",
-    "datasource": "urn:node:TFRI",
-    "dateModified": "2013-06-12T01:28:26.051Z",
-    "dateUploaded": "2007-11-08T00:00:00Z",
-    "eastBoundCoord": 125.625,
-    "endDate": "2006-01-01T00:00:00Z",
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/lus.42.15",
-    "formatId": "eml://ecoinformatics.org/eml-2.0.1",
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.5063%2FAA%2Fyhm.3.1",
+    "datasource": "urn:node:KNB",
+    "dateModified": "2015-08-14T17:22:15.986Z",
+    "dateUploaded": "2005-03-16T00:00:00Z",
+    "eastBoundCoord": 121.875,
+    "endDate": "2001-06-01T00:00:00Z",
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.5063%2FAA%2Fyhm.3.1",
+    "formatId": "eml://ecoinformatics.org/eml-2.0.0",
     "formatType": "METADATA",
     "geohash_1": [
       "w"
@@ -708,212 +375,298 @@ Apalachicola Bay, FL as an estimate of phytoplankton biomass.",
       "ws"
     ],
     "geohash_3": [
-      "wsj"
+      "wsq"
     ],
     "geohash_4": [
-      "wsjy"
+      "wsqm"
     ],
     "geohash_5": [
-      "wsjyq"
+      "wsqmg"
     ],
     "geohash_6": [
-      "wsjyqs"
+      "wsqmg7"
     ],
     "geohash_7": [
-      "wsjyqsf"
+      "wsqmg7s"
     ],
     "geohash_8": [
-      "wsjyqsf3"
+      "wsqmg7sp"
     ],
     "geohash_9": [
-      "wsjyqsf3x"
+      "wsqmg7sp6"
     ],
-    "id": "lus.42.15",
-    "identifier": "lus.42.15",
+    "id": "doi:10.5063/AA/yhm.3.1",
+    "identifier": "doi:10.5063/AA/yhm.3.1",
     "investigator": [
-      "Lu"
+      "han-ming"
     ],
     "isPublic": true,
     "isService": false,
     "keywords": [
-      "\u6a1f\u5c6c",
-      "\u6968\u6960\u5c6c",
-      "\u83f2\u5f8b\u8cd3\u6a1f",
-      "\u8449\u7da0\u9ad4DNA",
-      "\u5206\u985e",
-      "Cinnanomum",
-      "Machilus",
-      "Cinnamomum philippinense",
-      "Chloroplast DNA",
-      "Systematics"
+      "silviculture",
+      "Cinnamomum Kenehirai Hayata",
+      "Taiwan"
     ],
-    "northBoundCoord": 26.25,
-    "obsoletes": "lus.42.1",
+    "northBoundCoord": 25.5,
+    "numberReplicas": 2,
+    "obsoletedBy": "doi:10.5063/AA/yhm.3.2",
     "origin": [
-      "Sheng-You Lu"
+      "Yu han-ming"
     ],
     "readPermission": [
       "public"
     ],
     "replicaMN": [
       "urn:node:CN",
-      "urn:node:TFRI"
+      "urn:node:mnUNM1",
+      "urn:node:mnORC1",
+      "urn:node:KNB"
     ],
     "replicaVerifiedDate": [
-      "2017-02-24T22:09:08.612Z",
-      "2017-10-03T13:19:50.878Z"
+      "2015-01-05T22:27:05.173Z",
+      "2015-08-14T17:21:05.002Z",
+      "2015-08-14T17:21:34.69Z",
+      "2015-08-14T17:22:08.078Z"
     ],
-    "replicationAllowed": false,
-    "rightsHolder": "uid=lus,o=TFRI,dc=ecoinformatics,dc=org",
+    "replicationAllowed": true,
+    "rightsHolder": "uid=yhm,o=unaffiliated,dc=ecoinformatics,dc=org",
     "serviceCoupling": "false",
     "site": [
-      "Taiwan"
+      "North of Taiwan"
     ],
-    "size": 19773,
-    "southBoundCoord": 21.0,
-    "submitter": "uid=lus,o=TFRI,dc=ecoinformatics,dc=org",
-    "title": "\u5229\u7528\u8449\u7da0\u9ad4DNA\u5e8f\u5217\u63a2\u8a0e\u83f2\u5f8b\u8cd3\u6a1f\u4e4b\u5206\u985e\u5730\u4f4d",
-    "updateDate": "2007-11-08T00:00:00Z",
-    "westBoundCoord": 116.125
+    "size": 5931,
+    "southBoundCoord": 24.375,
+    "submitter": "uid=yhm,o=unaffiliated,dc=ecoinformatics,dc=org",
+    "title": "Silviculture of Cinnamomum Kanehirai Hayata at North of Taiwan",
+    "updateDate": "2005-03-16T00:00:00Z",
+    "westBoundCoord": 121.0
   },
   {
-    "abstract": "A GIS database of geologic units and structural features in Florida, with lithology, age, data structure, and
-format written and arranged just like the other states.",
-    "authoritativeMN": "urn:node:USGS_SDC",
-    "checksum": "c240eef6f680a655d3d2ab9f3a173686",
+    "abstract": "Middle and Late Archaic faunal database from the Tree Row Site (11F53), Fulton County, Illinois",
+    "author": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurName": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurNameSort": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authoritativeMN": "urn:node:TDAR",
+    "checksum": "85899d2127de42d897e8292cc10c52ec",
     "checksumAlgorithm": "MD5",
-    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/d4d36a16-3b3f-412d-81e7-4e76dd385637",
-    "datasource": "urn:node:USGS_SDC",
-    "dateModified": "2016-10-29T04:17:32Z",
-    "datePublished": "2005-01-01T00:00:00Z",
-    "dateUploaded": "2016-10-29T04:17:32Z",
-    "eastBoundCoord": -79.83672,
-    "fileID": "https://cn.dataone.org/cn/v2/resolve/d4d36a16-3b3f-412d-81e7-4e76dd385637",
-    "formatId": "FGDC-STD-001.1-1999",
+    "contactOrganization": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8Z0397S_meta%24v%3D1455143620237",
+    "datasource": "urn:node:TDAR",
+    "dateModified": "2016-02-10T22:33:40.237Z",
+    "dateUploaded": "2016-02-10T22:33:40.237Z",
+    "eastBoundCoord": -89.95026,
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8Z0397S_meta%24v%3D1455143620237",
+    "formatId": "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
     "formatType": "METADATA",
     "geohash_1": [
       "d"
     ],
     "geohash_2": [
-      "dh"
+      "dp"
     ],
     "geohash_3": [
-      "dhu"
+      "dp0"
     ],
     "geohash_4": [
-      "dhum"
+      "dp0n"
     ],
     "geohash_5": [
-      "dhumn"
+      "dp0n0"
     ],
     "geohash_6": [
-      "dhumnx"
+      "dp0n09"
     ],
     "geohash_7": [
-      "dhumnx3"
+      "dp0n09t"
     ],
     "geohash_8": [
-      "dhumnx3q"
+      "dp0n09t7"
     ],
     "geohash_9": [
-      "dhumnx3qj"
+      "dp0n09t7e"
     ],
-    "id": "d4d36a16-3b3f-412d-81e7-4e76dd385637",
-    "identifier": "d4d36a16-3b3f-412d-81e7-4e76dd385637",
+    "id": "doi:10.6067:XCV8Z0397S_meta$v=1455143620237",
+    "identifier": "doi:10.6067:XCV8Z0397S_meta$v=1455143620237",
+    "investigator": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
     "isPublic": true,
     "isService": false,
-    "keywords": [
-      "fUS12 = Florida",
-      "ArcInfo interchange",
-      "comma-delimited text",
-      "OGC WFS",
-      "OGC WMS",
-      "shapefile",
-      "bedrock geologic units",
-      "geologic contacts",
-      "geologic maps",
-      "geologic structure",
-      "geology",
-      "geospatial datasets",
-      "map interfaces",
-      "surficial geologic units"
+    "northBoundCoord": 40.456135,
+    "origin": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
     ],
-    "northBoundCoord": 31.000633,
-    "placeKey": [
-      "fUS12 = Florida"
-    ],
-    "pubDate": "2005-01-01T00:00:00Z",
     "readPermission": [
       "public"
     ],
     "replicaMN": [
-      "urn:node:USGS_SDC",
+      "urn:node:TDAR",
       "urn:node:CN"
     ],
     "replicaVerifiedDate": [
-      "2016-11-04T20:01:57.999Z",
-      "2016-11-04T20:01:58.004Z"
+      "2017-01-11T23:06:07.288Z",
+      "2017-01-11T23:06:07.322Z"
     ],
     "replicationAllowed": false,
-    "rightsHolder": "CN=USGSMN,DC=dataone,DC=org",
+    "rightsHolder": "CN=tdar-svn@lists.asu.edu,O=TDAR,DC=org",
+    "seriesId": "394420_meta",
     "serviceCoupling": "false",
-    "size": 4366,
-    "southBoundCoord": 24.276474,
-    "submitter": "CN=USGSMN,DC=dataone,DC=org",
-    "title": "Florida geologic map data",
-    "updateDate": "2016-10-29T04:17:32Z",
-    "webUrl": [
-      "http://mrdata.usgs.gov/geology/state/state.php?state=FL"
+    "site": [
+      "Prairie Peninsula",
+      "Fulton County, Illinois",
+      "Central Illinois River Valley"
     ],
-    "westBoundCoord": -87.634964
+    "size": 1771,
+    "southBoundCoord": 40.42097,
+    "submitter": "Steven Kuehn",
+    "title": "Tree Row Site, IL (11F53) Faunal Database",
+    "updateDate": "2016-02-10T22:33:40.237Z",
+    "westBoundCoord": -89.99112
   },
   {
-    "abstract": "Supplementary text",
-    "author": "Magain, Nicolas",
-    "authorGivenName": "Nicolas",
-    "authorSurName": "Magain",
-    "authorSurNameSort": "Magain",
-    "authoritativeMN": "urn:node:DRYAD",
-    "checksum": "311e0aaa8773b968bc7112330e2bc95c",
+    "abstract": "Late Archaic faunal assemblage from the Tree Row Site (11F53), Fulton County, Illinois.",
+    "author": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurName": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurNameSort": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authoritativeMN": "urn:node:TDAR",
+    "checksum": "eba8a9a9a99675a9c3b4c802f10c60da",
     "checksumAlgorithm": "MD5",
-    "dataUrl":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.h6v7g%2F6%3Fver%3D2016-07-26T09%3A34%3A16.285-04%3A00",
-    "datasource": "urn:node:DRYAD",
-    "dateModified": "2016-07-26T13:34:16.285Z",
-    "datePublished": "2016-07-26T13:33:57Z",
-    "dateUploaded": "2016-07-26T13:33:57Z",
-    "fileID":
-"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.h6v7g%2F6%3Fver%3D2016-07-26T09%3A34%3A16.285-04%3A00",
-    "formatId": "http://datadryad.org/profile/v3.1",
+    "contactOrganization": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8JS9S4N_meta%24v%3D1455661729968",
+    "datasource": "urn:node:TDAR",
+    "dateModified": "2016-02-16T22:28:49.968Z",
+    "dateUploaded": "2016-02-16T22:28:49.968Z",
+    "eastBoundCoord": -89.95026,
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8JS9S4N_meta%24v%3D1455661729968",
+    "formatId": "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
     "formatType": "METADATA",
-    "id": "http://dx.doi.org/10.5061/dryad.h6v7g/6?ver=2016-07-26T09:34:16.285-04:00",
-    "identifier": "http://dx.doi.org/10.5061/dryad.h6v7g/6?ver=2016-07-26T09:34:16.285-04:00",
+    "geohash_1": [
+      "d"
+    ],
+    "geohash_2": [
+      "dp"
+    ],
+    "geohash_3": [
+      "dp0"
+    ],
+    "geohash_4": [
+      "dp0n"
+    ],
+    "geohash_5": [
+      "dp0n0"
+    ],
+    "geohash_6": [
+      "dp0n09"
+    ],
+    "geohash_7": [
+      "dp0n09t"
+    ],
+    "geohash_8": [
+      "dp0n09t7"
+    ],
+    "geohash_9": [
+      "dp0n09t7e"
+    ],
+    "id": "doi:10.6067:XCV8JS9S4N_meta$v=1455661729968",
+    "identifier": "doi:10.6067:XCV8JS9S4N_meta$v=1455661729968",
     "investigator": [
-      "Magain, Nicolas",
-      "Miadlikowska, Jolanta",
-      "Goffinet, Bernard",
-      "S\u00e9rusiaux, Emmanu\u00ebl",
-      "Lutzoni, Francois"
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
     ],
     "isPublic": true,
     "isService": false,
     "keywords": [
-      "cyanobiont",
-      "mycobiont",
-      "photobiont",
-      "lichen symbiosis",
-      "species delimitation",
-      "mutualistic interactions",
-      "multilocus phylogeny"
+      "Archaic",
+      "Middle Archaic",
+      "Late Archaic",
+      "Data Recovery / Excavation",
+      "Tree Row Site/11F53",
+      "Resource Extraction/Production/Transportation Structure or Features",
+      "Funerary and Burial Structures or Features",
+      "Cemetery",
+      "Archaeological Feature",
+      "Hearth",
+      "Midden",
+      "Sheet midden",
+      "Pit",
+      "Refuse pit",
+      "Roasting pit / oven / horno",
+      "Storage pit",
+      "Fauna",
+      "Shell"
+    ],
+    "northBoundCoord": 40.456135,
+    "origin": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "readPermission": [
+      "public"
+    ],
+    "replicaMN": [
+      "urn:node:TDAR",
+      "urn:node:CN"
+    ],
+    "replicaVerifiedDate": [
+      "2017-01-12T05:53:15.138Z",
+      "2017-01-12T05:53:15.191Z"
+    ],
+    "replicationAllowed": false,
+    "rightsHolder": "CN=tdar-svn@lists.asu.edu,O=TDAR,DC=org",
+    "seriesId": "402033_meta",
+    "serviceCoupling": "false",
+    "site": [
+      "Prairie Peninsula",
+      "Fulton County, Illinois",
+      "Central Illinois River Valley"
+    ],
+    "size": 3292,
+    "southBoundCoord": 40.42097,
+    "submitter": "Steven Kuehn",
+    "title": "Tree Row Site, IL (11F53) Faunal Database REVISED",
+    "updateDate": "2016-02-16T22:28:49.968Z",
+    "westBoundCoord": -89.99112
+  },
+  {
+    "author": "De Lisle, Stephen P.",
+    "authorGivenName": "Stephen P.",
+    "authorSurName": "De Lisle",
+    "authorSurNameSort": "De Lisle",
+    "authoritativeMN": "urn:node:DRYAD",
+    "checksum": "6a8bcb71e2bb532a738f0bb96b936a48",
+    "checksumAlgorithm": "MD5",
+    "dataUrl":
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.g0q15%2F1%3Fver%3D2014-06-02T13%3A27%3A40.279-04%3A00",
+    "datasource": "urn:node:DRYAD",
+    "dateModified": "2014-06-03T04:00:59.968Z",
+    "datePublished": "2014-04-01T20:04:04Z",
+    "dateUploaded": "2014-04-01T20:04:04Z",
+    "fileID":
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.g0q15%2F1%3Fver%3D2014-06-02T13%3A27%3A40.279-04%3A00",
+    "formatId": "http://datadryad.org/profile/v3.1",
+    "formatType": "METADATA",
+    "id": "http://dx.doi.org/10.5061/dryad.g0q15/1?ver=2014-06-02T13:27:40.279-04:00",
+    "identifier": "http://dx.doi.org/10.5061/dryad.g0q15/1?ver=2014-06-02T13:27:40.279-04:00",
+    "investigator": [
+      "De Lisle, Stephen P.",
+      "Rowe, Locke"
+    ],
+    "isPublic": true,
+    "isService": false,
+    "keywords": [
+      "Amphibians & reptiles",
+      "Life history evolution",
+      "Phenotypic plasticity",
+      "Sex-ratio",
+      "Sexual selection & conflicts"
     ],
     "origin": [
-      "Magain, Nicolas",
-      "Miadlikowska, Jolanta",
-      "Goffinet, Bernard",
-      "S\u00e9rusiaux, Emmanu\u00ebl",
-      "Lutzoni, Francois"
+      "De Lisle, Stephen P.",
+      "Rowe, Locke"
     ],
-    "pubDate": "2016-07-26T13:33:57Z",
+    "pubDate": "2014-04-01T20:04:04Z",
     "readPermission": [
       "public"
     ],
@@ -922,60 +675,64 @@ format written and arranged just like the other states.",
       "urn:node:CN"
     ],
     "replicaVerifiedDate": [
-      "2016-07-26T22:45:29.189Z",
-      "2016-07-26T22:45:29.196Z"
+      "2014-06-03T04:00:59.056Z",
+      "2014-06-03T04:00:59.12Z"
     ],
     "replicationAllowed": false,
     "rightsHolder": "admin@datadryad.org",
     "serviceCoupling": "false",
-    "size": 1848,
-    "submitter": "nicolas.magain@ulg.ac.be",
-    "title": "SupplementaryText_jm+FL",
-    "updateDate": "2016-07-26T13:33:57Z"
+    "size": 1495,
+    "submitter": "s.delisle@utoronto.ca",
+    "title": "DeLisle&Rowe_JEB_DATA",
+    "updateDate": "2014-04-01T20:04:04Z"
   },
   {
-    "abstract": "sex of marked individuals in sampled population of Anolis sagrei lizards in Gainesville, FL",
-    "author": "Kamath, Ambika",
-    "authorGivenName": "Ambika",
-    "authorSurName": "Kamath",
-    "authorSurNameSort": "Kamath",
+    "abstract": "Modified output from GenClone. Column \u201cPsex(Fis)\u201d shows Psex for each clone, corrected by Fis.  Column
+L \u201cNum.ramets\u201d shows the number of ramets associated with the multilocus genotype. Column O
+\u201cCorr.num.ramets.w1s.Int\u201d shows the number of ramets associated with the multilocus genotype, corrected by Psex.  Rows
+highlighted in this column show a decrease from column L of at least 1.   Only 4 rows (clones) show this: (CTP-ON) row 4, row 14,
+(TRL-ON) row 130, row 136.  Only the relevant populations showing any Psex values <0.05 are shown in this file.",
+    "author": "Yakimowski, Sarah B.",
+    "authorGivenName": "Sarah B.",
+    "authorSurName": "Yakimowski",
+    "authorSurNameSort": "Yakimowski",
     "authoritativeMN": "urn:node:DRYAD",
-    "checksum": "fd99df18e01e46824ed144dde9308df4",
+    "checksum": "8bf8f52bc7407d561dac5b696f321168",
     "checksumAlgorithm": "MD5",
     "dataUrl":
-"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F3%3Fver%3D2018-01-31T13%3A43%3A58.563-05%3A00",
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.gs7k6%2F12%3Fver%3D2014-06-03T14%3A38%3A15.169-04%3A00",
     "datasource": "urn:node:DRYAD",
-    "dateModified": "2018-01-31T18:45:45.715Z",
-    "datePublished": "2018-01-31T18:43:52Z",
-    "dateUploaded": "2018-01-31T18:43:52Z",
+    "dateModified": "2014-06-04T04:02:02.444Z",
+    "datePublished": "2014-06-03T18:18:23Z",
+    "dateUploaded": "2014-06-03T18:18:23Z",
     "fileID":
-"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F3%3Fver%3D2018-01-31T13%3A43%3A58.563-05%3A00",
+"https://cn.dataone.org/cn/v2/resolve/http%3A%2F%2Fdx.doi.org%2F10.5061%2Fdryad.gs7k6%2F12%3Fver%3D2014-06-03T14%3A38%3A15.169-04%3A00",
     "formatId": "http://datadryad.org/profile/v3.1",
     "formatType": "METADATA",
-    "id": "https://doi.org/10.5061/dryad.kt387/3?ver=2018-01-31T13:43:58.563-05:00",
-    "identifier": "https://doi.org/10.5061/dryad.kt387/3?ver=2018-01-31T13:43:58.563-05:00",
+    "id": "http://dx.doi.org/10.5061/dryad.gs7k6/12?ver=2014-06-03T14:38:15.169-04:00",
+    "identifier": "http://dx.doi.org/10.5061/dryad.gs7k6/12?ver=2014-06-03T14:38:15.169-04:00",
     "investigator": [
-      "Kamath, Ambika",
-      "Losos, Jonathan"
+      "Yakimowski, Sarah B.",
+      "Barrett, Spencer C. H."
     ],
     "isDocumentedBy": [
-      "https://doi.org/10.5061/dryad.kt387?ver=2018-01-31T13:43:51.053-05:00"
+      "http://dx.doi.org/10.5061/dryad.gs7k6?ver=2014-06-03T14:42:37.094-04:00"
     ],
     "isPublic": true,
     "isService": false,
     "keywords": [
-      "mating system",
-      "territoriality",
-      "territory",
-      "anole",
-      "encounter",
-      "female choice"
+      "Population Genetics - Empirical",
+      "Plant Mating Systems",
+      "Evolution of Sex",
+      "Ecological Genetics",
+      "Contemporary Evolution",
+      "Angiosperms"
     ],
     "origin": [
-      "Kamath, Ambika",
-      "Losos, Jonathan"
+      "Yakimowski, Sarah B.",
+      "Barrett, Spencer C. H."
     ],
-    "pubDate": "2018-01-31T18:43:52Z",
+    "pubDate": "2014-06-03T18:18:23Z",
     "readPermission": [
       "public"
     ],
@@ -984,94 +741,266 @@ format written and arranged just like the other states.",
       "urn:node:CN"
     ],
     "replicaVerifiedDate": [
-      "2018-01-31T18:45:45.037Z",
-      "2018-01-31T18:45:45.139Z"
+      "2014-06-04T04:02:01.591Z",
+      "2014-06-04T04:02:01.655Z"
     ],
     "replicationAllowed": false,
     "resourceMap": [
-      "https://doi.org/10.5061/dryad.kt387?format=d1rem&ver=2018-01-31T13:43:51.053-05:00"
+      "http://dx.doi.org/10.5061/dryad.gs7k6?format=d1rem&ver=2014-06-03T14:42:37.094-04:00"
     ],
     "rightsHolder": "admin@datadryad.org",
     "serviceCoupling": "false",
-    "site": [
-      "Population of Anolis sagrei lizards in Gainesville",
-      "FL",
-      "USA"
-    ],
-    "size": 1782,
-    "submitter": "ambikamath@gmail.com",
-    "title": "sex",
-    "updateDate": "2018-01-31T18:43:52Z"
+    "size": 2135,
+    "submitter": "sarah.yakimowski@botany.ubc.ca",
+    "title": "Psex-correction",
+    "updateDate": "2014-06-03T18:18:23Z"
   },
   {
-    "abstract": "list of offspring IDs and their mothers from the sampled population of Anolis sagrei lizards in Gainesville FL;
-offspring were laid in the laboratory, with known mothers.",
-    "author": "Kamath, Ambika",
-    "authorGivenName": "Ambika",
-    "authorSurName": "Kamath",
-    "authorSurNameSort": "Kamath",
-    "authoritativeMN": "urn:node:DRYAD",
-    "checksum": "6cd305bfba7b8ee4f0e5aa3cba941168",
+    "abstract": "Data recovery excavations and archival research were conducted at site 38BU869, Spanish Pointe residential
+development tract, Hilton Head Island, South Carolina. The research was conducted to comply with federal, state, and Town of
+Hilton Head regulations regarding archaeological cultural resources. The site includes a former slave row of Spanish Wells
+Plantation and a Civil War picket post. The proposed development in the site area will include road construction and low density
+residential units. The work was conducted
+in accordance with a Data Recovery Plan reviewed by and accepted by the South Carolina State Historic Preservation Office. The
+reported research at 38BU869 was one element of a Memorandum of Agreement between Asset Management Associates and the State
+Historic Preservation Office.
+Archival research was undertaken to discover information concerning the owners of Spanish Wells. The field work entailed
+investigations at four loci: Locus A (Union picket shell mound), Locus B (downslope dump for slave row), Locus C (slave row), and
+Locus D (Union picket post).
+The results of the field investigations and analyses suggest that Locus A was a small shell mound created as an element of a Union
+picket post. The mound was built of household refuse from the Locus C slave row. The mound yielded antebellum household items and
+Union issue material. It is hypothesized that the mound was created as some variation of a rifle pit.
+Locus B proved to be the downslope dump for the Spanish Wells slave row. The
+predominately kitchen refuse from Locus B dated to the nineteenth century, although the slave row was occupied in the eighteenth
+and nineteenth century. It appears that a shift in refuse disposal patterns occurred in the early nineteenth century, perhaps in
+concordance with a period of slave row expansion.
+Locus C included both dense midden and structural features from the eighteenth and nineteenth century slave row. The dateable
+features suggest that the slave row grew from a restricted core in the eighteenth century to a more linear, larger row in the
+early nineteenth century.
+Locus D yielded numerous military and civilian artifacts of the Civil War period.
+The military items were standard Union issue. It is suspected that Locus A and Locus D were both associated with a Union picket
+post/outlier of the nearby Battery Holbrook. Two possible post features were also documented in Locus D.",
+    "author": "Espenshade, Christopher",
+    "authorSurName": "Espenshade, Christopher",
+    "authorSurNameSort": "Espenshade, Christopher",
+    "authoritativeMN": "urn:node:TDAR",
+    "checksum": "fa983963660f5c1b02903bb5f8d1340a",
     "checksumAlgorithm": "MD5",
-    "dataUrl":
-"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F8%3Fver%3D2018-01-31T13%3A43%3A57.453-05%3A00",
-    "datasource": "urn:node:DRYAD",
-    "dateModified": "2018-01-31T18:45:31.689Z",
-    "datePublished": "2018-01-31T18:43:54Z",
-    "dateUploaded": "2018-01-31T18:43:54Z",
-    "fileID":
-"https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fdoi.org%2F10.5061%2Fdryad.kt387%2F8%3Fver%3D2018-01-31T13%3A43%3A57.453-05%3A00",
-    "formatId": "http://datadryad.org/profile/v3.1",
-    "formatType": "METADATA",
-    "id": "https://doi.org/10.5061/dryad.kt387/8?ver=2018-01-31T13:43:57.453-05:00",
-    "identifier": "https://doi.org/10.5061/dryad.kt387/8?ver=2018-01-31T13:43:57.453-05:00",
-    "investigator": [
-      "Kamath, Ambika",
-      "Losos, Jonathan"
+    "contactOrganization": [
+      "Espenshade, Christopher",
+      "Jones, David C.",
+      "Roberts, Marian D.",
+      "Poplin, Eric C.",
+      "Huddleston, Connie"
     ],
-    "isDocumentedBy": [
-      "https://doi.org/10.5061/dryad.kt387?ver=2018-01-31T13:43:51.053-05:00"
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8J9677B_meta%24v%3D1370276337332",
+    "datasource": "urn:node:TDAR",
+    "dateModified": "2013-06-03T16:18:57.332Z",
+    "dateUploaded": "2013-06-03T16:18:57.332Z",
+    "eastBoundCoord": -80.55725,
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8J9677B_meta%24v%3D1370276337332",
+    "formatId": "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
+    "formatType": "METADATA",
+    "geohash_1": [
+      "d"
+    ],
+    "geohash_2": [
+      "dj"
+    ],
+    "geohash_3": [
+      "djw"
+    ],
+    "geohash_4": [
+      "djwx"
+    ],
+    "geohash_5": [
+      "djwx5"
+    ],
+    "geohash_6": [
+      "djwx5y"
+    ],
+    "geohash_7": [
+      "djwx5y2"
+    ],
+    "geohash_8": [
+      "djwx5y2n"
+    ],
+    "geohash_9": [
+      "djwx5y2n2"
+    ],
+    "id": "doi:10.6067:XCV8J9677B_meta$v=1370276337332",
+    "identifier": "doi:10.6067:XCV8J9677B_meta$v=1370276337332",
+    "investigator": [
+      "Espenshade, Christopher",
+      "Jones, David C.",
+      "Roberts, Marian D.",
+      "Poplin, Eric C.",
+      "Huddleston, Connie"
     ],
     "isPublic": true,
     "isService": false,
     "keywords": [
-      "mating system",
-      "territoriality",
-      "territory",
-      "anole",
-      "encounter",
-      "female choice"
+      "African American",
+      "Euroamerican",
+      "Data Recovery / Excavation",
+      "38BU869",
+      "slave row",
+      "Union Army picket post",
+      "Domestic Structure or Architectural Complex",
+      "Domestic Structures",
+      "Shell mound",
+      "Archaeological Feature",
+      "Midden",
+      "Post hole / post mold",
+      "Shell Midden",
+      "Ceramic",
+      "Fauna",
+      "Glass",
+      "Building Materials",
+      "Metal",
+      "Shell"
     ],
+    "northBoundCoord": 32.3382,
     "origin": [
-      "Kamath, Ambika",
-      "Losos, Jonathan"
+      "Espenshade, Christopher",
+      "Jones, David C.",
+      "Roberts, Marian D.",
+      "Poplin, Eric C.",
+      "Huddleston, Connie"
     ],
-    "pubDate": "2018-01-31T18:43:54Z",
     "readPermission": [
       "public"
     ],
     "replicaMN": [
-      "urn:node:DRYAD",
+      "urn:node:TDAR",
       "urn:node:CN"
     ],
     "replicaVerifiedDate": [
-      "2018-01-31T18:45:31.228Z",
-      "2018-01-31T18:45:31.277Z"
+      "2017-01-12T07:43:23.942Z",
+      "2017-01-12T07:43:23.974Z"
     ],
     "replicationAllowed": false,
-    "resourceMap": [
-      "https://doi.org/10.5061/dryad.kt387?format=d1rem&ver=2018-01-31T13:43:51.053-05:00"
-    ],
-    "rightsHolder": "admin@datadryad.org",
+    "rightsHolder": "CN=tdar-svn@lists.asu.edu,O=TDAR,DC=org",
+    "seriesId": "391038_meta",
     "serviceCoupling": "false",
     "site": [
-      "Gainesville",
-      "FL",
-      "USA"
+      "United States of America (Country)",
+      "South Carolina (State / Territory)",
+      "Beaufort County (County)",
+      "North America (Continent)",
+      "Hilton Head Island (S.C.)"
     ],
-    "size": 1828,
-    "submitter": "ambikamath@gmail.com",
-    "title": "offmom",
-    "updateDate": "2018-01-31T18:43:54Z"
+    "size": 5883,
+    "southBoundCoord": 32.06861,
+    "submitter": "Meg Moughan",
+    "title": "Investigation of a Slave Row at Spanish Wells Plantation: Archaeological Data Recovery at 38BU869, Spanish Pointe,
+HIlton Head Island, South Carolina",
+    "updateDate": "2013-06-03T16:18:57.332Z",
+    "westBoundCoord": -80.83191
+  },
+  {
+    "abstract": "Late Archaic faunal assemblage from the Tree Row Site (11F53), Fulton County, Illinois. Recovery includes 1/4\"
+mesh and flotation. Faunal remains identified by Steven Kuehn.",
+    "author": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurName": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authorSurNameSort": "Kuehn, Steven (Illinois State Archaeological Survey)",
+    "authoritativeMN": "urn:node:TDAR",
+    "checksum": "50784cca977748ea6ca122107c2adb98",
+    "checksumAlgorithm": "MD5",
+    "contactOrganization": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "dataUrl": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8HM5B44_meta%24v%3D1476303312172",
+    "datasource": "urn:node:TDAR",
+    "dateModified": "2016-10-12T20:15:12.172Z",
+    "dateUploaded": "2016-10-12T20:15:12.172Z",
+    "eastBoundCoord": -89.95026,
+    "fileID": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.6067%3AXCV8HM5B44_meta%24v%3D1476303312172",
+    "formatId": "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
+    "formatType": "METADATA",
+    "geohash_1": [
+      "d"
+    ],
+    "geohash_2": [
+      "dp"
+    ],
+    "geohash_3": [
+      "dp0"
+    ],
+    "geohash_4": [
+      "dp0n"
+    ],
+    "geohash_5": [
+      "dp0n0"
+    ],
+    "geohash_6": [
+      "dp0n09"
+    ],
+    "geohash_7": [
+      "dp0n09t"
+    ],
+    "geohash_8": [
+      "dp0n09t7"
+    ],
+    "geohash_9": [
+      "dp0n09t7e"
+    ],
+    "id": "doi:10.6067:XCV8HM5B44_meta$v=1476303312172",
+    "identifier": "doi:10.6067:XCV8HM5B44_meta$v=1476303312172",
+    "investigator": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "isPublic": true,
+    "isService": false,
+    "keywords": [
+      "Archaic",
+      "Middle Archaic",
+      "Late Archaic",
+      "Data Recovery / Excavation",
+      "Tree Row Site/11F53",
+      "Resource Extraction/Production/Transportation Structure or Features",
+      "Funerary and Burial Structures or Features",
+      "Cemetery",
+      "Archaeological Feature",
+      "Hearth",
+      "Midden",
+      "Sheet midden",
+      "Pit",
+      "Refuse pit",
+      "Roasting pit / oven / horno",
+      "Storage pit",
+      "Fauna",
+      "Shell"
+    ],
+    "northBoundCoord": 40.456135,
+    "origin": [
+      "Kuehn, Steven (Illinois State Archaeological Survey)"
+    ],
+    "readPermission": [
+      "public"
+    ],
+    "replicaMN": [
+      "urn:node:TDAR",
+      "urn:node:CN"
+    ],
+    "replicaVerifiedDate": [
+      "2017-01-11T18:57:04.36Z",
+      "2017-01-11T18:57:04.397Z"
+    ],
+    "replicationAllowed": false,
+    "rightsHolder": "CN=tdar-svn@lists.asu.edu,O=TDAR,DC=org",
+    "seriesId": "402132_meta",
+    "serviceCoupling": "false",
+    "site": [
+      "Prairie Peninsula",
+      "Fulton County, Illinois",
+      "Central Illinois River Valley"
+    ],
+    "size": 3425,
+    "southBoundCoord": 40.42097,
+    "submitter": "Scott Rivas",
+    "title": "Tree Row Site, IL (11F53) Faunal Database REVISED 2",
+    "updateDate": "2016-10-12T20:15:12.172Z",
+    "westBoundCoord": -89.99112
   }
 ]

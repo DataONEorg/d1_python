@@ -1,0 +1,36 @@
+< Accept-Encoding: gzip, deflate
+< Accept: */*
+< Charset: utf-8
+< Connection: keep-alive
+< GET /node/v1/object?count=10 HTTP/1.1
+< Host: gmn.client
+< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
+
+> Access-Control-Allow-Credentials: true
+> Access-Control-Allow-Headers: Authorization
+> Access-Control-Allow-Methods: GET,POST,OPTIONS
+> Access-Control-Allow-Origin: *
+> Allow: GET,POST,OPTIONS
+> Content-Length: 3042
+> Content-Type:[CONTENT-TYPE]
+> HTTP-Version: HTTP/1.1
+> HTTP/? 200 OK
+> Last-Modified: 1971-07-20 07:03:27+00:00
+
+<?xml version="1.0" encoding="utf-8"?><ns1:objectList count="10" start="0" total="1000"
+xmlns:ns1="http://ns.dataone.org/service/types/v1"><objectInfo><identifier>PID_GMNFXT_zeomgoufdbor</identifier><formatId>-//ecoinformatics.org//eml-
+attribute-2.0.0beta6//EN</formatId><checksum
+algorithm="SHA-1">4c6bd48700ff9a1bb5a6c065c290f718ea7f9c96</checksum><dateSysMetadataModified>1970-01-17T19:30:07Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_vcpxvjagcjjq</identifier><formatId>http://www.w3.org/TR/rdf-
+testcases/#ntriples</formatId><checksum
+algorithm="SHA-1">110c2ede42db5137421e3e92c0805ca2fd69d016</checksum><dateSysMetadataModified>1970-02-10T21:33:41Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_stxosxnduhde</identifier><formatId>-//ecoinformatics.org//eml-
+party-2.0.0beta6//EN</formatId><checksum
+algorithm="SHA-1">39ba3a9ec84804976d9dadd47048ffa42ea500c7</checksum><dateSysMetadataModified>1970-04-11T18:02:53Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_ymrwcskrvdnf</identifier><formatId>application/vnd.ms-
+excel.sheet.binary.macroEnabled.12</formatId><checksum
+algorithm="SHA-1">90cc3cc810419a38543d30a04550fbbf068a3409</checksum><dateSysMetadataModified>1970-06-19T20:16:09Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_quxebmhljqcl</identifier><formatId>netCDF-3</formatId><checksum
+algorithm="SHA-1">21901fcedd23480ad37b771e20d3cb18ade8654d</checksum><dateSysMetadataModified>1970-06-23T00:17:00Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_xjsdkcupldrd</identifier><formatId>http://datacite.org/schema/kernel-3.0</formatId><checksum
+algorithm="SHA-1">dd31b18b17e7f9adfb657488c7196ac90f4b97c0</checksum><dateSysMetadataModified>1970-12-12T19:03:18Z</dateSysMetadataModified><size>224</size></objectInfo><objectInfo><identifier>PID_GMNFXT_jqkrvyyctajm</identifier><formatId>application/SAS</formatId><checksum
+algorithm="SHA-1">dce065a4abc389c9f4e4df3c06afdf5355f27dd8</checksum><dateSysMetadataModified>1971-01-31T08:29:06Z</dateSysMetadataModified><size>225</size></objectInfo><objectInfo><identifier>PID_GMNFXT_lbiggfzrhykh</identifier><formatId>CF-1.0</formatId><checksum
+algorithm="SHA-1">ec2a76b8e845025f92312d1150a479b18477fc2c</checksum><dateSysMetadataModified>1971-03-02T12:38:53Z</dateSysMetadataModified><size>225</size></objectInfo><objectInfo><identifier>PID_GMNFXT_xyqmxghtmfvz</identifier><formatId>FGDC-
+STD-001-1998</formatId><checksum
+algorithm="SHA-1">2e0762b902059b469c309211c912fcc1ad12c80d</checksum><dateSysMetadataModified>1971-05-06T23:49:20Z</dateSysMetadataModified><size>225</size></objectInfo><objectInfo><identifier>PID_GMNFXT_jjvhrxaulfgm</identifier><formatId>netCDF-3</formatId><checksum
+algorithm="SHA-1">fb7ba50c9577ceb2dd151ec05d6b8e0be1b64e89</checksum><dateSysMetadataModified>1971-07-20T07:03:27Z</dateSysMetadataModified><size>225</size></objectInfo></ns1:objectList>

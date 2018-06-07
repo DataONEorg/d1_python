@@ -1,0 +1,17 @@
+< Accept-Encoding: gzip, deflate
+< Accept: */*
+< Charset: utf-8
+< Connection: keep-alive
+< Content-Length: 0
+< Host: gmn.client
+< PUT /node/v2/object HTTP/1.1
+< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
+
+> Access-Control-Allow-Credentials: true
+> Access-Control-Allow-Headers: Authorization
+> Access-Control-Allow-Methods: GET,POST,OPTIONS
+> Access-Control-Allow-Origin: *
+> Allow: GET,POST,OPTIONS
+> Content-Type:[CONTENT-TYPE]
+> HTTP-Version: HTTP/1.1
+> HTTP/? 405 Method Not Allowed
