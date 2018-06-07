@@ -19,17 +19,20 @@
 # limitations under the License.
 """Request handler middleware
 
-This handler runs first in the middleware chain. If DEBUG_ECHO_REQUEST is True,
-it will short circuit all other processing in GMN and return an echo of the
-request. Also see the description in settings.py.
+This handler runs first and last in the middleware "onion".
+
+If settings.DEBUG_ECHO_REQUEST is True, it will short circuit all other
+processing in GMN and return an echo of the request. Also see the description in
+settings.py.
+
+CORS headers are added here as a final step before passing the response to
+Django, which sends it to the client. By adding the headers as a final step,
+CORS headers are also added to responses created by the other middleware layers,
+such as the exception handler.
 """
 
-import logging
-import pprint
-
-import d1_common
-import d1_common.const
-import d1_common.types.exceptions
+import d1_gmn.app.util
+import d1_gmn.app.views.headers
 
 import django.conf
 import django.http
@@ -40,15 +43,15 @@ class RequestHandler:
     self.next_in_chain_func = next_in_chain_func
 
   def __call__(self, request):
-    if django.conf.settings.DEBUG_GMN and django.conf.settings.DEBUG_ECHO_REQUEST:
-      return self.create_http_echo_response(request)
-    return self.next_in_chain_func(request)
+    if django.conf.settings.DEBUG_GMN:
+      if django.conf.settings.DEBUG_ECHO_REQUEST or 'HTTP_VENDOR_GMN_ECHO_REQUEST' in request.META:
+        return d1_gmn.app.util.create_http_echo_response(request)
 
-  def create_http_echo_response(self, request):
-    logging.warning(
-      'Echoing request (django.conf.settings.DEBUG_ECHO_REQUEST=True)'
-    )
-    pp = pprint.PrettyPrinter(indent=2)
-    return django.http.HttpResponse(
-      pp.pformat(request.read()), d1_common.const.CONTENT_TYPE_TEXT
-    )
+    response = self.next_in_chain_func(request)
+
+    if hasattr(request, 'allowed_method_list'):
+      d1_gmn.app.views.headers.add_cors_headers_to_response(
+        response, request.allowed_method_list
+      )
+
+    return response
