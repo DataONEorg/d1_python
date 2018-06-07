@@ -440,7 +440,7 @@ def django_db_setup(request, django_db_blocker):
         db_create_blank(TEMPLATE_DB_KEY)
         db_migrate(TEMPLATE_DB_KEY)
         db_populate_by_json(TEMPLATE_DB_KEY)
-        # db_migrate(TEMPLATE_DB_KEY)
+        db_migrate(TEMPLATE_DB_KEY)
 
       logging.warning(
         'LOCK END {} {}'.
@@ -449,7 +449,7 @@ def django_db_setup(request, django_db_blocker):
 
     db_drop(TEST_DB_KEY)
     db_create_from_template()
-    # db_migrate(TEST_DB_KEY)
+    db_migrate(TEST_DB_KEY)
 
     # Haven't found out how to prevent transactions from being started, so
     # closing the implicit transaction here so that template fixture remains
