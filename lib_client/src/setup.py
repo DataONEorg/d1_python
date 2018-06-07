@@ -38,10 +38,10 @@ def main():
     install_requires=[
       'dataone.common == 2.4.2',
       #
-      'cachecontrol == 0.12.4',
-      'pyxb == 1.2.6',
-      'requests-toolbelt == 0.8.0',
-      'requests[security] == 2.18.4',
+      'cachecontrol >= 0.12.4',
+      'pyxb >= 1.2.6',
+      'requests-toolbelt >= 0.8.0',
+      'requests[security] >= 2.18.4',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -51,8 +51,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE client upload download member-node coordinating-node',
   )

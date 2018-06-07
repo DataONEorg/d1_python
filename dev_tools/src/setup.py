@@ -50,9 +50,9 @@ def main():
       # Python doesn't have a real package manager.
       'idna == 2.6',
       #
-      'baron == 0.6.6',
-      'pip == 9.0.1',
-      'redbaron == 0.6.3',
+      'baron >= 0.6.6',
+      'pip >= 9.0.1',
+      'redbaron >= 0.6.3',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -62,8 +62,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE python'
   )

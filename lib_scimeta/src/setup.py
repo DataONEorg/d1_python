@@ -36,7 +36,7 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'lxml == 4.1.1',
+      'lxml >= 4.1.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -46,8 +46,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords=(
       'DataONE client server member-node coordinating-node science metadata '

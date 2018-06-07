@@ -39,14 +39,14 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'contextlib2 == 0.5.5',
-      'cryptography == 2.1.4',
-      'iso8601 == 0.1.12',
-      'PyJWT == 1.5.3',
-      'pyasn1 == 0.4.2',
-      'pyxb == 1.2.6',
-      'rdflib == 4.2.2',
-      'zipstream == 1.1.4',
+      'contextlib2 >= 0.5.5',
+      'cryptography >= 2.1.4',
+      'iso8601 >= 0.1.12',
+      'PyJWT >= 1.5.3',
+      'pyasn1 >= 0.4.2',
+      'pyxb >= 1.2.6',
+      'rdflib >= 4.2.2',
+      'zipstream >= 1.1.4',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -56,8 +56,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords=(
       'DataONE client server member-node coordinating-node xml url oai-ore rdf '

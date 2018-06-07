@@ -43,11 +43,11 @@ def main():
       'dataone.common == 2.4.2',
       'dataone.libclient == 2.4.2',
       #
-      'fusepy == 2.0.4',
-      'pyxb == 1.2.6',
-      'pyzotero == 1.3.1',
-      'rdflib == 4.2.2',
-      'requests == 2.18.4',
+      'fusepy >= 2.0.4',
+      'pyxb >= 1.2.6',
+      'pyzotero >= 1.3.1',
+      'rdflib >= 4.2.2',
+      'requests >= 2.18.4',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -57,8 +57,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE client upload download member-node coordinating-node',
     # Options for py2exe and py2app.

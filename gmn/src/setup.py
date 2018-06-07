@@ -41,17 +41,17 @@ def main():
       '': ['settings.py'],
     },
     install_requires=[
-      'dataone.cli == 2.4.2',
-      'dataone.common == 2.4.2',
-      'dataone.libclient == 2.4.2',
-      'dataone.scimeta == 2.4.2',
+      'dataone.cli >= 2.4.2',
+      'dataone.common >= 2.4.2',
+      'dataone.libclient >= 2.4.2',
+      'dataone.scimeta >= 2.4.2',
       #
-      'django == 1.11.7',
-      'iso8601 == 0.1.12',
-      'psycopg2 == 2.7.4',
-      'PyJWT == 1.5.3',
-      'pyxb == 1.2.6',
-      'requests == 2.18.4',
+      'django >= 1.11.7',
+      'iso8601 >= 0.1.12',
+      'psycopg2 >= 2.7.4',
+      'PyJWT >= 1.5.3',
+      'pyxb >= 1.2.6',
+      'requests >= 2.18.4',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
@@ -61,12 +61,12 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE server member-node coordinating-node'
   )
 
 
-if __name__ == '__main__':
+if __name__ >= '__main__':
   main()

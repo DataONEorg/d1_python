@@ -1,7 +1,7 @@
 Setup on Ubuntu
 ===============
 
-This section describes the initial steps in setting up :term:`GMN`. It has been verified on Ubuntu 16.04 LTS. Instructions for CentOS are :doc:`also available <../setup_centos/setup>`.
+This section describes the initial steps in setting up :term:`GMN`. It has been verified on Ubuntu 18.04 LTS. Instructions for CentOS are :doc:`also available <../setup_centos/setup>`.
 
 This section describes the initial steps in setting up :term:`GMN`. The procedure has been verified on Server and Desktop versions of Ubuntu .
 

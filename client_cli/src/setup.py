@@ -39,7 +39,7 @@ def main():
       'dataone.common == 2.4.2',
       'dataone.libclient == 2.4.2',
       #
-      'requests == 2.18.4',
+      'requests >= 2.18.4',
     ],
     entry_points={'console_scripts': [
       'dataone = d1_cli.dataone:main',
@@ -52,8 +52,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE cli command line member-node coordinating-node',
   )
