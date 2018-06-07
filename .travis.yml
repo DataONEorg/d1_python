@@ -27,7 +27,8 @@ script:
   - pip check || true
   - pytest --help
   #- pytest --fixture
-  - pytest -n auto --cov=. --cov-report=term --cov-report=xml
+  - pytest --cov=. --cov-report=term --cov-report=xml
+  # -n auto
 after_success:
   # Submit results to Coveralls.io.
   ## Coveralls has a requirement for requests >= 1.0.0, so we install it after
