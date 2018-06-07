@@ -33,6 +33,7 @@ import traceback
 import posix_ipc
 import pytest
 import requests.structures
+import requests_toolbelt.utils.dump
 
 import d1_common
 import d1_common.types
@@ -40,6 +41,7 @@ import d1_common.types.dataoneTypes
 import d1_common.util
 import d1_common.xml
 
+import d1_client.d1client
 import d1_client.util
 
 import django
@@ -239,6 +241,17 @@ def obj_to_pretty_str(o, no_clobber=False):
       return '\n'.join(
         sorted(o.serialize(doc_format='nt').decode('utf-8').splitlines())
       )
+    # Dict returned from Requests
+    if isinstance(o, requests.structures.CaseInsensitiveDict):
+      with ignore_exceptions():
+        return d1_common.util.serialize_to_normalized_pretty_json(dict(o))
+    # Requests Request / Response
+    if isinstance(o, (requests.Request, requests.Response)):
+      if o.reason is None:
+        o.reason = '<unknown>'
+      return d1_client.util.normalize_request_response_dump(
+        requests_toolbelt.utils.dump.dump_response(o)
+      )
     # Valid UTF-8 bytes
     with ignore_exceptions():
       return 'VALID-UTF-8-BYTES:' + o.decode('utf-8')
@@ -267,10 +280,6 @@ def obj_to_pretty_str(o, no_clobber=False):
     # PyXB object
     with ignore_exceptions():
       return d1_common.xml.serialize_to_str(o, pretty=True)
-    # Dict returned from Requests
-    if isinstance(o, requests.structures.CaseInsensitiveDict):
-      with ignore_exceptions():
-        return d1_common.util.serialize_to_normalized_pretty_json(dict(o))
     # Any native object structure that can be serialized to JSON
     # This covers only basic types that can be sorted. E.g., of not covered:
     # datetime, mixed str and int keys.
@@ -350,7 +359,7 @@ def _get_or_create_path(filename):
   path = get_path(filename)
   logging.debug('Sample path: {}'.format(path))
   if not os.path.isfile(path):
-    logging.info('Write new blank file: {}'.format(path))
+    logging.info('Write new sample file: {}'.format(path))
     with open(path, 'w') as f:
       f.write('<new sample file>\n')
   return path
@@ -363,8 +372,8 @@ def _format_file_name(client, filename_postfix_str, extension_str):
   ]
   if client:
     section_list.extend([
-      d1_client.util.get_client_type(client),
-      d1_client.util.get_version_tag_by_d1_client(client),
+      d1_client.d1client.get_client_type(client),
+      d1_client.d1client.get_version_tag_by_d1_client(client),
     ])
   return '{}.{}'.format('_'.join(section_list), extension_str)
 
