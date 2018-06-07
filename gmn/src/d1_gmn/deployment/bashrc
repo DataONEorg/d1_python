@@ -1,0 +1,97 @@
+# Suggested .bashrc for the GMN user
+
+echo
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
+# Env
+
+export D1_ROOT_DIR="/var/local/dataone"
+export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn_venv"
+export GMN_SITE_DIR="${GMN_VENV_DIR}/lib/python2.7/site-packages"
+export GMN_PKG_DIR="${GMN_SITE_DIR}/d1_gmn"
+#export PYTHONPATH=/var/local/dataone/gmn_venv/lib/python2.7/site-packages
+export DJANGO_SETTINGS_MODULE=d1_gmn.settings
+
+# DataONE paths
+
+function padd () {
+  if [ -e "$1" ]; then
+    echo "Adding path: $1"
+    PATH="$1:$PATH"
+  fi
+}
+
+padd "$HOME/bin"
+
+# Use the GMN Python virtual environment by default for the gmn user, so there
+# is no need to "activate".
+padd "${GMN_VENV_DIR}/bin"
+
+# Use manage.py without having to CD to the GMN package dir
+padd "${GMN_PKG_DIR}"
+
+# Aliases
+
+function alias_add () {
+  echo "Adding alias: $1='$2'"
+  alias $1="$2"
+}
+
+alias_add "cdd1" "cd ${D1_ROOT_DIR}"
+alias_add "cdgmn" "cd ${GMN_PKG_DIR}"
+
+alias ll='ls -l --group-directories-first --color'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias rs='rsync --recursive --verbose --progress --links --times'
+alias clean-pyc='find . -name "*.pyc" -delete'
+
+echo
+echo "Using Python virtual env: `which python`"
+
+# Colored GCC warnings and errors.
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# Bash settings
+
+# Group file sizes by thousand in coreutils (ls, du, etc)
+export BLOCK_SIZE="'1"
+
+# Prompt
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;33m\]\t\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+# History
+# Don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth:erasedups
+# Append to the history file, don't overwrite it.
+shopt -s histappend
+# History length
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# Check the window size after each command and, if necessary, update the values
+# of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# Make less more friendly for non-text input files.
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+echo
