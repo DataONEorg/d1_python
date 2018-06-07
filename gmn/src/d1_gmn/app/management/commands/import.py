@@ -39,6 +39,7 @@ import d1_gmn.app.did
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
@@ -47,7 +48,6 @@ import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.create
-import d1_gmn.app.views.diagnostics
 import d1_gmn.app.views.util
 
 import d1_common.const
@@ -60,11 +60,11 @@ import d1_common.util
 import d1_common.xml
 
 import d1_client.cnclient_2_0
+import d1_client.d1client
 import d1_client.iter.logrecord_multi
 import d1_client.iter.objectlist_multi
 import d1_client.iter.sysmeta_multi
 import d1_client.mnclient
-import d1_client.util
 
 import django.conf
 import django.core.management.base
@@ -248,7 +248,10 @@ class Command(django.core.management.base.BaseCommand):
         )
         continue
 
-      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+      d1_gmn.app.sysmeta.create_or_update(
+        sysmeta_pyxb,
+        d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
+      )
 
   def _import_logs(self):
     log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
@@ -295,7 +298,7 @@ class Command(django.core.management.base.BaseCommand):
 
   def _create_log_entry(self, log_record_pyxb):
     event_log_model = d1_gmn.app.event_log.create_log_entry(
-      d1_gmn.app.util.
+      d1_gmn.app.model_util.
       get_sci_model(d1_common.xml.get_req_val(log_record_pyxb.identifier)),
       log_record_pyxb.event,
       log_record_pyxb.ipAddress,
@@ -314,16 +317,19 @@ class Command(django.core.management.base.BaseCommand):
     return client.getgetSystemMetadata(pid)
 
   def _download_source_sciobj_bytes_to_store(self, pid):
-    sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-    if os.path.isfile(sciobj_path):
+    abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(
+      pid
+    )
+    if os.path.isfile(abs_sciobj_path):
       self._events.log_and_count(
         'Skipped download of existing sciobj bytes',
-        'pid="{}" path="{}"'.format(pid, sciobj_path)
+        'pid="{}" path="{}"'.format(pid, abs_sciobj_path)
       )
-      return
-    d1_common.util.create_missing_directories_for_file(sciobj_path)
-    client = self._create_source_client()
-    client.get_and_save(pid, sciobj_path)
+    else:
+      d1_common.util.create_missing_directories_for_file(abs_sciobj_path)
+      client = self._create_source_client()
+      client.get_and_save(pid, abs_sciobj_path)
+    return
 
   def _get_client_dict(self):
     client_dict = {
@@ -349,7 +355,7 @@ class Command(django.core.management.base.BaseCommand):
     }
 
   def _create_source_client(self):
-    return d1_client.util.get_client_class_by_version_tag(self._api_major)(
+    return d1_client.d1client.get_client_class_by_version_tag(self._api_major)(
       self._opt['baseurl'], **self._get_client_dict()
     )
 
@@ -360,7 +366,7 @@ class Command(django.core.management.base.BaseCommand):
       )
 
   def _find_api_major(self):
-    return d1_client.util.get_api_major_by_base_url(self._opt['baseurl'])
+    return d1_client.d1client.get_api_major_by_base_url(self._opt['baseurl'])
 
   # def _migrate_filesystem(self):
   #   for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):

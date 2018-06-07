@@ -37,7 +37,6 @@ import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.diagnostics
 
 import d1_common.iter.dir
 import d1_common.iter.file
@@ -76,13 +75,13 @@ class Command(django.core.management.base.BaseCommand):
 
   # url(
   #   r'^diag/clear_replication_queue$',
-  #   d1_gmn.app.views.diagnostics.clear_replication_queue,
+  #   clear_replication_queue,
   #   name='clear_replication_queue',
   # ),
 
   # url(
   #   r'^diag/delete-event-log$',
-  #   d1_gmn.app.views.diagnostics.delete_event_log,
+  #   delete_event_log,
   #   name='delete_event_log',
   # ),
 
@@ -209,18 +208,17 @@ class UpdateSystemMetadata(object):
   """Update the System Metadata for objects on this GMN instance by copying
   specified elements from external SystemMetadata XML documents.
 
-
-  The source SystemMetadata is either an XML file or root directory referenced by
-  --root or an object on a remote node, referenced by --baseurl.
+  The source SystemMetadata is either an XML file or root directory referenced
+  by --root or an object on a remote node, referenced by --baseurl.
 
   When --root is a root directory or when using --baseurl, a bulk operation is
-  performed where all discovered objects are matched up with local objects by PID.
-  The specified elements are then copied from the discovered object to the
+  performed where all discovered objects are matched up with local objects by
+  PID. The specified elements are then copied from the discovered object to the
   matching local object.
 
   Any discovered objects that do not have a local matching PID are ignored. A
-  regular expression can also be specified to ignore discovered objects even when
-  there are matching local objects.
+  regular expression can also be specified to ignore discovered objects even
+  when there are matching local objects.
 
   Only elements that are children of root are supported. See
   SYSMETA_ROOT_CHILD_LIST.

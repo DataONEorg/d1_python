@@ -23,6 +23,7 @@
 import logging
 
 import d1_gmn.app
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
@@ -123,7 +124,7 @@ def is_sid(did):
 
 def is_obsoleted(did):
   """Return True if {did} is the PID of an object that has been obsoleted"""
-  return d1_gmn.app.util.get_sci_model(did).obsoleted_by is not None
+  return d1_gmn.app.model_util.get_sci_model(did).obsoleted_by is not None
 
 
 def is_resource_map_db(pid):
@@ -175,7 +176,8 @@ def is_in_revision_chain(sciobj_model):
 
 def is_archived(pid):
   return (
-    is_existing_object(pid) and d1_gmn.app.util.get_sci_model(pid).is_archived
+    is_existing_object(pid) and
+    d1_gmn.app.model_util.get_sci_model(pid).is_archived
   )
 
 

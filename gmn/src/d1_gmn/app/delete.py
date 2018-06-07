@@ -23,6 +23,7 @@
 import urllib.parse
 
 import d1_gmn.app.did
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
@@ -40,9 +41,9 @@ def delete_sciobj(pid):
   return pid
 
 
-def delete_all():
-  d1_gmn.app.sciobj_store.delete_all_sciobj()
-  delete_all_from_db()
+# def delete_all():
+#   d1_gmn.app.sciobj_store.delete_all_sciobj()
+#   delete_all_from_db()
 
 
 def delete_all_from_db():
@@ -55,11 +56,11 @@ def delete_all_from_db():
 
 
 def delete_sciobj_from_database(pid):
-  sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+  sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
   if d1_gmn.app.did.is_in_revision_chain(sciobj_model):
     d1_gmn.app.revision.cut_from_chain(sciobj_model)
   d1_gmn.app.revision.delete_chain(pid)
   # The models.CASCADE property is set on all ForeignKey fields, so most object
   # related info is deleted when deleting the IdNamespace "root".
   d1_gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
-  d1_gmn.app.util.delete_unused_subjects()
+  d1_gmn.app.model_util.delete_unused_subjects()

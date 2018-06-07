@@ -17,12 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Process queue of replications requested by the Coordinating Nodes
+"""Process queue of replication requests received from Coordinating Nodes
 
 Coordinating Nodes call MNReplication.replicate() to request the creation of
 replicas. GMN queues the requests and processes them asynchronously. This
-command iterates over the requests and attempts to create the replicas.
-  help = 'Process the queue of replication requests'
+command iterates over the requests and attempts to create the replicas. It
+is intended to be run as a cron job but cut can also be run manually.
 """
 
 import argparse
@@ -232,8 +232,8 @@ class ReplicationQueueProcessor(object):
     self._assert_is_pid_of_local_unprocessed_replica(pid)
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
-    url = 'file:///{}'.format(d1_common.url.encodePathElement(pid))
-    sciobj_model = d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
+    sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
+    sciobj_model = d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
     self._store_science_object_bytes(pid, sciobj_byteseam)
     d1_gmn.app.event_log.create_log_entry(
       sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
@@ -250,7 +250,7 @@ class ReplicationQueueProcessor(object):
     d1_gmn.app.models.replica_revision_chain_reference(pid)
 
   def _store_science_object_bytes(self, pid, sciobj_byteseam):
-    sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
+    sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
     d1_common.util.create_missing_directories_for_file(sciobj_path)
     with open(sciobj_path, 'wb') as f:
       for chunk in sciobj_byteseam.iter_content(
