@@ -21,7 +21,7 @@ script:
 #  - python3 -m venv venv
 #  - . ./venv/bin/activate
   - ls -l
-  - pip install -r ./requirments.txt
+  - pip install -r ./requirements.txt
   - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
