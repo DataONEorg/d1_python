@@ -21,6 +21,7 @@ Set up cron jobs
     SERVICE_ROOT = /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn
     PYTHON_BIN = /var/local/dataone/gmn_venv/bin/python
 
+    # Process the Science Object replication queue
     * * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_replication_queue >> $SERVICE_ROOT/gmn_replication.log 1>&1
     # Process the System Metadata refresh queue
     * * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_refresh_queue >> $SERVICE_ROOT/gmn_sysmeta.log 2>&1

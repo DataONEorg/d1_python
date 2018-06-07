@@ -176,7 +176,7 @@ def open_exception_location_in_pycharm(src_path, src_line_num):
     logging.warning(
       'PyCharm debugging is enabled but opening the location of the exception '
       'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
-        e.message, src_path, src_line_num
+        str(e), src_path, src_line_num
       )
     )
   else:
