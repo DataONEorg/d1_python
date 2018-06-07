@@ -17,6 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""pytest setup and customization
+"""
 
 import datetime
 import logging
@@ -58,6 +60,8 @@ D1_SKIP_COUNT = 'skip_passed/count'
 TEMPLATE_DB_KEY = 'template'
 TEST_DB_KEY = 'default'
 
+GMN_DB_FIXTURE_LABEL = 'db_fixture'
+
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
 # flake8: noqa: F811
@@ -73,6 +77,8 @@ sys.stdout = sys.stderr
 def pytest_addoption(parser):
   """Add command line switches for pytest customization. See README.md for
   info.
+
+  Note: None of these options can be used with xdist (-n --dist -tx).
   """
   # Sample files
 
@@ -105,11 +111,7 @@ def pytest_addoption(parser):
 
   parser.addoption(
     '--fixture-refresh', action='store_true',
-    help='Force reloading the template fixture'
-  )
-  parser.addoption(
-    '--fixture-regen', action='store_true',
-    help='Force regenerating the template fixture JSON files'
+    help='Drop and create GMN template database from JSON fixture file'
   )
 
   # Skip passed tests
@@ -139,43 +141,45 @@ def pytest_configure(config):
   sys._running_in_pytest = True
 
 
-#   logging.debug('pytest_configure()')
-#   tmp_store_path = os.path.join(
-#     tempfile.gettempdir(), 'gmn_test_obj_store_{}'.format(
-#       d1_test.instance_generator.random_data.
-#       random_lower_ascii(min_len=12, max_len=12)
-#     )
-#   )
-#   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
-#   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-#   d1_gmn.app.sciobj_store.create_clean_tmp_store()
-#   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
-
-
 def pytest_unconfigure(config):
   del sys._running_in_pytest
 
 
 def pytest_sessionstart(session):
   """Called by pytest before calling session.main()
-  When running in parallel with xdist, this is called once for each worker.
-  By default, the number of workers is the same as the number of CPU cores.
+  - When running in parallel with xdist, this is called once for each worker. By
+  default, the number of workers is the same as the number of CPU cores.
+  - NOTE: These cannot be used when running in parallel with xdist.
   """
+  exit_if_switch_used_with_xdist([
+    '--sample-ask',
+    '--sample-update',
+    '--sample-review',
+    '--sample-tidy',
+    '--pycharm',
+    '--fixture-refresh',
+    '--skip',
+    '--skip-clear',
+    '--skip-print',
+  ])
+
   if pytest.config.getoption('--sample-tidy'):
+    logging.info('Starting sample tidy')
     d1_test.sample.start_tidy()
-    pytest.exit('Sample tidy started')
 
   if pytest.config.getoption('--fixture-refresh'):
+    logging.info(
+      'Dropping and creating GMN template database from JSON fixture file'
+    )
     db_drop(TEMPLATE_DB_KEY)
-    pytest.exit('Template refresh started')
 
   if pytest.config.getoption('--skip-clear'):
+    logging.info('Clearing list of passed tests')
     _clear_skip_list()
-    pytest.exit('Cleared list of passed tests')
 
   if pytest.config.getoption('--skip-print'):
+    logging.info('Printing list of passed tests')
     _print_skip_list()
-    pytest.exit('Printed list of passed tests')
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -306,8 +310,6 @@ def enable_db_access(db):
   pass
 
 
-# mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
-
 # Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
 
 
@@ -382,22 +384,13 @@ def mn_client_v1_v2(request):
 
 # Settings
 
-# @pytest.fixture(scope='session', autouse=True)
-# def set_unique_sciobj_store_path(request):
-#   tmp_store_path = os.path.join(
-#     tempfile.gettempdir(),
-#     'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
-#   )
-#   logging.debug('Setting OBJECT_STORE_PATH = {}'.format(tmp_store_path))
-#   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-#   d1_gmn.app.sciobj_store.create_clean_tmp_store()
-
 
 @pytest.yield_fixture(scope='session', autouse=True)
 def django_sciobj_store_setup(request):
   tmp_store_path = os.path.join(
     tempfile.gettempdir(),
-    'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
+    # 'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
+    'gmn_test_obj_store_{}'.format(get_random_ascii_string())
   )
   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
@@ -422,20 +415,14 @@ def django_sciobj_store_setup(request):
 @pytest.yield_fixture(scope='session')
 def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
-  When running in parallel with xdist, this is called once for each worker.
+  When running in parallel with xdist, this is called once for each worker,
+  causing a separate database to be set up for each worker.
   """
   logging.info('Setting up DB fixture')
 
-  db_set_unique_db_name(request)
+  db_set_unique_db_name()
 
   with django_db_blocker.unblock():
-
-    # if pytest.config.getoption('--fixture-regen'):
-    #   db_drop(test_db_name)
-    #   db_create_blank(test_db_key, test_db_name)
-    #   django.db.connections[test_db_key].commit()
-    #   pytest.exit('Database dropped and reinitialized. Now run mk_db_fixture')
-
     # Regular multiprocessing.Lock() context manager did not work here. Also
     # tried creating the lock at module scope, and also directly calling
     # acquire() and release(). It's probably related to how the worker processes
@@ -453,7 +440,7 @@ def django_db_setup(request, django_db_blocker):
         db_create_blank(TEMPLATE_DB_KEY)
         db_migrate(TEMPLATE_DB_KEY)
         db_populate_by_json(TEMPLATE_DB_KEY)
-        db_migrate(TEMPLATE_DB_KEY)
+        # db_migrate(TEMPLATE_DB_KEY)
 
       logging.warning(
         'LOCK END {} {}'.
@@ -464,9 +451,9 @@ def django_db_setup(request, django_db_blocker):
     db_create_from_template()
     # db_migrate(TEST_DB_KEY)
 
-    # # Haven't found out how to prevent transactions from being started, so
-    # # closing the implicit transaction here so that template fixture remains
-    # # available.
+    # Haven't found out how to prevent transactions from being started, so
+    # closing the implicit transaction here so that template fixture remains
+    # available.
     # django.db.connections[test_db_key].commit()
 
     yield
@@ -479,11 +466,11 @@ def db_get_name_by_key(db_key):
   return django.conf.settings.DATABASES[db_key]['NAME']
 
 
-def db_set_unique_db_name(request):
+def db_set_unique_db_name():
   logging.debug('db_set_unique_db_name()')
   db_name = '_'.join([
     db_get_name_by_key(TEST_DB_KEY),
-    get_xdist_unique_suffix(request),
+    get_random_ascii_string(),
   ])
   django.conf.settings.DATABASES[TEST_DB_KEY]['NAME'] = db_name
 
@@ -505,10 +492,10 @@ def db_create_from_template():
 def db_populate_by_json(db_key):
   """Load DB fixture from compressed JSON file to template database"""
   logging.debug('db_populate_by_json() {}'.format(db_key))
-  fixture_file_path = d1_test.sample.get_path('db_fixture.json.bz2')
-  # loaddata used to have a 'commit' arg, but it appears to have been removed.
   django.core.management.call_command(
-    'loaddata', fixture_file_path, database=db_key, commit=True
+    'loaddata',
+    GMN_DB_FIXTURE_LABEL,
+    database=db_key #, commit=True
   )
   db_commit_and_close(db_key)
 
@@ -575,8 +562,8 @@ def run_sql(db, sql):
       connection.close()
 
 
-def get_xdist_unique_suffix(request):
-  return '_'.join([get_random_ascii_string(), get_xdist_suffix(request)])
+# def get_xdist_unique_suffix(request):
+#   return '_'.join([get_random_ascii_string(), get_xdist_suffix(request)])
 
 
 def get_random_ascii_string():
@@ -585,9 +572,19 @@ def get_random_ascii_string():
   )
 
 
-def get_xdist_suffix(request):
-  """Return a different string for each worker when running in parallel under
-  pytest-xdist, else return an empty string. Returned strings are on the form,
-  "gwN"."""
-  s = getattr(request.config, 'slaveinput', {}).get('slaveid')
-  return s if s is not None else ''
+# def get_xdist_suffix(request):
+#   """Return a different string for each worker when running in parallel under
+#   pytest-xdist, else return an empty string. Returned strings are on the form,
+#   "gwN"."""
+#   s = getattr(request.config, 'slaveinput', {}).get('slaveid')
+#   return s if s is not None else ''
+
+
+def exit_if_switch_used_with_xdist(switch_list):
+  if hasattr(pytest.config, 'slaveinput'):
+    for switch_str in switch_list:
+      if pytest.config.getoption(switch_str):
+        pytest.exit(
+          'Cannot use {} when running in parallel under pytest-xdist '
+          '(e.g., -n --dist --tx)'.format(switch_str)
+        )
