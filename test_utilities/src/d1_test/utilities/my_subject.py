@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
   fname = args[1]
   subject, status = getSubjectFromCertFile(fname)
-  print((subject['subject']))
+  print(subject['subject'])
   if options.info:
     if subject['subjectInfo'] is not None:
       if options.format:
@@ -140,7 +140,7 @@ if __name__ == "__main__":
           )
         ))
       else:
-        print((str(subject['subjectInfo'])))
+        print(str(subject['subjectInfo']))
   if status == 0:
     sys.exit(2)
   sys.exit(0)

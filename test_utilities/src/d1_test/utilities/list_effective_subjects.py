@@ -111,14 +111,14 @@ class get_subjects_from_certificate(object):
     try:
       return d1_certificate.certificate_extractor.extract(self.cert)
     except Exception as e:
-      print(('Error processing certificate: {}'.format(str(e))))
+      print('Error processing certificate: {}'.format(str(e)))
       exit()
 
   def _deserialize_subject_info(self, subject_info_xml):
     try:
       return dataoneTypes_v1.CreateFromDocument(subject_info_xml)
     except Exception as e:
-      print(('Error deserializing SubjectInfo: {}'.format(str(e))))
+      print('Error deserializing SubjectInfo: {}'.format(str(e)))
       exit()
 
 
@@ -136,15 +136,15 @@ def read_certificate_from_file(cert_pem_path):
     with open(cert_pem_path) as f:
       return f.read()
   except EnvironmentError as e:
-    print(('Error reading certificate file: {}'.format(str(e))))
+    print('Error reading certificate file: {}'.format(str(e)))
 
 
 def print_effective_subjects(primary_subject, subjects):
   print('Effective subjects for certificate:')
-  print(('{} (primary)'.format(primary_subject)))
+  print('{} (primary)'.format(primary_subject))
   for subject in sorted(list(subjects)):
     if subject != primary_subject:
-      print(('{}'.format(subject)))
+      print('{}'.format(subject))
 
 
 def main():

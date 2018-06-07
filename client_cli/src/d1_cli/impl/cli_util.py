@@ -69,7 +69,7 @@ def output(file_like_object, path, verbose=False):
       if verbose:
         print_info(line.rstrip())
       else:
-        print((line.rstrip()))
+        print(line.rstrip())
   else:
     try:
       object_file = open(os.path.expanduser(path), 'w', encoding='utf-8')

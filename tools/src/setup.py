@@ -52,8 +52,8 @@ def main():
       'Intended Audience :: Developers',
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 2',
-      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 3.6',
     ],
     keywords='DataONE python'
   )

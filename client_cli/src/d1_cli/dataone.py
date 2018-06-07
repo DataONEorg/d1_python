@@ -52,7 +52,7 @@ def main():
   if not check_dependencies.are_modules_importable():
     raise Exception('Dependency check failed')
 
-  print(('DataONE Command Line Interface ({})'.format(cli.__version__)))
+  print('DataONE Command Line Interface ({})'.format(cli.__version__))
 
   parser = optparse.OptionParser(
     usage='usage: %prog [command] ...', option_list=option_list

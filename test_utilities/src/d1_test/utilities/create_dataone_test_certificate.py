@@ -60,7 +60,7 @@ def read_subject_info(subject_info_path):
     with open(subject_info_path) as f:
       return f.read()
   except EnvironmentError as e:
-    print(('Error reading subject info from file: {}'.format(str(e))))
+    print('Error reading subject info from file: {}'.format(str(e)))
     exit()
 
 
