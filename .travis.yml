@@ -10,15 +10,16 @@ before_install:
   - sudo apt-get -q update
   - sudo apt-get -q install -y build-essential python-dev libssl-dev
     libxml2-dev libxslt1-dev libffi-dev postgresql-server-dev-9.3 openssl
-    python-pip libsmbclient-dev librsync-dev python3.5-dev python3.5-venv
+    python-pip libsmbclient-dev librsync-dev python3-dev
+    #python3.5-venv
 install:
   - pip install --upgrade pip setuptools
   - pip uninstall -y pytest py
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
   # the scripts.
-  - python3 -m venv venv
-  - . ./venv/bin/activate
+#  - python3 -m venv venv
+#  - . ./venv/bin/activate
   - pip install -r ./requirments.txt
   - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
   - ./dev_tools/src/d1_dev/syspath.py
