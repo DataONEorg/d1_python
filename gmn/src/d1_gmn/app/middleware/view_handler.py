@@ -25,11 +25,14 @@ import logging
 
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.middleware.session_jwt
+import d1_gmn.app.views
+import d1_gmn.app.views.headers
 
 import d1_common
 import d1_common.const
 
 import django.conf
+import django.http
 
 
 class ViewHandler:
@@ -46,6 +49,17 @@ class ViewHandler:
         view_func.__name__, request.method, view_args, view_kwargs, request.path_info
       )
     )
+
+    # Capture the list of allowed HTTP methods that is set in urls.py.
+    request.allowed_method_list = view_kwargs.pop('allowed_method_list')
+
+    # Skip view processing and return an empty response with
+    if request.method == 'OPTIONS':
+      return self.create_cors_options_response(request)
+
+    if request.method not in request.allowed_method_list:
+      return django.http.HttpResponseNotAllowed(request.allowed_method_list)
+
     # logging.debug(request.headers)
 
     # For simulating an HTTPS connection with client authentication when
@@ -124,3 +138,10 @@ class ViewHandler:
       pem.write(pem_line + '\n')
     pem.write('-----END CERTIFICATE-----\n')
     return pem.getvalue()
+
+  def create_cors_options_response(self, request):
+    response = django.http.HttpResponse(b'Header response to OPTIONS request')
+    d1_gmn.app.views.headers.add_cors_headers_to_response(
+      response, request.allowed_method_list
+    )
+    return response

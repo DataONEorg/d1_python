@@ -23,63 +23,41 @@
 import base64
 import inspect
 import logging
+import pprint
 import traceback
 import urllib.parse
 
-import d1_gmn.app
+import d1_common
+import d1_common.const
 
 import django.conf
-
-# class FixedChunkSizeIterator(object):
-#   """Create a file iterator that iterates through file-like object using fixed
-#   size chunks.
-#   """
-#
-#   def __init__(self, f, chunk_size=1024**2, length=None):
-#     self.f = f
-#     self.chunk_size = chunk_size
-#     self.length = length
-#
-#   def __len__(self):
-#     if self.length is None:
-#       return len(self.f)
-#     return self.length
-#
-#   def next(self):
-#     data = self.f.read(self.chunk_size)
-#     if data:
-#       return data
-#     else:
-#       self.f.close()
-#       raise StopIteration
-#
-#   def __iter__(self):
-#     return self
+import django.http
 
 
 # This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember
 def coerce_put_post(request):
   """
-  Django doesn't particularly understand REST.
-  In case we send data over PUT, Django won't
-  actually look at the data and load it. We need
-  to twist its arm here.
+  Django doesn't particularly understand REST. In case we send data over PUT,
+  Django won't actually look at the data and load it. We need to twist its arm
+  here.
 
-  The try/except abomination here is due to a bug
-  in mod_python. This should fix it.
+  The try/except abomination here is due to a bug in mod_python. This should fix
+  it.
   """
   if request.method == "PUT":
-    # Bug fix: if _load_post_and_files has already been called, for
-    # example by middleware accessing request.POST, the below code to
-    # pretend the request is a POST instead of a PUT will be too late
-    # to make a difference. Also calling _load_post_and_files will result
-    # in the following exception:
-    #   AttributeError: You cannot set the upload handlers after the upload has been processed.
-    # The fix is to check for the presence of the _post field which is set
-    # the first time _load_post_and_files is called (both by wsgi.py and
-    # modpython.py). If it's set, the request has to be 'reset' to redo
-    # the query value parsing in POST mode.
+    # Bug fix: if _load_post_and_files has already been called, for example by
+    # middleware accessing request.POST, the below code to pretend the request
+    # is a POST instead of a PUT will be too late to make a difference. Also
+    # calling _load_post_and_files will result in the following exception:
+    #
+    #   AttributeError: You cannot set the upload handlers after the upload has
+    #   been processed.
+    #
+    # The fix is to check for the presence of the _post field which is set the
+    # first time _load_post_and_files is called (both by wsgi.py and
+    # modpython.py). If it's set, the request has to be 'reset' to redo the
+    # query value parsing in POST mode.
     if hasattr(request, '_post'):
       del request._post
       del request._files
@@ -126,30 +104,14 @@ def is_proxy_url(url):
   return url_split.scheme in ('http', 'https')
 
 
-def get_sci_model(pid):
-  return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-
-
-def get_pids_for_all_locally_stored_objects():
-  return d1_gmn.app.models.ScienceObject.objects.all().values_list(
-    'pid__did', flat=True
+def create_http_echo_response(request):
+  logging.warning(
+    'Echoing request (triggered by vendor extension or '
+    'django.conf.settings.DEBUG_ECHO_REQUEST=True)'
   )
-
-
-def delete_unused_subjects():
-  """Delete any unused subjects from the database. This is not strictly required
-  as any unused subjects will automatically be reused if needed in the future.
-  """
-  # This causes Django to create a single join (check with query.query)
-  query = d1_gmn.app.models.Subject.objects.all()
-  query = query.filter(scienceobject_submitter__isnull=True)
-  query = query.filter(scienceobject_rights_holder__isnull=True)
-  query = query.filter(eventlog__isnull=True)
-  query = query.filter(permission__isnull=True)
-  query = query.filter(whitelistforcreateupdatedelete__isnull=True)
-
-  logging.debug('Deleting {} unused subjects:'.format(query.count()))
-  for s in query.all():
-    logging.debug('  {}'.format(s.subject))
-
-  query.delete()
+  return django.http.HttpResponse(
+    pprint.pformat({
+      'meta': request.META,
+      'body': request.body,
+    }, indent=2), d1_common.const.CONTENT_TYPE_TEXT
+  )

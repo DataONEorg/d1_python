@@ -20,43 +20,40 @@
 """URL to view mapping
 """
 
-import d1_gmn.app.views.diag
-import d1_gmn.app.views.ext
 import d1_gmn.app.views.external
 import d1_gmn.app.views.get_package
+import d1_gmn.app.views.gmn
 import d1_gmn.app.views.internal
 
 import django.conf.urls as urls
 
 urlpatterns = [
-  # Django's URL dispatcher does not take HTTP verb into account, so in the
+  # Django's URL dispatcher does not take HTTP method into account, so in the
   # cases where the DataONE REST API specifies different methods as different
-  # verbs against the same URL, the methods are dispatched to the same view
-  # function, which checks the verb and dispatches to the appropriate handler.
+  # methods against the same URL, the methods are dispatched to the same view
+  # function, which checks the method and dispatches to the appropriate handler.
 
   # Tier 1: Core API (MNCore)
   # MNCore.ping() - GET /monitor/ping
   urls.url(
     r'^v[12]/monitor/ping/?$',
     d1_gmn.app.views.external.get_monitor_ping,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_monitor_ping',
   ),
   # MNCore.getLogRecords() - GET /log
   urls.url(
     r'^v[12]/log/?$',
     d1_gmn.app.views.external.get_log,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_log',
   ),
   # MNCore.getCapabilities() - GET /node
   # Also available via Apache redirect from /
   urls.url(
-    r'^v[12]/?$',
+    r'^v[12]/(?:node/?)?$',
     d1_gmn.app.views.external.get_node,
-    name='get_node',
-  ),
-  urls.url(
-    r'^v[12]/node/?$',
-    d1_gmn.app.views.external.get_node,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_node',
   ),
 
@@ -65,18 +62,21 @@ urlpatterns = [
   urls.url(
     r'^v[12]/object/(.+)$',
     d1_gmn.app.views.external.dispatch_object,
+    kwargs={'allowed_method_list': ['GET', 'HEAD', 'PUT', 'DELETE']},
     name='dispatch_object',
   ),
   # MNRead.getSystemMetadata() - GET /meta/{did}
   urls.url(
     r'^v[12]/meta/(.+)$',
     d1_gmn.app.views.external.get_meta,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_meta',
   ),
   # MNStorage.updateSystemMetadata() - PUT /meta
   urls.url(
     r'^v2/meta$',
     d1_gmn.app.views.external.put_meta,
+    kwargs={'allowed_method_list': ['PUT']},
     name='put_meta',
   ),
   # MNRead.describe() - HEAD /object/{did}
@@ -85,24 +85,28 @@ urlpatterns = [
   urls.url(
     r'^v[12]/checksum/(.+)$',
     d1_gmn.app.views.external.get_checksum,
+    kwargs={'allowed_method_list': ['HEAD', 'GET']},
     name='get_checksum',
   ),
   # MNRead.listObjects() - GET /object
   urls.url(
     r'^v[12]/object/?$',
     d1_gmn.app.views.external.dispatch_object_list,
+    kwargs={'allowed_method_list': ['GET', 'POST']},
     name='dispatch_object_list',
   ),
   # MNRead.synchronizationFailed() - POST /error
   urls.url(
     r'^v[12]/error/?$',
     d1_gmn.app.views.external.post_error,
+    kwargs={'allowed_method_list': ['POST']},
     name='post_error',
   ),
   # MNRead.getReplica() - GET /replica/{did}
   urls.url(
     r'^v[12]/replica/(.+)/?$',
     d1_gmn.app.views.external.get_replica,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_replica',
   ),
 
@@ -111,12 +115,14 @@ urlpatterns = [
   urls.url(
     r'^v[12]/isAuthorized/(.+)/?$',
     d1_gmn.app.views.external.get_is_authorized,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_is_authorized',
   ),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{did}
   urls.url(
     r'^v[12]/dirtySystemMetadata/?$',
     d1_gmn.app.views.external.post_refresh_system_metadata,
+    kwargs={'allowed_method_list': ['POST']},
     name='post_refresh_system_metadata',
   ),
 
@@ -129,6 +135,7 @@ urlpatterns = [
   urls.url(
     r'^v[12]/generate/?$',
     d1_gmn.app.views.external.post_generate_identifier,
+    kwargs={'allowed_method_list': ['POST', 'PUT']},
     name='post_generate_identifier',
   ),
   # MNStorage.delete() - DELETE /object/{did}
@@ -137,6 +144,7 @@ urlpatterns = [
   urls.url(
     r'^v[12]/archive/(.+)/?$',
     d1_gmn.app.views.external.put_archive,
+    kwargs={'allowed_method_list': ['delete', 'PUT']},
     name='put_archive',
   ),
   # Tier 4: Replication API (MNReplication)
@@ -144,6 +152,7 @@ urlpatterns = [
   urls.url(
     r'^v[12]/replicate/?$',
     d1_gmn.app.views.external.post_replicate,
+    kwargs={'allowed_method_list': ['POST']},
     name='post_replicate',
   ),
   # Package API
@@ -151,13 +160,19 @@ urlpatterns = [
   urls.url(
     r'^v2/packages/(?P<package_type>.+)/(?P<pid>.+)/?$',
     d1_gmn.app.views.get_package.get_package,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_package',
   ),
 
   #
   # Home page and Web UI
   #
-  urls.url(r'^home/?$', d1_gmn.app.views.internal.home, name='home'),
+  urls.url(
+    r'^home/?$',
+    d1_gmn.app.views.internal.home,
+    kwargs={'allowed_method_list': ['GET']},
+    name='home',
+  ),
   # url(
   #   r'^home/replication?$', d1_gmn.app.views.internal.replication_queue,
   #   name='home_replication'
@@ -170,29 +185,24 @@ urlpatterns = [
   # ),
 
   #
-  # GMN API extensions
+  # GMN vendor specific extensions
   #
   urls.url(
-    r'^ext/object/?$',
-    d1_gmn.app.views.ext.get_object_list_json,
+    r'^gmn/object/?$',
+    d1_gmn.app.views.gmn.get_object_list_json,
+    kwargs={'allowed_method_list': ['GET']},
     name='get_object_list_json',
   ),
-
-  #
-  # GMN diagnostic APIs
-  #
   urls.url(
-    r'^diag/echo-session/?$',
-    d1_gmn.app.views.diag.echo_session,
+    r'^gmn/echo/session/?$',
+    d1_gmn.app.views.gmn.echo_session,
+    kwargs={'allowed_method_list': ['GET']},
     name='echo_session',
   ),
   urls.url(
-    r'^diag/echo-request/?$',
-    d1_gmn.app.views.diag.echo_request,
+    r'^gmn/echo/request/?$',
+    d1_gmn.app.views.gmn.echo_request,
+    kwargs={'allowed_method_list': ['GET']},
     name='echo_request_object',
-  ),
-  urls.url(
-    r'^diag/echo-exception/(.+?)$', d1_gmn.app.views.diag.echo_exception,
-    name='echo_exception'
   ),
 ]
