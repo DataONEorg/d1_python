@@ -21,6 +21,7 @@
 """
 
 import contextlib
+import datetime
 import email.message
 import email.utils
 import errno
@@ -28,6 +29,8 @@ import json
 import logging
 import os
 import sys
+
+import d1_common.date_time
 
 
 def log_setup(is_debug=False, is_multiprocess=False):
@@ -196,4 +199,7 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
     # set -> sorted list
     if isinstance(o, set):
       return sorted([v for v in o])
+    # datetime -> ISO 8601 UTC
+    if isinstance(o, datetime.datetime):
+      return d1_common.date_time.date_utc(o)
     return json.JSONEncoder.default(self, o)
