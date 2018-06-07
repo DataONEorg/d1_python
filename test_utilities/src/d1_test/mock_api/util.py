@@ -40,7 +40,7 @@ import d1_test.instance_generator.sciobj
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
 
-import d1_client.util
+import d1_client.d1client
 
 NUM_SCIOBJ_BYTES = 1024
 SYSMETA_FORMATID = 'application/octet-stream'
@@ -62,7 +62,7 @@ def parse_rest_url(rest_url):
   param_list = _decode_path_elements(url_obj.path)
   endpoint_str = param_list.pop(0)
   query_dict = urllib.parse.parse_qs(url_obj.query) if url_obj.query else {}
-  client = d1_client.util.get_client_class_by_version_tag(version_tag)(
+  client = d1_client.d1client.get_client_class_by_version_tag(version_tag)(
     base_url='http://invalid/'
   )
   return version_tag, endpoint_str, param_list, query_dict, client

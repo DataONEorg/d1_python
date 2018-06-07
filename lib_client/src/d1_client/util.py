@@ -17,50 +17,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import d1_common.type_conversions
-
-import d1_client.cnclient
-import d1_client.mnclient
-import d1_client.mnclient_1_2
-import d1_client.mnclient_2_0
+import re
 
 
-def get_client_class_by_version_tag(api_major):
-  api_major = str(api_major)
-  if api_major in ('v1', '1'):
-    return d1_client.mnclient_1_2.MemberNodeClient_1_2
-  elif api_major in ('v2', '2'):
-    return d1_client.mnclient_2_0.MemberNodeClient_2_0
-  else:
-    raise ValueError('Unknown DataONE API version tag: {}'.format(api_major))
+def normalize_request_response_dump(dump_str):
+  dump_list = dump_str.splitlines()
+  request_list = []
+  response_list = []
+  body_list = []
 
+  for i, s in enumerate(dump_list):
+    m = re.match(br'< (.*)', s)
+    if m:
+      if m.group(1):
+        request_list.append(s)
+      continue
+    m = re.match(br'> (.*)', s)
+    if m:
+      if m.group(1):
+        response_list.append(s)
+      continue
+    if not s:
+      continue
+    body_list = dump_list[i:]
+    break
 
-def get_version_tag_by_d1_client(d1_client_obj):
-  api_major, api_minor = d1_client_obj.api_version_tup
-  return d1_common.type_conversions.get_version_tag(api_major)
-
-
-def get_client_type(d1_client_obj):
-  if isinstance(d1_client_obj, d1_client.mnclient.MemberNodeClient):
-    return 'mn'
-  elif isinstance(d1_client_obj, d1_client.cnclient.CoordinatingNodeClient):
-    return 'cn'
-  else:
-    assert False, 'Unable to determine d1_client type'
-
-
-def get_api_major_by_base_url(base_url):
-  """Read the Node document from a node and return an int containing the latest
-  D1 API version supported by the node
-
-  The Node document can always be reached through the v1 API and will list
-  services for v1 and any later APIs versions supported by the node.
-  """
-  api_major = 0
-  client = d1_client.mnclient.MemberNodeClient(base_url)
-  node_pyxb = client.getCapabilities()
-  for service_pyxb in node_pyxb.services.service:
-    if service_pyxb.available:
-      api_major = max(api_major, int(service_pyxb.version[-1]))
-  return api_major
+  return '\n\n'.join([
+    '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(request_list)]),
+    '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(response_list)]),
+    '\n'.join([s.decode('utf-8', 'ignore') for s in body_list]),
+  ])

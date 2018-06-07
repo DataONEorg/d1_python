@@ -135,7 +135,7 @@ def _get_page(
   except Exception as e:
     logging.error(
       'Failed to retrieve page: {}/{}. Error: {}'.
-      format(page_idx + 1, n_pages, e.message)
+      format(page_idx + 1, n_pages, str(e))
     )
 
 

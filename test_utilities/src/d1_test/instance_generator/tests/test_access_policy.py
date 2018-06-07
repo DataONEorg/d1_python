@@ -51,7 +51,9 @@ class TestAccessPolicy(d1_test.d1_test_case.D1TestCase):
   def test_1030(self):
     """random_subjects_with_permission_labels()"""
     permissions = access_policy.random_set_of_permissions()
-    subjects = access_policy.random_subjects_with_permission_labels(permissions)
+    subjects = access_policy.random_subject_list_with_permission_labels(
+      permissions
+    )
     self.sample.assert_equals(
       subjects, 'inst_gen_random_subjects_with_permission_labels'
     )

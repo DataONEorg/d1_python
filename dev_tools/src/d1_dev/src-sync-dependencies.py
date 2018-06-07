@@ -21,9 +21,6 @@
 """Synchronize the install_requires sections in all setup.py files with the
 currently installed versions of all packages.
 
-Only dependencies set to a fixed version ("==") are updated. Dependencies
-specified with ">=", "<", etc, remain unchanged.
-
 The two required params are the root to the DataONE Python software stack
 and the new version number to use in the next release of the stack. We keep
 the version numbers for all the packages in the d1_python repository in sync.

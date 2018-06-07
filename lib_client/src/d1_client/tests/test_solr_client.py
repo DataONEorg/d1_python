@@ -36,10 +36,10 @@ import d1_client.solr_client
 CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
 
 
-# pytest.mark.xfail(
-#   'Testing against live server. Results must be checked manually'
-# )
-@pytest.mark.skip('Testing against live server')
+# @pytest.mark.skip('Testing against live server')
+@pytest.mark.xfail(
+  reason='Testing against live server. Results must be checked manually'
+)
 class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
   def _assert_at_least_one_populated_row(self, rows):
     assert any(rows), 'Expected at least one populated row in results'

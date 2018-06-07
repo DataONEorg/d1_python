@@ -19,31 +19,31 @@
 # limitations under the License.
 """Database models
 
-- Specify the GMN database schema via the Django Object Relational Model (ORM).
-- Wrappers for creating frequently used models (adding rows to tables).
+Specify the GMN database schema via the Django Object Relational Model (ORM).
+
+Wrappers for creating frequently used models (adding rows to tables).
+
+Any information we need to keep about a PID without having a native object
+is related directly to IdNamespace. The remaining information is related
+to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
+related to its PID in IdNamespace.
+
+Django automatically creates:
+  - "id" serial NOT NULL PRIMARY KEY
+  - Index on primary key
+  - Index on ForeignKey
+  - Index on unique=True
 """
 
 import datetime
 
-# Any information we need to keep about a PID without having a native object
-# is related directly to IdNamespace. The remaining information is related
-# to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
-# related to its PID in IdNamespace.
 from d1_gmn.app.did import get_or_create_did
 
-# Django
-from django.db import models
-
-# D1
-# Django automatically creates:
-# - "id" serial NOT NULL PRIMARY KEY
-# - Index on primary key
-# - Index on ForeignKey
-# - Index on unique=True
+import django.db.models
 
 
-class IdNamespace(models.Model):
-  did = models.CharField(max_length=800, unique=True)
+class IdNamespace(django.db.models.Model):
+  did = django.db.models.CharField(max_length=800, unique=True)
 
 
 # ------------------------------------------------------------------------------
@@ -51,8 +51,8 @@ class IdNamespace(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class Node(models.Model):
-  urn = models.CharField(max_length=64, unique=True)
+class Node(django.db.models.Model):
+  urn = django.db.models.CharField(max_length=64, unique=True)
 
 
 def node(node_urn):
@@ -64,8 +64,8 @@ def node(node_urn):
 # ------------------------------------------------------------------------------
 
 
-class Subject(models.Model):
-  subject = models.CharField(max_length=1024, unique=True)
+class Subject(django.db.models.Model):
+  subject = django.db.models.CharField(max_length=1024, unique=True)
 
 
 def subject(subject_str):
@@ -77,8 +77,8 @@ def subject(subject_str):
 # ------------------------------------------------------------------------------
 
 
-class ScienceObjectChecksumAlgorithm(models.Model):
-  checksum_algorithm = models.CharField(max_length=32, unique=True)
+class ScienceObjectChecksumAlgorithm(django.db.models.Model):
+  checksum_algorithm = django.db.models.CharField(max_length=32, unique=True)
 
 
 def checksum_algorithm(checksum_algorithm_str):
@@ -92,8 +92,8 @@ def checksum_algorithm(checksum_algorithm_str):
 # ------------------------------------------------------------------------------
 
 
-class ScienceObjectFormat(models.Model):
-  format = models.CharField(max_length=128, unique=True)
+class ScienceObjectFormat(django.db.models.Model):
+  format = django.db.models.CharField(max_length=128, unique=True)
 
 
 # noinspection PyShadowingBuiltins
@@ -106,40 +106,46 @@ def format(format_str):
 # ------------------------------------------------------------------------------
 
 
-class ScienceObject(models.Model):
-  pid = models.OneToOneField(IdNamespace, models.CASCADE)
-  serial_version = models.PositiveIntegerField()
-  modified_timestamp = models.DateTimeField(db_index=True)
-  uploaded_timestamp = models.DateTimeField(db_index=True)
-  format = models.ForeignKey(ScienceObjectFormat, models.CASCADE)
-  filename = models.CharField(max_length=256, db_index=True, null=True)
-  checksum = models.CharField(max_length=128, db_index=True)
-  checksum_algorithm = models.ForeignKey(
-    ScienceObjectChecksumAlgorithm, models.CASCADE
+class ScienceObject(django.db.models.Model):
+  pid = django.db.models.OneToOneField(IdNamespace, django.db.models.CASCADE)
+  serial_version = django.db.models.PositiveIntegerField()
+  modified_timestamp = django.db.models.DateTimeField(db_index=True)
+  uploaded_timestamp = django.db.models.DateTimeField(db_index=True)
+  format = django.db.models.ForeignKey(
+    ScienceObjectFormat, django.db.models.CASCADE
   )
-  size = models.BigIntegerField(db_index=True)
-  submitter = models.ForeignKey(
-    Subject, models.CASCADE, related_name='%(class)s_submitter'
+  filename = django.db.models.CharField(
+    max_length=256, db_index=True, null=True
   )
-  rights_holder = models.ForeignKey(
-    Subject, models.CASCADE, related_name='%(class)s_rights_holder'
+  checksum = django.db.models.CharField(max_length=128, db_index=True)
+  checksum_algorithm = django.db.models.ForeignKey(
+    ScienceObjectChecksumAlgorithm, django.db.models.CASCADE
   )
-  origin_member_node = models.ForeignKey(
-    Node, models.CASCADE, related_name='%(class)s_origin_member_node'
+  size = django.db.models.BigIntegerField(db_index=True)
+  submitter = django.db.models.ForeignKey(
+    Subject, django.db.models.CASCADE, related_name='%(class)s_submitter'
   )
-  authoritative_member_node = models.ForeignKey(
-    Node, models.CASCADE, related_name='%(class)s_authoritative_member_node'
+  rights_holder = django.db.models.ForeignKey(
+    Subject, django.db.models.CASCADE, related_name='%(class)s_rights_holder'
   )
-  obsoletes = models.OneToOneField(
-    IdNamespace, models.CASCADE, null=True, related_name='%(class)s_obsoletes'
+  origin_member_node = django.db.models.ForeignKey(
+    Node, django.db.models.CASCADE, related_name='%(class)s_origin_member_node'
   )
-  obsoleted_by = models.OneToOneField(
-    IdNamespace, models.CASCADE, null=True,
+  authoritative_member_node = django.db.models.ForeignKey(
+    Node, django.db.models.CASCADE,
+    related_name='%(class)s_authoritative_member_node'
+  )
+  obsoletes = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, null=True,
+    related_name='%(class)s_obsoletes'
+  )
+  obsoleted_by = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, null=True,
     related_name='%(class)s_obsoleted_by'
   )
-  is_archived = models.BooleanField(db_index=True)
+  is_archived = django.db.models.BooleanField(db_index=True)
   # Internal fields (not used in System Metadata)
-  url = models.CharField(max_length=1024, unique=True)
+  url = django.db.models.CharField(max_length=1024, unique=True)
 
   class Meta:
     # The slice module must be updated if ordering is modified
@@ -151,15 +157,15 @@ class ScienceObject(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class MediaType(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  name = models.CharField(max_length=256, db_index=True)
+class MediaType(django.db.models.Model):
+  sciobj = django.db.models.ForeignKey(ScienceObject, django.db.models.CASCADE)
+  name = django.db.models.CharField(max_length=256, db_index=True)
 
 
-class MediaTypeProperty(models.Model):
-  media_type = models.ForeignKey(MediaType, models.CASCADE)
-  name = models.CharField(max_length=256, db_index=True)
-  value = models.CharField(max_length=256, db_index=True)
+class MediaTypeProperty(django.db.models.Model):
+  media_type = django.db.models.ForeignKey(MediaType, django.db.models.CASCADE)
+  name = django.db.models.CharField(max_length=256, db_index=True)
+  value = django.db.models.CharField(max_length=256, db_index=True)
 
 
 # ------------------------------------------------------------------------------
@@ -170,8 +176,8 @@ class MediaTypeProperty(models.Model):
 # obsoletes and obsoletedBy fields by replicas.
 
 
-class ReplicaRevisionChainReference(models.Model):
-  pid = models.OneToOneField(IdNamespace, models.CASCADE)
+class ReplicaRevisionChainReference(django.db.models.Model):
+  pid = django.db.models.OneToOneField(IdNamespace, django.db.models.CASCADE)
 
 
 def replica_revision_chain_reference(pid):
@@ -181,8 +187,8 @@ def replica_revision_chain_reference(pid):
   return ref_model
 
 
-class ReplicaStatus(models.Model):
-  status = models.CharField(max_length=16, unique=True)
+class ReplicaStatus(django.db.models.Model):
+  status = django.db.models.CharField(max_length=16, unique=True)
 
 
 def replica_status(status_str):
@@ -191,10 +197,10 @@ def replica_status(status_str):
   return ReplicaStatus.objects.get_or_create(status=status_str)[0]
 
 
-class ReplicaInfo(models.Model):
-  status = models.ForeignKey(ReplicaStatus, models.CASCADE)
-  member_node = models.ForeignKey(Node, models.CASCADE)
-  timestamp = models.DateTimeField(db_index=True, null=True)
+class ReplicaInfo(django.db.models.Model):
+  status = django.db.models.ForeignKey(ReplicaStatus, django.db.models.CASCADE)
+  member_node = django.db.models.ForeignKey(Node, django.db.models.CASCADE)
+  timestamp = django.db.models.DateTimeField(db_index=True, null=True)
 
 
 def replica_info(status_str, source_node_urn, timestamp=None):
@@ -213,17 +219,17 @@ def update_replica_status(replica_info_model, status_str, timestamp=None):
   replica_info_model.save()
 
 
-class LocalReplica(models.Model):
+class LocalReplica(django.db.models.Model):
   """Keep track of replication requests and locally stored replicas
 
   Relate directly to IdNamespace because tracking of local replicas starts
   before there is a local object (when the replica is first requested by the
   CN)
   """
-  pid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  pid = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
   )
-  info = models.OneToOneField(ReplicaInfo, models.CASCADE)
+  info = django.db.models.OneToOneField(ReplicaInfo, django.db.models.CASCADE)
 
 
 def local_replica(pid, replica_info_model):
@@ -235,15 +241,17 @@ def local_replica(pid, replica_info_model):
   return local_replica_model
 
 
-class ReplicationQueue(models.Model):
-  local_replica = models.OneToOneField(LocalReplica, models.CASCADE)
+class ReplicationQueue(django.db.models.Model):
+  local_replica = django.db.models.OneToOneField(
+    LocalReplica, django.db.models.CASCADE
+  )
   # A copy of the size of replicas is kept here, so that total size restriction
   # for all replicas can be enforced at the time when replicas are accepted and
   # do not yet have any local system metadata.
-  size = models.BigIntegerField(db_index=True)
+  size = django.db.models.BigIntegerField(db_index=True)
   # Keep track of the number of attempts that have been made to complete the
   # replication request in order to stop retrying after some time.
-  failed_attempts = models.PositiveSmallIntegerField()
+  failed_attempts = django.db.models.PositiveSmallIntegerField()
 
 
 def replication_queue(local_replica_model, size):
@@ -263,12 +271,12 @@ def replication_queue(local_replica_model, size):
 # </replica>
 
 
-class RemoteReplica(models.Model):
+class RemoteReplica(django.db.models.Model):
   # Relate to ScienceObject because tracking of remote replicas is only done for
   # existing local objects. The local sciobj may itself be a replica and may
   # have multiple replicas (ForeignKey, not OneToOneField).
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  info = models.OneToOneField(ReplicaInfo, models.CASCADE)
+  sciobj = django.db.models.ForeignKey(ScienceObject, django.db.models.CASCADE)
+  info = django.db.models.OneToOneField(ReplicaInfo, django.db.models.CASCADE)
 
 
 def remote_replica(sciobj_model, replica_info_model):
@@ -313,22 +321,23 @@ def remote_replica(sciobj_model, replica_info_model):
 # second model to map PIDs to ChainIds.
 
 
-class Chain(models.Model):
+class Chain(django.db.models.Model):
   """Represent a single chain"""
   # id = ChainId
-  sid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_sid', null=True
+  sid = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_sid',
+    null=True
   )
-  head_pid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_head_pid'
+  head_pid = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_head_pid'
   )
 
 
-class ChainMember(models.Model):
+class ChainMember(django.db.models.Model):
   """Represent all members of a single chain"""
-  chain = models.ForeignKey(Chain, models.CASCADE)
-  pid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+  chain = django.db.models.ForeignKey(Chain, django.db.models.CASCADE)
+  pid = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
   )
 
 
@@ -337,8 +346,8 @@ class ChainMember(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class Event(models.Model):
-  event = models.CharField(max_length=128, unique=True)
+class Event(django.db.models.Model):
+  event = django.db.models.CharField(max_length=128, unique=True)
 
 
 def event(event_str):
@@ -351,32 +360,32 @@ def event(event_str):
   return Event.objects.get_or_create(event=event_str)[0]
 
 
-class IpAddress(models.Model):
-  ip_address = models.CharField(max_length=32, unique=True)
+class IpAddress(django.db.models.Model):
+  ip_address = django.db.models.CharField(max_length=32, unique=True)
 
 
 def ip_address(ip_address_str):
   return IpAddress.objects.get_or_create(ip_address=ip_address_str)[0]
 
 
-class UserAgent(models.Model):
-  user_agent = models.CharField(max_length=1024, unique=True)
+class UserAgent(django.db.models.Model):
+  user_agent = django.db.models.CharField(max_length=1024, unique=True)
 
 
 def user_agent(user_agent_str):
   return UserAgent.objects.get_or_create(user_agent=user_agent_str)[0]
 
 
-class EventLog(models.Model):
+class EventLog(django.db.models.Model):
   # Relate to ScienceObject because events are only recorded and kept for
   # existing native objects. The spec currently does not define if events should
   # be kept for objects after they are deleted.
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  event = models.ForeignKey(Event, models.CASCADE)
-  ip_address = models.ForeignKey(IpAddress, models.CASCADE)
-  user_agent = models.ForeignKey(UserAgent, models.CASCADE)
-  subject = models.ForeignKey(Subject, models.CASCADE)
-  timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+  sciobj = django.db.models.ForeignKey(ScienceObject, django.db.models.CASCADE)
+  event = django.db.models.ForeignKey(Event, django.db.models.CASCADE)
+  ip_address = django.db.models.ForeignKey(IpAddress, django.db.models.CASCADE)
+  user_agent = django.db.models.ForeignKey(UserAgent, django.db.models.CASCADE)
+  subject = django.db.models.ForeignKey(Subject, django.db.models.CASCADE)
+  timestamp = django.db.models.DateTimeField(auto_now_add=True, db_index=True)
 
   class Meta:
     # The slice module must be updated if ordering is modified
@@ -390,8 +399,8 @@ class EventLog(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class SystemMetadataRefreshQueueStatus(models.Model):
-  status = models.CharField(max_length=1024, unique=True)
+class SystemMetadataRefreshQueueStatus(django.db.models.Model):
+  status = django.db.models.CharField(max_length=1024, unique=True)
 
 
 def sysmeta_refresh_status(status_str):
@@ -402,15 +411,19 @@ def sysmeta_refresh_status(status_str):
   )[0]
 
 
-class SystemMetadataRefreshQueue(models.Model):
+class SystemMetadataRefreshQueue(django.db.models.Model):
   # Relate to ScienceObject because system metadata is only recorded and kept
   # for existing native objects.
-  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
-  status = models.ForeignKey(SystemMetadataRefreshQueueStatus, models.CASCADE)
-  serial_version = models.PositiveIntegerField()
-  timestamp = models.DateTimeField(auto_now=True)
-  sysmeta_timestamp = models.DateTimeField()
-  failed_attempts = models.PositiveSmallIntegerField()
+  sciobj = django.db.models.OneToOneField(
+    ScienceObject, django.db.models.CASCADE
+  )
+  status = django.db.models.ForeignKey(
+    SystemMetadataRefreshQueueStatus, django.db.models.CASCADE
+  )
+  serial_version = django.db.models.PositiveIntegerField()
+  timestamp = django.db.models.DateTimeField(auto_now=True)
+  sysmeta_timestamp = django.db.models.DateTimeField()
+  failed_attempts = django.db.models.PositiveSmallIntegerField()
 
 
 def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
@@ -429,14 +442,14 @@ def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
 # ------------------------------------------------------------------------------
 
 
-class Permission(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  subject = models.ForeignKey(Subject, models.CASCADE)
-  level = models.PositiveSmallIntegerField()
+class Permission(django.db.models.Model):
+  sciobj = django.db.models.ForeignKey(ScienceObject, django.db.models.CASCADE)
+  subject = django.db.models.ForeignKey(Subject, django.db.models.CASCADE)
+  level = django.db.models.PositiveSmallIntegerField()
 
 
-class WhitelistForCreateUpdateDelete(models.Model):
-  subject = models.OneToOneField(Subject, models.CASCADE)
+class WhitelistForCreateUpdateDelete(django.db.models.Model):
+  subject = django.db.models.OneToOneField(Subject, django.db.models.CASCADE)
 
 
 def whitelist_for_create_update_delete(subject_str):
@@ -455,20 +468,26 @@ def whitelist_for_create_update_delete(subject_str):
 # </replicationPolicy>
 
 
-class ReplicationPolicy(models.Model):
-  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
-  replication_is_allowed = models.BooleanField(db_index=True)
-  desired_number_of_replicas = models.PositiveSmallIntegerField()
+class ReplicationPolicy(django.db.models.Model):
+  sciobj = django.db.models.OneToOneField(
+    ScienceObject, django.db.models.CASCADE
+  )
+  replication_is_allowed = django.db.models.BooleanField(db_index=True)
+  desired_number_of_replicas = django.db.models.PositiveSmallIntegerField()
 
 
-class PreferredMemberNode(models.Model):
-  node = models.ForeignKey(Node, models.CASCADE)
-  replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
+class PreferredMemberNode(django.db.models.Model):
+  node = django.db.models.ForeignKey(Node, django.db.models.CASCADE)
+  replication_policy = django.db.models.ForeignKey(
+    ReplicationPolicy, django.db.models.CASCADE
+  )
 
 
-class BlockedMemberNode(models.Model):
-  node = models.ForeignKey(Node, models.CASCADE)
-  replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
+class BlockedMemberNode(django.db.models.Model):
+  node = django.db.models.ForeignKey(Node, django.db.models.CASCADE)
+  replication_policy = django.db.models.ForeignKey(
+    ReplicationPolicy, django.db.models.CASCADE
+  )
 
 
 # ------------------------------------------------------------------------------
@@ -476,15 +495,17 @@ class BlockedMemberNode(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class ResourceMap(models.Model):
-  pid = models.OneToOneField(
-    IdNamespace, models.CASCADE, related_name='%(class)s_pid'
+class ResourceMap(django.db.models.Model):
+  pid = django.db.models.OneToOneField(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
   )
 
 
-class ResourceMapMember(models.Model):
-  resource_map = models.ForeignKey(ResourceMap, models.CASCADE)
+class ResourceMapMember(django.db.models.Model):
+  resource_map = django.db.models.ForeignKey(
+    ResourceMap, django.db.models.CASCADE
+  )
   # Any number of Resource Maps can aggregate the same DIDs
-  did = models.ForeignKey(
-    IdNamespace, models.CASCADE, related_name='%(class)s_did'
+  did = django.db.models.ForeignKey(
+    IdNamespace, django.db.models.CASCADE, related_name='%(class)s_did'
   )

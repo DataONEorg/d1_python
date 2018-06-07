@@ -15,9 +15,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Asserts used in views
+
+These directly return a DataONE Exception to the client if a test condition is
+not true.
+"""
 
 import d1_gmn.app
 import d1_gmn.app.did
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
@@ -58,7 +64,7 @@ def matches_url_pid(sysmeta_pyxb, url_pid):
 
 def has_matching_modified_timestamp(new_sysmeta_pyxb):
   pid = d1_common.xml.get_req_val(new_sysmeta_pyxb.identifier)
-  old_ts = d1_gmn.app.util.get_sci_model(pid).modified_timestamp
+  old_ts = d1_gmn.app.model_util.get_sci_model(pid).modified_timestamp
   new_ts = new_sysmeta_pyxb.dateSysMetadataModified
   if not d1_common.date_time.are_equal(old_ts, new_ts):
     raise d1_common.types.exceptions.InvalidRequest(
@@ -167,9 +173,7 @@ def _is_correct_checksum(request, sysmeta_pyxb):
       sysmeta_pyxb.checksum.algorithm
     )
   )
-  checksum_str = d1_gmn.app.sciobj_store.calculate_checksum(
-    request, checksum_calculator
-  )
+  checksum_str = calculate_checksum(request, checksum_calculator)
   if sysmeta_pyxb.checksum.value().lower() != checksum_str.lower():
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
@@ -196,3 +200,9 @@ def _is_supported_checksum_algorithm(sysmeta_pyxb):
         ', '.join(d1_common.checksum.get_supported_algorithms())
       )
     )
+
+
+def calculate_checksum(request, checksum_calculator):
+  for chunk in request.FILES['object'].chunks():
+    checksum_calculator.update(chunk)
+  return checksum_calculator.hexdigest()

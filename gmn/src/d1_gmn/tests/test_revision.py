@@ -27,8 +27,10 @@ import pytest
 import responses
 
 import d1_gmn.app.did
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
+import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.create
 import d1_gmn.tests.gmn_mock
@@ -57,7 +59,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
       recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(client, pid)
       self.assert_sysmeta_pid_and_sid(recv_sysmeta_pyxb, pid, sid)
       # Is in chain
-      sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+      sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
       assert d1_gmn.app.did.is_in_revision_chain(sciobj_model)
       # Cut from the chain
       logging.debug(
@@ -140,7 +142,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2, random.choice(pid_chain_list), sid, pid_chain_list
       )
     # Last one now not in chain even though not explicitly cut
-    sciobj_model = d1_gmn.app.util.get_sci_model(pid_chain_list[0])
+    sciobj_model = d1_gmn.app.model_util.get_sci_model(pid_chain_list[0])
     assert not d1_gmn.app.did.is_in_revision_chain(sciobj_model)
 
   @responses.activate
@@ -156,7 +158,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
     # self.dump(sysmeta_pyxb)
     expected_pid_set = set(a_chain_list + b_chain_list + [pid])
     got_pid_set = set(d1_gmn.app.revision.get_all_pid_by_sid(a_sid))
@@ -179,7 +181,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
     with pytest.raises(d1_common.types.exceptions.ServiceFailure):
-      d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+      d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
 
   @responses.activate
   def test_1060(self, gmn_client_v2):
@@ -193,7 +195,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
     pid_list = a_chain_list + b_chain_list + [pid]
     for pid in pid_list:
       sysmeta_pyxb = self.call_d1_client(gmn_client_v2.getSystemMetadata, pid)
@@ -208,11 +210,11 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     a_pid, a_sid, a_sciobj_bytes, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       gmn_client_v2, sid=sid
     )
-    d1_gmn.app.views.create.create_sciobj_models(a_sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(a_sysmeta_pyxb)
     b_pid, b_sid, b_sciobj_bytes, b_sysmeta_pyxb = self.generate_sciobj_with_defaults(
       gmn_client_v2, sid=sid
     )
-    d1_gmn.app.views.create.create_sciobj_models(b_sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(b_sysmeta_pyxb)
     chain_model = d1_gmn.app.models.Chain.objects.get(sid__did=sid)
     member_query_set = d1_gmn.app.models.ChainMember.objects.filter(
       chain=chain_model
@@ -229,7 +231,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
     sysmeta_pyxb.obsoletedBy = d1_test.instance_generator.identifier.generate_pid()
-    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
 
   @responses.activate
   def test_1090(self, gmn_client_v2):
@@ -245,7 +247,7 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     sysmeta_pyxb.obsoletes = a_chain_list[-1]
     sysmeta_pyxb.obsoletedBy = b_chain_list[0]
-    d1_gmn.app.views.create.create_sciobj_models(sysmeta_pyxb)
+    d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
     last_pid = b_chain_list[-1]
     sysmeta_pyxb = self.call_d1_client(gmn_client_v2.getSystemMetadata, a_sid)
     assert sysmeta_pyxb.identifier.value() == last_pid

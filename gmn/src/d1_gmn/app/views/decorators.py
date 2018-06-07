@@ -43,7 +43,7 @@ import django.conf
 
 
 def resolve_sid(f):
-  """Decorator that adds SID resolve and PID validation to view handlers.
+  """View handler decorator that adds SID resolve and PID validation
   - For v1 calls, assume that {did} is a pid and raise NotFound exception if
   it's not valid.
   - For v2 calls, if DID is a valid PID, return it. If not, try to resolve it as
@@ -76,15 +76,13 @@ def resolve_sid_func(request, did):
 
 
 def decode_did(f):
-  """Decorator that decodes "%2f" ("/") in SID or PID extracted from URL path
-  segment by Django.
+  """View handler decorator that decodes "%2f" ("/") in SID or PID extracted
+  from URL path segment by Django
   """
 
   @functools.wraps(f)
   def wrapper(request, did, *args, **kwargs):
     return f(request, decode_path_segment(did), *args, **kwargs)
-    # return f(request, d1_common.url.decodeQueryElement(did), *args, **kwargs)
-    #return f(request, did, *args, **kwargs)
 
   return wrapper
 

@@ -130,7 +130,10 @@ class DataONEBaseClient(
   #   -> raise ServiceFailure that wraps up information returned from Node.
 
   def _raise_service_failure(self, response, msg):
-    trace_str = self.dump_request_and_response(response)
+    try:
+      trace_str = self.dump_request_and_response(response)
+    except TypeError:
+      trace_str = None
     e = d1_common.types.exceptions.ServiceFailure(0, msg, trace_str)
     logging.error('Raised: {}'.format(str(e)))
     raise e
@@ -399,12 +402,17 @@ class DataONEBaseClient(
     returning the Response. This can exhaust available memory on the local
     machine when retrieving large science objects. The solution is to set
     {stream} to True, which causes the returned Response object to contain a
-    a stream.
+    a stream. However, see note below.
 
-    {stream} = False by default because failure to read all data from the stream
-    can cause connections to be blocked. See
-    http://docs.python-requests.org/en/master/user/advanced/
-    body-content-workflow. Also see get_and_save() in this module.
+    When {stream} = True, the Response object will contain a stream which can
+    be processed without buffering the entire science object in memory. However,
+    failure to read all data from the stream can cause connections to be
+    blocked. Due to this, the {stream} parameter is False by default.
+
+    Also see:
+
+    - http://docs.python-requests.org/en/master/user/advanced/body-content-workflow
+    - get_and_save() in this module.
     """
     response = self.getResponse(pid, stream, vendorSpecific)
     return self._read_stream_response(response)
@@ -415,6 +423,8 @@ class DataONEBaseClient(
     """Like MNRead.get(), but also retrieve the object bytes and store them in a
     local file at {sciobj_path}. This method does not have the potential issue
     with excessive memory usage that get() with {stream}=False has.
+
+    Also see MNRead.get().
     """
     response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
     try:

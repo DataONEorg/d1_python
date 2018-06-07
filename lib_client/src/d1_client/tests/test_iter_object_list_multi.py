@@ -24,8 +24,8 @@ import responses
 import d1_test.d1_test_case
 import d1_test.mock_api.list_objects as mock_list_objects
 
+import d1_client.d1client
 import d1_client.iter.objectlist_multi
-import d1_client.util
 
 MAX_OBJECTS = 20
 
@@ -36,7 +36,7 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     """Object List iteration"""
     mock_list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
-    api_major = d1_client.util.get_version_tag_by_d1_client(mn_client_v1_v2)
+    api_major = d1_client.d1client.get_version_tag_by_d1_client(mn_client_v1_v2)
 
     object_list_iter = d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
       d1_test.d1_test_case.MOCK_MN_BASE_URL, page_size=13, max_workers=2,

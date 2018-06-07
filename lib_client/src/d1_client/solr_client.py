@@ -97,12 +97,41 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     return 'SolrClient(base_url="{}")'.format(self._base_url)
 
   #
+  # Building queries
+  #
+
+  def prepare_query_term(self, field, term):
+    """Prepare a query term for inclusion in a query.
+    This escapes the term and if necessary, wraps the term in quotes.
+    """
+    if term == "*":
+      return term
+    add_star = False
+    if term[len(term) - 1] == '*':
+      add_star = True
+      term = term[0:len(term) - 1]
+    term = self.escape_query_term(term)
+    if add_star:
+      term = '{}*'.format(term)
+    if self._get_solr_type(field) in ['string', 'text', 'text_ws']:
+      return '"{}"'.format(term)
+    return term
+
+  def escape_query_term(self, term):
+    """Escape a query term for inclusion in a query
+    - Also see: prepare_query_term().
+    """
+    term = term.replace('\\', '\\\\')
+    for c in RESERVED_CHAR_LIST:
+      term = term.replace(c, '\{}'.format(c))
+    return term
+
+  #
   # GET queries
   #
 
   def search(self, q='*:*', fq=None, **query_args):
     """Search the Solr index
-
     query_dict and query_args are combined.
     """
     return self._get_query(q=q, fq=fq, **query_args)
@@ -276,7 +305,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         # values
         for i in range(n_bins):
           a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-          bin_q = '{}:{}'.format(name, self._prepare_query_term(name, a_bin[0]))
+          bin_q = '{}:{}'.format(name, self.prepare_query_term(name, a_bin[0]))
           q_bin.append(bin_q)
           bin_list.append(a_bin)
       else:
@@ -287,14 +316,14 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
           for i in range(n_bins - 1):
             a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
             bin_q = '{}:{}'.format(
-              name, self._prepare_query_term(name, a_bin[0])
+              name, self.prepare_query_term(name, a_bin[0])
             )
             q_bin.append(bin_q)
             bin_list.append(a_bin)
           term = f_vals[name][(n_bins - 1) * 2]
           a_bin = [term, f_vals[name][((n_values - 1) * 2)], 0]
           bin_q = '{}:[{} TO *]'.format(
-            name, self._prepare_query_term(name, term)
+            name, self.prepare_query_term(name, term)
           )
           q_bin.append(bin_q)
           bin_list.append(a_bin)
@@ -312,17 +341,17 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
             try:
               if i == 0:
                 bin_q = '{}:[* TO {}]'.format(
-                  name, self._prepare_query_term(name, a_bin[1])
+                  name, self.prepare_query_term(name, a_bin[1])
                 )
               elif i == n_bins - 1:
                 bin_q = '{}:[{} TO *]'.format(
-                  name, self._prepare_query_term(name, a_bin[0])
+                  name, self.prepare_query_term(name, a_bin[0])
                 )
               else:
                 bin_q = '{}:[{} TO {}]'.format(
                   name,
-                  self._prepare_query_term(name, a_bin[0]),
-                  self._prepare_query_term(name, a_bin[1])
+                  self.prepare_query_term(name, a_bin[0]),
+                  self.prepare_query_term(name, a_bin[1])
                 )
             except Exception:
               self.logger.exception('Exception:')
@@ -351,30 +380,6 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
       logging.exception('Exception')
       raise
     return bin_list
-
-  def _escape_query_term(self, term):
-    term = term.replace('\\', '\\\\')
-    for c in RESERVED_CHAR_LIST:
-      term = term.replace(c, '\{}'.format(c))
-    return term
-
-  def _prepare_query_term(self, field, term):
-    """Prepare a query term for inclusion in a query.
-
-    This escapes the term and if necessary, wraps the term in quotes.
-    """
-    if term == "*":
-      return term
-    add_star = False
-    if term[len(term) - 1] == '*':
-      add_star = True
-      term = term[0:len(term) - 1]
-    term = self._escape_query_term(term)
-    if add_star:
-      term = '{}*'.format(term)
-    if self._get_solr_type(field) in ['string', 'text', 'text_ws']:
-      return '"{}"'.format(term)
-    return term
 
   def _escape_xml_entity(self, s):
     return quoteattr(s).encode('utf-8')

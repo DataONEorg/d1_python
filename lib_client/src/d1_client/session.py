@@ -23,7 +23,6 @@ import copy
 import datetime
 import logging
 import os
-import re
 import urllib.parse
 
 import cachecontrol
@@ -36,6 +35,8 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.url
 import d1_common.util
+
+import d1_client.util
 
 DEFAULT_NUMBER_OF_RETRIES = 3
 DEFAULT_USE_CACHE = True
@@ -226,6 +227,13 @@ class Session(object):
     """
     return self._request('DELETE', rest_path_list, **kwargs)
 
+  def OPTIONS(self, rest_path_list, **kwargs):
+    """Send a OPTIONS request.
+    See requests.sessions.request for optional parameters.
+    :returns: Response object
+    """
+    return self._request('OPTIONS', rest_path_list, **kwargs)
+
   def get_curl_command_line(self, method, url, **kwargs):
     """Get request as cURL command line for debugging.
     """
@@ -245,7 +253,7 @@ class Session(object):
     """
     if response.reason is None:
       response.reason = '<unknown>'
-    return self._normalize_request_response_dump(
+    return d1_client.util.normalize_request_response_dump(
       requests_toolbelt.utils.dump.dump_response(response)
     )
 
@@ -381,31 +389,3 @@ class Session(object):
       d1_common.const.DATAONE_SCHEMA_ATTRIBUTE_BASE,
       self._get_api_version_xml_type()
     )
-
-  def _normalize_request_response_dump(self, dump_str):
-    dump_list = dump_str.splitlines()
-    request_list = []
-    response_list = []
-    body_list = []
-
-    for i, s in enumerate(dump_list):
-      m = re.match(br'< (.*)', s)
-      if m:
-        if m.group(1):
-          request_list.append(s)
-        continue
-      m = re.match(br'> (.*)', s)
-      if m:
-        if m.group(1):
-          response_list.append(s)
-        continue
-      if not s:
-        continue
-      body_list = dump_list[i:]
-      break
-
-    return '\n\n'.join([
-      '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(request_list)]),
-      '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(response_list)]),
-      '\n'.join([s.decode('utf-8', 'ignore') for s in body_list]),
-    ])

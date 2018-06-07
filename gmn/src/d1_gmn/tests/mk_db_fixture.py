@@ -20,19 +20,21 @@
 # limitations under the License.
 """Create database entries for a set of test objects
 
+This creates the db entries by calling the GMN D1 APIs, then uses Django to dump
+the database to JSON.
+
 Objects are randomly distributed between categories:
   - Standalone, no SID
   - Standalone, SID
   - Chain, no SID
   - Chain, SID
 
-This creates the db entries by calling the GMN D1 APIs, then uses Django to dump
-the database to JSON. Though object bytes are also created, they are not
-captured in the db fixture. See the README.md for more info on the fixtures.
+Though object bytes are also created, they are not captured in the db fixture.
+See the README.md for more info on the fixtures.
 
 The django init needs to occur before the django and gmn_test_case imports, so
 we're stuck with a bit of a messy import section that isort and flake8 don't
-like:
+like.
 
 isort:skip_file
 """

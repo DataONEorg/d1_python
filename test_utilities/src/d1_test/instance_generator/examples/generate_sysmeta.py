@@ -138,7 +138,7 @@ if __name__ == '__main__':
     parser.print_help()
     sys.exit()
   if not os.path.exists(options.fname):
-    print(('File %s not found' % options.fname))
+    print('File %s not found' % options.fname)
     parser.print_help()
     sys.exit()
 
@@ -186,5 +186,5 @@ if __name__ == '__main__':
 
   logging.debug(str(oopts))
 
-  print((processDoc(oopts['fname'], oopts)))
+  print(processDoc(oopts['fname'], oopts))
   sys.exit()

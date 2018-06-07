@@ -284,6 +284,11 @@ def date_utc_now():
   return utc_now().date().isoformat()
 
 
+def date_utc(dt):
+  """Return {dt} as an ISO 8601 string in the UTC timezone"""
+  return dt.isoformat()
+
+
 def create_utc_datetime(*datetime_parts):
   """Create a datetime with timezone set to UTC"""
   return datetime.datetime(*datetime_parts, tzinfo=UTC())

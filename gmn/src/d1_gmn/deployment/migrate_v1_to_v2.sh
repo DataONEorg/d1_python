@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -x
+set -d
+
 d1=/var/local/dataone
 
 v1v=${d1}/gmn

@@ -23,6 +23,7 @@
 import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.did
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.util
 
@@ -272,7 +273,7 @@ def _find_head_or_latest_connected(pid, last_pid=None):
   If chain ends in a dangling obsoletedBy, return the last existing object.
   """
   try:
-    sci_model = d1_gmn.app.util.get_sci_model(pid)
+    sci_model = d1_gmn.app.model_util.get_sci_model(pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     return last_pid
   if sci_model.obsoleted_by is None:
@@ -361,7 +362,9 @@ def _get_all_chain_member_queryset_by_chain(chain_model):
 
 
 def _cut_head_from_chain(sciobj_model):
-  new_head_model = d1_gmn.app.util.get_sci_model(sciobj_model.obsoletes.did)
+  new_head_model = d1_gmn.app.model_util.get_sci_model(
+    sciobj_model.obsoletes.did
+  )
   new_head_model.obsoleted_by = None
   sciobj_model.obsoletes = None
   sciobj_model.save()
@@ -369,7 +372,9 @@ def _cut_head_from_chain(sciobj_model):
 
 
 def _cut_tail_from_chain(sciobj_model):
-  new_tail_model = d1_gmn.app.util.get_sci_model(sciobj_model.obsoleted_by.did)
+  new_tail_model = d1_gmn.app.model_util.get_sci_model(
+    sciobj_model.obsoleted_by.did
+  )
   new_tail_model.obsoletes = None
   sciobj_model.obsoleted_by = None
   sciobj_model.save()
@@ -377,8 +382,10 @@ def _cut_tail_from_chain(sciobj_model):
 
 
 def _cut_embedded_from_chain(sciobj_model):
-  prev_model = d1_gmn.app.util.get_sci_model(sciobj_model.obsoletes.did)
-  next_model = d1_gmn.app.util.get_sci_model(sciobj_model.obsoleted_by.did)
+  prev_model = d1_gmn.app.model_util.get_sci_model(sciobj_model.obsoletes.did)
+  next_model = d1_gmn.app.model_util.get_sci_model(
+    sciobj_model.obsoleted_by.did
+  )
   prev_model.obsoleted_by = next_model.pid
   next_model.obsoletes = prev_model.pid
   sciobj_model.obsoletes = None
@@ -398,7 +405,7 @@ def _is_tail(sciobj_model):
 
 def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
   try:
-    sciobj_model = d1_gmn.app.util.get_sci_model(from_pid)
+    sciobj_model = d1_gmn.app.model_util.get_sci_model(from_pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     return
   if not d1_gmn.app.did.is_existing_object(to_pid):

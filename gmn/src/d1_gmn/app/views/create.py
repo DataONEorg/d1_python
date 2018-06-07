@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sciobj create for view methods
+"""SciObj create for view methods
 """
 
 import datetime
@@ -34,6 +34,8 @@ import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.util
 
 import d1_common.const
+import d1_common.types
+import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
 import d1_common.xml
@@ -43,7 +45,8 @@ import django.core.files.move
 
 
 def create_sciobj(request, sysmeta_pyxb):
-  """Create object file and database entries for a new native science object
+  """Create object file and database entries for a new native locally stored
+  (non-proxied) science object
 
   This method takes a request object and is only called from the views that
   handle:
@@ -51,15 +54,15 @@ def create_sciobj(request, sysmeta_pyxb):
   - MNStorage.create()
   - MNStorage.update()
 
-  The method does sanity checking and raises D1 exceptions that are returned
-  directly to the client.
+  Various sanity checking is performed. Raises D1 exceptions that are returned
+  directly to the client. Adds create event to the event log.
 
   Preconditions:
   - None. This method should check everything.
 
   Postconditions:
-  - A new file containing sciobj bytes, and models (database rows) for the new
-  object have been added.
+  - A new file containing sciobj bytes, and models (database rows) for the newly
+  added object.
   """
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
@@ -67,17 +70,24 @@ def create_sciobj(request, sysmeta_pyxb):
   d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
   d1_gmn.app.views.assert_sysmeta.sanity(request, sysmeta_pyxb)
 
-  sciobj_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-  url = _get_sciobj_bytes_url(request, pid)
+  abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
+
+  if _is_proxy_sciobj(request):
+    sciobj_url = _get_sciobj_proxy_url(request)
+    _sanity_check_proxy_url(sciobj_url)
+  else:
+    sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
 
   if not _is_proxy_sciobj(request):
     if d1_gmn.app.resource_map.is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
-      _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, url)
+      _create_resource_map(
+        pid, request, abs_sciobj_path, sysmeta_pyxb, sciobj_url
+      )
     else:
-      _save_sciobj_bytes_from_request(request, sciobj_path)
-      d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, sciobj_path)
+      _save_sciobj_bytes_from_request(request, abs_sciobj_path)
+      d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, abs_sciobj_path)
 
-  d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
+  d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
 
   d1_gmn.app.event_log.create(
     d1_common.xml.get_req_val(sysmeta_pyxb.identifier), request,
@@ -85,46 +95,14 @@ def create_sciobj(request, sysmeta_pyxb):
   )
 
 
-def _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, url):
+def _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, sciobj_url):
   map_xml = _read_sciobj_bytes_from_request(request)
   resource_map = d1_gmn.app.resource_map.parse_resource_map_from_str(map_xml)
   d1_gmn.app.resource_map.assert_map_is_valid_for_create(resource_map)
   d1_common.util.create_missing_directories_for_file(sciobj_path)
   _save_sciobj_bytes_from_str(map_xml, sciobj_path)
-  d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, url)
+  d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
   d1_gmn.app.resource_map.create_or_update(pid, resource_map)
-
-
-def create_sciobj_models(sysmeta_pyxb):
-  """Create the db entries for a new native, locally stored (non-proxied)
-  science object
-
-  This assumes that the file containing the sciobj bytes has already been
-  created.
-
-  This method does not add any events to the event log.
-
-  Preconditions:
-  - PID is verified not to be unused, E.g., with
-  d1_gmn.app.views.asserts.is_unused().
-  - Sciobj bytes are saved to a file in the correct location.
-
-  Postconditions:
-  - A new file and new database entries are created.
-  """
-  pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-  d1_gmn.app.sysmeta.create_or_update(
-    sysmeta_pyxb, d1_gmn.app.sciobj_store.get_sciobj_file_url(pid)
-  )
-
-
-def _get_sciobj_bytes_url(request, pid):
-  if _is_proxy_sciobj(request):
-    url = _get_sciobj_proxy_url(request)
-    _sanity_check_proxy_url(url)
-  else:
-    url = _get_sciobj_file_url(pid)
-  return url
 
 
 def _is_proxy_sciobj(request):
@@ -141,12 +119,6 @@ def _sanity_check_proxy_url(url):
 
 def _get_sciobj_proxy_url(request):
   return request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-
-
-def _get_sciobj_file_url(pid):
-  # http://en.wikipedia.org/wiki/File_URI_scheme
-  url = 'file:///{}'.format(d1_common.url.encodePathElement(pid))
-  return url
 
 
 def _read_sciobj_bytes_from_request(request):

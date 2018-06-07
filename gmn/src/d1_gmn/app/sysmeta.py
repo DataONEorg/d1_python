@@ -31,8 +31,10 @@ import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.did
 import d1_gmn.app.local_replica
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.app.util
 import d1_gmn.app.views.util
 
@@ -55,7 +57,7 @@ def archive_object(pid):
   - The object is not a replica.
   - The object is not archived.
   """
-  sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+  sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
   sciobj_model.is_archived = True
   sciobj_model.save()
   _update_modified_timestamp(sciobj_model)
@@ -70,9 +72,17 @@ def serialize(sysmeta_pyxb, pretty=False):
     )
 
 
-def create_or_update(sysmeta_pyxb, url=None):
+def create_or_update(sysmeta_pyxb, sciobj_url=None):
   """Create or update database representation of a System Metadata object and
-  closely related internal state.
+  closely related internal state
+  - If {sciobj_url} is not passed on create, storage in the internal sciobj
+  store is assumed
+  - If {sciobj_url} is passed on create, it can reference a location in the
+  internal sciobj store, or an arbitrary location on disk, or a remote web
+  server. See the sciobj_store module for more information
+  - if {sciobj_url} is not passed on update, the sciobj location remains
+  unchanged
+  - If {sciobj_url} is passed on update, the sciobj location is updated
 
   Preconditions:
   - All values in {sysmeta_pyxb} must be valid for the operation being performed
@@ -83,12 +93,15 @@ def create_or_update(sysmeta_pyxb, url=None):
 
   pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
+  if sciobj_url is None:
+    sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
+
   try:
-    sci_model = d1_gmn.app.util.get_sci_model(pid)
+    sci_model = d1_gmn.app.model_util.get_sci_model(pid)
   except d1_gmn.app.models.ScienceObject.DoesNotExist:
     sci_model = d1_gmn.app.models.ScienceObject()
     sci_model.pid = d1_gmn.app.did.get_or_create_did(pid)
-    sci_model.url = url
+    sci_model.url = sciobj_url
     sci_model.serial_version = sysmeta_pyxb.serialVersion
     sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
 
@@ -113,7 +126,7 @@ def create_or_update(sysmeta_pyxb, url=None):
 
 
 def update_modified_timestamp(pid):
-  sci_model = d1_gmn.app.util.get_sci_model(pid)
+  sci_model = d1_gmn.app.model_util.get_sci_model(pid)
   _update_modified_timestamp(sci_model)
 
 
@@ -122,7 +135,7 @@ def model_to_pyxb(pid):
 
 
 def _model_to_pyxb(pid):
-  sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+  sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
   sysmeta_pyxb = _base_model_to_pyxb(sciobj_model)
   if _has_media_type_db(sciobj_model):
     sysmeta_pyxb.mediaType = _media_type_model_to_pyxb(sciobj_model)

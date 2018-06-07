@@ -150,8 +150,8 @@ def dir_iter(
 
   for path in path_list:
     path = os.path.expanduser(path)
-    if not isinstance(path, str):
-      path = path.decode('utf-8')
+    # if not isinstance(path, str):
+    #   path = path.decode('utf-8')
     if not ignore_invalid:
       if not (os.path.isfile(path) or os.path.isdir(path)):
         raise EnvironmentError(0, 'Not a valid file or dir path', path)
@@ -172,16 +172,28 @@ def dir_iter(
       else:
         # Single directory search
         file_path_iter = os.listdir(path)
-      skip_dir = yield next(file_path_iter)
+
+      skip_dir = None
+
       while True:
         file_or_dir_path = file_path_iter.send(skip_dir)
         file_or_dir_name = os.path.split(file_or_dir_path)[1]
+        skip_dir = False
         if not _is_filtered(
             file_or_dir_name, include_file_glob_list, exclude_file_glob_list
         ):
           skip_dir = yield file_or_dir_path
-        else:
-          skip_dir = False
+
+      # skip_dir = yield next(file_path_iter)
+      # while True:
+      #   file_or_dir_path = file_path_iter.send(skip_dir)
+      #   file_or_dir_name = os.path.split(file_or_dir_path)[1]
+      #   if not _is_filtered(
+      #       file_or_dir_name, include_file_glob_list, exclude_file_glob_list
+      #   ):
+      #     skip_dir = yield file_or_dir_path
+      #   else:
+      #     skip_dir = False
 
 
 def _is_filtered(name, include_glob_list, exclude_glob_list):

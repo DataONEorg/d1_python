@@ -42,3 +42,20 @@ class FileIterator(object):
   @property
   def size(self):
     return self._byte_count
+
+
+class FileLikeObjectIterator(object):
+  def __init__(self, file, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
+    self._file = file
+    self._chunk_size = chunk_size
+
+  def __iter__(self):
+    while True:
+      chunk_str = self._file(self._chunk_size)
+      if not chunk_str:
+        break
+      yield chunk_str
+
+  @property
+  def size(self):
+    return len(self._file)

@@ -96,7 +96,7 @@ REQUIRE_WHITELIST_FOR_UPDATE = True
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'test_gmn2',
+    'NAME': 'gmn_test_db',
     'USER': '',
     'PASSWORD': '',
     'HOST': '',
@@ -113,7 +113,7 @@ DATABASES = {
   },
   'template': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'test_gmn2_templ',
+    'NAME': 'gmn_test_db_template',
     'USER': '',
     'PASSWORD': '',
     'HOST': '',

@@ -50,8 +50,8 @@ ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['ore'])
 
 
 def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
-  """Create a simple resource map with one science metadata document and n
-  science data objects.
+  """Create a simple resource map with one science metadata document and any
+  number of science data objects.
   """
   ore = ResourceMap()
   ore.oreInitialize(ore_pid)
@@ -64,7 +64,7 @@ def createResourceMapFromStream(
     in_stream, base_url=d1_common.const.URL_DATAONE_ROOT
 ):
   """Create a simple resource map from a stream that contains a list of
-identifiers.
+  identifiers.
 
   The first non-blank line is the PID of the resource map itself. Second line
   is the science metadata PID and remaining lines are science data PIDs.

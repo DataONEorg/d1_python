@@ -24,6 +24,7 @@ import random
 
 import pytest
 
+import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.util
 import d1_gmn.tests.gmn_test_case
@@ -59,7 +60,7 @@ class TestMgmtFixChains(d1_gmn.tests.gmn_test_case.GMNTestCase):
     rev_sample_list = random.sample(rev_list, 30)
     # Break chains
     for pid, obsoleted_by, obsoletes in rev_sample_list:
-      sciobj_model = d1_gmn.app.util.get_sci_model(pid)
+      sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
       if random.randint(0, 1):
         sciobj_model.obsoleted_by = None
       else:

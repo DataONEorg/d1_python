@@ -380,8 +380,9 @@ DATABASES = {
   }
 }
 
-# Paths to the GMN object store. The bytes of all the objects handled by GMN are
-# stored in a directory hierarchy rooted in this folder.
+# Absolute Path to the root of the GMN object store. The object store is a
+# directory hierarchy in which the bytes of science objects are stored by
+# default.
 OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 # This setting determines how Open Archives Initiative Object Reuse and Exchange
@@ -522,9 +523,8 @@ TIME_ZONE = 'UTC'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-# Enable Django's internationalization support.
-# Internationalization is not used by GMN.
-# to load the internationalization machinery
+# Django's internationalization support is not used by GMN.
+#
 # False (default):
 # - Django will skip loading some of the internationalization machinery.
 # True:
@@ -605,7 +605,7 @@ MIDDLEWARE_CLASSES = (
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
   'd1_gmn.app.middleware.response_handler.ResponseHandler',
-  'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
+  # 'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
   'd1_gmn.app.middleware.view_handler.ViewHandler',
 )
 

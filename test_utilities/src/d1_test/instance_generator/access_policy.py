@@ -83,7 +83,7 @@ def random_subject_with_permission_labels(permissions, group_chance=0.1):
   return subject_base + group + tags
 
 
-def random_subjects_with_permission_labels(
+def random_subject_list_with_permission_labels(
     permissions, min_len=1, max_len=100, group_chance=0.1
 ):
   subjects = []
