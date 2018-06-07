@@ -21,32 +21,26 @@
 
 # 3rd party source
 """Upgrade all pip managed packages to latest PyPI release
-https://github.com/nschloe/pipdated
-http://stackoverflow.com/a/3452888/353337
+- https://github.com/nschloe/pipdated
+- http://stackoverflow.com/a/3452888/353337
 """
 
 import logging
-import os
 import subprocess
-import sys
 
 NO_UPGRADE_LIST = [
-  'Django', # We're on the last version that supports Python 2.
-  'pygobject', # build error
-  'zope.interface', # build error
+  # 'Django', # We're on the last version that supports Python 2.
+  # 'pygobject', # build error
+  # 'zope.interface', # build error
+  'urllib3', # requests 2.18.4 has requirement urllib3<1.23,>=1.21.1
 ]
 
 
 def main():
-  try:
-    os.utime('/usr/', None)
-  except EnvironmentError:
-    sys.exit('Must be root')
-
-  freeze_str = subprocess.check_output(['pip', 'freeze'])
+  freeze_str = run_pip('freeze')
 
   for line_str in freeze_str.splitlines():
-    print(('#### {}'.format(line_str)))
+    print('#### {}'.format(line_str))
     try:
       pkg_str, ver_str = line_str.strip().split('==')
     except ValueError:
@@ -57,9 +51,18 @@ def main():
         'Skipped package in NO_UPGRADE_LIST. pkg_str="{}"'.format(pkg_str)
       )
       continue
-    print((subprocess.check_output(['pip', 'install', '--upgrade', pkg_str])))
+    print(run_pip('install', '--upgrade', pkg_str))
 
-  print((subprocess.check_output(['pip', 'check'])))
+  print(run_pip('check'))
+
+
+def run_pip(*pip_arg_list):
+  print('pip {}'.format(' '.join(pip_arg_list)))
+  try:
+    return subprocess.check_output(['pip'] + list(pip_arg_list)).decode('utf-8')
+  except subprocess.CalledProcessError as e:
+    logging.error('Setup failed. error="{}"'.format(str(e)))
+    raise
 
 
 if __name__ == '__main__':

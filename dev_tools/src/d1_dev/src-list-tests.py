@@ -70,7 +70,7 @@ def main():
       list_tests_module(module_path, event_counter)
     except Exception as e:
       logging.error(
-        'Operation failed. error="{}" path="{}"'.format(module_path, e.message)
+        'Operation failed. error="{}" path="{}"'.format(module_path, str(e))
       )
       if args.debug:
         raise
