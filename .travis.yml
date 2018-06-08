@@ -12,22 +12,21 @@ addons:
   postgresql: "10"
   apt:
     packages:
-    - postgresql-10
-    - postgresql-client-10
-- python-dev
-- libssl-dev
-- libxml2-dev
-- libxslt1-dev
-- libffi-dev
-- openssl
-- python-pip
-- libsmbclient-dev
-- librsync-dev
-- python3-dev
-
+      - libffi-dev
+      - librsync-dev
+      - libsmbclient-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+      - openssl
+      - postgresql-10
+      - postgresql-client-10
+      - python-dev
+      - python-pip
+      - python3-dev
 env:
   global:
-  - PGPORT=5433
+    - PGPORT=5433
 before_install:
   - sudo apt-get -q update
 #  - sudo apt-get -q install -y build-essential python-dev libssl-dev
