@@ -27,21 +27,14 @@ addons:
 env:
   global:
     - PGPORT=5433
-before_install:
-  - sudo apt-get -q update
-#  - sudo apt-get -q install -y build-essential python-dev libssl-dev
-#    libxml2-dev libxslt1-dev libffi-dev openssl
-#    python-pip libsmbclient-dev librsync-dev python3-dev
-    # postgresql-server-dev-9.3
-    #python3.5-venv
-install:
-  - pip install --upgrade pip setuptools
-  - pip uninstall -y pytest py
-script:
-  # Travis clones the project to $TRAVIS_BUILD_DIR and cds there before running
+#before_install:
+#  - sudo apt-get -q update
+#install:
+#  - pip install --upgrade pip setuptools
+#  - pip uninstall -y pytest py
+#script:
+  # Travis clones the project to $TRAVIS_BUILD_DIR and CDs there before running
   # the scripts.
-#  - python3 -m venv venv
-#  - . ./venv/bin/activate
   - ls -l
   - pip install -r ./requirements.txt
   - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
@@ -49,9 +42,10 @@ script:
   - pip freeze
   - pip check || true
   - pytest --help
-  #- pytest --fixture
-  - pytest --exitfirst --cov=. --cov-report=term --cov-report=xml
-  # -n auto
+  # Create GMN template database (must be done in a single threaded run)
+  - pytest --collect-only
+  # Run tests in parallel, using as many threads as are supported by Travis
+  - pytest -n auto --exitfirst --cov=. --cov-report=term --cov-report=xml
 after_success:
   # Submit results to Coveralls.io.
   ## Coveralls has a requirement for requests >= 1.0.0, so we install it after
