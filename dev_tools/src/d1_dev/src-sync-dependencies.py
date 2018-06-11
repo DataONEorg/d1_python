@@ -67,6 +67,10 @@ def main():
     '--diff', dest='show_diff', action='store_true',
     help='Show diff and do not modify any files'
   )
+  parser.add_argument(
+    '--dry-run', action='store_true',
+    help='Perform a trial run without changing any files'
+  )
 
   args = parser.parse_args()
 
@@ -105,7 +109,9 @@ def update_deps_on_file(args, setup_path, show_diff, d1_version):
     if args.debug:
       raise
   else:
-    d1_dev.util.update_module_file(r, setup_path, show_diff, dry_run=True)
+    d1_dev.util.update_module_file(
+      r, setup_path, show_diff, dry_run=args.dry_run
+    )
 
 
 def update_deps_on_tree(r, d1_version):
@@ -149,7 +155,7 @@ def update_dep_str(str_node, d1_version):
   else:
     new_version_str = get_package_version(package_name, d1_version)
     if old_version_str != new_version_str:
-      str_node.value = '\'{} == {}\''.format(package_name, new_version_str)
+      str_node.value = '\'{} >= {}\''.format(package_name, new_version_str)
       logging.debug(
         'Dependency updated. package="{}" old="{}" new="{}"'.
         format(package_name, old_version_str, new_version_str)
@@ -162,9 +168,9 @@ def update_dep_str(str_node, d1_version):
 
 
 def parse_dep_str(dep_str):
-  m = re.match(r'(.*)\s*==\s*(.*)', dep_str)
+  m = re.match(r'(.*)\s*>=\s*(.*)', dep_str)
   if not m:
-    raise UpdateException('Dependency not set to fixed version ("==")')
+    raise UpdateException('Dependency not set to ">="')
   return m.group(1).strip('\'" '), m.group(2).strip('\'" ')
 
 
@@ -187,7 +193,9 @@ def update_version_const(base_name, path_list, d1_version, only_diff):
 
 
 def get_module_path(base_str, path_list):
-  return os.path.join(pkgutil.get_loader(base_str).filename, *path_list)
+  return os.path.join(
+    os.path.split(pkgutil.get_loader(base_str).path)[0], *path_list
+  )
 
 
 class UpdateException(Exception):

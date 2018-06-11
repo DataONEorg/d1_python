@@ -27,7 +27,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='2.4.2',
+    version='3.0.3',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -51,7 +51,7 @@ def main():
       'idna == 2.6',
       #
       'baron >= 0.6.6',
-      'pip >= 9.0.1',
+      'pip >= 10.0.1',
       'redbaron >= 0.6.3',
     ],
     setup_requires=[

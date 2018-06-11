@@ -277,10 +277,6 @@ Update the `requirements.txt` file:
 
     $  pip freeze > requirements.txt
 
-
-
-before the packages . This is the list of
-
 The DataONE Python stack specifies fixed versions of all its dependencies. This ensures that a stack deployed to production matches one that passed the tests. As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Run the script with:
 
     $ cd d1_python

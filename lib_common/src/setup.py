@@ -27,7 +27,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.common',
-    version='2.4.2',
+    version='3.0.3',
     description=(
       'Contains functionality common to projects that interact with '
       'the DataONE infrastructure via Python'
@@ -40,10 +40,10 @@ def main():
     include_package_data=True,
     install_requires=[
       'contextlib2 >= 0.5.5',
-      'cryptography >= 2.1.4',
+      'cryptography >= 2.2.2',
       'iso8601 >= 0.1.12',
-      'PyJWT >= 1.5.3',
-      'pyasn1 >= 0.4.2',
+      'PyJWT >= 1.6.4',
+      'pyasn1 >= 0.4.3',
       'pyxb >= 1.2.6',
       'rdflib >= 4.2.2',
       'zipstream >= 1.1.4',
