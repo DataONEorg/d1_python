@@ -90,10 +90,10 @@ def main():
       logging.error(str(e))
 
   update_version_const(
-    'd1_common', ['const.py'], args.d1_version, args.show_diff
+    'd1_common', ['const.py'], args.d1_version, args.show_diff, args.dry_run
   )
   update_version_const(
-    'd1_gmn', ['version.py'], args.d1_version, args.show_diff
+    'd1_gmn', ['version.py'], args.d1_version, args.show_diff, args.dry_run
   )
 
 
@@ -181,14 +181,14 @@ def get_package_version(package_name, d1_version):
     return pkg_resources.get_distribution(package_name).version
 
 
-def update_version_const(base_name, path_list, d1_version, only_diff):
+def update_version_const(base_name, path_list, d1_version, only_diff, dry_run):
   module_path = get_module_path(base_name, path_list)
   logging.debug('Updating version in module. path="{}"'.format(module_path))
   r = d1_dev.util.redbaron_module_path_to_tree(module_path)
   for n in r('AssignmentNode'):
     if n.target.value in ('VERSION', '__version__'):
       n.value.value = "'{}'".format(d1_version)
-      d1_dev.util.update_module_file(r, module_path, only_diff, dry_run=True)
+      d1_dev.util.update_module_file(r, module_path, only_diff, dry_run)
       break
 
 

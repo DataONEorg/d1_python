@@ -36,7 +36,7 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.common == 2.4.2',
+      'dataone.common >= 3.0.3',
       #
       'cachecontrol >= 0.12.4',
       'pyxb >= 1.2.6',

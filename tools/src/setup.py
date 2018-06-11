@@ -40,9 +40,9 @@ def main():
     },
     install_requires=[
       # These are not yet available when bootstrapping on Travis
-      'dataone.cli == 2.4.2',
-      'dataone.common == 2.4.2',
-      'dataone.libclient == 2.4.2',
+      'dataone.cli >= 3.0.3',
+      'dataone.common >= 3.0.3',
+      'dataone.libclient >= 3.0.3',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',
