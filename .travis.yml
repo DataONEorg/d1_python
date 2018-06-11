@@ -31,13 +31,13 @@ before_install:
   - sudo apt-get -q update
 install:
   - pip install --upgrade pip setuptools
-  - pip uninstall -y pytest py
+  - pip install -y pytest
 script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and CDs there before running
   # the scripts.
   - ls -l
   - pip install -r ./requirements.txt
-  - ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+  - python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
   - ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check || true

@@ -36,7 +36,7 @@ def main():
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-      'dataone.libclient == 2.4.2',
+      'dataone.libclient >= 3.0.3',
       #
       'contextlib2 >= 0.5.5',
       'coverage >= 4.5.1',
