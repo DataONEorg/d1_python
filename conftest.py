@@ -389,8 +389,7 @@ def mn_client_v1_v2(request):
 def django_sciobj_store_setup(request):
   tmp_store_path = os.path.join(
     tempfile.gettempdir(),
-    # 'gmn_test_obj_store_{}'.format(get_xdist_unique_suffix(request))
-    'gmn_test_obj_store_{}'.format(get_random_ascii_string())
+    'gmn_test_obj_store_{}'.format(get_unique_suffix(request))
   )
   mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
   django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
@@ -398,8 +397,6 @@ def django_sciobj_store_setup(request):
     'Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path)
   )
   d1_gmn.app.sciobj_store.create_store()
-  # d1_common.util.create_missing_directories_for_dir(tmp_store_path)
-  # save_store_version()
 
   yield
 
@@ -420,7 +417,7 @@ def django_db_setup(request, django_db_blocker):
   """
   logging.info('Setting up DB fixture')
 
-  db_set_unique_db_name()
+  db_set_unique_db_name(request)
 
   with django_db_blocker.unblock():
     # Regular multiprocessing.Lock() context manager did not work here. Also
@@ -466,11 +463,11 @@ def db_get_name_by_key(db_key):
   return django.conf.settings.DATABASES[db_key]['NAME']
 
 
-def db_set_unique_db_name():
+def db_set_unique_db_name(request):
   logging.debug('db_set_unique_db_name()')
   db_name = '_'.join([
     db_get_name_by_key(TEST_DB_KEY),
-    get_random_ascii_string(),
+    get_unique_suffix(request),
   ])
   django.conf.settings.DATABASES[TEST_DB_KEY]['NAME'] = db_name
 
@@ -562,22 +559,23 @@ def run_sql(db, sql):
       connection.close()
 
 
-# def get_xdist_unique_suffix(request):
-#   return '_'.join([get_random_ascii_string(), get_xdist_suffix(request)])
+def get_unique_suffix(request):
+  return '_'.join([get_random_ascii_str(),
+                   get_xdist_worker_id(request)]).strip('_')
 
 
-def get_random_ascii_string():
+def get_random_ascii_str():
   return d1_test.instance_generator.random_data.random_lower_ascii(
     min_len=12, max_len=12
   )
 
 
-# def get_xdist_suffix(request):
-#   """Return a different string for each worker when running in parallel under
-#   pytest-xdist, else return an empty string. Returned strings are on the form,
-#   "gwN"."""
-#   s = getattr(request.config, 'slaveinput', {}).get('slaveid')
-#   return s if s is not None else ''
+def get_xdist_worker_id(request):
+  """Return a different string for each worker when running in parallel under
+  pytest-xdist, else return an empty string. Returned strings are on the form,
+  "gwN"."""
+  s = getattr(request.config, 'slaveinput', {}).get('slaveid')
+  return s if s is not None else ''
 
 
 def exit_if_switch_used_with_xdist(switch_list):
