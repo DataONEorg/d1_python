@@ -27,12 +27,12 @@ addons:
 env:
   global:
     - PGPORT=5433
-#before_install:
-#  - sudo apt-get -q update
-#install:
-#  - pip install --upgrade pip setuptools
-#  - pip uninstall -y pytest py
-#script:
+before_install:
+  - sudo apt-get -q update
+install:
+  - pip install --upgrade pip setuptools
+  - pip uninstall -y pytest py
+script:
   # Travis clones the project to $TRAVIS_BUILD_DIR and CDs there before running
   # the scripts.
   - ls -l
