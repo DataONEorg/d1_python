@@ -37,7 +37,7 @@ DEFAULT_MN_BASEURL = ''.join(
 )
 
 # Version of the DataONE Python stack
-VERSION = '3.0.3'
+VERSION = '3.0.4'
 
 # Maximum number of entries per list objects request
 MAX_LISTOBJECTS = 1000

@@ -27,7 +27,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.scimeta',
-    version='3.0.3',
+    version='3.0.4',
     description='Utilities for processing Science Metadata',
     author='DataONE Project',
     author_email='developers@dataone.org',

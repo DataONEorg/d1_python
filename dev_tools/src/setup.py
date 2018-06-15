@@ -27,7 +27,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='3.0.3',
+    version='3.0.4',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
