@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE tools and examples package
+"""DataONE Utilities and Examples package
 """
 
 import setuptools
@@ -26,9 +26,9 @@ import setuptools
 
 def main():
   setuptools.setup(
-    name='dataone.tools',
+    name='dataone.util',
     version='3.0.4',
-    description='DataONE tools and examples',
+    description='DataONE Utilities and Examples',
     author='DataONE Project',
     author_email='developers@dataone.org',
     url='https://github.com/DataONEorg/d1_tools',

@@ -20,7 +20,10 @@
 # limitations under the License.
 """Check if a science metadata object can be successfully indexed by the CN
 
-Submit a science object to CNDiagnostic.echoIndexedObject() and print the
+This is an example on how to use the DataONE Client and Common libraries for
+Python. It shows how to:
+
+- Submit a science object to CNDiagnostic.echoIndexedObject() and print the
 result.
 
 This is intended for checking only the science metadata object. However,

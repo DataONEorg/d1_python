@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2017 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Tools and Examples"""
+"""DataONE Utilities and Examples
+
+A collection of scripts intended to be useful both as command line utilities and
+as examples on how to interact with the DataONE infrastructure via the DataONE
+Python stack.
+"""
 
 # Suppress log messages instead of raising exception if the program using the
 # library does not configure the logging system.
