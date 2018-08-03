@@ -24,7 +24,7 @@ Two separate certificate chains are available. One is used for the DataONE produ
   Registering in a testing environment (Staging, Sandbox, Development)::
 
     # Only run this command when registering the MN in a testing environment
-    $ sudo curl -o /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.pem \
+    $ sudo curl -o /var/local/dataone/certs/ca/DataONECAChain.crt \
     https://repository.dataone.org/software/tools/trunk/ca/DataONETestCAChain.crt; \
     c_rehash /var/local/dataone/certs/ca/
 
@@ -32,6 +32,6 @@ Two separate certificate chains are available. One is used for the DataONE produ
   Registering in production::
 
     # Only run this command when registering the MN in production
-    $ sudo curl -o /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.pem \
+    $ sudo curl -o /var/local/dataone/certs/ca/DataONECAChain.crt \
     https://repository.dataone.org/software/tools/trunk/ca/DataONECAChain.crt; \
     c_rehash /var/local/dataone/certs/ca/

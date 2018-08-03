@@ -33,7 +33,7 @@ Setup directories::
 
 Create and activate a virtual environment in the gmn_venv directory::
 
-    $ sudo su gmn
+    $ [ `whoami` != gmn ] && sudo -Hsu gmn
     $ virtualenv gmn_venv
     $ source gmn_venv/bin/activate
     $ pip install --upgrade setuptools==33.1.1

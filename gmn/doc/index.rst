@@ -16,6 +16,7 @@ Contents
   use
   maintenance
   troubleshooting
+  troubleshooting-tls
   performance
   impl
   /glossary

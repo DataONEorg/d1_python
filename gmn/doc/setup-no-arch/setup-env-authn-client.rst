@@ -28,7 +28,7 @@ To obtain a client side certificate for testing:
 #. Follow the link provided in the email, and sign in using the account created
    or used in the first step, above.
 
-.. WARNING:: Anyone who has the private key can act as your Node in the DataONE
+.. warning:: Anyone who has the private key can act as your Node in the DataONE
    infrastructure. Keep the private key safe. Set it to be readable only by
    root and follow best practices for security to keep root from being
    compromised. If your private key becomes compromised, please inform DataONE

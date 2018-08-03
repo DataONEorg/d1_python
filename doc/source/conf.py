@@ -23,13 +23,13 @@
 import better
 
 project = 'DataONE Python Products'
-copyright = '2016 Participating institutions in DataONE'
+copyright = '2018 Participating institutions in DataONE'
 
 source_suffix = '.rst'
 master_doc = 'index'
 version = ''
 release = ''
-exclude_trees = ['_build', '_templates']
+exclude_trees = ['_build']
 pygments_style = 'sphinx'
 today_fmt = '%Y-%m-%d'
 
@@ -46,10 +46,17 @@ extensions = [
   'sphinx.ext.extlinks',
 ]
 
-html_logo = 'dataone_logo.png'
+# The default syntax highlighting applied code-block and :: blocks
+highlight_language = 'bash'
+
+html_logo = '_static/dataone_logo.png'
 html_theme_path = [better.better_theme_path]
 html_theme = 'better'
 html_short_title = "Home"
+
+html_static_path = ['_static']
+
+templates_path = ['_templates']
 
 html_theme_options = {
   # show sidebar on the right instead of on the left
@@ -62,7 +69,7 @@ html_theme_options = {
   # CSS files to include after all other CSS files
   # (refer to by relative path from conf.py directory, or link to a
   # remote file)
-  'cssfiles': [], # default is empty list
+  'cssfiles': [],
 
   # show a big text header with the value of html_title
   'showheader': True,

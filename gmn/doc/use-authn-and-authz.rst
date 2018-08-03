@@ -51,7 +51,7 @@ To create a whitelist with this subject, first create a file, for instance,
 ``whitelist.txt``. The most convenient location for this file is in the
 ``gmn`` folder::
 
-  $ sudo su gmn
+  $ [ `whoami` != gmn ] && sudo -Hsu gmn
   $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn
   $ nano whitelist.txt
 

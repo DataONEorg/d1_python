@@ -31,8 +31,8 @@ DataONE Command Line Interface
 Member Node (for Member Node partners)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generic Member Node
-```````````````````
+Generic Member Node (GMN)
+`````````````````````````
 
 .. include:: ./gmn/overview.rst
 

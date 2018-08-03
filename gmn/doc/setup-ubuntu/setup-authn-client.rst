@@ -10,9 +10,28 @@ These instructions use a non-trusted client side certificate for the first part 
 
 If you already have a client side certificate issued by the DataONE CA, you can still install the non-trusted certificate here and just follow the instructions to upgrade it later.
 
-  Copy the previously created locally signed client side certificate for
-  outgoing connections::
+Copy the previously created locally signed client side certificate for outgoing connections:
 
-    $ cd /var/local/dataone/certs/local_ca
-    $ sudo mkdir -p ../client
-    $ sudo cp client_cert.pem private/client_key_nopassword.pem ../client
+  .. _clip1:
+
+  ::
+
+    [ `whoami` != gmn ] && sudo -Hsu gmn
+
+  .. raw:: html
+
+    <button class="btn" data-clipboard-target="#clip1">Copy</button>
+  ..
+
+  .. _clip2:
+
+  ::
+
+    cd /var/local/dataone/certs/local_ca
+    mkdir -p ../client
+    cp client_cert.pem private/client_key_nopassword.pem ../client
+
+  .. raw:: html
+
+    <button class="btn" data-clipboard-target="#clip2">Copy</button>
+  ..

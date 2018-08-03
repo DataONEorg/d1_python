@@ -17,21 +17,57 @@ If you already have a publicly trusted certificate that you intend to use, you c
 The snakeoil server side certificate is automatically generated when the
 ``ssl-cert`` package is installed.
 
-  Ensure that the ``ssl-cert`` package is installed::
+Run the commands below to:
 
-    $ sudo apt install --yes ssl-cert
+  * Ensure that the ``ssl-cert`` package is installed
+  * Copy the certificate and key to the GMN standard locations
 
-  Copy the certificate and key to the GMN standard locations::
+  .. _clip1:
 
-    $ sudo mkdir -p /var/local/dataone/certs/server
-    $ sudo cp /etc/ssl/certs/ssl-cert-snakeoil.pem /var/local/dataone/certs/server/server_cert.pem
-    $ sudo cp /etc/ssl/private/ssl-cert-snakeoil.key /var/local/dataone/certs/server/server_key_nopassword.pem
+  ::
 
-  The DN of the snakeoil certificate matches the IP address of the server. If
-  the IP adddress of the server is changed some time in the future, the snakeoil
-  certificate can be regenerated with::
+    [ `whoami` != root ] && sudo -Hs
+
+  .. raw:: html
+
+    <button class="btn" data-clipboard-target="#clip1">Copy</button>
+  ..
+
+  .. _clip2:
+
+  ::
+
+    apt install --yes ssl-cert
+    mkdir -p /var/local/dataone/certs/server
+    cp /etc/ssl/certs/ssl-cert-snakeoil.pem \
+    /var/local/dataone/certs/server/server_cert.pem
+    cp /etc/ssl/private/ssl-cert-snakeoil.key \
+    /var/local/dataone/certs/server/server_key_nopassword.pem
+
+  .. raw:: html
+
+    <button class="btn" data-clipboard-target="#clip2">Copy</button>
+  ..
+
+
+Updating the certificate if the IP address changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The DN of the snakeoil certificate matches the IP address of the server. If
+the IP adddress of the server is changed some time in the future, the snakeoil
+certificate can be regenerated with:
+
+  .. _clip3:
+
+  ::
 
     # Only run if the server name or IP address changes.
-    $ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+    [ `whoami` != root ] && sudo -Hs
+    make-ssl-cert generate-default-snakeoil --force-overwrite
 
-  Then, copy the new versions to the GMN standard locations as described above.
+  .. raw:: html
+
+    <button class="btn" data-clipboard-target="#clip3">Copy</button>
+  ..
+
+Then, copy the new versions to the GMN standard locations as described above.

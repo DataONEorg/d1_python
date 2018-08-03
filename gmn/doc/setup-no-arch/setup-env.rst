@@ -1,7 +1,7 @@
 Registering the new MN in a DataONE environment
 ===============================================
 
-This section assumes that the local setup for :doc:`Ubuntu <setup_ubuntu/setup>` or :doc:`CentOS <setup_centos/setup>` has been successfully completed.
+This section assumes that the local setup for :doc:`Ubuntu <../setup-ubuntu/setup>` or :doc:`CentOS <../setup-centos/setup>` has been successfully completed.
 
 Completing this section will enable the stand-alone instance of GMN to be joined to the DataONE infrastructure.
 

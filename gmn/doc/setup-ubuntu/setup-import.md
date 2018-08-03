@@ -43,7 +43,7 @@ If the source MN is a GMN instance, `PUBLIC_LOG_RECORDS` in settings.py controls
 
 * Start the import. Since the new instance has been set up to use the same object storage location as the old instance, the importer will automatically detect that the object bytes are already present on disk and skip the `get()` calls for the objects.
 
-  $ manage.py import --no-bytes
+  $ manage.py import 
 
 * Temporarily start the new MN with connect to it and check that all data is showing as expected.
 

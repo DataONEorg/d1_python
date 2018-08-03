@@ -1,0 +1,24 @@
+{%- extends "basic/layout.html" %}
+
+{%- block extrahead %}
+    {{ super() }}
+    <!--<script type="text/javascript" src="../../_static/clipboard.min.js"></script>-->
+    <script src="https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js"></script>
+    <link rel="stylesheet" href="{{ pathto('_static/dataone.css', 1) }}" type="text/css">
+    <script type="text/javascript">
+
+    function load() {
+        new ClipboardJS('.btn');
+    }
+
+    // Append newline to shell command blocks that are copied to the clipboard
+    document.addEventListener('copy', function(e) {
+        e.clipboardData.setData('text/plain', window.getSelection().toString() + '\n');
+        e.preventDefault();
+    });
+
+    window.onload = load
+
+    </script>
+
+{% endblock %}

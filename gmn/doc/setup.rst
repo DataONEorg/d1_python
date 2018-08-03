@@ -25,9 +25,10 @@ Use the `Next` link in the sidebar to get to the next page of steps after comple
 .. toctree::
   :maxdepth: 2
 
-  setup_ubuntu/setup
-  setup_centos/setup
-  setup-env
-  setup-extra
-  setup-extra-resources
-  setup-migrate
+  setup-ubuntu/setup
+  setup-centos/setup
+  setup-no-arch/setup-env
+  setup-no-arch/setup-extra
+  setup-no-arch/setup-extra-resources
+  setup-no-arch/setup-migrate
+  setup-no-arch/setup-multi

@@ -1,10 +1,10 @@
-Test the installation on Ubuntu
+Test the installation on CentOS
 ===============================
 
 The new stand-alone GMN instance is now ready to be tested.
 
 After a successful installation, GMN exposes the `complete REST interface that DataONE has defined for Member Nodes
-<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html>`_.
+<http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_.
 
 The default installation makes GMN accessible both on the server's loopback
 (localhost) and external interface(s). So the tests outlined below can be performed on the local server or from a different host by replacing
@@ -17,7 +17,7 @@ Basic testing via web browser or curl
 These initial tests can be performed via a web browser or the ``curl`` command line utility. By default, stand-alone instances of GMN use a non-trusted
 "snakeoil" self-signed certificate. The browser will warn about this and may require you to create a security exception. ``curl`` will need to be started with the ``--insecure`` switch. For example, ``curl --insecure <url>``.
 
-After the stand-alone GMN instance passes the tests, it can be joined to DataONE by performing the :doc:`../setup-env` section of the installation, in which the non-trusted certificate is replaced with a publicly trusted certificate from a 3rd party CA.
+After the stand-alone GMN instance passes the tests, it can be joined to DataONE by performing the :doc:`../setup-no-arch/setup-env` section of the installation, in which the non-trusted certificate is replaced with a publicly trusted certificate from a 3rd party CA.
 
 
 Node document
@@ -56,7 +56,8 @@ You should see an XML document such as this:
     <contactSubject>CN=My Name,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </ns1:node>
 
-This is your Node document. It exposes information about your Node to the DataONE infrastructure. It currently contains only default values. The :doc:`../setup-env` section of the installation includes information on how to customize this document for your node.
+This is your Node document. It exposes information about your Node to the DataONE infrastructure. It currently contains only default values. The
+:doc:`../setup-no-arch/setup-env` section of the installation includes information on how to customize this document for your node.
 
 
 Home page
