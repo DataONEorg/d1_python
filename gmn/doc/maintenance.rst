@@ -34,6 +34,9 @@ Due to the complexity of upgrading from earlier GMN 1.x.x and 2.x.x versions, on
 * The account will need "sudo" access
 * The account name can be selected according to the organization's policies. If no specific policies are in place, "dahl" can be used
 
+Opening temporary ssh access to the GMN server
+----------------------------------------------
+
 Often, ssh access to the GMN server is not available from external networks. For use in such cases, DataONE provides a simple service that allows the MN administrator to open temporary ssh access directly to the GMN server by running the following command from a shell on the GMN server:
 
 ::
