@@ -40,7 +40,7 @@ Install the PostgreSQL server and client:
   ::
 
     su postgres -c 'createuser gmn'
-    su postgres -c 'createdb -E UTF8 gmn2'
+    su postgres -c 'createdb -E UTF8 gmn3'
 
   .. raw:: html
 

@@ -25,7 +25,7 @@ Run the commands below to:
 
   ::
 
-    . /var/local/dataone/gmn_venv/bin/activate
+    . /var/local/dataone/gmn_venv_py3/bin/activate
     export GMN_PKG_DIR=`python -c "import site; print(site.getsitepackages()[0])"`
     cp ${GMN_PKG_DIR}/d1_gmn/settings_template.py ${GMN_PKG_DIR}/d1_gmn/settings.py
 
@@ -33,3 +33,9 @@ Run the commands below to:
 
     <button class="btn" data-clipboard-target="#clip2">Copy</button>
   ..
+
+Modify the ``settings.py`` file:
+
+  * Change ``MIDDLEWARE_CLASSES`` to just ``MIDDLEWARE``
+  * Change ``gmn2`` to ``gmn3``
+

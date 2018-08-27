@@ -20,7 +20,7 @@ Run the commands below to:
 
   ::
 
-    . /var/local/dataone/gmn_venv/bin/activate
+    . /var/local/dataone/gmn_venv_py3/bin/activate
     export GMN_PKG_DIR=`python -c "import site; print(site.getsitepackages()[0])"`
     crontab -u gmn ${GMN_PKG_DIR}/d1_gmn/deployment/crontab
 

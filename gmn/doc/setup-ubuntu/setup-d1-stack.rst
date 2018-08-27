@@ -52,12 +52,12 @@ Run the following commands to:
 
     apt install --yes build-essential libssl-dev libxml2-dev libxslt1-dev \
     libffi-dev postgresql-server-dev-10 openssl curl python-pip python3-venv \
-    python3-dev
+    python3-dev libapache2-mod-wsgi-py3
     pip install --upgrade pip virtualenv
     mkdir -p /var/local/dataone/
-    python3 -m venv /var/local/dataone/gmn_venv
-    . /var/local/dataone/gmn_venv/bin/activate
-    pip install wheel
+    python3 -m venv /var/local/dataone/gmn_venv_py3
+    . /var/local/dataone/gmn_venv_py3/bin/activate
+    pip install --upgrade pip
     pip install dataone.gmn
     chown -R gmn:www-data /var/local/dataone
     cp `python -c "import site; print(site.getsitepackages()[0])"`\
