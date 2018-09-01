@@ -1,5 +1,5 @@
 #!/bin/sh
 
-rm source/generated/*
-python generate_modules.py --dest-dir source/generated/ --suffix rst --force ../src/d1_client/
+rm -rf source/generated/*
+python ../lib_client/doc/generate_modules.py --dest-dir source/generated/ --suffix rst --force ../src/d1_client/
 make html
