@@ -15,13 +15,20 @@ DataONE Terms
   DataONE Common Library for Python
     Part of the DataONE :term:`Investigator Toolkit (ITK)`. Provides functionality commonly needed by projects that interact with the :term:`DataONE` infrastructure via Python. It is a dependency of :term:`DataONE Client Library for Python`, :term:`GMN` and currently all other DataONE components written in Python.
 
+
   DataONE Client Library for Python
     Part of the DataONE :term:`Investigator Toolkit (ITK)`. Provides programmatic access to the DataONE infrastructure and may be used to form the basis of larger applications or to extend existing applications to utilize the services of DataONE.
+
+
+  DataONE Test Utilities for Python
+    A framework for testing and validation of DataONE components implemented in Python.
+
 
   GMN
     DataONE Generic Member Node.
 
     A DataONE Member Node :term:`MN`). It provides an implementation of MN APIs and can be used by organizations to expose their science data to DataONE if they do not wish to reate their own, native MN.
+
 
   Metacat
     Metacat is a flexible, open source metadata catalog and data repository that targets scientific data, particularly from ecology and environmental science. Metacat accepts XML as a common syntax for representing the large number of metadata content standards that are relevant to ecology and other sciences. Thus, Metacat is a generic XML database that allows storage, query, and retrieval of arbitrary XML documents without prior knowledge of the XML schema.
@@ -48,6 +55,10 @@ DataONE Terms
 
   CN
     DataONE Coordinating Node.
+
+
+  Node
+    DataONE Member Node or Coordinating Node
 
 
   client
@@ -175,14 +186,47 @@ Authentication and security
   Client side authentication
     :term:`SSL` Client side authentication is part of the :term:`SSL handshake`, where the client proves its identity to the web server by providing a :term:`certificate` to the server. The certificate provided by the client must be signed by a :term:`CA` that is trusted by the server. Client Side Authentication is not a required part of the handshake. The server can be set up to not allow Client side authentication, to require it or to let it be optional.
 
+
   Server Side Authentication
     :term:`SSL` Server Side Authentication is part of the :term:`SSL handshake`, where the server proves its identity to the client by providing a :term:`certificate` to the client. The certificate provided by the server must be signed by a :term:`CA` that is trusted by the client. Server Side Authentication is a required part of the handshake.
+
 
   Client side certificate
     :term:`Certificate` that is provided by the client during :term:`client side authentication`.
 
+
   Server side certificate
     :term:`Certificate` that is provided by the server during :term:`server side authentication`.
+
+
+  Identity Provider
+    A service that creates, maintains, and manages identity information for principals while providing authentication services to relying party applications within a federation or distributed network.
+
+
+ONEDrive
+========
+
+.. glossary::
+
+  FUSE
+    Filesystem in Userspace.
+
+    http://fuse.sourceforge.net/
+
+
+  macfuse
+    http://code.google.com/p/macfuse/
+
+
+  fusepy
+    http://code.google.com/p/fusepy/
+
+
+  Dokan
+    User mode file system for windows.
+
+    http://dokan-dev.net/en/
+
 
 Misc
 ~~~~
