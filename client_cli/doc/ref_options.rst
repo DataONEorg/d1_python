@@ -3,7 +3,7 @@
 Overview of command line options
 ================================
 
-::
+.. code-block:: none
 
   Usage: dataone.py [command] ...
 

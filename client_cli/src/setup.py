@@ -20,6 +20,7 @@
 # limitations under the License.
 """DataONE Command-Line Interface package
 """
+import sys
 
 import setuptools
 
@@ -60,4 +61,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

@@ -77,8 +77,7 @@ CommandProcessor:
   * Display the results of DataONE Operations.
 
 OperationMaker:
-  * Combine parameters from CommandProcessor and from the session into a DataONE Read
-    or Write Operation.
+  * Combine parameters from CommandProcessor and from the session into a DataONE Read or Write Operation.
 
 OperationQueue:
   * Hold a queue of DataONE Write Operations.

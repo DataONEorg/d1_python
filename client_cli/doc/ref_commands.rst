@@ -231,7 +231,7 @@ Read Operations
 
 Commands that cause read operations to be issued against Coordinating Nodes and Member Nodes.
 
-Commands for retrieving :term:`Science Data Objects <Science Data Object>`, :term:`System Metadata` and related information.
+Commands for retrieving :term:`Science Data Objects <Science Data>`, :term:`System Metadata` and related information.
 
 
 .. _get:
@@ -341,7 +341,7 @@ Active session variables: :ref:`mn-url <mn-url>`, :ref:`format-id <format-id>`,
 
 package <package-pid> <science-metadata-pid> <science-pid> [science-pid ...]
 ----------------------------------------------------------------------------
-Create a simple :term:`OAI-ORE` Resource Map on a Member Node
+Create a simple :term:`OAI-ORE Resource Map` on a Member Node
 
 
 .. _archive:

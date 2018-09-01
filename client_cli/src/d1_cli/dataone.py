@@ -379,4 +379,4 @@ def _print_unexpected_exception(max_traceback_levels=100):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

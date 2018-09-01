@@ -156,4 +156,4 @@ def log_startup_parameters(options, arguments):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

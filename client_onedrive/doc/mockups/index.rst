@@ -11,8 +11,7 @@ The third implementation was based on the ``onemercury-integration`` and impleme
 
 The fourth implementation replaced the DataONE Workspace concept with the Zotero citation manager.
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :maxdepth: 1

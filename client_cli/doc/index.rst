@@ -5,8 +5,7 @@ See :doc:`/index` for an overview of the DataONE libraries and other products im
 
 .. include:: overview.rst
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :maxdepth: 3

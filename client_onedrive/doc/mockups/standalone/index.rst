@@ -6,17 +6,14 @@ In this approach, search and discovery is exposed directly as a filesystem hiera
 Main advantages:
 
 * Search and discovery functionality is in the same place as object access.
-
 * Virtually the same code base can be used for all supported platforms.
 
 Main disadvantages:
 
 * Giving folders different semantics than they have in a regular filesystem is
   unintuitive.
-
 * There is a learning curve in interpreting and navigating the search/discovery
   filesystem.
-
 * Input data such as keywords cannot be typed in -- they can only be selected.
 
 Mockups

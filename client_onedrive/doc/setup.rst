@@ -43,9 +43,7 @@ There is currently no setup script for ONEDrive, so installation means simply do
 
 
 * Set PYTHONPATH to include d1_common_python/src and d1_libclient_python/src
-
 * On OS X, set DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH
-
 * Make sure option 'user_allow_other' is set in /etc/fuse.conf.
 
 If the library search path is incomplete, an exception such as the following may occur::
@@ -68,7 +66,9 @@ Linux
 
 Make sure the system is up to date::
 
-  $ sudo apt-get --yes update; sudo apt-get --yes dist-upgrade
+  sudo -H bash -c '
+    apt update --yes && apt dist-upgrade --yes
+  '
 
 * Reboot if necessary.
 
@@ -79,12 +79,12 @@ Set up server packages:
 
 ::
 
-  $ sudo apt-get --yes install build-essential python-dev libxml2-dev \
+  $ sudo apt install --yes build-essential python-dev libxml2-dev \
   libxslt-dev
 
 Install pip::
 
-  $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
+  $ sudo apt install --yes python-pip; sudo pip install pip --upgrade;
 
 Install ONEDrive, and its dependencies from PyPI, into a Python virtual environment. The virtual environment is set up under onedrive_bin in the user's home folder.
 

@@ -34,7 +34,6 @@ Saving objects
 ---------------
 
 * A single object can be added to user defined folders.
-
 * The user can use the "New folder" option to a new folder and add the first
   object to it in the same operation.
 
@@ -47,7 +46,6 @@ Saving objects
 \
 
 * All of the search results can be added to a folder.
-
 * It is also possible to add a function to create an RSS or Atom feed for the
   search results so that the user can be notified when new objects that match
   the search parameters are added to DataONE.
