@@ -36,7 +36,7 @@ class DataONEClient(object):
   pass
 
 
-def get_api_major_by_base_url(base_url):
+def get_api_major_by_base_url(base_url, *client_arg_list, **client_arg_dict):
   """Read the Node document from a node and return an int containing the latest
   D1 API version supported by the node
 
@@ -44,7 +44,9 @@ def get_api_major_by_base_url(base_url):
   services for v1 and any later APIs versions supported by the node.
   """
   api_major = 0
-  client = d1_client.mnclient.MemberNodeClient(base_url)
+  client = d1_client.mnclient.MemberNodeClient(
+    base_url, *client_arg_list, **client_arg_dict
+  )
   node_pyxb = client.getCapabilities()
   for service_pyxb in node_pyxb.services.service:
     if service_pyxb.available:

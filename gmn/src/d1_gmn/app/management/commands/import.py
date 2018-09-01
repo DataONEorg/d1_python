@@ -69,18 +69,6 @@ import d1_client.mnclient
 import django.conf
 import django.core.management.base
 
-# import shutil
-# import zlib
-
-# import multiprocessing
-# import cProfile as profile
-
-# ROOT_PATH = '/var/local/dataone'
-# REVISION_LIST_PATH = os.path.join(ROOT_PATH, 'import_revision_list.json')
-# TOPO_LIST_PATH = os.path.join(ROOT_PATH, 'import_topo_list.json')
-# IMPORTED_LIST_PATH = os.path.join(ROOT_PATH, 'import_imported_list.json')
-# UNCONNECTED_DICT_PATH = os.path.join(ROOT_PATH, 'import_unconnected.json')
-
 DEFAULT_TIMEOUT_SEC = 3 * 60
 DEFAULT_N_WORKERS = 8
 # See notes in sysmeta iterator docstring before changing
@@ -221,8 +209,8 @@ class Command(django.core.management.base.BaseCommand):
           continue
         elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
           self._events.log_and_count(
-            'Unexpected PyXB object',
-            'pyxb="{}"'.format(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb))
+            'Unexpected PyXB object', 'pyxb="{}"'.
+            format(d1_common.xml.serialize_to_xml_str(sysmeta_pyxb))
           )
           continue
 
@@ -274,8 +262,8 @@ class Command(django.core.management.base.BaseCommand):
         continue
       elif not d1_common.type_conversions.is_pyxb(log_record_pyxb):
         self._events.log_and_count(
-          'Unexpected object',
-          'obj="{}"'.format(d1_common.xml.format_pretty_pyxb(log_record_pyxb))
+          'Unexpected object', 'obj="{}"'.
+          format(d1_common.xml.serialize_to_xml_str(log_record_pyxb))
         )
         continue
 
@@ -366,7 +354,9 @@ class Command(django.core.management.base.BaseCommand):
       )
 
   def _find_api_major(self):
-    return d1_client.d1client.get_api_major_by_base_url(self._opt['baseurl'])
+    return d1_client.d1client.get_api_major_by_base_url(
+      self._opt['baseurl'], **self._get_client_dict()
+    )
 
   # def _migrate_filesystem(self):
   #   for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):
