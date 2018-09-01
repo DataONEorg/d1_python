@@ -1,4 +1,3 @@
-
 ## d1_python
 
 Python components for DataONE clients and servers.
@@ -237,6 +236,21 @@ When prompted for the password, enter a new superuser password (and remember it 
 
     $ sudo -u postgres createdb -E UTF8 gmn2
     $ sudo -u postgres createuser --superuser `whoami`
+
+PyCharm (and other IntelliJ based platforms), are not able to connect to database with local (UNIX) sockets. Postgres' convenient "peer" authentication type only works over local sockets. A convenient workaround for this is to set Postgres up to trust local connections made over TCP/IP.
+
+:
+
+    $ sudo editor /etc/postgresql/10/main/pg_hba.conf
+
+Add line:
+
+:
+
+    host all all 127.0.0.1/32 trust
+
+A similar line for MD5 may already be present and, if so, must be commented out.
+
 
 #### Certificates
 
