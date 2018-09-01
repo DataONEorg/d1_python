@@ -99,8 +99,8 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   def test_1050(self):
     """echoCredentials(): Live test against prod env: Invalid cert"""
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=d1_common.const.URL_DATAONE_ROOT,
-      cert_pem_path=self.sample.get_path('cert_with_equivalents_and_group.pem')
+      base_url=d1_common.const.URL_DATAONE_ROOT, cert_pem_path=self.sample.
+      get_path('cert_with_equivalents_invalid_serialization.pem')
     )
     with pytest.raises(OpenSSL.SSL.Error) as exc_info:
       live_client.echoCredentials()

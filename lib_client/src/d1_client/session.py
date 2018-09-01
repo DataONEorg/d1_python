@@ -78,7 +78,7 @@ class Session(object):
     :type cert_key_path: string
 
     :param timeout_sec: Time in seconds that requests will wait for a response.
-      None, 0, 0.0 disables timeouts. Default is RESPONSE_TIMEOUT, currently 60
+      None, 0, 0.0 disables timeouts. Default is DEFAULT_HTTP_TIMEOUT, currently 60
       seconds.
     :type timeout_sec: float, int, None
 
@@ -139,7 +139,7 @@ class Session(object):
       'params':
         self._datetime_to_iso8601(kwargs_dict.pop('query', {})),
       'timeout':
-        kwargs_dict.pop('timeout_sec', d1_common.const.RESPONSE_TIMEOUT),
+        kwargs_dict.pop('timeout_sec', d1_common.const.DEFAULT_HTTP_TIMEOUT),
       'stream':
         kwargs_dict.pop('use_stream', DEFAULT_USE_STREAM),
       'verify':
