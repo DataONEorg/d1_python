@@ -29,8 +29,6 @@ import string
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.util
 
-import d1_common.util
-
 import django.apps
 import django.conf
 import django.core.exceptions
@@ -42,10 +40,16 @@ class GMNStartupChecks(django.apps.AppConfig):
   name = 'd1_gmn.app.startup'
 
   def ready(self):
+    """Called once per Django process instance
+
+    If the filesystem setup fails or if an error is found in settings.py,
+    django.core.exceptions.ImproperlyConfigured is raised, causing Django not to
+    launch the main GMN app.
+    """
     # Stop the startup code from running automatically from pytest unit tests.
     # When running tests in parallel with xdist, an instance of GMN is launched
     # before thread specific settings have been applied.
-    # if hasattr(sys, '_running_in_pytest'):
+    # if hasattr(sys, '_launched_by_pytest'):
     #   return
 
     self._assert_readable_file_if_set('CLIENT_CERT_PATH')
@@ -61,6 +65,8 @@ class GMNStartupChecks(django.apps.AppConfig):
     self._check_resource_map_create()
     if not d1_gmn.app.sciobj_store.is_existing_store():
       self._create_sciobj_store_root()
+
+    self._add_xslt_mimetype()
 
   def _assert_is_type(self, setting_name, valid_type):
     v = getattr(django.conf.settings, setting_name, None)
@@ -131,40 +137,38 @@ class GMNStartupChecks(django.apps.AppConfig):
       django.conf.settings.RESOURCE_MAP_CREATE not in RESOURCE_MAP_CREATE_MODE_LIST
     ):
       raise django.core.exceptions.ImproperlyConfigured(
-        'Configuration error: Invalid RESOURCE_MAP_CREATE setting. valid="{}" current="{}"'.
-        format(
+        'Configuration error: Invalid RESOURCE_MAP_CREATE setting. '
+        'valid="{}" current="{}"'.format(
           ', '.join(RESOURCE_MAP_CREATE_MODE_LIST),
           django.conf.settings.RESOURCE_MAP_CREATE
         )
       )
 
   def _set_secret_key(self):
-    secret_file_path = d1_common.util.abs_path('../secret_key.txt')
     try:
-      with open(secret_file_path, 'rb') as f:
+      with open(django.conf.settings.SECRET_KEY_PATH, 'rb') as f:
         django.conf.settings.SECRET_KEY = f.read().strip()
     except EnvironmentError:
-      django.conf.settings.SECRET_KEY = self._create_secret_key_file(
-        secret_file_path
-      )
+      django.conf.settings.SECRET_KEY = self._create_secret_key_file()
 
-  def _create_secret_key_file(self, secret_file_path):
+  def _create_secret_key_file(self):
     secret_key_str = ''.join([
       random.SystemRandom()
       .choice('{}{}'.format(string.ascii_letters, string.digits))
       for _ in range(64)
     ])
     try:
-      with open(secret_file_path, 'wb') as f:
-        f.write(secret_key_str)
+      with open(django.conf.settings.SECRET_KEY_PATH, 'wb') as f:
+        f.write(secret_key_str.encode('utf-8'))
     except EnvironmentError:
       raise django.core.exceptions.ImproperlyConfigured(
         'Configuration error: Secret key file not found and unable to write '
-        'new. path="{}"'.format(secret_file_path)
+        'new. path="{}"'.format(django.conf.settings.SECRET_KEY_PATH)
       )
     else:
       logging.info(
-        'Generated new secret key file. path="{}"'.format(secret_file_path)
+        'Generated new secret key file. path="{}"'.
+        format(django.conf.settings.SECRET_KEY_PATH)
       )
     return secret_key_str
 
@@ -174,7 +178,7 @@ class GMNStartupChecks(django.apps.AppConfig):
     except EnvironmentError as e:
       raise django.core.exceptions.ImproperlyConfigured(
         'Configuration error: Invalid object store root path. '
-        'OBJECT_STORE_PATH="{}". msg="{}"'.format(
+        'path="{}". msg="{}"'.format(
           django.conf.settings.OBJECT_STORE_PATH, str(e)
         )
       )
