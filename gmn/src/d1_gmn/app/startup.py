@@ -17,11 +17,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Startup configuration and checks
+"""App performing filesystem setup and basic sanity checks on configuration
+values in settings.py before GMN starts servicing requests.
+
+Django loads apps into the Application Registry in the order specified in
+settings.INSTALLED_APPS. This app must be set to load before the main GMN app
+by listing it above the main app in settings.INSTALLED_APPS.
 """
 
 import collections
 import logging
+import mimetypes
 import os
 import random
 import string
@@ -190,3 +196,10 @@ class GMNStartupChecks(django.apps.AppConfig):
           d1_gmn.app.sciobj_store.get_gmn_version(),
         )
       )
+
+  def _add_xslt_mimetype(self):
+    """Register the mimetype for .xsl files in order for Django to serve static
+    .xsl files with the correct mimetype
+    """
+    # 'application/xslt+xml'
+    mimetypes.add_type('text/xsl', '.xsl')
