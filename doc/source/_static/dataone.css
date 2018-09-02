@@ -3,3 +3,9 @@ div.highlight, pre {
   background-color: #FEEFB3;
 }
 
+body > div.footer {
+    padding-top: 2rem;
+    text-align: center;
+    font-size: 80%;
+    color: gray;
+}
