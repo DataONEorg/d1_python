@@ -1,7 +1,7 @@
-Installing PostgreSQL
+Installing Postgres
 =====================
 
-Install PostgreSQL::
+Install Postgres::
 
     $ sudo yum -y install postgresql postgresql-devel postgresql-libs postgresql-plpython postgresql-server
 

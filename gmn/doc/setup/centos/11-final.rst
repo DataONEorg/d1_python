@@ -14,22 +14,20 @@ Initialize the database
 
   ::
 
-    $ [ `whoami` != gmn ] && sudo -Hsu gmn
-    $ cd /var/local/dataone/
-    $ source gmn_venv/bin/activate
-    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/manage.py migrate --run-syncdb
-
+    sudo -Hu gmn bash -c '
+      cd /var/local/dataone
+      source gmn_venv_py3/bin/activate
+      python /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn/manage.py migrate --run-syncdb
+    '
 
 Set server to UTC timezone (recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GMN translates incoming date-times to UTC and provides outgoing date-times in UTC. Because of this, it is convenient to run the server in UTC, so that server related timestamps, such as the ones in logs, match up with timestamps stored in the GMN database and provided in DataONE REST API responses.
 
-To check your time format:
-  ::
+To check your time format::
 
-    $ date
-
+  $ date
 
 The output should specify that that time given is in UTC, for example:
 ::

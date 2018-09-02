@@ -17,12 +17,14 @@ Either you or your IT department may have already acquired an SSL certificate re
 
 Option 2: Create a Self-Signed SSL Cert for Testing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-It is possible to create a self-signed certificate. While this certificate will not be trusted by browsers, it will still be useful for testing that our SSL configurations are working. The below command will generate the certificate and key, putting them in the location where the gmn2-ssl.conf file has been told to look for it::
+It is possible to create a self-signed certificate. While this certificate will not be trusted by browsers, it will still be useful for testing that our SSL configurations are working. The below command will generate the certificate and key, putting them in the location where the gmn3-ssl.conf file has been told to look for it::
 
     $ sudo mkdir -p /var/local/dataone/certs/server
     $ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/local/dataone/certs/server/server_key_nopassword.pem -out /var/local/dataone/certs/server/server_cert.pem
 
-You will be asked to enter some information as shown below. Be sure to enter the domain being pointed at your server's IP for the Common Name. Don't forget that this should be consistent with the domain we configured as the ServerName in the gmn2-ssl.conf file::
+You will be asked to enter some information as shown below. Be sure to enter the domain being pointed at your server's IP for the Common Name. Don't forget that this should be consistent with the domain we configured as the ServerName in the gmn3-ssl.conf file:
+
+.. code-block:: none
 
     Country Name (2 letter code) [XX]:US
     State or Province Name (full name) []:Tennessee
@@ -88,6 +90,6 @@ Which will provide output similar to::
 
 However, you should not need to update your vhost with this information. If you go back and look at the contents of the GMN virtual host file::
 
-	$ vi /etc/httpd/conf.d/gmn2-ssl.conf
+	$ vi /etc/httpd/conf.d/gmn3-ssl.conf
 
 You’ll see that the paths for SSLCertificateFile and SSLCertificateKeyFile have automatically been updated for you.

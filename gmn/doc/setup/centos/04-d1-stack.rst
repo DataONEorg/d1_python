@@ -27,19 +27,19 @@ Install the virtualenv command. We can get this using pip::
 Setup directories::
 
 
-    $ sudo mkdir -p /var/local/dataone/{gmn_venv,gmn_object_store}
+    $ sudo mkdir -p /var/local/dataone/{gmn_venv_py3,gmn_object_store}
     $ cd /var/local/dataone
-    $ sudo chown gmn:apache gmn_venv
+    $ sudo chown gmn:apache gmn_venv_py3
 
-Create and activate a virtual environment in the gmn_venv directory::
+Create and activate a virtual environment in the gmn_venv_py3 directory::
 
-    $ [ `whoami` != gmn ] && sudo -Hsu gmn
-    $ virtualenv gmn_venv
-    $ source gmn_venv/bin/activate
-    $ pip install --upgrade setuptools==33.1.1
-    $ pip install cachecontrol==0.11.7
-    $ pip install dataone.gmn
-    $ deactivate
+    sudo -Hu gmn bash -c '
+      virtualenv gmn_venv_py3
+      source gmn_venv_py3/bin/activate
+      pip install --upgrade setuptools==33.1.1
+      pip install cachecontrol==0.11.7
+      pip install dataone.gmn
+    '
 
 
 Configure the GMN Python virtual environment to be the default for the gmn user.::
@@ -50,7 +50,7 @@ Configure the GMN Python virtual environment to be the default for the gmn user.
 This will take you into a text editor. Use the “i” key to enter insert mode. You will see the word ‘INSERT’ at the bottom when this is active, which means you can edit the contents. Add the following lines to the end of the file.::
 
     # This next line added as part of GMN installation setup:
-    PATH="$PATH":/var/local/dataone/gmn_venv/bin/
+    PATH="$PATH":/var/local/dataone/gmn_venv_py3/bin/
 
 
 Then use Escape key and “:wq” to write the changes to the file and exit the editor.

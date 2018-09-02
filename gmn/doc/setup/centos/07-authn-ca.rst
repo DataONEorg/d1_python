@@ -21,7 +21,7 @@ The local CA used for signing certificates that will be trusted by this (and no 
 
   Copy custom OpenSSL configuration file::
 
-    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/openssl.cnf .
+    $ sudo cp /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn/deployment/openssl.cnf .
 
   Create the certificate database file::
 

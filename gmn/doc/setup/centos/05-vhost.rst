@@ -10,10 +10,10 @@ Remove the default ssl.conf file containing a default vhost::
     $ sudo rm ssl.conf
 
 
-Copy over and edit gmn2-ssl.conf virtual host file::
+Copy over and edit gmn3-ssl.conf virtual host file::
 
-    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/gmn2-ssl.conf /etc/httpd/conf.d/
-    $ sudo vi gmn2-ssl.conf
+    $ sudo cp /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn/deployment/gmn3-ssl.conf /etc/httpd/conf.d/
+    $ sudo vi gmn3-ssl.conf
 
 Change the ServerName to your domain, which should already be pointed at your server’s IP. This must be consistent with the domain as it will be expressed when registering an SSL certificate.
 
@@ -44,10 +44,6 @@ Add the below text to the top of the file, above the start of the
     SSLProtocol all -SSLv3 -SSLv2
 
     SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4"
-
-Load additional config file for http to https forwarding in the "/etc/httpd/conf.d" directory::
-
-    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/d1_gmn/deployment/forward_http_to_https.conf /etc/httpd/conf.d/
 
 Don’t try to restart apache yet!
 Ordinarily, one might expect to restart apache at this point. However, the custom .conf file just copied over contains several references to certificate files and directories we have not yet created, so a restart would fail at this point.
