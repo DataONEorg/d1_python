@@ -142,10 +142,13 @@ TRUST_CLIENT_DATEUPLOADED = False
 # Hosts/domain names that are valid for this site.
 # Ignored if DEBUG is True. Required if DEBUG is False.
 ALLOWED_HOSTS = [
+  # Allow local connections
   'localhost',
-  '127.0.0.1', # Allow local connections.
-  #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
-  #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
+  '127.0.0.1',
+  # Add FQDN to allow external clients to access GMN
+  #'my.server.name.com',
+  # Add to allow external clients to access GMN by IP address
+  #'my.external.ip.address',
 ]
 
 # ==============================================================================
@@ -350,35 +353,10 @@ PUBLIC_LOG_RECORDS = True
 # - Any user that has write permission on an object can update it.
 REQUIRE_WHITELIST_FOR_UPDATE = True
 
-# Postgres database connection.
-DATABASES = {
-  'default': {
-    # Postgres
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn2',
-    # By default, GMN uses Postgres Peer authentication, which does not
-    # require a username and password.
-    'USER': '',
-    'PASSWORD': '',
-    # Set HOST to empty string for localhost.
-    'HOST': '',
-    # Set PORT to empty string for default.
-    'PORT': '',
-    # Wrap each HTTP request in an implicit transaction. The transaction is
-    # rolled back if the view does not return successfully. Upon a successful
-    # return, the transaction is committed, thus making all modifications that
-    # the view made to the database visible simultaneously, bringing the
-    # database directly from one valid state to the next.
-    #
-    # Transactions are also important for views that run only select queries and
-    # run more than a single query, as they hide any transitions between valid
-    # states that may happen between queries.
-    #
-    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
-    # the basis of concurrency control in GMN.
-    'ATOMIC_REQUESTS': True,
-  }
-}
+# Set the maximum number of items that can be returned in a single page of
+# results from listObjects (ObjectList) and getLogRecords (Log). A lower number
+# reduces memory usage, but causes more round-trips between client and server.
+MAX_SLICE_ITEMS = 5000
 
 # Absolute Path to the root of the GMN object store. The object store is a
 # directory hierarchy in which the bytes of science objects are stored by
@@ -496,14 +474,15 @@ PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
 # Path to the log file.
-LOG_PATH = d1_common.util.abs_path('./gmn.log')
+LOG_PATH = d1_common.util.abs_path('../gmn.log')
 
 # As the XML documents holding the DataONE types, such as SystemMetadata, must
 # be in memory while being deserialized and parsed, we limit the size that can
 # be handled. The default limit is set much higher than the expected size of any
-# valid DataONE types and is intended to guard against invalid or malicious
+# valid DataONE type and is intended to guard against invalid or malicious
 # documents that may exhaust the server's memory. The limit does not apply to
-# XML documents submitted as science objects.
+# XML documents submitted as science data objects, as they are streamed directly
+# to disk without being loaded to memory.
 # E.g.: 10 MiB = 10 * 1024**2 (default)
 MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 
@@ -540,10 +519,51 @@ MEDIA_URL = ''
 # Static files (served directly by Apache).
 STATIC_URL = '/static/'
 
-# Logging
+# Postgres database connection.
+DATABASES = {
+  'default': {
+    # Postgres
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    # The database in tables required by GMN are stored. The database itself
+    # is typically owned by the postgres user while the tables are owned by the
+    # gmn user.
+    'NAME': 'gmn3',
+    # By default, GMN uses Postgres Peer authentication, which does not
+    # require a username and password.
+    'USER': '',
+    'PASSWORD': '',
+    # Set HOST to empty string for localhost.
+    'HOST': '',
+    # Set PORT to empty string for default.
+    'PORT': '',
+    # Wrap each HTTP request in an implicit transaction. The transaction is
+    # rolled back if the view does not return successfully. Upon a successful
+    # return, the transaction is committed, thus making all modifications that
+    # the view made to the database visible simultaneously, bringing the
+    # database directly from one valid state to the next.
+    #
+    # Transactions are also important for views that run only select queries and
+    # run more than a single query, as they hide any transitions between valid
+    # states that may happen between queries.
+    #
+    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
+    # the basis of concurrency control in GMN.
+    'ATOMIC_REQUESTS': True,
+  }
+}
 
-# Set the level of logging that GMN should perform. Choices are:
-# DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+# Logging
+#
+# Log levels determine which types of messages get written to GMN's log file
+# Levels range from DEBUG, which is used for messages expected to occur during
+# regular operations, to CRITICAL, which is used for messages indicating
+# critical errors.
+#
+# The DEBUG log level is very verbose and will create large log files over time,
+# so its mainly useful for troubleshooting.
+#
+# By default, we set debug level logging when GMN is in debug mode and
+# informational level logging when GMN runs in regular mode.
 if DEBUG or DEBUG_GMN:
   LOG_LEVEL = 'DEBUG'
 else:
@@ -600,7 +620,7 @@ LOGGING = {
   }
 }
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
   # Custom GMN middleware
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
@@ -642,8 +662,11 @@ INSTALLED_APPS = [
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.staticfiles',
-  'd1_gmn.app',
+  # App that performs filesystem setup and basic sanity checks on the settings
+  # in this file. Must be listed before the GMN main app.
   'd1_gmn.app.startup.GMNStartupChecks',
+  # GMN main app
+  'd1_gmn.app',
 ]
 
 # Django uses SECRET_KEY for a number of security related features, such as
@@ -652,10 +675,12 @@ INSTALLED_APPS = [
 # SECRET_KEY is currently unused. However, to guard against future changes in
 # Django that may cause this setting to be used, GMN automatically generates a
 # persistent SECRET_KEY, which is used instead of the placeholder value
-# specified here. The key is stored in secret_key.txt.
+# specified here. Also see SECRET_KEY_PATH setting.
 SECRET_KEY = '<Do not modify this placeholder value>'
 
-# Set the maximum number of items that can be returned in a single page of
-# results from listObjects (ObjectList) and getLogRecords (Log). A lower number
-# reduces memory usage, but causes more round-trips between client and server.
-MAX_SLICE_ITEMS = 5000
+# Path to file holding the secret key. Typically, the file does not exist when
+# GMN is first installed, and is automatically created and written with a
+# generated key when GMN is first launched after install. If the file exists,
+# the contents are used as the key. The file and key may be created manually if
+# desired. The parent directories must exist. Also see the SECRET_KEY setting.
+SECRET_KEY_PATH = d1_common.util.abs_path('./secret_key.txt')
