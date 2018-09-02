@@ -44,8 +44,8 @@ SLICE_COUNT = 23
 
 def _assert_pyxb_objects_are_equivalent(arg_tup):
   a_pyxb, b_pyxb, i, item_count = arg_tup
-  a_str = d1_common.xml.serialize_to_str(a_pyxb)
-  b_str = d1_common.xml.serialize_to_str(b_pyxb)
+  a_str = d1_common.xml.serialize_to_xml_str(a_pyxb)
+  b_str = d1_common.xml.serialize_to_xml_str(b_pyxb)
   if not d1_common.xml.are_equivalent(a_str, b_str):
     raise AssertionError(
       'PyXB objects are not equivalent.\na="{}"\nb="{}"\n'.format(a_str, b_str)

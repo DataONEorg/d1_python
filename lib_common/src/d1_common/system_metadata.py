@@ -153,8 +153,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
   """
   normalize_in_place(a_pyxb, ignore_timestamps)
   normalize_in_place(b_pyxb, ignore_timestamps)
-  a_xml = d1_common.xml.serialize_to_str(a_pyxb)
-  b_xml = d1_common.xml.serialize_to_str(b_pyxb)
+  a_xml = d1_common.xml.serialize_to_xml_str(a_pyxb)
+  b_xml = d1_common.xml.serialize_to_xml_str(b_pyxb)
   are_equivalent = d1_common.xml.are_equivalent(a_xml, b_xml)
   if not are_equivalent:
     logging.debug('XML documents not equivalent:')

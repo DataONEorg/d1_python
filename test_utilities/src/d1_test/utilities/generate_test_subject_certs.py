@@ -35,7 +35,7 @@ import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
 # Get an instance of a logger.
 logger = logging.getLogger()
 
-# Config.
+# Config
 ca_cert_key_path = './ca_intermediate.key'
 ca_cert_pem_path = './ca_intermediate.crt'
 #ca_cert_key_path = './ca.key'

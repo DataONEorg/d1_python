@@ -69,30 +69,19 @@ def deserialize_d1_exc(doc_xml):
   return deserialize(doc_xml, bindings=d1_common.types.dataoneErrors)
 
 
-def serialize_gen(obj_pyxb, encoding, pretty=False, strip_prolog=False):
+def serialize_gen(
+    obj_pyxb, encoding, pretty=False, strip_prolog=False, xslt_url=None
+):
   """Serialize a PyXB object to XML
   - If {pretty} is True, format for human readability.
   - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
   encoding="utf-8"?>), from the resulting string.
   """
   assert is_pyxb(obj_pyxb)
-  assert encoding in (None, 'utf-8')
+  assert encoding in (None, 'utf-8', 'UTF-8')
+
   try:
-    if pretty:
-      pretty_xml = obj_pyxb.toDOM().toprettyxml(indent='  ', encoding=encoding)
-      # Remove empty lines in the result caused by a bug in toprettyxml()
-      if encoding is None:
-        pretty_xml = re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
-      else:
-        pretty_xml = re.sub(b'^\s*$\n', b'', pretty_xml, flags=re.MULTILINE)
-    else:
-      pretty_xml = obj_pyxb.toxml(encoding)
-    if strip_prolog:
-      if encoding is None:
-        pretty_xml = re.sub(r'^<\?(.*)\?>', r'', pretty_xml)
-      else:
-        pretty_xml = re.sub(b'^<\?(.*)\?>', b'', pretty_xml)
-    return pretty_xml.strip()
+    obj_dom = obj_pyxb.toDOM()
   except pyxb.ValidationError as e:
     raise ValueError(
       'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
@@ -102,23 +91,49 @@ def serialize_gen(obj_pyxb, encoding, pretty=False, strip_prolog=False):
       'Unable to serialize PyXB to XML. error="{}"'.format(str(e))
     )
 
+  if xslt_url:
+    xslt_processing_instruction = obj_dom.createProcessingInstruction(
+      'xml-stylesheet', 'type="text/xsl" href="{}"'.format(xslt_url)
+    )
+    root = obj_dom.firstChild
+    obj_dom.insertBefore(xslt_processing_instruction, root)
 
-def serialize_to_transport(obj_pyxb, pretty=False, strip_prolog=False):
+  if pretty:
+    xml_str = obj_dom.toprettyxml(indent='  ', encoding=encoding)
+    # Remove empty lines in the result caused by a bug in toprettyxml()
+    if encoding is None:
+      xml_str = re.sub(r'^\s*$\n', r'', xml_str, flags=re.MULTILINE)
+    else:
+      xml_str = re.sub(b'^\s*$\n', b'', xml_str, flags=re.MULTILINE)
+  else:
+    xml_str = obj_dom.toxml(encoding)
+  if strip_prolog:
+    if encoding is None:
+      xml_str = re.sub(r'^<\?(.*)\?>', r'', xml_str)
+    else:
+      xml_str = re.sub(b'^<\?(.*)\?>', b'', xml_str)
+
+  return xml_str.strip()
+
+
+def serialize_to_transport(
+    obj_pyxb, pretty=False, strip_prolog=False, xslt_url=None
+):
   """Serialize a PyXB object to XML bytes (UTF-8)
   - If {pretty} is True, format for human readability.
   - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
   encoding="utf-8"?>), from the resulting string.
   """
-  return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog)
+  return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog, xslt_url)
 
 
-def serialize_to_str(obj_pyxb, pretty=True, strip_prolog=False):
+def serialize_to_xml_str(obj_pyxb, pretty, strip_prolog, xslt_url=None):
   """Serialize a PyXB object to XML str (Unicode)
   - If {pretty} is True, format for human readability.
   - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
   encoding="utf-8"?>), from the resulting string.
   """
-  return serialize_gen(obj_pyxb, None, pretty, strip_prolog)
+  return serialize_gen(obj_pyxb, None, pretty, strip_prolog, xslt_url)
 
 
 def format_pretty_xml(doc_xml):
@@ -131,10 +146,6 @@ def format_pretty_xml(doc_xml):
   pretty_xml = dom_obj.toprettyxml(indent='  ')
   # Remove empty lines in the result caused by a bug in toprettyxml()
   return re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
-
-
-def format_pretty_pyxb(doc_pyxb):
-  return serialize_to_transport(doc_pyxb)
 
 
 def is_pyxb(doc_pyxb):
@@ -308,8 +319,8 @@ def sort_elements_by_child_values(obj_pyxb, child_name_list):
 def format_diff_pyxb(a_pyxb, b_pyxb):
   return '\n'.join(
     difflib.ndiff(
-      serialize_to_str(a_pyxb).splitlines(),
-      serialize_to_str(b_pyxb).splitlines(),
+      serialize_to_xml_str(a_pyxb).splitlines(),
+      serialize_to_xml_str(b_pyxb).splitlines(),
     )
   )
 

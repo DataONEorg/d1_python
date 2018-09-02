@@ -382,7 +382,7 @@ class D1TestCase(object):
     ss.write(
       '\n'.join([
         '  {}'.format(s)
-        for s in d1_common.xml.format_pretty_pyxb(type_pyxb).splitlines()
+        for s in d1_common.xml.serialize_to_xml_str(type_pyxb).splitlines()
       ])
     )
     return ss.getvalue()

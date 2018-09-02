@@ -52,7 +52,7 @@ DEFAULT_LISTOBJECTS_PAGE_SIZE = 100
 DEFAULT_GETLOGRECORDS_PAGE_SIZE = 100
 
 # HTTP Response timeout in seconds, float
-RESPONSE_TIMEOUT = 60.0
+DEFAULT_HTTP_TIMEOUT = 60.0
 
 # HTTP User Agent used by d1_python by default
 USER_AGENT = 'DataONE-Python/{} +http://dataone.org/'.format(VERSION)

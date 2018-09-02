@@ -245,7 +245,7 @@ def _gen_bag_info_file_tup(payload_byte_count, payload_file_count):
     '\n'.join(
       [
         'Payload-Oxum: {}.{}'.format(payload_byte_count, payload_file_count),
-        'Bagging-Date: {}'.format(d1_common.date_time.date_utc_now()),
+        'Bagging-Date: {}'.format(d1_common.date_time.date_utc_now_iso()),
         'Bag-Size: {}'.format(_gen_friendly_size(payload_byte_count)),
       ],
     ) + '\n'

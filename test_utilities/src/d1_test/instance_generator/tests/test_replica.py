@@ -33,7 +33,7 @@ class TestReplica(d1_test.d1_test_case.D1TestCase):
     """generate()"""
     replica_list = replica.generate()
     replica_xml_list = [
-      d1_common.xml.serialize_to_str(obj_pyxb) for obj_pyxb in replica_list
+      d1_common.xml.serialize_to_xml_str(obj_pyxb) for obj_pyxb in replica_list
     ]
     self.sample.assert_equals(replica_xml_list, 'inst_gen_generate')
 

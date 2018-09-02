@@ -33,14 +33,14 @@ AccessPolicy to be written back to the wrapped SystemMetadata.
 # An overview of the AccessPolicy
 
 There can be multiple rules in a policy and each rule can contain multiple
-subjects and permissions. So the same subject can be specified multiple times in the
-same rules or in different rules, each time with a different set of permissions. In
-such cases, the permissions are combined to determine the effective perm for the
-subject.
+subjects and permissions. So the same subject can be specified multiple times in
+the same rules or in different rules, each time with a different set of
+permissions. In such cases, the permissions are combined to determine the
+effective permission for the subject.
 
 The permissions supported by DataONE are 'read', 'write' and 'changePermission'.
 'write' implicitly includes 'read', and 'changePermission' implicitly includes
-'read' and 'write'. So, only a single perm needs to be assigned to a
+'read' and 'write'. So, only a single permission needs to be assigned to a
 subject in order to determine all permissions the subject has.
 
   read < write < changePermission

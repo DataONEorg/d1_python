@@ -44,7 +44,9 @@ class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self, capsys):
     """cert view <pem>: Lists subjects from DN and SubjectInfo
     """
-    cert_path = self.sample.get_path('cert_with_full_subject_info.pem')
+    cert_path = self.sample.get_path(
+      'cert_with_equivalents_invalid_serialization.pem'
+    )
     self.call_management_command('cert', 'view', cert_path)
     stdout, stderr = capsys.readouterr()
     self.sample.assert_equals(stdout, 'view')

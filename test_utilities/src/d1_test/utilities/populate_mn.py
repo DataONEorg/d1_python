@@ -77,7 +77,7 @@ def main():
     dest='timeout_sec',
     action='store',
     type='float',
-    default=TIMEOUT_SEC,
+    default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
     help='Amount of time to wait for calls to complete (seconds)',
   )
   parser.add_option(

@@ -50,9 +50,11 @@ D1_ENV_DICT = {
 }
 
 
-def get_d1env_keys():
-  return list(D1_ENV_DICT.keys())
+def get_d1_env_keys():
+  """Return the D1 env dictionary keys in preferred order"""
+  # These must match the keys in D1_ENV_DICT.
+  return ['prod', 'stage', 'sandbox', 'dev']
 
 
-def get_d1env(k):
+def get_d1_env(k):
   return D1_ENV_DICT[k]

@@ -77,8 +77,9 @@ UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 
 def extract_subjects(cert_pem):
-  """Extract DataONE compliant serialization of the DN and SubjectInfo extension
-  from PEM (base64) encoded X.509 v3 certificate.
+  """Extract from PEM (base64) encoded X.509 v3 certificate:
+  - DataONE compliant serialization of the DN (str)
+  - SubjectInfo extension (XML str)
   """
   cert_obj = deserialize_pem(cert_pem)
   return (
@@ -127,12 +128,11 @@ def extract_subject_info_extension(cert_obj):
     return str(pyasn1.codec.der.decoder.decode(subject_info_der)[0])
   except Exception as e:
     logging.debug('SubjectInfo not extracted. reason="{}"'.format(e))
-    return None
 
 
 def download_as_der(
     base_url=d1_common.const.URL_DATAONE_ROOT,
-    timeout_sec=d1_common.const.RESPONSE_TIMEOUT,
+    timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
   """Download certificate from the server at {base_url} and return it as a DER
   encoded string.
@@ -189,7 +189,7 @@ def download_as_der(
 
 def download_as_pem(
     base_url=d1_common.const.URL_DATAONE_ROOT,
-    timeout_sec=d1_common.const.RESPONSE_TIMEOUT,
+    timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
   """Download certificate from the server at {base_url} and return it as a PEM
   encoded string.
@@ -201,7 +201,7 @@ def download_as_pem(
 
 def download_as_obj(
     base_url=d1_common.const.URL_DATAONE_ROOT,
-    timeout_sec=d1_common.const.RESPONSE_TIMEOUT,
+    timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
   """Download certificate from the server at {base_url} and return it as a
   cryptography.Certificate object.

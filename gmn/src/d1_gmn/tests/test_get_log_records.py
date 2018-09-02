@@ -205,9 +205,10 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         '\n'.join([
           'pid: {}'.format(pid),
           'sid: {}'.format(sid),
-          'sysmeta: {}'.format(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb)),
+          'sysmeta: {}'.
+          format(d1_common.xml.serialize_to_xml_str(sysmeta_pyxb)),
           'create_event: {}'.
-          format(d1_common.xml.format_pretty_pyxb(event_pyxb)),
+          format(d1_common.xml.serialize_to_xml_str(event_pyxb)),
         ]),
         'new_create_event',
         gmn_client_v1_v2,

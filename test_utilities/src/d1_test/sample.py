@@ -279,7 +279,7 @@ def obj_to_pretty_str(o, no_clobber=False):
       return o
     # PyXB object
     with ignore_exceptions():
-      return d1_common.xml.serialize_to_str(o, pretty=True)
+      return d1_common.xml.serialize_to_xml_str(o, pretty=True)
     # Any native object structure that can be serialized to JSON
     # This covers only basic types that can be sorted. E.g., of not covered:
     # datetime, mixed str and int keys.
