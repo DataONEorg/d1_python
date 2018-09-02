@@ -1,0 +1,12 @@
+GMN_ROOT = /var/local/dataone/gmn_venv_py3
+SERVICE_ROOT = /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn
+PYTHON_BIN = /var/local/dataone/gmn_venv_py3/bin/python
+
+# By default, the processes are set to run once every hour
+# Tasks are started with a random delay that distributes network traffic and CN load over time
+
+# Process the Science Object replication queue
+* * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_replication_queue >> $SERVICE_ROOT/gmn_replication.log 1>&1
+
+# Process the System Metadata refresh queue
+* * * * * sleep $(expr $RANDOM \% $(30 * 60)) ; $PYTHON_BIN $SERVICE_ROOT/manage.py process_refresh_queue >> $SERVICE_ROOT/gmn_sysmeta.log 2>&1
