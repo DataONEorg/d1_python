@@ -275,13 +275,22 @@ def strip_timezone(dt):
 
 
 def utc_now():
-  """Return the current time in the UTC timezone"""
+  """Return the current dt as naive in the UTC timezone"""
   return cast_datetime_to_utc(datetime.datetime.utcnow())
 
 
-def date_utc_now():
+def date_utc_now_iso():
   """Return the current date as an ISO 8601 string in the UTC timezone"""
   return utc_now().date().isoformat()
+
+
+def local_now():
+  """Return the current dt as tz aware in the local timezone"""
+  return datetime.datetime.now(datetime.timezone.utc).astimezone()
+
+
+def local_now_iso():
+  return local_now().isoformat()
 
 
 def date_utc(dt):
