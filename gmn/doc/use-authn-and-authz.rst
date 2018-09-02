@@ -51,9 +51,10 @@ To create a whitelist with this subject, first create a file, for instance,
 ``whitelist.txt``. The most convenient location for this file is in the
 ``gmn`` folder::
 
-  $ [ `whoami` != gmn ] && sudo -Hsu gmn
-  $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn
-  $ nano whitelist.txt
+  sudo -Hu gmn bash -c '
+    cd /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/gmn
+    nano whitelist.txt
+  '
 
 In this file, add a line with an exact copy of the subject string marked as
 ``primary`` in the NotAuthorized exception (``CN=First Last,O=Google,C=US,DC=cilogon,DC=org`` in this case).

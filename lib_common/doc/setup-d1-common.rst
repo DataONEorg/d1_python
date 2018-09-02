@@ -11,8 +11,8 @@ Note that versions available through package managers such as apt tend to lag si
 Windows
 =======
 
-1. If you do not already have a working 32-bit Python 2.7 environment, download
-   the latest 32-bit Python 2.7 Windows installer from
+1. If you do not already have a working 32-bit Python 3.6 environment, download
+   the latest 32-bit Python 3.6 Windows installer from
    http://www.python.org/download/ and install it.
 
 #. In ``Control Panel | Classic View | System | Advanced | Environment Variables``,
@@ -35,7 +35,7 @@ Linux
 
 1. Install pip (Python package installer)::
 
-   $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
+   $ sudo apt install --yes python-pip; sudo pip install pip --upgrade;
 
 #. Install the DataONE Common Library for Python and dependencies::
 

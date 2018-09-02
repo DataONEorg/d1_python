@@ -4,8 +4,7 @@ DataONE Member Node Stress Tester
 .. include:: overview.rst
 
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :maxdepth: 2

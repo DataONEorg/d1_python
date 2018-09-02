@@ -6,8 +6,7 @@ The Instance Generator is used for generating randomized instances of the DataON
 It is part of the DataONE Test Utilities for Python and is installed as part of the test utilities.
 
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :maxdepth: 2

@@ -9,8 +9,7 @@ The provided serialization, deserialization and validation of DataONE API XML ty
 
 The certificate related functionality provides easy extraction of DataONE subjects from PEM (base64) encoded X.509 v3 certificates as used in DataONE. If DataONE's custom SubjectInfo extension is present in the certificate, related subjects for which the primary subject should also be authenticated are automatically included.
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :numbered:
@@ -18,6 +17,7 @@ Contents
 
   setup
   usage
+  /glossary
 
 Indices and tables
 ==================

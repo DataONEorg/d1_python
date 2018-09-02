@@ -3,8 +3,7 @@ DataONE Test Utilities
 
 .. include:: overview.rst
 
-Contents
-~~~~~~~~
+Contents:
 
 .. toctree::
   :numbered:
