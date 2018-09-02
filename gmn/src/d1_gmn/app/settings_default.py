@@ -18,8 +18,9 @@
 """Default settings for GMN
 - These settings are only used as fallbacks in case the corresponding settings
 in settings.py are missing.
-- This allows settings to be added without having to add them in settings.py
+- This allows settings to be added without having to modify settings.py
 in existing deployments.
+- The settings are described in settings.py.
 """
 
 # noinspection PyUnresolvedReferences
@@ -119,7 +120,7 @@ PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
-LOG_PATH = d1_common.util.abs_path('./gmn.log')
+LOG_PATH = d1_common.util.abs_path('../gmn.log')
 
 MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 NUM_CHUNK_BYTES = 1024**2
@@ -185,7 +186,7 @@ LOGGING = {
   }
 }
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
   'd1_gmn.app.middleware.request_handler.RequestHandler',
   'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
   'd1_gmn.app.middleware.response_handler.ResponseHandler',
@@ -211,6 +212,8 @@ TEMPLATES = [
   },
 ]
 
+TEMPLATE_CONTEXT_PROCESSORS = ('app.context_processors.global_settings',)
+
 CACHES = {
   'default': {
     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -221,13 +224,14 @@ CACHES = {
 ROOT_URLCONF = 'd1_gmn.app.urls'
 
 INSTALLED_APPS = [
-  # In Django 1.11, these are required in order for 404 not to trigger 500 when
-  # DEBUG=False
+  # These are required in order for 404 not to trigger 500 when DEBUG=False
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.staticfiles',
-  'd1_gmn.app',
+  # App for GMN configuration and startup checks (list before the GMN main app)
   'd1_gmn.app.startup.GMNStartupChecks',
+  # GMN main app
+  'd1_gmn.app',
 ]
 
 SECRET_KEY = '<Do not modify this placeholder value>'
