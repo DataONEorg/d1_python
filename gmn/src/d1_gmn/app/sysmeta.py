@@ -485,6 +485,18 @@ def _replication_policy_model_to_pyxb(sciobj_model):
   return replication_policy_pyxb
 
 
+def revision_pyxb_to_model(sci_model, sysmeta_pyxb, pid):
+  sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
+  obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
+  obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
+  d1_gmn.app.revision.set_revision_links(
+    sci_model, obsoletes_pid, obsoleted_by_pid
+  )
+  d1_gmn.app.revision.create_or_update_chain(
+    pid, sid, obsoletes_pid, obsoleted_by_pid
+  )
+
+
 # ------------------------------------------------------------------------------
 # Remote Replica
 # ------------------------------------------------------------------------------
@@ -527,20 +539,3 @@ def replica_model_to_pyxb(sciobj_model):
     )
     replica_pyxb_list.append(replica_pyxb)
   return replica_pyxb_list
-
-
-# ------------------------------------------------------------------------------
-# Remote Replica
-# ------------------------------------------------------------------------------
-
-
-def revision_pyxb_to_model(sci_model, sysmeta_pyxb, pid):
-  sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
-  obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
-  obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
-  d1_gmn.app.revision.set_revision_links(
-    sci_model, obsoletes_pid, obsoleted_by_pid
-  )
-  d1_gmn.app.revision.create_or_update_chain(
-    pid, sid, obsoletes_pid, obsoleted_by_pid
-  )

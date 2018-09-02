@@ -1,3 +1,5 @@
+{% load static %}
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -28,12 +30,12 @@
     }
 
     div.logoheader {
-      background: transparent url("/static/images/preface-wrapper-bg.png") repeat-x top left;
+      background: transparent url({% static 'images/preface-wrapper-bg.png' %}) repeat-x top left;
       height: 101px;
     }
 
     div.logoheader h1 {
-      background: transparent url("/static/images/d1_logo.png") no-repeat top left;
+      background: transparent url({% static 'images/d1_logo.png' %}) no-repeat top left;
       margin: 10px 9px;
       width: 333px;
       height: 77px;
@@ -59,7 +61,7 @@
       <tbody>
       <tr>
         <td>Node ID:</td>
-        <td>{{ node_identifier }}</td>
+        <td>{{ node_identifier_str }}</td>
       </tr>
       <tr>
         <td>Name:</td>
@@ -67,35 +69,43 @@
       </tr>
       <tr>
         <td>GMN version:</td>
-        <td>{{ gmn_version }}</td>
+        <td>{{ gmn_version_str }}</td>
+      </tr>
+      <tr>
+        <td>Python version:</td>
+        <td>{{ python_version_str }}</td>
       </tr>
       <tr>
         <td>Django version:</td>
-        <td>{{ django_version }}</td>
+        <td>{{ django_version_str }}</td>
       </tr>
       <tr>
-        <td>Average size of science objects:</td>
-        <td>{{ avg_sci_data_size }} bytes</td>
+        <td>PostgreSQL version:</td>
+        <td>{{ postgres_version_str }}</td>
+      </tr>
+      <tr>
+        <td>Average size of objects:</td>
+        <td>{{ avg_sci_data_size_bytes }} bytes</td>
       </tr>
       <tr>
         <td>Objects:</td>
-        <td>{{ n_science_objects }}</td>
+        <td>{{ total_sciobj_count }}</td>
       </tr>
       <tr>
         <td>Operations, total:</td>
-        <td>{{ n_connections_total }}</td>
+        <td>{{ total_event_count }}</td>
       </tr>
       <tr>
         <td>Operations, last hour:</td>
-        <td>{{ n_connections_in_last_hour }}</td>
+        <td>{{ last_hour_event_count }}</td>
       </tr>
       <tr>
         <td>Subjects:</td>
-        <td>{{ n_unique_subjects }}</td>
+        <td>{{ unique_subject_count }}</td>
       </tr>
       <tr>
         <td>Permissions:</td>
-        <td>{{ n_permissions }}</td>
+        <td>{{ total_permissions_count }}</td>
       </tr>
       <tr>
         <td>Server time:</td>
@@ -103,17 +113,17 @@
       </tr>
       <tr>
         <td>Storage used / remaining:</td>
-        <td>{{ storage_space }}</td>
+        <td>{{ sciobj_storage_space_gib_str }}</td>
       </tr>
       <tr>
         <td>Science objects by format:</td>
         <td>
           <table>
             <tbody>
-            {% for o in n_objects_by_format_id %}
+            {% for o in sciobj_count_by_format %}
               <tr>
-                <td>{{ o.format__format_id }}</td>
-                <td>{{ o.dcount }}</td>
+                <td>{{ o.format__format }}</td>
+                <td>{{ o.count }}</td>
               </tr>
             {% endfor %}
             </tbody>
