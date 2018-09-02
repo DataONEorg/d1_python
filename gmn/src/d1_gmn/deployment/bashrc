@@ -1,6 +1,10 @@
-# Suggested .bashrc for the GMN user
+# Standard Bash environment for the GMN user
 
-echo
+# If not running interactively, don't do anything
+case $- in
+  *i*) ;;
+    *) return;;
+esac
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -10,28 +14,22 @@ fi
 # Env
 
 export D1_ROOT_DIR="/var/local/dataone"
-export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn_venv"
-export GMN_SITE_DIR="${GMN_VENV_DIR}/lib/python2.7/site-packages"
+export GMN_VENV_DIR="${D1_ROOT_DIR}/gmn_venv_py3"
+export GMN_SITE_DIR=`${GMN_VENV_DIR}/bin/python -c "import site; print(site.getsitepackages()[0])"`
 export GMN_PKG_DIR="${GMN_SITE_DIR}/d1_gmn"
-#export PYTHONPATH=/var/local/dataone/gmn_venv/lib/python2.7/site-packages
-export DJANGO_SETTINGS_MODULE=d1_gmn.settings
 
 # DataONE paths
 
 function padd () {
   if [ -e "$1" ]; then
-    echo "Adding path: $1"
+    echo "Adding to search path: $1"
     PATH="$1:$PATH"
   fi
 }
 
-padd "$HOME/bin"
-
-# Use the GMN Python virtual environment by default for the gmn user, so there
-# is no need to "activate".
+echo
+padd "${HOME}/bin"
 padd "${GMN_VENV_DIR}/bin"
-
-# Use manage.py without having to CD to the GMN package dir
 padd "${GMN_PKG_DIR}"
 
 # Aliases
@@ -41,18 +39,22 @@ function alias_add () {
   alias $1="$2"
 }
 
+echo
 alias_add "cdd1" "cd ${D1_ROOT_DIR}"
 alias_add "cdgmn" "cd ${GMN_PKG_DIR}"
+alias_add "clean-pyc" 'find . -name "*.pyc" -delete'
 
-alias ll='ls -l --group-directories-first --color'
+alias_add "ll" 'ls -l --group-directories-first --color'
+alias_add "rs" 'rsync --recursive --verbose --progress --links --times'
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-alias rs='rsync --recursive --verbose --progress --links --times'
-alias clean-pyc='find . -name "*.pyc" -delete'
 
 echo
-echo "Using Python virtual env: `which python`"
+echo "- Using the GMN Python virtual environment by default (no need to activate venv)"
+echo "- GMN venv: `which python`"
+echo "- Added manage.py to the search path (no need to CD to d1_gmn package)"
 
 # Colored GCC warnings and errors.
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
