@@ -60,6 +60,7 @@ Operation:
 """
 
 import logging
+import sys
 
 import d1_common.const
 import d1_common.resource_map
@@ -176,4 +177,4 @@ class MemberNodeObjectDeleter(object):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

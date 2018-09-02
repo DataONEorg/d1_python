@@ -31,6 +31,7 @@ the backups.
 
 import argparse
 import logging
+import sys
 
 import d1_dev.util
 
@@ -135,4 +136,4 @@ def renumber_method(node, test_idx, do_move):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

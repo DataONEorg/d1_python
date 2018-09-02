@@ -20,6 +20,7 @@
 # limitations under the License.
 """DataONE Science Metadata processing
 """
+import sys
 
 import setuptools
 
@@ -57,4 +58,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

@@ -23,6 +23,7 @@
 
 import logging
 import os
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -365,4 +366,4 @@ def main():
 if __name__ == '__main__':
   #import pyxb
   #pyxb.RequireValidWhenGenerating(False)
-  main()
+  sys.exit(main())

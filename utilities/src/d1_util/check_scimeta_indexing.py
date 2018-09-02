@@ -39,6 +39,7 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
 
 import argparse
 import io
+import sys
 
 import d1_common.const
 import d1_common.util
@@ -96,4 +97,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

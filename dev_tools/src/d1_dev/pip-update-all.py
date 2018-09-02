@@ -27,6 +27,7 @@
 
 import logging
 import subprocess
+import sys
 
 NO_UPGRADE_LIST = [
   # 'Django', # We're on the last version that supports Python 2.
@@ -66,4 +67,4 @@ def run_pip(*pip_arg_list):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

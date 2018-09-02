@@ -35,6 +35,7 @@ recursive searches.
 import argparse
 import importlib
 import logging
+import sys
 
 import pip
 
@@ -157,4 +158,4 @@ class DepSearchException(Exception):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

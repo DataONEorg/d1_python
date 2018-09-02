@@ -23,6 +23,7 @@ This converts them to absolute, which PyCharm handles.
 """
 
 import os
+import sys
 import xml.etree.ElementTree
 
 import d1_dev.util
@@ -56,4 +57,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

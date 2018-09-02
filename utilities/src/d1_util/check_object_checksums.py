@@ -31,6 +31,7 @@ import json
 import logging
 import os
 import re
+import sys
 
 import requests
 
@@ -187,4 +188,4 @@ def log_dict(d):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

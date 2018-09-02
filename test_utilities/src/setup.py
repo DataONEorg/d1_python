@@ -20,6 +20,7 @@
 # limitations under the License.
 """DataONE Test Utilities package
 """
+import sys
 
 import setuptools
 
@@ -79,4 +80,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

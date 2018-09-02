@@ -27,6 +27,7 @@ import argparse
 import logging
 import os
 import subprocess
+import sys
 
 try:
   import d1_dev.util
@@ -84,4 +85,4 @@ def run_setup(setup_dir_path, command_list):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

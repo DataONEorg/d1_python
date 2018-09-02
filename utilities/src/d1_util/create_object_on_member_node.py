@@ -45,7 +45,7 @@ identifier is now in use by the previously created object.
 import datetime
 import hashlib
 import io
-import logging
+import sys
 
 import d1_common.const
 import d1_common.types.dataoneTypes as dataoneTypes
@@ -155,4 +155,4 @@ def generate_public_access_policy():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

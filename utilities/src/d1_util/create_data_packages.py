@@ -56,6 +56,7 @@ import hashlib
 import io
 import logging
 import os
+import sys
 
 import d1_common.const
 import d1_common.resource_map
@@ -226,4 +227,4 @@ def base_name_without_extension(file_path):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

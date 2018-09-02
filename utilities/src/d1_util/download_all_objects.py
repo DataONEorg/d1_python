@@ -65,6 +65,7 @@ in use.
 import logging
 import os
 import shutil
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -209,4 +210,4 @@ class MemberNodeObjectDownloader(object):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

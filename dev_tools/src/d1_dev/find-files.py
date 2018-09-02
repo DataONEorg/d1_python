@@ -27,6 +27,7 @@ See the file_iterator module for details on the arguments.
 
 import argparse
 import logging
+import sys
 
 import d1_common.iter.dir
 import d1_common.util
@@ -72,4 +73,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

@@ -22,6 +22,7 @@
 """
 
 import subprocess
+import sys
 
 import responses
 
@@ -82,4 +83,4 @@ class MakeDbFixtureGMNv1(d1_test.d1_test_case.D1TestCase):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

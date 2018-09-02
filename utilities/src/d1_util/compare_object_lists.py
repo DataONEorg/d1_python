@@ -33,6 +33,9 @@ Operation:
 """
 
 import logging
+import sys
+
+import d1_common.env
 
 import d1_client.cnclient_2_0
 import d1_client.mnclient_2_0
@@ -103,4 +106,4 @@ def find_node(node_id):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

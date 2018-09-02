@@ -36,6 +36,7 @@ import lib2to3.refactor
 import logging
 import os
 import re
+import sys
 
 import d1_dev.util
 import redbaron
@@ -354,4 +355,4 @@ def _insert_copyright_header(r):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

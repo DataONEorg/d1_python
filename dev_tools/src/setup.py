@@ -20,6 +20,7 @@
 # limitations under the License.
 """DataONE developer tools package
 """
+import sys
 
 import setuptools
 
@@ -70,4 +71,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

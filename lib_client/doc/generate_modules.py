@@ -29,6 +29,8 @@ import optparse
 import os
 
 # automodule options
+import sys
+
 OPTIONS = [
   'members',
   'undoc-members',
@@ -295,4 +297,4 @@ Note: By default this script will not overwrite already created files."""
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

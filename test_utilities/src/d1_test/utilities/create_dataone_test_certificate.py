@@ -34,6 +34,7 @@ Node. Test instances set up by DataONE will normally trust the DataONE Test CA.
 import logging
 import optparse
 import re
+import sys
 
 import d1_x509v3_certificate_generator
 
@@ -127,4 +128,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

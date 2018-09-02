@@ -37,6 +37,7 @@ Operation:
 """
 
 import logging
+import sys
 
 import d1_common.const
 import d1_common.resource_map
@@ -183,4 +184,4 @@ def is_coordinating_node(node):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

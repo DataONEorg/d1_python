@@ -41,6 +41,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 
 import d1_dev.util
 import git
@@ -187,4 +188,4 @@ def open_exception_location_in_pycharm(src_path, src_line_num):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

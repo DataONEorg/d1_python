@@ -25,6 +25,7 @@ and groups for which the certificate holder is authenticated.
 
 import logging
 import optparse
+import sys
 
 import d1_certificate.certificate_extractor
 
@@ -170,4 +171,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

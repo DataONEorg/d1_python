@@ -32,6 +32,7 @@ Operation:
 """
 
 import logging
+import sys
 
 import d1_common.resource_map
 
@@ -107,4 +108,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

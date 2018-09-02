@@ -29,6 +29,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 
 import cryptography.exceptions
 import cryptography.hazmat
@@ -185,4 +186,4 @@ def filename_from_cert_obj(cert_obj):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

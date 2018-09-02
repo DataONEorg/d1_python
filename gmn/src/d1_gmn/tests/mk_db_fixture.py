@@ -46,6 +46,7 @@ import logging
 import os
 import random
 import io
+import sys
 
 import freezegun
 import responses
@@ -207,4 +208,4 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

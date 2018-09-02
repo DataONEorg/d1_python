@@ -54,6 +54,7 @@ import logging
 import os
 import re
 import ssl
+import sys
 
 import requests
 
@@ -137,4 +138,4 @@ def download_server_cert(base_url, node_id, download_dir_path):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

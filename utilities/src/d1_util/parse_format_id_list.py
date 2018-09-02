@@ -24,6 +24,8 @@ Python. It shows how to:
 
 - Extract formatIds from a DataONE ObjectFormatList using XPath
 """
+import argparse
+import sys
 
 import lxml.etree
 
@@ -49,4 +51,4 @@ def get_scimeta_format_id_list(xsd_path):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

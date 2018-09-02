@@ -34,6 +34,7 @@ Operation:
 import argparse
 import json
 import logging
+import sys
 
 import bs4
 import requests
@@ -168,4 +169,4 @@ def get_gmn_version(base_url):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

@@ -29,6 +29,9 @@ shows how to:
 
 import logging
 import pprint
+import sys
+
+import d1_common.env
 
 import d1_client.mnclient
 import d1_client.solr_client
@@ -51,4 +54,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

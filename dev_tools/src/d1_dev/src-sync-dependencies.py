@@ -31,6 +31,7 @@ import logging
 import os
 import pkgutil
 import re
+import sys
 
 import pkg_resources
 
@@ -203,4 +204,4 @@ class UpdateException(Exception):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

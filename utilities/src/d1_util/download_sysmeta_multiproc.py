@@ -30,6 +30,7 @@ downloads of System Metadata from a Member Node
 import argparse
 import logging
 import os
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -270,4 +271,4 @@ class SysMetaRetrieveError(Exception):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

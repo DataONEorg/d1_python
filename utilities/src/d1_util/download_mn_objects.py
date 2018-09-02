@@ -33,6 +33,7 @@ Operation:
 
 import logging
 import os
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -201,4 +202,4 @@ class DownloadError(Exception):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())

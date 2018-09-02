@@ -24,6 +24,7 @@
 import argparse
 import logging
 import os
+import sys
 
 import d1_dev.util
 
@@ -106,4 +107,4 @@ def list_tests_tree(r, module_path, event_counter):
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())
