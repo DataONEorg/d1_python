@@ -34,4 +34,3 @@ def global_settings(request):
   return {
     'BASE_URL': django.conf.settings.BASE_URL,
   }
-
