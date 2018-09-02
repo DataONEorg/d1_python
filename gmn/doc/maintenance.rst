@@ -17,7 +17,7 @@ Nodes on the earlier GMN 1.x.x and 2.x.x versions require a full upgrade. Upgrad
 Finding your GMN version
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-To check which version you are running, enter GMN's Home page. The Home page is located at `BaseURL/home`. For instance, if your BaseURL is `https://my.node.org/mn`, your home page is at `https://my.node.org/mn/home`.
+To check which version you are running, enter GMN's Home page. The Home page is located at ``BaseURL/home``. For instance, if your BaseURL is ``https://my.node.org/mn``, your home page is at ``https://my.node.org/mn/home``.
 
 Based on your version number, see the applicable section below.
 
@@ -33,6 +33,7 @@ Due to the complexity of upgrading from earlier GMN 1.x.x and 2.x.x versions, on
 
 * The account will need "sudo" access
 * The account name can be selected according to the organization's policies. If no specific policies are in place, "dahl" can be used
+
 
 Opening temporary ssh access to the GMN server
 ----------------------------------------------
@@ -61,47 +62,27 @@ Updating GMN 3.x.x to the latest release
 Log into the GMN server and perform the following commands:
 
 
-.. _clip1:
-
-::
-
-  $ [ `whoami` != gmn ] && sudo -Hsu gmn
-
-
-.. raw:: html
-
-  <button class="btn" data-clipboard-target="#clip1">Copy</button>
-..
-
-
 .. _clip2:
 
 ::
 
-  $ pip install --upgrade dataone.gmn
-  $ manage.py migrate
+  sudo -Hu gmn bash -c '
+    pip install --upgrade dataone.gmn
+    manage.py migrate
+  '
 
 .. raw:: html
 
   <button class="btn" data-clipboard-target="#clip2">Copy</button>
 ..
 
-.. _clip3:
-
-::
-
-  $ [ `whoami` != root ] && sudo -Hs
-
-.. raw:: html
-
-  <button class="btn" data-clipboard-target="#clip3">Copy</button>
-..
-
 .. _clip4:
 
 ::
 
-  $ sudo service apache2 restart
+  sudo -H bash -c '
+    sudo service apache2 restart
+  '
 
 .. raw:: html
 
@@ -116,27 +97,17 @@ Updating the Node document
 
 The Node document contains information specific to a Node, such as the Member Node description and contact information.
 
-Make the desired updates to the Node information by modifying the GMN `settings.py` file.
+Make the desired updates to the Node information by modifying the GMN ``settings.py`` file.
 
 Publish the updated Node document:
-
-.. _clip5:
-
-::
-
-  [ `whoami` != gmn ] && sudo -Hsu gmn
-
-.. raw:: html
-
-  <button class="btn" data-clipboard-target="#clip5">Copy</button>
-..
-
 
 .. _clip6:
 
 ::
 
-  $ manage.py node update
+  sudo -Hu gmn bash -c '
+    manage.py node update
+  '
 
 .. raw:: html
 
