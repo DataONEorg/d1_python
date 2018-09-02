@@ -190,7 +190,7 @@ def _get_trace_information_content(err_pyxb):
   try:
     return '\n'.join(err_pyxb.traceInformation.content())
   except TypeError:
-    return d1_common.xml.serialize_to_str(
+    return d1_common.xml.serialize_to_xml_str(
       err_pyxb.traceInformation, strip_prolog=True
     )
 
