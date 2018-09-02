@@ -27,6 +27,7 @@ import logging
 
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
+import d1_gmn.app.xslt
 
 import d1_common.const
 import d1_common.date_time
@@ -34,6 +35,7 @@ import d1_common.type_conversions
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
+import d1_common.xml
 
 import django.conf
 import django.db
@@ -102,7 +104,7 @@ class ResponseHandler:
       'log': (self._generate_log_records, ['timestamp', 'id']),
     }
     d1_type_generator, sort_field_list = name_to_func_map[view_result['type']]
-    d1_type = d1_type_generator(
+    d1_type_pyxb = d1_type_generator(
       request, view_result['query'], view_result['start'], view_result['total']
     )
     d1_type_latest_date = self._latest_date(
@@ -112,7 +114,11 @@ class ResponseHandler:
       request, view_result['query'], view_result['start'], view_result['total'],
       sort_field_list
     )
-    response.write(d1_type.toxml('utf-8'))
+    response.write(
+      d1_common.xml.serialize_to_transport(
+        d1_type_pyxb, xslt_url=d1_gmn.app.xslt.get_xslt_url(d1_type_pyxb)
+      )
+    )
     self._set_headers(response, d1_type_latest_date, response.tell())
     return response
 

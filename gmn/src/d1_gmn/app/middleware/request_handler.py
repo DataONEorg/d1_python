@@ -49,7 +49,10 @@ class RequestHandler:
 
     response = self.next_in_chain_func(request)
 
-    if hasattr(request, 'allowed_method_list'):
+    if (
+        isinstance(response, django.http.response.HttpResponseBase) and
+        hasattr(request, 'allowed_method_list')
+    ):
       d1_gmn.app.views.headers.add_cors_headers_to_response(
         response, request.allowed_method_list
       )

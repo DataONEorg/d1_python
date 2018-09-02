@@ -50,7 +50,8 @@ class ViewHandler:
       )
     )
 
-    # Capture the list of allowed HTTP methods that is set in urls.py.
+    # Capture the list of allowed HTTP methods that is set for each API endpoint
+    # in urls.py.
     request.allowed_method_list = view_kwargs.pop('allowed_method_list')
 
     # Skip view processing and return an empty response with
