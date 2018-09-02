@@ -36,7 +36,6 @@ must be used.
 """
 
 import argparse
-import logging
 
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands._util as util
@@ -78,7 +77,9 @@ class Command(django.core.management.base.BaseCommand):
   def _handle(self, opt):
     node_pyxb = d1_gmn.app.node.get_pyxb()
     if opt['command'] == 'view':
-      logging.info(d1_common.xml.serialize_to_transport(node_pyxb))
+      self.stdout.write(
+        d1_common.xml.serialize_to_xml_str(node_pyxb, pretty=True)
+      )
     elif opt['command'] == 'register':
       self._register(node_pyxb)
     elif opt['command'] == 'update':
