@@ -1,18 +1,11 @@
 Install non-trusted client side certificate
 ===========================================
 
-In addition to acting as servers in the DataONE infrastructure, Member Nodes also act as clients, initiating connections to other Nodes. When connecting to other Nodes, Member Nodes authenticate themselves in a process called
-:term:`client side authentication`, in which a client side certificate is provided over an LTS/SSL connection.
+Run the following commands to:
 
-Nodes that are registered with DataONE will only trust Member Node connections where a client side sertificate issued by the DataONE :term:`CA` is provided. However, a stand-alone instance of GMN will not connect to registered Member Nodes, so a non-trusted client side certificate can be used instead.
+* Set GMN up to use the previously created locally signed client side certificate for outgoing connections.
 
-These instructions use a non-trusted client side certificate for the first part of the install and describe how to upgrade the certificate to a certificate issued by the DataONE CA in the optional section on how to register the node.
-
-If you already have a client side certificate issued by the DataONE CA, you can still install the non-trusted certificate here and just follow the instructions to upgrade it later.
-
-Copy the previously created locally signed client side certificate for outgoing connections:
-
-.. _clip2:
+.. _clip1:
 
 ::
 
@@ -24,5 +17,5 @@ Copy the previously created locally signed client side certificate for outgoing 
 
 .. raw:: html
 
-  <button class="btn" data-clipboard-target="#clip2">Copy</button>
+  <button class="btn" data-clipboard-target="#clip1">Copy</button>
 ..

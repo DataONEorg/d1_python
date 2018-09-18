@@ -126,8 +126,11 @@ Answer "y" on the prompts.
 
 ::
 
-  rm client_csr.pem
-  rm ca_csr.pem
+  sudo -Hu gmn bash -c '
+    cd /var/local/dataone/certs/local_ca
+    rm client_csr.pem
+    rm ca_csr.pem
+  '
 
 .. raw:: html
 
@@ -159,8 +162,10 @@ Add the local CA that was just created to the CAs trusted by GMN.
     mkdir -p ../ca
     cp ca_cert.pem ../ca/local_ca.pem
   '
-  sudo c_rehash ../ca
-
+  sudo -H bash -c '
+    cd /var/local/dataone/certs/ca
+    c_rehash .
+  '
 .. raw:: html
 
   <button class="btn" data-clipboard-target="#clip6">Copy</button>

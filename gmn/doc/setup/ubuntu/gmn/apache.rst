@@ -22,7 +22,6 @@ Run the commands below to:
     sed -Ei "s/www\.example\.com/${FQDN}/" ${CONF_PATH}
 
     a2enmod wsgi ssl alias
-    a2enconf forward_http_to_https
     a2dissite 000-default
     a2ensite gmn3-ssl
 

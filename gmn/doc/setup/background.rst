@@ -46,6 +46,23 @@ The asynchronous processes are implemented as Django management commands that ar
 The asynchronous processes connect to CNs and other MNs on behalf of your GMN instance. These connections are made over TLS/SSL and use the client side certificate stored in ``/var/local/dataone/certs/client``.
 
 
+Authentication and authorization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:doc:`Authentication and authorization </gmn/use-authn-and-authz>` in DataONE is based on :term:`X.509` (SSL) certificates.
+
+GMN authenticates to incoming connections from :term:`DataONE` :term:`client`\ s and other parts of the DataONE infrastructure, such as :term:`CN`\ s by providing a :term:`server side certificate` during the SSL/TLS handshake.
+
+By default, a stand-alone instance of GMN uses a non-trusted, self-signed, "snakeoil" server side certificate. This defers the purchase of a publicly trusted certificate from a 3rd party :term:`CA` such as VeriSign or Thawte until the stand-alone instance is registered with DataONE.
+
+A stand-alone instance that is not going to be registered with DataONE can use the non-trusted certificate indefinitely. Such a certificate is as secure as a publicly trusted certificate when used locally.
+
+In addition to acting as servers in the DataONE infrastructure, Member Nodes also act as clients, initiating connections to other Nodes. When connecting to other Nodes, Member Nodes authenticate themselves in a process called
+:term:`client side authentication`, in which a client side certificate is provided over an LTS/SSL connection.
+
+Nodes that are registered with DataONE will only trust Member Node connections where a client side sertificate issued by the DataONE :term:`CA` is provided. However, a stand-alone instance of GMN will not connect to registered Member Nodes, so a non-trusted client side certificate can be used instead.
+
+
 
 Misc
 ~~~~
