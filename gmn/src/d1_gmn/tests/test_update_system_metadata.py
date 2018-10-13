@@ -32,6 +32,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.replication_policy
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes
@@ -106,8 +107,9 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       # Get sysmeta
       sciobj_bytes, sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
       # Change something
-      sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.now(
-      ) + datetime.timedelta(1, 2)
+      sysmeta_pyxb.dateSysMetadataModified = (
+        d1_common.date_time.utc_now() + datetime.timedelta(1, 2)
+      )
       sysmeta_pyxb.submitter = 'new_submitter'
       # Update
       with pytest.raises(d1_common.types.exceptions.InvalidRequest):

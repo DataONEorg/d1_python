@@ -20,8 +20,6 @@
 """Read and write HTTP Headers
 """
 
-import datetime
-
 import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
@@ -76,7 +74,7 @@ def add_sciobj_properties_headers_to_response(response, sciobj):
 def add_http_date_header_to_response(response, date_time=None):
   response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
     d1_common.date_time.normalize_datetime_to_utc(date_time)
-    if date_time else datetime.datetime.utcnow()
+    if date_time else d1_common.date_time.utc_now()
   )
 
 

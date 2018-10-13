@@ -100,7 +100,7 @@ def _generate_log_records(client, n_start, n_count):
     logEntry.userAgent = 'Mock getLogRecords() UserAgent #{}'.format(i)
     logEntry.subject = 'Mock getLogRecords() Subject #{}'.format(i)
     logEntry.event = 'create'
-    logEntry.dateLogged = datetime.datetime.utcnow()
+    logEntry.dateLogged = d1_common.date_time.utc_now()
     logEntry.nodeIdentifier = 'urn:node:MockLogRecords'
 
     log.logEntry.append(logEntry)

@@ -75,7 +75,7 @@ def _create_science_object_bytes(pid, min_bytes, max_bytes):
 def _generate_system_metadata_for_science_object(
     pid, sciobj_bytes, format_id, include_revision_bool, use_v1_bool
 ):
-  now = datetime.datetime.now()
+  now = d1_common.date_time.utc_now()
   if use_v1_bool:
     client = v1
   else:

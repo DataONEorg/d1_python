@@ -20,9 +20,7 @@
 # limitations under the License.
 """Test CLI high level functionality
 """
-
 import contextlib
-import datetime
 import io
 import os
 import re
@@ -37,6 +35,7 @@ import mock
 import pytest
 import responses
 
+import d1_common.date_time
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes as v2
 import d1_common.util
@@ -453,7 +452,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
       received_event_log_pyxb = v2.CreateFromDocument(f.read())
     client = d1_client.mnclient.MemberNodeClient('http://responses/cn')
     expected_event_log_pyxb = client.getLogRecords()
-    now = datetime.datetime.utcnow()
+    now = d1_common.date_time.utc_now()
     for log_entry in received_event_log_pyxb.logEntry:
       log_entry.dateLogged = now
     for log_entry in expected_event_log_pyxb.logEntry:

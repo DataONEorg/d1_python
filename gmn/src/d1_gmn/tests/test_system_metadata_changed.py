@@ -21,7 +21,6 @@
 """Test MNStorage.systemMetadataChanged() and the process_refresh_queue
 management command
 """
-
 import datetime
 
 import freezegun
@@ -34,6 +33,7 @@ import d1_gmn.tests.gmn_test_client
 
 import d1_common
 import d1_common.date_time
+import d1_common.system_metadata
 import d1_common.types.exceptions
 import d1_common.xml
 
@@ -111,6 +111,8 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
           after_sysmeta_pyxb = gmn_client_v1_v2.getSystemMetadata(
             before_sysmeta_pyxb.identifier.value()
           )
+          d1_common.system_metadata.normalize_in_place(before_sysmeta_pyxb)
+          d1_common.system_metadata.normalize_in_place(after_sysmeta_pyxb)
           diff_str = d1_common.xml.format_diff_pyxb(
             before_sysmeta_pyxb, after_sysmeta_pyxb
           )

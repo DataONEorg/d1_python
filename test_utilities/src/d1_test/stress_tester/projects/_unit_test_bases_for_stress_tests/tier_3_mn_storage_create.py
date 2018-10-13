@@ -99,7 +99,8 @@ class Test310Create(d1_test_case.D1TestCase):
 
     context.sysmeta_file = self.generate_sysmeta(
       context.pid_created, context.scidata_size, context.checksum_algorithm,
-      context.checksum, datetime.datetime.now()
+      context.checksum, d1_common.date_time.utc_now()
+
     )
 
     context.scidata_file.seek(0)
@@ -133,6 +134,7 @@ class Test310Create(d1_test_case.D1TestCase):
     """Successful describe for newly created object.
     - Verify that required headers are present.
     """
+    # TODO: Requests returns case insensitive header dict
     client = test_client.TestClient(context.node['baseurl'])
     response = client.describe(context.TOKEN, context.pid_created)
     headers = response.getheaders()

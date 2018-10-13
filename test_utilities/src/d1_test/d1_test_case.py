@@ -44,6 +44,7 @@ import pyxb.binding.basis
 
 import d1_common.cert.x509
 import d1_common.const
+import d1_common.date_time
 import d1_common.types
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
@@ -80,6 +81,10 @@ SUBJ_DICT = {
 
 @contextlib.contextmanager
 def capture_std():
+  """Capture stdout and stderr.
+  - Does NOT capture logging.
+  - Use the caplog fixture and get_caplog_text() for log capture.
+  """
   new_out, new_err = io.StringIO(), io.StringIO()
   old_out, old_err = sys.stdout, sys.stderr
   try:
@@ -87,25 +92,6 @@ def capture_std():
     yield sys.stdout, sys.stderr
   finally:
     sys.stdout, sys.stderr = old_out, old_err
-
-
-# @contextlib.contextmanager
-# def capture_log(log_level=logging.DEBUG):
-#   """Capture anything output by the logging module. Uses a handler that does not
-#   not include any context, such as timestamp and module name, so that the
-#   result is reproducible over time.
-#   """
-#   stream = StringIO.StringIO()
-#   logger = None
-#   stream_handler = None
-#   try:
-#     logger = logging.getLogger()
-#     logger.level = log_level
-#     stream_handler = logging.StreamHandler(stream)
-#     logger.addHandler(stream_handler)
-#     yield stream
-#   finally:
-#     logger.removeHandler(stream_handler)
 
 
 def get_caplog_text(caplog, logger_name=None):
@@ -349,7 +335,17 @@ class D1TestCase(object):
       return None
 
   def now_str(self):
-    return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    return d1_common.date_time.utc_now().strftime("%Y-%m-%d_%H:%M:%S")
+
+  @staticmethod
+  def dt_from_ts(ts, tz=None):
+    """Convert POSIX timestamp to a datetime
+    - If {tz} supplied: The dt is adjusted to that tz before being returned.
+    - If {tz} not supplied: the dt is returned as naive.
+    - Keeping this function out of d1_common.date_time since we only need
+    naive datetimes for testing.
+    """
+    return datetime.datetime.fromtimestamp(ts, tz)
 
   # def random_str(self, num_chars=10):
   #   return ''.join([
@@ -394,19 +390,18 @@ class D1TestCase(object):
 
   @staticmethod
   def run_sql(sql_str='', db_str=None, *args):
+    """Run raw SQL using a separate DB connection
+    """
     try:
       conn = psycopg2.connect(database=db_str)
       # autocommit: Disable automatic transactions
       conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
       cur = conn.cursor()
       cur.execute(sql_str, args)
-    except psycopg2.DatabaseError as e:
-      logging.debug('SQL query result="{}"'.format(str(e)))
-      raise
-    try:
       return cur.fetchall()
-    except psycopg2.DatabaseError:
-      return None
+    except psycopg2.DatabaseError as e:
+      logging.error('SQL query error: ="{}"'.format(str(e)))
+      raise
     finally:
       conn.close()
 

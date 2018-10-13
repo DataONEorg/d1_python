@@ -174,7 +174,7 @@ def create_resource_map_for_pids(package_pid, pids):
 def generate_system_metadata_for_science_object(pid, format_id, science_object):
   size = len(science_object)
   md5 = hashlib.md5(science_object).hexdigest()
-  now = datetime.datetime.now()
+  now = d1_common.date_time.utc_now()
   sys_meta = generate_sys_meta(pid, format_id, size, md5, now)
   return sys_meta
 

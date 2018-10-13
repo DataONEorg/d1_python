@@ -23,8 +23,6 @@
 - Query the database for System Metadata properties.
 """
 
-import datetime
-
 import pyxb
 
 import d1_gmn.app
@@ -48,8 +46,10 @@ import d1_common.util
 import d1_common.wrap.access_policy
 import d1_common.xml
 
+import django.urls
 
-def archive_object(pid):
+
+def archive_sciobj(pid):
   """Set the status of an object to archived.
 
   Preconditions:
@@ -65,11 +65,17 @@ def archive_object(pid):
 
 def serialize(sysmeta_pyxb, pretty=False):
   try:
-    return d1_common.xml.serialize_to_transport(sysmeta_pyxb, pretty)
+    return d1_common.xml.serialize_to_transport(
+      sysmeta_pyxb, pretty, xslt_url=django.urls.base.reverse('home_xslt')
+    )
   except pyxb.IncompleteElementContentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Unable to serialize PyXB to XML. error="{}"'.format(e.details())
     )
+
+
+def deserialize(xml_str):
+  return d1_gmn.app.views.util.deserialize(xml_str)
 
 
 def create_or_update(sysmeta_pyxb, sciobj_url=None):
@@ -103,7 +109,9 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     sci_model.pid = d1_gmn.app.did.get_or_create_did(pid)
     sci_model.url = sciobj_url
     sci_model.serial_version = sysmeta_pyxb.serialVersion
-    sci_model.uploaded_timestamp = sysmeta_pyxb.dateUploaded
+    sci_model.uploaded_timestamp = (
+      d1_common.date_time.normalize_datetime_to_utc(sysmeta_pyxb.dateUploaded)
+    )
 
   _base_pyxb_to_model(sci_model, sysmeta_pyxb)
 
@@ -150,7 +158,10 @@ def _model_to_pyxb(pid):
 
 
 def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
-  sci_model.modified_timestamp = sysmeta_pyxb.dateSysMetadataModified
+  sci_model.modified_timestamp = (
+    d1_common.date_time.
+    normalize_datetime_to_utc(sysmeta_pyxb.dateSysMetadataModified)
+  )
   sci_model.format = d1_gmn.app.models.format(sysmeta_pyxb.formatId)
   sci_model.filename = getattr(sysmeta_pyxb, 'fileName', None)
   sci_model.checksum = d1_common.xml.get_req_val(sysmeta_pyxb.checksum)
@@ -183,9 +194,7 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(
     sciobj_model.modified_timestamp
   )
-  base_pyxb.dateUploaded = d1_common.date_time.normalize_datetime_to_utc(
-    sciobj_model.uploaded_timestamp
-  )
+  base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
   base_pyxb.formatId = sciobj_model.format.format
   base_pyxb.fileName = sciobj_model.filename
   base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(
@@ -209,8 +218,7 @@ def _base_model_to_pyxb(sciobj_model):
 
 
 def _update_modified_timestamp(sci_model):
-  # sci_model.modified_timestamp = datetime.datetime.utcnow()
-  sci_model.modified_timestamp = datetime.datetime.now(datetime.timezone.utc)
+  sci_model.modified_timestamp = d1_common.date_time.utc_now()
   sci_model.save()
 
 
@@ -265,7 +273,8 @@ def _insert_media_type_property_rows(media_type_model, media_type_pyxb):
 
 
 def _has_media_type_db(sciobj_model):
-  return d1_gmn.app.models.MediaType.objects.filter(sciobj=sciobj_model).exists()
+  return d1_gmn.app.models.MediaType.objects.filter(sciobj=sciobj_model
+                                                    ).exists()
 
 
 def _media_type_model_to_pyxb(sciobj_model):
@@ -518,7 +527,8 @@ def _register_remote_replica(sciobj_model, replica_pyxb):
   replica_info_model = d1_gmn.app.models.replica_info(
     status_str=replica_pyxb.replicationStatus,
     source_node_urn=d1_common.xml.get_req_val(replica_pyxb.replicaMemberNode),
-    timestamp=replica_pyxb.replicaVerified,
+    timestamp=d1_common.date_time.
+    normalize_datetime_to_utc(replica_pyxb.replicaVerified),
   )
   d1_gmn.app.models.remote_replica(
     sciobj_model=sciobj_model,
@@ -534,7 +544,7 @@ def replica_model_to_pyxb(sciobj_model):
     replica_pyxb = d1_common.types.dataoneTypes.Replica()
     replica_pyxb.replicaMemberNode = replica_model.info.member_node.urn
     replica_pyxb.replicationStatus = replica_model.info.status.status
-    replica_pyxb.replicaVerified = d1_common.date_time.cast_datetime_to_utc(
+    replica_pyxb.replicaVerified = d1_common.date_time.normalize_datetime_to_utc(
       replica_model.info.timestamp
     )
     replica_pyxb_list.append(replica_pyxb)

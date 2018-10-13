@@ -125,7 +125,7 @@ def generate_system_metadata_for_science_object(science_object):
   pid = SCIENCE_OBJECT_PID
   size = len(science_object)
   md5 = hashlib.md5(science_object).hexdigest()
-  now = datetime.datetime.now()
+  now = d1_common.date_time.utc_now()
   sys_meta = generate_sysmeta(pid, size, md5, now)
   return sys_meta
 

@@ -25,10 +25,10 @@ be available when the MN is in production.
 
 import ctypes
 import datetime
-import numbers
 import os
 import platform
 import sys
+import xml.etree.ElementTree
 
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
@@ -43,67 +43,156 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.url
 
 import django
 import django.conf
 import django.db.models
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+import django.http
+import django.shortcuts
+import django.urls.base
+
+
+def root(request):
+  """Redirect / to /home"""
+  if request.path in ('', '/'):
+    return django.http.HttpResponseRedirect('home')
 
 
 def home(request):
   """Home page. Root of web server should redirect to here."""
   if request.path.endswith('/'):
-    return HttpResponseRedirect(request.path[:-1])
+    return django.http.HttpResponseRedirect(request.path[:-1])
 
-  context_dict = {
-    'node_identifier_str':
-      django.conf.settings.NODE_IDENTIFIER,
-    'node_name':
-      django.conf.settings.NODE_NAME,
-    'gmn_version_str':
-      d1_gmn.__version__,
-    'python_version_str':
-      get_python_version_str(),
-    'django_version_str':
-      ', '.join(map(str, django.VERSION)),
-    'postgres_version_str':
-      get_postgres_version_str(),
-    'avg_sci_data_size_bytes':
-      get_avg_sci_data_size_bytes(),
-    'total_sciobj_count':
-      get_total_sciobj_count(),
-    'total_event_count':
-      get_total_event_count(),
-    'last_hour_event_count':
-      get_last_hour_event_count(),
-    'unique_subject_count':
-      get_unique_subject_count(),
-    'total_permissions_count':
-      get_total_permissions_count(),
-    'server_time':
-      d1_common.date_time.local_now().strftime('%Y-%m-%d %H:%M:%S %Z (%z)'),
-    'sciobj_storage_space_gib_str':
-      '{:.2f} GiB / {:.2f} GiB'.format(
-        float(get_sciobj_storage_used_bytes()) / 1024**3,
-        float(get_obj_store_free_space_bytes()) / 1024**3,
-      ),
-    'sciobj_count_by_format':
-      get_object_count_by_format(),
-    'node_description':
-      django.conf.settings.NODE_DESCRIPTION,
-  }
-
-  context_grouped_digits_dict = {
-    k: group_digits(v) if isinstance(v, numbers.Number) else v
-    for k, v in context_dict.items()
-  }
-
-  return render_to_response(
-    'home.html',
-    context_grouped_digits_dict,
-    content_type=d1_common.const.CONTENT_TYPE_XHTML,
+  return django.http.HttpResponse(
+    generate_status_xml(),
+    d1_common.const.CONTENT_TYPE_XML,
   )
+
+
+def home_xslt(request):
+  return django.shortcuts.render_to_response(
+    'home.xsl',
+    get_context_dict(),
+    content_type=d1_common.const.CONTENT_TYPE_XSLT,
+  )
+
+
+def error_404(request, exception):
+  """Handle 404s outside of the valid API URL endpoints
+  Note: Cannot raise NotFound() here, as this method is not covered by the GMN
+  middleware handler that catches DataONE exceptions raised by normal views.
+  """
+  return django.http.HttpResponse(
+    d1_common.types.exceptions.NotFound(
+      0,
+      'Invalid API endpoint',
+      # Include the regexes the URL was tested against
+      # traceInformation=str(exception),
+      nodeId=django.conf.settings.NODE_IDENTIFIER,
+    ).serialize_to_transport(xslt_url=django.urls.base.reverse('home_xslt')),
+    d1_common.const.CONTENT_TYPE_XML,
+  )
+
+
+def error_500(request):
+  return django.http.HttpResponse(
+    d1_common.types.exceptions.ServiceFailure(
+      0,
+      'Internal error',
+      nodeId=django.conf.settings.NODE_IDENTIFIER,
+    ).serialize_to_transport(xslt_url=django.urls.base.reverse('home_xslt')),
+    d1_common.const.CONTENT_TYPE_XML,
+  )
+
+
+def get_xml(xml_path):
+  with open(os.path.join('/d1_gmn/app/assets/test_types', xml_path)) as f:
+    tree = xml.etree.ElementTree.fromstring(f.read())
+
+  return (
+    '<?xml version="1.0" encoding="utf-8"?>'
+    '<?xml-stylesheet type="text/xsl" href="{}"?>'
+    '{}'.format(
+      django.urls.base.reverse('home_xslt'),
+      xml.etree.ElementTree.tostring(tree, encoding="utf-8", method="xml"
+                                     ).decode('utf-8')
+    )
+  )
+
+
+def get_context_dict():
+  return {
+    'baseUrl':
+      django.conf.settings.NODE_BASEURL,
+    'envRootUrl':
+      django.conf.settings.DATAONE_ROOT,
+    'nodeId':
+      django.conf.settings.NODE_IDENTIFIER,
+    'nodeName':
+      django.conf.settings.NODE_NAME,
+    'gmnVersion':
+      d1_gmn.__version__,
+    'pythonVersion':
+      get_python_version_str(),
+    'djangoVersion':
+      ', '.join(map(str, django.VERSION)),
+    'postgresVersion':
+      get_postgres_version_str(),
+    'avgSciDataSize':
+      get_avg_sci_data_size_bytes(),
+    'totalSciObjCount':
+      get_total_sciobj_count(),
+    'totalEventCount':
+      get_total_event_count(),
+    'lastHourEventCount':
+      get_last_hour_event_count(),
+    'uniqueSubjectCount':
+      get_unique_subject_count(),
+    'totalPermissionCount':
+      get_total_permissions_count(),
+    'serverTime':
+      d1_common.date_time.local_now(),
+    'sciobjStorageSpaceUsed':
+      get_sciobj_storage_used_bytes(),
+    'sciobjStorageSpaceFree':
+      get_obj_store_free_space_bytes(),
+    'sciobjCountByFormat':
+      get_object_count_by_format(),
+    'description':
+      django.conf.settings.NODE_DESCRIPTION,
+    'mnLogoUrl':
+      d1_common.url.joinPathElements(
+        django.conf.settings.NODE_LOGO_ROOT,
+        django.conf.settings.NODE_IDENTIFIER.split(':')[-1]
+      ) + '.png'
+  }
+
+
+def generate_status_xml():
+  context_dict = get_context_dict()
+  root_el = xml.etree.ElementTree.Element('status')
+  add_rec(root_el, context_dict)
+  return (
+    '<?xml version="1.0" encoding="utf-8"?>'
+    '<?xml-stylesheet type="text/xsl" href="{}"?>'
+    '{}'.format(
+      # d1_gmn.app.util.get_static_path('xslt/home.xsl'),
+      django.urls.base.reverse('home_xslt'),
+      xml.etree.ElementTree.tostring(root_el).decode('utf-8'),
+    )
+  )
+
+
+def add_rec(base_el, context_dict):
+  for k, v in context_dict.items():
+    value_el = xml.etree.ElementTree.SubElement(base_el, 'value')
+    value_el.attrib['name'] = k
+    if isinstance(v, dict):
+      # child = xml.etree.ElementTree.SubElement(child, 'values')
+      add_rec(value_el, v)
+    else:
+      value_el.text = str(v)
 
 
 def get_python_version_str():
@@ -142,7 +231,7 @@ def get_sciobj_storage_used_bytes():
 
 def get_last_hour_event_count():
   return d1_gmn.app.models.EventLog.objects.filter(
-    timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    timestamp__gte=d1_common.date_time.utc_now() - datetime.timedelta(hours=1)
   ).count()
 
 
@@ -151,9 +240,14 @@ def get_total_event_count():
 
 
 def get_object_count_by_format():
-  return d1_gmn.app.models.ScienceObject.objects.values('format__format').annotate(
-    count=django.db.models.Count('format__format')
-  ).order_by('-count')
+  return {
+    d['format__format']: d['count']
+    for d in (
+      d1_gmn.app.models.ScienceObject.objects.values('format__format').annotate(
+        count=django.db.models.Count('format__format')
+      ).order_by('-count')
+    )
+  }
 
 
 def get_obj_store_free_space_bytes():

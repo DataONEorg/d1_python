@@ -30,7 +30,6 @@ the backups.
 """
 
 import argparse
-import datetime
 import lib2to3.main
 import lib2to3.refactor
 import logging
@@ -349,7 +348,9 @@ def _insert_copyright_header(r):
       # Skip endl node.
       i = n.index_on_parent_raw + 2
   r.node_list.insert(
-    i, redbaron.RedBaron(COPYRIGHT_NOTICE.format(datetime.datetime.now().year))
+    i,
+    redbaron.
+    RedBaron(COPYRIGHT_NOTICE.format(d1_common.date_time.utc_now().year))
   )
   return r
 

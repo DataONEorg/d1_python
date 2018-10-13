@@ -20,10 +20,11 @@
 # limitations under the License.
 """Retrieve, cache, manipulate list of known Object Format IDs.
 """
-
 import datetime
 
 import d1_cli.impl.cli_client as cli_client
+
+import d1_common.date_time
 
 CACHE_MINUTES = 60
 
@@ -57,12 +58,12 @@ class FormatIDs(object):
   def _cache_is_stale(self, cn_base_url):
     if self._last_update is None or cn_base_url != self._last_cn:
       return True
-    return datetime.datetime.now() - self._last_update > datetime.timedelta(
+    return d1_common.date_time.utc_now() - self._last_update > datetime.timedelta(
       minutes=CACHE_MINUTES
     )
 
   def _update_cache_time(self):
-    self._last_update = datetime.datetime.now()
+    self._last_update = d1_common.date_time.utc_now()
 
   def _update_last_cn(self, cn_base_url):
     self._last_cn = cn_base_url

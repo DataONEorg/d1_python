@@ -90,7 +90,7 @@ class SystemMetadataCreator():
   #
 
   def _create_pyxb_object(self, operation, pid, format_id, file_size, checksum):
-    now = datetime.datetime.utcnow()
+    now = d1_common.date_time.utc_now()
     sys_meta = dataoneTypes.systemMetadata()
     sys_meta.serialVersion = 1
     sys_meta.identifier = pid

@@ -19,8 +19,6 @@
 # limitations under the License.
 """pytest setup and customization
 """
-
-import datetime
 import logging
 import multiprocessing
 import os
@@ -37,6 +35,8 @@ import pytest
 
 import d1_gmn.app.sciobj_store
 
+import d1_common.date_time
+
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 import d1_test.sample
@@ -49,6 +49,7 @@ from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 import django.conf
 import django.core.management
 import django.db
+import django.db.transaction
 import django.db.utils
 
 DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser(
@@ -304,12 +305,6 @@ def pytest_generate_tests(metafunc):
   )
 
 
-@pytest.fixture(autouse=True)
-# @pytest.mark.django_db(transaction=True)
-def enable_db_access(db):
-  pass
-
-
 # Fixtures for parameterizing tests over CN/MN and v1/v2 clients.
 
 
@@ -409,8 +404,20 @@ def django_sciobj_store_setup(request):
 # Database setup
 
 
-@pytest.yield_fixture(scope='session')
-def django_db_setup(request, django_db_blocker):
+@pytest.fixture(scope='function', autouse=True)
+def enable_db_access(db):
+  # No current connection:
+  # django.db.connection.(.connection).set_isolation_level(
+  #   psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT
+  # )
+  #
+  # Force the process to create new DB connections by closing the current ones.
+  # Not allowed in atomic block: django.db.connections.close_all()
+  pass
+
+
+@pytest.yield_fixture(scope='session', autouse=True)
+def django_db_setup(request):
   """Set up DB fixture
   When running in parallel with xdist, this is called once for each worker,
   causing a separate database to be set up for each worker.
@@ -419,43 +426,46 @@ def django_db_setup(request, django_db_blocker):
 
   db_set_unique_db_name(request)
 
-  with django_db_blocker.unblock():
-    # Regular multiprocessing.Lock() context manager did not work here. Also
-    # tried creating the lock at module scope, and also directly calling
-    # acquire() and release(). It's probably related to how the worker processes
-    # relate to each other when launched by pytest-xdist as compared to what the
-    # multiprocessing module expects.
-    with posix_ipc.Semaphore(
-        '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
-    ):
-      logging.warning(
-        'LOCK BEGIN {} {}'.
-        format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
+  # Regular multiprocessing.Lock() context manager did not work here. Also
+  # tried creating the lock at module scope, and also directly calling
+  # acquire() and release(). It's probably related to how the worker processes
+  # relate to each other when launched by pytest-xdist as compared to what the
+  # multiprocessing module expects.
+  with posix_ipc.Semaphore(
+      '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
+  ):
+    logging.warning(
+      'LOCK BEGIN {} {}'.format(
+        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
       )
+    )
 
-      if not db_exists(TEMPLATE_DB_KEY):
-        db_create_blank(TEMPLATE_DB_KEY)
-        db_migrate(TEMPLATE_DB_KEY)
-        db_populate_by_json(TEMPLATE_DB_KEY)
-        db_migrate(TEMPLATE_DB_KEY)
+    if not db_exists(TEMPLATE_DB_KEY):
+      db_create_blank(TEMPLATE_DB_KEY)
+      db_migrate(TEMPLATE_DB_KEY)
+      db_populate_by_json(TEMPLATE_DB_KEY)
+      db_migrate(TEMPLATE_DB_KEY)
 
-      logging.warning(
-        'LOCK END {} {}'.
-        format(db_get_name_by_key(TEMPLATE_DB_KEY), datetime.datetime.now())
+    logging.warning(
+      'LOCK END {} {}'.format(
+        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
       )
+    )
 
-    db_drop(TEST_DB_KEY)
-    db_create_from_template()
-    # db_migrate(TEST_DB_KEY)
+  db_drop(TEST_DB_KEY)
+  db_create_from_template()
+  # db_migrate(TEST_DB_KEY)
 
-    # Haven't found out how to prevent transactions from being started, so
-    # closing the implicit transaction here so that template fixture remains
-    # available.
-    # django.db.connections[test_db_key].commit()
+  # Haven't found out how to prevent transactions from being started. so
+  # closing the implicit transaction here so that template fixture remains
+  # available.
+  # django.db.connections[test_db_key].commit()
 
-    yield
+  logging.debug(django.conf.settings)
 
-    db_drop(TEST_DB_KEY)
+  yield
+
+  db_drop(TEST_DB_KEY)
 
 
 def db_get_name_by_key(db_key):
@@ -513,11 +523,20 @@ def db_drop(db_key):
   run_sql('postgres', 'drop database if exists {};'.format(db_name))
 
 
+# noinspection PyUnresolvedReferences
 def db_commit_and_close(db_key):
   logging.debug('db_commit_and_close() {}'.format(db_key))
+  # try:
   django.db.connections[db_key].commit()
-  for connection in django.db.connections.all():
-    connection.close()
+  # except (Exception, psycopg2.InterfaceError):
+  #   pass
+  # try:
+  django.db.connections.close_all()
+  # except django.db.transaction.TransactionManagementError:
+  # except (Exception, psycopg2.InterfaceError):
+  #   pass
+  # for connection in django.db.connections.all():
+  #   connection.close()
 
 
 def db_create_blank(db_key):
@@ -540,6 +559,7 @@ def db_exists(db_key):
   return exists_bool
 
 
+# noinspection PyUnresolvedReferences
 def run_sql(db, sql):
   try:
     conn = psycopg2.connect(database=db)

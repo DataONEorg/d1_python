@@ -24,8 +24,6 @@ The access control subsystem is mostly shared between the MNStorage methods, so
 most are tested in MNStorage.create()
 """
 
-import datetime
-
 import freezegun
 import pytest
 import responses
@@ -155,6 +153,6 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
       recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(
         gmn_client_v2, first_pid
       )
-      assert recv_sysmeta_pyxb.dateSysMetadataModified == datetime.datetime.now(
-        datetime.timezone.utc
+      assert recv_sysmeta_pyxb.dateSysMetadataModified == (
+        d1_common.date_time.utc_now()
       )

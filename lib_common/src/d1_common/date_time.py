@@ -19,8 +19,17 @@
 # limitations under the License.
 """Utilities for handling date-times in DataONE
 
-These functions are guaranteed not to modify their datetime arguments (datetime
-objects are immutable).
+- A datetime object can be tz-naive or tz-aware.
+
+- tz-naive: The datetime does not include timezone information. As such, it does
+not by itself specify an exact point in actual time. The exact point in time
+depends on contextual information that may or may not be accessible to the end
+user. However, as timezones go from GMT-12 to GMT+14, and if including a
+possible daylight saving offset of 1 hour, a tz-naive datetime will always be
+within 14 hours of the real time.
+
+- tz-aware: The datetime includes a timezone, specified as an abbreviation or as
+a hour and minute offset. It specifies an exact point in time.
 """
 
 import datetime
@@ -33,8 +42,8 @@ import iso8601
 class UTC(datetime.tzinfo):
   """timezoneinfo derived class that represents the UTC timezone
 
-  - Date-times in DataONE should have timezone information that is fixed to
-  UTC. A naive Python datetime can be fixed to UTC by attaching it to this
+  - Date-times in DataONE should have timezone information that is fixed to UTC.
+  A naive Python datetime can be fixed to UTC by attaching it to this
   timezoneinfo based class.
   """
 
@@ -90,6 +99,20 @@ class FixedOffset(datetime.tzinfo):
 #
 
 
+# TODO: D1 arch always deals with datetimes, never just dates or just times.
+# This function returns valid for just dates or just times, as long as they're
+# ISO 8601. Those can then cause trouble later on, as they're not really
+# supported. Refactor things to take this into account.
+def is_valid_iso8601(iso8601_str):
+  """Return True if string is a valid ISO 8601 date, time, or datetime
+  """
+  try:
+    iso8601.parse_date(iso8601_str)
+  except iso8601.ParseError:
+    return False
+  return True
+
+
 def has_tz(dt):
   """Return True if datetime has timezone (is not naive)"""
   return dt.tzinfo is not None
@@ -113,7 +136,7 @@ def are_equal(a_dt, b_dt, n_round_sec=1):
   logging.debug('Rounded:')
   logging.debug('{} -> {}'.format(a_dt, ra_dt))
   logging.debug('{} -> {}'.format(b_dt, rb_dt))
-  return cast_naive_datetime_to_utc(ra_dt) == cast_naive_datetime_to_utc(rb_dt)
+  return normalize_datetime_to_utc(ra_dt) == normalize_datetime_to_utc(rb_dt)
 
 
 #
@@ -122,28 +145,30 @@ def are_equal(a_dt, b_dt, n_round_sec=1):
 
 
 def ts_from_dt(dt):
-  """Convert datetime to Unix timestamp
+  """Convert datetime to POSIX timestamp
 
-  - A Unix timestamp is the number of seconds since Midnight, January 1st, 1970,
-  UTC.
+  - A POSIX timestamp is the number of seconds since Midnight, January 1st,
+  1970, UTC.
   - If the datetime contains sub-second values, the returned value will be a
   float with fraction.
-  - Timezone is included if present.
-  - A naive datetime (no timezone information) is assumed to be in in UTC.
+  - Timezone aware datetime: The tz is included and adjusted to UTC (since
+  timestamp is always at UTC).
+  - Naive datetime (no timezone information): Assumed to be in UTC.
   """
   dt = normalize_datetime_to_utc(dt)
   return (dt - create_utc_datetime(1970, 1, 1)).total_seconds()
 
 
 def dt_from_ts(ts, tz=None):
-  """Convert Unix timestamp to datetime
+  """Convert POSIX timestamp to a timezone aware datetime
 
-  - A Unix timestamp is the number of seconds since Midnight, January 1st, 1970,
-  UTC.
-  - If timezone is supplied, the datetime is returned set to that timezone.
-  - If timezone is not supplied, a naive datetime is returned.
+  - A POSIX timestamp is the number of seconds since Midnight, January 1st,
+  1970, UTC.
+  - If {tz} supplied: The dt is adjusted to that tz before being returned. It
+  does not affect the ts, which is always at UTC.
+  - If {tz} not supplied: the dt is returned in UTC.
   """
-  return datetime.datetime.fromtimestamp(ts, tz)
+  return datetime.datetime.fromtimestamp(ts, tz or UTC())
 
 
 def http_datetime_str_from_dt(dt):
@@ -185,16 +210,13 @@ def dt_from_http_datetime_str(http_full_datetime):
   return create_utc_datetime(year, *date_parts[1:])
 
 
-def dt_from_iso8601_str(iso8601_string, tz=UTC()):
+def dt_from_iso8601_str(iso8601_string):
   """Create Python datetime from ISO8601 formatted string
-
-  Can raise d1_common.date_time.iso8601.ParseError.
-
-  - A naive datetime (no timezone information) is assumed to be in {tz}, which
-  is UTC by default.
-  - {tz}=None: Return naive ISO8601 string as naive datetime.
+  - May raise d1_common.date_time.iso8601.ParseError.
+  - Always returns a timezone aware datetime in UTC
+  - A naive datetime (no timezone information) is assumed to be in UTC.
   """
-  return iso8601.parse_date(iso8601_string, tz)
+  return iso8601.parse_date(iso8601_string)
 
 
 #
@@ -206,46 +228,33 @@ def normalize_datetime_to_utc(dt):
   """Adjust datetime to UTC by applying the timezone offset to the datetime and
   setting the timezone to UTC
 
-  - If timezone is already in UTC, returns the datetime unmodified.
-  - A naive datetime (no timezone information) is assumed to be in in UTC.
+  - Naive datetime (no timezone information) is assumed to be in UTC, and made
+  timezone aware by assigning the UTC timezone.
+
+  - Timezone aware datetime not already in UTC is adjusted to UTC, then assigned
+  to UTC.
+
+  - Timezone aware datetime already in UTC is returned unchanged.
   """
-  if has_tz(dt):
-    dt -= dt.utcoffset()
-  return cast_datetime_to_utc(dt)
+  # This forces a new object to be returned, which fixes an issue with
+  # serialization to XML in PyXB. PyXB uses a mixin together with
+  # datetime.datetime to handle the XML xs:dateTime. That type keeps track of
+  # timezone information included in the original XML doc, which conflicts if we
+  # return it here as part of a datetime mixin.
 
+  return datetime.datetime(
+    *dt.utctimetuple()[:6], microsecond=dt.microsecond,
+    tzinfo=datetime.timezone.utc
+  )
 
-def normalize_datetime_to_naive_utc(dt):
-  """Adjust datetime to naive UTC by applying any timezone offset to the
-  datetime and removing the timezone
-
-  - If timezone already in UTC, only removes the timezone.
-  - If timezone is not set, returns the datetime unmodified.
-  """
-  dt = normalize_datetime_to_utc(dt)
-  return strip_timezone(dt)
-
-
-def cast_datetime_to_utc(dt):
-  """Set timezone to UTC without adjusting the date-time
-
-  - Warning: This will change the actual moment in time that is represented if
-  the datetime is set to another timezone or if it is a naive datetime that
-  represents a date and time not in UTC.
-  - See also normalize_datetime_to_utc()."""
-  return dt.replace(tzinfo=UTC())
-
-
-def cast_naive_datetime_to_utc(dt):
-  """If datetime is naive, set it to UTC
-
-  - datetime with timezone remain unchanged.
-  - Warning: This will change the actual moment in time that is represented if
-  the datetime is naive and represents a date and time not in UTC.
-  - See also normalize_datetime_to_utc().
-  """
-  if has_tz(dt):
-    return dt
-  return dt.replace(tzinfo=UTC())
+  # datetime.utctimetuple()
+  # if has_tz(dt):
+  #   dt = dt.astimezone(datetime.timezone.utc)
+  # return
+  #
+  # a = dt.replace(tzinfo=datetime.timezone.utc)
+  # b = a.astimezone(datetime.timezone.utc)
+  # return a
 
 
 def cast_naive_datetime_to_tz(dt, tz=UTC()):
@@ -275,12 +284,21 @@ def strip_timezone(dt):
 
 
 def utc_now():
-  """Return the current dt as naive in the UTC timezone"""
-  return cast_datetime_to_utc(datetime.datetime.utcnow())
+  """Return the local time and date as a timezone aware datetime in the UTC
+  timezone
+  - Local time is retrieved from the local machine clock
+  - Relies on correctly set timezone on the local machine
+  - Relies on current tables for Daylight Saving periods
+  - Local machine timezone can be checked with: $ date +'%z %Z'
+  """
+  return datetime.datetime.now(datetime.timezone.utc)
 
 
 def date_utc_now_iso():
-  """Return the current date as an ISO 8601 string in the UTC timezone"""
+  """Return the current date as an ISO 8601 string in
+   the UTC timezone
+  - Does not include the time.
+  """
   return utc_now().date().isoformat()
 
 

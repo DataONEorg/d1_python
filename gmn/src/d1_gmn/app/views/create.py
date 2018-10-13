@@ -20,8 +20,6 @@
 """SciObj create for view methods
 """
 
-import datetime
-
 import d1_gmn.app.event_log
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
@@ -34,6 +32,7 @@ import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.util
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.url
@@ -91,7 +90,8 @@ def create_sciobj(request, sysmeta_pyxb):
 
   d1_gmn.app.event_log.create(
     d1_common.xml.get_req_val(sysmeta_pyxb.identifier), request,
-    timestamp=sysmeta_pyxb.dateUploaded
+    timestamp=d1_common.date_time.
+    normalize_datetime_to_utc(sysmeta_pyxb.dateUploaded)
   )
 
 
@@ -155,7 +155,7 @@ def _save_sciobj_bytes_from_str(map_xml, sciobj_path):
 def _set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
   """See the description of TRUST_CLIENT_* in settings.py.
   """
-  now_datetime = datetime.datetime.utcnow()
+  now_datetime = d1_common.date_time.utc_now()
 
   default_value_list = [
     ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),

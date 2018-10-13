@@ -35,9 +35,9 @@ Django automatically creates:
   - Index on unique=True
 """
 
-import datetime
+import d1_gmn.app.did
 
-from d1_gmn.app.did import get_or_create_did
+import d1_common.date_time
 
 import django.db.models
 
@@ -186,7 +186,7 @@ class ReplicaRevisionChainReference(django.db.models.Model):
 
 
 def replica_revision_chain_reference(pid):
-  pid_model = get_or_create_did(pid)
+  pid_model = d1_gmn.app.did.get_or_create_did(pid)
   ref_model = ReplicaRevisionChainReference(pid=pid_model)
   ref_model.save()
   return ref_model
@@ -212,7 +212,7 @@ def replica_info(status_str, source_node_urn, timestamp=None):
   replica_info_model = ReplicaInfo(
     status=replica_status(status_str),
     member_node=node(source_node_urn),
-    timestamp=timestamp or datetime.datetime.now(),
+    timestamp=timestamp or d1_common.date_time.utc_now(),
   )
   replica_info_model.save()
   return replica_info_model
@@ -220,7 +220,7 @@ def replica_info(status_str, source_node_urn, timestamp=None):
 
 def update_replica_status(replica_info_model, status_str, timestamp=None):
   replica_info_model.status = replica_status(status_str)
-  replica_info_model.timestamp = timestamp or datetime.datetime.now()
+  replica_info_model.timestamp = timestamp or d1_common.date_time.utc_now()
   replica_info_model.save()
 
 
@@ -239,7 +239,7 @@ class LocalReplica(django.db.models.Model):
 
 def local_replica(pid, replica_info_model):
   local_replica_model = LocalReplica(
-    pid=get_or_create_did(pid),
+    pid=d1_gmn.app.did.get_or_create_did(pid),
     info=replica_info_model,
   )
   local_replica_model.save()
