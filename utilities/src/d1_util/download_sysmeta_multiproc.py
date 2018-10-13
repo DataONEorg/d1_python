@@ -113,7 +113,7 @@ def parse_cmd_line():
   )
   parser.add_argument(
     '--object-page-size', type=int, action='store',
-    default=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
+    default=d1_common.const.DEFAULT_SLICE_SIZE,
     help='Number of objects to retrieve in each listObjects() call'
   )
   parser.add_argument(

@@ -43,13 +43,7 @@ VERSION = '3.0.4'
 MAX_LISTOBJECTS = 1000
 
 # Default number of items in a single page of a multi-page result set
-DEFAULT_SLICE_SIZE = 1000
-
-# Default number of objects to retrieve in a list objects request
-DEFAULT_LISTOBJECTS_PAGE_SIZE = 100
-
-# Default number of records to retrieve in a log records request
-DEFAULT_GETLOGRECORDS_PAGE_SIZE = 100
+DEFAULT_SLICE_SIZE = 100
 
 # HTTP Response timeout in seconds, float
 DEFAULT_HTTP_TIMEOUT = 60.0

@@ -68,7 +68,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
       context.TOKEN, start=context.object_total - 1,
-      count=d1_common.const.MAX_LISTOBJECTS
+      count=d1_common.const.DEFAULT_SLICE_SIZE
     )
     self.assert_counts(
       object_list, context.object_total - 1, 1, object_list.total
@@ -84,7 +84,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
       context.TOKEN, start=context.object_total,
-      count=d1_common.const.MAX_LISTOBJECTS
+      count=d1_common.const.DEFAULT_SLICE_SIZE
     )
     self.assert_counts(object_list, context.object_total, 0, object_list.total)
 
@@ -112,16 +112,16 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       client.listObjects(
-        context.TOKEN, start=-1, count=d1_common.const.MAX_LISTOBJECTS
+        context.TOKEN, start=-1, count=d1_common.const.DEFAULT_SLICE_SIZE
       )
 
   def test_050_invalid_request_invalid_count(self):
-    """count parameter higher than MAX_LISTOBJECTS returns InvalidRequest.
+    """count parameter higher than DEFAULT_SLICE_SIZE returns InvalidRequest.
     """
     client = test_client.TestClient(context.node['baseurl'])
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
       client.listObjects(
-        context.TOKEN, count=d1_common.const.MAX_LISTOBJECTS + 1
+        context.TOKEN, count=d1_common.const.DEFAULT_SLICE_SIZE + 1
       )
 
   def test_060_invalid_request_negative_count(self):

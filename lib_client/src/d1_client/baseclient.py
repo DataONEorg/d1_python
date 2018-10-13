@@ -329,7 +329,7 @@ class DataONEBaseClient(
       pidFilter=None, # v1
       idFilter=None, # v2
       start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
+      count=d1_common.const.DEFAULT_SLICE_SIZE,
       vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
@@ -357,7 +357,7 @@ class DataONEBaseClient(
       pidFilter=None, # v1
       idFilter=None, # v2
       start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
+      count=d1_common.const.DEFAULT_SLICE_SIZE,
       vendorSpecific=None
   ):
     response = self.getLogRecordsResponse(
@@ -486,7 +486,7 @@ class DataONEBaseClient(
   def listObjectsResponse(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE, vendorSpecific=None
+      count=d1_common.const.DEFAULT_SLICE_SIZE, vendorSpecific=None
   ):
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
@@ -506,7 +506,7 @@ class DataONEBaseClient(
   def listObjects(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
-      count=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE, vendorSpecific=None
+      count=d1_common.const.DEFAULT_SLICE_SIZE, vendorSpecific=None
   ):
     response = self.listObjectsResponse(
       fromDate, toDate, formatId, identifier, replicaStatus, nodeId, start,

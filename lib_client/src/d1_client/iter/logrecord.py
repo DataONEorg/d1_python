@@ -36,7 +36,7 @@ class LogRecordIterator(object):
       client,
       get_log_records_arg_dict=None,
       start=0,
-      count=d1_common.const.DEFAULT_GETLOGRECORDS_PAGE_SIZE,
+      count=d1_common.const.DEFAULT_SLICE_SIZE,
   ):
     self._get_log_records_arg_dict = get_log_records_arg_dict or {}
     self._client = client

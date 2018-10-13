@@ -117,7 +117,7 @@ variable_defaults_map = {
   CN_URL_NAME: d1_common.const.URL_DATAONE_ROOT,
   MN_URL_NAME: d1_common.const.DEFAULT_MN_BASEURL,
   START_NAME: 0,
-  COUNT_NAME: d1_common.const.MAX_LISTOBJECTS,
+  COUNT_NAME: d1_common.const.DEFAULT_SLICE_SIZE,
   ANONYMOUS_NAME: True,
   CERT_FILENAME_NAME: None,
   KEY_FILENAME_NAME: None,
