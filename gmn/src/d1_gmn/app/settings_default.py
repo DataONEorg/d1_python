@@ -73,6 +73,12 @@ NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
 NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 NODE_STATE = 'up'
 
+LOG_IGNORE_USER_AGENT = []
+LOG_IGNORE_IP_ADDRESS = []
+LOG_IGNORE_SUBJECT = []
+LOG_IGNORE_TRUSTED_SUBJECT = True
+LOG_IGNORE_NODE_SUBJECT = True
+
 CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
 CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopassword.pem'
 

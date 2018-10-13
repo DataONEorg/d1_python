@@ -215,6 +215,51 @@ NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 # 'down': This node is currently not in operation.
 NODE_STATE = 'up'
 
+# ==============================================================================
+# Object "read" event logging
+#
+# Object related events are logged in order to generate statistics. Objects will
+# have exactly one "create" event, zero or one "update" and "delete" events, and
+# zero to a few "replicate" and "synchronization_failed" events. As these events
+# designate rare events in the history of an object, they are always logged.
+#
+# The only events that are not considered to be rare are "read" events.
+#
+# Nodes are often accessed as part of normal operations performed by automated
+# systems, usually running on a fixed schedule. Tracking the large numbers of
+# object "read" events that are often triggered by these automated systems is
+# not desirable as it skews the actual usage counts for the objects, and takes
+# up system resources.
+#
+# No "read" events will be logged for any request that matches one or more of
+# the following filters.
+
+# Ignore "read" events by user agent, ip address or subject. These are
+# lists of case insensitive regular expressions that are applied one by one
+# using re.match(). If a match is found, the "read" event is not logged.
+LOG_IGNORE_USER_AGENT = []
+LOG_IGNORE_IP_ADDRESS = []
+LOG_IGNORE_SUBJECT = []
+
+# Ignore "read" events for DataONE trusted subjects.
+# True (default):
+# - "read" events are not logged in requests made by subjects which are in the
+# DATAONE_TRUSTED_SUBJECTS list or are CN subjects in the DataONE environment in
+# which this node is registered.
+# False:
+# - Do not apply this filter.
+LOG_IGNORE_TRUSTED_SUBJECT = True
+
+# Ignore "read" event for subjects authenticated by the client side certificate.
+# True (default):
+# - "read" events are not logged in requests which where authenticated using
+# this MN's local client side certificate.
+# False:
+# - Do not apply this filter.
+LOG_IGNORE_NODE_SUBJECT = True
+
+# ==============================================================================
+
 # Path to the client side certificate that GMN uses when initiating TLS/SSL
 # connections to Coordinating Nodes. The certificate must be in PEM format.
 CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
