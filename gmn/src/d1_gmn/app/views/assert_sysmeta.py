@@ -43,7 +43,6 @@ def sanity(request, sysmeta_pyxb):
   _does_not_contain_replica_sections(sysmeta_pyxb)
   _is_not_archived(sysmeta_pyxb)
   _obsoleted_by_not_specified(sysmeta_pyxb)
-  # d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     return
   _has_correct_file_size(request, sysmeta_pyxb)
@@ -64,8 +63,12 @@ def matches_url_pid(sysmeta_pyxb, url_pid):
 
 def has_matching_modified_timestamp(new_sysmeta_pyxb):
   pid = d1_common.xml.get_req_val(new_sysmeta_pyxb.identifier)
-  old_ts = d1_gmn.app.model_util.get_sci_model(pid).modified_timestamp
-  new_ts = new_sysmeta_pyxb.dateSysMetadataModified
+  old_ts = d1_common.date_time.normalize_datetime_to_utc(
+    d1_gmn.app.model_util.get_sci_model(pid).modified_timestamp
+  )
+  new_ts = d1_common.date_time.normalize_datetime_to_utc(
+    new_sysmeta_pyxb.dateSysMetadataModified
+  )
   if not d1_common.date_time.are_equal(old_ts, new_ts):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
@@ -110,8 +113,9 @@ def is_valid_sid_for_new_standalone(sysmeta_pyxb):
   sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
   if not d1_gmn.app.did.is_valid_sid_for_new_standalone(sid):
     raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, 'Identifier is already in use as {}. did="{}"'
-      .format(d1_gmn.app.did.classify_identifier(sid), sid), identifier=sid
+      0, 'Identifier is already in use as {}. did="{}"'.format(
+        d1_gmn.app.did.classify_identifier(sid), sid
+      ), identifier=sid
     )
 
 
@@ -128,8 +132,9 @@ def is_valid_sid_for_chain(pid, sid):
       0, 'A different SID is already assigned to the revision chain to which '
       'the object being created or updated belongs. A SID cannot be changed '
       'once it has been assigned to a chain. '
-      'existing_sid="{}", new_sid="{}", pid="{}"'
-      .format(existing_sid, sid, pid)
+      'existing_sid="{}", new_sid="{}", pid="{}"'.format(
+        existing_sid, sid, pid
+      )
     )
 
 
@@ -139,9 +144,9 @@ def _does_not_contain_replica_sections(sysmeta_pyxb):
   if len(getattr(sysmeta_pyxb, 'replica', [])):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'A replica section was included. A new object object created via '
-      'create() or update() cannot already have replicas. pid="{}"'.
-      format(d1_common.xml.get_req_val(sysmeta_pyxb.identifier)),
-      identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+      'create() or update() cannot already have replicas. pid="{}"'.format(
+        d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+      ), identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     )
 
 
@@ -151,9 +156,9 @@ def _is_not_archived(sysmeta_pyxb):
   if _is_archived(sysmeta_pyxb):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'Archived flag was set. A new object created via create() or update() '
-      'cannot already be archived. pid="{}"'.
-      format(d1_common.xml.get_req_val(sysmeta_pyxb.identifier)),
-      identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+      'cannot already be archived. pid="{}"'.format(
+        d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+      ), identifier=d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     )
 
 
@@ -189,10 +194,8 @@ def _is_archived(sysmeta_pyxb):
 
 
 def _is_supported_checksum_algorithm(sysmeta_pyxb):
-  if not (
-      d1_common.checksum.
-      is_supported_algorithm(sysmeta_pyxb.checksum.algorithm)
-  ):
+  if not (d1_common.checksum.is_supported_algorithm(
+      sysmeta_pyxb.checksum.algorithm)):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       'Checksum algorithm is unsupported. algorithm="{}" supported="{}"'.format(

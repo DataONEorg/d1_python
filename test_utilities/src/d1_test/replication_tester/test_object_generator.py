@@ -17,8 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import datetime
 import random
 import string
 
@@ -70,7 +68,7 @@ def _create_science_object_bytes(pid):
 def _generate_system_metadata_for_science_object(
     pid, sciobj_bytes, include_revision_bool=False
 ):
-  now = datetime.datetime.now()
+  now = d1_common.date_time.utc_now()
 
   sysmeta_pyxb = dataoneTypes.systemMetadata()
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy()

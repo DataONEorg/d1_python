@@ -200,9 +200,12 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
     assert dt.ts_from_dt(T1_MST) != dt.ts_from_dt(T1_UTC)
 
   def test_1070(self, dt_fixture):
-    """dt_from_ts(): Round trips preserve original value"""
-    assert dt.dt_from_ts(dt.ts_from_dt(dt_fixture),
-                         dt_fixture.tzinfo) == dt_fixture
+    """dt_from_ts():
+    - Naive dt is assumed to be at UTC
+    - Round trips preserve original value
+    """
+    dt_utc = dt.normalize_datetime_to_utc(dt_fixture)
+    assert dt.dt_from_ts(dt.ts_from_dt(dt_fixture), dt_fixture.tzinfo) == dt_utc
 
   def test_1080(self, rounding_fixture, tz_fixture):
     """round_to_nearest()"""

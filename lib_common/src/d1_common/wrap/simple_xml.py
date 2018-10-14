@@ -72,6 +72,7 @@ with d1_common.wrap.simple_xml.wrap(my_xml_str) as xml:
 import xml.etree.ElementTree as ET
 
 import contextlib2
+import iso8601
 
 import d1_common.const
 import d1_common.date_time
@@ -191,9 +192,7 @@ class SimpleXMLWrapper(object):
     timezone, other contextual information is required in order to determine
     the exact represented time.
     - {tz}=d1_common.date_time.UTC(): Set naive dt to UTC."""
-    return d1_common.date_time.dt_from_iso8601_str(
-      self.get_element(el_name, el_idx).text, tz
-    )
+    return iso8601.parse_date(self.get_element(el_name, el_idx).text, tz)
 
   def set_element_dt(self, el_name, dt, tz=None, el_idx=0):
     """Set the text of the selected element to an ISO8601 formatted datetime
@@ -205,7 +204,7 @@ class SimpleXMLWrapper(object):
     timezone, other contextual information is required in order to determine
     the exact represented time.
     - {tz}=d1_common.date_time.UTC(): Set naive {dt} to UTC."""
-    d1_common.date_time.cast_naive_datetime_to_tz(dt, tz)
+    dt = d1_common.date_time.cast_naive_datetime_to_tz(dt, tz)
     self.get_element(el_name, el_idx).text = dt.isoformat()
 
   # remove

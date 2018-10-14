@@ -35,17 +35,11 @@ return: Filtered query
 return: QuerySet
 """
 
-import re
-
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.util
-
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
 
 
 def add_access_policy_filter(request, query, column_name):
@@ -81,24 +75,13 @@ def add_bool_filter(request, query, column_name, param_name):
 
 
 def add_datetime_filter(request, query, column_name, param_name, operator):
-  date_str = request.GET.get(param_name, None)
-  if date_str is None:
+  dt = d1_gmn.app.views.util.parse_and_normalize_url_date(
+    request.GET.get(param_name, None)
+  )
+  if dt is None:
     return query
-  # parse_date() needs date-time, so if we only have date, add time
-  # (midnight).
-  if not re.search('T', date_str):
-    date_str += 'T00:00:00Z'
-  try:
-    date = d1_common.date_time.dt_from_iso8601_str(date_str)
-  except d1_common.date_time.iso8601.ParseError as e:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid date format for parameter. parameter="{}" date="{}", '
-      'parse_error="{}"'.format(param_name, date_str, str(e))
-    )
-  d1_gmn.app.views.assert_db.date_is_utc(date)
-  date = d1_common.date_time.strip_timezone(date)
   filter_arg = '{}__{}'.format(column_name, operator)
-  return query.filter(**{filter_arg: date})
+  return query.filter(**{filter_arg: dt})
 
 
 def add_string_filter(request, query, column_name, param_name):

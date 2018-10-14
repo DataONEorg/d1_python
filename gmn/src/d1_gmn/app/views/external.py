@@ -86,8 +86,9 @@ def dispatch_object(request, did):
     # MNStorage.delete()
     return delete_object(request, did)
   assert False, (
-    'Mismatch between handled and allowed HTTP methods. request="{}"'.
-    format(request.method)
+    'Mismatch between handled and allowed HTTP methods. request="{}"'.format(
+      request.method
+    )
   )
 
 
@@ -100,8 +101,9 @@ def dispatch_object_list(request):
     # MNStorage.create()
     return post_object_list(request)
   assert False, (
-    'Mismatch between handled and allowed HTTP methods. request="{}"'.
-    format(request.method)
+    'Mismatch between handled and allowed HTTP methods. request="{}"'.format(
+      request.method
+    )
   )
 
 
@@ -345,8 +347,9 @@ def post_error(request):
     )
   else:
     logging.error(
-      'Received notification of synchronization error from CN:\n{}'.
-      format(str(synchronization_failed))
+      'Received notification of synchronization error from CN:\n{}'.format(
+        str(synchronization_failed)
+      )
     )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -407,7 +410,7 @@ def put_meta(request):
   )
   pid = request.POST['pid']
   d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
-  new_sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
+  new_sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(
     new_sysmeta_pyxb
   )
@@ -416,7 +419,9 @@ def put_meta(request):
   )
   d1_gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
   d1_gmn.app.event_log.log_update_event(
-    pid, request, timestamp=new_sysmeta_pyxb.dateUploaded
+    pid, request, timestamp=d1_common.date_time.normalize_datetime_to_utc(
+      new_sysmeta_pyxb.dateUploaded
+    )
   )
   return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -449,8 +454,11 @@ def post_refresh_system_metadata(request):
                                      dateSysMetaLastModified) → boolean
   """
   d1_gmn.app.views.assert_db.post_has_mime_parts(
-    request, (('field', 'pid'), ('field', 'serialVersion'),
-              ('field', 'dateSysMetaLastModified'),)
+    request, (
+      ('field', 'pid'),
+      ('field', 'serialVersion'),
+      ('field', 'dateSysMetaLastModified'),
+    )
   )
   d1_gmn.app.views.assert_db.is_existing_object(request.POST['pid'])
   d1_gmn.app.models.sysmeta_refresh_queue(
@@ -490,24 +498,16 @@ def post_refresh_system_metadata(request):
 # - If the submitted SysMeta includes obsoletes, check that it matches the
 #   OLD pid.
 #
-# For convenience, the functions below do not perform the locking and checks
-# in the same order as described above.
+# The functions below do not perform the locking and checks in the same order as
+# described above.
 #
 # Locking is done via Django's implicit transactions for views, enabled with
 # the ATOMIC_REQUESTS database setting.
 #
 # At any point where an exception is raised, the changes made to the database
-# are implicitly rolled back. Any files stored in the filesystem before the
-# exception are orphaned and cleaned up later. Whenever a filesystem object
-# (SysMeta) is updated, a new file is created, so that any subsequent exception
-# and rollback does not cause the database and filesystem to fall out of sync.
-#
-# Exceptions when dealing with the filesystem are not handled. They will
-# typically be caused by issues such as invalid filesystem permissions or the
-# server having run out of disk space. Hence, they are considered to be internal
-# server errors. In debug mode, GMN will forward the actual exceptions to the
-# client, wrapped in DataONE ServiceFailure exceptions. In production, the
-# actual exception is not included.
+# are implicitly rolled back. If the file holding the sciobj's bytes has been
+# created at that point, it will be orphaned, and can be cleaned up later
+# using an async management command.
 
 
 @d1_gmn.app.views.decorators.assert_create_update_delete_permission
@@ -517,8 +517,8 @@ def post_object_list(request):
   d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
-  sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
   url_pid = request.POST['pid']
+  sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.views.assert_sysmeta.obsoletes_not_specified(sysmeta_pyxb)
   d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, url_pid)
   d1_gmn.app.views.assert_sysmeta.is_valid_sid_for_new_standalone(sysmeta_pyxb)
@@ -540,7 +540,7 @@ def put_object(request, old_pid):
     request, (('field', 'newPid'), ('file', 'object'), ('file', 'sysmeta'))
   )
   d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(old_pid)
-  sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
+  sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
   new_pid = request.POST['newPid']
   d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, new_pid)
   d1_gmn.app.views.assert_sysmeta.obsoletes_matches_pid_if_specified(
@@ -553,7 +553,9 @@ def put_object(request, old_pid):
   # The create event for the new object is added in create_sciobj(). The update
   # event on the old object is added here.
   d1_gmn.app.event_log.log_update_event(
-    old_pid, request, timestamp=sysmeta_pyxb.dateUploaded
+    old_pid, request, timestamp=d1_common.date_time.normalize_datetime_to_utc(
+      sysmeta_pyxb.dateUploaded
+    )
   )
   d1_gmn.app.sysmeta.update_modified_timestamp(old_pid)
   return new_pid
@@ -594,7 +596,7 @@ def put_archive(request, pid):
   """
   d1_gmn.app.views.assert_db.is_not_replica(pid)
   d1_gmn.app.views.assert_db.is_not_archived(pid)
-  d1_gmn.app.sysmeta.archive_object(pid)
+  d1_gmn.app.sysmeta.archive_sciobj(pid)
   return pid
 
 
@@ -610,7 +612,7 @@ def post_replicate(request):
   d1_gmn.app.views.assert_db.post_has_mime_parts(
     request, (('field', 'sourceNode'), ('file', 'sysmeta'))
   )
-  sysmeta_pyxb = d1_gmn.app.views.util.deserialize(request.FILES['sysmeta'])
+  sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
   d1_gmn.app.local_replica.assert_request_complies_with_replication_policy(
     sysmeta_pyxb
   )

@@ -20,8 +20,6 @@
 # limitations under the License.
 """Create System Metadata documents based on session variables.
 """
-
-import datetime
 import os
 
 import d1_cli.impl.cli_util as cli_util
@@ -248,8 +246,8 @@ class SystemMetadataCreator():
   #  sys_meta.rightsHolder = session.get(OWNER_NAME)
   #  sys_meta.checksum = dataoneTypes.checksum(checksum)
   #  sys_meta.checksum.algorithm = _algorithm
-  #  sys_meta.dateUploaded = datetime.datetime.utcnow()
-  #  sys_meta.dateSysMetadataModified = datetime.datetime.utcnow()
+  #  sys_meta.dateUploaded = d1_common.date_time.utc_now()
+  #  sys_meta.dateSysMetadataModified = d1_common.date_time.utc_now()
   #  sys_meta.authoritativemn = session.get(AUTH_MN_NAME)
   #  sys_meta.accessPolicy = access_policy
   #  sys_meta.replicationPolicy = replication_policy

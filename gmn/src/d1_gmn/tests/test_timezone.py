@@ -20,17 +20,19 @@
 # limitations under the License.
 """Test handling of datetime (dt) with and without timezone (tz)
 
-When a dt with tz is stored in a PyXB binding object, it is adjusted so that tz
-is in UTC while still representing the same absolute point in time. This is
-because PyXB sits on top of the XML DOM, where xs:dateTime objects are always
-in UTC, even though they can be in any tz when serialized in XML.
+When a datetime with timezone is stored in a PyXB binding object, it is adjusted
+so that timezone is in UTC while still representing the same absolute point in
+time. This is because PyXB sits on top of the XML DOM, where xs:dateTime objects
+are always in UTC, even though they can be in any timezone when serialized in
+XML.
 
 This behavior is convenient for DataONE in general, since DataONE requires (at
-least wants to require) all dts to be in UTC, but it means that PyXB cannot be
-used for generating most XML documents required for testing handling of dt and
-tz in GMN. Since d1_client also generates XML with PyXB, this renders the
-regular test procedures, based on django_client which wraps d1_client, and much
-of the GMNTestCase functionality unusable for most of these tests.
+least wants to require) all datetimes to be in UTC, but it means that PyXB
+cannot be used for generating most XML documents required for testing handling
+of datetime and timezone in GMN. Since d1_client also generates XML with PyXB,
+this renders the regular test procedures, based on django_client which wraps
+d1_client, and much of the GMNTestCase functionality unusable for most of these
+tests.
 """
 
 # import freezegun
@@ -107,7 +109,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       resp_dict = d1_gmn.tests.gmn_direct.get_system_metadata(version_tag, pid)
 
-      with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+      with d1_common.wrap.simple_xml.wrap(
+          resp_dict['body_str']) as recv_sysmeta:
         recv_uploaded_dt = recv_sysmeta.get_element_dt('dateUploaded')
         recv_modified_dt = recv_sysmeta.get_element_dt(
           'dateSysMetadataModified'
@@ -119,16 +122,16 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       assert d1_common.date_time.is_utc(recv_uploaded_dt)
       assert d1_common.date_time.is_utc(recv_modified_dt)
       logging.debug(
-        'send_uploaded_dt="{}" recv_uploaded_dt="{}"'.
-        format(send_uploaded_dt, recv_uploaded_dt)
+        'send_uploaded_dt="{}" recv_uploaded_dt="{}"'.format(
+          send_uploaded_dt, recv_uploaded_dt
+        )
       )
       d1_common.date_time.are_equal(send_uploaded_dt, recv_uploaded_dt)
       d1_common.date_time.are_equal(send_modified_dt, recv_modified_dt)
 
       assert len(send_replica_verified_list) == len(recv_replica_verified_list)
-      for a_dt, b_dt in zip(
-          send_replica_verified_list, recv_replica_verified_list
-      ):
+      for a_dt, b_dt in zip(send_replica_verified_list,
+                            recv_replica_verified_list):
         d1_common.date_time.are_equal(
           d1_common.date_time.dt_from_iso8601_str(a_dt.text),
           d1_common.date_time.dt_from_iso8601_str(b_dt.text)
@@ -153,13 +156,14 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       resp_dict = d1_gmn.tests.gmn_direct.list_objects(version_tag)
 
-      with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+      with d1_common.wrap.simple_xml.wrap(
+          resp_dict['body_str']) as recv_sysmeta:
         el_list = recv_sysmeta.get_element_list_by_name(
           'dateSysMetadataModified'
         )
         assert len(el_list) == 1
         for el in el_list:
-          dt = d1_common.date_time.dt_from_iso8601_str(el.text, None)
+          dt = d1_common.date_time.dt_from_iso8601_str(el.text)
           assert d1_common.date_time.is_utc(dt)
 
   def _assert_log_entry_in_utc(self, version_tag, sysmeta_sample_name):
@@ -181,12 +185,13 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       resp_dict = d1_gmn.tests.gmn_direct.get_log_records(version_tag)
 
-      with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+      with d1_common.wrap.simple_xml.wrap(
+          resp_dict['body_str']) as recv_sysmeta:
         el_list = recv_sysmeta.get_element_list_by_name('dateLogged')
         assert len(el_list) == 1
         for el in el_list:
           logging.debug('el.text="{}"'.format(el.text))
-          dt = d1_common.date_time.dt_from_iso8601_str(el.text, None)
+          dt = d1_common.date_time.dt_from_iso8601_str(el.text)
           assert d1_common.date_time.is_utc(dt)
 
   @responses.activate
