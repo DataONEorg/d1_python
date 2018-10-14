@@ -36,6 +36,7 @@ import d1_common.util
 # True:
 # - Use only for debugging and testing on non-production instances.
 # - May expose sensitive information.
+# - Django will serve static files, which are required for the web UI.
 # - GMN returns a HTML Django exception page with extensive debug information
 #   for internal errors.
 # - GMN returns a HTML Django 404 page that lists all valid URL patterns for
@@ -43,6 +44,9 @@ import d1_common.util
 # - The profiling subsystem can be accessed.
 # False (default):
 # - Use for production.
+# - Django will not serve static files. For the UI to work, the web server must
+#   be set up to serve them directly.
+#   serve static files, which are required for the web UI.
 # - GMN returns a stack trace in a DataONE ServiceFailure exception for
 #   internal errors.
 # - GMN returns a regular 404 page for invalid URLs. The page contains a link
@@ -121,7 +125,7 @@ STAND_ALONE = True
 #
 # The settings apply to MNStorage.create(), MNStorage.update() and, with the
 # exception of TRUST_CLIENT_DATEUPLOADED, to MNStorage.updateSystemMetadata().
-# dataUploaded is an immutable value that cannot be changed after create() or
+# dateUploaded is an immutable value that cannot be changed after create() or
 # update().
 #
 # True:
@@ -270,6 +274,11 @@ CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
 # key. Otherwise, set it to None.
 CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopassword.pem'
 
+# Absolute Path to the root of the GMN object store. The object store is a
+# directory hierarchy in which the bytes of science objects are stored by
+# default.
+OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
+
 # Enable this node to be used as a replication target.
 # True:
 # - DataONE can use this node to store replicas of science objects.
@@ -340,8 +349,7 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 # the only trusted subjects.
 DATAONE_TRUSTED_SUBJECTS = set([
   # For testing and debugging, it's possible to add the public subject here.
-  # This circumvents all access control, allowing any method to be called
-  # from an unauthenticated connection.
+  # This circumvents all access control, making all content publicly accessible.
   #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
   # As with the public subject, it's possible to add the authenticatedUser
   # subject here, to let any authenticated user access any method.
@@ -397,16 +405,6 @@ PUBLIC_LOG_RECORDS = True
 # False:
 # - Any user that has write permission on an object can update it.
 REQUIRE_WHITELIST_FOR_UPDATE = True
-
-# Set the maximum number of items that can be returned in a single page of
-# results from listObjects (ObjectList) and getLogRecords (Log). A lower number
-# reduces memory usage, but causes more round-trips between client and server.
-MAX_SLICE_ITEMS = 5000
-
-# Absolute Path to the root of the GMN object store. The object store is a
-# directory hierarchy in which the bytes of science objects are stored by
-# default.
-OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 # This setting determines how Open Archives Initiative Object Reuse and Exchange
 # (OAI-ORE) Resource Maps are handled if one or more of the objects referenced
@@ -518,9 +516,6 @@ PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
-# Path to the log file.
-LOG_PATH = d1_common.util.abs_path('../gmn.log')
-
 # As the XML documents holding the DataONE types, such as SystemMetadata, must
 # be in memory while being deserialized and parsed, we limit the size that can
 # be handled. The default limit is set much higher than the expected size of any
@@ -535,67 +530,24 @@ MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 # E.g.: 1 MiB = 1024**2 (default)
 NUM_CHUNK_BYTES = 1024**2
 
-# Only set cookies when running through SSL.
-# Default: True
-SESSION_COOKIE_SECURE = True
-
-# GMN must run in the UTC time zone. Under Windows, the system time zone must
-# also be set to UTC. Do not change this setting from its default of UTC.
-TIME_ZONE = 'UTC'
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
-
-# Django's internationalization support is not used by GMN.
-#
-# False (default):
-# - Django will skip loading some of the internationalization machinery.
-# True:
-# - Internationalization is supported.
-USE_I18N = False
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Not used by GMN.
-# Default: ''
-MEDIA_URL = ''
-
-# Static files (served directly by Apache).
-STATIC_URL = '/static/'
+# The maximum number of items that can be returned in a single page of results
+# from MNRead.listObjects() (ObjectList) and MNCore.getLogRecords() (Log). A
+# lower number reduces memory usage, but causes more round-trips between client
+# and server.
+MAX_SLICE_ITEMS = 5000
 
 # Postgres database connection.
-DATABASES = {
-  'default': {
-    # Postgres
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    # The database in tables required by GMN are stored. The database itself
-    # is typically owned by the postgres user while the tables are owned by the
-    # gmn user.
-    'NAME': 'gmn3',
-    # By default, GMN uses Postgres Peer authentication, which does not
-    # require a username and password.
-    'USER': '',
-    'PASSWORD': '',
-    # Set HOST to empty string for localhost.
-    'HOST': '',
-    # Set PORT to empty string for default.
-    'PORT': '',
-    # Wrap each HTTP request in an implicit transaction. The transaction is
-    # rolled back if the view does not return successfully. Upon a successful
-    # return, the transaction is committed, thus making all modifications that
-    # the view made to the database visible simultaneously, bringing the
-    # database directly from one valid state to the next.
-    #
-    # Transactions are also important for views that run only select queries and
-    # run more than a single query, as they hide any transitions between valid
-    # states that may happen between queries.
-    #
-    # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
-    # the basis of concurrency control in GMN.
-    'ATOMIC_REQUESTS': True,
+d1_common.util.nested_update(
+  DATABASES,
+  {
+    'default': {
+      # The database in tables required by GMN are stored. The database itself
+      # is typically owned by the postgres user while the tables are owned by the
+      # GMN user.
+      'NAME': 'gmn3',
+    }
   }
-}
+)
 
 # Logging
 #
@@ -614,118 +566,20 @@ if DEBUG or DEBUG_GMN:
 else:
   LOG_LEVEL = 'INFO'
 
-LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': True,
-  'formatters': {
-    'verbose': {
-      'format':
-        '%(asctime)s %(levelname)-8s %(name)s %(module)s '
-        '%(process)d %(thread)d %(message)s',
-      'datefmt': '%Y-%m-%d %H:%M:%S'
+d1_common.util.nested_update(
+  LOGGING, {
+    'handlers': {
+      'file': {
+        'level': LOG_LEVEL,
+      },
     },
-    'simple': {
-      'format': '%(levelname)s %(message)s'
-    },
-  },
-  'handlers': {
-    'file': {
-      'level': LOG_LEVEL,
-      'class': 'logging.FileHandler',
-      'filename': LOG_PATH,
-      'formatter': 'verbose'
-    },
-    'null': {
-      'level': LOG_LEVEL,
-      'class': 'logging.NullHandler',
-    },
-  },
-  'loggers': {
-    # The "catch all" logger is denoted by ''.
-    '': {
-      'handlers': ['file'],
-      'propagate': True,
-      'level': LOG_LEVEL,
-    },
-    # Django uses this logger.
-    'django': {
-      'handlers': ['file'],
-      'propagate': False,
-      'level': LOG_LEVEL
-    },
-    # Messages relating to the interaction of code with the database. For
-    # example, every SQL statement executed by a request is logged at the DEBUG
-    # level to this logger.
-    'django.db.backends': {
-      'handlers': ['null'],
-      # Set logging level to "WARNING" to suppress logging of SQL statements.
-      'level': 'WARNING',
-      'propagate': False
-    },
+    'loggers': {
+      '': {
+        'level': LOG_LEVEL,
+      },
+      'django': {
+        'level': LOG_LEVEL
+      },
+    }
   }
-}
-
-MIDDLEWARE = (
-  # Custom GMN middleware
-  'd1_gmn.app.middleware.request_handler.RequestHandler',
-  'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
-  'd1_gmn.app.middleware.response_handler.ResponseHandler',
-  # 'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
-  'd1_gmn.app.middleware.view_handler.ViewHandler',
 )
-
-TEMPLATES = [
-  {
-    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [
-      d1_common.util.abs_path('./app/templates'), # noqa: F405
-    ],
-    'APP_DIRS': True,
-    'OPTIONS': {
-      'context_processors': [
-        'django.template.context_processors.debug',
-        'django.template.context_processors.request',
-        'django.contrib.auth.context_processors.auth',
-        'django.contrib.messages.context_processors.messages',
-      ],
-    },
-  },
-]
-
-CACHES = {
-  'default': {
-    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'TIMEOUT': 60 * 60,
-  }
-}
-
-ROOT_URLCONF = 'd1_gmn.app.urls'
-
-INSTALLED_APPS = [
-  # In Django 1.11, these are required in order for 404 not to trigger 500 when
-  # DEBUG=False
-  'django.contrib.auth',
-  'django.contrib.contenttypes',
-  'django.contrib.staticfiles',
-  # App that performs filesystem setup and basic sanity checks on the settings
-  # in this file. Must be listed before the GMN main app.
-  'd1_gmn.app.startup.GMNStartupChecks',
-  # GMN main app
-  'd1_gmn.app',
-]
-
-# Django uses SECRET_KEY for a number of security related features, such as
-# salting passwords, signing cookies and securing sessions. DataONE uses a
-# different security model based on X.509 certificates and JSON Web Tokens, so
-# SECRET_KEY is currently unused. However, to guard against future changes in
-# Django that may cause this setting to be used, GMN automatically generates a
-# persistent SECRET_KEY, which is used instead of the placeholder value
-# specified here. Also see SECRET_KEY_PATH setting.
-SECRET_KEY = '<Do not modify this placeholder value>'
-
-# Path to file holding the secret key. Typically, the file does not exist when
-# GMN is first installed, and is automatically created and written with a
-# generated key when GMN is first launched after install. If the file exists,
-# the contents are used as the key. The file and key may be created manually if
-# desired. The parent directories must exist. Also see the SECRET_KEY setting.
-SECRET_KEY_PATH = d1_common.util.abs_path('./secret_key.txt')

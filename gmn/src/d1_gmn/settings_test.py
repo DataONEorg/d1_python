@@ -23,10 +23,17 @@
 # flake8: noqa: F403,F401
 
 import logging
+# When running tests, turn Django's RuntimeWarning into exception
+import warnings
 
 from d1_gmn.app.settings_default import *
 
 import d1_common.util
+
+warnings.filterwarnings(
+  'error', r"DateTimeField .* received a naive datetime", RuntimeWarning,
+  r'django\.db\.models\.fields'
+)
 
 DEBUG = True
 DEBUG_GMN = True
@@ -44,54 +51,33 @@ TRUST_CLIENT_DATESYSMETADATAMODIFIED = True
 TRUST_CLIENT_SERIALVERSION = True
 TRUST_CLIENT_DATEUPLOADED = True
 
-MONITOR = True
-ALLOWED_HOSTS = [
-  'localhost',
-  '127.0.0.1', # Allow local connections.
-  #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
-  #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
-]
 NODE_IDENTIFIER = 'urn:node:GMNUnitTestInstance'
 NODE_NAME = 'GMN Unit Test Instance'
 NODE_DESCRIPTION = 'GMN instance launched via pytest'
 NODE_BASEURL = 'https://localhost/mn'
-NODE_SYNCHRONIZE = True
-
-NODE_SYNC_SCHEDULE_YEAR = '*'
-NODE_SYNC_SCHEDULE_MONTH = '*'
-NODE_SYNC_SCHEDULE_WEEKDAY = '?'
-NODE_SYNC_SCHEDULE_MONTHDAY = '*'
-NODE_SYNC_SCHEDULE_HOUR = '*'
-NODE_SYNC_SCHEDULE_MINUTE = '42'
-NODE_SYNC_SCHEDULE_SECOND = '0'
 
 NODE_SUBJECT = 'CN=urn:node:GMNUnitTestInstance,DC=dataone,DC=org'
 NODE_CONTACT_SUBJECT = 'CN=NodeContactSubject,O=Google,C=US,DC=cilogon,DC=org'
-NODE_STATE = 'up'
 
 CLIENT_CERT_PATH = None
 CLIENT_CERT_PRIVATE_KEY_PATH = None
-
-NODE_REPLICATE = False
-
-REPLICATION_MAXOBJECTSIZE = -1
-REPLICATION_SPACEALLOCATED = 10 * 1024**3
-REPLICATION_ALLOWEDNODE = ()
-REPLICATION_ALLOWEDOBJECTFORMAT = ()
-REPLICATION_MAX_ATTEMPTS = 24
-REPLICATION_ALLOW_ONLY_PUBLIC = False
-
-SYSMETA_REFRESH_MAX_ATTEMPTS = 24
+OBJECT_STORE_PATH = '/tmp/gmn_test_obj_store'
+LOG_PATH = d1_common.util.abs_path('/tmp/gmn_test.log')
 
 DATAONE_ROOT = 'http://mock/root/cn'
-DATAONE_TRUSTED_SUBJECTS = set([])
 
 ADMINS = (('GMN Unit Test Admin', 'admin@test.tld'),)
 
-PUBLIC_OBJECT_LIST = True
-PUBLIC_LOG_RECORDS = True
+RESOURCE_MAP_CREATE = 'block'
 
-REQUIRE_WHITELIST_FOR_UPDATE = True
+PROXY_MODE_BASIC_AUTH_ENABLED = False
+PROXY_MODE_BASIC_AUTH_USERNAME = ''
+PROXY_MODE_BASIC_AUTH_PASSWORD = ''
+PROXY_MODE_STREAM_TIMEOUT = 30
+
+MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
+NUM_CHUNK_BYTES = 1024**2
+MAX_SLICE_ITEMS = 5000
 
 DATABASES = {
   'default': {
@@ -104,9 +90,9 @@ DATABASES = {
     # Transactions
     #
     # ATOMIC_REQUESTS is always True when running in production as implicit
-    # transactions form the basis of concurrency control in GMN. However,
-    # during debugging, uncommitted changes are hidden inside the transaction,
-    # making it impossible (?) to see the changes made so far by the code bein
+    # transactions form the basis of concurrency control in GMN. However, during
+    # debugging, uncommitted changes are hidden inside the transaction, making
+    # it impossible (?) to see the changes made so far by the code being
     # debugged.
     'ATOMIC_REQUESTS': False,
     'AUTOCOMMIT': False,
@@ -123,34 +109,15 @@ DATABASES = {
   },
 }
 
-OBJECT_STORE_PATH = '/tmp/gmn_test_obj_store'
+STATIC_SERVER = True
 
-RESOURCE_MAP_CREATE = 'block'
-
-PROXY_MODE_BASIC_AUTH_ENABLED = False
-PROXY_MODE_BASIC_AUTH_USERNAME = ''
-PROXY_MODE_BASIC_AUTH_PASSWORD = ''
-PROXY_MODE_STREAM_TIMEOUT = 30
-
-LOG_PATH = d1_common.util.abs_path('/tmp/gmn_test.log')
-MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
-NUM_CHUNK_BYTES = 1024**2
-SESSION_COOKIE_SECURE = True
-TIME_ZONE = 'UTC'
-LANGUAGE_CODE = 'en-us'
-USE_I18N = False
-MEDIA_URL = ''
-STATIC_URL = '/static/'
-
-# Capture everything that is logged
+# Capture everything that is logged and write it to stdout.
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': True,
   'formatters': {
     'verbose': {
-      'format':
-        '%(asctime)s %(levelname)-8s %(name)s %(module)s '
-        '%(process)d %(thread)d %(message)s',
+      'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
       'datefmt': '%Y-%m-%d %H:%M:%S'
     },
   },
@@ -165,75 +132,8 @@ LOGGING = {
   'loggers': {
     '': {
       'handlers': ['console'],
-      'level': 'DEBUG',
-      'class': 'logging.StreamHandler',
+      'level': logging.DEBUG,
+      'propagate': True
     },
-    # SQL query profiling
-    # 'django.db.backends': {
-    #   'handlers': ['console'],
-    #   'level': logging.DEBUG,
-    #   'propagate': False,
-    # },
-    # 'django.db.backends.schema': {
-    #   # don't log schema queries, django >= 1.7
-    #   'propagate': False,
-    # },
   }
 }
-
-MIDDLEWARE = (
-  # Custom GMN middleware
-  'd1_gmn.app.middleware.request_handler.RequestHandler',
-  'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
-  'd1_gmn.app.middleware.response_handler.ResponseHandler',
-  # 'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
-  'd1_gmn.app.middleware.view_handler.ViewHandler',
-)
-
-TEMPLATES = [
-  {
-    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [
-      d1_common.util.abs_path('./app/templates'), # noqa: F405
-    ],
-    # 'APP_DIRS': True,
-    'OPTIONS': {
-      'context_processors': [
-        'django.contrib.auth.context_processors.auth',
-        'django.template.context_processors.debug',
-        'django.template.context_processors.i18n',
-        'django.template.context_processors.media',
-        'django.template.context_processors.static',
-        'django.template.context_processors.tz',
-        'django.contrib.messages.context_processors.messages',
-      ],
-      'loaders': [
-        'django.template.loaders.filesystem.Loader',
-        # 'django.template.loaders.app_directories.Loader',
-      ],
-    },
-  },
-]
-
-CACHES = {
-  'default': {
-    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'TIMEOUT': 60 * 60,
-  }
-}
-
-ROOT_URLCONF = 'd1_gmn.app.urls'
-
-INSTALLED_APPS = [
-  # In Django 1.11, these are required in order for 404 not to trigger 500 when
-  # DEBUG=False
-  'django.contrib.auth',
-  'django.contrib.contenttypes',
-  'django.contrib.staticfiles',
-  'd1_gmn.app',
-  'd1_gmn.app.startup.GMNStartupChecks',
-]
-
-SECRET_KEY = '<Do not modify this placeholder value>'
-
-MAX_SLICE_ITEMS = 5000

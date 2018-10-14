@@ -22,8 +22,8 @@
 
 import fcntl
 import logging
+import logging.config
 import os
-import sys
 import tempfile
 import time
 
@@ -31,7 +31,12 @@ import psycopg2
 
 import d1_gmn.app.models
 
+import d1_common.util
+
+import d1_client.d1client
+
 import django.conf
+import django.core
 import django.core.management.base
 
 single_instance_lock_file = None
@@ -41,17 +46,36 @@ def log_setup(debug_bool):
   """Set up logging. We output only to stdout. Instead of also writing to a log
   file, redirect stdout to a log file when the script is executed from cron.
   """
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
-    '%Y-%m-%d %H:%M:%S',
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-  if debug_bool:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.INFO)
+
+  level = logging.DEBUG if debug_bool else logging.INFO
+
+  logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+      'verbose': {
+        'format':
+          '%(asctime)s %(levelname)-8s %(name)s %(module)s '
+          '%(process)d %(thread)d %(message)s',
+        'datefmt': '%Y-%m-%d %H:%M:%S'
+      },
+    },
+    'handlers': {
+      'console': {
+        'class': 'logging.StreamHandler',
+        'formatter': 'verbose',
+        'level': level,
+        'stream': 'ext://sys.stdout',
+      },
+    },
+    'loggers': {
+      '': {
+        'handlers': ['console'],
+        'level': level,
+        'class': 'logging.StreamHandler',
+      },
+    }
+  })
 
 
 def exit_if_other_instance_is_running(command_name_str):
@@ -123,7 +147,7 @@ class Db(object):
     try:
       self.cur.execute(sql_str, args, **kwargs)
     except psycopg2.DatabaseError as e:
-      logging.debug('SQL query result="{}"'.format(str(e)))
+      logging.debug('SQL query result: {}'.format(str(e)))
       raise
     try:
       return self.cur.fetchall()
@@ -134,14 +158,8 @@ class Db(object):
 def format_progress(event_counter, msg, i, n, pid, start_sec=None):
   if start_sec:
     elapsed_sec = time.time() - start_sec
-    total_sec = float(n) / (i + 1) * elapsed_sec
-    eta_sec = int(total_sec - elapsed_sec)
-    s_int = eta_sec % 60
-    eta_sec //= 60
-    m_int = eta_sec % 60
-    eta_sec //= 60
-    h_int = eta_sec
-    eta_str = ' {}h{:02d}m{:02d}s'.format(h_int, m_int, s_int)
+    eta_sec = float(n) / (i + 1) * elapsed_sec
+    eta_str = ' ' + d1_common.util.format_sec_to_dhm(eta_sec)
   else:
     eta_str = ''
   event_counter.count(msg)
@@ -152,3 +170,16 @@ def format_progress(event_counter, msg, i, n, pid, start_sec=None):
 
 def is_db_empty():
   return not d1_gmn.app.models.IdNamespace.objects.exists()
+
+
+def assert_path_is_dir(dir_path):
+  if not os.path.isdir(dir_path):
+    raise django.core.management.base.CommandError(
+      'Invalid dir path. path="{}"'.format(dir_path)
+    )
+
+
+def find_api_major(base_url, client_arg_dict):
+  return d1_client.d1client.get_api_major_by_base_url(
+    base_url, **client_arg_dict
+  )
