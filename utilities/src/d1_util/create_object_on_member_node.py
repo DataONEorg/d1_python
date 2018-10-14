@@ -41,13 +41,14 @@ identifier is now in use by the previously created object.
 
 - Any other errors will also be returned as DataONE exceptions.
 """
-
+import argparse
 import datetime
 import hashlib
 import io
 import sys
 
 import d1_common.const
+import d1_common.env
 import d1_common.types.dataoneTypes as dataoneTypes
 
 import d1_client.mnclient
@@ -94,7 +95,29 @@ CERTIFICATE_FOR_CREATE_KEY = 'urn_node_mnTestRW/private/urn_node_mnTestRW.key'
 
 
 def main():
-  logging.basicConfig(level=logging.DEBUG)
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
 
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.

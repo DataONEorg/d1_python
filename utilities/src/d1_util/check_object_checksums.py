@@ -37,6 +37,7 @@ import requests
 
 import d1_common.cert.x509
 import d1_common.checksum
+import d1_common.const
 import d1_common.env
 import d1_common.types.dataoneTypes_v1_2
 import d1_common.types.exceptions
@@ -48,9 +49,6 @@ import d1_client.iter.node
 import d1_client.iter.sysmeta_multi
 import d1_client.mnclient_1_2
 
-DEFAULT_OBJ_STATS_PATH = 'gmn_stats_list2.json'
-DEFAULT_CHECKSUM_PATH = 'gmn_checksum_list.json'
-
 
 def main():
   parser = argparse.ArgumentParser(
@@ -58,13 +56,33 @@ def main():
     formatter_class=argparse.RawDescriptionHelpFormatter,
   )
   parser.add_argument(
-    '--fin', default=DEFAULT_OBJ_STATS_PATH,
-    help='Path to input JSON file with object size statistics'
+    '--debug', action='store_true', help='Debug level logging'
   )
   parser.add_argument(
-    '--fout', default=DEFAULT_CHECKSUM_PATH,
-    help='Path to output JSON file with checksum results'
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
   )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
+  # parser.add_argument(
+  #   '--fin', default=DEFAULT_OBJ_STATS_PATH,
+  #   help='Path to input JSON file with object size statistics'
+  # )
+  # parser.add_argument(
+  #   '--fout', default=DEFAULT_CHECKSUM_PATH,
+  #   help='Path to output JSON file with checksum results'
+  # )
   parser.add_argument(
     '--debug', action='store_true', help='Debug level logging'
   )
@@ -120,7 +138,7 @@ def make_checksum_validation_script(stats_list):
         base_url = stats_dict['gmn_dict']['base_url']
 
         if size > 100 * 1024 * 1024:
-          logging.info('Ignored lage object. size={} pid={}')
+          logging.info('Ignored large object. size={} pid={}')
 
         curl_f.write('# {} {}\n'.format(size, pid))
         curl_f.write(

@@ -61,6 +61,30 @@ def main():
     formatter_class=argparse.RawDescriptionHelpFormatter,
   )
   parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
     '--fin', default=DEFAULT_GMN_LIST_PATH,
     help='Path to input JSON file with GMN instances to examine'
   )

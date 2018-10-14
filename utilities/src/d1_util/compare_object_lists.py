@@ -31,7 +31,7 @@ Operation:
 
 - Configure the script in the Config section below
 """
-
+import argparse
 import logging
 import sys
 
@@ -52,6 +52,30 @@ NODE_ID = 'urn:node:mnTestR2R'
 
 
 def main():
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
   logging.basicConfig(level=logging.INFO)
 
   node_pyxb = find_node(NODE_ID)

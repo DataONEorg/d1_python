@@ -61,7 +61,7 @@ all Member Nodes as it is intended primarily for use by Coordinating Nodes.
 - The listObjects() method may miss objects that are created while the method is
 in use.
 """
-
+import argparse
 import logging
 import os
 import shutil
@@ -71,6 +71,7 @@ import urllib.parse
 import urllib.request
 
 import d1_common.const
+import d1_common.env
 import d1_common.resource_map
 import d1_common.types.exceptions
 
@@ -109,6 +110,30 @@ MAX_FILE_SIZE_TO_DOWNLOAD = 1024**2
 
 
 def main():
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
   logging.basicConfig()
   # Setting the default logger to level "DEBUG" causes the script to become
   # very verbose.

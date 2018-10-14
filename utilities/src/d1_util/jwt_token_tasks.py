@@ -23,7 +23,7 @@
 This is an example on how to use the DataONE Client and Common libraries for
 Python.
 """
-
+import argparse
 import logging
 import os
 import re
@@ -45,6 +45,30 @@ import d1_common.util
 
 
 def main():
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
   d1_common.util.log_setup(True)
   # jwt_cleanup()
   # cert_cleanup()
@@ -103,8 +127,8 @@ def download_cn_certs():
     with open(cert_file_path, 'wb') as f:
       f.write(cert_pem)
 
-  d(d1_common.env.get_d1env('prod')['base_url'])
-  d(d1_common.env.get_d1env('stage')['base_url'])
+  d(d1_common.env.get_d1_env('prod')['base_url'])
+  d(d1_common.env.get_d1_env('stage')['base_url'])
 
 
 def jwt_cleanup():

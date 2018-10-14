@@ -37,6 +37,7 @@ import urllib.parse
 import urllib.request
 
 import d1_common.const
+import d1_common.env
 import d1_common.revision
 import d1_common.system_metadata
 import d1_common.type_conversions
@@ -57,6 +58,30 @@ DEFAULT_N_WORKERS = 10
 
 
 def main():
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
   args = parse_cmd_line()
   d1_common.util.log_setup(args.debug)
   events = d1_common.util.EventCounter()
@@ -163,7 +188,7 @@ def _download_objects(
       else:
         msg_str = pid
     elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
-      logging.error(d1_common.xml.format_pretty_pyxb(sysmeta_pyxb))
+      logging.error(d1_common.xml.serialize_to_xml_str(sysmeta_pyxb))
     else:
       logging.error(str(sysmeta_pyxb))
 

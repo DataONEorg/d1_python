@@ -72,6 +72,30 @@ def main():
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
   )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
   parser.add_argument('dir', help='Path to download directory')
   parser.add_argument(
     '--env', type=str, default='prod',
@@ -93,13 +117,13 @@ def main():
       format(', '.join(d1_common.env.D1_ENV_DICT))
     )
 
-  env_dict = d1_common.env.get_d1env(args.env)
+  env_dict = d1_common.env.get_d1_env(args.env)
   cn_base_url = env_dict['base_url']
 
   node_iterator = d1_client.iter.node.NodeListIterator(cn_base_url)
 
   for node_pyxb in node_iterator:
-    logging.debug(d1_common.xml.format_pretty_pyxb(node_pyxb))
+    logging.debug(d1_common.xml.serialize_to_xml_str(node_pyxb))
     try:
       download_server_cert(
         node_pyxb.baseURL, node_pyxb.identifier.value(), args.dir

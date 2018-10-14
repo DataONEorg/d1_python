@@ -50,8 +50,7 @@ from the file and from a set of fixed settings.
 Then, a package for all the files is generated. System metadata is generated
 for the package, and the package is uploaded to the Member Node.
 """
-
-import datetime
+import argparse
 import hashlib
 import io
 import logging
@@ -59,6 +58,7 @@ import os
 import sys
 
 import d1_common.const
+import d1_common.env
 import d1_common.resource_map
 import d1_common.types.dataoneTypes as dataoneTypes
 
@@ -108,6 +108,30 @@ RESOURCE_MAP_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
 
 
 def main():
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
   logging.basicConfig()
   logging.getLogger('').setLevel(logging.DEBUG)
 

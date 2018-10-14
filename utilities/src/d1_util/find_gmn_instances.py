@@ -67,6 +67,30 @@ def main():
     formatter_class=argparse.RawDescriptionHelpFormatter,
   )
   parser.add_argument(
+    '--debug', action='store_true', help='Debug level logging'
+  )
+  parser.add_argument(
+    '--env', type=str, default='prod',
+    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+  )
+  parser.add_argument(
+    '--cert-pub', dest='cert_pem_path', action='store',
+    help='Path to PEM formatted public key of certificate'
+  )
+  parser.add_argument(
+    '--cert-key', dest='cert_key_path', action='store',
+    help='Path to PEM formatted private key of certificate'
+  )
+  parser.add_argument(
+    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+    help='Amount of time to wait for calls to complete (seconds)'
+  )
+
+  parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+  )
+  parser.add_argument(
     '--json', default=DEFAULT_JSON_FILE_PATH,
     help='Path to write JSON result file (any existing is overwritten)'
   )
@@ -83,7 +107,7 @@ def main():
 
   requests.packages.urllib3.disable_warnings()
 
-  env_dict = d1_common.env.get_d1env(args.env)
+  env_dict = d1_common.env.get_d1_env(args.env)
   cn_base_url = env_dict['base_url']
 
   node_iterator = d1_client.iter.node.NodeListIterator(cn_base_url)
