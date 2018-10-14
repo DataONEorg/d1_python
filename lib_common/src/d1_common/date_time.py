@@ -212,9 +212,13 @@ def dt_from_http_datetime_str(http_full_datetime):
 
 def dt_from_iso8601_str(iso8601_string):
   """Create Python datetime from ISO8601 formatted string
-  - May raise d1_common.date_time.iso8601.ParseError.
   - Always returns a timezone aware datetime in UTC
-  - A naive datetime (no timezone information) is assumed to be in UTC.
+  - Raises d1_common.date_time.iso8601.ParseError on invalid strings
+  - A naive datetime (no timezone information) is assumed to be in UTC, and also
+  returned as aware.
+  - Handles everything from just "2014" to "2006-10-20T15:34:56.123+02:30". The
+  sections that are not present in the string are set to zero in the datetime.
+  - See test_iso8601.py in the iso8601 package for examples.
   """
   return iso8601.parse_date(iso8601_string)
 
