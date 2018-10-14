@@ -62,7 +62,7 @@ def create_regular_d1_exception(status_code_int):
   d1_exception = d1_common.types.exceptions.create_exception_by_error_code(
     status_code_int
   )
-  body_str = d1_exception.serialize()
+  body_str = d1_exception.serialize_to_transport()
   header_dict = {
     'Content-Type': d1_common.const.CONTENT_TYPE_XML,
   }

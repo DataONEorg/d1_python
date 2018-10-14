@@ -51,8 +51,8 @@ the rest of the DataONEException XML type.
 
 To make it easier to use the traceInformation element, we support a special case
 where it can be read and written as a single string of bytes, where the contents
-are application specific. Any other content must be generated and parsed as XML by
-the user.
+are application specific. Any other content must be generated and parsed as XML
+by the user.
 
 Example of serialized DataONE Exception:
 
@@ -191,7 +191,7 @@ def _get_trace_information_content(err_pyxb):
     return '\n'.join(err_pyxb.traceInformation.content())
   except TypeError:
     return d1_common.xml.serialize_to_xml_str(
-      err_pyxb.traceInformation, strip_prolog=True
+      err_pyxb.traceInformation, pretty=True, strip_prolog=True
     )
 
 
@@ -298,24 +298,28 @@ class DataONEException(Exception):
       )
     return self.fmt(self.name, msg)
 
-  def serialize(self):
-    """Serialize to str"""
-    dataone_exception_pyxb = dataoneErrors.error()
-    dataone_exception_pyxb.name = self.__class__.__name__
-    dataone_exception_pyxb.errorCode = self.errorCode
-    dataone_exception_pyxb.detailCode = self.detailCode
-    if self.description is not None:
-      dataone_exception_pyxb.description = self.description
-    dataone_exception_pyxb.traceInformation = self.traceInformation
+  def serialize_to_transport(self, encoding='utf-8', xslt_url=None):
+    """Serialize to UTF-8 encoded XML bytes with prolog
+    - {xslt_url} is an optional link to an XSLT stylesheet. If provided, a
+    processing instruction for the stylesheet is included in the XML prolog.
+    """
+    assert encoding in ('utf-8', 'UTF-8')
+    dataone_exception_pyxb = self.get_pyxb()
+    return d1_common.xml.serialize_to_transport(
+      dataone_exception_pyxb, xslt_url=xslt_url
+    )
 
-    if self.identifier is not None:
-      dataone_exception_pyxb.identifier = self.identifier
-    if self.nodeId is not None:
-      dataone_exception_pyxb.nodeId = self.nodeId
-    return dataone_exception_pyxb.toxml()
+  def serialize_to_display(self, xslt_url=None):
+    """Serialize to a pretty printed Unicode str, suitable for display
+    - {xslt_url} is an optional link to an XSLT stylesheet. If provided, a
+    processing instruction for the stylesheet is included in the XML prolog.
+    """
+    return d1_common.xml.serialize_to_xml_str(
+      self.get_pyxb(), pretty=True, xslt_url=xslt_url
+    )
 
-  def toxml(self):
-    return self.serialize()
+  def encode(self, encoding='utf-8'):
+    return self.serialize_to_transport(encoding)
 
   def serialize_to_headers(self):
     """Serialize to a list of HTTP headers
@@ -337,6 +341,21 @@ class DataONEException(Exception):
       'DataONE-Exception-NodeID':
         self._format_header(self.nodeId),
     }
+
+  def get_pyxb(self):
+    """Generate PyXB object"""
+    dataone_exception_pyxb = dataoneErrors.error()
+    dataone_exception_pyxb.name = self.__class__.__name__
+    dataone_exception_pyxb.errorCode = self.errorCode
+    dataone_exception_pyxb.detailCode = self.detailCode
+    if self.description is not None:
+      dataone_exception_pyxb.description = self.description
+    dataone_exception_pyxb.traceInformation = self.traceInformation
+    if self.identifier is not None:
+      dataone_exception_pyxb.identifier = self.identifier
+    if self.nodeId is not None:
+      dataone_exception_pyxb.nodeId = self.nodeId
+    return dataone_exception_pyxb
 
   def _format_header(self, v):
     if v is None:

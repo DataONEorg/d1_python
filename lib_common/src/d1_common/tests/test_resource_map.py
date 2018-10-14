@@ -198,7 +198,7 @@ import d1_test.d1_test_case
 #   pkg.oreInitialize("pid_for_ore")
 #   pkg.addMetadataDocument("pid_for_metadata")
 #   pkg.addDataDocuments(["data_pid_1", "data_pid_2"], "pid_for_metadata")
-#   print pkg.serialize(format="json-ld", indent=2)
+#   print pkg.serialize_to_display(format="json-ld", indent=2)
 #
 #
 # .. code:: json
@@ -340,7 +340,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     self.sample.assert_equals(ore, 'init', mn_client_v2)
 
   def test_1020(self, mn_client_v2):
-    """serialize(): Instantiate resource map by pid, scimeta and scidata"""
+    """serialize_to_display(): Instantiate resource map by pid, scimeta and scidata"""
     ore = self._create()
     self.sample.assert_equals(ore, 'serialize', mn_client_v2)
 

@@ -147,7 +147,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
   def test_1010(self):
     """deserialize, serialize, deserialize round trip of valid error XML doc"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
-    sxml = x1.serialize()
+    sxml = x1.serialize_to_display()
     x2 = exceptions.deserialize(sxml)
     assert isinstance(x2, exceptions.NotFound)
     assert x1.errorCode == x2.errorCode
@@ -162,7 +162,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
   def test_1020(self):
     """deserialize, serialize, deserialize round trip 2"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
-    sxml = x1.serialize()
+    sxml = x1.serialize_to_display()
     x2 = exceptions.deserialize(sxml)
     assert isinstance(x2, exceptions.NotFound)
     assert x1.errorCode == x2.errorCode
@@ -177,7 +177,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
   def test_1030(self):
     """deserialize, serialize, deserialize round trip 3"""
     x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
-    sxml = x1.serialize()
+    sxml = x1.serialize_to_display()
     x2 = exceptions.deserialize(sxml)
     assert isinstance(x2, exceptions.NotFound)
     assert x1.errorCode == x2.errorCode
@@ -202,22 +202,28 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     assert 'detailCode: 123.456.789' in str(d1_exception)
 
   def test_1060(self):
-    """create with only detailCode then serialize()"""
+    """create with only detailCode then serialize_to_display()"""
     e = exceptions.ServiceFailure(123)
-    self.sample.assert_equals(e.serialize(), 'create_with_detail_code')
+    self.sample.assert_equals(
+      e.serialize_to_display(), 'create_with_detail_code'
+    )
 
   def test_1070(self):
-    """create with string detailCode and description, then serialize()"""
+    """create with string detailCode and description, then serialize_to_display()"""
     e = exceptions.ServiceFailure('123.456.789', 'test description')
-    self.sample.assert_equals(e.serialize(), 'create_with_description')
+    self.sample.assert_equals(
+      e.serialize_to_display(), 'create_with_description'
+    )
 
   def test_1080(self):
-    """create with detailCode, description and traceInformation, then serialize()"""
+    """create with detailCode, description and traceInformation, then serialize_to_display()"""
     e = exceptions.ServiceFailure(
       '123.456.789', description='test description',
       traceInformation='test traceInformation'
     )
-    self.sample.assert_equals(e.serialize(), 'create_with_trace_information')
+    self.sample.assert_equals(
+      e.serialize_to_display(), 'create_with_trace_information'
+    )
 
   def test_1090(self):
     """serialize_to_headers()"""
@@ -271,7 +277,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
       1010, 'description_test', 'test trace information', 'test_pid', 'node_id'
     )
     # Serialize to XML.
-    exc_ser_xml = exc.serialize()
+    exc_ser_xml = exc.serialize_to_display()
     # Check XML.
     dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild

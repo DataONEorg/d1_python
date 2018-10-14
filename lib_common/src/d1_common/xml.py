@@ -127,7 +127,9 @@ def serialize_to_transport(
   return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog, xslt_url)
 
 
-def serialize_to_xml_str(obj_pyxb, pretty, strip_prolog, xslt_url=None):
+def serialize_to_xml_str(
+    obj_pyxb, pretty=True, strip_prolog=False, xslt_url=None
+):
   """Serialize a PyXB object to XML str (Unicode)
   - If {pretty} is True, format for human readability.
   - If {strip_prolog} is True, remove any XML prolog (e.g., <?xml version="1.0"
@@ -391,6 +393,10 @@ def get_req_val(obj_pyxb):
   function forces immediate conversion to unicode.
   """
   return str(obj_pyxb.value())
+
+
+def normalize_xsd_datetime_to_utc(obj_pyxb):
+  pass
 
 
 class CompareError(Exception):

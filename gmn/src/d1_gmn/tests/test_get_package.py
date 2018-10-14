@@ -56,7 +56,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ore = d1_common.resource_map.createSimpleResourceMap(
       ore_pid, pid_list[0], pid_list[1:]
     )
-    ore_xml = ore.serialize()
+    ore_xml = ore.serialize_to_transport()
     sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
       gmn_client_v2,
       io.BytesIO(ore_xml),

@@ -142,13 +142,23 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     )
     self._ore_initialized = True
 
-  def serialize(self, doc_format='pretty-xml', *args, **kwargs):
+  def serialize_to_transport(self, doc_format='xml', *args, **kwargs):
+    """Serialize to ResouceMap UTF-8 encoded bytes
+    doc_format can be:
+      'xml', 'n3', 'turtle', 'nt', 'pretty-xml', 'trix', 'trig' and 'nquads'
+    """
+    return super(
+      ResourceMap, self
+    ).serialize(format=doc_format, encoding='utf-8', *args, **kwargs)
+
+  def serialize_to_display(self, doc_format='pretty-xml', *args, **kwargs):
     """Serialize to Resouce Map document.
     doc_format can be:
       'xml', 'n3', 'turtle', 'nt', 'pretty-xml', 'trix', 'trig' and 'nquads'
     """
-    return super(ResourceMap,
-                 self).serialize(format=doc_format, *args, **kwargs)
+    return super(ResourceMap, self
+                 ).serialize(format=doc_format, encoding=None, *args, **kwargs
+                             ).decode('utf-8')
 
   def deserialize(self, *args, **kwargs):
     """Deserialize a Resource Map document

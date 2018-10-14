@@ -239,7 +239,7 @@ def obj_to_pretty_str(o, no_clobber=False):
     # ResourceMap (rdflib.ConjunctiveGraph)
     with ignore_exceptions():
       return '\n'.join(
-        sorted(o.serialize(doc_format='nt').decode('utf-8').splitlines())
+        sorted(o.serialize_to_display(doc_format='nt').splitlines())
       )
     # Dict returned from Requests
     if isinstance(o, requests.structures.CaseInsensitiveDict):

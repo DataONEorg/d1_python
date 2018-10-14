@@ -76,7 +76,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     ore = d1_common.resource_map.createSimpleResourceMap(
       ore_pid, scimeta_pid=pid_list[0], sciobj_pid_list=pid_list[1:]
     )
-    ore_xml = ore.serialize()
+    ore_xml = ore.serialize_to_transport()
     sysmeta_pyxb = sysmeta.generate_from_file(
       client,
       io.BytesIO(ore_xml),

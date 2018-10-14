@@ -252,7 +252,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     self.send_response(exception.errorCode)
     self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
     self.end_headers()
-    self.wfile.write(exception.serialize())
+    self.wfile.write(exception.serialize_to_transport())
 
   def _generate_response_NotFound(self):
     self._logger.debug('Responding with: NotFound')
@@ -260,7 +260,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     self.send_response(exception.errorCode)
     self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
     self.end_headers()
-    self.wfile.write(exception.serialize())
+    self.wfile.write(exception.serialize_to_transport())
 
   def _generate_response_OctetStream(self, pid):
     self._logger.debug('Responding with: science object bytes')
@@ -288,7 +288,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     self.send_response(exception.errorCode)
     self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
     self.end_headers()
-    self.wfile.write(exception.serialize())
+    self.wfile.write(exception.serialize_to_transport())
 
   def _generate_response_NodeList(self):
     # When debugging this function, remember that GMN caches the response.
