@@ -20,7 +20,6 @@
 """Utilities for handling URLs in DataONE
 """
 
-import re
 import sys
 import urllib.error
 import urllib.parse
@@ -91,10 +90,9 @@ def decodeQueryElement(element):
 
 
 def stripElementSlashes(element):
-  """Strip any slashes from a URL element.
+  """Strip any slashes from the front and end of an URL element.
   """
-  m = re.match(r'/*(.*?)/*$', element)
-  return m.group(1)
+  return element.strip('/')
 
 
 def joinPathElements(*elements):
@@ -102,33 +100,20 @@ def joinPathElements(*elements):
   and trailing slashes are stripped from the resulting URL. An empty element
   ('') causes an empty spot in the path ('//').
   """
-  url = []
-  for element in elements:
-    element = stripElementSlashes(element)
-    url.append(element)
-  return '/'.join(url)
+  return '/'.join([stripElementSlashes(e) for e in elements])
 
 
-def joinPathElementsNoStrip(*elements):
-  """Join two or more URL elements, inserting '/' as needed. As opposed to
-  joinPathElements(), this function never removes slashes.
+def encodeAndJoinPathElements(*elements):
+  """Encode URL path element according to RFC3986 then join them, inserting '/'
+  as needed.  Note: Any leading and trailing slashes are stripped from the
+  resulting URL. An empty element ('') causes an empty spot in the path ('//').
   """
-  e = list(elements)
-  for i, (x, y) in enumerate(zip(e, e[1:])):
-    if not (x.endswith('/') or y.startswith('/')):
-      e[i] = x + '/'
-  return ''.join(e)
+  return joinPathElements(*[encodePathElement(e) for e in elements])
 
 
 def normalizeTarget(target):
   """If necessary, modify target so that it ends with '/'"""
-  if target.endswith('/'):
-    return target
-  if target.endswith('?'):
-    target = target[:-1]
-  if not target.endswith('/'):
-    return target + '/'
-  return normalizeTarget(target)
+  return target.rstrip('/?') + '/'
 
 
 def urlencode(query, doseq=0):
