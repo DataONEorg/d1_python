@@ -18,14 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
 import copy
 import datetime
 import logging
 import os
 import urllib.parse
 
-import cachecontrol
 import requests
 import requests.adapters
 import requests_toolbelt
@@ -38,8 +36,7 @@ import d1_common.util
 
 import d1_client.util
 
-DEFAULT_NUMBER_OF_RETRIES = 3
-DEFAULT_USE_CACHE = True
+DEFAULT_NUMBER_OF_RETRIES = 1
 DEFAULT_USE_STREAM = False
 DEFAULT_VERIFY_TLS = True
 DEFAULT_SUPPRESS_VERIFY_WARNINGS = False
@@ -57,14 +54,10 @@ class Session(object):
 
     - A connection pool
     - HTTP persistent connections (HTTP/1.1 and keep-alive)
-    - Cached responses
 
     Based on Python Requests:
     - http://docs.python-requests.org/en/master/
     - http://docs.python-requests.org/en/master/user/advanced/#session-objects
-
-    CacheControl is used for automated thread safe caching support:
-    - http://cachecontrol.readthedocs.org/en/latest/
 
     :param base_url: DataONE Node REST service BaseURL.
     :type host: string
@@ -94,10 +87,6 @@ class Session(object):
       connections.
     :type query: dictionary
 
-    :param use_cache: Use the cachecontrol library to cache request responses.
-      (default: True)
-    :type use_cache: bool
-
     :param use_stream: Use streaming response. When enabled, responses must be
       completely read to free up the connection for reuse. (default:False)
     :type use_stream: bool
@@ -126,7 +115,6 @@ class Session(object):
     self._api_major = 1
     self._api_minor = 0
     # Adapter
-    self._use_cache = kwargs_dict.pop('use_cache', DEFAULT_USE_CACHE)
     self._max_retries = kwargs_dict.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
     # Option to suppress SSL/TLS verification warnings
     suppress_verify_warnings = kwargs_dict.pop(
@@ -156,15 +144,16 @@ class Session(object):
       if os.path.isfile(UBUNTU_CA_BUNDLE_PATH):
         self._default_request_arg_dict['verify'] = UBUNTU_CA_BUNDLE_PATH
     # Default headers
-    self._default_request_arg_dict['headers'
-                                   ].update(kwargs_dict.pop('headers', {}))
+    self._default_request_arg_dict['headers'].update(
+      kwargs_dict.pop('headers', {})
+    )
     self._default_request_arg_dict.update(kwargs_dict)
     # Requests wants cert path as string if single file and tuple if cert/key
     # pair.
     if cert_pem_path is not None:
       self._default_request_arg_dict['cert'] = (
-        cert_pem_path, cert_key_path
-        if cert_key_path is not None else cert_pem_path
+        cert_pem_path,
+        cert_key_path if cert_key_path is not None else cert_pem_path
       )
     self._session = self._create_requests_session()
 
@@ -239,11 +228,15 @@ class Session(object):
     """
     if kwargs.get('query'):
       url = '{}?{}'.format(url, d1_common.url.urlencode(kwargs['query']))
-    curl_cmd = ['curl -X {}'.format(method)]
+    curl_list = ['curl']
+    if method.lower() == 'head':
+      curl_list.append('--head')
+    else:
+      curl_list.append('-X {}'.format(method))
     for k, v in sorted(list(kwargs['headers'].items())):
-      curl_cmd.append('-H "{}: {}"'.format(k, v))
-    curl_cmd.append('{}'.format(url))
-    return ' '.join(curl_cmd)
+      curl_list.append('-H "{}: {}"'.format(k, v))
+    curl_list.append('{}'.format(url))
+    return ' '.join(curl_list)
 
   def dump_request_and_response(self, response):
     """Return a string containing a nicely formatted representation of the
@@ -263,11 +256,7 @@ class Session(object):
 
   def _create_requests_session(self):
     session = requests.Session()
-    if self._use_cache:
-      adapter_cls = cachecontrol.CacheControlAdapter
-    else:
-      adapter_cls = requests.adapters.HTTPAdapter
-    adapter = adapter_cls(max_retries=self._max_retries)
+    adapter = requests.adapters.HTTPAdapter(max_retries=self._max_retries)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     return session
@@ -286,15 +275,18 @@ class Session(object):
   def _request(self, method, rest_path_list, **kwargs):
     url = self._prep_url(rest_path_list)
     kwargs = self._prep_request_kwargs(kwargs)
-    logging.debug(self.get_curl_command_line(method, url, **kwargs))
+    logging.debug(
+      'Request equivalent: {}'.format(
+        self.get_curl_command_line(method, url, **kwargs)
+      )
+    )
     return self._session.request(method, url, **kwargs)
 
   def _prep_url(self, rest_path_list):
     if isinstance(rest_path_list, str):
       rest_path_list = [rest_path_list]
     return d1_common.url.joinPathElements(
-      self._base_url,
-      self._get_api_version_path_element(),
+      self._base_url, self._get_api_version_path_element(),
       *self._encode_path_elements(rest_path_list)
     )
 
@@ -315,21 +307,13 @@ class Session(object):
     result_dict = copy.deepcopy(self._default_request_arg_dict)
     if result_dict['timeout'] in (0, 0.0):
       result_dict['timeout'] = None
-    self.nested_update(result_dict, kwargs_dict)
+    d1_common.util.nested_update(result_dict, kwargs_dict)
     logging.debug(
-      'Request kwargs:\n{}'.
-      format(d1_common.util.serialize_to_normalized_compact_json(result_dict))
+      'Request kwargs:\n{}'.format(
+        d1_common.util.serialize_to_normalized_compact_json(result_dict)
+      )
     )
     return result_dict
-
-  def nested_update(self, d, u):
-    for k, v in list(u.items()):
-      if isinstance(v, collections.Mapping):
-        r = self.nested_update(d.get(k, {}), v)
-        d[k] = r
-      else:
-        d[k] = u[k]
-    return d
 
   def _timeout_to_float(self, timeout):
     """Convert timeout to float. Return None if timeout is None, 0 or 0.0.
