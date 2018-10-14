@@ -60,9 +60,8 @@ import mock
 import requests_toolbelt
 import responses
 
+import django.http
 import django.test
-
-# import django.test.client
 
 base_url_list = []
 
@@ -136,6 +135,11 @@ def _request_callback(request):
         content_type=request.headers.get('Content-Type', ''),
         **_headers_to_wsgi_env(request.headers or {})
       )
+    except AttributeError as e:
+      if "object has no attribute '_closable_objects" in str(e):
+        msg = _make_attribute_error_msg(e)
+        logging.error(msg)
+        return django.http.HttpResponse(msg)
     except Exception:
       logging.exception(
         'Django test client raised exception. base_url="{}" url_path="{}"'
@@ -158,3 +162,30 @@ def _headers_to_wsgi_env(header_dict):
     for k, v in list(header_dict.items())
   })
   return wsgi_dict
+
+
+def _make_attribute_error_msg(e):
+  return (
+    """
+{0}
+
+GMN returned (not raised) an object of an unexpected type. Often this is a
+DataONEException or native Python exception. A HTTPResponse or one of its
+subclasses was expected.
+
+GMN returns DataONEException based types by design, but something in the
+combination of the Django test client and the Responses library ends up fumbling
+things up so that we don't get the chance to handle them.
+
+DataONEException types may or may not indicate actual bugs.
+
+Other types are likely to be one of Python's native exceptions, based on
+Exception. They probably indicate real bugs.
+
+The type/class name of the received instance is probably in this string:
+
+{1}
+
+{0}
+"""
+  ).format('#' * 100, str(e))
