@@ -196,6 +196,6 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     client = test_client.TestClient(context.node['baseurl'])
     object_list = client.listObjects(
       context.TOKEN, fromDate=dates[0], toDate=dates[-1],
-      count=d1_common.const.MAX_LISTOBJECTS
+      count=d1_common.const.DEFAULT_SLICE_SIZE
     )
     assert object_list.count >= len(dates)
