@@ -30,6 +30,7 @@ See the GMN setup documentation for more information on how to use this command.
 
 import argparse
 import logging
+import multiprocessing
 import os
 import time
 
@@ -68,20 +69,21 @@ import d1_client.mnclient
 
 import django.conf
 import django.core.management.base
+import django.db
 
-DEFAULT_TIMEOUT_SEC = 3 * 60
-DEFAULT_N_WORKERS = 8
-# See notes in sysmeta iterator docstring before changing
-MAX_RESULT_QUEUE_SIZE = 100
-MAX_TASK_QUEUE_SIZE = 16
+# 0 = Timeout disabled
+
+DEFAULT_TIMEOUT_SEC = 0
+DEFAULT_WORKER_COUNT = 16
+DEFAULT_LIST_COUNT = 1
+DEFAULT_PAGE_SIZE = 1000
+DEFAULT_API_MAJOR = 2
 
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
-  def __init__(self, *args, **kwargs):
+  def _init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    self._db = util.Db()
-    self._events = d1_common.util.EventCounter()
 
   def add_arguments(self, parser):
     parser.description = __doc__
@@ -91,10 +93,11 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument(
       '--force', action='store_true',
-      help='Import even if local database is not empty'
+      help='Import even if there are local objects or event logs in DB'
     )
     parser.add_argument(
-      '--clear', action='store_true', help='Clear local database'
+      '--clear', action='store_true',
+      help='Delete local objects or event logs from DB'
     )
     parser.add_argument(
       '--cert-pub', dest='cert_pem_path', action='store',
@@ -110,21 +113,19 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument(
       '--timeout', type=float, action='store', default=DEFAULT_TIMEOUT_SEC,
-      help='Timeout for D1 API call to the source MN'
+      help='Timeout for DataONE API calls to the source MN'
     )
     parser.add_argument(
-      '--workers', type=int, action='store', default=DEFAULT_N_WORKERS,
-      help='Max number workers making concurrent connections to the source MN'
+      '--workers', type=int, action='store', default=DEFAULT_WORKER_COUNT,
+      help='Max number of concurrent API calls to the source MN'
     )
     parser.add_argument(
-      '--object-page-size', type=int, action='store',
-      default=d1_common.const.DEFAULT_LISTOBJECTS_PAGE_SIZE,
-      help='Number of objects to retrieve in each listObjects() call'
+      '--lists', type=int, action='store', default=DEFAULT_LIST_COUNT,
+      help='Max number of concurrent list method API calls to source MN'
     )
     parser.add_argument(
-      '--log-page-size', type=int, action='store',
-      default=d1_common.const.DEFAULT_GETLOGRECORDS_PAGE_SIZE,
-      help='Number of log records to retrieve in each getLogRecords() call'
+      '--page-size', type=int, action='store', default=DEFAULT_PAGE_SIZE,
+      help='Number of objects to retrieve in each list method API call to source MN'
     )
     parser.add_argument(
       '--major', type=int, action='store',
@@ -139,250 +140,329 @@ class Command(django.core.management.base.BaseCommand):
     )
     parser.add_argument('baseurl', help='Source MN BaseURL')
 
-  def handle(self, *args, **opt):
-    util.log_setup(opt['debug'])
-    logging.info(
-      'Running management command: {}'.format(__name__) # util.get_command_name())
-    )
+  # noinspection PyUnresolvedReferences
+  def handle(self, *args, **options):
+    util.log_setup(options['debug'])
+    # logging.basicConfig(level=logging.DEBUG)
+    # if options['debug']:
+    #   logger = multiprocessing.log_to_stderr()
+    #   logger.setLevel(multiprocessing.SUBDEBUG)
+
+    logging.info('Running management command: {}'.format(__name__))
     util.exit_if_other_instance_is_running(__name__)
-    self._opt = opt
+    run_start_sec = time.time()
+    event_counter = d1_common.util.EventCounter()
+
     try:
       # profiler = profile.Profile()
-      # profiler.runcall(self._handle)
+      # profiler.runcall(handle)
       # profiler.print_stats()
-      self._handle()
-    except d1_common.types.exceptions.DataONEException as e:
+      self._handle(options, event_counter)
+    except Exception as e:
       logging.error(str(e))
+      event_counter.dump_to_log()
       raise django.core.management.base.CommandError(str(e))
-    self._events.dump_to_log()
 
-  def _handle(self):
-    if not self._opt['force'] and not util.is_db_empty():
+    event_counter.dump_to_log()
+    total_run_sec = time.time() - run_start_sec
+    logging.info(
+      'Completed. total_run_sec={:.02f} total_run_dhm="{}"'.
+      format(total_run_sec, d1_common.util.format_sec_to_dhm(total_run_sec))
+    )
+
+  def _handle(self, options, event_counter):
+    if not util.is_db_empty() and not options['force']:
       raise django.core.management.base.CommandError(
-        'There are already objects in the local database. '
-        'Use --force to import anyway'
+        'There are already local objects or event logs in the DB. '
+        'Use --force to import anyway. '
+        'Use --clear to delete local objects and event logs from DB. '
+        'Use --only-log with --clear to delete only event logs. '
       )
-    if self._opt['clear']:
-      if not self._opt['only_log']:
-        self._events.log_and_count('Clearing database')
-        d1_gmn.app.delete.delete_all_from_db()
-      else:
-        self._events.log_and_count('Clearing event log records')
+    if options['clear']:
+      if options['only_log']:
         d1_gmn.app.models.EventLog.objects.all().delete()
+        event_counter.log_and_count('Cleared event logs from DB')
+      else:
+        d1_gmn.app.delete.delete_all_from_db()
+        event_counter.log_and_count('Cleared objects and event logs from DB')
 
-    self._api_major = (
-      self._opt['major']
-      if self._opt['major'] is not None else self._find_api_major()
+    api_major = (
+      options['major'] if options['major'] is not None else
+      d1_gmn.app.management.commands._util.find_api_major(
+        options['baseurl'], get_source_client_arg_dict(options)
+      )
     )
 
-    if not self._opt['only_log']:
-      self._import_objects()
+    # Functions and PyXB attributes are transferred by name since they can't be
+    # serialized and passed across process boundaries.
 
-    self._import_logs()
-
-  def _import_objects(self):
-    sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
-      base_url=self._opt['baseurl'],
-      page_size=self._opt['object_page_size'],
-      max_workers=self._opt['workers'],
-      max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
-      max_task_queue_size=MAX_TASK_QUEUE_SIZE,
-      api_major=self._api_major,
-      client_dict=self._get_client_dict(),
-      list_objects_dict=self._get_list_objects_args_dict(),
-    )
-    start_sec = time.time()
-    for i, sysmeta_pyxb in enumerate(sysmeta_iter):
-      if self._opt['max_obj'] is not None and i >= self._opt['max_obj']:
-        self._events.log_and_count(
-          'Limiting import to {} objects (--max-obj)'
-          .format(self._opt['max_obj'])
-        )
-        break
-      if not d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
-        if isinstance(
-            sysmeta_pyxb, d1_common.types.exceptions.DataONEException
-        ):
-          self._events.log_and_count(
-            'Unable to get SysMeta', 'error="{}"'.format(str(sysmeta_pyxb))
-          )
-          continue
-        elif d1_common.type_conversions.is_pyxb(sysmeta_pyxb):
-          self._events.log_and_count(
-            'Unexpected PyXB object', 'pyxb="{}"'.
-            format(d1_common.xml.serialize_to_xml_str(sysmeta_pyxb))
-          )
-          continue
-
-      pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
-
-      self.stdout.write(
-        util.format_progress(
-          self._events, 'Importing objects', i, sysmeta_iter.total, pid, start_sec
-        )
+    if not options['only_log']:
+      multiprocessed_import(
+        options, event_counter, api_major, 'listObjects',
+        get_list_objects_arg_dict(options), 'objectInfo', 'import_object',
+        'Importing objects'
       )
 
-      if d1_gmn.app.did.is_existing_object(pid):
-        self._events.log_and_count(
-          'Object already exists', 'pid="{}"'.format(pid)
-        )
-        continue
-
-      try:
-        self._download_source_sciobj_bytes_to_store(pid)
-      except d1_common.types.exceptions.DataONEException as e:
-        self._events.log_and_count(
-          'Unable to get SciObj', 'error="{}"'.format(str(e))
-        )
-        continue
-
-      d1_gmn.app.sysmeta.create_or_update(
-        sysmeta_pyxb,
-        d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
-      )
-
-  def _import_logs(self):
-    log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
-      base_url=self._opt['baseurl'],
-      page_size=self._opt['log_page_size'],
-      max_workers=self._opt['workers'],
-      max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
-      max_task_queue_size=MAX_TASK_QUEUE_SIZE,
-      api_major=self._api_major,
-      client_dict=self._get_client_dict(),
+    multiprocessed_import(
+      options, event_counter, api_major, 'getLogRecords',
+      get_log_records_arg_dict(options), 'logEntry', 'import_event',
+      'Importing logs'
     )
-    start_sec = time.time()
-    for i, log_record_pyxb in enumerate(log_record_iterator):
-      if isinstance(
-          log_record_pyxb, d1_common.types.exceptions.DataONEException
-      ):
-        self._events.log_and_count(
-          'Unable to get SysMeta', 'error="{}"'.format(str(log_record_pyxb))
-        )
-        continue
-      elif not d1_common.type_conversions.is_pyxb(log_record_pyxb):
-        self._events.log_and_count(
-          'Unexpected object', 'obj="{}"'.
-          format(d1_common.xml.serialize_to_xml_str(log_record_pyxb))
-        )
-        continue
 
-      pid = d1_common.xml.get_req_val(log_record_pyxb.identifier)
 
-      self.stdout.write(
-        util.format_progress(
-          self._events, 'Importing event logs', i, log_record_iterator.total,
-          pid, start_sec
+def multiprocessed_import(
+    options, event_counter, api_major, list_method_name, list_arg_dict,
+    list_attr, import_method_name, display_str
+):
+  logging.info('Creating pool of {} workers'.format(options['workers']))
+  pool = multiprocessing.Pool(processes=options['workers'])
+
+  manager = multiprocessing.Manager()
+  namespace = manager.Namespace()
+  namespace.event_counter = event_counter
+  namespace.completed_count = 0
+
+  list_method_semaphore = manager.BoundedSemaphore(options['lists'])
+  completed_count_lock = manager.Lock()
+
+  client = create_source_client(options, api_major)
+
+  total_count = call_client_method(
+    client, list_method_name, count=0, **list_arg_dict
+  ).total
+
+  n_pages = (total_count - 1) // options['page_size'] + 1
+  start_sec = time.time()
+
+  for page_idx in range(n_pages):
+    try:
+      logging.debug(
+        'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
+      )
+      # DEBUG: pool.apply_async() will fail silently on errors
+      # in import_page. To debug, run import in the same process by replacing
+      # replace pool.apply_async() with a direct call to import_page.
+      # import_page(
+      #   namespace, options, api_major, list_method_name, list_arg_dict,
+      #   list_attr, import_method_name, display_str, total_count, page_idx,
+      #   start_sec, list_method_semaphore
+      # )
+      pool.apply_async(
+        import_page,
+        args=(
+          namespace, options, api_major, list_method_name, list_arg_dict,
+          list_attr, import_method_name, display_str, total_count, page_idx,
+          start_sec, list_method_semaphore, completed_count_lock
+        ),
+      )
+    except Exception as e:
+      logging.error('apply_async() failed. error="{}"'.format(str(e)))
+    # The pool does not support a clean way to limit the number of queued tasks
+    # so we have to access the internals to check the queue size and wait if
+    # necessary.
+    # noinspection PyProtectedMember
+    while pool._taskqueue.qsize() > 2 * options['workers']:
+      logging.debug('Waiting to queue task')
+      time.sleep(1)
+
+  pool.close()
+  pool.join()
+
+
+def import_page(
+    namespace, options, api_major, list_method_name, list_arg_dict, list_attr,
+    import_method_name, display_str, total_count, page_idx, start_sec,
+    list_method_semaphore, completed_count_lock
+):
+  client = create_source_client(options, api_major)
+  page_start_idx = page_idx * options['page_size']
+
+  # Cannot use inherited DB connections in this process. Force the process to
+  # create new DB connections by closing the current ones.
+  django.db.connections.close_all()
+
+  logging.debug('Waiting for list API semaphore')
+
+  # Prevent concurrent listObjects() and getLogRecords() calls to improve
+  # performance.
+  with list_method_semaphore:
+    logging.debug('Acquired list API semaphore')
+    call_start_sec = time.time()
+    try:
+      type_pyxb = call_client_method(
+        client, list_method_name, start=page_start_idx,
+        count=options['page_size'], **list_arg_dict
+      )
+    except Exception as e:
+      namespace.event_counter.log_and_count(
+        'Page skipped: {}() failed',
+        'page_idx={} page_start_idx={} page_size={} error="{}"'.format(
+          list_method_name, page_idx, page_start_idx, options['page_size'],
+          str(e)
         )
       )
-
-      if not d1_gmn.app.did.is_existing_object(pid):
-        self._events.log_and_count(
-          'Skipped object that does not exist', 'pid="{}"'.format(pid)
-        )
-        continue
-
-      self._create_log_entry(log_record_pyxb)
-
-  def _create_log_entry(self, log_record_pyxb):
-    event_log_model = d1_gmn.app.event_log.create_log_entry(
-      d1_gmn.app.model_util.
-      get_sci_model(d1_common.xml.get_req_val(log_record_pyxb.identifier)),
-      log_record_pyxb.event,
-      log_record_pyxb.ipAddress,
-      log_record_pyxb.userAgent,
-      log_record_pyxb.subject.value(),
+      return
+    logging.debug(
+      '{}() run_sec={:.02f}'.
+      format(list_method_name, time.time() - call_start_sec)
     )
-    event_log_model.timestamp = log_record_pyxb.dateLogged
-    event_log_model.save()
 
-  def _get_source_sysmeta(self, pid):
-    client = self._create_source_client()
-    return client.getSystemMetadata(pid)
-
-  def _get_source_log(self, pid):
-    client = self._create_source_client()
-    return client.getgetSystemMetadata(pid)
-
-  def _download_source_sciobj_bytes_to_store(self, pid):
-    abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(
-      pid
+  list_pyxb = getattr(type_pyxb, list_attr)
+  namespace.event_counter.log_and_count(
+    'Retrieved page', 'page_idx={} n_items={} page_size={}'.format(
+      page_idx, len(list_pyxb), options['page_size']
     )
-    if os.path.isfile(abs_sciobj_path):
-      self._events.log_and_count(
-        'Skipped download of existing sciobj bytes',
-        'pid="{}" path="{}"'.format(pid, abs_sciobj_path)
+  )
+
+  page_iter_start_sec = time.time()
+
+  for item_pyxb in list_pyxb:
+    logging.info(
+      util.format_progress(
+        namespace.event_counter, display_str, namespace.completed_count,
+        total_count, d1_common.xml.get_req_val(item_pyxb.identifier), start_sec
       )
-    else:
-      d1_common.util.create_missing_directories_for_file(abs_sciobj_path)
-      client = self._create_source_client()
-      client.get_and_save(pid, abs_sciobj_path)
+    )
+
+    with completed_count_lock:
+      namespace.completed_count += 1
+
+    call_import_method(import_method_name, namespace, client, item_pyxb)
+
+  logging.debug(
+    'Completed page. page_idx={} n_items={} iter_run_sec={:.02f}'.
+    format(page_idx, len(list_pyxb), time.time() - page_iter_start_sec)
+  )
+
+
+def call_import_method(import_method_name, namespace, client, item_pyxb):
+  globals()[import_method_name](namespace, client, item_pyxb)
+
+
+# SciObj
+
+
+def import_object(namespace, client, object_info_pyxb):
+  pid = d1_common.xml.get_req_val(object_info_pyxb.identifier)
+
+  if d1_gmn.app.did.is_existing_object(pid):
+    namespace.event_counter.log_and_count(
+      'Skipped object create: Local object already exists',
+      'pid="{}"'.format(pid)
+    )
     return
 
-  def _get_client_dict(self):
-    client_dict = {
-      'timeout_sec': self._opt['timeout'],
-      'verify_tls': False,
-      'suppress_verify_warnings': True,
-    }
-    if not self._opt['public']:
-      client_dict.update({
-        'cert_pem_path':
-          self._opt['cert_pem_path'] or django.conf.settings.CLIENT_CERT_PATH,
-        'cert_key_path':
-          self._opt['cert_key_path'] or
-          django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
-      })
-    return client_dict
+  sciobj_url = get_object_proxy_location(client, pid)
 
-  def _get_list_objects_args_dict(self):
-    return {
-      # Restrict query for faster debugging
-      # 'fromDate': datetime.datetime(2017, 1, 1),
-      # 'toDate': datetime.datetime(2017, 1, 3),
-    }
-
-  def _create_source_client(self):
-    return d1_client.d1client.get_client_class_by_version_tag(self._api_major)(
-      self._opt['baseurl'], **self._get_client_dict()
+  if sciobj_url:
+    namespace.event_counter.log_and_count(
+      'Skipped object download: Proxy object',
+      'pid="{}" sciobj_url="{}"'.format(pid, sciobj_url)
     )
-
-  def _assert_path_is_dir(self, dir_path):
-    if not os.path.isdir(dir_path):
-      raise django.core.management.base.CommandError(
-        'Invalid dir path. path="{}"'.format(dir_path)
+  else:
+    try:
+      download_source_sciobj_bytes_to_store(namespace, client, pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      namespace.event_counter.log_and_count(
+        'Skipped object create: Download failed', 'error="{}"'.format(str(e))
       )
+      return
+    sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
 
-  def _find_api_major(self):
-    return d1_client.d1client.get_api_major_by_base_url(
-      self._opt['baseurl'], **self._get_client_dict()
+  try:
+    sysmeta_pyxb = client.getSystemMetadata(pid)
+  except d1_common.types.exceptions.DataONEException as e:
+    namespace.event_counter.log_and_count(
+      'Skipped object create: getSystemMetadata() failed',
+      'pid="{}" error="{}"'.format(pid, str(e)),
     )
+    return
 
-  # def _migrate_filesystem(self):
-  #   for dir_path, dir_list, file_list in os.walk(V1_OBJ_PATH, topdown=False):
-  #     for file_name in file_list:
-  #       pid = d1_common.url.decodePathElement(file_name)
-  #       old_file_path = os.path.join(dir_path, file_name)
-  #       new_file_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(pid)
-  #       d1_common.util.create_missing_directories_for_file(new_file_path)
-  #       new_dir_path = os.path.dirname(new_file_path)
-  #       if self._are_on_same_disk(old_file_path, new_dir_path):
-  #         self._events.log_and_count('Creating SciObj hard link')
-  #         os.link(old_file_path, new_file_path)
-  #       else:
-  #         self._events.log_and_count('Copying SciObj file')
-  #         shutil.copyfile(old_file_path, new_file_path)
-  #
-  # def _are_on_same_disk(self, path_1, path_2):
-  #   return os.stat(path_1).st_dev == os.stat(path_2).st_dev
-  #
-  # def _file_path(self, root, pid):
-  #   z = zlib.adler32(pid.encode('utf-8'))
-  #   a = z & 0xff ^ (z >> 8 & 0xff)
-  #   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
-  #   return os.path.join(
-  #     root,
-  #     u'{0:03d}'.format(a),
-  #     u'{0:03d}'.format(b),
-  #     d1_common.url.encodePathElement(pid),
-  #   )
+  d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
+
+
+def get_object_proxy_location(client, pid):
+  """If object is proxied, return the proxy location URL. If object is local,
+  return None.
+  """
+  return client.describe(pid).get('DataONE-Proxy')
+
+
+def download_source_sciobj_bytes_to_store(namespace, client, pid):
+  abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
+  if os.path.isfile(abs_sciobj_path):
+    namespace.event_counter.log_and_count(
+      'Skipped object download: Bytes already in local object store',
+      'pid="{}" path="{}"'.format(pid, abs_sciobj_path)
+    )
+    return
+
+  d1_common.util.create_missing_directories_for_file(abs_sciobj_path)
+  client.get_and_save(pid, abs_sciobj_path)
+
+
+def get_list_objects_arg_dict(options):
+  return {
+    # Restrict query for faster debugging
+    # 'fromDate': datetime.datetime(2017, 1, 1),
+    # 'toDate': datetime.datetime(2017, 1, 3),
+  }
+
+
+# Event Logs
+
+
+def import_event(namespace, client, log_entry_pyxb):
+  pid = d1_common.xml.get_req_val(log_entry_pyxb.identifier)
+
+  if not d1_gmn.app.did.is_existing_object(pid):
+    namespace.event_counter.log_and_count(
+      'Skipped event log: Local object does not exist', 'pid="{}"'.format(pid)
+    )
+    return
+
+  event_log_model = d1_gmn.app.event_log.create_log_entry(
+    d1_gmn.app.model_util.get_sci_model(pid), log_entry_pyxb.event,
+    log_entry_pyxb.ipAddress, log_entry_pyxb.userAgent,
+    log_entry_pyxb.subject.value()
+  )
+  event_log_model.timestamp = d1_common.date_time.normalize_datetime_to_utc(
+    log_entry_pyxb.dateLogged
+  )
+  event_log_model.save()
+
+
+def get_log_records_arg_dict(options):
+  return {}
+
+
+# Client
+
+
+def create_source_client(options, api_major):
+  return d1_client.d1client.get_client_class_by_version_tag(api_major)(
+    options['baseurl'], **get_source_client_arg_dict(options)
+  )
+
+
+def get_source_client_arg_dict(options):
+  client_dict = {
+    'timeout_sec': options['timeout'],
+    'verify_tls': False,
+    'suppress_verify_warnings': True,
+  }
+  if not options['public']:
+    client_dict.update({
+      'cert_pem_path':
+        options['cert_pem_path'] or django.conf.settings.CLIENT_CERT_PATH,
+      'cert_key_path':
+        options['cert_key_path'] or
+        django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
+    })
+  return client_dict
+
+
+def call_client_method(
+    client, method_name, *method_arg_list, **method_arg_dict
+):
+  return getattr(client, method_name)(*method_arg_list, **method_arg_dict)
