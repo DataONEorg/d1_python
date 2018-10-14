@@ -51,6 +51,7 @@ import d1_common.types.exceptions
 
 import django.conf
 import django.http
+import django.urls
 
 
 class ExceptionHandler:
@@ -76,10 +77,13 @@ class ExceptionHandler:
       return self._serialize_dataone_exception_for_head_request(e)
 
   def _serialize_dataone_exception_for_regular_request(self, e):
-    exception_xml = e.serialize()
+    exception_xml = e.serialize_to_transport(
+      xslt_url=django.urls.base.reverse('home_xslt')
+    )
     return django.http.HttpResponse(
-      exception_xml, status=e.errorCode,
-      content_type=d1_common.const.CONTENT_TYPE_XML
+      exception_xml,
+      status=e.errorCode,
+      content_type=d1_common.const.CONTENT_TYPE_XML,
     )
 
   def _serialize_dataone_exception_for_head_request(self, e):

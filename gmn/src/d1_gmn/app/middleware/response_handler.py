@@ -25,6 +25,7 @@ Serialize DataONE response objects according to Accept header and set header
 
 import logging
 
+import d1_gmn.app.util
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 import d1_gmn.app.xslt
@@ -41,6 +42,7 @@ import django.conf
 import django.db
 import django.db.models
 import django.http
+import django.urls
 
 
 class ResponseHandler:
@@ -49,7 +51,7 @@ class ResponseHandler:
 
   def __call__(self, request):
     """Process return values from views
-    - If view_result is a HttpResponse, return it unprocessed.
+    - If view_result is a HttpResponse, return it unchanged.
     - If response is a database query, run the query and create a response.
     - If response is a string, assume that it is a PID.
     """
@@ -116,7 +118,8 @@ class ResponseHandler:
     )
     response.write(
       d1_common.xml.serialize_to_transport(
-        d1_type_pyxb, xslt_url=d1_gmn.app.xslt.get_xslt_url(d1_type_pyxb)
+        d1_type_pyxb, xslt_url=django.urls.base.reverse('home_xslt')
+        #d1_gmn.app.util.get_static_path('xslt/xhtml_grid.xsl')
       )
     )
     self._set_headers(response, d1_type_latest_date, response.tell())
@@ -152,7 +155,7 @@ class ResponseHandler:
                                                     ).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
-      objectInfo.dateSysMetadataModified = d1_gmn.app.views.util.naive_to_utc(
+      objectInfo.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(
         d1_common.date_time.row.modified_timestamp
       )
       objectInfo.size = row.size

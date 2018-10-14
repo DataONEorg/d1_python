@@ -25,7 +25,17 @@ import d1_gmn.app.views.get_package
 import d1_gmn.app.views.gmn
 import d1_gmn.app.views.internal
 
+import d1_common.util
+
 import django.conf.urls as urls
+import django.views.static
+
+# from django.urls import path
+# from django.views.generic import TemplateView
+
+# Return 404 and 500 as UI page when DEBUG=False
+handler404 = 'd1_gmn.app.views.internal.error_404'
+handler500 = 'd1_gmn.app.views.internal.error_500'
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP method into account, so in the
@@ -165,24 +175,28 @@ urlpatterns = [
   ),
 
   #
-  # Home page and Web UI
+  # Web UI
   #
+
+  # Redirect / to /home
+  urls.url(
+    r'^$',
+    d1_gmn.app.views.internal.root,
+    kwargs={'allowed_method_list': ['GET']},
+    name='root',
+  ),
   urls.url(
     r'^home/?$',
     d1_gmn.app.views.internal.home,
     kwargs={'allowed_method_list': ['GET']},
     name='home',
   ),
-  # url(
-  #   r'^home/replication?$', d1_gmn.app.views.internal.replication_queue,
-  #   name='home_replication'
-  # ),
-  # Environment (discovered CNs, etc))
-  # url(
-  #   r'^home/env',
-  #   d1_gmn.app.views.home.d1env,
-  #   name='d1env',
-  # ),
+  urls.url(
+    r'^templates/home.xsl$',
+    d1_gmn.app.views.internal.home_xslt,
+    kwargs={'allowed_method_list': ['GET']},
+    name='home_xslt',
+  ),
 
   #
   # GMN vendor specific extensions
@@ -206,3 +220,17 @@ urlpatterns = [
     name='echo_request_object',
   ),
 ]
+
+if django.conf.settings.STATIC_SERVER:
+  urlpatterns.append(
+    urls.url(
+      r'^static/(?P<path>.*)$',
+      django.views.static.serve,
+      kwargs={
+        # 'static': d1_common.util.abs_path('.'),
+        'document_root': d1_common.util.abs_path('./static'),
+        'show_indexes': True,
+        'allowed_method_list': ['GET'],
+      },
+    )
+  )

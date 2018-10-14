@@ -29,8 +29,10 @@ import urllib.parse
 
 import d1_common
 import d1_common.const
+import d1_common.url
 
 import django.conf
+import django.contrib.staticfiles.templatetags.staticfiles
 import django.http
 
 
@@ -115,3 +117,7 @@ def create_http_echo_response(request):
       'body': request.body,
     }, indent=2), d1_common.const.CONTENT_TYPE_TEXT
   )
+
+
+def get_static_path(rel_path):
+  return django.contrib.staticfiles.templatetags.staticfiles.static(rel_path)
