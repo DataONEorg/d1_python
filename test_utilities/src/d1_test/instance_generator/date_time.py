@@ -42,7 +42,7 @@ def random_datetime(tz_type='utc'):
   specified timezone type. See generate_tz() for {tz_type}.
   """
   century_sec = 60 * 60 * 24 * 365 * 100
-  return d1_common.date_time.dt_from_ts(
+  return d1_test.d1_test_case.D1TestCase.dt_from_ts(
     random.random() * century_sec, generate_tz(tz_type)
   )
 

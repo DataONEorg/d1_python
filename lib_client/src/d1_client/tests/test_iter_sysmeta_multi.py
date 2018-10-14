@@ -67,7 +67,7 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
     sort them and use the first and last few ones for checking
     """
     sorted_list = sorted(sysmeta_pyxb_list, key=lambda x: x.identifier.value())
-    return b'\n'.join([
+    return '\n'.join([
       d1_common.xml.serialize_to_xml_str(p)
       for p in (sorted_list[:2] + sorted_list[n_total - 2:])
     ])

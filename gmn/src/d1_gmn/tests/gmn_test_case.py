@@ -537,3 +537,30 @@ class GMNTestCase(
     with self.mock.disable_management_command_logging():
       with self.mock.disable_management_command_concurrent_instance_check():
         django.core.management.call_command(*args, **kwargs)
+
+  def run_django_sql(self, sql_str, dump=True, *sql_arg_list):
+    """Run raw SQL in the current Django database context and return any results
+    as a list of dicts, where they keys are the column names.
+    - By default, also dump the result with logging.debug(). Disable with
+    dump=False.
+    - This can be used for checking the state of a database within the implicit
+    transactions that wrap the unit tests.
+    """
+
+    def dict_fetchall(c):
+      return [
+        dict(zip([d[0] for d in c.description], row)) for row in c.fetchall()
+      ]
+
+    try:
+      with django.db.connection.cursor() as cursor:
+        logging.debug('Running SQL query: {}'.format(sql_str.strip()))
+        logging.debug('SQL query args: {}'.format(', '.join(sql_arg_list)))
+        cursor.execute(sql_str, sql_arg_list)
+        row_dict = dict_fetchall(cursor)
+        logging.debug('SQL query result:')
+        if dump:
+          self.dump(row_dict)
+    except Exception as e:
+      logging.error('SQL query error: {}'.format(str(e)))
+      raise
