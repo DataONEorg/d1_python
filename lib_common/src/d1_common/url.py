@@ -63,8 +63,8 @@ def encodePathElement(element):
   """Encode a URL path element according to RFC3986.
   """
   return urllib.parse.quote((
-    element.encode('utf-8') if isinstance(element, str) else str(element)
-    if isinstance(element, int) else element
+    element.encode('utf-8') if isinstance(element, str) else
+    str(element) if isinstance(element, int) else element
   ), safe=d1_common.const.URL_PATHELEMENT_SAFE_CHARS)
 
 
@@ -78,8 +78,8 @@ def encodeQueryElement(element):
   """Encode a URL query element according to RFC3986.
   """
   return urllib.parse.quote((
-    element.encode('utf-8') if isinstance(element, str) else str(element)
-    if isinstance(element, int) else element
+    element.encode('utf-8') if isinstance(element, str) else
+    str(element) if isinstance(element, int) else element
   ), safe=d1_common.const.URL_QUERYELEMENT_SAFE_CHARS)
 
 
@@ -258,14 +258,16 @@ def find_url_mismatches(a_url, b_url):
   # scheme
   if a_parts.scheme.lower() != b_parts.scheme.lower():
     diff_list.append(
-      'Schemes differ. a="{}" b="{}" differ'.
-      format(a_parts.scheme.lower(), b_parts.scheme.lower())
+      'Schemes differ. a="{}" b="{}" differ'.format(
+        a_parts.scheme.lower(), b_parts.scheme.lower()
+      )
     )
   # netloc
   if a_parts.netloc.lower() != b_parts.netloc.lower():
     diff_list.append(
-      'Network locations differ. a="{}" b="{}"'.
-      format(a_parts.netloc.lower(), b_parts.netloc.lower)
+      'Network locations differ. a="{}" b="{}"'.format(
+        a_parts.netloc.lower(), b_parts.netloc.lower
+      )
     )
   # path
   if a_parts.path != b_parts.path:
@@ -275,8 +277,9 @@ def find_url_mismatches(a_url, b_url):
   # fragment
   if a_parts.fragment != b_parts.fragment:
     diff_list.append(
-      'Fragments differ. a="{}" b="{}"'.
-      format(a_parts.fragment, b_parts.fragment)
+      'Fragments differ. a="{}" b="{}"'.format(
+        a_parts.fragment, b_parts.fragment
+      )
     )
   # param
   a_param_list = sorted(a_parts.params.split(";"))
@@ -293,8 +296,9 @@ def find_url_mismatches(a_url, b_url):
   b_query_dict = urllib.parse.parse_qs(b_parts.query)
   if len(list(a_query_dict.keys())) != len(list(b_query_dict.keys())):
     diff_list.append(
-      'Number of query keys differs. a={} b={}'.
-      format(len(list(a_query_dict.keys())), len(list(b_query_dict.keys())))
+      'Number of query keys differs. a={} b={}'.format(
+        len(list(a_query_dict.keys())), len(list(b_query_dict.keys()))
+      )
     )
   for a_key in b_query_dict:
     if a_key not in list(b_query_dict.keys()):
@@ -303,8 +307,9 @@ def find_url_mismatches(a_url, b_url):
       )
     elif sorted(a_query_dict[a_key]) != sorted(b_query_dict[a_key]):
       diff_list.append(
-        'Query values differ. key="{}" a_value="{}" b_value="{}"'.
-        format(a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key]))
+        'Query values differ. key="{}" a_value="{}" b_value="{}"'.format(
+          a_key, sorted(a_query_dict[a_key]), sorted(b_query_dict[a_key])
+        )
       )
   for b_key in b_query_dict:
     if b_key not in a_query_dict:

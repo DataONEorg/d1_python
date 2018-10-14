@@ -168,8 +168,8 @@ def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
   documents.
   """
   return are_equivalent_pyxb(
-    d1_common.xml.deserialize(a_xml),
-    d1_common.xml.deserialize(b_xml), ignore_timestamps
+    d1_common.xml.deserialize(a_xml), d1_common.xml.deserialize(b_xml),
+    ignore_timestamps
   )
 
 
@@ -201,8 +201,9 @@ def update_elements(dst_pyxb, src_pyxb, el_list):
   invalid_element_set = set(el_list) - set(SYSMETA_ROOT_CHILD_LIST)
   if invalid_element_set:
     raise ValueError(
-      'Passed one or more invalid elements. invalid="{}"'
-      .format(', '.join(sorted(list(invalid_element_set))))
+      'Passed one or more invalid elements. invalid="{}"'.format(
+        ', '.join(sorted(list(invalid_element_set)))
+      )
     )
   for el_str in el_list:
     setattr(dst_pyxb, el_str, getattr(src_pyxb, el_str, None))
