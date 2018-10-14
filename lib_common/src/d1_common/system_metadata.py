@@ -126,7 +126,7 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
     )
   d1_common.xml.sort_elements_by_child_values(
     sysmeta_pyxb.replica,
-    ['replicaMemberNode', 'replicationStatus', 'replicaVerified']
+    ['replicaVerified', 'replicaMemberNode', 'replicationStatus']
   )
   sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
   if reset_timestamps:
