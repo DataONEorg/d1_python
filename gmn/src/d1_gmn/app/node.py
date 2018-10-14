@@ -25,6 +25,7 @@ import d1_common.util
 import d1_common.xml
 
 import django.conf
+import django.urls
 
 # Example Node document:
 #
@@ -53,12 +54,15 @@ import django.conf
 
 
 def get_pretty_xml(api_major_int=2):
-  return d1_common.xml.serialize_to_transport(_get_pyxb(api_major_int))
+  return d1_common.xml.serialize_to_transport(
+    _get_pyxb(api_major_int), xslt_url=django.urls.base.reverse('home_xslt')
+  )
 
 
 def get_xml(api_major_int):
   return d1_common.xml.serialize_to_transport(
-    _get_pyxb(api_major_int), pretty=False
+    _get_pyxb(api_major_int), pretty=False,
+    xslt_url=django.urls.base.reverse('home_xslt')
   )
 
 
@@ -88,7 +92,7 @@ def _get_pyxb(api_major_int):
   node_pyxb.contactSubject.append(
     bindings.Subject(django.conf.settings.NODE_CONTACT_SUBJECT)
   )
-  node_pyxb.services = _create_service_list_pyxb(bindings, api_major_int)
+  node_pyxb.services = _create_service_list_pyxb(bindings)
   if django.conf.settings.NODE_SYNCHRONIZE:
     node_pyxb.synchronization = _create_synchronization_policy_pyxb(bindings)
   if django.conf.settings.NODE_REPLICATE:
@@ -125,15 +129,15 @@ def _create_replication_policy_pyxb(bindings):
   return replication_pyxb
 
 
-def _create_service_list_pyxb(bindings, api_major_int):
+def _create_service_list_pyxb(bindings):
+  # Both v1/node and v2/node list v2 services
   service_list_pyxb = bindings.services()
   service_list_pyxb.extend(
     _create_service_list_for_version_pyxb(bindings, 'v1')
   )
-  if api_major_int == 2:
-    service_list_pyxb.extend(
-      _create_service_list_for_version_pyxb(bindings, 'v2')
-    )
+  service_list_pyxb.extend(
+    _create_service_list_for_version_pyxb(bindings, 'v2')
+  )
   return service_list_pyxb
 
 
