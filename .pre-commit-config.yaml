@@ -1,23 +1,23 @@
--   repo: git://github.com/pre-commit/mirrors-yapf
-    sha: v0.16.0
-    hooks:
-    -   id: yapf
-        args:
-        - --in-place
-        exclude: &EXCLUDE
-          '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)|(/migrations/)'
+repos:
+- repo: git://github.com/pre-commit/mirrors-yapf
+  sha: v0.24.0
+  hooks:
+  - id: yapf
+    args:
+    - --in-place
+    exclude: &EXCLUDE
+      '(/dist/)|(egg-info/)|(/build/)|(/generated/)|(/.git/)|(/doc/)|(/\.idea/)|(/migrations/)'
 
--   repo: git://github.com/FalconSocial/pre-commit-python-sorter
-    sha: b57843b0b874df1d16eb0bef00b868792cb245c2
-    hooks:
-    -   id: python-import-sorter
-        args: ['--silent-overwrite', '--diff']
-        exclude: *EXCLUDE
+- repo: git://github.com/FalconSocial/pre-commit-python-sorter
+  sha: b57843b0b874df1d16eb0bef00b868792cb245c2
+  hooks:
+  - id: python-import-sorter
+    args: ['--silent-overwrite', '--diff']
 
--   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: 5bf6c09bfa1297d3692cadd621ef95f1284e33c0
-    hooks:
-    -   id: trailing-whitespace
-        exclude: *EXCLUDE
-    -   id: flake8
-        exclude: *EXCLUDE
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  sha: cb2bc2edc3923e4e3d1b399c705ccd6aa449ddaa
+  hooks:
+  - id: trailing-whitespace
+    exclude: *EXCLUDE
+  - id: flake8
+    exclude: *EXCLUDE
