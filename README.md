@@ -64,10 +64,12 @@ To set up automatic validation and formatting:
 
     $ sudo pip install pre-commit
     $ cd <a folder in the Git working tree for the repository>
-    $ pre-commit autoupdate
+    $ pre-commit autoupdate --bleeding-edge
     $ pre-commit install
 
 Notes:
+
+* `--bleeding-edge` is required as shown above at the time of writing, Oct 2018.
 
 * If the `YAPF`, `isort` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. The modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
 
