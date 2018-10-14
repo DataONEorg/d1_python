@@ -53,11 +53,9 @@ To set up a virtual environment::
   pip install -U iso8601
   pip install -U pyxb
   pip install -U requests
-  pip install -U cachecontrol
 
 Or as a user specific installation::
 
   pip install --user -U iso8601
   pip install --user -U pyxb
   pip install --user -U requests
-  pip install --user -U cachecontrol

@@ -39,7 +39,6 @@ def main():
     install_requires=[
       'dataone.common >= 3.0.4',
       #
-      'cachecontrol >= 0.12.4',
       'pyxb >= 1.2.6',
       'requests-toolbelt >= 0.8.0',
       'requests[security] >= 2.18.4',
