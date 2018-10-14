@@ -19,7 +19,7 @@
 # limitations under the License.
 """General utilities often needed by DataONE clients and servers.
 """
-
+import collections
 import contextlib
 import datetime
 import email.message
@@ -41,9 +41,9 @@ def log_setup(is_debug=False, is_multiprocess=False):
   Output only to stdout and stderr.
   """
   format_str = (
-    '%(asctime)s %(name)s %(module)s %(process)4d %(levelname)-8s %(message)s'
+    '%(asctime)s %(name)s %(module)s:%(lineno)d %(process)4d %(levelname)-8s %(message)s'
     if is_multiprocess else
-    '%(asctime)s %(name)s %(module)s %(levelname)-8s %(message)s'
+    '%(asctime)s %(name)s %(module)s:%(lineno)d %(levelname)-8s %(message)s'
   )
   formatter = logging.Formatter(format_str, '%Y-%m-%d %H:%M:%S')
   console_logger = logging.StreamHandler(sys.stdout)
@@ -102,6 +102,16 @@ def utf_8_bytes_to_str(b):
     logging.error(str(e))
 
 
+def nested_update(d, u):
+  for k, v in list(u.items()):
+    if isinstance(v, collections.Mapping):
+      r = nested_update(d.get(k, {}), v)
+      d[k] = r
+    else:
+      d[k] = u[k]
+  return d
+
+
 #===============================================================================
 
 
@@ -122,7 +132,8 @@ class EventCounter(object):
     {log_str} is a message with details that may change for each call
     """
     logging.info(
-      ' - '.join([v for v in (event_str, msg_str, str(inc_int)) if v])
+      ' - '.join(map(str,
+                     [v for v in (event_str, msg_str, inc_int) if v]))
     )
     self.count(event_str, inc_int or 1)
 
@@ -203,3 +214,11 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
     if isinstance(o, datetime.datetime):
       return d1_common.date_time.date_utc(o)
     return json.JSONEncoder.default(self, o)
+
+
+def format_sec_to_dhm(sec):
+  """Format seconds to days-hours-minutes str"""
+  rem_int, s_int = divmod(int(sec), 60)
+  rem_int, m_int, = divmod(rem_int, 60)
+  d_int, h_int, = divmod(rem_int, 24)
+  return '{}d{:02d}h{:02d}m'.format(d_int, h_int, m_int)
