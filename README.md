@@ -121,7 +121,6 @@ When staging `test_docs`, stage the directory, so that new files are included, a
     $ git add test_utilities/src/d1_test/test_docs
     $ git commit -m 'Update samples'
 
-
 #### DataONE Client to Django test adapter
 
 GMN tests are based on an adapter that enables using d1_client with the Django test framework. The adapter mocks Requests to issue requests through the Django test client.
@@ -148,7 +147,7 @@ Note: None of these switches can be used when running tests in parallel with xdi
 
 #### Debugging tests with PyCharm
 
-* By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail as they require pytest. To generate pytest configurations by default, set `Settings > Tools > Python Integrated Tools > Default test runner` to py.test. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
+* By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail, as they require pytest. To generate pytest configurations by default, set `Settings > Tools > Python Integrated Tools > Default test runner` to pytest. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
 
 * Generate and run a configuration for a specific test by placing the cursor on a test function name and running `Run context configuration (Ctrl+Shift+F10)`.
 
@@ -158,8 +157,11 @@ Note: None of these switches can be used when running tests in parallel with xdi
 
 * Stopping a test that has hit a breakpoint in PyCharm can cause the test database to be left around. On the next run, Django will then prompt the user to type "yes" to remove the database. The prompt appears in the PyCharm debug console output. To disable the prompt, go to `Run / Debug Configurations > Edit Configurations > Defaults > Django tests > Options` and add `--noinput`. See the [question on SO](https://stackoverflow.com/questions/34244171) for details.
 
-* `pytest` by default captures `stdout` and `stderr` output for the tests and only shows the output for the tests that failed after all tests have been completed. Since a test that hits a breakpoint has not yet failed, this hides any output from tests being debugged and also hides output from the debug console prompt (where Python script can be evaluated in the current context). To see the output while debugging, go to `Run / Debug Configurations > Edit Configurations > Defaults > py.test > Additional Arguments` and add `--capture=no` (`-s`). Verbosity can also be increased by adding one or more `-v`.
+* `pytest` by default captures `stdout` and `stderr` output for the tests and only shows the output for the tests that failed after all tests have been completed. Since a test that hits a breakpoint has not yet failed, this hides any output from tests being debugged and also hides output from the debug console prompt (where Python script can be evaluated in the current context). To see the output while debugging, go to `Run / Debug Configurations > Edit Configurations > Defaults > pytest > Additional Arguments` and add `--capture=no`. Also add an environment variable `JB_DISABLE_BUFFERING` and set it to `--capture=no --exitfirst --verbose`. Verbosity can also be increased by adding one or more `-v`.
 
+* Each unit test is implicitly wrapped in a database transaction and I have not found a way around this. The effect is that it's cumbersome to check the current state of the database while at a breakpoint or stepping through tests. PyCharm's database tools will only see the database as it was before the test was started. The only workaround I've found is to manually issue queries from within the current context, using the PyCharm console. While stepping through the test, bring up the console,`View > Tool Windows > Python Console`, and click `Show Python Prompt`. Then submit queries with, e.g., `> self.run_django_sql('select count(*) from app_scienceobject')`. Write them in the database console to get the code completion and other features, then copy it into a call in the Python console. If an invalid query is submitted, the current database transaction will be lost. If there is no output when running commands in the console, it's due to the output being captured by pytest. See above.
+
+* The settings in `settings_test.py` are optimized for testing and debugging, while the settings in `settings_template.py` are optimized for production. To use `settings_test.py` when debugging tests in PyCharm, go to `Run / Debug Configurations > Edit Configurations > Defaults > pytest > Environment variables`, add `DJANGO_SETTINGS_MODULE` and set it to `d1_gmn.settings_test`.
 
 ### Django
 
@@ -167,7 +169,7 @@ Note: None of these switches can be used when running tests in parallel with xdi
 
 * The tests use `settings_test.py` for GMN and Django configuration.
 
-* Pytest-django forces `settings.DEBUG` to `False` in `pytest_django/plugin.py`. To set `settings.DEBUG`, override it close to where it will be read, e.g., wit `@django.test.override_settings(DEBUG=True)`.
+* pytest-django forces `settings.DEBUG` to `False` in `pytest_django/plugin.py`. To set `settings.DEBUG`, override it close to where it will be read, e.g., wit `@django.test.override_settings(DEBUG=True)`.
 
 
 #### Django database test fixture
@@ -184,7 +186,7 @@ After changing any of the ORM classes in models.py, the database test fixture mu
 
 Fixtures can be loaded directly into the test database from the JSON files but it's much faster to keep an extra copy of the db as a template and create the test db as needed with Postgres' "create database from template" function. So we only load the fixtures into a template database and reuse the template. This is implemented in `./conftest.py`.
 
-Note that science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs get(), getChecksum() and replica() to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
+Science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs get(), getChecksum() and replica() to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
 
 
 ### Setting up the development environment
