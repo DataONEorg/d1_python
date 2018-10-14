@@ -39,9 +39,6 @@ DEFAULT_MN_BASEURL = ''.join(
 # Version of the DataONE Python stack
 VERSION = '3.0.4'
 
-# Maximum number of entries per list objects request
-MAX_LISTOBJECTS = 1000
-
 # Default number of items in a single page of a multi-page result set
 DEFAULT_SLICE_SIZE = 100
 
@@ -64,7 +61,8 @@ CONTENT_TYPE_JSON = 'application/json'
 CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream'
 CONTENT_TYPE_TEXT = 'text/plain'
 CONTENT_TYPE_XHTML = 'text/html'
-CONTENT_TYPE_XML = 'application/xml'
+CONTENT_TYPE_XML = 'text/xml'
+CONTENT_TYPE_XSLT = 'text/xsl'
 CONTENT_TYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
 
 DATAONE_SCHEMA_ATTRIBUTE_BASE = 'http://ns.dataone.org/service/types/'
