@@ -29,6 +29,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_test_client
 
 import d1_common
+import d1_common.types
 
 import d1_test.instance_generator.identifier
 
@@ -77,8 +78,8 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test(client):
       # noinspection PyClassHasNoInit
       class InvalidException(Exception):
-        def serialize(self):
-          return 'INVALID SERIALIZED DATAONE EXCEPTION'
+        def encode(self, *a, **b):
+          return b'INVALID SERIALIZED DATAONE EXCEPTION'
 
       with d1_gmn.tests.gmn_mock.disable_auth():
         result_bool = client.synchronizationFailed(InvalidException())

@@ -38,7 +38,7 @@ import django.test
 class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def setup_method(self, method):
     super().setup_method(method)
-    self.s = django.apps.apps.get_app_config('startup')
+    self.s = django.apps.apps.get_app_config('app')
 
   @django.test.override_settings(
     CLIENT_CERT_PATH=123,

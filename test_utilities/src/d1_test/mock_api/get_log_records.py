@@ -30,13 +30,13 @@ A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
 """
 
-import datetime
 import logging
 import re
 
 import responses
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.url
 

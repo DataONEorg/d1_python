@@ -117,8 +117,8 @@ class ExceptionHandler:
   def _wrap_internal_exception_in_dataone_exception(self, request):
     e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
     e.detailCode = str(
-      d1_gmn.app.middleware.detail_codes.DataoneExceptionToDetailCode()
-      .detail_code(request, e)
+      d1_gmn.app.middleware.detail_codes.DataoneExceptionToDetailCode().
+      detail_code(request, e)
     )
     e.traceInformation = self._traceback_to_text()
     return e
@@ -175,8 +175,8 @@ class ExceptionHandler:
       )
     else:
       logging.info(
-        'Opened location of exception in PyCharm. src_path="{}", src_line={}'
-        .format(src_path, src_line_num)
+        'Opened location of exception in PyCharm. src_path="{}", src_line={}'.
+        format(src_path, src_line_num)
       )
 
   def _get_project_location(self):

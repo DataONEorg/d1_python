@@ -93,23 +93,18 @@ def read_utf8_xml(stream_obj):
     return stream_obj.read(django.conf.settings.MAX_XML_DOCUMENT_SIZE
                            ).decode('utf-8')
   except IOError as e:
-    msg = 'Read failed on XML stream. error="{}"'.format(str(e))
-  except UnicodeDecodeError as e:
-    msg = 'XML stream encoding is invalid. Must be utf-8. error="{}"'.format(
-      str(e)
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'Read failed on XML stream. error="{}"'.format(str(e))
     )
-  raise d1_common.types.exceptions.ServiceFailure(0, msg)
+  except UnicodeDecodeError as e:
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'XML stream encoding is invalid. Must be utf-8. error="{}"'.
+      format(str(e))
+    )
 
 
 def deserialize(xml_file):
-  # Since the entire XML document must be in memory while being deserialized,
-  # we limit the size we are willing to handle.
-  if xml_file.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      'XML document size restriction exceeded. xml_size={} bytes, max_size={} bytes'
-      .format(xml_file.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
-    )
+  assert_xml_file_is_under_size_limit(xml_file)
   try:
     xml_str = read_utf8_xml(xml_file)
   except d1_common.types.exceptions.ServiceFailure as e:
@@ -118,6 +113,17 @@ def deserialize(xml_file):
     return d1_common.xml.deserialize(xml_str)
   except ValueError as e:
     raise d1_common.types.exceptions.InvalidRequest(0, str(e))
+
+
+def assert_xml_file_is_under_size_limit(xml_file):
+  # Since the entire XML document must be in memory while being deserialized,
+  # we limit the size we are willing to handle.
+  if xml_file.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'XML document size restriction exceeded. '
+      'xml_size={} bytes, max_size={} bytes'
+      .format(xml_file.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE)
+    )
 
 
 def generate_sysmeta_xml_matching_api_version(request, pid):
@@ -136,7 +142,7 @@ def http_response_with_boolean_true_type():
 
 
 def query_object_list(request, type_name):
-  # Assumes ScienceObject ordering = ['-modified_timestamp', 'id'] (set in model class)
+  # Assumes ScienceObject ordering = ['modified_timestamp', 'id'] (set in model class)
   query = d1_gmn.app.models.ScienceObject.objects.all().select_related().annotate(
     timestamp=django.db.models.F('modified_timestamp')
   )
@@ -182,3 +188,20 @@ def content_type_from_format(format_str):
     )
   except KeyError:
     return d1_common.const.CONTENT_TYPE_OCTET_STREAM
+
+
+def parse_and_normalize_url_date(date_str):
+  """Parse a ISO 8601 date-time with optional timezone
+  - Return as datetime with timezone adjusted to UTC.
+  - Return naive date-time set to UTC.
+  """
+  if date_str is None:
+    return None
+  try:
+    return d1_common.date_time.dt_from_iso8601_str(date_str)
+  except d1_common.date_time.iso8601.ParseError as e:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid date format for URL parameter. date="{}" error="{}"'.format(
+        date_str, str(e)
+      )
+    )

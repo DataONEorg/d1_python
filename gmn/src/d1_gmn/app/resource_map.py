@@ -150,7 +150,7 @@ def _create_or_update_map(map_pid, member_pid_list):
 
 def _get_or_create_map(map_pid):
   return d1_gmn.app.models.ResourceMap.objects.get_or_create(
-    pid=d1_gmn.app.models.get_or_create_did(map_pid)
+    pid=d1_gmn.app.did.get_or_create_did(map_pid)
   )[0]
 
 

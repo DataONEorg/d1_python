@@ -114,6 +114,12 @@ def is_trusted_subject(request):
   return not request.all_subjects_set.isdisjoint(get_trusted_subjects())
 
 
+def is_client_side_cert_subject(request):
+  """Return True if the current connection has been authenticated by the MN's
+  own client side cert"""
+  return _get_client_side_certificate_subject() == request.primary_subject_str
+
+
 def _get_client_side_certificate_subject():
   """Return the DN from the client side certificate as a D1 subject if
   a client side cert has been configured. Else return None."""

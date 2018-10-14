@@ -62,7 +62,6 @@ class DataONEBaseClient_1_1(
   # MNQuery.query(session, queryEngine, query) → OctetStream
   # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
 
-  ##@d1_common.util.utf8_to_unicode
   def queryResponse(
       self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
@@ -75,7 +74,6 @@ class DataONEBaseClient_1_1(
             if do_post else self.GET)(['query', queryEngine, query_str],
                                       headers=vendorSpecific, **kwargs)
 
-  ##@d1_common.util.utf8_to_unicode
   def query(
       self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
@@ -92,11 +90,9 @@ class DataONEBaseClient_1_1(
   # MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
   # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.getQueryEngineDescription
 
-  ##@d1_common.util.utf8_to_unicode
   def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
     return self.GET(['query', queryEngine], query=kwargs)
 
-  ##@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
     return self._read_dataone_type_response(response, 'QueryEngineDescription')

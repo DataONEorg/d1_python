@@ -161,5 +161,4 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
     response = live_client.echoIndexedObject(
       'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
     )
-    #
     self.sample.assert_equals(response.content, 'echo_indexed_object_live')

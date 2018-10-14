@@ -320,7 +320,6 @@ class DataONEBaseClient(
   # https://releases.dataone.org/online/api-documentation-v2.0.1/
   # apis/MN_APIs.html#MNCore.getLogRecords
 
-  #@d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(
       self,
       fromDate=None,
@@ -348,7 +347,6 @@ class DataONEBaseClient(
 
     return self.GET('log', query=query, headers=vendorSpecific)
 
-  #@d1_common.util.utf8_to_unicode
   def getLogRecords(
       self,
       fromDate=None,
@@ -371,12 +369,10 @@ class DataONEBaseClient(
   # MNRead.ping() → null
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.ping
 
-  #@d1_common.util.utf8_to_unicode
   def pingResponse(self, vendorSpecific=None):
     response = self.GET(['monitor', 'ping'], headers=vendorSpecific)
     return response
 
-  #@d1_common.util.utf8_to_unicode
   def ping(self, vendorSpecific=None):
     response = self.pingResponse(vendorSpecific=vendorSpecific)
     return self._read_boolean_response(response)
@@ -390,7 +386,6 @@ class DataONEBaseClient(
   # MNRead.get(d1_client.session, pid) → OctetStream
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.get
 
-  #@d1_common.util.utf8_to_unicode
   def getResponse(self, pid, stream=False, vendorSpecific=None):
     return self.GET(['object', pid], headers=vendorSpecific, stream=stream)
 
@@ -445,11 +440,9 @@ class DataONEBaseClient(
   # MNRead.getSystemMetadata(d1_client.session, pid) → SystemMetadata
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getSystemMetadata
 
-  #@d1_common.util.utf8_to_unicode
   def getSystemMetadataResponse(self, pid, vendorSpecific=None):
     return self.GET(['meta', pid], headers=vendorSpecific)
 
-  #@d1_common.util.utf8_to_unicode
   def getSystemMetadata(self, pid, vendorSpecific=None):
     response = self.getSystemMetadataResponse(
       pid, vendorSpecific=vendorSpecific
@@ -461,12 +454,10 @@ class DataONEBaseClient(
   # MNRead.describe(d1_client.session, pid) → DescribeResponse
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
-  #@d1_common.util.utf8_to_unicode
   def describeResponse(self, pid, vendorSpecific=None):
     response = self.HEAD(['object', pid], headers=vendorSpecific)
     return response
 
-  #@d1_common.util.utf8_to_unicode
   def describe(self, pid, vendorSpecific=None):
     """Note: If the server returns a status code other than 200 OK, a
     ServiceFailure will be raised, as this method is based on a HEAD request,
@@ -482,7 +473,6 @@ class DataONEBaseClient(
   #   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.listObjects
 
-  #@d1_common.util.utf8_to_unicode
   def listObjectsResponse(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
@@ -502,7 +492,6 @@ class DataONEBaseClient(
     }
     return self.GET('object', query=query, headers=vendorSpecific)
 
-  #@d1_common.util.utf8_to_unicode
   def listObjects(
       self, fromDate=None, toDate=None, formatId=None, identifier=None,
       replicaStatus=None, nodeId=None, start=0,
@@ -523,7 +512,6 @@ class DataONEBaseClient(
   # MNStorage.generateIdentifier(d1_client.session, scheme[, fragment]) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
-  #@d1_common.util.utf8_to_unicode
   def generateIdentifierResponse(
       self, scheme, fragment=None, vendorSpecific=None
   ):
@@ -534,7 +522,6 @@ class DataONEBaseClient(
       mmp_dict['fragment'] = fragment.encode('utf-8')
     return self.POST('generate', fields=mmp_dict, headers=vendorSpecific)
 
-  #@d1_common.util.utf8_to_unicode
   def generateIdentifier(self, scheme, fragment=None, vendorSpecific=None):
     response = self.generateIdentifierResponse(scheme, fragment, vendorSpecific)
     return self._read_dataone_type_response(response, 'Identifier')
@@ -544,12 +531,10 @@ class DataONEBaseClient(
   # MNStorage.delete(d1_client.session, pid) → Identifier
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.archive
 
-  #@d1_common.util.utf8_to_unicode
   def archiveResponse(self, pid, vendorSpecific=None):
     response = self.PUT(['archive', pid], headers=vendorSpecific)
     return response
 
-  #@d1_common.util.utf8_to_unicode
   def archive(self, pid, vendorSpecific=None):
     response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response, 'Identifier')
@@ -563,12 +548,10 @@ class DataONEBaseClient(
   # CNAuthorization.isAuthorized(d1_client.session, id, action) → boolean
   # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
-  #@d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
     return self.GET(['isAuthorized', pid], query={'action': action},
                     headers=vendorSpecific)
 
-  #@d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, action, vendorSpecific=None):
     """Return True if user is allowed to perform {action} on {pid}, else False.
     """

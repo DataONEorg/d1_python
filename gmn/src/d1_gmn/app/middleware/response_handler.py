@@ -85,10 +85,8 @@ class ResponseHandler:
     if django.conf.settings.DEBUG_GMN:
       if 'pretty' in request.GET:
         response['Content-Type'] = d1_common.const.CONTENT_TYPE_TEXT
-      if (
-        'HTTP_VENDOR_PROFILE_SQL' in request.META or
-        django.conf.settings.DEBUG_PROFILE_SQL
-      ):
+      if ('HTTP_VENDOR_PROFILE_SQL' in request.META or
+          django.conf.settings.DEBUG_PROFILE_SQL):
         response_list = []
         for query in django.db.connection.queries:
           response_list.append('{}\n{}'.format(query['time'], query['sql']))
@@ -101,8 +99,9 @@ class ResponseHandler:
     response = django.http.HttpResponse()
     name_to_func_map = {
       'object_list': (self._generate_object_list, ['modified_timestamp', 'id']),
-      'object_list_json':
-        (self._generate_object_field_json, ['modified_timestamp', 'id']),
+      'object_list_json': (
+        self._generate_object_field_json, ['modified_timestamp', 'id']
+      ),
       'log': (self._generate_log_records, ['timestamp', 'id']),
     }
     d1_type_generator, sort_field_list = name_to_func_map[view_result['type']]
@@ -131,8 +130,9 @@ class ResponseHandler:
       objectInfo = d1_gmn.app.views.util.dataoneTypes(request).ObjectInfo()
       objectInfo.identifier = row.pid.did
       objectInfo.formatId = row.format.format
-      checksum = d1_gmn.app.views.util.dataoneTypes(request
-                                                    ).Checksum(row.checksum)
+      checksum = d1_gmn.app.views.util.dataoneTypes(request).Checksum(
+        row.checksum
+      )
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
       objectInfo.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(
@@ -151,8 +151,9 @@ class ResponseHandler:
       objectInfo = d1_gmn.app.views.util.dataoneTypes(request).ObjectInfo()
       objectInfo.identifier = row.pid.did
       objectInfo.formatId = row.format.format
-      checksum = d1_gmn.app.views.util.dataoneTypes(request
-                                                    ).Checksum(row.checksum)
+      checksum = d1_gmn.app.views.util.dataoneTypes(request).Checksum(
+        row.checksum
+      )
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
       objectInfo.dateSysMetadataModified = d1_common.date_time.normalize_datetime_to_utc(

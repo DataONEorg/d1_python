@@ -23,10 +23,9 @@ import sys
 
 import d1_common.util
 
+import django
 import django.core.handlers.wsgi
-# Django
-from django import http
-from django.utils import datastructures
+import django.utils
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings'
 
@@ -53,20 +52,20 @@ class D1WSGIRequest(django.core.handlers.wsgi.WSGIRequest):
           # An error occured while parsing POST data. Since, when formatting the
           # error, the request handler might access self.POST, set self._post
           # and self._file to prevent attempts to parse POST data again.
-          self._post = http.QueryDict('')
-          self._files = datastructures.MultiValueDict()
+          self._post = django.http.QueryDict('')
+          self._files = django.utils.datastructures.MultiValueDict()
           # Mark that an error occurred. This allows self.__repr__ to be
           # explicit about it instead of simply representing an empty POST
           self._post_parse_error = True
           raise
       else:
-        self._post, self._files = http.QueryDict(
+        self._post, self._files = django.http.QueryDict(
           self._raw_post_data, encoding=self._encoding
-        ), datastructures.MultiValueDict()
+        ), django.utils.datastructures.MultiValueDict()
     else:
-      self._post, self._files = http.QueryDict(
+      self._post, self._files = django.http.QueryDict(
         '', encoding=self._encoding
-      ), datastructures.MultiValueDict()
+      ), django.utils.datastructures.MultiValueDict()
 
 
 # noinspection PyClassHasNoInit

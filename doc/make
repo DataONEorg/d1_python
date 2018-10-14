@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 rm -rf source/generated/*
 python ../lib_client/doc/generate_modules.py --dest-dir source/generated/ --suffix rst --force ../src/d1_client/

@@ -81,22 +81,6 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
     assert 'a/b' == d1_common.url.joinPathElements('a', 'b')
     assert 'a/b/c' == d1_common.url.joinPathElements('a/', '/b', 'c')
 
-  def test_1050(self):
-    """joinPathElementsNoStrip()"""
-    assert '' == d1_common.url.joinPathElementsNoStrip('')
-    assert '/' == d1_common.url.joinPathElementsNoStrip('/')
-    assert '//' == d1_common.url.joinPathElementsNoStrip('//')
-    assert 'ab' == d1_common.url.joinPathElementsNoStrip('ab')
-    assert 'a/b' == d1_common.url.joinPathElementsNoStrip('a/b')
-    assert 'a/b' == d1_common.url.joinPathElementsNoStrip('a', 'b')
-    assert 'a/b/c' == d1_common.url.joinPathElementsNoStrip('a', 'b', 'c')
-    assert 'a/b' == d1_common.url.joinPathElementsNoStrip('a/', 'b')
-    assert 'a//b' == d1_common.url.joinPathElementsNoStrip('a//', 'b')
-    assert 'a/b/' == d1_common.url.joinPathElementsNoStrip('a/', 'b/')
-    assert 'a//b///c' == d1_common.url.joinPathElementsNoStrip(
-      'a//', 'b', '///c'
-    )
-
   def test_1060(self):
     """normalizeTarget()"""
     u0 = "http://some.server/base/mn/"

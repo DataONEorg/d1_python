@@ -133,7 +133,8 @@ def _save_sciobj_bytes_from_request(request, sciobj_path):
   TemporaryUploadedFile. To store an UploadedFile on disk, it's iterated and
   saved in chunks. To store a TemporaryUploadedFile, it's moved from the
   temporary to the final location. Django automatically handles this when using
-  the file related fields in the models.
+  the file related fields in the models, but GMN is not using those, so has to
+  do it manually here.
   """
   d1_common.util.create_missing_directories_for_file(sciobj_path)
   try:
