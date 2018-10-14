@@ -4,8 +4,16 @@ Create ``gmn`` Account and Configure Permissions
 Run the following commands to:
 
 * Create the ``gmn`` user account (with password login disabled)
-* Prepare the DataONE root directory
+
 * Add or update permissions allowing the ``gmn`` user to
+
+  * Create and edit Apache configuration files
+  * Restart the Apache and Postgres services
+  * Read Apache and Postgres logs
+
+* Prepare the DataONE root directory
+
+* Create Postgres role and database
 
 
 .. note:: These commands can safely be run multiple times. Any missing permissions will be restored. Existing permissions will not be duplicated.

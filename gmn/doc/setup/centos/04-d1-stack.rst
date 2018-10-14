@@ -37,7 +37,6 @@ Create and activate a virtual environment in the gmn_venv_py3 directory::
       virtualenv gmn_venv_py3
       source gmn_venv_py3/bin/activate
       pip install --upgrade setuptools==33.1.1
-      pip install cachecontrol==0.11.7
       pip install dataone.gmn
     '
 

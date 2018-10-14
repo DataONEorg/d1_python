@@ -17,6 +17,7 @@ Run the following commands to:
     pip install --upgrade pip virtualenv
     pip install dataone.gmn
     cp ${GMN_PKG_DIR}/d1_gmn/deployment/bashrc ~/.bashrc
+    chmod go+x ${GMN_PKG_DIR}/d1_gmn/manage.py
   '
 
 .. raw:: html

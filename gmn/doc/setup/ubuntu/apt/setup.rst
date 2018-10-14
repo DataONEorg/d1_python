@@ -11,7 +11,6 @@ This avoids dependencies on PyPI, which may result in a more secure deployment.
   sudo apt install -y \
   python3 \
   python3-asn1crypto \
-  python3-cachecontrol \
   python3-certifi \
   python3-cffi \
   python3-chardet \
