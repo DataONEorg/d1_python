@@ -180,9 +180,17 @@ The GMN tests run in the context of a database that has been prepopulated with r
 
     ./test_utilities/src/d1_test/test_docs/db_fixture_gmn1.gz
 
+Set up a blank database to be populated with test data:
+    
+    $ sudo -u postgres dropdb --if-exists gmn_test_db_template
+    $ sudo -u postgres createdb -E UTF8 --owner=<your user name> gmn_test_db_template
+    $ ./gmn/src/d1_gmn/manage.py migrate --settings settings_test --database template --run-syncdb
+
 Regenerate the fixture file:
 
-    $ ./d1_python/gmn/src/d1_gmn/tests/mk_db_fixture.py
+    $ ./gmn/src/d1_gmn/tests/mk_db_fixture.py
+
+The name, `gmn_test_db_template`, must match the name of the database that is set up for the dict key `template` in `settings_test.DATABASE`.
 
 After changing any of the ORM classes in models.py, the database test fixture must be regenerated. This will often cause sample files to have to be updated as well.
 
