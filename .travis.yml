@@ -41,7 +41,7 @@ script:
   - python ./dev_tools/src/d1_dev/syspath.py
   - pip freeze
   - pip check || true
-  - pytest --help
+  - pytest --version
   # Create GMN template database (must be done in a single threaded run)
   #- pytest --collect-only
   # Run tests in parallel, using as many threads as are supported by Travis
