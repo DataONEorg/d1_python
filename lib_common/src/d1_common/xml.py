@@ -203,7 +203,7 @@ def etree_from_xml(xml_str, encoding='utf-8'):
 
 
 def _compare_attr(a_tree, b_tree):
-  for a_el in a_tree.getiterator():
+  for a_el in a_tree.iter():
     b_el = _find_corresponding_element(a_el, a_tree, b_tree)
     for attr_name, attr_val in list(a_el.items()):
       _validate_element_attr(b_tree, b_el, attr_name, attr_val)

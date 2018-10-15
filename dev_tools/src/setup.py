@@ -28,7 +28,7 @@ import setuptools
 def main():
   setuptools.setup(
     name='dataone.dev',
-    version='3.0.4',
+    version='3.2.0',
     description='DataONE developer tools',
     author='DataONE Project',
     author_email='developers@dataone.org',
@@ -51,9 +51,9 @@ def main():
       # Python doesn't have a real package manager.
       'idna == 2.6',
       #
-      'baron >= 0.6.6',
-      'pip >= 10.0.1',
-      'redbaron >= 0.6.3',
+      'baron >= 0.7',
+      'pip >= 18.1',
+      'redbaron >= 0.7.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1',

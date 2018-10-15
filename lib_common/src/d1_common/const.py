@@ -37,7 +37,7 @@ DEFAULT_MN_BASEURL = ''.join(
 )
 
 # Version of the DataONE Python stack
-VERSION = '3.0.4'
+VERSION = '3.2.0'
 
 # Default number of items in a single page of a multi-page result set
 DEFAULT_SLICE_SIZE = 100
