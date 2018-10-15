@@ -152,8 +152,8 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
       xml.replace_by_etree(new_replication_policy_el)
       assert len(xml.get_element_list_by_name('preferredMemberNode')) == 1
       assert len(xml.get_element_list_by_name('blockedMemberNode')) == 1
-      assert xml.get_element('replicationPolicy').attrib['a'] == 'b'
-      assert xml.get_element('replicationPolicy').attrib['c'] == 'd'
+      assert xml.get_element_by_name('replicationPolicy').attrib['a'] == 'b'
+      assert xml.get_element_by_name('replicationPolicy').attrib['c'] == 'd'
       d1_test.sample.assert_equals(xml.get_xml(), 'replace_by_etree')
 
   def test_1130(self):

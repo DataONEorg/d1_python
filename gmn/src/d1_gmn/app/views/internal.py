@@ -83,7 +83,7 @@ def error_404(request, exception):
   Note: Cannot raise NotFound() here, as this method is not covered by the GMN
   middleware handler that catches DataONE exceptions raised by normal views.
   """
-  return django.http.HttpResponse(
+  return django.http.HttpResponseNotFound(
     d1_common.types.exceptions.NotFound(
       0,
       'Invalid API endpoint',
@@ -96,7 +96,7 @@ def error_404(request, exception):
 
 
 def error_500(request):
-  return django.http.HttpResponse(
+  return django.http.HttpResponseServerError(
     d1_common.types.exceptions.ServiceFailure(
       0,
       'Internal error',
