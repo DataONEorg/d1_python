@@ -1,0 +1,15 @@
+{
+  "response": {
+    "docs": [],
+    "numFound": 0,
+    "start": 0
+  },
+  "responseHeader": {
+    "params": {
+      "fl": "*",
+      "q": "id:invalid_solr_record_id",
+      "wt": "json"
+    },
+    "status": 0
+  }
+}

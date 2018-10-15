@@ -1,0 +1,32 @@
+{
+  "response": {
+    "docs": [
+      {
+        "checksum": "3a03be67589a4247a90a431b92798eb1",
+        "dateUploaded": "2017-01-04T00:00:00Z",
+        "id": "arctic-data.10011.1"
+      },
+      {
+        "checksum": "268918b52e644308b89385b707e09067500bd301",
+        "dateUploaded": "2017-01-08T21:34:21.296Z",
+        "id": "ark:/c5146/r3fg6p/1/AcademicLibraries_RDS_Survey.xlsx"
+      }
+    ],
+    "numFound": 2,
+    "start": 0
+  },
+  "responseHeader": {
+    "params": {
+      "fl": [
+        "id",
+        "checksum",
+        "dateUploaded"
+      ],
+      "fq": "dateUploaded:{ 2017-01-01T00:00:00.000Z TO 2017-01-10T00:00:00.000Z }",
+      "q": "id:a*",
+      "sort": "id asc",
+      "wt": "json"
+    },
+    "status": 0
+  }
+}
