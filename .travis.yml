@@ -43,9 +43,11 @@ script:
   - pip check || true
   - pytest --version
   # Create GMN template database (must be done in a single threaded run)
-  #- pytest --collect-only
+  - pytest --collect-only
   # Run tests in parallel, using as many threads as are supported by Travis
-  - pytest --cov=. --cov-report=term --cov-report=xml
+  - pytest --cov=. --cov-config .coveragerc --cov-report=term --cov-report=xml -n auto
+  # --cov-config=tox.ini
+  # --cov-config=coverage.cfg --cov-report=term --cov-report=xml
   # -n auto
 after_success:
   # Submit results to Coveralls.io.
