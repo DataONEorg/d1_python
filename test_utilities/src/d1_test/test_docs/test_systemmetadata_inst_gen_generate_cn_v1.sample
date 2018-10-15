@@ -31,11 +31,6 @@
   <originMemberNode>mn_fl</originMemberNode>
   <authoritativeMemberNode>mn_t</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_bj</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2037-02-09T10:43:39Z</replicaVerified>
-  </replica>
-  <replica>
     <replicaMemberNode>mn_dh</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
     <replicaVerified>2004-02-02T07:53:14Z</replicaVerified>
@@ -44,5 +39,10 @@
     <replicaMemberNode>mn_e</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
     <replicaVerified>2027-09-10T01:33:00Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_bj</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2037-02-09T10:43:39Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

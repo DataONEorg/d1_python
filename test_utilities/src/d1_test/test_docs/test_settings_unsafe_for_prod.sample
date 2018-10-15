@@ -1,3 +1,4 @@
 Setting is unsafe for use in production. setting="DEBUG_GMN" current="True" safe="False"
-
 Setting is unsafe for use in production. setting="STAND_ALONE" current="True" safe="False"
+Setting is unsafe for use in production. setting="DATABASES.default.ATOMIC_REQUESTS" current="False" safe="True"
+Setting is unsafe for use in production. setting="STATIC_SERVER" current="True" safe="False"

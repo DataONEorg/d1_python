@@ -1,8 +1,8 @@
 [
   413,
   {
-    "Content-Type": "application/xml"
+    "Content-Type": "text/xml"
   },
-  "<?xml version=\"1.0\" ?><error detailCode=\"0\" errorCode=\"413\"
+  "<?xml version=\"1.0\" encoding=\"utf-8\"?><error detailCode=\"0\" errorCode=\"413\"
 name=\"InsufficientResources\"><description></description></error>"
 ]

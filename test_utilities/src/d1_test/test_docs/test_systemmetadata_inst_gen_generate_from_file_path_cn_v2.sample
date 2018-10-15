@@ -45,14 +45,14 @@
   <originMemberNode>mn_lq</originMemberNode>
   <authoritativeMemberNode>mn_ld</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_go</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2014-02-10T07:45:40Z</replicaVerified>
-  </replica>
-  <replica>
     <replicaMemberNode>mn_mw</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
     <replicaVerified>1989-06-18T18:19:43Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_go</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2014-02-10T07:45:40Z</replicaVerified>
   </replica>
   <fileName>file_bwrbnqfwmhwv</fileName>
 </ns1:systemMetadata>

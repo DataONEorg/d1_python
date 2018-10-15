@@ -1,6 +1,6 @@
 test msg:
-  Issued At: 2017-06-13 05:25:23
-  Expiration Time: 2017-06-13 23:25:23
+  Issued At: 2017-06-13 05:25:23+00:00
+  Expiration Time: 2017-06-13 23:25:23+00:00
   _sig_sha1: 1e70746eb4e2b8eb51e914b14a8ea179fb05f001
   alg: RS256
   consumerKey: theconsumerkey

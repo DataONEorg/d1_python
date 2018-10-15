@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <ns1:objectList count="1" start="999" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_vhyupyuyynue</identifier>
-    <formatId>application/x-gzip</formatId>
-    <checksum algorithm="SHA-1">50c9a311d4c3141521edd8046dd67facca71e833</checksum>
-    <dateSysMetadataModified>2069-11-22T10:04:34Z</dateSysMetadataModified>
-    <size>324</size>
+    <identifier>PID_GMNFXT_iyvpmmumystl</identifier>
+    <formatId>nexus/1997</formatId>
+    <checksum algorithm="SHA-1">6f026cc94280e592a9ee524a65c1a605d317a0a3</checksum>
+    <dateSysMetadataModified>2069-10-16T18:02:16Z</dateSysMetadataModified>
+    <size>277</size>
   </objectInfo>
 </ns1:objectList>

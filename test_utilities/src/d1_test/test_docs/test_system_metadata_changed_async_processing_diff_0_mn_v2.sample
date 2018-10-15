@@ -1,273 +1,189 @@
   <?xml version="1.0" ?>
-
   <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-
     <serialVersion>92</serialVersion>
-
     <identifier>PID_gpminqffoqnu</identifier>
-
     <formatId>http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html</formatId>
-
     <size>308</size>
-
     <checksum algorithm="SHA-1">b68963db1dce90b3696220fa72c565d2bb5779e2</checksum>
-
     <submitter>subj_ag</submitter>
-
     <rightsHolder>subj_cc</rightsHolder>
-
     <accessPolicy>
-
       <allow>
-
 -       <subject>subj1</subject>
-
 ?                    ^
 
 +       <subject>subj_aw</subject>
-
 ?                    ^^^
 
 -       <permission>read</permission>
-
 -     </allow>
-
 -     <allow>
-
 -       <subject>subj2</subject>
-
 ?                    ^
 
 +       <subject>subj_bx</subject>
-
 ?                    ^^^
 
 -       <subject>subj3</subject>
-
 ?                    ^
 
 +       <subject>subj_ot</subject>
-
 ?                    ^^^
 
 -       <subject>subj4</subject>
-
         <permission>write</permission>
-
       </allow>
-
       <allow>
-
 -       <subject>subj10</subject>
-
 -       <subject>subj11</subject>
-
 -       <subject>subj12</subject>
-
 -       <subject>subj5</subject>
-
 ?                    ^
 
 +       <subject>subj_az</subject>
-
 ?                    ^^^
 
 +       <subject>subj_bj_group</subject>
-
 -       <subject>subj6</subject>
-
 ?                    ^
 
 +       <subject>subj_fi</subject>
-
 ?                    ^^^
 
 -       <subject>subj7</subject>
-
 ?                    ^
 
 +       <subject>subj_nu</subject>
-
 ?                    ^^^
 
 -       <subject>subj8</subject>
-
 ?                    ^
 
 +       <subject>subj_pi</subject>
-
 ?                    ^^^
 
 -       <subject>subj9</subject>
-
         <permission>changePermission</permission>
-
       </allow>
-
     </accessPolicy>
-
 -   <replicationPolicy numberReplicas="8" replicationAllowed="true">
-
 ?                                      ^
 
 +   <replicationPolicy numberReplicas="3" replicationAllowed="true">
-
 ?                                      ^
 
 -     <preferredMemberNode>mn_d</preferredMemberNode>
-
 +     <preferredMemberNode>mn_dw</preferredMemberNode>
-
 ?                              +
 
 +     <blockedMemberNode>mn_ui</blockedMemberNode>
-
 -     <preferredMemberNode>mn_n</preferredMemberNode>
-
 -     <preferredMemberNode>mn_qy</preferredMemberNode>
-
 -     <blockedMemberNode>mn_op</blockedMemberNode>
-
 ?                           ^^
 
 +     <blockedMemberNode>mn_v</blockedMemberNode>
-
 ?                           ^
 
     </replicationPolicy>
-
     <archived>false</archived>
-
     <dateUploaded>2041-02-10T11:11:17Z</dateUploaded>
-
     <dateSysMetadataModified>2041-02-20T11:11:17Z</dateSysMetadataModified>
-
 -   <originMemberNode>mn_w</originMemberNode>
-
 ?                        ^
 
 +   <originMemberNode>mn_q</originMemberNode>
-
 ?                        ^
 
 -   <authoritativeMemberNode>mn_z</authoritativeMemberNode>
-
 ?                               ^
 
 +   <authoritativeMemberNode>mn_x</authoritativeMemberNode>
-
 ?                               ^
 
     <replica>
-
--     <replicaMemberNode>mn_bx</replicaMemberNode>
-
+-     <replicaMemberNode>mn_tm</replicaMemberNode>
 ?                           ^^
 
 +     <replicaMemberNode>mn_i</replicaMemberNode>
-
 ?                           ^
 
--     <replicationStatus>requested</replicationStatus>
-
-?                        ^ ----
+-     <replicationStatus>failed</replicationStatus>
+?                        ^^^
 
 +     <replicationStatus>completed</replicationStatus>
+?                        ^^^^ ++
 
-?                        ^^^^^
-
--     <replicaVerified>2030-06-18T21:06:59Z</replicaVerified>
+-     <replicaVerified>1972-09-29T20:53:22Z</replicaVerified>
+?                        ^^  ^ ^^ - --  ^^
 
 +     <replicaVerified>1993-05-16T03:34:15Z</replicaVerified>
+?                        ^^  ^ ^^    ^^^^^
 
     </replica>
-
     <replica>
-
--     <replicaMemberNode>mn_f</replicaMemberNode>
-
-?                           ^
+-     <replicaMemberNode>mn_op</replicaMemberNode>
+?                           ^^
 
 +     <replicaMemberNode>mn_wj</replicaMemberNode>
-
 ?                           ^^
 
 -     <replicationStatus>completed</replicationStatus>
-
 ?                        ^^^^^ ^
 
 +     <replicationStatus>queued</replicationStatus>
-
 ?                        ^^ ^
 
--     <replicaVerified>2047-04-27T18:41:31Z</replicaVerified>
-
-?                         ----------  ^ ^
+-     <replicaVerified>2025-02-19T10:24:33Z</replicaVerified>
+?                      ^^^^  ^  ^ - --  ^^
 
 +     <replicaVerified>1998-08-12T04:44:51Z</replicaVerified>
-
-?                      +++++++++ +    ^ ^
+?                      ^^^^  ^  ^    ^^^^^
 
     </replica>
-
     <replica>
-
--     <replicaMemberNode>mn_op</replicaMemberNode>
-
+-     <replicaMemberNode>mn_bx</replicaMemberNode>
 ?                           ^^
 
 +     <replicaMemberNode>mn_tg</replicaMemberNode>
-
 ?                           ^^
 
-      <replicationStatus>completed</replicationStatus>
+-     <replicationStatus>requested</replicationStatus>
+?                        ^ ----
 
--     <replicaVerified>2025-02-19T10:24:33Z</replicaVerified>
++     <replicationStatus>completed</replicationStatus>
+?                        ^^^^^
 
-?                         ^  ^ ^^ - ^^^  ^
+-     <replicaVerified>2030-06-18T21:06:59Z</replicaVerified>
+?                         -  ^ ^^ ^  ^^^^^
 
 +     <replicaVerified>2023-09-04T05:31:14Z</replicaVerified>
-
-?                         ^  ^ ^^  ^  ^^^^
+?                        +   ^ ^^ ^^^^  ^^
 
     </replica>
-
     <replica>
-
--     <replicaMemberNode>mn_tm</replicaMemberNode>
-
-?                           ^^
+-     <replicaMemberNode>mn_f</replicaMemberNode>
+?                           ^
 
 +     <replicaMemberNode>mn_uy</replicaMemberNode>
-
 ?                           ^^
 
--     <replicationStatus>failed</replicationStatus>
-
-?                        ^^^^
+-     <replicationStatus>completed</replicationStatus>
+?                        ^^^^^ ^
 
 +     <replicationStatus>queued</replicationStatus>
+?                        ^^ ^
 
-?                        ^^^^
-
--     <replicaVerified>1972-09-29T20:53:22Z</replicaVerified>
-
-?                      ^^ -  ^  ^ ^^    ^^
+-     <replicaVerified>2047-04-27T18:41:31Z</replicaVerified>
+?                        ^   ^  ^  ^ ^^ ^
 
 +     <replicaVerified>2057-08-25T17:53:51Z</replicaVerified>
-
-?                      ^^^   ^  ^ ^^    ^^
+?                        ^   ^  ^  ^ ^^ ^
 
     </replica>
-
     <seriesId>SID_lcjnhzxmwdwg</seriesId>
-
     <mediaType name="media_type_zt">
-
       <property name="prop_vouinffqudxq">bjccwzgksodw</property>
-
     </mediaType>
-
 -   <fileName>file_uycupwjzycjz</fileName>
-
   </ns1:systemMetadata>

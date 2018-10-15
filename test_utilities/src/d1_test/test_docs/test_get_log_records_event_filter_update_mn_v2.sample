@@ -1,103 +1,103 @@
 <?xml version="1.0" ?>
-<ns1:log count="10" start="0" total="236" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="10" start="0" total="243" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_anplqlgpgvon</identifier>
+    <identifier>PID_GMNFXT_mdudtklncsai</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1970-04-01T18:02:53Z</dateLogged>
+    <dateLogged>1970-02-05T09:24:20Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_tdwytqzubarb</identifier>
+    <identifier>PID_GMNFXT_jdpqscowesnq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1970-06-09T20:16:09Z</dateLogged>
+    <dateLogged>1970-03-29T23:20:26Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_rnbvqlazhanw</identifier>
+    <identifier>PID_GMNFXT_smecjmxvwwep</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1971-07-10T07:03:27Z</dateLogged>
+    <dateLogged>1970-05-12T08:17:48Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_zxeatcdlmqix</identifier>
+    <identifier>PID_GMNFXT_fetmqxnfowwc</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1971-12-18T03:55:33Z</dateLogged>
+    <dateLogged>1970-11-18T10:27:47Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_wtmojqjaxilz</identifier>
+    <identifier>PID_GMNFXT_axbqvmqoqqsb</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1972-03-08T19:52:22Z</dateLogged>
+    <dateLogged>1971-01-24T03:48:48Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_xxtgzmwxfinf</identifier>
+    <identifier>PID_GMNFXT_rvigiihuwjam</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1972-04-10T19:11:39Z</dateLogged>
+    <dateLogged>1971-03-28T03:31:59Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_cconfymqcphi</identifier>
+    <identifier>PID_GMNFXT_srgqayygytbu</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1972-06-11T19:47:47Z</dateLogged>
+    <dateLogged>1971-07-10T19:26:40Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_npeuujlgwzus</identifier>
+    <identifier>PID_GMNFXT_ubbgoybyjkhj</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1973-01-02T20:46:57Z</dateLogged>
+    <dateLogged>1971-09-04T21:45:56Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_vcyvxwxoagvk</identifier>
+    <identifier>PID_GMNFXT_krtwezcgblyg</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1973-04-04T20:39:07Z</dateLogged>
+    <dateLogged>1971-12-18T07:19:34Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_xsddmnxbilqd</identifier>
+    <identifier>PID_GMNFXT_imchoblifqxq</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>1973-05-20T01:15:35Z</dateLogged>
+    <dateLogged>1972-02-14T14:11:19Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

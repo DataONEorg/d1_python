@@ -1,54 +1,33 @@
 <?xml version="1.0" ?>
-<ns1:log count="5" start="0" total="5" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="3" start="0" total="3" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_gimmljcjcrxe</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87
-Safari/537.36</userAgent>
-    <subject>subj_ax</subject>
-    <event>read</event>
-    <dateLogged>2005-07-23T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_rxatuanjscup</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.1; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
-    <subject>subj_qx</subject>
-    <event>read</event>
-    <dateLogged>2008-12-04T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_gimmljcjcrxe</identifier>
+    <identifier>PID_GMNFXT_thaiaccfyoih</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>2022-04-26T21:32:18Z</dateLogged>
+    <dateLogged>2014-03-04T09:59:16Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_rxatuanjscup</identifier>
+    <identifier>PID_GMNFXT_ketrjgklnbpy</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>2055-01-24T10:41:19Z</dateLogged>
+    <dateLogged>2046-06-23T05:11:27Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_gimmljcjcrxe</identifier>
+    <identifier>PID_GMNFXT_thaiaccfyoih</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>2055-01-24T10:41:19Z</dateLogged>
+    <dateLogged>2046-06-23T05:11:27Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

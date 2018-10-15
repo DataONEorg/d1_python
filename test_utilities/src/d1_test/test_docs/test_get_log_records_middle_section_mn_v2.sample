@@ -1,163 +1,73 @@
 <?xml version="1.0" ?>
-<ns1:log count="15" start="2000" total="3236" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="7" start="621" total="1243" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_hhufqekmpcfq</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110
-Safari/537.36</userAgent>
-    <subject>subj_xw</subject>
-    <event>read</event>
-    <dateLogged>2007-12-22T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_ybikjfmmuhus</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36
-OPR/45.0.2552.888</userAgent>
-    <subject>subj_az</subject>
-    <event>read</event>
-    <dateLogged>2007-12-23T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_iebunbazbogu</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36</userAgent>
-    <subject>subj_r</subject>
-    <event>read</event>
-    <dateLogged>2007-12-24T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_aorptuycwgvj</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133
-Safari/537.36</userAgent>
-    <subject>subj_rh</subject>
-    <event>read</event>
-    <dateLogged>2007-12-25T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_ujmuobnaabna</identifier>
+    <identifier>PID_GMNFXT_qpuoomiiwtzu</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>2007-12-25T05:16:40Z</dateLogged>
+    <dateLogged>2021-04-01T00:15:17Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_ufjlinsocsbc</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36
-Edge/15.15063</userAgent>
-    <subject>subj_of</subject>
-    <event>read</event>
-    <dateLogged>2007-12-26T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_mliqvlyjiirc</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110
-Safari/537.36</userAgent>
-    <subject>subj_n</subject>
-    <event>read</event>
-    <dateLogged>2007-12-27T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_pxodizxembsl</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110
-Safari/537.36</userAgent>
-    <subject>subj_w</subject>
-    <event>read</event>
-    <dateLogged>2007-12-28T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_lcnzxcbllewd</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110
-Safari/537.36</userAgent>
-    <subject>subj_zv</subject>
-    <event>read</event>
-    <dateLogged>2007-12-29T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_strkujemssup</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.3; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0</userAgent>
-    <subject>subj_jl</subject>
-    <event>read</event>
-    <dateLogged>2007-12-30T00:00:00Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_fwinvgiknqkg</identifier>
+    <identifier>PID_GMNFXT_ouxqyfygyekw</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
-    <event>create</event>
-    <dateLogged>2007-12-30T01:47:46Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_lvomykibqjeg</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>disabled_auth_subj</subject>
+    <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>2007-12-30T01:47:46Z</dateLogged>
+    <dateLogged>2021-04-01T00:15:17Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_eaapgtobzkit</identifier>
+    <identifier>PID_GMNFXT_fitjzyxvbjsi</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86
-Safari/537.36</userAgent>
-    <subject>subj_q</subject>
-    <event>read</event>
-    <dateLogged>2007-12-31T00:00:00Z</dateLogged>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>2021-04-06T01:16:35Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_zngzrrsabdco</identifier>
+    <identifier>PID_GMNFXT_qekqvxvfdhvj</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133
-Safari/537.36</userAgent>
-    <subject>subj_ok</subject>
-    <event>read</event>
-    <dateLogged>2008-01-01T00:00:00Z</dateLogged>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>update</event>
+    <dateLogged>2021-04-06T01:16:35Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_inzrqizpqoei</identifier>
+    <identifier>PID_GMNFXT_lgtnowmfbnwi</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/602.4.8 (KHTML, like Gecko) Version/10.0.3
-Safari/602.4.8</userAgent>
-    <subject>subj_to</subject>
-    <event>read</event>
-    <dateLogged>2008-01-02T00:00:00Z</dateLogged>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>2021-07-28T10:15:27Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_GMNFXT_bjnqaqxqlzvk</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>2021-08-26T05:13:05Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_GMNFXT_ggggvtmmaxvd</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>2021-09-17T21:51:22Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

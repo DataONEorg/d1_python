@@ -1,7 +1,7 @@
 [
   413,
   {
-    "Content-Type": "application/xml",
+    "Content-Type": "text/xml",
     "DataONE-Exception-Description": "",
     "DataONE-Exception-DetailCode": "0",
     "DataONE-Exception-ErrorCode": "413",

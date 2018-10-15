@@ -1,17 +1,75 @@
-VALID-UTF-8-BYTES:<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
-xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>48</serialVersion><identifier>object#0024</identifier><formatId>http://www.w3.org/TR/rdfa-
-syntax</formatId><size>259</size><checksum
-algorithm="SHA-1">a631227eff1d502c9a4498fb47daeede022692b5</checksum><submitter>subj_o</submitter><rightsHolder>subj_t</rightsHolder><replicationPolicy
-numberReplicas="0"
-replicationAllowed="false"><preferredMemberNode>mn_o</preferredMemberNode><preferredMemberNode>mn_t</preferredMemberNode><preferredMemberNode>mn_z</preferredMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2007-05-10T14:08:58Z</dateUploaded><dateSysMetadataModified>2007-05-20T14:08:58Z</dateSysMetadataModified><originMemberNode>mn_cp</originMemberNode><authoritativeMemberNode>mn_eh</authoritativeMemberNode><replica><replicaMemberNode>mn_h</replicaMemberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>1972-08-30T19:24:16Z</replicaVerified></replica><replica><replicaMemberNode>mn_k</replicaMemberNode><replicationStatus>queued</replicationStatus><replicaVerified>2068-04-29T04:10:06Z</replicaVerified></replica><replica><replicaMemberNode>mn_x</replicaMemberNode><replicationStatus>completed</replicationStatus><replicaVerified>2021-01-29T19:45:28Z</replicaVerified></replica><seriesId>SID_knhmzilszxgr</seriesId><mediaType
-name="media_type_qr"><property name="prop_lyzowhfxuzrx">fwhamunfszpe</property><property
-name="prop_fcshxqshyaes">jttxvluznjiu</property><property name="prop_jqvgrbdzfmgh">ukemjhyergfr</property><property
-name="prop_bcqtaejgyfas">xhtnimxtwwvz</property></mediaType><fileName>file_pwnjbdbcjcjn</fileName></ns1:systemMetadata>
-<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
-xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>43</serialVersion><identifier>object#0028</identifier><formatId>http://www.w3.org/TR/rdfa-
-syntax</formatId><size>254</size><checksum
-algorithm="SHA-1">83c44b509ad842b77d48cb3e58c84c89a40991e5</checksum><submitter>subj_wa</submitter><rightsHolder>subj_ro</rightsHolder><accessPolicy><allow><subject>subj_ba</subject><subject>subj_eb</subject><subject>subj_yw</subject><permission>changePermission</permission></allow></accessPolicy><replicationPolicy
-numberReplicas="0"
-replicationAllowed="false"><preferredMemberNode>mn_vq</preferredMemberNode><blockedMemberNode>mn_gs</blockedMemberNode></replicationPolicy><archived>false</archived><dateUploaded>2002-12-09T18:16:14Z</dateUploaded><dateSysMetadataModified>2002-12-19T18:16:14Z</dateSysMetadataModified><originMemberNode>mn_c</originMemberNode><authoritativeMemberNode>mn_n</authoritativeMemberNode><mediaType
-name="media_type_sn"><property name="prop_kvayiuheivfz">eusgezvzlzme</property><property
-name="prop_uqryqrqgzzdj">mquuqgpiffmr</property></mediaType><fileName>file_zjfnjlisblhp</fileName></ns1:systemMetadata>
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>48</serialVersion>
+  <identifier>object#0024</identifier>
+  <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+  <size>259</size>
+  <checksum algorithm="SHA-1">a631227eff1d502c9a4498fb47daeede022692b5</checksum>
+  <submitter>subj_o</submitter>
+  <rightsHolder>subj_t</rightsHolder>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_o</preferredMemberNode>
+    <preferredMemberNode>mn_t</preferredMemberNode>
+    <preferredMemberNode>mn_z</preferredMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2007-05-10T14:08:58Z</dateUploaded>
+  <dateSysMetadataModified>2007-05-20T14:08:58Z</dateSysMetadataModified>
+  <originMemberNode>mn_cp</originMemberNode>
+  <authoritativeMemberNode>mn_eh</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_h</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1972-08-30T19:24:16Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_x</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2021-01-29T19:45:28Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_k</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2068-04-29T04:10:06Z</replicaVerified>
+  </replica>
+  <seriesId>SID_knhmzilszxgr</seriesId>
+  <mediaType name="media_type_qr">
+    <property name="prop_lyzowhfxuzrx">fwhamunfszpe</property>
+    <property name="prop_fcshxqshyaes">jttxvluznjiu</property>
+    <property name="prop_jqvgrbdzfmgh">ukemjhyergfr</property>
+    <property name="prop_bcqtaejgyfas">xhtnimxtwwvz</property>
+  </mediaType>
+  <fileName>file_pwnjbdbcjcjn</fileName>
+</ns1:systemMetadata>
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>43</serialVersion>
+  <identifier>object#0028</identifier>
+  <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+  <size>254</size>
+  <checksum algorithm="SHA-1">83c44b509ad842b77d48cb3e58c84c89a40991e5</checksum>
+  <submitter>subj_wa</submitter>
+  <rightsHolder>subj_ro</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_ba</subject>
+      <subject>subj_eb</subject>
+      <subject>subj_yw</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_vq</preferredMemberNode>
+    <blockedMemberNode>mn_gs</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2002-12-09T18:16:14Z</dateUploaded>
+  <dateSysMetadataModified>2002-12-19T18:16:14Z</dateSysMetadataModified>
+  <originMemberNode>mn_c</originMemberNode>
+  <authoritativeMemberNode>mn_n</authoritativeMemberNode>
+  <mediaType name="media_type_sn">
+    <property name="prop_kvayiuheivfz">eusgezvzlzme</property>
+    <property name="prop_uqryqrqgzzdj">mquuqgpiffmr</property>
+  </mediaType>
+  <fileName>file_zjfnjlisblhp</fileName>
+</ns1:systemMetadata>

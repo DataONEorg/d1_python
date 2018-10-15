@@ -1,12 +1,84 @@
 pid: PID_fbvelwifflvu
 sid: None
-sysmeta: b'<?xml version="1.0" encoding="utf-8"?><ns1:systemMetadata
-xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><serialVersion>42</serialVersion><identifier>PID_fbvelwifflvu</identifier><formatId>CF-1.2</formatId><size>258</size><checksum
-algorithm="SHA-1">be78e42f0d4332c3e5c71269d89c59427b94eab2</checksum><submitter>subj_di</submitter><rightsHolder>subj_ht</rightsHolder><accessPolicy><allow><subject>subj1</subject><permission>read</permission></allow><allow><subject>subj2</subject><subject>subj3</subject><subject>subj4</subject><permission>write</permission></allow><allow><subject>subj10</subject><subject>subj11</subject><subject>subj12</subject><subject>subj5</subject><subject>subj6</subject><subject>subj7</subject><subject>subj8</subject><subject>subj9</subject><permission>changePermission</permission></allow></accessPolicy><archived>false</archived><dateUploaded>2388-08-28T00:00:00</dateUploaded><dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified><originMemberNode>mn_eb</originMemberNode><authoritativeMemberNode>mn_o</authoritativeMemberNode><replica><replicaMemberNode>mn_bb</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>2043-06-10T13:08:29Z</replicaVerified></replica><replica><replicaMemberNode>mn_f</replicaMemberNode><replicationStatus>failed</replicationStatus><replicaVerified>2028-09-24T13:08:03Z</replicaVerified></replica><replica><replicaMemberNode>mn_i</replicaMemberNode><replicationStatus>invalidated</replicationStatus><replicaVerified>1997-10-24T22:20:37Z</replicaVerified></replica><replica><replicaMemberNode>mn_lt</replicaMemberNode><replicationStatus>requested</replicationStatus><replicaVerified>2058-11-17T13:22:33Z</replicaVerified></replica><replica><replicaMemberNode>mn_vj</replicaMemberNode><replicationStatus>requested</replicationStatus><replicaVerified>2036-03-05T11:53:10Z</replicaVerified></replica><mediaType
-name="media_type_iz"><property name="prop_ddjfefvbjmoz">eeuzolcbrehz</property><property
-name="prop_iegijihihhvh">mqwifapyihfz</property><property
-name="prop_mssjwtyifpcq">uvhgqxahgqyt</property></mediaType><fileName>file_bmpcrddgzorc</fileName></ns1:systemMetadata>'
-create_event: b'<?xml version="1.0" encoding="utf-8"?><ns1:log count="1" start="0" total="3237"
-xmlns:ns1="http://ns.dataone.org/service/types/v2.0"><logEntry><entryId>[ENTRY-
-ID]</entryId><identifier>PID_GMNFXT_zeomgoufdbor</identifier><ipAddress>127.0.0.1</ipAddress><userAgent>DataONE-Python/[VERSION]
-+http://dataone.org/</userAgent><subject>disabled_auth_subj</subject><event>create</event><dateLogged>1970-01-07T19:30:07Z</dateLogged><nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier></logEntry></ns1:log>'
+sysmeta: <?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>42</serialVersion>
+  <identifier>PID_fbvelwifflvu</identifier>
+  <formatId>CF-1.2</formatId>
+  <size>258</size>
+  <checksum algorithm="SHA-1">be78e42f0d4332c3e5c71269d89c59427b94eab2</checksum>
+  <submitter>subj_di</submitter>
+  <rightsHolder>subj_ht</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj1</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>subj2</subject>
+      <subject>subj3</subject>
+      <subject>subj4</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>subj10</subject>
+      <subject>subj11</subject>
+      <subject>subj12</subject>
+      <subject>subj5</subject>
+      <subject>subj6</subject>
+      <subject>subj7</subject>
+      <subject>subj8</subject>
+      <subject>subj9</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
+  <archived>false</archived>
+  <dateUploaded>2388-08-28T00:00:00</dateUploaded>
+  <dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified>
+  <originMemberNode>mn_eb</originMemberNode>
+  <authoritativeMemberNode>mn_o</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1997-10-24T22:20:37Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_f</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2028-09-24T13:08:03Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_vj</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2036-03-05T11:53:10Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_bb</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2043-06-10T13:08:29Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_lt</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2058-11-17T13:22:33Z</replicaVerified>
+  </replica>
+  <mediaType name="media_type_iz">
+    <property name="prop_ddjfefvbjmoz">eeuzolcbrehz</property>
+    <property name="prop_iegijihihhvh">mqwifapyihfz</property>
+    <property name="prop_mssjwtyifpcq">uvhgqxahgqyt</property>
+  </mediaType>
+  <fileName>file_bmpcrddgzorc</fileName>
+</ns1:systemMetadata>
+create_event: <?xml version="1.0" ?>
+<ns1:log count="1" start="0" total="1244" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_GMNFXT_ozzmphwkqwxl</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>1970-02-05T09:24:20Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+</ns1:log>
