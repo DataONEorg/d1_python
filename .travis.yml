@@ -45,7 +45,8 @@ script:
   # Create GMN template database (must be done in a single threaded run)
   #- pytest --collect-only
   # Run tests in parallel, using as many threads as are supported by Travis
-  - pytest --cov=. --cov-report=term --cov-report=xml -n auto
+  - pytest --cov=. --cov-report=term --cov-report=xml
+  # -n auto
 after_success:
   # Submit results to Coveralls.io.
   ## Coveralls has a requirement for requests >= 1.0.0, so we install it after

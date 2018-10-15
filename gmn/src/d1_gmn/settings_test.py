@@ -140,3 +140,7 @@ LOGGING = {
     },
   }
 }
+
+FIXTURE_DIRS = (
+  d1_common.util.abs_path('./fixtures'),
+)

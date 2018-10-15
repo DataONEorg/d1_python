@@ -499,8 +499,9 @@ def db_populate_by_json(db_key):
   logging.debug('db_populate_by_json() {}'.format(db_key))
   django.core.management.call_command(
     'loaddata',
-    d1_test.sample.get_path('db_fixture.json.bz2'),
+    'db_fixture',
     database=db_key,
+    # d1_test.sample.get_path('db_fixture.json.bz2'),
     # verbosity=0,
     # commit=False,
   )
