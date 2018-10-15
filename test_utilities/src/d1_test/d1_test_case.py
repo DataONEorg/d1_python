@@ -342,8 +342,8 @@ class D1TestCase(object):
     """Convert POSIX timestamp to a datetime
     - If {tz} supplied: The dt is adjusted to that tz before being returned.
     - If {tz} not supplied: the dt is returned as naive.
-    - Keeping this function out of d1_common.date_time since we only need
-    naive datetimes for testing.
+    - Keeping this function out of d1_common.date_time since naive datetimes
+    are only needed for testing.
     """
     return datetime.datetime.fromtimestamp(ts, tz)
 

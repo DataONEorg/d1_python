@@ -46,7 +46,6 @@ class UTC(datetime.tzinfo):
   A naive Python datetime can be fixed to UTC by attaching it to this
   timezoneinfo based class.
   """
-
   def __repr__(self):
     return self.tzname(0)
 

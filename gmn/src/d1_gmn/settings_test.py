@@ -15,7 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test settings for GMN
+"""Test and debug settings for GMN
 - These settings are in effect when GMN is called through unit tests.
 """
 
@@ -23,13 +23,12 @@
 # flake8: noqa: F403,F401
 
 import logging
-# When running tests, turn Django's RuntimeWarning into exception
 import warnings
+import d1_common.util
 
 from d1_gmn.app.settings_default import *
 
-import d1_common.util
-
+# When running tests, turn Django's RuntimeWarning into exception
 warnings.filterwarnings(
   'error', r"DateTimeField .* received a naive datetime", RuntimeWarning,
   r'django\.db\.models\.fields'
@@ -79,6 +78,17 @@ MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 NUM_CHUNK_BYTES = 1024**2
 MAX_SLICE_ITEMS = 5000
 
+# mk_db_fixture:
+# - Uses DATABASES.default
+# - The default database is flushed then populated with test data by
+# mk_db_fixture
+#
+# Unit tests:
+# - Use DATABASES.default.NAME as a base name for temporary databases created
+# from the template database.
+# - Use DATABASES.template.NAME as the source database name when creating
+# databases from template.
+
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -87,15 +97,8 @@ DATABASES = {
     'PASSWORD': '',
     'HOST': '',
     'PORT': '',
-    # Transactions
-    #
-    # ATOMIC_REQUESTS is always True when running in production as implicit
-    # transactions form the basis of concurrency control in GMN. However, during
-    # debugging, uncommitted changes are hidden inside the transaction, making
-    # it impossible (?) to see the changes made so far by the code being
-    # debugged.
     'ATOMIC_REQUESTS': False,
-    'AUTOCOMMIT': False,
+    # 'AUTOCOMMIT': False,
   },
   'template': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -105,7 +108,7 @@ DATABASES = {
     'HOST': '',
     'PORT': '',
     'ATOMIC_REQUESTS': False,
-    'AUTOCOMMIT': False,
+    # 'AUTOCOMMIT': False,
   },
 }
 

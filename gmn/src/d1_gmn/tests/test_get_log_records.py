@@ -70,7 +70,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """getLogRecords(): Slicing: Retrieve middle section
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
-      log = gmn_client_v1_v2.getLogRecords(start=2000, count=7)
+      n_events = self.get_total_log_records(gmn_client_v1_v2)
+      log = gmn_client_v1_v2.getLogRecords(start=n_events // 2, count=7)
       self.norm_entry_id(log)
       self.sample.assert_equals(log, 'middle_section', gmn_client_v1_v2)
 

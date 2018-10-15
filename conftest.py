@@ -58,17 +58,13 @@ DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser(
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
+# Dict lookup keys matching the keys in settings_test.DATABASE
 TEMPLATE_DB_KEY = 'template'
 TEST_DB_KEY = 'default'
-
-GMN_DB_FIXTURE_LABEL = 'db_fixture'
 
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
 # flake8: noqa: F811
-
-# template_db_lock = threading.Lock()
-template_db_lock = multiprocessing.Lock()
 
 # Hack to get access to print and logging output when running under pytest-xdist
 # and pytest-catchlog. Without this, only output from failed tests is displayed.
@@ -112,7 +108,7 @@ def pytest_addoption(parser):
 
   parser.addoption(
     '--fixture-refresh', action='store_true',
-    help='Drop and create GMN template database from JSON fixture file'
+    help='Drop and recreate GMN template database from JSON fixture file'
   )
 
   # Skip passed tests
@@ -417,7 +413,8 @@ def enable_db_access(db):
 
 
 @pytest.yield_fixture(scope='session', autouse=True)
-def django_db_setup(request):
+@pytest.mark.django_db
+def django_db_setup(request, django_db_blocker):
   """Set up DB fixture
   When running in parallel with xdist, this is called once for each worker,
   causing a separate database to be set up for each worker.
@@ -426,46 +423,47 @@ def django_db_setup(request):
 
   db_set_unique_db_name(request)
 
-  # Regular multiprocessing.Lock() context manager did not work here. Also
-  # tried creating the lock at module scope, and also directly calling
-  # acquire() and release(). It's probably related to how the worker processes
-  # relate to each other when launched by pytest-xdist as compared to what the
-  # multiprocessing module expects.
-  with posix_ipc.Semaphore(
-      '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
-  ):
-    logging.warning(
-      'LOCK BEGIN {} {}'.format(
-        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+  with django_db_blocker.unblock():
+    # Regular multiprocessing.Lock() context manager did not work here. Also
+    # tried creating the lock at module scope, and also directly calling
+    # acquire() and release(). It's probably related to how the worker processes
+    # relate to each other when launched by pytest-xdist as compared to what the
+    # multiprocessing module expects.
+    with posix_ipc.Semaphore(
+        '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
+    ):
+      logging.warning(
+        'LOCK BEGIN {} {}'.format(
+          db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+        )
       )
-    )
 
-    if not db_exists(TEMPLATE_DB_KEY):
-      db_create_blank(TEMPLATE_DB_KEY)
-      db_migrate(TEMPLATE_DB_KEY)
-      db_populate_by_json(TEMPLATE_DB_KEY)
-      db_migrate(TEMPLATE_DB_KEY)
+      if not db_exists(TEMPLATE_DB_KEY):
+        db_create_blank(TEMPLATE_DB_KEY)
+        db_migrate(TEMPLATE_DB_KEY)
+        db_populate_by_json(TEMPLATE_DB_KEY)
+        db_migrate(TEMPLATE_DB_KEY)
 
-    logging.warning(
-      'LOCK END {} {}'.format(
-        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+      logging.warning(
+        'LOCK END {} {}'.format(
+          db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+        )
       )
-    )
 
-  db_drop(TEST_DB_KEY)
-  db_create_from_template()
-  # db_migrate(TEST_DB_KEY)
+    db_drop(TEST_DB_KEY)
+    db_create_from_template()
+    # db_migrate(TEST_DB_KEY)
 
-  # Haven't found out how to prevent transactions from being started. so
-  # closing the implicit transaction here so that template fixture remains
-  # available.
-  # django.db.connections[test_db_key].commit()
+    # Haven't found out how to prevent transactions from being started. so
+    # closing the implicit transaction here so that template fixture remains
+    # available.
+    # django.db.connections[TEST_DB_KEY].commit()
 
-  logging.debug(django.conf.settings)
+    # print(django.conf.settings)
 
-  yield
+    yield
 
-  db_drop(TEST_DB_KEY)
+    db_drop(TEST_DB_KEY)
 
 
 def db_get_name_by_key(db_key):
@@ -501,8 +499,10 @@ def db_populate_by_json(db_key):
   logging.debug('db_populate_by_json() {}'.format(db_key))
   django.core.management.call_command(
     'loaddata',
-    GMN_DB_FIXTURE_LABEL,
-    database=db_key #, commit=True
+    d1_test.sample.get_path('db_fixture.json.bz2'),
+    database=db_key,
+    # verbosity=0,
+    # commit=False,
   )
   db_commit_and_close(db_key)
 

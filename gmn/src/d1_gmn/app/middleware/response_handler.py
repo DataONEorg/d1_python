@@ -28,7 +28,6 @@ import logging
 import d1_gmn.app.util
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
-import d1_gmn.app.xslt
 
 import d1_common.const
 import d1_common.date_time

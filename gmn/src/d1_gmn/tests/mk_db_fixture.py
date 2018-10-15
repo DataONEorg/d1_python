@@ -18,10 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Create database entries for a set of test objects
+"""Create database fixture JSON file
 
-This creates the db entries by calling the GMN D1 APIs, then uses Django to dump
-the database to JSON.
+This creates the db entries for a set of test objects by calling the GMN D1
+APIs, then uses Django to dump the database to JSON.
 
 Objects are randomly distributed between categories:
   - Standalone, no SID
@@ -32,7 +32,7 @@ Objects are randomly distributed between categories:
 Though object bytes are also created, they are not captured in the db fixture.
 See the README.md for more info on the fixtures.
 
-The django init needs to occur before the django and gmn_test_case imports, so
+The Django init needs to occur before the django and gmn_test_case imports, so
 we're stuck with a bit of a messy import section that isort and flake8 don't
 like.
 
@@ -69,7 +69,9 @@ import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.system_metadata
 import d1_test.instance_generator.user_agent
 
+# Dict lookup key matching the default key in settings_test.DATABASE
 TEST_DB_KEY = 'default'
+
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
 
@@ -170,10 +172,19 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with bz2.BZ2File(
         fixture_file_path, 'w', buffering=1024, compresslevel=9
     ) as bz2_file:
-      django.core.management.call_command('dumpdata', stdout=bz2_file)
+      django.core.management.call_command(
+        'dumpdata',
+        exclude=['auth.permission', 'contenttypes'],
+        database=TEST_DB_KEY,
+        stdout=io.TextIOWrapper(bz2_file),
+      )
 
   def save_pid_list_sample(self, chunk_size=500, **list_objects_kwargs):
-    """Get list of all PIDs in the DB fixture"""
+    """Get list of all PIDs in the DB fixture
+
+    These are for use in any tests that need to know which PIDs and SIDs are
+    available in the DB.
+    """
     client = self.client_v2
     with d1_gmn.tests.gmn_mock.disable_auth():
       start_idx = 0
