@@ -31,6 +31,7 @@ import git
 import redbaron
 import redbaron.nodes
 
+import d1_test.pycharm
 
 def are_files_equal(old_file, new_file):
   with open(old_file, 'rb') as old_f:
@@ -94,7 +95,9 @@ def diff_update_file(module_path, module_str, show_diff=False, dry_run=False):
     if show_diff:
       try:
         tmp_file.seek(0)
-        subprocess.check_call(['kdiff3', module_path, tmp_file.name])
+        # subprocess.check_call(['kdiff3', module_path, tmp_file.name])
+        d1_test.pycharm.diff(module_path, tmp_file.name)
+
         # Running from the console
         # subprocess.check_call(['condiff.sh', module_path, tmp_file.name])
       except subprocess.CalledProcessError:

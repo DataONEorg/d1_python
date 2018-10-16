@@ -19,6 +19,7 @@
 # limitations under the License.
 """pytest setup and customization
 """
+import d1_test.pycharm
 import logging
 import multiprocessing
 import os
@@ -52,9 +53,8 @@ import django.db
 import django.db.transaction
 import django.db.utils
 
-DEFAULT_DEBUG_PYCHARM_BIN_PATH = os.path.expanduser(
-  '~/bin/JetBrains/pycharm.sh'
-)
+
+
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
@@ -260,30 +260,9 @@ def _print_skip_list():
 
 def _open_error_in_pycharm(call):
   """Attempt to open error locations in PyCharm. Use with --exitfirst (-x)"""
-  # src_path, src_line, func_name = rep.location
   src_path = call.excinfo.traceback[-1].path
   src_line = call.excinfo.traceback[-1].lineno + 1
-  logging.info('src_path="{}", src_line={}'.format(src_path, src_line))
-  if src_path == '<string>':
-    logging.debug('Unable to find location of error')
-    return
-  try:
-    assert os.path.isfile(DEFAULT_DEBUG_PYCHARM_BIN_PATH), \
-      'Path to PyCharm is incorrect'
-    subprocess.call(
-      [DEFAULT_DEBUG_PYCHARM_BIN_PATH, '--line', str(src_line), str(src_path)]
-    )
-  except subprocess.CalledProcessError as e:
-    logging.warning(
-      'Unable to open in PyCharm. error="{}" src_path="{}", src_line={}'.
-      format(str(e), src_path, src_line)
-    )
-  else:
-    logging.debug(
-      'Opened in PyCharm. src_path="{}", src_line={}'.
-      format(src_path, src_line)
-    )
-
+  d1_test.pycharm.open_and_set_cursor(src_path, src_line)
 
 # Fixtures
 

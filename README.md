@@ -135,15 +135,21 @@ This module is typically used in tests running under django.test.TestCase and re
 
 #### Command line switches
 
-We have added some custom functionality to pytest which can be enabled to launching pytest with the following switches:
+We have added some custom functionality to pytest which can be enabled by launching pytest with the following switches:
 
-  * `--sample-ask`: Enable a mode that invokes `kdiff3` to display diffs and, after user confirmation, can automatically update or write new test sample documents on mismatches.
+  * `--sample-ask`: Enable a mode that display diffs and, after user confirmation, can automatically update or write new test sample documents on mismatches.
 
-  * `parameterize_dict`: Support for parameterizing test functions by adding a dict class member containing parameter sets.
-
-  * `--pycharm`: Attempt to move the cursor in PyCharm to the location of the test of failure.
+  * `--pycharm`:
+   
+    * Automatically open files where errors occur and move the cursor to the line of the error
+    
+    * Show syntax highlighted diffs for scripts and data files using PyCharm's powerful diff viewer
+    
+    * Also requires the path to the PyCharm binary to be configured in `DEBUG_PYCHARM_BIN_PATH` in `./conftest.py`. 
 
   * See `./conftest.py` for implementation and notes.
+
+  * `parameterize_dict`: Support for parameterizing test functions by adding a dict class member containing parameter sets.
 
 Note: None of these switches can be used when running tests in parallel with xdist (`-n`, `--dist`, `--tx`).
 

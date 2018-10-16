@@ -128,7 +128,6 @@ class Startup(django.apps.AppConfig):
     safe_settings_list = [
       ('DEBUG', False),
       ('DEBUG_GMN', False),
-      ('DEBUG_PYCHARM', False),
       ('STAND_ALONE', False),
       ('DATABASES.default.ATOMIC_REQUESTS', True),
       ('SECRET_KEY', '<Do not modify this placeholder value>'),

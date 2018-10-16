@@ -17,6 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import d1_test.pycharm
 import base64
 import bz2
 import codecs
@@ -434,12 +436,13 @@ def _get_sxs_diff_file(got_str, exp_path):
 def _gui_diff_str_path(got_str, exp_path, filename_postfix_str=None):
   exp_str = load_utf8_to_str(exp_path)
   with _tmp_file_pair(got_str, exp_str, filename_postfix_str) as (got_f, exp_f):
-    subprocess.call(['kdiff3', got_f.name, exp_f.name])
-
+    # subprocess.call(['kdiff3', got_f.name, exp_f.name])
+    d1_test.pycharm.diff(got_f.name, exp_f.name)
 
 def _gui_diff_str_str(a_str, b_str, filename_postfix_str=None):
   with _tmp_file_pair(a_str, b_str, filename_postfix_str) as (a_f, b_f):
-    subprocess.call(['kdiff3', a_f.name, b_f.name])
+    # subprocess.call(['kdiff3', a_f.name, b_f.name])
+    d1_test.pycharm.diff(a_f.name, b_f.name)
 
 
 def _save_interactive(got_str, exp_path, filename_postfix_str=None):

@@ -36,6 +36,7 @@ After fixing an error, hit Enter to retrigger the hooks in order to check if
 there are more errors or S to skip directly to the next file.
 """
 
+import d1_test.pycharm
 import argparse
 import logging
 import os
@@ -48,9 +49,6 @@ import git
 
 import d1_common.iter.dir
 import d1_common.util
-
-# Path to PyCharm, for automatically moving to errors in the IDE
-DEFAULT_PYCHARM_BIN_PATH = os.path.expanduser('~/bin/JetBrains/pycharm.sh')
 
 
 def main():
@@ -69,8 +67,7 @@ def main():
     '--ignore-invalid', action='store_true', help='Ignore invalid paths'
   )
   parser.add_argument(
-    '--pycharm', action='store', default=DEFAULT_PYCHARM_BIN_PATH,
-    help='Path to PyCharm binary. Set to "" to disable PyCharm integration'
+    '--pycharm', action='store_true', help='Enable PyCharm integration'
   )
   parser.add_argument(
     '--debug', action='store_true', help='Debug level logging'
@@ -89,7 +86,7 @@ def main():
   trigger_path_list = sorted(
     set(specified_file_path_list).intersection(tracked_and_modified_path_list)
   )
-  trigger_all_pre_commit_hooks(trigger_path_list)
+  trigger_all_pre_commit_hooks(args, trigger_path_list)
 
 
 def get_specified_file_path_list(args):
@@ -108,16 +105,16 @@ def get_specified_file_path_list(args):
   return specified_file_path_list
 
 
-def trigger_all_pre_commit_hooks(trigger_path_list):
+def trigger_all_pre_commit_hooks(args, trigger_path_list):
   for trigger_path in trigger_path_list:
     logging.info('Checking file. path="{}"'.format(trigger_path))
     while True:
-      recheck_bool = trigger_pre_commit_hook(trigger_path)
+      recheck_bool = trigger_pre_commit_hook(args, trigger_path)
       if not recheck_bool:
         break
 
 
-def trigger_pre_commit_hook(trigger_path):
+def trigger_pre_commit_hook(args, trigger_path):
   try:
     res_str = subprocess.check_output(
       [
@@ -138,11 +135,11 @@ def trigger_pre_commit_hook(trigger_path):
     m = re.search(r'\.py:(\d+):', res_line)
     if m:
       logging.info('Error: {}'.format(res_line))
-      if DEFAULT_PYCHARM_BIN_PATH is not None:
-        open_exception_location_in_pycharm(trigger_path, m.group(1))
+      if args.pycharm:
+        d1_test.pycharm.open_and_set_cursor(trigger_path, m.group(1))
       while True:
         action_str = input(
-          'Opened in PyCharm. Recheck: Enter, Skip file: s Enter: '
+          'Recheck: Enter, Skip file: s Enter: '
         )
         if action_str == '':
           return True
@@ -168,23 +165,6 @@ def get_git_staged_files(repo):
     yield file_path
 
 
-def open_exception_location_in_pycharm(src_path, src_line_num):
-  try:
-    subprocess.call([
-      DEFAULT_PYCHARM_BIN_PATH, '--line', src_line_num, src_path
-    ])
-  except subprocess.CalledProcessError as e:
-    logging.warning(
-      'PyCharm debugging is enabled but opening the location of the exception '
-      'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
-        str(e), src_path, src_line_num
-      )
-    )
-  else:
-    logging.debug(
-      'Opened location of exception in PyCharm. src_path="{}", src_line={}'
-      .format(src_path, src_line_num)
-    )
 
 
 if __name__ == '__main__':

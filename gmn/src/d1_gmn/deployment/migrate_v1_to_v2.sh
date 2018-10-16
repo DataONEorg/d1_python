@@ -38,7 +38,6 @@ cp ${v1s} ${v2s}
 sed -ri "s/django.utils.log.NullHandler/logging.NullHandler/" ${v2s}
 
 sed -ri "s/GMN_DEBUG/DEBUG_GMN/" ${v2s}
-sed -ri "/DEBUG_GMN\s*=/a\DEBUG_PYCHARM = False" ${v2s}
 
 sed -ri "s/^(PUBLIC_OBJECT_LIST\s*=).*/\1 True/" ${v2s}
 sed -ri "s/^(PUBLIC_LOG_RECORDS\s*=).*/\1 True/" ${v2s}

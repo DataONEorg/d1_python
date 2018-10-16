@@ -33,8 +33,6 @@ import d1_common.util
 
 DEBUG = False
 DEBUG_GMN = False
-DEBUG_PYCHARM = False
-DEBUG_PYCHARM_BIN = 'pycharm.sh'
 DEBUG_ECHO_REQUEST = False
 DEBUG_PROFILE_SQL = False
 

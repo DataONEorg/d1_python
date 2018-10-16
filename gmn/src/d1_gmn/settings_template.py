@@ -63,22 +63,6 @@ DEBUG = False
 # - Use for production.
 DEBUG_GMN = False
 
-# Enable PyCharm debugging.
-# True:
-# - If GMN encounters an unhandled internal exception, GMN will attempt to move
-#   the cursor in the PyCharm IDE to the code that was being executed when the
-#   exception was raised. The exception is then handled as normal.
-# False (default):
-# - GMN handles exceptions as normal.
-DEBUG_PYCHARM = False
-
-# Path to the PyCharm IDE binary.
-# - Only used if DEBUG_PYCHARM = True.
-# - If PyCharm is in the path, can typically left at 'pycharm.sh'
-# - If PyCharm is not in path, can be set to an absolute path. E.g.
-#   '~/JetBrains/pycharm'
-DEBUG_PYCHARM_BIN = 'pycharm.sh'
-
 # Enable request echo.
 # True:
 # - GMN will not process any requests. Instead, it will echo the requests

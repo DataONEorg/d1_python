@@ -36,8 +36,6 @@ warnings.filterwarnings(
 
 DEBUG = True
 DEBUG_GMN = True
-DEBUG_PYCHARM = False
-DEBUG_PYCHARM_BIN = 'pycharm.sh'
 DEBUG_ECHO_REQUEST = False
 DEBUG_PROFILE_SQL = False
 
