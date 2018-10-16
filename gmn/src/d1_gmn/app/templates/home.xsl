@@ -16,6 +16,7 @@
   <xsl:param name="static_root_url">{% static '/' %}</xsl:param>
   <xsl:param name="base_url">{{ baseUrl }}/</xsl:param>
   <xsl:param name="env_root_url">{{ envRootUrl }}/</xsl:param>
+  <xsl:param name="search_root_url">{{ searchRootUrl }}/</xsl:param>
   <xsl:param name="node_id">{{ nodeId }}</xsl:param>
   <xsl:param name="mn_logo_url">{{ mnLogoUrl }}</xsl:param>
   <xsl:param name="node_name">{{ nodeName }}</xsl:param>
@@ -34,26 +35,24 @@
       <body>
         <div class="container">
           <!--<div class="flex-head">-->
-
           <div class="container-grid">
             <div class="header-left">
-              <div class="mn-logo">
-                <xsl:call-template name="insert_logo">
-                  <xsl:with-param name="url" select="$mn_logo_url"/>
-                </xsl:call-template>
-              </div>
             </div>
             <div class="header-right">
-              <div class="mn-name">
-                <xsl:value-of select="$node_name"/>
-              </div>
             </div>
 
             <div class="sidebar">
-
               <div class="flex-vert">
+
                 <!--left panel top-->
                 <div>
+                  <div class="nav-outer">
+                    <div class="mn-logo">
+                      <xsl:call-template name="insert_logo">
+                        <xsl:with-param name="url" select="$mn_logo_url"/>
+                      </xsl:call-template>
+                    </div>
+                  </div>
 
                   <div class="nav-outer">
                     <div>
@@ -62,21 +61,18 @@
                         Status
                       </a>
                     </div>
-
                     <div>
                       <a class="nav-button"
                          href="{ concat($base_url, 'v2/node') }">
                         Node
                       </a>
                     </div>
-
                     <div>
                       <a class="nav-button"
                          href="{ concat($base_url, 'v2/object') }">
                         Objects
                       </a>
                     </div>
-
                     <div>
                       <a class="nav-button"
                          href="{ concat($base_url, 'v2/log') }">
@@ -86,13 +82,11 @@
                   </div>
 
                   <div class="nav-outer">
-
                     <div class="d1-logo">
                       <xsl:call-template name="insert_logo">
                         <xsl:with-param name="url" select="$d1_logo_url"/>
                       </xsl:call-template>
                     </div>
-
                     <div>
                       <a class="nav-button"
                          href="https://search.dataone.org/data">
@@ -114,6 +108,7 @@
                       Member Nodes
                     </a>
                   </div>
+
                   <div class="nav-outer">
                     <div class="gmn-logo">
                       <xsl:call-template name="insert_logo">
@@ -135,20 +130,36 @@
               </div>
 
               <!-- left panel bottom -->
-              <div>
-              </div>
-
+              <!--<div>-->
+              <!--</div>-->
             </div>
 
             <!--right panel-->
-            <div class="d1-type">
-              <xsl:call-template name="d1_type_to_xhtml_grid"/>
+            <div class="flex-vert">
+              <div>
+                <div class="nav-outer">
+                  <div class="mn-name">
+                    <xsl:value-of select="$node_name"/>
+                  </div>
+                </div>
+                <div class="nav-outer">
+                  <div class="d1-type">
+                    <xsl:call-template name="d1_type_to_xhtml_grid"/>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- right panel bottom -->
+            <!--<div>-->
+            <!--</div>-->
+
             <div class="footer">
               <div class="copyright">
                 © Copyright 2018 Participating institutions in DataONE
               </div>
             </div>
+
           </div>
         </div>
       </body>
@@ -158,12 +169,13 @@
   <xsl:template name="document_header">
     <head>
       <title>
-        <xsl:value-of select="$node_name"/></title>
+        <xsl:value-of select="$node_name"/>
+      </title>
       <script
           src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
           type="text/javascript"/>
-
-      <link href="{% static '/ui/d1type.css' %}" rel="stylesheet" type="text/css"/>
+      <link href="{% static '/ui/d1type.css' %}" rel="stylesheet"
+            type="text/css"/>
       <script src="{% static '/ui/d1type.js' %}" type="text/javascript"/>
     </head>
   </xsl:template>

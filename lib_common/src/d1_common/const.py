@@ -35,6 +35,7 @@ URL_DATAONE_ROOT = ''.join(
 DEFAULT_MN_BASEURL = ''.join(
   (DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH)
 )
+URL_DATAONE_SEARCH = 'https://search.dataone.org'
 
 # Version of the DataONE Python stack
 VERSION = '3.2.0'

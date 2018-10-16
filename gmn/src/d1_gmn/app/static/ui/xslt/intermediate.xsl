@@ -154,8 +154,9 @@
       <a>
         <xsl:call-template name="add_href_and_text">
           <xsl:with-param name="abs_url"
-                          select="concat($env_root_url, 'v2/node')"/>
-          <xsl:with-param name="rel_url" select="."/>
+                          select="concat($search_root_url, 'profile')"/>
+          <xsl:with-param name="rel_url" select="substring-after(substring-after(.,':'),':')"/>
+          <xsl:with-param name="text" select="."/>
           <xsl:with-param name="noencode" select="'y'"/>
         </xsl:call-template>
       </a>
@@ -164,7 +165,17 @@
 
   <!-- subject, value -->
   <xsl:template match="node()|@*" mode="format_subject">
-    <!--TODO: Find out if there's somewhere we can link to for subjects-->
+    <xsl:element name="{ name() }">
+      <a>
+        <xsl:call-template name="add_href_and_text">
+          <xsl:with-param name="abs_url"
+                          select="concat($search_root_url, 'profile')"/>
+          <xsl:with-param name="rel_url" select="."/>
+          <!--<xsl:with-param name="text" select="."/>-->
+          <!--<xsl:with-param name="noencode" select="'y'"/>-->
+        </xsl:call-template>
+      </a>
+    </xsl:element>
     <!--<xsl:element name="{ name() }">-->
       <!--<a>-->
         <!--<xsl:call-template name="add_href_and_text">-->
@@ -173,7 +184,7 @@
         <!--</xsl:call-template>-->
       <!--</a>-->
     <!--</xsl:element>-->
-    <xsl:apply-templates select="." mode="format_short_text"/>
+    <!--<xsl:apply-templates select="." mode="format_short_text"/>-->
   </xsl:template>
 
   <!-- dateTime, value -->

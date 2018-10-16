@@ -127,6 +127,8 @@ def get_context_dict():
       django.conf.settings.NODE_BASEURL,
     'envRootUrl':
       django.conf.settings.DATAONE_ROOT,
+    'searchRootUrl':
+      django.conf.settings.DATAONE_SEARCH,
     'nodeId':
       django.conf.settings.NODE_IDENTIFIER,
     'nodeName':

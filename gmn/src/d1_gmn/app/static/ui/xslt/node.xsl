@@ -188,8 +188,7 @@
   </xsl:template>
 
   <xsl:template match="schedule/@*">
-    <xsl:value-of select="name()"/>:
-    <xsl:value-of select="."/>
+    <xsl:value-of select="concat(name(), ':', .)"/>
     <xsl:if test="position() != last()">
       <xsl:value-of select="' '"/>
     </xsl:if>

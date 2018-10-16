@@ -137,4 +137,39 @@
         select="concat(format-number($integer, '###,###,###,###,###', 'US'), ' ', $units)"/>
   </xsl:template>
 
+  <!--Split string-->
+
+  <xsl:variable name="delimiter">
+    <xsl:text>:</xsl:text>
+  </xsl:variable>
+
+  <xsl:template match="mark">
+    <xsl:variable name="dataList">
+      <xsl:value-of select="."/>
+    </xsl:variable>
+    <xsl:call-template name="processingTemplate">
+      <xsl:with-param name="datalist" select="$dataList"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="processingTemplate">
+    <xsl:param name="datalist"/>
+    <xsl:choose>
+      <xsl:when test="contains($datalist,$delimiter)  ">
+        <xsl:element name="processedItem">
+          <xsl:value-of select="substring-before($datalist,$delimiter) * 10"/>
+        </xsl:element>
+        <xsl:call-template name="processingTemplate">
+          <xsl:with-param name="datalist"
+                          select="substring-after($datalist,$delimiter)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="string-length($datalist)=1">
+        <xsl:element name="processedItem">
+          <xsl:value-of select="$datalist * 10"/>
+        </xsl:element>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
 </xsl:stylesheet>

@@ -26,13 +26,13 @@ body {
 
 .header-left {
   grid-area: header-left;
-  align-self: center;
+  align-self: self-start;
   justify-self: center;
 }
 
 .header-right {
   grid-area: header-right;
-  align-self: center;
+  align-self: self-start;
   justify-items: start;
 }
 
