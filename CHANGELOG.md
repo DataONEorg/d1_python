@@ -1,5 +1,106 @@
 # Change Log
 
+## [3.2.0](https://github.com/DataONEorg/d1_python/tree/3.2.0) (2018-02-15)
+[Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.4.2...3.2.0)
+
+* DataONE Generic Member Node (GMN)
+
+  * Added web interface for GMN
+    * MN organization highlighted with logo and description 
+    * Opening any link at or below the BaseURL of GMN provides a way to reach all publicly available information on the MN. This includes links that do not go to valid endpoints, or are in other ways invalid
+    * Functionality includes
+      * Links to profile pages on Search for subjects and other MNs
+      * Resolve objects on CN, download object from MN, view System Metadata
+      * Browse object list and log records, paging forwards and backwards
+      * Static links to areas of interest for DataONE
+
+  * Added Apache, Postgres and Python version numbers to GMN status page
+  * Reading from the GMN status page with without a browser now returns an XML doc. No need to scrape the page for version numbers and other status information
+  * Added multiprocessing to GMN bulk importer
+    * 10x speedup seems likely in latency bound systems
+
+  * Added more validation of GMN settings
+  * Added migrations to generate Postgres indexes for default sorting  
+    * Suprisingly, Django does not generate indexes for default sort ordering specified when using the ORM
+
+  * Reconfigured logging to take advantage of Django's support for rotating logs, much like logrotate does. Maximum space to use for logging is now a config setting.
+  * Other usability improvements (see log)
+
+* GMN deployment 
+
+  * Improved and streamline GMN install procedures, including
+    * Refactored install so that it can be accomplished by in two stages, where only the first stage needs to be performed by account with sudo access
+
+  * Improved and cleaned up Apache conf file
+    * Move from Rewrite to Redirect / Alias
+    * All redirects are in the same configuration file
+      * http -> https, / -> GMN "home", /mn -> v2/node
+      
+    * Factored repeated paths out 
+
+* Documentation
+
+  * Fixed documentation build warnings and formatting
+  * Added SSL/TLS troubleshooting doc, misc other background information
+  * Restructured doc layout
+  * Refactored shell commands into larger blocks to reduce copy/paste
+  * Added more checking and related logic to the blocks to automatically handle more filesystem / OS variations
+  * Added Copy buttons for all shell blocks
+  * Added docs for
+    * How to set up GMN using APT instead of PyPI dependencies
+    * How to set up multiple MNs on a single GMN instance
+    * How to perform automatic upgrades within GMN 3.x
+    * How to cluster tables by index in Postgres to improve GMN perf
+
+  * Added missing glossary entries
+  * Upgraded to Sphinx Better theme 0.1.5
+ 
+* DataONE Client and Common Libraries
+
+  * Refactored to improve functionality and take advantage of new functionality in the underlying dependencies
+  * Standardized logging in d1_python
+  * Consistently use timezone aware datetime objects
+  * Removed automatic caching (cachecontrol) in d1_client
+  * Disabled retries by default in d1_client
+    * Retries are still available, but they're opt-in instead of opt-out.
+
+  * Changed default mimetype for XML from application/xml to text/xml
+  * Changed default slice size from 1000 to 100
+  * Upgrades of all dependencies
+
+* Tests and test framework
+
+  * Improved support for debugging in PyCharm and factored it out to the test framework
+  * Moved to using the PyCharm Diff & Merge tool for viewing sample mismatches
+  * Fixed inconsistent normalization of sysmeta replica section
+
+* Developer, working on the DataONE code base
+
+  * Improved documentation on how to work on our code base, such as  
+    * Building of GMN DB fixture
+    * Using the Responses based DataONE client for debugging GMN    
+    * Types of test failures
+    * Work with the pre-commit Git hooks
+    * Authenticating on Postgres from PyCharm
+
+  * Fixture generator updates, new fixture for Django 2.x
+  * Better consistency in logging formats, more information logged
+
+* Developer, using the DataONE libraries
+
+  * Add timezone aware current time functions based on the timezone support that was added in Python 3
+  * Cleaner and more consistent interfaces in classes and methods  
+  * Documentation describing more corner cases, e.g.,for date-time objects
+
+* Ongoing:
+  * Fixing and clean up the Solr client  
+  * Reworking the examples / utilities
+    * Standardize code layout
+    * Add standard set of command line arguments
+    * Update to use currently available features in Python 3 and the D1 libs
+
+  * Adding tests for GMN multithreaded bulk importer
+  * Adding tests for GMN's XSLT based web UI
 
 
 ## [2.4.2](https://github.com/DataONEorg/d1_python/tree/2.4.2) (2018-02-15)
