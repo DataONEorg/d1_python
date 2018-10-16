@@ -1,6 +1,6 @@
 # Change Log
 
-## [3.2.0](https://github.com/DataONEorg/d1_python/tree/3.2.0) (2018-02-15)
+## [3.2.0](https://github.com/DataONEorg/d1_python/tree/3.2.0) (2018-10-15)
 [Full Changelog](https://github.com/DataONEorg/d1_python/compare/2.4.2...3.2.0)
 
 * DataONE Generic Member Node (GMN)
