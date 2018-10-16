@@ -120,7 +120,7 @@ class ObjectListIterator(object):
         nodeId=self._nodeId
       )
     except http.client.BadStatusLine as e:
-      self.log.warn("Server responded with Bad Status Line. Retrying in 5sec")
+      self.log.warning("Server responded with Bad Status Line. Retrying in 5sec")
       self._client.connection.close()
       if trys > 3:
         raise e

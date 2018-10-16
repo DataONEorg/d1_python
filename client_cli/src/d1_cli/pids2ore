@@ -135,7 +135,7 @@ args = parser.parse_args()
 
 if args.log not in (10,20,30,40,50):
   logging.basicConfig(level=logging.INFO)
-  logging.warn("Invalid value %s for log level. Using 20 (INFO).", args.log)
+  logging.warning("Invalid value %s for log level. Using 20 (INFO).", args.log)
 else:
   logging.basicConfig( level=args.log )
 
