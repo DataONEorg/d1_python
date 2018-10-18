@@ -50,6 +50,11 @@ PKG_PATH_LIST = [
 
 
 def main():
+  if sys.version_info[0] != 3:
+    raise Exception(
+      'Python 3 required. Current version: {}'.format(sys.version)
+    )
+
   logging.basicConfig(level=logging.DEBUG)
 
   parser = argparse.ArgumentParser(
@@ -77,7 +82,7 @@ def main():
 
 def run_setup(setup_dir_path, command_list):
   try:
-    subprocess.check_call(['python', 'setup.py'] + command_list,
+    subprocess.check_call(['python3', 'setup.py'] + command_list,
                           cwd=setup_dir_path)
   except subprocess.CalledProcessError as e:
     logging.error('Setup failed. error="{}"'.format(str(e)))
