@@ -19,6 +19,7 @@
 # limitations under the License.
 """Test Cross-Origin Resource Sharing (CORS) Headers
 """
+import d1_common
 import freezegun
 import responses
 
@@ -26,10 +27,11 @@ import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
+import d1_common.const
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestCors')
-@freezegun.freeze_time('1961-01-02')
+@freezegun.freeze_time('1981-01-02')
 class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, gmn_client_v1_v2):
@@ -81,6 +83,16 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
       response = gmn_client_v1_v2.OPTIONS(['object', pid])
     self.sample.assert_equals(response, 'get_options', gmn_client_v1_v2)
 
+
+  @responses.activate
+  def test_1051(self, gmn_client_v2):
+    """getPackage(): OPTIONS request returns expected headers"""
+    pid_list = self.create_multiple_objects(gmn_client_v2, object_count=2)
+    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
+    response = gmn_client_v2.OPTIONS(['packages', d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, ore_pid])
+    self.sample.assert_equals(response, 'get_package_options', gmn_client_v2)
+
+
   @responses.activate
   def test_1060(self, gmn_client_v1_v2):
     """Invalid method against endpoint raises 405 Method Not Allowed and returns
@@ -89,3 +101,26 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       response = gmn_client_v1_v2.PUT(['object'])
     self.sample.assert_equals(response, 'put_object_list', gmn_client_v1_v2)
+
+
+  @responses.activate
+  def test_1061(self, gmn_client_v1_v2):
+    """get(): WITHOUT Origin header sets Access-Control-Allow-Origin to wildcard
+    """
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      response = gmn_client_v1_v2.get(pid)
+    self.sample.assert_equals(response.headers, 'get_without_origin', gmn_client_v1_v2)
+    assert response.headers['Access-Control-Allow-Origin'] == '*'
+
+
+  @responses.activate
+  def test_1062(self, gmn_client_v1_v2):
+    """get(): WITH Origin header sets Access-Control-Allow-Origin to the Origin
+    """
+    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
+    origin_url = 'https://somewhere.com'
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      response = gmn_client_v1_v2.get(pid, vendorSpecific={'Origin': origin_url})
+    self.sample.assert_equals(response.headers, 'get_with_origin', gmn_client_v1_v2)
+    assert response.headers['Access-Control-Allow-Origin'] == origin_url

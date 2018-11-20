@@ -54,7 +54,7 @@ class RequestHandler:
         hasattr(request, 'allowed_method_list')
     ):
       d1_gmn.app.views.headers.add_cors_headers_to_response(
-        response, request.allowed_method_list
+        response, request
       )
 
     return response
