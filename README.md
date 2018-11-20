@@ -296,8 +296,6 @@ Edit `~/.pypirc`:
 
 #### Updating dependencies
 
-TODO: Move from pip to pipenv. https://docs.pipenv.org/
-
 Update all packages managed by pip:
 
     $ cd d1_python
@@ -328,17 +326,15 @@ Commit and push the changes, and check the build on Travis.
 
 After successful build, clone a fresh copy, which will be used for building the release packages:
 
-    $ cd ~
-    $ rm -rf ~/d1_python_build
-    $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
-
 Building the release packages from a fresh clone is a simple way of ensuring that only tracked files are released. It is a workaround for the way setuptools works, which is basically that it vacuums up everything that looks like a Python script in anything that looks like a package, which makes it easy to publish local files by accident.
 
 Build and publish the packages:
 
-    cd ~/d1_python_build
-    setup-all.py --root . bdist_wheel upload
-
+    $ cd
+    $ rm -rf ~/d1_python_build
+    $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
+    $ cd ~/d1_python_build
+    $ python3 ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
 
 ### Building the documentation
 

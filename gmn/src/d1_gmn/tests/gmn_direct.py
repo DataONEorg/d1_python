@@ -132,7 +132,7 @@ def get_log_records(version_tag, pid=None, start=None, count=None):
 
 def _add_query(query_dict, url_path):
   if query_dict:
-    url_str = '{}?{}'.format(url_path, d1_common.url.urlencode(query_dict))
+    url_str = '{}?{}'.format(url_path, d1_common.url.encodePathElement().urlencode(query_dict))
   else:
     url_str = url_path
   return url_str

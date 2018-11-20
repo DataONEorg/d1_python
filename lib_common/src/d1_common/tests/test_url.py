@@ -25,46 +25,27 @@ import d1_common.url
 
 import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
-HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
+# HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):
-  unicode_str_list = d1_test.sample.load_utf8_to_str(
-    'testUnicodeStrings.utf8.txt'
-  )
+  # unicode_str_list = d1_test.test_files.load_utf8_to_str(
+  #   'testUnicodeStrings.utf8.txt'
+  # )
 
   def test_1000(self):
     """encodePathElement()"""
-    for row in self.unicode_str_list.splitlines():
-      assert isinstance(row, str)
-      parts = row.split('\t')
-      if len(parts) > 1:
-        v = parts[0]
-        if v.startswith('common') or v.startswith('path'):
-          e = parts[1].strip()
-          assert e == d1_common.url.encodePathElement(v)
+    for did, enc_did in d1_test.test_files.TRICKY_IDENTIFIER_LIST:
+      if did.startswith('common') or did.startswith('path'):
+        assert enc_did == d1_common.url.encodePathElement(did)
 
   def test_1010(self):
     """encodeQueryElement()"""
-    for row in self.unicode_str_list.splitlines():
-      parts = row.split('\t')
-      if len(parts) > 1:
-        v = parts[0]
-        if v.startswith('common') or v.startswith('query'):
-          e = parts[1].strip()
-          assert e == d1_common.url.encodeQueryElement(v)
-
-  def test_1020(self):
-    """urlencode()"""
-    data = [('a', '"#<>[]^`{}|'), ('b', '-&=&='),
-            ('c', 'http://example.com/data/mydata?row=24')]
-    expected = (
-      'a=%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C&b=-%26%3D%26%3D&c='
-      'http://example.com/data/mydata?row%3D24'
-    )
-    test = d1_common.url.urlencode(data)
-    assert test == expected
+    for did, enc_did in d1_test.test_files.TRICKY_IDENTIFIER_LIST:
+      if did.startswith('common') or did.startswith('path'):
+        assert enc_did == d1_common.url.encodeQueryElement(did)
 
   def test_1030(self):
     """stripElementSlashes()"""

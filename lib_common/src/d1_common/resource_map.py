@@ -43,7 +43,7 @@ import d1_common.type_conversions
 import d1_common.url
 import d1_common.util
 
-# RDFLib wrappers around the namespaces. Others are defined by RDFLib
+# RDFLib wrappers around the namespaces. Additional ones are defined by RDFLib
 DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['dcterms'])
 CITO = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['cito'])
 ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT['ore'])
@@ -133,7 +133,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     self.add((ore, DCTERMS.identifier, rdflib.term.Literal(pid)))
     self.add((ore, DCTERMS.creator, rdflib.term.Literal(ore_software_id)))
     # Add an empty aggregation
-    ag = rdflib.URIRef(d1_common.url.joinPathElements(oid, 'aggregation'))
+    ag = rdflib.URIRef(oid + '#aggregation')
     self.add((ore, ORE.describes, ag))
     self.add((ag, rdflib.RDF.type, ORE.Aggregation))
     self.add((ORE.Aggregation, rdflib.RDFS.isDefinedBy, ORE.term('')))

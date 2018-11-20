@@ -99,11 +99,11 @@ def find_valid_combinations(cert_file_name_list, jwt_file_name_list):
   successfully validated with the cert.
   """
   for cert_file_name in cert_file_name_list:
-    cert_pem = '' # self.sample.load_utf8_to_str(cert_file_name)
+    cert_pem = '' # self.test_files.load_utf8_to_str(cert_file_name)
     cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)
     # d1_common.cert.x509.log_cert_info(logging.info, 'CERT', cert_obj)
     for jwt_file_name in jwt_file_name_list:
-      jwt_bu64 = '' # self.sample.load_utf8_to_str(jwt_file_name)
+      jwt_bu64 = '' # self.test_files.load_utf8_to_str(jwt_file_name)
       # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
       is_ok = False
       try:

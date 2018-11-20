@@ -247,6 +247,7 @@ def create_session_extension(subject, persons, groups):
 
 
 def create_certificate(
+    # TODO: Fix and test
     req, xxx_todo_changeme, serial, xxx_todo_changeme1, digest="md5"
 ):
   """Generate a certificate given a certificate request.

@@ -25,7 +25,9 @@ import d1_common.util
 
 import django
 import django.core.handlers.wsgi
+import django.http
 import django.utils
+import django.utils.datastructures
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings'
 

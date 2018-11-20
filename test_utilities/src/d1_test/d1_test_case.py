@@ -19,22 +19,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for unit- and integration tests"""
-
+import codecs
 import collections
 import contextlib
 import datetime
 import gc
 import inspect
 import io
+import json
 import logging
 import os
 import random
+import re
 import resource
 import sys
 import tempfile
 import traceback
 import xml
 
+import d1_common
 import decorator
 import mock
 import psutil
@@ -54,6 +57,7 @@ import d1_common.xml
 import d1_test.instance_generator.date_time
 import d1_test.instance_generator.system_metadata
 import d1_test.sample
+import d1_test.test_files
 
 CN_URL = d1_common.const.URL_DATAONE_ROOT
 
@@ -77,6 +81,7 @@ SUBJ_DICT = {
   'trusted': 'gmn_test_subject_trusted',
   'submitter': 'gmn_test_subject_submitter',
 }
+
 
 
 @contextlib.contextmanager
@@ -208,11 +213,11 @@ def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
 
 
 @contextlib.contextmanager
-def temp_file_name():
+def temp_file_name(suffix=None):
   """Provide a file path that can be used as the location of a temporary file,
   and delete any file written to the path on exit
   """
-  with tempfile.NamedTemporaryFile() as f:
+  with tempfile.NamedTemporaryFile(suffix=suffix) as f:
     temp_file_path = f.name
   yield temp_file_path
   try:
@@ -236,8 +241,9 @@ def memory_limit(max_mem_bytes):
     current_used_bytes = process.memory_info().vms
     limit_bytes = current_used_bytes + max_mem_bytes
     logging.debug(
-      'Setting memory limit. current={:,} bytes, limit={:,} bytes'.
-      format(current_used_bytes, limit_bytes)
+      'Setting memory limit. current={:,} bytes, limit={:,} bytes'.format(
+        current_used_bytes, limit_bytes
+      )
     )
     resource.setrlimit(
       resource.RLIMIT_AS,
@@ -261,6 +267,11 @@ class D1TestCase(object):
   @property
   def sample(self):
     return d1_test.sample
+
+  @property
+  def test_files(self):
+    return d1_test.test_files
+
 
   @staticmethod
   def deserialize_and_check(doc, raises_pyxb_exc=False):
@@ -312,6 +323,81 @@ class D1TestCase(object):
     with open(module_path, 'a'):
       os.utime(module_path, times)
 
+
+  #
+  # Exception handling
+  #
+
+  # @staticmethod
+  # def get_d1_test_case_location(exc_traceback=None):
+  #   """Return the abs path and line number of the unit test that directly or
+  #   indirectly triggered the exception
+  #   - Use the exception currently being handled if exc_traceback is None,
+  #   else use exc_traceback.
+  #   - The unit test must be a method in a class that derives from D1TestCase.
+  #   """
+  #   tb_frame = D1TestCase.get_last_d1_test_case_frame(exc_traceback)
+  #   return tb_frame.f_code.co_filename, tb_frame.f_lineno #+ 1
+
+    # exc_traceback = D1TestCase.get_and_check_traceback(exc_traceback)
+    # location_tup = None
+    # while exc_traceback:
+    #   if D1TestCase.frame_is_d1_test_case_method(exc_traceback):
+    #     co = exc_traceback.tb_frame.f_code
+    #     location_tup = co.co_filename, co.co_firstlineno + 1
+    #   exc_traceback = exc_traceback.tb_next
+    # if location_tup:
+    #   return location_tup
+    # raise Exception(
+    #   "Exception was not triggered in a D1TestCase unit test method"
+    # )
+
+
+  @staticmethod
+  def get_d1_test_case_location(exc_traceback=None):
+    """Return the last stack frame that holds a D1TestCase unit test method
+    - Use the exception currently being handled if exc_traceback is None,
+    else use exc_traceback.
+    - The unit test must be a method in a class that derives from D1TestCase.
+    """
+    exc_traceback = D1TestCase.get_and_check_traceback(exc_traceback)
+    location_tup = None
+    while exc_traceback:
+      if D1TestCase.frame_is_d1_test_case_method(exc_traceback):
+        location_tup = (
+          exc_traceback.tb_frame.f_code.co_filename,
+          exc_traceback.tb_lineno,
+        )
+
+      exc_traceback = exc_traceback.tb_next
+    if not location_tup:
+      raise Exception(
+        "Exception was not triggered in a D1TestCase unit test method"
+      )
+    return location_tup
+
+
+  @staticmethod
+  def frame_is_d1_test_case_method(exc_traceback):
+    try:
+      return isinstance(exc_traceback.tb_frame.f_locals['self'],
+                        D1TestCase)
+    except KeyError:
+      return False
+
+
+  @staticmethod
+  def get_and_check_traceback(tb):
+    tb = tb or sys.exc_info()[2]
+    assert hasattr(tb, "tb_next"), \
+      "Not a valid traceback. Must be a native Python traceback, not a " \
+      "pytest.Traceback."
+    return tb
+
+  #
+  # Misc
+  #
+
   @staticmethod
   @contextlib.contextmanager
   def mock_ssl_download(cert_obj):
@@ -319,12 +405,9 @@ class D1TestCase(object):
     ssl.SSLSocket.getpeercert() and returning {cert_obj} in DER format.
     """
     cert_der = d1_common.cert.x509.get_cert_der(cert_obj)
-    with mock.patch(
-        'd1_common.cert.x509.ssl.SSLSocket.connect'
-    ) as mock_connect:
-      with mock.patch(
-          'd1_common.cert.x509.ssl.SSLSocket.getpeercert'
-      ) as mock_getpeercert:
+    with mock.patch('d1_common.cert.x509.ssl.SSLSocket.connect') as mock_connect:
+      with mock.patch('d1_common.cert.x509.ssl.SSLSocket.getpeercert'
+                      ) as mock_getpeercert:
         mock_getpeercert.return_value = cert_der
         yield mock_connect, mock_getpeercert
 
@@ -426,7 +509,6 @@ class D1TestCase(object):
         for _ in range(num_nodes)
       ]
 
-
 #===============================================================================
 
 # import logging, logging.config, colorstreamhandler
@@ -496,3 +578,4 @@ def get_test_module_name():
     module_name = os.path.splitext(os.path.split(module_path)[1])[0]
     if module_name.startswith('test_') and func_name.startswith('test_'):
       return module_name
+

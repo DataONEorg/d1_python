@@ -21,7 +21,7 @@
 
   * Added more validation of GMN settings
   * Added migrations to generate Postgres indexes for default sorting  
-    * Suprisingly, Django does not generate indexes for default sort ordering specified when using the ORM
+    * Surprisingly, Django does not generate indexes for default sort ordering specified when using the ORM
 
   * Reconfigured logging to take advantage of Django's support for rotating logs, much like logrotate does. Maximum space to use for logging is now a config setting.
   * Other usability improvements (see log)
@@ -29,7 +29,7 @@
 * GMN deployment 
 
   * Improved and streamline GMN install procedures, including
-    * Refactored install so that it can be accomplished by in two stages, where only the first stage needs to be performed by account with sudo access
+    * Refactored install so that it can be accomplished in two stages, where only the first stage needs to be performed by account with sudo access
 
   * Improved and cleaned up Apache conf file
     * Move from Rewrite to Redirect / Alias
