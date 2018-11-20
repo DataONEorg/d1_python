@@ -27,22 +27,27 @@ memberships of the caller.
 
 import d1_common.cert.subject_info
 import d1_common.cert.x509
+import d1_common.const
 
 
 def extract_subjects(cert_pem):
   """Extract subjects from a DataONE PEM (base64) encoded X.509 v3 certificate
-
-  Return a 2-tuple containing the primary subject string and a set of equivalent
-  identities and group memberships. The primary subject is always set. The set
-  of equivalent identities and group memberships may be empty.
-
-  All returned subjects are DataONE compliant serializations.
+  - Return a 2-tuple containing the primary subject string and a set of equivalent
+  identities and group memberships.
+  - The primary subject is always set.
+  - The set of equivalent identities always includes
+    - The primary subject
+    - The public and authenticatedSubject symbolic subjects
+  - All returned subjects are DataONE compliant serializations.
   """
   primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(cert_pem)
+  equivalent_set = {
+    primary_str,
+    d1_common.const.SUBJECT_AUTHENTICATED,
+    d1_common.const.SUBJECT_PUBLIC,
+  }
   if subject_info_xml is not None:
-    equivalent_set = d1_common.cert.subject_info.extract_subjects(
-      subject_info_xml, primary_str
+    equivalent_set |= d1_common.cert.subject_info.extract_subjects(
+        subject_info_xml, primary_str
     )
-  else:
-    equivalent_set = set()
   return primary_str, equivalent_set
