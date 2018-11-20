@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  SubjectInfo containing only person records
+  - Two Person records using the same subject
+  - Lots of circular references
+  - No verifiedUser
+  - Only subjects marked as INCLUDE should appear in the generated samples
+-->
+<ns2:subjectInfo xmlns:ns2="http://ns.dataone.org/service/types/v1">
+  <person>
+    <!--INCLUDE -->
+    <subject>subj-1</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-3</equivalentIdentity>
+  </person>
+  <person>
+    <!--INCLUDE -->
+    <subject>subj-1</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-10</equivalentIdentity>
+  </person>
+  <person>
+    <!--INCLUDE -->
+    <subject>subj-3</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-3</equivalentIdentity>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+  </person>
+  <person>
+    <!--INCLUDE -->
+    <subject>subj-4</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-3</equivalentIdentity>
+    <!--INCLUDE -->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+  </person>
+  <person>
+    <!--EXCLUDE -->
+    <subject>subj-40</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE -->
+    <equivalentIdentity>subj-3</equivalentIdentity>
+  </person>
+</ns2:subjectInfo>

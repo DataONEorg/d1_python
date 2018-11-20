@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  SubjectInfo containing person and group records
+  - Full sample from production environment
+-->
+<ns2:subjectInfo xmlns:ns2="http://ns.dataone.org/service/types/v1">
+  <person>
+    <subject>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Matthew</givenName>
+    <familyName>Jones</familyName>
+    <isMemberOf>CN=dataone-coredev,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=NCEAS-interns,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=SASAP Data Teamf,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=arctic-data-admins,DC=dataone,DC=org</isMemberOf>
+    <equivalentIdentity>UID=jones,O=NCEAS,DC=ecoinformatics,DC=org</equivalentIdentity>
+    <equivalentIdentity>UID=mjones,O=LTER,DC=ecoinformatics,DC=org</equivalentIdentity>
+    <equivalentIdentity>CN=Matthew Jones A332,O=ProtectNetwork,C=US,DC=cilogon,DC=org</equivalentIdentity>
+    <equivalentIdentity>http://orcid.org/0000-0003-0077-4738</equivalentIdentity>
+    <verified>true</verified>
+  </person>
+  <person>
+    <subject>uid=jones,o=NCEAS,dc=ecoinformatics,dc=org</subject>
+    <givenName>Matthew</givenName>
+    <familyName>Jones</familyName>
+    <verified>false</verified>
+  </person>
+  <person>
+    <subject>UID=mjones,O=LTER,DC=ecoinformatics,DC=org</subject>
+    <givenName>NA</givenName>
+    <familyName>N/A</familyName>
+    <email>NA</email>
+  </person>
+  <person>
+    <subject>CN=Matthew Jones A332,O=ProtectNetwork,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Matthew</givenName>
+    <familyName>Jones</familyName>
+    <verified>false</verified>
+  </person>
+  <person>
+    <subject>http://orcid.org/0000-0003-0077-4738</subject>
+    <givenName>Matthew B.</givenName>
+    <familyName>Jones</familyName>
+    <isMemberOf>CN=DBO,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=knb-data-admins,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=SASAP Data Team,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=SASAP,DC=dataone,DC=org</isMemberOf>
+    <isMemberOf>CN=arctic-data-admins,DC=dataone,DC=org</isMemberOf>
+    <equivalentIdentity>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</equivalentIdentity>
+    <verified>false</verified>
+  </person>
+  <group>
+    <subject>CN=DBO,DC=dataone,DC=org</subject>
+    <groupName>Distributed Biological Observatory</groupName>
+    <hasMember>http://orcid.org/0000-0003-0077-4738</hasMember>
+    <rightsHolder>http://orcid.org/0000-0003-0077-4738</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=knb-data-admins,DC=dataone,DC=org</subject>
+    <groupName>knb-data-admins</groupName>
+    <hasMember>http://orcid.org/0000-0002-8121-2341</hasMember>
+    <hasMember>http://orcid.org/0000-0003-4703-1974</hasMember>
+    <hasMember>http://orcid.org/0000-0002-0381-3766</hasMember>
+    <hasMember>http://orcid.org/0000-0002-2192-403X</hasMember>
+    <hasMember>CN=Jing Tao A1098,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>http://orcid.org/0000-0003-2192-431X</hasMember>
+    <hasMember>http://orcid.org/0000-0002-6220-0134</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1209-5268</hasMember>
+    <rightsHolder>http://orcid.org/0000-0002-8121-2341</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=SASAP Data Team,DC=dataone,DC=org</subject>
+    <groupName>SASAP Data Team</groupName>
+    <hasMember>http://orcid.org/0000-0003-4703-1974</hasMember>
+    <hasMember>CN=Susan Clark A96891,O=University of California-Santa Barbara,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>http://orcid.org/0000-0002-4244-2865</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1006-9496</hasMember>
+    <hasMember>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>http://orcid.org/0000-0002-8121-2341</hasMember>
+    <hasMember>http://orcid.org/0000-0003-0077-4738</hasMember>
+    <hasMember>http://orcid.org/0000-0002-0381-3766</hasMember>
+    <hasMember>http://orcid.org/0000-0003-2192-431X</hasMember>
+    <hasMember>UID=https://orcid.org/0000-0002-1615-3963,DC=dataone,DC=org</hasMember>
+    <rightsHolder>http://orcid.org/0000-0003-4703-1974</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=SASAP,DC=dataone,DC=org</subject>
+    <groupName>SASAP</groupName>
+    <hasMember>http://orcid.org/0000-0003-4703-1974</hasMember>
+    <hasMember>http://orcid.org/0000-0002-5415-3534</hasMember>
+    <hasMember>http://orcid.org/0000-0003-0003-2515</hasMember>
+    <hasMember>http://orcid.org/0000-0002-4286-6959</hasMember>
+    <hasMember>http://orcid.org/0000-0001-7209-9757</hasMember>
+    <hasMember>http://orcid.org/0000-0002-2820-8714</hasMember>
+    <hasMember>http://orcid.org/0000-0002-5859-8602</hasMember>
+    <hasMember>http://orcid.org/0000-0002-4244-2865</hasMember>
+    <hasMember>http://orcid.org/0000-0003-2878-3943</hasMember>
+    <hasMember>http://orcid.org/0000-0001-7379-185X</hasMember>
+    <hasMember>http://orcid.org/0000-0002-7822-2303</hasMember>
+    <hasMember>http://orcid.org/0000-0001-8594-506X</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1615-3963</hasMember>
+    <hasMember>http://orcid.org/0000-0002-3554-6594</hasMember>
+    <hasMember>http://orcid.org/0000-0003-3697-394X</hasMember>
+    <hasMember>http://orcid.org/0000-0003-2192-431X</hasMember>
+    <hasMember>UID=jared,DC=dataone,DC=org</hasMember>
+    <rightsHolder>http://orcid.org/0000-0003-4703-1974</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=arctic-data-admins,DC=dataone,DC=org</subject>
+    <groupName>Arctic Data Center Team</groupName>
+    <hasMember>http://orcid.org/0000-0002-2561-5840</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1006-9496</hasMember>
+    <hasMember>http://orcid.org/0000-0002-7705-5670</hasMember>
+    <hasMember>http://orcid.org/0000-0002-8121-2341</hasMember>
+    <hasMember>CN=Christopher Jones A2108,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>http://orcid.org/0000-0003-0077-4738</hasMember>
+    <hasMember>http://orcid.org/0000-0002-0381-3766</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1209-5268</hasMember>
+    <hasMember>http://orcid.org/0000-0002-1615-3963</hasMember>
+    <hasMember>http://orcid.org/0000-0003-2192-431X</hasMember>
+    <rightsHolder>http://orcid.org/0000-0002-2561-5840</rightsHolder>
+    <rightsHolder>http://orcid.org/0000-0002-1006-9496</rightsHolder>
+    <rightsHolder>http://orcid.org/0000-0002-8121-2341</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=dataone-coredev,DC=dataone,DC=org</subject>
+    <groupName>dataone-coredev</groupName>
+    <hasMember>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>CN=Benjamin Leinfelder A515,O=University of Chicago,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>CN=ben leinfelder A756,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>CN=Robert P Waltz A904,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <rightsHolder>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</rightsHolder>
+  </group>
+  <group>
+    <subject>CN=NCEAS-interns,DC=dataone,DC=org</subject>
+    <groupName>NCEAS-interns</groupName>
+    <hasMember>CN=Jessica Couture A35351,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org</hasMember>
+    <hasMember>group-1</hasMember>
+    <rightsHolder>CN=Jessica Couture A35351,O=Google,C=US,DC=cilogon,DC=org</rightsHolder>
+  </group>
+  <group>
+    <subject>group-1</subject>
+    <groupName>Group</groupName>
+    <hasMember>group-2</hasMember>
+    <hasMember>group-3</hasMember>
+    <rightsHolder>rights-1</rightsHolder>
+  </group>
+  <group>
+    <subject>group-2</subject>
+    <groupName>Group</groupName>
+    <hasMember>person-1</hasMember>
+    <rightsHolder>rights-1</rightsHolder>
+  </group>
+  <group>
+    <subject>group-2</subject>
+    <groupName>Group</groupName>
+    <hasMember>person-1</hasMember>
+    <rightsHolder>rights-1</rightsHolder>
+  </group>
+</ns2:subjectInfo>

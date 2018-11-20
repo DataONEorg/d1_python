@@ -1,0 +1,40 @@
+[
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Symbolic/verifiedUser",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/UID=jones,O=NCEAS,DC=ecoinformatics,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/UID=mjones,O=LTER,DC=ecoinformatics,DC=org/Person/UID=mjones,O=LTER,DC=ecoinformatics,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/CN=Matthew Jones
+A332,O=ProtectNetwork,C=US,DC=cilogon,DC=org/Person/CN=Matthew Jones A332,O=ProtectNetwork,C=US,DC=cilogon,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/http://orcid.org/0000-0003-0077-4738",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Equiv/CN=Matt
+Jones A729,O=Google,C=US,DC=cilogon,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Member/CN=DBO,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Member/CN=knb-
+data-admins,DC=dataone,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Member/CN=SASAP Data
+Team,DC=dataone,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Member/CN=SASAP,DC=dataone,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Person/Member/CN=arctic-data-
+admins,DC=dataone,DC=org",
+  "Root/CN=Matt Jones
+A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Group/CN=DBO,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Group/CN=SASAP Data
+Team,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Equiv/http://orcid.org/0000-0003-0077-4738/Group/CN=arctic-data-
+admins,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Member/CN=dataone-coredev,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Member/CN=NCEAS-interns,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Member/CN=SASAP Data Teamf,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Person/Member/CN=arctic-data-admins,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Group/CN=SASAP Data Team,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Group/CN=arctic-data-admins,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Group/CN=dataone-coredev,DC=dataone,DC=org",
+  "Root/CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org/Group/CN=NCEAS-interns,DC=dataone,DC=org",
+  "Root/Symbolic/authenticatedUser"
+]

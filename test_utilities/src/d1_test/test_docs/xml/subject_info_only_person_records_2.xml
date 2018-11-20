@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  - SubjectInfo containing only person records
+  - Like subject_info_only_person_records.xml but adds:
+    - Another Person with duplicated equivalentIdentity
+    - Additional level of equivalentIdentity
+  - Only subjects marked as INCLUDE should appear in the generated samples
+-->
+<ns2:subjectInfo xmlns:ns2="http://ns.dataone.org/service/types/v1">
+  <person>
+    <!--INCLUDE: Connected through subj-2 -->
+    <subject>subj-10</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Entry is in disconnected Person record-->
+    <equivalentIdentity>subj-20</equivalentIdentity>
+    <!--EXCLUDE: Entry is in disconnected Person record-->
+    <verified>true</verified>
+  </person>
+  <person>
+    <!--EXCLUDE: Shares equiv with subj-10 is ignored -->
+    <subject>subj-11</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Equiv id-->
+    <equivalentIdentity>subj-20</equivalentIdentity>
+    <!--INCLUDE: The verifiedUser symbolic subject-->
+    <verified>true</verified>
+  </person>
+  <person>
+    <!--INCLUDE: The initial subject-->
+    <subject>subj-1</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-2</equivalentIdentity>
+    <!--INCLUDE: The verifiedUser symbolic subject-->
+    <verified>true</verified>
+  </person>
+  <person>
+    <!--INCLUDE: Repeated equiv id-->
+    <subject>subj-2</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-10</equivalentIdentity>
+    <!--INCLUDE: Equiv id leaf nodes-->
+    <equivalentIdentity>subj-30</equivalentIdentity>
+    <equivalentIdentity>subj-31</equivalentIdentity>
+    <!--Opposite verified status does not affect the previously included verifiedUser and does not cause multiple verifiedUser subjects-->
+    <verified>false</verified>
+  </person>
+  <person>
+    <!--EXCLUDE: Disconnected-->
+    <subject>subj-3</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Entry is in disconnected Person record-->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+    <!--EXCLUDE: Entry is in disconnected Person record-->
+    <equivalentIdentity>subj-5</equivalentIdentity>
+    <!--The optional verified element is not included. Should not be assumed to be present-->
+  </person>
+  <person>
+    <!--EXCLUDE: Connected but parent is disconnected-->
+    <subject>subj-4</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Connected but parent is disconnected-->
+    <equivalentIdentity>subj-6</equivalentIdentity>
+  </person>
+</ns2:subjectInfo>

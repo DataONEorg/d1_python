@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  SubjectInfo containing person and group records
+  - Combinations of nested included and excluded elements
+  - Nested group
+  - Multiple nested equivalent identities
+  - Only subjects marked as INCLUDE should appear in the generated samples
+-->
+<ns2:subjectInfo xmlns:ns2="http://ns.dataone.org/service/types/v1">
+  <person>
+    <!--INCLUDE: The initial subject-->
+    <subject>subj-1</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Disconnected-->
+    <isMemberOf>group-1</isMemberOf>
+    <!--EXCLUDE: Disconnected-->
+    <isMemberOf>group-2</isMemberOf>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-2</equivalentIdentity>
+    <!--INCLUDE: The verifiedUser symbolic subject-->
+    <verified>true</verified>
+  </person>
+  <person>
+    <!--INCLUDE: Repeated equiv id-->
+    <subject>subj-2</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-10</equivalentIdentity>
+    <verified>false</verified>
+  </person>
+  <person>
+    <!--EXCLUDE: Disconnected-->
+    <subject>subj-3</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: In disconnected Person record-->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+    <!--EXCLUDE: In disconnected Person record-->
+    <equivalentIdentity>subj-5</equivalentIdentity>
+    <!--The optional verified element is not included. Should not be assumed to be present-->
+  </person>
+  <person>
+    <!--EXCLUDE: Connected but parent is disconnected-->
+    <subject>subj-4</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Connected but parent is disconnected-->
+    <equivalentIdentity>subj-6</equivalentIdentity>
+  </person>
+  <person>
+    <!--INCLUDE: Connected but parent is disconnected-->
+    <subject>subj-4</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Connected but parent is disconnected-->
+    <equivalentIdentity>subj-6</equivalentIdentity>
+  </person>
+  <group>
+    <!--EXCLUDE: Disconnected-->
+    <subject>group-1</subject>
+    <groupName>Group</groupName>
+    <!--EXCLUDE: Disconnected-->
+    <hasMember>subj-5</hasMember>
+    <hasMember>subj-6</hasMember>
+    <hasMember>group-3</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+  <group>
+    <!--INCLUDE: Initial subject is a member of this group -->
+    <subject>group-10</subject>
+    <groupName>Group</groupName>
+    <!--EXCLUDE: Disconnected-->
+    <hasMember>subj-5</hasMember>
+    <hasMember>subj-6</hasMember>
+    <hasMember>group-3</hasMember>
+    <!--INCLUDE: The member that connects this group-->
+    <hasMember>subj-1</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+  <group>
+    <!--EXCLUDE: Disconnected-->
+    <subject>group-3</subject>
+    <groupName>Group</groupName>
+    <hasMember>subj-7</hasMember>
+    <hasMember>subj-8</hasMember>
+    <hasMember>group-4</hasMember>
+    <hasMember>group-1</hasMember>
+    <rightsHolder>group-rights-subj-2</rightsHolder>
+  </group>
+</ns2:subjectInfo>

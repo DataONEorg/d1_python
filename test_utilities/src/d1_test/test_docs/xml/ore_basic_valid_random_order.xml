@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:cito="http://purl.org/spar/cito/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <ore:ResourceMap rdf:about="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID">
+    <dcterms:creator>DataONE.org Python ITK[VERSION]</dcterms:creator>
+    <dcterms:identifier>ORE_PID_DIDDID</dcterms:identifier>
+    <ore:describes>
+      <ore:Aggregation rdf:about="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID#aggregation">
+        <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA3_PID"/>
+        <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA1_PID_DIDDID"/>
+        <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/META_PID_DIDDID"/>
+        <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA2_PID"/>
+      </ore:Aggregation>
+    </ore:describes>
+  </ore:ResourceMap>
+  <rdf:Description rdf:about="http://www.openarchives.org/ore/terms/Aggregation">
+    <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    <rdfs:label>Aggregation</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/DATA2_PID">
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID#aggregation"/>
+    <cito:isDocumentedBy>
+      <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/META_PID_DIDDID">
+        <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA3_PID"/>
+        <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA2_PID"/>
+        <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID#aggregation"/>
+        <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/DATA1_PID_DIDDID"/>
+        <dcterms:identifier>META_PID_DIDDID</dcterms:identifier>
+      </rdf:Description>
+    </cito:isDocumentedBy>
+    <dcterms:identifier>DATA2_PID</dcterms:identifier>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/DATA1_PID_DIDDID">
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/META_PID_DIDDID"/>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID#aggregation"/>
+    <dcterms:identifier>DATA1_PID_DIDDID</dcterms:identifier>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/DATA3_PID">
+    <dcterms:identifier>DATA3_PID</dcterms:identifier>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/META_PID_DIDDID"/>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ORE_PID_DIDDID#aggregation"/>
+  </rdf:Description>
+</rdf:RDF>

@@ -1,0 +1,12 @@
+[
+  "Root/subj-1/Person/subj-1",
+  "Root/subj-1/Person/Equiv/subj-3/Person/subj-3",
+  "Root/subj-1/Person/Equiv/subj-3/Person/Equiv/subj-3",
+  "Root/subj-1/Person/Equiv/subj-3/Person/Equiv/subj-4/Person/subj-4",
+  "Root/subj-1/Person/Equiv/subj-3/Person/Equiv/subj-4/Person/Equiv/subj-3",
+  "Root/subj-1/Person/Equiv/subj-3/Person/Equiv/subj-4/Person/Equiv/subj-4",
+  "Root/subj-1/Person/subj-1",
+  "Root/subj-1/Person/Equiv/subj-4",
+  "Root/subj-1/Person/Equiv/subj-10",
+  "Root/Symbolic/authenticatedUser"
+]

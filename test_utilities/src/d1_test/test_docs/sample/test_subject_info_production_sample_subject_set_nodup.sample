@@ -1,0 +1,17 @@
+[
+  "CN=DBO,DC=dataone,DC=org",
+  "CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org",
+  "CN=Matthew Jones A332,O=ProtectNetwork,C=US,DC=cilogon,DC=org",
+  "CN=NCEAS-interns,DC=dataone,DC=org",
+  "CN=SASAP Data Team,DC=dataone,DC=org",
+  "CN=SASAP Data Teamf,DC=dataone,DC=org",
+  "CN=SASAP,DC=dataone,DC=org",
+  "CN=arctic-data-admins,DC=dataone,DC=org",
+  "CN=dataone-coredev,DC=dataone,DC=org",
+  "CN=knb-data-admins,DC=dataone,DC=org",
+  "UID=jones,O=NCEAS,DC=ecoinformatics,DC=org",
+  "UID=mjones,O=LTER,DC=ecoinformatics,DC=org",
+  "authenticatedUser",
+  "http://orcid.org/0000-0003-0077-4738",
+  "verifiedUser"
+]

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier1</identifier>
+        <name>name3</name>
+        <description>description1</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service name="name5" version="version3" available="false">
+                <restriction methodName="methodName6">
+                    <subject>subject14</subject>
+                    <subject>subject15</subject>
+                </restriction>
+                <restriction methodName="methodName7">
+                    <subject>subject16</subject>
+                    <subject>subject17</subject>
+                </restriction>
+            </service>
+            <service name="name4" version="version2" available="false">
+                <restriction methodName="methodName4">
+                    <subject>subject10</subject>
+                    <subject>subject11</subject>
+                </restriction>
+                <restriction methodName="methodName5">
+                    <subject>subject12</subject>
+                    <subject>subject13</subject>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject18</subject>
+        <subject>subject19</subject>
+        <contactSubject>contactSubject2</contactSubject>
+        <contactSubject>contactSubject3</contactSubject>
+    </node>
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier0</identifier>
+        <name>name0</name>
+        <description>description0</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service name="name2" version="version1" available="false">
+                <restriction methodName="methodName2">
+                    <subject>subject4</subject>
+                    <subject>subject5</subject>
+                </restriction>
+                <restriction methodName="methodName3">
+                    <subject>subject6</subject>
+                    <subject>subject7</subject>
+                </restriction>
+            </service>
+            <service name="name1" version="version0" available="false">
+                <restriction methodName="methodName1">
+                    <subject>subject2</subject>
+                    <subject>subject3</subject>
+                </restriction>
+                <restriction methodName="methodName0">
+                    <subject>subject1</subject>
+                    <subject>subject0</subject>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject9</subject>
+        <subject>subject8</subject>
+        <contactSubject>contactSubject0</contactSubject>
+        <contactSubject>contactSubject1</contactSubject>
+    </node>
+</d1:nodeList>

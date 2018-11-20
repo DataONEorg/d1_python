@@ -1,0 +1,151 @@
+v2:systemMetadata = [
+  accessPolicy = [
+    allow = [
+      permission = [
+        'changePermission'
+      ]
+      subject = [
+        'subj2'
+      ]
+      subject = [
+        'subj3'
+      ]
+      subject = [
+        'subj5'
+      ]
+      subject = [
+        'subj6'
+      ]
+    ]
+    allow = [
+      permission = [
+        'write'
+      ]
+      subject = [
+        'subj1'
+      ]
+      subject = [
+        'subj3'
+      ]
+      subject = [
+        'subj4'
+      ]
+    ]
+  ]
+  archived = [
+    'true'
+  ]
+  authoritativeMemberNode = [
+    'test_authoritative_mn'
+  ]
+  checksum = [
+    'SHA1'
+    @algorithm = 'SHA1'
+  ]
+  dateSysMetadataModified = [
+    '2006-08-19T11:27:14-06:00'
+  ]
+  dateUploaded = [
+    '2014-09-18T17:18:33'
+  ]
+  fileName = [
+    'string'
+  ]
+  formatId = [
+    'test_format_id'
+  ]
+  identifier = [
+    'test_pid'
+  ]
+  mediaType = [
+    @name = 'test_media_type'
+    property = [
+      'property_value_1'
+      @name = 'property_name_1'
+    ]
+    property = [
+      'property_value_2'
+      @name = 'property_name_2'
+    ]
+    property = [
+      'property_value_3'
+      @name = 'property_name_3'
+    ]
+  ]
+  obsoletedBy = [
+    'test_obsoleted_by'
+  ]
+  obsoletes = [
+    'test_obsoletes_pid'
+  ]
+  originMemberNode = [
+    'test_originating_mn'
+  ]
+  replica = [
+    replicaMemberNode = [
+      'node1'
+    ]
+    replicaVerified = [
+      '2013-05-21T19:02:49-06:00'
+    ]
+    replicationStatus = [
+      'failed'
+    ]
+  ]
+  replica = [
+    replicaMemberNode = [
+      'node2'
+    ]
+    replicaVerified = [
+      '2014-05-21T19:02:49-06:00'
+    ]
+    replicationStatus = [
+      'failed'
+    ]
+  ]
+  replica = [
+    replicaMemberNode = [
+      'node3'
+    ]
+    replicaVerified = [
+      '2015-05-21T19:02:49-06:00'
+    ]
+    replicationStatus = [
+      'failed'
+    ]
+  ]
+  replicationPolicy = [
+    @numberReplicas = '3'
+    @replicationAllowed = 'true'
+    blockedMemberNode = [
+      'node4'
+    ]
+    blockedMemberNode = [
+      'node5'
+    ]
+    preferredMemberNode = [
+      'node1'
+    ]
+    preferredMemberNode = [
+      'node2'
+    ]
+    preferredMemberNode = [
+      'node3'
+    ]
+  ]
+  rightsHolder = [
+    'test_rights_holder'
+  ]
+  serialVersion = [
+    '11'
+  ]
+  seriesId = [
+    'test_series_id'
+  ]
+  size = [
+    '11'
+  ]
+  submitter = [
+    'test_submitter'
+  ]
+]

@@ -1,0 +1,202 @@
+v1:nodeList = [
+  @{http://www.w3.org/2001/XMLSchema-instance}schemaLocation = 'http://ns.dataone.org/service/types/v1
+file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd'
+  node = [
+    @replicate = 'false'
+    @state = 'up'
+    @synchronize = 'false'
+    @type = 'mn'
+    baseURL = [
+      'http://www.oxygenxml.com/'
+    ]
+    contactSubject = [
+      'contactSubject0'
+    ]
+    contactSubject = [
+      'contactSubject1'
+    ]
+    description = [
+      'description0'
+    ]
+    identifier = [
+      'identifier0'
+    ]
+    name = [
+      'name0'
+    ]
+    ping = [
+      @lastSuccess = '2006-05-04T18:13:51.0Z'
+      @success = 'false'
+    ]
+    services = [
+      service = [
+        @available = 'false'
+        @name = 'name1'
+        @version = 'version0'
+        restriction = [
+          @methodName = 'methodName0'
+          subject = [
+            'subject0'
+          ]
+          subject = [
+            'subject1'
+          ]
+        ]
+        restriction = [
+          @methodName = 'methodName1'
+          subject = [
+            'subject2'
+          ]
+          subject = [
+            'subject3'
+          ]
+        ]
+      ]
+      service = [
+        @available = 'false'
+        @name = 'name2'
+        @version = 'version1'
+        restriction = [
+          @methodName = 'methodName2'
+          subject = [
+            'subject4'
+          ]
+          subject = [
+            'subject5'
+          ]
+        ]
+        restriction = [
+          @methodName = 'methodName3'
+          subject = [
+            'subject6'
+          ]
+          subject = [
+            'subject7'
+          ]
+        ]
+      ]
+    ]
+    subject = [
+      'subject8'
+    ]
+    subject = [
+      'subject9'
+    ]
+    synchronization = [
+      lastCompleteHarvest = [
+        '2006-05-04T18:13:51.0Z'
+      ]
+      lastHarvested = [
+        '2006-05-04T18:13:51.0Z'
+      ]
+      schedule = [
+        @hour = '*'
+        @mday = '*'
+        @min = '*'
+        @mon = '*'
+        @sec = '1'
+        @wday = '*'
+        @year = '*'
+      ]
+    ]
+  ]
+  node = [
+    @replicate = 'false'
+    @state = 'up'
+    @synchronize = 'false'
+    @type = 'mn'
+    baseURL = [
+      'http://www.oxygenxml.com/'
+    ]
+    contactSubject = [
+      'contactSubject2'
+    ]
+    contactSubject = [
+      'contactSubject3'
+    ]
+    description = [
+      'description1'
+    ]
+    identifier = [
+      'identifier1'
+    ]
+    name = [
+      'name3'
+    ]
+    ping = [
+      @lastSuccess = '2006-05-04T18:13:51.0Z'
+      @success = 'false'
+    ]
+    services = [
+      service = [
+        @available = 'false'
+        @name = 'name4'
+        @version = 'version2'
+        restriction = [
+          @methodName = 'methodName4'
+          subject = [
+            'subject10'
+          ]
+          subject = [
+            'subject11'
+          ]
+        ]
+        restriction = [
+          @methodName = 'methodName5'
+          subject = [
+            'subject12'
+          ]
+          subject = [
+            'subject13'
+          ]
+        ]
+      ]
+      service = [
+        @available = 'false'
+        @name = 'name5'
+        @version = 'version3'
+        restriction = [
+          @methodName = 'methodName6'
+          subject = [
+            'subject14'
+          ]
+          subject = [
+            'subject15'
+          ]
+        ]
+        restriction = [
+          @methodName = 'methodName7'
+          subject = [
+            'subject16'
+          ]
+          subject = [
+            'subject17'
+          ]
+        ]
+      ]
+    ]
+    subject = [
+      'subject18'
+    ]
+    subject = [
+      'subject19'
+    ]
+    synchronization = [
+      lastCompleteHarvest = [
+        '2006-05-04T18:13:51.0Z'
+      ]
+      lastHarvested = [
+        '2006-05-04T18:13:51.0Z'
+      ]
+      schedule = [
+        @hour = '*'
+        @mday = '*'
+        @min = '*'
+        @mon = '*'
+        @sec = '1'
+        @wday = '*'
+        @year = '*'
+      ]
+    ]
+  ]
+]

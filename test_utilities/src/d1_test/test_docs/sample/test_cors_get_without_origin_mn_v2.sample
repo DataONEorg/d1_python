@@ -1,0 +1,16 @@
+{
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Headers": "Authorization",
+  "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Origin": "*",
+  "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Content-Length": "317",
+  "Content-Type": "text/xml",
+  "DataONE-Checksum": "SHA-1,ba71ea8be4f6c2b2a730512766ef4f6583e823ab",
+  "DataONE-FormatId": "text/xml",
+  "DataONE-GMN": "3.2.0",
+  "DataONE-SerialVersion": "49",
+  "Date": "Fri, 02 Jan 1981 00:00:00 GMT",
+  "HTTP-Version": "HTTP/1.1",
+  "Last-Modified": "Sun, 10 May 2048 06:36:32 GMT"
+}

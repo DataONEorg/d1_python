@@ -1,0 +1,8 @@
+{
+  "equivalent_set": [
+    "CN=Roger Dahl A538,O=Google,C=US,DC=cilogon,DC=org",
+    "authenticatedUser",
+    "public"
+  ],
+  "primary_str": "CN=Roger Dahl A538,O=Google,C=US,DC=cilogon,DC=org"
+}
