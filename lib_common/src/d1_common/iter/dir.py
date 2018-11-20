@@ -65,10 +65,16 @@ receive directory paths that can be skipped, the return_dir_paths must be set to
 True. The regular "for...in" syntax does not support sending the "skip" flag
 back to the iterator. Instead, use a pattern like:
 
-itr = file_iterator.file_iter(..., return_dir_paths=True) try: path = itr.next()
-while True: skip_dir = determine_if_dir_should_be_skipped(path) file_path =
-itr.send(skip_dir) except KeyboardInterrupt: raise StopIteration except
-StopIteration: pass
+itr = file_iterator.file_iter(..., return_dir_paths=True)
+try:
+  path = itr.next()
+  while True:
+  skip_dir = determine_if_dir_should_be_skipped(path)
+  file_path = itr.send(skip_dir)
+except KeyboardInterrupt:
+  raise StopIteration
+except StopIteration:
+  pass
 
 {path_list} does not accept glob patterns, as it's more convenient to let the
 shell expand glob patterns to directly specified files and dirs. E.g., to use a
@@ -150,11 +156,7 @@ def dir_iter(
 
   for path in path_list:
     path = os.path.expanduser(path)
-    # if not isinstance(path, str):
-    #   path = path.decode('utf-8')
-    if not ignore_invalid:
-      if not (os.path.isfile(path) or os.path.isdir(path)):
-        raise EnvironmentError(0, 'Not a valid file or dir path', path)
+
     # Return file
     if os.path.isfile(path):
       file_name = os.path.split(path)[1]
@@ -162,38 +164,30 @@ def dir_iter(
           file_name, include_file_glob_list, exclude_file_glob_list
       ):
         yield path
+
     # Search directory
-    if os.path.isdir(path):
-      if recursive:
-        # Recursive directory search
-        file_path_iter = _filtered_walk(
-          path, include_dir_glob_list, exclude_dir_glob_list, return_dir_paths
-        )
-      else:
-        # Single directory search
-        file_path_iter = os.listdir(path)
-
-      skip_dir = None
-
-      while True:
-        file_or_dir_path = file_path_iter.send(skip_dir)
-        file_or_dir_name = os.path.split(file_or_dir_path)[1]
-        skip_dir = False
-        if not _is_filtered(
-            file_or_dir_name, include_file_glob_list, exclude_file_glob_list
-        ):
-          skip_dir = yield file_or_dir_path
-
-      # skip_dir = yield next(file_path_iter)
+    elif os.path.isdir(path):
+      yield from _filtered_walk(
+        path,
+        include_dir_glob_list, exclude_dir_glob_list,
+        include_file_glob_list, exclude_file_glob_list,
+        return_dir_paths, recursive
+      )
+      # else:
+      #   # Single directory search
+      #   file_path_iter = os.listdir(path)
+      #
+      # skip_dir = None
+      #
       # while True:
       #   file_or_dir_path = file_path_iter.send(skip_dir)
       #   file_or_dir_name = os.path.split(file_or_dir_path)[1]
-      #   if not _is_filtered(
-      #       file_or_dir_name, include_file_glob_list, exclude_file_glob_list
-      #   ):
+      #   skip_dir = False
       #     skip_dir = yield file_or_dir_path
-      #   else:
-      #     skip_dir = False
+
+    else:
+      if not ignore_invalid:
+        raise EnvironmentError(0, 'Not a valid file or dir path', path)
 
 
 def _is_filtered(name, include_glob_list, exclude_glob_list):
@@ -206,28 +200,40 @@ def _is_filtered(name, include_glob_list, exclude_glob_list):
 
 
 def _filtered_walk(
-    root_dir_path, include_dir_glob_list, exclude_dir_glob_list,
-    return_dir_paths
+    root_dir_path,
+    include_dir_glob_list, exclude_dir_glob_list,
+    include_file_glob_list, exclude_file_glob_list,
+    return_dir_paths, recursive
 ):
   skip_dir_path_list = []
+
   for dir_path, dir_list, file_list in os.walk(root_dir_path):
+    if not recursive and dir_path != root_dir_path:
+      return
+
     if any(dir_path.startswith(d) for d in skip_dir_path_list):
-      logging.debug('Skipped dir tree. root="{}"'.format(dir_path))
+      logging.debug('Skipped dir branch. branch="{}"'.format(dir_path))
       continue
+
     dir_list[:] = [
       d for d in dir_list
       if not _is_filtered(
         os.path.split(d)[1] + '/', include_dir_glob_list, exclude_dir_glob_list
       )
     ]
+
     if return_dir_paths:
       for dir_name in dir_list:
         this_dir_path = os.path.join(dir_path, dir_name)
         skip_dir = yield this_dir_path
         if skip_dir:
           logging.debug(
-            'Client requested skip. root="{}"'.format(this_dir_path)
+            'Client requested branch. branch="{}"'.format(this_dir_path)
           )
           skip_dir_path_list.append(this_dir_path)
+
     for file_name in file_list:
-      yield os.path.join(dir_path, file_name)
+      if not _is_filtered(
+          file_name, include_file_glob_list, exclude_file_glob_list
+      ):
+        yield os.path.join(dir_path, file_name)
