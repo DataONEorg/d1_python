@@ -78,11 +78,14 @@ def is_valid_pid_for_create(did):
 
 
 def is_valid_pid_to_be_updated(did):
+  """Assert that {did} is the PID of an object that can be updated (obsoleted)
+  with MNStorage.update()
+  """
   if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
     raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      'Identifier cannot be used for an update. did="{}" cause="Object is {}"'
-      .format(did, d1_gmn.app.did.classify_identifier(did)), identifier=did
+      0, 'Object cannot be updated because the identifier for the object to be '
+      'updated is {}. did="{}"'.format(
+        d1_gmn.app.did.classify_identifier(did), did), identifier=did
     )
 
 

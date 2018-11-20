@@ -59,6 +59,12 @@ def is_valid_pid_for_create(did):
   )
 
 
+def is_valid_sid_for_new_standalone(did):
+  """Return True if {did} can be assigned to a new standalone object
+  """
+  return _is_unused_did(did)
+
+
 def is_valid_pid_to_be_updated(did):
   """Return True if {did} is the PID of an object that can be updated
   (obsoleted) with MNStorage.update()
@@ -67,12 +73,6 @@ def is_valid_pid_to_be_updated(did):
     is_existing_object(did) and not is_local_replica(did) and
     not is_archived(did) and not is_obsoleted(did)
   )
-
-
-def is_valid_sid_for_new_standalone(did):
-  """Return True if {did} can be assigned to a new standalone object
-  """
-  return _is_unused_did(did)
 
 
 def is_valid_sid_for_chain(pid, sid):
@@ -148,6 +148,12 @@ def classify_identifier(did):
     return 'a Series ID (SID) of a revision chain'
   elif is_local_replica(did):
     return 'a Persistent ID (PID) of a local replica'
+  elif is_unprocessed_local_replica(did):
+    return 'a Persistent ID (PID) of an accepted but not yet processed local replica'
+  elif is_archived(did):
+    return 'a Persistent ID (PID) of a previously archived local object'
+  elif is_obsoleted(did):
+    return 'a Persistent ID (PID) of a previously updated (obsoleted) local object'
   elif is_resource_map_db(did):
     return 'a Persistent ID (PID) of a local resource map'
   elif is_existing_object(did):
