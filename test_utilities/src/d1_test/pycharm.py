@@ -20,15 +20,14 @@
 
 """
 PyCharm support in the test framework
-# - This sets up the path to the PyCharm binary. It is required and used only if pytest is started with the --pycharm switch. Otherwise it is ignored.
-# - When active, the test framework will:
-# - Automatically open files where errors occur and move the cursor to the line of the error
-# - Show syntax highlighted diffs for scripts and data files using PyCharm's powerful diff viewer
+- This sets up the path to the PyCharm binary. It is required and used only if pytest is started with the --pycharm switch. Otherwise it is ignored.
+- When active, the test framework will:
+- Automatically open files where errors occur and move the cursor to the line of the error
+- Show syntax highlighted diffs for scripts and data files using PyCharm's powerful diff viewer
 """
 import logging
 import os
 import subprocess
-import sys
 import d1_dev.util
 
 # Set this path to the binary that launches PyCharm. If an environment variable
@@ -55,7 +54,20 @@ def open_and_set_cursor(src_path, src_line=1):
 
 def diff(left_path, right_path):
   """Attempt to open a diff of the two files in the PyCharm Diff & Merge tool"""
-  call_pycharm('diff', str(left_path), str(right_path))
+  tag_empty_file(left_path)
+  tag_empty_file(right_path)
+  call_pycharm('diff', left_path, right_path)
+
+
+def tag_empty_file(path):
+  """If path is to empty file, write the text "<empty>" to the file
+  - This works around the issue that PyCharm PyCharm Diff & Merge errors out
+  if one of the input files are empty.
+  - Is probably less confusing when debugging
+  """
+  if not os.path.getsize(path):
+    with open(path, 'w') as f:
+      f.write('<empty>')
 
 
 def get_abs_path(src_path):
@@ -67,36 +79,9 @@ def get_abs_path(src_path):
   return src_path
 
 
-def get_exception_location(exc_traceback=None):
-  """Return the abs path and line number of the line of the location where
-  exception was triggered
-  """
-  exc_traceback = exc_traceback or sys.exc_info()[2]
-  return exc_traceback[-1].path, exc_traceback[-1].lineno + 1
-
-
-def get_d1_exception_location(exc_traceback=None):
-  """Return the abs path and line number of the line of project code that is
-  closest to location where exception was triggered
-  - If an exception is triggered within a 3rd party package, this will provide
-  the location within the DataONE source code that passed control down to the
-  dependencies.
-  - If exception was triggered directly in the DataONE source code, gives the
-  exact location, like get_exception_location().
-  """
-  exc_traceback = exc_traceback or sys.exc_info()[2]
-  location_tup = ()
-  while exc_traceback:
-    co = exc_traceback.tb_frame.f_code
-    # if co.co_filename.startswith(django.conf.settings.BASE_DIR):
-    if 'd1_' in co.co_filename:
-      # location_tup = co.co_filename, str(exc_traceback.tb_lineno)
-      location_tup = co.path, co.lineno + 1
-    exc_traceback = exc_traceback.tb_next
-  return location_tup
-
-
 def call_pycharm(*arg_list):
+  arg_list = list(map(str, arg_list))
+  arg_str = ', '.join(arg_list)
   pycharm_bin_path = os.environ.get('PYCHARM_BIN_PATH', PYCHARM_BIN_PATH)
   try:
     assert os.path.isfile(pycharm_bin_path), (
@@ -106,13 +91,13 @@ def call_pycharm(*arg_list):
       'available, try starting again without the --pycharm '
       'switch.'.format(__file__)
     )
-    subprocess.call([PYCHARM_BIN_PATH] + [str(v) for v in arg_list])
+    subprocess.call([PYCHARM_BIN_PATH] + arg_list)
   except subprocess.CalledProcessError as e:
     logging.warning(
       'PyCharm call failed. error="{}" args="{}"'.
-        format(str(e), ', '.join(arg_list))
+        format(str(e), arg_str)
     )
   else:
     logging.debug(
-      'PyCharm call. args="{}"'. format(', '.join(arg_list))
+      'PyCharm call ok. args="{}"'. format(arg_str)
     )
