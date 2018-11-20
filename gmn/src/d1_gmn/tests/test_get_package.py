@@ -25,6 +25,7 @@ import io
 import tempfile
 import zipfile
 
+import pytest
 import responses
 
 import d1_gmn.app.resource_map
@@ -34,48 +35,25 @@ import d1_gmn.tests.gmn_test_case
 import d1_common.bagit
 import d1_common.const
 import d1_common.resource_map
+import d1_common.types.exceptions
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.system_metadata
 
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def _extract_zip(self, zip_path, dst_path):
-    zipfile.ZipFile(zip_path).extractall(dst_path)
+  @responses.activate
+  def test_0900(self, gmn_client_v2):
+    """MNPackage.getPackage(): Raises NotFound on unknown PID"""
+    with pytest.raises(d1_common.types.exceptions.NotFound):
+      self.call_d1_client(gmn_client_v2.getPackage, 'unknown_ore_pid')
 
-  def _create_objects(self, client):
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      pid_list = []
-      for i in range(10):
-        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(client)
-        pid_list.append(pid)
-    return pid_list
-
-  def _create_resource_map(self, gmn_client_v2, pid_list):
-    ore_pid = d1_test.instance_generator.identifier.generate_pid('PID_ORE_')
-    ore = d1_common.resource_map.createSimpleResourceMap(
-      ore_pid, pid_list[0], pid_list[1:]
-    )
-    ore_xml = ore.serialize_to_transport()
-    sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
-      gmn_client_v2,
-      io.BytesIO(ore_xml),
-      {
-        'identifier': ore_pid,
-        'formatId': d1_common.const.ORE_FORMAT_ID,
-        'replica': None,
-      },
-    )
-    self.call_d1_client(
-      gmn_client_v2.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
-    )
-    return ore_pid
 
   @responses.activate
   def test_1000(self, gmn_client_v2):
     """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
-    pid_list = self._create_objects(gmn_client_v2)
-    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
+    pid_list = self.create_multiple_objects(gmn_client_v2)
+    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
     response = self.call_d1_client(gmn_client_v2.getPackage, ore_pid)
     with tempfile.NamedTemporaryFile() as tmp_file:
       tmp_file.write(response.content)

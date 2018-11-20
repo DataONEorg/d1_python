@@ -30,8 +30,8 @@ import django.utils.six
 
 class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _cert_whitelist(self, capsys):
-    cert_path = self.sample.get_path(
-      'cert_cn_ucsb_1_dataone_org_20150709_180838.pem'
+    cert_path = self.test_files.get_abs_test_file_path(
+      'cert/cert_cn_ucsb_1_dataone_org_20150709_180838.pem'
     )
     # with self.mock.disable_management_command_logging():
     #   with d1_test.d1_test_case.disable_debug_level_logging():
@@ -44,8 +44,8 @@ class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1000(self, capsys):
     """cert view <pem>: Lists subjects from DN and SubjectInfo
     """
-    cert_path = self.sample.get_path(
-      'cert_with_equivalents_invalid_serialization.pem'
+    cert_path = self.test_files.get_abs_test_file_path(
+      'cert/cert_with_equivalents_invalid_serialization.pem'
     )
     self.call_management_command('cert', 'view', cert_path)
     stdout, stderr = capsys.readouterr()

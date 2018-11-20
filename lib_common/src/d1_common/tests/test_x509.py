@@ -30,13 +30,14 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
 
 class TestCert(d1_test.d1_test_case.D1TestCase):
-  cert_simple_subject_info_pem = d1_test.sample.load(
+  cert_simple_subject_info_pem = d1_test.test_files.load_cert(
     'cert_with_simple_subject_info.pem'
   )
-  cert_no_subject_info_pem = d1_test.sample.load(
+  cert_no_subject_info_pem = d1_test.test_files.load_cert(
     'cert_without_subject_info.pem'
   )
 
@@ -112,8 +113,8 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     cert_obj = d1_common.cert.x509.deserialize_pem(
       self.cert_simple_subject_info_pem
     )
-    with caplog.at_level(logging.WARN):
-      d1_common.cert.x509.log_cert_info(logging.warn, 'test msg', cert_obj)
+    with caplog.at_level(logging.WARNING):
+      d1_common.cert.x509.log_cert_info(logging.warning, 'test msg', cert_obj)
     self.sample.assert_equals(
       d1_test.d1_test_case.get_caplog_text(caplog), 'log_cert_info_expected'
     )

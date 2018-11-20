@@ -22,10 +22,11 @@
 import d1_common.object_format
 
 import d1_test.d1_test_case
+import d1_test.test_files
 
 
 class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
-  ofl_pyxb = d1_test.sample.load_xml_to_pyxb('objectFormatList_v2_0.xml')
+  ofl_pyxb = d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml')
 
   def test_1000(self):
     """pyxb_to_dict()"""

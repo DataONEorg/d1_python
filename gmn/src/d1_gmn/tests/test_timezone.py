@@ -84,7 +84,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     return pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt
 
   def _assert_sysmeta_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.sample.load(sysmeta_sample_name)
+    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_sample_name)
     with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
       with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
         pid = d1_test.instance_generator.identifier.generate_pid()
@@ -137,8 +137,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           d1_common.date_time.dt_from_iso8601_str(b_dt.text)
         )
 
-  def _assert_object_list_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.sample.load_utf8_to_str(sysmeta_sample_name)
+  def _assert_object_list_in_utc(self, version_tag, sysmeta_filename):
+    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
     with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
       with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
         pid = d1_test.instance_generator.identifier.generate_pid()
@@ -166,8 +166,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
           dt = d1_common.date_time.dt_from_iso8601_str(el.text)
           assert d1_common.date_time.is_utc(dt)
 
-  def _assert_log_entry_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.sample.load_utf8_to_str(sysmeta_sample_name)
+  def _assert_log_entry_in_utc(self, version_tag, sysmeta_filename):
+    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
     with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
       with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
         pid = d1_test.instance_generator.identifier.generate_pid()
@@ -241,7 +241,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """PyXB deserializes XML doc with naive dt for xs:dateTime types and
     returns dt unmodified and without tz
     """
-    sysmeta_pyxb = self.sample.load_xml_to_pyxb(
+    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0.tz_naive.xml'
     )
     assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300'
@@ -251,7 +251,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """PyXB deserializes XML doc with non-UTC dt for xs:dateTime types and
     returns dt as normalized to UTC
     """
-    sysmeta_pyxb = self.sample.load_xml_to_pyxb(
+    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0.tz_non_utc.xml'
     )
     assert str(sysmeta_pyxb.dateUploaded) == '1933-03-04 00:46:13.333300+00:00'
@@ -261,7 +261,7 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """PyXB deserializes XML doc with UTC dt for xs:dateTime types and
     returns dt unmodified and with tz
     """
-    sysmeta_pyxb = self.sample.load_xml_to_pyxb(
+    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0.tz_utc.xml'
     )
     assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300+00:00'

@@ -34,7 +34,7 @@ class Generate(object):
 
   def __call__(self):
     if self._user_agent_list is None:
-      self._user_agent_list = d1_test.sample.load_utf8_to_str(
+      self._user_agent_list = d1_test.test_files.load_utf8_to_str(
         'common_user_agents.txt'
       ).splitlines()
     return random.choice(self._user_agent_list)

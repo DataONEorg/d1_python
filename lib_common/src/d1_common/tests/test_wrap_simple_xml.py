@@ -32,11 +32,11 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.sample
-
+import d1_test.test_files
 
 class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
   def setup_method(self):
-    self.sysmeta_xml = d1_test.sample.load_utf8_to_str(
+    self.sysmeta_xml = d1_test.test_files.load_xml_to_str(
       'systemMetadata_v2_0.tz_non_utc.xml'
     )
 

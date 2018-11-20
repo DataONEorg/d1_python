@@ -25,6 +25,7 @@ import datetime
 
 import freezegun
 import pytest
+import pyxb
 import responses
 
 import d1_gmn.tests.gmn_mock
@@ -38,6 +39,7 @@ import d1_common.util
 import d1_common.xml
 
 import d1_test.d1_test_case
+import d1_test.instance_generator
 
 
 @d1_test.d1_test_case.reproducible_random_decorator(
@@ -196,3 +198,18 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
       active_subj_list='subj5',
       disable_auth=False,
     )
+
+
+  @responses.activate
+  @pytest.mark.parametrize("did", ["  ", "\tAaBb", "AaB\tb", "AaBb\t",
+                                   "\nAaBb", "AaB\nb", "AaBb\n",
+                                   " AaBb", "AaB b", "AaBb ", 
+                                   ])
+  def test_1110(self, did, gmn_client_v1_v2):
+    """create() / get(): Identifiers with starting, ending or embedded whitespace are
+    rejected
+    """
+    with pytest.raises(pyxb.SimpleFacetValueError):
+      self.create_obj(
+        gmn_client_v1_v2, 'x y', permission_list=[(['subj5'], ['changePermission'])]
+      )

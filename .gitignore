@@ -7,7 +7,7 @@ devpi-settings.sh
 secret_key.txt
 settings.py
 stores/
-test_docs_tidy/
+sample_tidy/
 
 .idea/
 .project

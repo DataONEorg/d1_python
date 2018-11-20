@@ -35,15 +35,15 @@ import d1_test.d1_test_case
 class TestChecksum(d1_test.d1_test_case.D1TestCase):
   parameterize_dict = {
     'test_1000': [
-      dict(filename='checksum_gmn_valid.xml', raises_pyxb_exc=False),
-      dict(filename='checksum_invalid_1.xml', raises_pyxb_exc=True),
-      dict(filename='checksum_invalid_2.xml', raises_pyxb_exc=True),
+      dict(filename='checksum_gmn_valid.json', raises_pyxb_exc=False),
+      dict(filename='checksum_invalid_1.json', raises_pyxb_exc=True),
+      dict(filename='checksum_invalid_2.json', raises_pyxb_exc=True),
     ],
   }
 
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize: XML -> Checksum"""
-    exp_dict = self.sample.load_json(filename)
+    exp_dict = self.test_files.load_json(filename)
     try:
       checksum_pyxb = dataoneTypes.CreateFromDocument(exp_dict['xml'])
     except (pyxb.PyXBException, xml.sax.SAXParseException):

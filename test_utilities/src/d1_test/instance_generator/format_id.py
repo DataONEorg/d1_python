@@ -27,6 +27,7 @@ import d1_common.const
 
 import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
 
 class Generate(object):
@@ -37,12 +38,12 @@ class Generate(object):
     if self._format_id_list is None:
       format_id_set = {
         o.formatId
-        for o in d1_test.sample.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
+        for o in d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
       }
       # Remove the formatIds for object types that are parsed by GMN
       format_id_set.remove(d1_common.const.ORE_FORMAT_ID)
       format_id_set -= set(
-        d1_test.sample.load_json('scimeta_format_id_list.json')
+        d1_test.test_files.load_json('scimeta_format_id_list.json')
       )
       self._format_id_list = sorted(format_id_set)
 

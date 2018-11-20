@@ -17,6 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import d1_common.resource_map
+import d1_test.instance_generator.system_metadata
+import d1_common.const
 
 import copy
 import datetime
@@ -440,6 +443,21 @@ class GMNTestCase(
       )
     return send_sciobj_bytes, send_sysmeta_pyxb
 
+  # create multiple objects
+
+  def create_multiple_objects(self, client, object_count=10):
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      pid_list = []
+      for i in range(object_count):
+        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(client)
+        pid_list.append(pid)
+    return pid_list
+
+  def create_objects_by_list(self, client, pid_list):
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      for pid in pid_list:
+        self.create_obj(client, pid, sid=None)
+
   #
 
   def generate_sciobj_with_defaults(
@@ -473,6 +491,30 @@ class GMNTestCase(
     )
     return pid, sid, sciobj_bytes, sysmeta_pyxb
 
+  # Resource maps
+
+  def create_resource_map(self, client, pid_list, ore_pid=None):
+    ore_pid = (ore_pid or d1_test.instance_generator.identifier.generate_pid('PID_ORE_'))
+    ore = d1_common.resource_map.createSimpleResourceMap(
+      ore_pid, scimeta_pid=pid_list[0], sciobj_pid_list=pid_list[1:]
+    )
+    ore_xml = ore.serialize_to_transport()
+    sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
+      client,
+      io.BytesIO(ore_xml),
+      {
+        'identifier': ore_pid,
+        'formatId': d1_common.const.ORE_FORMAT_ID,
+        'replica': None,
+      },
+    )
+    # self.dump(sysmeta_pyxb)
+    self.call_d1_client(
+      client.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
+    )
+    return ore_pid
+
+
   #
   # Misc
   #
@@ -502,11 +544,11 @@ class GMNTestCase(
 
   def get_pid_list(self):
     """Get list of all PIDs in the DB fixture"""
-    return json.loads(self.sample.load_utf8_to_str('db_fixture_pid.json', 'rb'))
+    return json.loads(self.test_files.load_utf8_to_str('db_fixture_pid.json', 'rb'))
 
   def get_sid_list(self):
     """Get list of all SIDs in the DB fixture"""
-    return json.loads(self.sample.load_utf8_to_str('db_fixture_sid.json', 'rb'))
+    return json.loads(self.test_files.load_utf8_to_str('db_fixture_sid.json', 'rb'))
 
   def get_sid_with_min_chain_length(self, min_len=2):
     """Get list of all SIDs in the DB fixture"""

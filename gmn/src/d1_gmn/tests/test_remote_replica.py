@@ -43,7 +43,9 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.xml
 
+import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
 
 class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
@@ -83,7 +85,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1000(self, gmn_client_v2):
     """Regular replica sections correctly represented"""
-    sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
+    sysmeta_pyxb = d1_test.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0_remote_replica_base.xml'
     )
     sysmeta_pyxb.identifier = 'remote_rep_pid_1'
@@ -97,7 +99,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     nodes
     """
     # Create obj with replica info for node1 and node2 on pid_1
-    sysmeta_1_pyxb = d1_test.sample.load_xml_to_pyxb(
+    sysmeta_1_pyxb = d1_test.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0_remote_replica_base.xml'
     )
     sysmeta_1_pyxb.identifier = 'remote_rep_pid_1'
@@ -113,7 +115,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
     # Create obj with different replica info for node1 and node2 on pid_2
-    sysmeta_2_pyxb = d1_test.sample.load_xml_to_pyxb(
+    sysmeta_2_pyxb = d1_test.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0_remote_replica_base.xml'
     )
     sysmeta_2_pyxb.identifier = 'remote_rep_pid_2'

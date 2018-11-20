@@ -36,7 +36,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
 
   def test_1010(self, cn_client_v1_v2):
     """generate_from_file_path()"""
-    sysmeta_path = self.sample.get_path('systemMetadata_v2_0.xml')
+    sysmeta_path = self.test_files.get_abs_test_file_path('xml/systemMetadata_v2_0.xml')
     sysmeta_pyxb = sysmeta.generate_from_file_path(
       cn_client_v1_v2, sysmeta_path
     )

@@ -40,14 +40,14 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def _create_and_check_scimeta(self, client, pid, format_id, xml_str):
     sysmeta_pyxb = sysmeta.generate_from_file(
       client,
-      io.BytesIO(xml_str),
+      io.BytesIO(xml_str.encode('utf-8')),
       {
         'identifier': pid,
         'formatId': format_id,
         'replica': None,
       },
     )
-    self.call_d1_client(client.create, pid, io.BytesIO(xml_str), sysmeta_pyxb)
+    self.call_d1_client(client.create, pid, io.BytesIO(xml_str.encode('utf-8')), sysmeta_pyxb)
     self.get_obj(client, pid)
 
   @responses.activate
@@ -58,7 +58,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'http://www.icpsr.umich.edu/DDI',
-      b'not a valid XML doc',
+      'not a valid XML doc',
     )
 
   @responses.activate
@@ -69,7 +69,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'unknown_format_id',
-      b'not a valid XML doc',
+      'not a valid XML doc',
     )
 
   @responses.activate
@@ -82,7 +82,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
-        self.sample.load('scimeta_dc_1.xml'),
+        self.test_files.load_xml_to_str('scimeta_dc_1.xml'),
       )
 
   @responses.activate
@@ -93,7 +93,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'http://ns.dataone.org/metadata/schema/onedcx/v1.0',
-      self.sample.load('scimeta_dc_1.xml'),
+      self.test_files.load_xml_to_str('scimeta_dc_1.xml'),
     )
 
   @responses.activate
@@ -106,7 +106,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'http://datadryad.org/profile/v3.1',
-        self.sample.load('scimeta_isotc211_1.xml'),
+        self.test_files.load_xml_to_str('scimeta_isotc211_1.xml'),
       )
 
   @responses.activate
@@ -116,7 +116,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
       gmn_client_v1_v2,
       identifier.generate_pid('PID_SCIMETA_'),
       'eml://ecoinformatics.org/eml-2.1.1',
-      self.sample.load('scimeta_eml_valid.xml'),
+      self.test_files.load_xml_to_str('scimeta_eml_valid.xml'),
     )
 
   @responses.activate
@@ -129,7 +129,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
-        self.sample.load('scimeta_eml_invalid_1.xml'),
+        self.test_files.load_xml_to_str('scimeta_eml_invalid_1.xml'),
       )
 
   @responses.activate
@@ -142,7 +142,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
-        self.sample.load('scimeta_eml_invalid_2.xml'),
+        self.test_files.load_xml_to_str('scimeta_eml_invalid_2.xml'),
       )
 
   @responses.activate
@@ -161,7 +161,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
           gmn_client_v1_v2,
           identifier.generate_pid('PID_SCIMETA_'),
           'eml://ecoinformatics.org/eml-2.1.1',
-          self.sample.load('scimeta_eml_invalid_2.xml'),
+          self.test_files.load_xml_to_str('scimeta_eml_invalid_2.xml'),
         )
 
   @responses.activate
@@ -176,5 +176,5 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         gmn_client_v1_v2,
         identifier.generate_pid('PID_SCIMETA_'),
         'eml://ecoinformatics.org/eml-2.1.1',
-        self.sample.load('scimeta_eml_invalid_2.xml'),
+        self.test_files.load_xml_to_str('scimeta_eml_invalid_2.xml'),
       )

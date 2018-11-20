@@ -110,7 +110,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1060(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata
+    sysmeta.obsoletes pointing to KNOWN object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = (
@@ -129,7 +129,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1070(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
-    sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata
+    sysmeta_pyxb.obsoletes pointing to UNKNOWN object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       new_pid, sid, sciobj_bytes, sysmeta_pyxb = (
@@ -143,7 +143,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1080(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
-    sysmeta_pyxb.obsoletedBy pointing to known object raises InvalidSystemMetadata
+    sysmeta.obsoletedBy pointing to KNOWN object raises InvalidSystemMetadata
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
       old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = (
@@ -162,14 +162,13 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
   def test_1090(self, gmn_client_v1_v2):
     """MNStorage.create(): Creating standalone object with
-    sysmeta_pyxb.obsoletedBy pointing to unknown object raises InvalidSystemMetadata
+    sysmeta_pyxb.obsoletedBy pointing to UNKNOWN object raises InvalidSystemMetadata
     """
-
     with d1_gmn.tests.gmn_mock.disable_auth():
       new_pid, sid, sciobj_bytes, sysmeta_pyxb = (
         self.generate_sciobj_with_defaults(gmn_client_v1_v2)
       )
-      sysmeta_pyxb.obsoletes = d1_test.instance_generator.identifier.generate_pid()
+      sysmeta_pyxb.obsoletedBy = d1_test.instance_generator.identifier.generate_pid()
 
       with pytest.raises(d1_common.types.exceptions.InvalidSystemMetadata):
         gmn_client_v1_v2.create(new_pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)

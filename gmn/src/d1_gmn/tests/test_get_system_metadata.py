@@ -40,6 +40,7 @@ import d1_test.instance_generator.sciobj
 import d1_test.mock_api.django_client
 import d1_test.mock_api.get
 
+import d1_test.instance_generator.identifier
 
 class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
   @responses.activate
@@ -59,7 +60,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """SysMeta: Roundtrip of fully populated System Metadata"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       # Prepare fully populated sysmeta
-      orig_sysmeta_pyxb = self.sample.load_xml_to_pyxb(
+      orig_sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
         'systemMetadata_v2_0.xml'
       )
       pid = d1_test.instance_generator.identifier.generate_pid()

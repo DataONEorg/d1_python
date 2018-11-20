@@ -140,6 +140,7 @@ def _request_callback(request):
         msg = _make_attribute_error_msg(e)
         logging.error(msg)
         return django.http.HttpResponse(msg)
+      raise
     except Exception:
       logging.exception(
         'Django test client raised exception. base_url="{}" url_path="{}"'

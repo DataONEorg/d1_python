@@ -19,7 +19,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import io as StringIO
+import io
+import urllib
+import urllib.parse
+
+import d1_common.type_conversions
+import d1_common.xml
+import pytest
 
 import rdflib
 import rdflib.compare
@@ -29,6 +35,9 @@ import d1_common.util
 
 import d1_test.d1_test_case
 
+
+# TODO: Move this to docs
+#
 # d1_pyore Examples
 # =================
 #
@@ -300,7 +309,7 @@ import d1_test.d1_test_case
 #   ]
 #
 
-
+@pytest.mark.skip('Disabled until reproducible XML serialization is fixed')
 class TestResourceMap(d1_test.d1_test_case.D1TestCase):
   # def _norm_nt(self, nt_str):
   #   return sorted([sorted(v.split(' ')) for v in nt_str.split('\n')])
@@ -351,7 +360,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     assert isinstance(aggr, rdflib.URIRef)
     assert str(
       aggr
-    ) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid/aggregation'
+    ) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation'
 
   def test_1040(self, mn_client_v2):
     """getObjectByPid()"""
@@ -460,8 +469,34 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
   def test_1170(self, mn_client_v2):
     """asGraphvizDot()"""
     ore = self._create()
-    stream = StringIO.StringIO()
+    stream = io.StringIO()
     ore.asGraphvizDot(stream)
     self.sample.assert_equals(
       stream.getvalue(), 'as_graphviz_dot', mn_client_v2
     )
+
+  # def _create(self):
+  #   return
+
+  # tricky_identifier_tup
+  def test_2000(self):
+    """Unicode identifiers that use various reserved characters and embedded URL
+    segments are correctly escaped
+    """
+    # import xml.etree.ElementTree
+
+    did_str = 'DIDDID'
+    ore = d1_common.resource_map.ResourceMap(
+      'ORE_PID_' + did_str,
+      'META_PID_' + did_str,
+      ['DATA1_PID_' + did_str, 'DATA2_PID', 'DATA3_PID'],
+    )
+
+    xml = ore.serialize_to_display()
+
+    self.sample.assert_equals(
+      xml,
+      urllib.parse.quote(did_str.encode('utf-8'), safe=' @$,~*&'),
+      no_wrap=True,
+    )
+

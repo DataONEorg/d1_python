@@ -30,23 +30,14 @@ import d1_gmn.tests.gmn_test_case
 import d1_common
 import d1_common.system_metadata
 
-import d1_test.sample
+import d1_test.test_files
 
 
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  parameterize_dict = {
-    'test_1000':
-      [{
-        'unicode_pid': s.split('\t')[0]
-      }
-       for s in d1_test.sample.
-       load_utf8_to_str('tricky_identifiers_unicode.utf8.txt').splitlines()
-       if not s.startswith('#')],
-  }
-
   @responses.activate
-  def test_1000(self, gmn_client_v1_v2, unicode_pid):
+  def test_1000(self, gmn_client_v1_v2, tricky_identifier_tup):
     """Unicode: GMN and libraries handle Unicode correctly"""
+    unicode_pid = tricky_identifier_tup[0]
     with d1_gmn.tests.gmn_mock.disable_auth():
       logging.debug('Testing PID: {}'.format(unicode_pid))
       pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(

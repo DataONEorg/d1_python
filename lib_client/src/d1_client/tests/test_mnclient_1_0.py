@@ -28,7 +28,7 @@ import d1_test.sample
 
 class TestMNClient(d1_test.d1_test_case.D1TestCase):
   def setup_class(self):
-    self.sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
+    self.sysmeta_pyxb = d1_test.test_files.load_xml_to_pyxb(
       'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     )
 

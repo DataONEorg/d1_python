@@ -40,7 +40,7 @@ class TestLogRecords(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize various Log XML docs"""
     try:
-      self.sample.load_xml_to_pyxb(filename)
+      self.test_files.load_xml_to_pyxb(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if not raises_pyxb_exc:
         raise

@@ -103,6 +103,10 @@ def extract_subject_from_dn(cert_obj):
 
 
 def deserialize_pem(cert_pem):
+  """Deserialize PEM to cryptography.Certificate
+  - {cert_pem} can be a str or bytes"""
+  if isinstance(cert_pem, str):
+    cert_pem = cert_pem.encode('utf-8')
   return cryptography.x509.load_pem_x509_certificate(
     cert_pem,
     cryptography.hazmat.backends.default_backend(),

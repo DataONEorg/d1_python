@@ -25,12 +25,13 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
 
 class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
   def setup_method(self):
-    # ap_pyxb = d1_test.sample.load_xml_to_pyxb('accessPolicy_v1_0.redundant.xml')
-    self.sysmeta_pyxb = d1_test.sample.load_xml_to_pyxb(
+    # ap_pyxb = d1_test.test_files.load_xml_to_pyxb('accessPolicy_v1_0.redundant.xml')
+    self.sysmeta_pyxb = d1_test.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0.tz_non_utc.xml'
     )
 
@@ -125,11 +126,11 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
     with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(
         self.sysmeta_pyxb
     ) as ap:
-      other_pyxb = self.sample.load_xml_to_pyxb(
+      other_pyxb = self.test_files.load_xml_to_pyxb(
         'systemMetadata_v2_0.tz_non_utc.xml'
       )
       assert ap.are_equivalent_pyxb(other_pyxb.accessPolicy)
-      other_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+      other_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
       assert not ap.are_equivalent_pyxb(other_pyxb.accessPolicy)
 
   def test_1100(self):
@@ -138,11 +139,11 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
         self.sysmeta_pyxb
     ) as ap:
       # self.sample.save_obj(self.sysmeta_pyxb.accessPolicy, 'accessPolicy_v1_0.xml')
-      other_xml = self.sample.load_utf8_to_str(
+      other_xml = self.test_files.load_xml_to_str(
         'accessPolicy_v1_0.redundant.xml'
       )
       assert not ap.are_equivalent_xml(other_xml)
-      other_xml = self.sample.load_utf8_to_str('accessPolicy_v1_0.xml')
+      other_xml = self.test_files.load_xml_to_str('accessPolicy_v1_0.xml')
       assert ap.are_equivalent_xml(other_xml)
 
   def test_1110(self):

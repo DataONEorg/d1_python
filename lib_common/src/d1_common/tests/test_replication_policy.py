@@ -24,17 +24,17 @@ import d1_common.replication_policy
 import d1_common.xml
 
 import d1_test.d1_test_case
-
+import d1_test.test_files
 
 class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
-  sm_with_rp_pyxb = d1_test.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
-  sm_without_rp_pyxb = d1_test.sample.load_xml_to_pyxb(
+  sm_with_rp_pyxb = d1_test.test_files.load_xml_to_pyxb('systemMetadata_v2_0.xml')
+  sm_without_rp_pyxb = d1_test.test_files.load_xml_to_pyxb(
     'sysmeta_variation_3.xml'
   )
-  rp_pyxb = d1_test.sample.load_xml_to_pyxb(
+  rp_pyxb = d1_test.test_files.load_xml_to_pyxb(
     'systemMetadata_v2_0.xml'
   ).replicationPolicy
-  rp_swiz_pyxb = d1_test.sample.load_xml_to_pyxb(
+  rp_swiz_pyxb = d1_test.test_files.load_xml_to_pyxb(
     'systemMetadata_v2_0.swizzled.xml'
   ).replicationPolicy
 

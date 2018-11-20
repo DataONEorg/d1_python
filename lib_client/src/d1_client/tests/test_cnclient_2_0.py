@@ -99,8 +99,8 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
   def test_1050(self):
     """echoCredentials(): Live test against prod env: Invalid cert"""
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      base_url=d1_common.const.URL_DATAONE_ROOT, cert_pem_path=self.sample.
-      get_path('cert_with_equivalents_invalid_serialization.pem')
+      base_url=d1_common.const.URL_DATAONE_ROOT, cert_pem_path=self.test_files.
+      get_abs_test_file_path('cert/cert_with_equivalents_invalid_serialization.pem')
     )
     with pytest.raises(OpenSSL.SSL.Error) as exc_info:
       live_client.echoCredentials()
@@ -114,7 +114,7 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
     d1_test.mock_api.catch_all.add_callback(
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
-    sysmeta_pyxb = self.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
+    sysmeta_pyxb = self.test_files.load_xml_to_pyxb('systemMetadata_v2_0.xml')
     recv_sysmeta_pyxb = cn_client_v2.echoSystemMetadata(sysmeta_pyxb)
     d1_test.mock_api.catch_all.assert_expected_echo(
       recv_sysmeta_pyxb, 'system_metadata_echo', cn_client_v2
@@ -122,7 +122,7 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
 
   def test_1070(self):
     """echoSystemMetadata(): Live test against prod env"""
-    sysmeta_pyxb = self.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
+    sysmeta_pyxb = self.test_files.load_xml_to_pyxb('systemMetadata_v2_0.xml')
     live_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       base_url=d1_common.const.URL_DATAONE_ROOT
     )

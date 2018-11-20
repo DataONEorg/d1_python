@@ -34,10 +34,10 @@ import django.core.cache
 
 class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def load_sample_cert_jwt_pair(self, cert_file_name, jwt_file_name):
-    cert_pem = self.sample.load(cert_file_name)
+    cert_pem = self.test_files.load_cert(cert_file_name)
     cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)
     # d1_common.cert.x509.log_cert_info(logging.info, 'CERT', cert_obj)
-    jwt_bu64 = self.sample.load_utf8_to_str(jwt_file_name)
+    jwt_bu64 = self.test_files.load_jwt(jwt_file_name)
     # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
     return cert_obj, jwt_bu64
 

@@ -37,7 +37,7 @@ class TestObjectList(d1_test.d1_test_case.D1TestCase):
   def test_1000(self, filename, raises_pyxb_exc):
     """Deserialize various ObjectList XML docs"""
     try:
-      self.sample.load_utf8_to_str(filename)
+      self.test_files.load_xml_to_str(filename)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if not raises_pyxb_exc:
         raise

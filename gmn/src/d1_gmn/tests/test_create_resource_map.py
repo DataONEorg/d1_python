@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test MNStorage.create() and MNStorage.update() with Resource Map
 """
-
+import d1_common.types.exceptions
 import io
 import logging
 
@@ -39,6 +39,7 @@ import d1_test.instance_generator.random_data as random_data
 import d1_test.instance_generator.system_metadata as sysmeta
 
 import django.test
+import d1_common.types
 
 # # Long test
 # NUM_CREATE = 1000
@@ -56,42 +57,6 @@ MAP_CHANCE = 0.2
 
 
 class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  # Having these methods at the top seems to confuse PyCharm's detection of test
-  # framework. It creates plain Python instead of pytest test runners.
-  def _create_objects(self, client):
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      pid_list = []
-      for i in range(10):
-        pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(client)
-        pid_list.append(pid)
-    return pid_list
-
-  def _create_objects_by_list(self, client, pid_list):
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      for pid in pid_list:
-        self.create_obj(client, pid, sid=None)
-
-  def _create_resource_map(self, client, pid_list, ore_pid=None):
-    ore_pid = (ore_pid or identifier.generate_pid('PID_ORE_'))
-    ore = d1_common.resource_map.createSimpleResourceMap(
-      ore_pid, scimeta_pid=pid_list[0], sciobj_pid_list=pid_list[1:]
-    )
-    ore_xml = ore.serialize_to_transport()
-    sysmeta_pyxb = sysmeta.generate_from_file(
-      client,
-      io.BytesIO(ore_xml),
-      {
-        'identifier': ore_pid,
-        'formatId': d1_common.const.ORE_FORMAT_ID,
-        'replica': None,
-      },
-    )
-    # self.dump(sysmeta_pyxb)
-    self.call_d1_client(
-      client.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb
-    )
-    return ore_pid
-
   @responses.activate
   @django.test.override_settings(
     RESOURCE_MAP_CREATE='block',
@@ -100,8 +65,8 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.create(): "block" mode: Creating a resource map after
     creating its aggregated objects is supported
     """
-    pid_list = self._create_objects(gmn_client_v2)
-    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
+    pid_list = self.create_multiple_objects(gmn_client_v2)
+    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -117,7 +82,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """
     pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
     with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-      self._create_resource_map(gmn_client_v2, pid_list)
+      self.create_resource_map(gmn_client_v2, pid_list)
 
   @responses.activate
   @django.test.override_settings(
@@ -127,8 +92,8 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNStorage.create(): "open" mode: Creating a resource map after
     creating its aggregated objects is supported
     """
-    pid_list = self._create_objects(gmn_client_v2)
-    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
+    pid_list = self.create_multiple_objects(gmn_client_v2)
+    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -143,7 +108,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     creating its aggregated objects is supported
     """
     pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
-    ore_pid = self._create_resource_map(gmn_client_v2, pid_list)
+    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
     member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(
       ore_pid
     )
@@ -177,7 +142,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
       is_ore = random_data.random_bool_factor(MAP_CHANCE)
       if is_ore:
-        self._create_resource_map(gmn_client_v1_v2, aggr_list, pid)
+        self.create_resource_map(gmn_client_v1_v2, aggr_list, pid)
       else:
         self.create_obj(gmn_client_v1_v2, pid, sid=none_true)
       logging.info(

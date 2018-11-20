@@ -26,21 +26,22 @@ import d1_common.system_metadata
 import d1_common.xml
 
 import d1_test.d1_test_case
+import d1_test.test_files
 
 
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
-  sm_pyxb = d1_test.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
+  sm_pyxb = d1_test.test_files.load_xml_to_pyxb('systemMetadata_v2_0.xml')
 
   def test_1000(self):
     """PyXB performs schema validation on sysmeta object and raises
     pyxb.PyXBException on invalid XML doc
     """
     with pytest.raises(pyxb.PyXBException):
-      self.sample.load_xml_to_pyxb('systemMetadata_v1_0.invalid.xml')
+      self.test_files.load_xml_to_pyxb('systemMetadata_v1_0.invalid.xml')
 
   def test_1010(self):
     """are_equivalent() Returns False for modified sysmeta"""
-    modified_pyxb = self.sample.load_xml_to_pyxb('systemMetadata_v2_0.xml')
+    modified_pyxb = self.test_files.load_xml_to_pyxb('systemMetadata_v2_0.xml')
     modified_pyxb.identifier = 'modifiedIdentifier'
     assert not d1_common.system_metadata.are_equivalent_pyxb(
       self.sm_pyxb, modified_pyxb
@@ -57,7 +58,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     any order without changing the meaning of the doc have been shuffled
     around
     """
-    swizzled_pyxb = self.sample.load_xml_to_pyxb(
+    swizzled_pyxb = self.test_files.load_xml_to_pyxb(
       'systemMetadata_v2_0.swizzled.xml'
     )
     assert d1_common.system_metadata.are_equivalent_pyxb(
@@ -66,19 +67,19 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
 
   def test_1040(self):
     """update_elements(): Elements are copied from src to dst"""
-    dst_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
-    src_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_2.xml')
+    dst_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    src_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_2.xml')
     d1_common.system_metadata.update_elements(
       dst_pyxb, src_pyxb, ['identifier', 'accessPolicy', 'size', 'checksum']
     )
-    # orig_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    # orig_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
     # logging.debug(self.sample.get_sxs_diff(orig_pyxb, dst_pyxb))
     self.sample.assert_equals(dst_pyxb, 'update_elements_copy')
 
   def test_1050(self):
     """update_elements(): Passing invalid element raies ValueError"""
-    dst_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
-    src_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_2.xml')
+    dst_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    src_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_2.xml')
     with pytest.raises(ValueError) as exc_info:
       d1_common.system_metadata.update_elements(
         dst_pyxb, src_pyxb, [
@@ -92,6 +93,6 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     #
     #   assert 'identifier' not in str(exc_info)
     #
-    # # orig_pyxb = self.sample.load_xml_to_pyxb('sysmeta_variation_1.xml')
+    # # orig_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
     # # logging.debug(self.sample.get_sxs_diff(orig_pyxb, dst_pyxb))
     # self.sample.assert_equals(dst_pyxb, 'update_elements')

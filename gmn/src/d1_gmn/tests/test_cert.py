@@ -24,12 +24,14 @@ import responses
 
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.tests.gmn_test_case
+import d1_test.d1_test_case
+import d1_test.test_files
 
 import d1_test.sample
 
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  cert_simple_subject_info_pem = d1_test.sample.load_utf8_to_str(
+  cert_simple_subject_info_pem = d1_test.test_files.load_cert(
     'cert_with_simple_subject_info.pem'
   )
 

@@ -167,7 +167,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
 
   def save_compressed_db_fixture(self):
-    fixture_file_path = self.sample.get_path('db_fixture.json.bz2')
+    fixture_file_path = self.test_files.get_abs_test_file_path('db_fixture.json.bz2')
     logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
     with bz2.BZ2File(
         fixture_file_path, 'w', buffering=1024, compresslevel=9
