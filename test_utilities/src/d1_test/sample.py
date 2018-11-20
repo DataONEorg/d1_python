@@ -21,9 +21,7 @@
 import d1_test.pycharm
 import base64
 import bz2
-import codecs
 import contextlib
-import json
 import logging
 import os
 import re
@@ -50,6 +48,8 @@ import django
 import django.core
 import django.core.management
 
+import d1_test.test_files
+
 MAX_LINE_WIDTH = 130
 
 
@@ -61,8 +61,8 @@ def start_tidy():
   best place to call it from appears to be ./conftest.pytest_sessionstart().
   """
   logging.info('Moving files to tidy dir')
-  sample_dir_path = os.path.join(d1_common.util.abs_path('test_docs'))
-  tidy_dir_path = os.path.join(d1_common.util.abs_path('test_docs_tidy'))
+  sample_dir_path = get_abs_sample_file_path('')
+  tidy_dir_path = get_abs_sample_tidy_file_path('')
   d1_common.util.create_missing_directories_for_dir(sample_dir_path)
   d1_common.util.create_missing_directories_for_dir(tidy_dir_path)
   i = 0
@@ -75,26 +75,34 @@ def start_tidy():
   logging.info('Moved {} files'.format(i))
 
 
+def get_abs_sample_file_path(filename):
+  return d1_test.test_files.get_abs_test_file_path(os.path.join('sample', filename))
+
+
+def get_abs_sample_tidy_file_path(filename):
+  return d1_test.test_files.get_abs_test_file_path(os.path.join('sample_tidy', filename))
+
+
 def assert_diff_equals(
-    a_obj, b_obj, filename_postfix_str, client=None, extension_str='sample'
+    left_obj, right_obj, filename_postfix_str, client=None, extension_str='sample'
 ):
   """Check that the difference between two objects, typically captured before
   and after some operation, is as expected"""
-  a_str = obj_to_pretty_str(a_obj)
-  b_str = obj_to_pretty_str(b_obj)
-  diff_str = _get_sxs_diff_str(a_str, b_str)
+  left_str = obj_to_pretty_str(left_obj)
+  right_str = obj_to_pretty_str(right_obj)
+  diff_str = _get_sxs_diff_str(left_str, right_str)
   if diff_str is None:
     return
   return assert_equals(diff_str, filename_postfix_str, client, extension_str)
 
 
 def assert_equals(
-    got_obj, filename_postfix_str, client=None, extension_str='sample'
+    got_obj, filename_postfix_str, client=None, extension_str='sample', no_wrap=False
 ):
   filename = _format_file_name(client, filename_postfix_str, extension_str)
   logging.info('Using sample file. filename="{}"'.format(filename))
   exp_path = _get_or_create_path(filename)
-  got_str = obj_to_pretty_str(got_obj)
+  got_str = obj_to_pretty_str(got_obj, no_wrap=no_wrap)
 
   if pytest.config.getoption('--sample-review'):
     _review_interactive(got_str, exp_path, filename_postfix_str)
@@ -139,19 +147,17 @@ def assert_equal_str(got_obj, exp_obj):
 
 
 def get_path(filename):
-  # When tidying, get_path() may move samples, which can cause concurrent calls
+  # When tidying, get_path_list() may move samples, which can cause concurrent calls
   # to receive different paths for the same file. This is resolved by
-  # serializing calls to get_path(). Regular multiprocessing.Lock() does not
+  # serializing calls to get_path_list(). Regular multiprocessing.Lock() does not
   # seem to work under pytest-xdist.
   with posix_ipc.Semaphore(
       '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
   ):
-    path = os.path.join(d1_common.util.abs_path('test_docs'), filename)
+    path = get_abs_sample_file_path(filename)
     if os.path.isfile(path):
       return path
-    tidy_file_path = os.path.join(
-      d1_common.util.abs_path('test_docs_tidy'), filename
-    )
+    tidy_file_path = get_abs_sample_tidy_file_path(filename)
     if os.path.isfile(tidy_file_path):
       os.rename(tidy_file_path, path)
     return path
@@ -160,22 +166,6 @@ def get_path(filename):
 def load(filename, mode_str='rb'):
   with open(_get_or_create_path(filename), mode_str) as f:
     return f.read()
-
-
-def load_utf8_to_str(filename, strip_xml_encoding_declaration=False):
-  utf8_path = _get_or_create_path(filename)
-  return _load_utf8_to_str(utf8_path, strip_xml_encoding_declaration)
-
-
-def load_xml_to_pyxb(filename):
-  logging.debug('Loading sample XML file. filename="{}"'.format(filename))
-  xml_str = load_utf8_to_str(filename)
-  return d1_common.types.dataoneTypes.CreateFromDocument(xml_str)
-
-
-def load_json(filename, mode_str='r'):
-  logging.debug('Loading sample JSON file. filename="{}"'.format(filename))
-  return json.loads(load_utf8_to_str(filename))
 
 
 def save_path(got_str, exp_path, mode_str='wb'):
@@ -200,21 +190,21 @@ def save(got_str, filename, mode_str='wb'):
   save_path(got_str, path, mode_str)
 
 
-def get_sxs_diff(a_obj, b_obj):
+def get_sxs_diff(left_obj, right_obj):
   return _get_sxs_diff_str(
-    obj_to_pretty_str(a_obj),
-    obj_to_pretty_str(b_obj),
+    obj_to_pretty_str(left_obj),
+    obj_to_pretty_str(right_obj),
   )
 
 
-def gui_sxs_diff(a_obj, b_obj):
+def gui_sxs_diff(left_obj, right_obj):
   return _gui_diff_str_str(
-    obj_to_pretty_str(a_obj),
-    obj_to_pretty_str(b_obj),
+    obj_to_pretty_str(left_obj),
+    obj_to_pretty_str(right_obj),
   )
 
 
-def obj_to_pretty_str(o, no_clobber=False):
+def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
   """Serialize object to str
   - Create a normalized string representation of the object that is suitable for
   using in a diff.
@@ -241,7 +231,7 @@ def obj_to_pretty_str(o, no_clobber=False):
     # ResourceMap (rdflib.ConjunctiveGraph)
     with ignore_exceptions():
       return '\n'.join(
-        sorted(o.serialize_to_display(doc_format='nt').splitlines())
+        o.serialize_to_display(doc_format='nt').splitlines()
       )
     # Dict returned from Requests
     if isinstance(o, requests.structures.CaseInsensitiveDict):
@@ -304,7 +294,8 @@ def obj_to_pretty_str(o, no_clobber=False):
   if not no_clobber:
     s = _clobber_uncontrolled_volatiles(s)
 
-  s = wrap_and_preserve_newlines(s)
+  if not no_wrap:
+    s = wrap_and_preserve_newlines(s)
 
   return s
 
@@ -380,16 +371,6 @@ def _format_file_name(client, filename_postfix_str, extension_str):
   return '{}.{}'.format('_'.join(section_list), extension_str)
 
 
-def _load_utf8_to_str(utf8_path, strip_xml_encoding_declaration=False):
-  unicode_file = codecs.open(utf8_path, encoding='utf-8', mode='r')
-  unicode_str = unicode_file.read()
-  if strip_xml_encoding_declaration:
-    unicode_str = re.sub(
-      r'\s*encoding\s*=\s*"UTF-8"\s*', '', unicode_str, re.IGNORECASE
-    )
-  return unicode_str
-
-
 def _get_sxs_diff_str(got_str, exp_str):
   with tempfile.NamedTemporaryFile(suffix='__EXPECTED') as exp_f:
     exp_f.write(exp_str.encode('utf-8'))
@@ -434,15 +415,15 @@ def _get_sxs_diff_file(got_str, exp_path):
 
 
 def _gui_diff_str_path(got_str, exp_path, filename_postfix_str=None):
-  exp_str = load_utf8_to_str(exp_path)
+  exp_str = d1_test.test_files.load_utf8_to_str(exp_path)
   with _tmp_file_pair(got_str, exp_str, filename_postfix_str) as (got_f, exp_f):
     # subprocess.call(['kdiff3', got_f.name, exp_f.name])
     d1_test.pycharm.diff(got_f.name, exp_f.name)
 
-def _gui_diff_str_str(a_str, b_str, filename_postfix_str=None):
-  with _tmp_file_pair(a_str, b_str, filename_postfix_str) as (a_f, b_f):
-    # subprocess.call(['kdiff3', a_f.name, b_f.name])
-    d1_test.pycharm.diff(a_f.name, b_f.name)
+def _gui_diff_str_str(left_str, right_str, filename_postfix_str=None):
+  with _tmp_file_pair(left_str, right_str, filename_postfix_str) as (left_f, right_f):
+    # subprocess.call(['kdiff3', left_f.name, right_f.name])
+    d1_test.pycharm.diff(left_f.name, right_f.name)
 
 
 def _save_interactive(got_str, exp_path, filename_postfix_str=None):
@@ -454,8 +435,8 @@ def _save_interactive(got_str, exp_path, filename_postfix_str=None):
     raise AssertionError('Failure triggered interactively')
 
 
-def _diff_interactive(a_str, b_str):
-  _gui_diff_str_str(a_str, b_str)
+def _diff_interactive(left_str, right_str):
+  _gui_diff_str_str(left_str, right_str)
   answer_str = ask_diff_ignore()
   if answer_str == 'f':
     raise AssertionError('Failure triggered interactively')

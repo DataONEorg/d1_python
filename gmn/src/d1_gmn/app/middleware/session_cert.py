@@ -29,21 +29,6 @@ A user can connect with a certificate that does not contain a list of
 equivalent identities and group memberships (no SubjectInfo). This limits the
 user's access to data that is publicly available and that is available directly
 to that user (as designated in the Subject DN).
-
-The list of subjects to use for access control is created with the following
-algorithm:
-
-- Start with empty set of subjects
-- Add the symbolic subject, "public"
-- If the connection was made without a certificate:
-  - Stop.
-- Add the symbolic subject, "authenticatedUser"
-- Get the DN from the Subject and serialize it to a standardized string. This
-  string is called Subject below.
-- Add Subject
-- If the certificate does not have a SubjectInfo extension:
-  - Stop.
-- Add subjects from SubjectInfo.
 """
 
 import d1_common.cert.subjects
@@ -71,14 +56,14 @@ def get_subjects(request):
 
 
 def get_authenticated_subjects(cert_pem):
-  primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
-    cert_pem.encode('utf-8')
+  """Return primary subject and set of equivalents authenticated by certificate
+  - {cert_pem} can be str or bytes
+  """
+  if isinstance(cert_pem, str):
+    cert_pem = cert_pem.encode('utf-8')
+  return d1_common.cert.subjects.extract_subjects(
+    cert_pem
   )
-  equivalent_set |= {
-    d1_common.const.SUBJECT_PUBLIC,
-    d1_common.const.SUBJECT_AUTHENTICATED,
-  }
-  return primary_str, equivalent_set
 
 
 def _is_certificate_provided(request):

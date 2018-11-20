@@ -41,6 +41,7 @@ import d1_common.date_time
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 import d1_test.sample
+import d1_test.test_files
 
 from d1_client.cnclient_1_2 import CoordinatingNodeClient_1_2 as cn_v1
 from d1_client.cnclient_2_0 import CoordinatingNodeClient_2_0 as cn_v2
@@ -52,8 +53,6 @@ import django.core.management
 import django.db
 import django.db.transaction
 import django.db.utils
-
-
 
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
@@ -146,20 +145,18 @@ def pytest_sessionstart(session):
   """Called by pytest before calling session.main()
   - When running in parallel with xdist, this is called once for each worker. By
   default, the number of workers is the same as the number of CPU cores.
-  - NOTE: These cannot be used when running in parallel with xdist.
   """
   exit_if_switch_used_with_xdist([
     '--sample-ask',
     '--sample-update',
     '--sample-review',
-    '--sample-tidy',
+    # --sample-tidy is supported with xdist
     '--pycharm',
     '--fixture-refresh',
     '--skip',
     '--skip-clear',
     '--skip-print',
   ])
-
   if pytest.config.getoption('--sample-tidy'):
     logging.info('Starting sample tidy')
     d1_test.sample.start_tidy()
@@ -169,11 +166,9 @@ def pytest_sessionstart(session):
       'Dropping and creating GMN template database from JSON fixture file'
     )
     db_drop(TEMPLATE_DB_KEY)
-
   if pytest.config.getoption('--skip-clear'):
     logging.info('Clearing list of passed tests')
     _clear_skip_list()
-
   if pytest.config.getoption('--skip-print'):
     logging.info('Printing list of passed tests')
     _print_skip_list()
@@ -260,9 +255,15 @@ def _print_skip_list():
 
 def _open_error_in_pycharm(call):
   """Attempt to open error locations in PyCharm. Use with --exitfirst (-x)"""
-  src_path = call.excinfo.traceback[-1].path
-  src_line = call.excinfo.traceback[-1].lineno + 1
-  d1_test.pycharm.open_and_set_cursor(src_path, src_line)
+  logging.error('Test raised exception: {}'.format(call.excinfo.exconly()))
+  test_path, test_lineno = d1_test.d1_test_case.D1TestCase.get_d1_test_case_location(call.excinfo.tb)
+  logging.error('D1TestCase location: {}:{}'.format(test_path, test_lineno))
+  exc_frame = call.excinfo.traceback.getcrashentry()
+  logging.error('Exception location: {}({})'.format(exc_frame.path, exc_frame.lineno + 1))
+  # src_path = call.excinfo.traceback[-1].path
+  # src_line = call.excinfo.traceback[-1].lineno + 1
+  d1_test.pycharm.open_and_set_cursor(test_path, test_lineno)
+
 
 # Fixtures
 
@@ -351,6 +352,17 @@ def mn_client_v2(request):
 def mn_client_v1_v2(request):
   yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
+@pytest.fixture(
+  scope='function',
+  params=d1_test.test_files.TRICKY_IDENTIFIER_LIST
+)
+def tricky_identifier_tup(request):
+  """Unicode identifiers that use various reserved characters and embedded URL
+  segments. Each fixture is a 2-tuple where the first value is a
+  Unicode identifier and the second is a URL escaped version of the identifier.
+  """
+  yield request.param
+
 
 # Settings
 
@@ -408,9 +420,8 @@ def django_db_setup(request, django_db_blocker):
     # acquire() and release(). It's probably related to how the worker processes
     # relate to each other when launched by pytest-xdist as compared to what the
     # multiprocessing module expects.
-    with posix_ipc.Semaphore(
-        '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
-    ):
+    with posix_ipc.Semaphore('/{}'.format(__name__), flags=posix_ipc.O_CREAT,
+                             initial_value=1):
       logging.warning(
         'LOCK BEGIN {} {}'.format(
           db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
@@ -464,8 +475,9 @@ def db_create_from_template():
   new_db_name = db_get_name_by_key(TEST_DB_KEY)
   template_db_name = db_get_name_by_key(TEMPLATE_DB_KEY)
   logging.info(
-    'Creating new db from template. new_db="{}" template_db="{}"'.
-    format(new_db_name, template_db_name)
+    'Creating new db from template. new_db="{}" template_db="{}"'.format(
+      new_db_name, template_db_name
+    )
   )
   run_sql(
     'postgres',
@@ -480,7 +492,7 @@ def db_populate_by_json(db_key):
     'loaddata',
     'db_fixture',
     database=db_key,
-    # d1_test.sample.get_path('db_fixture.json.bz2'),
+    # d1_test.sample.get_path_list('db_fixture.json.bz2'),
     # verbosity=0,
     # commit=False,
   )

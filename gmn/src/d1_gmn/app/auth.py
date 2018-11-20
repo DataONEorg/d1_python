@@ -216,7 +216,6 @@ def assert_allowed(request, level, pid):
   """Assert that one or more subjects are allowed to perform action on object.
   Raise NotAuthorized if object exists and subject is not allowed.
   Raise NotFound if object does not exist.
-  Return NoneType if subject is allowed.
   """
   if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.NotFound(

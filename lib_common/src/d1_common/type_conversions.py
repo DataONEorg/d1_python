@@ -19,20 +19,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-In the DataONE Python stack, XML docs are represented in a few different ways.
+- Handle conversions between XML representations used in the D1 Python stack
+- Handle conversions between v1 and v2 DataONE XML types
 
-- Received and transmitted as utf-8 text documents.
-- On the borders of the Python domain, handled as utf-8 or Unicode strings.
-- Schema validation and manipulation in Python code as PyXB binding objects.
-- General processing as ElementTrees.
+In the stack, XML docs are represented as follows:
+
+- As native Unicode str, typically "pretty printed" with indentations, when
+formatted for display
+- As UTF-8 encoded byte strings when send sending or receiving over the network,
+or loading or saving as files
+- Schema validation and manipulation in Python code as PyXB binding objects
+- General processing as ElementTrees
+
+In order to allow conversions between all representations without having to
+implement separate conversions for each combination of input and output
+representation, a "hub and spokes" model is used. Native Unicode str was
+selected as the "hub" representation due to:
 
 - PyXB provides translation to/from string and DOM.
 - ElementTree provides translation to/from string.
-
-We select string as the "hub" representation for XML.
 """
 
 import re
+import xml.etree
 import xml.etree.ElementTree
 
 import pyxb
@@ -48,12 +57,22 @@ import d1_common.util
 # PyXB shares information about all known types between all imported bindings.
 PYXB_BINDING = d1_common.types.dataoneTypes_v1
 
+# Map common namespace prefixes to namespaces
 NS_DICT = {
   'v1': str(v1_0.Namespace),
   'v1_1': str(v1_1.Namespace),
   'v1_2': str(v1_2.Namespace),
   'v2': str(v2_0.Namespace),
+  'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+  'ore': 'http://www.openarchives.org/ore/terms/',
+  'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  'dcterms': 'http://purl.org/dc/terms/',
+  'cito': 'http://purl.org/spar/cito/',
 }
+
+
+# Map common namespaces to prefixes
+NS_REVERSE_DICT = { v: k for k, v in NS_DICT.items() }
 
 BINDING_TO_VERSION_TAG_DICT = {
   v1_0: 'v1',
@@ -271,9 +290,19 @@ def str_to_pyxb(xml_str):
   return PYXB_BINDING.CreateFromDocument(xml_str)
 
 
-def str_to_etree(xml_str):
-  return xml.etree.ElementTree.fromstring(xml_str)
+def str_to_etree(xml_str, encoding='utf-8'):
+  """Parse an XML doc to an ElementTree"""
+  # parser = xml.etree.ElementTree.XMLParser(encoding=encoding)
+  # return xml.etree.ElementTree.ElementTree(
+  # return xml.etree.ElementTree.fromstring(xml_str)
+  # )
+  # parser = xml.etree.ElementTree.XMLParser(encoding=encoding)
+  # return xml.etree.ElementTree.ElementTree(
+  #   xml.etree.ElementTree.fromstring(xml_str, parser=parser)
+  # )
 
+  parser = xml.etree.ElementTree.XMLParser(encoding=encoding)
+  return xml.etree.ElementTree.fromstring(xml_str, parser=parser)
 
 def pyxb_to_str(pyxb_obj):
   return pyxb_obj.toxml('utf-8')
@@ -292,7 +321,15 @@ def etree_to_pyxb(etree_obj):
 
 
 # ElementTree
-# https://docs.python.org/2/library/xml.etree.elementtree.html
+
+def replace_namespace_with_prefix(tag_str, ns_reverse_dict=None):
+  """Given a tag on the form "{namespace}name", return "prefix:name"
+  E.g.: {http://www.openarchives.org/ore/terms/}ResourceMap -> ore:ResourceMap
+  """
+  ns_reverse_dict = ns_reverse_dict or NS_REVERSE_DICT
+  for namespace_str, prefix_str in ns_reverse_dict.items():
+    tag_str = tag_str.replace('{{{}}}'.format(namespace_str), '{}:'.format(prefix_str))
+  return tag_str
 
 
 def etree_replace_namespace(etree_obj, ns_str):
@@ -300,11 +337,12 @@ def etree_replace_namespace(etree_obj, ns_str):
 
 
 def _replace_namespace_recursive(el, ns_str):
-  el.tag = re.sub(r'\{.*\}', '{{{}}}'.format(ns_str), el.tag)
+  el.tag = re.sub(r'{.*\}', '{{{}}}'.format(ns_str), el.tag)
   el.text = el.text.strip() if el.text else None
   el.tail = el.tail.strip() if el.tail else None
   for child_el in el:
     _replace_namespace_recursive(child_el, ns_str)
+
 
 
 def strip_v2_elements(etree_obj):
@@ -358,3 +396,5 @@ def strip_node_list(etree_obj):
 
 def v2_0_tag(element_name):
   return '{{{}}}{}'.format(NS_DICT['v2'], element_name)
+
+
