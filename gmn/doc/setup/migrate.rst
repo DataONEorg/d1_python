@@ -66,6 +66,6 @@ Switch the GMN version served by Apache to v1::
 Disable v2 services for this MN in the CN Node registry::
 
     $ sudo -u gmn /var/local/dataone/gmn/bin/python \
-    /var/local/dataone/gmn/lib/python3.6/site-packages/gmn/manage.py \
+    /var/local/dataone/gmn/lib/python3.6/site-packages/d1_gmn/manage.py \
     register_node_with_dataone --update
 
