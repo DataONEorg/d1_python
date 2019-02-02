@@ -1,0 +1,91 @@
+{
+  "disable_existing_loggers": true,
+  "formatters": {
+    "verbose": {
+      "datefmt": "%Y-%m-%d %H:%M:%S",
+      "format": "%(asctime)s %(levelname)-8s %(name)s %(module)s %(process)d %(thread)d %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "stream": "ext://sys.stdout"
+    },
+    "rotating_file": {
+      "backupCount": 5,
+      "class": "logging.handlers.RotatingFileHandler",
+      "filename": "/tmp/test/log/file/path",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "maxBytes": 1234
+    }
+  },
+  "key3": "val5",
+  "l1": {
+    "l2": {
+      "key3": "val1",
+      "l3": {
+        "key3": "val2",
+        "l4": {
+          "l5": {
+            "key1": "val3",
+            "key2": "val4"
+          }
+        }
+      }
+    }
+  },
+  "lb1": {
+    "key5": "val6",
+    "key6": "val8",
+    "l2": {
+      "key3": "val7",
+      "l3": {
+        "l4": {
+          "l5": {}
+        }
+      }
+    }
+  },
+  "loggers": {
+    "": {
+      "handlers": [
+        "rotating_file"
+      ],
+      "level": "new_level",
+      "propagate": false
+    },
+    "formatters": {
+      "verbose": {
+        "format": "new_format"
+      }
+    },
+    "handlers": {
+      "new_key_1": {
+        "l1": {
+          "l2": {
+            "key3": "val1",
+            "l3": {
+              "key3": "val2",
+              "l4": {
+                "l5": {
+                  "key1": "val3",
+                  "key2": "val4"
+                }
+              }
+            }
+          }
+        },
+        "level": "new_level"
+      }
+    },
+    "loggers": {
+      "django": {
+        "level": "new_level"
+      }
+    }
+  },
+  "version": 1
+}

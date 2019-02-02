@@ -1,0 +1,52 @@
+{
+  "disable_existing_loggers": true,
+  "formatters": {
+    "verbose": {
+      "datefmt": "%Y-%m-%d %H:%M:%S",
+      "format": "%(asctime)s %(levelname)-8s %(name)s %(module)s %(process)d %(thread)d %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "stream": "ext://sys.stdout"
+    },
+    "new_key_1": {
+      "l1": {
+        "l2": {
+          "key3": "val1",
+          "l3": {
+            "key3": "val2",
+            "l4": {
+              "l5": {
+                "key1": "val3",
+                "key2": "val4"
+              }
+            }
+          }
+        }
+      },
+      "level": "new_level"
+    },
+    "rotating_file": {
+      "backupCount": 5,
+      "class": "logging.handlers.RotatingFileHandler",
+      "filename": "/tmp/test/log/file/path",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "maxBytes": 10485760
+    }
+  },
+  "loggers": {
+    "": {
+      "handlers": [
+        "rotating_file"
+      ],
+      "level": "DEBUG",
+      "propagate": true
+    }
+  },
+  "version": 1
+}
