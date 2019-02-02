@@ -46,14 +46,26 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
     assert expected_answer_str == received_answer_str
 
   # flake8: noqa: F841
-  def test_1010(self, disable_garbage_collector):
-    """memory_limit context manager"""
-    # Passes because it uses less memory than the limit
+  def test_1010(self):
+    """memory_limit context manager: Raises no exceptions with allocation below limit
+    """
     with d1_test.d1_test_case.memory_limit(10 * 1024**2):
       # It's necessary to assign a name to the object here, or it does not
       # get created, even with garbage collection disabled
       a = bytearray(1 * 1024**2)
-    # Raises MemoryError since it uses more memory than the limit
+
+
+  # flake8: noqa: F841
+  def test_1020(self):
+    """memory_limit context manager: Raises MemoryError with allocation above limit
+    """
     with d1_test.d1_test_case.memory_limit(10 * 1024**2):
       with pytest.raises(MemoryError):
+        # It's necessary to assign a name to the object here, or it does not
+        # get created, even with garbage collection disabled
         b = bytearray(20 * 1024**2)
+
+
+
+
+
