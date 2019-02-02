@@ -28,10 +28,15 @@ apidoc_args="--module-first --doc-project API"
 # --force
 
 # Force cleanup after deleting or renaming modules.
-#find -L ./doc/source -type f -wholename '*/api/*' -delete
+find -L ./doc/source -type f -wholename '*/api/*' -delete
 
 sphinx-apidoc ${apidoc_args} -o ./doc/source/common/api/ ./lib_common/src/d1_common/ ${exclude_list}
 sphinx-apidoc ${apidoc_args} -o ./doc/source/client/api/ ./lib_client/src/d1_client/ ${exclude_list}
 sphinx-apidoc ${apidoc_args} -o ./doc/source/test/api/ ./test_utilities/src/d1_test/ ${exclude_list}
 
 make -C ./doc -j8 html
+
+git add ./lib_common/doc/api
+git add ./lib_client/doc/api
+git add ./test_utilities/doc/api
+

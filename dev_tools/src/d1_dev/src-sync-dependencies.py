@@ -96,6 +96,9 @@ def main():
   update_version_const(
     'd1_gmn', ['version.py'], args.d1_version, args.show_diff, args.dry_run
   )
+  update_version_const(
+    'd1_cli', ['version.py'], args.d1_version, args.show_diff, args.dry_run
+  )
 
 
 def update_deps_on_file(args, setup_path, show_diff, d1_version):
