@@ -225,17 +225,27 @@ def temp_file_name(suffix=None):
   except EnvironmentError:
     pass
 
+@contextlib.contextmanager
+def disable_garbage_collector():
+  """Context manager that disables the garbage collector while in the context"""
+  gc.collect()
+  gc.disable()
+  try:
+    yield
+  finally:
+    gc.enable()
 
 @contextlib.contextmanager
 def memory_limit(max_mem_bytes):
   """Raise MemoryError if code within the manager causes memory used by process
-  to increase by more than ``max_mem_bytes``
-  - May not be very accurate.
+  to increase by more than ``max_mem_bytes``.
+  - Garbage collection is disabled while in the context.
+  - May not be very accurate. In tests that check for excessive memory usage, wide
+  margins should be used in order to ensure the expected behavior. E.g., to check that a
+  file is not buffered in memory, set the memory limit to 10 GiB and use a file with
+  size 20 GiB.
   """
-  try:
-    gc.collect()
-    gc.disable()
-
+  with disable_garbage_collector():
     process = psutil.Process(os.getpid())
     old_limit_tup = resource.getrlimit(resource.RLIMIT_AS)
     current_used_bytes = process.memory_info().vms
@@ -254,10 +264,6 @@ def memory_limit(max_mem_bytes):
 
     logging.debug('Removing memory limit. limit={:,} bytes'.format(limit_bytes))
     resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
-
-  finally:
-    gc.enable()
-    gc.collect()
 
 
 #===============================================================================
