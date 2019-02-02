@@ -56,7 +56,7 @@ def update_module_file(
     redbaron_tree, module_path, show_diff=False, dry_run=False
 ):
   """Set show_diff to False to overwrite module_path with a new file generated
-  from {redbaron_tree}.
+  from ``redbaron_tree``.
 
   Returns True if tree is different from source.
   """

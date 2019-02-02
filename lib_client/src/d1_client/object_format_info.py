@@ -23,6 +23,8 @@
 mappings are provided in a CSV file. Raises KeyError for unknown values.
 """
 
+# TODO: Move this module to d1_common.
+
 import csv
 
 import d1_common.util
@@ -45,8 +47,18 @@ class Singleton(object):
 
 
 class ObjectFormatInfo(Singleton):
+  """Map DataONE ObjectFormatIDs to mimetype and filename extension.
+
+  As part of the metadata for a science object, DataONE stores a type identifier called
+  an Object Format ID. Many client utilities need a mimetype to determine how to process
+  or display the object and/or a filename extension for use when saving the object to a
+  local file. This module provides convenient functions for performing such mappings.
+
+  By default, ObjectFormatInfo uses DataONE's standard table of mappings. If desired, a
+  custom table can be provided.
+  """
   def __init__(self, csv_file=None):
-    """{csv_file} is a file like object containing comma separate values (CSV)
+    """``csv_file`` is a file like object containing comma separate values (CSV)
     """
     if csv_file is None:
       self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')

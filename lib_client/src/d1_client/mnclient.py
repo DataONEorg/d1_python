@@ -48,7 +48,7 @@ class MemberNodeClient(
 
     self._api_major = 1
     self._api_minor = 0
-    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
       self._api_major, self._api_minor
     )
 

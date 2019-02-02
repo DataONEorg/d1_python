@@ -18,12 +18,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
+"""DataONE API Type wrappers
+"""
 
+# Suppress log messages instead of raising exception if the program using the
+# library does not configure the logging system.
 
-def main():
-  pass
+import logging
 
+try:
+  from logging import NullHandler
+except ImportError:
 
-if __name__ == '__main__':
-  sys.exit(main())
+  class NullHandler(logging.Handler):
+    """Suppress log messages instead of raising exception if the program using the
+    library does not configure the logging system.
+    """
+    # noinspection PyMissingOrEmptyDocstring
+    def emit(self, record):
+      pass
+
+logging.getLogger(__name__).addHandler(NullHandler())

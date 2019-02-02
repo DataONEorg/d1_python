@@ -52,6 +52,8 @@ import d1_test.test_files
 
 MAX_LINE_WIDTH = 130
 
+# Options are populated by pytest.
+options = {}
 
 def start_tidy():
   """Call at start of test run to tidy the samples directory.
@@ -104,7 +106,8 @@ def assert_equals(
   exp_path = _get_or_create_path(filename)
   got_str = obj_to_pretty_str(got_obj, no_wrap=no_wrap)
 
-  if pytest.config.getoption('--sample-review'):
+  # if pytest.config.getoption('--sample-review'):
+  if options.get('review'):
     _review_interactive(got_str, exp_path, filename_postfix_str)
     return
 
@@ -118,11 +121,13 @@ def assert_equals(
     format(filename, '-' * 10, diff_str)
   )
 
-  if pytest.config.getoption('--sample-update'):
+  if options.get('update'):
+  # if pytest.config.getoption('--sample-update'):
     save(got_str, filename)
     return
 
-  if pytest.config.getoption('--sample-ask'):
+  # if pytest.config.getoption('--sample-ask'):
+  if options.get('ask'):
     _save_interactive(got_str, exp_path, filename_postfix_str)
     return
 
@@ -139,7 +144,9 @@ def assert_equal_str(got_obj, exp_obj):
   if diff_str is None:
     return
   err_msg = '\n{0} Diff mismatch. A <-> B {0}\n{1}'.format('-' * 10, diff_str)
-  if pytest.config.getoption('--sample-ask'):
+  # if options['ask']:
+  if options.get('ask'):
+  # if pytest.config.getoption('--sample-ask'):
     logging.error(err_msg)
     _diff_interactive(got_str, exp_str)
   else:
@@ -169,7 +176,6 @@ def load(filename, mode_str='rb'):
 
 
 def save_path(got_str, exp_path, mode_str='wb'):
-  print(exp_path)
   assert isinstance(got_str, str)
   logging.info(
     'Saving sample file. filename="{}"'.format(os.path.split(exp_path)[1])
@@ -262,7 +268,7 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
       )
     # Valid XML str
     with ignore_exceptions():
-      return d1_common.xml.format_pretty_xml(o)
+      return d1_common.xml.reformat_to_pretty_xml(o)
     # Valid JSON str
     with ignore_exceptions():
       return d1_common.util.format_json_to_normalized_pretty_json(o)
@@ -285,6 +291,9 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
     return repr(o)
 
   s = serialize(o).rstrip()
+  # if isinstance(s, bytes):
+  #   s = s.decode('utf-8')
+  # logging.debug('{}'.format(type(s)))
   assert isinstance(s, str)
 
   # Replace '\n' with actual newlines since breaking text into multiple lines

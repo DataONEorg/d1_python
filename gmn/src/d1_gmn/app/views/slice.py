@@ -82,7 +82,7 @@ def cache_add_last_in_slice(
 
 
 def _get_and_assert_slice_param(url_dict, param_name, default_int):
-  """Return {param_str} converted to an int. If str cannot be converted to int
+  """Return ``param_str`` converted to an int. If str cannot be converted to int
   or int is not zero or positive, raise InvalidRequest.
   """
   param_str = url_dict['query'].get(param_name, default_int)
@@ -181,14 +181,14 @@ def _cache_get_last_in_slice(url_dict, start_int, total_int, authn_subj_list):
 
 def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
   """Generate cache key for the REST URL the client is currently accessing or is
-  expected to access in order to get the slice starting at the given {start_int}
+  expected to access in order to get the slice starting at the given ``start_int``
   of a multi-slice result set.
 
-  When used for finding the key to check in the current call, {start_int} is
+  When used for finding the key to check in the current call, ``start_int`` is
   0, or the start that was passed in the current call.
 
-  When used for finding the key to set for the anticipated call, {start_int} is
-  current {start_int} + {count_int}, the number of objects the current call will
+  When used for finding the key to set for the anticipated call, ``start_int`` is
+  current ``start_int`` + ``count_int``, the number of objects the current call will
   return.
 
   The URL for the slice is the same as for the current slice, except that the

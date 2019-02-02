@@ -49,7 +49,7 @@ class DataONEBaseClient_1_1(
 
     self._api_major = 1
     self._api_minor = 1
-    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
       self._api_major, self._api_minor
     )
 
@@ -57,14 +57,24 @@ class DataONEBaseClient_1_1(
   # v1.1 APIs shared between CNs and MNs.
   #=============================================================================
 
-  # CNRead.query(session, queryEngine, query) → OctetStream
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
-  # MNQuery.query(session, queryEngine, query) → OctetStream
-  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
-
   def queryResponse(
       self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
+    """
+    CNRead.query(session, queryEngine, query) → OctetStream
+    https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
+    MNQuery.query(session, queryEngine, query) → OctetStream
+    http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
+
+    Args:
+      queryEngine:
+      query_str:
+      vendorSpecific:
+      do_post:
+      **kwargs:
+
+    Returns:
+    """
     logging.debug(
       'Solr query: {}'.format(
         ', '.join(['{}={}'.format(k, v) for (k, v) in list(locals().items())])
@@ -77,6 +87,20 @@ class DataONEBaseClient_1_1(
   def query(
       self, queryEngine, query_str, vendorSpecific=None, do_post=False, **kwargs
   ):
+    """
+    See Also:
+      queryResponse()
+
+    Args:
+      queryEngine:
+      query_str:
+      vendorSpecific:
+      do_post:
+      **kwargs:
+
+    Returns:
+
+    """
     response = self.queryResponse(
       queryEngine, query_str, vendorSpecific, do_post, **kwargs
     )
@@ -85,15 +109,35 @@ class DataONEBaseClient_1_1(
     else:
       return self._read_stream_response(response)
 
-  # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
-  # MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.getQueryEngineDescription
 
   def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
+    """
+    CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
+    https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+    MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
+    http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.getQueryEngineDescription
+
+    Args:
+      queryEngine:
+      **kwargs:
+
+    Returns:
+
+    """
     return self.GET(['query', queryEngine], query=kwargs)
 
   def getQueryEngineDescription(self, queryEngine, **kwargs):
+    """
+    See Also:
+      getQueryEngineDescriptionResponse()
+
+    Args:
+      queryEngine:
+      **kwargs:
+
+    Returns:
+
+    """
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
     return self._read_dataone_type_response(response, 'QueryEngineDescription')
 

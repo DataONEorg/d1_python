@@ -265,7 +265,7 @@ class CommandProcessor():
     cli_util.print_info('Created file: {}'.format(abs_path))
 
   def _pretty(self, xml_doc):
-    return d1_common.xml.format_pretty_xml(xml_doc.decode('utf-8'))
+    return d1_common.xml.reformat_to_pretty_xml(xml_doc.decode('utf-8'))
 
   def _system_metadata_print(self, metadata, path=None):
     sci_meta_xml = metadata.toxml('utf-8')

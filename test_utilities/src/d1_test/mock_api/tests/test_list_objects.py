@@ -37,7 +37,7 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
     """mock_api.listObjects() returns a DataONE ObjectList PyXB object"""
     mock_object_list.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     assert isinstance(
-      mn_client_v1_v2.listObjects(), mn_client_v1_v2.bindings.ObjectList
+      mn_client_v1_v2.listObjects(), mn_client_v1_v2.pyxb_binding.ObjectList
     )
 
   @responses.activate

@@ -22,9 +22,11 @@
 
 import logging
 
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v1 import *
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v1_1 import *
-# from d1_common.types.generated.dataoneTypes_v1_2 import *
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v2_0 import *
 
 # flake8: noqa: F403
@@ -35,7 +37,7 @@ from d1_common.types.generated.dataoneTypes_v2_0 import *
 # <unknown>[1:209] to binding
 #
 # This warning occurs because traceInformation is an xs:anyType, which can
-# hold any XML structure so no bindings can be generated.
+# hold any XML structure so noPyXB bindingcan be generated.
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
 
 # TODO: Add a replacement for CreateFromDocument() that raises DataONEExceptions.

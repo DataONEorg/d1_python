@@ -204,7 +204,7 @@ import d1_test.d1_test_case
 #   import d1_pyore
 #
 #   pkg = d1_pyore.ResourceMap()
-#   pkg.oreInitialize("pid_for_ore")
+#   pkg.initialize("pid_for_ore")
 #   pkg.addMetadataDocument("pid_for_metadata")
 #   pkg.addDataDocuments(["data_pid_1", "data_pid_2"], "pid_for_metadata")
 #   print pkg.serialize_to_display(format="json-ld", indent=2)

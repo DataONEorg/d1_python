@@ -31,7 +31,7 @@ import d1_gmn.app.util
 
 
 def is_valid_pid_for_create(did):
-  """Return True if {did} is the PID of an object that can be created with
+  """Return True if ``did`` is the PID of an object that can be created with
   MNStorage.create() or MNStorage.update().
 
   To be valid for create() and update(), the DID:
@@ -60,13 +60,13 @@ def is_valid_pid_for_create(did):
 
 
 def is_valid_sid_for_new_standalone(did):
-  """Return True if {did} can be assigned to a new standalone object
+  """Return True if ``did`` can be assigned to a new standalone object
   """
   return _is_unused_did(did)
 
 
 def is_valid_pid_to_be_updated(did):
-  """Return True if {did} is the PID of an object that can be updated
+  """Return True if ``did`` is the PID of an object that can be updated
   (obsoleted) with MNStorage.update()
   """
   return (
@@ -76,8 +76,8 @@ def is_valid_pid_to_be_updated(did):
 
 
 def is_valid_sid_for_chain(pid, sid):
-  """Return True if {sid} can be assigned to the single object {pid} or to the
-  chain to which {pid} belongs.
+  """Return True if ``sid`` can be assigned to the single object ``pid`` or to the
+  chain to which ``pid`` belongs.
 
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
@@ -85,8 +85,8 @@ def is_valid_sid_for_chain(pid, sid):
   All known PIDs are associated with a chain.
 
   Preconditions:
-  - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
-  - {sid} is None or verified to be a SID
+  - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
+  - ``sid`` is None or verified to be a SID
   """
   if _is_unused_did(sid):
     return True
@@ -123,7 +123,7 @@ def is_sid(did):
 
 
 def is_obsoleted(did):
-  """Return True if {did} is the PID of an object that has been obsoleted"""
+  """Return True if ``did`` is the PID of an object that has been obsoleted"""
   return d1_gmn.app.model_util.get_sci_model(did).obsoleted_by is not None
 
 
@@ -137,7 +137,7 @@ def is_resource_map_member(pid):
 
 
 def classify_identifier(did):
-  """Return a text fragment classifying the {did}
+  """Return a text fragment classifying the ``did``
 
   Return <UNKNOWN> if the DID could not be classified. This should not
   normally happen and may indicate that the DID was orphaned in the database.
@@ -214,9 +214,9 @@ def is_revision_chain_placeholder(pid):
 
 
 def _is_unused_did(did):
-  """Return True if {did} is not recorded in any local context
+  """Return True if ``did`` is not recorded in any local context
 
-  {did}=None is supported and returns True.
+  ``did``=None is supported and returns True.
 
   A DID can be classified with classify_identifier().
   """
@@ -224,9 +224,9 @@ def _is_unused_did(did):
 
 
 def _is_did(did):
-  """Return True if {did} is recorded in a local context
+  """Return True if ``did`` is recorded in a local context
 
-  {did}=None is supported and returns False.
+  ``did``=None is supported and returns False.
 
   A DID can be classified with classify_identifier().
   """
@@ -234,9 +234,9 @@ def _is_did(did):
 
 
 def _is_pid(did):
-  """Return True if {did} exists in IdNamespace and is not a SID.
+  """Return True if ``did`` exists in IdNamespace and is not a SID.
 
-  {did}=None is supported and returns False.
+  ``did``=None is supported and returns False.
 
   Note: Non-existing and remote DIDs may not be known to be SIDs or PIDs, and
   are assumed to be PIDs by this function.

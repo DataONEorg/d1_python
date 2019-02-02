@@ -123,15 +123,15 @@ def generate(min_rules=1, max_rules=5, max_subjects=5):
 def generate_from_permission_list(client, permission_list):
   if permission_list is None:
     return None
-  access_policy_pyxb = client.bindings.accessPolicy()
+  access_policy_pyxb = client.pyxb_binding.accessPolicy()
   for subject_list, action_list in permission_list:
     subject_list = d1_test.d1_test_case.D1TestCase.expand_subjects(subject_list)
     action_list = list(action_list)
-    access_rule_pyxb = client.bindings.AccessRule()
+    access_rule_pyxb = client.pyxb_binding.AccessRule()
     for subject_str in subject_list:
       access_rule_pyxb.subject.append(subject_str)
     for action_str in action_list:
-      permission_pyxb = client.bindings.Permission(action_str)
+      permission_pyxb = client.pyxb_binding.Permission(action_str)
       access_rule_pyxb.permission.append(permission_pyxb)
     access_policy_pyxb.append(access_rule_pyxb)
   return access_policy_pyxb

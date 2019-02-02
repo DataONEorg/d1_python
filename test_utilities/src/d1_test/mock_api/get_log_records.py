@@ -89,10 +89,10 @@ def _generate_log_records(client, n_start, n_count):
   if n_start + n_count > N_TOTAL:
     n_count = N_TOTAL - n_start
 
-  log = client.bindings.log()
+  log = client.pyxb_binding.log()
 
   for i in range(n_count):
-    logEntry = client.bindings.LogEntry()
+    logEntry = client.pyxb_binding.LogEntry()
 
     logEntry.entryId = str(i)
     logEntry.identifier = 'object#{:04d}'.format(n_start + i)

@@ -118,7 +118,7 @@ def main():
     'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
   )
 
-  print(d1_common.xml.format_pretty_xml(response.content))
+  print(d1_common.xml.reformat_to_pretty_xml(response.content))
 
 
 if __name__ == '__main__':

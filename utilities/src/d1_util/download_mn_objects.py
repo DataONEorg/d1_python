@@ -197,7 +197,7 @@ class MemberNodeObjectDownloader(object):
           '{}.sysmeta.xml'.format(self._pid_to_filename(pid))
         ), 'wb'
     ) as f:
-      f.write(d1_common.xml.serialize_to_transport(sysmeta_pyxb))
+      f.write(d1_common.xml.serialize_for_transport(sysmeta_pyxb))
 
   def _download_object_bytes_to_file(self, pid):
     try:

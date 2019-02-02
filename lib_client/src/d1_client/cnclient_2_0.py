@@ -57,7 +57,7 @@ class CoordinatingNodeClient_2_0(
 
     self._api_major = 2
     self._api_minor = 0
-    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
       self._api_major, self._api_minor
     )
 
@@ -65,13 +65,29 @@ class CoordinatingNodeClient_2_0(
   # Core API
   #=========================================================================
 
-  # CNCore.delete(session, id) → Identifier
-  # DELETE /object/{id}
-
   def deleteResponse(self, pid):
+    """
+    CNCore.delete(session, id) → Identifier
+    DELETE /object/{id}
+
+    Args:
+      pid:
+
+    Returns:
+
+    """
     return self.DELETE(['object', pid])
 
   def delete(self, pid):
+    """
+    See Also:
+      deleteResponse()
+
+    Args:
+      pid:
+
+    Returns:
+    """
     response = self.deleteResponse(pid)
     return self._read_dataone_type_response(response, 'Identifier')
 
@@ -79,16 +95,30 @@ class CoordinatingNodeClient_2_0(
   # CNRead
   #=========================================================================
 
-  # CNRead.synchronize(session, pid) → boolean
-  # POST /synchronize
-
   def synchronizeResponse(self, pid, vendorSpecific=None):
+    """
+    CNRead.synchronize(session, pid) → boolean
+    POST /synchronize
+
+    Args:
+      pid:
+      vendorSpecific:
+    """
     mmp_dict = {
       'pid': pid,
     }
     return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
 
   def synchronize(self, pid, vendorSpecific=None):
+    """
+    See Also:
+      synchronizeResponse()
+    Args:
+      pid:
+      vendorSpecific:
+
+    Returns:
+    """
     response = self.synchronizeResponse(pid, vendorSpecific)
     return self._read_boolean_response(response)
 

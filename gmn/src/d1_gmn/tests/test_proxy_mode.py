@@ -56,7 +56,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """Create a sciobj that wraps object bytes stored on a 3rd party server. We
     use Responses to simulate the 3rd party server
 
-    If {do_redirect} is True, a 302 redirect operation is added. This tests
+    If ``do_redirect`` is True, a 302 redirect operation is added. This tests
     that GMN is able to follow redirects when establishing the proxy stream.
     """
     with d1_gmn.tests.gmn_mock.disable_auth():
@@ -97,7 +97,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def get_remote_sciobj_url(self, pid, client):
     return d1_common.url.joinPathElements(
       d1_test.d1_test_case.MOCK_REMOTE_BASE_URL,
-      d1_common.type_conversions.get_version_tag_by_bindings(client.bindings),
+      d1_common.type_conversions.get_version_tag_by_pyxb_binding(client.pyxb_binding),
       'object',
       d1_common.url.encodePathElement(pid),
     )
@@ -105,7 +105,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def get_invalid_sciobj_url(self, pid, client):
     return d1_common.url.joinPathElements(
       d1_test.d1_test_case.MOCK_INVALID_BASE_URL,
-      d1_common.type_conversions.get_version_tag_by_bindings(client.bindings),
+      d1_common.type_conversions.get_version_tag_by_pyxb_binding(client.pyxb_binding),
       'object',
       d1_common.url.encodePathElement(pid),
     )

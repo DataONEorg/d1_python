@@ -122,7 +122,7 @@ def download_cn_certs():
   def d(base_url):
     cert_obj = d1_common.cert.x509.download_as_obj(base_url)
     cert_file_name = filename_from_cert_obj(cert_obj)
-    cert_pem = d1_common.cert.x509.get_cert_pem(cert_obj)
+    cert_pem = d1_common.cert.x509.serialize_cert_to_pem(cert_obj)
     cert_file_path = os.path.join('out', cert_file_name)
     with open(cert_file_path, 'wb') as f:
       f.write(cert_pem)

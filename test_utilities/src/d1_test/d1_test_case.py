@@ -101,7 +101,7 @@ def capture_std():
 
 def get_caplog_text(caplog, logger_name=None):
   """Return the log messages currently captured by the caplog fixture
-  - If {logger_name} is set, only messages from the given logger are returned.
+  - If ``logger_name`` is set, only messages from the given logger are returned.
   - This differs from `caplog.text` in that only the message part of the logs
   are retrieved, not the timestamps, loggers and log levels.
   """
@@ -199,8 +199,8 @@ def reproducible_random_context(seed=None):
 
 @contextlib.contextmanager
 def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
-  """Context manager providing a temporary file of size {gib} GiB + {mib} MiB +
-  {kib} KiB + {b} bytes
+  """Context manager providing a temporary file of size ``gib`` GiB + ``mib`` MiB +
+  ``kib`` KiB + ``b`` bytes
   - The file is created as a sparse empty file in tmp, so does not allocate
   actual space on disk.
   - Intended for use when large, empty (all zero), test files are needed.
@@ -229,7 +229,7 @@ def temp_file_name(suffix=None):
 @contextlib.contextmanager
 def memory_limit(max_mem_bytes):
   """Raise MemoryError if code within the manager causes memory used by process
-  to increase by more than {max_mem_bytes}
+  to increase by more than ``max_mem_bytes``
   - May not be very accurate.
   """
   try:
@@ -404,7 +404,7 @@ class D1TestCase(object):
     """Simulate successful cert download by catching call to
     ssl.SSLSocket.getpeercert() and returning {cert_obj} in DER format.
     """
-    cert_der = d1_common.cert.x509.get_cert_der(cert_obj)
+    cert_der = d1_common.cert.x509.serialize_cert_to_der(cert_obj)
     with mock.patch('d1_common.cert.x509.ssl.SSLSocket.connect') as mock_connect:
       with mock.patch('d1_common.cert.x509.ssl.SSLSocket.getpeercert'
                       ) as mock_getpeercert:
@@ -423,8 +423,8 @@ class D1TestCase(object):
   @staticmethod
   def dt_from_ts(ts, tz=None):
     """Convert POSIX timestamp to a datetime
-    - If {tz} supplied: The dt is adjusted to that tz before being returned.
-    - If {tz} not supplied: the dt is returned as naive.
+    - If ``tz`` supplied: The dt is adjusted to that tz before being returned.
+    - If ``tz`` not supplied: the dt is returned as naive.
     - Keeping this function out of d1_common.date_time since naive datetimes
     are only needed for testing.
     """
@@ -457,7 +457,7 @@ class D1TestCase(object):
 
   def format_pyxb(self, type_pyxb):
     ss = io.StringIO()
-    ss.write('PyXB object:\n')
+    ss.write('PyXB type instance:\n')
     ss.write(
       '\n'.join([
         '  {}'.format(s)

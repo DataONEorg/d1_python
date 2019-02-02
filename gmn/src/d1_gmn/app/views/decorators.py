@@ -44,7 +44,7 @@ import django.conf
 
 def resolve_sid(f):
   """View handler decorator that adds SID resolve and PID validation
-  - For v1 calls, assume that {did} is a pid and raise NotFound exception if
+  - For v1 calls, assume that ``did`` is a pid and raise NotFound exception if
   it's not valid.
   - For v2 calls, if DID is a valid PID, return it. If not, try to resolve it as
   a SID and, if successful, return the new PID. Else, raise NotFound exception.

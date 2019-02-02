@@ -65,7 +65,7 @@ def archive_sciobj(pid):
 
 def serialize(sysmeta_pyxb, pretty=False):
   try:
-    return d1_common.xml.serialize_to_transport(
+    return d1_common.xml.serialize_for_transport(
       sysmeta_pyxb, pretty, xslt_url=django.urls.base.reverse('home_xslt')
     )
   except pyxb.IncompleteElementContentError as e:
@@ -81,17 +81,17 @@ def deserialize(xml_str):
 def create_or_update(sysmeta_pyxb, sciobj_url=None):
   """Create or update database representation of a System Metadata object and
   closely related internal state
-  - If {sciobj_url} is not passed on create, storage in the internal sciobj
+  - If ``sciobj_url`` is not passed on create, storage in the internal sciobj
   store is assumed
-  - If {sciobj_url} is passed on create, it can reference a location in the
+  - If ``sciobj_url`` is passed on create, it can reference a location in the
   internal sciobj store, or an arbitrary location on disk, or a remote web
   server. See the sciobj_store module for more information
-  - if {sciobj_url} is not passed on update, the sciobj location remains
+  - if ``sciobj_url`` is not passed on update, the sciobj location remains
   unchanged
-  - If {sciobj_url} is passed on update, the sciobj location is updated
+  - If ``sciobj_url`` is passed on update, the sciobj location is updated
 
   Preconditions:
-  - All values in {sysmeta_pyxb} must be valid for the operation being performed
+  - All values in ``sysmeta_pyxb`` must be valid for the operation being performed
   """
   # TODO: Make sure that old sections are removed if not included in update.
 

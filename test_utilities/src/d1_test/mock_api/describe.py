@@ -91,7 +91,7 @@ def _parse_url(url):
 
 
 def _create_headers(sciobj_bytes, sysmeta_pyxb):
-  checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
+  checksum_pyxb = d1_common.checksum.create_checksum_object_from_bytes(
     sciobj_bytes
   )
   return {

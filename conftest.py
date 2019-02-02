@@ -21,10 +21,8 @@
 """
 import d1_test.pycharm
 import logging
-import multiprocessing
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 
@@ -128,13 +126,19 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-  """Allow plugins and conftest files to perform initial configuration
-  This hook is called for every plugin and initial conftest file after command
-  line options have been parsed. After that, the hook is called for other
-  conftest files as they are imported.
+  """Allow plugins and conftest files to perform initial configuration This hook is
+  called for every plugin and initial conftest file after command line options have been
+  parsed. After that, the hook is called for other conftest files as they are imported.
   """
   import sys
   sys._running_in_pytest = True
+  # Set parameters for the sample module.
+  import d1_test.sample
+  d1_test.sample.options = {
+    'ask': config.getoption('--sample-ask'),
+    'review': config.getoption('--sample-review'),
+    'update': config.getoption('--sample-update'),
+  }
 
 
 def pytest_unconfigure(config):
@@ -146,7 +150,7 @@ def pytest_sessionstart(session):
   - When running in parallel with xdist, this is called once for each worker. By
   default, the number of workers is the same as the number of CPU cores.
   """
-  exit_if_switch_used_with_xdist([
+  exit_if_switch_used_with_xdist(session, [
     '--sample-ask',
     '--sample-update',
     '--sample-review',
@@ -157,28 +161,28 @@ def pytest_sessionstart(session):
     '--skip-clear',
     '--skip-print',
   ])
-  if pytest.config.getoption('--sample-tidy'):
+  if session.config.getoption('--sample-tidy'):
     logging.info('Starting sample tidy')
     d1_test.sample.start_tidy()
 
-  if pytest.config.getoption('--fixture-refresh'):
+  if session.config.getoption('--fixture-refresh'):
     logging.info(
       'Dropping and creating GMN template database from JSON fixture file'
     )
     db_drop(TEMPLATE_DB_KEY)
-  if pytest.config.getoption('--skip-clear'):
+  if session.config.getoption('--skip-clear'):
     logging.info('Clearing list of passed tests')
-    _clear_skip_list()
-  if pytest.config.getoption('--skip-print'):
+    _clear_skip_list(session)
+  if session.config.getoption('--skip-print'):
     logging.info('Printing list of passed tests')
-    _print_skip_list()
+    _print_skip_list(session)
 
 
 def pytest_sessionfinish(session, exitstatus):
   """Called by pytest after the test session ends"""
   # if exitstatus != 2:
-  if pytest.config.getoption('--skip'):
-    skipped_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+  if session.config.getoption('--skip'):
+    skipped_count = session.config.cache.get(D1_SKIP_COUNT, 0)
     if skipped_count:
       logging.warning(
         'Skipped {} previously passed tests'.format(skipped_count)
@@ -194,37 +198,37 @@ def pytest_runtest_makereport(item, call):
   if rep.when != 'call':
     return
   if rep.passed or rep.skipped:
-    passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
+    passed_set = set(item.session.config.cache.get(D1_SKIP_LIST, []))
     passed_set.add(item.nodeid)
-    pytest.config.cache.set(D1_SKIP_LIST, list(passed_set))
+    item.session.config.cache.set(D1_SKIP_LIST, list(passed_set))
   elif rep.failed:
-    if pytest.config.getoption('--pycharm'):
+    if item.session.config.getoption('--pycharm'):
       _open_error_in_pycharm(call)
 
 
 def pytest_collection_modifyitems(session, config, items):
   """Called by pytest after collecting tests. The collected tests and the order
-  in which they will be called are in {items}, which can be manipulated in place.
+  in which they will be called are in ``items``, which can be manipulated in place.
   """
-  if not pytest.config.getoption('--skip'):
+  if not session.config.getoption('--skip'):
     return
 
-  passed_set = set(pytest.config.cache.get(D1_SKIP_LIST, []))
+  passed_set = set(session.config.cache.get(D1_SKIP_LIST, []))
   new_item_list = []
   for item in items:
     if item.nodeid not in passed_set:
       new_item_list.append(item)
 
-  prev_skip_count = pytest.config.cache.get(D1_SKIP_COUNT, 0)
+  prev_skip_count = session.config.cache.get(D1_SKIP_COUNT, 0)
   cur_skip_count = len(items) - len(new_item_list)
 
   if prev_skip_count == cur_skip_count:
     logging.info(
       'No tests were run (--skip). Restarting with complete test set'
     )
-    _clear_skip_list()
+    _clear_skip_list(session)
   else:
-    pytest.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
+    session.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
     logging.info(
       'Skipping {} previously passed tests (--skip)'.format(cur_skip_count)
     )
@@ -244,13 +248,13 @@ def pytest_collection_modifyitems(session, config, items):
 #     return msg.splitlines()
 
 
-def _clear_skip_list():
-  pytest.config.cache.set(D1_SKIP_LIST, [])
-  pytest.config.cache.set(D1_SKIP_COUNT, 0)
+def _clear_skip_list(session):
+  session.config.cache.set(D1_SKIP_LIST, [])
+  session.config.cache.set(D1_SKIP_COUNT, 0)
 
 
-def _print_skip_list():
-  list(map(logging.info, sorted(pytest.config.cache.get(D1_SKIP_LIST, []))))
+def _print_skip_list(session):
+  list(map(logging.info, sorted(session.config.cache.get(D1_SKIP_LIST, []))))
 
 
 def _open_error_in_pycharm(call):
@@ -590,10 +594,10 @@ def get_xdist_worker_id(request):
   return s if s is not None else ''
 
 
-def exit_if_switch_used_with_xdist(switch_list):
-  if hasattr(pytest.config, 'slaveinput'):
+def exit_if_switch_used_with_xdist(session, switch_list):
+  if hasattr(session.config, 'slaveinput'):
     for switch_str in switch_list:
-      if pytest.config.getoption(switch_str):
+      if session.config.getoption(switch_str):
         pytest.exit(
           'Cannot use {} when running in parallel under pytest-xdist '
           '(e.g., -n --dist --tx)'.format(switch_str)

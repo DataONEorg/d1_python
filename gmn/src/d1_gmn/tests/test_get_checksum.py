@@ -41,8 +41,8 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(self.client_v2)
       recv_checksum_pyxb = gmn_client_v1_v2.getChecksum(pid)
-      assert isinstance(recv_checksum_pyxb, gmn_client_v1_v2.bindings.Checksum)
-      send_checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
+      assert isinstance(recv_checksum_pyxb, gmn_client_v1_v2.pyxb_binding.Checksum)
+      send_checksum_pyxb = d1_common.checksum.create_checksum_object_from_bytes(
         sciobj_bytes, recv_checksum_pyxb.algorithm
       )
       self.assert_checksums_equal(send_checksum_pyxb, recv_checksum_pyxb)
@@ -56,7 +56,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
       pid, sid, sciobj_bytes, send_sysmeta_pyxb = (
         self.generate_sciobj_with_defaults(client)
       )
-      send_checksum = d1_common.checksum.create_checksum_object_from_string(
+      send_checksum = d1_common.checksum.create_checksum_object_from_bytes(
         sciobj_bytes, algorithm_str
       )
       send_sysmeta_pyxb.checksum = send_checksum

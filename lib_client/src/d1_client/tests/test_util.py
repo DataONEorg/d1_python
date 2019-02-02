@@ -48,7 +48,7 @@ class TesttUtil(d1_test.d1_test_case.D1TestCase):
     ):
       node_api_major = int(
         d1_common.type_conversions.
-        get_version_tag_by_bindings(mn_client_v1_v2.bindings)[-1]
+        get_version_tag_by_pyxb_binding(mn_client_v1_v2.pyxb_binding)[-1]
       )
       assert (
         d1_client.d1client.get_api_major_by_base_url(

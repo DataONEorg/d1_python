@@ -117,7 +117,7 @@ def check(setup_path, wheel_path):
 def open_repo(repo_path):
   repo = git.Repo(repo_path)
   if repo.is_dirty():
-    logging.warning('Working tree is dirty (has uncomitted changes)')
+    logging.warning('Working tree is dirty (has uncommitted changes)')
   if repo.bare:
     raise PackageError('Repository is bare (does not have a working tree')
   return repo

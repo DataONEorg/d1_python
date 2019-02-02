@@ -20,7 +20,7 @@
 import os
 import tempfile
 
-import d1_common.iter.dir
+import d1_common.iter.path
 import pytest
 
 import d1_test.d1_test_case
@@ -139,7 +139,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
     def _check(self, test_path, postfix_str, *path_list, **param_dict):
         tmp_path_list = self._add_tmp(path_list, test_path)
         found_path_list = self._normalize(
-            d1_common.iter.dir.dir_iter(tmp_path_list, **param_dict), test_path
+            d1_common.iter.path.path_generator(tmp_path_list, **param_dict), test_path
         )
         postfix_str += "_incdirs" if param_dict["return_dir_paths"] else ""
         postfix_str += "_recursive" if param_dict["recursive"] else ""

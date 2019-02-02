@@ -20,9 +20,18 @@
 # limitations under the License.
 
 import pytest
+import gc
 
 import d1_test.d1_test_case
 
+@pytest.fixture()
+def disable_garbage_collector():
+  """Fixture that disables the garbage collector while the function is running"""
+  gc.disable()
+  try:
+    yield
+  finally:
+    gc.enable()
 
 class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
@@ -37,7 +46,7 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
     assert expected_answer_str == received_answer_str
 
   # flake8: noqa: F841
-  def test_1010(self):
+  def test_1010(self, disable_garbage_collector):
     """memory_limit context manager"""
     # Passes because it uses less memory than the limit
     with d1_test.d1_test_case.memory_limit(10 * 1024**2):

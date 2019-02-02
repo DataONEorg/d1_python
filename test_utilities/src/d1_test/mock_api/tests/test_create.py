@@ -46,7 +46,7 @@ class TestMockCreate(d1_test.d1_test_case.D1TestCase):
     echo_dict = d1_test.mock_api.create.unpack_echo_header(response.headers)
     # TODO: echo_dict is currently a JSON str
     # echo_dict['identifier'] = (
-    #   mn_client_v1_v2.bindings.CreateFromDocument(response.content).value()
+    #   mn_client_v1_v2.pyxb_binding.CreateFromDocument(response.content).value()
     # )
     # del echo_dict['body']
     self.sample.assert_equals(echo_dict, 'echoes_request', mn_client_v1_v2)

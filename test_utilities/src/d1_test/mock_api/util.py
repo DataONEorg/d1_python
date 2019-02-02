@@ -49,7 +49,7 @@ SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 
 def parse_rest_url(rest_url):
   """Parse a DataONE REST API URL.
-  Return: version_tag, endpoint_str, param_list, query_dict, client.bindings.
+  Return: version_tag, endpoint_str, param_list, query_dict, client.pyxb_binding.
   E.g.:
     http://dataone.server.edu/dataone/mn/v1/objects/mypid ->
     'v1', 'objects', ['mypid'], {}, <v1 client>
@@ -127,7 +127,7 @@ def echo_get_callback(request):
 def generate_object_list(
     client, n_start, n_count, n_total, from_date=None, to_date=None
 ):
-  object_list_pyxb = client.bindings.objectList()
+  object_list_pyxb = client.pyxb_binding.objectList()
 
   for i in range(n_count):
     pid = 'object#{:04d}'.format(n_start + i)
@@ -148,7 +148,7 @@ def generate_object_list(
     elif not from_date and to_date and now_dt > to_date:
       continue
 
-    object_info_pyxb = client.bindings.ObjectInfo()
+    object_info_pyxb = client.pyxb_binding.ObjectInfo()
 
     object_info_pyxb.identifier = pid
     object_info_pyxb.formatId = sysmeta_pyxb.formatId
@@ -178,12 +178,12 @@ def _generate_system_metadata_for_sciobj_bytes(client, pid, sciobj_bytes):
 
 
 def _generate_sysmeta_pyxb(client, pid, size, md5, now):
-  sysmeta_pyxb = client.bindings.systemMetadata()
+  sysmeta_pyxb = client.pyxb_binding.systemMetadata()
   sysmeta_pyxb.identifier = pid
   sysmeta_pyxb.formatId = SYSMETA_FORMATID
   sysmeta_pyxb.size = size
   sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
-  sysmeta_pyxb.checksum = client.bindings.checksum(md5)
+  sysmeta_pyxb.checksum = client.pyxb_binding.checksum(md5)
   sysmeta_pyxb.checksum.algorithm = 'MD5'
   sysmeta_pyxb.dateUploaded = now
   sysmeta_pyxb.dateSysMetadataModified = now + datetime.timedelta(days=10)
@@ -192,10 +192,10 @@ def _generate_sysmeta_pyxb(client, pid, size, md5, now):
 
 
 def _generate_public_access_policy(client):
-  accessPolicy = client.bindings.accessPolicy()
-  accessRule = client.bindings.AccessRule()
+  accessPolicy = client.pyxb_binding.accessPolicy()
+  accessRule = client.pyxb_binding.AccessRule()
   accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission = client.bindings.Permission('read')
+  permission = client.pyxb_binding.Permission('read')
   accessRule.permission.append(permission)
   accessPolicy.append(accessRule)
   return accessPolicy

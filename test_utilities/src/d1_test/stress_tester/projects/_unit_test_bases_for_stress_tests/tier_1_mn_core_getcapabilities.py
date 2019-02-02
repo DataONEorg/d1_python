@@ -43,7 +43,7 @@ class Test020GetCapabilities(d1_test_case.D1TestCase):
     node_list = client.listNodes()
     assert len(node_list.node) == 1
     for node in node_list.node:
-      # Verif that correct node was reached and that it provided the correct identifier.
+      # Verify that correct node was reached and that it provided the correct identifier.
       assert node.baseURL == context.node['baseurl']
       assert node.identifier == context.node['identifier']
       # Verify that the interfaces required for Tier 1 compliance are present.

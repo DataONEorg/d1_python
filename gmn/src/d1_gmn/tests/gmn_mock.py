@@ -166,9 +166,9 @@ def set_auth_context_with_defaults(
 ):
   """Set the active, trusted and whitelisted subjects for an GMN API call
 
-  {disable_auth}=True: The other subj lists are ignored and GMN sees all calls
-  as comming from a fully trusted subject.
-  {param}=True: Use a default list of subjects.
+  ``disable_auth``=True: The other subj lists are ignored and GMN sees all calls
+  as coming from a fully trusted subject.
+  ``param``=True: Use a default list of subjects.
   """
   with d1_gmn.tests.gmn_mock.set_auth_context(
     ['active_subj_1', 'active_subj_2', 'active_subj_3']

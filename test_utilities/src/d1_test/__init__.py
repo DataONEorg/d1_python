@@ -18,7 +18,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Test Utilities"""
+"""DataONE Test Utilities
+
+The :doc:`/test/index` package contains various utilities for testing DataONE
+infrastructure components and clients. These include:
+
+:doc:`Instance Generator </test/instance_generator/index>`: Used for creating randomized
+System Metadata documents
+
+:doc:`Stress Tester </test/stress_tester/index>`: Used for stress testing of Member Node
+implementations. The stress_tester creates a configurable number of concurrent
+connections to a Member Node and populates the MN with randomly generated objects while
+running queries and object retrievals.
+
+:doc:`Utilities </test/utilities/index>`: Misc test utilities.
+"""
 
 # Suppress log messages instead of raising exception if the program using the
 # library does not configure the logging system.
@@ -30,8 +44,11 @@ try:
 except ImportError:
 
   class NullHandler(logging.Handler):
+    """Suppress log messages instead of raising exception if the program using the
+    library does not configure the logging system.
+    """
+    # noinspection PyMissingOrEmptyDocstring
     def emit(self, record):
       pass
-
 
 logging.getLogger(__name__).addHandler(NullHandler())

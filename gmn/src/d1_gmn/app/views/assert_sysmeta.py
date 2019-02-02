@@ -107,7 +107,7 @@ def obsoletes_matches_pid_if_specified(sysmeta_pyxb, old_pid):
 
 
 def is_valid_sid_for_new_standalone(sysmeta_pyxb):
-  """Assert that any SID in {sysmeta_pyxb} can be assigned to a new standalone
+  """Assert that any SID in ``sysmeta_pyxb`` can be assigned to a new standalone
   object
   """
   sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
@@ -120,8 +120,8 @@ def is_valid_sid_for_new_standalone(sysmeta_pyxb):
 
 
 def is_valid_sid_for_chain(pid, sid):
-  """Assert that {sid} can be assigned to the single object {pid} or to the
-  chain to which {pid} belongs.
+  """Assert that ``sid`` can be assigned to the single object ``pid`` or to the
+  chain to which ``pid`` belongs.
 
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
@@ -139,7 +139,7 @@ def is_valid_sid_for_chain(pid, sid):
 
 
 def _does_not_contain_replica_sections(sysmeta_pyxb):
-  """Assert that {sysmeta_pyxb} does not contain any replica information
+  """Assert that ``sysmeta_pyxb`` does not contain any replica information
   """
   if len(getattr(sysmeta_pyxb, 'replica', [])):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
@@ -151,7 +151,7 @@ def _does_not_contain_replica_sections(sysmeta_pyxb):
 
 
 def _is_not_archived(sysmeta_pyxb):
-  """Assert that {sysmeta_pyxb} does not have have the archived flag set
+  """Assert that ``sysmeta_pyxb`` does not have have the archived flag set
   """
   if _is_archived(sysmeta_pyxb):
     raise d1_common.types.exceptions.InvalidSystemMetadata(

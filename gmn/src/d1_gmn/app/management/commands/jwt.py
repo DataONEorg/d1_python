@@ -25,7 +25,7 @@ whitelist <jwt-path>: Add subject to whitelist for create, update and delete.
 
 The JWT signature is not verified by this command.
 
-The JWT must be in base64 format.
+The JWT must be in Base64 format.
 
 If the JWT is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
@@ -58,7 +58,7 @@ class Command(django.core.management.base.BaseCommand):
       '--debug', action='store_true', help='Debug level logging'
     )
     parser.add_argument('command', choices=['view', 'whitelist'], help='Action')
-    parser.add_argument('jwt_path', help='Path to base64 JWT file')
+    parser.add_argument('jwt_path', help='Path to Base64 JWT file')
 
   def handle(self, *args, **opt):
     assert not args

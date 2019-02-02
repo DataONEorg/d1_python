@@ -19,68 +19,74 @@
 # limitations under the License.
 """Utilities for handling the DataONE SystemMetadata type
 
-Example v2 SystemMetadata XML document with all optional values included:
+DataONE API methods such as `MNStorage.create()` require a Science Object and System Metadata pair.
 
-<v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
-  <!--Optional:-->
-  <serialVersion>11</serialVersion>
+Examples:
 
-  <identifier>string</identifier>
-  <formatId>string</formatId>
-  <size>11</size>
-  <checksum algorithm="string">string</checksum>
+  Example v2 SystemMetadata XML document with all optional values included:
 
-  <!--Optional:-->
-  <submitter>string</submitter>
-  <rightsHolder>string</rightsHolder>
+  ::
 
-  <!--Optional:-->
-  <accessPolicy>
-    <!--1 or more repetitions:-->
-    <allow>
-      <!--1 or more repetitions:-->
-      <subject>string</subject>
-      <!--1 or more repetitions:-->
-      <permission>read</permission>
-    </allow>
-  </accessPolicy>
+    <v2:systemMetadata xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+      <!--Optional:-->
+      <serialVersion>11</serialVersion>
 
-  <!--Optional:-->
-  <replicationPolicy replicationAllowed="true" numberReplicas="3">
-    <!--Zero or more repetitions:-->
-    <preferredMemberNode>string</preferredMemberNode>
-    <!--Zero or more repetitions:-->
-    <blockedMemberNode>string</blockedMemberNode>
-  </replicationPolicy>
+      <identifier>string</identifier>
+      <formatId>string</formatId>
+      <size>11</size>
+      <checksum algorithm="string">string</checksum>
 
-  <!--Optional:-->
-  <obsoletes>string</obsoletes>
-  <obsoletedBy>string</obsoletedBy>
-  <archived>true</archived>
-  <dateUploaded>2014-09-18T17:18:33</dateUploaded>
-  <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
-  <originMemberNode>string</originMemberNode>
-  <authoritativeMemberNode>string</authoritativeMemberNode>
+      <!--Optional:-->
+      <submitter>string</submitter>
+      <rightsHolder>string</rightsHolder>
 
-  <!--Zero or more repetitions:-->
-  <replica>
-    <replicaMemberNode>string</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
-  </replica>
+      <!--Optional:-->
+      <accessPolicy>
+        <!--1 or more repetitions:-->
+        <allow>
+          <!--1 or more repetitions:-->
+          <subject>string</subject>
+          <!--1 or more repetitions:-->
+          <permission>read</permission>
+        </allow>
+      </accessPolicy>
 
-  <!--Optional:-->
-  <seriesId>string</seriesId>
+      <!--Optional:-->
+      <replicationPolicy replicationAllowed="true" numberReplicas="3">
+        <!--Zero or more repetitions:-->
+        <preferredMemberNode>string</preferredMemberNode>
+        <!--Zero or more repetitions:-->
+        <blockedMemberNode>string</blockedMemberNode>
+      </replicationPolicy>
 
-  <!--Optional:-->
-  <mediaType name="string">
-    <!--Zero or more repetitions:-->
-    <property name="string">string</property>
-  </mediaType>
+      <!--Optional:-->
+      <obsoletes>string</obsoletes>
+      <obsoletedBy>string</obsoletedBy>
+      <archived>true</archived>
+      <dateUploaded>2014-09-18T17:18:33</dateUploaded>
+      <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
+      <originMemberNode>string</originMemberNode>
+      <authoritativeMemberNode>string</authoritativeMemberNode>
 
-  <!--Optional:-->
-  <fileName>string</fileName>
-</v2:systemMetadata>
+      <!--Zero or more repetitions:-->
+      <replica>
+        <replicaMemberNode>string</replicaMemberNode>
+        <replicationStatus>failed</replicationStatus>
+        <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
+      </replica>
+
+      <!--Optional:-->
+      <seriesId>string</seriesId>
+
+      <!--Optional:-->
+      <mediaType name="string">
+        <!--Zero or more repetitions:-->
+        <property name="string">string</property>
+      </mediaType>
+
+      <!--Optional:-->
+      <fileName>string</fileName>
+    </v2:systemMetadata>
 """
 
 import datetime
@@ -102,6 +108,16 @@ SYSMETA_ROOT_CHILD_LIST = [
 
 
 def is_sysmeta_pyxb(sysmeta_pyxb):
+  """
+  Args:
+    sysmeta_pyxb:
+      Object that may or may not be a SystemMetadata PyXB object.
+
+  Returns:
+    bool:
+      - ``True`` if ``sysmeta_pyxb`` is a SystemMetadata PyXB object.
+      - ``False`` if ``sysmeta_pyxb`` is not a PyXB object or is a PyXB object of a type other than SystemMetadata.
+  """
   return (
     d1_common.type_conversions.is_pyxb_d1_type(sysmeta_pyxb) and
     d1_common.type_conversions.pyxb_get_type_name(sysmeta_pyxb) == 'SystemMetadata'
@@ -109,7 +125,21 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
 
 
 def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
-  """Normalize {sysmeta_pyxb} in place
+  """Normalize SystemMetadata PyXB object in-place.
+
+  Args:
+    sysmeta_pyxb:
+      SystemMetadata PyXB object to normalize.
+
+    reset_timestamps: bool
+      ``True``: Timestamps in the SystemMetadata are set to a standard value so that
+      objects that are compared after normalization register as equivalent if only their
+      timestamps differ.
+
+  Notes:
+    The SystemMetadata is normalized by removing any redundant information and ordering
+    all sections where there are no semantics associated with the order. The normalized
+    SystemMetadata is intended to be semantically equivalent to the un-normalized one.
   """
   if sysmeta_pyxb.accessPolicy is not None:
     sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
@@ -149,7 +179,25 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
 
 
 def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
-  """Normalizes then compares SystemMetadata PyXB objects for equivalency.
+  """Determine if SystemMetadata PyXB objects are semantically equivalent.
+
+  Normalize then compare SystemMetadata PyXB objects for equivalency.
+
+  Args:
+    a_pyxb, b_pyxb : SystemMetadata PyXB objects to compare
+
+    reset_timestamps: bool
+      ``True``: Timestamps in the SystemMetadata are set to a standard value so that
+      objects that are compared after normalization register as equivalent if only their
+      timestamps differ.
+
+  Returns:
+    bool: **True** if SystemMetadata PyXB objects are semantically equivalent.
+
+  Notes:
+    The SystemMetadata is normalized by removing any redundant information and ordering
+    all sections where there are no semantics associated with the order. The normalized
+    SystemMetadata is intended to be semantically equivalent to the un-normalized one.
   """
   normalize_in_place(a_pyxb, ignore_timestamps)
   normalize_in_place(b_pyxb, ignore_timestamps)
@@ -163,8 +211,29 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
 
 
 def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
+  """Determine if two SystemMetadata XML docs are semantically equivalent.
+
+  Normalize then compare SystemMetadata XML docs for equivalency.
+
+  Args:
+    a_xml, b_xml: bytes
+      UTF-8 encoded SystemMetadata XML docs to compare
+
+    ignore_timestamps: bool
+      ``True``: Timestamps in the SystemMetadata are ignored so that objects that are
+      compared register as equivalent if only their timestamps differ.
+
+  Returns:
+    bool: **True** if SystemMetadata XML docs are semantically equivalent.
+
+  Notes:
+    The SystemMetadata is normalized by removing any redundant information and ordering
+    all sections where there are no semantics associated with the order. The normalized
+    SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+  """
+
   """Normalizes then compares SystemMetadata XML docs for equivalency.
-  {a_xml} and {b_xml} should be utf-8 encoded DataONE System Metadata XML
+  ``a_xml`` and ``b_xml`` should be utf-8 encoded DataONE System Metadata XML
   documents.
   """
   return are_equivalent_pyxb(
@@ -190,13 +259,13 @@ def clear_elements(
 
 
 def update_elements(dst_pyxb, src_pyxb, el_list):
-  """Copy elements specified in {el_list} from {src_pyxb} to {dst_pyxb}
+  """Copy elements specified in ``el_list`` from ``src_pyxb`` to ``dst_pyxb``
 
   Only elements that are children of root are supported. See
   SYSMETA_ROOT_CHILD_LIST.
 
-  If an element in {el_list} does not exist in {src_pyxb}, it is removed from
-  {dst_pyxb}.
+  If an element in ``el_list`` does not exist in ``src_pyxb``, it is removed from
+  ``dst_pyxb``.
   """
   invalid_element_set = set(el_list) - set(SYSMETA_ROOT_CHILD_LIST)
   if invalid_element_set:

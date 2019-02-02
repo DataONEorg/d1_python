@@ -38,9 +38,9 @@ PYCHARM_BIN_PATH = os.path.expanduser(
 
 
 def open_and_set_cursor(src_path, src_line=1):
-  """Attempt to open the file at {src_path} in the PyCharm IDE and move the
-  cursor to line {src_line}
-  - {src_path} can be an absolute path, or a path relative to the root of the
+  """Attempt to open the file at ``src_path`` in the PyCharm IDE and move the
+  cursor to line ``src_line``
+  - ``src_path`` can be an absolute path, or a path relative to the root of the
   DataONE Git repository.
   """
   if src_path == '<string>':

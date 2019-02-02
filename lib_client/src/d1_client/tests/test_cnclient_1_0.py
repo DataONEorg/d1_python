@@ -78,7 +78,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
     object_format_pyxb = cn_client_v1.getFormat('valid_format_id')
-    assert isinstance(object_format_pyxb, cn_client_v1.bindings.ObjectFormat)
+    assert isinstance(object_format_pyxb, cn_client_v1.pyxb_binding.ObjectFormat)
     assert object_format_pyxb.formatId == 'valid_format_id'
 
   # CNCore.reserveIdentifier()
@@ -523,7 +523,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
     received_echo_dict = cn_client_v1.requestMapIdentity(
-      cn_client_v1.bindings.subject('test_request_map_identity_subj')
+      cn_client_v1.pyxb_binding.subject('test_request_map_identity_subj')
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'request_map_identity', cn_client_v1
@@ -537,7 +537,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     )
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.requestMapIdentity(
-        cn_client_v1.bindings.subject('test_request_map_identity_subj'),
+        cn_client_v1.pyxb_binding.subject('test_request_map_identity_subj'),
         vendorSpecific={'trigger': '404'}
       )
 
@@ -550,7 +550,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
     received_echo_dict = cn_client_v1.confirmMapIdentity(
-      cn_client_v1.bindings.subject('test_confirm_map_identity_subj')
+      cn_client_v1.pyxb_binding.subject('test_confirm_map_identity_subj')
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'confirm_map_identity', cn_client_v1
@@ -564,7 +564,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     )
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.confirmMapIdentity(
-        cn_client_v1.bindings.subject('test_request_map_identity_subj'),
+        cn_client_v1.pyxb_binding.subject('test_request_map_identity_subj'),
         vendorSpecific={'trigger': '404'}
       )
 
@@ -577,7 +577,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
     received_echo_dict = cn_client_v1.denyMapIdentity(
-      cn_client_v1.bindings.subject('test_deny_map_identity_subj')
+      cn_client_v1.pyxb_binding.subject('test_deny_map_identity_subj')
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'deny_map_identity', cn_client_v1
@@ -591,7 +591,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     )
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.denyMapIdentity(
-        cn_client_v1.bindings.subject('test_deny_map_identity_subj'),
+        cn_client_v1.pyxb_binding.subject('test_deny_map_identity_subj'),
         vendorSpecific={'trigger': '404'}
       )
 
@@ -604,7 +604,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
     received_echo_dict = cn_client_v1.createGroup(
-      cn_client_v1.bindings.subject('test_create_group_subj')
+      cn_client_v1.pyxb_binding.subject('test_create_group_subj')
     )
     d1_test.mock_api.catch_all.assert_expected_echo(
       received_echo_dict, 'create_group', cn_client_v1
@@ -618,7 +618,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     )
     with pytest.raises(d1_common.types.exceptions.NotFound):
       cn_client_v1.createGroup(
-        cn_client_v1.bindings.subject('test_create_group_subj'),
+        cn_client_v1.pyxb_binding.subject('test_create_group_subj'),
         vendorSpecific={'trigger': '404'}
       )
 
@@ -634,13 +634,13 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     d1_test.mock_api.catch_all.add_callback(
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
-    pid_pyxb = cn_client_v1.bindings.Identifier(
+    pid_pyxb = cn_client_v1.pyxb_binding.Identifier(
       'test_set_replication_status_pid'
     )
-    node_ref_pyxb = cn_client_v1.bindings.nodeReference(
+    node_ref_pyxb = cn_client_v1.pyxb_binding.nodeReference(
       'test_set_replication_status_node_ref'
     )
-    replication_status_pyxb = cn_client_v1.bindings.ReplicationStatus(
+    replication_status_pyxb = cn_client_v1.pyxb_binding.ReplicationStatus(
       'requested'
     )
     failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
@@ -657,13 +657,13 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
     d1_test.mock_api.catch_all.add_callback(
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
-    pid_pyxb = cn_client_v1.bindings.Identifier(
+    pid_pyxb = cn_client_v1.pyxb_binding.Identifier(
       'test_set_replication_status_pid'
     )
-    node_ref_pyxb = cn_client_v1.bindings.nodeReference(
+    node_ref_pyxb = cn_client_v1.pyxb_binding.nodeReference(
       'test_set_replication_status_node_ref'
     )
-    replication_status_pyxb = cn_client_v1.bindings.ReplicationStatus(
+    replication_status_pyxb = cn_client_v1.pyxb_binding.ReplicationStatus(
       'requested'
     )
     failure_pyxb = d1_common.types.exceptions.NotAuthorized(0, 'a failure')
@@ -683,7 +683,7 @@ class TestCNClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_BASE_URL
     )
 
-    pid_pyxb = cn_client_v1.bindings.Identifier(
+    pid_pyxb = cn_client_v1.pyxb_binding.Identifier(
       'test_update_replication_metadata_pid'
     )
     replica_pyxb = d1_test.instance_generator.replica.generate_single()

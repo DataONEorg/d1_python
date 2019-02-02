@@ -62,7 +62,7 @@ Contributors are encouraged to set up the hooks before creating PRs. This can be
 
 To set up automatic validation and formatting:
 
-    $ sudo pip install pre-commit
+    $ pip install pre-commit
     $ cd <a folder in the Git working tree for the repository>
     $ pre-commit autoupdate --bleeding-edge
     $ pre-commit install

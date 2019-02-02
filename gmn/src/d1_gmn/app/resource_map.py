@@ -90,7 +90,7 @@ def create_or_update(map_pid, resource_map):
 
 
 def get_resource_map_members(pid):
-  """{pid} is the PID of a Resource Map or the PID of a member of a Resource Map
+  """``pid`` is the PID of a Resource Map or the PID of a member of a Resource Map
   """
   if d1_gmn.app.did.is_resource_map_db(pid):
     return get_resource_map_members_by_map(pid)

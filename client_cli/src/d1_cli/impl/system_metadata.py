@@ -144,7 +144,7 @@ class SystemMetadataCreator():
       )
 
   def _get_string_checksum(self, string, algorithm='SHA-1', block_size=None):
-    return d1_common.checksum.calculate_checksum_on_string(string, algorithm)
+    return d1_common.checksum.calculate_checksum_on_bytes(string, algorithm)
 
   #def _create_system_metadata(self, pid, path, format_id=None):
   #  checksum = self._get_file_checksum(

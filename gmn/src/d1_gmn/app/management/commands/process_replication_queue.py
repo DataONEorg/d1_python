@@ -131,8 +131,8 @@ class ReplicationQueueProcessor(object):
     with django.db.transaction.atomic():
       sysmeta_pyxb = self._get_system_metadata(queue_model)
       self._set_origin(queue_model, sysmeta_pyxb)
-      sciobj_byteseam = self._get_sciobj_byteseam(queue_model)
-      self._create_replica(sysmeta_pyxb, sciobj_byteseam)
+      sciobj_bytestream = self._get_sciobj_bytestream(queue_model)
+      self._create_replica(sysmeta_pyxb, sciobj_bytestream)
       self._update_request_status(queue_model, 'completed')
 
   def _set_origin(self, queue_model, sysmeta_pyxb):
@@ -188,7 +188,7 @@ class ReplicationQueueProcessor(object):
     logging.debug('Calling CNRead.getSystemMetadata() pid={}'.format(pid))
     return self.cn_client.getSystemMetadata(pid)
 
-  def _get_sciobj_byteseam(self, queue_model):
+  def _get_sciobj_bytestream(self, queue_model):
     source_node_base_url = self._resolve_source_node_id_to_base_url(
       queue_model.local_replica.info.member_node.urn
     )
@@ -198,7 +198,7 @@ class ReplicationQueueProcessor(object):
       cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
       retries=1,
     )
-    return self._open_sciobj_byteseam_on_member_node(
+    return self._open_sciobj_bytestream_on_member_node(
       mn_client, queue_model.local_replica.pid.did
     )
 
@@ -219,10 +219,10 @@ class ReplicationQueueProcessor(object):
   def _get_node_list(self):
     return self.cn_client.listNodes()
 
-  def _open_sciobj_byteseam_on_member_node(self, mn_client, pid):
+  def _open_sciobj_bytestream_on_member_node(self, mn_client, pid):
     return mn_client.getReplica(pid)
 
-  def _create_replica(self, sysmeta_pyxb, sciobj_byteseam):
+  def _create_replica(self, sysmeta_pyxb, sciobj_bytestream):
     """GMN handles replicas differently from native objects, with the main
     differences being related to handling of restrictions related to
     revision chains and SIDs. So this create sequence differs significantly
@@ -234,7 +234,7 @@ class ReplicationQueueProcessor(object):
     self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
     sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
     sciobj_model = d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
-    self._store_science_object_bytes(pid, sciobj_byteseam)
+    self._store_science_object_bytes(pid, sciobj_bytestream)
     d1_gmn.app.event_log.create_log_entry(
       sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
     )
@@ -249,11 +249,11 @@ class ReplicationQueueProcessor(object):
   def _create_replica_revision_reference(self, pid):
     d1_gmn.app.models.replica_revision_chain_reference(pid)
 
-  def _store_science_object_bytes(self, pid, sciobj_byteseam):
+  def _store_science_object_bytes(self, pid, sciobj_bytestream):
     sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
     d1_common.util.create_missing_directories_for_file(sciobj_path)
     with open(sciobj_path, 'wb') as f:
-      for chunk in sciobj_byteseam.iter_content(
+      for chunk in sciobj_bytestream.iter_content(
           chunk_size=django.conf.settings.NUM_CHUNK_BYTES
       ):
         f.write(chunk)

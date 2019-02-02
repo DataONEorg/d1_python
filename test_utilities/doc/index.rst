@@ -6,10 +6,10 @@ DataONE Test Utilities
 Contents:
 
 .. toctree::
-  :numbered:
   :maxdepth: 2
 
   setup
+  api/modules
   instance_generator/index
   stress_tester/index
   utilities/index

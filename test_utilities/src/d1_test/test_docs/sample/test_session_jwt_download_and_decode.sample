@@ -1,3 +1,1 @@
-<Name([<NameAttribute(oid=<ObjectIdentifier(oid=0.9.2342.19200300.100.1.25, name=domainComponent)>, value='org')>,
-<NameAttribute(oid=<ObjectIdentifier(oid=0.9.2342.19200300.100.1.25, name=domainComponent)>, value='dataone')>,
-<NameAttribute(oid=<ObjectIdentifier(oid=2.5.4.3, name=commonName)>, value='cn-ucsb-1.dataone.org')>])>
+<Name(DC=org,DC=dataone,CN=cn-ucsb-1.dataone.org)>

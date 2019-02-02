@@ -69,7 +69,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     assert rp_dict_1 == rp_dict_2
 
   def test_1040(self):
-    """add_node(): Add node without conflict"""
+    """add_preferred(): Add node without conflict"""
     rp_swiz_pyxb = copy.deepcopy(self.rp_swiz_pyxb)
     d1_common.replication_policy.add_preferred(
       rp_swiz_pyxb, 'add_preferred_urn'
@@ -77,7 +77,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     self.sample.assert_equals(rp_swiz_pyxb, 'add_node')
 
   def test_1050(self):
-    """add_node(): Add node with conflict"""
+    """add_preferred(), add_blocked(): Add node with conflict"""
     rp_swiz_pyxb = copy.deepcopy(self.rp_swiz_pyxb)
     d1_common.replication_policy.add_preferred(rp_swiz_pyxb, 'add_urn')
     d1_common.replication_policy.add_blocked(rp_swiz_pyxb, 'add_urn')
@@ -115,13 +115,13 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     self.sample.assert_equals(sm_pyxb, 'sysmeta_set_default_rp_new')
 
   def test_1100(self):
-    """add_node(): Add node without existing RP"""
+    """sysmeta_add_preferred(): Add node without existing RP"""
     sm_pyxb = copy.deepcopy(self.sm_without_rp_pyxb)
     d1_common.replication_policy.sysmeta_add_preferred(sm_pyxb, 'add_pref_urn')
     self.sample.assert_equals(sm_pyxb, 'add_node_without_existing')
 
   def test_1110(self):
-    """sysmeta_add_preferred()"""
+    """sysmeta_add_preferred(), sysmeta_add_blocked(): Add node with conflict"""
     sm_pyxb = copy.deepcopy(self.sm_with_rp_pyxb)
     d1_common.replication_policy.sysmeta_add_preferred(sm_pyxb, 'add_urn')
     d1_common.replication_policy.sysmeta_add_blocked(sm_pyxb, 'add_urn')

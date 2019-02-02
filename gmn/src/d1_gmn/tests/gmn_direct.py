@@ -63,7 +63,7 @@ def create(version_tag, sciobj_bytes, sysmeta_xml):
       )
 
 
-def create_stream(version_tag, sciobj_byteseam, sysmeta_xml):
+def create_stream(version_tag, sciobj_bytestream, sysmeta_xml):
   """Call MNStorage.create()"""
   with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
     with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
@@ -71,7 +71,7 @@ def create_stream(version_tag, sciobj_byteseam, sysmeta_xml):
         django.test.Client().post(
           d1_common.url.joinPathElements('/', version_tag, 'object'), {
             'pid': xml.get_element_text('identifier'),
-            'object': ('content.bin', sciobj_byteseam),
+            'object': ('content.bin', sciobj_bytestream),
             'sysmeta': ('sysmeta.xml', io.StringIO(sysmeta_xml)),
           }
         )
@@ -140,7 +140,7 @@ def _add_query(query_dict, url_path):
 
 def get_object_count(version_tag):
   """Get total number of objects for which one or more subj in
-  {active_subj_list} have read access or better. """
+  ``active_subj_list`` have read access or better. """
   url_path = d1_common.url.joinPathElements('/', version_tag, 'object')
   # url_path += "?identifier={}".format(d1_common.url.encodeQueryElement(pid))
   resp_dict = _get_resp_dict(django.test.Client().get(url_path))

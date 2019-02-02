@@ -38,7 +38,7 @@ class TestMockSolrSearch(d1_test.d1_test_case.D1TestCase):
     mock_solr_search.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     assert isinstance(
       cn_client_v1_v2.search(queryType='solr', query='query-string'),
-      cn_client_v1_v2.bindings.ObjectList
+      cn_client_v1_v2.pyxb_binding.ObjectList
     )
 
   @responses.activate

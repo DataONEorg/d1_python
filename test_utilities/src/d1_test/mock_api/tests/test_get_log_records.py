@@ -38,7 +38,7 @@ class TestMockLogRecords(d1_test.d1_test_case.D1TestCase):
     """mock_api.getLogRecords() returns a DataONE Log PyXB object"""
     mock_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     assert isinstance(
-      mn_client_v1_v2.getLogRecords(), mn_client_v1_v2.bindings.Log
+      mn_client_v1_v2.getLogRecords(), mn_client_v1_v2.pyxb_binding.Log
     )
 
   @responses.activate

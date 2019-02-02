@@ -61,7 +61,7 @@ RELATIVE_PATH_MAGIC_HOST_STR = 'gmn-object-store'
 
 
 def save_in_object_store_by_file(pid, sciobj_file):
-  """Save the Science Object bytes in the {sciobj_file} file-like object to the
+  """Save the Science Object bytes in the ``sciobj_file`` file-like object to the
   default location within the tree of the local SciObj store and return file_url
   with the file location in a suitable form for storing in the DB.
   """
@@ -74,7 +74,7 @@ def save_in_object_store_by_file(pid, sciobj_file):
 
 
 def save_in_object_store_by_iter(pid, sciobj_iter):
-  """Save the Science Object bytes in the {sciobj_iter} iterator object to the
+  """Save the Science Object bytes in the ``sciobj_iter`` iterator object to the
   default location within the tree of the local SciObj store and return file_url
   with the file location in a suitable form for storing in the DB.
   """
@@ -86,8 +86,8 @@ def save_in_object_store_by_iter(pid, sciobj_iter):
 
 @contextlib2.contextmanager
 def open_sciobj_file_by_pid(pid, write=False):
-  """Open the file containing the Science Object bytes of {pid} in the default
-  location within the tree of the local SciObj store. If {write} is True, the
+  """Open the file containing the Science Object bytes of ``pid`` in the default
+  location within the tree of the local SciObj store. If ``write`` is True, the
   file is opened for writing and any missing directories are created. Return the
   file handle and file_url with the file location in a suitable form for storing
   in the DB.
@@ -101,8 +101,8 @@ def open_sciobj_file_by_pid(pid, write=False):
 
 
 def save_in_custom_location_by_file(abs_path, sciobj_file):
-  """Save the Science Object bytes in the {sciobj_file} file-like object to the
-  custom location {abs_path} in the local filesystem and return file_url with
+  """Save the Science Object bytes in the ``sciobj_file`` file-like object to the
+  custom location ``abs_path`` in the local filesystem and return file_url with
   the file location in a suitable form for storing in the DB.
   """
   return save_in_custom_location_by_iter(
@@ -114,8 +114,8 @@ def save_in_custom_location_by_file(abs_path, sciobj_file):
 
 
 def save_in_custom_location_by_iter(abs_path, sciobj_iter):
-  """Save the Science Object bytes in the {sciobj_file} iterator object to the
-  custom location {abs_path} in the local filesystem and return file_url with the
+  """Save the Science Object bytes in the ``sciobj_file`` iterator object to the
+  custom location ``abs_path`` in the local filesystem and return file_url with the
   file location in a suitable form for storing in the DB.
   """
   with open_sciobj_file_by_path(abs_path, True) as sciobj_file:
@@ -127,7 +127,7 @@ def save_in_custom_location_by_iter(abs_path, sciobj_iter):
 @contextlib2.contextmanager
 def open_sciobj_file_by_path(abs_path, write=False):
   """Open the file containing the Science Object bytes at the custom location
-  {abs_path} in the local filesystem. If {write} is True, the file is opened for
+  ``abs_path`` in the local filesystem. If ``write`` is True, the file is opened for
   writing and any missing directores are created. Return the file handle and
   file_url with the file location in a suitable form for storing in the DB.
   """
@@ -226,7 +226,7 @@ def get_abs_sciobj_file_url(abs_sciobj_file_path):
 
 def get_abs_sciobj_file_path_by_url(file_url):
   """Get the absolute path to the file holding an object's bytes
-  - {file_url} is an absolute or relative file:// url as stored in the DB.
+  - ``file_url`` is an absolute or relative file:// url as stored in the DB.
   """
   assert_sciobj_store_exists()
   m = re.match(r'file://(.*?)/(.*)', file_url, re.IGNORECASE)

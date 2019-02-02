@@ -51,7 +51,7 @@ class CLI(cmd.Cmd):
   # Override methods in Cmd object.
   def preloop(self):
     """Initialization before prompting user for commands.
-    Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
+    Despite the claims in the Cmd documentation, Cmd.preloop() is not a stub.
     """
     # Set up command completion.
     cmd.Cmd.preloop(self)
@@ -59,7 +59,7 @@ class CLI(cmd.Cmd):
 
   def postloop(self):
     """Take care of any unfinished business.
-    Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
+    Despite the claims in the Cmd documentation, Cmd.postloop() is not a stub.
     """
     cmd.Cmd.postloop(self) # Clean up command completion
     cli_util.print_info('Exiting...')

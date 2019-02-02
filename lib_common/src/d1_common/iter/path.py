@@ -17,9 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Resolve a list of file and dir paths to a list of file paths with optional
-filtering and client feedback.
+"""Generator that resolves a list of file and dir paths and returns file paths with
+optional filtering and client feedback.
 """
 
 # TODO: Update code and docstring for Py3
@@ -37,7 +36,7 @@ DEFAULT_EXCLUDE_GLOB_LIST = [
 ] # yapf: disable
 
 
-def dir_iter(
+def path_generator(
     path_list,
     include_glob_list=None,
     exclude_glob_list=None,
@@ -46,12 +45,7 @@ def dir_iter(
     default_excludes=True,
     return_dir_paths=False,
 ):
-  """Resolve a list of file and dir paths to a list of file paths with optional
-  filtering and client feedback.
-
-  This function is intended for use on a list of paths passed to a script on the
-  command line.
-
+  """
   Args:
     path_list: list of str
 

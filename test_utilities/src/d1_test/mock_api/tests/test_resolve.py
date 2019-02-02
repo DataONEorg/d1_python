@@ -38,7 +38,7 @@ class TestMockResolve(d1_test.d1_test_case.D1TestCase):
     mock_resolve.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     assert isinstance(
       cn_client_v2.resolve('valid_pid'),
-      cn_client_v2.bindings.ObjectLocationList
+      cn_client_v2.pyxb_binding.ObjectLocationList
     )
 
   @responses.activate

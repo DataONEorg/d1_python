@@ -91,17 +91,14 @@ def _parse_url(url):
 
 
 def _generate_object_format(client, format_id_str):
-  objectFormat = client.bindings.objectFormat()
+  objectFormat = client.pyxb_binding.objectFormat()
   objectFormat.formatId = format_id_str
   objectFormat.formatName = 'format_name_{}'.format(format_id_str)
   objectFormat.formatType = 'format_type_{}'.format(format_id_str)
 
   if hasattr(client, 'MediaType'): # Only in v2
-    mediaType = client.bindings.MediaType()
+    mediaType = client.pyxb_binding.MediaType()
     mediaType.name = 'media_type_name_{}'.format(format_id_str)
-    # mediaTypeProperty = client.bindings.MediaTypeProperty(
-    # 'media_type_property_{}'.format(n_start + i))
-    # mediaType.property_.append(mediaTypeProperty)
     objectFormat.mediaType = mediaType
 
   return objectFormat.toxml('utf-8')

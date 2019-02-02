@@ -21,7 +21,7 @@
 
 # TODO: This is the start of a command line wrapper for SubjectInfoRenderer
 
-"""View or render_to_image_file a SubjectInfo XML doc to UI or image file
+"""Render SubjectInfo XML doc to UI or image file
 """
 import sys
 import d1_common.cert.subject_info_renderer
@@ -37,6 +37,7 @@ SUBJ_INFO_SAMPLE_PATH = "/home/dahl/dev/d1_python/test_utilities/src/d1_test/tes
 AUTH_SUBJ = "CN=Matt Jones A729,O=Google,C=US,DC=cilogon,DC=org"
 
 
+# noinspection PyMissingOrEmptyDocstring
 def main():
     subject_info_pyxb = deserialize_subject_info(SUBJ_INFO_SAMPLE_PATH)
     subject_info_renderer = d1_common.cert.subject_info_renderer.SubjectInfoRenderer(
@@ -48,6 +49,7 @@ def main():
 
 
 def deserialize_subject_info(subject_info_xml_path):
+    """Deserialize a SubjectInfo XML file to a PyXB object"""
     try:
         with open(subject_info_xml_path) as f:
             return d1_common.xml.deserialize(f.read())

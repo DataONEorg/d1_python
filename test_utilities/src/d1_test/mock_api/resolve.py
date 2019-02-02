@@ -88,12 +88,12 @@ def _parse_url(url):
 
 
 def _generate_object_location_list(client, pid_str):
-  objectLocationList = client.bindings.objectLocationList()
+  objectLocationList = client.pyxb_binding.objectLocationList()
   objectLocationList.identifier = pid_str
 
   for i in range(3):
     pid_str = 'resolved_pid_{}'.format(i)
-    objectLocation = client.bindings.ObjectLocation()
+    objectLocation = client.pyxb_binding.ObjectLocation()
     objectLocation.nodeIdentifier = 'urn:node:testResolve{}'.format(i)
     objectLocation.baseURL = 'https://{}.some.base.url/mn'.format(i)
     objectLocation.version = 'v2'

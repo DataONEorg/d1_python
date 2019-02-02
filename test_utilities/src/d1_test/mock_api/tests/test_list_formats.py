@@ -37,7 +37,7 @@ class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
     """mock_api.listFormats() returns a objectFormatList PyXB object"""
     mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     assert isinstance(
-      cn_client_v1_v2.listFormats(), cn_client_v1_v2.bindings.ObjectFormatList
+      cn_client_v1_v2.listFormats(), cn_client_v1_v2.pyxb_binding.ObjectFormatList
     )
 
   @responses.activate

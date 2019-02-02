@@ -96,7 +96,7 @@ class Session(object):
     :type verify_tls: bool or path
 
     :param suppress_verify_warnings: Suppress the warnings issued when
-      {verify_tls} is set to False.
+      ``verify_tls`` is set to False.
     :type suppress_verify_warnings: bool
 
     :param user_agent: Override the default User-Agent string used by d1client.
@@ -116,7 +116,7 @@ class Session(object):
     self._api_minor = 0
     # Adapter
     self._max_retries = kwargs_dict.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
-    # Option to suppress SSL/TLS verification warnings
+    # Option to suppress TLS/SSL verification warnings
     suppress_verify_warnings = kwargs_dict.pop(
       'suppress_verify_warnings', DEFAULT_SUPPRESS_VERIFY_WARNINGS
     )
@@ -179,9 +179,9 @@ class Session(object):
   def POST(self, rest_path_list, **kwargs):
     """Send a POST request with optional streaming multipart encoding.
     See requests.sessions.request for optional parameters. To post regular data,
-    pass a string, iterator or generator as the {data} argument. To post a
+    pass a string, iterator or generator as the ``data`` argument. To post a
     multipart stream, pass a dictionary of multipart elements as the
-    {fields} argument. E.g.:
+    ``fields`` argument. E.g.:
 
     fields = {
       'field0': 'value',

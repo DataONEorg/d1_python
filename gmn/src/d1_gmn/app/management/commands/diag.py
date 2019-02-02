@@ -38,16 +38,13 @@ import d1_gmn.app.sysmeta
 import d1_gmn.app.util
 import d1_gmn.app.views.assert_db
 
-import d1_common.iter.dir
+import d1_common.iter.path
 import d1_common.iter.file
 import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
-
-import d1_test
-import d1_test.sample
 
 import d1_client.cnclient
 import d1_client.cnclient_2_0
@@ -328,6 +325,10 @@ class UpdateSystemMetadata(object):
         sysmeta_pyxb, discovered_sysmeta_pyxb, element_list
       )
       d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
+
+      #
+      import d1_test.sample
+
       logging.debug(
         d1_test.sample.get_sxs_diff(before_sysmeta_pyxb, sysmeta_pyxb)
       )
@@ -347,7 +348,7 @@ class UpdateSystemMetadata(object):
       )
 
   def _discovered_sysmeta_file_iter(self, sysmeta_path):
-    for xml_path in d1_common.iter.dir.dir_iter(
+    for xml_path in d1_common.iter.path.path_generator(
         path_list=[sysmeta_path],
         include_glob_list=['*.xml'],
     ):
@@ -359,6 +360,5 @@ class UpdateSystemMetadata(object):
         continue
       pyxb_type_str = d1_common.type_conversions.pyxb_get_type_name(obj_pyxb)
       if pyxb_type_str != 'SystemMetadata':
-        # logging.debug('Not SystemMetadata. type="{}"'.format(pyxb_type_str))
         continue
       yield obj_pyxb

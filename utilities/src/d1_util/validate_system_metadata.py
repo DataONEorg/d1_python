@@ -127,7 +127,7 @@ class DataONENodeObjectValidator(object):
   def _validate_pid(self, pid):
     sys_meta = self._read_sys_meta_with_correction(pid)
     sci_obj = self._read_obj(pid)
-    checksum = d1_common.checksum.calculate_checksum_on_string(
+    checksum = d1_common.checksum.calculate_checksum_on_bytes(
       sci_obj, sys_meta.checksum.algorithm
     )
     errors = []

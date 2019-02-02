@@ -1,5 +1,1 @@
-<Certificate(subject=<Name([<NameAttribute(oid=<ObjectIdentifier(oid=0.9.2342.19200300.100.1.25, name=domainComponent)>,
-value='org')>, <NameAttribute(oid=<ObjectIdentifier(oid=0.9.2342.19200300.100.1.25, name=domainComponent)>, value='cilogon')>,
-<NameAttribute(oid=<ObjectIdentifier(oid=2.5.4.6, name=countryName)>, value='US')>,
-<NameAttribute(oid=<ObjectIdentifier(oid=2.5.4.10, name=organizationName)>, value='Google')>,
-<NameAttribute(oid=<ObjectIdentifier(oid=2.5.4.3, name=commonName)>, value='Roger Dahl A1779')>])>, ...)>
+<Certificate(subject=<Name(DC=org,DC=cilogon,C=US,O=Google,CN=Roger Dahl A1779)>, ...)>

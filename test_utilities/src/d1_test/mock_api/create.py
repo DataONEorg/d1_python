@@ -139,7 +139,7 @@ def unpack_echo_header(header_dict):
   # serialized_mmp_list = [
   #   (dict(p.headers), 'SHA-1/{}'.format(
   #     d1_common.checksum.format_checksum(
-  #       d1_common.checksum.create_checksum_object_from_string(
+  #       d1_common.checksum.create_checksum_object_from_bytes(
   #         p.text.encode('utf-8')
   #       )
   #     )

@@ -5,4 +5,4 @@ To update your copy of the library to the latest version available on PyPI, run 
 
 ::
 
-  $ sudo pip install --upgrade dataone.libclient
+  $ pip install --upgrade dataone.libclient

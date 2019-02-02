@@ -36,7 +36,7 @@ import d1_common.types
 import d1_common.types.exceptions
 import d1_common.xml
 
-import d1_test.sample
+import d1_test.d1_test_case
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestGetLogRecords')
@@ -225,3 +225,16 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     with d1_gmn.tests.gmn_mock.disable_auth():
       log = gmn_client_v1_v2.getLogRecords(idFilter=sid)
       self.sample.assert_equals(log, 'id_filter_with_sid', gmn_client_v1_v2)
+
+
+  @responses.activate
+  def test_1200(self, gmn_client_v1_v2):
+    """MNCore.getLogRecords(): LogEntry ipAddress and subject are redacted for public
+    objects.
+    """
+    with d1_gmn.tests.gmn_mock.disable_auth():
+      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+        gmn_client_v1_v2
+      )
+      log = gmn_client_v1_v2.getLogRecords(idFilter=sid)
+      print(log)

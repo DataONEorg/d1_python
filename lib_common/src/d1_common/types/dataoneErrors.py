@@ -17,13 +17,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Import the PYXB bindings required for handling the DataONE Exception types
+"""Import the PyXB binding required for handling the DataONE Exception types
 """
 
 import logging
 
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneErrors import *
 
 # flake8: noqa: F403
 
+# Suppress PyXB warnings, such as the following:
+#
+# WARNING:pyxb.binding.basis:Unable to convert DOM node value at
+# <unknown>[1:209] to binding
+#
+# This warning occurs because traceInformation is an xs:anyType, which can
+# hold any XML structure so noPyXB bindingcan be generated.
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)

@@ -38,7 +38,7 @@ class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
     mock_get_format.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
     assert isinstance(
       cn_client_v1_v2.getFormat('valid_format_id'),
-      cn_client_v1_v2.bindings.ObjectFormat
+      cn_client_v1_v2.pyxb_binding.ObjectFormat
     )
 
   @responses.activate

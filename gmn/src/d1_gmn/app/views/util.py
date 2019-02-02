@@ -53,7 +53,7 @@ import django.http
 
 
 def dataoneTypes(request):
-  """Return the PyXB type client to use when handling a request"""
+  """Return the PyXB binding to use when handling a request"""
   if is_v1_api(request):
     return d1_common.types.dataoneTypes_v1_1
   elif is_v2_api(request) or is_diag_api(request):
@@ -142,10 +142,9 @@ def http_response_with_boolean_true_type():
 
 
 def query_object_list(request, type_name):
-  # Assumes ScienceObject ordering = ['modified_timestamp', 'id'] (set in model class)
   query = d1_gmn.app.models.ScienceObject.objects.all().select_related().annotate(
     timestamp=django.db.models.F('modified_timestamp')
-  )
+  ).order_by('modified_timestamp', 'id')
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(request, query, 'id')
   query = d1_gmn.app.db_filter.add_datetime_filter(

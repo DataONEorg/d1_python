@@ -1,4 +1,4 @@
-PyXB object:
+PyXB type instance:
   <?xml version="1.0" ?>
   <ns1:objectList count="1" start="0" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -10,7 +10,7 @@ PyXB object:
     </objectInfo>
   </ns1:objectList>
 
-PyXB object:
+PyXB type instance:
   <?xml version="1.0" ?>
   <ns1:objectList count="1" start="7" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>

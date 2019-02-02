@@ -272,7 +272,7 @@ class SolrConnection:
     Returns unicode(value) after trying to coerce it into the SOLR field type.
 
     @param ftype(string) The SOLR field type for the value
-    @param value(any) The value that is to be represented as unicode text.
+    @param value(any) The value that is to be represented as Unicode text.
     """
     if value is None:
       return None

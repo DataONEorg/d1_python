@@ -11,9 +11,9 @@ Contents:
   :maxdepth: 2
 
   setup
-  api
+  update
+  api/modules
   /glossary
-
 
 Indices and tables
 ==================

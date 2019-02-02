@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generator that returns the bytes of a file in chunks
+"""Generator that returns the bytes of a file in chunks.
 """
 
 import os
@@ -26,6 +26,8 @@ import d1_common.const
 
 
 class FileIterator(object):
+  """Generator that returns the bytes of a file in chunks.
+  """
   def __init__(self, path, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
     self._path = path
     self._chunk_size = chunk_size
@@ -41,10 +43,16 @@ class FileIterator(object):
 
   @property
   def size(self):
+    """
+    Returns:
+      int : The total number of bytes that will be returned by the iterator.
+    """
     return self._byte_count
 
 
 class FileLikeObjectIterator(object):
+  """Generator that returns the bytes of a file-like object in chunks
+  """
   def __init__(self, file, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
     self._file = file
     self._chunk_size = chunk_size
@@ -58,4 +66,8 @@ class FileLikeObjectIterator(object):
 
   @property
   def size(self):
+    """
+    Returns:
+      int : The total number of bytes that will be returned by the iterator.
+    """
     return len(self._file)

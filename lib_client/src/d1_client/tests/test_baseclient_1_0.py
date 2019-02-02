@@ -87,7 +87,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
     )
     assert isinstance(
-      cn_mn_client_v1.getLogRecords(), cn_mn_client_v1.bindings.Log
+      cn_mn_client_v1.getLogRecords(), cn_mn_client_v1.pyxb_binding.Log
     )
 
   @responses.activate
@@ -141,7 +141,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
     )
     sysmeta_pyxb = cn_mn_client_v1.getSystemMetadata('valid_pid')
-    assert isinstance(sysmeta_pyxb, cn_mn_client_v1.bindings.SystemMetadata)
+    assert isinstance(sysmeta_pyxb, cn_mn_client_v1.pyxb_binding.SystemMetadata)
 
   @responses.activate
   def test_1100(self, cn_mn_client_v1):
@@ -191,12 +191,12 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
       d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
     )
     object_list_pyxb = cn_mn_client_v1.listObjects()
-    assert isinstance(object_list_pyxb, cn_mn_client_v1.bindings.ObjectList)
+    assert isinstance(object_list_pyxb, cn_mn_client_v1.pyxb_binding.ObjectList)
     assert object_list_pyxb.count == len(object_list_pyxb.objectInfo)
     entry = object_list_pyxb.objectInfo[0]
-    assert isinstance(entry.identifier, cn_mn_client_v1.bindings.Identifier)
+    assert isinstance(entry.identifier, cn_mn_client_v1.pyxb_binding.Identifier)
     assert isinstance(
-      entry.formatId, cn_mn_client_v1.bindings.ObjectFormatIdentifier
+      entry.formatId, cn_mn_client_v1.pyxb_binding.ObjectFormatIdentifier
     )
 
   # CNCore.generateIdentifier()

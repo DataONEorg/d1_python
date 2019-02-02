@@ -200,7 +200,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
   def _handle_getSystemMetadata(self, url):
     """MNRead.getSystemMetadata(session, pid) → SystemMetadata
-    GET /meta/{pid}
+    GET /meta/``pid``
     A MN may either save the System Metadata from the original MNReplication.replicate()
     call or pull it from the CN again when processing the request, to ensure
     that the latest version of the System Metadata is used.

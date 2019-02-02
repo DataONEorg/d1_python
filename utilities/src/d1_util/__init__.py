@@ -35,8 +35,11 @@ try:
 except ImportError:
 
   class NullHandler(logging.Handler):
+    """Suppress log messages instead of raising exception if the program using the
+    library does not configure the logging system.
+    """
+    # noinspection PyMissingOrEmptyDocstring
     def emit(self, record):
       pass
-
 
 logging.getLogger(__name__).addHandler(NullHandler())

@@ -191,7 +191,7 @@ def _request_callback(request):
     'query_dict':
       query_dict,
     'pyxb_namespace':
-      str(client.bindings.Namespace),
+      str(client.pyxb_binding.Namespace),
     'header_dict':
       dict(request.headers),
   }

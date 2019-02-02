@@ -35,26 +35,27 @@ import cryptography.x509.oid
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
 
-# Map OID to short names for use when creating DataONE compliant serialization
-# of the DN.
-#
-# This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
-#
-# The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514
-# refers to a registry but, if the registry exists, it's probably too large to be
-# useful to us. So we pull in OIDs for a small set that can be expected in RDNs in
-# certs from CILogon and will just need to expand it if required.
-#
-# RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
-#
-# If the AttributeType is defined to have a short name (descriptor) [RFC4512] and
-# that short name is known to be registered [REGISTRY] [RFC4520] as identifying
-# the AttributeType , that short name a <descr>, is used.  Otherwise the
-# AttributeType is encoded as the dotted-decimal encoding , a <numericoid> of its
-# OBJECT IDENTIFIER. The <descr> and <numericoid> are defined in [RFC4512].
 import d1_common.const
 
 OID_TO_SHORT_NAME_DICT = {
+  """Map OID to short names for use when creating DataONE compliant serialization of the
+  DN.
+  
+  This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
+  
+  The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514 refers to
+  a registry but, if the registry exists, it's probably too large to be useful to us. So
+  we pull in OIDs for a small set that can be expected in RDNs in certs from CILogon and
+  will just need to expand it if required.
+  
+  RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
+  
+  If the AttributeType is defined to have a short name (descriptor) [RFC4512] and
+  that short name is known to be registered [REGISTRY] [RFC4520] as identifying
+  the AttributeType , that short name a <descr>, is used.  Otherwise the
+  AttributeType is encoded as the dotted-decimal encoding , a <numericoid> of its
+  OBJECT IDENTIFIER. The <descr> and <numericoid> are defined in [RFC4512].
+  """
   '0.9.2342.19200300.100.1.1': 'UID', # userId
   '0.9.2342.19200300.100.1.25': 'DC', # domainComponent
   '1.2.840.113549.1.9.1': 'email', # emailAddress
@@ -68,7 +69,7 @@ OID_TO_SHORT_NAME_DICT = {
   '2.5.4.11': 'OU', # organizationalUnitName
 }
 
-CILOGON_DATAONE_SUBJECT_INFO_OID = '1.3.6.1.4.1.34998.2.1'
+DATAONE_SUBJECT_INFO_OID = '1.3.6.1.4.1.34998.2.1'
 AUTHORITY_INFO_ACCESS_OID = '1.3.6.1.5.5.7.1.1' # authorityInfoAccess
 CA_ISSUERS_OID = '1.3.6.1.5.5.7.48.2' # caIssuers
 OCSP_OID = '1.3.6.1.5.5.7.48.1' # OCSP
@@ -77,9 +78,17 @@ UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 
 def extract_subjects(cert_pem):
-  """Extract from PEM (base64) encoded X.509 v3 certificate:
-  - DataONE compliant serialization of the DN (str)
-  - SubjectInfo extension (XML str)
+  """Extract primary subject and SubjectInfo from a DataONE PEM (Base64) encoded X.509
+  v3 certificate.
+
+  Args:
+    cert_pem: str or bytes
+      PEM (Base64) encoded X.509 v3 certificate
+
+  Returns:
+    2-tuple:
+      - Primary subject (str) extracted from the certificate DN.
+      - SubjectInfo (XML str) if present (see the subject_info module for parsing)
   """
   cert_obj = deserialize_pem(cert_pem)
   return (
@@ -89,8 +98,21 @@ def extract_subjects(cert_pem):
 
 def extract_subject_from_dn(cert_obj):
   """Serialize a DN to a DataONE subject string.
-  E.g.: CN=Some Name A792,O=Harte Research Institute,C=US,DC=cilogon,DC=org
-  If an RDN contains an unknown OID, the OID is serialized as a dotted string.
+
+  Args:
+    cert_obj: cryptography.Certificate
+
+  Returns:
+    str:
+      Primary subject extracted from the certificate DN.
+
+  The certificate DN (DistinguishedName) is a sequence of RDNs (RelativeDistinguishedName). Each RDN is a set of AVAs (AttributeValueAssertion / AttributeTypeAndValue). A DataONE subject is a plain string. As there is no single standard specifying how to create a string representation of a DN, DataONE selected one of the most common ways, which yield strings such as:
+
+  CN=Some Name A123,O=Some Organization,C=US,DC=Some Domain,DC=org
+
+  In particular, the sequence of RDNs is reversed. Attribute values are escaped, attribute type and value pairs are separated by "=", and AVAs are joined together with ",". If an RDN contains an unknown OID, the OID is serialized as a dotted string.
+
+  As all the information in the DN is preserved, it is not possible to create the same subject with two different DNs, and the DN can be recreated from the subject.
   """
   return (
     ','.join(
@@ -103,8 +125,15 @@ def extract_subject_from_dn(cert_obj):
 
 
 def deserialize_pem(cert_pem):
-  """Deserialize PEM to cryptography.Certificate
-  - {cert_pem} can be a str or bytes"""
+  """Deserialize PEM (Base64) encoded X.509 v3 certificate
+
+  Args:
+    cert_pem: str or bytes
+      PEM (Base64) encoded X.509 v3 certificate
+
+  Returns:
+    cert_obj: cryptography.Certificate
+  """
   if isinstance(cert_pem, str):
     cert_pem = cert_pem.encode('utf-8')
   return cryptography.x509.load_pem_x509_certificate(
@@ -114,20 +143,47 @@ def deserialize_pem(cert_pem):
 
 
 def deserialize_pem_file(cert_path):
+  """Deserialize PEM (Base64) encoded X.509 v3 certificate in file
+
+  Args:
+    cert_path: str or bytes
+      Path to PEM (Base64) encoded X.509 v3 certificate file
+
+  Returns:
+    cert_obj: cryptography.Certificate
+  """
   with open(cert_path, 'rb') as f:
     return deserialize_pem(f.read())
 
 
 def rdn_escape(rdn_str):
-  """The following chars must be escaped in RDNs: , = + < > # ; \ "
+  """Escape string for use as an RDN (RelativeDistinguishedName)
+
+  The following chars must be escaped in RDNs: , = + < > # ; \ "
+
+  Args:
+    rdn_str : str
+
+  Returns:
+    str: Escaped string ready for use in an RDN (.)
   """
   return re.sub(r'([,=+<>#;\\])', r'\\\1', rdn_str)
 
 
 def extract_subject_info_extension(cert_obj):
+  """Extract DataONE SubjectInfo XML doc from certificate.
+
+  Certificates issued by DataONE may include an embedded XML doc containing additional information about the subject specified in the certificate DN. If present, the doc is stored as an extension with an OID specified by DataONE and formatted as specified in the DataONE SubjectInfo schema definition.
+
+  Args:
+    cert_obj: cryptography.Certificate
+
+  Returns:
+    str : SubjectInfo XML doc if present, else None
+  """
   try:
     subject_info_der = cert_obj.extensions.get_extension_for_oid(
-      cryptography.x509.oid.ObjectIdentifier(CILOGON_DATAONE_SUBJECT_INFO_OID)
+      cryptography.x509.oid.ObjectIdentifier(DATAONE_SUBJECT_INFO_OID)
     ).value.value
     return str(pyasn1.codec.der.decoder.decode(subject_info_der)[0])
   except Exception as e:
@@ -138,26 +194,28 @@ def download_as_der(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-  """Download certificate from the server at {base_url} and return it as a DER
-  encoded string.
+  """Download public certificate from a TLS/SSL web server as DER encoded ``bytes``.
 
-  {base_url} can be a full URL to a DataONE service endpoint or just a server
-  hostname.
+  If the certificate is being downloaded in order to troubleshoot validation issues, the
+  download itself may fail due to the validation issue that is being investigated. To
+  work around such chicken-and-egg problems, temporarily wrap calls to the download_*
+  functions with the ``disable_cert_validation()`` context manager (also in this module).
 
-  In some cases, there's a need to download certificates in order to fix
-  validation issues that prevent those certificates from being downloaded. To
-  work around such chicken-and-egg problems, temporarily wrap calls to the
-  download_* functions with the disable_cert_validation() context manager (also
-  in this module).
-
-  TODO: It is unclear which SSL and TLS protocols are supported by the method
-  currently being used. The current method and the two commented out below
-  should be compared to determine which has the best compatibility with current
-  versions of Python and current best practices for protocol selection.
+  Args:
+      base_url : str
+        A full URL to a DataONE service endpoint or a server hostname
+      timeout_sec : int or float
+        Timeout for the SSL socket operations
+  Returns:
+    bytes: The server's public certificate as DER encoded bytes.
   """
+  # TODO: It is unclear which SSL and TLS protocols are supported by the method
+  # currently being used. The current method and the two commented out below
+  # should be compared to determine which has the best compatibility with current
+  # versions of Python and current best practices for protocol selection.
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(timeout_sec)
-  ssl_socket = ssl.SSLSocket(sock)
+  ssl_socket = ssl.wrap_socket(sock)
   url_obj = urllib.parse.urlparse(base_url)
   ssl_socket.connect((url_obj.netloc, 443))
   return ssl_socket.getpeercert(binary_form=True)
@@ -187,7 +245,7 @@ def download_as_der(
   #     )
   #   except ssl.SSLError as e:
   #     logging.info('SSL: {}'.format(str(e)))
-  #     if ssl_protocol_str is ssl_protocol_list[-1]:
+  #     if ssl_protocol_str is ssl_protoc`ol_list[-1]:
   #       raise
 
 
@@ -195,10 +253,18 @@ def download_as_pem(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-  """Download certificate from the server at {base_url} and return it as a PEM
-  encoded string.
+  """Download public certificate from a TLS/SSL web server as PEM encoded string.
 
-  See download_as_der() for more info.
+  Also see download_as_der().
+
+  Args:
+      base_url : str
+        A full URL to a DataONE service endpoint or a server hostname
+      timeout_sec : int or float
+        Timeout for the SSL socket operations
+
+  Returns:
+    str: The certificate as a PEM encoded string.
   """
   return ssl.DER_cert_to_PEM_cert(download_as_der(base_url, timeout_sec))
 
@@ -207,16 +273,32 @@ def download_as_obj(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-  """Download certificate from the server at {base_url} and return it as a
-  cryptography.Certificate object.
+  """Download public certificate from a TLS/SSL web server as Certificate object.
 
-  See download_as_der() for more info.
+  Also see download_as_der().
+
+  Args:
+      base_url : str
+        A full URL to a DataONE service endpoint or a server hostname
+      timeout_sec : int or float
+        Timeout for the SSL socket operations
+
+  Returns:
+    cryptography.Certificate
   """
   return decode_der(download_as_der(base_url, timeout_sec))
 
 
 def decode_der(cert_der):
-  """Decode cert DER string and return a cryptography.Certificate()"""
+  """Decode cert DER string to Certificate object.
+
+  Args:
+    cert_der : Certificate as a DER encoded string
+
+  Returns:
+    cryptography.Certificate()
+
+  """
   return cryptography.x509.load_der_x509_certificate(
     cert_der,
     cryptography.hazmat.backends.default_backend(),
@@ -226,15 +308,12 @@ def decode_der(cert_der):
 # noinspection PyProtectedMember
 @contextlib2.contextmanager
 def disable_cert_validation():
-  """Temporary disable certificate validation in the standard ssl library
+  """Context manager to temporarily disable certificate validation in the standard SSL library.
 
-  Note: This should not be used in production code but is sometimes necessary
-  as a temporary workaround.
+  Note: This should not be used in production code but is sometimes useful for troubleshooting certificate validation issues.
+
+  By design, the standard SSL library does not provide a way to disable verification of the server side certificate. However, a patch to disable validation is described by the library developers. This context manager allows applying the patch for specific sections of code.
   """
-  # By design, the standard ssl library does not provide a way to disable
-  # verification of the server side cert. However, the ssl implementors do
-  # mention this dangerous monkey patch as an alternative. Offered here as a
-  # context manager to make it a bit safer.
   current_context = ssl._create_default_https_context
   ssl._create_default_https_context = ssl._create_unverified_context
   try:
@@ -243,10 +322,18 @@ def disable_cert_validation():
     ssl._create_default_https_context = current_context
 
 
-def get_issuer_ca_cert_url(cert_obj):
-  """Given {server_cert} as a cryptography.Certificate(), return a URL where the
-  issuer's cert can be downloaded. The issuer cert can then be added to the
-  trusted CA certs in order to trust {server_cert}.
+def extract_issuer_ca_cert_url(cert_obj):
+  """Extract issuer CA certificate URL from certificate.
+
+  Certificates may include a URL where the root certificate for the CA which was used for signing the certificate can be downloaded. This function returns the URL if present.
+
+  The primary use for this is to fix validation failure due to non-trusted issuer by downloading the root CA certificate from the URL and installing it in the local trust store.
+
+  Args:
+    cert_obj: cryptography.Certificate
+
+  Returns:
+    str: Issuer certificate URL if present, else None
   """
   for extension in cert_obj.extensions:
     if extension.oid.dotted_string == AUTHORITY_INFO_ACCESS_OID:
@@ -258,7 +345,20 @@ def get_issuer_ca_cert_url(cert_obj):
 
 # noinspection PyProtectedMember
 def log_cert_info(log, msg_str, cert_obj):
-  """Log information from {cert_obj} to {log}.
+  """Dump basic certificate values to the log.
+
+  Args:
+    log: Logger
+      Logger to which to write the certificate values.
+
+    msg_str: str
+      A message to write to the log before the certificate values.
+
+    cert_obj: cryptography.Certificate
+      Certificate containing values to log.
+
+  Returns:
+    None
   """
   list(
     map(
@@ -283,59 +383,140 @@ def log_cert_info(log, msg_str, cert_obj):
             )
           ),
           'Authority Access Location: {}'
-          .format(get_issuer_ca_cert_url(cert_obj) or '<not found>'),
+          .format(extract_issuer_ca_cert_url(cert_obj) or '<not found>'),
         ]
       ]
     )
   )
 
 
-def get_ext(cert_obj, n):
+def get_extension_by_name(cert_obj, extension_name):
+  """Get a standard certificate extension by attribute name.
+
+  Args:
+    cert_obj: cryptography.Certificate
+      Certificate containing a standard extension.
+
+    extension_name : str
+      Extension name. E.g., 'SUBJECT_DIRECTORY_ATTRIBUTES'.
+
+  Returns:
+    Cryptography.Extension
+  """
   try:
     return cert_obj.extensions.get_extension_for_oid(
-      getattr(cryptography.x509.oid.ExtensionOID, n)
+      getattr(cryptography.x509.oid.ExtensionOID, extension_name)
     )
   except cryptography.x509.ExtensionNotFound:
     pass
 
 
-def get_val_list(n, path):
-  """Return a list of the values in the innermost objects in a set of nested
-  lists"""
+def get_val_list(obj, path_list, reverse=False):
+  """Extract values from nested objects by attribute names.
+
+  Objects contain attributes which are named references to objects. This will descend down a tree of nested objects, starting at the given object, following the given path.
+
+  Args:
+    obj: object
+      Any type of object
+
+    path_list: list
+      Attribute names
+
+    reverse: bool
+      Reverse the list of values before concatenation.
+
+  Returns:
+    list of objects
+  """
   try:
-    y = getattr(n, path[0])
+    y = getattr(obj, path_list[0])
   except AttributeError:
     return []
-  if len(path) == 1:
+  if len(path_list) == 1:
     return [y]
   else:
-    return [x for a in y for x in get_val_list(a, path[1:])]
+    val_list = [x for a in y for x in get_val_list(a, path_list[1:], reverse)]
+    if reverse:
+      val_list.reverse()
+    return val_list
+
+def get_val_str(obj, path_list=None, reverse=False):
+  """Extract values from nested objects by attribute names and concatenate their string representations.
+
+  Args:
+    obj: object
+      Any type of object
+
+    path_list: list
+      Attribute names
+
+    reverse: bool
+      Reverse the list of values before concatenation.
+
+  Returns:
+    str: Concatenated extracted values.
+  """
+  val_list = get_val_list(obj, path_list or [], reverse)
+  return '<not found>' if obj is None else ' / '.join(map(str, val_list))
 
 
-def get_val_str(x, path=None, reverse=False):
-  val_list = get_val_list(x, path or [])
-  if reverse:
-    val_list = reversed(val_list)
-  return '<not found>' if x is None else ' / '.join(map(str, val_list))
+def get_ext_val_str(cert_obj, extension_name, path_list=None):
+  """Get value from certificate extension.
+
+  Args:
+    cert_obj: cryptography.Certificate
+      Certificate containing a standard extension.
+
+    extension_name : str
+      Extension name. E.g., 'SUBJECT_DIRECTORY_ATTRIBUTES'.
+
+    path_list: list
+      Attribute names
+
+  Returns:
+    str : String value of extension
+  """
+  return get_val_str(get_extension_by_name(cert_obj, extension_name), path_list or [])
 
 
-def get_ext_val_str(cert_obj, e, path=None):
-  return get_val_str(get_ext(cert_obj, e), path or [])
+def serialize_cert_to_pem(cert_obj):
+  """Serialize certificate to PEM
 
+  Args:
+    cert_obj: cryptography.Certificate
 
-def get_cert_pem(cert_obj):
+  Returns:
+    bytes: PEM encoded certificate
+  """
   return cert_obj.public_bytes(
     cryptography.hazmat.primitives.serialization.Encoding.PEM,
   )
 
 
-def get_cert_der(cert_obj):
+def serialize_cert_to_der(cert_obj):
+  """Serialize certificate to DER
+
+  Args:
+    cert_obj: cryptography.Certificate
+
+  Returns:
+    bytes: DER encoded certificate
+  """
   return cert_obj.public_bytes(
     cryptography.hazmat.primitives.serialization.Encoding.DER,
   )
 
 
 def get_public_key_pem(cert_obj):
+  """Extract public key from certificate as PEM encoded PKCS#1.
+
+  Args:
+    cert_obj: cryptography.Certificate
+
+  Returns:
+    bytes: PEM encoded PKCS#1 public key.
+  """
   return cert_obj.public_key().public_bytes(
     cryptography.hazmat.primitives.serialization.Encoding.PEM,
     cryptography.hazmat.primitives.serialization.PublicFormat.PKCS1,

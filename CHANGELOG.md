@@ -124,7 +124,7 @@
     * Based on psutil, which is added as a new dependency
   * Add workaround for MultipartEncoder bug in Django test client
   * Improve performance in instance generator
-    * Skip generating PyXB objects that will not be used in the final SysMeta object
+    * Skip generating PyXB type bindings that will not be used in the final SysMeta object
   * Ensure unique media types in test objects
   * Check that dateSysMetadataModified of object obsoleted by update() is set to the GMN server's current datetime
 

@@ -149,7 +149,7 @@ class ScienceObject(django.db.models.Model):
 
   class Meta:
     # The slice module must be updated if ordering is modified
-    ordering = ['modified_timestamp', 'id'] # pid__did
+    # ordering = ['modified_timestamp', 'id'] # pid__did
     # Django creates many indexes by default, but not the one specified in
     # Meta.ordering.
     indexes = [
@@ -394,7 +394,7 @@ class EventLog(django.db.models.Model):
 
   class Meta:
     # The slice module must be updated if ordering is modified
-    ordering = ['timestamp', 'id']
+    # ordering = ['timestamp', 'id']
     indexes = [
       django.db.models.Index(fields=['timestamp', 'id']),
     ]

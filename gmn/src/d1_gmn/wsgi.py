@@ -51,7 +51,7 @@ class D1WSGIRequest(django.core.handlers.wsgi.WSGIRequest):
             self.META, self.environ['wsgi.input']
           )
         except:
-          # An error occured while parsing POST data. Since, when formatting the
+          # An error occurred while parsing POST data. Since, when formatting the
           # error, the request handler might access self.POST, set self._post
           # and self._file to prevent attempts to parse POST data again.
           self._post = django.http.QueryDict('')

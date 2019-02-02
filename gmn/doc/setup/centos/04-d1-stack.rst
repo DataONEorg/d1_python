@@ -22,7 +22,7 @@ Install GMN Software in Virtual Environment
 
 Install the virtualenv command. We can get this using pip::
 
-    $ sudo pip install virtualenv
+    $ pip install virtualenv
 
 Setup directories::
 

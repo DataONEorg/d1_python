@@ -23,9 +23,18 @@ including v1.1.
 
 import logging
 
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v1 import *
+# noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v1_1 import *
 
 # flake8: noqa: F403
 
+# Suppress PyXB warnings, such as the following:
+#
+# WARNING:pyxb.binding.basis:Unable to convert DOM node value at
+# <unknown>[1:209] to binding
+#
+# This warning occurs because traceInformation is an xs:anyType, which can
+# hold any XML structure so noPyXB bindingcan be generated.
 logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)

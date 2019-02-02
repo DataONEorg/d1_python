@@ -33,4 +33,4 @@ class TestGetCapabilities(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """MNCore.getCapabilities(): Returns a valid Node Registry document"""
     with d1_gmn.tests.gmn_mock.disable_auth():
       node = gmn_client_v1_v2.getCapabilities()
-      assert isinstance(node, gmn_client_v1_v2.bindings.Node)
+      assert isinstance(node, gmn_client_v1_v2.pyxb_binding.Node)

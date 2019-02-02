@@ -37,7 +37,7 @@ import pkg_resources
 
 import d1_dev.util
 
-import d1_common.iter.dir
+import d1_common.iter.path
 import d1_common.util
 
 
@@ -77,7 +77,7 @@ def main():
 
   d1_common.util.log_setup(args.debug)
 
-  for setup_path in d1_common.iter.dir.dir_iter(
+  for setup_path in d1_common.iter.path.path_generator(
       path_list=[args.path],
       include_glob_list=['setup.py'],
       exclude_glob_list=args.exclude,

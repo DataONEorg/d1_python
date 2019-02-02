@@ -35,7 +35,7 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
     assert endpoint_str == 'log'
     assert param_list == []
     assert query_dict == {}
-    assert client.bindings.Namespace == v1_2.Namespace
+    assert client.pyxb_binding.Namespace == v1_2.Namespace
 
   def test_1010(self):
     """parse_rest_url() 2"""
@@ -57,4 +57,4 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
       'fromDate': ['date1'],
       'start': ['500']
     }
-    assert client.bindings.Namespace == v2_0.Namespace
+    assert client.pyxb_binding.Namespace == v2_0.Namespace

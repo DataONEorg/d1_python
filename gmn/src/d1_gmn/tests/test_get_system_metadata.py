@@ -67,7 +67,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
       sciobj_bytes = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_bytes(
         pid
       )
-      orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
+      orig_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
         sciobj_bytes
       )
       orig_sysmeta_pyxb.size = len(sciobj_bytes)

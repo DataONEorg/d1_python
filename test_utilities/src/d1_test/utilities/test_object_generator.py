@@ -60,7 +60,7 @@ def generate_science_object_with_sysmeta(
 
 def _create_science_object_bytes(pid, min_bytes, max_bytes):
   """Create a string of pseudo-random bytes that are always the same for a given
-  {pid}. The length if set randomly between {num_min_bytes} and {num_max_bytes}
+  ``pid``. The length if set randomly between ``num_min_bytes`` and ``num_max_bytes``
   including
   """
   # Seeding the PRNG with the PID causes the same sequence to be generated each
@@ -80,9 +80,9 @@ def _generate_system_metadata_for_science_object(
   else:
     client = v2
 
-  sysmeta_pyxb = client.bindings.systemMetadata()
+  sysmeta_pyxb = client.pyxb_binding.systemMetadata()
   sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
-  sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
+  sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
     sciobj_bytes
   )
   sysmeta_pyxb.dateSysMetadataModified = now
@@ -104,10 +104,10 @@ def _generate_system_metadata_for_science_object(
 
 
 def _generate_public_access_policy(client):
-  access_policy_pyxb = client.bindings.accessPolicy()
-  access_rule_pyxb = client.bindings.AccessRule()
+  access_policy_pyxb = client.pyxb_binding.accessPolicy()
+  access_rule_pyxb = client.pyxb_binding.AccessRule()
   access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission_pyxb = client.bindings.Permission('read')
+  permission_pyxb = client.pyxb_binding.Permission('read')
   access_rule_pyxb.permission.append(permission_pyxb)
   access_policy_pyxb.append(access_rule_pyxb)
   return access_policy_pyxb

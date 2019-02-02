@@ -47,7 +47,7 @@ class DataONEBaseClient_2_0(
 
     self._api_major = 2
     self._api_minor = 0
-    self._bindings = d1_common.type_conversions.get_bindings_by_api_version(
+    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
       self._api_major, self._api_minor
     )
 
@@ -55,12 +55,21 @@ class DataONEBaseClient_2_0(
   # v2.0 APIs shared between CNs and MNs.
   #=============================================================================
 
-  # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
-  # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
-
   def updateSystemMetadataResponse(
       self, pid, sysmeta_pyxb, vendorSpecific=None
   ):
+    """
+    MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
+    http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
+
+    Args:
+      pid:
+      sysmeta_pyxb:
+      vendorSpecific:
+
+    Returns:
+
+    """
     mmp_dict = {
       'pid': pid.encode('utf-8'),
       'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),

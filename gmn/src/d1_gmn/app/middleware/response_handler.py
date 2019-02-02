@@ -115,7 +115,7 @@ class ResponseHandler:
       sort_field_list
     )
     response.write(
-      d1_common.xml.serialize_to_transport(
+      d1_common.xml.serialize_for_transport(
         d1_type_pyxb, xslt_url=django.urls.base.reverse('home_xslt')
         #d1_gmn.app.util.get_static_path('xslt/xhtml_grid.xsl')
       )

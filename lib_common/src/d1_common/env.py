@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling DataONE environments
+"""Utilities for handling DataONE environments.
 """
 
 import d1_common.const
@@ -51,10 +51,19 @@ D1_ENV_DICT = {
 
 
 def get_d1_env_keys():
-  """Return the D1 env dictionary keys in preferred order"""
+  """Get the DataONE env dict keys in preferred order.
+
+  Returns:
+    list : DataONE env dict keys
+  """
   # These must match the keys in D1_ENV_DICT.
   return ['prod', 'stage', 'sandbox', 'dev']
 
 
 def get_d1_env(k):
+  """Get the values required in order to connect to a DataONE environment.
+
+  Returns:
+    dict : Values required in order to connect to a DataONE environment.
+  """
   return D1_ENV_DICT[k]

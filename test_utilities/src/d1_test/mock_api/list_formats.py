@@ -81,20 +81,17 @@ def _parse_url(url):
 
 
 def _generate_object_format_list(client, n_start, n_count):
-  objectFormatList = client.bindings.objectFormatList()
+  objectFormatList = client.pyxb_binding.objectFormatList()
 
   for i in range(n_count):
-    objectFormat = client.bindings.ObjectFormat()
+    objectFormat = client.pyxb_binding.ObjectFormat()
     objectFormat.formatId = 'format_id_{}'.format(n_start + i)
     objectFormat.formatName = 'format_name_{}'.format(n_start + i)
     objectFormat.formatType = 'format_type_{}'.format(n_start + i)
 
     if hasattr(client, 'MediaType'): # Only in v2
-      mediaType = client.bindings.MediaType()
+      mediaType = client.pyxb_binding.MediaType()
       mediaType.name = 'media_type_name_{}'.format(n_start + i)
-      # mediaTypeProperty = client.bindings.MediaTypeProperty(
-      # 'media_type_property_{}'.format(n_start + i))
-      # mediaType.property_.append(mediaTypeProperty)
       objectFormat.mediaType = mediaType
 
     objectFormatList.append(objectFormat)

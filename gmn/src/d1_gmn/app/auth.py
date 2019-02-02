@@ -87,6 +87,8 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
+  """Get set of subjects that have unlimited access to all SciObj and APIs on this node.
+  """
   cert_subj = _get_client_side_certificate_subject()
   return (
     d1_gmn.app.node_registry.get_cn_subjects() |
@@ -96,6 +98,9 @@ def get_trusted_subjects():
 
 
 def get_trusted_subjects_string():
+  """Get subjects that have unlimited access to all SciObj and APIs on this node as
+  string for display.
+  """
   return ', '.join(sorted(get_trusted_subjects()))
 
 
@@ -105,6 +110,8 @@ def get_trusted_subjects_string():
 
 
 def is_trusted_subject(request):
+  """Determine if calling subject is fully trusted.
+  """
   logging.debug(
     'Active subjects: {}'.format(', '.join(request.all_subjects_set))
   )
@@ -158,30 +165,50 @@ def _extract_subject_from_pem(cert_pem):
 
 
 def is_allowed(request, level, pid):
-  """Check if one or more subjects are allowed to perform action on object.
-  If a subject holds permissions for one action level on object, all lower
-  action levels are also allowed. Any included subject that is unknown to this
-  MN is treated as a subject without permissions.
-  Return:
-    True if one or more subjects are allowed to perform action on object.
-    False if PID does not exist.
-    False if level is invalid.
+  """Check if one or more subjects are allowed to perform action level on object.
+
+  If a subject holds permissions for one action level on object, all lower action levels
+  are also allowed. Any included subject that is unknown to this MN is treated as a
+  subject without permissions.
+
+  Returns:
+    bool
+      True:
+        - The active subjects include one or more subjects that:
+            - are fully trusted DataONE infrastructure subjects, causing all rights to
+              be granted regardless of requested access level and SciObj
+            - OR are in the object's ACL for the requested access level. The ACL
+              contains the subjects from the object's allow rules and the object's
+              rightsHolder, which has all rights.
+        - OR object is public, which always yields a match on the "public" symbolic
+          subject.
+      False:
+        - None of the active subjects are in the object's ACL for the requested access
+          level or for lower levels.
+        - OR PID does not exist
+        - OR access level is invalid
   """
-  # If subjects contains one or more DataONE trusted infrastructure subjects,
-  # all rights are given.
   if is_trusted_subject(request):
     return True
-  # - If subject is not trusted infrastructure, a specific permission for
-  # subject must exist on object.
-  # - Full permissions for owner are set implicitly when the object is created
-  # and when the ACL is updated.
-  # - The permission must be for an action level that is the same or higher than
-  # the requested action level.
   return d1_gmn.app.models.Permission.objects.filter(
     sciobj__pid__did=pid, subject__subject__in=request.all_subjects_set,
     level__gte=level
   ).exists()
 
+# TODO: Change "trusted" / "fully trusted" to something like admin / superuser.
+def is_redacted_log(request, pid):
+  """Determine if ``ipAddress`` and ``subject`` fields must be redacted on any
+  ``LogEntry``s for the SciObj that are returned to the client.
+
+  If access to ``LogEntry``s for the SciObj is denied for the client, this function will
+  return True, indicating that ``LogEntry``s must be redacted. However, the result is
+  irrelevant since no ``LogEntry``s for the SciObj will be returned to the caller.
+  """
+  if is_trusted_subject(request):
+    return False
+  if is_allowed(request, WRITE_LEVEL, pid):
+    return False
+  return True
 
 def has_create_update_delete_permission(request):
   whitelisted_subject_set = get_whitelisted_subject_set()

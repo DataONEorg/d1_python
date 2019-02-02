@@ -32,7 +32,7 @@ import os
 import shutil
 import sys
 
-import d1_common.iter.dir
+import d1_common.iter.path
 import d1_common.util
 
 # Files and directories to delete
@@ -68,7 +68,7 @@ def main():
   args = parser.parse_args()
   d1_common.util.log_setup(args.debug)
 
-  itr = d1_common.iter.dir.dir_iter(
+  itr = d1_common.iter.path.path_generator(
     path_list=args.path,
     include_glob_list=args.include,
     exclude_glob_list=args.exclude,

@@ -80,7 +80,7 @@ def add_http_date_header_to_response(response, date_time=None):
 
 def add_cors_headers_to_response(response, request):
   """Add Cross-Origin Resource Sharing (CORS) headers to response
-  - {method_list} is a list of HTTP methods that are allowed for the endpoint
+  - ``method_list`` is a list of HTTP methods that are allowed for the endpoint
   that was called. It should not include "OPTIONS", which is included
   automatically since it's allowed for all endpoints.
   """

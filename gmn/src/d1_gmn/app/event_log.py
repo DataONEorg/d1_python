@@ -19,7 +19,7 @@
 # limitations under the License.
 """Event Log utilities
 
-The Event Log is a log of all operations performed on sciobjs. It is retrieved
+The Event Log is a log of all operations performed on SciObjs. It is retrieved
 with MNCore.getLogRecords() and aggregated by CNs.
 """
 import re

@@ -23,13 +23,15 @@
 # Note: sphinx-apidoc exclude filters do not work when source path starts with "../",
 # so this script should be in the root, not in the doc directory.
 
-# python ../lib_client/doc/generate_modules.py --dest-dir source/generated/ --suffix rst --force ../src/d1_client/
+exclude_list="**/tests test*.py **/generated"
+apidoc_args="--module-first --doc-project API"
+# --force
 
-exclude_list="**/tests test*.py"
+# Force cleanup after deleting or renaming modules.
+#find -L ./doc/source -type f -wholename '*/api/*' -delete
 
-find -L ./doc/source -type f -wholename '*/api/*' -delete
-
-sphinx-apidoc --force -H API -o ./doc/source/common/api/ ./lib_common/src/d1_common/ ${exclude_list}
-sphinx-apidoc --force -H API -o ./doc/source/client/api/ ./lib_client/src/d1_client/ ${exclude_list}
+sphinx-apidoc ${apidoc_args} -o ./doc/source/common/api/ ./lib_common/src/d1_common/ ${exclude_list}
+sphinx-apidoc ${apidoc_args} -o ./doc/source/client/api/ ./lib_client/src/d1_client/ ${exclude_list}
+sphinx-apidoc ${apidoc_args} -o ./doc/source/test/api/ ./test_utilities/src/d1_test/ ${exclude_list}
 
 make -C ./doc -j8 html

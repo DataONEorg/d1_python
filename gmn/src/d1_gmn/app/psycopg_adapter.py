@@ -32,7 +32,7 @@ import d1_common.types.dataoneTypes
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 
-def adapt_pyxb_bindings(client):
+def adapt_pyxb_binding(client):
   return psycopg2.extensions.AsIs(
     "'{}'".format(str(client).replace('\'', '\'\''))
   )
@@ -43,29 +43,29 @@ def adapt_pyxb_bindings(client):
 
 psycopg2.extensions.register_adapter(
   d1_common.types.dataoneTypes.NonEmptyNoWhitespaceString800,
-  adapt_pyxb_bindings
+  adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.NonEmptyString800, adapt_pyxb_bindings
+  d1_common.types.dataoneTypes.NonEmptyString800, adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.ChecksumAlgorithm, adapt_pyxb_bindings
+  d1_common.types.dataoneTypes.ChecksumAlgorithm, adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_bindings
+  d1_common.types.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.dataoneTypes.NonEmptyString, adapt_pyxb_bindings
+  d1_common.types.dataoneTypes.NonEmptyString, adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  pyxb.binding.datatypes.string, adapt_pyxb_bindings
+  pyxb.binding.datatypes.string, adapt_pyxb_binding
 )
 
 psycopg2.extensions.register_adapter(
-  pyxb.binding.datatypes.boolean, adapt_pyxb_bindings
+  pyxb.binding.datatypes.boolean, adapt_pyxb_binding
 )

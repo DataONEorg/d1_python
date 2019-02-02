@@ -156,7 +156,7 @@
 
             <div class="footer">
               <div class="copyright">
-                © Copyright 2018 Participating institutions in DataONE
+                Copyright © 2018 Participating institutions in DataONE
               </div>
             </div>
 
@@ -183,9 +183,7 @@
   <!-- Insert logo while falling back to GMN logo if fetch from url fails -->
   <xsl:template name="insert_logo">
     <xsl:param name="url"/>
-    <object class="logo" data="{ $url }" type="image/jpg">
-      <img class="logo" src="{ $gmn_logo_url }" alt="logo"/>
-    </object>
+      <img class="logo" src="{ $url }" onerror="this.src='{ $gmn_logo_url }'" alt="logo"/>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -53,7 +53,7 @@ def main():
   fixed_cov_xml = xml.etree.ElementTree.tostring(cov_tree, 'utf-8')
 
   with open(fixed_cov_xml_path, 'wb') as f:
-    f.write(d1_common.xml.serialize_to_transport(fixed_cov_xml))
+    f.write(d1_common.xml.serialize_for_transport(fixed_cov_xml))
 
 
 if __name__ == '__main__':

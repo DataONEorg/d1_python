@@ -97,16 +97,16 @@ def get_all_pid_by_sid(sid):
 
 
 def resolve_sid(sid):
-  """Get the PID to which the {sid} currently maps.
+  """Get the PID to which the ``sid`` currently maps.
 
   Preconditions:
-  - {sid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
+  - ``sid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
   """
   return d1_gmn.app.models.Chain.objects.get(sid__did=sid).head_pid.did
 
 
 def get_sid_by_pid(pid):
-  """Given the {pid} of the object in a chain, return the SID for the chain
+  """Given the ``pid`` of the object in a chain, return the SID for the chain
 
   Return None if there is no SID for the chain. This operation is also valid
   for standalone objects which may or may not have a SID.
@@ -116,7 +116,7 @@ def get_sid_by_pid(pid):
   All known PIDs are associated with a chain.
 
   Preconditions:
-  - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
+  - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
   """
   return d1_gmn.app.did.get_did_by_foreign_key(_get_chain_by_pid(pid).sid)
 
@@ -138,7 +138,7 @@ def set_revision_links(sciobj_model, obsoletes_pid=None, obsoleted_by_pid=None):
 
 
 def is_obsoletes_pid(pid):
-  """Return True if {pid} is referenced in the obsoletes field of any object
+  """Return True if ``pid`` is referenced in the obsoletes field of any object
 
   This will return True even if the PID is in the obsoletes field of an object
   that does not exist on the local MN, such as replica that is in an incomplete
@@ -149,7 +149,7 @@ def is_obsoletes_pid(pid):
 
 
 def is_obsoleted_by_pid(pid):
-  """Return True if {pid} is referenced in the obsoletedBy field of any object
+  """Return True if ``pid`` is referenced in the obsoletedBy field of any object
 
   This will return True even if the PID is in the obsoletes field of an object
   that does not exist on the local MN, such as replica that is in an incomplete
@@ -160,7 +160,7 @@ def is_obsoleted_by_pid(pid):
 
 
 def is_revision(pid):
-  """Return True if {pid} is referenced in the obsoletes or obsoletedBy field of
+  """Return True if ``pid`` is referenced in the obsoletes or obsoletedBy field of
   any object
 
   This will return True even if the PID is in the obsoletes field of an object
@@ -237,7 +237,7 @@ def _add_pid_to_chain(chain_model, pid):
 def _set_chain_sid(chain_model, sid):
   """Set or update SID for chain
 
-  If the chain already has a SID, {sid} must either be None or match the
+  If the chain already has a SID, ``sid`` must either be None or match the
   existing SID.
   """
   if not sid:
@@ -266,9 +266,9 @@ def _assert_sid_is_in_chain(sid, pid):
 
 def _find_head_or_latest_connected(pid, last_pid=None):
   """Find latest existing sciobj that can be reached by walking towards the head
-  from {pid}
+  from ``pid``
 
-  If {pid} does not exist, return None.
+  If ``pid`` does not exist, return None.
   If chain is connected all the way to head and head exists, return the head.
   If chain ends in a dangling obsoletedBy, return the last existing object.
   """
@@ -302,13 +302,13 @@ def _get_chain_by_sid(sid):
 
 
 def _update_sid_to_last_existing_pid_map(pid):
-  """Set chain head PID to the last existing object in the chain to which {pid}
+  """Set chain head PID to the last existing object in the chain to which ``pid``
   belongs. If SID has been set for chain, it resolves to chain head PID.
 
   Intended to be called in MNStorage.delete() and other chain manipulation.
 
   Preconditions:
-  - {pid} must exist and be verified to be a PID.
+  - ``pid`` must exist and be verified to be a PID.
     d1_gmn.app.views.asserts.is_existing_object()
   """
   last_pid = _find_head_or_latest_connected(pid)
@@ -324,7 +324,7 @@ def _create_chain(pid, sid):
   be called in MNStorage.create().
 
   Preconditions:
-  - {sid} must be verified to be available to be assigned to a new standalone
+  - ``sid`` must be verified to be available to be assigned to a new standalone
   object. E.g., with is_valid_sid_for_new_standalone().
   """
   chain_model = d1_gmn.app.models.Chain(
@@ -440,22 +440,22 @@ def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
 #   be called in MNStorage.create().
 #
 #   Preconditions:
-#   - {sid} must either be None or be previously unused.
+#   - ``sid`` must either be None or be previously unused.
 #     d1_gmn.app.views.asserts.is_unused()
-#   - {pid} must exist and be verified to be a PID.
+#   - ``pid`` must exist and be verified to be a PID.
 #     d1_gmn.app.views.asserts.is_pid()
 #   """
 #   chain_model = _get_or_create_chain_for_pid(pid)
 #   _map_sid_to_pid(chain_model, sid, pid)
 
 # def add_pid_to_chain(sid, old_pid, new_pid):
-#   """Add a new revision {new_pid} to the chain that {old_pid} belongs to and
+#   """Add a new revision ``new_pid`` to the chain that ``old_pid`` belongs to and
 #   update any SID to resolve to the new PID. Intended to be called in
 #   MNStorage.update().
 #
 #   Preconditions:
-#   - {sid} must either be None or match the SID already assigned to the chain.
-#   - Both {old_pid} and {new_pid} must exist and be verified to be PIDs
+#   - ``sid`` must either be None or match the SID already assigned to the chain.
+#   - Both ``old_pid`` and ``new_pid`` must exist and be verified to be PIDs
 #     d1_gmn.app.views.asserts.is_pid()
 #   """
 #   chain_model = _get_or_create_chain_for_pid(old_pid)
@@ -463,32 +463,32 @@ def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
 #   _map_sid_to_pid(chain_model, sid, new_pid)
 
 # def is_sid_in_revision_chain(sid, pid):
-#   """Determine if {sid} resolves to an object in the revision chain to which
-#   {pid} belongs.
+#   """Determine if ``sid`` resolves to an object in the revision chain to which
+#   ``pid`` belongs.
 #
 #   Preconditions:
-#   - {sid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
+#   - ``sid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
 #   """
 #   chain_pid_list = get_pids_in_revision_chain(pid)
 #   resolved_pid = resolve_sid(sid)
 #   return resolved_pid in chain_pid_list
 
 # def update_or_create_sid_to_pid_map(sid, pid):
-#   """Update existing or create a new {sid} to {pid} association. Then create
-#   or update the {sid} to resolve to the {pid}.
+#   """Update existing or create a new ``sid`` to ``pid`` association. Then create
+#   or update the ``sid`` to resolve to the ``pid``.
 #
 #   Preconditions:
-#   - {sid} is verified to be unused if creating a standalone object (that may later become
+#   - ``sid`` is verified to be unused if creating a standalone object (that may later become
 #   the first object in a chain).
-#   - {sid} is verified to belong to the given chain updating.
-#   - {pid} is verified to exist. E.g., with d1_gmn.app.views.asserts.is_pid().
+#   - ``sid`` is verified to belong to the given chain updating.
+#   - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_pid().
 #   """
 #   d1_gmn.app.models.sid_to_pid(sid, pid)
 #   d1_gmn.app.models.sid_to_head_pid(sid, pid)
 
 # def get_sid_by_pid(pid):
-#   """Get the SID to which the {pid} maps.
-#   Return None if there is no SID maps to {pid}.
+#   """Get the SID to which the ``pid`` maps.
+#   Return None if there is no SID maps to ``pid``.
 #   """
 #   try:
 #     return d1_gmn.app.models.SeriesIdToPersistentId.objects.get(
@@ -498,7 +498,7 @@ def _set_revision_reverse(to_pid, from_pid, is_obsoletes):
 #     return None
 
 # def move_sid_to_last_object_in_chain(pid):
-#   """Move SID to the last object in a chain to which {pid} belongs.
+#   """Move SID to the last object in a chain to which ``pid`` belongs.
 #
 #   - If the chain does not have a SID, do nothing.
 #   - If the SID already maps to the last object in the chain, do nothing.

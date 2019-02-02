@@ -46,3 +46,7 @@ class TestArchiveStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
   def test_1010(self):
     """MNStorage.archive(): Archived flag is set in sysmeta"""
     self._assert_archived_flag_set(self.client_v2)
+
+# TODO: Also check that sysmeta modified date is correctly updated to the current time
+# and that it causes the object to appear in listObjects() results filtered by the
+# current time.

@@ -37,7 +37,7 @@ def generate_reproducible_sciobj_with_sysmeta(
   object that is always the same for a given PID
   - The PID can be seen as a handle through which the same science object bytes
   and sysmeta can always be retrieved.
-  - {allow_resource_map=False} causes the Resource Map FormatId to not be used.
+  - ``allow_resource_map=False`` causes the Resource Map FormatId to not be used.
   This method does not generate resource maps, and resource maps undergo special
   processing in GMN.
   """

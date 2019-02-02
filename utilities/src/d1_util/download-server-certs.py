@@ -139,7 +139,7 @@ def download_server_cert(base_url, node_id, download_dir_path):
   logging.info('Downloading server side cert: {}'.format(base_url))
   server_der = d1_common.cert.x509.download_as_der(base_url)
   server_cert = d1_common.cert.x509.decode_der(server_der)
-  issuer_cert_url = d1_common.cert.x509.get_issuer_ca_cert_url(server_cert)
+  issuer_cert_url = d1_common.cert.x509.extract_issuer_ca_cert_url(server_cert)
 
   logging.info('Downloading CA issuer cert: {}'.format(issuer_cert_url))
   issuer_der = requests.get(issuer_cert_url).content

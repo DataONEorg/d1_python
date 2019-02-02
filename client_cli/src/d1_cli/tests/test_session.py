@@ -58,7 +58,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     assert s is not None, 'Could not instantiate session'
 
   def test_1010(self):
-    """After instatiation, the default session parameters are available via get()"""
+    """After instantiation, the default session parameters are available via get()"""
     s = session.Session(nodes, format_ids)
     #self.assertEqual(s.get('pretty'), True)
     assert s.get('cn-url') == d1_common.const.URL_DATAONE_ROOT

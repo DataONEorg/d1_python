@@ -135,11 +135,10 @@ def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
 
-  Sorted by timestamp, id (see EventLog.Meta).
+  Sorted by timestamp, id.
   """
   # TODO: Check if select_related() gives better performance
-  query = d1_gmn.app.models.EventLog.objects.all().select_related(
-  ) # order_by('-timestamp', 'id'
+  query = d1_gmn.app.models.EventLog.objects.all().select_related().order_by('timestamp', 'id')
   if not d1_gmn.app.auth.is_trusted_subject(request):
     query = d1_gmn.app.db_filter.add_access_policy_filter(
       request, query, 'sciobj__id'

@@ -63,9 +63,9 @@ def random_lower_ascii(min_len=2, max_len=2):
 
 def random_bytes(num_bytes, max_bytes=None):
   """Return a bytes object containing random bytes
-  - If only {num_bytes} is set, exactly {num_bytes} are returned.
-  - If both {num_bytes} and {max_bytes} are set, a random number of bytes between
-  {num_bytes} and {max_bytes} (including) is returned.
+  - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
+  - If both ``num_bytes`` and ``max_bytes`` are set, a random number of bytes between
+  ``num_bytes`` and ``max_bytes`` (including) is returned.
   """
   return bytearray(
     random.getrandbits(8)
@@ -75,9 +75,9 @@ def random_bytes(num_bytes, max_bytes=None):
 
 def random_bytes_file(num_bytes, max_bytes=None):
   """Return a file-like object containing random bytes
-  - If only {num_bytes} is set, exactly {num_bytes} are returned.
-  - If both {num_bytes} and {max_bytes} is set, a random number of bytes between
-  {num_bytes} and {max_bytes} (including) is returned.
+  - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
+  - If both ``num_bytes`` and ``max_bytes`` is set, a random number of bytes between
+  ``num_bytes`` and ``max_bytes`` (including) is returned.
   """
   return io.BytesIO(random_bytes(num_bytes, max_bytes))
 
@@ -137,9 +137,9 @@ def random_unicode_char_no_whitespace():
 
 def random_unicode_str(num_chars=5, max_chars=None):
   """Return a str containing random Unicode characters
-  - If only {num_chars} is set, exactly {num_chars} characters are returned.
-  - If both {num_chars} and {max_chars} are set, a random number of characters between
-  {num_chars} and {max_chars} (including) is returned.
+  - If only ``num_chars`` is set, exactly ``num_chars`` characters are returned.
+  - If both ``num_chars`` and ``max_chars`` are set, a random number of characters between
+  ``num_chars`` and ``max_chars`` (including) is returned.
   """
   return ''.join([
     random_unicode_char()
@@ -157,21 +157,21 @@ def random_bool():
 
 
 def random_bool_factor(f=0.5):
-  """Return random bool value that is more likely to be True the closer {f} is
+  """Return random bool value that is more likely to be True the closer ``f`` is
   to 1.0
 
-  - {f} == [0, 1)
-  - {f} = 1.0: Always return True
-  - {f} = 0.1: Return True 10% of the time
+  - ``f`` == [0, 1)
+  - ``f`` = 1.0: Always return True
+  - ``f`` = 0.1: Return True 10% of the time
   """
   return random.random() < f
 
 
 def random_sized_sample(seq, min_size=1, max_size=10):
-  """Return a random number of randomly selected values from {seq}
+  """Return a random number of randomly selected values from ``seq``
 
   If it's not possible to meet the min_size and/or max_size criteria due to the
-  number of values in {seq}, a best effort is made.
+  number of values in ``seq``, a best effort is made.
   """
   min_size = min(min_size, len(seq))
   max_size = min(max_size, len(seq))
@@ -181,11 +181,11 @@ def random_sized_sample(seq, min_size=1, max_size=10):
 
 
 def random_sized_sample_pop(seq, min_size=1, max_size=10):
-  """Return a random number of randomly selected values from {seq}, then remove
-  them from {seq}.
+  """Return a random number of randomly selected values from ``seq``, then remove
+  them from ``seq``.
 
   If it's not possible to meet the min_size and/or max_size criteria due to the
-  number of values in {seq}, a best effort is made.
+  number of values in ``seq``, a best effort is made.
   """
   s = random_sized_sample(seq, min_size, max_size)
   if isinstance(seq, set):
@@ -204,9 +204,9 @@ def random_choice_pop(seq):
 
 def random_within_range(num_bytes, max_bytes=None):
   """Return a random int within range
-  - If only {num_bytes} is set, return {num_bytes}
-  - If both {num_bytes} and {max_bytes} are set, return random int within
-  between {num_bytes} and {max_bytes} (including).
+  - If only ``num_bytes`` is set, return ``num_bytes``
+  - If both ``num_bytes`` and ``max_bytes`` are set, return random int within
+  between ``num_bytes`` and ``max_bytes`` (including).
   """
   return num_bytes if max_bytes is None else random.randint(
     num_bytes, max_bytes

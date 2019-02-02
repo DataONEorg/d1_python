@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling URLs in DataONE
+"""Utilities for handling URLs in DataONE.
 """
 
 import sys
@@ -116,12 +116,11 @@ def normalizeTarget(target):
   return target.rstrip('/?') + '/'
 
 
+# TODO: verify the Unicode encoding process - looks a bit suspect.
 def urlencode(query, doseq=0):
   """Modified version of the standard urllib.urlencode that is conforms
   to RFC3986. The urllib version encodes spaces as '+' which can lead
   to inconsistency. This version will always encode spaces as '%20'.
-
-  TODO: verify the unicode encoding process - looks a bit suspect.
 
   Encode a sequence of two-element tuples or dictionary into a URL query string.
 

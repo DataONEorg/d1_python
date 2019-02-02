@@ -32,7 +32,7 @@ def generate(prefix='urn:node:', min_len=5, max_len=20):
 
 
 def generate_bare(prefix='', min_len=5, max_len=20):
-  """Generate a random unicode string"""
+  """Generate a random Unicode string"""
   len_prefix = len(prefix)
   if len_prefix >= max_len:
     raise ValueError('Unable to generate random string: No room for prefix')

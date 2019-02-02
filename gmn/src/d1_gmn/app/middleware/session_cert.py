@@ -57,7 +57,7 @@ def get_subjects(request):
 
 def get_authenticated_subjects(cert_pem):
   """Return primary subject and set of equivalents authenticated by certificate
-  - {cert_pem} can be str or bytes
+  - ``cert_pem`` can be str or bytes
   """
   if isinstance(cert_pem, str):
     cert_pem = cert_pem.encode('utf-8')

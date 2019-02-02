@@ -50,7 +50,7 @@ import d1_common.xml
 import django.conf
 
 # def is_unused(did):
-#   """Assert that the {did} is currently unused and so is available to be
+#   """Assert that the ``did`` is currently unused and so is available to be
 #   assigned to a new object.
 #
 #   To be unused, the DID:
@@ -67,7 +67,7 @@ import django.conf
 
 
 def is_valid_pid_for_create(did):
-  """Assert that {did} can be used as a PID for creating a new object with
+  """Assert that ``did`` can be used as a PID for creating a new object with
   MNStorage.create() or MNStorage.update().
   """
   if not d1_gmn.app.did.is_valid_pid_for_create(did):
@@ -78,7 +78,7 @@ def is_valid_pid_for_create(did):
 
 
 def is_valid_pid_to_be_updated(did):
-  """Assert that {did} is the PID of an object that can be updated (obsoleted)
+  """Assert that ``did`` is the PID of an object that can be updated (obsoleted)
   with MNStorage.update()
   """
   if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):

@@ -220,7 +220,7 @@ class GMNTestCase(
     assert sysmeta_pyxb.size == len(sciobj_bytes)
 
   def assert_sci_obj_checksum_matches_sysmeta(self, sciobj_bytes, sysmeta_pyxb):
-    checksum_pyxb = d1_common.checksum.create_checksum_object_from_string(
+    checksum_pyxb = d1_common.checksum.create_checksum_object_from_bytes(
       sciobj_bytes, sysmeta_pyxb.checksum.algorithm
     )
     assert d1_common.checksum.are_checksums_equal(
@@ -251,7 +251,7 @@ class GMNTestCase(
     b_xml = d1_common.xml.serialize_pretty(b_pyxb)
     if not d1_common.xml.are_equivalent(a_xml, b_xml):
       self.dump(
-        'PyXB objects are not equivalent.\na_xml="{}"\nb_xml="{}"\n'.format(
+        'PyXB type instances are not equivalent.\na_xml="{}"\nb_xml="{}"\n'.format(
           a_xml, b_xml
         )
       )
@@ -263,7 +263,7 @@ class GMNTestCase(
   #
 
   def create_revision_chain(self, client, chain_len, sid=None, *args, **kwargs):
-    """Create a revision chain with a total of {chain_len} objects. If
+    """Create a revision chain with a total of ``chain_len`` objects. If
     client is v2, can assign a SID to the chain. Return the SID (None for v1)
     and a list of the PIDs in the chain. The first PID in the list is the
     tail and the last is the head.
@@ -428,7 +428,7 @@ class GMNTestCase(
       pid
     )
     send_sysmeta_pyxb = copy.deepcopy(sysmeta_pyxb)
-    send_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_string(
+    send_sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
       send_sciobj_bytes, sysmeta_pyxb.checksum.algorithm
     )
     send_sysmeta_pyxb.size = len(send_sciobj_bytes)

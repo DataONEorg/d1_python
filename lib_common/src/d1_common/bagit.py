@@ -17,12 +17,14 @@
 # limitations under the License.
 """Create and validate BagIt Data Packages / zip file archives
 
-- https://en.wikipedia.org/wiki/BagIt
-- https://tools.ietf.org/html/draft-kunze-bagit-05
-- https://releases.dataone.org/online/api-documentation-v2.0.1/apis/
-  MN_APIs.html#MNPackage.getPackage
-- https://releases.dataone.org/online/api-documentation-v2.0/design/
-  DataPackage.html
+See Also:
+
+  - https://en.wikipedia.org/wiki/BagIt
+  - https://tools.ietf.org/html/draft-kunze-bagit-05
+  - https://releases.dataone.org/online/api-documentation-v2.0.1/apis/
+    MN_APIs.html#MNPackage.getPackage
+  - https://releases.dataone.org/online/api-documentation-v2.0/design/
+    DataPackage.html
 """
 
 import logging
@@ -59,18 +61,59 @@ TAG_CHECKSUM_ALGO = 'SHA1'
 
 
 def validate_bagit_file(bagit_path):
-  """Raise ServiceFailure() if the BagIt zip archive file fails any of the
-  following checks:
-  - Is a valid zip file.
-  - The tag and manifest files are correctly formatted.
-  - Contains all the files listed in the manifests.
-  - The file checksums match the manifests.
+  """Check if a BagIt file is valid.
+
+  Raises:
+    ServiceFailure
+      If the BagIt zip archive file fails any of the following checks:
+
+      - Is a valid zip file.
+      - The tag and manifest files are correctly formatted.
+      - Contains all the files listed in the manifests.
+      - The file checksums match the manifests.
   """
-  assert zipfile.is_zipfile(bagit_path)
+  _assert_zip_file(bagit_path)
   bagit_zip = zipfile.ZipFile(bagit_path)
   manifest_info_list = _get_manifest_info_list(bagit_zip)
   _validate_checksums(bagit_zip, manifest_info_list)
   return True
+
+
+def create_bagit_stream(dir_name, payload_info_list):
+  """Create a stream containing a BagIt zip archive.
+
+  Args:
+    dir_name : str
+      The name of the root directory in the zip file, under which all the files are placed (avoids "zip bombs").
+
+    payload_info_list: list
+      List of payload_info_dict, each dict describing a file.
+
+      - keys: pid, filename, iter, checksum, checksum_algorithm
+      - If the filename is None, the pid is used for the filename.
+  """
+  zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
+  _add_path(dir_name, payload_info_list)
+  payload_byte_count, payload_file_count = _add_payload_files(
+    zip_file, payload_info_list
+  )
+  tag_info_list = _add_tag_files(
+    zip_file, dir_name, payload_info_list, payload_byte_count,
+    payload_file_count
+  )
+  _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list)
+  _add_tag_manifest_file(zip_file, dir_name, tag_info_list)
+  return zip_file
+
+#
+# Private
+#
+
+def _assert_zip_file(bagit_path):
+  if not zipfile.is_zipfile(bagit_path):
+    raise d1_common.types.exceptions.ServiceFailure(
+      'File is not a valid zip file. path="{}"'.format(bagit_path)
+    )
 
 
 def _parse_tab_separated_file(bagit_zip, tag_path):
@@ -130,29 +173,6 @@ def _calculate_checksum_of_member(bagit_zip, manifest_info):
       'Unable to read file listed in manifest. path="{}" manifest="{}" error="{}"'
       .format(manifest_info['path'], manifest_info['manifest_path'], str(e))
     )
-
-
-def create_bagit_stream(dir_name, payload_info_list):
-  """Create a stream containing a BagIt zip archive
-
-  - {dir_name} is the name of the root directory in the zip file, under which
-  all the files are placed (avoids "zip bombs").
-  - payload_info_list: A list of payload_info_dict, each dict describing a file.
-    keys: pid, filename, iter, checksum, checksum_algorithm
-  - If the filename is None, the pid is used for the filename.
-  """
-  zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
-  _add_path(dir_name, payload_info_list)
-  payload_byte_count, payload_file_count = _add_payload_files(
-    zip_file, payload_info_list
-  )
-  tag_info_list = _add_tag_files(
-    zip_file, dir_name, payload_info_list, payload_byte_count,
-    payload_file_count
-  )
-  _add_manifest_files(zip_file, dir_name, payload_info_list, tag_info_list)
-  _add_tag_manifest_file(zip_file, dir_name, tag_info_list)
-  return zip_file
 
 
 def _add_path(dir_name, payload_info_list):

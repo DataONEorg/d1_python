@@ -35,7 +35,7 @@ Notes:
 
 - This approach retrieves object lists directly from each Member Node and is
 mainly suitable in special situations where a 3rd party wishes to examine the
-overal state of objects in DataONE, for instance, for creating statistics or
+overall state of objects in DataONE, for instance, for creating statistics or
 data quality reports.
 
 - This approach uses the listObjects() Member Node API method, which has

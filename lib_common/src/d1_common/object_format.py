@@ -20,29 +20,32 @@
 """Utilities for handling the DataONE ObjectFormat and ObjectFormatList types
 """
 
-
 def pyxb_to_dict(object_format_list_pyxb):
-  """Return a dict representation of {object_format_list_pyxb}, keyed on
-  formatId. E.g.:
-  {
-    u'-//ecoinformatics.org//eml-access-2.0.0beta4//EN': {
-      'extension': u'xml',
-      'format_name': u'Ecological Metadata Language, Access module, version 2.0.0beta4',
-      'format_type': u'METADATA',
-      'media_type': {
-        'name': u'text/xml',
-        'property_list': []
-      }
-    },
-    u'-//ecoinformatics.org//eml-access-2.0.0beta6//EN': {
-      'extension': u'xml',
-      'format_name': u'Ecological Metadata Language, Access module, version 2.0.0beta6',
-      'format_type': u'METADATA',
-      'media_type': {
-        'name': u'text/xml',
-        'property_list': []}
+  """
+  Returns:
+     dict : Representation of ``object_format_list_pyxb``, keyed on ``formatId``.
+
+  Example::
+
+    {
+      u'-//ecoinformatics.org//eml-access-2.0.0beta4//EN': {
+        'extension': u'xml',
+        'format_name': u'Ecological Metadata Language, Access module, version 2.0.0beta4',
+        'format_type': u'METADATA',
+        'media_type': {
+          'name': u'text/xml',
+          'property_list': []
+        }
       },
-  }
+      u'-//ecoinformatics.org//eml-access-2.0.0beta6//EN': {
+        'extension': u'xml',
+        'format_name': u'Ecological Metadata Language, Access module, version 2.0.0beta6',
+        'format_type': u'METADATA',
+        'media_type': {
+          'name': u'text/xml',
+          'property_list': []}
+        },
+    }
   """
   f_dict = {}
   for f_pyxb in object_format_list_pyxb.objectFormat:

@@ -46,6 +46,6 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     i = 0
 
     for i, object_info_pyxb in enumerate(object_list_iter):
-      assert isinstance(object_info_pyxb, mn_client_v1_v2.bindings.ObjectInfo)
+      assert isinstance(object_info_pyxb, mn_client_v1_v2.pyxb_binding.ObjectInfo)
 
     assert i == mock_list_objects.N_TOTAL - 1

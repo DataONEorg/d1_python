@@ -118,3 +118,27 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
     self.sample.assert_equals(
       d1_test.d1_test_case.get_caplog_text(caplog), 'log_cert_info_expected'
     )
+
+  def test_1070(self):
+    """get_val_list(): Retrieves expected attributes"""
+    class O1:
+      a = '1'
+      b = '2'
+      c = '3'
+
+    class O2:
+      d = O1
+      e = '4'
+      f = '5'
+
+    class O3:
+      g = 's1'
+      h = 'g1'
+      i = O2
+
+    assert d1_common.cert.x509.get_val_list(O3, ['invalid_attr']) == []
+    assert d1_common.cert.x509.get_val_list(O3, ['g']) == ['s1']
+    assert d1_common.cert.x509.get_val_list(O3, ['g', 'invalid']) == []
+
+
+

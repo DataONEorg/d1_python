@@ -43,6 +43,7 @@ __author__ = 'Joe Gregorio'
 __email__ = "joe@bitworking.org"
 __credits__ = ""
 
+# TODO: Can probably delete this module.
 
 def parse_mime_type(mime_type):
   """Carves up a mime-type and returns a tuple of the
@@ -134,8 +135,7 @@ def quality(mime_type, ranges):
   """Returns the quality 'q' of a mime-type when compared
     against the media-ranges in ranges. For example:
 
-    >>> quality('text/html','text/*;q=0.3, text/html;q=0.7, text/html;level=1,
-    text/html;level=2;q=0.4, */*;q=0.5')
+    >>> quality('text/html', 'text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5')
     0.7
     """
   parsed_ranges = [parse_media_range(r) for r in ranges.split(",")]

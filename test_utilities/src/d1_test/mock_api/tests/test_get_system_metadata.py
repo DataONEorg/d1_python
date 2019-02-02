@@ -42,7 +42,7 @@ class TestMockSystemMetadata(d1_test.d1_test_case.D1TestCase):
     mock_sysmeta.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     assert isinstance(
       mn_client_v1_v2.getSystemMetadata('test_pid'),
-      mn_client_v1_v2.bindings.SystemMetadata
+      mn_client_v1_v2.pyxb_binding.SystemMetadata
     )
 
   @responses.activate

@@ -48,7 +48,7 @@ def _assert_pyxb_objects_are_equivalent(arg_tup):
   b_str = d1_common.xml.serialize_to_xml_str(b_pyxb)
   if not d1_common.xml.are_equivalent(a_str, b_str):
     raise AssertionError(
-      'PyXB objects are not equivalent.\na="{}"\nb="{}"\n'.format(a_str, b_str)
+      'PyXB type instances are not equivalent.\na="{}"\nb="{}"\n'.format(a_str, b_str)
     )
 
 

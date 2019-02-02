@@ -71,21 +71,23 @@ class SubjectInfoRenderer:
     def render_to_image_file(
         self, image_out_path, width_pixels=None, height_pixels=None, dpi=90
     ):
-        """Render the SubjectInfo to an image file at {out_path}.
+        """Render the SubjectInfo to an image file.
 
-        Parameters
-        ----------
-        image_out_path : str
-            Path to which image will be written. Valid extensions are .svg, .pdf, and .png.
+        Args:
+            image_out_path : str
+                Path to where image image will be written. Valid extensions are ``.svg,`` ``.pdf``, and ``.png``.
 
-        width_pixels : int
-            Width of image to write.
+            width_pixels : int
+                Width of image to write.
 
-        height_pixels : int
-            Height of image to write, in pixels.
+            height_pixels : int
+                Height of image to write, in pixels.
 
-        dpi:
-            Dots Per Inch to declare in image file. This does not change the resolution of the image but may change the size of the image when rendered.
+            dpi:
+                Dots Per Inch to declare in image file. This does not change the resolution of the image but may change the size of the image when rendered.
+
+        Returns:
+            None
         """
         self._render_type = "file"
         self._tree.render(
@@ -98,7 +100,7 @@ class SubjectInfoRenderer:
         )
 
     def browse_in_qt5_ui(self):
-        """Browse and edit the SubjectInfo in a simple QT5 based UI.
+        """Browse and edit the SubjectInfo in a simple Qt5 based UI.
         """
         self._render_type = "browse"
         self._tree.show(tree_style=self._get_tree_style())
@@ -106,10 +108,9 @@ class SubjectInfoRenderer:
     def render_to_ascii_art(self):
         """Render the SubjectInfo to a string containing an "ASCII art" tree.
 
-        Returns
-        -------
-        str
-            String containing an "ASCII art" representation of the tree.
+        Returns:
+            str
+                String containing an "ASCII art" representation of the tree.
         """
         self._render_type = "ascii"
         return self._tree.get_ascii()
@@ -140,7 +141,7 @@ class SubjectInfoRenderer:
         return child
 
     def _get_node_path(self, node):
-        """Return the path from the root to {node} as a list of node names"""
+        """Return the path from the root to ``node`` as a list of node names"""
         path = []
         while node.up:
             path.append(node.name)
@@ -176,11 +177,15 @@ class SubjectInfoRenderer:
             node.set_style(node_style)
 
         def style_subject_node(color="Black"):
+            """Specify the appearance of Subject nodes
+            """
             face = ete3.TextFace(node.name, fsize=SUBJECT_NODE_FONT_SIZE, fgcolor=color)
             set_face_margin(face)
             node.add_face(face, column=0, position="branch-right")
 
         def style_type_node(color="Black"):
+            """Specify the appearance of Type nodes
+            """
             face = ete3.CircleFace(
                 radius=TYPE_NODE_RADIUS,
                 color=TYPE_NODE_COLOR_DICT.get(node.name, "White"),

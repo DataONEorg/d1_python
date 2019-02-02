@@ -121,12 +121,12 @@ def main():
   for pid in resource_map_parser.get_aggregated_pids():
     print('PID: ' + pid)
 
-  print('\nSience Metadata PIDs in aggregation: ')
+  print('\nScience Metadata PIDs in aggregation: ')
 
   for pid in resource_map_parser.get_aggregated_science_metadata_pids():
     print('PID: ' + pid)
 
-  print('\nSience Data PIDs in aggregation: ')
+  print('\nScience Data PIDs in aggregation: ')
 
   for pid in resource_map_parser.get_aggregated_science_data_pids():
     print('PID: ' + pid)
