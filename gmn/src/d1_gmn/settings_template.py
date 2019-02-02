@@ -553,7 +553,7 @@ else:
 d1_common.util.nested_update(
   LOGGING, {
     'handlers': {
-      'file': {
+      'rotating_file': {
         'level': LOG_LEVEL,
       },
     },
