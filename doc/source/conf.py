@@ -29,7 +29,14 @@ source_suffix = ".rst"
 master_doc = "index"
 version = ""
 release = ""
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "tests", "test*.py"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "tests",
+    "test*.py",
+    "subject_info_renderer.py",
+]
 pygments_style = "sphinx"
 today_fmt = "%Y-%m-%d"
 
@@ -112,7 +119,6 @@ autodoc_member_order = "bysource"
 autodoc_default_flags = [
     # Include regular members.
     "members",
-    #
     # "show-inheritance",
     # Include members without docstrings.
     # "undoc-members",
