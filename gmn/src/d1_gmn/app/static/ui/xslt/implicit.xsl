@@ -28,19 +28,22 @@ Must be imported before other imports
 
     <!--<xsl:message terminate="yes">-->
     <!--<z:msg>Unmatched node:</z:msg>-->
-    <!--<z:path><xsl:call-template name="get_path"/></z:path>-->
+    <!--<z:path><xsl:call-template name="get_path_list"/></z:path>-->
     <!--<z:node><xsl:copy-of select="."/></z:node>-->
     <!--</xsl:message>-->
 
     <!--<z:msg>Unmatched node:</z:msg>-->
     <!--<z:path>-->
-    <!--<xsl:call-template name="get_path"/>-->
+    <!--<xsl:call-template name="get_path_list"/>-->
     <!--</z:path>-->
     <!--<z:node>-->
     <!--<xsl:copy-of select="."/>-->
     <!--</z:node>-->
     <xsl:apply-templates/>
   </xsl:template>
+
+  <!--<xsl:template match="text()" priority="0"/>-->
+
 
   <!-- Identity templates -->
 

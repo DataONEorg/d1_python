@@ -134,7 +134,7 @@
     <xsl:param name="integer"/>
     <xsl:param name="units"/>
     <xsl:value-of
-        select="concat(format-number($integer, '###,###,###,###,###', 'US'), ' ', $units)"/>
+        select="concat(format-number($integer, '#,###.##', 'US'), ' ', $units)"/>
   </xsl:template>
 
   <!--Split string-->

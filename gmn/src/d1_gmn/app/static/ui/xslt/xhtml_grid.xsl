@@ -59,7 +59,7 @@
 
     <!--Dump trimmed nodeset -->
     <!--<xsl:call-template name="dump_nodeset">-->
-      <!--<xsl:with-param name="nodes" select="$trimmed_nodeset"/>-->
+    <!--<xsl:with-param name="nodes" select="$trimmed_nodeset"/>-->
     <!--</xsl:call-template>-->
 
     <!-- Transform the intermediate types to XHTML, using CSS Grid for layout.
@@ -82,9 +82,9 @@
       <xsl:call-template name="max">
         <xsl:with-param name="sequence">
           <xsl:for-each select="exsl:node-set($nodeset)/z:type">
-            <count>
+            <z:count>
               <xsl:value-of select="count(./*)"/>
-            </count>
+            </z:count>
           </xsl:for-each>
         </xsl:with-param>
       </xsl:call-template>
@@ -110,7 +110,8 @@
     <xsl:param name="column_count"/>
     <xsl:variable name="is_first_section"
                   select="not(preceding-sibling::z:type)"/>
-    <xsl:variable name="is_new_section" select="boolean(z:section/. != preceding-sibling::*[1]/z:section/.)
+    <xsl:variable name="is_new_section"
+                  select="boolean(z:section/. != preceding-sibling::*[1]/z:section/.)
                   or not(preceding-sibling::*[1]/z:section)"/>
 
     <!-- Populate even rows with regular items and use the odd rows for inserting
@@ -175,45 +176,24 @@
           'grid-column', ':', $col_idx, $col_span)"/>
       </xsl:attribute>
 
-      <!-- Bold labels -->
-      <!--<xsl:choose>-->
-        <!--<xsl:when test="name() = 'z:label'">-->
-          <!--<div class="bold">-->
-            <!--<xsl:copy-of select="./*|text()"/>-->
-          <!--</div>-->
-        <!--</xsl:when>-->
-        <!--<xsl:otherwise>-->
-          <xsl:copy-of select="./*|text()"/>
-        <!--</xsl:otherwise>-->
-      <!--</xsl:choose>-->
+      <xsl:copy-of select="./*|text()"/>
     </div>
   </xsl:template>
 
   <xsl:template name="document_header">
     <head>
       <title>DataONE GMN</title>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-      <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+      <script
+          src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script
+          src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <link
+          href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"
+          rel="stylesheet" type="text/css"/>
       <link href="{concat($static_root_url, 'gmn.css')}"
             rel="stylesheet" type="text/css"/>
     </head>
   </xsl:template>
-
-  <!--<xsl:template name="body-header">-->
-    <!--<div class="logo_header"></div>-->
-  <!--</xsl:template>-->
-
-  <!--<xsl:template name="body-footer"></xsl:template>-->
-
-  <!--<xsl:template name="grid-line">-->
-    <!--<div class="section-line-top"/>-->
-    <!--<div class="section-line-bottom"/>-->
-  <!--</xsl:template>-->
-
-  <!--<xsl:template name="grid-space">-->
-    <!--<div class="section-space"/>-->
-  <!--</xsl:template>-->
 
   <!-- Trim and collapse whitespace in text and attribute nodes.
   Makes for fewer surprises in general. Ensures that duplicated section headers

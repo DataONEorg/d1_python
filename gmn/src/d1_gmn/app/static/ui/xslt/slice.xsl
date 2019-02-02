@@ -15,7 +15,8 @@
 
   <!--
   ################# Slice browser
-  - Slice information and add links to previous and next slices.  -->
+  - Show slice information and provide links to previous and next slices.
+  -->
 
   <xsl:template name="slice">
     <xsl:param name="label" select="'records'"/>
@@ -25,14 +26,36 @@
         <xsl:value-of select="$label"/>
       </z:label>
       <z:tree>
-        <xsl:value-of select="
-        concat(@start + 1, ' to ', @start + @count, ' of ', @total, ' (count: ', @count, ')')
-        "/>
+        <xsl:choose>
+          <xsl:when test="@total=0">
+            &lt;none>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="group_thousands">
+              <xsl:with-param name="integer" select="@start + 1"/>
+            </xsl:call-template>
+            to
+            <xsl:call-template name="group_thousands">
+              <xsl:with-param name="integer" select="@start + @count"/>
+            </xsl:call-template>
+            of
+            <xsl:call-template name="group_thousands">
+              <xsl:with-param name="integer" select="@total"/>
+            </xsl:call-template>
+            <xsl:variable name="grouped_count">
+              <xsl:call-template name="group_thousands">
+                <xsl:with-param name="integer" select="@count"/>
+              </xsl:call-template>
+            </xsl:variable>
+            <xsl:value-of
+                select="concat('(count: ', normalize-space($grouped_count), ')')"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </z:tree>
     </z:type>
     <z:type>
       <z:section>slice</z:section>
-      <z:label></z:label>
+      <z:label/>
       <z:tree>
         <xsl:choose>
           <xsl:when test="@start > 0 and @start - @count >= 0">
@@ -54,8 +77,8 @@
         <xsl:choose>
           <xsl:when test="@start + @count &lt; @total">
             <a class="round-button" onclick="open_slice({ @start + @count });">
-                Next
-              </a>
+              Next
+            </a>
           </xsl:when>
           <xsl:otherwise>
             <a class="round-button round-button-disabled">

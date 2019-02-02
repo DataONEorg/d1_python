@@ -19,7 +19,7 @@ body {
   grid-template-columns: max-content max-content;
   grid-template-rows: auto;
   grid-template-areas: "header-left header-right" "sidebar d1-type " "footer footer";
-  grid-gap: 0.1em 4em;
+  grid-gap: 0.1em 6em;
 
   justify-items: center;
 }
@@ -78,6 +78,7 @@ body {
 .mn-name {
   font-size: 2em;
   font-weight: bold;
+  text-align: left;
 }
 
 /* Left and right panels */

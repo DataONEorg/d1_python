@@ -11,6 +11,7 @@
                 extension-element-prefixes="exsl"
 >
   <xsl:import href="intermediate.xsl"/>
+  <xsl:import href="slice.xsl"/>
 
   <xsl:template match="v1:log | v2:log">
     <z:type>
@@ -20,6 +21,10 @@
         </div>
       </z:section>
     </z:type>
+
+    <xsl:call-template name="slice">
+      <xsl:with-param name="label">events</xsl:with-param>
+    </xsl:call-template>
 
     <xsl:apply-templates select="logEntry"/>
   </xsl:template>
