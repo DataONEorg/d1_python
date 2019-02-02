@@ -24,32 +24,34 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 """
 
-import d1_client.cnclient
+import d1_client.mnclient_2_0
+import d1_client.cnclient_2_0
+import d1_client.baseclient_2_0
 
 
 class CLIClient(object):
-  pass
+    pass
 
 
-#===============================================================================
+# ===============================================================================
 
 
-class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+class CLIMNClient(CLIClient, d1_client.mnclient_2_0.MemberNodeClient_2_0):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-#===============================================================================
+# ===============================================================================
 
 
-class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+class CLICNClient(CLIClient, d1_client.cnclient_2_0.CoordinatingNodeClient_2_0):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-#===============================================================================
+# ===============================================================================
 
 
-class CLIBaseClient(d1_client.baseclient.DataONEBaseClient):
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+class CLIBaseClient(d1_client.baseclient_2_0.DataONEBaseClient_2_0):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

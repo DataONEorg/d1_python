@@ -26,39 +26,35 @@ import setuptools
 
 
 def main():
-  setuptools.setup(
-    name='dataone.cli',
-    version='3.2.0',
-    description='Command-Line Interface (CLI) for DataONE',
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=[
-      'dataone.common >= 3.2.0',
-      'dataone.libclient >= 3.2.0',
-      #
-      'requests >= 2.19.1',
-    ],
-    entry_points={'console_scripts': [
-      'dataone = d1_cli.dataone:main',
-    ]},
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords='DataONE cli command line member-node coordinating-node',
-  )
+    setuptools.setup(
+        name="dataone.cli",
+        version="3.3.0",
+        description="Command-Line Interface (CLI) for DataONE",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_python",
+        license="Apache License, Version 2.0",
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        install_requires=[
+            "dataone.common >= 3.3.0",
+            "dataone.libclient >= 3.3.0",
+            #
+            "requests >= 2.21.0",
+        ],
+        entry_points={"console_scripts": ["dataone = d1_cli.dataone:main"]},
+        setup_requires=["setuptools_git >= 1.1"],
+        classifiers=[
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
+        ],
+        keywords="DataONE cli command line member-node coordinating-node",
+    )
 
 
-if __name__ == '__main__':
-  sys.exit(main())
+if __name__ == "__main__":
+    sys.exit(main())

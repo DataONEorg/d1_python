@@ -21,9 +21,9 @@
 """Test the CLI exceptions
 """
 
-import d1_cli.impl.cli
-import d1_cli.impl.cli_client
-import d1_cli.impl.cli_exceptions
+import d1_cli.impl.command_parser
+import d1_cli.impl.client
+import d1_cli.impl.exceptions
 import d1_cli.impl.operation_validator
 import pytest
 
@@ -31,32 +31,31 @@ import d1_test.d1_test_case
 
 
 class TestCLIExceptions(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    cli = d1_cli.impl.cli.CLI()
-    cli.do_set('verbose true')
+    def setup_method(self):
+        cli = d1_cli.impl.command_parser.CLI()
+        cli.do_set("verbose true")
 
-  def test_1000(self):
-    """InvalidArguments(): __init__()"""
-    with pytest.raises(d1_cli.impl.cli_exceptions.InvalidArguments):
-      self._raise(d1_cli.impl.cli_exceptions.InvalidArguments('test_message'))
+    def test_1000(self):
+        """InvalidArguments(): __init__()"""
+        with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
+            self._raise(d1_cli.impl.exceptions.InvalidArguments("test_message"))
 
-  def test_1010(self):
-    """InvalidArguments(): Returns string"""
-    msg_str = 'test_message'
-    ex = d1_cli.impl.cli_exceptions.InvalidArguments(msg_str)
-    assert msg_str == str(ex)
+    def test_1010(self):
+        """InvalidArguments(): Returns string"""
+        msg_str = "test_message"
+        ex = d1_cli.impl.exceptions.InvalidArguments(msg_str)
+        assert msg_str == str(ex)
 
-  def test_1020(self):
-    """CLIError(): __init__()"""
-    with pytest.raises(d1_cli.impl.cli_exceptions.CLIError):
-      self. \
-    _raise(d1_cli.impl.cli_exceptions.CLIError('test_message'))
+    def test_1020(self):
+        """CLIError(): __init__()"""
+        with pytest.raises(d1_cli.impl.exceptions.CLIError):
+            self._raise(d1_cli.impl.exceptions.CLIError("test_message"))
 
-  def test_1030(self):
-    """CLIError(): Returns string"""
-    msg_str = 'test_message'
-    ex = d1_cli.impl.cli_exceptions.CLIError(msg_str)
-    assert msg_str == str(ex)
+    def test_1030(self):
+        """CLIError(): Returns string"""
+        msg_str = "test_message"
+        ex = d1_cli.impl.exceptions.CLIError(msg_str)
+        assert msg_str == str(ex)
 
-  def _raise(self, ex):
-    raise ex
+    def _raise(self, ex):
+        raise ex

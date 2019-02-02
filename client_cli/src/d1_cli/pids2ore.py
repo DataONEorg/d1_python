@@ -118,27 +118,31 @@ import d1_pyore
 
 parser = argparse.ArgumentParser(description="stdin to OAI-ORE")
 
-parser.add_argument('-l', '--log',
-                    default=logging.WARN,
-                    type=int,
-                    help="Set the logging level (debug=10, error=40)")
+parser.add_argument(
+    "-l",
+    "--log",
+    default=logging.WARN,
+    type=int,
+    help="Set the logging level (debug=10, error=40)",
+)
 
-parser.add_argument('-f', '--format', 
-                    default='xml',
-                    help='Specify the serialization format (xml)')
+parser.add_argument(
+    "-f", "--format", default="xml", help="Specify the serialization format (xml)"
+)
 
-parser.add_argument('-b', '--base_url',
-                    default=u'https://cn.dataone.org/cn',
-                    help='Specify the base URL for the resource map entity identifiers')
+parser.add_argument(
+    "-b",
+    "--base_url",
+    default=u"https://cn.dataone.org/cn",
+    help="Specify the base URL for the resource map entity identifiers",
+)
 
 args = parser.parse_args()
 
-if args.log not in (10,20,30,40,50):
-  logging.basicConfig(level=logging.INFO)
-  logging.warning("Invalid value %s for log level. Using 20 (INFO).", args.log)
+if args.log not in (10, 20, 30, 40, 50):
+    logging.basicConfig(level=logging.INFO)
+    logging.warning("Invalid value %s for log level. Using 20 (INFO).", args.log)
 else:
-  logging.basicConfig( level=args.log )
+    logging.basicConfig(level=args.log)
 
-print( d1_pyore.pids2ore( sys.stdin, 
-                          fmt=args.format,
-                          base_url=args.base_url) )
+print(d1_pyore.pids2ore(sys.stdin, fmt=args.format, base_url=args.base_url))

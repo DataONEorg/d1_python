@@ -27,15 +27,15 @@ import d1_test.d1_test_case
 
 
 class TestCheckDependencies(d1_test.d1_test_case.D1TestCase):
-  def test_1000(self):
-    """check_dependencies(): Returns True given modules known to be present"""
-    assert d1_cli.impl.check_dependencies.are_modules_importable(['os', 'sys'])
+    def test_1000(self):
+        """check_dependencies(): Returns True given modules known to be present"""
+        assert d1_cli.impl.check_dependencies.are_modules_importable(["os", "sys"])
 
-  def test_1010(self, caplog):
-    """check_dependencies(): Returns false and logs error on invalid module"""
-    assert not (
-      d1_cli.impl.check_dependencies.are_modules_importable(
-        ['os', 'invalid_module']
-      )
-    )
-    assert 'dependencies failed' in d1_test.d1_test_case.get_caplog_text(caplog)
+    def test_1010(self, caplog):
+        """check_dependencies(): Returns false and logs error on invalid module"""
+        assert not (
+            d1_cli.impl.check_dependencies.are_modules_importable(
+                ["os", "invalid_module"]
+            )
+        )
+        assert "dependencies failed" in d1_test.d1_test_case.get_caplog_text(caplog)
