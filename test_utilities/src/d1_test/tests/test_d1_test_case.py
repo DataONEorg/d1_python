@@ -24,14 +24,6 @@ import gc
 
 import d1_test.d1_test_case
 
-@pytest.fixture()
-def disable_garbage_collector():
-  """Fixture that disables the garbage collector while the function is running"""
-  gc.disable()
-  try:
-    yield
-  finally:
-    gc.enable()
 
 class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
   def test_1000(self):
@@ -64,8 +56,3 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
         # It's necessary to assign a name to the object here, or it does not
         # get created, even with garbage collection disabled
         b = bytearray(20 * 1024**2)
-
-
-
-
-
