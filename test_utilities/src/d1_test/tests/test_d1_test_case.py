@@ -19,13 +19,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 import pytest
 import gc
 
 import d1_test.d1_test_case
 
+MiB = 1024**2
 
 class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
+  def _eat_memory(self, chunk_count, chunk_size):
+    buf = []
+    for i in range(chunk_count):
+      logging.debug('Allocated memory: {:,} bytes'.format(i * chunk_size))
+      buf.append(bytearray(chunk_size))
+
   def test_1000(self):
     """mock_input():"""
     expected_prompt_str = 'user prompt'
@@ -39,20 +48,20 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
 
   # flake8: noqa: F841
   def test_1010(self):
-    """memory_limit context manager: Raises no exceptions with allocation below limit
+    """memory_limit() context manager: Raises no exceptions with allocation below limit
     """
-    with d1_test.d1_test_case.memory_limit(10 * 1024**2):
-      # It's necessary to assign a name to the object here, or it does not
-      # get created, even with garbage collection disabled
-      a = bytearray(1 * 1024**2)
+    with d1_test.d1_test_case.memory_limit(10 * MiB):
+      self._eat_memory(5, MiB)
 
 
   # flake8: noqa: F841
   def test_1020(self):
-    """memory_limit context manager: Raises MemoryError with allocation above limit
+    """memory_limit() context manager: Raises MemoryError with allocation above limit
+
+    Note:
+      The limit is set to 10 MiB while the test attempts to allocated 100 MiB in order
+      to reliably cause a MemoryError exception.
     """
-    with d1_test.d1_test_case.memory_limit(10 * 1024**2):
+    with d1_test.d1_test_case.memory_limit(10 * MiB):
       with pytest.raises(MemoryError):
-        # It's necessary to assign a name to the object here, or it does not
-        # get created, even with garbage collection disabled
-        b = bytearray(20 * 1024**2)
+        self._eat_memory(100, MiB)

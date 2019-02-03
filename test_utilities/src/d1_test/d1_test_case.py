@@ -227,9 +227,16 @@ def temp_file_name(suffix=None):
 
 @contextlib.contextmanager
 def disable_garbage_collector():
-  """Context manager that disables the garbage collector while in the context"""
-  gc.collect()
+  """Context manager that disables the garbage collector while in the context.
+
+  Warnings:
+
+    ``gc.collect()`` is called before entering the context in order to force Python to
+    allocate new memory for objects that are created within the context. However, that
+    does not seem to work reliably in the tested versions of Python 3.
+  """
   gc.disable()
+  gc.collect()
   try:
     yield
   finally:
@@ -239,11 +246,23 @@ def disable_garbage_collector():
 def memory_limit(max_mem_bytes):
   """Raise MemoryError if code within the manager causes memory used by process
   to increase by more than ``max_mem_bytes``.
-  - Garbage collection is disabled while in the context.
-  - May not be very accurate. In tests that check for excessive memory usage, wide
-  margins should be used in order to ensure the expected behavior. E.g., to check that a
-  file is not buffered in memory, set the memory limit to 10 GiB and use a file with
-  size 20 GiB.
+
+  This can be used for detecting excessive memory usage, for instance due to objects
+  being buffered in memory instead of being streamed.
+
+  This is implemented by setting a memory allocation limit at the process level and
+  disabling garbage collection before entering the context and reversing that at exit.
+
+  Warnings:
+
+    This has turned out to not be very accurate. It may be due to Python holding on to
+    memory after it has been garbage collected, though ``gc.collect()`` is called by the
+    context manager in an attempt to avoid that.
+
+    It's currently necessary to massively overshoot the limit specified by
+    ``max_mem_bytes`` in order to reliably raise a MemoryError. Current values for a
+    unit test for this context manager, is 10 MiB for ``max_mem_bytes`` and a combined
+    100 MiB of attempted allocations.
   """
   with disable_garbage_collector():
     process = psutil.Process(os.getpid())
