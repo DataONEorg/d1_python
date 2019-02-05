@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Delete science objects and metadata
-"""
+"""Delete science objects and metadata."""
 
 import urllib.parse
 
@@ -34,11 +33,11 @@ import django.conf
 
 
 def delete_sciobj(pid):
-  sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-  url_split = urllib.parse.urlparse(sciobj.url)
-  d1_gmn.app.sciobj_store.delete_sciobj(url_split, pid)
-  delete_sciobj_from_database(pid)
-  return pid
+    sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
+    url_split = urllib.parse.urlparse(sciobj.url)
+    d1_gmn.app.sciobj_store.delete_sciobj(url_split, pid)
+    delete_sciobj_from_database(pid)
+    return pid
 
 
 # def delete_all():
@@ -47,20 +46,22 @@ def delete_sciobj(pid):
 
 
 def delete_all_from_db():
-  """Clear the database. Used for testing and debugging.
-  """
-  # The models.CASCADE property is set on all ForeignKey fields, so tables can
-  # be deleted in any order without breaking constraints.
-  for model in django.apps.apps.get_models():
-    model.objects.all().delete()
+    """Clear the database.
+
+    Used for testing and debugging.
+    """
+    # The models.CASCADE property is set on all ForeignKey fields, so tables can
+    # be deleted in any order without breaking constraints.
+    for model in django.apps.apps.get_models():
+        model.objects.all().delete()
 
 
 def delete_sciobj_from_database(pid):
-  sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
-  if d1_gmn.app.did.is_in_revision_chain(sciobj_model):
-    d1_gmn.app.revision.cut_from_chain(sciobj_model)
-  d1_gmn.app.revision.delete_chain(pid)
-  # The models.CASCADE property is set on all ForeignKey fields, so most object
-  # related info is deleted when deleting the IdNamespace "root".
-  d1_gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
-  d1_gmn.app.model_util.delete_unused_subjects()
+    sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
+    if d1_gmn.app.did.is_in_revision_chain(sciobj_model):
+        d1_gmn.app.revision.cut_from_chain(sciobj_model)
+    d1_gmn.app.revision.delete_chain(pid)
+    # The models.CASCADE property is set on all ForeignKey fields, so most object
+    # related info is deleted when deleting the IdNamespace "root".
+    d1_gmn.app.models.IdNamespace.objects.filter(did=pid).delete()
+    d1_gmn.app.model_util.delete_unused_subjects()

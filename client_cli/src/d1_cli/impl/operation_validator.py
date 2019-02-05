@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sanity checking of the values which are required by a given operation.
-"""
+"""Sanity checking of the values which are required by a given operation."""
 
 import urllib.parse
 

@@ -18,66 +18,63 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Test Utilities package
-"""
+"""DataONE Test Utilities package."""
 import sys
 
 import setuptools
 
 
 def main():
-  setuptools.setup(
-    name='dataone.test_utilities',
-    version='3.3.0',
-    description='Utilities for testing DataONE infrastructure components',
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=[
-      'dataone.libclient >= 3.3.0',
-      #
-      'contextlib2 >= 0.5.5',
-      'coverage >= 5.0a4',
-      'coveralls >= 1.5.1',
-      'decorator >= 4.3.2',
-      'freezegun >= 0.3.11',
-      'gitpython >= 2.1.11',
-      'mock >= 2.0.0',
-      'multi-mechanize >= 1.2.0',
-      'posix-ipc >= 1.0.4',
-      'psutil >= 5.5.0',
-      'pyasn1 >= 0.4.5',
-      'pytest >= 4.1.0',
-      'pytest-cov >= 2.6.1',
-      'pytest-django >= 3.4.6',
-      'pytest-forked >= 1.0.1',
-      'pytest-random-order >= 1.0.4',
-      'pytest-xdist >= 1.26.1',
-      'pyxb >= 1.2.6',
-      'rdflib >= 4.2.2',
-      'requests >= 2.21.0',
-      'responses >= 0.10.5',
-    ],
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords=(
-      'DataONE source code unit tests ingeration tests coverage travis '
-      'coveralls'
-    ),
-  )
+    setuptools.setup(
+        name='dataone.test_utilities',
+        version='3.3.0',
+        description='Utilities for testing DataONE infrastructure components',
+        author='DataONE Project',
+        author_email='developers@dataone.org',
+        url='https://github.com/DataONEorg/d1_python',
+        license='Apache License, Version 2.0',
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        install_requires=[
+            'dataone.libclient >= 3.3.0',
+            #
+            'contextlib2 >= 0.5.5',
+            'coverage >= 5.0a4',
+            'coveralls >= 1.5.1',
+            'decorator >= 4.3.2',
+            'freezegun >= 0.3.11',
+            'gitpython >= 2.1.11',
+            'mock >= 2.0.0',
+            'multi-mechanize >= 1.2.0',
+            'posix-ipc >= 1.0.4',
+            'psutil >= 5.5.0',
+            'pyasn1 >= 0.4.5',
+            'pytest >= 4.1.1',
+            'pytest-cov >= 2.6.1',
+            'pytest-django >= 3.4.6',
+            'pytest-forked >= 1.0.1',
+            'pytest-random-order >= 1.0.4',
+            'pytest-xdist >= 1.26.1',
+            'pyxb >= 1.2.6',
+            'rdflib >= 4.2.2',
+            'requests >= 2.21.0',
+            'responses >= 0.10.5',
+        ],
+        setup_requires=['setuptools_git >= 1.1'],
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Topic :: Scientific/Engineering',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+        ],
+        keywords=(
+            'DataONE source code unit tests ingeration tests coverage travis '
+            'coveralls'
+        ),
+    )
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

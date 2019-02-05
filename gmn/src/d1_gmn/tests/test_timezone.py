@@ -66,255 +66,242 @@ import d1_test.instance_generator.identifier
 # @freezegun.freeze_time('2001-05-27')
 @d1_test.d1_test_case.reproducible_random_decorator('TestTimeZone')
 class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def _generate_sciobj(self, client, tz_type='utc'):
-    pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-      client
-    )
+    def _generate_sciobj(self, client, tz_type='utc'):
+        pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
+            client
+        )
 
-    uploaded_dt = d1_test.instance_generator.date_time.random_datetime(tz_type)
-    modified_dt = d1_test.instance_generator.date_time.random_datetime(tz_type)
+        uploaded_dt = d1_test.instance_generator.date_time.random_datetime(tz_type)
+        modified_dt = d1_test.instance_generator.date_time.random_datetime(tz_type)
 
-    logging.debug('tz_type={}'.format(tz_type))
-    logging.debug('  {}'.format(uploaded_dt))
-    logging.debug('  {}'.format(modified_dt))
+        logging.debug('tz_type={}'.format(tz_type))
+        logging.debug('  {}'.format(uploaded_dt))
+        logging.debug('  {}'.format(modified_dt))
 
-    sysmeta_pyxb.dateUploaded = uploaded_dt
-    sysmeta_pyxb.dateSysMetadataModified = modified_dt
+        sysmeta_pyxb.dateUploaded = uploaded_dt
+        sysmeta_pyxb.dateSysMetadataModified = modified_dt
 
-    return pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt
+        return pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt
 
-  def _assert_sysmeta_in_utc(self, version_tag, sysmeta_sample_name):
-    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_sample_name)
-    with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
-      with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
-        pid = d1_test.instance_generator.identifier.generate_pid()
-        send_sysmeta.set_element_text('identifier', pid)
-        send_sysmeta.replace_by_xml(
-          '''<accessPolicy><allow>
+    def _assert_sysmeta_in_utc(self, version_tag, sysmeta_sample_name):
+        send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_sample_name)
+        with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
+            with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
+                pid = d1_test.instance_generator.identifier.generate_pid()
+                send_sysmeta.set_element_text('identifier', pid)
+                send_sysmeta.replace_by_xml(
+                    '''<accessPolicy><allow>
           <subject>{}</subject><permission>changePermission</permission>
           </allow></accessPolicy>
-          '''.format(isolated_subj)
-        )
-        send_uploaded_dt = send_sysmeta.get_element_dt('dateUploaded')
-        send_modified_dt = send_sysmeta.get_element_dt(
-          'dateSysMetadataModified'
-        )
-        send_replica_verified_list = send_sysmeta.get_element_list_by_name(
-          'replicaVerified'
-        )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
+          '''.format(
+                        isolated_subj
+                    )
+                )
+                send_uploaded_dt = send_sysmeta.get_element_dt('dateUploaded')
+                send_modified_dt = send_sysmeta.get_element_dt(
+                    'dateSysMetadataModified'
+                )
+                send_replica_verified_list = send_sysmeta.get_element_list_by_name(
+                    'replicaVerified'
+                )
+                send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
 
-      d1_gmn.tests.gmn_direct.create(
-        version_tag, b'body-contents', send_sysmeta_xml
-      )
-      resp_dict = d1_gmn.tests.gmn_direct.get_system_metadata(version_tag, pid)
+            d1_gmn.tests.gmn_direct.create(
+                version_tag, b'body-contents', send_sysmeta_xml
+            )
+            resp_dict = d1_gmn.tests.gmn_direct.get_system_metadata(version_tag, pid)
 
-      with d1_common.wrap.simple_xml.wrap(
-          resp_dict['body_str']) as recv_sysmeta:
-        recv_uploaded_dt = recv_sysmeta.get_element_dt('dateUploaded')
-        recv_modified_dt = recv_sysmeta.get_element_dt(
-          'dateSysMetadataModified'
-        )
-        recv_replica_verified_list = recv_sysmeta.get_element_list_by_name(
-          'replicaVerified'
-        )
+            with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+                recv_uploaded_dt = recv_sysmeta.get_element_dt('dateUploaded')
+                recv_modified_dt = recv_sysmeta.get_element_dt(
+                    'dateSysMetadataModified'
+                )
+                recv_replica_verified_list = recv_sysmeta.get_element_list_by_name(
+                    'replicaVerified'
+                )
 
-      assert d1_common.date_time.is_utc(recv_uploaded_dt)
-      assert d1_common.date_time.is_utc(recv_modified_dt)
-      logging.debug(
-        'send_uploaded_dt="{}" recv_uploaded_dt="{}"'.format(
-          send_uploaded_dt, recv_uploaded_dt
-        )
-      )
-      d1_common.date_time.are_equal(send_uploaded_dt, recv_uploaded_dt)
-      d1_common.date_time.are_equal(send_modified_dt, recv_modified_dt)
+            assert d1_common.date_time.is_utc(recv_uploaded_dt)
+            assert d1_common.date_time.is_utc(recv_modified_dt)
+            logging.debug(
+                'send_uploaded_dt="{}" recv_uploaded_dt="{}"'.format(
+                    send_uploaded_dt, recv_uploaded_dt
+                )
+            )
+            d1_common.date_time.are_equal(send_uploaded_dt, recv_uploaded_dt)
+            d1_common.date_time.are_equal(send_modified_dt, recv_modified_dt)
 
-      assert len(send_replica_verified_list) == len(recv_replica_verified_list)
-      for a_dt, b_dt in zip(send_replica_verified_list,
-                            recv_replica_verified_list):
-        d1_common.date_time.are_equal(
-          d1_common.date_time.dt_from_iso8601_str(a_dt.text),
-          d1_common.date_time.dt_from_iso8601_str(b_dt.text)
-        )
+            assert len(send_replica_verified_list) == len(recv_replica_verified_list)
+            for a_dt, b_dt in zip(
+                send_replica_verified_list, recv_replica_verified_list
+            ):
+                d1_common.date_time.are_equal(
+                    d1_common.date_time.dt_from_iso8601_str(a_dt.text),
+                    d1_common.date_time.dt_from_iso8601_str(b_dt.text),
+                )
 
-  def _assert_object_list_in_utc(self, version_tag, sysmeta_filename):
-    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
-    with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
-      with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
-        pid = d1_test.instance_generator.identifier.generate_pid()
-        send_sysmeta.set_element_text('identifier', pid)
-        send_sysmeta.replace_by_xml(
-          '''<accessPolicy><allow>
+    def _assert_object_list_in_utc(self, version_tag, sysmeta_filename):
+        send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
+        with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
+            with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
+                pid = d1_test.instance_generator.identifier.generate_pid()
+                send_sysmeta.set_element_text('identifier', pid)
+                send_sysmeta.replace_by_xml(
+                    '''<accessPolicy><allow>
           <subject>{}</subject><permission>changePermission</permission>
           </allow></accessPolicy>
-          '''.format(isolated_subj)
-        )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
+          '''.format(
+                        isolated_subj
+                    )
+                )
+                send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
 
-      d1_gmn.tests.gmn_direct.create(
-        version_tag, b'body-contents', send_sysmeta_xml
-      )
-      resp_dict = d1_gmn.tests.gmn_direct.list_objects(version_tag)
+            d1_gmn.tests.gmn_direct.create(
+                version_tag, b'body-contents', send_sysmeta_xml
+            )
+            resp_dict = d1_gmn.tests.gmn_direct.list_objects(version_tag)
 
-      with d1_common.wrap.simple_xml.wrap(
-          resp_dict['body_str']) as recv_sysmeta:
-        el_list = recv_sysmeta.get_element_list_by_name(
-          'dateSysMetadataModified'
-        )
-        assert len(el_list) == 1
-        for el in el_list:
-          dt = d1_common.date_time.dt_from_iso8601_str(el.text)
-          assert d1_common.date_time.is_utc(dt)
+            with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+                el_list = recv_sysmeta.get_element_list_by_name(
+                    'dateSysMetadataModified'
+                )
+                assert len(el_list) == 1
+                for el in el_list:
+                    dt = d1_common.date_time.dt_from_iso8601_str(el.text)
+                    assert d1_common.date_time.is_utc(dt)
 
-  def _assert_log_entry_in_utc(self, version_tag, sysmeta_filename):
-    send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
-    with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
-      with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
-        pid = d1_test.instance_generator.identifier.generate_pid()
-        send_sysmeta.set_element_text('identifier', pid)
-        send_sysmeta.replace_by_xml(
-          '''<accessPolicy><allow>
+    def _assert_log_entry_in_utc(self, version_tag, sysmeta_filename):
+        send_sysmeta_xml = self.test_files.load_xml_to_str(sysmeta_filename)
+        with d1_gmn.tests.gmn_mock.isolated_whitelisted_subj() as isolated_subj:
+            with d1_common.wrap.simple_xml.wrap(send_sysmeta_xml) as send_sysmeta:
+                pid = d1_test.instance_generator.identifier.generate_pid()
+                send_sysmeta.set_element_text('identifier', pid)
+                send_sysmeta.replace_by_xml(
+                    '''<accessPolicy><allow>
           <subject>{}</subject><permission>changePermission</permission>
           </allow></accessPolicy>
-          '''.format(isolated_subj)
+          '''.format(
+                        isolated_subj
+                    )
+                )
+                send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
+
+            d1_gmn.tests.gmn_direct.create(
+                version_tag, b'body-contents', send_sysmeta_xml
+            )
+            resp_dict = d1_gmn.tests.gmn_direct.get_log_records(version_tag)
+
+            with d1_common.wrap.simple_xml.wrap(resp_dict['body_str']) as recv_sysmeta:
+                el_list = recv_sysmeta.get_element_list_by_name('dateLogged')
+                assert len(el_list) == 1
+                for el in el_list:
+                    logging.debug('el.text="{}"'.format(el.text))
+                    dt = d1_common.date_time.dt_from_iso8601_str(el.text)
+                    assert d1_common.date_time.is_utc(dt)
+
+    @responses.activate
+    def test_1000(self, gmn_client_v1_v2):
+        """PyXB accepts dt with tz for xs:dateTime types and normalizes
+        timezone to UTC."""
+        pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = self._generate_sciobj(
+            gmn_client_v1_v2, 'random_not_utc'
         )
-        send_sysmeta_xml = send_sysmeta.get_pretty_xml().encode('utf-8')
+        # Starting with dt that has tz but is not in UTC
+        assert d1_common.date_time.has_tz(uploaded_dt)
+        assert d1_common.date_time.has_tz(modified_dt)
+        assert not d1_common.date_time.is_utc(uploaded_dt)
+        assert not d1_common.date_time.is_utc(modified_dt)
+        # Reading the dts back from PyXB, they are now in UTC, but adjusted to
+        # represent the same absolute point in time.
+        assert d1_common.date_time.is_utc(sysmeta_pyxb.dateUploaded)
+        assert d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
+        assert d1_common.date_time.are_equal(uploaded_dt, sysmeta_pyxb.dateUploaded)
+        assert d1_common.date_time.are_equal(
+            modified_dt, sysmeta_pyxb.dateSysMetadataModified
+        )
 
-      d1_gmn.tests.gmn_direct.create(
-        version_tag, b'body-contents', send_sysmeta_xml
-      )
-      resp_dict = d1_gmn.tests.gmn_direct.get_log_records(version_tag)
+    @responses.activate
+    def test_1010(self, gmn_client_v2):
+        """PyXB accepts dt without tz for xs:dateTime types and returns it
+        unmodified and without tz."""
+        pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = self._generate_sciobj(
+            gmn_client_v2, 'naive'
+        )
+        # Starting with dt without tz
+        assert not d1_common.date_time.has_tz(uploaded_dt)
+        assert not d1_common.date_time.has_tz(modified_dt)
+        # Reading the dts back from PyXB, they are still without tz
+        assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateUploaded)
+        assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateSysMetadataModified)
+        # Generating the XML doc, the xs:dateTime strings are still without tz
+        xml_doc = d1_common.xml.serialize_for_transport(sysmeta_pyxb)
+        with d1_common.wrap.simple_xml.wrap(xml_doc) as xml:
+            assert xml.get_element_dt('dateUploaded') == uploaded_dt
+            assert xml.get_element_dt('dateSysMetadataModified') == modified_dt
 
-      with d1_common.wrap.simple_xml.wrap(
-          resp_dict['body_str']) as recv_sysmeta:
-        el_list = recv_sysmeta.get_element_list_by_name('dateLogged')
-        assert len(el_list) == 1
-        for el in el_list:
-          logging.debug('el.text="{}"'.format(el.text))
-          dt = d1_common.date_time.dt_from_iso8601_str(el.text)
-          assert d1_common.date_time.is_utc(dt)
+    @responses.activate
+    def test_1020(self):
+        """PyXB deserializes XML doc with naive dt for xs:dateTime types and
+        returns dt unmodified and without tz."""
+        sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
+            'systemMetadata_v2_0.tz_naive.xml'
+        )
+        assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300'
 
-  @responses.activate
-  def test_1000(self, gmn_client_v1_v2):
-    """PyXB accepts dt with tz for xs:dateTime types and normalizes timezone to
-    UTC
-    """
-    pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
-      self._generate_sciobj(gmn_client_v1_v2, 'random_not_utc')
-    )
-    # Starting with dt that has tz but is not in UTC
-    assert d1_common.date_time.has_tz(uploaded_dt)
-    assert d1_common.date_time.has_tz(modified_dt)
-    assert not d1_common.date_time.is_utc(uploaded_dt)
-    assert not d1_common.date_time.is_utc(modified_dt)
-    # Reading the dts back from PyXB, they are now in UTC, but adjusted to
-    # represent the same absolute point in time.
-    assert d1_common.date_time.is_utc(sysmeta_pyxb.dateUploaded)
-    assert d1_common.date_time.is_utc(sysmeta_pyxb.dateSysMetadataModified)
-    assert d1_common.date_time.are_equal(uploaded_dt, sysmeta_pyxb.dateUploaded)
-    assert d1_common.date_time.are_equal(
-      modified_dt, sysmeta_pyxb.dateSysMetadataModified
-    )
+    @responses.activate
+    def test_1030(self):
+        """PyXB deserializes XML doc with non-UTC dt for xs:dateTime types and
+        returns dt as normalized to UTC."""
+        sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
+            'systemMetadata_v2_0.tz_non_utc.xml'
+        )
+        assert str(sysmeta_pyxb.dateUploaded) == '1933-03-04 00:46:13.333300+00:00'
 
-  @responses.activate
-  def test_1010(self, gmn_client_v2):
-    """PyXB accepts dt without tz for xs:dateTime types and returns it
-    unmodified and without tz
-    """
-    pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = (
-      self._generate_sciobj(gmn_client_v2, 'naive')
-    )
-    # Starting with dt without tz
-    assert not d1_common.date_time.has_tz(uploaded_dt)
-    assert not d1_common.date_time.has_tz(modified_dt)
-    # Reading the dts back from PyXB, they are still without tz
-    assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateUploaded)
-    assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateSysMetadataModified)
-    # Generating the XML doc, the xs:dateTime strings are still without tz
-    xml_doc = d1_common.xml.serialize_for_transport(sysmeta_pyxb)
-    with d1_common.wrap.simple_xml.wrap(xml_doc) as xml:
-      assert xml.get_element_dt('dateUploaded') == uploaded_dt
-      assert xml.get_element_dt('dateSysMetadataModified') == modified_dt
+    @responses.activate
+    def test_1040(self):
+        """PyXB deserializes XML doc with UTC dt for xs:dateTime types and
+        returns dt unmodified and with tz."""
+        sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
+            'systemMetadata_v2_0.tz_utc.xml'
+        )
+        assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300+00:00'
 
-  @responses.activate
-  def test_1020(self):
-    """PyXB deserializes XML doc with naive dt for xs:dateTime types and
-    returns dt unmodified and without tz
-    """
-    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
-      'systemMetadata_v2_0.tz_naive.xml'
-    )
-    assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300'
+    # SysMeta dt
 
-  @responses.activate
-  def test_1030(self):
-    """PyXB deserializes XML doc with non-UTC dt for xs:dateTime types and
-    returns dt as normalized to UTC
-    """
-    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
-      'systemMetadata_v2_0.tz_non_utc.xml'
-    )
-    assert str(sysmeta_pyxb.dateUploaded) == '1933-03-04 00:46:13.333300+00:00'
+    @responses.activate
+    def test_1050(self, tag_v1_v2):
+        """SysMeta with naive dt are accepted and assumed to be in UTC."""
+        self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_naive.xml')
 
-  @responses.activate
-  def test_1040(self):
-    """PyXB deserializes XML doc with UTC dt for xs:dateTime types and
-    returns dt unmodified and with tz
-    """
-    sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
-      'systemMetadata_v2_0.tz_utc.xml'
-    )
-    assert str(sysmeta_pyxb.dateUploaded) == '1933-03-03 13:13:13.333300+00:00'
+    def test_1060(self, tag_v1_v2):
+        """SysMeta with ts in UTC are accepted and returned unchanged."""
+        self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_utc.xml')
 
-  # SysMeta dt
+    @responses.activate
+    def test_1070(self, tag_v1_v2):
+        """SysMeta with ts where tz is other than UTC are accepted and returned
+        in UTC."""
+        self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')
 
-  @responses.activate
-  def test_1050(self, tag_v1_v2):
-    """SysMeta with naive dt are accepted and assumed to be in UTC
-    """
-    self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_naive.xml')
+    # ObjectList
 
-  def test_1060(self, tag_v1_v2):
-    """SysMeta with ts in UTC are accepted and returned unchanged
-    """
-    self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_utc.xml')
+    @responses.activate
+    def test_1080(self, tag_v1_v2):
+        """ObjectList with naive dt are accepted and assumed to be in UTC."""
+        self._assert_object_list_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_naive.xml')
 
-  @responses.activate
-  def test_1070(self, tag_v1_v2):
-    """SysMeta with ts where tz is other than UTC are accepted and returned in
-    UTC
-    """
-    self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')
+    def test_1090(self, tag_v1_v2):
+        """ObjectList with ts in UTC are accepted and returned unchanged."""
+        self._assert_object_list_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_utc.xml')
 
-  # ObjectList
+    @responses.activate
+    def test_1100(self, tag_v1_v2):
+        """ObjectList with ts where tz is other than UTC are accepted and
+        returned in UTC."""
+        self._assert_object_list_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')
 
-  @responses.activate
-  def test_1080(self, tag_v1_v2):
-    """ObjectList with naive dt are accepted and assumed to be in UTC
-    """
-    self._assert_object_list_in_utc(
-      tag_v1_v2, 'systemMetadata_v2_0.tz_naive.xml'
-    )
+    # Log
 
-  def test_1090(self, tag_v1_v2):
-    """ObjectList with ts in UTC are accepted and returned unchanged
-    """
-    self._assert_object_list_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_utc.xml')
-
-  @responses.activate
-  def test_1100(self, tag_v1_v2):
-    """ObjectList with ts where tz is other than UTC are accepted and returned in
-    UTC
-    """
-    self._assert_object_list_in_utc(
-      tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml'
-    )
-
-  # Log
-
-  @responses.activate
-  def test_2110(self, tag_v1_v2):
-    """Log timestamps are in UTC"""
-    self._assert_log_entry_in_utc(
-      tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml'
-    )
+    @responses.activate
+    def test_2110(self, tag_v1_v2):
+        """Log timestamps are in UTC."""
+        self._assert_log_entry_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')

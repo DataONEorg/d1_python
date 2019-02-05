@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Iterate over the nodes that are registered in a DataONE environment
+"""Iterate over the nodes that are registered in a DataONE environment.
 
 For each Node in the environment, returns a PyXB representation of a DataONE
 Node document.
@@ -34,28 +34,22 @@ API_MAJOR = 2
 
 
 class NodeListIterator(object):
-  def __init__(
-      self,
-      base_url,
-      api_major=API_MAJOR,
-      client_dict=None,
-      listNodes_dict=None,
-  ):
-    self._base_url = base_url
-    self._api_major = api_major
-    self._client_dict = client_dict or {}
-    self._listNodes_dict = listNodes_dict
-
-  def __iter__(self):
-    client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      self._base_url, **self._client_dict
-    )
-    # The NodeList type does not support slicing.
-    node_list_pyxb = client.listNodes()
-    logging.debug(
-      'Retrieved {} Node documents'.format(len(node_list_pyxb.node))
-    )
-    for node_pyxb in sorted(
-        node_list_pyxb.node, key=lambda x: x.identifier.value()
+    def __init__(
+        self, base_url, api_major=API_MAJOR, client_dict=None, listNodes_dict=None
     ):
-      yield node_pyxb
+        self._base_url = base_url
+        self._api_major = api_major
+        self._client_dict = client_dict or {}
+        self._listNodes_dict = listNodes_dict
+
+    def __iter__(self):
+        client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+            self._base_url, **self._client_dict
+        )
+        # The NodeList type does not support slicing.
+        node_list_pyxb = client.listNodes()
+        logging.debug('Retrieved {} Node documents'.format(len(node_list_pyxb.node)))
+        for node_pyxb in sorted(
+            node_list_pyxb.node, key=lambda x: x.identifier.value()
+        ):
+            yield node_pyxb

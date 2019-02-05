@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Create Dokan drive
+"""Create Dokan drive.
 
 Handle callbacks from Dokan.
 
@@ -43,207 +43,216 @@ import d1_common.date_time
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(
-    logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__])
-  )
+    log.setLevel(logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
 except KeyError:
-  pass
+    pass
 
 THREADS = 5
 
 
 def run(options, root_resolver):
-  #NOTE: mounts anywhere other than root level don't work
-  #UPDATE: this seems to be a Windows issue since you can only specify volume
-  # properties for a drive not a volume mounted to a mountpoint
-  #mountpoint = args[0]
-  #directory = args[0]
+    # NOTE: mounts anywhere other than root level don't work
+    # UPDATE: this seems to be a Windows issue since you can only specify volume
+    # properties for a drive not a volume mounted to a mountpoint
+    # mountpoint = args[0]
+    # directory = args[0]
 
-  # set up Dokan
-  #NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or
-  # DOKAN_OPTION_NETWORK.  This will make the drive appear as a mounted drive
-  # like it should.  There are a few problems with this though.  The network
-  # approach gives an ugly icon in Windows Explorer and says that the drive is
-  # disconnected.  The removable approach gives an error when I try to eject
-  # the drive.  There may be solutions to both of these problems, but I
-  # haven't figure it out yet.  I'm not sure what makes the most sense.
-  #UPDATE: I was able to get rid of the ugly disconnected network icon in
-  # a number of ways.  First, by editing the registry you can indicate an
-  # icon that you want to be used for a particular drive letter.  Second,
-  # I was able to register the network drive so that it appears connected.
-  # There is a bug in this code though.  When you try to access the drive using
-  # Windows Explorer, the first time it will always crash Explorer.  After that
-  # first crash it appears to be fine.  I need to figure out how to fix this.
+    # set up Dokan
+    # NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or
+    # DOKAN_OPTION_NETWORK.  This will make the drive appear as a mounted drive
+    # like it should.  There are a few problems with this though.  The network
+    # approach gives an ugly icon in Windows Explorer and says that the drive is
+    # disconnected.  The removable approach gives an error when I try to eject
+    # the drive.  There may be solutions to both of these problems, but I
+    # haven't figure it out yet.  I'm not sure what makes the most sense.
+    # UPDATE: I was able to get rid of the ugly disconnected network icon in
+    # a number of ways.  First, by editing the registry you can indicate an
+    # icon that you want to be used for a particular drive letter.  Second,
+    # I was able to register the network drive so that it appears connected.
+    # There is a bug in this code though.  When you try to access the drive using
+    # Windows Explorer, the first time it will always crash Explorer.  After that
+    # first crash it appears to be fine.  I need to figure out how to fix this.
 
-  DriverOption = (
-    d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_KEEP_ALIVE
-    # | DOKAN_OPTION_NETWORK
-  )
-  if options.stderr:
-    DriverOption |= (
-      d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_DEBUG |
-      d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_STDERR
+    DriverOption = (
+        d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_KEEP_ALIVE
+        # | DOKAN_OPTION_NETWORK
+    )
+    if options.stderr:
+        DriverOption |= (
+            d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_DEBUG
+            | d1_onedrive.impl.drivers.dokan.const.DOKAN_OPTION_STDERR
+        )
+
+    d1fs = d1_onedrive.impl.drivers.dokan.dokan.Dokan(
+        DataONEFS(options, root_resolver),
+        options.mount_drive_letter,
+        DriverOption,
+        0x19831116,
+        THREADS,
     )
 
-  d1fs = d1_onedrive.impl.drivers.dokan.dokan.Dokan(
-    DataONEFS(options, root_resolver), options.mount_drive_letter, DriverOption,
-    0x19831116, THREADS
-  )
-
-  #if options.unmount:
-  #  # unmount the specified drive
-  #  if not d1fs.dokanUnmount(mountpoint):
-  #    logging.error("Failed to unmount DataONE drive")
-  #else:
-  # start DataONE drive
-  ret = d1fs.main()
-  if (ret == -6):
-    logging.error("Failed to mount DataONE drive: Bad mount point")
-  elif (ret < 0):
-    logging.error("Failed to mount DataONE drive")
+    # if options.unmount:
+    #  # unmount the specified drive
+    #  if not d1fs.dokanUnmount(mountpoint):
+    #    logging.error("Failed to unmount DataONE drive")
+    # else:
+    # start DataONE drive
+    ret = d1fs.main()
+    if ret == -6:
+        logging.error("Failed to mount DataONE drive: Bad mount point")
+    elif ret < 0:
+        logging.error("Failed to mount DataONE drive")
 
 
 class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
-  """
-  Read-only user-mode file system for DataONE using Dokan
-  """
+    """Read-only user-mode file system for DataONE using Dokan."""
 
-  def __init__(self, options, root_resolver):
-    self._options = options
-    self.READ_ONLY_ACCESS_MODE = 3
-    self.root_resolver = root_resolver
-    self.start_time = time.time()
+    def __init__(self, options, root_resolver):
+        self._options = options
+        self.READ_ONLY_ACCESS_MODE = 3
+        self.root_resolver = root_resolver
+        self.start_time = time.time()
 
-    self.attribute_cache = options.attribute_cache
-    self.directory_cache = options.directory_cache
+        self.attribute_cache = options.attribute_cache
+        self.directory_cache = options.directory_cache
 
-  def getFileInformation(self, fileName):
-    log.debug('getFileInformation(): fileName={}'.format(fileName))
-    if self._is_os_special_file(fileName):
-      return None
-    attributes = self._get_attributes_through_cache(fileName)
-    stat = self._stat_from_attributes(attributes)
-    if fileName == "\\":
-      stat['attr'] |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DEVICE
-    return stat
+    def getFileInformation(self, fileName):
+        log.debug('getFileInformation(): fileName={}'.format(fileName))
+        if self._is_os_special_file(fileName):
+            return None
+        attributes = self._get_attributes_through_cache(fileName)
+        stat = self._stat_from_attributes(attributes)
+        if fileName == "\\":
+            stat['attr'] |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DEVICE
+        return stat
 
-  def findFilesWithPattern(self, path, searchPattern):
-    log.debug(
-      'findFilesWithPattern(): path={} searchPattern={}'.
-      format(path, searchPattern)
-    )
+    def findFilesWithPattern(self, path, searchPattern):
+        log.debug(
+            'findFilesWithPattern(): path={} searchPattern={}'.format(
+                path, searchPattern
+            )
+        )
 
-    if self._is_os_special_file(searchPattern):
-      return None
+        if self._is_os_special_file(searchPattern):
+            return None
 
-    try:
-      dir = self.directory_cache[path]
-    except KeyError:
-      dir = self.root_resolver.get_directory(path)
-      self.directory_cache[path] = dir
+        try:
+            dir = self.directory_cache[path]
+        except KeyError:
+            dir = self.root_resolver.get_directory(path)
+            self.directory_cache[path] = dir
 
-    files = []
-    for file_name in dir.names():
-      if not fnmatch.fnmatch(file_name, searchPattern):
-        continue
-      file_path = os.path.join(path, file_name)
-      attribute = self._get_attributes_through_cache(file_path)
-      stat = self._stat_from_attributes(attribute)
-      stat['name'] = file_name
-      files.append(stat)
-    return files
+        files = []
+        for file_name in dir.names():
+            if not fnmatch.fnmatch(file_name, searchPattern):
+                continue
+            file_path = os.path.join(path, file_name)
+            attribute = self._get_attributes_through_cache(file_path)
+            stat = self._stat_from_attributes(attribute)
+            stat['name'] = file_name
+            files.append(stat)
+        return files
 
-    # example:
-  #result.append(dict(name='systemmetadata.xml',
-  #                   attr=(FILE_ATTRIBUTE_NORMAL
-  #                         |FILE_ATTRIBUTE_READONLY),
-  #                   ctime=ctime1, atime=now, wtime=mtime1,
-  #                   size=len(xml)))
-  # science metadata
+        # example:
 
-  def readFile(self, path, size, offset):
-    log.debug('read(): {}'.format(path))
-    try:
-      return self.root_resolver.read_file(path, size, offset)
-    except d1_onedrive.impl.onedrive_exceptions.PathException:
-      #raise OSError(errno.ENOENT, e) FUSE
-      raise IOError('Could not read specified file: %s', path)
+    # result.append(dict(name='systemmetadata.xml',
+    #                   attr=(FILE_ATTRIBUTE_NORMAL
+    #                         |FILE_ATTRIBUTE_READONLY),
+    #                   ctime=ctime1, atime=now, wtime=mtime1,
+    #                   size=len(xml)))
+    # science metadata
 
-    #logging.debug('%s %s %s', fileName, numberOfBytesToRead, offset)
-    #
-    ## tokenize path
-    #tokens = fileName[1:].split('\\')
+    def readFile(self, path, size, offset):
+        log.debug('read(): {}'.format(path))
+        try:
+            return self.root_resolver.read_file(path, size, offset)
+        except d1_onedrive.impl.onedrive_exceptions.PathException:
+            # raise OSError(errno.ENOENT, e) FUSE
+            raise IOError('Could not read specified file: %s', path)
 
-    # example
-    #if mfname == 'systemmetadata.xml':
-    #  obj = self.getSystemMetadata(pid)
-    #  xml = obj.toxml('utf-8')
-    #  if offset+numberOfBytesToRead>len(xml):
-    #    numberOfBytesToRead = len(xml) - offset
-    #  return xml[offset:offset+numberOfBytesToRead]
+        # logging.debug('%s %s %s', fileName, numberOfBytesToRead, offset)
+        #
+        ## tokenize path
+        # tokens = fileName[1:].split('\\')
 
-    raise IOError('Could not read specified file: %s', path)
+        # example
+        # if mfname == 'systemmetadata.xml':
+        #  obj = self.getSystemMetadata(pid)
+        #  xml = obj.toxml('utf-8')
+        #  if offset+numberOfBytesToRead>len(xml):
+        #    numberOfBytesToRead = len(xml) - offset
+        #  return xml[offset:offset+numberOfBytesToRead]
 
-  #TODO Not really sure what to do here...at the moment everything is virtual.
-  # Everything is hard-coded right now just to get the idea across.  Mounting
-  # as a network drive would solve this problem I think.
+        raise IOError('Could not read specified file: %s', path)
 
-  def getDiskFreeSpace(self):
-    return dict(
-      freeBytesAvailable=0x100000000 - 2048, totalNumberOfBytes=0x100000000,
-      totalNumberOfFreeBytes=0x100000000 - 2048
-    )
+    # TODO Not really sure what to do here...at the moment everything is virtual.
+    # Everything is hard-coded right now just to get the idea across.  Mounting
+    # as a network drive would solve this problem I think.
 
-  def getVolumeInformation(self):
-    #logging.error('')
-    fsFlags = (
-      d1_onedrive.impl.drivers.dokan.const.FILE_READ_ONLY_VOLUME |
-      d1_onedrive.impl.drivers.dokan.const.FILE_CASE_SENSITIVE_SEARCH |
-      d1_onedrive.impl.drivers.dokan.const.FILE_CASE_PRESERVED_NAMES
-    )
-    return dict(
-      volumeNameBuffer='DataONE Disk', maximumComponentLength=260,
-      fileSystemFlags=fsFlags, fileSystemNameBuffer='DataONE File System'
-    )
+    def getDiskFreeSpace(self):
+        return dict(
+            freeBytesAvailable=0x100000000 - 2048,
+            totalNumberOfBytes=0x100000000,
+            totalNumberOfFreeBytes=0x100000000 - 2048,
+        )
 
-  def _get_attributes_through_cache(self, path):
-    try:
-      return self.attribute_cache[path]
-    except KeyError:
-      attribute = self.root_resolver.get_attributes(path)
-      self.attribute_cache[path] = attribute
-      return attribute
+    def getVolumeInformation(self):
+        # logging.error('')
+        fsFlags = (
+            d1_onedrive.impl.drivers.dokan.const.FILE_READ_ONLY_VOLUME
+            | d1_onedrive.impl.drivers.dokan.const.FILE_CASE_SENSITIVE_SEARCH
+            | d1_onedrive.impl.drivers.dokan.const.FILE_CASE_PRESERVED_NAMES
+        )
+        return dict(
+            volumeNameBuffer='DataONE Disk',
+            maximumComponentLength=260,
+            fileSystemFlags=fsFlags,
+            fileSystemNameBuffer='DataONE File System',
+        )
 
-  def _stat_from_attributes(self, attributes):
-    #log.debug(u'_stat_from_attributes(): attributes={0}'.format(attributes))
+    def _get_attributes_through_cache(self, path):
+        try:
+            return self.attribute_cache[path]
+        except KeyError:
+            attribute = self.root_resolver.get_attributes(path)
+            self.attribute_cache[path] = attribute
+            return attribute
 
-    date_time = d1_common.date_time.ts_from_dt(
-      attributes.date()
-    ) if attributes.date() is not None else self.start_time
+    def _stat_from_attributes(self, attributes):
+        # log.debug(u'_stat_from_attributes(): attributes={0}'.format(attributes))
 
-    attrs = d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir(
-    ) else d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_NORMAL
-    attrs |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_READONLY
+        date_time = (
+            d1_common.date_time.ts_from_dt(attributes.date())
+            if attributes.date() is not None
+            else self.start_time
+        )
 
-    stat = dict(
-      attr=attrs,
-      nlinks=2, # TODO
-      size=attributes.size(),
-      atime=date_time,
-      mtime=date_time, # in use?
-      ctime=date_time,
-      wtime=date_time,
-    )
+        attrs = (
+            d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DIRECTORY
+            if attributes.is_dir()
+            else d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_NORMAL
+        )
+        attrs |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_READONLY
 
-    #log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))
-    return stat
+        stat = dict(
+            attr=attrs,
+            nlinks=2,  # TODO
+            size=attributes.size(),
+            atime=date_time,
+            mtime=date_time,  # in use?
+            ctime=date_time,
+            wtime=date_time,
+        )
 
-  def _is_os_special_file(self, path):
-    return len(set(path.split(os.path.sep)) & self._options.ignore_special)
+        # log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))
+        return stat
 
-  def _raise_error_no_such_file_or_directory(self, path):
-    log.debug('Error: No such file or directory: {}'.format(path))
-    raise OSError(errno.ENOENT, '')
+    def _is_os_special_file(self, path):
+        return len(set(path.split(os.path.sep)) & self._options.ignore_special)
+
+    def _raise_error_no_such_file_or_directory(self, path):
+        log.debug('Error: No such file or directory: {}'.format(path))
+        raise OSError(errno.ENOENT, '')
 
 
 #  def _raise_error_permission_denied(self, path):
@@ -252,7 +261,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
 
 ################################################################################
 #
-#class FUSECallbacks():
+# class FUSECallbacks():
 #  def __init__(self, options, root_resolver):
 #    self._options = options
 #    self.READ_ONLY_ACCESS_MODE = 3

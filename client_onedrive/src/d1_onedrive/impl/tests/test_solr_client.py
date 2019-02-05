@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the OneDriveSolrClient
-"""
+"""Test the OneDriveSolrClient."""
 
 import d1_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
 
@@ -28,19 +27,19 @@ import d1_test.d1_test_case
 options = {}
 
 
-class TestOptions():
-  pass
+class TestOptions:
+    pass
 
 
 class TestOneDriveSolrClient(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    options = TestOptions()
-    options.base_url = 'https://localhost/'
-    options.solr_query_path = ''
-    options.solr_query_timeout_sec = 30
-    options.max_objects_for_query = 10
-    self.c = onedrive_solr_client.OneDriveSolrClient(options)
+    def setup_method(self):
+        options = TestOptions()
+        options.base_url = 'https://localhost/'
+        options.solr_query_path = ''
+        options.solr_query_timeout_sec = 30
+        options.max_objects_for_query = 10
+        self.c = onedrive_solr_client.OneDriveSolrClient(options)
 
-  def test_1000(self):
-    """__init__()"""
-    pass
+    def test_1000(self):
+        """__init__()"""
+        pass

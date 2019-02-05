@@ -18,33 +18,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Hold the size and other attributes for a file or folder
-"""
+"""Hold the size and other attributes for a file or folder."""
 
 import logging
 
 log = logging.getLogger(__name__)
 
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 
 class Attributes(object):
-  def __init__(self, size=0, date=None, is_dir=False):
-    self._size_ = size
-    self._date_ = date
-    self._is_dir_ = is_dir
+    def __init__(self, size=0, date=None, is_dir=False):
+        self._size_ = size
+        self._date_ = date
+        self._is_dir_ = is_dir
 
-  def __eq__(self, other):
-    return self.__dict__ == other.__dict__
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
-  def __repr__(self):
-    return '{}({})'.format(self.__class__, self.__dict__)
+    def __repr__(self):
+        return '{}({})'.format(self.__class__, self.__dict__)
 
-  def size(self):
-    return self._size_
+    def size(self):
+        return self._size_
 
-  def date(self):
-    return self._date_
+    def date(self):
+        return self._date_
 
-  def is_dir(self):
-    return self._is_dir_
+    def is_dir(self):
+        return self._is_dir_

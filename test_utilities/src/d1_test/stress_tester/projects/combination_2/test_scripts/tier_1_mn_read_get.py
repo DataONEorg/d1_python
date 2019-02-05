@@ -32,20 +32,20 @@ import transaction
 
 
 class Transaction(transaction.Transaction):
-  def __init__(self):
-    super().__init__()
+    def __init__(self):
+        super().__init__()
 
-  def d1_mn_api_call(self):
-    """MNRead.get() called by regular user"""
-    pid = self.select_random_public_object()
-    client = self.create_public_client()
-    response = client.getResponse(pid)
-    self.check_response(response)
-    response.read()
+    def d1_mn_api_call(self):
+        """MNRead.get() called by regular user."""
+        pid = self.select_random_public_object()
+        client = self.create_public_client()
+        response = client.getResponse(pid)
+        self.check_response(response)
+        response.read()
 
 
 if __name__ == '__main__':
-  t = Transaction()
-  t.run()
-  #import cProfile
-  #cProfile.run('t.run()', 'profile')
+    t = Transaction()
+    t.run()
+    # import cProfile
+    # cProfile.run('t.run()', 'profile')

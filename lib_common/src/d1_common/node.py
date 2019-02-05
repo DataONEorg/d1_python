@@ -17,12 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling the DataONE Node and NodeList types.
-"""
+"""Utilities for handling the DataONE Node and NodeList types."""
 
 
 def pyxb_to_dict(node_list_pyxb):
-  """
+    """
   Returns:
      dict : Representation of ``node_list_pyxb``, keyed on the Node identifier (``urn:node:*``).
 
@@ -51,23 +50,23 @@ def pyxb_to_dict(node_list_pyxb):
       },
     }
   """
-  f_dict = {}
-  for f_pyxb in sorted(node_list_pyxb.node, key=lambda x: x.identifier.value()):
-    f_dict[f_pyxb.identifier.value()] = {
-      'name': f_pyxb.name,
-      'description': f_pyxb.description,
-      'base_url': f_pyxb.baseURL,
-      'ping': f_pyxb.ping,
-      'replicate': f_pyxb.replicate,
-      'synchronize': f_pyxb.synchronize,
-      'type': f_pyxb.type,
-      'state': f_pyxb.state,
-    }
-    # TODO:
-    # f_pyxb.services
-    # f_pyxb.synchronization
-    # f_pyxb.subject
-    # f_pyxb.contactSubject
-    # f_pyxb.nodeReplicationPolicy,
+    f_dict = {}
+    for f_pyxb in sorted(node_list_pyxb.node, key=lambda x: x.identifier.value()):
+        f_dict[f_pyxb.identifier.value()] = {
+            'name': f_pyxb.name,
+            'description': f_pyxb.description,
+            'base_url': f_pyxb.baseURL,
+            'ping': f_pyxb.ping,
+            'replicate': f_pyxb.replicate,
+            'synchronize': f_pyxb.synchronize,
+            'type': f_pyxb.type,
+            'state': f_pyxb.state,
+        }
+        # TODO:
+        # f_pyxb.services
+        # f_pyxb.synchronization
+        # f_pyxb.subject
+        # f_pyxb.contactSubject
+        # f_pyxb.nodeReplicationPolicy,
 
-  return f_dict
+    return f_dict

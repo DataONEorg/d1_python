@@ -18,18 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Settings for the stress tester.
-"""
+"""Settings for the stress tester."""
 
 import os
 
 # The MN to stress test.
-#BASEURL = 'https://localhost/mn'
-#BASEURL = 'http://localhost/mn'
-#BASEURL = 'http://localhost:8000'
-#BASEURL = 'https://stress-1-unm.test.dataone.org/mn'
-#BASEURL = 'https://stress-2-unm.test.dataone.org'
-#BASEURL = 'https://gmn-dev.test.dataone.org/mn'
+# BASEURL = 'https://localhost/mn'
+# BASEURL = 'http://localhost/mn'
+# BASEURL = 'http://localhost:8000'
+# BASEURL = 'https://stress-1-unm.test.dataone.org/mn'
+# BASEURL = 'https://stress-2-unm.test.dataone.org'
+# BASEURL = 'https://gmn-dev.test.dataone.org/mn'
 BASEURL = 'https://192.168.1.135/mn'
 # Number of objects to retrieve with listObjects.
 PAGE_SIZE = 1000
@@ -56,10 +55,10 @@ CA_KEY_PW = ''
 
 CLIENT_CERT_DIR = os.path.join(CERT_ROOT, 'client_side_certs')
 CLIENT_CERT_PUBLIC_KEY_PATH = os.path.join(
-  CERT_ROOT, 'local_test_client_cert.public.key'
+    CERT_ROOT, 'local_test_client_cert.public.key'
 )
 CLIENT_CERT_PRIVATE_KEY_PATH = os.path.join(
-  CERT_ROOT, 'local_test_client_cert.nopassword.key'
+    CERT_ROOT, 'local_test_client_cert.nopassword.key'
 )
 
 SUBJECT_ALT_NAME = 'DNS:dataone.org'
@@ -68,10 +67,10 @@ SUBJECT_ALT_NAME = 'DNS:dataone.org'
 # being tested. For GMN, this means that the subject must be in the
 # update / delete / create whitelist.
 SUBJECT_WITH_CREATE_PERMISSIONS = (
-  'CN=subject_with_create_permissions,O=d1-stress-tester,'
-  'C=US,DC=d1-stress-tester,DC=com'
+    'CN=subject_with_create_permissions,O=d1-stress-tester,'
+    'C=US,DC=d1-stress-tester,DC=com'
 )
 SUBJECT_WITH_CN_PERMISSIONS = (
-  'CN=subject_with_cn_permissions,O=d1-stress-tester,'
-  'C=US,DC=d1-stress-tester,DC=com'
+    'CN=subject_with_cn_permissions,O=d1-stress-tester,'
+    'C=US,DC=d1-stress-tester,DC=com'
 )

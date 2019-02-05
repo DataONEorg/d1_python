@@ -21,29 +21,31 @@ import re
 
 
 def normalize_request_response_dump(dump_str):
-  dump_list = dump_str.splitlines()
-  request_list = []
-  response_list = []
-  body_list = []
+    dump_list = dump_str.splitlines()
+    request_list = []
+    response_list = []
+    body_list = []
 
-  for i, s in enumerate(dump_list):
-    m = re.match(br'< (.*)', s)
-    if m:
-      if m.group(1):
-        request_list.append(s)
-      continue
-    m = re.match(br'> (.*)', s)
-    if m:
-      if m.group(1):
-        response_list.append(s)
-      continue
-    if not s:
-      continue
-    body_list = dump_list[i:]
-    break
+    for i, s in enumerate(dump_list):
+        m = re.match(br'< (.*)', s)
+        if m:
+            if m.group(1):
+                request_list.append(s)
+            continue
+        m = re.match(br'> (.*)', s)
+        if m:
+            if m.group(1):
+                response_list.append(s)
+            continue
+        if not s:
+            continue
+        body_list = dump_list[i:]
+        break
 
-  return '\n\n'.join([
-    '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(request_list)]),
-    '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(response_list)]),
-    '\n'.join([s.decode('utf-8', 'ignore') for s in body_list]),
-  ])
+    return '\n\n'.join(
+        [
+            '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(request_list)]),
+            '\n'.join([s.decode('utf-8', 'ignore') for s in sorted(response_list)]),
+            '\n'.join([s.decode('utf-8', 'ignore') for s in body_list]),
+        ]
+    )

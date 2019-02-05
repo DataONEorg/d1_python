@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Random person first names
-"""
+"""Random person first names."""
 
 import random
 
@@ -299,6 +298,8 @@ NAMES_2K = [
 
 
 def random_names(count=10):
-  """Returns a random selection of ``count`` names. No repetitions.
+  """Returns a random selection of ``count`` names.
+
+  No repetitions.
   """
   return random.sample(NAMES_2K, count)

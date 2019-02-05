@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Check if a science metadata object can be successfully indexed by the CN
+"""Check if a science metadata object can be successfully indexed by the CN.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -54,72 +54,74 @@ DEFAULT_FORMAT_ID = 'http://www.isotc211.org/2005/gmd'
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    '--env', type=str, default='prod',
-    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
-  )
-  parser.add_argument(
-    '--cert-pub', dest='cert_pem_path', action='store',
-    help='Path to PEM formatted public key of certificate'
-  )
-  parser.add_argument(
-    '--cert-key', dest='cert_key_path', action='store',
-    help='Path to PEM formatted private key of certificate'
-  )
-  parser.add_argument(
-    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-    help='Amount of time to wait for calls to complete (seconds)'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        '--env',
+        type=str,
+        default='prod',
+        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+    )
+    parser.add_argument(
+        '--cert-pub',
+        dest='cert_pem_path',
+        action='store',
+        help='Path to PEM formatted public key of certificate',
+    )
+    parser.add_argument(
+        '--cert-key',
+        dest='cert_key_path',
+        action='store',
+        help='Path to PEM formatted private key of certificate',
+    )
+    parser.add_argument(
+        '--timeout',
+        action='store',
+        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+        help='Amount of time to wait for calls to complete (seconds)',
+    )
 
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument('path', help='Path to science metadata file')
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('path', help='Path to science metadata file')
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
 
-  args = parser.parse_args()
+    args = parser.parse_args()
 
-  d1_common.util.log_setup(args.debug)
+    d1_common.util.log_setup(args.debug)
 
-  cn_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-    base_url=d1_common.const.URL_DATAONE_ROOT
-  )
+    cn_client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+        base_url=d1_common.const.URL_DATAONE_ROOT
+    )
 
-  sysmeta_pyxb = gen_sysmeta.generate_from_file_path(
-    cn_client,
-    args.path,
-    {
-      'identifier': 'test_pid',
-      'formatId': 'http://www.isotc211.org/2005/gmd',
-      'accessPolicy': None,
-      'replicationPolicy': None,
-      'obsoletes': None,
-      'obsoletedBy': None,
-      'archived': None,
-      'replica': None,
-      'mediaType': None,
-    },
-  )
+    sysmeta_pyxb = gen_sysmeta.generate_from_file_path(
+        cn_client,
+        args.path,
+        {
+            'identifier': 'test_pid',
+            'formatId': 'http://www.isotc211.org/2005/gmd',
+            'accessPolicy': None,
+            'replicationPolicy': None,
+            'obsoletes': None,
+            'obsoletedBy': None,
+            'archived': None,
+            'replica': None,
+            'mediaType': None,
+        },
+    )
 
-  with open(args.path, 'rb') as f:
-    sciobj_bytes = f.read()
+    with open(args.path, 'rb') as f:
+        sciobj_bytes = f.read()
 
-  response = cn_client.echoIndexedObject(
-    'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
-  )
+    response = cn_client.echoIndexedObject(
+        'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
+    )
 
-  print(d1_common.xml.reformat_to_pretty_xml(response.content))
+    print(d1_common.xml.reformat_to_pretty_xml(response.content))
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

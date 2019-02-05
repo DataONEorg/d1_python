@@ -30,19 +30,20 @@ import transaction
 
 
 class Transaction(transaction.Transaction):
-  def __init__(self):
-    super().__init__()
+    def __init__(self):
+        super().__init__()
 
-  def d1_mn_api_call(self):
-    """MNCore.getLogRecords() for specific object called by regular subject"""
-    obj, subject = self.select_random_private_object()
-    client = self.create_client_for_subject(subject)
-    response = client.getLogRecordsResponse(pidFilter=obj)
-    self.check_response(response)
+    def d1_mn_api_call(self):
+        """MNCore.getLogRecords() for specific object called by regular
+        subject."""
+        obj, subject = self.select_random_private_object()
+        client = self.create_client_for_subject(subject)
+        response = client.getLogRecordsResponse(pidFilter=obj)
+        self.check_response(response)
 
 
 if __name__ == '__main__':
-  t = Transaction()
-  t.run()
-  #import cProfile
-  #cProfile.run('t.run()', 'profile')
+    t = Transaction()
+    t.run()
+    # import cProfile
+    # cProfile.run('t.run()', 'profile')

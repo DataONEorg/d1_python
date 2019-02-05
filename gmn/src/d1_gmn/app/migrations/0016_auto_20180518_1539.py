@@ -5,17 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0015_auto_20171029_0246'),
-    ]
+    dependencies = [('app', '0015_auto_20171029_0246')]
 
     operations = [
         migrations.AlterModelOptions(
-            name='eventlog',
-            options={'ordering': ['timestamp', 'id']},
+            name='eventlog', options={'ordering': ['timestamp', 'id']}
         ),
         migrations.AlterModelOptions(
-            name='scienceobject',
-            options={'ordering': ['modified_timestamp', 'id']},
+            name='scienceobject', options={'ordering': ['modified_timestamp', 'id']}
         ),
     ]

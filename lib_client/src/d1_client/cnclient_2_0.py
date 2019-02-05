@@ -34,156 +34,139 @@ class CoordinatingNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
     d1_client.cnclient_1_2.CoordinatingNodeClient_1_2,
 ):
-  """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_2 with functionality
-  for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
+    """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_2 with
+    functionality for Coordinating nodes that was added in v2.0 of the DataONE
+    infrastructure.
 
-  Updated in v2:
+    Updated in v2:
 
-  - CNCore.listFormats() → ObjectFormatList
-  - CNRead.listObjects(session[, fromDate][, toDate][, formatId]
-  - MNRead.listObjects(session[, fromDate][, toDate][, formatId]
+    - CNCore.listFormats() → ObjectFormatList
+    - CNRead.listObjects(session[, fromDate][, toDate][, formatId]
+    - MNRead.listObjects(session[, fromDate][, toDate][, formatId]
 
-  The base implementations of listFormats() and listObjects() handle v2 when
-  called through this class.
+    The base implementations of listFormats() and listObjects() handle v2 when
+    called through this class.
 
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
-  """
-
-  def __init__(self, *args, **kwargs):
-    """See baseclient.DataONEBaseClient for args."""
-    super(CoordinatingNodeClient_2_0, self).__init__(*args, **kwargs)
-
-    self.logger = logging.getLogger(__file__)
-
-    self._api_major = 2
-    self._api_minor = 0
-    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
-      self._api_major, self._api_minor
-    )
-
-  #=========================================================================
-  # Core API
-  #=========================================================================
-
-  def deleteResponse(self, pid):
+    https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
     """
-    CNCore.delete(session, id) → Identifier
-    DELETE /object/{id}
 
-    Args:
-      pid:
+    def __init__(self, *args, **kwargs):
+        """See baseclient.DataONEBaseClient for args."""
+        super(CoordinatingNodeClient_2_0, self).__init__(*args, **kwargs)
 
-    Returns:
+        self.logger = logging.getLogger(__file__)
 
-    """
-    return self.DELETE(['object', pid])
+        self._api_major = 2
+        self._api_minor = 0
+        self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
+            self._api_major, self._api_minor
+        )
 
-  def delete(self, pid):
-    """
-    See Also:
-      deleteResponse()
+    # =========================================================================
+    # Core API
+    # =========================================================================
 
-    Args:
-      pid:
+    def deleteResponse(self, pid):
+        """CNCore.delete(session, id) → Identifier DELETE /object/{id}
 
-    Returns:
-    """
-    response = self.deleteResponse(pid)
-    return self._read_dataone_type_response(response, 'Identifier')
+        Args:
+          pid:
 
-  #=========================================================================
-  # CNRead
-  #=========================================================================
+        Returns:
+        """
+        return self.DELETE(['object', pid])
 
-  def synchronizeResponse(self, pid, vendorSpecific=None):
-    """
-    CNRead.synchronize(session, pid) → boolean
-    POST /synchronize
+    def delete(self, pid):
+        """See Also: deleteResponse()
 
-    Args:
-      pid:
-      vendorSpecific:
-    """
-    mmp_dict = {
-      'pid': pid,
-    }
-    return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
+        Args:
+          pid:
 
-  def synchronize(self, pid, vendorSpecific=None):
-    """
-    See Also:
-      synchronizeResponse()
-    Args:
-      pid:
-      vendorSpecific:
+        Returns:
+        """
+        response = self.deleteResponse(pid)
+        return self._read_dataone_type_response(response, 'Identifier')
 
-    Returns:
-    """
-    response = self.synchronizeResponse(pid, vendorSpecific)
-    return self._read_boolean_response(response)
+    # =========================================================================
+    # CNRead
+    # =========================================================================
 
-  #=========================================================================
-  # CNView
-  #=========================================================================
+    def synchronizeResponse(self, pid, vendorSpecific=None):
+        """CNRead.synchronize(session, pid) → boolean POST /synchronize.
 
-  # CNView.view(session, theme, id) → OctetStream
-  # GET /views/{theme}/{id}
+        Args:   pid:   vendorSpecific:
+        """
+        mmp_dict = {'pid': pid}
+        return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
 
-  def viewResponse(self, theme, did):
-    return self.GET(['views', theme, did])
+    def synchronize(self, pid, vendorSpecific=None):
+        """See Also: synchronizeResponse() Args: pid: vendorSpecific:
 
-  def view(self, theme, did):
-    response = self.viewResponse(theme, did)
-    return self._read_stream_response(response)
+        Returns:
+        """
+        response = self.synchronizeResponse(pid, vendorSpecific)
+        return self._read_boolean_response(response)
 
-  # CNView.listViews(session) → OptionList
-  # GET /views
+    # =========================================================================
+    # CNView
+    # =========================================================================
 
-  def listViewsResponse(self):
-    return self.GET(['views'])
+    # CNView.view(session, theme, id) → OctetStream
+    # GET /views/{theme}/{id}
 
-  def listViews(self):
-    response = self.listViewsResponse()
-    return self._read_dataone_type_response(response, 'OptionList')
+    def viewResponse(self, theme, did):
+        return self.GET(['views', theme, did])
 
-  #=========================================================================
-  # CNDiagnostic
-  #=========================================================================
+    def view(self, theme, did):
+        response = self.viewResponse(theme, did)
+        return self._read_stream_response(response)
 
-  # CNDiagnostic.echoCredentials(session) → SubjectInfo
-  # GET /diag/subject
+    # CNView.listViews(session) → OptionList
+    # GET /views
 
-  def echoCredentialsResponse(self):
-    return self.GET(['diag', 'subject'])
+    def listViewsResponse(self):
+        return self.GET(['views'])
 
-  def echoCredentials(self):
-    response = self.echoCredentialsResponse()
-    return self._read_dataone_type_response(response, 'SubjectInfo')
+    def listViews(self):
+        response = self.listViewsResponse()
+        return self._read_dataone_type_response(response, 'OptionList')
 
-  # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
-  # POST /diag/sysmeta
+    # =========================================================================
+    # CNDiagnostic
+    # =========================================================================
 
-  def echoSystemMetadataResponse(self, sysmeta_pyxb):
-    mmp_dict = {
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
-    }
-    return self.POST(['diag', 'sysmeta'], fields=mmp_dict)
+    # CNDiagnostic.echoCredentials(session) → SubjectInfo
+    # GET /diag/subject
 
-  def echoSystemMetadata(self, sysmeta_pyxb):
-    response = self.echoSystemMetadataResponse(sysmeta_pyxb)
-    return self._read_dataone_type_response(response, 'SystemMetadata')
+    def echoCredentialsResponse(self):
+        return self.GET(['diag', 'subject'])
 
-  # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
-  # POST /diag/object
+    def echoCredentials(self):
+        response = self.echoCredentialsResponse()
+        return self._read_dataone_type_response(response, 'SubjectInfo')
 
-  def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj):
-    mmp_dict = {
-      'queryEngine': queryEngine.encode('utf-8'),
-      'object': ('content.bin', obj),
-      'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
-    }
-    return self.POST(['diag', 'object'], fields=mmp_dict)
+    # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
+    # POST /diag/sysmeta
 
-  def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj):
-    response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj)
-    return self._read_stream_response(response)
+    def echoSystemMetadataResponse(self, sysmeta_pyxb):
+        mmp_dict = {'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8'))}
+        return self.POST(['diag', 'sysmeta'], fields=mmp_dict)
+
+    def echoSystemMetadata(self, sysmeta_pyxb):
+        response = self.echoSystemMetadataResponse(sysmeta_pyxb)
+        return self._read_dataone_type_response(response, 'SystemMetadata')
+
+    # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
+    # POST /diag/object
+
+    def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj):
+        mmp_dict = {
+            'queryEngine': queryEngine.encode('utf-8'),
+            'object': ('content.bin', obj),
+            'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+        }
+        return self.POST(['diag', 'object'], fields=mmp_dict)
+
+    def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj):
+        response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj)
+        return self._read_stream_response(response)

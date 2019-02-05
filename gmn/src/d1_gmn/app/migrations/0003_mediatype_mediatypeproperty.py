@@ -3,31 +3,57 @@
 
 
 import django.db.models.deletion
-from django.db import migrations, models
+from django.db import migrations
+from django.db import models
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0002_scienceobject_filename'),
-    ]
+    dependencies = [('app', '0002_scienceobject_filename')]
 
     operations = [
         migrations.CreateModel(
             name='MediaType',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(db_index=True, max_length=256)),
-                ('sciobj', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.ScienceObject')),
+                (
+                    'sciobj',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='app.ScienceObject',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='MediaTypeProperty',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(db_index=True, max_length=256)),
                 ('value', models.CharField(db_index=True, max_length=256)),
-                ('media_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.MediaType')),
+                (
+                    'media_type',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='app.MediaType'
+                    ),
+                ),
             ],
         ),
     ]

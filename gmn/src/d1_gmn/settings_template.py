@@ -17,14 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Global settings for GMN
-"""
+"""Global settings for GMN."""
 
 # noinspection PyUnresolvedReferences
 # flake8: noqa: F403,F401
 
-#import logging
-#import d1_common.const
+# import logging
+# import d1_common.const
 from d1_gmn.app.settings_default import *
 
 import d1_common.util
@@ -130,13 +129,13 @@ TRUST_CLIENT_DATEUPLOADED = False
 # Hosts/domain names that are valid for this site.
 # Ignored if DEBUG is True. Required if DEBUG is False.
 ALLOWED_HOSTS = [
-  # Allow local connections
-  'localhost',
-  '127.0.0.1',
-  # Add FQDN to allow external clients to access GMN
-  #'my.server.name.com',
-  # Add to allow external clients to access GMN by IP address
-  #'my.external.ip.address',
+    # Allow local connections
+    'localhost',
+    '127.0.0.1',
+    # Add FQDN to allow external clients to access GMN
+    #'my.server.name.com',
+    # Add to allow external clients to access GMN by IP address
+    #'my.external.ip.address',
 ]
 
 # ==============================================================================
@@ -256,7 +255,9 @@ CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
 # CLIENT_CERT_PATH. The private key must be in PEM format. This is only
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
-CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopassword.pem'
+CLIENT_CERT_PRIVATE_KEY_PATH = (
+    '/var/local/dataone/certs/client/client_key_nopassword.pem'
+)
 
 # Absolute Path to the root of the GMN object store. The object store is a
 # directory hierarchy in which the bytes of science objects are stored by
@@ -280,7 +281,7 @@ REPLICATION_MAXOBJECTSIZE = -1
 # The total space, in octets (8-bit bytes), that this node is providing for
 # replication. Set to -1 to provide unlimited space (not recommended).
 # E.g. for a total space of 10 GiB: 10 * 1024**3
-REPLICATION_SPACEALLOCATED = 10 * 1024**3
+REPLICATION_SPACEALLOCATED = 10 * 1024 ** 3
 
 # A list of nodes for which this node is willing to replicate content. To allow
 # objects from any node to be replicated, set to an empty list.
@@ -321,9 +322,9 @@ SYSMETA_REFRESH_MAX_ATTEMPTS = 24
 # The CN subjects are used for controlling access to MN API methods for which
 # only CNs should have access. See also the STAND_ALONE setting.
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 
 # Subjects for implicitly trusted DataONE infrastructure. Connections containing
 # client side certificates with these subjects bypass access control rules and
@@ -331,16 +332,18 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 # added to the ones discovered by connecting to the DataONE root CN. See the
 # DATAONE_ROOT setting. If the STAND_ALONE setting is set to True, these become
 # the only trusted subjects.
-DATAONE_TRUSTED_SUBJECTS = set([
-  # For testing and debugging, it's possible to add the public subject here.
-  # This circumvents all access control, making all content publicly accessible.
-  #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
-  # As with the public subject, it's possible to add the authenticatedUser
-  # subject here, to let any authenticated user access any method.
-  #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
-  # Specific authenticated users can also be added.
-  #'any-authenticated-user-subject',
-])
+DATAONE_TRUSTED_SUBJECTS = set(
+    [
+        # For testing and debugging, it's possible to add the public subject here.
+        # This circumvents all access control, making all content publicly accessible.
+        # d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
+        # As with the public subject, it's possible to add the authenticatedUser
+        # subject here, to let any authenticated user access any method.
+        # d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
+        # Specific authenticated users can also be added.
+        #'any-authenticated-user-subject',
+    ]
+)
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
@@ -460,7 +463,7 @@ SCIMETA_VALIDATION_ENABLED = True
 #
 # E.g.: 100 MiB = 1024**2 (default)
 # To validate SciMeta of any size, set to -1 (not recommended).
-SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024**2
+SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024 ** 2
 
 # The action to perform for SciMeta objects received in MNStorage.create()
 # and MNStorage.update() larger than size set in SCIMETA_VALIDATION_MAX_SIZE.
@@ -508,11 +511,11 @@ PROXY_MODE_STREAM_TIMEOUT = 30
 # XML documents submitted as science data objects, as they are streamed directly
 # to disk without being loaded to memory.
 # E.g.: 10 MiB = 10 * 1024**2 (default)
-MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
+MAX_XML_DOCUMENT_SIZE = 10 * 1024 ** 2
 
 # Chunk size for stream iterators.
 # E.g.: 1 MiB = 1024**2 (default)
-NUM_CHUNK_BYTES = 1024**2
+NUM_CHUNK_BYTES = 1024 ** 2
 
 # The maximum number of items that can be returned in a single page of results
 # from MNRead.listObjects() (ObjectList) and MNCore.getLogRecords() (Log). A
@@ -522,15 +525,15 @@ MAX_SLICE_ITEMS = 5000
 
 # Postgres database connection.
 d1_common.util.nested_update(
-  DATABASES,
-  {
-    'default': {
-      # The database in tables required by GMN are stored. The database itself
-      # is typically owned by the postgres user while the tables are owned by the
-      # GMN user.
-      'NAME': 'gmn3',
-    }
-  }
+    DATABASES,
+    {
+        'default': {
+            # The database in tables required by GMN are stored. The database itself
+            # is typically owned by the postgres user while the tables are owned by the
+            # GMN user.
+            'NAME': 'gmn3'
+        }
+    },
 )
 
 # Logging
@@ -546,24 +549,14 @@ d1_common.util.nested_update(
 # By default, we set debug level logging when GMN is in debug mode and
 # informational level logging when GMN runs in regular mode.
 if DEBUG or DEBUG_GMN:
-  LOG_LEVEL = 'DEBUG'
+    LOG_LEVEL = 'DEBUG'
 else:
-  LOG_LEVEL = 'INFO'
+    LOG_LEVEL = 'INFO'
 
 d1_common.util.nested_update(
-  LOGGING, {
-    'handlers': {
-      'rotating_file': {
-        'level': LOG_LEVEL,
-      },
+    LOGGING,
+    {
+        'handlers': {'rotating_file': {'level': LOG_LEVEL}},
+        'loggers': {'': {'level': LOG_LEVEL}, 'django': {'level': LOG_LEVEL}},
     },
-    'loggers': {
-      '': {
-        'level': LOG_LEVEL,
-      },
-      'django': {
-        'level': LOG_LEVEL
-      },
-    }
-  }
 )

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pytest
+
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -19,12 +21,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import d1_common.cert.subject_info
-import d1_common.cert.subject_info
-
-import d1_test.d1_test_case
-import d1_common.cert.subject_info
-
-import pytest
 
 import d1_test.d1_test_case
 
@@ -63,8 +59,10 @@ class TestSubjectInfo(d1_test.d1_test_case.D1TestCase):
     def test_1000(
         self, subj_info_testfile, sample_tag, authn_subj, render_type, show_duplicates
     ):
-        """SubjectInfo methods give expected results. See the subject_info_*.xml sample
-        files for notes on the individual tests and expected results
+        """SubjectInfo methods give expected results.
+
+        See the subject_info_*.xml sample files for notes on the
+        individual tests and expected results
         """
         subject_info_pyxb = d1_common.cert.subject_info.deserialize_subject_info(
             self.test_files.load_xml_to_str(subj_info_testfile)

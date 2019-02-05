@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random ReplicationStatus
-"""
+"""Generate random ReplicationStatus."""
 
 import random
 
@@ -26,6 +25,6 @@ import d1_common.types.dataoneTypes
 
 
 def generate():
-  status_list = ['queued', 'requested', 'completed', 'failed', 'invalidated']
-  status_str = random.choice(status_list)
-  return d1_common.types.dataoneTypes.ReplicationStatus(status_str)
+    status_list = ['queued', 'requested', 'completed', 'failed', 'invalidated']
+    status_str = random.choice(status_list)
+    return d1_common.types.dataoneTypes.ReplicationStatus(status_str)

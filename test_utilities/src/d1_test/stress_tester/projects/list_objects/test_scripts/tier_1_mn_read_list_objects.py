@@ -35,41 +35,41 @@ page_size = 1000
 
 
 class Transaction(transaction.Transaction):
-  def __init__(self):
-    super().__init__()
-    self.total = self.get_object_total()
+    def __init__(self):
+        super().__init__()
+        self.total = self.get_object_total()
 
-  def get_object_total(self):
-    client = self.create_client_for_cn()
-    try:
-      res = client.listObjects(count=0, start=0)
-    except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
-    else:
-      return res.total
+    def get_object_total(self):
+        client = self.create_client_for_cn()
+        try:
+            res = client.listObjects(count=0, start=0)
+        except Exception as e:
+            with open('/tmp/stress_test_error.html', 'w') as f:
+                f.write(str(e))
+            raise
+        else:
+            return res.total
 
-  # Definition of listObjects from mnclient.py:
-  #
-  # def listObjects(self, fromDate=None, toDate=None, formatId=None,
-  #                 replicaStatus=None, start=0,
-  #                 count=d1_common.const.DEFAULT_LISTOBJECTS,
-  #                 vendorSpecific=None):
+    # Definition of listObjects from mnclient.py:
+    #
+    # def listObjects(self, fromDate=None, toDate=None, formatId=None,
+    #                 replicaStatus=None, start=0,
+    #                 count=d1_common.const.DEFAULT_LISTOBJECTS,
+    #                 vendorSpecific=None):
 
-  def d1_mn_api_call(self):
-    """MNRead.ListObjects()"""
-    client = self.create_client_for_cn()
-    start = random.randint(0, self.total - 1)
-    count = page_size
-    if start + count >= self.total - 1:
-      count = self.total - start
-    response = client.listObjectsResponse(start=start, count=count)
-    self.check_response(response)
+    def d1_mn_api_call(self):
+        """MNRead.ListObjects()"""
+        client = self.create_client_for_cn()
+        start = random.randint(0, self.total - 1)
+        count = page_size
+        if start + count >= self.total - 1:
+            count = self.total - start
+        response = client.listObjectsResponse(start=start, count=count)
+        self.check_response(response)
 
 
 if __name__ == '__main__':
-  t = Transaction()
-  t.run()
-  #import cProfile
-  #cProfile.run('t.run()', 'profile')
+    t = Transaction()
+    t.run()
+    # import cProfile
+    # cProfile.run('t.run()', 'profile')

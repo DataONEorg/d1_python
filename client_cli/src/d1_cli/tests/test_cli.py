@@ -18,22 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test CLI high level functionality
-"""
+"""Test CLI high level functionality."""
 import contextlib
 import io
 import os
 import re
 import tempfile
 
-import d1_cli.impl.command_parser
-import d1_cli.impl.client
-import d1_cli.impl.exceptions
-import d1_cli.impl.operation_validator
 import freezegun
 import mock
 import pytest
 import responses
+
+import d1_cli.impl.client
+import d1_cli.impl.command_parser
+import d1_cli.impl.exceptions
+import d1_cli.impl.operation_validator
 
 import d1_common.date_time
 import d1_common.system_metadata
@@ -91,7 +91,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "Unknown command: somecommand" in out_stream.getvalue()
 
     def test_1040(self, cn_client_v2):
-        """run_command_line_arguments(): """
+        """run_command_line_arguments():"""
         cli = d1_cli.impl.command_parser.CLI()
         test_cmd_str = "somecommand arg1 arg2 arg3"
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -170,7 +170,8 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             assert mock_method.call_count > 0
 
     def test_1110(self, cn_client_v2):
-        """do_reset(), do_set(), do_save(), do_load(): Session to disk round trip"""
+        """do_reset(), do_set(), do_save(), do_load(): Session to disk round
+        trip."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         fi, path = tempfile.mkstemp(
@@ -235,8 +236,8 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @d1_test.mock_api.catch_all.activate
     def test_1150(self, cn_client_v2):
-        """ping (no arguments): Ping the CN and MN that is specified in the session
-    """
+        """ping (no arguments): Ping the CN and MN that is specified in the
+        session."""
         d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         cli = d1_cli.impl.command_parser.CLI()
@@ -307,7 +308,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "test_subject_3: changePermission" not in env_str
 
     def test_1200(self, cn_client_v2):
-        """do_allowrep(), do_denyrep(): Toggles replication"""
+        """do_allowrep(), do_denyrep(): Toggles replication."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_allowrep("")
@@ -411,7 +412,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1260(self, capsys):
-        """list nodes: Gives expected output"""
+        """list nodes: Gives expected output."""
         d1_test.mock_api.list_nodes.add_callback("http://responses/cn")
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_set("cn-url http://responses/cn")

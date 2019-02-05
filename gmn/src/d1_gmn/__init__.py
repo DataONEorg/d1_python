@@ -18,5 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .version import __version__ # noqa: F401
+from .version import __version__  # noqa: F401
+
 default_app_config = 'd1_gmn.app.startup.GMNStartupChecks'

@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Database model utilities
+"""Database model utilities.
 
 These are in a separate module because module classes can only be referenced in
 an active Django context. More general utilities can be used without an active
@@ -33,29 +33,31 @@ import d1_gmn.app.models
 
 
 def get_sci_model(pid):
-  return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
+    return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
 
 
 def get_pids_for_all_locally_stored_objects():
-  return d1_gmn.app.models.ScienceObject.objects.all().values_list(
-    'pid__did', flat=True
-  )
+    return d1_gmn.app.models.ScienceObject.objects.all().values_list(
+        'pid__did', flat=True
+    )
 
 
 def delete_unused_subjects():
-  """Delete any unused subjects from the database. This is not strictly required
-  as any unused subjects will automatically be reused if needed in the future.
-  """
-  # This causes Django to create a single join (check with query.query)
-  query = d1_gmn.app.models.Subject.objects.all()
-  query = query.filter(scienceobject_submitter__isnull=True)
-  query = query.filter(scienceobject_rights_holder__isnull=True)
-  query = query.filter(eventlog__isnull=True)
-  query = query.filter(permission__isnull=True)
-  query = query.filter(whitelistforcreateupdatedelete__isnull=True)
+    """Delete any unused subjects from the database.
 
-  logging.debug('Deleting {} unused subjects:'.format(query.count()))
-  for s in query.all():
-    logging.debug('  {}'.format(s.subject))
+    This is not strictly required as any unused subjects will
+    automatically be reused if needed in the future.
+    """
+    # This causes Django to create a single join (check with query.query)
+    query = d1_gmn.app.models.Subject.objects.all()
+    query = query.filter(scienceobject_submitter__isnull=True)
+    query = query.filter(scienceobject_rights_holder__isnull=True)
+    query = query.filter(eventlog__isnull=True)
+    query = query.filter(permission__isnull=True)
+    query = query.filter(whitelistforcreateupdatedelete__isnull=True)
 
-  query.delete()
+    logging.debug('Deleting {} unused subjects:'.format(query.count()))
+    for s in query.all():
+        logging.debug('  {}'.format(s.subject))
+
+    query.delete()

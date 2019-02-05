@@ -31,61 +31,58 @@ import d1_client.mnclient
 
 
 class MemberNodeClient_1_2(
-    d1_client.baseclient_1_2.DataONEBaseClient_1_2,
-    d1_client.mnclient.MemberNodeClient,
+    d1_client.baseclient_1_2.DataONEBaseClient_1_2, d1_client.mnclient.MemberNodeClient
 ):
-  """Extend DataONEBaseClient_1_2 and MemberNodeClient with functionality
-  for Member nodes that was added in v1.2 of the DataONE infrastructure.
+    """Extend DataONEBaseClient_1_2 and MemberNodeClient with functionality for
+    Member nodes that was added in v1.2 of the DataONE infrastructure.
 
-  For details on how to use these methods, see:
+    For details on how to use these methods, see:
 
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
-  """
+    https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+    """
 
-  def __init__(self, *args, **kwargs):
-    """See baseclient.DataONEBaseClient for args."""
-    super(MemberNodeClient_1_2, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        """See baseclient.DataONEBaseClient for args."""
+        super(MemberNodeClient_1_2, self).__init__(*args, **kwargs)
 
-    self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__file__)
 
-    self._api_major = 1
-    self._api_minor = 2
-    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
-      self._api_major, self._api_minor
-    )
+        self._api_major = 1
+        self._api_minor = 2
+        self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
+            self._api_major, self._api_minor
+        )
 
-  # MNView.view(session, theme, id) → OctetStream
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.view
+    # MNView.view(session, theme, id) → OctetStream
+    # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.view
 
-  def viewResponse(self, theme, did, **kwargs):
-    return self.GET(['views', theme, did], query=kwargs)
+    def viewResponse(self, theme, did, **kwargs):
+        return self.GET(['views', theme, did], query=kwargs)
 
-  def view(self, theme, did, **kwargs):
-    response = self.viewResponse(theme, did, **kwargs)
-    return self._read_stream_response(response)
+    def view(self, theme, did, **kwargs):
+        response = self.viewResponse(theme, did, **kwargs)
+        return self._read_stream_response(response)
 
-  # MNView.listViews(session) → OptionList
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.listViews
+    # MNView.listViews(session) → OptionList
+    # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.listViews
 
-  def listViewsResponse(self, **kwargs):
-    return self.GET(['view'], query=kwargs)
+    def listViewsResponse(self, **kwargs):
+        return self.GET(['view'], query=kwargs)
 
-  def listViews(self, **kwargs):
-    response = self.listViewsResponse(**kwargs)
-    return self._read_dataone_type_response(response, 'OptionList')
+    def listViews(self, **kwargs):
+        response = self.listViewsResponse(**kwargs)
+        return self._read_dataone_type_response(response, 'OptionList')
 
-  # MNPackage.getPackage(session, packageType, id) → OctetStream
-  # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
+    # MNPackage.getPackage(session, packageType, id) → OctetStream
+    # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
-  def getPackageResponse(
-      self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
-      **kwargs
-  ):
-    return self.GET(['packages', packageType, did], query=kwargs)
+    def getPackageResponse(
+        self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, **kwargs
+    ):
+        return self.GET(['packages', packageType, did], query=kwargs)
 
-  def getPackage(
-      self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
-      **kwargs
-  ):
-    response = self.getPackageResponse(did, packageType, **kwargs)
-    return self._read_stream_response(response)
+    def getPackage(
+        self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, **kwargs
+    ):
+        response = self.getPackageResponse(did, packageType, **kwargs)
+        return self._read_stream_response(response)

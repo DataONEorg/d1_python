@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Retrieve, cache, manipulate list of known DataONE nodes.
-"""
+"""Retrieve, cache, manipulate list of known DataONE nodes."""
 
 import datetime
 

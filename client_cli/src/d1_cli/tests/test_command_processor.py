@@ -18,20 +18,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the CLI command processor
-"""
+"""Test the CLI command processor."""
 
 import re
 
-import d1_cli.impl.command_parser
+import responses
+
 import d1_cli.impl.client
+import d1_cli.impl.command_parser
 import d1_cli.impl.command_processor
 import d1_cli.impl.format_ids
 import d1_cli.impl.nodes
 import d1_cli.impl.operation_queue
 import d1_cli.impl.operation_validator
 import d1_cli.impl.session
-import responses
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data

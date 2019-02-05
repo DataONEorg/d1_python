@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the Flat Space Resolver
-"""
+"""Test the Flat Space Resolver."""
 
 import d1_onedrive.impl.resolver.flat_space as flat_space
 import d1_onedrive.impl.tests.object_tree_test_sample
@@ -29,22 +28,22 @@ import d1_test.d1_test_case
 options = {}
 
 
-class TestOptions():
-  def flat_space(self):
-    pass
+class TestOptions:
+    def flat_space(self):
+        pass
 
 
 class TestFlatSpaceResolver(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    options = TestOptions()
-    options.base_url = 'https://localhost/'
-    options.object_tree_xml = './test_flat_space.xml'
-    options.max_error_path_cache_size = 1000
-    options.max_solr_query_cache_size = 1000
-    self._w = flat_space.Resolver(
-      options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
-    )
+    def setup_method(self):
+        options = TestOptions()
+        options.base_url = 'https://localhost/'
+        options.object_tree_xml = './test_flat_space.xml'
+        options.max_error_path_cache_size = 1000
+        options.max_solr_query_cache_size = 1000
+        self._w = flat_space.Resolver(
+            options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
+        )
 
-  def test_1000(self):
-    """__init__()"""
-    pass
+    def test_1000(self):
+        """__init__()"""
+        pass

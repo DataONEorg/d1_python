@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Hold and manipulate session variables.
-"""
+"""Hold and manipulate session variables."""
 
 # > set
 #         cli:
@@ -63,9 +62,9 @@ import platform
 
 import d1_cli.impl.access_control as access_control
 import d1_cli.impl.exceptions as exceptions
-import d1_cli.impl.util as util
 import d1_cli.impl.operation_formatter as operation_formatter
 import d1_cli.impl.replication_policy as replication_policy
+import d1_cli.impl.util as util
 
 import d1_common.checksum
 import d1_common.const
@@ -160,11 +159,13 @@ class Session(object):
         self._variables[variable] = value
 
     def set_with_conversion(self, variable, value_string):
-        """Convert user supplied string to Python type. Lets user use values such as
-    True, False and integers. All variables can be set to None, regardless of
-    type. Handle the case where a string is typed by the user and is not quoted,
-    as a string literal.
-    """
+        """Convert user supplied string to Python type.
+
+        Lets user use values such as True, False and integers. All
+        variables can be set to None, regardless of type. Handle the
+        case where a string is typed by the user and is not quoted, as a
+        string literal.
+        """
         self._assert_valid_variable(variable)
         try:
             v = ast.literal_eval(value_string)

@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the Author resolver
-"""
+"""Test the Author resolver."""
 
 import d1_onedrive.impl.resolver.author as author
 import d1_onedrive.impl.tests.object_tree_test_sample
@@ -33,19 +32,19 @@ options = {}
 
 
 class TestAuthorResolver(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    self._resolver = author.Resolver(
-      options, d1_onedrive.impl.tests.object_tree_test_sample
-    )
+    def setup_method(self):
+        self._resolver = author.Resolver(
+            options, d1_onedrive.impl.tests.object_tree_test_sample
+        )
 
-  def test_1000(self):
-    """__init__()"""
-    # Test class instantiation (done in set_method())
-    pass
+    def test_1000(self):
+        """__init__()"""
+        # Test class instantiation (done in set_method())
+        pass
 
-  def test_1010(self):
-    """get_attributes([])"""
-    a = self._resolver.get_attributes([], [])
-    assert a.date() is None
-    assert a.size() == 0
-    assert a.is_dir() is True
+    def test_1010(self):
+        """get_attributes([])"""
+        a = self._resolver.get_attributes([], [])
+        assert a.date() is None
+        assert a.size() == 0
+        assert a.is_dir() is True

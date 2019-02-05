@@ -27,17 +27,17 @@ import d1_test.d1_test_case
 
 
 class TestObjectLocationList(d1_test.d1_test_case.D1TestCase):
-  parameterize_dict = {
-    'test_1000': [
-      dict(filename='object_list_gmn_valid.xml', raises_pyxb_exc=False),
-      dict(filename='object_list_invalid_1.xml', raises_pyxb_exc=True),
-    ],
-  }
+    parameterize_dict = {
+        'test_1000': [
+            dict(filename='object_list_gmn_valid.xml', raises_pyxb_exc=False),
+            dict(filename='object_list_invalid_1.xml', raises_pyxb_exc=True),
+        ]
+    }
 
-  def test_1000(self, filename, raises_pyxb_exc):
-    """Deserialize various ObjectLocationList XML docs"""
-    try:
-      self.test_files.load_xml_to_str(filename)
-    except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if not raises_pyxb_exc:
-        raise
+    def test_1000(self, filename, raises_pyxb_exc):
+        """Deserialize various ObjectLocationList XML docs."""
+        try:
+            self.test_files.load_xml_to_str(filename)
+        except (pyxb.PyXBException, xml.sax.SAXParseException):
+            if not raises_pyxb_exc:
+                raise

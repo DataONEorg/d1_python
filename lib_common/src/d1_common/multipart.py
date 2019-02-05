@@ -17,75 +17,76 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling MIME Multipart documents.
-"""
+"""Utilities for handling MIME Multipart documents."""
 
 import requests_toolbelt.multipart.decoder
 
 
 def parse_response(response, encoding='utf-8'):
-  """Parse a multipart Requests.Response into a tuple of BodyPart objects.
+    """Parse a multipart Requests.Response into a tuple of BodyPart objects.
 
-  Args:
-    response: Requests.Response
+    Args:
+      response: Requests.Response
 
-    encoding:
-      The parser will assume that any text in the HTML body is encoded with this encoding
-      when decoding it for use in the ``text`` attribute.
+      encoding:
+        The parser will assume that any text in the HTML body is encoded with this encoding
+        when decoding it for use in the ``text`` attribute.
 
-  Returns:
-    tuple of BodyPart
-      Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
-  """
-  return requests_toolbelt.multipart.decoder.MultipartDecoder.from_response(
-    response, encoding
-  ).parts
+    Returns:
+      tuple of BodyPart
+        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+    """
+    return requests_toolbelt.multipart.decoder.MultipartDecoder.from_response(
+        response, encoding
+    ).parts
 
 
 def parse_str(mmp_bytes, content_type, encoding='utf-8'):
-  """Parse multipart document bytes into a tuple of BodyPart objects.
+    """Parse multipart document bytes into a tuple of BodyPart objects.
 
-  Args:
-    mmp_bytes: bytes
-      Multipart document.
+    Args:
+      mmp_bytes: bytes
+        Multipart document.
 
-    content_type : str
-      Must be on the form, ``multipart/form-data; boundary=<BOUNDARY>``, where
-      ``<BOUNDARY>`` is the string that separates the parts of the multipart document in
-      ``mmp_bytes``. In HTTP requests and responses, it is passed in the Content-Type
-      header.
+      content_type : str
+        Must be on the form, ``multipart/form-data; boundary=<BOUNDARY>``, where
+        ``<BOUNDARY>`` is the string that separates the parts of the multipart document in
+        ``mmp_bytes``. In HTTP requests and responses, it is passed in the Content-Type
+        header.
 
-    encoding : str
-      The coding used for the text in the HTML body.
+      encoding : str
+        The coding used for the text in the HTML body.
 
-  Returns:
-    tuple of BodyPart
-      Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
-  """
-  return requests_toolbelt.multipart.decoder.MultipartDecoder(
-    mmp_bytes, content_type, encoding
-  ).parts
+    Returns:
+      tuple of BodyPart
+        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+    """
+    return requests_toolbelt.multipart.decoder.MultipartDecoder(
+        mmp_bytes, content_type, encoding
+    ).parts
 
 
-def normalize(
-    body_part_tup,
-):
-  """Normalize a tuple of BodyPart objects to a string.
-  
-  Normalization is done by sorting the body_parts by the Content-Disposition
-  headers, which is typically on the form, ``form-data; name="name_of_part``.
-  """
-  return '\n\n'.join([
-    '{}\n\n{}'.format(
-      str(p.headers[b'Content-Disposition'], p.encoding), p.text
+def normalize(body_part_tup,):
+    """Normalize a tuple of BodyPart objects to a string.
+
+    Normalization is done by sorting the body_parts by the Content-
+    Disposition headers, which is typically on the form, ``form-data;
+    name="name_of_part``.
+    """
+    return '\n\n'.join(
+        [
+            '{}\n\n{}'.format(
+                str(p.headers[b'Content-Disposition'], p.encoding), p.text
+            )
+            for p in sorted(
+                body_part_tup, key=lambda p: p.headers[b'Content-Disposition']
+            )
+        ]
     )
-    for p in
-    sorted(body_part_tup, key=lambda p: p.headers[b'Content-Disposition'])
-  ])
 
 
 def is_multipart(header_dict):
-  """
+    """
   Args:
     header_dict : CaseInsensitiveDict
 
@@ -93,5 +94,8 @@ def is_multipart(header_dict):
     bool: ``True`` if ``header_dict`` has a Content-Type key (case insensitive) with
     value that begins with 'multipart'.
   """
-  return {k.lower(): v for k, v in header_dict.items()
-          }.get('content-type', '').startswith('multipart')
+    return (
+        {k.lower(): v for k, v in header_dict.items()}
+        .get('content-type', '')
+        .startswith('multipart')
+    )

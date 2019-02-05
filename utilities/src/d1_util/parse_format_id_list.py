@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Parse ObjectFormatList XML doc with XPath
+"""Parse ObjectFormatList XML doc with XPath.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -32,49 +32,54 @@ import lxml.etree
 import d1_common.env
 
 NS_MAP = {
-  # None : XHTML_NAMESPACE
-  'xs': 'http://www.w3.org/2001/XMLSchema',
-  'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    # None : XHTML_NAMESPACE
+    'xs': 'http://www.w3.org/2001/XMLSchema',
+    'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
 }
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    '--env', type=str, default='prod',
-    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
-  )
-  parser.add_argument(
-    '--cert-pub', dest='cert_pem_path', action='store',
-    help='Path to PEM formatted public key of certificate'
-  )
-  parser.add_argument(
-    '--cert-key', dest='cert_key_path', action='store',
-    help='Path to PEM formatted private key of certificate'
-  )
-  parser.add_argument(
-    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-    help='Amount of time to wait for calls to complete (seconds)'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        '--env',
+        type=str,
+        default='prod',
+        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+    )
+    parser.add_argument(
+        '--cert-pub',
+        dest='cert_pem_path',
+        action='store',
+        help='Path to PEM formatted public key of certificate',
+    )
+    parser.add_argument(
+        '--cert-key',
+        dest='cert_key_path',
+        action='store',
+        help='Path to PEM formatted private key of certificate',
+    )
+    parser.add_argument(
+        '--timeout',
+        action='store',
+        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+        help='Amount of time to wait for calls to complete (seconds)',
+    )
 
-  print(get_scimeta_format_id_list('./formats.xml'))
+    print(get_scimeta_format_id_list('./formats.xml'))
 
 
 def get_scimeta_format_id_list(xsd_path):
-  format_id_list = []
-  parser = lxml.etree.XMLParser(no_network=True)
-  etree_obj = lxml.etree.parse(xsd_path, parser=parser)
-  el_list = etree_obj.xpath('//*[formatType="METADATA"]')
-  for el in el_list:
-    format_id_list.append(el.find('formatId').text)
-  return format_id_list
+    format_id_list = []
+    parser = lxml.etree.XMLParser(no_network=True)
+    etree_obj = lxml.etree.parse(xsd_path, parser=parser)
+    el_list = etree_obj.xpath('//*[formatType="METADATA"]')
+    for el in el_list:
+        format_id_list.append(el.find('formatId').text)
+    return format_id_list
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

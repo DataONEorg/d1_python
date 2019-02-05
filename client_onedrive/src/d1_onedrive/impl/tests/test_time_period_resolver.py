@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the Time Period Resolver
-"""
+"""Test the Time Period Resolver."""
 
 import d1_onedrive.impl.resolver.time_period as time_period
 import d1_onedrive.impl.tests.object_tree_test_sample
@@ -30,12 +29,12 @@ options = {}
 
 
 class TestTimePeriodResolver(d1_test.d1_test_case.D1TestCase):
-  def setup_method(self):
-    self._resolver = time_period.Resolver(
-      options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
-    )
+    def setup_method(self):
+        self._resolver = time_period.Resolver(
+            options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
+        )
 
-  def test_1000(self):
-    """__init__()"""
-    # Test class instantiation (done in setup_method())
-    pass
+    def test_1000(self):
+        """__init__()"""
+        # Test class instantiation (done in setup_method())
+        pass

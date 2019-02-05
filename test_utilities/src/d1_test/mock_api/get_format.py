@@ -50,55 +50,51 @@ FORMATS_ENDPOINT_RX = r'v([123])/formats/(.*)'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.GET,
-    re.compile(
-      r'^' + d1_common.url.joinPathElements(base_url, FORMATS_ENDPOINT_RX)
-    ),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.GET,
+        re.compile(
+            r'^' + d1_common.url.joinPathElements(base_url, FORMATS_ENDPOINT_RX)
+        ),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  query_dict, client = _parse_url(request.url)
-  # Return NotFound
-  format_id_str, client = _parse_url(request.url)
-  if format_id_str.startswith('<NotFound>'):
-    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
-  # Return regular response
-  body_str = _generate_object_format(client, format_id_str)
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_XML,
-  }
-  return 200, header_dict, body_str
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    query_dict, client = _parse_url(request.url)
+    # Return NotFound
+    format_id_str, client = _parse_url(request.url)
+    if format_id_str.startswith('<NotFound>'):
+        return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
+    # Return regular response
+    body_str = _generate_object_format(client, format_id_str)
+    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    return 200, header_dict, body_str
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, client = (
-    d1_test.mock_api.util.parse_rest_url(url)
-  )
-  assert endpoint_str == 'formats'
-  assert len(
-    param_list
-  ) == 1, 'getFormat() accept a single parameter, the formatId'
-  return param_list[0], client
+    version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
+        url
+    )
+    assert endpoint_str == 'formats'
+    assert len(param_list) == 1, 'getFormat() accept a single parameter, the formatId'
+    return param_list[0], client
 
 
 def _generate_object_format(client, format_id_str):
-  objectFormat = client.pyxb_binding.objectFormat()
-  objectFormat.formatId = format_id_str
-  objectFormat.formatName = 'format_name_{}'.format(format_id_str)
-  objectFormat.formatType = 'format_type_{}'.format(format_id_str)
+    objectFormat = client.pyxb_binding.objectFormat()
+    objectFormat.formatId = format_id_str
+    objectFormat.formatName = 'format_name_{}'.format(format_id_str)
+    objectFormat.formatType = 'format_type_{}'.format(format_id_str)
 
-  if hasattr(client, 'MediaType'): # Only in v2
-    mediaType = client.pyxb_binding.MediaType()
-    mediaType.name = 'media_type_name_{}'.format(format_id_str)
-    objectFormat.mediaType = mediaType
+    if hasattr(client, 'MediaType'):  # Only in v2
+        mediaType = client.pyxb_binding.MediaType()
+        mediaType.name = 'media_type_name_{}'.format(format_id_str)
+        objectFormat.mediaType = mediaType
 
-  return objectFormat.toxml('utf-8')
+    return objectFormat.toxml('utf-8')

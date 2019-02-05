@@ -32,27 +32,27 @@ import d1_test.mock_api.list_formats as mock_object_format_list
 
 
 class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
-  @responses.activate
-  def test_1000(self, cn_client_v1_v2):
-    """mock_api.listFormats() returns a objectFormatList PyXB object"""
-    mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
-    assert isinstance(
-      cn_client_v1_v2.listFormats(), cn_client_v1_v2.pyxb_binding.ObjectFormatList
-    )
+    @responses.activate
+    def test_1000(self, cn_client_v1_v2):
+        """mock_api.listFormats() returns a objectFormatList PyXB object."""
+        mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+        assert isinstance(
+            cn_client_v1_v2.listFormats(), cn_client_v1_v2.pyxb_binding.ObjectFormatList
+        )
 
-  @responses.activate
-  def test_1010(self, cn_client_v1_v2):
-    """mock_api.listFormats() returns a populated objectFormatList"""
-    mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
-    object_format_list = cn_client_v1_v2.listFormats()
-    assert len(object_format_list.objectFormat) == 100
-    for object_format in object_format_list.objectFormat:
-      assert object_format.formatId == 'format_id_0'
-      break
+    @responses.activate
+    def test_1010(self, cn_client_v1_v2):
+        """mock_api.listFormats() returns a populated objectFormatList."""
+        mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+        object_format_list = cn_client_v1_v2.listFormats()
+        assert len(object_format_list.objectFormat) == 100
+        for object_format in object_format_list.objectFormat:
+            assert object_format.formatId == 'format_id_0'
+            break
 
-  @responses.activate
-  def test_1020(self, cn_client_v1_v2):
-    """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
-    mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
-    with pytest.raises(d1_common.types.exceptions.NotFound):
-      cn_client_v1_v2.listFormats(vendorSpecific={'trigger': '404'})
+    @responses.activate
+    def test_1020(self, cn_client_v1_v2):
+        """mock_api.listFormats(): Passing a trigger header triggers a DataONEException"""
+        mock_object_format_list.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+        with pytest.raises(d1_common.types.exceptions.NotFound):
+            cn_client_v1_v2.listFormats(vendorSpecific={'trigger': '404'})

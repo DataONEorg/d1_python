@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Request handler middleware
+"""Request handler middleware.
 
 This handler runs first and last in the middleware "onion".
 
@@ -39,22 +39,22 @@ import django.http
 
 
 class RequestHandler:
-  def __init__(self, next_in_chain_func):
-    self.next_in_chain_func = next_in_chain_func
+    def __init__(self, next_in_chain_func):
+        self.next_in_chain_func = next_in_chain_func
 
-  def __call__(self, request):
-    if django.conf.settings.DEBUG_GMN:
-      if django.conf.settings.DEBUG_ECHO_REQUEST or 'HTTP_VENDOR_GMN_ECHO_REQUEST' in request.META:
-        return d1_gmn.app.util.create_http_echo_response(request)
+    def __call__(self, request):
+        if django.conf.settings.DEBUG_GMN:
+            if (
+                django.conf.settings.DEBUG_ECHO_REQUEST
+                or 'HTTP_VENDOR_GMN_ECHO_REQUEST' in request.META
+            ):
+                return d1_gmn.app.util.create_http_echo_response(request)
 
-    response = self.next_in_chain_func(request)
+        response = self.next_in_chain_func(request)
 
-    if (
-        isinstance(response, django.http.response.HttpResponseBase) and
-        hasattr(request, 'allowed_method_list')
-    ):
-      d1_gmn.app.views.headers.add_cors_headers_to_response(
-        response, request
-      )
+        if isinstance(response, django.http.response.HttpResponseBase) and hasattr(
+            request, 'allowed_method_list'
+        ):
+            d1_gmn.app.views.headers.add_cors_headers_to_response(response, request)
 
-    return response
+        return response

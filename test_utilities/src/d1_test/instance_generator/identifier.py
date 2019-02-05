@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random Identifier
-"""
+"""Generate random Identifier."""
 
 import random
 
@@ -28,27 +27,28 @@ import d1_test.instance_generator.random_data
 
 
 def generate_pid(prefix_str='PID_'):
-  return generate_bare(prefix_str, min_len=12, max_len=12)
-
-
-def generate_sid(prefix_str='SID_', probability=1.0):
-  """Generate a SID ``probability``*100 percent of the time. Else return None.
-  """
-  if random.random() <= probability:
     return generate_bare(prefix_str, min_len=12, max_len=12)
 
 
+def generate_sid(prefix_str='SID_', probability=1.0):
+    """Generate a SID ``probability``*100 percent of the time.
+
+    Else return None.
+    """
+    if random.random() <= probability:
+        return generate_bare(prefix_str, min_len=12, max_len=12)
+
+
 def generate(prefix_str='DID_', min_len=5, max_len=20):
-  """Generate instance of Identifier holding a random Unicode string"""
-  return d1_common.types.dataoneTypes.identifier(
-    generate_bare(prefix_str, min_len, max_len)
-  )
+    """Generate instance of Identifier holding a random Unicode string."""
+    return d1_common.types.dataoneTypes.identifier(
+        generate_bare(prefix_str, min_len, max_len)
+    )
 
 
 def generate_bare(prefix_str='DID_', min_len=5, max_len=20):
-  """Generate bare Identifier holding a random Unicode string
-  min and max length does not include the length of the prefix.
-  """
-  return prefix_str + d1_test.instance_generator.random_data.random_lower_ascii(
-    min_len, max_len
-  )
+    """Generate bare Identifier holding a random Unicode string min and max
+    length does not include the length of the prefix."""
+    return prefix_str + d1_test.instance_generator.random_data.random_lower_ascii(
+        min_len, max_len
+    )

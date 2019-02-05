@@ -35,23 +35,22 @@ import d1_test_case
 
 
 class Test020GetCapabilities(d1_test_case.D1TestCase):
-  def test_010_get_capabilities(self):
-    """GetCapabilities returns a NodeList containing a single, valid Node
-    object.
-    """
-    client = test_client.TestClient(context.node['baseurl'])
-    node_list = client.listNodes()
-    assert len(node_list.node) == 1
-    for node in node_list.node:
-      # Verify that correct node was reached and that it provided the correct identifier.
-      assert node.baseURL == context.node['baseurl']
-      assert node.identifier == context.node['identifier']
-      # Verify that the interfaces required for Tier 1 compliance are present.
-      # Service name: node.services.service
-      for service in node.services.service:
-        for method in service.method:
-          self.assert_validate_method_name(context, method.name)
-          # Method rest interface:
-          #print method.rest
-          # I don't think there's much validation we can do on the REST
-          # interface URL.
+    def test_010_get_capabilities(self):
+        """GetCapabilities returns a NodeList containing a single, valid Node
+        object."""
+        client = test_client.TestClient(context.node['baseurl'])
+        node_list = client.listNodes()
+        assert len(node_list.node) == 1
+        for node in node_list.node:
+            # Verify that correct node was reached and that it provided the correct identifier.
+            assert node.baseURL == context.node['baseurl']
+            assert node.identifier == context.node['identifier']
+            # Verify that the interfaces required for Tier 1 compliance are present.
+            # Service name: node.services.service
+            for service in node.services.service:
+                for method in service.method:
+                    self.assert_validate_method_name(context, method.name)
+                    # Method rest interface:
+                    # print method.rest
+                    # I don't think there's much validation we can do on the REST
+                    # interface URL.

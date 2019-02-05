@@ -26,21 +26,18 @@ import d1_test.test_files
 
 
 class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
-  ofl_pyxb = d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml')
+    ofl_pyxb = d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml')
 
-  def test_1000(self):
-    """pyxb_to_dict()"""
-    ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
-    assert len(ofl_dict) == 117
+    def test_1000(self):
+        """pyxb_to_dict()"""
+        ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
+        assert len(ofl_dict) == 117
 
-    expected_text_xml_dict = {
-      'extension': 'html',
-      'format_name': 'Hypertext Markup Language',
-      'format_type': 'DATA',
-      'media_type': {
-        'name': 'text/html',
-        'property_list': []
-      }
-    }
+        expected_text_xml_dict = {
+            'extension': 'html',
+            'format_name': 'Hypertext Markup Language',
+            'format_type': 'DATA',
+            'media_type': {'name': 'text/html', 'property_list': []},
+        }
 
-    assert ofl_dict['text/html'] == expected_text_xml_dict
+        assert ofl_dict['text/html'] == expected_text_xml_dict

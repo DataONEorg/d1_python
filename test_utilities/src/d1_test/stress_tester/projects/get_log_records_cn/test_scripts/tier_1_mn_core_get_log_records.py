@@ -35,28 +35,28 @@ import transaction
 
 
 class Transaction(transaction.Transaction):
-  def __init__(self):
-    super().__init__()
-    self.total = self.get_log_records_total()
+    def __init__(self):
+        super().__init__()
+        self.total = self.get_log_records_total()
 
-  def get_log_records_total(self):
-    client = self.create_client_for_cn()
-    log = client.getLogRecords(count=0, start=0)
-    return log.total
+    def get_log_records_total(self):
+        client = self.create_client_for_cn()
+        log = client.getLogRecords(count=0, start=0)
+        return log.total
 
-  def d1_mn_api_call(self):
-    """MNCore.getLogRecords(), paged, called by CN"""
-    client = self.create_client_for_cn()
-    start = random.randint(0, self.total - 1)
-    count = settings.PAGE_SIZE
-    if start + count >= self.total - 1:
-      count = self.total - start
-    response = client.getLogRecordsResponse(start=start, count=count)
-    self.check_response(response)
+    def d1_mn_api_call(self):
+        """MNCore.getLogRecords(), paged, called by CN."""
+        client = self.create_client_for_cn()
+        start = random.randint(0, self.total - 1)
+        count = settings.PAGE_SIZE
+        if start + count >= self.total - 1:
+            count = self.total - start
+        response = client.getLogRecordsResponse(start=start, count=count)
+        self.check_response(response)
 
 
 if __name__ == '__main__':
-  t = Transaction()
-  t.run()
-  #import cProfile
-  #cProfile.run('t.run()', 'profile')
+    t = Transaction()
+    t.run()
+    # import cProfile
+    # cProfile.run('t.run()', 'profile')

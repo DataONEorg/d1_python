@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Holds only dynamic data
+"""Holds only dynamic data.
 
-All tests import this module and use it for sharing information that is used
-across tests.
+All tests import this module and use it for sharing information that is
+used across tests.
 """

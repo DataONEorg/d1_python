@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Create Science Object on Member Node
+"""Create Science Object on Member Node.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -80,8 +80,8 @@ SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 # BaseURL for the Member Node. If the script is run on the same server as the
 # Member Node, this can be localhost.
 MN_BASE_URL = 'https://dataone-test.researchworkspace.com/mn'
-#MN_BASE_URL = 'https://localhost/mn'
-#MN_BASE_URL = 'https://d1_gmn.test.dataone.org/mn'
+# MN_BASE_URL = 'https://localhost/mn'
+# MN_BASE_URL = 'https://d1_gmn.test.dataone.org/mn'
 
 # Paths to the certificate and key to use when creating the object. If the
 # certificate has the key embedded, the _KEY setting should be set to None. The
@@ -95,87 +95,93 @@ CERTIFICATE_FOR_CREATE_KEY = 'urn_node_mnTestRW/private/urn_node_mnTestRW.key'
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    '--env', type=str, default='prod',
-    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
-  )
-  parser.add_argument(
-    '--cert-pub', dest='cert_pem_path', action='store',
-    help='Path to PEM formatted public key of certificate'
-  )
-  parser.add_argument(
-    '--cert-key', dest='cert_key_path', action='store',
-    help='Path to PEM formatted private key of certificate'
-  )
-  parser.add_argument(
-    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-    help='Amount of time to wait for calls to complete (seconds)'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        '--env',
+        type=str,
+        default='prod',
+        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+    )
+    parser.add_argument(
+        '--cert-pub',
+        dest='cert_pem_path',
+        action='store',
+        help='Path to PEM formatted public key of certificate',
+    )
+    parser.add_argument(
+        '--cert-key',
+        dest='cert_key_path',
+        action='store',
+        help='Path to PEM formatted private key of certificate',
+    )
+    parser.add_argument(
+        '--timeout',
+        action='store',
+        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+        help='Amount of time to wait for calls to complete (seconds)',
+    )
 
-  # Create a Member Node client that can be used for running commands against
-  # a specific Member Node.
-  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-    MN_BASE_URL, cert_pem_path=CERTIFICATE_FOR_CREATE,
-    cert_key_path=CERTIFICATE_FOR_CREATE_KEY
-  )
-  # Get the bytes for the Science Object.
-  science_object = open(SCIENCE_OBJECT_FILE_PATH, 'rb').read()
+    # Create a Member Node client that can be used for running commands against
+    # a specific Member Node.
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+        MN_BASE_URL,
+        cert_pem_path=CERTIFICATE_FOR_CREATE,
+        cert_key_path=CERTIFICATE_FOR_CREATE_KEY,
+    )
+    # Get the bytes for the Science Object.
+    science_object = open(SCIENCE_OBJECT_FILE_PATH, 'rb').read()
 
-  # Create the System Metadata for the object that is to be uploaded. The
-  # System Metadata contains information about the object, such as its
-  # format, access control list and size.
-  sys_meta = generate_system_metadata_for_science_object(science_object)
+    # Create the System Metadata for the object that is to be uploaded. The
+    # System Metadata contains information about the object, such as its
+    # format, access control list and size.
+    sys_meta = generate_system_metadata_for_science_object(science_object)
 
-  # Create the object on the Member Node. The create() call takes an open
-  # file-like object for the Science Object. Since we already have the data in a
-  # string, we use StringIO. Another way would be to open the file again, with
-  # "f = open(filename, 'rb')", and then pass "f". The StringIO method is more
-  # efficient if the file fits in memory, as it already had to be read from disk
-  # once, for the MD5 checksum calculation.
-  client.create(SCIENCE_OBJECT_PID, io.StringIO(science_object), sys_meta)
+    # Create the object on the Member Node. The create() call takes an open
+    # file-like object for the Science Object. Since we already have the data in a
+    # string, we use StringIO. Another way would be to open the file again, with
+    # "f = open(filename, 'rb')", and then pass "f". The StringIO method is more
+    # efficient if the file fits in memory, as it already had to be read from disk
+    # once, for the MD5 checksum calculation.
+    client.create(SCIENCE_OBJECT_PID, io.StringIO(science_object), sys_meta)
 
-  print('Object created successfully')
+    print('Object created successfully')
 
 
 def generate_system_metadata_for_science_object(science_object):
-  pid = SCIENCE_OBJECT_PID
-  size = len(science_object)
-  md5 = hashlib.md5(science_object).hexdigest()
-  now = d1_common.date_time.utc_now()
-  sys_meta = generate_sysmeta(pid, size, md5, now)
-  return sys_meta
+    pid = SCIENCE_OBJECT_PID
+    size = len(science_object)
+    md5 = hashlib.md5(science_object).hexdigest()
+    now = d1_common.date_time.utc_now()
+    sys_meta = generate_sysmeta(pid, size, md5, now)
+    return sys_meta
 
 
 def generate_sysmeta(pid, size, md5, now):
-  sysmeta_pyxb = dataoneTypes.systemMetadata()
-  sysmeta_pyxb.identifier = pid
-  sysmeta_pyxb.formatId = SYSMETA_FORMATID
-  sysmeta_pyxb.size = size
-  sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
-  sysmeta_pyxb.checksum = dataoneTypes.checksum(md5)
-  sysmeta_pyxb.checksum.algorithm = 'MD5'
-  sysmeta_pyxb.dateUploaded = now
-  sysmeta_pyxb.dateSysMetadataModified = now
-  sysmeta_pyxb.accessPolicy = generate_public_access_policy()
-  return sysmeta_pyxb
+    sysmeta_pyxb = dataoneTypes.systemMetadata()
+    sysmeta_pyxb.identifier = pid
+    sysmeta_pyxb.formatId = SYSMETA_FORMATID
+    sysmeta_pyxb.size = size
+    sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
+    sysmeta_pyxb.checksum = dataoneTypes.checksum(md5)
+    sysmeta_pyxb.checksum.algorithm = 'MD5'
+    sysmeta_pyxb.dateUploaded = now
+    sysmeta_pyxb.dateSysMetadataModified = now
+    sysmeta_pyxb.accessPolicy = generate_public_access_policy()
+    return sysmeta_pyxb
 
 
 def generate_public_access_policy():
-  access_policy_pyxb = dataoneTypes.accessPolicy()
-  access_rule_pyxb = dataoneTypes.AccessRule()
-  access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission_pyxb = dataoneTypes.Permission('read')
-  access_rule_pyxb.permission.append(permission_pyxb)
-  access_policy_pyxb.append(access_rule_pyxb)
-  return access_policy_pyxb
+    access_policy_pyxb = dataoneTypes.accessPolicy()
+    access_rule_pyxb = dataoneTypes.AccessRule()
+    access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
+    permission_pyxb = dataoneTypes.Permission('read')
+    access_rule_pyxb.permission.append(permission_pyxb)
+    access_policy_pyxb.append(access_rule_pyxb)
+    return access_policy_pyxb
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

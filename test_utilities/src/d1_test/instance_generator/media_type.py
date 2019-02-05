@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random MediaType
-"""
+"""Generate random MediaType."""
 
 import random
 
@@ -29,22 +28,24 @@ import d1_test.instance_generator.random_data
 
 
 def generate(min_properties=0, max_properties=5):
-  n_properties = random.randint(min_properties, max_properties)
-  if not n_properties:
-    return None
-  media_type_pyxb = d1_common.types.dataoneTypes.MediaType(
-    name='media_type_{}'.
-    format(d1_test.instance_generator.random_data.random_lower_ascii()),
-  )
-  for _ in range(n_properties):
-    property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
-      d1_test.instance_generator.random_data.random_lower_ascii(
-        min_len=12, max_len=12
-      ),
-      name='prop_{}'.format(
-        d1_test.instance_generator.random_data.
-        random_lower_ascii(min_len=12, max_len=12)
-      ),
+    n_properties = random.randint(min_properties, max_properties)
+    if not n_properties:
+        return None
+    media_type_pyxb = d1_common.types.dataoneTypes.MediaType(
+        name='media_type_{}'.format(
+            d1_test.instance_generator.random_data.random_lower_ascii()
+        )
     )
-    media_type_pyxb.property_.append(property_pyxb)
-  return media_type_pyxb
+    for _ in range(n_properties):
+        property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
+            d1_test.instance_generator.random_data.random_lower_ascii(
+                min_len=12, max_len=12
+            ),
+            name='prop_{}'.format(
+                d1_test.instance_generator.random_data.random_lower_ascii(
+                    min_len=12, max_len=12
+                )
+            ),
+        )
+        media_type_pyxb.property_.append(property_pyxb)
+    return media_type_pyxb

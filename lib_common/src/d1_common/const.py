@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""System wide constants for the Python DataONE stack.
-"""
+"""System wide constants for the Python DataONE stack."""
 
 # The root of all DataONE.  Used to perform introspection on the system when
 # no other node information is provided.
@@ -30,10 +29,10 @@ DEFAULT_MN_PROTOCOL = 'https'
 DEFAULT_MN_HOST = 'localhost'
 DEFAULT_MN_PATH = '/mn'
 URL_DATAONE_ROOT = ''.join(
-  (DEFAULT_CN_PROTOCOL, '://', DEFAULT_CN_HOST, DEFAULT_CN_PATH)
+    (DEFAULT_CN_PROTOCOL, '://', DEFAULT_CN_HOST, DEFAULT_CN_PATH)
 )
 DEFAULT_MN_BASEURL = ''.join(
-  (DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH)
+    (DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH)
 )
 URL_DATAONE_SEARCH = 'https://search.dataone.org'
 
@@ -87,11 +86,11 @@ DEFAULT_SEARCH_ENGINE = 'solr'
 
 # OAI-ORE Resource Maps
 ORE_NAMESPACE_DICT = {
-  'cito': 'http://purl.org/spar/cito/',
-  'dc': 'http://purl.org/dc/elements/1.1/',
-  'dcterms': 'http://purl.org/dc/terms/',
-  'ore': 'http://www.openarchives.org/ore/terms/',
-  'foaf': 'http://xmlns.com/foaf/0.1/',
+    'cito': 'http://purl.org/spar/cito/',
+    'dc': 'http://purl.org/dc/elements/1.1/',
+    'dcterms': 'http://purl.org/dc/terms/',
+    'ore': 'http://www.openarchives.org/ore/terms/',
+    'foaf': 'http://xmlns.com/foaf/0.1/',
 }
 ORE_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
 ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)

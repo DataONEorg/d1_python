@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""View decorators
-"""
+"""View decorators."""
 
 import functools
 
@@ -43,55 +42,57 @@ import django.conf
 
 
 def resolve_sid(f):
-  """View handler decorator that adds SID resolve and PID validation
-  - For v1 calls, assume that ``did`` is a pid and raise NotFound exception if
-  it's not valid.
-  - For v2 calls, if DID is a valid PID, return it. If not, try to resolve it as
-  a SID and, if successful, return the new PID. Else, raise NotFound exception.
-  """
+    """View handler decorator that adds SID resolve and PID validation.
 
-  @functools.wraps(f)
-  def wrapper(request, did, *args, **kwargs):
-    pid = resolve_sid_func(request, did)
-    return f(request, pid, *args, **kwargs)
+    - For v1 calls, assume that ``did`` is a pid and raise NotFound exception if
+    it's not valid.
+    - For v2 calls, if DID is a valid PID, return it. If not, try to resolve it as
+    a SID and, if successful, return the new PID. Else, raise NotFound exception.
+    """
 
-  return wrapper
+    @functools.wraps(f)
+    def wrapper(request, did, *args, **kwargs):
+        pid = resolve_sid_func(request, did)
+        return f(request, pid, *args, **kwargs)
+
+    return wrapper
 
 
 def resolve_sid_func(request, did):
-  if d1_gmn.app.views.util.is_v1_api(request):
-    d1_gmn.app.views.assert_db.is_existing_object(did)
-    return did
-  elif d1_gmn.app.views.util.is_v2_api(request):
-    if d1_gmn.app.did.is_existing_object(did):
-      return did
-    elif d1_gmn.app.did.is_sid(did):
-      return d1_gmn.app.revision.resolve_sid(did)
+    if d1_gmn.app.views.util.is_v1_api(request):
+        d1_gmn.app.views.assert_db.is_existing_object(did)
+        return did
+    elif d1_gmn.app.views.util.is_v2_api(request):
+        if d1_gmn.app.did.is_existing_object(did):
+            return did
+        elif d1_gmn.app.did.is_sid(did):
+            return d1_gmn.app.revision.resolve_sid(did)
+        else:
+            raise d1_common.types.exceptions.NotFound(
+                0, 'Unknown identifier. id="{}"'.format(did), identifier=did
+            )
     else:
-      raise d1_common.types.exceptions.NotFound(
-        0, 'Unknown identifier. id="{}"'.format(did), identifier=did
-      )
-  else:
-    assert False, 'Unable to determine API version'
+        assert False, 'Unable to determine API version'
 
 
 def decode_did(f):
-  """View handler decorator that decodes "%2f" ("/") in SID or PID extracted
-  from URL path segment by Django
-  """
+    """View handler decorator that decodes "%2f" ("/") in SID or PID extracted
+    from URL path segment by Django."""
 
-  @functools.wraps(f)
-  def wrapper(request, did, *args, **kwargs):
-    return f(request, decode_path_segment(did), *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, did, *args, **kwargs):
+        return f(request, decode_path_segment(did), *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def decode_path_segment(s):
-  """Django decodes URL elements before passing them to views, but passes "%2f"
-  ("/") through undecoded. Why..?
-  """
-  return s.replace('%2f', '/').replace('%2F', '/')
+    """Django decodes URL elements before passing them to views, but passes
+    "%2f" ("/") through undecoded.
+
+    Why..?
+    """
+    return s.replace('%2f', '/').replace('%2F', '/')
 
 
 # ------------------------------------------------------------------------------
@@ -108,128 +109,123 @@ def decode_path_segment(s):
 
 
 def trusted_permission(f):
-  """Access only by D1 infrastructure.
-  """
+    """Access only by D1 infrastructure."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    trusted(request)
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        trusted(request)
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def list_objects_access(f):
-  """Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST.
-  """
+    """Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    if not django.conf.settings.PUBLIC_OBJECT_LIST:
-      trusted(request)
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        if not django.conf.settings.PUBLIC_OBJECT_LIST:
+            trusted(request)
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def get_log_records_access(f):
-  """Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS.
-  """
+    """Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    if not django.conf.settings.PUBLIC_LOG_RECORDS:
-      trusted(request)
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        if not django.conf.settings.PUBLIC_LOG_RECORDS:
+            trusted(request)
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def trusted(request):
-  if not d1_gmn.app.auth.is_trusted_subject(request):
-    raise d1_common.types.exceptions.NotAuthorized(
-      0, 'Access allowed only for trusted subjects. active_subjects="{}", '
-      'trusted_subjects="{}"'.format(
-        d1_gmn.app.auth.format_active_subjects(request),
-        d1_gmn.app.auth.get_trusted_subjects_string()
-      )
-    )
+    if not d1_gmn.app.auth.is_trusted_subject(request):
+        raise d1_common.types.exceptions.NotAuthorized(
+            0,
+            'Access allowed only for trusted subjects. active_subjects="{}", '
+            'trusted_subjects="{}"'.format(
+                d1_gmn.app.auth.format_active_subjects(request),
+                d1_gmn.app.auth.get_trusted_subjects_string(),
+            ),
+        )
 
 
 def assert_create_update_delete_permission(f):
-  """Access only by subjects with Create/Update/Delete permission and by
-  trusted infrastructure (CNs).
-  """
+    """Access only by subjects with Create/Update/Delete permission and by
+    trusted infrastructure (CNs)."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    d1_gmn.app.auth.assert_create_update_delete_permission(request)
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        d1_gmn.app.auth.assert_create_update_delete_permission(request)
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def authenticated(f):
-  """Access only with a valid session.
-  """
+    """Access only with a valid session."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
-      raise d1_common.types.exceptions.NotAuthorized(
-        0,
-        'Access allowed only for authenticated subjects. Please reconnect with '
-        'a valid DataONE session certificate. active_subjects="{}"'.
-        format(d1_gmn.app.auth.format_active_subjects(request))
-      )
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
+            raise d1_common.types.exceptions.NotAuthorized(
+                0,
+                'Access allowed only for authenticated subjects. Please reconnect with '
+                'a valid DataONE session certificate. active_subjects="{}"'.format(
+                    d1_gmn.app.auth.format_active_subjects(request)
+                ),
+            )
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def verified(f):
-  """Access only with a valid session where the primary subject is verified.
-  """
+    """Access only with a valid session where the primary subject is
+    verified."""
 
-  @functools.wraps(f)
-  def wrapper(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for verified accounts. Please reconnect with a '
-        'valid DataONE session certificate in which the identity of the '
-        'primary subject has been verified. active_subjects="{}"'
-        .format(d1_gmn.app.auth.format_active_subjects(request))
-      )
-    return f(request, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, *args, **kwargs):
+        if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
+            raise d1_common.types.exceptions.NotAuthorized(
+                0,
+                'Access allowed only for verified accounts. Please reconnect with a '
+                'valid DataONE session certificate in which the identity of the '
+                'primary subject has been verified. active_subjects="{}"'.format(
+                    d1_gmn.app.auth.format_active_subjects(request)
+                ),
+            )
+        return f(request, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def required_permission(f, level):
-  """Assert that subject has access at given level or higher for object.
-  """
+    """Assert that subject has access at given level or higher for object."""
 
-  @functools.wraps(f)
-  def wrapper(request, pid, *args, **kwargs):
-    d1_gmn.app.auth.assert_allowed(request, level, pid)
-    return f(request, pid, *args, **kwargs)
+    @functools.wraps(f)
+    def wrapper(request, pid, *args, **kwargs):
+        d1_gmn.app.auth.assert_allowed(request, level, pid)
+        return f(request, pid, *args, **kwargs)
 
-  return wrapper
+    return wrapper
 
 
 def changepermission_permission(f):
-  """Assert that subject has changePermission or high for object.
-  """
-  return required_permission(f, d1_gmn.app.auth.CHANGEPERMISSION_LEVEL)
+    """Assert that subject has changePermission or high for object."""
+    return required_permission(f, d1_gmn.app.auth.CHANGEPERMISSION_LEVEL)
 
 
 def write_permission(f):
-  """Assert that subject has write permission or higher for object.
-  """
-  return required_permission(f, d1_gmn.app.auth.WRITE_LEVEL)
+    """Assert that subject has write permission or higher for object."""
+    return required_permission(f, d1_gmn.app.auth.WRITE_LEVEL)
 
 
 def read_permission(f):
-  """Assert that subject has read permission or higher for object.
-  """
-  return required_permission(f, d1_gmn.app.auth.READ_LEVEL)
+    """Assert that subject has read permission or higher for object."""
+    return required_permission(f, d1_gmn.app.auth.READ_LEVEL)

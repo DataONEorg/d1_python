@@ -18,15 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Execute queued write operations.
-"""
+"""Execute queued write operations."""
 
 import io
 
 import d1_cli.impl.client
-import d1_cli.impl.util
 import d1_cli.impl.operation_validator
 import d1_cli.impl.system_metadata
+import d1_cli.impl.util
 
 import d1_common.resource_map
 

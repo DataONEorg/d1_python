@@ -26,33 +26,31 @@ import d1_common.type_conversions
 
 import d1_client.baseclient_1_1
 
-#=============================================================================
+# =============================================================================
 
 
-class DataONEBaseClient_1_2(
-    d1_client.baseclient_1_1.DataONEBaseClient_1_1,
-):
-  """Extend DataONEBaseClient with functionality common between Member and
-  Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
+class DataONEBaseClient_1_2(d1_client.baseclient_1_1.DataONEBaseClient_1_1):
+    """Extend DataONEBaseClient with functionality common between Member and
+    Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
 
-  For details on how to use these methods, see:
+    For details on how to use these methods, see:
 
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
-  """
+    https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+    https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+    """
 
-  def __init__(self, *args, **kwargs):
-    """See d1_client.baseclient.DataONEBaseClient for args."""
-    super(DataONEBaseClient_1_2, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        """See d1_client.baseclient.DataONEBaseClient for args."""
+        super(DataONEBaseClient_1_2, self).__init__(*args, **kwargs)
 
-    self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__file__)
 
-    self._api_major = 1
-    self._api_minor = 2
-    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
-      self._api_major, self._api_minor
-    )
+        self._api_major = 1
+        self._api_minor = 2
+        self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
+            self._api_major, self._api_minor
+        )
 
-  #=============================================================================
-  # v1.2 APIs shared between CNs and MNs.
-  #=============================================================================
+    # =============================================================================
+    # v1.2 APIs shared between CNs and MNs.
+    # =============================================================================

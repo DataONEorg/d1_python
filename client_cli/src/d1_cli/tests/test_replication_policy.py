@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test generation of ReplicationPolicy in SysMeta
-"""
+"""Test generation of ReplicationPolicy in SysMeta."""
 
 import io
 import sys
@@ -42,12 +41,12 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert not len(s.get_preferred())
 
     def test_1020(self):
-        """After instatiation, get_blocked() returns empty list"""
+        """After instatiation, get_blocked() returns empty list."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         assert not len(s.get_blocked())
 
     def test_1030(self):
-        """add_preferred() retains added MN"""
+        """add_preferred() retains added MN."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["preferred_mn_1", "preferred_mn_2", "preferred_mn_3"])
         assert 3 == len(s.get_preferred())
@@ -56,7 +55,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "preferred_mn_3" in s.get_preferred()
 
     def test_1040(self):
-        """add_blocked() retains added MN"""
+        """add_blocked() retains added MN."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_blocked(["blocked_mn_1", "blocked_mn_2", "blocked_mn_3"])
         assert 3 == len(s.get_blocked())
@@ -65,7 +64,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "blocked_mn_3" in s.get_blocked()
 
     def test_1050(self):
-        """add_preferred() followed by add_blocked() switches item from preferred to blocked"""
+        """add_preferred() followed by add_blocked() switches item from
+        preferred to blocked."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["preferred_mn"])
         assert not ("preferred_mn" in s.get_blocked())
@@ -73,7 +73,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "preferred_mn" in s.get_blocked()
 
     def test_1060(self):
-        """add_blocked() followed by add_preferred() switches item from blocked to preferred"""
+        """add_blocked() followed by add_preferred() switches item from blocked
+        to preferred."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["blocked_mn"])
         assert not ("blocked_mn" in s.get_blocked())
@@ -81,12 +82,13 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "blocked_mn" in s.get_blocked()
 
     def test_1070(self):
-        """Replication is allowed by default"""
+        """Replication is allowed by default."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         assert s.get_replication_allowed()
 
     def test_1080(self):
-        """set_replication_allowed() is retained and can be retrieved with get_replication_policy()"""
+        """set_replication_allowed() is retained and can be retrieved with
+        get_replication_policy()"""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.set_replication_allowed(True)
         assert s.get_replication_allowed()
@@ -94,12 +96,13 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert not s.get_replication_allowed()
 
     def test_1090(self):
-        """number_of_replicas can be retrieved and is 0 by default"""
+        """number_of_replicas can be retrieved and is 0 by default."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         assert 3 == s.get_number_of_replicas()  # 3 by default
 
     def test_1100(self):
-        """set_number_of_replicas() is retained and can be retrieved with get_number_of_replicas()"""
+        """set_number_of_replicas() is retained and can be retrieved with
+        get_number_of_replicas()"""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.set_number_of_replicas(5)
         assert 5 == s.get_number_of_replicas()
@@ -107,7 +110,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert 10 == s.get_number_of_replicas()
 
     def test_1110(self):
-        """set_replication_allowed(False) implicitly sets number_of_replicas to 0"""
+        """set_replication_allowed(False) implicitly sets number_of_replicas to
+        0."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.set_number_of_replicas(5)
         assert 5 == s.get_number_of_replicas()
@@ -115,7 +119,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert 0 == s.get_number_of_replicas()
 
     def test_1120(self):
-        """set_number_of_replicas(0) implicitly sets replication_allowed to False"""
+        """set_number_of_replicas(0) implicitly sets replication_allowed to
+        False."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.set_replication_allowed(True)
         assert s.get_replication_allowed()
@@ -123,7 +128,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert not s.get_replication_allowed()
 
     def test_1130(self):
-        """print_replication_policy() is available and appears to work"""
+        """print_replication_policy() is available and appears to work."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["preferred_mn_1"])
         s.add_preferred(["preferred_mn_2"])
@@ -146,7 +151,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "blocked member nodes" in out
 
     def test_1140(self):
-        """clear() sets everything to default"""
+        """clear() sets everything to default."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["preferred_mn_1"])
         s.add_preferred(["preferred_mn_2"])

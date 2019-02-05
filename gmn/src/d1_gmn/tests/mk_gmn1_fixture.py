@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-"""
+""""""
 
 import subprocess
 import sys
@@ -32,55 +31,46 @@ N_OBJECTS = 200
 
 
 def main():
-  make_db_fixture = MakeDbFixtureGMNv1()
-  make_db_fixture.run()
+    make_db_fixture = MakeDbFixtureGMNv1()
+    make_db_fixture.run()
 
 
 # flake8: noqa: F124
 class MakeDbFixtureGMNv1(d1_test.d1_test_case.D1TestCase):
-  @responses.activate
-  def run(self):
-    print((
-      '# sciobj: {}'.format(
+    @responses.activate
+    def run(self):
+        print(
+            (
+                '# sciobj: {}'.format(
+                    self.run_sql('SELECT count(*) FROM mn_scienceobject;', 'gmn')[0][0]
+                )
+            )
+        )
+
+        self.pg_dump('db_fixture_gmn1_before.gz')
+
+        self.run_sql('delete from mn_eventlog;', 'gmn')
+        self.run_sql('delete from mn_permission;', 'gmn')
+        self.run_sql('delete from mn_systemmetadatarefreshqueue;', 'gmn')
+        pid_list = self.run_sql(
+            'select pid, serial_version from mn_scienceobject order by pid limit %s;',
+            'gmn',
+            N_OBJECTS,
+        )
         self.run_sql(
-          'SELECT count(*) FROM mn_scienceobject;',
-          'gmn',
-        )[0][0]
-      )
-    ))
+            'delete from mn_scienceobject where pid not in %s;',
+            'gmn',
+            tuple([p[0] for p in pid_list]),
+        )
 
-    self.pg_dump('db_fixture_gmn1_before.gz')
+        self.run_sql('analyze')
+        self.run_sql('vacuum full')
 
-    self.run_sql(
-      'delete from mn_eventlog;',
-      'gmn',
-    )
-    self.run_sql(
-      'delete from mn_permission;',
-      'gmn',
-    )
-    self.run_sql(
-      'delete from mn_systemmetadatarefreshqueue;',
-      'gmn',
-    )
-    pid_list = self.run_sql(
-      'select pid, serial_version from mn_scienceobject order by pid limit %s;',
-      'gmn',
-      N_OBJECTS,
-    )
-    self.run_sql(
-      'delete from mn_scienceobject where pid not in %s;', 'gmn',
-      tuple([p[0] for p in pid_list])
-    )
+        self.pg_dump('db_fixture_gmn1.gz')
 
-    self.run_sql('analyze')
-    self.run_sql('vacuum full')
-
-    self.pg_dump('db_fixture_gmn1.gz')
-
-  def pg_dump(self, path):
-    subprocess.check_call(['pg_dump', '--file', path, '--compress', '9', 'gmn'])
+    def pg_dump(self, path):
+        subprocess.check_call(['pg_dump', '--file', path, '--compress', '9', 'gmn'])
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

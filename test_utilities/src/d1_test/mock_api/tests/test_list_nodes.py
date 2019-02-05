@@ -27,11 +27,9 @@ import d1_test.mock_api.list_nodes as list_nodes
 @d1_test.d1_test_case.reproducible_random_decorator('TestMockNodeList')
 @freezegun.freeze_time('1977-01-27')
 class TestMockNodeList(d1_test.d1_test_case.D1TestCase):
-  @responses.activate
-  def test_1000(self, cn_client_v1_v2):
-    """mock_api.listNodes() returns a DataONE ObjectList PyXB object"""
-    list_nodes.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
-    node_list_pyxb = cn_client_v1_v2.listNodes()
-    self.sample.assert_equals(
-      node_list_pyxb, 'mock_list_nodes', cn_client_v1_v2
-    )
+    @responses.activate
+    def test_1000(self, cn_client_v1_v2):
+        """mock_api.listNodes() returns a DataONE ObjectList PyXB object."""
+        list_nodes.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
+        node_list_pyxb = cn_client_v1_v2.listNodes()
+        self.sample.assert_equals(node_list_pyxb, 'mock_list_nodes', cn_client_v1_v2)

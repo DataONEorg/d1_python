@@ -15,7 +15,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test and debug settings for GMN
+"""Test and debug settings for GMN.
+
 - These settings are in effect when GMN is called through unit tests.
 """
 
@@ -24,14 +25,17 @@
 
 import logging
 import warnings
-import d1_common.util
 
 from d1_gmn.app.settings_default import *
 
+import d1_common.util
+
 # When running tests, turn Django's RuntimeWarning into exception
 warnings.filterwarnings(
-  'error', r"DateTimeField .* received a naive datetime", RuntimeWarning,
-  r'django\.db\.models\.fields'
+    'error',
+    r"DateTimeField .* received a naive datetime",
+    RuntimeWarning,
+    r'django\.db\.models\.fields',
 )
 
 DEBUG = True
@@ -72,8 +76,8 @@ PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
-MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
-NUM_CHUNK_BYTES = 1024**2
+MAX_XML_DOCUMENT_SIZE = 10 * 1024 ** 2
+NUM_CHUNK_BYTES = 1024 ** 2
 MAX_SLICE_ITEMS = 5000
 
 # mk_db_fixture:
@@ -88,57 +92,51 @@ MAX_SLICE_ITEMS = 5000
 # databases from template.
 
 DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn_test_db',
-    'USER': '',
-    'PASSWORD': '',
-    'HOST': '',
-    'PORT': '',
-    'ATOMIC_REQUESTS': False,
-    # 'AUTOCOMMIT': False,
-  },
-  'template': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn_test_db_template',
-    'USER': '',
-    'PASSWORD': '',
-    'HOST': '',
-    'PORT': '',
-    'ATOMIC_REQUESTS': False,
-    # 'AUTOCOMMIT': False,
-  },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gmn_test_db',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+        'ATOMIC_REQUESTS': False,
+        # 'AUTOCOMMIT': False,
+    },
+    'template': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gmn_test_db_template',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+        'ATOMIC_REQUESTS': False,
+        # 'AUTOCOMMIT': False,
+    },
 }
 
 STATIC_SERVER = True
 
 # Capture everything that is logged and write it to stdout.
 LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': True,
-  'formatters': {
-    'verbose': {
-      'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
-      'datefmt': '%Y-%m-%d %H:%M:%S'
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
     },
-  },
-  'handlers': {
-    'console': {
-      'class': 'logging.StreamHandler',
-      'formatter': 'verbose',
-      'level': logging.DEBUG,
-      'stream': 'ext://sys.stdout',
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'level': logging.DEBUG,
+            'stream': 'ext://sys.stdout',
+        }
     },
-  },
-  'loggers': {
-    '': {
-      'handlers': ['console'],
-      'level': logging.DEBUG,
-      'propagate': True
+    'loggers': {
+        '': {'handlers': ['console'], 'level': logging.DEBUG, 'propagate': True}
     },
-  }
 }
 
-FIXTURE_DIRS = (
-  d1_common.util.abs_path('./fixtures'),
-)
+FIXTURE_DIRS = (d1_common.util.abs_path('./fixtures'),)

@@ -17,39 +17,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test subject extraction from certificate and SubjectInfo
-"""
+"""Test subject extraction from certificate and SubjectInfo."""
 
 import responses
 
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.tests.gmn_test_case
-import d1_test.d1_test_case
-import d1_test.test_files
 
+import d1_test.d1_test_case
 import d1_test.sample
+import d1_test.test_files
 
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  cert_simple_subject_info_pem = d1_test.test_files.load_cert(
-    'cert_with_simple_subject_info.pem'
-  )
-
-  @responses.activate
-  def test_1000(self):
-    """Extract primary and equivalent subjects from certificate. This does not
-    perform validation
-    """
-    primary_str, equivalent_set = (
-      d1_gmn.app.middleware.session_cert.
-      get_authenticated_subjects(self.cert_simple_subject_info_pem)
+    cert_simple_subject_info_pem = d1_test.test_files.load_cert(
+        'cert_with_simple_subject_info.pem'
     )
-    assert primary_str == \
-      'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
-    assert sorted(equivalent_set) == \
-      [
-        'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
-        'authenticatedUser',
-        'public',
-        'verifiedUser',
-      ]
+
+    @responses.activate
+    def test_1000(self):
+        """Extract primary and equivalent subjects from certificate.
+
+        This does not perform validation
+        """
+        primary_str, equivalent_set = d1_gmn.app.middleware.session_cert.get_authenticated_subjects(
+            self.cert_simple_subject_info_pem
+        )
+        assert primary_str == 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+        assert sorted(equivalent_set) == [
+            'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
+            'authenticatedUser',
+            'public',
+            'verifiedUser',
+        ]

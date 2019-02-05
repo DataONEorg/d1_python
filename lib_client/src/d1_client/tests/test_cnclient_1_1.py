@@ -27,14 +27,14 @@ import d1_test.mock_api.query_engine_description
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestCNClient11')
 class TestCNClient_1_1(d1_test.d1_test_case.D1TestCase):
-  @responses.activate
-  def test_1000(self, cn_client_v1_v2):
-    """CNRead.getQueryEngineDescription: Returns valid QueryEngineDescription
+    @responses.activate
+    def test_1000(self, cn_client_v1_v2):
+        """CNRead.getQueryEngineDescription: Returns valid QueryEngineDescription
     """
-    d1_test.mock_api.query_engine_description.add_callback(
-      d1_test.d1_test_case.MOCK_CN_BASE_URL
-    )
-    qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
-    self.sample.assert_equals(
-      qed_xml, 'get_query_engine_description', cn_client_v1_v2
-    )
+        d1_test.mock_api.query_engine_description.add_callback(
+            d1_test.d1_test_case.MOCK_CN_BASE_URL
+        )
+        qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
+        self.sample.assert_equals(
+            qed_xml, 'get_query_engine_description', cn_client_v1_v2
+        )

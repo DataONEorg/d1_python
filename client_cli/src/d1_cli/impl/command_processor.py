@@ -18,23 +18,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Process and execute CLI operations.
-"""
+"""Process and execute CLI operations."""
 
 import html.entities
 import io
 import os
 import re
 
+import requests
+
 import d1_cli.impl.client
 import d1_cli.impl.exceptions
-import d1_cli.impl.util
 import d1_cli.impl.format_ids
 import d1_cli.impl.nodes
 import d1_cli.impl.operation_maker
 import d1_cli.impl.operation_queue
 import d1_cli.impl.session
-import requests
+import d1_cli.impl.util
 
 import d1_common.const
 import d1_common.date_time
@@ -93,8 +93,7 @@ class CommandProcessor:
                     self._ping_base(mn_base_url)
 
     def search(self, line):
-        """CN search.
-    """
+        """CN search."""
         if self._session.get(d1_cli.impl.session.QUERY_ENGINE_NAME) == "solr":
             return self._search_solr(line)
         raise d1_cli.impl.exceptions.InvalidArguments(
@@ -112,8 +111,7 @@ class CommandProcessor:
         self._output(self._nodes.format(cn_base_url))
 
     def resolve(self, pid):
-        """Get Object Locations for Object.
-    """
+        """Get Object Locations for Object."""
         client = d1_cli.impl.client.CLICNClient(
             **self._cn_client_connect_params_from_session()
         )
@@ -138,8 +136,10 @@ class CommandProcessor:
     # Read operations
 
     def science_object_get(self, pid, path):
-        """First try the MN set in the session. Then try to resolve via the CN set
-    in the session."""
+        """First try the MN set in the session.
+
+        Then try to resolve via the CN set in the session.
+        """
         mn_client = d1_cli.impl.client.CLIMNClient(
             **self._mn_client_connect_params_from_session()
         )
@@ -222,13 +222,11 @@ class CommandProcessor:
     # Write operations (queued)
 
     def science_object_create(self, pid, path, format_id=None):
-        """Create a new Science Object on a Member Node
-    """
+        """Create a new Science Object on a Member Node."""
         self._queue_science_object_create(pid, path, format_id)
 
     def science_object_update(self, pid_old, path, pid_new, format_id=None):
-        """Obsolete a Science Object on a Member Node with a different one.
-    """
+        """Obsolete a Science Object on a Member Node with a different one."""
         self._queue_science_object_update(pid_old, path, pid_new, format_id)
 
     def create_package(self, pids):
@@ -243,7 +241,7 @@ class CommandProcessor:
     #
 
     def _output(self, file_like_object, path=None):
-        """Display or save file like object"""
+        """Display or save file like object."""
         if not path:
             self._output_to_display(file_like_object)
         else:
@@ -289,8 +287,7 @@ class CommandProcessor:
             d1_cli.impl.util.print_error("Did not respond: {}".format(url))
 
     def _search_solr(self, line):
-        """Perform a SOLR search.
-    """
+        """Perform a SOLR search."""
         try:
             query_str = self._create_solr_query(line)
             client = d1_cli.impl.client.CLICNClient(

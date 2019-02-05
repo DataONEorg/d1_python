@@ -19,8 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Classes used for passing exceptions within and between components of the
-DataONE Command Line Client.
-"""
+DataONE Command Line Client."""
 
 
 class InvalidArguments(Exception):

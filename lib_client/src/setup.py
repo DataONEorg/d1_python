@@ -18,45 +18,42 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Client Library package
-"""
+"""DataONE Client Library package."""
 import sys
 
 import setuptools
 
 
 def main():
-  setuptools.setup(
-    name='dataone.libclient',
-    version='3.3.0',
-    description='A DataONE client library for Python',
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=[
-      'dataone.common >= 3.3.0',
-      #
-      'pyxb >= 1.2.6',
-      'requests-toolbelt >= 0.9.1',
-      'requests[security] >= 2.21.0',
-    ],
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords='DataONE client upload download member-node coordinating-node',
-  )
+    setuptools.setup(
+        name='dataone.libclient',
+        version='3.3.0',
+        description='A DataONE client library for Python',
+        author='DataONE Project',
+        author_email='developers@dataone.org',
+        url='https://github.com/DataONEorg/d1_python',
+        license='Apache License, Version 2.0',
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        install_requires=[
+            'dataone.common >= 3.3.0',
+            #
+            'pyxb >= 1.2.6',
+            'requests-toolbelt >= 0.9.1',
+            'requests[security] >= 2.21.0',
+        ],
+        setup_requires=['setuptools_git >= 1.1'],
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Topic :: Scientific/Engineering',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+        ],
+        keywords='DataONE client upload download member-node coordinating-node',
+    )
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

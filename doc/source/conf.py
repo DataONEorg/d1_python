@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sphinx configuration for DataONE Python Products documentation
-"""
+"""Sphinx configuration for DataONE Python Products documentation."""
 import os
 import sys
 

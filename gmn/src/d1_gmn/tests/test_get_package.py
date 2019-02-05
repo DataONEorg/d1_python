@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNPackage.getPackage()
-"""
+"""Test MNPackage.getPackage()"""
 
 import io
 import tempfile
@@ -42,20 +41,19 @@ import d1_test.instance_generator.system_metadata
 
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_0900(self, gmn_client_v2):
-    """MNPackage.getPackage(): Raises NotFound on unknown PID"""
-    with pytest.raises(d1_common.types.exceptions.NotFound):
-      self.call_d1_client(gmn_client_v2.getPackage, 'unknown_ore_pid')
+    @responses.activate
+    def test_0900(self, gmn_client_v2):
+        """MNPackage.getPackage(): Raises NotFound on unknown PID"""
+        with pytest.raises(d1_common.types.exceptions.NotFound):
+            self.call_d1_client(gmn_client_v2.getPackage, 'unknown_ore_pid')
 
-
-  @responses.activate
-  def test_1000(self, gmn_client_v2):
-    """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
-    pid_list = self.create_multiple_objects(gmn_client_v2)
-    ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
-    response = self.call_d1_client(gmn_client_v2.getPackage, ore_pid)
-    with tempfile.NamedTemporaryFile() as tmp_file:
-      tmp_file.write(response.content)
-      tmp_file.seek(0)
-      d1_common.bagit.validate_bagit_file(tmp_file.name)
+    @responses.activate
+    def test_1000(self, gmn_client_v2):
+        """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
+        pid_list = self.create_multiple_objects(gmn_client_v2)
+        ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
+        response = self.call_d1_client(gmn_client_v2.getPackage, ore_pid)
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            tmp_file.write(response.content)
+            tmp_file.seek(0)
+            d1_common.bagit.validate_bagit_file(tmp_file.name)

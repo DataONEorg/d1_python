@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Check that misconfigured settings.py is correctly detected and handled
-"""
+"""Check that misconfigured settings.py is correctly detected and handled."""
 
 import logging
 
@@ -36,87 +35,75 @@ import django.test
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSettings')
 class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def setup_method(self, method):
-    super().setup_method(method)
-    self.s = django.apps.apps.get_app_config('app')
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.s = django.apps.apps.get_app_config('app')
 
-  @django.test.override_settings(
-    CLIENT_CERT_PATH=123,
-  )
-  def test_1000(self):
-    """Setting PATH to number triggers ImproperlyConfigured with expected
-    message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='Setting CLIENT_CERT_PATH must be a string'
-    ):
-      self.s.ready()
+    @django.test.override_settings(CLIENT_CERT_PATH=123)
+    def test_1000(self):
+        """Setting PATH to number triggers ImproperlyConfigured with expected
+        message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='Setting CLIENT_CERT_PATH must be a string',
+        ):
+            self.s.ready()
 
-  @django.test.override_settings(
-    CLIENT_CERT_PATH='/invalid/cert/path',
-  )
-  def test_1010(self):
-    """Setting PATH to non-existing path triggers ImproperlyConfigured with
-    expected message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='If set, setting CLIENT_CERT_PATH must be a path to a readable file'
-    ):
-      self.s.ready()
+    @django.test.override_settings(CLIENT_CERT_PATH='/invalid/cert/path')
+    def test_1010(self):
+        """Setting PATH to non-existing path triggers ImproperlyConfigured with
+        expected message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='If set, setting CLIENT_CERT_PATH must be a path to a readable file',
+        ):
+            self.s.ready()
 
-  @django.test.override_settings(
-    CLIENT_CERT_PATH='/tmp',
-  )
-  def test_1020(self):
-    """Setting PATH to dir path triggers ImproperlyConfigured with
-    expected message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='If set, setting CLIENT_CERT_PATH must be a path to a readable file'
-    ):
-      self.s.ready()
+    @django.test.override_settings(CLIENT_CERT_PATH='/tmp')
+    def test_1020(self):
+        """Setting PATH to dir path triggers ImproperlyConfigured with expected
+        message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='If set, setting CLIENT_CERT_PATH must be a path to a readable file',
+        ):
+            self.s.ready()
 
-  @django.test.override_settings(
-    SCIMETA_VALIDATION_ENABLED=123,
-  )
-  def test_1030(self):
-    """Setting bool to number triggers ImproperlyConfigured with expected
-    message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='Setting SCIMETA_VALIDATION_ENABLED must be True or False'
-    ):
-      self.s.ready()
+    @django.test.override_settings(SCIMETA_VALIDATION_ENABLED=123)
+    def test_1030(self):
+        """Setting bool to number triggers ImproperlyConfigured with expected
+        message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='Setting SCIMETA_VALIDATION_ENABLED must be True or False',
+        ):
+            self.s.ready()
 
-  @django.test.override_settings(
-    SCIMETA_VALIDATION_ENABLED='string should be bool',
-  )
-  def test_1031(self):
-    """Setting bool to string triggers ImproperlyConfigured with expected
-    message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='Setting SCIMETA_VALIDATION_ENABLED must be True or False'
-    ):
-      self.s.ready()
+    @django.test.override_settings(SCIMETA_VALIDATION_ENABLED='string should be bool')
+    def test_1031(self):
+        """Setting bool to string triggers ImproperlyConfigured with expected
+        message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='Setting SCIMETA_VALIDATION_ENABLED must be True or False',
+        ):
+            self.s.ready()
 
-  @django.test.override_settings(
-    SCIMETA_VALIDATION_OVER_SIZE_ACTION=123,
-  )
-  def test_1040(self):
-    """Setting keyword to number triggers ImproperlyConfigured with expected
-    message"""
-    with pytest.raises(
-        django.core.exceptions.ImproperlyConfigured,
-        match='Setting SCIMETA_VALIDATION_OVER_SIZE_ACTION must be "reject" or "accept"'
-    ):
-      self.s.ready()
+    @django.test.override_settings(SCIMETA_VALIDATION_OVER_SIZE_ACTION=123)
+    def test_1040(self):
+        """Setting keyword to number triggers ImproperlyConfigured with
+        expected message."""
+        with pytest.raises(
+            django.core.exceptions.ImproperlyConfigured,
+            match='Setting SCIMETA_VALIDATION_OVER_SIZE_ACTION must be "reject" or "accept"',
+        ):
+            self.s.ready()
 
-  # @django.test.override_settings(DEBUG=True, )
-  def test_1050(self, caplog):
-    """Setting that is unsafe for prod triggers warning"""
-    with caplog.at_level(logging.INFO):
-      self.s.ready()
-    self.sample.assert_equals(
-      d1_test.d1_test_case.get_caplog_text(caplog), 'unsafe_for_prod'
-    )
+    # @django.test.override_settings(DEBUG=True, )
+    def test_1050(self, caplog):
+        """Setting that is unsafe for prod triggers warning."""
+        with caplog.at_level(logging.INFO):
+            self.s.ready()
+        self.sample.assert_equals(
+            d1_test.d1_test_case.get_caplog_text(caplog), 'unsafe_for_prod'
+        )

@@ -17,53 +17,52 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling DataONE environments.
-"""
+"""Utilities for handling DataONE environments."""
 
 import d1_common.const
 
 D1_ENV_DICT = {
-  'prod': {
-    'name': 'Production',
-    'base_url': d1_common.const.URL_DATAONE_ROOT,
-    'host': 'cn.dataone.org',
-    'solr_base': '/cn/v1/query/solr/',
-  },
-  'stage': {
-    'name': 'Stage',
-    'base_url': 'https://cn-stage.test.dataone.org/cn',
-    'host': 'cn-stage.test.dataone.org',
-    'solr_base': '/cn/v1/query/solr/',
-  },
-  'sandbox': {
-    'name': 'Sandbox',
-    'base_url': 'https://cn-sandbox.test.dataone.org/cn',
-    'host': 'cn-sandbox.test.dataone.org',
-    'solr_base': '/cn/v1/query/solr/',
-  },
-  'dev': {
-    'name': 'Development',
-    'base_url': 'https://cn-dev.test.dataone.org/cn',
-    'host': 'cn-dev.test.dataone.org',
-    'solr_base': '/cn/v1/query/solr/',
-  },
+    'prod': {
+        'name': 'Production',
+        'base_url': d1_common.const.URL_DATAONE_ROOT,
+        'host': 'cn.dataone.org',
+        'solr_base': '/cn/v1/query/solr/',
+    },
+    'stage': {
+        'name': 'Stage',
+        'base_url': 'https://cn-stage.test.dataone.org/cn',
+        'host': 'cn-stage.test.dataone.org',
+        'solr_base': '/cn/v1/query/solr/',
+    },
+    'sandbox': {
+        'name': 'Sandbox',
+        'base_url': 'https://cn-sandbox.test.dataone.org/cn',
+        'host': 'cn-sandbox.test.dataone.org',
+        'solr_base': '/cn/v1/query/solr/',
+    },
+    'dev': {
+        'name': 'Development',
+        'base_url': 'https://cn-dev.test.dataone.org/cn',
+        'host': 'cn-dev.test.dataone.org',
+        'solr_base': '/cn/v1/query/solr/',
+    },
 }
 
 
 def get_d1_env_keys():
-  """Get the DataONE env dict keys in preferred order.
+    """Get the DataONE env dict keys in preferred order.
 
-  Returns:
-    list : DataONE env dict keys
-  """
-  # These must match the keys in D1_ENV_DICT.
-  return ['prod', 'stage', 'sandbox', 'dev']
+    Returns:
+      list : DataONE env dict keys
+    """
+    # These must match the keys in D1_ENV_DICT.
+    return ['prod', 'stage', 'sandbox', 'dev']
 
 
 def get_d1_env(k):
-  """Get the values required in order to connect to a DataONE environment.
+    """Get the values required in order to connect to a DataONE environment.
 
-  Returns:
-    dict : Values required in order to connect to a DataONE environment.
-  """
-  return D1_ENV_DICT[k]
+    Returns:
+      dict : Values required in order to connect to a DataONE environment.
+    """
+    return D1_ENV_DICT[k]

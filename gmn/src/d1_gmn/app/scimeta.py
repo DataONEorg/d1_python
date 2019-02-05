@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for Science Metadata
-"""
+"""Utilities for Science Metadata."""
 
 import d1_scimeta.xml_schema
 
@@ -36,59 +35,55 @@ import django.conf
 
 
 def assert_valid(sysmeta_pyxb, sciobj_path):
-  """Validate file at {sciobj_path} against schema selected via formatId and
-  raise InvalidRequest if invalid
+    """Validate file at {sciobj_path} against schema selected via formatId and
+    raise InvalidRequest if invalid.
 
-  Validation is only performed when:
+    Validation is only performed when:
 
-  - SciMeta validation is enabled
-  - and Object size is below size limit for validation
-  - and formatId designates object as a Science Metadata object which is recognized
-    and parsed by DataONE CNs
-  - and XML Schema (XSD) files for formatId are present on local system
-  """
-  if not (
-      _is_validation_enabled() and
-      _is_installed_scimeta_format_id(sysmeta_pyxb)
-  ):
-    return
+    - SciMeta validation is enabled
+    - and Object size is below size limit for validation
+    - and formatId designates object as a Science Metadata object which is recognized
+      and parsed by DataONE CNs
+    - and XML Schema (XSD) files for formatId are present on local system
+    """
+    if not (_is_validation_enabled() and _is_installed_scimeta_format_id(sysmeta_pyxb)):
+        return
 
-  if _is_above_size_limit(sysmeta_pyxb):
-    if _is_action_accept():
-      return
-    else:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, 'Science Metadata file is above size limit for validation and this '
-        'node has been configured to reject unvalidated Science Metadata '
-        'files. For more information, see the SCIMETA_VALIDATE* settings. '
-        'size={} size_limit={}'.format(
-          sysmeta_pyxb.size, django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE
-        )
-      )
+    if _is_above_size_limit(sysmeta_pyxb):
+        if _is_action_accept():
+            return
+        else:
+            raise d1_common.types.exceptions.InvalidRequest(
+                0,
+                'Science Metadata file is above size limit for validation and this '
+                'node has been configured to reject unvalidated Science Metadata '
+                'files. For more information, see the SCIMETA_VALIDATE* settings. '
+                'size={} size_limit={}'.format(
+                    sysmeta_pyxb.size, django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE
+                ),
+            )
 
-  with open(sciobj_path, 'rb') as f:
-    try:
-      d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, f.read())
-    except d1_scimeta.xml_schema.SciMetaValidationError as e:
-      raise d1_common.types.exceptions.InvalidRequest(0, str(e))
+    with open(sciobj_path, 'rb') as f:
+        try:
+            d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, f.read())
+        except d1_scimeta.xml_schema.SciMetaValidationError as e:
+            raise d1_common.types.exceptions.InvalidRequest(0, str(e))
 
 
 def _is_validation_enabled():
-  return django.conf.settings.SCIMETA_VALIDATION_ENABLED
+    return django.conf.settings.SCIMETA_VALIDATION_ENABLED
 
 
 def _is_installed_scimeta_format_id(sysmeta_pyxb):
-  return d1_scimeta.xml_schema.is_installed_scimeta_format_id(
-    sysmeta_pyxb.formatId
-  )
+    return d1_scimeta.xml_schema.is_installed_scimeta_format_id(sysmeta_pyxb.formatId)
 
 
 def _is_above_size_limit(sysmeta_pyxb):
-  return (
-    django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE == -1 or
-    sysmeta_pyxb.size > django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE
-  )
+    return (
+        django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE == -1
+        or sysmeta_pyxb.size > django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE
+    )
 
 
 def _is_action_accept():
-  return django.conf.settings.SCIMETA_VALIDATION_OVER_SIZE_ACTION == 'accept'
+    return django.conf.settings.SCIMETA_VALIDATION_OVER_SIZE_ACTION == 'accept'

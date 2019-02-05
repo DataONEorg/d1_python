@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities shared between components of the DataONE Command Line
-"""
+"""Utilities shared between components of the DataONE Command Line."""
 
 import os
 import shutil
@@ -61,7 +60,7 @@ def confirm(prompt, default="no", allow_blank=False):
 
 
 def output(file_like_object, path, verbose=False):
-    """Display or save file like object"""
+    """Display or save file like object."""
     if not path:
         for line in file_like_object:
             if verbose:
@@ -147,7 +146,6 @@ def print_info(msg):
 
 
 def _print_level(level, msg):
-    """Print the information in Unicode safe manner.
-  """
+    """Print the information in Unicode safe manner."""
     for l in str(msg.rstrip()).split("\n"):
         print("{0:<9s}{1}".format(level, str(l)))

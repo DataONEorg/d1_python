@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random Subject
-"""
+"""Generate random Subject."""
 
 import d1_common.types.dataoneTypes
 
@@ -27,8 +26,8 @@ import d1_test.instance_generator.random_data
 
 
 def generate():
-  return d1_common.types.dataoneTypes.subject(generate_bare())
+    return d1_common.types.dataoneTypes.subject(generate_bare())
 
 
 def generate_bare():
-  return d1_test.instance_generator.random_data.random_lower_ascii(5, 10)
+    return d1_test.instance_generator.random_data.random_lower_ascii(5, 10)

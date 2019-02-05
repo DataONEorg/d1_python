@@ -25,39 +25,35 @@ import d1_test.sample
 
 
 class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
-  def test_1000(self):
-    """trigger_by_status_code(): GET request returns DataONEException XML doc"""
+    def test_1000(self):
+        """trigger_by_status_code(): GET request returns DataONEException XML doc"""
 
-    class FakeRequest:
-      method = 'GET'
+        class FakeRequest:
+            method = 'GET'
 
-    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
-      FakeRequest(), 413
-    )
-    d1_test.sample.assert_equals(
-      exc_response_tup, 'trigger_by_status_code_regular'
-    )
+        exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
+            FakeRequest(), 413
+        )
+        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_status_code_regular')
 
-  def test_1010(self):
-    """trigger_by_status_code(): HEAD request returns DataONEException headers"""
+    def test_1010(self):
+        """trigger_by_status_code(): HEAD request returns DataONEException headers"""
 
-    class FakeRequest:
-      method = 'HEAD'
+        class FakeRequest:
+            method = 'HEAD'
 
-    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
-      FakeRequest(), 413
-    )
-    d1_test.sample.assert_equals(
-      exc_response_tup, 'trigger_by_status_code_head'
-    )
+        exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
+            FakeRequest(), 413
+        )
+        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_status_code_head')
 
-  def test_1020(self):
-    """trigger_by_pid()"""
+    def test_1020(self):
+        """trigger_by_pid()"""
 
-    class FakeRequest:
-      method = 'GET'
+        class FakeRequest:
+            method = 'GET'
 
-    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_pid(
-      FakeRequest, 'trigger_413'
-    )
-    d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_pid')
+        exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_pid(
+            FakeRequest, 'trigger_413'
+        )
+        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_pid')

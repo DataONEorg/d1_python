@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Base resolver
+"""Base resolver.
 
 Abstract Base Class (ABC) for the resolvers.
 
@@ -33,45 +33,45 @@ from d1_onedrive.impl import attributes
 from d1_onedrive.impl import onedrive_exceptions
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 README_FILENAME = 'readme.txt'
 
 
 class Resolver(object):
-  #__metaclass__ = abc.ABCMeta
+    # __metaclass__ = abc.ABCMeta
 
-  def __init__(self, options, object_tree):
-    self._options = options
-    self._object_tree = object_tree
-    self._readme_txt = ''
+    def __init__(self, options, object_tree):
+        self._options = options
+        self._object_tree = object_tree
+        self._readme_txt = ''
 
-  def is_root(self, path):
-    return path == ['', '']
+    def is_root(self, path):
+        return path == ['', '']
 
-  def _is_root(self, path):
-    return not len(path)
+    def _is_root(self, path):
+        return not len(path)
 
-  def _raise_exception_if_empty_directory(self, directory, msg=None):
-    """In hierarchies where ONEDrive dynamically renders directories only after
-    having determined that there are contents for them, an empty directory
-    means that the path is invalid."""
-    if len(directory) <= 2:
-      raise onedrive_exceptions.PathException(msg)
+    def _raise_exception_if_empty_directory(self, directory, msg=None):
+        """In hierarchies where ONEDrive dynamically renders directories only
+        after having determined that there are contents for them, an empty
+        directory means that the path is invalid."""
+        if len(directory) <= 2:
+            raise onedrive_exceptions.PathException(msg)
 
-  def _raise_invalid_pid(self, pid):
-    raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
+    def _raise_invalid_pid(self, pid):
+        raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
 
-  # Readme file.
+    # Readme file.
 
-  def _is_readme_file(self, path):
-    return path and path[0] == README_FILENAME
+    def _is_readme_file(self, path):
+        return path and path[0] == README_FILENAME
 
-  def _get_readme_text(self, size=None, offset=0):
-    return self._readme_txt[offset:offset + size]
+    def _get_readme_text(self, size=None, offset=0):
+        return self._readme_txt[offset : offset + size]
 
-  def _get_readme_file_attributes(self):
-    return attributes.Attributes(size=len(self._readme_txt), is_dir=False)
+    def _get_readme_file_attributes(self):
+        return attributes.Attributes(size=len(self._readme_txt), is_dir=False)
 
-  def _get_readme_filename(self):
-    return README_FILENAME
+    def _get_readme_filename(self):
+        return README_FILENAME

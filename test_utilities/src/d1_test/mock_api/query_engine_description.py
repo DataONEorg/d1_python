@@ -51,38 +51,35 @@ QED_ENDPOINT_RX = r'v([123])/query/solr'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.GET,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, QED_ENDPOINT_RX)),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.GET,
+        re.compile(r'^' + d1_common.url.joinPathElements(base_url, QED_ENDPOINT_RX)),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return regular response
-  version_tag = _parse_url(request.url)
-  if version_tag not in ('v1', 'v2'):
-    assert False, 'Unknown API version. tag="{}"'.format(version_tag)
-  qed_xml_path = d1_common.util.abs_path(
-    os.path.join('type_docs', 'query_engine_description_1_1.xml')
-  )
-  with open(qed_xml_path, 'rb') as f:
-    qed_xml = f.read()
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_XML,
-  }
-  return 200, header_dict, qed_xml
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    # Return regular response
+    version_tag = _parse_url(request.url)
+    if version_tag not in ('v1', 'v2'):
+        assert False, 'Unknown API version. tag="{}"'.format(version_tag)
+    qed_xml_path = d1_common.util.abs_path(
+        os.path.join('type_docs', 'query_engine_description_1_1.xml')
+    )
+    with open(qed_xml_path, 'rb') as f:
+        qed_xml = f.read()
+    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    return 200, header_dict, qed_xml
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, client = (
-    d1_test.mock_api.util.parse_rest_url(url)
-  )
-  return version_tag
+    version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
+        url
+    )
+    return version_tag

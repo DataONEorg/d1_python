@@ -18,57 +18,52 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE developer tools package
-"""
+"""DataONE developer tools package."""
 import sys
 
 import setuptools
 
 
 def main():
-  setuptools.setup(
-    name='dataone.dev',
-    version='3.3.0',
-    description='DataONE developer tools',
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_dev',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    exclude_package_data={
-      '': ['settings.py'],
-    },
-    install_requires=[
-      # These are not yet available when bootstrapping on Travis
-      #'dataone.cli == 2.3.0rc1',
-      #'dataone.common == 2.3.0rc1',
-      #'dataone.libclient == 2.3.0rc1',
-      #
-      # This is a hack to force a version of idna that is compatible with both
-      # asn1crypto and requests. Without this, if asn1crypto is installed first,
-      # it will install idna 2.6, and requests will fails due to the fact that
-      # Python doesn't have a real package manager.
-      'idna == 2.6',
-      #
-      'baron >= 0.9',
-      'pip >= 19.0.1',
-      'redbaron >= 0.9',
-    ],
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords='DataONE python'
-  )
+    setuptools.setup(
+        name='dataone.dev',
+        version='3.3.0',
+        description='DataONE developer tools',
+        author='DataONE Project',
+        author_email='developers@dataone.org',
+        url='https://github.com/DataONEorg/d1_dev',
+        license='Apache License, Version 2.0',
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        exclude_package_data={'': ['settings.py']},
+        install_requires=[
+            # These are not yet available when bootstrapping on Travis
+            #'dataone.cli == 2.3.0rc1',
+            #'dataone.common == 2.3.0rc1',
+            #'dataone.libclient == 2.3.0rc1',
+            #
+            # This is a hack to force a version of idna that is compatible with both
+            # asn1crypto and requests. Without this, if asn1crypto is installed first,
+            # it will install idna 2.6, and requests will fails due to the fact that
+            # Python doesn't have a real package manager.
+            # 'idna == 2.6',
+            #
+            'baron >= 0.9',
+            'pip >= 19.0.1',
+            'redbaron >= 0.9.1',
+        ],
+        setup_requires=['setuptools_git >= 1.1'],
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Topic :: Scientific/Engineering',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+        ],
+        keywords='DataONE python',
+    )
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

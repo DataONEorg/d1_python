@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Command Line Interface
-"""
+"""DataONE Command Line Interface."""
 
 import logging
 import optparse
@@ -29,9 +28,8 @@ import traceback
 import d1_cli.impl.check_dependencies
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
-import d1_cli.impl.util
 import d1_cli.impl.session
-
+import d1_cli.impl.util
 import d1_cli.version
 
 import d1_common.types.exceptions
@@ -432,7 +430,7 @@ def handle_options(cli, options):
 
 def handle_unexpected_exception(max_traceback_levels=100):
     """Suppress stack traces for common errors and provide hints for how to
-  resolve them."""
+    resolve them."""
     exc_type, exc_msgs = sys.exc_info()[:2]
     if exc_type.__name__ == "SSLError":
         d1_cli.impl.util.print_error(

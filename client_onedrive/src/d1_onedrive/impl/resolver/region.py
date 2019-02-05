@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Resolve region
+"""Resolve region.
 
 Resolve a filesystem path pointing into a Region controlled hierarchy.
 """
@@ -41,9 +41,9 @@ from d1_onedrive.impl import util
 # D1
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
-#GAZETTEER_HOST = '192.168.1.116'
+# GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
 README_TXT = """Region Folder
@@ -73,211 +73,212 @@ under New Mexico.
 
 
 class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
-  def __init__(self, options, object_tree):
-    super().__init__(options, object_tree)
-    self._resource_map_resolver = d1_onedrive.impl.resolver.resource_map.Resolver(
-      options, object_tree
-    )
-    self._region_tree_cache = disk_cache.DiskCache(
-      options.region_tree_max_cache_items, options.region_tree_cache_path
-    )
-    self._readme_txt = util.os_format(README_TXT)
-
-  def get_attributes(self, object_tree_folder, path):
-    log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
-
-    return self._get_attributes(object_tree_folder, path)
-
-  def get_directory(self, object_tree_folder, path):
-    log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
-
-    return self._get_directory(object_tree_folder, path)
-
-  def read_file(self, object_tree_folder, path, size, offset):
-    log.debug(
-      'read_file: {}, {}, {}'.
-      format(util.string_from_path_elements(path), size, offset)
-    )
-
-    return self._read_file(object_tree_folder, path, size, offset)
-
-  #
-  # Private.
-  #
-
-  def _get_attributes(self, object_tree_folder, path):
-    if path == ['readme.txt']:
-      return attributes.Attributes(len(self._readme_txt))
-
-    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
-    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
-      merged_region_tree, path
-    )
-    if self._region_tree_item_is_pid(region_tree_item):
-      try:
-        return self._resource_map_resolver.get_attributes(
-          object_tree_folder,
-          [region_tree_item] + unconsumed_path
+    def __init__(self, options, object_tree):
+        super().__init__(options, object_tree)
+        self._resource_map_resolver = d1_onedrive.impl.resolver.resource_map.Resolver(
+            options, object_tree
         )
-      except onedrive_exceptions.NoResultException:
-        pass
-    return attributes.Attributes(0, is_dir=True)
+        self._region_tree_cache = disk_cache.DiskCache(
+            options.region_tree_max_cache_items, options.region_tree_cache_path
+        )
+        self._readme_txt = util.os_format(README_TXT)
 
-  def _get_directory(self, object_tree_folder, path):
-    dir = directory.Directory()
+    def get_attributes(self, object_tree_folder, path):
+        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
 
-    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
+        return self._get_attributes(object_tree_folder, path)
 
-    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
-      merged_region_tree, path
-    )
-    if self._region_tree_item_is_pid(region_tree_item):
-      # If there is an unconsumed path section, the path exits through a valid
-      # PID (any other exit would have raised an exception).
-      #if len(unconsumed_path):
-      return self._resource_map_resolver.get_directory(
-        object_tree_folder,
-        [region_tree_item] + unconsumed_path
-      )
-      #else:
-      #  # The user has attempted to "dir" a PID.
-      #  raise onedrive_exceptions.PathException('not a directory')
+    def get_directory(self, object_tree_folder, path):
+        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
 
-      # The whole path was consumed and a folder within the tree was returned.
-    dir = directory.Directory()
-    #if self._has_readme_entry(path):
-    #  dir.append(self._get_readme_filename())
+        return self._get_directory(object_tree_folder, path)
 
-    for r in region_tree_item:
-      dir.append(r)
+    def read_file(self, object_tree_folder, path, size, offset):
+        log.debug(
+            'read_file: {}, {}, {}'.format(
+                util.string_from_path_elements(path), size, offset
+            )
+        )
 
-    # Add readme.txt to root.
-    if not path:
-      dir.append('readme.txt')
+        return self._read_file(object_tree_folder, path, size, offset)
 
-    return dir
+    #
+    # Private.
+    #
 
-  def _read_file(self, object_tree_folder, path, size, offset):
-    if path == ['readme.txt']:
-      return self._readme_txt[offset:offset + size]
+    def _get_attributes(self, object_tree_folder, path):
+        if path == ['readme.txt']:
+            return attributes.Attributes(len(self._readme_txt))
 
-    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
-    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
-      merged_region_tree, path
-    )
+        merged_region_tree = self._get_merged_region_tree(object_tree_folder)
+        region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+            merged_region_tree, path
+        )
+        if self._region_tree_item_is_pid(region_tree_item):
+            try:
+                return self._resource_map_resolver.get_attributes(
+                    object_tree_folder, [region_tree_item] + unconsumed_path
+                )
+            except onedrive_exceptions.NoResultException:
+                pass
+        return attributes.Attributes(0, is_dir=True)
 
-    if self._region_tree_item_is_pid(region_tree_item):
-      return self._resource_map_resolver.read_file(
-        object_tree_folder,
-        [region_tree_item] + unconsumed_path, size, offset
-      )
+    def _get_directory(self, object_tree_folder, path):
+        dir = directory.Directory()
 
-  def _get_merged_region_tree(self, object_tree_folder):
-    k = self._get_unique_dictionary_key(object_tree_folder)
-    try:
-      return self._region_tree_cache[k]
-    except KeyError:
-      pass
+        merged_region_tree = self._get_merged_region_tree(object_tree_folder)
 
-    geo_records = self._get_records_with_geo_bounding_box(object_tree_folder)
+        region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+            merged_region_tree, path
+        )
+        if self._region_tree_item_is_pid(region_tree_item):
+            # If there is an unconsumed path section, the path exits through a valid
+            # PID (any other exit would have raised an exception).
+            # if len(unconsumed_path):
+            return self._resource_map_resolver.get_directory(
+                object_tree_folder, [region_tree_item] + unconsumed_path
+            )
+            # else:
+            #  # The user has attempted to "dir" a PID.
+            #  raise onedrive_exceptions.PathException('not a directory')
 
-    merged_region_tree = {}
-    for g in geo_records:
-      t = self._get_region_tree_for_geo_record(g)
-      self._merge_region_trees(merged_region_tree, t, g[0])
+            # The whole path was consumed and a folder within the tree was returned.
+        dir = directory.Directory()
+        # if self._has_readme_entry(path):
+        #  dir.append(self._get_readme_filename())
 
-    self._region_tree_cache[k] = merged_region_tree
-    return merged_region_tree
+        for r in region_tree_item:
+            dir.append(r)
 
-  def _get_unique_dictionary_key(self, object_tree_folder):
-    m = hashlib.sha1()
-    for pid in object_tree_folder['items']:
-      m.update(pid)
-    return m.hexdigest()
+        # Add readme.txt to root.
+        if not path:
+            dir.append('readme.txt')
 
-  def _get_region_tree_for_geo_record(self, geo_record):
-    try:
-      c = http.client.HTTPConnection(GAZETTEER_HOST)
-      c.request('GET', '/region_tree/{}/{}/{}/{}'.format(*geo_record[1:]))
-      return json.loads(c.getresponse().read())
-    except (http.client.HTTPException, socket.error):
-      return {'Reverse geocoding failed': {}}
+        return dir
 
-  def _get_records_with_geo_bounding_box(self, object_tree_folder):
-    geo_records = []
-    for pid in object_tree_folder['items']:
-      record = self._object_tree.get_object_record(pid)
-      try:
-        w = record['westBoundCoord']
-        s = record['southBoundCoord']
-        e = record['eastBoundCoord']
-        n = record['northBoundCoord']
-      except KeyError:
-        pass
-      else:
-        geo_records.append((pid, w, s, e, n))
-    return geo_records
+    def _read_file(self, object_tree_folder, path, size, offset):
+        if path == ['readme.txt']:
+            return self._readme_txt[offset : offset + size]
 
-  def _merge_region_trees(self, dst_tree, src_tree, pid):
-    """Merge conflicts occur if a folder in one tree is a file in the other. As
-    the files are PIDs, this can only happen if a PID matches one of the
-    geographical areas that the dataset covers and should be very rare. In such
-    conflicts, the destination wins."""
-    for k, v in list(src_tree.items()):
-      # Prepend an underscore to the administrative area names, to make them
-      # sort separately from the identifiers.
-      #k = '_' + k
-      if k not in dst_tree or dst_tree[k] is None:
-        dst_tree[k] = {}
-      dst_tree[k][pid] = None
-      if v is not None:
-        self._merge_region_trees(dst_tree[k], v, pid)
+        merged_region_tree = self._get_merged_region_tree(object_tree_folder)
+        region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+            merged_region_tree, path
+        )
 
-  def _get_region_tree_item_and_unconsumed_path(
-      self, region_tree, path, parent_key=''
-  ):
-    """Return the region_tree item specified by path. An item can be a a folder
-    (represented by a dictionary) or a PID (represented by None).
+        if self._region_tree_item_is_pid(region_tree_item):
+            return self._resource_map_resolver.read_file(
+                object_tree_folder, [region_tree_item] + unconsumed_path, size, offset
+            )
 
-    This function is also used for determining which section of a path is within
-    the region tree and which section should be passed to the next resolver. To
-    support this, the logic is as follows:
+    def _get_merged_region_tree(self, object_tree_folder):
+        k = self._get_unique_dictionary_key(object_tree_folder)
+        try:
+            return self._region_tree_cache[k]
+        except KeyError:
+            pass
 
-    - If the path points to an item in the region tree, the item is returned and
-      the path, having been fully consumed, is returned as an empty list.
+        geo_records = self._get_records_with_geo_bounding_box(object_tree_folder)
 
-    - If the path exits through a valid PID in the region tree, the PID is
-      returned for the item and the section of the path that was not consumed
-      within the region tree is returned.
+        merged_region_tree = {}
+        for g in geo_records:
+            t = self._get_region_tree_for_geo_record(g)
+            self._merge_region_trees(merged_region_tree, t, g[0])
 
-    - If the path exits through a valid folder in the region tree, an "invalid
-      path" PathException is raised. This is because only the PIDs are valid
-      "exit points" in the tree.
+        self._region_tree_cache[k] = merged_region_tree
+        return merged_region_tree
 
-    - If the path goes to an invalid location within the region tree, an
-      "invalid path" PathException is raised.
-    """
-    # Handle valid item within region tree.
-    if not path:
-      if region_tree is None:
-        return parent_key, []
-      else:
-        return region_tree, []
-    # Handle valid exit through PID.
-    if region_tree is None:
-      return parent_key, path
-    # Handle next level in path.
-    if path[0] in list(region_tree.keys()):
-      return self._get_region_tree_item_and_unconsumed_path(
-        region_tree[path[0]], path[1:], path[0]
-      )
-    else:
-      raise onedrive_exceptions.PathException('Invalid path')
+    def _get_unique_dictionary_key(self, object_tree_folder):
+        m = hashlib.sha1()
+        for pid in object_tree_folder['items']:
+            m.update(pid)
+        return m.hexdigest()
 
-    #if path[0] in region_tree.keys():
-    #  if region_tree[path[0]] is None:
-    #    return [path[0]], path
-    #  else:
+    def _get_region_tree_for_geo_record(self, geo_record):
+        try:
+            c = http.client.HTTPConnection(GAZETTEER_HOST)
+            c.request('GET', '/region_tree/{}/{}/{}/{}'.format(*geo_record[1:]))
+            return json.loads(c.getresponse().read())
+        except (http.client.HTTPException, socket.error):
+            return {'Reverse geocoding failed': {}}
 
-  def _region_tree_item_is_pid(self, region_tree_item):
-    return isinstance(region_tree_item, str)
+    def _get_records_with_geo_bounding_box(self, object_tree_folder):
+        geo_records = []
+        for pid in object_tree_folder['items']:
+            record = self._object_tree.get_object_record(pid)
+            try:
+                w = record['westBoundCoord']
+                s = record['southBoundCoord']
+                e = record['eastBoundCoord']
+                n = record['northBoundCoord']
+            except KeyError:
+                pass
+            else:
+                geo_records.append((pid, w, s, e, n))
+        return geo_records
+
+    def _merge_region_trees(self, dst_tree, src_tree, pid):
+        """Merge conflicts occur if a folder in one tree is a file in the
+        other.
+
+        As the files are PIDs, this can only happen if a PID matches one
+        of the geographical areas that the dataset covers and should be
+        very rare. In such conflicts, the destination wins.
+        """
+        for k, v in list(src_tree.items()):
+            # Prepend an underscore to the administrative area names, to make them
+            # sort separately from the identifiers.
+            # k = '_' + k
+            if k not in dst_tree or dst_tree[k] is None:
+                dst_tree[k] = {}
+            dst_tree[k][pid] = None
+            if v is not None:
+                self._merge_region_trees(dst_tree[k], v, pid)
+
+    def _get_region_tree_item_and_unconsumed_path(
+        self, region_tree, path, parent_key=''
+    ):
+        """Return the region_tree item specified by path. An item can be a a
+        folder (represented by a dictionary) or a PID (represented by None).
+
+        This function is also used for determining which section of a path is within
+        the region tree and which section should be passed to the next resolver. To
+        support this, the logic is as follows:
+
+        - If the path points to an item in the region tree, the item is returned and
+          the path, having been fully consumed, is returned as an empty list.
+
+        - If the path exits through a valid PID in the region tree, the PID is
+          returned for the item and the section of the path that was not consumed
+          within the region tree is returned.
+
+        - If the path exits through a valid folder in the region tree, an "invalid
+          path" PathException is raised. This is because only the PIDs are valid
+          "exit points" in the tree.
+
+        - If the path goes to an invalid location within the region tree, an
+          "invalid path" PathException is raised.
+        """
+        # Handle valid item within region tree.
+        if not path:
+            if region_tree is None:
+                return parent_key, []
+            else:
+                return region_tree, []
+        # Handle valid exit through PID.
+        if region_tree is None:
+            return parent_key, path
+        # Handle next level in path.
+        if path[0] in list(region_tree.keys()):
+            return self._get_region_tree_item_and_unconsumed_path(
+                region_tree[path[0]], path[1:], path[0]
+            )
+        else:
+            raise onedrive_exceptions.PathException('Invalid path')
+
+        # if path[0] in region_tree.keys():
+        #  if region_tree[path[0]] is None:
+        #    return [path[0]], path
+        #  else:
+
+    def _region_tree_item_is_pid(self, region_tree_item):
+        return isinstance(region_tree_item, str)

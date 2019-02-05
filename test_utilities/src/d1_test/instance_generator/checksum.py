@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random Checksum
-"""
+"""Generate random Checksum."""
 
 import random
 
@@ -32,14 +31,15 @@ import d1_test.instance_generator.random_data
 
 
 def random_checksum_algorithm():
-  return random.choice(
-    sorted(d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
-  )
+    return random.choice(
+        sorted(d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
+    )
 
 
 def generate():
-  """Generate a Checksum object for a random string, using random algorithm."""
-  return d1_common.checksum.create_checksum_object_from_bytes(
-    d1_test.instance_generator.random_data.random_bytes(10),
-    random_checksum_algorithm(),
-  )
+    """Generate a Checksum object for a random string, using random
+    algorithm."""
+    return d1_common.checksum.create_checksum_object_from_bytes(
+        d1_test.instance_generator.random_data.random_bytes(10),
+        random_checksum_algorithm(),
+    )

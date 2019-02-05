@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate PyXB binding classes from schemas
-"""
+"""Generate PyXB binding classes from schemas."""
 
 import optparse
 import os
@@ -27,167 +26,167 @@ import sys
 
 
 def main():
-  """
+    """"""
+    # Command line options.
+    parser = optparse.OptionParser()
+    parser.add_option(
+        '--schemas',
+        dest='schema_dir',
+        action='store',
+        type='string',
+        default='./d1_common/types/schemas',
+    )
+    parser.add_option(
+        '--pyxb_binding',
+        dest='binding_dir',
+        action='store',
+        type='string',
+        default='./d1_common/types/generated',
+    )
 
-  """
-  # Command line options.
-  parser = optparse.OptionParser()
-  parser.add_option(
-    '--schemas', dest='schema_dir', action='store', type='string',
-    default='./d1_common/types/schemas'
-  )
-  parser.add_option(
-    '--pyxb_binding', dest='binding_dir', action='store', type='string',
-    default='./d1_common/types/generated'
-  )
+    (options, args) = parser.parse_args()
 
-  (options, args) = parser.parse_args()
+    if not os.path.exists(options.schema_dir):
+        print('Could not find the schema folder: {}'.format(options.schema_dir))
+        print('This script should be run from ./lib_common/src')
+        exit()
 
-  if not os.path.exists(options.schema_dir):
-    print('Could not find the schema folder: {}'.format(options.schema_dir))
-    print('This script should be run from ./lib_common/src')
-    exit()
+    if not os.path.exists(options.binding_dir):
+        print(
+            (
+                'Could not find thePyXB bindingdestination folder: {}'.format(
+                    options.schema_dir
+                )
+            )
+        )
+        print('This script should be run from ./lib_common/src')
+        exit()
 
-  if not os.path.exists(options.binding_dir):
-    print((
-      'Could not find thePyXB bindingdestination folder: {}'.
-      format(options.schema_dir)
-    ))
-    print('This script should be run from ./lib_common/src')
-    exit()
+    g = GenerateBindings(options.schema_dir, options.binding_dir)
 
-  g = GenerateBindings(options.schema_dir, options.binding_dir)
+    # GeneratePyXB bindingfor 1.0. Also create a types archive for use by the the
+    # 1.1 pyxb_binding.
+    g.generate_pyxb_binding(
+        [
+            '--schema-location=dataoneTypes.xsd',
+            '--module=dataoneTypes_v1',
+            '--archive-to-file dataoneTypes.wxs',
+            '--schema-stripped-prefix='
+            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_V1/\'',
+        ]
+    )
 
-  # GeneratePyXB bindingfor 1.0. Also create a types archive for use by the the
-  # 1.1 pyxb_binding.
-  g.generate_pyxb_binding([
-    '--schema-location=dataoneTypes.xsd',
-    '--module=dataoneTypes_v1',
-    '--archive-to-file dataoneTypes.wxs',
-    '--schema-stripped-prefix='
-    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_V1/\'',
-  ])
+    # Generate additionalPyXB bindingfor 1.1. Pull 1.0 dependencies from archive.
+    g.generate_pyxb_binding(
+        [
+            '--schema-location=dataoneTypes_v1.1.xsd',
+            '--module=dataoneTypes_v1_1',
+            '--archive-path .:+',
+            '--schema-stripped-prefix='
+            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+        ]
+    )
 
-  # Generate additionalPyXB bindingfor 1.1. Pull 1.0 dependencies from archive.
-  g.generate_pyxb_binding([
-    '--schema-location=dataoneTypes_v1.1.xsd',
-    '--module=dataoneTypes_v1_1',
-    '--archive-path .:+',
-    '--schema-stripped-prefix='
-    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
-  ])
+    # Generate additionalPyXB bindingfor 2.0. Pull 1.1 dependencies from archive.
+    g.generate_pyxb_binding(
+        [
+            '--schema-location=dataoneTypes_v2.0.xsd',
+            '--module=dataoneTypes_v2_0',
+            '--archive-path .:+',
+            '--schema-stripped-prefix='
+            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
+        ]
+    )
 
-  # Generate additionalPyXB bindingfor 2.0. Pull 1.1 dependencies from archive.
-  g.generate_pyxb_binding([
-    '--schema-location=dataoneTypes_v2.0.xsd',
-    '--module=dataoneTypes_v2_0',
-    '--archive-path .:+',
-    '--schema-stripped-prefix='
-    '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
-  ])
+    # g.generate_pyxb_binding([
+    #  '--schema-location=dataoneErrors.xsd',
+    #  '--module=dataoneErrors',
+    #  '--archive-path .:+',
+    #  '--schema-stripped-prefix='
+    #   '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
+    # ])
 
-  # g.generate_pyxb_binding([
-  #  '--schema-location=dataoneErrors.xsd',
-  #  '--module=dataoneErrors',
-  #  '--archive-path .:+',
-  #  '--schema-stripped-prefix='
-  #   '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
-  # ])
-
-  # GeneratePyXB bindingfor the exception types.
-  g.generate_pyxb_binding([
-    '--schema-location=dataoneErrors.xsd',
-    '--module=dataoneErrors',
-  ])
+    # GeneratePyXB bindingfor the exception types.
+    g.generate_pyxb_binding(
+        ['--schema-location=dataoneErrors.xsd', '--module=dataoneErrors']
+    )
 
 
 # Generate version text files for the pyxb_binding, using the Subversion
 # revision numbers from the schema files.
-#g = GenerateVersionFile(options.schema_dir, options.binding_dir)
-#g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
-#g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
-#g.generate_version_file('dataoneTypes_v2.0.xsd', 'dataoneTypes_2_0')
-#g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
+# g = GenerateVersionFile(options.schema_dir, options.binding_dir)
+# g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
+# g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
+# g.generate_version_file('dataoneTypes_v2.0.xsd', 'dataoneTypes_2_0')
+# g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
 
-#===============================================================================
+# ===============================================================================
 
 
 class GenerateBindings(object):
-  """
+    """"""
 
-  """
-  def __init__(self, schema_dir, binding_dir):
-    self.schema_dir = schema_dir
-    self.binding_dir = binding_dir
+    def __init__(self, schema_dir, binding_dir):
+        self.schema_dir = schema_dir
+        self.binding_dir = binding_dir
 
-  def generate_pyxb_binding(self, args):
-    """
+    def generate_pyxb_binding(self, args):
+        """Args:
 
-    Args:
-      args:
-    """
-    pyxbgen_args = []
-    pyxbgen_args.append('--schema-root=\'{}\''.format(self.schema_dir))
-    pyxbgen_args.append('--binding-root=\'{}\''.format(self.binding_dir))
-    pyxbgen_args.append(
-      '--schema-stripped-prefix='
-      '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\''
-    )
-    pyxbgen_args.extend(args)
+        args:
+        """
+        pyxbgen_args = []
+        pyxbgen_args.append('--schema-root=\'{}\''.format(self.schema_dir))
+        pyxbgen_args.append('--binding-root=\'{}\''.format(self.binding_dir))
+        pyxbgen_args.append(
+            '--schema-stripped-prefix='
+            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\''
+        )
+        pyxbgen_args.extend(args)
 
-    self.run_pyxbgen(pyxbgen_args)
+        self.run_pyxbgen(pyxbgen_args)
 
-  def run_pyxbgen(self, args):
-    """
+    def run_pyxbgen(self, args):
+        """Args:
 
-    Args:
-      args:
-    """
-    cmd = 'pyxbgen {}'.format(' '.join(args))
-    print(cmd)
-    os.system(cmd)
+        args:
+        """
+        cmd = 'pyxbgen {}'.format(' '.join(args))
+        print(cmd)
+        os.system(cmd)
 
 
-#===============================================================================
+# ===============================================================================
 
 
 class GenerateVersionFile(object):
-  """
+    """"""
 
-  """
-  def __init__(self, schema_dir, binding_dir):
-    self.schema_dir = schema_dir
-    self.binding_dir = binding_dir
+    def __init__(self, schema_dir, binding_dir):
+        self.schema_dir = schema_dir
+        self.binding_dir = binding_dir
 
-  def generate_version_file(self, schema_filename, binding_filename):
-    """Given a DataONE schema, generates a file that contains version
-    information about the schema.
-    """
-    version_filename = binding_filename + '_version.txt'
-    version_path = os.path.join(self.binding_dir, version_filename)
-    schema_path = os.path.join(self.schema_dir, schema_filename)
-    try:
-      tstamp, svnpath, svnrev, version = self.get_version_info_from_svn(
-        schema_path
-      )
-    except TypeError:
-      pass
-    else:
-      self.write_version_file(version_path, tstamp, svnpath, svnrev, version)
+    def generate_version_file(self, schema_filename, binding_filename):
+        """Given a DataONE schema, generates a file that contains version
+        information about the schema."""
+        version_filename = binding_filename + '_version.txt'
+        version_path = os.path.join(self.binding_dir, version_filename)
+        schema_path = os.path.join(self.schema_dir, schema_filename)
+        try:
+            tstamp, svnpath, svnrev, version = self.get_version_info_from_svn(
+                schema_path
+            )
+        except TypeError:
+            pass
+        else:
+            self.write_version_file(version_path, tstamp, svnpath, svnrev, version)
 
-  def write_version_file(
-      self, version_file_path, tstamp, svnpath, svnrev, version
-  ):
-    """
+    def write_version_file(self, version_file_path, tstamp, svnpath, svnrev, version):
+        """Args:
 
-    Args:
-      version_file_path:
-      tstamp:
-      svnpath:
-      svnrev:
-      version:
-    """
-    txt = """# This file is automatically generated. Manual edits will be erased.
+        version_file_path: tstamp: svnpath: svnrev: version:
+        """
+        txt = """# This file is automatically generated. Manual edits will be erased.
 
 # When this file was generated
 TIMESTAMP="{}"
@@ -200,11 +199,13 @@ SVNREVISION="{2}"
 
 # The version tag of the schema
 VERSION="{3}"
-""".format(tstamp, svnpath, svnrev, version)
+""".format(
+            tstamp, svnpath, svnrev, version
+        )
 
-    with open(version_file_path, 'w') as f:
-      f.write(txt)
+        with open(version_file_path, 'w') as f:
+            f.write(txt)
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

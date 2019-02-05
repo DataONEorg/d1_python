@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNRead.describe()
-"""
+"""Test MNRead.describe()"""
 
 import responses
 
@@ -27,16 +26,16 @@ import d1_gmn.tests.gmn_test_case
 
 
 class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_1000(self, gmn_client_v1_v2):
-    """MNStorage.describe(): Returns valid header for valid object"""
+    @responses.activate
+    def test_1000(self, gmn_client_v1_v2):
+        """MNStorage.describe(): Returns valid header for valid object"""
 
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-        gmn_client_v1_v2, sid=True
-      )
-      info = gmn_client_v1_v2.describe(pid)
-      assert 'dataone-formatid' in info
-      assert 'content-length' in info
-      assert 'last-modified' in info
-      assert 'dataone-checksum' in info
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+                gmn_client_v1_v2, sid=True
+            )
+            info = gmn_client_v1_v2.describe(pid)
+            assert 'dataone-formatid' in info
+            assert 'content-length' in info
+            assert 'last-modified' in info
+            assert 'dataone-checksum' in info

@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Create and manipulate replication policies.
-"""
+"""Create and manipulate replication policies."""
 
 import d1_cli.impl.exceptions
 import d1_cli.impl.util

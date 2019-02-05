@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random formatId
-"""
+"""Generate random formatId."""
 
 import random
 
@@ -31,23 +30,25 @@ import d1_test.test_files
 
 
 class Generate(object):
-  def __init__(self):
-    self._format_id_list = None
+    def __init__(self):
+        self._format_id_list = None
 
-  def __call__(self):
-    if self._format_id_list is None:
-      format_id_set = {
-        o.formatId
-        for o in d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml').objectFormat
-      }
-      # Remove the formatIds for object types that are parsed by GMN
-      format_id_set.remove(d1_common.const.ORE_FORMAT_ID)
-      format_id_set -= set(
-        d1_test.test_files.load_json('scimeta_format_id_list.json')
-      )
-      self._format_id_list = sorted(format_id_set)
+    def __call__(self):
+        if self._format_id_list is None:
+            format_id_set = {
+                o.formatId
+                for o in d1_test.test_files.load_xml_to_pyxb(
+                    'objectFormatList_v2_0.xml'
+                ).objectFormat
+            }
+            # Remove the formatIds for object types that are parsed by GMN
+            format_id_set.remove(d1_common.const.ORE_FORMAT_ID)
+            format_id_set -= set(
+                d1_test.test_files.load_json('scimeta_format_id_list.json')
+            )
+            self._format_id_list = sorted(format_id_set)
 
-    return random.choice(self._format_id_list)
+        return random.choice(self._format_id_list)
 
 
 generate = Generate()

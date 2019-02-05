@@ -18,35 +18,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Type that gets raised as exception for invalid paths
-"""
+"""Type that gets raised as exception for invalid paths."""
 
 import inspect
 import logging
 
 log = logging.getLogger(__name__)
 
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 
 class PathException(Exception):
-  def __init__(self, message):
-    Exception.__init__(self, message)
-    trace = ', '.join(
-      ['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
-    )
-    log.debug('PathException("{}"): {}'.format(message, trace))
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        trace = ', '.join(['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+        log.debug('PathException("{}"): {}'.format(message, trace))
 
 
 class ONEDriveException(Exception):
-  def __init__(self, message):
-    Exception.__init__(self, message)
-    trace = ', '.join(
-      ['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]]
-    )
-    log.debug('ONEDriveException("{}"): {}'.format(message, trace))
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        trace = ', '.join(['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+        log.debug('ONEDriveException("{}"): {}'.format(message, trace))
 
 
 class NoResultException(Exception):
-  def __init__(self, message=""):
-    Exception.__init__(self, message)
+    def __init__(self, message=""):
+        Exception.__init__(self, message)

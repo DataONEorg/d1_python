@@ -18,19 +18,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test CLI utilities
-"""
+"""Test CLI utilities."""
 
 import io
 import tempfile
 
-import d1_cli.impl.command_parser
-import d1_cli.impl.client
-import d1_cli.impl.exceptions
-import d1_cli.impl.util
-import d1_cli.impl.operation_validator
 import pytest
 import responses
+
+import d1_cli.impl.client
+import d1_cli.impl.command_parser
+import d1_cli.impl.exceptions
+import d1_cli.impl.operation_validator
+import d1_cli.impl.util
 
 import d1_test.d1_test_case
 import d1_test.mock_api.get as mock_get

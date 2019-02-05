@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test handling of Unicode in D1 REST URLs and type elements
-"""
+"""Test handling of Unicode in D1 REST URLs and type elements."""
 
 import logging
 
@@ -34,19 +33,19 @@ import d1_test.test_files
 
 
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_1000(self, gmn_client_v1_v2, tricky_identifier_tup):
-    """Unicode: GMN and libraries handle Unicode correctly"""
-    unicode_pid = tricky_identifier_tup[0]
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      logging.debug('Testing PID: {}'.format(unicode_pid))
-      pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
-        gmn_client_v1_v2, pid=unicode_pid, sid=True
-      )
-      recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
-      assert d1_common.system_metadata.are_equivalent_pyxb(
-        send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
-      )
-      assert pid == unicode_pid
-      assert recv_sysmeta_pyxb.identifier.value() == unicode_pid
-      gmn_client_v1_v2.delete(pid)
+    @responses.activate
+    def test_1000(self, gmn_client_v1_v2, tricky_identifier_tup):
+        """Unicode: GMN and libraries handle Unicode correctly"""
+        unicode_pid = tricky_identifier_tup[0]
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            logging.debug('Testing PID: {}'.format(unicode_pid))
+            pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
+                gmn_client_v1_v2, pid=unicode_pid, sid=True
+            )
+            recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
+            assert d1_common.system_metadata.are_equivalent_pyxb(
+                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
+            )
+            assert pid == unicode_pid
+            assert recv_sysmeta_pyxb.identifier.value() == unicode_pid
+            gmn_client_v1_v2.delete(pid)

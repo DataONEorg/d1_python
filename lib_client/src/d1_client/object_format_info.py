@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Map DataONE ObjectFormatIDs to Content-Type and filename extension
+"""Map DataONE ObjectFormatIDs to Content-Type and filename extension.
 
 mappings are provided in a CSV file. Raises KeyError for unknown values.
 """
@@ -34,62 +34,63 @@ MIME_MAPPINGS_CSV_PATH = d1_common.util.abs_path('mime_mappings.csv')
 
 
 class Singleton(object):
-  _instances = {}
+    _instances = {}
 
-  def __new__(class_, *args, **kwargs):
-    if class_ not in class_._instances:
-      class_._instances[class_] = super(Singleton, class_)\
-        .__new__(class_)
-    return class_._instances[class_]
+    def __new__(class_, *args, **kwargs):
+        if class_ not in class_._instances:
+            class_._instances[class_] = super(Singleton, class_).__new__(class_)
+        return class_._instances[class_]
 
 
-#===============================================================================
+# ===============================================================================
 
 
 class ObjectFormatInfo(Singleton):
-  """Map DataONE ObjectFormatIDs to mimetype and filename extension.
+    """Map DataONE ObjectFormatIDs to mimetype and filename extension.
 
-  As part of the metadata for a science object, DataONE stores a type identifier called
-  an Object Format ID. Many client utilities need a mimetype to determine how to process
-  or display the object and/or a filename extension for use when saving the object to a
-  local file. This module provides convenient functions for performing such mappings.
+    As part of the metadata for a science object, DataONE stores a type identifier called
+    an Object Format ID. Many client utilities need a mimetype to determine how to process
+    or display the object and/or a filename extension for use when saving the object to a
+    local file. This module provides convenient functions for performing such mappings.
 
-  By default, ObjectFormatInfo uses DataONE's standard table of mappings. If desired, a
-  custom table can be provided.
-  """
-  def __init__(self, csv_file=None):
-    """``csv_file`` is a file like object containing comma separate values (CSV)
+    By default, ObjectFormatInfo uses DataONE's standard table of mappings. If desired, a
+    custom table can be provided.
     """
-    if csv_file is None:
-      self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')
-    else:
-      self.csv_file = csv_file
-    self.read_csv_file()
 
-  def content_type_from_format_id(self, format_id):
-    return self.format_id_map[format_id][0]
+    def __init__(self, csv_file=None):
+        """``csv_file`` is a file like object containing comma separate values
+        (CSV)"""
+        if csv_file is None:
+            self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')
+        else:
+            self.csv_file = csv_file
+        self.read_csv_file()
 
-  def filename_extension_from_format_id(self, format_id):
-    return self.format_id_map[format_id][1]
+    def content_type_from_format_id(self, format_id):
+        return self.format_id_map[format_id][0]
 
-  def read_csv_file(self, csv_file=None):
-    """Reinitialize the map from a csv file like object"""
-    if csv_file is not None:
-      self.csv_file = csv_file
-    self._read_format_id_map_from_file()
+    def filename_extension_from_format_id(self, format_id):
+        return self.format_id_map[format_id][1]
 
-  #
-  # Private.
-  #
+    def read_csv_file(self, csv_file=None):
+        """Reinitialize the map from a csv file like object."""
+        if csv_file is not None:
+            self.csv_file = csv_file
+        self._read_format_id_map_from_file()
 
-  def _read_format_id_map_from_file(self):
-    self.csv_file.seek(0)
-    csv_reader = csv.reader(self.csv_file)
-    r = None
-    try:
-      self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
-    except (csv.Error, Exception) as e:
-      raise Exception(
-        'Error in csv file. row="{}" line={} error={}'.
-        format(r, csv_reader.line_num, str(e))
-      )
+    #
+    # Private.
+    #
+
+    def _read_format_id_map_from_file(self):
+        self.csv_file.seek(0)
+        csv_reader = csv.reader(self.csv_file)
+        r = None
+        try:
+            self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
+        except (csv.Error, Exception) as e:
+            raise Exception(
+                'Error in csv file. row="{}" line={} error={}'.format(
+                    r, csv_reader.line_num, str(e)
+                )
+            )

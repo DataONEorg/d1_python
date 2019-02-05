@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.synchronizationFailed()
-"""
+"""Test MNStorage.synchronizationFailed()"""
 
 import pytest
 import responses
@@ -35,55 +34,53 @@ import d1_test.instance_generator.identifier
 
 
 class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_1000(self):
-    """MNRead.synchronizationFailed() with valid error returns 200 OK"""
+    @responses.activate
+    def test_1000(self):
+        """MNRead.synchronizationFailed() with valid error returns 200 OK."""
 
-    def test(client):
-      # This test does not test if GMN actually does anything with the message
-      # passed to the synchronizationFailed() method. There is currently no way
-      # for the test to reach that information.
-      pid = d1_test.instance_generator.identifier.generate_pid()
-      msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
-      exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-      client.synchronizationFailed(exception)
+        def test(client):
+            # This test does not test if GMN actually does anything with the message
+            # passed to the synchronizationFailed() method. There is currently no way
+            # for the test to reach that information.
+            pid = d1_test.instance_generator.identifier.generate_pid()
+            msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+            exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
+            client.synchronizationFailed(exception)
 
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      test(self.client_v1)
-      test(self.client_v2)
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            test(self.client_v1)
+            test(self.client_v2)
 
-  @responses.activate
-  def test_1010(self):
-    """MNRead.synchronizationFailed() from untrusted subject raises
-    NotAuthorized
-    """
+    @responses.activate
+    def test_1010(self):
+        """MNRead.synchronizationFailed() from untrusted subject raises
+        NotAuthorized."""
 
-    def test(client):
-      pid = d1_test.instance_generator.identifier.generate_pid()
-      msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
-      exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-      with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'],
-                                                  ['trusted_subj']):
-        with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-          client.synchronizationFailed(exception)
+        def test(client):
+            pid = d1_test.instance_generator.identifier.generate_pid()
+            msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+            exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
+            with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
+                with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+                    client.synchronizationFailed(exception)
 
-    test(self.client_v1)
-    test(self.client_v2)
+        test(self.client_v1)
+        test(self.client_v2)
 
-  @responses.activate
-  def test_1020(self):
-    """MNRead.synchronizationFailed() with invalid XML document returns 200
-    OK"""
+    @responses.activate
+    def test_1020(self):
+        """MNRead.synchronizationFailed() with invalid XML document returns 200
+        OK."""
 
-    def test(client):
-      # noinspection PyClassHasNoInit
-      class InvalidException(Exception):
-        def encode(self, *a, **b):
-          return b'INVALID SERIALIZED DATAONE EXCEPTION'
+        def test(client):
+            # noinspection PyClassHasNoInit
+            class InvalidException(Exception):
+                def encode(self, *a, **b):
+                    return b'INVALID SERIALIZED DATAONE EXCEPTION'
 
-      with d1_gmn.tests.gmn_mock.disable_auth():
-        result_bool = client.synchronizationFailed(InvalidException())
-        assert result_bool
+            with d1_gmn.tests.gmn_mock.disable_auth():
+                result_bool = client.synchronizationFailed(InvalidException())
+                assert result_bool
 
-    test(self.client_v1)
-    test(self.client_v2)
+        test(self.client_v1)
+        test(self.client_v2)

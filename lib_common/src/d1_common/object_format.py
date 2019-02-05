@@ -17,11 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling the DataONE ObjectFormat and ObjectFormatList types
-"""
+"""Utilities for handling the DataONE ObjectFormat and ObjectFormatList
+types."""
+
 
 def pyxb_to_dict(object_format_list_pyxb):
-  """
+    """
   Returns:
      dict : Representation of ``object_format_list_pyxb``, keyed on ``formatId``.
 
@@ -47,19 +48,16 @@ def pyxb_to_dict(object_format_list_pyxb):
         },
     }
   """
-  f_dict = {}
-  for f_pyxb in object_format_list_pyxb.objectFormat:
-    d_dict = {
-      'format_name': f_pyxb.formatName,
-      'format_type': f_pyxb.formatType,
-    }
-    if getattr(f_pyxb, 'extension', False):
-      d_dict['extension'] = f_pyxb.extension
-    if getattr(f_pyxb, 'mediaType', False):
-      d_dict['media_type'] = {
-        'name': f_pyxb.mediaType.name,
-        'property_list': [p for p in f_pyxb.mediaType.property_],
-      }
-    f_dict[f_pyxb.formatId] = d_dict
+    f_dict = {}
+    for f_pyxb in object_format_list_pyxb.objectFormat:
+        d_dict = {'format_name': f_pyxb.formatName, 'format_type': f_pyxb.formatType}
+        if getattr(f_pyxb, 'extension', False):
+            d_dict['extension'] = f_pyxb.extension
+        if getattr(f_pyxb, 'mediaType', False):
+            d_dict['media_type'] = {
+                'name': f_pyxb.mediaType.name,
+                'property_list': [p for p in f_pyxb.mediaType.property_],
+            }
+        f_dict[f_pyxb.formatId] = d_dict
 
-  return f_dict
+    return f_dict

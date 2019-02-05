@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Mock Requests to issue requests through the Django test client
+"""Mock Requests to issue requests through the Django test client.
 
 Django includes a test framework with a test client that provides an interface
 that's similar to that of an HTTP client, but calls Django internals directly.
@@ -67,107 +67,109 @@ base_url_list = []
 
 
 def add_callback(base_url):
-  base_url_list.append(base_url)
-  method_list = [
-    responses.GET,
-    responses.POST,
-    responses.PUT,
-    responses.DELETE,
-    responses.HEAD,
-    responses.OPTIONS,
-    responses.PATCH,
-  ]
-  for method in method_list:
-    responses.add_callback(
-      method,
-      re.compile('^{}'.format(base_url)),
-      callback=_request_callback,
-      content_type='',
+    base_url_list.append(base_url)
+    method_list = [
+        responses.GET,
+        responses.POST,
+        responses.PUT,
+        responses.DELETE,
+        responses.HEAD,
+        responses.OPTIONS,
+        responses.PATCH,
+    ]
+    for method in method_list:
+        responses.add_callback(
+            method,
+            re.compile('^{}'.format(base_url)),
+            callback=_request_callback,
+            content_type='',
+        )
+    logging.debug(
+        'Added callbacks for all methods. base_url="{}" methods="{}"'.format(
+            base_url, '/'.join(method_list)
+        )
     )
-  logging.debug(
-    'Added callbacks for all methods. base_url="{}" methods="{}"'.
-    format(base_url, '/'.join(method_list))
-  )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # url_path = u'/{}/{}'.format(
-  #   *d1_test.mock_api.util.split_url_at_version_tag(request.url)[1:]
-  # )
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # url_path = u'/{}/{}'.format(
+    #   *d1_test.mock_api.util.split_url_at_version_tag(request.url)[1:]
+    # )
 
-  for base_url in base_url_list:
-    if request.url.startswith(base_url):
-      url_path = request.url[len(base_url):]
-      break
-  else:
-    assert False
+    for base_url in base_url_list:
+        if request.url.startswith(base_url):
+            url_path = request.url[len(base_url) :]
+            break
+    else:
+        assert False
 
-  logging.debug(
-    'Calling Django test client. base_url="{}" url_path="{}"'
-    .format(base_url, url_path)
-  )
+    logging.debug(
+        'Calling Django test client. base_url="{}" url_path="{}"'.format(
+            base_url, url_path
+        )
+    )
 
-  # This is a workaround for a bug in the Django test client. To determine if
-  # the body is a multipart document, the Django test client checks Content-Type
-  # for an exact match to a string that is hard coded in the client. When a
-  # match is not found, the client turns the MultipartEncoder into its string
-  # repr, that is used for debugging, and passes that on as the body.
-  # MultipartEncoder generates a unique boundary value for the Content-Type each
-  # time a multipart document is created, and there's no clean way to pass in
-  # the hard coded string, that the Django test client expects, through
-  # d1_client. So the buggy function in the Django test client is disabled here.
+    # This is a workaround for a bug in the Django test client. To determine if
+    # the body is a multipart document, the Django test client checks Content-Type
+    # for an exact match to a string that is hard coded in the client. When a
+    # match is not found, the client turns the MultipartEncoder into its string
+    # repr, that is used for debugging, and passes that on as the body.
+    # MultipartEncoder generates a unique boundary value for the Content-Type each
+    # time a multipart document is created, and there's no clean way to pass in
+    # the hard coded string, that the Django test client expects, through
+    # d1_client. So the buggy function in the Django test client is disabled here.
 
-  if isinstance(request.body, requests_toolbelt.MultipartEncoder):
-    data = request.body.read()
-    # data = request.body
-  else:
-    data = request.body
+    if isinstance(request.body, requests_toolbelt.MultipartEncoder):
+        data = request.body.read()
+        # data = request.body
+    else:
+        data = request.body
 
-  with mock.patch(
-      'django.test.RequestFactory._encode_data',
-      return_value=data,
-  ):
-    django_client = django.test.Client()
-    try:
-      django_response = getattr(django_client, request.method.lower())(
-        url_path, data=data,
-        content_type=request.headers.get('Content-Type', ''),
-        **_headers_to_wsgi_env(request.headers or {})
-      )
-    except AttributeError as e:
-      if "object has no attribute '_closable_objects" in str(e):
-        msg = _make_attribute_error_msg(e)
-        logging.error(msg)
-        return django.http.HttpResponse(msg)
-      raise
-    except Exception:
-      logging.exception(
-        'Django test client raised exception. base_url="{}" url_path="{}"'
-        .format(base_url, url_path)
-      )
-      raise
+    with mock.patch('django.test.RequestFactory._encode_data', return_value=data):
+        django_client = django.test.Client()
+        try:
+            django_response = getattr(django_client, request.method.lower())(
+                url_path,
+                data=data,
+                content_type=request.headers.get('Content-Type', ''),
+                **_headers_to_wsgi_env(request.headers or {})
+            )
+        except AttributeError as e:
+            if "object has no attribute '_closable_objects" in str(e):
+                msg = _make_attribute_error_msg(e)
+                logging.error(msg)
+                return django.http.HttpResponse(msg)
+            raise
+        except Exception:
+            logging.exception(
+                'Django test client raised exception. base_url="{}" url_path="{}"'.format(
+                    base_url, url_path
+                )
+            )
+            raise
 
-  django_response.setdefault('HTTP-Version', 'HTTP/1.1')
-  return (
-    django_response.status_code, list(django_response.items()),
-    b''.join(django_response.streaming_content)
-    if django_response.streaming else django_response.content
-  )
+    django_response.setdefault('HTTP-Version', 'HTTP/1.1')
+    return (
+        django_response.status_code,
+        list(django_response.items()),
+        b''.join(django_response.streaming_content)
+        if django_response.streaming
+        else django_response.content,
+    )
 
 
 def _headers_to_wsgi_env(header_dict):
-  wsgi_dict = header_dict.copy()
-  wsgi_dict.update({
-    'HTTP_' + k.upper().replace('-', '_'): v
-    for k, v in list(header_dict.items())
-  })
-  return wsgi_dict
+    wsgi_dict = header_dict.copy()
+    wsgi_dict.update(
+        {'HTTP_' + k.upper().replace('-', '_'): v for k, v in list(header_dict.items())}
+    )
+    return wsgi_dict
 
 
 def _make_attribute_error_msg(e):
-  return (
-    """
+    return (
+        """
 {0}
 
 GMN returned (not raised) an object of an unexpected type. Often this is a
@@ -189,4 +191,4 @@ The type/class name of the received instance is probably in this string:
 
 {0}
 """
-  ).format('#' * 100, str(e))
+    ).format('#' * 100, str(e))

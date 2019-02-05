@@ -19,8 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Return a randomly selected user agent string, picked from a list of common
-user agents.
-"""
+user agents."""
 
 import random
 
@@ -29,15 +28,15 @@ import d1_test.sample
 
 
 class Generate(object):
-  def __init__(self):
-    self._user_agent_list = None
+    def __init__(self):
+        self._user_agent_list = None
 
-  def __call__(self):
-    if self._user_agent_list is None:
-      self._user_agent_list = d1_test.test_files.load_utf8_to_str(
-        'common_user_agents.txt'
-      ).splitlines()
-    return random.choice(self._user_agent_list)
+    def __call__(self):
+        if self._user_agent_list is None:
+            self._user_agent_list = d1_test.test_files.load_utf8_to_str(
+                'common_user_agents.txt'
+            ).splitlines()
+        return random.choice(self._user_agent_list)
 
 
 generate = Generate()

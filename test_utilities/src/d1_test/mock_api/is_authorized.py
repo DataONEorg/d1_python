@@ -44,37 +44,34 @@ IS_AUTHORIZED_ENDPOINT_RX = r'v([123])/isAuthorized/(.*)'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.GET,
-    re.compile(
-      r'^' +
-      d1_common.url.joinPathElements(base_url, IS_AUTHORIZED_ENDPOINT_RX)
-    ),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.GET,
+        re.compile(
+            r'^' + d1_common.url.joinPathElements(base_url, IS_AUTHORIZED_ENDPOINT_RX)
+        ),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return NotFound
-  pid, client = _parse_url(request.url)
-  if pid == 'unauthorized_pid':
-    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
-  # Return regular response
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
-  }
-  return 200, header_dict, 'OK'
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    # Return NotFound
+    pid, client = _parse_url(request.url)
+    if pid == 'unauthorized_pid':
+        return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
+    # Return regular response
+    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM}
+    return 200, header_dict, 'OK'
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, client = (
-    d1_test.mock_api.util.parse_rest_url(url)
-  )
-  assert endpoint_str == 'isAuthorized'
-  return param_list[0], client
+    version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
+        url
+    )
+    assert endpoint_str == 'isAuthorized'
+    return param_list[0], client

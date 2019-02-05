@@ -20,11 +20,11 @@
 import os
 import tempfile
 
-import d1_common.iter.path
 import pytest
 
-import d1_test.d1_test_case
+import d1_common.iter.path
 
+import d1_test.d1_test_case
 
 TEST_TREE_PATH = {
     "dir11": {
@@ -146,12 +146,11 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(found_path_list, postfix_str)
 
     def _add_tmp(self, path_list, test_path):
-        """Add tmp root to paths"""
+        """Add tmp root to paths."""
         return [os.path.join(test_path, p) for p in path_list]
 
     def _normalize(self, itr, test_path):
-        """Trim the /tmp/*/ section and sort for reproducibility
-        """
+        """Trim the /tmp/*/ section and sort for reproducibility."""
         return sorted([v[len(test_path) :] for v in itr])
 
     def test_1000(self, tree_path, return_dir_paths, recursive):

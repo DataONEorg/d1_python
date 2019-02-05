@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test dependency checker
-"""
+"""Test dependency checker."""
 
 import d1_cli.impl.check_dependencies
 

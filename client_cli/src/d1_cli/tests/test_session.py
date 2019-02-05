@@ -18,18 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test handling of session variables
-"""
+"""Test handling of session variables."""
 
 import io
 import sys
 import uuid
 
+import pytest
+
 import d1_cli.impl.exceptions
 import d1_cli.impl.format_ids
 import d1_cli.impl.nodes
 import d1_cli.impl.session
-import pytest
 
 import d1_common.const
 
@@ -58,7 +58,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s is not None, "Could not instantiate session"
 
     def test_1010(self):
-        """After instantiation, the default session parameters are available via get()"""
+        """After instantiation, the default session parameters are available
+        via get()"""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         # self.assertEqual(s.get('pretty'), True)
         assert s.get("cn-url") == d1_common.const.URL_DATAONE_ROOT
@@ -72,14 +73,15 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s.get("rights-holder") == "test"
 
     def test_1030(self):
-        """Setting valid CN is successful"""
+        """Setting valid CN is successful."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         valid_cn = "https://cn-unm-1.dataone.org/cn"
         s.set("cn-url", valid_cn)
         assert s.get("cn-url") == valid_cn
 
     def test_1040(self):
-        """Session parameters can be brought back to their defaults with reset()"""
+        """Session parameters can be brought back to their defaults with
+        reset()"""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         s.set("query", "testquery"),
         assert s.get("query") == "testquery"
@@ -87,38 +89,40 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s.get("query") == "*:*"
 
     def test_1050(self):
-        """Getting an non-existing session parameter raises InvalidArguments"""
+        """Getting an non-existing session parameter raises
+        InvalidArguments."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             s.get("bogus-value")
 
     def test_1060(self):
-        """set_with_conversion() handles None"""
+        """set_with_conversion() handles None."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         assert s.get("verbose") is True
         s.set_with_conversion("verbose", "None")
         assert s.get("verbose") is None
 
     def test_1070(self):
-        """set_with_conversion() handles integer conversions"""
+        """set_with_conversion() handles integer conversions."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         assert s.get("verbose") is True
         s.set_with_conversion("verbose", "1")
         assert s.get("verbose") == 1
 
     def test_1080(self):
-        """set_with_conversion() raises InvalidArguments on non-existing session parameter"""
+        """set_with_conversion() raises InvalidArguments on non-existing
+        session parameter."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             s.set_with_conversion("bogus-value", "1")
 
     def test_1090(self):
-        """Session object exposes access control"""
+        """Session object exposes access control."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         s.get_access_control().add_allowed_subject("newsubject", "write")
 
     def test_1100(self):
-        """print_all_variables() is available and appears to work"""
+        """print_all_variables() is available and appears to work."""
         # capture stdout
         old = sys.stdout
         sys.stdout = io.StringIO()
@@ -133,7 +137,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert type(out) is str
 
     def test_1110(self, tmpdir):
-        """Session is successfully saved and then loaded (pickled and unpickled)"""
+        """Session is successfully saved and then loaded (pickled and
+        unpickled)"""
         tmp_pickle_path = str(tmpdir.join("session.pickle"))
         s1 = d1_cli.impl.session.Session(nodes, format_ids)
         u = str(uuid.uuid1())

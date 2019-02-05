@@ -18,10 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Random words
+"""Random words.
 
-A selection of 1000 words pulled randomly from /usr/share/dict/words using the
-randomWords method below.
+A selection of 1000 words pulled randomly from /usr/share/dict/words
+using the randomWords method below.
 """
 
 import codecs
@@ -233,8 +233,10 @@ WORDS_1K = [
 
 
 def random_words(count=100, supplemental_word_file_path='/usr/share/dict/words'):
-  """Return a random selection of count words from WORDS_1K. Include words from
-  file if number of words requested is more than available in WORDS_1K.
+  """Return a random selection of count words from WORDS_1K.
+
+  Include words from file if number of words requested is more than
+  available in WORDS_1K.
   """
   if count <= len(WORDS_1K):
     return random.sample(WORDS_1K, count)

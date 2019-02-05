@@ -57,11 +57,13 @@ TYPE_NODE_COLOR_DICT = {
 SUBJECT_NODE_TAG = "is_subject_node"
 TYPE_NODE_TAG = "is_type_node"
 
+
 class SubjectInfoRenderer:
     """Render a SubjectInfoTree to UI or image file.
 
     - Based on the ETE Toolkit for analysis and visualization of trees.
     """
+
     def __init__(self, subject_info_tree):
         self._tree = ete3.Tree(name="Root")
         self._tree.add_feature(TYPE_NODE_TAG, True)
@@ -100,17 +102,15 @@ class SubjectInfoRenderer:
         )
 
     def browse_in_qt5_ui(self):
-        """Browse and edit the SubjectInfo in a simple Qt5 based UI.
-        """
+        """Browse and edit the SubjectInfo in a simple Qt5 based UI."""
         self._render_type = "browse"
         self._tree.show(tree_style=self._get_tree_style())
 
     def render_to_ascii_art(self):
         """Render the SubjectInfo to a string containing an "ASCII art" tree.
 
-        Returns:
-            str
-                String containing an "ASCII art" representation of the tree.
+        Returns:     str         String containing an "ASCII art"
+        representation of the tree.
         """
         self._render_type = "ascii"
         return self._tree.get_ascii()
@@ -118,30 +118,33 @@ class SubjectInfoRenderer:
     # Private
 
     def _gen_etetoolkit_tree(self, node, subject_info_tree):
-        """Copy SubjectInfoTree to a ETE Tree"""
+        """Copy SubjectInfoTree to a ETE Tree."""
         for si_node in subject_info_tree.child_list:
             if si_node.type_str == TYPE_NODE_TAG:
                 child = self._add_type_node(node, si_node.label_str)
             elif si_node.type_str == SUBJECT_NODE_TAG:
                 child = self._add_subject_node(node, si_node.label_str)
             else:
-                raise AssertionError('Unknown node type. type_str="{}"'.format(si_node.type_str))
+                raise AssertionError(
+                    'Unknown node type. type_str="{}"'.format(si_node.type_str)
+                )
             self._gen_etetoolkit_tree(child, si_node)
 
     def _add_type_node(self, node, label):
-        """Add a node representing a SubjectInfo type"""
+        """Add a node representing a SubjectInfo type."""
         child = node.add_child(name=label)
         child.add_feature(TYPE_NODE_TAG, True)
         return child
 
     def _add_subject_node(self, node, subj_str):
-        """Add a node containing a subject string"""
+        """Add a node containing a subject string."""
         child = node.add_child(name=subj_str)
         child.add_feature(SUBJECT_NODE_TAG, True)
         return child
 
     def _get_node_path(self, node):
-        """Return the path from the root to ``node`` as a list of node names"""
+        """Return the path from the root to ``node`` as a list of node
+        names."""
         path = []
         while node.up:
             path.append(node.name)
@@ -159,7 +162,8 @@ class SubjectInfoRenderer:
         return ts
 
     def _layout(self, node):
-        """ETE calls this function to style each node before rendering
+        """ETE calls this function to style each node before rendering.
+
         - ETE terms:
             - A Style is a specification for how to render the node itself
             - A Face defines extra information that is rendered outside of the node
@@ -167,7 +171,7 @@ class SubjectInfoRenderer:
         """
 
         def set_edge_style():
-            """Set the style for edges and make the node invisible"""
+            """Set the style for edges and make the node invisible."""
             node_style = ete3.NodeStyle()
             node_style["vt_line_color"] = EDGE_COLOR
             node_style["hz_line_color"] = EDGE_COLOR
@@ -177,15 +181,13 @@ class SubjectInfoRenderer:
             node.set_style(node_style)
 
         def style_subject_node(color="Black"):
-            """Specify the appearance of Subject nodes
-            """
+            """Specify the appearance of Subject nodes."""
             face = ete3.TextFace(node.name, fsize=SUBJECT_NODE_FONT_SIZE, fgcolor=color)
             set_face_margin(face)
             node.add_face(face, column=0, position="branch-right")
 
         def style_type_node(color="Black"):
-            """Specify the appearance of Type nodes
-            """
+            """Specify the appearance of Type nodes."""
             face = ete3.CircleFace(
                 radius=TYPE_NODE_RADIUS,
                 color=TYPE_NODE_COLOR_DICT.get(node.name, "White"),
@@ -204,7 +206,8 @@ class SubjectInfoRenderer:
             node.add_face(face, column=0, position="branch-right")
 
         def set_face_margin(face):
-            """Add margins to Face object
+            """Add margins to Face object.
+
             - Add space between inner_border and border on TextFace.
             - Add space outside bounding area of CircleFace.
             """

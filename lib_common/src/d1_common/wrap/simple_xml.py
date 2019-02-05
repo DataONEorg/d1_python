@@ -79,47 +79,50 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.xml
 
-import xml.etree.ElementTree
 
 @contextlib2.contextmanager
 def wrap(xml_str):
-  """Simple processing of XML"""
-  w = SimpleXMLWrapper(xml_str)
-  yield w
+    """Simple processing of XML."""
+    w = SimpleXMLWrapper(xml_str)
+    yield w
 
 
 # ==============================================================================
 
 
 class SimpleXMLWrapper(object):
-  """Wrap an XML document and provide convenient methods for performing simple processing on it.
+    """Wrap an XML document and provide convenient methods for performing
+    simple processing on it.
 
-  Args:
-    xml_str : str
-      XML document to read, write or modify.
-  """
-  def __init__(self, xml_str):
-    self._root_el = self.parse_xml(xml_str)
+    Args:
+      xml_str : str
+        XML document to read, write or modify.
+    """
 
-  def parse_xml(self, xml_str):
-    return ET.fromstring(xml_str)
+    def __init__(self, xml_str):
+        self._root_el = self.parse_xml(xml_str)
 
-  def get_xml(self, encoding='unicode'):
-    """
-    Returns:
-      str : Current state of the wrapper as XML
-    """
-    return ET.tostring(self._root_el, encoding)
+    def parse_xml(self, xml_str):
+        return ET.fromstring(xml_str)
 
-  def get_pretty_xml(self, encoding='unicode'):
-    """
-    Returns:
-      str : Current state of the wrapper as a pretty printed XML string.
-    """
-    return d1_common.xml.reformat_to_pretty_xml(ET.tostring(self._root_el, encoding))
+    def get_xml(self, encoding='unicode'):
+        """Returns:
 
-  def get_xml_below_element(self, el_name, el_idx=0, encoding='unicode'):
-    """
+        str : Current state of the wrapper as XML
+        """
+        return ET.tostring(self._root_el, encoding)
+
+    def get_pretty_xml(self, encoding='unicode'):
+        """Returns:
+
+        str : Current state of the wrapper as a pretty printed XML string.
+        """
+        return d1_common.xml.reformat_to_pretty_xml(
+            ET.tostring(self._root_el, encoding)
+        )
+
+    def get_xml_below_element(self, el_name, el_idx=0, encoding='unicode'):
+        """
     Args:
       el_name : str
         Name of element that is the base of the branch to retrieve.
@@ -131,10 +134,10 @@ class SimpleXMLWrapper(object):
     Returns:
       str : XML fragment rooted at ``el``.
     """
-    return ET.tostring(self.get_element_by_name(el_name, el_idx), encoding)
+        return ET.tostring(self.get_element_by_name(el_name, el_idx), encoding)
 
-  def get_element_list_by_name(self, el_name):
-    """
+    def get_element_list_by_name(self, el_name):
+        """
     Args:
       el_name : str
         Name of element for which to search.
@@ -144,10 +147,10 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-    return self._root_el.findall('.//{}'.format(el_name))
+        return self._root_el.findall('.//{}'.format(el_name))
 
-  def get_element_list_by_attr_key(self, attr_key):
-    """
+    def get_element_list_by_attr_key(self, attr_key):
+        """
     Args:
       attr_key : str
         Name of attribute for which to search
@@ -157,12 +160,12 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-    return self._root_el.findall('.//*[@{}]'.format(attr_key))
+        return self._root_el.findall('.//*[@{}]'.format(attr_key))
 
-  # get element
+    # get element
 
-  def get_element_by_xpath(self, xpath_str, namespaces=None):
-    """
+    def get_element_by_xpath(self, xpath_str, namespaces=None):
+        """
     Args:
       xpath_str : str
         XPath matching the elements for which to search.
@@ -172,17 +175,17 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-    try:
-      return self._root_el.findall('.' + xpath_str, namespaces)
-    except (ValueError, xml.etree.ElementTree.ParseError) as e:
-      raise SimpleXMLWrapperException(
-        'XPath select raised exception. xpath_str="{}" error="{}"'.format(
-          xpath_str, str(e)
-        )
-      )
+        try:
+            return self._root_el.findall('.' + xpath_str, namespaces)
+        except (ValueError, xml.etree.ElementTree.ParseError) as e:
+            raise SimpleXMLWrapperException(
+                'XPath select raised exception. xpath_str="{}" error="{}"'.format(
+                    xpath_str, str(e)
+                )
+            )
 
-  def get_element_by_name(self, el_name, el_idx=0):
-    """
+    def get_element_by_name(self, el_name, el_idx=0):
+        """
     Args:
       el_name : str
         Name of element to get.
@@ -194,17 +197,17 @@ class SimpleXMLWrapper(object):
     Returns:
       element : The selected element.
     """
-    el_list = self.get_element_list_by_name(el_name)
-    try:
-      return el_list[el_idx]
-    except IndexError:
-      raise SimpleXMLWrapperException(
-        'Element not found. element_name="{}" requested_idx={} '
-        'available_elements={}'.format(el_name, el_idx, len(el_list))
-      )
+        el_list = self.get_element_list_by_name(el_name)
+        try:
+            return el_list[el_idx]
+        except IndexError:
+            raise SimpleXMLWrapperException(
+                'Element not found. element_name="{}" requested_idx={} '
+                'available_elements={}'.format(el_name, el_idx, len(el_list))
+            )
 
-  def get_element_by_attr_key(self, attr_key, el_idx=0):
-    """
+    def get_element_by_attr_key(self, attr_key, el_idx=0):
+        """
     Args:
       attr_key : str
         Name of attribute for which to search
@@ -216,19 +219,19 @@ class SimpleXMLWrapper(object):
     Returns:
       Element containing an attribute key named ``attr_key``.
     """
-    el_list = self.get_element_list_by_attr_key(attr_key)
-    try:
-      return el_list[el_idx]
-    except IndexError:
-      raise SimpleXMLWrapperException(
-        'Element with tag not found. tag_name="{}" requested_idx={} '
-        'available_elements={}'.format(attr_key, el_idx, len(el_list))
-      )
+        el_list = self.get_element_list_by_attr_key(attr_key)
+        try:
+            return el_list[el_idx]
+        except IndexError:
+            raise SimpleXMLWrapperException(
+                'Element with tag not found. tag_name="{}" requested_idx={} '
+                'available_elements={}'.format(attr_key, el_idx, len(el_list))
+            )
 
-  # set/get text by element name
+    # set/get text by element name
 
-  def get_element_text(self, el_name, el_idx=0):
-    """
+    def get_element_text(self, el_name, el_idx=0):
+        """
     Args:
       el_name : str
         Name of element to use.
@@ -240,10 +243,10 @@ class SimpleXMLWrapper(object):
     Returns:
       str : Text of the selected element.
     """
-    return self.get_element_by_name(el_name, el_idx).text
+        return self.get_element_by_name(el_name, el_idx).text
 
-  def set_element_text(self, el_name, el_text, el_idx=0):
-    """
+    def set_element_text(self, el_name, el_text, el_idx=0):
+        """
     Args:
       el_name : str
         Name of element to update.
@@ -255,12 +258,12 @@ class SimpleXMLWrapper(object):
         Index of element to use in the event that there are multiple sibling
         elements with the same name.
     """
-    self.get_element_by_name(el_name, el_idx).text = el_text
+        self.get_element_by_name(el_name, el_idx).text = el_text
 
-  # set/get text by attr key
+    # set/get text by attr key
 
-  def get_element_text_by_attr_key(self, attr_key, el_idx=0):
-    """
+    def get_element_text_by_attr_key(self, attr_key, el_idx=0):
+        """
     Args:
       attr_key : str
         Name of attribute for which to search
@@ -272,10 +275,10 @@ class SimpleXMLWrapper(object):
     Returns:
       str : Text of the selected element.
     """
-    return self.get_element_by_attr_key(attr_key, el_idx).text
+        return self.get_element_by_attr_key(attr_key, el_idx).text
 
-  def set_element_text_by_attr_key(self, attr_key, el_text, el_idx=0):
-    """
+    def set_element_text_by_attr_key(self, attr_key, el_text, el_idx=0):
+        """
     Args:
       attr_key : str
         Name of attribute for which to search
@@ -287,148 +290,150 @@ class SimpleXMLWrapper(object):
         Index of element to use in the event that there are multiple sibling
         elements with the same name.
     """
-    self.get_element_by_attr_key(attr_key, el_idx).text = el_text
+        self.get_element_by_attr_key(attr_key, el_idx).text = el_text
 
-  # set/get attr value by key
+    # set/get attr value by key
 
-  def get_attr_value(self, attr_key, el_idx=0):
-    """Return the value of the selected attribute in the selected element
+    def get_attr_value(self, attr_key, el_idx=0):
+        """Return the value of the selected attribute in the selected element.
 
-    Args:
-      attr_key : str
-        Name of attribute for which to search
+        Args:
+          attr_key : str
+            Name of attribute for which to search
 
-      el_idx : int
-        Index of element to use in the event that there are multiple sibling
-        elements with the same name.
+          el_idx : int
+            Index of element to use in the event that there are multiple sibling
+            elements with the same name.
 
-    Returns:
-      str : Value of the selected attribute in the selected element.
-    """
-    return self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key]
+        Returns:
+          str : Value of the selected attribute in the selected element.
+        """
+        return self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key]
 
-  def set_attr_text(self, attr_key, attr_val, el_idx=0):
-    """Set the value of the selected attribute of the selected element
+    def set_attr_text(self, attr_key, attr_val, el_idx=0):
+        """Set the value of the selected attribute of the selected element.
 
-    Args:
-      attr_key : str
-        Name of attribute for which to search
+        Args:
+          attr_key : str
+            Name of attribute for which to search
 
-      attr_val : str
-        Text to set for the attribute.
+          attr_val : str
+            Text to set for the attribute.
 
-      el_idx : int
-        Index of element to use in the event that there are multiple sibling
-        elements with the same name.
-    """
-    self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key] = attr_val
+          el_idx : int
+            Index of element to use in the event that there are multiple sibling
+            elements with the same name.
+        """
+        self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key] = attr_val
 
-  # get/set datetime
+    # get/set datetime
 
-  def get_element_dt(self, el_name, tz=None, el_idx=0):
-    """Return the text of the selected element as a ``datetime.datetime`` object
+    def get_element_dt(self, el_name, tz=None, el_idx=0):
+        """Return the text of the selected element as a ``datetime.datetime``
+        object.
 
-    The element text must be a ISO8601 formatted datetime
+        The element text must be a ISO8601 formatted datetime
 
-    Args:
-      el_name : str
-        Name of element to use.
+        Args:
+          el_name : str
+            Name of element to use.
 
-      tz : datetime.tzinfo
-        Timezone in which to return the datetime.
+          tz : datetime.tzinfo
+            Timezone in which to return the datetime.
 
-        - Without a timezone, other contextual information is required in order to determine the exact represented time.
-        - If dt has timezone: The ``tz`` parameter is ignored.
-        - If dt is naive (without timezone): The timezone is set to ``tz``.
-        - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
-          timezone, other contextual information is required in order to determine
-          the exact represented time.
-        - ``tz=d1_common.date_time.UTC()``: Set naive dt to UTC.
+            - Without a timezone, other contextual information is required in order to determine the exact represented time.
+            - If dt has timezone: The ``tz`` parameter is ignored.
+            - If dt is naive (without timezone): The timezone is set to ``tz``.
+            - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
+              timezone, other contextual information is required in order to determine
+              the exact represented time.
+            - ``tz=d1_common.date_time.UTC()``: Set naive dt to UTC.
 
-      el_idx : int
-        Index of element to use in the event that there are multiple sibling
-        elements with the same name.
+          el_idx : int
+            Index of element to use in the event that there are multiple sibling
+            elements with the same name.
 
-    Returns:
-      datetime.datetime
-    """
-    return iso8601.parse_date(self.get_element_by_name(el_name, el_idx).text, tz)
+        Returns:
+          datetime.datetime
+        """
+        return iso8601.parse_date(self.get_element_by_name(el_name, el_idx).text, tz)
 
-  def set_element_dt(self, el_name, dt, tz=None, el_idx=0):
-    """Set the text of the selected element to an ISO8601 formatted datetime
+    def set_element_dt(self, el_name, dt, tz=None, el_idx=0):
+        """Set the text of the selected element to an ISO8601 formatted
+        datetime.
 
-    Args:
-      el_name : str
-        Name of element to update.
+        Args:
+          el_name : str
+            Name of element to update.
 
-      dt : datetime.datetime
-        Date and time to set
+          dt : datetime.datetime
+            Date and time to set
 
-      tz : datetime.tzinfo
-        Timezone to set
+          tz : datetime.tzinfo
+            Timezone to set
 
-        - Without a timezone, other contextual information is required in order to determine the exact represented time.
-        - If dt has timezone: The ``tz`` parameter is ignored.
-        - If dt is naive (without timezone): The timezone is set to ``tz``.
-        - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
-          timezone, other contextual information is required in order to determine
-          the exact represented time.
-        - ``tz=d1_common.date_time.UTC()``: Set naive dt to UTC.
+            - Without a timezone, other contextual information is required in order to determine the exact represented time.
+            - If dt has timezone: The ``tz`` parameter is ignored.
+            - If dt is naive (without timezone): The timezone is set to ``tz``.
+            - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
+              timezone, other contextual information is required in order to determine
+              the exact represented time.
+            - ``tz=d1_common.date_time.UTC()``: Set naive dt to UTC.
 
-      el_idx : int
-        Index of element to use in the event that there are multiple sibling
-        elements with the same name.
-    """
-    dt = d1_common.date_time.cast_naive_datetime_to_tz(dt, tz)
-    self.get_element_by_name(el_name, el_idx).text = dt.isoformat()
+          el_idx : int
+            Index of element to use in the event that there are multiple sibling
+            elements with the same name.
+        """
+        dt = d1_common.date_time.cast_naive_datetime_to_tz(dt, tz)
+        self.get_element_by_name(el_name, el_idx).text = dt.isoformat()
 
-  # remove
+    # remove
 
-  def remove_children(self, el_name, el_idx=0):
-    """Remove any child elements from element.
+    def remove_children(self, el_name, el_idx=0):
+        """Remove any child elements from element.
 
-    Args:
-      el_name : str
-        Name of element to update.
+        Args:
+          el_name : str
+            Name of element to update.
 
-      el_idx : int
-        Index of element to use in the event that there are multiple sibling
-        elements with the same name.
-    """
-    self.get_element_by_name(el_name, el_idx)[:] = []
+          el_idx : int
+            Index of element to use in the event that there are multiple sibling
+            elements with the same name.
+        """
+        self.get_element_by_name(el_name, el_idx)[:] = []
 
-  # replace subtree
+    # replace subtree
 
-  def replace_by_etree(self, root_el, el_idx=0):
-    """Replace element
+    def replace_by_etree(self, root_el, el_idx=0):
+        """Replace element.
 
-    Select element that has the same name as ``root_el``, then replace the selected element with ``root_el``
+        Select element that has the same name as ``root_el``, then replace the selected element with ``root_el``
 
-    ``root_el`` can be a single element or the root of an element tree.
+        ``root_el`` can be a single element or the root of an element tree.
 
-    Args:
-      root_el : element
-        New element that will replace the existing element.
-    """
-    el = self.get_element_by_name(root_el.tag, el_idx)
-    el[:] = list(root_el)
-    el.attrib = root_el.attrib
+        Args:
+          root_el : element
+            New element that will replace the existing element.
+        """
+        el = self.get_element_by_name(root_el.tag, el_idx)
+        el[:] = list(root_el)
+        el.attrib = root_el.attrib
 
-  def replace_by_xml(self, xml_str, el_idx=0):
-    """Replace element
+    def replace_by_xml(self, xml_str, el_idx=0):
+        """Replace element.
 
-    Select element that has the same name as ``xml_str``, then replace the selected element with ``xml_str``
+        Select element that has the same name as ``xml_str``, then replace the selected element with ``xml_str``
 
-    - ``xml_str`` must have a single element in the root.
-    - The root element in ``xml_str`` can have an arbitrary number of children.
+        - ``xml_str`` must have a single element in the root.
+        - The root element in ``xml_str`` can have an arbitrary number of children.
 
-    Args:
-      xml_str : str
-        New element that will replace the existing element.
-    """
-    root_el = self.parse_xml(xml_str)
-    self.replace_by_etree(root_el, el_idx)
+        Args:
+          xml_str : str
+            New element that will replace the existing element.
+        """
+        root_el = self.parse_xml(xml_str)
+        self.replace_by_etree(root_el, el_idx)
 
 
 class SimpleXMLWrapperException(Exception):
-  pass
+    pass

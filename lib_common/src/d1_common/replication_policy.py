@@ -43,111 +43,110 @@ import d1_common.xml
 
 
 def has_replication_policy(sysmeta_pyxb):
-  """
+    """
   Args:
     sysmeta_pyxb: SystemMetadata PyXB object.
 
   Returns:
     bool: ``True`` if SystemMetadata includes the optional ReplicationPolicy section.
   """
-  return bool(getattr(sysmeta_pyxb, 'replicationPolicy', False))
+    return bool(getattr(sysmeta_pyxb, 'replicationPolicy', False))
 
 
 def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
-  """Add a remote Member Node to the list of preferred replication targets to this System Metadata object.
+    """Add a remote Member Node to the list of preferred replication targets to
+    this System Metadata object.
 
-  Also remove the target MN from the list of blocked Member Nodes if present.
+    Also remove the target MN from the list of blocked Member Nodes if present.
 
-  If the target MN is already in the preferred list and not in the blocked list, this
-  function is a no-op.
+    If the target MN is already in the preferred list and not in the blocked list, this
+    function is a no-op.
 
-  Args:
-    sysmeta_pyxb : SystemMetadata PyXB object.
-      System Metadata in which to add the preferred replication target.
+    Args:
+      sysmeta_pyxb : SystemMetadata PyXB object.
+        System Metadata in which to add the preferred replication target.
 
-      If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and populated with the preferred replication target.
+        If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and populated with the preferred replication target.
 
-    node_urn : str
-      Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``. 
-  """
-  if not has_replication_policy(sysmeta_pyxb):
-    sysmeta_set_default_rp(sysmeta_pyxb)
-  rp_pyxb = sysmeta_pyxb.replicationPolicy
-  _add_node(rp_pyxb, 'pref', node_urn)
-  _remove_node(rp_pyxb, 'block', node_urn)
+      node_urn : str
+        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+    """
+    if not has_replication_policy(sysmeta_pyxb):
+        sysmeta_set_default_rp(sysmeta_pyxb)
+    rp_pyxb = sysmeta_pyxb.replicationPolicy
+    _add_node(rp_pyxb, 'pref', node_urn)
+    _remove_node(rp_pyxb, 'block', node_urn)
 
 
 def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
-  """Add a remote Member Node to the list of blocked replication targets to this System Metadata object.
+    """Add a remote Member Node to the list of blocked replication targets to
+    this System Metadata object.
 
-  The blocked node will not be considered a possible replication target for the associated System Metadata.
+    The blocked node will not be considered a possible replication target for the associated System Metadata.
 
-  Also remove the target MN from the list of preferred Member Nodes if present.
+    Also remove the target MN from the list of preferred Member Nodes if present.
 
-  If the target MN is already in the blocked list and not in the preferred list, this
-  function is a no-op.
+    If the target MN is already in the blocked list and not in the preferred list, this
+    function is a no-op.
 
-  Args:
-    sysmeta_pyxb : SystemMetadata PyXB object.
-      System Metadata in which to add the blocked replication target.
+    Args:
+      sysmeta_pyxb : SystemMetadata PyXB object.
+        System Metadata in which to add the blocked replication target.
 
-      If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and then populated with the blocked replication target.
+        If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and then populated with the blocked replication target.
 
-    node_urn : str
-      Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``. 
-  """
-  if not has_replication_policy(sysmeta_pyxb):
-    sysmeta_set_default_rp(sysmeta_pyxb)
-  rp_pyxb = sysmeta_pyxb.replicationPolicy
-  _add_node(rp_pyxb, 'block', node_urn)
-  _remove_node(rp_pyxb, 'pref', node_urn)
+      node_urn : str
+        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+    """
+    if not has_replication_policy(sysmeta_pyxb):
+        sysmeta_set_default_rp(sysmeta_pyxb)
+    rp_pyxb = sysmeta_pyxb.replicationPolicy
+    _add_node(rp_pyxb, 'block', node_urn)
+    _remove_node(rp_pyxb, 'pref', node_urn)
 
 
 def sysmeta_set_default_rp(sysmeta_pyxb):
-  """Set a default, empty, Replication Policy.
-  
-  This will clear any existing Replication Policy in the System Metadata.
-  
-  The default Replication Policy disables replication and sets number of replicas to 0. 
+    """Set a default, empty, Replication Policy.
 
-  Args:
-    sysmeta_pyxb : SystemMetadata PyXB object.
-      System Metadata in which to set a default Replication Policy.
-  """
-  sysmeta_pyxb.replicationPolicy = dict_to_pyxb({
-    'allowed': False,
-    'num': 0,
-    'block': set(),
-    'pref': set()
-  })
+    This will clear any existing Replication Policy in the System Metadata.
+
+    The default Replication Policy disables replication and sets number of replicas to 0.
+
+    Args:
+      sysmeta_pyxb : SystemMetadata PyXB object.
+        System Metadata in which to set a default Replication Policy.
+    """
+    sysmeta_pyxb.replicationPolicy = dict_to_pyxb(
+        {'allowed': False, 'num': 0, 'block': set(), 'pref': set()}
+    )
 
 
 # Direct ReplicationPolicy
 
 
 def normalize(rp_pyxb):
-  """Normalize a ReplicationPolicy PyXB type in place.
-  
-  The preferred and blocked lists are sorted alphabetically. As blocked nodes override preferred nodes, and any node present in both lists is removed from the preferred list.
+    """Normalize a ReplicationPolicy PyXB type in place.
 
-  Args:
-    rp_pyxb : ReplicationPolicy PyXB object
-      The object will be normalized in place.
-  """
+    The preferred and blocked lists are sorted alphabetically. As blocked nodes override preferred nodes, and any node present in both lists is removed from the preferred list.
 
-  # noinspection PyMissingOrEmptyDocstring
-  def sort(r, a):
-    d1_common.xml.sort_value_list_pyxb(_get_attr_or_list(r, a))
+    Args:
+      rp_pyxb : ReplicationPolicy PyXB object
+        The object will be normalized in place.
+    """
 
-  rp_pyxb.preferredMemberNode = (
-      set(_get_attr_or_list(rp_pyxb, 'pref')) - set(_get_attr_or_list(rp_pyxb, 'block'))
-  )
-  sort(rp_pyxb, 'block')
-  sort(rp_pyxb, 'pref')
+    # noinspection PyMissingOrEmptyDocstring
+    def sort(r, a):
+        d1_common.xml.sort_value_list_pyxb(_get_attr_or_list(r, a))
+
+    rp_pyxb.preferredMemberNode = set(_get_attr_or_list(rp_pyxb, 'pref')) - set(
+        _get_attr_or_list(rp_pyxb, 'block')
+    )
+    sort(rp_pyxb, 'block')
+    sort(rp_pyxb, 'pref')
 
 
 def is_preferred(rp_pyxb, node_urn):
-  """
+    """
   Args:
     rp_pyxb : ReplicationPolicy PyXB object
       The object will be normalized in place.
@@ -160,13 +159,13 @@ def is_preferred(rp_pyxb, node_urn):
 
     As blocked nodes override preferred nodes, return False if ``node_urn`` is in both lists.
   """
-  return (
-      node_urn in _get_attr_or_list(rp_pyxb, 'pref') and node_urn not in _get_attr_or_list(rp_pyxb, 'block')
-  )
+    return node_urn in _get_attr_or_list(
+        rp_pyxb, 'pref'
+    ) and node_urn not in _get_attr_or_list(rp_pyxb, 'block')
 
 
 def is_blocked(rp_pyxb, node_urn):
-  """
+    """
   Args:
     rp_pyxb : ReplicationPolicy PyXB object
       The object will be normalized in place.
@@ -179,167 +178,165 @@ def is_blocked(rp_pyxb, node_urn):
 
     As blocked nodes override preferred nodes, return True if ``node_urn`` is in both lists.
   """
-  return node_urn in _get_attr_or_list(rp_pyxb, 'block')
+    return node_urn in _get_attr_or_list(rp_pyxb, 'block')
 
 
 def are_equivalent_pyxb(a_pyxb, b_pyxb):
-  """Check if two ReplicationPolicy objects are semantically equivalent.
-  
-  The ReplicationPolicy objects are normalized before comparison.
-  
-  Args:
-    a_pyxb, b_pyxb : ReplicationPolicy PyXB objects to compare
+    """Check if two ReplicationPolicy objects are semantically equivalent.
 
-  Returns:
-    bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
-  """
-  return pyxb_to_dict(a_pyxb) == pyxb_to_dict(b_pyxb)
+    The ReplicationPolicy objects are normalized before comparison.
+
+    Args:
+      a_pyxb, b_pyxb : ReplicationPolicy PyXB objects to compare
+
+    Returns:
+      bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+    """
+    return pyxb_to_dict(a_pyxb) == pyxb_to_dict(b_pyxb)
 
 
 def are_equivalent_xml(a_xml, b_xml):
-  """Check if two ReplicationPolicy XML docs are semantically equivalent.
+    """Check if two ReplicationPolicy XML docs are semantically equivalent.
 
-  The ReplicationPolicy XML docs are normalized before comparison.
+    The ReplicationPolicy XML docs are normalized before comparison.
 
-  Args:
-    a_xml, b_xml: ReplicationPolicy XML docs to compare
+    Args:
+      a_xml, b_xml: ReplicationPolicy XML docs to compare
 
-  Returns:
-    bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
-  """
-  return are_equivalent_pyxb(
-    d1_common.xml.deserialize(a_xml),
-    d1_common.xml.deserialize(b_xml),
-  )
+    Returns:
+      bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+    """
+    return are_equivalent_pyxb(
+        d1_common.xml.deserialize(a_xml), d1_common.xml.deserialize(b_xml)
+    )
 
 
 def add_preferred(rp_pyxb, node_urn):
-  """Add a remote Member Node to the list of preferred replication targets.
+    """Add a remote Member Node to the list of preferred replication targets.
 
-  Also remove the target MN from the list of blocked Member Nodes if present.
+    Also remove the target MN from the list of blocked Member Nodes if present.
 
-  If the target MN is already in the preferred list and not in the blocked list, this
-  function is a no-op.
+    If the target MN is already in the preferred list and not in the blocked list, this
+    function is a no-op.
 
-  Args:
-    rp_pyxb: SystemMetadata PyXB object.
-      Replication Policy in which to add the preferred replication target.
+    Args:
+      rp_pyxb: SystemMetadata PyXB object.
+        Replication Policy in which to add the preferred replication target.
 
-    node_urn : str
-      Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``. 
-  """
-  _add_node(rp_pyxb, 'pref', node_urn)
-  _remove_node(rp_pyxb, 'block', node_urn)
+      node_urn : str
+        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+    """
+    _add_node(rp_pyxb, 'pref', node_urn)
+    _remove_node(rp_pyxb, 'block', node_urn)
 
 
 def add_blocked(rp_pyxb, node_urn):
-  """Add a remote Member Node to the list of blocked replication targets.
+    """Add a remote Member Node to the list of blocked replication targets.
 
-  Also remove the target MN from the list of preferred Member Nodes if present.
+    Also remove the target MN from the list of preferred Member Nodes if present.
 
-  If the target MN is already in the blocked list and not in the preferred list, this
-  function is a no-op.
+    If the target MN is already in the blocked list and not in the preferred list, this
+    function is a no-op.
 
-  Args:
-    rp_pyxb: SystemMetadata PyXB object.
-      Replication Policy in which to add the blocked replication target.
+    Args:
+      rp_pyxb: SystemMetadata PyXB object.
+        Replication Policy in which to add the blocked replication target.
 
-    node_urn : str
-      Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``. 
-  """
-  _add_node(rp_pyxb, 'block', node_urn)
-  _remove_node(rp_pyxb, 'pref', node_urn)
+      node_urn : str
+        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+    """
+    _add_node(rp_pyxb, 'block', node_urn)
+    _remove_node(rp_pyxb, 'pref', node_urn)
 
 
 def pyxb_to_dict(rp_pyxb):
-  """
-  Convert ReplicationPolicy PyXB object to a normalized dict.
+    """Convert ReplicationPolicy PyXB object to a normalized dict.
 
-  Args:
-    rp_pyxb: ReplicationPolicy to convert.
+    Args:
+      rp_pyxb: ReplicationPolicy to convert.
 
-  Returns:
-      dict : Replication Policy as normalized dict.
+    Returns:
+        dict : Replication Policy as normalized dict.
 
-  Example::
+    Example::
 
-    {
-      'allowed': True,
-      'num': 3,
-      'blockedMemberNode': {'urn:node:NODE1', 'urn:node:NODE2', 'urn:node:NODE3'},
-      'preferredMemberNode': {'urn:node:NODE4', 'urn:node:NODE5'},
+      {
+        'allowed': True,
+        'num': 3,
+        'blockedMemberNode': {'urn:node:NODE1', 'urn:node:NODE2', 'urn:node:NODE3'},
+        'preferredMemberNode': {'urn:node:NODE4', 'urn:node:NODE5'},
+      }
+    """
+    return {
+        'allowed': bool(_get_attr_or_list(rp_pyxb, 'allowed')),
+        'num': _get_as_int(rp_pyxb),
+        'block': _get_as_set(rp_pyxb, 'block'),
+        'pref': _get_as_set(rp_pyxb, 'pref'),
     }
-  """
-  return {
-    'allowed': bool(_get_attr_or_list(rp_pyxb, 'allowed')),
-    'num': _get_as_int(rp_pyxb),
-    'block': _get_as_set(rp_pyxb, 'block'),
-    'pref': _get_as_set(rp_pyxb, 'pref'),
-  }
 
 
 def dict_to_pyxb(rp_dict):
-  """Convert dict to ReplicationPolicy PyXB object.
+    """Convert dict to ReplicationPolicy PyXB object.
 
-  Args:
-    rp_dict: Native Python structure representing a Replication Policy.
+    Args:
+      rp_dict: Native Python structure representing a Replication Policy.
 
-  Example::
+    Example::
 
-    {
-      'allowed': True,
-      'num': 3,
-      'blockedMemberNode': {'urn:node:NODE1', 'urn:node:NODE2', 'urn:node:NODE3'},
-      'preferredMemberNode': {'urn:node:NODE4', 'urn:node:NODE5'},
-    }
+      {
+        'allowed': True,
+        'num': 3,
+        'blockedMemberNode': {'urn:node:NODE1', 'urn:node:NODE2', 'urn:node:NODE3'},
+        'preferredMemberNode': {'urn:node:NODE4', 'urn:node:NODE5'},
+      }
 
-  Returns:
-    ReplicationPolicy PyXB object.
-  """
-  rp_pyxb = d1_common.types.dataoneTypes.replicationPolicy()
-  rp_pyxb.replicationAllowed = rp_dict['allowed']
-  rp_pyxb.numberReplicas = rp_dict['num']
-  rp_pyxb.blockedMemberNode = rp_dict['block']
-  rp_pyxb.preferredMemberNode = rp_dict['pref']
-  normalize(rp_pyxb)
-  return rp_pyxb
+    Returns:
+      ReplicationPolicy PyXB object.
+    """
+    rp_pyxb = d1_common.types.dataoneTypes.replicationPolicy()
+    rp_pyxb.replicationAllowed = rp_dict['allowed']
+    rp_pyxb.numberReplicas = rp_dict['num']
+    rp_pyxb.blockedMemberNode = rp_dict['block']
+    rp_pyxb.preferredMemberNode = rp_dict['pref']
+    normalize(rp_pyxb)
+    return rp_pyxb
 
 
 def _add_node(rp_pyxb, attr, node_url):
-  setattr(rp_pyxb, _map_dict_key(attr), _get_as_set(rp_pyxb, attr) | {node_url})
-  _ensure_allow_rp(rp_pyxb)
-  normalize(rp_pyxb)
+    setattr(rp_pyxb, _map_dict_key(attr), _get_as_set(rp_pyxb, attr) | {node_url})
+    _ensure_allow_rp(rp_pyxb)
+    normalize(rp_pyxb)
 
 
 def _remove_node(rp_pyxb, attr, node_url):
-  setattr(rp_pyxb, _map_dict_key(attr), _get_as_set(rp_pyxb, attr) - {node_url})
-  normalize(rp_pyxb)
+    setattr(rp_pyxb, _map_dict_key(attr), _get_as_set(rp_pyxb, attr) - {node_url})
+    normalize(rp_pyxb)
 
 
 def _ensure_allow_rp(rp_pyxb):
-  """Ensure that RP allows replication"""
-  if not rp_pyxb.replicationAllowed:
-    rp_pyxb.replicationAllowed = True
-  if not rp_pyxb.numberReplicas:
-    rp_pyxb.numberReplicas = 3
+    """Ensure that RP allows replication."""
+    if not rp_pyxb.replicationAllowed:
+        rp_pyxb.replicationAllowed = True
+    if not rp_pyxb.numberReplicas:
+        rp_pyxb.numberReplicas = 3
 
 
 def _get_attr_or_list(rp_pyxb, attr):
-  return getattr(rp_pyxb, _map_dict_key(attr), [])
+    return getattr(rp_pyxb, _map_dict_key(attr), [])
 
 
 def _get_as_set(rp_pyxb, attr):
-  return {x.value() for x in getattr(rp_pyxb, _map_dict_key(attr), [])}
+    return {x.value() for x in getattr(rp_pyxb, _map_dict_key(attr), [])}
 
 
 def _get_as_int(rp_pyxb):
-  return int(getattr(rp_pyxb, _map_dict_key('num'), 0))
+    return int(getattr(rp_pyxb, _map_dict_key('num'), 0))
 
 
 def _map_dict_key(attr):
-  return {
-    'block': 'blockedMemberNode',
-    'pref': 'preferredMemberNode',
-    'allowed': 'replicationAllowed',
-    'num': 'numberReplicas',
-  }[attr]
+    return {
+        'block': 'blockedMemberNode',
+        'pref': 'preferredMemberNode',
+        'allowed': 'replicationAllowed',
+        'num': 'numberReplicas',
+    }[attr]

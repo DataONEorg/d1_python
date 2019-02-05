@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multiprocessed System Metadata iterator
+"""Multiprocessed System Metadata iterator.
 
 Parallel download of a set of SystemMetadata documents from a CN or MN. The
 SystemMetadata to download can be selected by the filters that are available in
@@ -68,209 +68,241 @@ API_MAJOR = 2
 
 
 class SystemMetadataIteratorMulti(object):
-  def __init__(
-      self,
-      base_url,
-      page_size=OBJECT_LIST_PAGE_SIZE,
-      max_workers=MAX_WORKERS,
-      max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
-      max_task_queue_size=MAX_TASK_QUEUE_SIZE,
-      api_major=API_MAJOR,
-      client_dict=None,
-      list_objects_dict=None,
-      get_sysmeta_dict=None,
-      debug=False,
-  ):
-    self._base_url = base_url
-    self._page_size = page_size
-    self._max_workers = max_workers
-    self._max_queue_size = max_result_queue_size
-    self._max_task_queue_size = max_task_queue_size
-    self._api_major = api_major
-    self._client_dict = client_dict or {}
-    self._list_objects_dict = list_objects_dict or {}
-    self._get_sysmeta_dict = get_sysmeta_dict or {}
-    self.total = _get_total_object_count(
-      base_url, api_major, self._client_dict, self._list_objects_dict
-    )
-    self._debug = debug
-    if debug:
-      logger = multiprocessing.log_to_stderr()
-      logger.setLevel(multiprocessing.SUBDEBUG)
+    def __init__(
+        self,
+        base_url,
+        page_size=OBJECT_LIST_PAGE_SIZE,
+        max_workers=MAX_WORKERS,
+        max_result_queue_size=MAX_RESULT_QUEUE_SIZE,
+        max_task_queue_size=MAX_TASK_QUEUE_SIZE,
+        api_major=API_MAJOR,
+        client_dict=None,
+        list_objects_dict=None,
+        get_sysmeta_dict=None,
+        debug=False,
+    ):
+        self._base_url = base_url
+        self._page_size = page_size
+        self._max_workers = max_workers
+        self._max_queue_size = max_result_queue_size
+        self._max_task_queue_size = max_task_queue_size
+        self._api_major = api_major
+        self._client_dict = client_dict or {}
+        self._list_objects_dict = list_objects_dict or {}
+        self._get_sysmeta_dict = get_sysmeta_dict or {}
+        self.total = _get_total_object_count(
+            base_url, api_major, self._client_dict, self._list_objects_dict
+        )
+        self._debug = debug
+        if debug:
+            logger = multiprocessing.log_to_stderr()
+            logger.setLevel(multiprocessing.SUBDEBUG)
 
-  def __iter__(self):
-    manager = multiprocessing.Manager()
-    queue = manager.Queue(maxsize=self._max_queue_size)
-    namespace = manager.Namespace()
-    namespace.stop = False
+    def __iter__(self):
+        manager = multiprocessing.Manager()
+        queue = manager.Queue(maxsize=self._max_queue_size)
+        namespace = manager.Namespace()
+        namespace.stop = False
 
-    process = multiprocessing.Process(
-      target=_get_all_pages,
-      args=(
-        queue, namespace, self._base_url, self._page_size, self._max_workers,
-        self._max_task_queue_size, self._api_major, self._client_dict,
-        self._list_objects_dict, self._get_sysmeta_dict, self.total
-      ),
-    )
+        process = multiprocessing.Process(
+            target=_get_all_pages,
+            args=(
+                queue,
+                namespace,
+                self._base_url,
+                self._page_size,
+                self._max_workers,
+                self._max_task_queue_size,
+                self._api_major,
+                self._client_dict,
+                self._list_objects_dict,
+                self._get_sysmeta_dict,
+                self.total,
+            ),
+        )
 
-    process.start()
+        process.start()
 
-    try:
-      while True:
-        error_dict_or_sysmeta_pyxb = queue.get()
-        if error_dict_or_sysmeta_pyxb is None:
-          logging.debug(
-            '__iter__(): Received None sentinel value. Stopping iteration'
-          )
-          break
-        elif isinstance(error_dict_or_sysmeta_pyxb, dict):
-          yield d1_common.types.exceptions.create_exception_by_name(
-            error_dict_or_sysmeta_pyxb['error'],
-            identifier=error_dict_or_sysmeta_pyxb['pid'],
-          )
-        else:
-          yield error_dict_or_sysmeta_pyxb
-    except GeneratorExit:
-      logging.debug('__iter__(): GeneratorExit exception')
-      pass
+        try:
+            while True:
+                error_dict_or_sysmeta_pyxb = queue.get()
+                if error_dict_or_sysmeta_pyxb is None:
+                    logging.debug(
+                        '__iter__(): Received None sentinel value. Stopping iteration'
+                    )
+                    break
+                elif isinstance(error_dict_or_sysmeta_pyxb, dict):
+                    yield d1_common.types.exceptions.create_exception_by_name(
+                        error_dict_or_sysmeta_pyxb['error'],
+                        identifier=error_dict_or_sysmeta_pyxb['pid'],
+                    )
+                else:
+                    yield error_dict_or_sysmeta_pyxb
+        except GeneratorExit:
+            logging.debug('__iter__(): GeneratorExit exception')
+            pass
 
-    # If generator is exited before exhausted, provide clean shutdown of the
-    # generator by signaling processes to stop, then waiting for them.
-    logging.debug('__iter__(): Setting stop signal')
-    namespace.stop = True
-    # Prevent parent from leaving zombie children behind.
-    while queue.qsize():
-      logging.debug('__iter__(): queue.size(): Dropping unwanted result')
-      queue.get()
-    logging.debug('__iter__(): process.join(): Waiting for process to exit')
-    process.join()
+        # If generator is exited before exhausted, provide clean shutdown of the
+        # generator by signaling processes to stop, then waiting for them.
+        logging.debug('__iter__(): Setting stop signal')
+        namespace.stop = True
+        # Prevent parent from leaving zombie children behind.
+        while queue.qsize():
+            logging.debug('__iter__(): queue.size(): Dropping unwanted result')
+            queue.get()
+        logging.debug('__iter__(): process.join(): Waiting for process to exit')
+        process.join()
 
 
 def _get_all_pages(
-    queue, namespace, base_url, page_size, max_workers, max_task_queue_size,
-    api_major, client_dict, list_objects_dict, get_sysmeta_dict, n_total
+    queue,
+    namespace,
+    base_url,
+    page_size,
+    max_workers,
+    max_task_queue_size,
+    api_major,
+    client_dict,
+    list_objects_dict,
+    get_sysmeta_dict,
+    n_total,
 ):
-  logging.info('Creating pool of {} workers'.format(max_workers))
-  pool = multiprocessing.Pool(processes=max_workers)
-  n_pages = (n_total - 1) // page_size + 1
+    logging.info('Creating pool of {} workers'.format(max_workers))
+    pool = multiprocessing.Pool(processes=max_workers)
+    n_pages = (n_total - 1) // page_size + 1
 
-  for page_idx in range(n_pages):
-    if namespace.stop:
-      logging.debug('_get_all_pages(): Page iter: Received stop signal')
-      break
-    try:
-      pool.apply_async(
-        _get_page, args=(
-          queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
-          client_dict, list_objects_dict, get_sysmeta_dict
-        )
-      )
-    except Exception as e:
-      logging.debug(
-        '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
-      )
-    # The pool does not support a clean way to limit the number of queued tasks
-    # so we have to access the internals to check the queue size and wait if
-    # necessary.
-    # noinspection PyProtectedMember
-    while pool._taskqueue.qsize() > max_task_queue_size:
-      if namespace.stop:
-        logging.debug(
-          '_get_all_pages(): Waiting to queue task: Received stop signal'
-        )
-        break
-      # logging.debug('_get_all_pages(): Waiting to queue task')
-      time.sleep(1)
+    for page_idx in range(n_pages):
+        if namespace.stop:
+            logging.debug('_get_all_pages(): Page iter: Received stop signal')
+            break
+        try:
+            pool.apply_async(
+                _get_page,
+                args=(
+                    queue,
+                    namespace,
+                    base_url,
+                    page_idx,
+                    n_pages,
+                    page_size,
+                    api_major,
+                    client_dict,
+                    list_objects_dict,
+                    get_sysmeta_dict,
+                ),
+            )
+        except Exception as e:
+            logging.debug(
+                '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
+            )
+        # The pool does not support a clean way to limit the number of queued tasks
+        # so we have to access the internals to check the queue size and wait if
+        # necessary.
+        # noinspection PyProtectedMember
+        while pool._taskqueue.qsize() > max_task_queue_size:
+            if namespace.stop:
+                logging.debug(
+                    '_get_all_pages(): Waiting to queue task: Received stop signal'
+                )
+                break
+            # logging.debug('_get_all_pages(): Waiting to queue task')
+            time.sleep(1)
 
-  # Workaround for workers hanging at exit.
-  # pool.terminate()
-  logging.debug(
-    '_get_all_pages(): pool.close(): Preventing more tasks for being added to the pool'
-  )
-  pool.close()
-  logging.debug(
-    '_get_all_pages(): pool.join(): Waiting for the workers to exit'
-  )
-  pool.join()
-  logging.debug(
-    '_get_all_pages(): queue.put(None): Sending None sentinel value to stop the generator'
-  )
-  queue.put(None)
+    # Workaround for workers hanging at exit.
+    # pool.terminate()
+    logging.debug(
+        '_get_all_pages(): pool.close(): Preventing more tasks for being added to the pool'
+    )
+    pool.close()
+    logging.debug('_get_all_pages(): pool.join(): Waiting for the workers to exit')
+    pool.join()
+    logging.debug(
+        '_get_all_pages(): queue.put(None): Sending None sentinel value to stop the generator'
+    )
+    queue.put(None)
 
 
 def _get_page(
-    queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
-    client_dict, list_objects_dict, get_sysmeta_dict
+    queue,
+    namespace,
+    base_url,
+    page_idx,
+    n_pages,
+    page_size,
+    api_major,
+    client_dict,
+    list_objects_dict,
+    get_sysmeta_dict,
 ):
-  logging.debug('_get_page(): page_idx={} n_pages={}'.format(page_idx, n_pages))
+    logging.debug('_get_page(): page_idx={} n_pages={}'.format(page_idx, n_pages))
 
-  if namespace.stop:
-    logging.debug('_get_page(): Received stop signal before listObjects()')
-    return
-
-  client = _create_client(base_url, api_major, client_dict)
-
-  try:
-    object_list_pyxb = client.listObjects(
-      start=page_idx * page_size, count=page_size, **list_objects_dict
-    )
-  except Exception as e:
-    logging.error(
-      '_get_page(): listObjects() failed. page_idx={} page_total={} error="{}"'
-      .format(page_idx, n_pages, str(e))
-    )
-    return
-
-  logging.debug(
-    '_get_page(): Retrieved page. page_idx={} n_items={}'.
-    format(page_idx, len(object_list_pyxb.objectInfo))
-  )
-
-  i = 0
-  for object_info_pyxb in object_list_pyxb.objectInfo:
-    logging.debug('_get_page(): Iterating over objectInfo. i={}'.format(i))
-    i += 1
     if namespace.stop:
-      logging.debug('_get_page(): objectInfo iter: Received stop signal')
-      break
-    _get_sysmeta(
-      client, queue, object_info_pyxb.identifier.value(), get_sysmeta_dict
+        logging.debug('_get_page(): Received stop signal before listObjects()')
+        return
+
+    client = _create_client(base_url, api_major, client_dict)
+
+    try:
+        object_list_pyxb = client.listObjects(
+            start=page_idx * page_size, count=page_size, **list_objects_dict
+        )
+    except Exception as e:
+        logging.error(
+            '_get_page(): listObjects() failed. page_idx={} page_total={} error="{}"'.format(
+                page_idx, n_pages, str(e)
+            )
+        )
+        return
+
+    logging.debug(
+        '_get_page(): Retrieved page. page_idx={} n_items={}'.format(
+            page_idx, len(object_list_pyxb.objectInfo)
+        )
     )
+
+    i = 0
+    for object_info_pyxb in object_list_pyxb.objectInfo:
+        logging.debug('_get_page(): Iterating over objectInfo. i={}'.format(i))
+        i += 1
+        if namespace.stop:
+            logging.debug('_get_page(): objectInfo iter: Received stop signal')
+            break
+        _get_sysmeta(
+            client, queue, object_info_pyxb.identifier.value(), get_sysmeta_dict
+        )
 
 
 def _get_sysmeta(client, queue, pid, get_sysmeta_dict):
-  logging.debug('_get_sysmeta(): pid="{}"'.format(pid))
-  try:
-    sysmeta_pyxb = client.getSystemMetadata(pid, get_sysmeta_dict)
-  except d1_common.types.exceptions.DataONEException as e:
-    logging.debug(
-      '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'
-      .format(pid, str(e))
-    )
-    queue.put({'pid': pid, 'error': e.name})
-  except Exception as e:
-    logging.debug(
-      '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'
-      .format(pid, str(e))
-    )
-  else:
-    queue.put(sysmeta_pyxb)
+    logging.debug('_get_sysmeta(): pid="{}"'.format(pid))
+    try:
+        sysmeta_pyxb = client.getSystemMetadata(pid, get_sysmeta_dict)
+    except d1_common.types.exceptions.DataONEException as e:
+        logging.debug(
+            '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'.format(
+                pid, str(e)
+            )
+        )
+        queue.put({'pid': pid, 'error': e.name})
+    except Exception as e:
+        logging.debug(
+            '_get_sysmeta(): getSystemMetadata() failed. pid="{}" error="{}"'.format(
+                pid, str(e)
+            )
+        )
+    else:
+        queue.put(sysmeta_pyxb)
 
 
 def _create_client(base_url, api_major, client_dict):
-  logging.debug(
-    '_create_client(): api="v{}"'.format(1 if api_major <= 1 else 2)
-  )
-  if api_major <= 1:
-    return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
-  else:
-    return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
+    logging.debug('_create_client(): api="v{}"'.format(1 if api_major <= 1 else 2))
+    if api_major <= 1:
+        return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
+    else:
+        return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
 
 
-def _get_total_object_count(
-    base_url, api_major, client_dict, list_objects_dict
-):
-  client = _create_client(base_url, api_major, client_dict)
-  args_dict = list_objects_dict.copy()
-  args_dict['count'] = 0
-  return client.listObjects(**args_dict).total
+def _get_total_object_count(base_url, api_major, client_dict, list_objects_dict):
+    client = _create_client(base_url, api_major, client_dict)
+    args_dict = list_objects_dict.copy()
+    args_dict['count'] = 0
+    return client.listObjects(**args_dict).total

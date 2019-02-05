@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Echo commands back for unit testing / TDD.
-"""
+"""Echo commands back for unit testing / TDD."""
 
 import logging
 
@@ -27,18 +26,18 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class CommandEchoer():
-  def __init__(self):
-    pass
+class CommandEchoer:
+    def __init__(self):
+        pass
 
-  def solr_query_raw(self, query_string):
-    return query_string
+    def solr_query_raw(self, query_string):
+        return query_string
 
-  def solr_query(self, applied_facets=None, filter_queries=None):
-    return applied_facets, filter_queries
+    def solr_query(self, applied_facets=None, filter_queries=None):
+        return applied_facets, filter_queries
 
-  def get_science_object_through_cache(self, pid):
-    return pid
+    def get_science_object_through_cache(self, pid):
+        return pid
 
-  def get_system_metadata_through_cache(self, pid):
-    return pid
+    def get_system_metadata_through_cache(self, pid):
+        return pid

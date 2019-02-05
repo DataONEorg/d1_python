@@ -24,21 +24,21 @@ import datetime
 import d1_test.d1_test_case
 import d1_test.instance_generator.date_time as dates
 
-#===============================================================================
+# ===============================================================================
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestDateTime')
 class TestDateTime(d1_test.d1_test_case.D1TestCase):
-  def test_10001(self):
-    """random_date(): Returns random datetime.date objects"""
-    random_date_list = [dates.random_date() for _ in range(10)]
-    assert len(set(random_date_list)) >= 8
-    list([isinstance(x, datetime.date) for x in random_date_list])
-    self.sample.assert_equals(random_date_list, 'inst_gen_random_date')
+    def test_10001(self):
+        """random_date(): Returns random datetime.date objects"""
+        random_date_list = [dates.random_date() for _ in range(10)]
+        assert len(set(random_date_list)) >= 8
+        list([isinstance(x, datetime.date) for x in random_date_list])
+        self.sample.assert_equals(random_date_list, 'inst_gen_random_date')
 
-  def test_10002(self):
-    """random_datetime(): Returns random datetime.datetime objects"""
-    random_datetime_list = [dates.random_datetime() for _ in range(10)]
-    assert len(set(random_datetime_list)) >= 8
-    list([isinstance(x, datetime.date) for x in random_datetime_list])
-    self.sample.assert_equals(random_datetime_list, 'inst_gen_random_datetime')
+    def test_10002(self):
+        """random_datetime(): Returns random datetime.datetime objects"""
+        random_datetime_list = [dates.random_datetime() for _ in range(10)]
+        assert len(set(random_datetime_list)) >= 8
+        list([isinstance(x, datetime.date) for x in random_datetime_list])
+        self.sample.assert_equals(random_datetime_list, 'inst_gen_random_datetime')

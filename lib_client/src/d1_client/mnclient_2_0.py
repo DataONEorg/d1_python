@@ -35,22 +35,22 @@ class MemberNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
     d1_client.mnclient_1_2.MemberNodeClient_1_2,
 ):
-  """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_2 with functionality
-  for Member nodes that was added in v2.0 of the DataONE infrastructure.
+    """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_2 with functionality
+    for Member nodes that was added in v2.0 of the DataONE infrastructure.
 
-  For details on how to use these methods, see:
+    For details on how to use these methods, see:
 
-  https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
-  """
+    https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+    """
 
-  def __init__(self, *args, **kwargs):
-    """See baseclient.DataONEBaseClient for args."""
-    super(MemberNodeClient_2_0, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        """See baseclient.DataONEBaseClient for args."""
+        super(MemberNodeClient_2_0, self).__init__(*args, **kwargs)
 
-    self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__file__)
 
-    self._api_major = 2
-    self._api_minor = 0
-    self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
-      self._api_major, self._api_minor
-    )
+        self._api_major = 2
+        self._api_minor = 0
+        self._pyxb_binding = d1_common.type_conversions.get_pyxb_binding_by_api_version(
+            self._api_major, self._api_minor
+        )

@@ -19,14 +19,16 @@
 
 def entrypoint0():
 
-  import sys
-  print(sys.argv)
-  del sys.modules['__main__']
+    import sys
 
-  entrypoint1()
+    print(sys.argv)
+    del sys.modules['__main__']
+
+    entrypoint1()
 
 
 def entrypoint1():
 
-  from .d1_onedrive import d1_onedrive
-  d1_onedrive.main()
+    from .d1_onedrive import d1_onedrive
+
+    d1_onedrive.main()

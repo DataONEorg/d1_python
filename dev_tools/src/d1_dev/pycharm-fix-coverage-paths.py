@@ -18,7 +18,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""PyCharm can't resolve the relative paths written by pytest's coverage plugin.
+"""PyCharm can't resolve the relative paths written by pytest's coverage
+plugin.
+
 This converts them to absolute, which PyCharm handles.
 """
 
@@ -34,27 +36,27 @@ import d1_common.xml
 
 
 def main():
-  d1_common.util.log_setup()
+    d1_common.util.log_setup()
 
-  repo_root_path = d1_dev.util.find_repo_root()
+    repo_root_path = d1_dev.util.find_repo_root()
 
-  cov_xml_path = os.path.join(repo_root_path, 'coverage.xml')
-  fixed_cov_xml_path = os.path.join(repo_root_path, 'coverage_pycharm.xml')
+    cov_xml_path = os.path.join(repo_root_path, 'coverage.xml')
+    fixed_cov_xml_path = os.path.join(repo_root_path, 'coverage_pycharm.xml')
 
-  with open(cov_xml_path, 'rb') as f:
-    cov_tree = d1_common.type_conversions.str_to_etree(f.read())
+    with open(cov_xml_path, 'rb') as f:
+        cov_tree = d1_common.type_conversions.str_to_etree(f.read())
 
-  filename_el_list = cov_tree.findall('.//*[@filename]')
-  for filename_el in filename_el_list:
-    filename_el.attrib['filename'] = os.path.join(
-      repo_root_path, filename_el.attrib['filename']
-    )
+    filename_el_list = cov_tree.findall('.//*[@filename]')
+    for filename_el in filename_el_list:
+        filename_el.attrib['filename'] = os.path.join(
+            repo_root_path, filename_el.attrib['filename']
+        )
 
-  fixed_cov_xml = xml.etree.ElementTree.tostring(cov_tree, 'utf-8')
+    fixed_cov_xml = xml.etree.ElementTree.tostring(cov_tree, 'utf-8')
 
-  with open(fixed_cov_xml_path, 'wb') as f:
-    f.write(d1_common.xml.serialize_for_transport(fixed_cov_xml))
+    with open(fixed_cov_xml_path, 'wb') as f:
+        f.write(d1_common.xml.serialize_for_transport(fixed_cov_xml))
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

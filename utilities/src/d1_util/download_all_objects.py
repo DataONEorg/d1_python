@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Download all Science Objects in a DataONE environment
+"""Download all Science Objects in a DataONE environment.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -88,12 +88,12 @@ import d1_client.mnclient
 # client connects.
 
 # Round-robin CN endpoints
-DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT  # (recommended, production)
+# DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
+# DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 
 # Only retrieve objects of this type. A complete list of valid formatIds can be
 # found at https://cn.dataone.org/cn/v1/formats
@@ -106,133 +106,138 @@ LIST_OBJECTS_PAGE_SIZE = 100
 DOWNLOAD_FOLDER = './d1_objects'
 
 # Don't download objects larger than this size.
-MAX_FILE_SIZE_TO_DOWNLOAD = 1024**2
+MAX_FILE_SIZE_TO_DOWNLOAD = 1024 ** 2
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    '--env', type=str, default='prod',
-    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
-  )
-  parser.add_argument(
-    '--cert-pub', dest='cert_pem_path', action='store',
-    help='Path to PEM formatted public key of certificate'
-  )
-  parser.add_argument(
-    '--cert-key', dest='cert_key_path', action='store',
-    help='Path to PEM formatted private key of certificate'
-  )
-  parser.add_argument(
-    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-    help='Amount of time to wait for calls to complete (seconds)'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        '--env',
+        type=str,
+        default='prod',
+        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+    )
+    parser.add_argument(
+        '--cert-pub',
+        dest='cert_pem_path',
+        action='store',
+        help='Path to PEM formatted public key of certificate',
+    )
+    parser.add_argument(
+        '--cert-key',
+        dest='cert_key_path',
+        action='store',
+        help='Path to PEM formatted private key of certificate',
+    )
+    parser.add_argument(
+        '--timeout',
+        action='store',
+        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+        help='Amount of time to wait for calls to complete (seconds)',
+    )
 
-  logging.basicConfig()
-  # Setting the default logger to level "DEBUG" causes the script to become
-  # very verbose.
-  logging.getLogger('').setLevel(logging.DEBUG)
+    logging.basicConfig()
+    # Setting the default logger to level "DEBUG" causes the script to become
+    # very verbose.
+    logging.getLogger('').setLevel(logging.DEBUG)
 
-  try:
-    os.makedirs(DOWNLOAD_FOLDER)
-  except OSError:
-    pass
+    try:
+        os.makedirs(DOWNLOAD_FOLDER)
+    except OSError:
+        pass
 
-  node_list = get_node_list_from_coordinating_node()
-  for node in node_list.node:
-    if is_member_node(node):
-      member_node_object_downloader = MemberNodeObjectDownloader(node)
-      member_node_object_downloader.download_objects_from_member_node()
+    node_list = get_node_list_from_coordinating_node()
+    for node in node_list.node:
+        if is_member_node(node):
+            member_node_object_downloader = MemberNodeObjectDownloader(node)
+            member_node_object_downloader.download_objects_from_member_node()
 
 
 def get_node_list_from_coordinating_node():
-  cn_client = d1_client.cnclient.CoordinatingNodeClient(base_url=DATAONE_ROOT)
-  try:
-    return cn_client.listNodes()
-  except d1_common.types.exceptions.DataONEException:
-    logging.exception('listNodes() failed with exception:')
-    raise
+    cn_client = d1_client.cnclient.CoordinatingNodeClient(base_url=DATAONE_ROOT)
+    try:
+        return cn_client.listNodes()
+    except d1_common.types.exceptions.DataONEException:
+        logging.exception('listNodes() failed with exception:')
+        raise
 
 
 def is_member_node(node):
-  return node.type == 'mn'
+    return node.type == 'mn'
 
 
 # ==============================================================================
 
 
 class MemberNodeObjectDownloader(object):
-  def __init__(self, node):
-    self._node = node
-    self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(node.baseURL)
+    def __init__(self, node):
+        self._node = node
+        self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(node.baseURL)
 
-  def download_objects_from_member_node(self):
-    logging.info(
-      'Retrieving objects for Member Node: {}'.format(self._node.name)
-    )
-    current_start = 0
-    while True:
-      try:
-        object_list = self._mn_client.listObjects(
-          start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
-          formatId=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
-        )
-      except d1_common.types.exceptions.DataONEException:
-        logging.exception('listObjects() failed with exception:')
-        raise
-      else:
-        current_start += object_list.count
-        if current_start >= object_list.total:
-          break
+    def download_objects_from_member_node(self):
+        logging.info('Retrieving objects for Member Node: {}'.format(self._node.name))
+        current_start = 0
+        while True:
+            try:
+                object_list = self._mn_client.listObjects(
+                    start=current_start,
+                    count=LIST_OBJECTS_PAGE_SIZE,
+                    formatId=LIST_OBJECTS_FORMAT_ID,
+                    replicaStatus=False,
+                )
+            except d1_common.types.exceptions.DataONEException:
+                logging.exception('listObjects() failed with exception:')
+                raise
+            else:
+                current_start += object_list.count
+                if current_start >= object_list.total:
+                    break
 
-        logging.info(
-          'Retrieved page: {}/{}'.format(
-            current_start / LIST_OBJECTS_PAGE_SIZE + 1, object_list.total /
-            LIST_OBJECTS_PAGE_SIZE
-          )
-        )
+                logging.info(
+                    'Retrieved page: {}/{}'.format(
+                        current_start / LIST_OBJECTS_PAGE_SIZE + 1,
+                        object_list.total / LIST_OBJECTS_PAGE_SIZE,
+                    )
+                )
 
-        for d1_object in object_list.objectInfo:
-          self._download_d1_object_if_public(d1_object)
+                for d1_object in object_list.objectInfo:
+                    self._download_d1_object_if_public(d1_object)
 
-  def _download_d1_object_if_public(self, d1_object):
-    pid = d1_object.identifier.value()
-    sys_meta = self._get_d1_object_system_metadata(pid)
-    if sys_meta is not None:
-      # The System Metadata object can be examined to determine system level
-      # details about the corresponding object.
-      if sys_meta.size < MAX_FILE_SIZE_TO_DOWNLOAD:
-        self.download_d1_object(pid)
+    def _download_d1_object_if_public(self, d1_object):
+        pid = d1_object.identifier.value()
+        sys_meta = self._get_d1_object_system_metadata(pid)
+        if sys_meta is not None:
+            # The System Metadata object can be examined to determine system level
+            # details about the corresponding object.
+            if sys_meta.size < MAX_FILE_SIZE_TO_DOWNLOAD:
+                self.download_d1_object(pid)
 
-  def _get_d1_object_system_metadata(self, pid):
-    try:
-      return self._mn_client.getSystemMetadata(pid)
-    except d1_common.types.exceptions.NotAuthorized:
-      logging.info('Ignoring non-public object: {}'.format(pid))
-    except d1_common.types.exceptions.DataONEException:
-      logging.exception('getSystemMetadata() failed with exception:')
-      raise
+    def _get_d1_object_system_metadata(self, pid):
+        try:
+            return self._mn_client.getSystemMetadata(pid)
+        except d1_common.types.exceptions.NotAuthorized:
+            logging.info('Ignoring non-public object: {}'.format(pid))
+        except d1_common.types.exceptions.DataONEException:
+            logging.exception('getSystemMetadata() failed with exception:')
+            raise
 
-  def download_d1_object(self, pid):
-    try:
-      object_stream = self._mn_client.get(pid)
-    except d1_common.types.exceptions.DataONEException:
-      logging.exception('get() failed with exception:')
-      raise
-    else:
-      # The PID (DataONE Persistent Identifier) can contain characters that are
-      # not valid for use as filenames (most commonly, slashes). A simple way to
-      # make a PID safe for use as a filename is to "percent-encode" it.
-      pid_filename = urllib.parse.quote(pid, safe='')
-      with open(os.path.join(DOWNLOAD_FOLDER, pid_filename), 'wb') as f:
-        shutil.copyfileobj(object_stream, f)
+    def download_d1_object(self, pid):
+        try:
+            object_stream = self._mn_client.get(pid)
+        except d1_common.types.exceptions.DataONEException:
+            logging.exception('get() failed with exception:')
+            raise
+        else:
+            # The PID (DataONE Persistent Identifier) can contain characters that are
+            # not valid for use as filenames (most commonly, slashes). A simple way to
+            # make a PID safe for use as a filename is to "percent-encode" it.
+            pid_filename = urllib.parse.quote(pid, safe='')
+            with open(os.path.join(DOWNLOAD_FOLDER, pid_filename), 'wb') as f:
+                shutil.copyfileobj(object_stream, f)
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

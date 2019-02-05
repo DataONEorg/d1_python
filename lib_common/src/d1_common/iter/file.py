@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generator that returns the bytes of a file in chunks.
-"""
+"""Generator that returns the bytes of a file in chunks."""
 
 import os
 
@@ -26,48 +25,48 @@ import d1_common.const
 
 
 class FileIterator(object):
-  """Generator that returns the bytes of a file in chunks.
-  """
-  def __init__(self, path, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
-    self._path = path
-    self._chunk_size = chunk_size
-    self._byte_count = os.path.getsize(path)
+    """Generator that returns the bytes of a file in chunks."""
 
-  def __iter__(self):
-    with open(self._path, 'rb') as f:
-      while True:
-        chunk_str = f.read(self._chunk_size)
-        if not chunk_str:
-          break
-        yield chunk_str
+    def __init__(self, path, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
+        self._path = path
+        self._chunk_size = chunk_size
+        self._byte_count = os.path.getsize(path)
 
-  @property
-  def size(self):
-    """
-    Returns:
-      int : The total number of bytes that will be returned by the iterator.
-    """
-    return self._byte_count
+    def __iter__(self):
+        with open(self._path, 'rb') as f:
+            while True:
+                chunk_str = f.read(self._chunk_size)
+                if not chunk_str:
+                    break
+                yield chunk_str
+
+    @property
+    def size(self):
+        """Returns:
+
+        int : The total number of bytes that will be returned by the iterator.
+        """
+        return self._byte_count
 
 
 class FileLikeObjectIterator(object):
-  """Generator that returns the bytes of a file-like object in chunks
-  """
-  def __init__(self, file, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
-    self._file = file
-    self._chunk_size = chunk_size
+    """Generator that returns the bytes of a file-like object in chunks."""
 
-  def __iter__(self):
-    while True:
-      chunk_str = self._file(self._chunk_size)
-      if not chunk_str:
-        break
-      yield chunk_str
+    def __init__(self, file, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
+        self._file = file
+        self._chunk_size = chunk_size
 
-  @property
-  def size(self):
-    """
-    Returns:
-      int : The total number of bytes that will be returned by the iterator.
-    """
-    return len(self._file)
+    def __iter__(self):
+        while True:
+            chunk_str = self._file(self._chunk_size)
+            if not chunk_str:
+                break
+            yield chunk_str
+
+    @property
+    def size(self):
+        """Returns:
+
+        int : The total number of bytes that will be returned by the iterator.
+        """
+        return len(self._file)

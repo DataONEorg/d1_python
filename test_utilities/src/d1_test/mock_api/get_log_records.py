@@ -50,63 +50,60 @@ LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.GET,
-    re.
-    compile(r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.GET,
+        re.compile(r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return regular response
-  query_dict, client = _parse_log_url(request.url)
-  n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
-  # TODO: Add support for filters: fromDate, toDate, pidFilter
-  body_str = _generate_log_records(client, n_start, n_count)
-  header_dict = {
-    'Content-Type': d1_common.const.CONTENT_TYPE_XML,
-  }
-  return 200, header_dict, body_str
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    # Return regular response
+    query_dict, client = _parse_log_url(request.url)
+    n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
+    # TODO: Add support for filters: fromDate, toDate, pidFilter
+    body_str = _generate_log_records(client, n_start, n_count)
+    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    return 200, header_dict, body_str
 
 
 def _parse_log_url(url):
-  version_tag, endpoint_str, param_list, query_dict, client = (
-    d1_test.mock_api.util.parse_rest_url(url)
-  )
-  assert endpoint_str == 'log'
-  assert len(param_list) == 0, 'log() does not accept any parameters'
-  return query_dict, client
+    version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
+        url
+    )
+    assert endpoint_str == 'log'
+    assert len(param_list) == 0, 'log() does not accept any parameters'
+    return query_dict, client
 
 
 def _generate_log_records(client, n_start, n_count):
-  if n_start + n_count > N_TOTAL:
-    n_count = N_TOTAL - n_start
+    if n_start + n_count > N_TOTAL:
+        n_count = N_TOTAL - n_start
 
-  log = client.pyxb_binding.log()
+    log = client.pyxb_binding.log()
 
-  for i in range(n_count):
-    logEntry = client.pyxb_binding.LogEntry()
+    for i in range(n_count):
+        logEntry = client.pyxb_binding.LogEntry()
 
-    logEntry.entryId = str(i)
-    logEntry.identifier = 'object#{:04d}'.format(n_start + i)
-    logEntry.ipAddress = '1.2.3.4'
-    logEntry.userAgent = 'Mock getLogRecords() UserAgent #{}'.format(i)
-    logEntry.subject = 'Mock getLogRecords() Subject #{}'.format(i)
-    logEntry.event = 'create'
-    logEntry.dateLogged = d1_common.date_time.utc_now()
-    logEntry.nodeIdentifier = 'urn:node:MockLogRecords'
+        logEntry.entryId = str(i)
+        logEntry.identifier = 'object#{:04d}'.format(n_start + i)
+        logEntry.ipAddress = '1.2.3.4'
+        logEntry.userAgent = 'Mock getLogRecords() UserAgent #{}'.format(i)
+        logEntry.subject = 'Mock getLogRecords() Subject #{}'.format(i)
+        logEntry.event = 'create'
+        logEntry.dateLogged = d1_common.date_time.utc_now()
+        logEntry.nodeIdentifier = 'urn:node:MockLogRecords'
 
-    log.logEntry.append(logEntry)
+        log.logEntry.append(logEntry)
 
-  log.start = n_start
-  log.count = len(log.logEntry)
-  log.total = N_TOTAL
+    log.start = n_start
+    log.count = len(log.logEntry)
+    log.total = N_TOTAL
 
-  return log.toxml('utf-8')
+    return log.toxml('utf-8')

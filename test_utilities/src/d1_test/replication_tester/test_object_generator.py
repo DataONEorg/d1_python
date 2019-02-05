@@ -38,64 +38,65 @@ N_SCI_OBJ_BYTES = 10
 
 
 def generate_random_ascii(prefix):
-  return '{}_{}'.format(
-    prefix, ''.join(
-      random.
-      choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
-      for x in range(10)
+    return '{}_{}'.format(
+        prefix,
+        ''.join(
+            random.choice(
+                string.ascii_uppercase + string.ascii_lowercase + string.digits
+            )
+            for x in range(10)
+        ),
     )
-  )
 
 
 def generate_science_object_with_sysmeta(pid, include_revision_bool=False):
-  sci_obj = _create_science_object_bytes(pid)
-  sys_meta = _generate_system_metadata_for_science_object(
-    pid, sci_obj, include_revision_bool
-  )
-  return sys_meta, sci_obj
+    sci_obj = _create_science_object_bytes(pid)
+    sys_meta = _generate_system_metadata_for_science_object(
+        pid, sci_obj, include_revision_bool
+    )
+    return sys_meta, sci_obj
 
 
 def _create_science_object_bytes(pid):
-  """Create a set of pseudo-random bytes that are always the same for a given
-  SID
-  """
-  # Seeding the PRNG with the PID causes the same sequence to be generated each
-  # time.
-  random.seed(pid)
-  return d1_test.instance_generator.random_data.random_bytes(N_SCI_OBJ_BYTES)
+    """Create a set of pseudo-random bytes that are always the same for a given
+    SID."""
+    # Seeding the PRNG with the PID causes the same sequence to be generated each
+    # time.
+    random.seed(pid)
+    return d1_test.instance_generator.random_data.random_bytes(N_SCI_OBJ_BYTES)
 
 
 def _generate_system_metadata_for_science_object(
     pid, sciobj_bytes, include_revision_bool=False
 ):
-  now = d1_common.date_time.utc_now()
+    now = d1_common.date_time.utc_now()
 
-  sysmeta_pyxb = dataoneTypes.systemMetadata()
-  sysmeta_pyxb.accessPolicy = _generate_public_access_policy()
-  sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
-    sciobj_bytes
-  )
-  sysmeta_pyxb.dateSysMetadataModified = now
-  sysmeta_pyxb.dateUploaded = now
-  sysmeta_pyxb.formatId = FORMAT_ID
-  sysmeta_pyxb.identifier = pid
-  sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
-  # dataoneTypes.subject(rights_holder)
-  sysmeta_pyxb.size = len(sciobj_bytes)
-  sysmeta_pyxb.submitter = generate_random_ascii('submitter')
+    sysmeta_pyxb = dataoneTypes.systemMetadata()
+    sysmeta_pyxb.accessPolicy = _generate_public_access_policy()
+    sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
+        sciobj_bytes
+    )
+    sysmeta_pyxb.dateSysMetadataModified = now
+    sysmeta_pyxb.dateUploaded = now
+    sysmeta_pyxb.formatId = FORMAT_ID
+    sysmeta_pyxb.identifier = pid
+    sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
+    # dataoneTypes.subject(rights_holder)
+    sysmeta_pyxb.size = len(sciobj_bytes)
+    sysmeta_pyxb.submitter = generate_random_ascii('submitter')
 
-  if include_revision_bool:
-    sysmeta_pyxb.obsoletedBy = generate_random_ascii('obsoleted_by_pid')
-    sysmeta_pyxb.obsoletes = generate_random_ascii('obsoletes_pid')
+    if include_revision_bool:
+        sysmeta_pyxb.obsoletedBy = generate_random_ascii('obsoleted_by_pid')
+        sysmeta_pyxb.obsoletes = generate_random_ascii('obsoletes_pid')
 
-  return sysmeta_pyxb
+    return sysmeta_pyxb
 
 
 def _generate_public_access_policy():
-  access_policy_pyxb = dataoneTypes.accessPolicy()
-  access_rule_pyxb = dataoneTypes.AccessRule()
-  access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-  permission_pyxb = dataoneTypes.Permission('read')
-  access_rule_pyxb.permission.append(permission_pyxb)
-  access_policy_pyxb.append(access_rule_pyxb)
-  return access_policy_pyxb
+    access_policy_pyxb = dataoneTypes.accessPolicy()
+    access_rule_pyxb = dataoneTypes.AccessRule()
+    access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
+    permission_pyxb = dataoneTypes.Permission('read')
+    access_rule_pyxb.permission.append(permission_pyxb)
+    access_policy_pyxb.append(access_rule_pyxb)
+    return access_policy_pyxb

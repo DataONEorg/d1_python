@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Hold a queue of operations and perform commands on the queue.
-"""
+"""Hold a queue of operations and perform commands on the queue."""
 
 import json
 import os
@@ -27,11 +26,11 @@ import subprocess
 import tempfile
 
 import d1_cli.impl.exceptions
-import d1_cli.impl.util
 import d1_cli.impl.operation_executer
 import d1_cli.impl.operation_formatter
 import d1_cli.impl.operation_validator
 import d1_cli.impl.session
+import d1_cli.impl.util
 
 DEFAULT_EDITOR = "nano"
 

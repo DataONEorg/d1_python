@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Extract subjects from a DataONE X.509 v3 certificate
+"""Extract subjects from a DataONE X.509 v3 certificate.
 
 If a certificate was provided, it has been validated by Apache before being
 passed to GMN. So it is known to signed by a trusted CA and to be unexpired.
@@ -37,35 +37,35 @@ import d1_common.types.exceptions
 
 
 def get_subjects(request):
-  """Get all subjects in the certificate.
-  - Returns: primary_str (primary subject), equivalent_set (equivalent
-  identities, groups and group memberships)
-  - The primary subject is the certificate subject DN, serialized to a DataONE
-  compliant subject string.
-  """
-  if _is_certificate_provided(request):
-    try:
-      return get_authenticated_subjects(request.META['SSL_CLIENT_CERT'])
-    except Exception as e:
-      raise d1_common.types.exceptions.InvalidToken(
-        0,
-        'Error extracting session from certificate. error="{}"'.format(str(e))
-      )
-  else:
-    return d1_common.const.SUBJECT_PUBLIC, set()
+    """Get all subjects in the certificate.
+
+    - Returns: primary_str (primary subject), equivalent_set (equivalent
+    identities, groups and group memberships)
+    - The primary subject is the certificate subject DN, serialized to a DataONE
+    compliant subject string.
+    """
+    if _is_certificate_provided(request):
+        try:
+            return get_authenticated_subjects(request.META['SSL_CLIENT_CERT'])
+        except Exception as e:
+            raise d1_common.types.exceptions.InvalidToken(
+                0,
+                'Error extracting session from certificate. error="{}"'.format(str(e)),
+            )
+    else:
+        return d1_common.const.SUBJECT_PUBLIC, set()
 
 
 def get_authenticated_subjects(cert_pem):
-  """Return primary subject and set of equivalents authenticated by certificate
-  - ``cert_pem`` can be str or bytes
-  """
-  if isinstance(cert_pem, str):
-    cert_pem = cert_pem.encode('utf-8')
-  return d1_common.cert.subjects.extract_subjects(
-    cert_pem
-  )
+    """Return primary subject and set of equivalents authenticated by
+    certificate.
+
+    - ``cert_pem`` can be str or bytes
+    """
+    if isinstance(cert_pem, str):
+        cert_pem = cert_pem.encode('utf-8')
+    return d1_common.cert.subjects.extract_subjects(cert_pem)
 
 
 def _is_certificate_provided(request):
-  return 'SSL_CLIENT_CERT' in request.META and \
-    request.META['SSL_CLIENT_CERT'] != ''
+    return 'SSL_CLIENT_CERT' in request.META and request.META['SSL_CLIENT_CERT'] != ''

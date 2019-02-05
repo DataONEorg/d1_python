@@ -18,54 +18,51 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Common Library package
-"""
+"""DataONE Common Library package."""
 import sys
 
 import setuptools
 
 
 def main():
-  setuptools.setup(
-    name='dataone.common',
-    version='3.3.0',
-    description=(
-      'Contains functionality common to projects that interact with '
-      'the DataONE infrastructure via Python'
-    ),
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=[
-      'contextlib2 >= 0.5.5',
-      'cryptography >= 2.5',
-      'iso8601 >= 0.1.12',
-      'PyJWT >= 1.7.1',
-      'pyasn1 >= 0.4.5',
-      'pyxb >= 1.2.6',
-      'rdflib >= 4.2.2',
-      'zipstream >= 1.1.4',
-    ],
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords=(
-      'DataONE client server member-node coordinating-node xml url oai-ore rdf '
-      'resource-map'
-    ),
-  )
+    setuptools.setup(
+        name='dataone.common',
+        version='3.3.0',
+        description=(
+            'Contains functionality common to projects that interact with '
+            'the DataONE infrastructure via Python'
+        ),
+        author='DataONE Project',
+        author_email='developers@dataone.org',
+        url='https://github.com/DataONEorg/d1_python',
+        license='Apache License, Version 2.0',
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        install_requires=[
+            'contextlib2 >= 0.5.5',
+            'cryptography >= 2.5',
+            'iso8601 >= 0.1.12',
+            'PyJWT >= 1.7.1',
+            'pyasn1 >= 0.4.5',
+            'pyxb >= 1.2.6',
+            'rdflib >= 4.2.2',
+            'zipstream >= 1.1.4',
+        ],
+        setup_requires=['setuptools_git >= 1.1'],
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Topic :: Scientific/Engineering',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+        ],
+        keywords=(
+            'DataONE client server member-node coordinating-node xml url oai-ore rdf '
+            'resource-map'
+        ),
+    )
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

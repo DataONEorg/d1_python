@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generate random NodeReference
-"""
+"""Generate random NodeReference."""
 
 import d1_common.types.dataoneTypes
 
@@ -26,16 +25,17 @@ import d1_test.instance_generator.random_data
 
 
 def generate(prefix='urn:node:', min_len=5, max_len=20):
-  """Generate instance of nodeReference holding a urn:node:<random> string"""
-  s = generate_bare(prefix, min_len, max_len)
-  return d1_common.types.dataoneTypes.nodeReference(s)
+    """Generate instance of nodeReference holding a urn:node:<random>
+    string."""
+    s = generate_bare(prefix, min_len, max_len)
+    return d1_common.types.dataoneTypes.nodeReference(s)
 
 
 def generate_bare(prefix='', min_len=5, max_len=20):
-  """Generate a random Unicode string"""
-  len_prefix = len(prefix)
-  if len_prefix >= max_len:
-    raise ValueError('Unable to generate random string: No room for prefix')
-  return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
-    min_len - len_prefix, max_len - len_prefix
-  )
+    """Generate a random Unicode string."""
+    len_prefix = len(prefix)
+    if len_prefix >= max_len:
+        raise ValueError('Unable to generate random string: No room for prefix')
+    return prefix + d1_test.instance_generator.random_data.random_lower_ascii(
+        min_len - len_prefix, max_len - len_prefix
+    )

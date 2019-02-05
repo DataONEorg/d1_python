@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-.. _Types:
+""".. _Types:
 
 DataONE API types
 
@@ -66,15 +65,16 @@ See also:
 import logging
 
 try:
-  from logging import NullHandler
+    from logging import NullHandler
 except ImportError:
 
-  class NullHandler(logging.Handler):
-    """Suppress log messages instead of raising exception if the program using the
-    library does not configure the logging system.
-    """
-    # noinspection PyMissingOrEmptyDocstring
-    def emit(self, record):
-      pass
+    class NullHandler(logging.Handler):
+        """Suppress log messages instead of raising exception if the program
+        using the library does not configure the logging system."""
+
+        # noinspection PyMissingOrEmptyDocstring
+        def emit(self, record):
+            pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())

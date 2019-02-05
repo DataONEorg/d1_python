@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Delete all Science Objects of specific type from Member Node
+"""Delete all Science Objects of specific type from Member Node.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -95,111 +95,119 @@ CERTIFICATE_KEY = 'client.key'
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    '--env', type=str, default='prod',
-    help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
-  )
-  parser.add_argument(
-    '--cert-pub', dest='cert_pem_path', action='store',
-    help='Path to PEM formatted public key of certificate'
-  )
-  parser.add_argument(
-    '--cert-key', dest='cert_key_path', action='store',
-    help='Path to PEM formatted private key of certificate'
-  )
-  parser.add_argument(
-    '--timeout', action='store', default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-    help='Amount of time to wait for calls to complete (seconds)'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        '--env',
+        type=str,
+        default='prod',
+        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+    )
+    parser.add_argument(
+        '--cert-pub',
+        dest='cert_pem_path',
+        action='store',
+        help='Path to PEM formatted public key of certificate',
+    )
+    parser.add_argument(
+        '--cert-key',
+        dest='cert_key_path',
+        action='store',
+        help='Path to PEM formatted private key of certificate',
+    )
+    parser.add_argument(
+        '--timeout',
+        action='store',
+        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
+        help='Amount of time to wait for calls to complete (seconds)',
+    )
 
-  # Setting the default logger to level "DEBUG" causes the script to become
-  # very verbose.
-  logging.basicConfig()
-  logging.getLogger('').setLevel(logging.DEBUG)
+    # Setting the default logger to level "DEBUG" causes the script to become
+    # very verbose.
+    logging.basicConfig()
+    logging.getLogger('').setLevel(logging.DEBUG)
 
-  member_node_object_deleter = MemberNodeObjectDeleter(MEMBER_NODE_BASE_URL)
-  member_node_object_deleter.delete_objects_from_member_node()
+    member_node_object_deleter = MemberNodeObjectDeleter(MEMBER_NODE_BASE_URL)
+    member_node_object_deleter.delete_objects_from_member_node()
 
 
 # ==============================================================================
 
 
 class MemberNodeObjectDeleter(object):
-  def __init__(self, base_url):
-    self._base_url = base_url
-    self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-      self._base_url, cert_pem_path=CERTIFICATE, cert_key_path=CERTIFICATE_KEY
-    )
-
-  def delete_objects_from_member_node(self):
-    logging.info(
-      'Searching for objects to delete on Member Node: {}'.
-      format(self._base_url)
-    )
-    pids_delete = self._find_objects_to_delete()
-    logging.info('Found {} objects to delete'.format(len(pids_delete)))
-    if not len(pids_delete):
-      return
-    self._delete_objects(pids_delete)
-    # Check for success.
-    pids_remaining = self._find_objects_to_delete()
-    if len(pids_remaining):
-      logging.error(
-        'Deletion failed on {} of {} objects'.
-        format(len(pids_remaining), len(pids_delete))
-      )
-    else:
-      logging.info('Successfully deleted {} objects'.format(len(pids_delete)))
-
-  def _find_objects_to_delete(self):
-    pids = []
-    current_start = 0
-    while True:
-      try:
-        object_list = self._mn_client.listObjects(
-          start=current_start, count=LIST_OBJECTS_PAGE_SIZE,
-          formatId=LIST_OBJECTS_FORMAT_ID, replicaStatus=False
+    def __init__(self, base_url):
+        self._base_url = base_url
+        self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+            self._base_url, cert_pem_path=CERTIFICATE, cert_key_path=CERTIFICATE_KEY
         )
-      except d1_common.types.exceptions.DataONEException:
-        logging.exception('listObjects() failed with exception:')
-        raise
 
-      logging.info(
-        'Retrieved page: {}/{} ({} objects)'.format(
-          current_start / LIST_OBJECTS_PAGE_SIZE + 1, object_list.total /
-          LIST_OBJECTS_PAGE_SIZE + 1, object_list.count
+    def delete_objects_from_member_node(self):
+        logging.info(
+            'Searching for objects to delete on Member Node: {}'.format(self._base_url)
         )
-      )
+        pids_delete = self._find_objects_to_delete()
+        logging.info('Found {} objects to delete'.format(len(pids_delete)))
+        if not len(pids_delete):
+            return
+        self._delete_objects(pids_delete)
+        # Check for success.
+        pids_remaining = self._find_objects_to_delete()
+        if len(pids_remaining):
+            logging.error(
+                'Deletion failed on {} of {} objects'.format(
+                    len(pids_remaining), len(pids_delete)
+                )
+            )
+        else:
+            logging.info('Successfully deleted {} objects'.format(len(pids_delete)))
 
-      for d1_object in object_list.objectInfo:
-        pids.append(d1_object.identifier.value())
+    def _find_objects_to_delete(self):
+        pids = []
+        current_start = 0
+        while True:
+            try:
+                object_list = self._mn_client.listObjects(
+                    start=current_start,
+                    count=LIST_OBJECTS_PAGE_SIZE,
+                    formatId=LIST_OBJECTS_FORMAT_ID,
+                    replicaStatus=False,
+                )
+            except d1_common.types.exceptions.DataONEException:
+                logging.exception('listObjects() failed with exception:')
+                raise
 
-      current_start += object_list.count
-      if current_start >= object_list.total:
-        break
-    return pids
+            logging.info(
+                'Retrieved page: {}/{} ({} objects)'.format(
+                    current_start / LIST_OBJECTS_PAGE_SIZE + 1,
+                    object_list.total / LIST_OBJECTS_PAGE_SIZE + 1,
+                    object_list.count,
+                )
+            )
 
-  def _delete_objects(self, pids):
-    logging.info('Deleting objects on Member Node: {}'.format(self._base_url))
-    for pid in pids:
-      self._delete_object(pid)
+            for d1_object in object_list.objectInfo:
+                pids.append(d1_object.identifier.value())
 
-  def _delete_object(self, pid):
-    try:
-      self._mn_client.delete(pid)
-    except d1_common.types.exceptions.DataONEException:
-      logging.exception('MNStorage.delete() failed with exception:')
-      raise
-    else:
-      logging.info('Deleted: {}'.format(pid))
+            current_start += object_list.count
+            if current_start >= object_list.total:
+                break
+        return pids
+
+    def _delete_objects(self, pids):
+        logging.info('Deleting objects on Member Node: {}'.format(self._base_url))
+        for pid in pids:
+            self._delete_object(pid)
+
+    def _delete_object(self, pid):
+        try:
+            self._mn_client.delete(pid)
+        except d1_common.types.exceptions.DataONEException:
+            logging.exception('MNStorage.delete() failed with exception:')
+            raise
+        else:
+            logging.info('Deleted: {}'.format(pid))
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

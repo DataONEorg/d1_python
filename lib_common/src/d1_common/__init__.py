@@ -17,20 +17,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Common Library"""
+"""DataONE Common Library."""
 
 import logging
 
 try:
-  from logging import NullHandler
+    from logging import NullHandler
 except ImportError:
 
-  class NullHandler(logging.Handler):
-    """Suppress log messages instead of raising exception if the program using the
-    library does not configure the logging system.
-    """
-    # noinspection PyMissingOrEmptyDocstring
-    def emit(self, record):
-      pass
+    class NullHandler(logging.Handler):
+        """Suppress log messages instead of raising exception if the program
+        using the library does not configure the logging system."""
+
+        # noinspection PyMissingOrEmptyDocstring
+        def emit(self, record):
+            pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())

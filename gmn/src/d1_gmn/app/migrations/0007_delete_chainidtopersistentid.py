@@ -7,12 +7,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0006_chainidtopersistentid'),
-    ]
+    dependencies = [('app', '0006_chainidtopersistentid')]
 
-    operations = [
-        migrations.DeleteModel(
-            name='ChainIdToPersistentId',
-        ),
-    ]
+    operations = [migrations.DeleteModel(name='ChainIdToPersistentId')]

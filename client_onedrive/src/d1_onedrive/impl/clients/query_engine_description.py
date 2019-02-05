@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Cache and manipulate a queryEngineDescription
-"""
+"""Cache and manipulate a queryEngineDescription."""
 
 import logging
 
@@ -27,9 +26,9 @@ import logging
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
+    log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
 except (KeyError, AttributeError):
-  pass
+    pass
 
 # class QueryEngineDescription(object):
 #   def __init__(self):

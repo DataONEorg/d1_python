@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generator that returns a ``bytes`` object in chunks.
-"""
+"""Generator that returns a ``bytes`` object in chunks."""
 
 import io
 
@@ -26,29 +25,29 @@ import d1_common.const
 
 
 class BytesIterator(object):
-  """Generator that returns a ``bytes`` object in chunks.
-  """
-  # TODO: Rename class to Generator.
-  # Iterator becomes a generator when using yield.
-  def __init__(self, bytes_, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
-    self._bytes = bytes_
-    self._chunk_size = chunk_size
+    """Generator that returns a ``bytes`` object in chunks."""
 
-  def __iter__(self):
-    f = io.BytesIO(self._bytes)
-    while True:
-      chunk_str = f.read(self._chunk_size)
-      if not chunk_str:
-        break
-      yield chunk_str
+    # TODO: Rename class to Generator.
+    # Iterator becomes a generator when using yield.
+    def __init__(self, bytes_, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
+        self._bytes = bytes_
+        self._chunk_size = chunk_size
 
-  def __len__(self):
-    return len(self._bytes)
+    def __iter__(self):
+        f = io.BytesIO(self._bytes)
+        while True:
+            chunk_str = f.read(self._chunk_size)
+            if not chunk_str:
+                break
+            yield chunk_str
 
-  @property
-  def size(self):
-    """
-    Returns:
-      int: The total number of bytes that will be returned by the iterator.
-    """
-    return len(self._bytes)
+    def __len__(self):
+        return len(self._bytes)
+
+    @property
+    def size(self):
+        """Returns:
+
+        int: The total number of bytes that will be returned by the iterator.
+        """
+        return len(self._bytes)

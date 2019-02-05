@@ -17,10 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Asserts used in views
+"""Asserts used in views.
 
-These directly return a DataONE Exception to the client if a test condition is
-not true.
+These directly return a DataONE Exception to the client if a test
+condition is not true.
 """
 
 import contextlib
@@ -67,77 +67,82 @@ import django.conf
 
 
 def is_valid_pid_for_create(did):
-  """Assert that ``did`` can be used as a PID for creating a new object with
-  MNStorage.create() or MNStorage.update().
-  """
-  if not d1_gmn.app.did.is_valid_pid_for_create(did):
-    raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, 'Identifier is already in use as {}. did="{}"'
-      .format(d1_gmn.app.did.classify_identifier(did), did), identifier=did
-    )
+    """Assert that ``did`` can be used as a PID for creating a new object with
+    MNStorage.create() or MNStorage.update()."""
+    if not d1_gmn.app.did.is_valid_pid_for_create(did):
+        raise d1_common.types.exceptions.IdentifierNotUnique(
+            0,
+            'Identifier is already in use as {}. did="{}"'.format(
+                d1_gmn.app.did.classify_identifier(did), did
+            ),
+            identifier=did,
+        )
 
 
 def is_valid_pid_to_be_updated(did):
-  """Assert that ``did`` is the PID of an object that can be updated (obsoleted)
-  with MNStorage.update()
-  """
-  if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Object cannot be updated because the identifier for the object to be '
-      'updated is {}. did="{}"'.format(
-        d1_gmn.app.did.classify_identifier(did), did), identifier=did
-    )
+    """Assert that ``did`` is the PID of an object that can be updated
+    (obsoleted) with MNStorage.update()"""
+    if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Object cannot be updated because the identifier for the object to be '
+            'updated is {}. did="{}"'.format(
+                d1_gmn.app.did.classify_identifier(did), did
+            ),
+            identifier=did,
+        )
 
 
 def is_did(did):
-  if not d1_gmn.app.did._is_did(did):
-    raise d1_common.types.exceptions.NotFound(
-      0, 'Unknown identifier. id="{}"'.format(did), identifier=did
-    )
+    if not d1_gmn.app.did._is_did(did):
+        raise d1_common.types.exceptions.NotFound(
+            0, 'Unknown identifier. id="{}"'.format(did), identifier=did
+        )
 
 
 def is_existing_object(did):
-  if not d1_gmn.app.did.is_existing_object(did):
-    raise d1_common.types.exceptions.NotFound(
-      0, 'Identifier is {}. Expected a Persistent ID (PID) for an existing '
-      'object. id="{}"'.format(d1_gmn.app.did.classify_identifier(did), did),
-      identifier=did
-    )
+    if not d1_gmn.app.did.is_existing_object(did):
+        raise d1_common.types.exceptions.NotFound(
+            0,
+            'Identifier is {}. Expected a Persistent ID (PID) for an existing '
+            'object. id="{}"'.format(d1_gmn.app.did.classify_identifier(did), did),
+            identifier=did,
+        )
 
 
 def is_sid(did):
-  if not d1_gmn.app.did.is_sid(did):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Identifier is {}. Expected a Series ID (SID). id="{}"'.format(
-        d1_gmn.app.did.classify_identifier(did), did
-      ), identifier=did
-    )
+    if not d1_gmn.app.did.is_sid(did):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Identifier is {}. Expected a Series ID (SID). id="{}"'.format(
+                d1_gmn.app.did.classify_identifier(did), did
+            ),
+            identifier=did,
+        )
 
 
 def is_bool_param(param_name, bool_val):
-  if not d1_gmn.app.views.util.is_bool_param(bool_val):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
-        param_name, bool_val
-      )
-    )
+    if not d1_gmn.app.views.util.is_bool_param(bool_val):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Invalid boolean value for parameter. parameter="{}" value="{}"'.format(
+                param_name, bool_val
+            ),
+        )
 
 
 def is_in_revision_chain(pid):
-  if not d1_gmn.app.did.is_in_revision_chain(pid):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Object is not in a revision chain. pid="{}"'.format(pid),
-      identifier=pid
-    )
+    if not d1_gmn.app.did.is_in_revision_chain(pid):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0, 'Object is not in a revision chain. pid="{}"'.format(pid), identifier=pid
+        )
 
 
 def is_not_obsoleted(pid):
-  if d1_gmn.app.did.is_obsoleted(pid):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Object has already been obsoleted. pid="{}"'.format(pid),
-      identifier=pid
-    )
+    if d1_gmn.app.did.is_obsoleted(pid):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0, 'Object has already been obsoleted. pid="{}"'.format(pid), identifier=pid
+        )
 
 
 # ------------------------------------------------------------------------------
@@ -146,87 +151,95 @@ def is_not_obsoleted(pid):
 
 
 def post_has_mime_parts(request, parts):
-  """Validate that a MMP POST contains all required sections.
-  :param request: Django Request
-  :param parts: [(part_type, part_name), ...]
-  :return: None or raises exception.
+    """Validate that a MMP POST contains all required sections.
 
-  Where information is stored in the request:
-  part_type header: request.META['HTTP_<UPPER CASE NAME>']
-  part_type file: request.FILES['<name>']
-  part_type field: request.POST['<name>']
-  """
-  missing = []
+    :param request: Django Request
+    :param parts: [(part_type, part_name), ...]
+    :return: None or raises exception.
 
-  for part_type, part_name in parts:
-    if part_type == 'header':
-      if 'HTTP_' + part_name.upper() not in request.META:
-        missing.append('{}: {}'.format(part_type, part_name))
-    elif part_type == 'file':
-      if part_name not in list(request.FILES.keys()):
-        missing.append('{}: {}'.format(part_type, part_name))
-    elif part_type == 'field':
-      if part_name not in list(request.POST.keys()):
-        missing.append('{}: {}'.format(part_type, part_name))
-    else:
-      raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Invalid part_type. part_type="{}"'.format(part_type)
-      )
+    Where information is stored in the request:
+    part_type header: request.META['HTTP_<UPPER CASE NAME>']
+    part_type file: request.FILES['<name>']
+    part_type field: request.POST['<name>']
+    """
+    missing = []
 
-  if len(missing) > 0:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Missing part(s) in MIME Multipart document. missing="{}"'
-      .format(', '.join(missing))
-    )
+    for part_type, part_name in parts:
+        if part_type == 'header':
+            if 'HTTP_' + part_name.upper() not in request.META:
+                missing.append('{}: {}'.format(part_type, part_name))
+        elif part_type == 'file':
+            if part_name not in list(request.FILES.keys()):
+                missing.append('{}: {}'.format(part_type, part_name))
+        elif part_type == 'field':
+            if part_name not in list(request.POST.keys()):
+                missing.append('{}: {}'.format(part_type, part_name))
+        else:
+            raise d1_common.types.exceptions.ServiceFailure(
+                0, 'Invalid part_type. part_type="{}"'.format(part_type)
+            )
+
+    if len(missing) > 0:
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Missing part(s) in MIME Multipart document. missing="{}"'.format(
+                ', '.join(missing)
+            ),
+        )
 
 
 def date_is_utc(date_time):
-  if not d1_common.date_time.is_utc(date_time):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Date-time must be specified in UTC. date_time="{}"'.format(date_time)
-    )
+    if not d1_common.date_time.is_utc(date_time):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0, 'Date-time must be specified in UTC. date_time="{}"'.format(date_time)
+        )
 
 
 def url_is_http_or_https(url):
-  if not d1_common.url.isHttpOrHttps(url):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      'URL specified for remote storage must be HTTP or HTTPS. url="{}"'.
-      format(url),
-    )
+    if not d1_common.url.isHttpOrHttps(url):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'URL specified for remote storage must be HTTP or HTTPS. url="{}"'.format(
+                url
+            ),
+        )
 
 
 def url_is_retrievable(url):
-  try:
-    with contextlib.closing(
-        requests.get(
-          url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
+    try:
+        with contextlib.closing(
+            requests.get(
+                url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
+            )
+        ) as r:
+            r.raise_for_status()
+            for _ in r.iter_content(chunk_size=1):
+                return True
+        raise IOError('Object appears to be empty')
+    except Exception as e:
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Invalid URL specified for remote storage. The referenced object is not '
+            'retrievable. url="{}", error="{}"'.format(url, str(e)),
         )
-    ) as r:
-      r.raise_for_status()
-      for _ in r.iter_content(chunk_size=1):
-        return True
-    raise IOError('Object appears to be empty')
-  except Exception as e:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      'Invalid URL specified for remote storage. The referenced object is not '
-      'retrievable. url="{}", error="{}"'.format(url, str(e))
-    )
 
 
 def is_not_replica(pid):
-  if d1_gmn.app.did.is_local_replica(pid):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Object is a replica and cannot be updated on this Member Node. '
-      'The operation must be performed on the authoritative Member Node. '
-      'pid="{}"'.format(pid), identifier=pid
-    )
+    if d1_gmn.app.did.is_local_replica(pid):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'Object is a replica and cannot be updated on this Member Node. '
+            'The operation must be performed on the authoritative Member Node. '
+            'pid="{}"'.format(pid),
+            identifier=pid,
+        )
 
 
 def is_not_archived(pid):
-  if d1_gmn.app.did.is_archived(pid):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'The object has been archived and cannot be updated. '
-      'pid="{}"'.format(pid), identifier=pid
-    )
+    if d1_gmn.app.did.is_archived(pid):
+        raise d1_common.types.exceptions.InvalidRequest(
+            0,
+            'The object has been archived and cannot be updated. '
+            'pid="{}"'.format(pid),
+            identifier=pid,
+        )

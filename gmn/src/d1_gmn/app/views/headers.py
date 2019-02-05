@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Read and write HTTP Headers
-"""
+"""Read and write HTTP Headers."""
 
 import d1_gmn.app
 import d1_gmn.app.auth
@@ -46,47 +45,49 @@ import d1_common.xml
 
 
 def add_sciobj_properties_headers_to_response(response, sciobj):
-  response['Content-Length'] = sciobj.size
-  response['Content-Type'] = d1_gmn.app.views.util.content_type_from_format(
-    sciobj.format.format
-  )
-  response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
-    d1_common.date_time.normalize_datetime_to_utc(sciobj.modified_timestamp)
-  )
-  response['DataONE-GMN'] = d1_gmn.__version__
-  response['DataONE-FormatId'] = sciobj.format.format
-  response['DataONE-Checksum'] = '{},{}'.format(
-    sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
-  )
-  response['DataONE-SerialVersion'] = sciobj.serial_version
-  add_http_date_header_to_response(response)
-  if d1_common.url.isHttpOrHttps(sciobj.url):
-    response['DataONE-Proxy'] = sciobj.url
-  if sciobj.obsoletes:
-    response['DataONE-Obsoletes'] = sciobj.obsoletes.did
-  if sciobj.obsoleted_by:
-    response['DataONE-ObsoletedBy'] = sciobj.obsoleted_by.did
-  sid = d1_gmn.app.revision.get_sid_by_pid(sciobj.pid.did)
-  if sid:
-    response['DataONE-SeriesId'] = sid
+    response['Content-Length'] = sciobj.size
+    response['Content-Type'] = d1_gmn.app.views.util.content_type_from_format(
+        sciobj.format.format
+    )
+    response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
+        d1_common.date_time.normalize_datetime_to_utc(sciobj.modified_timestamp)
+    )
+    response['DataONE-GMN'] = d1_gmn.__version__
+    response['DataONE-FormatId'] = sciobj.format.format
+    response['DataONE-Checksum'] = '{},{}'.format(
+        sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
+    )
+    response['DataONE-SerialVersion'] = sciobj.serial_version
+    add_http_date_header_to_response(response)
+    if d1_common.url.isHttpOrHttps(sciobj.url):
+        response['DataONE-Proxy'] = sciobj.url
+    if sciobj.obsoletes:
+        response['DataONE-Obsoletes'] = sciobj.obsoletes.did
+    if sciobj.obsoleted_by:
+        response['DataONE-ObsoletedBy'] = sciobj.obsoleted_by.did
+    sid = d1_gmn.app.revision.get_sid_by_pid(sciobj.pid.did)
+    if sid:
+        response['DataONE-SeriesId'] = sid
 
 
 def add_http_date_header_to_response(response, date_time=None):
-  response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
-    d1_common.date_time.normalize_datetime_to_utc(date_time)
-    if date_time else d1_common.date_time.utc_now()
-  )
+    response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
+        d1_common.date_time.normalize_datetime_to_utc(date_time)
+        if date_time
+        else d1_common.date_time.utc_now()
+    )
 
 
 def add_cors_headers_to_response(response, request):
-  """Add Cross-Origin Resource Sharing (CORS) headers to response
-  - ``method_list`` is a list of HTTP methods that are allowed for the endpoint
-  that was called. It should not include "OPTIONS", which is included
-  automatically since it's allowed for all endpoints.
-  """
-  opt_method_list = ','.join(request.allowed_method_list + ['OPTIONS'])
-  response['Allow'] = opt_method_list
-  response['Access-Control-Allow-Methods'] = opt_method_list
-  response['Access-Control-Allow-Origin'] = request.META.get('Origin', '*')
-  response['Access-Control-Allow-Headers'] = 'Authorization'
-  response['Access-Control-Allow-Credentials'] = 'true'
+    """Add Cross-Origin Resource Sharing (CORS) headers to response.
+
+    - ``method_list`` is a list of HTTP methods that are allowed for the endpoint
+    that was called. It should not include "OPTIONS", which is included
+    automatically since it's allowed for all endpoints.
+    """
+    opt_method_list = ','.join(request.allowed_method_list + ['OPTIONS'])
+    response['Allow'] = opt_method_list
+    response['Access-Control-Allow-Methods'] = opt_method_list
+    response['Access-Control-Allow-Origin'] = request.META.get('Origin', '*')
+    response['Access-Control-Allow-Headers'] = 'Authorization'
+    response['Access-Control-Allow-Credentials'] = 'true'

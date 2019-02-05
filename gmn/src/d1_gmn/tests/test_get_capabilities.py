@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNCore.getCapabilities()
-"""
+"""Test MNCore.getCapabilities()"""
 
 import responses
 
@@ -28,9 +27,9 @@ import d1_gmn.tests.gmn_test_case
 
 
 class TestGetCapabilities(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  @responses.activate
-  def test_1000(self, gmn_client_v1_v2):
-    """MNCore.getCapabilities(): Returns a valid Node Registry document"""
-    with d1_gmn.tests.gmn_mock.disable_auth():
-      node = gmn_client_v1_v2.getCapabilities()
-      assert isinstance(node, gmn_client_v1_v2.pyxb_binding.Node)
+    @responses.activate
+    def test_1000(self, gmn_client_v1_v2):
+        """MNCore.getCapabilities(): Returns a valid Node Registry document"""
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            node = gmn_client_v1_v2.getCapabilities()
+            assert isinstance(node, gmn_client_v1_v2.pyxb_binding.Node)

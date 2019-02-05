@@ -18,107 +18,94 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE ONEDrive Client package
-"""
+"""DataONE ONEDrive Client package."""
 
 import sys
 
 import setuptools
 
-# yapf: disable
-
 
 def main():
-  setuptools.setup(
-    name='dataone.onedrive',
-    version='3.3.0',
-    description='Filesystem access to the DataONE Workspace',
-    author='DataONE Project',
-    author_email='developers@dataone.org',
-    url='https://github.com/DataONEorg/d1_python',
-    license='Apache License, Version 2.0',
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=[
-      'dataone.common >= 3.3.0',
-      'dataone.libclient >= 3.3.0',
-      #
-      'fusepy >= 3.0.1',
-      'pyxb >= 1.2.6',
-      'pyzotero >= 1.3.15',
-      'rdflib >= 4.2.2',
-      'requests >= 2.21.0',
-    ],
-    setup_requires=[
-      'setuptools_git >= 1.1',
-    ],
-    classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: Apache Software License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 3.6',
-    ],
-    keywords='DataONE client upload download member-node coordinating-node',
-    # Options for py2exe and py2app.
-    options=opts,
-    **extra_opts
-  )
+    setuptools.setup(
+        name='dataone.onedrive',
+        version='3.3.0',
+        description='Filesystem access to the DataONE Workspace',
+        author='DataONE Project',
+        author_email='developers@dataone.org',
+        url='https://github.com/DataONEorg/d1_python',
+        license='Apache License, Version 2.0',
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        install_requires=[
+            'dataone.common >= 3.3.0',
+            'dataone.libclient >= 3.3.0',
+            #
+            'fusepy >= 3.0.1',
+            'pyxb >= 1.2.6',
+            'pyzotero >= 1.3.15',
+            'rdflib >= 4.2.2',
+            'requests >= 2.21.0',
+        ],
+        setup_requires=['setuptools_git >= 1.1'],
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Topic :: Scientific/Engineering',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+        ],
+        keywords='DataONE client upload download member-node coordinating-node',
+        # Options for py2exe and py2app.
+        options=opts,
+        **extra_opts
+    )
 
 
 # Windows executable setup
 if sys.platform == 'win32':
-  opts = {
-    'py2exe': {
-      'packages': [
-        'd1_client_onedrive',
-        'd1_client_onedrive.impl',
-        'd1_client_onedrive.impl.drivers',
-        'd1_client_onedrive.impl.drivers.dokan',
-        'd1_client_onedrive.impl.drivers.fuse',
-        'd1_client_onedrive.impl.resolver',
-        'rdflib.plugins',
-      ],
-      'skip_archive': True,
-    },
-  },
-  extra_opts = dict(
-    console=['d1_client_onedrive/onedrive.py'],
-  ),
+    opts = (
+        {
+            'py2exe': {
+                'packages': [
+                    'd1_client_onedrive',
+                    'd1_client_onedrive.impl',
+                    'd1_client_onedrive.impl.drivers',
+                    'd1_client_onedrive.impl.drivers.dokan',
+                    'd1_client_onedrive.impl.drivers.fuse',
+                    'd1_client_onedrive.impl.resolver',
+                    'rdflib.plugins',
+                ],
+                'skip_archive': True,
+            }
+        },
+    )
+    extra_opts = (dict(console=['d1_client_onedrive/onedrive.py']),)
 
 elif sys.platform == 'darwin':
-  # Mac App setup
-  opts = dict(
-    py2app=dict(
-      argv_emulation=True,
-      iconfile='mac/mac_dataone.icns',
-      packages=[
-        'rdflib',
-      ],
-      site_packages=False,
-      resources=[
-        'd1_client_onedrive/impl/d1.icon',
-      ],
-      plist=dict(
-        LSBackgroundOnly=True,
-      ),
-    ),
-  ),
-  extra_opts = dict(
-    #app = ['d1_client_onedrive/onedrive.py'],
-    app=[
-      'mac/start_app.py',
-    ],
-    setup_requires=[
-      'py2app',
-    ],
-  )
+    # Mac App setup
+    opts = (
+        dict(
+            py2app=dict(
+                argv_emulation=True,
+                iconfile='mac/mac_dataone.icns',
+                packages=['rdflib'],
+                site_packages=False,
+                resources=['d1_client_onedrive/impl/d1.icon'],
+                plist=dict(LSBackgroundOnly=True),
+            )
+        ),
+    )
+    extra_opts = dict(
+        # app = ['d1_client_onedrive/onedrive.py'],
+        app=['mac/start_app.py'],
+        setup_requires=['py2app'],
+    )
 else:
-  # Normal setup
-  opts = dict()
-  extra_opts = dict()
+    # Normal setup
+    opts = dict()
+    extra_opts = dict()
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

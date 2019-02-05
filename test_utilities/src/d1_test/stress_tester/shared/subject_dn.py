@@ -33,37 +33,44 @@ import re
 # A DN is created by inserting a randomly generated string in the CN field
 # in this tuple. It is typically not necessary to change the other fields
 # from their defaults.
-dn_tuple = (('DC', 'com'), ('DC', 'd1-stress-tester'), ('C', 'US'),
-            ('O', 'd1-stress-tester'), ('CN', ''),)
+dn_tuple = (
+    ('DC', 'com'),
+    ('DC', 'd1-stress-tester'),
+    ('C', 'US'),
+    ('O', 'd1-stress-tester'),
+    ('CN', ''),
+)
 
 
 def get_dn_by_subject(subject):
-  return dn_tuple[:4] + (('CN', subject),)
+    return dn_tuple[:4] + (('CN', subject),)
 
 
 def get_dataone_compliant_dn_serialization(dn):
-  return ','.join(map('='.join, reversed(dn)))
+    return ','.join(map('='.join, reversed(dn)))
 
 
 def get_dataone_compliant_dn_serialization_by_subject(subject):
-  return get_dataone_compliant_dn_serialization(get_dn_by_subject(subject))
+    return get_dataone_compliant_dn_serialization(get_dn_by_subject(subject))
 
 
 def subject_to_filename(subject):
-  return re.sub('\W', '_', subject)
+    return re.sub('\W', '_', subject)
 
 
 def dataone_compliant_dn_serialization_to_dn_tuple(d1_dn_string):
-  rdns = d1_dn_string.rsplit(',', 4)
-  rdn_list = []
-  for rdn in rdns:
-    rdn_list.append(tuple(rdn.split('=')))
-  return tuple(reversed(rdn_list))
+    rdns = d1_dn_string.rsplit(',', 4)
+    rdn_list = []
+    for rdn in rdns:
+        rdn_list.append(tuple(rdn.split('=')))
+    return tuple(reversed(rdn_list))
 
 
 if __name__ == '__main__':
-  print((
-    dataone_compliant_dn_serialization_to_dn_tuple(
-      'CN=test1,test2,test3,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+    print(
+        (
+            dataone_compliant_dn_serialization_to_dn_tuple(
+                'CN=test1,test2,test3,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+            )
+        )
     )
-  ))

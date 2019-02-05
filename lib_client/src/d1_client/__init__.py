@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Client Library
+"""DataONE Client Library.
 
 The :doc:`/client/index` works together with the :doc:`/common/index` to provide
 functionality commonly needed by client software that connects to DataONE nodes.
@@ -39,16 +39,16 @@ enabling clients to use Python's concise exception handling system to handle err
 import logging
 
 try:
-  from logging import NullHandler
+    from logging import NullHandler
 except ImportError:
 
-  class NullHandler(logging.Handler):
-    """Suppress log messages instead of raising exception if the program using the
-    library does not configure the logging system.
-    """
-    # noinspection PyMissingOrEmptyDocstring
-    def emit(self, record):
-      pass
+    class NullHandler(logging.Handler):
+        """Suppress log messages instead of raising exception if the program
+        using the library does not configure the logging system."""
+
+        # noinspection PyMissingOrEmptyDocstring
+        def emit(self, record):
+            pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())
-

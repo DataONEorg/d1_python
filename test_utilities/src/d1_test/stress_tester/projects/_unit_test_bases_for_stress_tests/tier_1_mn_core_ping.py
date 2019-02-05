@@ -35,8 +35,8 @@ import d1_test_case
 
 
 class Test010Ping(d1_test_case.D1TestCase):
-  def test_010_ping(self):
-    """Ping() does not raise."""
-    client = test_client.TestClient(context.node['baseurl'])
-    # The ping() call passes if it doesn't raise.
-    client.ping()
+    def test_010_ping(self):
+        """Ping() does not raise."""
+        client = test_client.TestClient(context.node['baseurl'])
+        # The ping() call passes if it doesn't raise.
+        client.ping()

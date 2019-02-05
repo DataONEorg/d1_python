@@ -17,12 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Combine the PyXB bindings required for handling all DataONE types
-"""
+"""Combine the PyXB bindings required for handling all DataONE types."""
 
 import logging
-
-# noinspection PyUnresolvedReferences
 
 from d1_common.types.generated.dataoneTypes_v1 import *
 # noinspection PyUnresolvedReferences
@@ -30,6 +27,9 @@ from d1_common.types.generated.dataoneTypes_v1_1 import *
 # from d1_common.types.generated.dataoneTypes_v1_2 import *
 # noinspection PyUnresolvedReferences
 from d1_common.types.generated.dataoneTypes_v2_0 import *
+
+# noinspection PyUnresolvedReferences
+
 
 # flake8: noqa: F403
 

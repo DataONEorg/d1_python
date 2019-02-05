@@ -30,50 +30,49 @@
 
 import os
 
-import context
 import pytest
+
+import context
 import test_client
 
 import d1_test_case
 
 
 class TestUpdate(d1_test_case.D1TestCase):
-  def test_(self):
-    pass
+    def test_(self):
+        pass
 
-  def test_object_update(self):
-    """Update an object.
-    """
-    # New object.
-    # SysMeta
-    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
-    sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
-    sysmeta_xml = open(sysmeta_path).read()
-    # SciData
-    object_path = os.path.splitext(sysmeta_path)[0]
-    object_str = open(object_path, 'rb')
-    #
-    obsoleted_pid = 'AnserMatrix.htm'
-    new_pid = 'update_object_pid'
-    # Update.
-    client = test_client.TestClient(context.node['baseurl'])
-    response = client.updateResponse(
-      context.TOKEN, obsoleted_pid, object_str, new_pid, sysmeta_xml
-    )
-    return response
+    def test_object_update(self):
+        """Update an object."""
+        # New object.
+        # SysMeta
+        sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
+        sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
+        sysmeta_xml = open(sysmeta_path).read()
+        # SciData
+        object_path = os.path.splitext(sysmeta_path)[0]
+        object_str = open(object_path, 'rb')
+        #
+        obsoleted_pid = 'AnserMatrix.htm'
+        new_pid = 'update_object_pid'
+        # Update.
+        client = test_client.TestClient(context.node['baseurl'])
+        response = client.updateResponse(
+            context.TOKEN, obsoleted_pid, object_str, new_pid, sysmeta_xml
+        )
+        return response
 
-  def delete(self):
-    """MN_crud.delete() in GMN and libraries.
-    """
-    client = test_client.TestClient(context.node['baseurl'])
-    # Find the PID for a random object that exists on the server.
-    pid = self.find_valid_pid(client)
-    # Delete the object on GMN.
-    pid_deleted = client.delete(context.TOKEN, pid)
-    assert pid == pid_deleted.value()
-    # Verify that the object no longer exists.
-    # We check for SyntaxError raised by the XML deserializer when it attempts
-    # to deserialize a DataONEException. The exception is caused by the body
-    # being empty since describe() uses a HEAD request.
-    with pytest.raises(SyntaxError):
-      client.describe(context.TOKEN, pid)
+    def delete(self):
+        """MN_crud.delete() in GMN and libraries."""
+        client = test_client.TestClient(context.node['baseurl'])
+        # Find the PID for a random object that exists on the server.
+        pid = self.find_valid_pid(client)
+        # Delete the object on GMN.
+        pid_deleted = client.delete(context.TOKEN, pid)
+        assert pid == pid_deleted.value()
+        # Verify that the object no longer exists.
+        # We check for SyntaxError raised by the XML deserializer when it attempts
+        # to deserialize a DataONEException. The exception is caused by the body
+        # being empty since describe() uses a HEAD request.
+        with pytest.raises(SyntaxError):
+            client.describe(context.TOKEN, pid)

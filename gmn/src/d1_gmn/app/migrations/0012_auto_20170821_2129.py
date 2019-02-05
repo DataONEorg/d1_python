@@ -7,13 +7,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0011_resourcemap_resourcemapmember'),
-    ]
+    dependencies = [('app', '0011_resourcemap_resourcemapmember')]
 
     operations = [
         migrations.AlterModelOptions(
-            name='eventlog',
-            options={'ordering': ['-timestamp', 'id']},
-        ),
+            name='eventlog', options={'ordering': ['-timestamp', 'id']}
+        )
     ]

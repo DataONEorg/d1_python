@@ -18,40 +18,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Check the dependencies by attempting to import them
-"""
+"""Check the dependencies by attempting to import them."""
 
 import logging
 import platform
 
 
 def check_dependencies():
-  exceptions = []
-  messages = []
+    exceptions = []
+    messages = []
 
-  try:
-    import pyxb # noqa: F401
-  except ImportError as e:
-    exceptions.append(e)
-    messages.append('PyXB: Try "sudo pip install pyxb"\n')
-
-  if platform.system() == 'Linux':
     try:
-      import fuse # noqa: F401
+        import pyxb  # noqa: F401
     except ImportError as e:
-      exceptions.append(e)
-      messages.append(
-        'FUSE: Read the documentation for instructions on how to install fusepy'
-      )
+        exceptions.append(e)
+        messages.append('PyXB: Try "sudo pip install pyxb"\n')
 
-  if len(exceptions):
-    logging.critical('Importing of the following dependencies failed.')
-    for msg in messages:
-      logging.critical(msg)
-    logging.critical('Import errors:')
-    for e in exceptions:
-      logging.critical(str(e))
+    if platform.system() == 'Linux':
+        try:
+            import fuse  # noqa: F401
+        except ImportError as e:
+            exceptions.append(e)
+            messages.append(
+                'FUSE: Read the documentation for instructions on how to install fusepy'
+            )
 
-    return False
+    if len(exceptions):
+        logging.critical('Importing of the following dependencies failed.')
+        for msg in messages:
+            logging.critical(msg)
+        logging.critical('Import errors:')
+        for e in exceptions:
+            logging.critical(str(e))
 
-  return True
+        return False
+
+    return True

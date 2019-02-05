@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Misc utilities that don't fit anywhere else
-"""
+"""Misc utilities that don't fit anywhere else."""
 
 import errno
 import logging
@@ -29,28 +28,28 @@ import pprint
 
 
 def log_dump(s):
-  logging.debug('-' * 100)
-  logging.debug('{}: {}'.format(s, pprint.pformat(s)))
+    logging.debug('-' * 100)
+    logging.debug('{}: {}'.format(s, pprint.pformat(s)))
 
 
 def ensure_dir_exists(path):
-  try:
-    os.makedirs(path)
-  except OSError as e:
-    if e.errno != errno.EEXIST:
-      raise
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
 
 def string_from_path_elements(path):
-  return os.path.sep.join(path)
+    return os.path.sep.join(path)
 
 
 def is_root(path):
-  return path == ['', '']
+    return path == ['', '']
 
 
 def os_format(txt):
-  if platform.system() == "Windows":
-    return txt.replace('\n', '\r\n').encode('utf16')
-  else:
-    return txt.encode('utf-8')
+    if platform.system() == "Windows":
+        return txt.replace('\n', '\r\n').encode('utf16')
+    else:
+        return txt.encode('utf-8')

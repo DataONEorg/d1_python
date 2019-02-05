@@ -51,60 +51,52 @@ DESCRIBE_ENDPOINT_RX = r'v([123])/object/(.*)'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.HEAD,
-    re.compile(
-      r'^' + d1_common.url.joinPathElements(base_url, DESCRIBE_ENDPOINT_RX)
-    ),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.HEAD,
+        re.compile(
+            r'^' + d1_common.url.joinPathElements(base_url, DESCRIBE_ENDPOINT_RX)
+        ),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return NotFound
-  pid, client = _parse_url(request.url)
-  if pid.startswith('<NotFound>'):
-    return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
-  # Return regular response
-  pid, sid, sciobj_bytes, sysmeta_pyxb = (
-    d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
-      client, pid
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    # Return NotFound
+    pid, client = _parse_url(request.url)
+    if pid.startswith('<NotFound>'):
+        return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
+    # Return regular response
+    pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+        client, pid
     )
-  )
-  header_dict = _create_headers(sciobj_bytes, sysmeta_pyxb)
-  return 200, header_dict, ''
+    header_dict = _create_headers(sciobj_bytes, sysmeta_pyxb)
+    return 200, header_dict, ''
 
 
 def _parse_url(url):
-  version_tag, endpoint_str, param_list, query_dict, client = (
-    d1_test.mock_api.util.parse_rest_url(url)
-  )
-  assert endpoint_str == 'object'
-  assert len(param_list) == 1, 'describe() accepts a single parameter, the PID'
-  return param_list[0], client
+    version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
+        url
+    )
+    assert endpoint_str == 'object'
+    assert len(param_list) == 1, 'describe() accepts a single parameter, the PID'
+    return param_list[0], client
 
 
 def _create_headers(sciobj_bytes, sysmeta_pyxb):
-  checksum_pyxb = d1_common.checksum.create_checksum_object_from_bytes(
-    sciobj_bytes
-  )
-  return {
-    'Content-Length':
-      str(sysmeta_pyxb.size),
-    'Content-Type':
-      d1_common.const.CONTENT_TYPE_OCTET_STREAM,
-    'Last-Modified':
-      str(d1_common.date_time.utc_now()),
-    'DataONE-FormatId':
-      sysmeta_pyxb.formatId,
-    'DataONE-Checksum':
-      '{},{}'.format(checksum_pyxb.algorithm, checksum_pyxb.value()),
-    'DataONE-SerialVersion':
-      '3',
-  }
+    checksum_pyxb = d1_common.checksum.create_checksum_object_from_bytes(sciobj_bytes)
+    return {
+        'Content-Length': str(sysmeta_pyxb.size),
+        'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM,
+        'Last-Modified': str(d1_common.date_time.utc_now()),
+        'DataONE-FormatId': sysmeta_pyxb.formatId,
+        'DataONE-Checksum': '{},{}'.format(
+            checksum_pyxb.algorithm, checksum_pyxb.value()
+        ),
+        'DataONE-SerialVersion': '3',
+    }

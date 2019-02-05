@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DataONE Science Metadata Library"""
+"""DataONE Science Metadata Library."""
 
 # Suppress log messages instead of raising exception if the program using the
 # library does not configure the logging system.
@@ -25,12 +25,12 @@
 import logging
 
 try:
-  from logging import NullHandler
+    from logging import NullHandler
 except ImportError:
 
-  class NullHandler(logging.Handler):
-    def emit(self, record):
-      pass
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
 
 
 logging.getLogger(__name__).addHandler(NullHandler())

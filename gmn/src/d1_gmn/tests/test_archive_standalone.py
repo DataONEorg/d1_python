@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.archive() for standalone objects
-"""
+"""Test MNStorage.archive() for standalone objects."""
 
 import responses
 
@@ -27,25 +26,26 @@ import d1_gmn.tests.gmn_test_case
 
 
 class TestArchiveStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
-  def _assert_archived_flag_set(self, client):
-    pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(client)
-    assert not sysmeta_pyxb.archived
-    pid_archived = client.archive(pid)
-    assert pid == pid_archived.value()
-    archived_sysmeta_pyxb = client.getSystemMetadata(pid)
-    assert archived_sysmeta_pyxb.archived
+    def _assert_archived_flag_set(self, client):
+        pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(client)
+        assert not sysmeta_pyxb.archived
+        pid_archived = client.archive(pid)
+        assert pid == pid_archived.value()
+        archived_sysmeta_pyxb = client.getSystemMetadata(pid)
+        assert archived_sysmeta_pyxb.archived
 
-  @responses.activate
-  @d1_gmn.tests.gmn_mock.disable_auth()
-  def test_1000(self):
-    """MNStorage.archive(): Archived flag is set in sysmeta"""
-    self._assert_archived_flag_set(self.client_v1)
+    @responses.activate
+    @d1_gmn.tests.gmn_mock.disable_auth()
+    def test_1000(self):
+        """MNStorage.archive(): Archived flag is set in sysmeta"""
+        self._assert_archived_flag_set(self.client_v1)
 
-  @responses.activate
-  @d1_gmn.tests.gmn_mock.disable_auth()
-  def test_1010(self):
-    """MNStorage.archive(): Archived flag is set in sysmeta"""
-    self._assert_archived_flag_set(self.client_v2)
+    @responses.activate
+    @d1_gmn.tests.gmn_mock.disable_auth()
+    def test_1010(self):
+        """MNStorage.archive(): Archived flag is set in sysmeta"""
+        self._assert_archived_flag_set(self.client_v2)
+
 
 # TODO: Also check that sysmeta modified date is correctly updated to the current time
 # and that it causes the object to appear in listObjects() results filtered by the

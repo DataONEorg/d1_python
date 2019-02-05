@@ -18,12 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test generation of AccessControl in SysMeta
-"""
-import d1_cli.impl.access_control
-import d1_cli.impl.exceptions
+"""Test generation of AccessControl in SysMeta."""
 import freezegun
 import pytest
+
+import d1_cli.impl.access_control
+import d1_cli.impl.exceptions
 
 import d1_test.d1_test_case
 
@@ -55,7 +55,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         assert a.allow["subject_1"] == "read"
 
     def test_1030(self):
-        """Adding subject that already exists updates its permission"""
+        """Adding subject that already exists updates its permission."""
         a = d1_cli.impl.access_control.AccessControl()
         a.add_allowed_subject("subject_1", None)
         assert len(a.allow) == 1
@@ -100,7 +100,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         assert not ("subject_3" in a.allow)
 
     def test_1070(self):
-        """str() returns formatted string representation"""
+        """str() returns formatted string representation."""
         a = d1_cli.impl.access_control.AccessControl()
         a.add_allowed_subject("subject_1", None)
         a.add_allowed_subject("subject_2", "write")

@@ -44,106 +44,105 @@ CREATE_ENDPOINT_RX = r'v([123])/object'
 
 
 def add_callback(base_url):
-  responses.add_callback(
-    responses.POST,
-    re.compile(
-      r'^' + d1_common.url.joinPathElements(base_url, CREATE_ENDPOINT_RX)
-    ),
-    callback=_request_callback,
-    content_type='',
-  )
+    responses.add_callback(
+        responses.POST,
+        re.compile(r'^' + d1_common.url.joinPathElements(base_url, CREATE_ENDPOINT_RX)),
+        callback=_request_callback,
+        content_type='',
+    )
 
 
 def _request_callback(request):
-  """Echo an MN.create() POST. Return a valid Identifier XML doc in the
-  body to satisfy the requirements for create() and echo of the POSTed
-  information in headers (serialized to Base64 encoded JSON).
-  """
-  logging.debug('Received callback. url="{}"'.format(request.url))
-  # Return DataONEException if triggered
-  exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
-  if exc_response_tup:
-    return exc_response_tup
-  # Return regular response
-  try:
-    body_bytes = request.body.read()
-  except AttributeError:
-    body_bytes = request.body
+    """Echo an MN.create() POST.
 
-  assert isinstance(body_bytes, bytes)
+    Return a valid Identifier XML doc in the body to satisfy the
+    requirements for create() and echo of the POSTed information in
+    headers (serialized to Base64 encoded JSON).
+    """
+    logging.debug('Received callback. url="{}"'.format(request.url))
+    # Return DataONEException if triggered
+    exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_header(request)
+    if exc_response_tup:
+        return exc_response_tup
+    # Return regular response
+    try:
+        body_bytes = request.body.read()
+    except AttributeError:
+        body_bytes = request.body
 
-  url_obj = urllib.parse.urlparse(request.url)
+    assert isinstance(body_bytes, bytes)
 
-  # header_dict = {
-  #   'Content-Type':
-  #     d1_common.const.CONTENT_TYPE_XML,
-  #   'Echo-Body-Base64':
-  #     base64.standard_b64encode(body_bytes).decode('utf-8'),
-  #   'Echo-Query-Base64':
-  #     base64.standard_b64encode(
-  #       d1_common.util.serialize_to_normalized_pretty_json(
-  #         urllib.parse.parse_qs(url_obj.query)
-  #       ).encode('utf-8')
-  #     ).decode('utf-8'),
-  #   'Echo-Header-Base64':
-  #     base64.standard_b64encode(
-  #       d1_common.util.serialize_to_normalized_pretty_json(
-  #         dict(request.headers)
-  #       ).encode('utf-8')
-  #     ).decode('utf-8'),
-  # }
+    url_obj = urllib.parse.urlparse(request.url)
 
-  header_dict = pack_echo_header(body_bytes, request.headers, url_obj)
+    # header_dict = {
+    #   'Content-Type':
+    #     d1_common.const.CONTENT_TYPE_XML,
+    #   'Echo-Body-Base64':
+    #     base64.standard_b64encode(body_bytes).decode('utf-8'),
+    #   'Echo-Query-Base64':
+    #     base64.standard_b64encode(
+    #       d1_common.util.serialize_to_normalized_pretty_json(
+    #         urllib.parse.parse_qs(url_obj.query)
+    #       ).encode('utf-8')
+    #     ).decode('utf-8'),
+    #   'Echo-Header-Base64':
+    #     base64.standard_b64encode(
+    #       d1_common.util.serialize_to_normalized_pretty_json(
+    #         dict(request.headers)
+    #       ).encode('utf-8')
+    #     ).decode('utf-8'),
+    # }
 
-  return (
-    200, header_dict,
-    d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8'),
-  )
+    header_dict = pack_echo_header(body_bytes, request.headers, url_obj)
+
+    return (
+        200,
+        header_dict,
+        d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8'),
+    )
 
 
 def pack_echo_header(body_bytes, headers, url_obj):
-  return {
-    'Content-Type':
-      d1_common.const.CONTENT_TYPE_XML,
-    'Echo-POST-JSON-Base64':
-      base64.standard_b64encode(
-        d1_common.util.serialize_to_normalized_pretty_json({
-          'query': urllib.parse.parse_qs(url_obj.query),
-          'headers': dict(headers),
-          # TODO: Need to include body, but it must be normalized. As it is, the
-          # MMP parts arrive in random order
-          # 'body': body_bytes,
-        }).encode('utf-8')
-      ).decode('ascii')
-  }
+    return {
+        'Content-Type': d1_common.const.CONTENT_TYPE_XML,
+        'Echo-POST-JSON-Base64': base64.standard_b64encode(
+            d1_common.util.serialize_to_normalized_pretty_json(
+                {
+                    'query': urllib.parse.parse_qs(url_obj.query),
+                    'headers': dict(headers),
+                    # TODO: Need to include body, but it must be normalized. As it is, the
+                    # MMP parts arrive in random order
+                    # 'body': body_bytes,
+                }
+            ).encode('utf-8')
+        ).decode('ascii'),
+    }
 
 
 def unpack_echo_header(header_dict):
-  return (
-    base64.standard_b64decode(
-      header_dict['Echo-POST-JSON-Base64'].encode('ascii')
+    return base64.standard_b64decode(
+        header_dict['Echo-POST-JSON-Base64'].encode('ascii')
     ).decode('utf-8')
-  )
 
-  # TODO: MMP normalization
+    # TODO: MMP normalization
 
-  # echo_dict = json.loads(
-  #   base64.standard_b64decode(header_dict['Echo-POST-JSON-Base64'].encode('ascii')).decode('utf-8')
-  # )
-  #
-  # multipart_decoder = requests_toolbelt.MultipartDecoder(
-  #   echo_dict['body'].encode('utf-8'),
-  #   echo_dict['headers']['Content-Type'],
-  # )
-  #
-  # serialized_mmp_list = [
-  #   (dict(p.headers), 'SHA-1/{}'.format(
-  #     d1_common.checksum.format_checksum(
-  #       d1_common.checksum.create_checksum_object_from_bytes(
-  #         p.text.encode('utf-8')
-  #       )
-  #     )
-  #   )) for p in multipart_decoder.parts
-  # ]
-  # echo_dict['body'] = serialized_mmp_list
-  # return echo_dict
+    # echo_dict = json.loads(
+    #   base64.standard_b64decode(header_dict['Echo-POST-JSON-Base64'].encode('ascii')).decode('utf-8')
+    # )
+    #
+    # multipart_decoder = requests_toolbelt.MultipartDecoder(
+    #   echo_dict['body'].encode('utf-8'),
+    #   echo_dict['headers']['Content-Type'],
+    # )
+    #
+    # serialized_mmp_list = [
+    #   (dict(p.headers), 'SHA-1/{}'.format(
+    #     d1_common.checksum.format_checksum(
+    #       d1_common.checksum.create_checksum_object_from_bytes(
+    #         p.text.encode('utf-8')
+    #       )
+    #     )
+    #   )) for p in multipart_decoder.parts
+    # ]
+    # echo_dict['body'] = serialized_mmp_list
+    # return echo_dict
