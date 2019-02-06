@@ -167,7 +167,8 @@ _module_typeBindings.CrontabEntrySeconds = CrontabEntrySeconds
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}Event
 class Event(pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
-    """The controlled list of events that are logged, which will include
+    """The controlled list of events that are logged, which will include.
+
     *create*, *update*, *delete*, *read*, *replicate*,
 
     *synchronization_failed* and *replication_failed*
@@ -561,7 +562,8 @@ class AccessRule(pyxb.binding.basis.complexTypeDefinition):
     If a subject is granted multiple permissions, the highest level of access
     applies. The resource on which the access control rules are being applied
     is determined by the containing :term:`SystemMetadata` document, or in the
-    case of methods such as :func:`CNAuthorization.setAccessPolicy`, by the
+    case of methods such as :func:`CNAuthorization.setAccessPolicy`, by the.
+
     :term:`pid` in the method parameters.Access control rules are specified by
     the.
 
@@ -1146,7 +1148,9 @@ Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectFormat with content type ELEMENT_ONLY
 class ObjectFormat(pyxb.binding.basis.complexTypeDefinition):
-    """One value from the DataONE Object Format Vocabulary which is returned by
+    """One value from the DataONE Object Format Vocabulary which is returned
+    by.
+
     :func:`CNCore.getFormat()`.An *ObjectFormat* is the structure returned from
     the.
 
@@ -1245,8 +1249,11 @@ Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectInfo with content type ELEMENT_ONLY
 class ObjectInfo(pyxb.binding.basis.complexTypeDefinition):
-    """Metadata about an object, representing a subset of the metadata found in
-    :class:`Types.SystemMetadata`."""
+    """Metadata about an object, representing a subset of the metadata found
+    in.
+
+    :class:`Types.SystemMetadata`.
+    """
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -1359,7 +1366,8 @@ class ObjectLocation(pyxb.binding.basis.complexTypeDefinition):
     """Portion of an :class:`Types.ObjectLocationList` indicating the node from
     which the object can be retrieved. The principal information on each
     location is found in the *nodeIdentifier*, all other fields are provided
-    for convenience, but could also be looked up from the
+    for convenience, but could also be looked up from the.
+
     :class:`Types.NodeList` information obtained from.
 
     :func:`CNCore.listNodes`.
@@ -1496,7 +1504,8 @@ Namespace.addCategoryObject('typeBinding', 'ObjectLocation', ObjectLocation)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectLocationList with content type ELEMENT_ONLY
 class ObjectLocationList(pyxb.binding.basis.complexTypeDefinition):
-    """An *ObjectLocationList* is the structure returned from the
+    """An *ObjectLocationList* is the structure returned from the.
+
     :func:`CNRead.resolve` method of the CN REST interface.
 
     It provides a list of locations from which the specified object can
@@ -2264,7 +2273,8 @@ Namespace.addCategoryObject('typeBinding', 'Slice', Slice)
 class Synchronization(pyxb.binding.basis.complexTypeDefinition):
     """Configuration information for the process by which metadata is harvested
     from Member Nodes to Coordinating Nodes, including the schedule on which
-    harvesting should occur, and information about the last
+    harvesting should occur, and information about the last.
+
     :term:`synchronization` attempts for the node. Member Nodes providing
     *Synchronization* information only need to provide the.
 
@@ -3699,7 +3709,8 @@ Namespace.addCategoryObject('typeBinding', 'Schedule', Schedule)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Subject with content type SIMPLE
 class Subject(pyxb.binding.basis.complexTypeDefinition):
-    """An identifier for a Person (user), Group, Organization, or System.The
+    """An identifier for a Person (user), Group, Organization, or System.The.
+
     :term:`Subject` is a string that provides a formal name to identify a user
     or group in the DataONE Identity Management Service. The *subject* is
     represented by a unique, persistent, non-reassignable identifier string

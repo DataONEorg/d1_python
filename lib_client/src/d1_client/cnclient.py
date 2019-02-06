@@ -410,6 +410,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
     def setRightsHolderResponse(self, pid, userId, serialVersion, vendorSpecific=None):
         """CNAuthorization.setRightsHolder(session, pid, userId, serialVersion)
+
         → Identifier https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.setRightsHolder.
 

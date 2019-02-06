@@ -61,7 +61,9 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         """CNRead.query(session, queryEngine, query) → OctetStream
         https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
-        MNQuery.query(session, queryEngine, query) → OctetStream http://jenkins
+        MNQuery.query(session, queryEngine, query) → OctetStream
+        http://jenkins.
+
         -1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-
         documentation/build/html/apis/MN_APIs.html#MNQuery.query.
 

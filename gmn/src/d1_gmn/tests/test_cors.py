@@ -44,8 +44,10 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
         """Invalid method against endpoint raises 405 Method Not Allowed and
-        returns regular and CORS headers with allowed methods (POST
-        /object/invalid_pid)"""
+        returns regular and CORS headers with allowed methods (POST.
+
+        /object/invalid_pid)
+        """
         with d1_gmn.tests.gmn_mock.disable_auth():
             response = gmn_client_v1_v2.POST(['object', 'invalid_pid'])
         self.sample.assert_equals(response, 'post_object_pid', gmn_client_v1_v2)

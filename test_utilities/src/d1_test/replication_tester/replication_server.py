@@ -134,8 +134,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _handle_isNodeAuthorized(self, url):
         """CNReplication.isNodeAuthorized(session, targetNodeSubject, pid) →
-        boolean GET
-        /replicaAuthorizations/{pid}?targetNodeSubject={targetNodeSubject}"""
+        boolean GET.
+
+        /replicaAuthorizations/{pid}?targetNodeSubject={targetNodeSubject}
+        """
         m = re.match(r'/v1/replicaAuthorizations/(.*)', url.path)
         if not m:
             return False
@@ -196,11 +198,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return True
 
     def _handle_getSystemMetadata(self, url):
-        """MNRead.getSystemMetadata(session, pid) → SystemMetadata GET
+        """MNRead.getSystemMetadata(session, pid) → SystemMetadata GET.
+
         /meta/``pid`` A MN may either save the System Metadata from the
-        original MNReplication.replicate() call or pull it from the CN again
-        when processing the request, to ensure that the latest version of the
-        System Metadata is used."""
+        original MNReplication.replicate() call or pull it from the CN
+        again when processing the request, to ensure that the latest
+        version of the System Metadata is used.
+        """
         m = re.match(r'/v1/meta/(.*)', url.path)
         if not m:
             return False

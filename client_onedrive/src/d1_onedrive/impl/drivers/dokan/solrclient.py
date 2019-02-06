@@ -15,11 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This client code is built from: http://svn.apache.org/viewvc/lucene/solr/tag
-s/release-1.2.0/client/python/solr.py.
 
-though has been modified in many respects.
-"""
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -49,6 +45,12 @@ though has been modified in many respects.
 # print c.search(q='id:[* TO *]', wt='python', rows='10',indent='on')
 # data = c.search(q='id:500', wt='python')
 # print 'first match=', eval(data)['response']['docs'][0]
+
+"""This client code is built from: http://svn.apache.org/viewvc/lucene/solr/tag
+s/release-1.2.0/client/python/solr.py.
+
+though has been modified in many respects.
+"""
 
 import codecs
 # ===============================================================================
@@ -595,8 +597,8 @@ class SolrConnection:
     ):
         """Generates a histogram of values from a string field. Output is:
 
-        [[low, high, count, query],    ... ] Bin edges is determined
-        by equal division of the fields
+        [[low, high, count, query],    ... ] Bin edges is determined by
+        equal division of the fields
         """
         oldpersist = self.persistent
         self.persistent = True

@@ -224,7 +224,8 @@ Namespace.addCategoryObject('typeBinding', 'MediaType', MediaType)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}SystemMetadata with content type ELEMENT_ONLY
 class SystemMetadata(_ImportedBinding_dataoneTypes_v1.SystemMetadata):
-    """System metadata in DataONE APIs version 2.0 extends the
+    """System metadata in DataONE APIs version 2.0 extends the.
+
     :class:`types.SystemMetadata` definition of version 1.x by adding.
 
     :term:`seriesId`, :term:`mediaType`, and :term:`fileName` elements. Each
@@ -554,8 +555,10 @@ Namespace.addCategoryObject('typeBinding', 'Property', Property)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormat with content type ELEMENT_ONLY
 class ObjectFormat(_ImportedBinding_dataoneTypes_v1.ObjectFormat):
-    """Extends Version 1.x :class:`Types.ObjectFormat` by adding
-    :term:`mediaType` and :term:`extension` elements."""
+    """Extends Version 1.x :class:`Types.ObjectFormat` by adding.
+
+    :term:`mediaType` and :term:`extension` elements.
+    """
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -628,8 +631,10 @@ Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormatList with content type ELEMENT_ONLY
 class ObjectFormatList(_ImportedBinding_dataoneTypes_v1.Slice):
-    """Extends :class:`Types.ObjectFormatList` to provide a list of
-    :class:`v2_0.Types.ObjectFormat`."""
+    """Extends :class:`Types.ObjectFormatList` to provide a list of.
+
+    :class:`v2_0.Types.ObjectFormat`.
+    """
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -723,8 +728,10 @@ Namespace.addCategoryObject('typeBinding', 'Log', Log)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}LogEntry with content type ELEMENT_ONLY
 class LogEntry(pyxb.binding.basis.complexTypeDefinition):
-    """Extends :class:`Types.LogEntry` by relaxing the value space for the
-    *event* element."""
+    """Extends :class:`Types.LogEntry` by relaxing the value space for the.
+
+    *event* element.
+    """
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
