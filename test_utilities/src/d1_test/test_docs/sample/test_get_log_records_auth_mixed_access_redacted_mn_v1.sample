@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<ns1:log count="3" start="0" total="3" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>glr_authz_3</identifier>
+    <ipAddress>&lt;NotAuthorized&gt;</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>&lt;NotAuthorized&gt;</subject>
+    <event>create</event>
+    <dateLogged>1977-05-30T00:00:00Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>glr_authz_4</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>1977-05-31T00:00:00Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>glr_authz_5</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>1977-06-01T00:00:00Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+</ns1:log>

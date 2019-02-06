@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="/templates/home.xsl"?>
+<error detailCode="0" errorCode="400" name="InvalidRequest"
+       nodeId="urn:node:KNB">
+  <description>Requested a non-existing slice. start=100000 count=100
+    total=1826
+  </description>
+</error>

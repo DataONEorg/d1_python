@@ -1,0 +1,91 @@
+<v2:node replicate="false" synchronize="true" type="cn" state="up" xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <identifier>urn:node:ACRONYM</identifier>
+  <name>The Name Of My Member Node</name>
+  <description>MLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </description>
+  <baseURL>https://www.any.org/ventos/verrantque</baseURL>
+  <!--Optional:-->
+
+  <services>
+    <!--1 or more repetitions:-->
+    <service name="MNCore" version="v1" available="true"/>
+    <service name="MNRead" version="v1" available="true"/>
+    <service name="MNAuthorization" version="v1" available="true"/>
+    <service name="MNStorage" version="v1" available="true"/>
+    <service name="MNReplication" version="v1" available="true"/>
+
+    <service name="MNCore" version="v2" available="true">
+
+      <restriction methodName="restrictedMethodCore">
+        <subject>unrestricted-subj6</subject>
+        <subject>unrestricted-subj7</subject>
+      </restriction>
+
+    </service>
+    
+    <service name="MNRead" version="v2" available="true"/>
+    <service name="MNAuthorization" version="v2" available="true"/>
+    <service name="MNStorage" version="v2" available="true"/>
+    <service name="MNReplication" version="v2" available="true">
+
+      <restriction methodName="restrictedMethodRep1">
+        <subject>unrestricted-subj1</subject>
+        <subject>unrestricted-subj2</subject>
+      </restriction>
+
+      <restriction methodName="restrictedMethodRep2">
+        <subject>unrestricted-subj3</subject>
+        <subject>unrestricted-subj4</subject>
+        <subject>unrestricted-subj5</subject>
+      </restriction>
+
+    </service>
+
+
+  </services>
+  <!--Optional:-->
+  <synchronization>
+    <schedule hour="*" mday="*" min="0/3" mon="1" sec="0" wday="?" year="*"/>
+    <!--Optional:-->
+    <lastHarvested>2009-05-16T06:42:28</lastHarvested>
+    <!--Optional:-->
+    <lastCompleteHarvest>2003-08-08T18:18:37-06:00</lastCompleteHarvest>
+  </synchronization>
+
+  <!--Optional:-->
+  <nodeReplicationPolicy>
+    <!--Optional:-->
+    <maxObjectSize>100000000</maxObjectSize>
+    <!--Optional:-->
+    <spaceAllocated>1000000000000</spaceAllocated>
+    <!--Zero or more repetitions:-->
+    <allowedNode>urn:node:ABC</allowedNode>
+    <allowedNode>urn:node:DEF</allowedNode>
+    <allowedNode>urn:node:GHI</allowedNode>
+    <allowedNode>urn:node:KLM</allowedNode>
+    <!--Zero or more repetitions:-->
+    <allowedObjectFormat>eml://ecoinformatics.org/eml-2.0.0</allowedObjectFormat>
+    <allowedObjectFormat>application/json-ld</allowedObjectFormat>
+    <allowedObjectFormat>application/MATLAB-v6</allowedObjectFormat>
+  </nodeReplicationPolicy>
+
+  <!--Optional:-->
+  <ping success="false" lastSuccess="2002-06-24T09:46:32-06:00"/>
+
+  <!--Zero or more repetitions:-->
+  <subject>node_subj_1</subject>
+  <subject>node_subj_2</subject>
+  <subject>node_subj_3</subject>
+  <subject>node_subj_4</subject>
+
+  <!--1 or more repetitions:-->
+  <contactSubject>contact_subject_1</contactSubject>
+  <contactSubject>contact_subject_2</contactSubject>
+  <contactSubject>contact_subject_3</contactSubject>
+
+  <!--Zero or more repetitions:-->
+  <property key="prop_key_1" type="prop_type_1">prop_val_1</property>
+  <property key="prop_key_2" type="prop_type_2">prop_val_2</property>
+  <property key="prop_key_3" type="prop_type_3">prop_val_3</property>
+
+</v2:node>
