@@ -180,9 +180,15 @@ class ResponseHandler:
             logEntry = d1_gmn.app.views.util.dataoneTypes(request).LogEntry()
             logEntry.entryId = str(row.id)
             logEntry.identifier = row.sciobj.pid.did
-            logEntry.ipAddress = row.ip_address.ip_address
+            # Redact ipAddress and subject on records for which client has only "read"
+            # access.
+            if getattr(row, 'redact', False):
+                logEntry.ipAddress = '<NotAuthorized>'
+                logEntry.subject = '<NotAuthorized>'
+            else:
+                logEntry.ipAddress = row.ip_address.ip_address
+                logEntry.subject = row.subject.subject
             logEntry.userAgent = row.user_agent.user_agent
-            logEntry.subject = row.subject.subject
             logEntry.event = row.event.event
             logEntry.dateLogged = d1_common.date_time.normalize_datetime_to_utc(
                 row.timestamp

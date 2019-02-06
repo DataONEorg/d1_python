@@ -136,16 +136,12 @@ def get_log(request):
 
     Sorted by timestamp, id.
     """
-    # TODO: Check if select_related() gives better performance
-    query = (
-        d1_gmn.app.models.EventLog.objects.all()
-        .select_related()
-        .order_by('timestamp', 'id')
-    )
+    query = d1_gmn.app.models.EventLog.objects.all().order_by('timestamp', 'id')
     if not d1_gmn.app.auth.is_trusted_subject(request):
         query = d1_gmn.app.db_filter.add_access_policy_filter(
             request, query, 'sciobj__id'
         )
+        query = d1_gmn.app.db_filter.add_redact_annotation(request, query)
     query = d1_gmn.app.db_filter.add_datetime_filter(
         request, query, 'timestamp', 'fromDate', 'gte'
     )

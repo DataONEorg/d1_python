@@ -356,9 +356,8 @@ class Event(django.db.models.Model):
 
 
 def event(event_str):
-    # In v2.0, events are no longer restricted to this set. However, GMN still
-    # only records these types of events, so we'll leave it in while that
-    # remains the case.
+    # In v2.0, events are no longer restricted to this set. However, GMN still only
+    # records these types of events, so we'll leave it in while that remains the case.
     assert event_str in [
         'create',
         'read',

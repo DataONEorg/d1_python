@@ -196,23 +196,6 @@ def is_allowed(request, level, pid):
     ).exists()
 
 
-# TODO: Change "trusted" / "fully trusted" to something like admin / superuser.
-def is_redacted_log(request, pid):
-    """Determine if ``ipAddress`` and ``subject`` fields must be redacted on
-    any ``LogEntry``s for the SciObj that are returned to the client.
-
-    If access to ``LogEntry``s for the SciObj is denied for the client,
-    this function will return True, indicating that ``LogEntry``s must
-    be redacted. However, the result is irrelevant since no
-    ``LogEntry``s for the SciObj will be returned to the caller.
-    """
-    if is_trusted_subject(request):
-        return False
-    if is_allowed(request, WRITE_LEVEL, pid):
-        return False
-    return True
-
-
 def has_create_update_delete_permission(request):
     whitelisted_subject_set = get_whitelisted_subject_set()
     logging.debug('Whitelisted subjects: {}'.format(', '.join(whitelisted_subject_set)))

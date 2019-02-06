@@ -146,7 +146,6 @@ def http_response_with_boolean_true_type():
 def query_object_list(request, type_name):
     query = (
         d1_gmn.app.models.ScienceObject.objects.all()
-        .select_related()
         .annotate(timestamp=django.db.models.F('modified_timestamp'))
         .order_by('modified_timestamp', 'id')
     )
