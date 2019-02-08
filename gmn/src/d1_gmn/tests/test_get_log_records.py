@@ -232,7 +232,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.sample.assert_equals(log, 'id_filter_with_sid', gmn_client_v1_v2)
 
     @responses.activate
-    def test_1200(self, gmn_client_v1_v2):
+    def test_1130(self, gmn_client_v1_v2):
         """MNCore.getLogRecords(): LogEntry ipAddress and subject are redacted for public
     objects.
     """

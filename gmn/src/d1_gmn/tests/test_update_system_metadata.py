@@ -66,7 +66,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.client_v2.get(pid)
 
     @responses.activate
-    def test_1040(self, gmn_client_v2):
+    def test_1000(self, gmn_client_v2):
         """updateSystemMetadata(): Access Policy adjustment
     - Remove permissions for subj1-4
     - Lower permissions for subj9-12 from changePermission to write
@@ -95,7 +95,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self._get(pid, subject_str)
 
     @responses.activate
-    def test_1090(self, gmn_client_v2):
+    def test_1010(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Update blocked due to modified
     timestamp mismatch
     """
@@ -116,7 +116,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
     @responses.activate
-    def test_1100(self, gmn_client_v2):
+    def test_1020(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Successful update"""
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
@@ -138,7 +138,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     @d1_gmn.tests.gmn_mock.no_client_trust_decorator
-    def test_1110(self):
+    def test_1030(self):
         """MNStorage.updateSystemMetadata()
 
         - Does not change dateUploaded
@@ -166,7 +166,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
 
     @responses.activate
-    def test_1120(self, gmn_client_v2):
+    def test_1040(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata():
 
         A series of updates and downloads using the same gmn_client_v2
@@ -189,7 +189,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 assert new_sysmeta_pyxb.rightsHolder.value() == random_subject_str
 
     @responses.activate
-    def test_1130(self, gmn_client_v2):
+    def test_1050(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes
     """
         # Not relevant for v1

@@ -61,12 +61,12 @@ import pytest
         }
     ],
 )
-def test_dict(request):
+def test_1000(request):
     yield copy.deepcopy(request.param)
 
 
 class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
-    def test_1000(self, test_dict):
+    def test_1010(self, test_dict):
         """nested_update(): Update existing values"""
         # test_dict = copy.deepcopy(TEST_DICT)
 
@@ -81,7 +81,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         # self.sample.gui_sxs_diff(TEST_DICT, test_dict)
         self.sample.assert_equals(test_dict, "nested_update_existing")
 
-    def test_1010(self, test_dict):
+    def test_1020(self, test_dict):
         """nested_update(): Add new keys in existing tree"""
         d1_common.util.nested_update(
             test_dict,
@@ -106,7 +106,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         # self.sample.gui_sxs_diff(TEST_DICT, test_dict)
         self.sample.assert_equals(test_dict, "nested_update_new")
 
-    def test_1020(self, test_dict):
+    def test_1030(self, test_dict):
         """nested_update(): Combined"""
         d1_common.util.nested_update(
             test_dict,

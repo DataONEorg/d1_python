@@ -131,7 +131,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
 
     @responses.activate
-    def test_1001(self, gmn_client_v1_v2):
+    def test_1010(self, gmn_client_v1_v2):
         """getLogRecords() authz: Subject receives redacted records for objects where
         they have only 'read' access"""
         self._create_test_objs(gmn_client_v1_v2)
@@ -150,7 +150,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.sample.assert_equals(log, 'read_access_redacted', gmn_client_v1_v2)
 
     @responses.activate
-    def test_1002(self, gmn_client_v1_v2):
+    def test_1020(self, gmn_client_v1_v2):
         """getLogRecords() authz: Subject receives a mix of unredacted and redacted
         records depending on access level"""
         self._create_test_objs(gmn_client_v1_v2)
@@ -171,7 +171,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
 
     @responses.activate
-    def test_1003(self, gmn_client_v1_v2):
+    def test_1030(self, gmn_client_v1_v2):
         """getLogRecords() authz: RightsHolder always receives unredacted records"""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
@@ -192,7 +192,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
 
     @responses.activate
-    def test_1004(self, gmn_client_v1_v2):
+    def test_1040(self, gmn_client_v1_v2):
         """getLogRecords() authz: Trusted subject receives all records unredacted"""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(

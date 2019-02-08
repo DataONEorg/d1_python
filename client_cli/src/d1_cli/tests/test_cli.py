@@ -644,11 +644,20 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     #   actual = cli._command_processor._create_solr_query(args)
     #   assert expect == actual
 
-    def test_1390(self, cn_client_v2):
+    def test_1380(self, cn_client_v2):
         """search: Expected Solr query is generated"""
         expect = "id:knb-lter* dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
         cli = d1_cli.impl.command_parser.CLI()
+        actual = cli._command_processor._create_solr_query(args)
+        assert expect == actual
+
+    def test_1390(self, cn_client_v2):
+        """search: Expected Solr query is generated"""
+        expect = "id:knb-lter* abstract:water dateModified:[* TO *]"
+        args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
+        cli = d1_cli.impl.command_parser.CLI()
+        cli.do_set("query abstract:water")
         actual = cli._command_processor._create_solr_query(args)
         assert expect == actual
 
@@ -662,15 +671,6 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert expect == actual
 
     def test_1410(self, cn_client_v2):
-        """search: Expected Solr query is generated"""
-        expect = "id:knb-lter* abstract:water dateModified:[* TO *]"
-        args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
-        cli = d1_cli.impl.command_parser.CLI()
-        cli.do_set("query abstract:water")
-        actual = cli._command_processor._create_solr_query(args)
-        assert expect == actual
-
-    def test_1420(self, cn_client_v2):
         """search: Expected Solr query is generated"""
         expect = "id:knb-lter* formatId:text/csv dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])

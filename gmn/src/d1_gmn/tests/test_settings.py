@@ -80,7 +80,7 @@ class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.s.ready()
 
     @django.test.override_settings(SCIMETA_VALIDATION_ENABLED='string should be bool')
-    def test_1031(self):
+    def test_1040(self):
         """Setting bool to string triggers ImproperlyConfigured with expected
         message."""
         with pytest.raises(
@@ -90,7 +90,7 @@ class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.s.ready()
 
     @django.test.override_settings(SCIMETA_VALIDATION_OVER_SIZE_ACTION=123)
-    def test_1040(self):
+    def test_1050(self):
         """Setting keyword to number triggers ImproperlyConfigured with
         expected message."""
         with pytest.raises(
@@ -100,7 +100,7 @@ class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.s.ready()
 
     # @django.test.override_settings(DEBUG=True, )
-    def test_1050(self, caplog):
+    def test_1060(self, caplog):
         """Setting that is unsafe for prod triggers warning."""
         with caplog.at_level(logging.INFO):
             self.s.ready()

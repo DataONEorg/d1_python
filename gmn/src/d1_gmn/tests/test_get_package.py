@@ -42,13 +42,13 @@ import d1_test.instance_generator.system_metadata
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
-    def test_0900(self, gmn_client_v2):
+    def test_1000(self, gmn_client_v2):
         """MNPackage.getPackage(): Raises NotFound on unknown PID"""
         with pytest.raises(d1_common.types.exceptions.NotFound):
             self.call_d1_client(gmn_client_v2.getPackage, 'unknown_ore_pid')
 
     @responses.activate
-    def test_1000(self, gmn_client_v2):
+    def test_1010(self, gmn_client_v2):
         """MNPackage.getPackage(): Returns a valid BagIt zip archive"""
         pid_list = self.create_multiple_objects(gmn_client_v2)
         ore_pid = self.create_resource_map(gmn_client_v2, pid_list)

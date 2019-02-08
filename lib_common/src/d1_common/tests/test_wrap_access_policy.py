@@ -212,11 +212,11 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
 
     # Module level wrappers
 
-    def test_2000(self):
+    def test_1200(self):
         """module level is_empty()"""
         assert not d1_common.wrap.access_policy.is_empty(self.sysmeta_pyxb.accessPolicy)
 
-    def test_2010(self):
+    def test_1210(self):
         """module level get_normalized_perm_list()"""
         d = d1_common.wrap.access_policy.get_normalized_perm_list(
             self.sysmeta_pyxb.accessPolicy

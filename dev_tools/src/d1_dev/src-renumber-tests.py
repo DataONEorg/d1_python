@@ -18,11 +18,47 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Renumber test functions to free up space for new tests.
+"""Renumber test methods.
 
-By default, files are NOT modified. After having verified that the modifications
-are as expected with the `--diff` switch, run the script again with `--update`
-to modify the files.
+Tests are renumbered to start at 1000 and increment in by 10. The order that the methods
+appear in is not changed.
+
+Only function names on the form, ``test_<number>`` are modified.
+
+Examples:
+
+    ::
+
+        class Tests:
+            def test_10(self):
+                print('1')
+
+            def test_5(self):
+                print('2')
+
+            def test_something(self):
+                print('3')
+
+            def test20(self):
+                print('4')
+
+    ->
+
+    ::
+
+        class Tests:
+            def test_1000(self):
+                print('1')
+
+            def test_1010(self):
+                print('2')
+
+            def test_something(self):
+                print('3')
+
+            def test_1020(self):
+                print('4')
+
 
 When files are updated, the original file is backed up by appending "~" to the
 original name. Any earlier backups are overwritten. Use clean-tree.py to delete

@@ -470,7 +470,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     #   return
 
     # tricky_identifier_tup
-    def test_2000(self):
+    def test_1180(self):
         """Unicode identifiers that use various reserved characters and
         embedded URL segments are correctly escaped."""
         # import xml.etree.ElementTree

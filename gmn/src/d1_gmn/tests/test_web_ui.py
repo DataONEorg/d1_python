@@ -57,7 +57,7 @@ class TestWebUI(d1_gmn.tests.gmn_test_case.GMNTestCase):
     assert response.status_code == 200
 
 
-  def test_1011(self):
+  def test_1020(self):
     """home: Returns well formed XML document with the internal GMN type,
     <status>
     """
@@ -70,14 +70,14 @@ class TestWebUI(d1_gmn.tests.gmn_test_case.GMNTestCase):
       )
 
 
-  def test_1020(self):
+  def test_1030(self):
     """Invalid endpoint: Returns status code 404
     """
     response = django.test.Client().get('/invalid/endpoint')
     assert response.status_code == 404
 
 
-  def test_1021(self):
+  def test_1040(self):
     """Invalid endpoint: Returns expected headers
     """
     response = django.test.Client().get('/invalid/endpoint')
@@ -87,7 +87,7 @@ class TestWebUI(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
 
 
-  def test_1022(self):
+  def test_1050(self):
     """Invalid endpoint: Returns well formed DataONEException with expected
     contents
     """

@@ -85,7 +85,7 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.sample.assert_equals(response, 'get_options', gmn_client_v1_v2)
 
     @responses.activate
-    def test_1051(self, gmn_client_v2):
+    def test_1060(self, gmn_client_v2):
         """getPackage(): OPTIONS request returns expected headers"""
         pid_list = self.create_multiple_objects(gmn_client_v2, object_count=2)
         ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
@@ -95,7 +95,7 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.sample.assert_equals(response, 'get_package_options', gmn_client_v2)
 
     @responses.activate
-    def test_1060(self, gmn_client_v1_v2):
+    def test_1070(self, gmn_client_v1_v2):
         """Invalid method against endpoint raises 405 Method Not Allowed and
         returns regular and CORS headers with allowed methods (PUT /object/)"""
         with d1_gmn.tests.gmn_mock.disable_auth():
@@ -103,7 +103,7 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.sample.assert_equals(response, 'put_object_list', gmn_client_v1_v2)
 
     @responses.activate
-    def test_1061(self, gmn_client_v1_v2):
+    def test_1080(self, gmn_client_v1_v2):
         """get(): WITHOUT Origin header sets Access-Control-Allow-Origin to wildcard
     """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
@@ -115,7 +115,7 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
         assert response.headers['Access-Control-Allow-Origin'] == '*'
 
     @responses.activate
-    def test_1062(self, gmn_client_v1_v2):
+    def test_1090(self, gmn_client_v1_v2):
         """get(): WITH Origin header sets Access-Control-Allow-Origin to the Origin
     """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)

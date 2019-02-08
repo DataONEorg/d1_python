@@ -302,6 +302,6 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # Log
 
     @responses.activate
-    def test_2110(self, tag_v1_v2):
+    def test_1110(self, tag_v1_v2):
         """Log timestamps are in UTC."""
         self._assert_log_entry_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')

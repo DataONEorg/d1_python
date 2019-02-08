@@ -93,7 +93,7 @@ INVALID_ERROR_DOC = (
 
 
 class TestExceptions(d1_test.d1_test_case.D1TestCase):
-    def test_0010(self):
+    def test_1000(self):
         """Serialize PyXB to XML str."""
         err_pyxb = d1_common.types.dataoneErrors.error()
         err_pyxb.name = 'TestError'
@@ -111,7 +111,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
             'ναμ ετ νοσθερ σιμιλικυε</traceInformation></error>'
         )
 
-    def test_0011(self):
+    def test_1010(self):
         """Serialize PyXB to XML UTF-8 bytes."""
         err_pyxb = d1_common.types.dataoneErrors.error()
         err_pyxb.name = 'TestError'
@@ -131,7 +131,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
             b'\xce\xb9\xce\xba\xcf\x85\xce\xb5</traceInformation></error>'
         )
 
-    def test_0012(self):
+    def test_1020(self):
         """Deserialize XML to PyXB."""
         err_pyxb = d1_common.types.dataoneErrors.CreateFromDocument(
             VALID_ERROR_DOC_NOTFOUND_4
@@ -146,7 +146,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
             'ναμ ετ νοσθερ σιμιλικυε'
         )
 
-    def test_1000(self):
+    def test_1030(self):
         """deserialize() valid error XML doc."""
         d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
         assert isinstance(d1_exception, exceptions.IdentifierNotUnique)
@@ -158,7 +158,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         assert d1_exception.description == 'description0'
         assert d1_exception.traceInformation == TRACE_SECTION.strip()
 
-    def test_1010(self):
+    def test_1040(self):
         """deserialize, serialize, deserialize round trip of valid error XML
         doc."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
@@ -174,7 +174,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(x1, 'valid_error_doc_notfound_1_round_trip_x1')
         self.sample.assert_equals(x2, 'valid_error_doc_notfound_1_round_trip_x2')
 
-    def test_1020(self):
+    def test_1050(self):
         """deserialize, serialize, deserialize round trip 2."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
         sxml = x1.serialize_to_display()
@@ -189,7 +189,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(x1, 'valid_error_doc_notfound_2_round_trip_x1')
         self.sample.assert_equals(x2, 'valid_error_doc_notfound_2_round_trip_x2')
 
-    def test_1030(self):
+    def test_1060(self):
         """deserialize, serialize, deserialize round trip 3."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
         sxml = x1.serialize_to_display()
@@ -204,30 +204,30 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(x1, 'valid_error_doc_notfound_3_round_trip_x1')
         self.sample.assert_equals(x2, 'valid_error_doc_notfound_3_round_trip_x2')
 
-    def test_1040(self):
+    def test_1070(self):
         """deserialize() of bad document raises ServiceFailure."""
         with pytest.raises(exceptions.ServiceFailure):
             exceptions.deserialize(INVALID_ERROR_DOC[0])
 
-    def test_1050(self):
+    def test_1080(self):
         """String representation."""
         d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
         assert 'name: IdentifierNotUnique' in str(d1_exception)
         assert 'errorCode: 409' in str(d1_exception)
         assert 'detailCode: 123.456.789' in str(d1_exception)
 
-    def test_1060(self):
+    def test_1090(self):
         """create with only detailCode then serialize_to_display()"""
         e = exceptions.ServiceFailure(123)
         self.sample.assert_equals(e.serialize_to_display(), 'create_with_detail_code')
 
-    def test_1070(self):
+    def test_1100(self):
         """create with string detailCode and description, then
         serialize_to_display()"""
         e = exceptions.ServiceFailure('123.456.789', 'test description')
         self.sample.assert_equals(e.serialize_to_display(), 'create_with_description')
 
-    def test_1080(self):
+    def test_1110(self):
         """create with detailCode, description and traceInformation, then
         serialize_to_display()"""
         e = exceptions.ServiceFailure(
@@ -239,7 +239,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
             e.serialize_to_display(), 'create_with_trace_information'
         )
 
-    def test_1090(self):
+    def test_1120(self):
         """serialize_to_headers()"""
         e = exceptions.ServiceFailure(
             '123.456.789', 'test description', 'test traceInformation'
@@ -256,7 +256,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         }
         assert header_dict == expected_dict
 
-    def test_1100(self):
+    def test_1130(self):
         """deserialize_from_headers()"""
         headers = {
             'DataONE-Exception-Name': 'IdentifierNotUnique',  # required
@@ -273,7 +273,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         assert e.description == 'test description'
         assert e.traceInformation == 'test traceInformation'
 
-    def test_1110(self):
+    def test_1140(self):
         """Serialization and deserialization of DataONE Exceptions.
 
         Test serialization and deserialization of DataONE Exceptions by performing

@@ -48,7 +48,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
         return self.create_obj(self.client_v2, sid=True)
 
     @responses.activate
-    def test_1050(self):
+    def test_1000(self):
         """isAuthorized(): Returns False for unknown subject"""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
         with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
@@ -57,14 +57,14 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
             assert not self.client_v2.isAuthorized(pid, 'changePermission')
 
     @responses.activate
-    def test_1060(self):
+    def test_1010(self):
         """isAuthorized(): Raises InvalidRequest for unknown permission"""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             self.client_v2.isAuthorized(pid, 'unknownPermission')
 
     @responses.activate
-    def test_1070(self):
+    def test_1020(self):
         """isAuthorized(): Returns False for known subject with inadequate
     permission level
     """
@@ -73,7 +73,7 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
             assert not self.client_v2.isAuthorized(pid, 'changePermission')
 
     @responses.activate
-    def test_1080(self):
+    def test_1030(self):
         """isAuthorized(): Returns True for known subject with adequate permission
     level
     """
