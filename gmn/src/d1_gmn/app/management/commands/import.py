@@ -30,6 +30,7 @@ See the GMN setup documentation for more information on how to use this command.
 
 import argparse
 import logging
+import logging.config
 import multiprocessing
 import os
 import time
@@ -88,88 +89,100 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Import even if there are local objects or event logs in DB',
+            "--force",
+            action="store_true",
+            help="Import even if there are local objects or event logs in DB",
         )
         parser.add_argument(
-            '--clear',
-            action='store_true',
-            help='Delete local objects or event logs from DB',
+            "--clear",
+            action="store_true",
+            help="Delete local objects or event logs from DB",
         )
         parser.add_argument(
-            '--cert-pub',
-            dest='cert_pem_path',
-            action='store',
-            help='Path to PEM formatted public key of certificate',
+            "--cert-pub",
+            dest="cert_pem_path",
+            action="store",
+            help="Path to PEM formatted public key of certificate",
         )
         parser.add_argument(
-            '--cert-key',
-            dest='cert_key_path',
-            action='store',
-            help='Path to PEM formatted private key of certificate',
+            "--cert-key",
+            dest="cert_key_path",
+            action="store",
+            help="Path to PEM formatted private key of certificate",
         )
         parser.add_argument(
-            '--public',
-            action='store_true',
-            help='Do not use certificate even if available',
+            "--public",
+            action="store_true",
+            help="Do not use certificate even if available",
         )
         parser.add_argument(
-            '--timeout',
+            "--disable-server-cert-validation",
+            action="store_true",
+            help="Do not validate the TLS/SSL server side certificate of the source node (insecure)",
+        )
+        parser.add_argument(
+            "--timeout",
             type=float,
-            action='store',
+            action="store",
             default=DEFAULT_TIMEOUT_SEC,
-            help='Timeout for DataONE API calls to the source MN',
+            help="Timeout for DataONE API calls to the source MN",
         )
         parser.add_argument(
-            '--workers',
+            "--workers",
             type=int,
-            action='store',
+            action="store",
             default=DEFAULT_WORKER_COUNT,
-            help='Max number of concurrent API calls to the source MN',
+            help="Max number of concurrent API calls to the source MN",
         )
         parser.add_argument(
-            '--lists',
+            "--lists",
             type=int,
-            action='store',
+            action="store",
             default=DEFAULT_LIST_COUNT,
-            help='Max number of concurrent list method API calls to source MN',
+            help="Max number of concurrent list method API calls to source MN",
         )
         parser.add_argument(
-            '--page-size',
+            "--page-size",
             type=int,
-            action='store',
+            action="store",
             default=DEFAULT_PAGE_SIZE,
-            help='Number of objects to retrieve in each list method API call to source MN',
+            help="Number of objects to retrieve in each list method API call to source MN",
         )
         parser.add_argument(
-            '--major',
+            "--major",
             type=int,
-            action='store',
-            help='Use API major version instead of finding by connecting to CN',
+            action="store",
+            help="Use API major version instead of finding by reading the source Node doc",
         )
         parser.add_argument(
-            '--only-log', action='store_true', help='Only import event logs'
+            "--type",
+            action="store",
+            help='Assume source node is a CN ("cn") or MN ("mn") instead of finding '
+            "by reading the source Node doc",
         )
         parser.add_argument(
-            '--max-obj',
+            "--only-log", action="store_true", help="Only import event logs"
+        )
+        parser.add_argument(
+            "--max-obj",
             type=int,
-            action='store',
-            help='Limit number of objects to import',
+            action="store",
+            help="Limit number of objects to import",
         )
-        parser.add_argument('baseurl', help='Source MN BaseURL')
+        parser.add_argument("baseurl", help="Source MN or CN BaseURL")
 
     # noinspection PyUnresolvedReferences
     def handle(self, *args, **options):
-        util.log_setup(options['debug'])
-        # logging.basicConfig(level=logging.DEBUG)
+        util.log_setup(options["debug"])
+        # Suppress error logging from d1_client
+        logging.getLogger("d1_client").setLevel(logging.CRITICAL)
         # if options['debug']:
         #   logger = multiprocessing.log_to_stderr()
         #   logger.setLevel(multiprocessing.SUBDEBUG)
 
-        logging.info('Running management command: {}'.format(__name__))
+        logging.info("Running management command: {}".format(__name__))
         util.exit_if_other_instance_is_running(__name__)
         run_start_sec = time.time()
         event_counter = d1_common.util.EventCounter()
@@ -193,59 +206,56 @@ class Command(django.core.management.base.BaseCommand):
         )
 
     def _handle(self, options, event_counter):
-        if not util.is_db_empty() and not options['force']:
+        if not util.is_db_empty() and not options["force"]:
             raise django.core.management.base.CommandError(
-                'There are already local objects or event logs in the DB. '
-                'Use --force to import anyway. '
-                'Use --clear to delete local objects and event logs from DB. '
-                'Use --only-log with --clear to delete only event logs. '
+                "There are already local objects or event logs in the DB. "
+                "Use --force to import anyway. "
+                "Use --clear to delete local objects and event logs from DB. "
+                "Use --only-log with --clear to delete only event logs. "
             )
-        if options['clear']:
-            if options['only_log']:
+        if options["clear"]:
+            if options["only_log"]:
                 d1_gmn.app.models.EventLog.objects.all().delete()
-                event_counter.log_and_count('Cleared event logs from DB')
+                event_counter.log_and_count("Cleared event logs from DB")
             else:
                 d1_gmn.app.delete.delete_all_from_db()
-                event_counter.log_and_count('Cleared objects and event logs from DB')
+                event_counter.log_and_count("Cleared objects and event logs from DB")
 
-        api_major = (
-            options['major']
-            if options['major'] is not None
-            else d1_gmn.app.management.commands._util.find_api_major(
-                options['baseurl'], get_source_client_arg_dict(options)
-            )
-        )
+        node_type, api_major = probe_node_type_major(options)
 
         # Functions and PyXB attributes are transferred by name since they can't be
         # serialized and passed across process boundaries.
 
-        if not options['only_log']:
+        if not options["only_log"]:
             multiprocessed_import(
                 options,
                 event_counter,
+                node_type,
                 api_major,
-                'listObjects',
-                get_list_objects_arg_dict(options),
-                'objectInfo',
-                'import_object',
-                'Importing objects',
+                "listObjects",
+                get_list_objects_arg_dict(options, node_type),
+                "objectInfo",
+                "import_object",
+                "Importing objects",
             )
 
         multiprocessed_import(
             options,
             event_counter,
+            node_type,
             api_major,
-            'getLogRecords',
+            "getLogRecords",
             get_log_records_arg_dict(options),
-            'logEntry',
-            'import_event',
-            'Importing logs',
+            "logEntry",
+            "import_event",
+            "Importing logs",
         )
 
 
 def multiprocessed_import(
     options,
     event_counter,
+    node_type,
     api_major,
     list_method_name,
     list_arg_dict,
@@ -253,36 +263,36 @@ def multiprocessed_import(
     import_method_name,
     display_str,
 ):
-    logging.info('Creating pool of {} workers'.format(options['workers']))
-    pool = multiprocessing.Pool(processes=options['workers'])
+    logging.info("Creating pool of {} workers".format(options["workers"]))
+    pool = multiprocessing.Pool(processes=options["workers"])
 
     manager = multiprocessing.Manager()
     namespace = manager.Namespace()
     namespace.event_counter = event_counter
     namespace.completed_count = 0
 
-    list_method_semaphore = manager.BoundedSemaphore(options['lists'])
+    list_method_semaphore = manager.BoundedSemaphore(options["lists"])
     completed_count_lock = manager.Lock()
 
-    client = create_source_client(options, api_major)
+    client = create_source_client(options, api_major, node_type)
 
     total_count = call_client_method(
         client, list_method_name, count=0, **list_arg_dict
     ).total
 
-    n_pages = (total_count - 1) // options['page_size'] + 1
+    n_pages = (total_count - 1) // options["page_size"] + 1
     start_sec = time.time()
 
     for page_idx in range(n_pages):
         try:
             logging.debug(
-                'apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages)
+                "apply_async(): page_idx={} n_pages={}".format(page_idx, n_pages)
             )
             # DEBUG: pool.apply_async() will fail silently on errors
             # in import_page. To debug, run import in the same process by replacing
             # replace pool.apply_async() with a direct call to import_page.
             # import_page(
-            #   namespace, options, api_major, list_method_name, list_arg_dict,
+            #   namespace, options, api_major, node_type, list_method_name, list_arg_dict,
             #   list_attr, import_method_name, display_str, total_count, page_idx,
             #   start_sec, list_method_semaphore
             # )
@@ -292,6 +302,7 @@ def multiprocessed_import(
                     namespace,
                     options,
                     api_major,
+                    node_type,
                     list_method_name,
                     list_arg_dict,
                     list_attr,
@@ -310,8 +321,8 @@ def multiprocessed_import(
         # so we have to access the internals to check the queue size and wait if
         # necessary.
         # noinspection PyProtectedMember
-        while pool._taskqueue.qsize() > 2 * options['workers']:
-            logging.debug('Waiting to queue task')
+        while pool._taskqueue.qsize() > 2 * options["workers"]:
+            logging.debug("Waiting to queue task")
             time.sleep(1)
 
     pool.close()
@@ -322,6 +333,7 @@ def import_page(
     namespace,
     options,
     api_major,
+    node_type,
     list_method_name,
     list_arg_dict,
     list_attr,
@@ -333,51 +345,50 @@ def import_page(
     list_method_semaphore,
     completed_count_lock,
 ):
-    client = create_source_client(options, api_major)
-    page_start_idx = page_idx * options['page_size']
+    client = create_source_client(options, api_major, node_type)
+    page_start_idx = page_idx * options["page_size"]
 
     # Cannot use inherited DB connections in this process. Force the process to
     # create new DB connections by closing the current ones.
     django.db.connections.close_all()
 
-    logging.debug('Waiting for list API semaphore')
+    logging.debug("Waiting for list API semaphore")
 
     # Prevent concurrent listObjects() and getLogRecords() calls to improve
     # performance.
     with list_method_semaphore:
-        logging.debug('Acquired list API semaphore')
+        logging.debug("Acquired list API semaphore")
         call_start_sec = time.time()
         try:
             type_pyxb = call_client_method(
                 client,
                 list_method_name,
                 start=page_start_idx,
-                count=options['page_size'],
+                count=options["page_size"],
                 **list_arg_dict
             )
         except Exception as e:
             namespace.event_counter.log_and_count(
-                'Page skipped: {}() failed',
+                "Page skipped: {}() failed",
                 'page_idx={} page_start_idx={} page_size={} error="{}"'.format(
                     list_method_name,
                     page_idx,
                     page_start_idx,
-                    options['page_size'],
+                    options["page_size"],
                     str(e),
                 ),
             )
-            return
         logging.debug(
-            '{}() run_sec={:.02f}'.format(
+            "{}() run_sec={:.02f}".format(
                 list_method_name, time.time() - call_start_sec
             )
         )
 
     list_pyxb = getattr(type_pyxb, list_attr)
     namespace.event_counter.log_and_count(
-        'Retrieved page',
-        'page_idx={} n_items={} page_size={}'.format(
-            page_idx, len(list_pyxb), options['page_size']
+        "Retrieved page",
+        "page_idx={} n_items={} page_size={}".format(
+            page_idx, len(list_pyxb), options["page_size"]
         ),
     )
 
@@ -401,7 +412,7 @@ def import_page(
         call_import_method(import_method_name, namespace, client, item_pyxb)
 
     logging.debug(
-        'Completed page. page_idx={} n_items={} iter_run_sec={:.02f}'.format(
+        "Completed page. page_idx={} n_items={} iter_run_sec={:.02f}".format(
             page_idx, len(list_pyxb), time.time() - page_iter_start_sec
         )
     )
@@ -419,7 +430,7 @@ def import_object(namespace, client, object_info_pyxb):
 
     if d1_gmn.app.did.is_existing_object(pid):
         namespace.event_counter.log_and_count(
-            'Skipped object create: Local object already exists', 'pid="{}"'.format(pid)
+            "Skipped object import: Local object already exists", 'pid="{}"'.format(pid)
         )
         return
 
@@ -427,7 +438,7 @@ def import_object(namespace, client, object_info_pyxb):
 
     if sciobj_url:
         namespace.event_counter.log_and_count(
-            'Skipped object download: Proxy object',
+            "Skipped object download: Proxy object",
             'pid="{}" sciobj_url="{}"'.format(pid, sciobj_url),
         )
     else:
@@ -435,7 +446,8 @@ def import_object(namespace, client, object_info_pyxb):
             download_source_sciobj_bytes_to_store(namespace, client, pid)
         except d1_common.types.exceptions.DataONEException as e:
             namespace.event_counter.log_and_count(
-                'Skipped object create: Download failed', 'error="{}"'.format(str(e))
+                "Skipped object import: Download failed",
+                'pid="{}" error="{}"'.format(pid, e.friendly_format()),
             )
             return
         sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
@@ -444,8 +456,8 @@ def import_object(namespace, client, object_info_pyxb):
         sysmeta_pyxb = client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
         namespace.event_counter.log_and_count(
-            'Skipped object create: getSystemMetadata() failed',
-            'pid="{}" error="{}"'.format(pid, str(e)),
+            "Skipped object import: getSystemMetadata() failed",
+            'pid="{}" error="{}"'.format(pid, e.friendly_format()),
         )
         return
 
@@ -457,14 +469,14 @@ def get_object_proxy_location(client, pid):
 
     If object is local, return None.
     """
-    return client.describe(pid).get('DataONE-Proxy')
+    return client.describe(pid).get("DataONE-Proxy")
 
 
 def download_source_sciobj_bytes_to_store(namespace, client, pid):
     abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
     if os.path.isfile(abs_sciobj_path):
         namespace.event_counter.log_and_count(
-            'Skipped object download: Bytes already in local object store',
+            "Skipped object download: Bytes already in local object store",
             'pid="{}" path="{}"'.format(pid, abs_sciobj_path),
         )
         return
@@ -473,12 +485,19 @@ def download_source_sciobj_bytes_to_store(namespace, client, pid):
     client.get_and_save(pid, abs_sciobj_path)
 
 
-def get_list_objects_arg_dict(options):
-    return {
+def get_list_objects_arg_dict(options, node_type):
+    """Create a dict of arguments that will be passed to listObjects().
+    If {node_type} is a CN, add filtering to include only objects from this GMN instance
+    in the ObjectList returned by CNCore.listObjects().
+    """
+    arg_dict = {
         # Restrict query for faster debugging
-        # 'fromDate': datetime.datetime(2017, 1, 1),
-        # 'toDate': datetime.datetime(2017, 1, 3),
+        # "fromDate": datetime.datetime(2017, 1, 1),
+        # "toDate": datetime.datetime(2017, 1, 3),
     }
+    if node_type == "cn":
+        arg_dict["nodeId"] = django.conf.settings.NODE_IDENTIFIER
+    return arg_dict
 
 
 # Event Logs
@@ -489,7 +508,7 @@ def import_event(namespace, client, log_entry_pyxb):
 
     if not d1_gmn.app.did.is_existing_object(pid):
         namespace.event_counter.log_and_count(
-            'Skipped event log: Local object does not exist', 'pid="{}"'.format(pid)
+            "Skipped event log: Local object does not exist", 'pid="{}"'.format(pid)
         )
         return
 
@@ -513,24 +532,36 @@ def get_log_records_arg_dict(options):
 # Client
 
 
-def create_source_client(options, api_major):
+def create_source_client(options, api_major, node_type):
+    if node_type == "cn":
+        return create_source_cn_client(options)
+    elif node_type == "mn":
+        return create_source_mn_client(options, api_major)
+    raise AssertionError('node_type must be "mn" or "cn", not "{}"'.format(node_type))
+
+
+def create_source_cn_client(options):
+    return d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+        options["baseurl"], **get_source_client_arg_dict(options)
+    )
+
+
+def create_source_mn_client(options, api_major):
     return d1_client.d1client.get_client_class_by_version_tag(api_major)(
-        options['baseurl'], **get_source_client_arg_dict(options)
+        options["baseurl"], **get_source_client_arg_dict(options)
     )
 
 
 def get_source_client_arg_dict(options):
-    client_dict = {
-        'timeout_sec': options['timeout'],
-        'verify_tls': False,
-        'suppress_verify_warnings': True,
-    }
-    if not options['public']:
+    client_dict = {"timeout_sec": options["timeout"]}
+    if options["disable_server_cert_validation"]:
+        client_dict.update({"verify_tls": False, "suppress_verify_warnings": True})
+    if not options["public"]:
         client_dict.update(
             {
-                'cert_pem_path': options['cert_pem_path']
+                "cert_pem_path": options["cert_pem_path"]
                 or django.conf.settings.CLIENT_CERT_PATH,
-                'cert_key_path': options['cert_key_path']
+                "cert_key_path": options["cert_key_path"]
                 or django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
             }
         )
@@ -539,3 +570,98 @@ def get_source_client_arg_dict(options):
 
 def call_client_method(client, method_name, *method_arg_list, **method_arg_dict):
     return getattr(client, method_name)(*method_arg_list, **method_arg_dict)
+
+
+def get_cn_node_list(options):
+    """If options["baseurl"] is the BaseURL of a functional CN, return the v2 NodeList,
+    else return None.
+    """
+    try:
+        return create_source_cn_client(options).listNodes()
+    except d1_common.types.exceptions.DataONEException:
+        pass
+
+
+def get_mn_node_doc(options):
+    """If options["baseurl"] is the BaseURL of a functional MN, return the v1 Node doc,
+    else return None.
+
+    As v2 nodes list both v1 and v2 services under the v1 endpoint, and the v2 endpoint
+    does not exist for v1 nodes, this always calls v1 MNCore.getCapabilities().
+    """
+    try:
+        return create_source_mn_client(options, "v1").getCapabilities()
+    except d1_common.types.exceptions.DataONEException:
+        pass
+
+
+def probe_node_type_major(options):
+    """Determine if import source node is a CN or MN and which major version API to use
+    """
+    node_list_pyxb = get_cn_node_list(options)
+    node_pyxb = get_mn_node_doc(options)
+    if node_list_pyxb is None and node_pyxb is None:
+        raise django.core.management.base.CommandError(
+            "Could not find a functional CN or MN at the provided BaseURL. "
+            'base_url="{}"'.format(options["baseurl"])
+        )
+    elif node_list_pyxb is not None and node_pyxb is not None:
+        raise django.core.management.base.CommandError(
+            "Could not detect the type of the Node at the provided BaseURL. "
+            'base_url="{}"'.format(options["baseurl"])
+        )
+    elif node_list_pyxb is not None and node_pyxb is None:
+        assert_is_known_node_id(
+            options, node_list_pyxb, django.conf.settings.NODE_IDENTIFIER
+        )
+        logging.info(
+            "Importing from CN: {}. filtered on MN: {}".format(
+                d1_common.xml.get_req_val(
+                    find_node(node_list_pyxb, options["baseurl"]).identifier
+                ),
+                django.conf.settings.NODE_IDENTIFIER,
+            )
+        )
+        return "cn", "v2"
+    elif node_list_pyxb is None and node_pyxb is not None:
+        logging.info(
+            "Importing from MN: {}".format(
+                d1_common.xml.get_req_val(node_pyxb.identifier)
+            )
+        )
+        return "mn", find_node_api_version(node_pyxb)
+
+
+def find_node(node_list_pyxb, base_url):
+    """Search NodeList for Node that has {base_url}. Return matching Node or None"""
+    for node_pyxb in node_list_pyxb.node:
+        if node_pyxb.baseURL == base_url:
+            return node_pyxb
+
+
+def assert_is_known_node_id(options, node_list_pyxb, node_id):
+    """When importing from a CN, ensure that the NodeID which the ObjectList will be
+    filtered by is known to the CN
+    """
+    node_pyxb = find_node_by_id(node_list_pyxb, node_id)
+    assert (
+        node_pyxb is not None
+    ), 'The NodeID of this GMN instance is unknown to the CN at the provided BaseURL. node_id="{}" base_url="{}"'.format(
+        node_id, options["baseurl"]
+    )
+
+
+def find_node_api_version(node_pyxb):
+    """Find the highest API major version supported by node"""
+    max_major = 0
+    for s in node_pyxb.services.service:
+        max_major = max(max_major, int(s.version[1:]))
+    return max_major
+
+
+def find_node_by_id(node_list_pyxb, node_id):
+    """Search NodeList for Node with {node_id}. Return matching Node or None"""
+    for node_pyxb in node_list_pyxb.node:
+        # if node_pyxb.baseURL == base_url:
+        if d1_common.xml.get_req_val(node_pyxb.identifier) == node_id:
+            return node_pyxb
