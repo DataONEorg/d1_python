@@ -168,7 +168,7 @@ class DataONEBaseClient(d1_client.session.Session):
         """
         super(DataONEBaseClient, self).__init__(base_url, *args, **kwargs)
 
-        self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__name__)
 
         self._api_major = 1
         self._api_minor = 0

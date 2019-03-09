@@ -38,7 +38,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
 
         See d1baseclient.DataONEBaseClient for args.
         """
-        self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__name__)
         # Turn off server certificate validation by default when running unit tests
         kwargs.setdefault('verify_tls', False)
         d1_client.mnclient.MemberNodeClient.__init__(self, *args, **kwargs)

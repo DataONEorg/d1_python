@@ -42,7 +42,7 @@ class DataONEBaseClient_2_0(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """See baseclient.DataONEBaseClient for args."""
         super(DataONEBaseClient_2_0, self).__init__(*args, **kwargs)
 
-        self.logger = logging.getLogger(__file__)
+        self.logger = logging.getLogger(__name__)
 
         self._api_major = 2
         self._api_minor = 0
