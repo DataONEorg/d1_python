@@ -46,6 +46,7 @@ class ObjectListIteratorMulti(object):
         client_args_dict=None,
         list_objects_args_dict=None,
     ):
+        self._log = logging.getLogger(__name__)
         self._base_url = base_url
         self._page_size = page_size
         self._max_workers = max_workers
@@ -80,7 +81,7 @@ class ObjectListIteratorMulti(object):
         while True:
             object_info_pyxb = queue.get()
             if object_info_pyxb is None:
-                logging.debug('Received None sentinel value. Stopping iteration')
+                self._log.debug('Received None sentinel value. Stopping iteration')
                 break
             yield object_info_pyxb
 
@@ -105,12 +106,12 @@ def _get_all_pages(
     list_objects_args_dict,
     n_total,
 ):
-    logging.info('Creating pool of {} workers'.format(max_workers))
+    self._log.info('Creating pool of {} workers'.format(max_workers))
     pool = multiprocessing.Pool(processes=max_workers)
     n_pages = (n_total - 1) // page_size + 1
 
     for page_idx in range(n_pages):
-        logging.debug('apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages))
+        self._log.debug('apply_async(): page_idx={} n_pages={}'.format(page_idx, n_pages))
         pool.apply_async(
             _get_page,
             args=(
@@ -146,11 +147,11 @@ def _get_page(
         object_list_pyxb = client.listObjects(
             start=page_idx * page_size, count=page_size, **list_objects_args_dict
         )
-        logging.debug('Retrieved page: {}/{}'.format(page_idx + 1, n_pages))
+        self._log.debug('Retrieved page: {}/{}'.format(page_idx + 1, n_pages))
         for object_info_pyxb in object_list_pyxb.objectInfo:
             queue.put(object_info_pyxb)
     except Exception as e:
-        logging.error(
+        self._log.error(
             'Failed to retrieve page: {}/{}. Error: {}'.format(
                 page_idx + 1, n_pages, str(e)
             )

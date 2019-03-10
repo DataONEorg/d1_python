@@ -37,6 +37,7 @@ class NodeListIterator(object):
     def __init__(
         self, base_url, api_major=API_MAJOR, client_dict=None, listNodes_dict=None
     ):
+        self._log = logging.getLogger(__name__)
         self._base_url = base_url
         self._api_major = api_major
         self._client_dict = client_dict or {}
@@ -48,7 +49,7 @@ class NodeListIterator(object):
         )
         # The NodeList type does not support slicing.
         node_list_pyxb = client.listNodes()
-        logging.debug('Retrieved {} Node documents'.format(len(node_list_pyxb.node)))
+        self._log.debug('Retrieved {} Node documents'.format(len(node_list_pyxb.node)))
         for node_pyxb in sorted(
             node_list_pyxb.node, key=lambda x: x.identifier.value()
         ):

@@ -43,7 +43,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         """See d1_client.baseclient.DataONEBaseClient for args."""
         super(DataONEBaseClient_1_1, self).__init__(*args, **kwargs)
 
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         self._api_major = 1
         self._api_minor = 1
@@ -76,7 +76,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
 
         Returns:
         """
-        logging.debug(
+        self._log.debug(
             'Solr query: {}'.format(
                 ', '.join(['{}={}'.format(k, v) for (k, v) in list(locals().items())])
             )

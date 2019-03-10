@@ -136,7 +136,7 @@ class ObjectListIterator(object):
         :param max: Maximum number of items to retrieve (all)
         :type max: integer
         """
-        self.log = logging.getLogger(self.__class__.__name__)
+        self._log = logging.getLogger(__name__)
         self._object_list = None
         self._czero = 0
         self._citem = 0
@@ -167,7 +167,7 @@ class ObjectListIterator(object):
         Returns the next ObjectInfo instance. Loads more if at the end
         of the page and there's more pages to load.
         """
-        self.log.debug(
+        self._log.debug(
             "%d / %d (%d)"
             % (self._citem, self._maxitem, len(self._object_list.objectInfo))
         )
@@ -184,7 +184,7 @@ class ObjectListIterator(object):
 
     def _loadMore(self, start=0, trys=0, validation=True):
         """Retrieves the next page of results."""
-        self.log.debug("Loading page starting from %d" % start)
+        self._log.debug("Loading page starting from %d" % start)
         self._czero = start
         self._pageoffs = 0
         try:
@@ -196,14 +196,14 @@ class ObjectListIterator(object):
                 nodeId=self._nodeId,
             )
         except http.client.BadStatusLine as e:
-            self.log.warning("Server responded with Bad Status Line. Retrying in 5sec")
+            self._log.warning("Server responded with Bad Status Line. Retrying in 5sec")
             self._client.connection.close()
             if trys > 3:
                 raise e
             trys += 1
             self._loadMore(start, trys)
         except d1_common.types.exceptions.ServiceFailure as e:
-            self.log.error(e)
+            self._log.error(e)
             if trys > 3:
                 raise e
             trys += 1

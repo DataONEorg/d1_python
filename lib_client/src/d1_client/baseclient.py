@@ -168,7 +168,7 @@ class DataONEBaseClient(d1_client.session.Session):
         """
         super(DataONEBaseClient, self).__init__(base_url, *args, **kwargs)
 
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         self._api_major = 1
         self._api_minor = 0
@@ -228,7 +228,7 @@ class DataONEBaseClient(d1_client.session.Session):
         except TypeError:
             trace_str = None
         e = d1_common.types.exceptions.ServiceFailure(0, msg, trace_str)
-        logging.error('Raised: {}'.format(str(e)))
+        self._log.error('Raised: {}'.format(str(e)))
         raise e
 
     def _raise_service_failure_invalid_content_type(self, response):

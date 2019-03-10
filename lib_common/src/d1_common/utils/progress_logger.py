@@ -123,7 +123,7 @@ class ProgressLogger:
         self._log_total_runtime()
         self._warn_if_active_task_types()
 
-    def start_task_type(self, task_type_str, total_task_count=None):
+    def start_task_type(self, task_type_str, total_task_count):
         """Call when about to start processing a new type of task, typically just before
         entering a loop that processes many task of the given type.
 
@@ -150,6 +150,7 @@ class ProgressLogger:
             "total_task_count": total_task_count,
             "task_idx": 0,
         }
+        self._log('Started task type: {}'.format(task_type_str))
 
     def end_task_type(self, task_type_str):
         """Call when processing of all tasks of the given type is completed, typically
@@ -164,6 +165,7 @@ class ProgressLogger:
         ), "Task type has not been started yet: {}".format(task_type_str)
         self._log_progress()
         del self._task_dict[task_type_str]
+        self._log('Ended task type: {}'.format(task_type_str))
 
     def start_task(self, task_type_str, current_task_index=None):
         """Call when processing is about to start on a single task of the given task

@@ -146,7 +146,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     """
 
     def __init__(self, *args, **kwargs):
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
         header_dict = requests.structures.CaseInsensitiveDict(kwargs.pop('headers', {}))
         header_dict.setdefault(
             'Content-Type', 'application/x-www-form-urlencoded; charset=utf-8'
@@ -247,7 +247,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                 max_resp_dict['response']['docs'][0][name],
             )
         except Exception:
-            self.logger.exception('Exception')
+            self._log.exception('Exception')
             raise
 
     def field_alpha_histogram(
@@ -327,7 +327,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                                     self._prepare_query_term(name, a_bin[1]),
                                 )
                         except Exception:
-                            self.logger.exception('Exception:')
+                            self._log.exception('Exception:')
                             raise
                         q_bin.append(bin_q)
                         bin_list.append(a_bin)
@@ -351,7 +351,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                 if include_queries:
                     bin_list[i].append(q_bin[i])
         except Exception:
-            logging.exception('Exception')
+            self._log.exception('Exception')
             raise
         return bin_list
 
@@ -603,7 +603,7 @@ class SolrSearchResponseIterator(object):
         transformer=SolrRecordTransformerBase(),
         **query_dict
     ):
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         self.client = client
         self.query_dict = query_dict.copy()
@@ -617,11 +617,11 @@ class SolrSearchResponseIterator(object):
         self._next_page(self.c_record)
         self._num_hits = 0
 
-        self.logger.debug("Iterator hits={}".format(self.res['response']['numFound']))
+        self._log.debug("Iterator hits={}".format(self.res['response']['numFound']))
 
     def _next_page(self, offset):
         """Retrieves the next set of results from the service."""
-        self.logger.debug("Iterator c_record={}".format(self.c_record))
+        self._log.debug("Iterator c_record={}".format(self.c_record))
         page_size = self.page_size
         if (offset + page_size) > self.max_records:
             page_size = self.max_records - offset
@@ -677,7 +677,7 @@ class SolrArrayResponseIterator(SolrSearchResponseIterator):
     """
 
     def __init__(self, client, page_size=100, cols=None, **query_dict):
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         cols = cols or ['lng', 'lat']
         transformer = SolrArrayTransformer(cols)
@@ -768,7 +768,7 @@ class SolrValuesResponseIterator(object):
         @param page_size(int) Number of rows to retrieve in each call.
         """
 
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         self.client = client
         self.field = field
@@ -787,7 +787,7 @@ class SolrValuesResponseIterator(object):
 
     def _next_page(self, offset):
         """Retrieves the next set of results from the service."""
-        self.logger.debug("Iterator c_record={}".format(self.c_record))
+        self._log.debug("Iterator c_record={}".format(self.c_record))
         param_dict = self.query_dict.copy()
         param_dict.update(
             {
@@ -805,7 +805,7 @@ class SolrValuesResponseIterator(object):
         pprint.pprint(resp_dict)
         try:
             self.res = resp_dict['facet_counts']['facet_fields'][self.field]
-            self.logger.debug(self.res)
+            self._log.debug(self.res)
         except Exception:
             self.res = []
         self.index = 0

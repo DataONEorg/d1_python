@@ -45,7 +45,7 @@ class MemberNodeClient_1_2(
         """See baseclient.DataONEBaseClient for args."""
         super(MemberNodeClient_1_2, self).__init__(*args, **kwargs)
 
-        self.logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
 
         self._api_major = 1
         self._api_minor = 2

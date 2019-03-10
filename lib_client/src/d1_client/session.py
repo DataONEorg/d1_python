@@ -106,6 +106,7 @@ class Session(object):
 
         :returns: None
         """
+        self._log = logging.getLogger(__name__)
         self._base_url = base_url
         self._scheme, self._host, self._port, self._path = urllib.parse.urlparse(
             base_url
@@ -274,7 +275,7 @@ class Session(object):
     def _request(self, method, rest_path_list, **kwargs):
         url = self._prep_url(rest_path_list)
         kwargs = self._prep_request_kwargs(kwargs)
-        logging.debug(
+        self._log.debug(
             'Request equivalent: {}'.format(
                 self.get_curl_command_line(method, url, **kwargs)
             )
@@ -304,7 +305,7 @@ class Session(object):
         if result_dict['timeout'] in (0, 0.0):
             result_dict['timeout'] = None
         d1_common.util.nested_update(result_dict, kwargs_dict)
-        logging.debug(
+        self._log.debug(
             'Request kwargs:\n{}'.format(
                 d1_common.util.serialize_to_normalized_compact_json(result_dict)
             )
