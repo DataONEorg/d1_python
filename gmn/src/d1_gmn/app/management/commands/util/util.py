@@ -52,28 +52,28 @@ def log_setup(debug_bool):
 
     logging.config.dictConfig(
         {
-            'version': 1,
-            'disable_existing_loggers': True,
-            'formatters': {
-                'verbose': {
-                    'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s '
-                    '%(process)d %(thread)d %(message)s',
-                    'datefmt': '%Y-%m-%d %H:%M:%S',
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "verbose": {
+                    "format": "%(asctime)s %(levelname)-8s %(name)s %(module)s "
+                    "%(process)d %(thread)d %(message)s",
+                    "datefmt": "%Y-%m-%d %H:%M:%S",
                 }
             },
-            'handlers': {
-                'console': {
-                    'class': 'logging.StreamHandler',
-                    'formatter': 'verbose',
-                    'level': level,
-                    'stream': 'ext://sys.stdout',
+            "handlers": {
+                "console": {
+                    "class": "logging.StreamHandler",
+                    "formatter": "verbose",
+                    "level": level,
+                    "stream": "ext://sys.stdout",
                 }
             },
-            'loggers': {
-                '': {
-                    'handlers': ['console'],
-                    'level': level,
-                    'class': 'logging.StreamHandler',
+            "loggers": {
+                "": {
+                    "handlers": ["console"],
+                    "level": level,
+                    "class": "logging.StreamHandler",
                 }
             },
         }
@@ -83,28 +83,28 @@ def log_setup(debug_bool):
 def exit_if_other_instance_is_running(command_name_str):
     global single_instance_lock_file
     # command_name_str = get_command_name()
-    single_path = os.path.join(tempfile.gettempdir(), command_name_str + '.single')
-    single_instance_lock_file = open(single_path, 'w')
+    single_path = os.path.join(tempfile.gettempdir(), command_name_str + ".single")
+    single_instance_lock_file = open(single_path, "w")
     try:
         fcntl.lockf(single_instance_lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
         raise django.core.management.base.CommandError(
-            'Aborted: Another instance is still running'
+            "Aborted: Another instance is still running"
         )
 
 
 def abort_if_stand_alone_instance():
     if django.conf.settings.STAND_ALONE:
         raise django.core.management.base.CommandError(
-            'Aborted: Command not applicable in stand-alone instance of GMN. '
-            'See STAND_ALONE in settings.py.'
+            "Aborted: Command not applicable in stand-alone instance of GMN. "
+            "See STAND_ALONE in settings.py."
         )
 
 
 def abort_if_not_debug_mode():
     if not django.conf.settings.DEBUG_GMN:
         raise django.core.management.base.CommandError(
-            'This command is only available when DEBUG_GMN is True in ' 'settings.py'
+            "This command is only available when DEBUG_GMN is True in " "settings.py"
         )
 
 
@@ -146,7 +146,7 @@ class Db(object):
         try:
             self.cur.execute(sql_str, args, **kwargs)
         except psycopg2.DatabaseError as e:
-            logging.debug('SQL query result: {}'.format(str(e)))
+            logging.debug("SQL query result: {}".format(str(e)))
             raise
         try:
             return self.cur.fetchall()
@@ -158,11 +158,11 @@ def format_progress(event_counter, msg, i, n, pid, start_sec=None):
     if start_sec:
         elapsed_sec = time.time() - start_sec
         eta_sec = float(n) / (i + 1) * elapsed_sec
-        eta_str = ' ' + d1_common.util.format_sec_to_dhm(eta_sec)
+        eta_str = " " + d1_common.util.format_sec_to_dhm(eta_sec)
     else:
-        eta_str = ''
+        eta_str = ""
     event_counter.count(msg)
-    return '{} - {}/{} ({:.2f}%{}) - {}'.format(
+    return "{} - {}/{} ({:.2f}%{}) - {}".format(
         msg, i + 1, n, (i + 1) / float(n) * 100, eta_str, pid
     )
 
