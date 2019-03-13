@@ -53,7 +53,7 @@ class TestHTTPServer(threading.Thread):
         # Daemon mode causes the Python app to exit when the main thread exits.
         # This lets the app be stopped with Ctrl-C without having to send signals
         # to the threads.
-        self._logger = logging.getLogger(self.__class__.__name__)
+        self._log = logging.getLogger(self.__class__.__name__)
         self._options = options
         self._host, self._port = self._get_host_and_port()
         self.pid_unknown = pid_unknown
@@ -77,13 +77,13 @@ class TestHTTPServer(threading.Thread):
         socketserver.TCPServer.src_existing_pid_approve = self.src_existing_pid_approve
         socketserver.TCPServer.src_existing_pid_deny = self.src_existing_pid_deny
 
-        self._logger.info(
+        self._log.info(
             'Starting HTTP Server. Host={} Port={}'.format(self._host, self._port)
         )
         self.httpd.serve_forever()
 
     def stop(self):
-        self._logger.info('Stopping HTTP Server')
+        self._log.info('Stopping HTTP Server')
         self.httpd.shutdown()
 
     def _get_host_and_port(self, default_port=80):
@@ -99,13 +99,13 @@ class TestHTTPServer(threading.Thread):
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, request, client_address, server):
-        self._logger = logging.getLogger(self.__class__.__name__)
+        self._log = logging.getLogger(self.__class__.__name__)
         http.server.SimpleHTTPRequestHandler.__init__(
             self, request, client_address, server
         )
 
     def do_GET(self):
-        self._logger.debug('Received HTTP GET: {}'.format(self.path))
+        self._log.debug('Received HTTP GET: {}'.format(self.path))
         url = urllib.parse.urlparse(urllib.parse.unquote(self.path))
         if self._handle_isNodeAuthorized(url):
             return
@@ -121,7 +121,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             )
 
     def do_PUT(self):
-        self._logger.debug('Received HTTP PUT: {}'.format(self.path))
+        self._log.debug('Received HTTP PUT: {}'.format(self.path))
         url = urllib.parse.urlparse(urllib.parse.unquote(self.path))
         if self._handle_setReplicationStatus(url):
             return
@@ -144,7 +144,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         pid = m.group(1)
         query = urllib.parse.parse_qs(url.query)
         target_node_subject = query['targetNodeSubject'][0]
-        self._logger.debug(
+        self._log.debug(
             'Handling call: isNodeAuthorized() pid="{}", dst_node="{}")'.format(
                 pid, target_node_subject
             )
@@ -176,7 +176,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not m:
             return False
         pid = m.group(1)
-        self._logger.debug('Handling call: getReplica() pid="{}")'.format(pid))
+        self._log.debug('Handling call: getReplica() pid="{}")'.format(pid))
         if pid == self.server.pid_not_authorized:
             self._generate_response_NotAuthorized()
             self._record_mn_call('getReplica_NotAuthorized', pid)
@@ -209,7 +209,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not m:
             return False
         pid = m.group(1)
-        self._logger.debug('Handling call: getSystemMetadata() pid="{}")'.format(pid))
+        self._log.debug('Handling call: getSystemMetadata() pid="{}")'.format(pid))
         self._generate_response_SystemMetadata(pid)
         return True
 
@@ -226,7 +226,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         multipart_fields = cgi.parse_multipart(self.rfile, param_dict)
         logging.debug(multipart_fields)
         status = multipart_fields.get('status')[0]
-        self._logger.debug(
+        self._log.debug(
             'Handling call: setReplicationStatus() pid="{}", status="{}"'.format(
                 pid, status
             )
@@ -238,14 +238,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     # Response generators.
 
     def _generate_response_success(self):
-        self._logger.debug('Responding with: 200 OK')
+        self._log.debug('Responding with: 200 OK')
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write('ReplicationTester: Testing MN\'s response to 200 OK')
 
     def _generate_response_NotAuthorized(self):
-        self._logger.debug('Responding with: NotAuthorized')
+        self._log.debug('Responding with: NotAuthorized')
         exception = d1_common.types.exceptions.NotAuthorized(0)
         self.send_response(exception.errorCode)
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
@@ -253,7 +253,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(exception.serialize_to_transport())
 
     def _generate_response_NotFound(self):
-        self._logger.debug('Responding with: NotFound')
+        self._log.debug('Responding with: NotFound')
         exception = d1_common.types.exceptions.NotFound(0)
         self.send_response(exception.errorCode)
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
@@ -261,7 +261,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(exception.serialize_to_transport())
 
     def _generate_response_OctetStream(self, pid):
-        self._logger.debug('Responding with: science object bytes')
+        self._log.debug('Responding with: science object bytes')
         self.send_response(200)
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_OCTET_STREAM)
         self.end_headers()
@@ -271,7 +271,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(object_bytes)
 
     def _generate_response_SystemMetadata(self, pid):
-        self._logger.debug('Responding with: System Metadata')
+        self._log.debug('Responding with: System Metadata')
         self.send_response(200)
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
         self.end_headers()
@@ -281,7 +281,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(object_bytes)
 
     def _generate_response_ServiceFailure(self, msg):
-        self._logger.debug('Responding with: ServiceFailure')
+        self._log.debug('Responding with: ServiceFailure')
         exception = d1_common.types.exceptions.ServiceFailure(0, msg)
         self.send_response(exception.errorCode)
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
@@ -290,7 +290,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _generate_response_NodeList(self):
         # When debugging this function, remember that GMN caches the response.
-        self._logger.debug('Responding with custom NodeList')
+        self._log.debug('Responding with custom NodeList')
         # exception = d1_common.types.exceptions.NotAuthorized(0,
         #  'ReplicationTester: Testing MN\'s response to NotAuthorized')
         self.send_response(200)
@@ -302,7 +302,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(node_list.toxml('utf-8'))
 
     def _record_mn_call(self, *params):
-        self._logger.debug('Recorded call: {}'.format(', '.join(params)))
+        self._log.debug('Recorded call: {}'.format(', '.join(params)))
         self.server._queue.put(params)
 
     def _create_cn_node_obj(self):

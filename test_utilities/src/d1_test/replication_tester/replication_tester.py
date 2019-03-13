@@ -259,7 +259,7 @@ class ReplicationTester(object):
             src_existing_pid_deny,
             self._queue,
         )
-        self._logger = logging.getLogger(self.__class__.__name__)
+        self._log = logging.getLogger(self.__class__.__name__)
 
     def __enter__(self):
         self._http_server.start()
@@ -458,8 +458,8 @@ class ReplicationTester(object):
     #
 
     def _log_debug_header(self, msg):
-        self._logger.debug('-' * 100)
-        self._logger.info('Testing: {}'.format(msg))
+        self._log.debug('-' * 100)
+        self._log.info('Testing: {}'.format(msg))
 
     def _assert_correct_mn_call_with_wait(self, *expected_call):
         return self._assert_correct_mn_call(True, expected_call)
@@ -469,7 +469,7 @@ class ReplicationTester(object):
 
     def _assert_correct_mn_call(self, block, expected_call):
         if block:
-            self._logger.debug('Waiting for call from MN: {}'.format(expected_call))
+            self._log.debug('Waiting for call from MN: {}'.format(expected_call))
         try:
             call = self._queue.get(block, self._options.timeout_sec)
         except queue.Empty:

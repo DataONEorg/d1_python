@@ -95,11 +95,11 @@ class ProgressLogger:
 
         Args:
             logger:
-                Optional logger to which the progress information log entries are
-                written. A new logger is created if not provided.
+                Optional logger to which the progress log entries are written. A new
+                logger is created if not provided.
 
             level:
-                The level of severity to set for the progress information log entries.
+                The level of severity to set for the progress log entries.
 
             event_counter:
                 Optional EventCounter to use for recording events
@@ -115,8 +115,8 @@ class ProgressLogger:
         self._start_ts = time.time()
         self._last_log_time = time.time()
         self._log_interval_sec = log_interval_sec
-        self._logger = logger or logging.getLogger(__name__)
-        self._logger.setLevel(log_level)
+        self._log = logger or logging.getLogger(__name__)
+        self._log.setLevel(log_level)
         self._log_level = log_level
 
     def __del__(self):
@@ -133,9 +133,7 @@ class ProgressLogger:
                 updates.
 
             total_task_count (int):
-                The total number of the new type of task that will be processed. If the
-                total is unknown, this can be left unset. If unset, only elapsed time is
-                displayed. ETA is not displayed.
+                The total number of the new type of task that will be processed.
 
         This starts the timer that is used for providing an ETA for completing all tasks
         of the given type.
@@ -150,7 +148,8 @@ class ProgressLogger:
             "total_task_count": total_task_count,
             "task_idx": 0,
         }
-        self._log('Started task type: {}'.format(task_type_str))
+        # self._log_msg('Started task type: {}'.format(task_type_str))
+        # self._log_active_task_types()
 
     def end_task_type(self, task_type_str):
         """Call when processing of all tasks of the given type is completed, typically
@@ -165,7 +164,7 @@ class ProgressLogger:
         ), "Task type has not been started yet: {}".format(task_type_str)
         self._log_progress()
         del self._task_dict[task_type_str]
-        self._log('Ended task type: {}'.format(task_type_str))
+        # self._log_msg('Ended task type: {}'.format(task_type_str))
 
     def start_task(self, task_type_str, current_task_index=None):
         """Call when processing is about to start on a single task of the given task
@@ -224,9 +223,9 @@ class ProgressLogger:
 
     def _log_events(self):
         if self._event_dict:
-            self._log("Events:")
+            self._log_msg("Events:")
             for event_str, count_int in sorted(self._event_dict.items()):
-                self._log("  {}: {}".format(event_str, count_int))
+                self._log_msg("  {}: {}".format(event_str, count_int))
 
     def _log_progress_for_task_type(self, task_type_str):
         task_idx = self._task_dict[task_type_str]["task_idx"]
@@ -234,32 +233,39 @@ class ProgressLogger:
         elapsed_sec = time.time() - self._task_dict[task_type_str]["start_time"]
         eta_sec = float(total_task_count) / (task_idx + 1) * elapsed_sec
         eta_str = d1_common.util.format_sec_to_dhm(eta_sec)
-        self._log(
+        self._log_msg(
             "{}: {}/{} ({:.2f}% {})".format(
                 task_type_str,
-                task_idx + 1,
+                task_idx,
                 total_task_count,
-                (task_idx + 1) / float(total_task_count) * 100,
+                task_idx / float(total_task_count) * 100,
                 eta_str,
             )
         )
 
-    def _log(self, msg_str):
-        self._logger.log(self._log_level, msg_str)
+    def _log_msg(self, msg_str):
+        self._log.log(self._log_level, msg_str)
 
     def _warn_if_active_task_types(self):
         if self._task_dict:
             self._log_progress()
-            self._logger.warning(
+            self._log.warning(
                 "ProgressLogger was deleted while there were still active task types. "
-                "Still active: {}".format(
+            )
+            self._log_active_task_types()
+
+    def _log_active_task_types(self):
+        if self._task_dict:
+            self._log_msg('Active task types: {}'.format(
                     ", ".join(self._task_dict)
                 )
             )
+        else:
+            self._log_msg("Active task types: None")
 
     def _log_total_runtime(self):
         runtime_sec = time.time() - self._start_ts
-        self._log(
+        self._log_msg(
             'Completed. runtime_sec={:.02f} total_run_dhm="{}"'.format(
                 runtime_sec, d1_common.util.format_sec_to_dhm(runtime_sec)
             )
