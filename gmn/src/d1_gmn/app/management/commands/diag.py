@@ -29,7 +29,7 @@ import d1_gmn.app.auth
 import d1_gmn.app.delete
 # noinspection PyProtectedMember
 import d1_gmn.app.did
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.revision
@@ -60,9 +60,9 @@ class Command(django.core.management.base.BaseCommand):
         super().__init__(*args, **kwargs)
 
         self._command_class_map = {
-            'cleardb': ClearDb,
-            'exportobj': ExportObjectIdentifiers,
-            'updatesysmeta': UpdateSystemMetadata,
+            "cleardb": ClearDb,
+            "exportobj": ExportObjectIdentifiers,
+            "updatesysmeta": UpdateSystemMetadata,
         }
 
         self._events = d1_common.util.EventCounter()
@@ -121,19 +121,19 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
-        parser.add_argument('command', choices=sorted(self._command_class_map.keys()))
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
+        parser.add_argument("command", choices=sorted(self._command_class_map.keys()))
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
             raise django.core.management.base.CommandError(str(e))
 
     def _handle(self, opt):
-        cmd_class = self._command_class_map[opt['command']]
+        cmd_class = self._command_class_map[opt["command"]]
         cmd_obj = cmd_class()
         cmd_obj.run()
 
@@ -166,25 +166,25 @@ class ExportObjectIdentifiers(object):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--limit',
+            "--limit",
             type=int,
             default=0,
-            help='Limit number of objects exported. 0 (default) is no limit',
+            help="Limit number of objects exported. 0 (default) is no limit",
         )
-        parser.add_argument('path', type=str, help='Path to export file')
+        parser.add_argument("path", type=str, help="Path to export file")
 
     def _handle(self, opt):
-        logging.info('Exported object list to: {}'.format(opt['path']))
-        with open(opt['path'], 'w') as f:
+        logging.info("Exported object list to: {}".format(opt["path"]))
+        with open(opt["path"], "w") as f:
             for i, sciobj_model in enumerate(
-                d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
+                d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
             ):
                 f.write(
-                    '{}\t{}\n'.format(
+                    "{}\t{}\n".format(
                         sciobj_model.pid.did,
-                        ','.join(
+                        ",".join(
                             [
-                                '{}={}'.format(
+                                "{}={}".format(
                                     subj, d1_gmn.app.auth.level_to_action(level)
                                 )
                                 for (subj, level) in self.get_object_permissions(
@@ -194,7 +194,7 @@ class ExportObjectIdentifiers(object):
                         ),
                     )
                 )
-                if i + 1 == opt['limit']:
+                if i + 1 == opt["limit"]:
                     break
 
     def get_object_permissions(self, sciobj_model):
@@ -202,7 +202,7 @@ class ExportObjectIdentifiers(object):
             (p.subject.subject, p.level)
             for p in d1_gmn.app.models.Permission.objects.filter(
                 sciobj=sciobj_model
-            ).order_by('subject__subject')
+            ).order_by("subject__subject")
         ]
 
 
@@ -236,53 +236,53 @@ class UpdateSystemMetadata(object):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
         parser.add_argument(
-            '--root', help='Path to source SystemMetadata XML file or root of dir tree'
+            "--root", help="Path to source SystemMetadata XML file or root of dir tree"
         )
         parser.add_argument(
-            '--baseurl', help='Base url to node holding source documents'
+            "--baseurl", help="Base url to node holding source documents"
         )
         parser.add_argument(
-            '--pidrx', default=False, help='Regex pattern for PIDs to process'
+            "--pidrx", default=False, help="Regex pattern for PIDs to process"
         )
         parser.add_argument(
-            'element',
-            nargs='+',
+            "element",
+            nargs="+",
             choices=d1_common.system_metadata.SYSMETA_ROOT_CHILD_LIST,
-            help='One or more elements to update',
+            help="One or more elements to update",
         )
         parser.add_argument(
-            '--cert-pub',
-            dest='cert_pem_path',
-            action='store',
-            help='Path to PEM formatted public key of certificate',
+            "--cert-pub",
+            dest="cert_pem_path",
+            action="store",
+            help="Path to PEM formatted public key of certificate",
         )
         parser.add_argument(
-            '--cert-key',
-            dest='cert_key_path',
-            action='store',
-            help='Path to PEM formatted private key of certificate',
+            "--cert-key",
+            dest="cert_key_path",
+            action="store",
+            help="Path to PEM formatted private key of certificate",
         )
 
     def handle(self, *args, **opt):
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         logging.info(
-            'Running management command: {}'.format(
+            "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
         util.exit_if_other_instance_is_running(__name__)
         self._check_debug_mode()
-        if opt['root'] and opt['baseurl']:
+        if opt["root"] and opt["baseurl"]:
             raise django.core.management.base.CommandError(
-                '--root and --baseurl are mutually exclusive'
+                "--root and --baseurl are mutually exclusive"
             )
-        if not (opt['root'] or opt['baseurl']):
+        if not (opt["root"] or opt["baseurl"]):
             raise django.core.management.base.CommandError(
-                'Must specify --root or --baseurl'
+                "Must specify --root or --baseurl"
             )
-        if not (opt['element']):
+        if not (opt["element"]):
             raise django.core.management.base.CommandError(
-                'Must specify at least one element to copy'
+                "Must specify at least one element to copy"
             )
         try:
             self._handle(opt)
@@ -292,12 +292,12 @@ class UpdateSystemMetadata(object):
     def _handle(self, opt):
         try:
             self._update_sysmeta(
-                opt['root'],
-                opt['baseurl'],
-                opt['pidrx'],
-                opt['element'],
-                opt['cert_pem_path'],
-                opt['cert_key_path'],
+                opt["root"],
+                opt["baseurl"],
+                opt["pidrx"],
+                opt["element"],
+                opt["cert_pem_path"],
+                opt["cert_key_path"],
             )
         except django.core.management.base.CommandError as e:
             logging.error(str(e))
@@ -306,8 +306,8 @@ class UpdateSystemMetadata(object):
     def _check_debug_mode(self):
         if not django.conf.settings.DEBUG_GMN:
             raise django.core.management.base.CommandError(
-                'This command is only available when DEBUG_GMN is True in '
-                'settings.py'
+                "This command is only available when DEBUG_GMN is True in "
+                "settings.py"
             )
 
     def _update_sysmeta(
@@ -318,23 +318,23 @@ class UpdateSystemMetadata(object):
                 sysmeta_path, base_url, cert_pem_path, cert_key_path
             )
         ):
-            self._events.count('SystemMetadata objects discovered')
+            self._events.count("SystemMetadata objects discovered")
             pid = d1_common.xml.get_req_val(discovered_sysmeta_pyxb.identifier)
             if pid_rx and not re.search(pid_rx, pid):
-                skip_msg = 'Skipped: --pidrx mismatch'
+                skip_msg = "Skipped: --pidrx mismatch"
                 self._events.count(skip_msg)
-                logging.info('{}: {}'.format(skip_msg, pid))
+                logging.info("{}: {}".format(skip_msg, pid))
                 continue
 
             if not d1_gmn.app.did.is_existing_object(pid):
-                skip_msg = 'Skipped: Unknown on local node'
+                skip_msg = "Skipped: Unknown on local node"
                 self._events.count(skip_msg)
-                logging.info('{}: {}'.format(skip_msg, pid))
+                logging.info("{}: {}".format(skip_msg, pid))
                 continue
 
             before_sysmeta_pyxb = d1_gmn.app.sysmeta.model_to_pyxb(pid)
             sysmeta_pyxb = d1_gmn.app.sysmeta.model_to_pyxb(pid)
-            logging.info('Updating: {}'.format(pid))
+            logging.info("Updating: {}".format(pid))
             d1_common.system_metadata.update_elements(
                 sysmeta_pyxb, discovered_sysmeta_pyxb, element_list
             )
@@ -346,7 +346,7 @@ class UpdateSystemMetadata(object):
             logging.debug(
                 d1_test.sample.get_sxs_diff(before_sysmeta_pyxb, sysmeta_pyxb)
             )
-            self._events.count('Updated')
+            self._events.count("Updated")
 
     def _discovered_sysmeta_iter(
         self, sysmeta_path, base_url, cert_pem_path, cert_key_path
@@ -357,23 +357,23 @@ class UpdateSystemMetadata(object):
             return d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
                 base_url,
                 client_dict={
-                    'cert_pem_path': cert_pem_path,
-                    'cert_key_path': cert_key_path,
+                    "cert_pem_path": cert_pem_path,
+                    "cert_key_path": cert_key_path,
                 },
                 list_objects_dict={},
             )
 
     def _discovered_sysmeta_file_iter(self, sysmeta_path):
         for xml_path in d1_common.iter.path.path_generator(
-            path_list=[sysmeta_path], include_glob_list=['*.xml']
+            path_list=[sysmeta_path], include_glob_list=["*.xml"]
         ):
             try:
-                with open(xml_path, 'rb') as f:
+                with open(xml_path, "rb") as f:
                     obj_pyxb = d1_common.xml.deserialize(f.read())
             except (EnvironmentError, ValueError):
                 # logging.debug('Unable to read or parse. path="{}" err="{}"'.format(xml_path,str(e)))
                 continue
             pyxb_type_str = d1_common.type_conversions.pyxb_get_type_name(obj_pyxb)
-            if pyxb_type_str != 'SystemMetadata':
+            if pyxb_type_str != "SystemMetadata":
                 continue
             yield obj_pyxb

@@ -48,6 +48,7 @@ def n_workers(request):
 # noinspection PyShadowingNames
 @d1_test.d1_test_case.reproducible_random_decorator('TestSysMetaIterator')
 class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
+    """Run with misc variations and verify that they give the same result"""
     parameterize_dict = {
         'test_1000': [
             dict(
@@ -60,7 +61,6 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
             ),
         ]
     }
-    """Run with misc variations and verify that they give the same result"""
 
     def _get_combined_xml(self, sysmeta_pyxb_list, n_total):
         """When using multiple threads, docs are returned in random order, so
@@ -90,7 +90,7 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
                 # 'cert_pem_path': cert_pem_path,
                 # 'cert_key_path': cert_key_path,
             },
-            list_objects_dict=dict(fromDate=from_date, toDate=to_date),
+            list_objects_dict={'fromDate': from_date, 'toDate': to_date},
         )
 
         for sysmeta_pyxb in sysmeta_iter:

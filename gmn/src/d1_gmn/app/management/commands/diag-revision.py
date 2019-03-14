@@ -35,16 +35,13 @@ import logging
 import time
 
 import d1_gmn.app.did
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.util
 
 import d1_common.util
 
 import django.conf
 import django.core.management.base
-
-#
-
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
@@ -56,12 +53,12 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     def handle(self, *args, **opt):
-        util.log_setup(opt['debug'])
-        logging.info('test')
-        logging.info('Running management command: {}'.format(__name__))
+        util.log_setup(opt["debug"])
+        logging.info("test")
+        logging.info("Running management command: {}".format(__name__))
         util.exit_if_other_instance_is_running(__name__)
         self._opt = opt
         try:
@@ -81,12 +78,12 @@ class Command(django.core.management.base.BaseCommand):
         start_sec = time.time()
         total = d1_gmn.app.models.ScienceObject.objects.count()
         for i, sciobj_model in enumerate(
-            d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
+            d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
         ):
             self.stdout.write(
                 util.format_progress(
                     self._events,
-                    'Writing revision chains',
+                    "Writing revision chains",
                     i,
                     total,
                     sciobj_model.pid.did,

@@ -33,7 +33,7 @@ import d1_gmn.app.did
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.models
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
@@ -60,13 +60,13 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         logging.info(
-            'Running management command: {}'.format(
+            "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
@@ -91,43 +91,43 @@ class ReplicationQueueProcessor(object):
 
     def process_replication_queue(self):
         queue_queryset = d1_gmn.app.models.ReplicationQueue.objects.filter(
-            local_replica__info__status__status='queued'
-        ).order_by('local_replica__info__timestamp', 'local_replica__pid__did')
+            local_replica__info__status__status="queued"
+        ).order_by("local_replica__info__timestamp", "local_replica__pid__did")
         if not len(queue_queryset):
-            logging.debug('No replication requests to process')
+            logging.debug("No replication requests to process")
             return
         for queue_model in queue_queryset:
             self._process_replication_request(queue_model)
         self._remove_completed_requests_from_queue()
 
     def _process_replication_request(self, queue_model):
-        logging.info('-' * 100)
-        logging.info('Processing PID: {}'.format(queue_model.local_replica.pid.did))
+        logging.info("-" * 100)
+        logging.info("Processing PID: {}".format(queue_model.local_replica.pid.did))
         try:
             self._replicate(queue_model)
         except Exception as e:
-            logging.exception('Replication failed with exception:')
+            logging.exception("Replication failed with exception:")
             num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
             if num_failed_attempts < django.conf.settings.REPLICATION_MAX_ATTEMPTS:
                 logging.warning(
-                    'Replication failed and will be retried during next processing. '
-                    'failed_attempts={}, max_attempts={}'.format(
+                    "Replication failed and will be retried during next processing. "
+                    "failed_attempts={}, max_attempts={}".format(
                         num_failed_attempts,
                         django.conf.settings.REPLICATION_MAX_ATTEMPTS,
                     )
                 )
             else:
                 logging.warning(
-                    'Replication failed and has reached the maximum number of attempts. '
-                    'Recording the request as permanently failed and notifying the CN. '
-                    'failed_attempts={}, max_attempts={}'.format(
+                    "Replication failed and has reached the maximum number of attempts. "
+                    "Recording the request as permanently failed and notifying the CN. "
+                    "failed_attempts={}, max_attempts={}".format(
                         num_failed_attempts,
                         django.conf.settings.REPLICATION_MAX_ATTEMPTS,
                     )
                 )
                 self._update_request_status(
                     queue_model,
-                    'failed',
+                    "failed",
                     e
                     if isinstance(e, d1_common.types.exceptions.DataONEException)
                     else None,
@@ -139,7 +139,7 @@ class ReplicationQueueProcessor(object):
             self._set_origin(queue_model, sysmeta_pyxb)
             sciobj_bytestream = self._get_sciobj_bytestream(queue_model)
             self._create_replica(sysmeta_pyxb, sciobj_bytestream)
-            self._update_request_status(queue_model, 'completed')
+            self._update_request_status(queue_model, "completed")
 
     def _set_origin(self, queue_model, sysmeta_pyxb):
         if sysmeta_pyxb.originMemberNode is None:
@@ -180,7 +180,7 @@ class ReplicationQueueProcessor(object):
 
     def _remove_completed_requests_from_queue(self):
         d1_gmn.app.models.ReplicationQueue.objects.filter(
-            local_replica__info__status__status='completed'
+            local_replica__info__status__status="completed"
         ).delete()
 
     def _create_cn_client(self):
@@ -193,7 +193,7 @@ class ReplicationQueueProcessor(object):
 
     def _get_system_metadata(self, queue_model):
         pid = queue_model.local_replica.pid.did
-        logging.debug('Calling CNRead.getSystemMetadata() pid={}'.format(pid))
+        logging.debug("Calling CNRead.getSystemMetadata() pid={}".format(pid))
         return self.cn_client.getSystemMetadata(pid)
 
     def _get_sciobj_bytestream(self, queue_model):
@@ -219,9 +219,9 @@ class ReplicationQueueProcessor(object):
             if discovered_node_id == source_node:
                 return node.baseURL
         raise django.core.management.base.CommandError(
-            'Unable to resolve Source Node ID. '
+            "Unable to resolve Source Node ID. "
             'source_node="{}", discovered_nodes="{}"'.format(
-                source_node, ', '.join(discovered_nodes)
+                source_node, ", ".join(discovered_nodes)
             )
         )
 
@@ -241,13 +241,13 @@ class ReplicationQueueProcessor(object):
         """
         pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
         self._assert_is_pid_of_local_unprocessed_replica(pid)
-        self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletes')
-        self._check_and_create_replica_revision(sysmeta_pyxb, 'obsoletedBy')
+        self._check_and_create_replica_revision(sysmeta_pyxb, "obsoletes")
+        self._check_and_create_replica_revision(sysmeta_pyxb, "obsoletedBy")
         sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
         sciobj_model = d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
         self._store_science_object_bytes(pid, sciobj_bytestream)
         d1_gmn.app.event_log.create_log_entry(
-            sciobj_model, 'create', '0.0.0.0', '[replica]', '[replica]'
+            sciobj_model, "create", "0.0.0.0", "[replica]", "[replica]"
         )
 
     def _check_and_create_replica_revision(self, sysmeta_pyxb, attr_str):
@@ -263,7 +263,7 @@ class ReplicationQueueProcessor(object):
     def _store_science_object_bytes(self, pid, sciobj_bytestream):
         sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
         d1_common.util.create_missing_directories_for_file(sciobj_path)
-        with open(sciobj_path, 'wb') as f:
+        with open(sciobj_path, "wb") as f:
             for chunk in sciobj_bytestream.iter_content(
                 chunk_size=django.conf.settings.NUM_CHUNK_BYTES
             ):
@@ -272,13 +272,13 @@ class ReplicationQueueProcessor(object):
     def _assert_is_pid_of_local_unprocessed_replica(self, pid):
         if not d1_gmn.app.did.is_unprocessed_local_replica(pid):
             raise django.core.management.base.CommandError(
-                'The identifier is already in use on the local Member Node. '
+                "The identifier is already in use on the local Member Node. "
                 'pid="{}"'.format(pid)
             )
 
     def _assert_pid_is_unknown_or_replica(self, pid):
         if d1_gmn.app.did._is_did(pid) and not d1_gmn.app.did.is_local_replica(pid):
             raise django.core.management.base.CommandError(
-                'The identifier is already in use on the local Member Node. '
+                "The identifier is already in use on the local Member Node. "
                 'pid="{}"'.format(pid)
             )

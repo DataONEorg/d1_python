@@ -47,19 +47,17 @@ specified object to its task queue. When the CN later processes the task, the ob
 synced just as if it was discovered by the regular poll based sync.
 """
 
-import argparse
 import asyncio
 import logging
 import logging.config
-import time
 
 import d1_gmn.app.auth
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
-
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.standard_args as args
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.management.commands.async_client
 import d1_gmn.app.model_util
 import d1_gmn.app.models
@@ -79,8 +77,8 @@ import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
-import d1_common.xml
 import d1_common.utils.progress_logger
+import d1_common.xml
 
 import django.conf
 import django.core.management.base
@@ -102,74 +100,36 @@ class Command(django.core.management.base.BaseCommand):
         super().__init__(*args, **kwargs)
 
     def add_arguments(self, parser):
-        parser.description = __doc__
-        parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument("--debug", action="store_true", help="Debug level logging")
-        parser.add_argument(
-            "--cert-pub",
-            dest="cert_pem_path",
-            action="store",
-            help="Path to PEM formatted public key of certificate",
-        )
-        parser.add_argument(
-            "--cert-key",
-            dest="cert_key_path",
-            action="store",
-            help="Path to PEM formatted private key of certificate",
-        )
-        parser.add_argument(
-            "--public",
-            action="store_true",
-            help="Do not use certificate even if available",
-        )
-        parser.add_argument(
-            "--disable-server-cert-validation",
-            action="store_true",
-            help="Do not validate the TLS/SSL server side certificate of the source "
-            "node (insecure)",
-        )
-        parser.add_argument(
-            "--timeout",
-            type=float,
-            action="store",
-            default=DEFAULT_TIMEOUT_SEC,
-            help="Timeout for DataONE API calls to the source MN",
-        )
-        parser.add_argument(
-            "--concurrent",
-            type=int,
-            action="store",
-            default=DEFAULT_MAX_CONCURRENT_TASK_COUNT,
-            help="Max number of concurrent API calls to the CN",
-        )
-        parser.add_argument("baseurl", help="Source MN or CN BaseURL")
+        args.add_arguments(parser, __doc__)
 
     def handle(self, *args, **options):
-        self.progress_logger = d1_common.utils.progress_logger.ProgressLogger()
-
-        util.log_setup(options["debug"])
-        logging.info("Running management command: {}".format(__name__))
+        self.options = options
+        logging.basicConfig(level=logging.DEBUG)
+        self._log = logging.getLogger(__name__.split(".")[-1])
+        self.progress_logger = d1_common.utils.progress_logger.ProgressLogger(
+            logger=self._log
+        )
+        # util.log_setup(self.options["debug"])
+        self._log.info("Running management command: {}".format(__name__))
         util.exit_if_other_instance_is_running(__name__)
 
         # Python 3.7
-        # asyncio.run(self._handle(options))
+        # asyncio.run(self._handle())
         # Python 3.6
         loop = asyncio.get_event_loop()
         try:
-            loop.run_until_complete(self._handle(options))
+            loop.run_until_complete(self._handle())
         except Exception as e:
-            logging.exception("Sync raised exception")
-            logging.info("-" * 79)
+            self._log.exception("Sync failed with exception")
             raise django.core.management.base.CommandError(str(e))
         finally:
             loop.close()
+            self.progress_logger.completed()
 
-        self.progress_logger.completed()
-
-    async def _handle(self, options):
-        client = d1_gmn.app.management.commands.async_client.AsyncCoordinatingNodeClient_2_0(
-            options["baseurl"],
-            options["timeout"],
+    async def _handle(self):
+        client = d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
+            self.options["baseurl"],
+            self.options["timeout"],
             django.conf.settings.CLIENT_CERT_PATH,
             django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
         )
@@ -186,7 +146,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.start_task("Sync MN -> CN")
 
             pid = sciobj_model.pid.did
-            if len(task_set) >= options["concurrent"]:
+            if len(task_set) >= self.options["max_concurrent"]:
                 result_set, task_set = await asyncio.wait(
                     task_set, return_when=asyncio.FIRST_COMPLETED
                 )
@@ -218,7 +178,7 @@ class Command(django.core.management.base.BaseCommand):
         """
         status = await client.describe(pid)
         if status == 200:
-            self.progress_logger.event("SciObj has been successfully synced to CN")
+            self.progress_logger.event("SciObj already synced on CN")
             return True
         elif status == 404:
             self.progress_logger.event("SciObj has not synced to CN")

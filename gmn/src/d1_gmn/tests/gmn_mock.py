@@ -253,7 +253,7 @@ def disable_sysmeta_sanity_checks():
 def disable_management_command_logging():
     """Prevent management commands from setting up logging, which cause
     duplicated log messages when the commands are launched multiple times."""
-    with mock.patch('d1_gmn.app.management.commands._util.log_setup'):
+    with mock.patch('d1_gmn.app.management.commands.util.util.log_setup'):
         yield
 
 
@@ -261,7 +261,7 @@ def disable_management_command_logging():
 def disable_management_command_concurrent_instance_check():
     """Allow concurrent instances of the same management command."""
     with mock.patch(
-        'd1_gmn.app.management.commands._util.exit_if_other_instance_is_running'
+        'd1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running'
     ):
         yield
 

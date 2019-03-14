@@ -38,7 +38,7 @@ must be used.
 import argparse
 
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.models
 import d1_gmn.app.node
 
@@ -61,12 +61,12 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
-        parser.add_argument('command', choices=['view', 'register', 'update'])
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
+        parser.add_argument("command", choices=["view", "register", "update"])
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
@@ -74,13 +74,13 @@ class Command(django.core.management.base.BaseCommand):
 
     def _handle(self, opt):
         node_pyxb = d1_gmn.app.node.get_pyxb()
-        if opt['command'] == 'view':
+        if opt["command"] == "view":
             self.stdout.write(
                 d1_common.xml.serialize_to_xml_str(node_pyxb, pretty=True)
             )
-        elif opt['command'] == 'register':
+        elif opt["command"] == "register":
             self._register(node_pyxb)
-        elif opt['command'] == 'update':
+        elif opt["command"] == "update":
             self._update(node_pyxb)
         else:
             assert False
@@ -91,7 +91,7 @@ class Command(django.core.management.base.BaseCommand):
         success_bool = client.register(node_pyxb)
         if not success_bool:
             raise django.core.management.base.CommandError(
-                'Call returned failure but did not raise exception'
+                "Call returned failure but did not raise exception"
             )
 
     def _update(self, node_pyxb):
@@ -102,7 +102,7 @@ class Command(django.core.management.base.BaseCommand):
         )
         if not success_bool:
             raise django.core.management.base.CommandError(
-                'Call returned failure but did not raise exception'
+                "Call returned failure but did not raise exception"
             )
 
     def _create_client(self):

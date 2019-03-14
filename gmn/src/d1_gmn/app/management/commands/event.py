@@ -36,7 +36,7 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('command', choices=['view'], help='Action')
+        parser.add_argument("command", choices=["view"], help="Action")
 
     def handle(self, *args, **opt):
         assert not args
@@ -46,7 +46,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(str(e))
 
     def _handle(self, opt):
-        if opt['command'] == 'view':
+        if opt["command"] == "view":
             self._view()
         else:
             assert False

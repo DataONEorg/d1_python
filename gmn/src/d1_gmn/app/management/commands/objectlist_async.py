@@ -101,4 +101,5 @@ class ObjectListIteratorAsync:
     async def _get_total_object_count(self):
         args_dict = self._list_objects_args_dict.copy()
         args_dict["count"] = 0
-        return (await self._client.list_objects(**args_dict)).total
+        return await self._client.list_objects(**args_dict).total
+        return await self._client.list_objects(**args_dict).total

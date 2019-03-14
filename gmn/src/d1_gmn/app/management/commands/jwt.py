@@ -38,7 +38,7 @@ import logging
 from . import jwt
 
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.middleware.session_jwt
 import d1_gmn.app.models
 
@@ -54,13 +54,13 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
-        parser.add_argument('command', choices=['view', 'whitelist'], help='Action')
-        parser.add_argument('jwt_path', help='Path to Base64 JWT file')
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
+        parser.add_argument("command", choices=["view", "whitelist"], help="Action")
+        parser.add_argument("jwt_path", help="Path to Base64 JWT file")
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
@@ -69,10 +69,10 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(str(e))
 
     def _handle(self, opt):
-        primary_str = self.get_subject(opt['jwt_path'])
-        if opt['command'] == 'view':
+        primary_str = self.get_subject(opt["jwt_path"])
+        if opt["command"] == "view":
             self._view(primary_str)
-        elif opt['command'] == 'whitelist':
+        elif opt["command"] == "whitelist":
             self._whitelist(primary_str)
         else:
             assert False
@@ -86,31 +86,31 @@ class Command(django.core.management.base.BaseCommand):
                 'Unable to decode JWT. error="{}"'.format(str(e))
             )
         try:
-            return jwt_dict['sub']
+            return jwt_dict["sub"]
         except KeyError:
             raise jwt.InvalidTokenError('Missing "sub" key')
 
     def _view(self, primary_str):
-        logging.info('Primary subject:')
-        logging.info('  {}'.format(primary_str))
+        logging.info("Primary subject:")
+        logging.info("  {}".format(primary_str))
 
     def _whitelist(self, primary_str):
         if d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
             subject=d1_gmn.app.models.subject(primary_str)
         ).exists():
             raise django.core.management.base.CommandError(
-                'Create, update and delete already enabled for subject: {}'.format(
+                "Create, update and delete already enabled for subject: {}".format(
                     primary_str
                 )
             )
         d1_gmn.app.models.whitelist_for_create_update_delete(primary_str)
         logging.info(
-            'Enabled create, update and delete for subject: {}'.format(primary_str)
+            "Enabled create, update and delete for subject: {}".format(primary_str)
         )
 
     def _read_jwt(self, jwt_path):
         try:
-            with open(jwt_path, 'r') as f:
+            with open(jwt_path, "r") as f:
                 return f.read()
         except EnvironmentError as e:
             raise django.core.management.base.CommandError(

@@ -61,30 +61,30 @@ import pytest
         }
     ],
 )
-def test_1000(request):
+def dict_config_fixture(request):
     yield copy.deepcopy(request.param)
 
 
 class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
-    def test_1010(self, test_dict):
+    def test_1010(self, dict_config_fixture):
         """nested_update(): Update existing values"""
-        # test_dict = copy.deepcopy(TEST_DICT)
+        # dict_config_fixture = copy.deepcopy(TEST_DICT)
 
         d1_common.util.nested_update(
-            test_dict,
+            dict_config_fixture,
             {
                 # Update existing values
                 "handlers": {"rotating_file": {"maxBytes": 1234}},
                 "loggers": {"": {"level": "new_level", "propagate": False}},
             },
         )
-        # self.sample.gui_sxs_diff(TEST_DICT, test_dict)
-        self.sample.assert_equals(test_dict, "nested_update_existing")
+        # self.sample.gui_sxs_diff(TEST_DICT, dict_config_fixture)
+        self.sample.assert_equals(dict_config_fixture, "nested_update_existing")
 
-    def test_1020(self, test_dict):
+    def test_1020(self, dict_config_fixture):
         """nested_update(): Add new keys in existing tree"""
         d1_common.util.nested_update(
-            test_dict,
+            dict_config_fixture,
             {
                 #
                 "handlers": {
@@ -103,13 +103,13 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
                 }
             },
         )
-        # self.sample.gui_sxs_diff(TEST_DICT, test_dict)
-        self.sample.assert_equals(test_dict, "nested_update_new")
+        # self.sample.gui_sxs_diff(TEST_DICT, dict_config_fixture)
+        self.sample.assert_equals(dict_config_fixture, "nested_update_new")
 
-    def test_1030(self, test_dict):
+    def test_1030(self, dict_config_fixture):
         """nested_update(): Combined"""
         d1_common.util.nested_update(
-            test_dict,
+            dict_config_fixture,
             {
                 # Update existing values
                 "handlers": {"rotating_file": {"maxBytes": 1234}},
@@ -151,5 +151,5 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
                 },
             },
         )
-        # self.sample.gui_sxs_diff(TEST_DICT, test_dict)
-        self.sample.assert_equals(test_dict, "nested_update_combined")
+        # self.sample.gui_sxs_diff(TEST_DICT, dict_config_fixture)
+        self.sample.assert_equals(dict_config_fixture, "nested_update_combined")

@@ -41,7 +41,7 @@ DEFAULT_USE_STREAM = False
 DEFAULT_VERIFY_TLS = True
 DEFAULT_SUPPRESS_VERIFY_WARNINGS = False
 
-UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
+UBUNTU_CA_BUNDLE_PATH = "/etc/ssl/certs/ca-certificates.crt"
 
 
 class Session(object):
@@ -60,13 +60,25 @@ class Session(object):
         :param base_url: DataONE Node REST service BaseURL.
         :type host: string
 
-        :param cert_pem_path: Path to a PEM formatted certificate file.
+        :param cert_pem_path: Path to a PEM formatted certificate file. If provided and
+        accepted by the remote node, the subject for which the certificate was issued is
+        added to the authenticated context in which API calls are made by the client.
+        Equivalent subjects and group subjects may be implicitly included as well. If
+        the certificate is used together with an JWT token, the two sets of subjects are
+        combined.
         :type cert_pem_path: string
 
         :param cert_key_path: Path to a PEM formatted file that contains the private
           key for the certificate file. Only required if the certificate file does
           not itself contain the private key.
         :type cert_key_path: string
+
+        :param jwt_token: Base64 encoded JSON Web Token. If provided and accepted by the
+        remote node, the subject for which the token was issued is added to the
+        authenticated context in which API calls are made by the client. Equivalent
+        subjects and group subjects may be implicitly included as well. If the token is
+        used together with an X.509 certificate, the two sets of subjects are combined.
+        :type token: string
 
         :param timeout_sec: Time in seconds that requests will wait for a response.
           None, 0, 0.0 disables timeouts. Default is DEFAULT_HTTP_TIMEOUT, currently 60
@@ -114,39 +126,45 @@ class Session(object):
         self._api_major = 1
         self._api_minor = 0
         # Adapter
-        self._max_retries = kwargs_dict.pop('retries', DEFAULT_NUMBER_OF_RETRIES)
+        self._max_retries = kwargs_dict.pop("retries", DEFAULT_NUMBER_OF_RETRIES)
         # Option to suppress TLS/SSL verification warnings
         suppress_verify_warnings = kwargs_dict.pop(
-            'suppress_verify_warnings', DEFAULT_SUPPRESS_VERIFY_WARNINGS
+            "suppress_verify_warnings", DEFAULT_SUPPRESS_VERIFY_WARNINGS
         )
         if suppress_verify_warnings:
             requests.packages.urllib3.disable_warnings()
         # Default parameters for requests
         self._default_request_arg_dict = {
-            'params': self._datetime_to_iso8601(kwargs_dict.pop('query', {})),
-            'timeout': kwargs_dict.pop(
-                'timeout_sec', d1_common.const.DEFAULT_HTTP_TIMEOUT
+            "params": self._datetime_to_iso8601(kwargs_dict.pop("query", {})),
+            "timeout": kwargs_dict.pop(
+                "timeout_sec", d1_common.const.DEFAULT_HTTP_TIMEOUT
             ),
-            'stream': kwargs_dict.pop('use_stream', DEFAULT_USE_STREAM),
-            'verify': kwargs_dict.pop('verify_tls', DEFAULT_VERIFY_TLS),
-            'headers': {
-                'User-Agent': kwargs_dict.pop('user_agent', d1_common.const.USER_AGENT),
-                'Charset': kwargs_dict.pop('charset', d1_common.const.DEFAULT_CHARSET),
+            "stream": kwargs_dict.pop("use_stream", DEFAULT_USE_STREAM),
+            "verify": kwargs_dict.pop("verify_tls", DEFAULT_VERIFY_TLS),
+            "headers": {
+                "User-Agent": kwargs_dict.pop("user_agent", d1_common.const.USER_AGENT),
+                "Charset": kwargs_dict.pop("charset", d1_common.const.DEFAULT_CHARSET),
             },
         }
         # Use the OS trust store on Ubuntu and derivatives
-        if self._default_request_arg_dict['verify'] is True:
+        if self._default_request_arg_dict["verify"] is True:
             if os.path.isfile(UBUNTU_CA_BUNDLE_PATH):
-                self._default_request_arg_dict['verify'] = UBUNTU_CA_BUNDLE_PATH
+                self._default_request_arg_dict["verify"] = UBUNTU_CA_BUNDLE_PATH
         # Default headers
-        self._default_request_arg_dict['headers'].update(kwargs_dict.pop('headers', {}))
+        self._default_request_arg_dict["headers"].update(kwargs_dict.pop("headers", {}))
         self._default_request_arg_dict.update(kwargs_dict)
         # Requests wants cert path as string if single file and tuple if cert/key
         # pair.
         if cert_pem_path is not None:
-            self._default_request_arg_dict['cert'] = (
+            self._default_request_arg_dict["cert"] = (
                 cert_pem_path,
                 cert_key_path if cert_key_path is not None else cert_pem_path,
+            )
+        # JSON Web Token (JWT)
+        jwt_token = kwargs_dict.pop("jwt_token", None)
+        if jwt_token is not None:
+            self._default_request_arg_dict["Authorization"] = "Bearer {}".format(
+                jwt_token
             )
         self._session = self._create_requests_session()
 
@@ -160,7 +178,7 @@ class Session(object):
 
         :returns: Response object
         """
-        return self._request('GET', rest_path_list, **kwargs)
+        return self._request("GET", rest_path_list, **kwargs)
 
     def HEAD(self, rest_path_list, **kwargs):
         """Send a HEAD request. See requests.sessions.request for optional
@@ -168,8 +186,8 @@ class Session(object):
 
         :returns: Response object
         """
-        kwargs.setdefault('allow_redirects', False)
-        return self._request('HEAD', rest_path_list, **kwargs)
+        kwargs.setdefault("allow_redirects", False)
+        return self._request("HEAD", rest_path_list, **kwargs)
 
     def POST(self, rest_path_list, **kwargs):
         """Send a POST request with optional streaming multipart encoding. See
@@ -186,11 +204,11 @@ class Session(object):
 
         :returns: Response object
         """
-        fields = kwargs.pop('fields', None)
+        fields = kwargs.pop("fields", None)
         if fields is not None:
-            return self._send_mmp_stream('POST', rest_path_list, fields, **kwargs)
+            return self._send_mmp_stream("POST", rest_path_list, fields, **kwargs)
         else:
-            return self._request('POST', rest_path_list, **kwargs)
+            return self._request("POST", rest_path_list, **kwargs)
 
     def PUT(self, rest_path_list, **kwargs):
         """Send a PUT request with optional streaming multipart encoding. See
@@ -199,11 +217,11 @@ class Session(object):
 
         :returns: Response object
         """
-        fields = kwargs.pop('fields', None)
+        fields = kwargs.pop("fields", None)
         if fields is not None:
-            return self._send_mmp_stream('PUT', rest_path_list, fields, **kwargs)
+            return self._send_mmp_stream("PUT", rest_path_list, fields, **kwargs)
         else:
-            return self._request('PUT', rest_path_list, **kwargs)
+            return self._request("PUT", rest_path_list, **kwargs)
 
     def DELETE(self, rest_path_list, **kwargs):
         """Send a DELETE request. See requests.sessions.request for optional
@@ -211,7 +229,7 @@ class Session(object):
 
         :returns: Response object
         """
-        return self._request('DELETE', rest_path_list, **kwargs)
+        return self._request("DELETE", rest_path_list, **kwargs)
 
     def OPTIONS(self, rest_path_list, **kwargs):
         """Send a OPTIONS request. See requests.sessions.request for optional
@@ -219,21 +237,21 @@ class Session(object):
 
         :returns: Response object
         """
-        return self._request('OPTIONS', rest_path_list, **kwargs)
+        return self._request("OPTIONS", rest_path_list, **kwargs)
 
     def get_curl_command_line(self, method, url, **kwargs):
         """Get request as cURL command line for debugging."""
-        if kwargs.get('query'):
-            url = '{}?{}'.format(url, d1_common.url.urlencode(kwargs['query']))
-        curl_list = ['curl']
-        if method.lower() == 'head':
-            curl_list.append('--head')
+        if kwargs.get("query"):
+            url = "{}?{}".format(url, d1_common.url.urlencode(kwargs["query"]))
+        curl_list = ["curl"]
+        if method.lower() == "head":
+            curl_list.append("--head")
         else:
-            curl_list.append('-X {}'.format(method))
-        for k, v in sorted(list(kwargs['headers'].items())):
+            curl_list.append("-X {}".format(method))
+        for k, v in sorted(list(kwargs["headers"].items())):
             curl_list.append('-H "{}: {}"'.format(k, v))
-        curl_list.append('{}'.format(url))
-        return ' '.join(curl_list)
+        curl_list.append("{}".format(url))
+        return " ".join(curl_list)
 
     def dump_request_and_response(self, response):
         """Return a string containing a nicely formatted representation of the
@@ -243,7 +261,7 @@ class Session(object):
         object.
         """
         if response.reason is None:
-            response.reason = '<unknown>'
+            response.reason = "<unknown>"
         return d1_client.util.normalize_request_response_dump(
             requests_toolbelt.utils.dump.dump_response(response)
         )
@@ -255,19 +273,19 @@ class Session(object):
     def _create_requests_session(self):
         session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(max_retries=self._max_retries)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
         return session
 
     def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
         url = self._prep_url(rest_path_list)
         kwargs = self._prep_request_kwargs(kwargs)
         mmp_stream = requests_toolbelt.MultipartEncoder(fields=fields)
-        kwargs['data'] = mmp_stream
-        kwargs['headers'].update(
+        kwargs["data"] = mmp_stream
+        kwargs["headers"].update(
             {
-                'Content-Type': mmp_stream.content_type,
-                'Content-Length': str(mmp_stream.len),
+                "Content-Type": mmp_stream.content_type,
+                "Content-Length": str(mmp_stream.len),
             }
         )
         return self._session.request(method, url, **kwargs)
@@ -276,7 +294,7 @@ class Session(object):
         url = self._prep_url(rest_path_list)
         kwargs = self._prep_request_kwargs(kwargs)
         self._log.debug(
-            'Request equivalent: {}'.format(
+            "Request equivalent: {}".format(
                 self.get_curl_command_line(method, url, **kwargs)
             )
         )
@@ -294,19 +312,19 @@ class Session(object):
     def _prep_request_kwargs(self, kwargs_in_dict):
         # TODO: Check if per-call args get the same processing as client create args
         kwargs_dict = {
-            'timeout': self._timeout_to_float(kwargs_in_dict.pop('timeout_sec', 0.0)),
-            'stream': kwargs_in_dict.pop('use_stream', None),
-            'verify': kwargs_in_dict.pop('verify_tls', None),
-            'params': self._format_query_values(kwargs_in_dict.pop('query', {})),
+            "timeout": self._timeout_to_float(kwargs_in_dict.pop("timeout_sec", 0.0)),
+            "stream": kwargs_in_dict.pop("use_stream", None),
+            "verify": kwargs_in_dict.pop("verify_tls", None),
+            "params": self._format_query_values(kwargs_in_dict.pop("query", {})),
         }
         kwargs_dict.update(kwargs_in_dict)
         kwargs_dict = self._remove_none_value_items(kwargs_dict)
         result_dict = copy.deepcopy(self._default_request_arg_dict)
-        if result_dict['timeout'] in (0, 0.0):
-            result_dict['timeout'] = None
+        if result_dict["timeout"] in (0, 0.0):
+            result_dict["timeout"] = None
         d1_common.util.nested_update(result_dict, kwargs_dict)
         self._log.debug(
-            'Request kwargs:\n{}'.format(
+            "Request kwargs:\n{}".format(
                 d1_common.util.serialize_to_normalized_compact_json(result_dict)
             )
         )
@@ -347,7 +365,7 @@ class Session(object):
 
     def _bool_to_string(self, query_dict):
         return {
-            k: 'true' if v is True else 'false' if v is False else v
+            k: "true" if v is True else "false" if v is False else v
             for k, v in list(query_dict.items())
         }
 
@@ -360,16 +378,16 @@ class Session(object):
         ]
 
     def _get_api_version_path_element(self):
-        return 'v{}'.format(self._api_major)
+        return "v{}".format(self._api_major)
 
     def _get_api_version_xml_type(self):
         if (self._api_major, self._api_minor) == (1, 0):
-            return 'v1'
+            return "v1"
         else:
-            return 'v{}.{}'.format(self._api_major, self._api_minor)
+            return "v{}.{}".format(self._api_major, self._api_minor)
 
     def _get_expected_schema_type_attribute(self):
-        return '{}{}'.format(
+        return "{}{}".format(
             d1_common.const.DATAONE_SCHEMA_ATTRIBUTE_BASE,
             self._get_api_version_xml_type(),
         )

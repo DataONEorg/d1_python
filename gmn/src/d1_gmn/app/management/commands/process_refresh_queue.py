@@ -30,7 +30,7 @@ import logging
 import d1_gmn.app.auth
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands._util as util
+import d1_gmn.app.management.commands.util.util as util
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 
@@ -54,13 +54,13 @@ class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
-        parser.add_argument('--debug', action='store_true', help='Debug level logging')
+        parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt['debug'])
+        util.log_setup(opt["debug"])
         logging.info(
-            'Running management command: {}'.format(
+            "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
@@ -73,41 +73,41 @@ class Command(django.core.management.base.BaseCommand):
 
     def _handle(self, opt):
         queue_queryset = d1_gmn.app.models.SystemMetadataRefreshQueue.objects.filter(
-            status__status='queued'
-        ).order_by('timestamp', 'sciobj__pid__did')
+            status__status="queued"
+        ).order_by("timestamp", "sciobj__pid__did")
         if not len(queue_queryset):
-            logging.debug('No System Metadata refresh requests to process')
+            logging.debug("No System Metadata refresh requests to process")
             return
         for queue_model in queue_queryset:
             self._process_refresh_request(queue_model)
         self._remove_completed_requests_from_queue()
 
     def _process_refresh_request(self, queue_model):
-        logging.info('-' * 100)
-        logging.info('Processing PID: {}'.format(queue_model.sciobj.pid.did))
+        logging.info("-" * 100)
+        logging.info("Processing PID: {}".format(queue_model.sciobj.pid.did))
         try:
             self._refresh(queue_model)
         except Exception:
-            logging.exception('System Metadata refresh failed with exception:')
+            logging.exception("System Metadata refresh failed with exception:")
             num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
             if num_failed_attempts < django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
                 logging.warning(
-                    'SysMeta refresh failed and will be retried during next processing. '
-                    'failed_attempts={}, max_attempts={}'.format(
+                    "SysMeta refresh failed and will be retried during next processing. "
+                    "failed_attempts={}, max_attempts={}".format(
                         num_failed_attempts,
                         django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS,
                     )
                 )
             else:
                 logging.warning(
-                    'SysMeta refresh failed and has reached the maximum number of '
-                    'attempts. Recording the request as permanently failed and '
-                    'removing from queue. failed_attempts={}, max_attempts={}'.format(
+                    "SysMeta refresh failed and has reached the maximum number of "
+                    "attempts. Recording the request as permanently failed and "
+                    "removing from queue. failed_attempts={}, max_attempts={}".format(
                         num_failed_attempts,
                         django.conf.settings.SYSMETA_REFRESH_MAX_ATTEMPTS,
                     )
                 )
-                self._update_request_status(queue_model, 'failed')
+                self._update_request_status(queue_model, "failed")
         return True
 
     def _refresh(self, queue_model):
@@ -117,9 +117,9 @@ class Command(django.core.management.base.BaseCommand):
         self._assert_pid_matches_request(sysmeta_pyxb, pid)
         with transaction.atomic():
             self._update_sysmeta(sysmeta_pyxb)
-            self._update_request_status(queue_model, 'completed')
+            self._update_request_status(queue_model, "completed")
             d1_gmn.app.event_log.create_log_entry(
-                queue_model.sciobj, 'update', '0.0.0.0', '[refresh]', '[refresh]'
+                queue_model.sciobj, "update", "0.0.0.0", "[refresh]", "[refresh]"
             )
 
     def _update_request_status(self, queue_model, status_str):
@@ -136,7 +136,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def _remove_completed_requests_from_queue(self):
         d1_gmn.app.models.SystemMetadataRefreshQueue.objects.filter(
-            status__status__in=('completed', 'failed')
+            status__status__in=("completed", "failed")
         ).delete()
 
     def _create_cn_client(self):
@@ -148,7 +148,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def _get_system_metadata(self, queue_model):
         logging.debug(
-            'Calling CNRead.getSystemMetadata(pid={})'.format(queue_model.sciobj.pid)
+            "Calling CNRead.getSystemMetadata(pid={})".format(queue_model.sciobj.pid)
         )
         return self.cn_client.getSystemMetadata(queue_model.sciobj.pid.did)
 
@@ -163,14 +163,14 @@ class Command(django.core.management.base.BaseCommand):
     def _assert_is_pid_of_native_object(self, pid):
         if not d1_gmn.app.did.is_existing_object(pid):
             raise django.core.management.base.CommandError(
-                'Object referenced by PID does not exist or is not valid target for'
+                "Object referenced by PID does not exist or is not valid target for"
                 'System Metadata refresh. pid="{}"'.format(pid)
             )
 
     def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
         if d1_common.xml.get_req_val(sysmeta_pyxb.identifier) != pid:
             raise django.core.management.base.CommandError(
-                'PID in retrieved System Metadata does not match the object for which '
+                "PID in retrieved System Metadata does not match the object for which "
                 'refresh was requested. pid="{}"'.format(pid)
             )
 
