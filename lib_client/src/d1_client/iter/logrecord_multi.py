@@ -64,13 +64,13 @@ class LogRecordIteratorMulti(object):
         self._api_major = api_major
         self._client_dict = client_dict or {}
         self._get_log_records_dict = get_log_records_dict or {}
-        self.total = _get_total_object_count(
+        self.total = self._get_total_object_count(
             base_url, api_major, self._client_dict, self._get_log_records_dict
         )
         self._debug = debug
         if debug:
             logger = multiprocessing.log_to_stderr()
-            logger.setLevel(multiprocessing.SUBDEBUG)
+            logger.setLevel(logging.DEBUG)
 
     def __iter__(self):
         manager = multiprocessing.Manager()
@@ -79,7 +79,7 @@ class LogRecordIteratorMulti(object):
         namespace.stop = False
 
         process = multiprocessing.Process(
-            target=_get_all_pages,
+            target=self._get_all_pages,
             args=(
                 queue,
                 namespace,
@@ -101,155 +101,159 @@ class LogRecordIteratorMulti(object):
                 error_dict_or_log_pyxb = queue.get()
                 if error_dict_or_log_pyxb is None:
                     self._log.debug(
-                        '__iter__(): Received None sentinel value. Stopping iteration'
+                        "__iter__(): Received None sentinel value. Stopping iteration"
                     )
                     break
                 elif isinstance(error_dict_or_log_pyxb, dict):
                     yield d1_common.types.exceptions.create_exception_by_name(
-                        error_dict_or_log_pyxb['error'],
-                        identifier=error_dict_or_log_pyxb['pid'],
+                        error_dict_or_log_pyxb["error"],
+                        identifier=error_dict_or_log_pyxb["pid"],
                     )
                 else:
                     yield error_dict_or_log_pyxb
         except GeneratorExit:
-            self._log.debug('__iter__(): GeneratorExit exception')
+            self._log.debug("__iter__(): GeneratorExit exception")
             pass
 
         # If generator is exited before exhausted, provide clean shutdown of the
         # generator by signaling processes to stop, then waiting for them.
-        self._log.debug('__iter__(): Setting stop signal')
+        self._log.debug("__iter__(): Setting stop signal")
         namespace.stop = True
         # Prevent parent from leaving zombie children behind.
         while queue.qsize():
-            self._log.debug('__iter__(): queue.size(): Dropping unwanted result')
+            self._log.debug("__iter__(): queue.size(): Dropping unwanted result")
             queue.get()
-        self._log.debug('__iter__(): process.join(): Waiting for process to exit')
+        self._log.debug("__iter__(): process.join(): Waiting for process to exit")
         process.join()
 
+    def _get_all_pages(
+        self,
+        queue,
+        namespace,
+        base_url,
+        page_size,
+        max_workers,
+        max_task_queue_size,
+        api_major,
+        client_dict,
+        get_log_records_dict,
+        n_total,
+    ):
+        self._log.info("Creating pool of {} workers".format(max_workers))
+        pool = multiprocessing.Pool(processes=max_workers)
+        n_pages = (n_total - 1) // page_size + 1
 
-def _get_all_pages(
-    queue,
-    namespace,
-    base_url,
-    page_size,
-    max_workers,
-    max_task_queue_size,
-    api_major,
-    client_dict,
-    get_log_records_dict,
-    n_total,
-):
-    self._log.info('Creating pool of {} workers'.format(max_workers))
-    pool = multiprocessing.Pool(processes=max_workers)
-    n_pages = (n_total - 1) // page_size + 1
+        for page_idx in range(n_pages):
+            if namespace.stop:
+                self._log.debug("_get_all_pages(): Page iter: Received stop signal")
+                break
+            try:
+                pool.apply_async(
+                    self._get_page,
+                    args=(
+                        queue,
+                        namespace,
+                        base_url,
+                        page_idx,
+                        n_pages,
+                        page_size,
+                        api_major,
+                        client_dict,
+                        get_log_records_dict,
+                    ),
+                )
+            except Exception as e:
+                self._log.debug(
+                    '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
+                )
+            # The pool does not support a clean way to limit the number of queued tasks
+            # so we have to access the internals to check the queue size and wait if
+            # necessary.
+            # noinspection PyProtectedMember
+            while pool._taskqueue.qsize() > max_task_queue_size:
+                if namespace.stop:
+                    self._log.debug(
+                        "_get_all_pages(): Waiting to queue task: Received stop signal"
+                    )
+                    break
+                # self._log.debug('_get_all_pages(): Waiting to queue task')
+                time.sleep(1)
 
-    for page_idx in range(n_pages):
+        # Workaround for workers hanging at exit.
+        # pool.terminate()
+        self._log.debug(
+            "_get_all_pages(): pool.close(): Preventing more tasks for being added to the pool"
+        )
+        pool.close()
+        self._log.debug(
+            "_get_all_pages(): pool.join(): Waiting for the workers to exit"
+        )
+        pool.join()
+        self._log.debug(
+            "_get_all_pages(): queue.put(None): Sending None sentinel value to stop the generator"
+        )
+        queue.put(None)
+
+    def _get_page(
+        self,
+        queue,
+        namespace,
+        base_url,
+        page_idx,
+        n_pages,
+        page_size,
+        api_major,
+        client_dict,
+        get_log_records_dict,
+    ):
+        self._log.debug("_get_page(): page_idx={} n_pages={}".format(page_idx, n_pages))
+
         if namespace.stop:
-            self._log.debug('_get_all_pages(): Page iter: Received stop signal')
-            break
+            self._log.debug("_get_page(): Received stop signal before listObjects()")
+            return
+
+        client = self._create_client(base_url, api_major, client_dict)
+
         try:
-            pool.apply_async(
-                _get_page,
-                args=(
-                    queue,
-                    namespace,
-                    base_url,
-                    page_idx,
-                    n_pages,
-                    page_size,
-                    api_major,
-                    client_dict,
-                    get_log_records_dict,
-                ),
+            log_records_pyxb = client.getLogRecords(
+                start=page_idx * page_size, count=page_size, **get_log_records_dict
             )
         except Exception as e:
-            self._log.debug(
-                '_get_all_pages(): pool.apply_async() error="{}"'.format(str(e))
-            )
-        # The pool does not support a clean way to limit the number of queued tasks
-        # so we have to access the internals to check the queue size and wait if
-        # necessary.
-        # noinspection PyProtectedMember
-        while pool._taskqueue.qsize() > max_task_queue_size:
-            if namespace.stop:
-                self._log.debug(
-                    '_get_all_pages(): Waiting to queue task: Received stop signal'
+            self._log.error(
+                '_get_page(): getLogRecords() failed. page_idx={} page_total={} error="{}"'.format(
+                    page_idx, n_pages, str(e)
                 )
-                break
-            # self._log.debug('_get_all_pages(): Waiting to queue task')
-            time.sleep(1)
+            )
+            return
 
-    # Workaround for workers hanging at exit.
-    # pool.terminate()
-    self._log.debug(
-        '_get_all_pages(): pool.close(): Preventing more tasks for being added to the pool'
-    )
-    pool.close()
-    self._log.debug('_get_all_pages(): pool.join(): Waiting for the workers to exit')
-    pool.join()
-    self._log.debug(
-        '_get_all_pages(): queue.put(None): Sending None sentinel value to stop the generator'
-    )
-    queue.put(None)
-
-
-def _get_page(
-    queue,
-    namespace,
-    base_url,
-    page_idx,
-    n_pages,
-    page_size,
-    api_major,
-    client_dict,
-    get_log_records_dict,
-):
-    self._log.debug('_get_page(): page_idx={} n_pages={}'.format(page_idx, n_pages))
-
-    if namespace.stop:
-        self._log.debug('_get_page(): Received stop signal before listObjects()')
-        return
-
-    client = _create_client(base_url, api_major, client_dict)
-
-    try:
-        log_records_pyxb = client.getLogRecords(
-            start=page_idx * page_size, count=page_size, **get_log_records_dict
-        )
-    except Exception as e:
-        self._log.error(
-            '_get_page(): getLogRecords() failed. page_idx={} page_total={} error="{}"'.format(
-                page_idx, n_pages, str(e)
+        self._log.debug(
+            "_get_page(): Retrieved page. page_idx={} n_items={}".format(
+                page_idx, len(log_records_pyxb.logEntry)
             )
         )
-        return
 
-    self._log.debug(
-        '_get_page(): Retrieved page. page_idx={} n_items={}'.format(
-            page_idx, len(log_records_pyxb.logEntry)
+        i = 0
+        for log_entry_pyxb in log_records_pyxb.logEntry:
+            self._log.debug("_get_page(): Iterating over logEntry. i={}".format(i))
+            i += 1
+            if namespace.stop:
+                self._log.debug("_get_page(): logEntry iter: Received stop signal")
+                break
+            queue.put(log_entry_pyxb)
+
+    def _create_client(self, base_url, api_major, client_dict):
+        self._log.debug(
+            '_create_client(): api="v{}"'.format(1 if api_major <= 1 else 2)
         )
-    )
+        if api_major <= 1:
+            return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
+        else:
+            return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
 
-    i = 0
-    for log_entry_pyxb in log_records_pyxb.logEntry:
-        self._log.debug('_get_page(): Iterating over logEntry. i={}'.format(i))
-        i += 1
-        if namespace.stop:
-            self._log.debug('_get_page(): logEntry iter: Received stop signal')
-            break
-        queue.put(log_entry_pyxb)
-
-
-def _create_client(base_url, api_major, client_dict):
-    self._log.debug('_create_client(): api="v{}"'.format(1 if api_major <= 1 else 2))
-    if api_major <= 1:
-        return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
-    else:
-        return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
-
-
-def _get_total_object_count(base_url, api_major, client_dict, get_log_records_dict):
-    client = _create_client(base_url, api_major, client_dict)
-    args_dict = get_log_records_dict.copy()
-    args_dict['count'] = 0
-    return client.getLogRecords(**args_dict).total
+    def _get_total_object_count(
+        self, base_url, api_major, client_dict, get_log_records_dict
+    ):
+        client = self._create_client(base_url, api_major, client_dict)
+        args_dict = get_log_records_dict.copy()
+        args_dict["count"] = 0
+        return client.getLogRecords(**args_dict).total
