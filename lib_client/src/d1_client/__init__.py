@@ -31,24 +31,21 @@ nodes by calling native Python methods which take and return native objects.
 
 The wrappers also convert any errors received from the nodes into native exceptions,
 enabling clients to use Python's concise exception handling system to handle errors.
-"""
 
-# Suppress log messages instead of raising exception if the program using the
-# library does not configure the logging system.
+Although this directory is not a package, this __init__.py file is required for pytest
+to be able to reach test directories below this directory.
+"""
 
 import logging
 
 try:
     from logging import NullHandler
 except ImportError:
-
     class NullHandler(logging.Handler):
-        """Suppress log messages instead of raising exception if the program
-        using the library does not configure the logging system."""
-
+        """Suppress log messages instead of raising exception if the program using the
+        library does not configure the logging system."""
         # noinspection PyMissingOrEmptyDocstring
         def emit(self, record):
             pass
-
 
 logging.getLogger(__name__).addHandler(NullHandler())

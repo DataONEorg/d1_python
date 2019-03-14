@@ -57,24 +57,22 @@ See also:
     The DataONE API XML `Schemas`_.
 
 .. _Schemas: https://repository.dataone.org/software/cicore/trunk/schemas/
-"""
 
-# Suppress log messages instead of raising exception if the program using the
-# library does not configure the logging system.
+
+Although this directory is not a package, this __init__.py file is required for pytest
+to be able to reach test directories below this directory.
+"""
 
 import logging
 
 try:
     from logging import NullHandler
 except ImportError:
-
     class NullHandler(logging.Handler):
-        """Suppress log messages instead of raising exception if the program
-        using the library does not configure the logging system."""
-
+        """Suppress log messages instead of raising exception if the program using the
+        library does not configure the logging system."""
         # noinspection PyMissingOrEmptyDocstring
         def emit(self, record):
             pass
-
 
 logging.getLogger(__name__).addHandler(NullHandler())
