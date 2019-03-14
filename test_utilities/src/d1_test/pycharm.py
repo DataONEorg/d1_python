@@ -35,8 +35,12 @@ import os
 import subprocess
 import time
 
-import Xlib
-import Xlib.display
+try:
+    import Xlib
+    import Xlib.display
+    is_headless = False
+except ImportError:
+    is_headless = True
 
 import d1_dev.util
 
@@ -52,6 +56,8 @@ def open_and_set_cursor(src_path, src_line=1):
     - ``src_path`` can be an absolute path, or a path relative to the root of the
     DataONE Git repository.
     """
+    if is_headless:
+        return
     if src_path == "<string>":
         logging.debug("Unable to find location of error")
         return
@@ -64,6 +70,8 @@ def open_and_set_cursor(src_path, src_line=1):
 def diff(left_path, right_path):
     """Attempt to open a diff of the two files in the PyCharm Diff & Merge
     tool."""
+    if is_headless:
+        return
     tag_empty_file(left_path)
     tag_empty_file(right_path)
     call_pycharm("diff", left_path, right_path)
