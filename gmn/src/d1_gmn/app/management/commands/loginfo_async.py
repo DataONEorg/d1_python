@@ -24,7 +24,6 @@ Fast retrieval of logEntry from a DataONE Node.
 import asyncio
 import logging
 
-import d1_common.const
 import d1_common.types.exceptions
 
 DEFAULT_LOG_PAGE_SIZE = 1000
@@ -101,4 +100,4 @@ class EventLogIteratorAsync:
     async def _get_total_event_count(self):
         args_dict = self._get_log_records_args_dict.copy()
         args_dict["count"] = 0
-        return (await self._client.get_log_records(**args_dict)).total
+        return await self._client.get_log_records(**args_dict).total

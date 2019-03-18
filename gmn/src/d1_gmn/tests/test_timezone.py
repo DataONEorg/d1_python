@@ -45,14 +45,8 @@ import d1_gmn.tests.gmn_direct
 # import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
-import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.wrap.access_policy
 import d1_common.wrap.simple_xml
 import d1_common.xml
 
@@ -234,9 +228,9 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         assert not d1_common.date_time.has_tz(sysmeta_pyxb.dateSysMetadataModified)
         # Generating the XML doc, the xs:dateTime strings are still without tz
         xml_doc = d1_common.xml.serialize_for_transport(sysmeta_pyxb)
-        with d1_common.wrap.simple_xml.wrap(xml_doc) as xml:
-            assert xml.get_element_dt('dateUploaded') == uploaded_dt
-            assert xml.get_element_dt('dateSysMetadataModified') == modified_dt
+        with d1_common.wrap.simple_xml.wrap(xml_doc) as xml_wrapper:
+            xml_wrapper.get_element_dt('dateUploaded') == uploaded_dt
+            xml_wrapper.get_element_dt('dateSysMetadataModified') == modified_dt
 
     @responses.activate
     def test_1020(self):

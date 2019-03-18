@@ -23,9 +23,6 @@
 import random
 
 import d1_common.checksum
-import d1_common.const
-import d1_common.types.dataoneTypes
-import d1_common.util
 
 import d1_test.instance_generator.random_data
 

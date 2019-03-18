@@ -59,9 +59,7 @@ import http.client
 import logging
 import random
 import socket
-import urllib.error
 import urllib.parse
-import urllib.request
 import xml.dom.minidom
 
 

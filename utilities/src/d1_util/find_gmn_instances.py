@@ -39,12 +39,10 @@ import sys
 import bs4
 import requests
 
-import d1_common.cert.x509
 import d1_common.env
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
-import d1_common.xml
 
 import d1_client.iter.node
 import d1_client.mnclient

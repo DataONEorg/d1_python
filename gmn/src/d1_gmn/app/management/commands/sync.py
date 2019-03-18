@@ -49,40 +49,17 @@ synced just as if it was discovered by the regular poll based sync.
 
 import asyncio
 import logging
-import logging.config
 
-import d1_gmn.app.auth
-import d1_gmn.app.delete
-import d1_gmn.app.did
-import d1_gmn.app.event_log
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.standard_args as args
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.standard_args
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.management.commands.async_client
-import d1_gmn.app.model_util
 import d1_gmn.app.models
-import d1_gmn.app.node
-import d1_gmn.app.revision
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.create
-import d1_gmn.app.views.util
 
-import d1_common.const
-import d1_common.revision
-import d1_common.system_metadata
-import d1_common.type_conversions
-import d1_common.types.exceptions
-import d1_common.url
-import d1_common.util
 import d1_common.utils.progress_logger
-import d1_common.xml
 
 import django.conf
 import django.core.management.base
-import django.db
 
 # 0 = Timeout disabled
 
@@ -100,7 +77,7 @@ class Command(django.core.management.base.BaseCommand):
         super().__init__(*args, **kwargs)
 
     def add_arguments(self, parser):
-        args.add_arguments(parser, __doc__)
+        d1_gmn.app.management.commands.util.standard_args.add_arguments(parser, __doc__)
 
     def handle(self, *args, **options):
         self.options = options
@@ -111,7 +88,7 @@ class Command(django.core.management.base.BaseCommand):
         )
         # util.log_setup(self.options["debug"])
         self._log.info("Running management command: {}".format(__name__))
-        util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
 
         # Python 3.7
         # asyncio.run(self._handle())

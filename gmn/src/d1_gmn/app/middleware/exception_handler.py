@@ -39,7 +39,6 @@ serialized to a set of HTTP headers for HEAD requests.
 
 import logging
 import os
-import subprocess
 import sys
 import traceback
 

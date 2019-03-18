@@ -36,14 +36,11 @@ import io
 import logging
 import xml.etree.ElementTree
 
-import d1_gmn.app.views.util
 import d1_gmn.tests.gmn_mock
 
-import d1_common.type_conversions
 import d1_common.url
 import d1_common.util
 import d1_common.wrap.simple_xml
-import d1_common.xml
 
 import django.test
 
@@ -51,12 +48,12 @@ import django.test
 def create(version_tag, sciobj_bytes, sysmeta_xml):
     """Call MNStorage.create()"""
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-        with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
+        with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml_wrapper:
             return _get_resp_dict(
                 django.test.Client().post(
                     d1_common.url.joinPathElements('/', version_tag, 'object'),
                     {
-                        'pid': xml.get_element_text('identifier'),
+                        'pid': xml_wrapper.get_element_text('identifier'),
                         'object': ('content.bin', io.BytesIO(sciobj_bytes)),
                         'sysmeta': ('sysmeta.xml', io.BytesIO(sysmeta_xml)),
                     },
@@ -67,12 +64,12 @@ def create(version_tag, sciobj_bytes, sysmeta_xml):
 def create_stream(version_tag, sciobj_bytestream, sysmeta_xml):
     """Call MNStorage.create()"""
     with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-        with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml:
+        with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml_wrapper:
             return _get_resp_dict(
                 django.test.Client().post(
                     d1_common.url.joinPathElements('/', version_tag, 'object'),
                     {
-                        'pid': xml.get_element_text('identifier'),
+                        'pid': xml_wrapper.get_element_text('identifier'),
                         'object': ('content.bin', sciobj_bytestream),
                         'sysmeta': ('sysmeta.xml', io.StringIO(sysmeta_xml)),
                     },

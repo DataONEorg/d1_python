@@ -30,18 +30,10 @@ import platform
 import sys
 import xml.etree.ElementTree
 
-import d1_gmn.app.auth
-import d1_gmn.app.db_filter
-import d1_gmn.app.event_log
 import d1_gmn.app.models
-import d1_gmn.app.psycopg_adapter
-import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.util
 
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.url
 

@@ -37,10 +37,8 @@ import responses
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
-import d1_common.type_conversions
 import d1_common.url
 
-import d1_test.d1_test_case
 import d1_test.instance_generator.sciobj
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util

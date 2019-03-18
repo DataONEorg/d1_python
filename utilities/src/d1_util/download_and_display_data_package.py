@@ -37,7 +37,6 @@ import sys
 import d1_common.env
 import d1_common.resource_map
 
-import d1_client.mnclient
 
 # Config
 

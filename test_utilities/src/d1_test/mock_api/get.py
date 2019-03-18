@@ -46,10 +46,8 @@ import re
 import responses
 
 import d1_common.const
-import d1_common.types.exceptions
 import d1_common.url
 
-import d1_test.d1_test_case
 import d1_test.instance_generator.sciobj
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util

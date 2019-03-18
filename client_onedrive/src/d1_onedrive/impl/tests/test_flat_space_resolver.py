@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test the Flat Space Resolver."""
 
-import d1_onedrive.impl.resolver.flat_space as flat_space
+import d1_onedrive.impl.resolver.flat_space
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -40,7 +40,7 @@ class TestFlatSpaceResolver(d1_test.d1_test_case.D1TestCase):
         options.object_tree_xml = './test_flat_space.xml'
         options.max_error_path_cache_size = 1000
         options.max_solr_query_cache_size = 1000
-        self._w = flat_space.Resolver(
+        self._w = d1_onedrive.impl.resolver.flat_space.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

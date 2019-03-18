@@ -22,10 +22,8 @@
 
 import pytest
 
-import d1_cli.impl.client
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
-import d1_cli.impl.operation_validator
 
 import d1_test.d1_test_case
 

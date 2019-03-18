@@ -33,39 +33,27 @@ import logging
 import os
 import time
 
-import d1_gmn.app.auth
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.model_util
 import d1_gmn.app.models
-import d1_gmn.app.node
-import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.create
-import d1_gmn.app.views.util
 
 import d1_common.const
 import d1_common.date_time
-import d1_common.revision
 import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.xml
 
-import d1_client.cnclient_2_0
 import d1_client.d1client
 import d1_client.iter.logrecord_multi
-import d1_client.iter.objectlist_multi
 import d1_client.iter.sysmeta_multi
-import d1_client.mnclient
 
 import django.conf
 import django.core.management.base
@@ -86,7 +74,7 @@ class Command(django.core.management.base.BaseCommand):
         **kwargs:
     """
         super().__init__(*args, **kwargs)
-        self._db = util.Db()
+        self._db = d1_gmn.app.management.commands.util.util.Db()
         self._events = d1_common.util.EventCounter()
 
     def add_arguments(self, parser):
@@ -171,13 +159,13 @@ class Command(django.core.management.base.BaseCommand):
         *args:
         **opt:
     """
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info(
             "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
-        util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
         self._opt = opt
         try:
             # profiler = profile.Profile()
@@ -190,7 +178,7 @@ class Command(django.core.management.base.BaseCommand):
         self._events.dump_to_log()
 
     def _handle(self):
-        if not self._opt["force"] and not util.is_db_empty():
+        if not self._opt["force"] and not d1_gmn.app.management.commands.util.util.is_db_empty():
             raise django.core.management.base.CommandError(
                 "There are already objects in the local database. "
                 "Use --force to import anyway"
@@ -256,7 +244,7 @@ class Command(django.core.management.base.BaseCommand):
             pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
             self.stdout.write(
-                util.format_progress(
+                d1_gmn.app.management.commands.util.util.format_progress(
                     self._events,
                     "Importing objects",
                     i,
@@ -323,7 +311,7 @@ class Command(django.core.management.base.BaseCommand):
             pid = d1_common.xml.get_req_val(log_record_pyxb.identifier)
 
             self.stdout.write(
-                util.format_progress(
+                d1_gmn.app.management.commands.util.util.format_progress(
                     self._events,
                     "Importing event logs",
                     i,

@@ -22,16 +22,12 @@
 import xml.sax
 
 import d1_gmn.app
-import d1_gmn.app.auth
 import d1_gmn.app.did
 import d1_gmn.app.models
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.util
 
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
-import d1_common.xml
 
 import django.conf
 

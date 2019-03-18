@@ -21,9 +21,7 @@
 
 import logging
 
-import d1_common.const
 import d1_common.type_conversions
-import d1_common.util
 
 import d1_client.baseclient
 

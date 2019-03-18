@@ -24,8 +24,7 @@ import responses
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.sciobj
-import d1_test.mock_api.create as mock_create
-import d1_test.mock_api.util
+import d1_test.mock_api.create
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestMockCreate')
@@ -33,7 +32,7 @@ class TestMockCreate(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.create(): Echoes the request"""
-        mock_create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             mn_client_v1_v2, 'post_pid'
         )

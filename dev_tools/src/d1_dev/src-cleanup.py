@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Perform various small source _cleanup tasks on modules.
+"""Perform various small source cleanup tasks on modules.
 
 By default, files are NOT modified. After having verified that the modifications
 are as expected with the `--diff` switch, run the script again with `--update`
@@ -30,7 +30,6 @@ the backups.
 """
 
 import argparse
-import lib2to3.main
 import lib2to3.refactor
 import logging
 import os
@@ -38,7 +37,6 @@ import re
 import sys
 
 import redbaron
-import redbaron.nodes
 
 import d1_dev.util
 

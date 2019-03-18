@@ -25,7 +25,6 @@ Note: Currently issues requests to the production DataONE Solr index.
 TODO: Create Solr mockup
 """
 import d1_common.const
-import d1_common.util
 
 import d1_test.d1_test_case
 

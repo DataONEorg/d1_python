@@ -38,7 +38,6 @@ import re
 import lxml
 import lxml.etree
 
-import d1_common.types.exceptions
 import d1_common.util
 
 NS_MAP = {

@@ -23,21 +23,19 @@ import datetime
 
 import responses
 
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get_log_records as mock_get_log_records
+import d1_test.mock_api.get_log_records
 
-import d1_client.cnclient
 import d1_client.iter.logrecord_multi
-import d1_client.mnclient
 
 
 class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self):
         """PageSize=5, start=0."""
-        mock_get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         self._log_record_iterator_test(5)
 
     def _test_110(self):
@@ -59,7 +57,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
         )
         cnt = 0
         for log_entry in log_record_iterator:
-            assert isinstance(log_entry, dataoneTypes.LogEntry)
+            assert isinstance(log_entry, d1_common.types.dataoneTypes.LogEntry)
             # logging.info("Event      = {}".format(log_entry.event))
             # logging.info("Timestamp  = {}".format(log_entry.dateLogged.isoformat()))
             # logging.info("IP Address = {}".format(log_entry.ipAddress))

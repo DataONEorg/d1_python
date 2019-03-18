@@ -34,18 +34,14 @@ import re
 
 import contextlib2
 
-import d1_gmn.app
-import d1_gmn.app.util
 
-import d1_common.checksum
 import d1_common.iter.file
 import d1_common.types
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 
-import django.apps
 import django.conf
+import d1_gmn
 
 SCIOBJ_JSON_NAME = 'gmn_object_store.json'
 

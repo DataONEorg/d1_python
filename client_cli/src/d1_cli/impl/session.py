@@ -60,11 +60,11 @@ import os
 import pickle
 import platform
 
-import d1_cli.impl.access_control as access_control
-import d1_cli.impl.exceptions as exceptions
-import d1_cli.impl.operation_formatter as operation_formatter
-import d1_cli.impl.replication_policy as replication_policy
-import d1_cli.impl.util as util
+import d1_cli.impl.access_control
+import d1_cli.impl.exceptions
+import d1_cli.impl.operation_formatter
+import d1_cli.impl.replication_policy
+import d1_cli.impl.util
 
 import d1_common.checksum
 import d1_common.const
@@ -140,8 +140,8 @@ class Session(object):
 
     def reset(self):
         self._variables = self._create_default_variables()
-        self._access_control = access_control.AccessControl()
-        self._replication_policy = replication_policy.ReplicationPolicy()
+        self._access_control = d1_cli.impl.access_control.AccessControl()
+        self._replication_policy = d1_cli.impl.replication_policy.ReplicationPolicy()
 
     def get(self, variable):
         self._assert_valid_variable(variable)
@@ -182,7 +182,7 @@ class Session(object):
                 value = type_converter(value_string)
                 self._variables[variable] = value
             except ValueError:
-                raise exceptions.InvalidArguments(
+                raise d1_cli.impl.exceptions.InvalidArguments(
                     "Invalid value for {}: {}".format(variable, value_string)
                 )
 
@@ -194,10 +194,10 @@ class Session(object):
 
     def print_single_variable(self, variable):
         self._assert_valid_variable(variable)
-        util.print_info("{}: {}".format(variable, self.get(variable)))
+        d1_cli.impl.util.print_info("{}: {}".format(variable, self.get(variable)))
 
     def print_all_variables(self):
-        f = operation_formatter.OperationFormatter()
+        f = d1_cli.impl.operation_formatter.OperationFormatter()
         d = copy.deepcopy(self._variables)
         d["replication"] = {
             "replication-allowed": self._replication_policy.get_replication_allowed(),
@@ -225,12 +225,12 @@ class Session(object):
         if pickle_file_path is None:
             pickle_file_path = self.get_default_pickle_file_path()
         try:
-            with open(util.os.path.expanduser(pickle_file_path), "rb") as f:
+            with open(d1_cli.impl.util.os.path.expanduser(pickle_file_path), "rb") as f:
                 self.__dict__.update(pickle.load(f))
             # self._verify_session_variables()
         except (NameError, IOError, ImportError) as e:
             if not suppress_error:
-                util.print_error(
+                d1_cli.impl.util.print_error(
                     "Unable to load session from file: {}\n{}".format(
                         pickle_file_path, str(e)
                     )
@@ -240,11 +240,11 @@ class Session(object):
         if pickle_file_path is None:
             pickle_file_path = self.get_default_pickle_file_path()
         try:
-            with open(util.os.path.expanduser(pickle_file_path), "wb") as f:
+            with open(d1_cli.impl.util.os.path.expanduser(pickle_file_path), "wb") as f:
                 pickle.dump(self.__dict__, f, 2)
         except (NameError, IOError) as e:
             if not suppress_error:
-                util.print_error(
+                d1_cli.impl.util.print_error(
                     "Unable to save session to file: {}\n{}".format(
                         pickle_file_path, str(e)
                     )
@@ -267,7 +267,7 @@ class Session(object):
 
     def _assert_valid_variable(self, variable):
         if variable not in self._variables:
-            raise exceptions.InvalidArguments(
+            raise d1_cli.impl.exceptions.InvalidArguments(
                 "Invalid session variable: {}".format(variable)
             )
 
@@ -288,7 +288,7 @@ class Session(object):
             try:
                 d1_common.checksum.get_checksum_calculator_by_dataone_designator(value)
             except LookupError:
-                raise exceptions.InvalidArguments(
+                raise d1_cli.impl.exceptions.InvalidArguments(
                     "Invalid checksum algorithm: {}".format(value)
                 )
         elif variable == CN_URL_NAME:
@@ -299,13 +299,13 @@ class Session(object):
             if value not in [
                 n[2] for n in self._nodes.get(cn_base_url) if n[0] == "mn"
             ]:
-                if not util.confirm(
+                if not d1_cli.impl.util.confirm(
                     '"{}" is not a known DataONE Member Node. Use anyway?'.format(value)
                 ):
-                    raise exceptions.InvalidArguments("Member Node update cancelled")
+                    raise d1_cli.impl.exceptions.InvalidArguments("Member Node update cancelled")
         elif variable == FORMAT_NAME:
             cn_base_url = self.get(CN_URL_NAME)
             if value not in self._format_ids.get(cn_base_url):
-                raise exceptions.InvalidArguments(
+                raise d1_cli.impl.exceptions.InvalidArguments(
                     "Invalid Object Format ID: {}".format(value)
                 )

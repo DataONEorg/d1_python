@@ -30,9 +30,6 @@ import optparse
 import platform
 import sys
 
-import d1_onedrive.impl
-import d1_onedrive.impl.clients
-import d1_onedrive.impl.resolver
 
 # flake8: noqa: F402
 
@@ -116,9 +113,9 @@ def main():
     log_startup_parameters(options, arguments)
 
     if platform.system() == 'Linux' or platform.system() == 'Darwin':
-        import d1_onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
+        import d1_onedrive.impl.drivers.fuse.d1_fuse
     elif platform.system() == 'Windows':
-        import d1_onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks
+        import d1_onedrive.impl.drivers.dokan.d1_dokan
     else:
         log.error('Unknown platform: {}'.format(platform.system()))
         exit()
@@ -128,7 +125,7 @@ def main():
         with object_tree.ObjectTree(options, z) as o:
             # with d1_object_tree.object_tree.ObjectTree(**options.__dict__) as object_tree:
             root_resolver = root.RootResolver(options, o)
-            filesystem_callbacks.run(options, root_resolver)
+            d1_onedrive.impl.drivers.dokan.d1_dokan.run(options, root_resolver)
 
     log.info("Exiting ONEDrive")
 

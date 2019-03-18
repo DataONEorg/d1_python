@@ -29,9 +29,7 @@ added first of the objects still in the cache.
 import logging
 import os
 import pickle
-import urllib.error
 import urllib.parse
-import urllib.request
 
 log = logging.getLogger(__name__)
 

@@ -58,15 +58,12 @@ import django.db
 os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings_test'
 django.setup()
 
-import d1_gmn.settings_test
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
-import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.instance_generator.sciobj
-import d1_test.instance_generator.system_metadata
 import d1_test.instance_generator.user_agent
 
 # Dict lookup key matching the default key in settings_test.DATABASE

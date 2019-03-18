@@ -35,12 +35,10 @@ import argparse
 # noinspection PyProtectedMember
 from . import jwt
 
-import d1_gmn.app.management.commands.util.util as util
-import d1_gmn.app.middleware.session_cert
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 
 import d1_common.types.exceptions
-import d1_common.util
 
 import django.core.management.base
 
@@ -88,7 +86,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to add"
             )
-        if util.is_subject_in_whitelist(subject_str):
+        if d1_gmn.app.management.commands.util.util.is_subject_in_whitelist(subject_str):
             raise django.core.management.base.CommandError(
                 "Subject already in whitelist: {}".format(subject_str)
             )
@@ -100,7 +98,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to remove"
             )
-        if not util.is_subject_in_whitelist(subject_str):
+        if not d1_gmn.app.management.commands.util.util.is_subject_in_whitelist(subject_str):
             raise django.core.management.base.CommandError(
                 "Subject is not in whitelist: {}".format(subject_str)
             )

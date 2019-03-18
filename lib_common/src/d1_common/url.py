@@ -20,9 +20,7 @@
 """Utilities for handling URLs in DataONE."""
 
 import sys
-import urllib.error
 import urllib.parse
-import urllib.request
 
 import d1_common.const
 

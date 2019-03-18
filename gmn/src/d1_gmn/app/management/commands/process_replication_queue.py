@@ -31,19 +31,13 @@ import logging
 
 import d1_gmn.app.did
 import d1_gmn.app.event_log
-import d1_gmn.app.local_replica
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.util
 
-import d1_common.const
-import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.xml
 
@@ -64,14 +58,14 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info(
             "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
-        util.exit_if_other_instance_is_running(__name__)
-        util.abort_if_stand_alone_instance()
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:

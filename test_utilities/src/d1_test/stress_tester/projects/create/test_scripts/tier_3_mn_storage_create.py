@@ -32,7 +32,7 @@ import string
 import settings
 import transaction
 
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 from d1_test.instance_generator import random_data
 from d1_test.instance_generator import system_metadata
@@ -79,8 +79,8 @@ class Transaction(transaction.Transaction):
         )
 
     def create_access_policy(self, subjects):
-        ap = dataoneTypes.AccessPolicy()
-        ar = dataoneTypes.AccessRule()
+        ap = d1_common.types.dataoneTypes.AccessPolicy()
+        ar = d1_common.types.dataoneTypes.AccessRule()
         ar.subject = subjects
         ar.permission = ['changePermission']
         ap.allow.append(ar)

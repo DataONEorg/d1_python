@@ -42,16 +42,14 @@ identifier is now in use by the previously created object.
 - Any other errors will also be returned as DataONE exceptions.
 """
 import argparse
-import datetime
 import hashlib
 import io
 import sys
 
 import d1_common.const
 import d1_common.env
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
-import d1_client.mnclient
 import d1_client.mnclient_2_0
 
 # Config
@@ -160,12 +158,12 @@ def generate_system_metadata_for_science_object(science_object):
 
 
 def generate_sysmeta(pid, size, md5, now):
-    sysmeta_pyxb = dataoneTypes.systemMetadata()
+    sysmeta_pyxb = d1_common.types.dataoneTypes.systemMetadata()
     sysmeta_pyxb.identifier = pid
     sysmeta_pyxb.formatId = SYSMETA_FORMATID
     sysmeta_pyxb.size = size
     sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
-    sysmeta_pyxb.checksum = dataoneTypes.checksum(md5)
+    sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(md5)
     sysmeta_pyxb.checksum.algorithm = 'MD5'
     sysmeta_pyxb.dateUploaded = now
     sysmeta_pyxb.dateSysMetadataModified = now
@@ -174,10 +172,10 @@ def generate_sysmeta(pid, size, md5, now):
 
 
 def generate_public_access_policy():
-    access_policy_pyxb = dataoneTypes.accessPolicy()
-    access_rule_pyxb = dataoneTypes.AccessRule()
+    access_policy_pyxb = d1_common.types.dataoneTypes.accessPolicy()
+    access_rule_pyxb = d1_common.types.dataoneTypes.AccessRule()
     access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission_pyxb = dataoneTypes.Permission('read')
+    permission_pyxb = d1_common.types.dataoneTypes.Permission('read')
     access_rule_pyxb.permission.append(permission_pyxb)
     access_policy_pyxb.append(access_rule_pyxb)
     return access_policy_pyxb

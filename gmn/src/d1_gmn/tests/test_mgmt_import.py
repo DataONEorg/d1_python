@@ -26,10 +26,10 @@ import responses
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.get_log_records as mock_log_records
-import d1_test.mock_api.get_system_metadata as mock_get_system_metadata
-import d1_test.mock_api.list_objects as mock_object_list
+import d1_test.mock_api.get
+import d1_test.mock_api.get_log_records
+import d1_test.mock_api.get_system_metadata
+import d1_test.mock_api.list_objects
 
 
 @pytest.mark.skip('Need to refactor import.py to work with the tests')
@@ -38,10 +38,10 @@ import d1_test.mock_api.list_objects as mock_object_list
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, caplog):
-        mock_object_list.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-        mock_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-        mock_get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+        d1_test.mock_api.get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.call_management_command(
                 'import',

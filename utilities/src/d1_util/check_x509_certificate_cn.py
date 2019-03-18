@@ -45,10 +45,8 @@ import requests.packages.urllib3
 
 import d1_common.util
 import d1_common.xml
-import d1_common.cert.x509
-import d1_common.cert.subject_info
 
-import d1_client.cnclient_2_0 as cn_20
+import d1_client.cnclient_2_0
 import d1_common.env
 
 DEFAULT_BASE_URL = 'https://cn.dataone.org/cn/'
@@ -112,7 +110,7 @@ def main():
 
   requests.packages.urllib3.disable_warnings()
 
-  c = cn_20.CoordinatingNodeClient_2_0(
+  c = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
     base_url=args.base_url, cert_pem_path=args.cert_pem_path,
     cert_key_path=args.cert_key_path,
   )

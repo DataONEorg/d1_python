@@ -113,16 +113,18 @@ def diff_window_is_open(left_path, right_path):
     def get_window_name(window_id):
         """Return window title if one can be found or None"""
         for atom in (net_wm_name, wm_name):
-            try:
                 window_obj = display.create_resource_object("window", window_id)
                 name_str = window_obj.get_full_property(atom, 0).value
                 if isinstance(name_str, bytes):
                     return name_str.decode("latin1", "replace")
                 return name_str
-            except (Xlib.error.XError, UnicodeDecodeError, AttributeError):
-                pass
 
-    return find_diff_window(display.screen().root)
+    try:
+        return find_diff_window(display.screen().root)
+    except (
+        Xlib.error.XError, Xlib.error.BadWindow, UnicodeDecodeError, AttributeError
+    ):
+        return False
 
 
 def tag_empty_file(path):

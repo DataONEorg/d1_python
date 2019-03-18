@@ -46,7 +46,7 @@ import d1_common.env
 import d1_common.util
 import d1_common.xml
 
-import d1_test.instance_generator.system_metadata as gen_sysmeta
+import d1_test.instance_generator.system_metadata
 
 import d1_client.cnclient_2_0
 
@@ -97,7 +97,7 @@ def main():
         base_url=d1_common.const.URL_DATAONE_ROOT
     )
 
-    sysmeta_pyxb = gen_sysmeta.generate_from_file_path(
+    sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file_path(
         cn_client,
         args.path,
         {

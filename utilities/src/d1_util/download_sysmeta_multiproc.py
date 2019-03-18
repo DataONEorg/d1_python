@@ -32,26 +32,18 @@ import logging
 import os
 import sys
 import time
-import urllib.error
 import urllib.parse
-import urllib.request
 
 import d1_common.const
 import d1_common.env
-import d1_common.revision
 import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.xml
 
-import d1_client.cnclient_2_0
 import d1_client.d1client
-import d1_client.iter.logrecord_multi
-import d1_client.iter.objectlist_multi
 import d1_client.iter.sysmeta_multi
-import d1_client.mnclient
 
 DEFAULT_TIMEOUT_SEC = 3 * 60
 DEFAULT_N_WORKERS = 10

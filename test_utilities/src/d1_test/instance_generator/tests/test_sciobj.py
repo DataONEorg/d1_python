@@ -23,7 +23,6 @@ import freezegun
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.sciobj
-import d1_test.instance_generator.system_metadata
 
 
 class TestSciObj(d1_test.d1_test_case.D1TestCase):

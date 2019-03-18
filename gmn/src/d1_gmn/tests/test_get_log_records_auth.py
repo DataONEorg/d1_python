@@ -21,25 +21,16 @@
 """Test getLogRecords() access control.
 """
 
-import pytest
 import responses
 import freezegun
 import datetime
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
-import d1_common.const
-import d1_common.replication_policy
-import d1_common.system_metadata
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-import d1_common.util
 import d1_common.xml
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.subject
 
 PERM_LIST = [
     # Private objects

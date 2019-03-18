@@ -20,7 +20,6 @@
 
 import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
-import d1_test.mock_api.util
 import d1_test.sample
 
 

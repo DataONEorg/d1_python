@@ -24,7 +24,7 @@ Example:
   .. highlight:: python
   ::
 
-    with d1_common.wrap.simple_xml.wrap(my_xml_str) as xml:
+    with d1_common.wrap.simple_xml.wrap(my_xml_str) as xml_wrapper:
       # Read, modify and write the text in an XML element
       text_str = xml.get_element_text('my_el')
       xml.set_element_text('{} more text'.format(text_str)
@@ -32,7 +32,7 @@ Example:
       # is required because context managers cannot replace the object that was passed
       # to the manager, and strings are immutable. If the wrapped XML is needed later,
       # just store another reference to it.
-      my_xml_str = xml.get_xml()
+      my_xml_str = xml_wrapper.get_xml()
 
 Notes:
 
@@ -68,15 +68,12 @@ Notes:
   - This wrapper is based on the ElementTree module.
 """
 
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree
 
 import contextlib2
 import iso8601
 
-import d1_common.const
 import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
 import d1_common.xml
 
 
@@ -103,14 +100,14 @@ class SimpleXMLWrapper(object):
         self._root_el = self.parse_xml(xml_str)
 
     def parse_xml(self, xml_str):
-        return ET.fromstring(xml_str)
+        return xml.etree.ElementTree.fromstring(xml_str)
 
     def get_xml(self, encoding='unicode'):
         """Returns:
 
         str : Current state of the wrapper as XML
         """
-        return ET.tostring(self._root_el, encoding)
+        return xml.etree.ElementTree.tostring(self._root_el, encoding)
 
     def get_pretty_xml(self, encoding='unicode'):
         """Returns:
@@ -118,7 +115,7 @@ class SimpleXMLWrapper(object):
         str : Current state of the wrapper as a pretty printed XML string.
         """
         return d1_common.xml.reformat_to_pretty_xml(
-            ET.tostring(self._root_el, encoding)
+            xml.etree.ElementTree.tostring(self._root_el, encoding)
         )
 
     def get_xml_below_element(self, el_name, el_idx=0, encoding='unicode'):
@@ -134,7 +131,7 @@ class SimpleXMLWrapper(object):
     Returns:
       str : XML fragment rooted at ``el``.
     """
-        return ET.tostring(self.get_element_by_name(el_name, el_idx), encoding)
+        return xml.etree.ElementTree.tostring(self.get_element_by_name(el_name, el_idx), encoding)
 
     def get_element_list_by_name(self, el_name):
         """

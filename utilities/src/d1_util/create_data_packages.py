@@ -60,7 +60,7 @@ import sys
 import d1_common.const
 import d1_common.env
 import d1_common.resource_map
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 import d1_client.mnclient_2_0
 
@@ -210,12 +210,12 @@ def generate_system_metadata_for_science_object(pid, format_id, science_object):
 
 
 def generate_sys_meta(pid, format_id, size, md5, now):
-    sys_meta = dataoneTypes.systemMetadata()
+    sys_meta = d1_common.types.dataoneTypes.systemMetadata()
     sys_meta.identifier = pid
     sys_meta.formatId = format_id
     sys_meta.size = size
     sys_meta.rightsHolder = SYSMETA_RIGHTSHOLDER
-    sys_meta.checksum = dataoneTypes.checksum(md5)
+    sys_meta.checksum = d1_common.types.dataoneTypes.checksum(md5)
     sys_meta.checksum.algorithm = 'MD5'
     sys_meta.dateUploaded = now
     sys_meta.dateSysMetadataModified = now
@@ -224,10 +224,10 @@ def generate_sys_meta(pid, format_id, size, md5, now):
 
 
 def generate_public_access_policy():
-    accessPolicy = dataoneTypes.accessPolicy()
-    accessRule = dataoneTypes.AccessRule()
+    accessPolicy = d1_common.types.dataoneTypes.accessPolicy()
+    accessRule = d1_common.types.dataoneTypes.AccessRule()
     accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission = dataoneTypes.Permission('read')
+    permission = d1_common.types.dataoneTypes.Permission('read')
     accessRule.permission.append(permission)
     accessPolicy.append(accessRule)
     return accessPolicy

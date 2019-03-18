@@ -25,15 +25,12 @@ import freezegun
 import responses
 
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
-import d1_test.mock_api.get_system_metadata
 
 import django
-import django.conf
-import django.core.management
 import django.test
 import d1_common.wrap.simple_xml
+import d1_test.d1_test_case
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestWebUI')
@@ -62,10 +59,10 @@ class TestWebUI(d1_gmn.tests.gmn_test_case.GMNTestCase):
     <status>
     """
     response = django.test.Client().get('/home')
-    with d1_common.wrap.simple_xml.wrap(response.content.decode('utf-8')) as xml:
+    with d1_common.wrap.simple_xml.wrap(response.content.decode('utf-8')) as xml_wrapper:
       # Check a random element
       assert (
-          xml.get_element_by_xpath("value[@name='envRootUrl']")[0].text ==
+          xml_wrapper.get_element_by_xpath("value[@name='envRootUrl']")[0].text ==
           'http://mock/root/cn'
       )
 

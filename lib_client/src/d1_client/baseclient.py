@@ -24,11 +24,7 @@ import logging
 
 import d1_common.const
 import d1_common.type_conversions
-import d1_common.types.dataoneTypes_v1
-import d1_common.types.dataoneTypes_v1_1
-import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.xml
 

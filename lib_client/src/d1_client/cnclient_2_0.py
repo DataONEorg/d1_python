@@ -21,10 +21,7 @@
 
 import logging
 
-import d1_common.const
 import d1_common.type_conversions
-import d1_common.types.dataoneTypes_v2_0
-import d1_common.util
 
 import d1_client.baseclient_2_0
 import d1_client.cnclient_1_2

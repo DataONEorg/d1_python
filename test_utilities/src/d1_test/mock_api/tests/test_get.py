@@ -22,21 +22,21 @@ import requests
 import responses
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.get
 
 
 class TestMockGet(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.get() returns a Requests Response object."""
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         assert isinstance(mn_client_v1_v2.get('test_pid_1'), requests.Response)
 
     @responses.activate
     def test_1010(self, mn_client_v1_v2):
         """mock_api.get() returns the same content each time for a given
         PID."""
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         obj_1a_str = mn_client_v1_v2.get('test_pid_1').content
         obj_2a_str = mn_client_v1_v2.get('test_pid_2').content
         obj_1b_str = mn_client_v1_v2.get('test_pid_1').content
@@ -47,7 +47,7 @@ class TestMockGet(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1020(self, mn_client_v1_v2):
         """mock_api.get(): Redirects"""
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         direct_sciobj_bytes = mn_client_v1_v2.get('test_pid_1').content
         redirect_sciobj_bytes = mn_client_v1_v2.get(
             '<REDIRECT:303:3>test_pid_1'

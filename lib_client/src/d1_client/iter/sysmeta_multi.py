@@ -52,7 +52,6 @@ import logging
 import multiprocessing
 import time
 
-import d1_common.type_conversions
 import d1_common.types.exceptions
 
 import d1_client.mnclient_1_2

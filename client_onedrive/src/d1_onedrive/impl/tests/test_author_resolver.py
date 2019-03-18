@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test the Author resolver."""
 
-import d1_onedrive.impl.resolver.author as author
+import d1_onedrive.impl.resolver.author
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -33,7 +33,7 @@ options = {}
 
 class TestAuthorResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
-        self._resolver = author.Resolver(
+        self._resolver = d1_onedrive.impl.resolver.author.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample
         )
 

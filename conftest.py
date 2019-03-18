@@ -36,7 +36,7 @@ import d1_common.date_time
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
-import d1_test.pycharm
+
 import d1_test.sample
 import d1_test.test_files
 
@@ -48,8 +48,9 @@ from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 import django.conf
 import django.core.management
 import django.db
-import django.db.transaction
-import django.db.utils
+
+if not 'TRAVIS' in os.environ:
+    import d1_test.pycharm
 
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
@@ -139,11 +140,9 @@ def pytest_configure(config):
     After that, the hook is called for other conftest files as they are
     imported.
     """
-    import sys
 
-    sys._running_in_pytest = True
-    # Set parameters for the sample module.
-    import d1_test.sample
+    sys.is_running_under_travis = 'TRAVIS' in os.environ
+    sys.is_running_under_pytest = True
 
     d1_test.sample.options = {
         'ask': config.getoption('--sample-ask'),
@@ -152,8 +151,10 @@ def pytest_configure(config):
     }
 
 
+# noinspection PyUnresolvedReferences
 def pytest_unconfigure(config):
-    del sys._running_in_pytest
+    del sys.is_running_under_travis
+    del sys.is_running_under_pytest
 
 
 def pytest_sessionstart(session):

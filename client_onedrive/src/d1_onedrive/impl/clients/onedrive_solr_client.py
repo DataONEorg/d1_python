@@ -26,9 +26,7 @@ import requests
 
 import d1_onedrive.impl.onedrive_exceptions
 
-import d1_common.const
 import d1_common.date_time
-import d1_common.url
 
 import d1_client.solr_client
 

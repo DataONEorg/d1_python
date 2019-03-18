@@ -20,7 +20,7 @@
 # limitations under the License.
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.checksum as checksum
+import d1_test.instance_generator.checksum
 
 # ===============================================================================
 
@@ -29,5 +29,5 @@ import d1_test.instance_generator.checksum as checksum
 class TestChecksum(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """random_checksum_algorithm(): Returns a valid checksum algorithm"""
-        algorithm_str = checksum.random_checksum_algorithm()
+        algorithm_str = d1_test.instance_generator.checksum.random_checksum_algorithm()
         self.sample.assert_equals(algorithm_str, 'inst_gen__random_checksum_algorithm')

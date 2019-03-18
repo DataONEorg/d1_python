@@ -27,15 +27,15 @@ import random
 import d1_common.checksum
 import d1_common.system_metadata
 
-import d1_test.instance_generator.access_policy as access_policy
-import d1_test.instance_generator.checksum as checksum_generator
-import d1_test.instance_generator.date_time as date_time
+import d1_test.instance_generator.access_policy
+import d1_test.instance_generator.checksum
+import d1_test.instance_generator.date_time
 import d1_test.instance_generator.format_id
-import d1_test.instance_generator.identifier as identifier
+import d1_test.instance_generator.identifier
 import d1_test.instance_generator.media_type
-import d1_test.instance_generator.random_data as random_data
+import d1_test.instance_generator.random_data
 import d1_test.instance_generator.replica
-import d1_test.instance_generator.replication_policy as replication_policy
+import d1_test.instance_generator.replication_policy
 
 
 def generate_random(client, option_dict=None, normalize=True):
@@ -53,24 +53,24 @@ def generate_random(client, option_dict=None, normalize=True):
     sysmeta_pyxb = client.pyxb_binding.systemMetadata()
     sysmeta_pyxb.serialVersion = random.randint(1, 100)
     sysmeta_pyxb.identifier = lazy_get(
-        option_dict, 'identifier', identifier.generate_pid
+        option_dict, 'identifier', d1_test.instance_generator.identifier.generate_pid
     )
     sysmeta_pyxb.formatId = lazy_get(
         option_dict, 'formatId', d1_test.instance_generator.format_id.generate
     )
     sysmeta_pyxb.size = lazy_get(option_dict, 'size', random.randint, 1, 1024 ** 4)
     sysmeta_pyxb.checksum = lazy_get(
-        option_dict, 'checksum', checksum_generator.generate
+        option_dict, 'checksum', d1_test.instance_generator.checksum.generate
     )
-    sysmeta_pyxb.submitter = lazy_get(option_dict, 'submitter', random_data.random_subj)
+    sysmeta_pyxb.submitter = lazy_get(option_dict, 'submitter', d1_test.instance_generator.random_data.random_subj)
     sysmeta_pyxb.rightsHolder = lazy_get(
-        option_dict, 'rightsHolder', random_data.random_subj
+        option_dict, 'rightsHolder', d1_test.instance_generator.random_data.random_subj
     )
     sysmeta_pyxb.accessPolicy = lazy_get(
-        option_dict, 'accessPolicy', access_policy.generate, min_rules=0
+        option_dict, 'accessPolicy', d1_test.instance_generator.access_policy.generate, min_rules=0
     )
     sysmeta_pyxb.replicationPolicy = lazy_get(
-        option_dict, 'replicationPolicy', replication_policy.generate
+        option_dict, 'replicationPolicy', d1_test.instance_generator.replication_policy.generate
     )
 
     # obsoletes
@@ -80,7 +80,7 @@ def generate_random(client, option_dict=None, normalize=True):
     sysmeta_pyxb.dateUploaded = lazy_get(
         option_dict,
         'dateUploaded',
-        date_time.reproducible_datetime,
+        d1_test.instance_generator.date_time.reproducible_datetime,
         sysmeta_pyxb.identifier.value(),
     )
     # Set dateSysMetadataModified to a fixed time after dateUploaded
@@ -89,16 +89,16 @@ def generate_random(client, option_dict=None, normalize=True):
         sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10),
     )
     sysmeta_pyxb.originMemberNode = lazy_get(
-        option_dict, 'originMemberNode', random_data.random_mn
+        option_dict, 'originMemberNode', d1_test.instance_generator.random_data.random_mn
     )
     sysmeta_pyxb.authoritativeMemberNode = lazy_get(
-        option_dict, 'authoritativeMemberNode', random_data.random_mn
+        option_dict, 'authoritativeMemberNode', d1_test.instance_generator.random_data.random_mn
     )
     sysmeta_pyxb.replica = lazy_get(
         option_dict, 'replica', d1_test.instance_generator.replica.generate
     )
     sysmeta_pyxb.seriesId = lazy_get(
-        option_dict, 'seriesId', identifier.generate_sid, probability=0.5
+        option_dict, 'seriesId', d1_test.instance_generator.identifier.generate_sid, probability=0.5
     )
     sysmeta_pyxb.mediaType = lazy_get(
         option_dict, 'mediaType', d1_test.instance_generator.media_type.generate

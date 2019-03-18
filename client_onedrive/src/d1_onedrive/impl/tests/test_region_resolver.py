@@ -22,7 +22,7 @@
 
 import tempfile
 
-import d1_onedrive.impl.resolver.region as region
+import d1_onedrive.impl.resolver.region
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -44,7 +44,7 @@ class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
         options.region_tree_max_cache_items = 1000
         with tempfile.NamedTemporaryFile(prefix='region_tree_cache') as tmp_file:
             options.region_tree_cache_path = tmp_file.name
-        self._resolver = region.Resolver(
+        self._resolver = d1_onedrive.impl.resolver.region.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

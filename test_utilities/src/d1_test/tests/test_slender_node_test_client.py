@@ -26,10 +26,8 @@ import pytest
 import d1_common.xml
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.access_policy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.sciobj
-import d1_test.instance_generator.system_metadata
 import d1_test.slender_node_test_client
 
 
