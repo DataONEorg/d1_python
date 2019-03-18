@@ -30,16 +30,12 @@ import mock
 import pytest
 import responses
 
-import d1_cli.impl.client
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
-import d1_cli.impl.operation_validator
 
 import d1_common.date_time
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes
-import d1_common.util
-import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
@@ -50,7 +46,6 @@ import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_nodes
 import d1_test.mock_api.list_objects
 
-import d1_client.cnclient
 import d1_client.mnclient
 
 

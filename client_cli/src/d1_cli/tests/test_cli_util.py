@@ -26,14 +26,12 @@ import tempfile
 import pytest
 import responses
 
-import d1_cli.impl.client
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
-import d1_cli.impl.operation_validator
 import d1_cli.impl.util
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get as mock_get
+import d1_test.mock_api.get
 
 import d1_client.mnclient_2_0
 
@@ -183,7 +181,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1160(self):
         """copy_requests_stream_to_file(): Copies Requests Response body to file when path is valid"""
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
@@ -199,7 +197,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1170(self):
         """copy_requests_stream_to_file(): Raises InvalidArguments if path is invalid"""
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )

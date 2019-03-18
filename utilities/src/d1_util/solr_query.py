@@ -33,7 +33,6 @@ import sys
 
 import d1_common.env
 
-import d1_client.mnclient
 import d1_client.solr_client
 
 

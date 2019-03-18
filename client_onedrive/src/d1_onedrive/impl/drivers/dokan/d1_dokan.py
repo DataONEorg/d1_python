@@ -36,7 +36,6 @@ import d1_onedrive.impl.drivers.dokan.const
 import d1_onedrive.impl.drivers.dokan.dokan
 import d1_onedrive.impl.onedrive_exceptions
 
-import d1_common.const
 import d1_common.date_time
 
 # Set up logger for this module.

@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test the Resource Map Resolver."""
 
-import d1_onedrive.impl.resolver.resource_map as resource_map
+import d1_onedrive.impl.resolver.resource_map
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -30,7 +30,7 @@ options = {}
 
 class TestResourceMapResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
-        self._resolver = resource_map.Resolver(
+        self._resolver = d1_onedrive.impl.resolver.resource_map.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

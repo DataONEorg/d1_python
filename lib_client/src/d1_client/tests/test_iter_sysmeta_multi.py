@@ -26,11 +26,10 @@ import d1_common.date_time
 import d1_common.xml
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get_system_metadata as mock_get_system_metadata
-import d1_test.mock_api.list_objects as mock_list_objects
+import d1_test.mock_api.get_system_metadata
+import d1_test.mock_api.list_objects
 
 import d1_client.iter.sysmeta_multi
-import d1_client.mnclient
 
 N_TOTAL = 50
 
@@ -75,10 +74,10 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1000(self, page_size, n_workers, from_date, to_date):
-        mock_list_objects.add_callback(
+        d1_test.mock_api.list_objects.add_callback(
             d1_test.d1_test_case.MOCK_MN_BASE_URL, n_total=N_TOTAL
         )
-        mock_get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
         sysmeta_pyxb_list = []
         # with freezegun.freeze_time('1977-07-27') as freeze_time:

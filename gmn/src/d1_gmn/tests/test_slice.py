@@ -26,15 +26,12 @@ import random
 
 import responses
 
-import d1_gmn.app.models
-import d1_gmn.app.util
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_common.xml
 
 import d1_test.d1_test_case
-import d1_test.sample
 
 import django.test
 

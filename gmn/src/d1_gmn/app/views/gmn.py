@@ -19,11 +19,8 @@
 # limitations under the License.
 """Views for vendor specific extensions for GMN."""
 
-import d1_gmn.app.sysmeta
 import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.decorators
-import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
 
 import d1_common
@@ -32,7 +29,6 @@ import d1_common.types.exceptions
 import d1_common.util
 
 import django.http
-import django.shortcuts
 
 SYSMETA_TO_MODEL_LIST = [
     ('identifier', 'pid__did'),

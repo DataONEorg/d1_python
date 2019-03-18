@@ -23,13 +23,11 @@
 import logging
 import os
 import sys
-import urllib.error
 import urllib.parse
-import urllib.request
 
 import OpenSSL
 
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 # Get an instance of a logger.
 logger = logging.getLogger()
@@ -204,19 +202,19 @@ def create_session_extension(subject, persons, groups):
     :return type: X509Extension
     """
 
-    subject_list = dataoneTypes.SubjectList()
+    subject_list = d1_common.types.dataoneTypes.SubjectList()
     for person in persons:
-        person_pyxb = dataoneTypes.Person()
+        person_pyxb = d1_common.types.dataoneTypes.Person()
         person_pyxb.subject = person
         person_pyxb.givenName = ['given']
         person_pyxb.familyName = 'family'
         person_pyxb.email = ['email@email.com']
         subject_list.person.append(person_pyxb)
     for group in groups:
-        group_pyxb = dataoneTypes.Group()
+        group_pyxb = d1_common.types.dataoneTypes.Group()
         group_pyxb.subject = group
         group_pyxb.groupName = 'groupname'
-    session = dataoneTypes.Session()
+    session = d1_common.types.dataoneTypes.Session()
     session.subject = subject
     session.subjectList = subject_list
 

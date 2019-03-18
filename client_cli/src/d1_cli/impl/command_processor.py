@@ -40,7 +40,6 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.url
-import d1_common.util
 import d1_common.xml
 
 DEFAULT_PREFIX = ""

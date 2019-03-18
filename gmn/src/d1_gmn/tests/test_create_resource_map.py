@@ -19,24 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNStorage.create() and MNStorage.update() with Resource Map."""
-import io
 import logging
 
 import pytest
 import responses
 
 import d1_gmn.app.resource_map
-import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
-import d1_common.const
-import d1_common.resource_map
 import d1_common.types
 import d1_common.types.exceptions
 
-import d1_test.instance_generator.identifier as identifier
-import d1_test.instance_generator.random_data as random_data
-import d1_test.instance_generator.system_metadata as sysmeta
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.system_metadata
 
 import django.test
 
@@ -73,7 +69,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """MNStorage.create(): "block" mode: Creating a resource map before
     creating its aggregated objects raises InvalidRequest
     """
-        pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
+        pid_list = [d1_test.instance_generator.identifier.generate_pid('PID_AGGR_') for _ in range(10)]
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             self.create_resource_map(gmn_client_v2, pid_list)
 
@@ -94,7 +90,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """MNStorage.create(): "open" mode: Creating a resource map before
     creating its aggregated objects is supported
     """
-        pid_list = [identifier.generate_pid('PID_AGGR_') for _ in range(10)]
+        pid_list = [d1_test.instance_generator.identifier.generate_pid('PID_AGGR_') for _ in range(10)]
         ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
         member_list = d1_gmn.app.resource_map.get_resource_map_members_by_map(ore_pid)
         assert sorted(pid_list) == sorted(member_list)
@@ -110,20 +106,20 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     - Maps created both before and after their aggregated PIDs
     - Some maps containing references to themselves
     """
-        avail_pid_set = [identifier.generate_pid() for _ in range(NUM_CREATE)]
+        avail_pid_set = [d1_test.instance_generator.identifier.generate_pid() for _ in range(NUM_CREATE)]
         uncreated_pid_set = avail_pid_set[:]
 
         while True:
-            pid = random_data.random_choice_pop(uncreated_pid_set)
-            aggr_list = random_data.random_sized_sample(
+            pid = d1_test.instance_generator.random_data.random_choice_pop(uncreated_pid_set)
+            aggr_list = d1_test.instance_generator.random_data.random_sized_sample(
                 avail_pid_set, 2, max_size=MAX_AGGR_SIZE
             )
             if not uncreated_pid_set or not aggr_list:
                 break
-            random_data.random_sized_sample_pop(
+            d1_test.instance_generator.random_data.random_sized_sample_pop(
                 avail_pid_set, 0, max_size=MAX_REDUCE_SIZE
             )
-            is_ore = random_data.random_bool_factor(MAP_CHANCE)
+            is_ore = d1_test.instance_generator.random_data.random_bool_factor(MAP_CHANCE)
             if is_ore:
                 self.create_resource_map(gmn_client_v1_v2, aggr_list, pid)
             else:

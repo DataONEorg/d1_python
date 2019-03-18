@@ -34,7 +34,6 @@ import context
 import test_client
 import test_utilities
 
-import d1_common.const
 import d1_common.types.exceptions
 
 import d1_test_case

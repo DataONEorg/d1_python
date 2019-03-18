@@ -25,12 +25,8 @@ import urllib.parse
 
 import pytest
 import rdflib
-import rdflib.compare
 
 import d1_common.resource_map
-import d1_common.type_conversions
-import d1_common.util
-import d1_common.xml
 
 import d1_test.d1_test_case
 

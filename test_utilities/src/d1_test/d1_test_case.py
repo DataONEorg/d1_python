@@ -19,18 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for unit- and integration tests."""
-import codecs
 import collections
 import contextlib
 import datetime
 import gc
 import inspect
 import io
-import json
 import logging
 import os
 import random
-import re
 import resource
 import sys
 import tempfile
@@ -42,7 +39,6 @@ import mock
 import psutil
 import psycopg2
 import pyxb
-import pyxb.binding.basis
 
 import d1_common
 import d1_common.cert.x509
@@ -51,11 +47,8 @@ import d1_common.date_time
 import d1_common.types
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
-import d1_common.util
 import d1_common.xml
 
-import d1_test.instance_generator.date_time
-import d1_test.instance_generator.system_metadata
 import d1_test.sample
 import d1_test.test_files
 

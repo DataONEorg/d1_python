@@ -24,15 +24,10 @@ import logging
 import re
 import xml.dom
 import xml.dom.minidom
-import xml.etree.ElementTree
-import xml.parsers.expat
 import xml.sax
 
 import pyxb
-import pyxb.binding.basis
-import pyxb.binding.datatypes
 
-import d1_common.date_time
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 from d1_common.type_conversions import str_to_etree

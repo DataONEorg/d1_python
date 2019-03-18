@@ -24,7 +24,6 @@ import pytest
 import d1_gmn.tests.gmn_test_case
 
 import django.core.management
-import django.utils.six
 
 
 class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):

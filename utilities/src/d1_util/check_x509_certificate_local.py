@@ -43,10 +43,8 @@ import requests
 import requests.packages.urllib3
 
 import d1_common.util
-import d1_common.xml
 import d1_common.cert.x509
 import d1_common.cert.subject_info
-import d1_common.env
 
 
 def main():

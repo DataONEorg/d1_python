@@ -30,14 +30,12 @@ import logging
 import optparse
 import os.path
 import sys
-import urllib.error
-import urllib.parse
 import urllib.request
 
 import d1_common.date_time
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
-import d1_test.instance_generator.system_metadata as system_metadata
+import d1_test.instance_generator.system_metadata
 
 # import lxml
 
@@ -51,7 +49,7 @@ def getObjectFormatFromID(fmtid, default='application/octet-stream'):
         'main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml'
     )
     doc = urllib.request.urlopen(formatlistURL).read().decode('utf-8')
-    formats = dataoneTypes.CreateFromDocument(doc)
+    formats = d1_common.types.dataoneTypes.CreateFromDocument(doc)
     for format in formats.objectFormat:
         if format.formatId == fmtid:
             logging.info("Found format for %s" % fmtid)
@@ -75,7 +73,7 @@ def processDoc(fname, options={}):
         "command:: generate_sysmeta.py %s\n"
         % (tnow, repr(sys.argv[1:]), " ".join(sys.argv[1:]))
     )
-    sysm = system_metadata.generate_from_file_path(fname, options)
+    sysm = d1_test.instance_generator.system_metadata.generate_from_file_path(fname, options)
     root = lxml.etree.fromstring(sysm.toxml('utf-8'))
     root.insert(0, comment)
     pxml = lxml.etree.tostring(
@@ -181,7 +179,7 @@ if __name__ == '__main__':
     oopts['originMemberNode'] = options.originMemberNode
     oopts['authoritativeMemberNode'] = options.originMemberNode
 
-    defrepl = dataoneTypes.ReplicationPolicy()
+    defrepl = d1_common.types.dataoneTypes.ReplicationPolicy()
     if options.numberReplicas == 0:
         defrepl.replicationAllowed = False
     else:
@@ -189,13 +187,13 @@ if __name__ == '__main__':
         defrepl.numberReplicas = options.numberReplicas
     oopts['replicationPolicy'] = defrepl
 
-    defap = dataoneTypes.AccessPolicy()
-    ar = dataoneTypes.AccessRule()
-    ar.permission = [dataoneTypes.Permission.read]
+    defap = d1_common.types.dataoneTypes.AccessPolicy()
+    ar = d1_common.types.dataoneTypes.AccessRule()
+    ar.permission = [d1_common.types.dataoneTypes.Permission.read]
     ar.subject = ["public"]
     defap.allow = [ar]
-    ar = dataoneTypes.AccessRule()
-    ar.permission = [dataoneTypes.Permission.write]
+    ar = d1_common.types.dataoneTypes.AccessRule()
+    ar.permission = [d1_common.types.dataoneTypes.Permission.write]
     ar.subject = [oopts['submitter']]
     defap.allow.append(ar)
     oopts['accessPolicy'] = defap

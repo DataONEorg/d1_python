@@ -20,7 +20,6 @@
 """Generate Node document based on the current settings for GMN."""
 
 import d1_common.type_conversions
-import d1_common.util
 import d1_common.xml
 
 import django.conf

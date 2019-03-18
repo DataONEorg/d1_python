@@ -25,7 +25,6 @@ Fast retrieval of ObjectInfo from a DataONE Node.
 import asyncio
 import logging
 
-import d1_common.const
 import d1_common.types.exceptions
 
 DEFAULT_OBJECT_LIST_PAGE_SIZE = 1000

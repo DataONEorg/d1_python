@@ -26,7 +26,6 @@ import pytest
 
 import d1_common.cert.jwt
 import d1_common.cert.x509
-import d1_common.util
 
 import d1_test.d1_test_case
 

@@ -29,8 +29,6 @@ import d1_gmn.app.models
 import d1_gmn.app.node_registry
 
 import d1_common.cert.subjects
-import d1_common.const
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
 import django.conf

@@ -22,7 +22,6 @@ import datetime
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
-import d1_test.sample
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSample')

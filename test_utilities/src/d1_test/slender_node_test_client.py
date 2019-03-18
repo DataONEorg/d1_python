@@ -21,7 +21,6 @@ import atexit
 import io
 import json
 import os
-import shutil
 import urllib.parse
 
 import d1_common
@@ -29,7 +28,6 @@ import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.util
 import d1_common.xml
 
 DEFAULT_SCIOBJ_STORE_PATH = "./sciobj_store"

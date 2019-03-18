@@ -41,7 +41,7 @@ import pip
 
 import d1_dev.util
 
-import d1_common.iter.file as file_iterator
+import d1_common.iter.file
 import d1_common.util
 
 
@@ -82,7 +82,7 @@ def main():
 
 def find_pkg_names(args):
     dep_set = set()
-    for module_path in file_iterator.dir_iter(
+    for module_path in d1_common.iter.file.dir_iter(
         path_list=args.path,
         include_glob_list=['*.py'],
         exclude_glob_list=args.exclude,

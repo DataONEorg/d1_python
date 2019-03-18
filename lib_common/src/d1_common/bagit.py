@@ -30,9 +30,7 @@ See Also:
 import logging
 import os
 import re
-import urllib.error
 import urllib.parse
-import urllib.request
 import zipfile
 
 import zipstream
@@ -40,7 +38,6 @@ import zipstream
 import d1_common.checksum
 import d1_common.date_time
 import d1_common.iter.bytes
-import d1_common.iter.file
 import d1_common.types.exceptions
 
 BAGIT_MAJOR_INT = 0

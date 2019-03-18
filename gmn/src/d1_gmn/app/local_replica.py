@@ -21,8 +21,6 @@
 
 import d1_gmn.app.models
 
-import d1_common.checksum
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.wrap.access_policy
 import d1_common.xml

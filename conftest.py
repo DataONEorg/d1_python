@@ -48,8 +48,6 @@ from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 import django.conf
 import django.core.management
 import django.db
-#!# import django.db.transaction
-#!# import django.db.utils
 
 if not 'TRAVIS' in os.environ:
     import d1_test.pycharm

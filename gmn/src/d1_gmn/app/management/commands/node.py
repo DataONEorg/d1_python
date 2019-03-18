@@ -38,8 +38,7 @@ must be used.
 import argparse
 
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
-import d1_gmn.app.models
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.node
 
 import d1_common.types.exceptions
@@ -66,7 +65,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
@@ -86,7 +85,7 @@ class Command(django.core.management.base.BaseCommand):
             assert False
 
     def _register(self, node_pyxb):
-        util.abort_if_stand_alone_instance()
+        d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         client = self._create_client()
         success_bool = client.register(node_pyxb)
         if not success_bool:
@@ -95,7 +94,7 @@ class Command(django.core.management.base.BaseCommand):
             )
 
     def _update(self, node_pyxb):
-        util.abort_if_stand_alone_instance()
+        d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         client = self._create_client()
         success_bool = client.updateNodeCapabilities(
             django.conf.settings.NODE_IDENTIFIER, node_pyxb

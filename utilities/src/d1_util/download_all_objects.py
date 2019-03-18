@@ -66,17 +66,13 @@ import logging
 import os
 import shutil
 import sys
-import urllib.error
 import urllib.parse
-import urllib.request
 
 import d1_common.const
 import d1_common.env
-import d1_common.resource_map
 import d1_common.types.exceptions
 
 import d1_client.cnclient
-import d1_client.mnclient
 
 # Config
 

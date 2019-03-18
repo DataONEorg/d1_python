@@ -35,19 +35,17 @@ import logging
 import time
 
 import d1_gmn.app.did
-import d1_gmn.app.management.commands.util.util as util
-import d1_gmn.app.util
+import d1_gmn.app.management.commands.util.util
 
 import d1_common.util
 
-import django.conf
 import django.core.management.base
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._db = util.Db()
+        self._db = d1_gmn.app.management.commands.util.util.Db()
         self._events = d1_common.util.EventCounter()
 
     def add_arguments(self, parser):
@@ -56,10 +54,10 @@ class Command(django.core.management.base.BaseCommand):
         parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     def handle(self, *args, **opt):
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info("test")
         logging.info("Running management command: {}".format(__name__))
-        util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
         self._opt = opt
         try:
             # profiler = profile.Profile()
@@ -81,7 +79,7 @@ class Command(django.core.management.base.BaseCommand):
             d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
         ):
             self.stdout.write(
-                util.format_progress(
+                d1_gmn.app.management.commands.util.util.format_progress(
                     self._events,
                     "Writing revision chains",
                     i,

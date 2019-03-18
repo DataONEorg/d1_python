@@ -19,7 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import d1_common.wrap.simple_xml
 import d1_common.xml
 
 import d1_test.d1_test_case

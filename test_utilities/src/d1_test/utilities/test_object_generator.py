@@ -23,8 +23,8 @@ import string
 
 import d1_common.checksum
 import d1_common.const
-import d1_common.types.dataoneTypes_v1 as v1
-import d1_common.types.dataoneTypes_v2_0 as v2
+import d1_common.types.dataoneTypes_v1
+import d1_common.types.dataoneTypes_v2_0
 
 import d1_test.instance_generator
 import d1_test.instance_generator.random_data

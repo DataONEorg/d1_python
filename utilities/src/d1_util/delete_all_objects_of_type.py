@@ -64,11 +64,8 @@ import sys
 
 import d1_common.const
 import d1_common.env
-import d1_common.resource_map
 import d1_common.types.exceptions
 
-import d1_client.cnclient
-import d1_client.mnclient
 
 # Config
 

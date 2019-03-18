@@ -30,7 +30,6 @@ from . import settings
 from . import subject_dn
 
 import d1_common.const
-import d1_common.util
 
 import d1_client.mnclient
 

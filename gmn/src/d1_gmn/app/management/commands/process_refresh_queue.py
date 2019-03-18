@@ -27,10 +27,9 @@ parser.formatter_class = argparse.RawDescriptionHelpFormatter
 import argparse
 import logging
 
-import d1_gmn.app.auth
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 
@@ -58,14 +57,14 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info(
             "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
-        util.exit_if_other_instance_is_running(__name__)
-        util.abort_if_stand_alone_instance()
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:

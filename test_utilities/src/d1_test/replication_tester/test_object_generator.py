@@ -22,7 +22,7 @@ import string
 
 import d1_common.checksum
 import d1_common.const
-import d1_common.types.dataoneTypes_v1 as dataoneTypes
+import d1_common.types.dataoneTypes_v1
 
 import d1_test.instance_generator.random_data
 
@@ -71,7 +71,7 @@ def _generate_system_metadata_for_science_object(
 ):
     now = d1_common.date_time.utc_now()
 
-    sysmeta_pyxb = dataoneTypes.systemMetadata()
+    sysmeta_pyxb = d1_common.types.dataoneTypes_v1.systemMetadata()
     sysmeta_pyxb.accessPolicy = _generate_public_access_policy()
     sysmeta_pyxb.checksum = d1_common.checksum.create_checksum_object_from_bytes(
         sciobj_bytes
@@ -93,10 +93,10 @@ def _generate_system_metadata_for_science_object(
 
 
 def _generate_public_access_policy():
-    access_policy_pyxb = dataoneTypes.accessPolicy()
-    access_rule_pyxb = dataoneTypes.AccessRule()
+    access_policy_pyxb = d1_common.types.dataoneTypes_v1.accessPolicy()
+    access_rule_pyxb = d1_common.types.dataoneTypes_v1.AccessRule()
     access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission_pyxb = dataoneTypes.Permission('read')
+    permission_pyxb = d1_common.types.dataoneTypes_v1.Permission('read')
     access_rule_pyxb.permission.append(permission_pyxb)
     access_policy_pyxb.append(access_rule_pyxb)
     return access_policy_pyxb

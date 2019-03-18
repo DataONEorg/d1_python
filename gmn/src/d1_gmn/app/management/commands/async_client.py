@@ -25,7 +25,6 @@ import ssl
 
 import aiohttp
 
-import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions

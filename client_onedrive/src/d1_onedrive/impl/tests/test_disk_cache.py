@@ -30,7 +30,7 @@ import time
 import contextlib2
 import pytest
 
-import d1_onedrive.impl.disk_cache as disk_cache
+import d1_onedrive.impl.disk_cache
 
 import d1_test.d1_test_case
 
@@ -41,7 +41,7 @@ log = logging.getLogger(__name__)
 def dc(max_items=3):
     tmp_dir_path = tempfile.mkdtemp(prefix='test_disk_cache')
     try:
-        yield disk_cache.DiskCache(
+        yield d1_onedrive.impl.disk_cache.DiskCache(
             max_items=max_items, cache_directory_path=tmp_dir_path
         )
     finally:

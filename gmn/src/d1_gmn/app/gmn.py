@@ -34,7 +34,6 @@ import random
 import string
 
 import d1_gmn.app.sciobj_store
-import d1_gmn.app.util
 
 import django.apps
 import django.conf

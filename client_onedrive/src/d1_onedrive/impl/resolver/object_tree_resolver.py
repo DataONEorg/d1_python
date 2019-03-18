@@ -31,12 +31,9 @@ import d1_onedrive.impl
 import d1_onedrive.impl.onedrive_exceptions
 import d1_onedrive.impl.resolver
 import d1_onedrive.impl.resolver.author
-import d1_onedrive.impl.resolver.d1_object
-import d1_onedrive.impl.resolver.flat_space
 import d1_onedrive.impl.resolver.region
 import d1_onedrive.impl.resolver.resolver_base
 import d1_onedrive.impl.resolver.resource_map
-import d1_onedrive.impl.resolver.root
 import d1_onedrive.impl.resolver.single
 import d1_onedrive.impl.resolver.taxa
 import d1_onedrive.impl.resolver.time_period

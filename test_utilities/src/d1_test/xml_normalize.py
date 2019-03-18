@@ -61,7 +61,6 @@ stepping up from a completed level.
 """
 import io
 
-import d1_common.date_time
 import d1_common.type_conversions
 
 

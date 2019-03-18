@@ -28,41 +28,39 @@ import requests
 import responses
 
 import d1_common.logging_context
-import d1_common.types.exceptions
-import d1_common.util
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get as mock_get
-import d1_test.mock_api.post as mock_post
+import d1_test.mock_api.get
+import d1_test.mock_api.post
 import d1_test.sample
 
-import d1_client.session as session
+import d1_client.session
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSession')
 @freezegun.freeze_time('1945-01-02')
 class TestSession(d1_test.d1_test_case.D1TestCase):
     def _get_hash(self, pid):
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         response = s.GET(['object', pid])
         return hashlib.sha1(response.content).hexdigest()
 
     def _get_response(self, pid, header_dict=None):
-        mock_get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         return s.GET(['object', pid], headers=header_dict or {})
 
     def _post(self, query_dict, header_dict, body):
-        mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        s = session.Session(
+        d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(
             d1_test.d1_test_case.MOCK_MN_BASE_URL, query={'default_query': 'test'}
         )
         return s.POST(['post'], query=query_dict, headers=header_dict, data=body)
 
     def _post_fields(self, fields_dict):
-        mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         return s.POST(['post'], fields=fields_dict)
 
     @responses.activate
@@ -104,7 +102,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     def test_1030(self):
         """HTTP GET against http://some.bogus.address/ raises
         ConnectionError."""
-        s = session.Session('http://some.bogus.address')
+        s = d1_client.session.Session('http://some.bogus.address')
         logger = logging.getLogger()
         with d1_common.logging_context.LoggingContext(logger):
             logger.setLevel(logging.ERROR)
@@ -125,7 +123,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     def test_1050(self):
         """Query params passed to Session() and individual POST are correctly
         combined."""
-        mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         body_bytes = b'test_body'
         query_dict = {'abcd': '1234', 'efgh': '5678'}
         header_dict = {'ijkl': '9876', 'mnop': '5432'}
@@ -146,7 +144,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         """cURL command line retains query parameters and headers."""
         query_dict = {'abcd': '1234', 'efgh': '5678'}
         header_dict = {'ijkl': '9876', 'mnop': '5432'}
-        s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         curl_str = s.get_curl_command_line(
             'POST', 'http://some.bogus.address', query=query_dict, headers=header_dict
         )
