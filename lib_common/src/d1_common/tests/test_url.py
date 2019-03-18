@@ -19,12 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 
 import d1_common.url
 
 import d1_test.d1_test_case
-import d1_test.sample
 import d1_test.test_files
 
 # HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))

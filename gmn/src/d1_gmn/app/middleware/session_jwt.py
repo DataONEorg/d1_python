@@ -26,7 +26,6 @@ import ssl
 
 import d1_common.cert.jwt
 import d1_common.cert.x509
-import d1_common.date_time
 
 import django.conf
 import django.core.cache

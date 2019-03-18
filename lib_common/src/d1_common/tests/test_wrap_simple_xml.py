@@ -20,87 +20,86 @@
 """Test the SimpleXML context manager."""
 
 import datetime
-import xml.etree.ElementTree as ET
 
 import pytest
 
 import d1_common.date_time
-import d1_common.types.dataoneTypes
 import d1_common.wrap.simple_xml
-import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.sample
 import d1_test.test_files
+import d1_common.wrap.simple_xml
+import xml.etree.ElementTree
 
 
 class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
         self.sysmeta_xml = d1_test.test_files.load_xml_to_str(
-            'systemMetadata_v2_0.tz_non_utc.xml'
+            "systemMetadata_v2_0.tz_non_utc.xml"
         )
 
     def test_1000(self):
         """get_xml()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            d1_test.sample.assert_equals(xml.get_xml(), 'get_xml')
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            d1_test.sample.assert_equals(xml_wrapper.get_xml(), "get_xml")
 
     def test_1010(self):
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             """get_xml_below_element()"""
             d1_test.sample.assert_equals(
-                xml.get_xml_below_element('accessPolicy'), 'get_xml_below_element'
+                xml_wrapper.get_xml_below_element("accessPolicy"), "get_xml_below_element"
             )
 
     def test_1020(self):
         """get_element_list_by_attr_key()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             assert [
-                el.tag for el in xml.get_element_list_by_attr_key('replicationAllowed')
-            ] == ['replicationPolicy']
+                el.tag for el in xml_wrapper.get_element_list_by_attr_key("replicationAllowed")
+            ] == ["replicationPolicy"]
 
     def test_1030(self):
-        """get_element_by_attr_key(): Valid selection returns element"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
+        """get_element_by_attr_key(): Valid selection returns element."""
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             assert (
-                xml.get_element_by_attr_key('replicationAllowed').tag
-                == 'replicationPolicy'
+                xml_wrapper.get_element_by_attr_key("replicationAllowed").tag
+                == "replicationPolicy"
             )
 
     def test_1040(self):
         """get_element_by_attr_key(): Non-existing element raises
-    SimpleXMLWrapperException"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
+        SimpleXMLWrapperException."""
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             with pytest.raises(d1_common.wrap.simple_xml.SimpleXMLWrapperException):
-                xml.get_element_by_attr_key('replicationAllowed', 100)
+                xml_wrapper.get_element_by_attr_key("replicationAllowed", 100)
 
     def test_1050(self):
-        """get_element_text(): Returns XML element text, root child"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            assert xml.get_element_text('rightsHolder') == 'test_rights_holder'
+        """get_element_text(): Returns XML element text, root child."""
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            assert xml_wrapper.get_element_text("rightsHolder") == "test_rights_holder"
 
     def test_1060(self):
-        """get_element_text(): Returns XML element text, nested"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            assert xml.get_element_text('preferredMemberNode', 2) == 'node2'
+        """get_element_text(): Returns XML element text, nested."""
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            assert xml_wrapper.get_element_text("preferredMemberNode", 2) == "node2"
 
     def test_1070(self):
         """get_element_text(): Non-existing element raises
-    SimpleXMLWrapperException"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
+        SimpleXMLWrapperException."""
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             with pytest.raises(d1_common.wrap.simple_xml.SimpleXMLWrapperException):
-                xml.get_element_text('preferredMemberNode', 3)
+                xml_wrapper.get_element_text("preferredMemberNode", 3)
 
     def test_1080(self):
         """set_element_text()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            xml.set_element_text('preferredMemberNode', '__preferredMemberNode__2__', 2)
-            d1_test.sample.assert_equals(xml.get_xml(), 'set_element_text')
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            xml_wrapper.set_element_text("preferredMemberNode", "__preferredMemberNode__2__", 2)
+            d1_test.sample.assert_equals(xml_wrapper.get_xml(), "set_element_text")
 
     def test_1090(self):
         """get_element_dt()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            dt = xml.get_element_dt('dateUploaded')
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            dt = xml_wrapper.get_element_dt("dateUploaded")
             d1_common.date_time.are_equal(
                 dt,
                 datetime.datetime(
@@ -112,7 +111,7 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
                     13,
                     333300,
                     tzinfo=d1_common.date_time.FixedOffset(
-                        '-11:33', offset_hours=-11, offset_minutes=33
+                        "-11:33", offset_hours=-11, offset_minutes=33
                     ),
                 ),
             )
@@ -120,9 +119,9 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
 
     def test_1100(self):
         """set_element_dt()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            xml.set_element_dt(
-                'dateUploaded',
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            xml_wrapper.set_element_dt(
+                "dateUploaded",
                 datetime.datetime(
                     1911,
                     2,
@@ -132,53 +131,53 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
                     6,
                     7890,
                     tzinfo=d1_common.date_time.FixedOffset(
-                        '-2:30', offset_hours=-2, offset_minutes=30
+                        "-2:30", offset_hours=-2, offset_minutes=30
                     ),
                 ),
             )
             assert (
-                xml.get_element_text('dateUploaded')
-                == '1911-02-03T04:05:06.007890-01:30'
+                xml_wrapper.get_element_text("dateUploaded")
+                == "1911-02-03T04:05:06.007890-01:30"
             )
 
     def test_1110(self):
         """remove_children()"""
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            assert xml.get_element_list_by_name('preferredMemberNode')
-            assert xml.get_element_list_by_name('blockedMemberNode')
-            xml.remove_children('replicationPolicy')
-            d1_test.sample.assert_equals(xml.get_xml(), 'remove_children')
-            assert not xml.get_element_list_by_name('preferredMemberNode')
-            assert not xml.get_element_list_by_name('blockedMemberNode')
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            assert xml_wrapper.get_element_list_by_name("preferredMemberNode")
+            assert xml_wrapper.get_element_list_by_name("blockedMemberNode")
+            xml_wrapper.remove_children("replicationPolicy")
+            d1_test.sample.assert_equals(xml_wrapper.get_xml(), "remove_children")
+            assert not xml_wrapper.get_element_list_by_name("preferredMemberNode")
+            assert not xml_wrapper.get_element_list_by_name("blockedMemberNode")
 
     def test_1120(self):
         """replace_by_etree()"""
-        new_replication_policy_el = ET.fromstring(
-            '''
-    <replicationPolicy a="b" c="d">
-      <preferredMemberNode>new_preferred</preferredMemberNode>
-      <blockedMemberNode>new_blocked</blockedMemberNode>
-    </replicationPolicy>
-    '''
-        )
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            xml.replace_by_etree(new_replication_policy_el)
-            assert len(xml.get_element_list_by_name('preferredMemberNode')) == 1
-            assert len(xml.get_element_list_by_name('blockedMemberNode')) == 1
-            assert xml.get_element_by_name('replicationPolicy').attrib['a'] == 'b'
-            assert xml.get_element_by_name('replicationPolicy').attrib['c'] == 'd'
-            d1_test.sample.assert_equals(xml.get_xml(), 'replace_by_etree')
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            new_replication_policy_el = xml.etree.ElementTree.fromstring(
+            """
+                <replicationPolicy a="b" c="d">
+                  <preferredMemberNode>new_preferred</preferredMemberNode>
+                  <blockedMemberNode>new_blocked</blockedMemberNode>
+                </replicationPolicy>
+            """
+            )
+            xml_wrapper.replace_by_etree(new_replication_policy_el)
+            assert len(xml_wrapper.get_element_list_by_name("preferredMemberNode")) == 1
+            assert len(xml_wrapper.get_element_list_by_name("blockedMemberNode")) == 1
+            assert xml_wrapper.get_element_by_name("replicationPolicy").attrib["a"] == "b"
+            assert xml_wrapper.get_element_by_name("replicationPolicy").attrib["c"] == "d"
+            d1_test.sample.assert_equals(xml_wrapper.get_xml(), "replace_by_etree")
 
     def test_1130(self):
         """replace_by_xml()"""
-        new_replication_policy_xml = '''
-    <replicationPolicy a="b" c="d">
-      <preferredMemberNode>new_preferred</preferredMemberNode>
-      <blockedMemberNode>new_blocked</blockedMemberNode>
-    </replicationPolicy>
-    '''
-        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml:
-            xml.replace_by_xml(new_replication_policy_xml)
-            assert len(xml.get_element_list_by_name('preferredMemberNode')) == 1
-            assert len(xml.get_element_list_by_name('blockedMemberNode')) == 1
-            d1_test.sample.assert_equals(xml.get_xml(), 'replace_by_xml')
+        new_replication_policy_xml = """
+            <replicationPolicy a="b" c="d">
+                <preferredMemberNode>new_preferred</preferredMemberNode>
+                <blockedMemberNode>new_blocked</blockedMemberNode>
+            </replicationPolicy>
+        """
+        with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
+            xml_wrapper.replace_by_xml(new_replication_policy_xml)
+            assert len(xml_wrapper.get_element_list_by_name("preferredMemberNode")) == 1
+            assert len(xml_wrapper.get_element_list_by_name("blockedMemberNode")) == 1
+            d1_test.sample.assert_equals(xml_wrapper.get_xml(), "replace_by_xml")

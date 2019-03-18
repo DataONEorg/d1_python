@@ -14,7 +14,7 @@ import pyxb.binding
 import pyxb.binding.datatypes
 import pyxb.binding.saxer
 import pyxb.utils.domutils
-import pyxb.utils.six as _six
+import pyxb.utils.six
 import pyxb.utils.utility
 
 # Unique identifier for bindings created at the same time
@@ -69,7 +69,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
     )
     handler = saxer.getContentHandler()
     xmld = xml_text
-    if isinstance(xmld, _six.text_type):
+    if isinstance(xmld, pyxb.utils.six.text_type):
         xmld = xmld.encode(pyxb._InputEncoding)
     saxer.parse(io.BytesIO(xmld))
     instance = handler.rootObject()
@@ -4288,7 +4288,7 @@ def _BuildAutomaton():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton
     del _BuildAutomaton
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -4301,7 +4301,7 @@ def _BuildAutomaton():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -4309,9 +4309,9 @@ def _BuildAutomaton():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 AccessPolicy._Automaton = _BuildAutomaton()
@@ -4348,7 +4348,7 @@ def _BuildAutomaton_():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_
     del _BuildAutomaton_
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -4361,7 +4361,7 @@ def _BuildAutomaton_():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -4377,7 +4377,7 @@ def _BuildAutomaton_():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4385,13 +4385,13 @@ def _BuildAutomaton_():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 AccessRule._Automaton = _BuildAutomaton_()
@@ -4415,7 +4415,7 @@ def _BuildAutomaton_2():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_2
     del _BuildAutomaton_2
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -4430,7 +4430,7 @@ def _BuildAutomaton_2():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -4438,9 +4438,9 @@ def _BuildAutomaton_2():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ChecksumAlgorithmList._Automaton = _BuildAutomaton_2()
@@ -4507,10 +4507,10 @@ def _BuildAutomaton_3():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_3
     del _BuildAutomaton_3
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -4530,7 +4530,7 @@ def _BuildAutomaton_3():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -4546,7 +4546,7 @@ def _BuildAutomaton_3():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4562,7 +4562,7 @@ def _BuildAutomaton_3():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4578,7 +4578,7 @@ def _BuildAutomaton_3():
             4,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4586,20 +4586,20 @@ def _BuildAutomaton_3():
     )
     states.append(st_3)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_3._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Group._Automaton = _BuildAutomaton_3()
@@ -4722,7 +4722,7 @@ def _BuildAutomaton_4():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_4
     del _BuildAutomaton_4
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -4735,7 +4735,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -4751,7 +4751,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4767,7 +4767,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4783,7 +4783,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4799,7 +4799,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4815,7 +4815,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_5 = fac.State(
+    st_5 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4831,7 +4831,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_6 = fac.State(
+    st_6 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4847,7 +4847,7 @@ def _BuildAutomaton_4():
             6,
         ),
     )
-    st_7 = fac.State(
+    st_7 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -4855,29 +4855,29 @@ def _BuildAutomaton_4():
     )
     states.append(st_7)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_5, []))
+    transitions.append(pyxb.utils.fac.Transition(st_5, []))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_6, []))
+    transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_7, []))
+    transitions.append(pyxb.utils.fac.Transition(st_7, []))
     st_6._set_transitionSet(transitions)
     transitions = []
     st_7._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 LogEntry._Automaton = _BuildAutomaton_4()
@@ -4944,10 +4944,10 @@ def _BuildAutomaton_5():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_5
     del _BuildAutomaton_5
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -4957,7 +4957,7 @@ def _BuildAutomaton_5():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -4967,7 +4967,7 @@ def _BuildAutomaton_5():
         ),
     )
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(
+    cc_2 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -4977,7 +4977,7 @@ def _BuildAutomaton_5():
         ),
     )
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(
+    cc_3 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -4989,7 +4989,7 @@ def _BuildAutomaton_5():
     counters.add(cc_3)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         NodeReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'maxObjectSize')
@@ -5000,7 +5000,7 @@ def _BuildAutomaton_5():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5008,7 +5008,7 @@ def _BuildAutomaton_5():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         NodeReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'spaceAllocated')
@@ -5019,7 +5019,7 @@ def _BuildAutomaton_5():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5027,7 +5027,7 @@ def _BuildAutomaton_5():
     )
     states.append(st_1)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_2, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_2, False))
     symbol = pyxb.binding.content.ElementUse(
         NodeReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'allowedNode')
@@ -5038,7 +5038,7 @@ def _BuildAutomaton_5():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5046,7 +5046,7 @@ def _BuildAutomaton_5():
     )
     states.append(st_2)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_3, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_3, False))
     symbol = pyxb.binding.content.ElementUse(
         NodeReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'allowedObjectFormat')
@@ -5057,7 +5057,7 @@ def _BuildAutomaton_5():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5065,24 +5065,24 @@ def _BuildAutomaton_5():
     )
     states.append(st_3)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
     st_3._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 NodeReplicationPolicy._Automaton = _BuildAutomaton_5()
@@ -5106,7 +5106,7 @@ def _BuildAutomaton_6():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_6
     del _BuildAutomaton_6
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -5119,7 +5119,7 @@ def _BuildAutomaton_6():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5127,9 +5127,9 @@ def _BuildAutomaton_6():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 NodeList._Automaton = _BuildAutomaton_6()
@@ -5182,7 +5182,7 @@ def _BuildAutomaton_7():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_7
     del _BuildAutomaton_7
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -5195,7 +5195,7 @@ def _BuildAutomaton_7():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5211,7 +5211,7 @@ def _BuildAutomaton_7():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5227,7 +5227,7 @@ def _BuildAutomaton_7():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5235,14 +5235,14 @@ def _BuildAutomaton_7():
     )
     states.append(st_2)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
     st_2._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ObjectFormat._Automaton = _BuildAutomaton_7()
@@ -5318,7 +5318,7 @@ def _BuildAutomaton_8():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_8
     del _BuildAutomaton_8
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -5331,7 +5331,7 @@ def _BuildAutomaton_8():
             8,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5347,7 +5347,7 @@ def _BuildAutomaton_8():
             8,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5363,7 +5363,7 @@ def _BuildAutomaton_8():
             8,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5381,7 +5381,7 @@ def _BuildAutomaton_8():
             8,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5397,7 +5397,7 @@ def _BuildAutomaton_8():
             8,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5405,20 +5405,20 @@ def _BuildAutomaton_8():
     )
     states.append(st_4)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_3._set_transitionSet(transitions)
     transitions = []
     st_4._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ObjectInfo._Automaton = _BuildAutomaton_8()
@@ -5499,10 +5499,10 @@ def _BuildAutomaton_9():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_9
     del _BuildAutomaton_9
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -5522,7 +5522,7 @@ def _BuildAutomaton_9():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5538,7 +5538,7 @@ def _BuildAutomaton_9():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5554,7 +5554,7 @@ def _BuildAutomaton_9():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5570,7 +5570,7 @@ def _BuildAutomaton_9():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5578,7 +5578,7 @@ def _BuildAutomaton_9():
     )
     states.append(st_3)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, 'preference')),
         pyxb.utils.utility.Location(
@@ -5587,7 +5587,7 @@ def _BuildAutomaton_9():
             6,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5595,22 +5595,22 @@ def _BuildAutomaton_9():
     )
     states.append(st_4)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_4._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ObjectLocation._Automaton = _BuildAutomaton_9()
@@ -5649,10 +5649,10 @@ def _BuildAutomaton_10():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_10
     del _BuildAutomaton_10
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -5672,7 +5672,7 @@ def _BuildAutomaton_10():
             4,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5680,7 +5680,7 @@ def _BuildAutomaton_10():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         ObjectLocationList._UseForTag(
             pyxb.namespace.ExpandedName(None, 'objectLocation')
@@ -5691,7 +5691,7 @@ def _BuildAutomaton_10():
             4,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5699,12 +5699,12 @@ def _BuildAutomaton_10():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ObjectLocationList._Automaton = _BuildAutomaton_10()
@@ -5813,10 +5813,10 @@ def _BuildAutomaton_11():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_11
     del _BuildAutomaton_11
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -5826,7 +5826,7 @@ def _BuildAutomaton_11():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -5836,7 +5836,7 @@ def _BuildAutomaton_11():
         ),
     )
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(
+    cc_2 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -5846,7 +5846,7 @@ def _BuildAutomaton_11():
         ),
     )
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(
+    cc_3 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -5866,7 +5866,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -5882,7 +5882,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5898,7 +5898,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5906,7 +5906,7 @@ def _BuildAutomaton_11():
     )
     states.append(st_2)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         Person._UseForTag(pyxb.namespace.ExpandedName(None, 'email')),
         pyxb.utils.utility.Location(
@@ -5915,7 +5915,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5923,7 +5923,7 @@ def _BuildAutomaton_11():
     )
     states.append(st_3)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         Person._UseForTag(pyxb.namespace.ExpandedName(None, 'isMemberOf')),
         pyxb.utils.utility.Location(
@@ -5932,7 +5932,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5940,7 +5940,7 @@ def _BuildAutomaton_11():
     )
     states.append(st_4)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_2, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_2, False))
     symbol = pyxb.binding.content.ElementUse(
         Person._UseForTag(pyxb.namespace.ExpandedName(None, 'equivalentIdentity')),
         pyxb.utils.utility.Location(
@@ -5949,7 +5949,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_5 = fac.State(
+    st_5 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5957,7 +5957,7 @@ def _BuildAutomaton_11():
     )
     states.append(st_5)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_3, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_3, False))
     symbol = pyxb.binding.content.ElementUse(
         Person._UseForTag(pyxb.namespace.ExpandedName(None, 'verified')),
         pyxb.utils.utility.Location(
@@ -5966,7 +5966,7 @@ def _BuildAutomaton_11():
             6,
         ),
     )
-    st_6 = fac.State(
+    st_6 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -5974,37 +5974,37 @@ def _BuildAutomaton_11():
     )
     states.append(st_6)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
-    transitions.append(fac.Transition(st_4, []))
-    transitions.append(fac.Transition(st_5, []))
-    transitions.append(fac.Transition(st_6, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_5, []))
+    transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_4, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, [fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
     st_6._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Person._Automaton = _BuildAutomaton_11()
@@ -6057,7 +6057,7 @@ def _BuildAutomaton_12():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_12
     del _BuildAutomaton_12
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -6070,7 +6070,7 @@ def _BuildAutomaton_12():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6086,7 +6086,7 @@ def _BuildAutomaton_12():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -6102,7 +6102,7 @@ def _BuildAutomaton_12():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -6110,14 +6110,14 @@ def _BuildAutomaton_12():
     )
     states.append(st_2)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
     st_2._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Replica._Automaton = _BuildAutomaton_12()
@@ -6156,10 +6156,10 @@ def _BuildAutomaton_13():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_13
     del _BuildAutomaton_13
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -6169,7 +6169,7 @@ def _BuildAutomaton_13():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -6181,7 +6181,7 @@ def _BuildAutomaton_13():
     counters.add(cc_1)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         ReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'preferredMemberNode')
@@ -6192,7 +6192,7 @@ def _BuildAutomaton_13():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6200,7 +6200,7 @@ def _BuildAutomaton_13():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         ReplicationPolicy._UseForTag(
             pyxb.namespace.ExpandedName(None, 'blockedMemberNode')
@@ -6211,7 +6211,7 @@ def _BuildAutomaton_13():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6219,13 +6219,13 @@ def _BuildAutomaton_13():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 ReplicationPolicy._Automaton = _BuildAutomaton_13()
@@ -6249,7 +6249,7 @@ def _BuildAutomaton_14():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_14
     del _BuildAutomaton_14
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -6262,7 +6262,7 @@ def _BuildAutomaton_14():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6270,9 +6270,9 @@ def _BuildAutomaton_14():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Services._Automaton = _BuildAutomaton_14()
@@ -6309,10 +6309,10 @@ def _BuildAutomaton_15():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_15
     del _BuildAutomaton_15
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6332,7 +6332,7 @@ def _BuildAutomaton_15():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6340,7 +6340,7 @@ def _BuildAutomaton_15():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         Session._UseForTag(pyxb.namespace.ExpandedName(None, 'subjectInfo')),
         pyxb.utils.utility.Location(
@@ -6349,7 +6349,7 @@ def _BuildAutomaton_15():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -6357,12 +6357,12 @@ def _BuildAutomaton_15():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Session._Automaton = _BuildAutomaton_15()
@@ -6415,10 +6415,10 @@ def _BuildAutomaton_16():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_16
     del _BuildAutomaton_16
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6428,7 +6428,7 @@ def _BuildAutomaton_16():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6448,7 +6448,7 @@ def _BuildAutomaton_16():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6456,7 +6456,7 @@ def _BuildAutomaton_16():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, 'lastHarvested')),
         pyxb.utils.utility.Location(
@@ -6465,7 +6465,7 @@ def _BuildAutomaton_16():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -6473,7 +6473,7 @@ def _BuildAutomaton_16():
     )
     states.append(st_1)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         Synchronization._UseForTag(
             pyxb.namespace.ExpandedName(None, 'lastCompleteHarvest')
@@ -6484,7 +6484,7 @@ def _BuildAutomaton_16():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -6492,17 +6492,17 @@ def _BuildAutomaton_16():
     )
     states.append(st_2)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, [fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
     st_2._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Synchronization._Automaton = _BuildAutomaton_16()
@@ -6539,10 +6539,10 @@ def _BuildAutomaton_17():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_17
     del _BuildAutomaton_17
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -6552,7 +6552,7 @@ def _BuildAutomaton_17():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -6564,7 +6564,7 @@ def _BuildAutomaton_17():
     counters.add(cc_1)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         SubjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, 'person')),
         pyxb.utils.utility.Location(
@@ -6573,7 +6573,7 @@ def _BuildAutomaton_17():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6581,7 +6581,7 @@ def _BuildAutomaton_17():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         SubjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, 'group')),
         pyxb.utils.utility.Location(
@@ -6590,7 +6590,7 @@ def _BuildAutomaton_17():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6598,13 +6598,13 @@ def _BuildAutomaton_17():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 SubjectInfo._Automaton = _BuildAutomaton_17()
@@ -6628,10 +6628,10 @@ def _BuildAutomaton_18():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_18
     del _BuildAutomaton_18
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -6643,7 +6643,7 @@ def _BuildAutomaton_18():
     counters.add(cc_0)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         SubjectList._UseForTag(pyxb.namespace.ExpandedName(None, 'subject')),
         pyxb.utils.utility.Location(
@@ -6652,7 +6652,7 @@ def _BuildAutomaton_18():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -6660,9 +6660,9 @@ def _BuildAutomaton_18():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 SubjectList._Automaton = _BuildAutomaton_18()
@@ -6911,10 +6911,10 @@ def _BuildAutomaton_19():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_19
     del _BuildAutomaton_19
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6924,7 +6924,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6934,7 +6934,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(
+    cc_2 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6944,7 +6944,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(
+    cc_3 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6954,7 +6954,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_3)
-    cc_4 = fac.CounterCondition(
+    cc_4 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6964,7 +6964,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_4)
-    cc_5 = fac.CounterCondition(
+    cc_5 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6974,7 +6974,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_5)
-    cc_6 = fac.CounterCondition(
+    cc_6 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6984,7 +6984,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_6)
-    cc_7 = fac.CounterCondition(
+    cc_7 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -6994,7 +6994,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_7)
-    cc_8 = fac.CounterCondition(
+    cc_8 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7004,7 +7004,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_8)
-    cc_9 = fac.CounterCondition(
+    cc_9 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7014,7 +7014,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_9)
-    cc_10 = fac.CounterCondition(
+    cc_10 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7024,7 +7024,7 @@ def _BuildAutomaton_19():
         ),
     )
     counters.add(cc_10)
-    cc_11 = fac.CounterCondition(
+    cc_11 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -7044,7 +7044,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -7060,7 +7060,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -7076,7 +7076,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7092,7 +7092,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7108,7 +7108,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7124,7 +7124,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_5 = fac.State(
+    st_5 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7140,7 +7140,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_6 = fac.State(
+    st_6 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7148,7 +7148,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_6)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_2, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_2, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'accessPolicy')),
         pyxb.utils.utility.Location(
@@ -7157,7 +7157,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_7 = fac.State(
+    st_7 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7165,7 +7165,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_7)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_3, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_3, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(
             pyxb.namespace.ExpandedName(None, 'replicationPolicy')
@@ -7176,7 +7176,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_8 = fac.State(
+    st_8 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7184,7 +7184,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_8)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_4, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_4, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletes')),
         pyxb.utils.utility.Location(
@@ -7193,7 +7193,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_9 = fac.State(
+    st_9 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7201,7 +7201,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_9)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_5, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_5, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletedBy')),
         pyxb.utils.utility.Location(
@@ -7210,7 +7210,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_10 = fac.State(
+    st_10 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7218,7 +7218,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_10)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_6, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_6, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'archived')),
         pyxb.utils.utility.Location(
@@ -7227,7 +7227,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_11 = fac.State(
+    st_11 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7235,7 +7235,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_11)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_7, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_7, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'dateUploaded')),
         pyxb.utils.utility.Location(
@@ -7244,7 +7244,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_12 = fac.State(
+    st_12 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7252,7 +7252,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_12)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_8, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_8, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(
             pyxb.namespace.ExpandedName(None, 'dateSysMetadataModified')
@@ -7263,7 +7263,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_13 = fac.State(
+    st_13 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7271,7 +7271,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_13)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_9, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_9, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(
             pyxb.namespace.ExpandedName(None, 'originMemberNode')
@@ -7282,7 +7282,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_14 = fac.State(
+    st_14 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7290,7 +7290,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_14)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_10, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_10, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(
             pyxb.namespace.ExpandedName(None, 'authoritativeMemberNode')
@@ -7301,7 +7301,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_15 = fac.State(
+    st_15 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7309,7 +7309,7 @@ def _BuildAutomaton_19():
     )
     states.append(st_15)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_11, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_11, False))
     symbol = pyxb.binding.content.ElementUse(
         SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'replica')),
         pyxb.utils.utility.Location(
@@ -7318,7 +7318,7 @@ def _BuildAutomaton_19():
             6,
         ),
     )
-    st_16 = fac.State(
+    st_16 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7326,114 +7326,114 @@ def _BuildAutomaton_19():
     )
     states.append(st_16)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_5, []))
-    transitions.append(fac.Transition(st_6, []))
+    transitions.append(pyxb.utils.fac.Transition(st_5, []))
+    transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_7, []))
-    transitions.append(fac.Transition(st_8, []))
-    transitions.append(fac.Transition(st_9, []))
-    transitions.append(fac.Transition(st_10, []))
-    transitions.append(fac.Transition(st_11, []))
-    transitions.append(fac.Transition(st_12, []))
-    transitions.append(fac.Transition(st_13, []))
-    transitions.append(fac.Transition(st_14, []))
-    transitions.append(fac.Transition(st_15, []))
-    transitions.append(fac.Transition(st_16, []))
+    transitions.append(pyxb.utils.fac.Transition(st_7, []))
+    transitions.append(pyxb.utils.fac.Transition(st_8, []))
+    transitions.append(pyxb.utils.fac.Transition(st_9, []))
+    transitions.append(pyxb.utils.fac.Transition(st_10, []))
+    transitions.append(pyxb.utils.fac.Transition(st_11, []))
+    transitions.append(pyxb.utils.fac.Transition(st_12, []))
+    transitions.append(pyxb.utils.fac.Transition(st_13, []))
+    transitions.append(pyxb.utils.fac.Transition(st_14, []))
+    transitions.append(pyxb.utils.fac.Transition(st_15, []))
+    transitions.append(pyxb.utils.fac.Transition(st_16, []))
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_7, [fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_10, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_11, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_10, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_11, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
     st_8._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(fac.Transition(st_10, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_11, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
     st_9._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_10, [fac.UpdateInstruction(cc_5, True)]))
-    transitions.append(fac.Transition(st_11, [fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
     st_10._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_11, [fac.UpdateInstruction(cc_6, True)]))
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_6, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
     st_11._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_12, [fac.UpdateInstruction(cc_7, True)]))
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_7, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
     st_12._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_13, [fac.UpdateInstruction(cc_8, True)]))
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_8, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_8, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
     st_13._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_14, [fac.UpdateInstruction(cc_9, True)]))
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_9, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_9, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
     st_14._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_15, [fac.UpdateInstruction(cc_10, True)]))
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_10, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_10, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
     st_15._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_16, [fac.UpdateInstruction(cc_11, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_11, True)]))
     st_16._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 SystemMetadata._Automaton = _BuildAutomaton_19()
@@ -7457,10 +7457,10 @@ def _BuildAutomaton_20():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_20
     del _BuildAutomaton_20
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -7472,7 +7472,7 @@ def _BuildAutomaton_20():
     counters.add(cc_0)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         Log._UseForTag(pyxb.namespace.ExpandedName(None, 'logEntry')),
         pyxb.utils.utility.Location(
@@ -7481,7 +7481,7 @@ def _BuildAutomaton_20():
             10,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -7489,9 +7489,9 @@ def _BuildAutomaton_20():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 Log._Automaton = _BuildAutomaton_20()
@@ -7642,10 +7642,10 @@ def _BuildAutomaton_21():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_21
     del _BuildAutomaton_21
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7655,7 +7655,7 @@ def _BuildAutomaton_21():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7665,7 +7665,7 @@ def _BuildAutomaton_21():
         ),
     )
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(
+    cc_2 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7675,7 +7675,7 @@ def _BuildAutomaton_21():
         ),
     )
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(
+    cc_3 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -7685,7 +7685,7 @@ def _BuildAutomaton_21():
         ),
     )
     counters.add(cc_3)
-    cc_4 = fac.CounterCondition(
+    cc_4 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -7705,7 +7705,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -7721,7 +7721,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7737,7 +7737,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_2 = fac.State(
+    st_2 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7753,7 +7753,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_3 = fac.State(
+    st_3 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7769,7 +7769,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_4 = fac.State(
+    st_4 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7785,7 +7785,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_5 = fac.State(
+    st_5 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7801,7 +7801,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_6 = fac.State(
+    st_6 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7817,7 +7817,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_7 = fac.State(
+    st_7 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7833,7 +7833,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_8 = fac.State(
+    st_8 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7849,7 +7849,7 @@ def _BuildAutomaton_21():
             6,
         ),
     )
-    st_9 = fac.State(
+    st_9 = pyxb.utils.fac.State(
         symbol,
         is_initial=False,
         final_update=final_update,
@@ -7857,56 +7857,56 @@ def _BuildAutomaton_21():
     )
     states.append(st_9)
     transitions = []
-    transitions.append(fac.Transition(st_1, []))
+    transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_2, []))
+    transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_3, []))
+    transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, []))
-    transitions.append(fac.Transition(st_5, []))
-    transitions.append(fac.Transition(st_6, []))
-    transitions.append(fac.Transition(st_7, []))
-    transitions.append(fac.Transition(st_8, []))
-    transitions.append(fac.Transition(st_9, []))
+    transitions.append(pyxb.utils.fac.Transition(st_4, []))
+    transitions.append(pyxb.utils.fac.Transition(st_5, []))
+    transitions.append(pyxb.utils.fac.Transition(st_6, []))
+    transitions.append(pyxb.utils.fac.Transition(st_7, []))
+    transitions.append(pyxb.utils.fac.Transition(st_8, []))
+    transitions.append(pyxb.utils.fac.Transition(st_9, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_4, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_7, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_5, [fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(fac.Transition(st_7, [fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_6, [fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(fac.Transition(st_7, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_7, [fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_8, [fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(fac.Transition(st_9, [fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
     st_8._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_9, []))
+    transitions.append(pyxb.utils.fac.Transition(st_9, []))
     st_9._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 Node._Automaton = _BuildAutomaton_21()
@@ -7930,7 +7930,7 @@ def _BuildAutomaton_22():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_22
     del _BuildAutomaton_22
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
     states = []
@@ -7943,7 +7943,7 @@ def _BuildAutomaton_22():
             10,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -7951,9 +7951,9 @@ def _BuildAutomaton_22():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, []))
+    transitions.append(pyxb.utils.fac.Transition(st_0, []))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
 
 ObjectFormatList._Automaton = _BuildAutomaton_22()
@@ -7977,10 +7977,10 @@ def _BuildAutomaton_23():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_23
     del _BuildAutomaton_23
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -7992,7 +7992,7 @@ def _BuildAutomaton_23():
     counters.add(cc_0)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         ObjectList._UseForTag(pyxb.namespace.ExpandedName(None, 'objectInfo')),
         pyxb.utils.utility.Location(
@@ -8001,7 +8001,7 @@ def _BuildAutomaton_23():
             10,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -8009,9 +8009,9 @@ def _BuildAutomaton_23():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 ObjectList._Automaton = _BuildAutomaton_23()
@@ -8021,10 +8021,10 @@ def _BuildAutomaton_24():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_24
     del _BuildAutomaton_24
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -8036,7 +8036,7 @@ def _BuildAutomaton_24():
     counters.add(cc_0)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         ServiceMethodRestriction._UseForTag(
             pyxb.namespace.ExpandedName(None, 'subject')
@@ -8047,7 +8047,7 @@ def _BuildAutomaton_24():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -8055,9 +8055,9 @@ def _BuildAutomaton_24():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 ServiceMethodRestriction._Automaton = _BuildAutomaton_24()
@@ -8082,10 +8082,10 @@ def _BuildAutomaton_25():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_25
     del _BuildAutomaton_25
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=None,
         metadata=pyxb.utils.utility.Location(
@@ -8097,7 +8097,7 @@ def _BuildAutomaton_25():
     counters.add(cc_0)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         Service._UseForTag(pyxb.namespace.ExpandedName(None, 'restriction')),
         pyxb.utils.utility.Location(
@@ -8106,7 +8106,7 @@ def _BuildAutomaton_25():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -8114,9 +8114,9 @@ def _BuildAutomaton_25():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
     st_0._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 Service._Automaton = _BuildAutomaton_25()

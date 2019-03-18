@@ -22,7 +22,7 @@
 import responses
 
 import d1_test.d1_test_case
-import d1_test.mock_api.list_objects as mock_list_objects
+import d1_test.mock_api.list_objects
 
 import d1_client.d1client
 import d1_client.iter.objectlist_multi
@@ -34,7 +34,7 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """Object List iteration."""
-        mock_list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
         api_major = d1_client.d1client.get_version_tag_by_d1_client(mn_client_v1_v2)
 
@@ -51,4 +51,4 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
         for i, object_info_pyxb in enumerate(object_list_iter):
             assert isinstance(object_info_pyxb, mn_client_v1_v2.pyxb_binding.ObjectInfo)
 
-        assert i == mock_list_objects.N_TOTAL - 1
+        assert i == d1_test.mock_api.list_objects.N_TOTAL - 1

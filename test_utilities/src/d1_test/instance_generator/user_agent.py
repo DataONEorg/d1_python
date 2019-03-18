@@ -23,9 +23,7 @@ user agents."""
 
 import random
 
-import d1_test.d1_test_case
-import d1_test.sample
-
+import d1_test.test_files
 
 class Generate(object):
     def __init__(self):

@@ -26,10 +26,8 @@ import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
-import d1_gmn.app.util
 
 import django.apps
-import django.conf
 
 
 def delete_sciobj(pid):

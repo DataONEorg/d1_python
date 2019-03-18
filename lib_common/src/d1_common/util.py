@@ -22,7 +22,6 @@ import collections
 import contextlib
 import datetime
 import email.message
-import email.utils
 import json
 import logging
 import os

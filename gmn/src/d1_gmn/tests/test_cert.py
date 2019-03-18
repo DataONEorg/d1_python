@@ -24,8 +24,6 @@ import responses
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.tests.gmn_test_case
 
-import d1_test.d1_test_case
-import d1_test.sample
 import d1_test.test_files
 
 

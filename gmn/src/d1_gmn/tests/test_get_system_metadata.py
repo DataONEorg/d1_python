@@ -26,19 +26,13 @@ import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
 import d1_common.checksum
 import d1_common.system_metadata
 import d1_common.types.exceptions
-import d1_common.util
-import d1_common.xml
 
-import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.sciobj
-import d1_test.mock_api.django_client
-import d1_test.mock_api.get
 
 
 class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):

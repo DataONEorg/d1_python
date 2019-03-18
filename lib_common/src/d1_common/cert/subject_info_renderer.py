@@ -27,7 +27,6 @@ DataONE stack. To install, follow the instructions on the ETE site:
 """
 # See the module level docstring if ImportError is raised here
 import ete3
-import ete3.treeview
 
 # Rendering
 

@@ -24,15 +24,12 @@ import functools
 import d1_gmn.app.auth
 import d1_gmn.app.did
 import d1_gmn.app.revision
-import d1_gmn.app.sysmeta
 import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.assert_sysmeta
 import d1_gmn.app.views.util
 
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
-import d1_common.url
 
 import django.conf
 

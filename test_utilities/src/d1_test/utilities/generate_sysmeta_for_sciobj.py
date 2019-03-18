@@ -30,14 +30,12 @@ import logging
 import optparse
 import os.path
 import sys
-import urllib.error
-import urllib.parse
 import urllib.request
 
 from d1_instance_generator import systemmetadata
 
 import d1_common.date_time
-import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1
 
 # from lxml import etree
 
@@ -52,7 +50,7 @@ def getObjectFormatFromID(fmtid, default='application/octet-stream'):
         'objectFormatList.xml'
     )
     doc = urllib.request.urlopen(formatlistURL).read()
-    formats = dataoneTypes_v1.CreateFromDocument(doc)
+    formats = d1_common.types.dataoneTypes_v1.CreateFromDocument(doc)
     for format in formats.objectFormat:
         if format.formatId == fmtid:
             logging.info("Found format for %s" % fmtid)
@@ -182,7 +180,7 @@ if __name__ == '__main__':
     oopts['originMemberNode'] = options.originMemberNode
     oopts['authoritativeMemberNode'] = options.originMemberNode
 
-    defrepl = dataoneTypes_v1.ReplicationPolicy()
+    defrepl = d1_common.types.dataoneTypes_v1.ReplicationPolicy()
     if options.numberReplicas == 0:
         defrepl.replicationAllowed = False
     else:
@@ -190,13 +188,13 @@ if __name__ == '__main__':
         defrepl.numberReplicas = options.numberReplicas
     oopts['replicationPolicy'] = defrepl
 
-    defap = dataoneTypes_v1.AccessPolicy()
-    ar = dataoneTypes_v1.AccessRule()
-    ar.permission = [dataoneTypes_v1.Permission.read]
+    defap = d1_common.types.dataoneTypes_v1.AccessPolicy()
+    ar = d1_common.types.dataoneTypes_v1.AccessRule()
+    ar.permission = [d1_common.types.dataoneTypes_v1.Permission.read]
     ar.subject = ["public"]
     defap.allow = [ar]
-    ar = dataoneTypes_v1.AccessRule()
-    ar.permission = [dataoneTypes_v1.Permission.write]
+    ar = d1_common.types.dataoneTypes_v1.AccessRule()
+    ar.permission = [d1_common.types.dataoneTypes_v1.Permission.write]
     ar.subject = [oopts['submitter']]
     defap.allow.append(ar)
     oopts['accessPolicy'] = defap

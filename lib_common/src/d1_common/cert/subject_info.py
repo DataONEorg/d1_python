@@ -134,7 +134,6 @@ Authorization: Denied
 import os
 
 import d1_common.const
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.xml
 

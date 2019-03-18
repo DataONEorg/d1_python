@@ -53,23 +53,20 @@ import pyxb
 import pyxb.namespace.utility
 import pyxb.utils.domutils
 
-import d1_common.types.dataoneTypes_v1 as v1_0
-import d1_common.types.dataoneTypes_v1_1 as v1_1
-import d1_common.types.dataoneTypes_v1_2 as v1_2
-import d1_common.types.dataoneTypes_v2_0 as v2_0
+import d1_common.types.dataoneTypes_v1
+import d1_common.types.dataoneTypes_v1_1
+import d1_common.types.dataoneTypes_v1_2
+import d1_common.types.dataoneTypes_v2_0
 import d1_common.util
 
-PYXB_BINDING = d1_common.types.dataoneTypes_v1
-
-# TODO: Generate v1.2 instead of v1.0 objects for v1
 
 # Map common namespace prefixes to namespaces
 NS_DICT = {
     # TODO: 'v1' should map to v1_2.Namespace
-    'v1': str(v1_0.Namespace),
-    'v1_1': str(v1_1.Namespace),
-    'v1_2': str(v1_2.Namespace),
-    'v2': str(v2_0.Namespace),
+    'v1': str(d1_common.types.dataoneTypes_v1.Namespace),
+    'v1_1': str(d1_common.types.dataoneTypes_v1_1.Namespace),
+    'v1_2': str(d1_common.types.dataoneTypes_v1_2.Namespace),
+    'v2': str(d1_common.types.dataoneTypes_v2_0.Namespace),
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'ore': 'http://www.openarchives.org/ore/terms/',
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -81,7 +78,7 @@ NS_DICT = {
 # Map common namespaces to prefixes
 NS_REVERSE_DICT = {v: k for k, v in NS_DICT.items()}
 
-BINDING_TO_VERSION_TAG_DICT = {v1_0: 'v1', v1_1: 'v1', v1_2: 'v1', v2_0: 'v2'}
+BINDING_TO_VERSION_TAG_DICT = {d1_common.types.dataoneTypes_v1: 'v1', d1_common.types.dataoneTypes_v1_1: 'v1', d1_common.types.dataoneTypes_v1_2: 'v1', d1_common.types.dataoneTypes_v2_0: 'v2'}
 
 VERSION_TO_BINDING_DICT = {
     'v1': d1_common.types.dataoneTypes_v1_2,
@@ -201,7 +198,7 @@ def str_to_v1_str(xml_str):
         return xml_str
     etree_obj = str_to_etree(xml_str)
     strip_v2_elements(etree_obj)
-    etree_replace_namespace(etree_obj, v1_0.Namespace)
+    etree_replace_namespace(etree_obj, d1_common.types.dataoneTypes_v1.Namespace)
     return etree_to_str(etree_obj)
 
 
@@ -255,7 +252,7 @@ def str_to_v2_str(xml_str):
     if str_is_v2(xml_str):
         return xml_str
     etree_obj = str_to_etree(xml_str)
-    etree_replace_namespace(etree_obj, v2_0.Namespace)
+    etree_replace_namespace(etree_obj, d1_common.types.dataoneTypes_v2_0.Namespace)
     return etree_to_str(etree_obj)
 
 
@@ -452,7 +449,7 @@ def pyxb_is_v1(pyxb_obj):
     bool: **True** if ``pyxb_obj`` holds an API v1 type.
   """
     # TODO: Will not detect v1.2 as v1.
-    return pyxb_obj._element().name().namespace() == v1_0.Namespace
+    return pyxb_obj._element().name().namespace() == d1_common.types.dataoneTypes_v1.Namespace
 
 
 # noinspection PyProtectedMember
@@ -465,7 +462,7 @@ def pyxb_is_v2(pyxb_obj):
   Returns:
     bool: **True** if ``pyxb_obj`` holds an API v2 type.
   """
-    return pyxb_obj._element().name().namespace() == v2_0.Namespace
+    return pyxb_obj._element().name().namespace() == d1_common.types.dataoneTypes_v2_0.Namespace
 
 
 # Conversions between XML representations

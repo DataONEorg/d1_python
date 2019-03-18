@@ -20,24 +20,16 @@
 # limitations under the License.
 """Test MNPackage.getPackage()"""
 
-import io
 import tempfile
-import zipfile
 
 import pytest
 import responses
 
-import d1_gmn.app.resource_map
-import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_common.bagit
-import d1_common.const
-import d1_common.resource_map
 import d1_common.types.exceptions
 
-import d1_test.instance_generator.identifier
-import d1_test.instance_generator.system_metadata
 
 
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):

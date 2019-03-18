@@ -31,14 +31,12 @@ import urllib.parse
 
 import responses
 
-import d1_common.checksum
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.url
 import d1_common.util
 
 import d1_test.mock_api.d1_exception
-import d1_test.mock_api.util
 
 CREATE_ENDPOINT_RX = r'v([123])/object'
 

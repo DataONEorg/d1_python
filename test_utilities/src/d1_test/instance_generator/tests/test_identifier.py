@@ -20,8 +20,8 @@
 # limitations under the License.
 
 import d1_test.d1_test_case
-import d1_test.instance_generator.identifier as identifier
-import d1_test.instance_generator.random_data as random_data
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
 
 # ===============================================================================
 
@@ -31,7 +31,7 @@ class TestIdentifier(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
         id_list = [
-            identifier.generate(random_data.random_lower_ascii(), i, i + 5).toxml(
+            d1_test.instance_generator.identifier.generate(d1_test.instance_generator.random_data.random_lower_ascii(), i, i + 5).toxml(
                 'utf-8'
             )
             for i in range(10)

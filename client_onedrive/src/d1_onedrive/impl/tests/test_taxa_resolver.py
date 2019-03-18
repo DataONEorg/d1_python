@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test the Taxa Resolver."""
 
-import d1_onedrive.impl.resolver.taxa as taxa
+import d1_onedrive.impl.resolver.taxa
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -30,7 +30,7 @@ options = {}
 
 class TestTaxaResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
-        self._resolver = taxa.Resolver(
+        self._resolver = d1_onedrive.impl.resolver.taxa.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

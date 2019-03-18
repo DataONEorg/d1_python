@@ -26,7 +26,6 @@ import sys
 
 import d1_common
 import d1_common.cert.subject_info_renderer
-import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.xml

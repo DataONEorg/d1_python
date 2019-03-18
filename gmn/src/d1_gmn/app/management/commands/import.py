@@ -31,42 +31,29 @@ import asyncio
 import contextlib
 import datetime
 import logging
-import logging.config
 import os
 
-import d1_gmn.app.auth
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
-import d1_gmn.app.management.commands.util.standard_args as args
+import d1_gmn.app.management.commands.util.standard_args
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.management.commands.async_client
 import d1_gmn.app.model_util
 import d1_gmn.app.models
-import d1_gmn.app.node
-import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.create
-import d1_gmn.app.views.util
 
-import d1_common.const
 import d1_common.date_time
-import d1_common.revision
-import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.utils.progress_logger
 import d1_common.xml
 
 import django.conf
 import django.core.management.base
-import django.db
 
 # import d1_client.cnclient_2_0
 # import d1_client.d1client
@@ -89,7 +76,7 @@ class Command(django.core.management.base.BaseCommand):
         super().__init__(*args, **kwargs)
 
     def add_arguments(self, parser):
-        args.add_arguments(parser, __doc__)
+        d1_gmn.app.management.commands.util.standard_args.add_arguments(parser, __doc__)
         parser.add_argument(
             "--force",
             action="store_true",
@@ -118,7 +105,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **options):
         self.options = options
-        util.log_setup(self.options["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(self.options["debug"])
         self._log = logging.getLogger(__name__.split(".")[-1])
         self.progress_logger = d1_common.utils.progress_logger.ProgressLogger(
             logger=self._log
@@ -129,7 +116,7 @@ class Command(django.core.management.base.BaseCommand):
         #   logger = multiprocessing.log_to_stderr()
         #   logger.setLevel(multiprocessing.SUBDEBUG)
         logging.info("Running management command: {}".format(__name__))
-        util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
 
         # import logging_tree
         # logging_tree.printout()
@@ -149,7 +136,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.completed()
 
     async def _handle(self):
-        if not util.is_db_empty() and not self.options["force"]:
+        if not d1_gmn.app.management.commands.util.util.is_db_empty() and not self.options["force"]:
             raise django.core.management.base.CommandError(
                 "There are already local objects or event logs in the DB. "
                 "Use --force to import anyway. "
@@ -195,7 +182,7 @@ class Command(django.core.management.base.BaseCommand):
         import_func,
         import_task_name,
     ):
-        total_count = (await list_func(count=0, **list_arg_dict)).total
+        total_count = await list_func(count=0, **list_arg_dict).total
 
         if not total_count:
             self.progress_logger.event("{}: Aborted: Received empty list from Node")
@@ -375,7 +362,7 @@ class Command(django.core.management.base.BaseCommand):
 
         If object is local, return None.
         """
-        return (await client.describe(pid)).get("DataONE-Proxy")
+        return await client.describe(pid).get("DataONE-Proxy")
 
     async def download_source_sciobj_bytes_to_store(self, client, pid):
         abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)

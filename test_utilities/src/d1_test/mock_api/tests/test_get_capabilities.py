@@ -21,13 +21,13 @@
 import responses
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get_capabilities as get_capabilities
+import d1_test.mock_api.get_capabilities
 
 
 class TestMockGetCapabilities(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.getCapabilities() returns a DataONE Node PyXB object."""
-        get_capabilities.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_capabilities.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         node_pyxb = mn_client_v1_v2.getCapabilities()
         self.sample.assert_equals(node_pyxb, 'mock_get_capabilities', mn_client_v1_v2)

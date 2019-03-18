@@ -38,7 +38,6 @@ import re
 import responses
 
 import d1_common.const
-import d1_common.type_conversions
 import d1_common.url
 
 import d1_test.mock_api.d1_exception

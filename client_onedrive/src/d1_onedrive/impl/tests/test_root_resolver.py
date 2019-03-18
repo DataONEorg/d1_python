@@ -22,7 +22,7 @@
 
 import tempfile
 
-import d1_onedrive.impl.resolver.root as root
+import d1_onedrive.impl.resolver.root
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -45,7 +45,7 @@ class TestRootResolver(d1_test.d1_test_case.D1TestCase):
         with tempfile.NamedTemporaryFile(prefix='region_tree_cache') as tmp_file:
             options.region_tree_cache_path = tmp_file.name
         options.ignore_special = []
-        self._r = root.RootResolver(
+        self._r = d1_onedrive.impl.resolver.root.RootResolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

@@ -37,13 +37,11 @@ import socket
 import sys
 import time
 
-import d1_common.const
 import d1_common.types.exceptions
-import d1_common.url
 
-import d1_test.replication_tester.replication_error as replication_error
-import d1_test.replication_tester.replication_server as replication_server
-import d1_test.replication_tester.test_object_generator as test_object_generator
+import d1_test.replication_tester.replication_error
+import d1_test.replication_tester.replication_server
+import d1_test.replication_tester.test_object_generator
 from d1_test.replication_tester.test_object_generator import generate_random_ascii
 
 import d1_client.mnclient
@@ -214,14 +212,14 @@ def main():
                 tester.test_src_mn()
             if not options.only_src:
                 tester.test_dst_mn()
-    except replication_error.ReplicationTesterError as e:
+    except d1_test.replication_tester.replication_error.ReplicationTesterError as e:
         logger.error('Replication testing failed: {}'.format(e))
     else:
         logging.info('All replication tests passed')
 
 
 def create_test_object_on_mn(base_url, pid):
-    sys_meta, sci_obj = test_object_generator.generate_science_object_with_sysmeta(pid)
+    sys_meta, sci_obj = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(pid)
     mn_client = d1_client.mnclient.MemberNodeClient(base_url, retries=1)
     # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
     mn_client.create(pid, io.StringIO(sci_obj), sys_meta)
@@ -250,7 +248,7 @@ class ReplicationTester(object):
         self._dst_existing_pid = dst_existing_pid
         self._validate_cert_paths()
         self._queue = queue.Queue()
-        self._http_server = replication_server.TestHTTPServer(
+        self._http_server = d1_test.replication_tester.replication_server.TestHTTPServer(
             self._options,
             pid_unknown,
             pid_not_authorized,
@@ -305,9 +303,9 @@ class ReplicationTester(object):
             pass
         except (
             d1_common.types.exceptions.DataONEException,
-            replication_error.ReplicationTesterError,
+            d1_test.replication_tester.replication_error.ReplicationTesterError,
         ) as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'Source MNRead.getReplica(unknown PID): '
                 'Expected NotFound exception. Received: {}'.format(str(e))
             )
@@ -321,9 +319,9 @@ class ReplicationTester(object):
             pass
         except (
             d1_common.types.exceptions.DataONEException,
-            replication_error.ReplicationTesterError,
+            d1_test.replication_tester.replication_error.ReplicationTesterError,
         ) as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'Source MNRead.getReplica(valid PID with replication rejected): '
                 'Expected NotAuthorized exception. Received: {}'.format(e)
             )
@@ -349,7 +347,7 @@ class ReplicationTester(object):
         try:
             self._call_src_get_replica(self._src_existing_pid_approve)
         except d1_common.types.exceptions.DataONEException as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'Source MNRead.getReplica(valid PID with replication approved): '
                 'Expected OctetStream. Received exception: {}'.format(e)
             )
@@ -362,7 +360,7 @@ class ReplicationTester(object):
         try:
             return mn_client.getReplica(pid).content
         except socket.error:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'Unable to connect to Source MN'
             )
 
@@ -386,12 +384,12 @@ class ReplicationTester(object):
         except d1_common.types.exceptions.IdentifierNotUnique:
             pass
         except d1_common.types.exceptions.DataONEException as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'MNReplication.replicate()(existing PID): '
                 'Expected exception IdentifierNotUnique. Received: {}'.format(e)
             )
         else:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'MNReplication.replicate()(existing PID): ' 'Failed to raise exception'
             )
 
@@ -402,7 +400,7 @@ class ReplicationTester(object):
         try:
             self._call_dst_replicate(self._pid_not_authorized)
         except d1_common.types.exceptions.DataONEException as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'MNReplication.replicate(PID_NOT_AUTHORIZED): '
                 'Expected MN to accept replication request. Instead, received exception: {}'.format(
                     e
@@ -422,7 +420,7 @@ class ReplicationTester(object):
         try:
             self._call_dst_replicate(self._pid_known_and_authorized)
         except d1_common.types.exceptions.DataONEException as e:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'MNReplication.replicate()(PID_KNOWN_AND_AUTHORIZED): '
                 'Expected MN to accept replication request. Instead, received exception: {}'.format(
                     e
@@ -437,11 +435,11 @@ class ReplicationTester(object):
 
     def _call_dst_replicate(self, pid):
         mn_client = self._create_mn_client_for_replicate()
-        sys_meta = test_object_generator.generate_science_object_with_sysmeta(pid)[0]
+        sys_meta = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(pid)[0]
         try:
             mn_client.replicate(sys_meta, TEST_MN_NODE_ID)
         except socket.error:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'Unable to connect to Destination MN'
             )
 
@@ -473,12 +471,12 @@ class ReplicationTester(object):
         try:
             call = self._queue.get(block, self._options.timeout_sec)
         except queue.Empty:
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'MN did not make expected call: {}'.format(expected_call)
             )
         else:
             if call != expected_call:
-                raise replication_error.ReplicationTesterError(
+                raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                     'MN made an unexpected call: {}.\nExpected: {}'.format(
                         call, expected_call
                     )
@@ -492,7 +490,7 @@ class ReplicationTester(object):
 
     def _assert_if_invalid(self, path):
         if path is not None and not os.path.isfile(path):
-            raise replication_error.ReplicationTesterError(
+            raise d1_test.replication_tester.replication_error.ReplicationTesterError(
                 'No certificate or key at path: {}'.format(path)
             )
 

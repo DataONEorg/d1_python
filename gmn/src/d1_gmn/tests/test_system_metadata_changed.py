@@ -28,7 +28,6 @@ import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
 import d1_common
 import d1_common.date_time
@@ -41,7 +40,6 @@ import d1_test.mock_api.get_system_metadata
 
 import django
 import django.conf
-import django.core.management
 import django.test
 
 

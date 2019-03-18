@@ -24,9 +24,7 @@ import freezegun
 import d1_gmn.app.middleware.session_jwt
 import d1_gmn.tests.gmn_test_case
 
-import d1_common.cert.jwt
 import d1_common.cert.x509
-import d1_common.util
 
 import django.core.cache
 

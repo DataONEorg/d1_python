@@ -25,7 +25,7 @@ Dokan -- "no-op" Dokan implementation
 """
 
 import ctypes
-import ctypes.wintypes as wintypes
+import ctypes.wintypes
 import functools
 import logging
 
@@ -836,15 +836,15 @@ class _DOKAN_FILE_INFO(ctypes.Structure):
 DOKAN_FILE_INFO = _DOKAN_FILE_INFO
 PDOKAN_FILE_INFO = ctypes.POINTER(_DOKAN_FILE_INFO)
 
-PWIN32_FIND_DATAW = ctypes.POINTER(wintypes.WIN32_FIND_DATAW)
+PWIN32_FIND_DATAW = ctypes.POINTER(ctypes.wintypes.WIN32_FIND_DATAW)
 
 
 class _BY_HANDLE_FILE_INFORMATION(ctypes.Structure):
     _fields_ = [
         ("dwFileAttributes", ctypes.c_ulong),
-        ("ftCreationTime", wintypes.FILETIME),
-        ("ftLastAccessTime", wintypes.FILETIME),
-        ("ftLastWriteTime", wintypes.FILETIME),
+        ("ftCreationTime", ctypes.wintypes.FILETIME),
+        ("ftLastAccessTime", ctypes.wintypes.FILETIME),
+        ("ftLastWriteTime", ctypes.wintypes.FILETIME),
         ("dwVolumeSerialNumber", ctypes.c_ulong),
         ("nFileSizeHigh", ctypes.c_ulong),
         ("nFileSizeLow", ctypes.c_ulong),
@@ -861,7 +861,7 @@ PSECURITY_INFORMATION = ctypes.POINTER(ctypes.c_ulong)
 PSECURITY_DESCRIPTOR = ctypes.c_void_p
 
 PFillFindData = ctypes.WINFUNCTYPE(
-    ctypes.c_int, ctypes.POINTER(wintypes.WIN32_FIND_DATAW), PDOKAN_FILE_INFO
+    ctypes.c_int, ctypes.POINTER(ctypes.wintypes.WIN32_FIND_DATAW), PDOKAN_FILE_INFO
 )
 
 
@@ -959,9 +959,9 @@ class dokan_operations(ctypes.Structure):
             ctypes.WINFUNCTYPE(
                 ctypes.c_int,
                 ctypes.c_wchar_p,
-                ctypes.POINTER(wintypes.FILETIME),
-                ctypes.POINTER(wintypes.FILETIME),
-                ctypes.POINTER(wintypes.FILETIME),
+                ctypes.POINTER(ctypes.wintypes.FILETIME),
+                ctypes.POINTER(ctypes.wintypes.FILETIME),
+                ctypes.POINTER(ctypes.wintypes.FILETIME),
                 PDOKAN_FILE_INFO,
             ),
         ),

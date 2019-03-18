@@ -26,7 +26,6 @@ import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
-import d1_gmn.app.util
 
 
 def is_valid_pid_for_create(did):

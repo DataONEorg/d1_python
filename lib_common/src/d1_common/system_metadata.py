@@ -94,7 +94,6 @@ import logging
 
 import d1_common.date_time
 import d1_common.type_conversions
-import d1_common.types.dataoneTypes
 import d1_common.wrap.access_policy
 import d1_common.xml
 

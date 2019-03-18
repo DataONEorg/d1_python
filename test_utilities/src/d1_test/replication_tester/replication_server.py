@@ -24,15 +24,13 @@ import logging
 import re
 import socketserver
 import threading
-import urllib.error
 import urllib.parse
-import urllib.request
 
 from . import replication_error
 from . import test_object_generator
 
 import d1_common.const
-import d1_common.types.dataoneTypes_v1 as dataoneTypes
+import d1_common.types.dataoneTypes_v1
 
 TEST_CN_NODE_ID = 'urn:node:RepTestCN'
 TEST_MN_NODE_ID = 'urn:node:RepTestMN'
@@ -294,7 +292,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # exception = d1_common.types.exceptions.NotAuthorized(0,
         #  'ReplicationTester: Testing MN\'s response to NotAuthorized')
         self.send_response(200)
-        node_list = dataoneTypes.nodeList()
+        node_list = d1_common.types.dataoneTypes_v1.nodeList()
         node_list.append(self._create_cn_node_obj())
         node_list.append(self._create_mn_node_obj())
         self.send_header('Content-type', d1_common.const.CONTENT_TYPE_XML)
@@ -328,7 +326,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def _create_node_obj(
         self, node_type, node_id, name, description, subject, service_name
     ):
-        node_list = dataoneTypes.node()
+        node_list = d1_common.types.dataoneTypes_v1.node()
         node_list.identifier = node_id
         node_list.name = name
         node_list.description = description
@@ -343,8 +341,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return node_list
 
     def _create_services_obj(self, service_name):
-        services = dataoneTypes.services()
-        service = dataoneTypes.service()
+        services = d1_common.types.dataoneTypes_v1.services()
+        service = d1_common.types.dataoneTypes_v1.service()
         service.name = service_name
         service.version = 'v1'
         service.available = True

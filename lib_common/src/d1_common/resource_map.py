@@ -55,7 +55,6 @@ import rdflib.tools.rdf2dot
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.url
-import d1_common.util
 
 # RDFLib wrappers around the namespaces. Additional ones are defined by RDFLib
 DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["dcterms"])

@@ -24,7 +24,6 @@ import os
 import d1_cli.impl.util
 
 import d1_common.checksum
-import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes
 

@@ -19,7 +19,6 @@
 # limitations under the License.
 """Utilities for working with revision / obsolescence chains."""
 
-import d1_common.util
 import d1_common.xml
 
 

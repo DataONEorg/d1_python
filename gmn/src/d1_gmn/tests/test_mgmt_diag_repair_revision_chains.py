@@ -25,7 +25,6 @@ import pytest
 
 import d1_gmn.app.model_util
 import d1_gmn.app.models
-import d1_gmn.app.util
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case

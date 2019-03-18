@@ -25,15 +25,8 @@ import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.tests.gmn_test_client
 
-import d1_common.const
-import d1_common.replication_policy
-import d1_common.system_metadata
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import d1_common.util
-import d1_common.xml
 
 
 class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):

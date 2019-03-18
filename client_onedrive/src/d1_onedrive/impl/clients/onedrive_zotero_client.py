@@ -44,7 +44,7 @@ import pyzotero
 import d1_onedrive.impl.onedrive_exceptions
 
 try:
-    import pickle as pickle
+    import pickle
 except ImportError:
     import pickle
 

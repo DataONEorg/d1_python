@@ -14,7 +14,7 @@ import pyxb.binding
 import pyxb.binding.datatypes
 import pyxb.binding.saxer
 import pyxb.utils.domutils
-import pyxb.utils.six as _six
+import pyxb.utils.six
 import pyxb.utils.utility
 
 # Unique identifier for bindings created at the same time
@@ -67,7 +67,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
     )
     handler = saxer.getContentHandler()
     xmld = xml_text
-    if isinstance(xmld, _six.text_type):
+    if isinstance(xmld, pyxb.utils.six.text_type):
         xmld = xmld.encode(pyxb._InputEncoding)
     saxer.parse(io.BytesIO(xmld))
     instance = handler.rootObject()
@@ -301,10 +301,10 @@ def _BuildAutomaton():
     # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton
     del _BuildAutomaton
-    import pyxb.utils.fac as fac
+    import pyxb.utils.fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(
+    cc_0 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -314,7 +314,7 @@ def _BuildAutomaton():
         ),
     )
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(
+    cc_1 = pyxb.utils.fac.CounterCondition(
         min=0,
         max=1,
         metadata=pyxb.utils.utility.Location(
@@ -326,7 +326,7 @@ def _BuildAutomaton():
     counters.add(cc_1)
     states = []
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_0, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(
         DataONEException._UseForTag(pyxb.namespace.ExpandedName(None, 'description')),
         pyxb.utils.utility.Location(
@@ -335,7 +335,7 @@ def _BuildAutomaton():
             6,
         ),
     )
-    st_0 = fac.State(
+    st_0 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -343,7 +343,7 @@ def _BuildAutomaton():
     )
     states.append(st_0)
     final_update = set()
-    final_update.add(fac.UpdateInstruction(cc_1, False))
+    final_update.add(pyxb.utils.fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(
         DataONEException._UseForTag(
             pyxb.namespace.ExpandedName(None, 'traceInformation')
@@ -354,7 +354,7 @@ def _BuildAutomaton():
             6,
         ),
     )
-    st_1 = fac.State(
+    st_1 = pyxb.utils.fac.State(
         symbol,
         is_initial=True,
         final_update=final_update,
@@ -362,13 +362,13 @@ def _BuildAutomaton():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(fac.Transition(st_0, [fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(fac.Transition(st_1, [fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
     st_1._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, True, containing_state=None)
+    return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
 
 DataONEException._Automaton = _BuildAutomaton()

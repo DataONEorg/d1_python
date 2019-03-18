@@ -54,13 +54,9 @@ import mock
 import responses
 
 import d1_common.const
-import d1_common.type_conversions
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 
-import d1_test.d1_test_case
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 import d1_test.sample

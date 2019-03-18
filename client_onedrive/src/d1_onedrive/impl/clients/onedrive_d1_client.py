@@ -34,7 +34,6 @@ import d1_common.types.exceptions
 
 import d1_client.cnclient
 import d1_client.d1client
-import d1_client.mnclient
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

@@ -25,12 +25,8 @@ import d1_gmn.app
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
 import d1_gmn.app.did
-import d1_gmn.app.event_log
 import d1_gmn.app.models
-import d1_gmn.app.psycopg_adapter
-import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
 import d1_gmn.app.views.external
 import d1_gmn.app.views.slice
 
@@ -38,15 +34,12 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types
-import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.url
 import d1_common.xml
 
 import django.conf
-import django.core.files.move
 import django.db.models
 import django.http
 

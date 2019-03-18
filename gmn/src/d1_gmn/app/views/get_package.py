@@ -21,8 +21,6 @@
 import d1_gmn.app.model_util
 import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-import d1_gmn.app.util
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.util
 
@@ -31,7 +29,6 @@ import d1_common.checksum
 import d1_common.const
 import d1_common.iter.bytes
 import d1_common.iter.file
-import d1_common.iter.string
 import d1_common.types.exceptions
 
 import django.http

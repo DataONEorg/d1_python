@@ -21,20 +21,13 @@
 
 import d1_gmn.app.event_log
 import d1_gmn.app.resource_map
-import d1_gmn.app.revision
 import d1_gmn.app.scimeta
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
 import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.assert_sysmeta
-import d1_gmn.app.views.util
 
-import d1_common.const
 import d1_common.date_time
-import d1_common.types
-import d1_common.types.exceptions
-import d1_common.url
 import d1_common.util
 import d1_common.xml
 

@@ -24,7 +24,6 @@ import datetime
 import random
 
 import d1_common.date_time
-import d1_common.types.dataoneTypes
 
 import d1_test.d1_test_case
 

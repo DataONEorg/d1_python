@@ -30,7 +30,6 @@ import d1_gmn.tests.gmn_test_case
 import d1_common.checksum
 import d1_common.types
 import d1_common.types.exceptions
-import d1_common.util
 
 
 class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):

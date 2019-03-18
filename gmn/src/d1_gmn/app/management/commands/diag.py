@@ -29,15 +29,10 @@ import d1_gmn.app.auth
 import d1_gmn.app.delete
 # noinspection PyProtectedMember
 import d1_gmn.app.did
-import d1_gmn.app.management.commands.util.util as util
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
-import d1_gmn.app.node
-import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.assert_db
 
-import d1_common.iter.file
 import d1_common.iter.path
 import d1_common.system_metadata
 import d1_common.type_conversions
@@ -45,10 +40,7 @@ import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
 
-import d1_client.cnclient
-import d1_client.cnclient_2_0
 import d1_client.iter.sysmeta_multi
-import d1_client.mnclient_2_0
 
 import django.conf
 import django.core.management.base
@@ -126,7 +118,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
@@ -264,13 +256,13 @@ class UpdateSystemMetadata(object):
         )
 
     def handle(self, *args, **opt):
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info(
             "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
-        util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
         self._check_debug_mode()
         if opt["root"] and opt["baseurl"]:
             raise django.core.management.base.CommandError(

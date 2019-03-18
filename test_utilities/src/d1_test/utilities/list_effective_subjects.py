@@ -30,11 +30,7 @@ import sys
 import d1_certificate.certificate_extractor
 
 import d1_common.const
-import d1_common.date_time
-import d1_common.types.dataoneTypes_v1 as dataoneTypes_v1
-import d1_common.types.exceptions
-import d1_common.url
-import d1_common.util
+import d1_common.types.dataoneTypes_v1
 
 
 class get_subjects_from_certificate(object):
@@ -120,7 +116,7 @@ class get_subjects_from_certificate(object):
 
     def _deserialize_subject_info(self, subject_info_xml):
         try:
-            return dataoneTypes_v1.CreateFromDocument(subject_info_xml)
+            return d1_common.types.dataoneTypes_v1.CreateFromDocument(subject_info_xml)
         except Exception as e:
             print('Error deserializing SubjectInfo: {}'.format(str(e)))
             exit()

@@ -46,9 +46,7 @@ Quote and unquote are somewhat borrowed from python urllib standard library.
 
 import logging
 import os
-import urllib.error
 import urllib.parse
-import urllib.request
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
@@ -99,7 +97,7 @@ def windows_filename_from_identifier(identifier):
 
     \ / :  * ? " < > |
     """
-    return quote(identifier, '\\/:*?"<>|')
+    return quote(identifier, r'\/:*?"<>|')
 
 
 def windows_identifier_from_filename(filename):

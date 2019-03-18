@@ -32,12 +32,10 @@ import responses
 
 import d1_common.const
 import d1_common.multipart
-import d1_common.types.dataoneTypes
 import d1_common.url
 import d1_common.util
 
 import d1_test.mock_api.d1_exception
-import d1_test.mock_api.util
 
 POST_ENDPOINT_RX = r'v([123])/post'
 

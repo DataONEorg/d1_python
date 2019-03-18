@@ -20,7 +20,7 @@
 # limitations under the License.
 """Test the Object Resolver."""
 
-import d1_onedrive.impl.resolver.d1_object as d1_object
+import d1_onedrive.impl.resolver.d1_object
 import d1_onedrive.impl.tests.object_tree_test_sample
 
 import d1_test.d1_test_case
@@ -30,7 +30,7 @@ options = {}
 
 class TestD1ObjectResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
-        self._resolver = d1_object.Resolver(
+        self._resolver = d1_onedrive.impl.resolver.d1_object.Resolver(
             options, d1_onedrive.impl.tests.object_tree_test_sample.object_tree
         )
 

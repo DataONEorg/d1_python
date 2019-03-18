@@ -29,17 +29,17 @@ Cache the information on disk between runs of ONEDrive.
 import logging
 import pickle
 
-import d1_onedrive.impl.clients.onedrive_d1_client as onedrive_d1_client
-import d1_onedrive.impl.clients.onedrive_solr_client as onedrive_solr_client
-import d1_onedrive.impl.onedrive_exceptions as onedrive_exceptions
+import d1_onedrive.impl.clients.onedrive_d1_client
+import d1_onedrive.impl.clients.onedrive_solr_client
+import d1_onedrive.impl.onedrive_exceptions
 
 
 class ObjectTree:
     def __init__(self, options, source_tree):
         self._options = options
         self._source_tree = source_tree
-        self._solr_client = onedrive_solr_client.OneDriveSolrClient(options)
-        self._d1_client = onedrive_d1_client.DataONEClient(options)
+        self._solr_client = d1_onedrive.impl.clients.onedrive_solr_client.OneDriveSolrClient(options)
+        self._d1_client = d1_onedrive.impl.clients.onedrive_d1_client.DataONEClient(options)
 
     def __enter__(self):
         self._create_cache()
@@ -73,7 +73,7 @@ class ObjectTree:
         try:
             return self._cache['records'][pid]
         except KeyError:
-            raise onedrive_exceptions.ONEDriveException('Unknown PID')
+            raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException('Unknown PID')
 
     def get_object_record_with_sync(self, pid):
         """Get an object that may not currently be in the cache.
@@ -126,7 +126,7 @@ class ObjectTree:
         try:
             return self._cache['records'][pid]
         except KeyError:
-            raise onedrive_exceptions.ONEDriveException('Unknown PID')
+            raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException('Unknown PID')
 
     def _unpickle_cache_from_disk(self):
         try:
@@ -177,7 +177,7 @@ class ObjectTree:
         """
         try:
             record = self._solr_client.get_solr_record(pid)
-        except onedrive_exceptions.ONEDriveException:
+        except d1_onedrive.impl.onedrive_exceptions.ONEDriveException:
             pass
         else:
             self._create_cache_item(cache_folder, record)
@@ -207,4 +207,4 @@ class ObjectTree:
         try:
             return self._get_cache_folder_recursive(path[1:], folder['dirs'][path[0]])
         except KeyError:
-            raise onedrive_exceptions.ONEDriveException('Invalid path')
+            raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException('Invalid path')

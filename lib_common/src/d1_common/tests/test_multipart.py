@@ -25,15 +25,15 @@ import responses
 import d1_common.multipart
 
 import d1_test.d1_test_case
-import d1_test.mock_api.post as mock_post
+import d1_test.mock_api.post
 
-import d1_client.session as session
+import d1_client.session
 
 
 class TestMultipart(d1_test.d1_test_case.D1TestCase):
     def _post_fields(self, fields_dict):
-        mock_post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        s = session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         return s.POST(['post'], fields=fields_dict)
 
     @responses.activate

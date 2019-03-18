@@ -38,13 +38,11 @@ import logging
 from . import jwt
 
 # noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util as util
-import d1_gmn.app.middleware.session_jwt
+import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 
 import d1_common.cert.jwt
 import d1_common.types.exceptions
-import d1_common.util
 
 import django.core.management.base
 
@@ -60,7 +58,7 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         assert not args
-        util.log_setup(opt["debug"])
+        d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         try:
             self._handle(opt)
         except d1_common.types.exceptions.DataONEException as e:
