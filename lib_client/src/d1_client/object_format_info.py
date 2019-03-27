@@ -30,7 +30,9 @@ import csv
 import d1_common.util
 
 # Config
-MIME_MAPPINGS_CSV_PATH = d1_common.util.abs_path('mime_mappings.csv')
+import d1_common.utils.filesystem
+
+MIME_MAPPINGS_CSV_PATH = d1_common.utils.filesystem.abs_path('mime_mappings.csv')
 
 
 class Singleton(object):

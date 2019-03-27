@@ -126,7 +126,6 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         recv_sciobj_1_str, recv_sysmeta_1_pyxb = self.get_obj(
             gmn_client_v2, d1_common.xml.get_req_val(sysmeta_1_pyxb.identifier)
         )
-        self.dump(recv_sysmeta_1_pyxb)
         assert send_sciobj_1_str == recv_sciobj_1_str
         assert d1_common.system_metadata.are_equivalent_pyxb(
             send_sysmeta_1_pyxb, recv_sysmeta_1_pyxb
@@ -135,7 +134,6 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         recv_sciobj_2_str, recv_sysmeta_2_pyxb = self.get_obj(
             gmn_client_v2, d1_common.xml.get_req_val(sysmeta_2_pyxb.identifier)
         )
-        self.dump(recv_sysmeta_2_pyxb)
         assert send_sciobj_2_str == recv_sciobj_2_str
         assert d1_common.system_metadata.are_equivalent_pyxb(
             send_sysmeta_2_pyxb, recv_sysmeta_2_pyxb

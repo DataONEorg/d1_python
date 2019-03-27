@@ -26,6 +26,7 @@ import d1_common.const
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_client.session
@@ -521,7 +522,7 @@ class DataONEBaseClient(d1_client.session.Session):
         response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
         try:
             if create_missing_dirs:
-                d1_common.util.create_missing_directories_for_file(sciobj_path)
+                d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
             with open(sciobj_path, 'wb') as f:
                 for chunk_str in response.iter_content(
                     chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE

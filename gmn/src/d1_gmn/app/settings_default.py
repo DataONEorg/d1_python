@@ -31,6 +31,7 @@ import os.path
 
 import d1_common.const
 import d1_common.util
+import d1_common.utils.filesystem
 
 DEBUG = False
 DEBUG_GMN = False
@@ -80,7 +81,7 @@ CLIENT_CERT_PRIVATE_KEY_PATH = (
 )
 
 OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
-LOG_PATH = d1_common.util.abs_path('../gmn.log')
+LOG_PATH = d1_common.utils.filesystem.abs_path('../gmn.log')
 
 NODE_REPLICATE = False
 
@@ -131,7 +132,7 @@ MAX_SLICE_ITEMS = 5000
 STATIC_SERVER = False
 
 STATIC_URL = '/static/'
-STATIC_ROOT = d1_common.util.abs_path('./static')
+STATIC_ROOT = d1_common.utils.filesystem.abs_path('./static')
 
 # Postgres database connection.
 DATABASES = {
@@ -175,7 +176,7 @@ LOG_LEVEL = 'DEBUG' if DEBUG or DEBUG_GMN else 'INFO'
 LOG_FILE_PATH = (
     '/var/local/dataone/logs/gmn.log'
     if os.path.isdir('/var/local/dataone/logs')
-    else d1_common.util.abs_path('../gmn.log')
+    else d1_common.utils.filesystem.abs_path('../gmn.log')
 )
 
 LOGGING = {
@@ -254,7 +255,7 @@ MIDDLEWARE = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [d1_common.util.abs_path('./app/templates')],  # noqa: F405
+        'DIRS': [d1_common.utils.filesystem.abs_path('./app/templates')],  # noqa: F405
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -301,7 +302,7 @@ SECRET_KEY = '<Do not modify this placeholder value>'
 # generated key when GMN is first launched after install. If the file exists,
 # the contents are used as the key. The file and key may be created manually if
 # desired. The parent directories must exist. Also see the SECRET_KEY setting.
-SECRET_KEY_PATH = d1_common.util.abs_path('./secret_key.txt')
+SECRET_KEY_PATH = d1_common.utils.filesystem.abs_path('./secret_key.txt')
 
 # Only set cookies when running through SSL.
 # Default: True

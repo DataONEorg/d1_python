@@ -33,6 +33,7 @@ import datetime
 import logging
 import os
 
+import d1_common.utils.filesystem
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
@@ -377,7 +378,7 @@ class Command(django.core.management.base.BaseCommand):
             )
             return
 
-        d1_common.util.create_missing_directories_for_file(abs_sciobj_path)
+        d1_common.utils.filesystem.create_missing_directories_for_file(abs_sciobj_path)
         await client.get_and_save(pid, abs_sciobj_path)
 
     def get_list_objects_arg_dict(self, node_type):
