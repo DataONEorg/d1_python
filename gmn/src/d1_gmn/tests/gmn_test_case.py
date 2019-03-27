@@ -477,7 +477,6 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         send_sysmeta_pyxb.size = len(send_sciobj_bytes)
         send_sysmeta_pyxb.obsoletes = None
         send_sysmeta_pyxb.obsoletedBy = None
-        # self.dump(send_sysmeta_pyxb)
         with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
             self.call_d1_client(
                 client.create,
@@ -568,7 +567,6 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 'replica': None,
             },
         )
-        # self.dump(sysmeta_pyxb)
         self.call_d1_client(client.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb)
         return ore_pid
 
@@ -661,7 +659,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 row_dict = dict_fetchall(cursor)
                 logging.debug('SQL query result:')
                 if dump:
-                    self.dump(row_dict)
+                    self.sample.dump(row_dict)
         except Exception as e:
             logging.error('SQL query error: {}'.format(str(e)))
             raise

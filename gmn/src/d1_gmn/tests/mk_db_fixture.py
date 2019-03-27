@@ -121,9 +121,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                     client, pid
                 )
                 sciobj_file = io.BytesIO(sciobj_bytes)
-                # self.dump(sysmeta_pyxb)
                 # recv_sysmeta_pyxb = client.getSystemMetadata(pid)
-                # self.dump(recv_sysmeta_pyxb)
 
                 if not do_chain:
                     client.create(pid, sciobj_file, sysmeta_pyxb)
@@ -212,8 +210,8 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
                 start_idx += object_list_pyxb.count
 
-        self.sample.save(self.sample.obj_to_pretty_str(pid_list), 'db_fixture_pid.json')
-        self.sample.save(self.sample.obj_to_pretty_str(sid_list), 'db_fixture_sid.json')
+        self.sample.save(self.sample.obj_to_pretty_str(pid_list)[1], 'db_fixture_pid.json')
+        self.sample.save(self.sample.obj_to_pretty_str(sid_list)[1], 'db_fixture_sid.json')
 
 
 if __name__ == '__main__':

@@ -51,7 +51,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
             sciobj_bytes, sysmeta_pyxb = self.get_obj(self.client_v2, pid)
             sysmeta_pyxb.accessPolicy = access_policy_pyxb
-            # self.dump(sysmeta_pyxb)
             self.client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
     def _get(self, pid, active_subj_list):
@@ -150,8 +149,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 freeze_time.tick(delta=datetime.timedelta(days=1))
                 assert self.client_v2.updateSystemMetadata(pid, old_sysmeta_pyxb)
                 new_sciobj_bytes, new_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
-                # self.dump(old_sysmeta_pyxb)
-                # self.dump(new_sysmeta_pyxb)
                 assert old_sysmeta_pyxb.formatId == new_sysmeta_pyxb.formatId
                 assert old_sysmeta_pyxb.dateUploaded == new_sysmeta_pyxb.dateUploaded
                 assert (
@@ -200,8 +197,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
             gmn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
             ver3_sciobj_bytes, ver3_sysmeta_pyxb = self.get_obj(gmn_client_v2, base_pid)
-            # self.dump(ver1_sysmeta_pyxb)
-            # self.dump(ver3_sysmeta_pyxb)
             # Check that the count of preferred nodes increased by one
             assert len(
                 ver1_sysmeta_pyxb.replicationPolicy.preferredMemberNode
