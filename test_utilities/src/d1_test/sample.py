@@ -29,6 +29,7 @@ import tempfile
 import textwrap
 import traceback
 
+import d1_common.utils.filesystem
 import posix_ipc
 import requests.structures
 import requests_toolbelt.utils.dump
@@ -64,8 +65,8 @@ def start_tidy():
     logging.info('Moving files to tidy dir')
     sample_dir_path = get_abs_sample_file_path('')
     tidy_dir_path = get_abs_sample_tidy_file_path('')
-    d1_common.util.create_missing_directories_for_dir(sample_dir_path)
-    d1_common.util.create_missing_directories_for_dir(tidy_dir_path)
+    d1_common.utils.filesystem.create_missing_directories_for_dir(sample_dir_path)
+    d1_common.utils.filesystem.create_missing_directories_for_dir(tidy_dir_path)
     i = 0
     for i, item_name in enumerate(os.listdir(sample_dir_path)):
         sample_path = os.path.join(sample_dir_path, item_name)

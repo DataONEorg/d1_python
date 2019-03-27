@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """URL to view mapping."""
-
+import d1_common.utils.filesystem
 import d1_gmn.app.views.external
 import d1_gmn.app.views.get_package
 import d1_gmn.app.views.gmn
@@ -220,7 +220,7 @@ if django.conf.settings.STATIC_SERVER:
             django.views.static.serve,
             kwargs={
                 # 'static': d1_common.util.abs_path('.'),
-                'document_root': d1_common.util.abs_path('./static'),
+                'document_root': d1_common.utils.filesystem.abs_path('./static'),
                 'show_indexes': True,
                 'allowed_method_list': ['GET'],
             },

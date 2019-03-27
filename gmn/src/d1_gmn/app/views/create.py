@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """SciObj create for view methods."""
-
+import d1_common.utils.filesystem
 import d1_gmn.app.event_log
 import d1_gmn.app.resource_map
 import d1_gmn.app.scimeta
@@ -93,7 +93,7 @@ def _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, sciobj_url):
     map_xml = _read_sciobj_bytes_from_request(request)
     resource_map = d1_gmn.app.resource_map.parse_resource_map_from_str(map_xml)
     d1_gmn.app.resource_map.assert_map_is_valid_for_create(resource_map)
-    d1_common.util.create_missing_directories_for_file(sciobj_path)
+    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
     _save_sciobj_bytes_from_str(map_xml, sciobj_path)
     d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
     d1_gmn.app.resource_map.create_or_update(pid, resource_map)
@@ -131,7 +131,7 @@ def _save_sciobj_bytes_from_request(request, sciobj_path):
     handles this when using the file related fields in the models, but
     GMN is not using those, so has to do it manually here.
     """
-    d1_common.util.create_missing_directories_for_file(sciobj_path)
+    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
     try:
         django.core.files.move.file_move_safe(
             request.FILES['object'].temporary_file_path(), sciobj_path
@@ -143,7 +143,7 @@ def _save_sciobj_bytes_from_request(request, sciobj_path):
 
 
 def _save_sciobj_bytes_from_str(map_xml, sciobj_path):
-    d1_common.util.create_missing_directories_for_file(sciobj_path)
+    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
     with open(sciobj_path, 'wb') as f:
         f.write(map_xml)
 

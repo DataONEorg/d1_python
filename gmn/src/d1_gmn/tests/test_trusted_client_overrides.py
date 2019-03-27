@@ -72,8 +72,6 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
             recv_sysmeta_pyxb = gmn_client_v2.getSystemMetadata(pid)
 
-            self.dump(recv_sysmeta_pyxb)
-
             accepted_override_list = []
             for is_simple_content, attr_str, override_value in override_list:
                 attr = getattr(recv_sysmeta_pyxb, attr_str)

@@ -29,6 +29,7 @@ also be run manually.
 import argparse
 import logging
 
+import d1_common.utils.filesystem
 import d1_gmn.app.did
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
@@ -256,7 +257,7 @@ class ReplicationQueueProcessor(object):
 
     def _store_science_object_bytes(self, pid, sciobj_bytestream):
         sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-        d1_common.util.create_missing_directories_for_file(sciobj_path)
+        d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
         with open(sciobj_path, "wb") as f:
             for chunk in sciobj_bytestream.iter_content(
                 chunk_size=django.conf.settings.NUM_CHUNK_BYTES

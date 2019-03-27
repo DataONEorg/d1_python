@@ -461,14 +461,6 @@ class D1TestCase(object):
     # def random_tag(self, tag_str):
     #   return '{}_{}'.format(tag_str, self.random_str())
 
-    def dump(self, o, log_func=logging.debug):
-        list(
-            map(
-                log_func,
-                d1_test.sample.obj_to_pretty_str(o, no_clobber=True).splitlines(),
-            )
-        )
-
     def format_pyxb(self, type_pyxb):
         ss = io.StringIO()
         ss.write('PyXB type instance:\n')

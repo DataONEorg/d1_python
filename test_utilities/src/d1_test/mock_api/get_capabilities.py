@@ -36,6 +36,7 @@ import logging
 import os
 import re
 
+import d1_common.utils.filesystem
 import responses
 
 import d1_common.const
@@ -77,7 +78,7 @@ def _request_callback(request):
         type_doc_name = 'node_v2_0.xml'
     else:
         assert False, 'Type doc not available for version. tag="{}"'.format(version_tag)
-    node_xml_path = d1_common.util.abs_path(os.path.join('type_docs', type_doc_name))
+    node_xml_path = d1_common.utils.filesystem.abs_path(os.path.join('type_docs', type_doc_name))
     with open(node_xml_path, 'rb') as f:
         node_xml = f.read()
     header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}

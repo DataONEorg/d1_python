@@ -30,6 +30,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
+import d1_common.utils.filesystem
 
 DEFAULT_MAX_CONCURRENT_CONNECTIONS = 100
 DEFAULT_RETRY_COUNT = 3
@@ -109,7 +110,7 @@ class AsyncDataONEClient:
         """
         async with self.get(pid, vendor_specific=vendor_specific) as content:
             if create_missing_dirs:
-                d1_common.util.create_missing_directories_for_file(sciobj_path)
+                d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
             with open(sciobj_path, "wb") as f:
                 for chunk_str in await content.iter_chunks():
                     f.write(chunk_str)

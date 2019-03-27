@@ -35,6 +35,7 @@ import os
 import pprint
 import re
 
+import d1_common.utils.filesystem
 import lxml
 import lxml.etree
 
@@ -142,7 +143,7 @@ class Validate(object):
         return self.normalize_path(schema_store_root_path, schema_root_path)
 
     def load_format_id_to_schema_root_dict(self, format_id_json_path):
-        abs_format_id_json_path = d1_common.util.abs_path(format_id_json_path)
+        abs_format_id_json_path = d1_common.utils.filesystem.abs_path(format_id_json_path)
         with open(abs_format_id_json_path, 'r') as f:
             return json.load(f)
 
@@ -219,7 +220,8 @@ class Validate(object):
     def normalize_path(self, base_path, rel_path=None):
         if os.path.isfile(base_path):
             base_path = os.path.split(base_path)[0]
-        res = os.path.realpath(d1_common.util.abs_path_from_base(base_path, rel_path))
+        res = os.path.realpath(
+            d1_common.utils.filesystem.abs_path_from_base(base_path, rel_path))
         if os.path.exists(res):
             return res
 

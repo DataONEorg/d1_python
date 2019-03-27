@@ -26,6 +26,7 @@
 import logging
 import warnings
 
+import d1_common.utils.filesystem
 from d1_gmn.app.settings_default import *
 
 import d1_common.util
@@ -63,7 +64,7 @@ NODE_CONTACT_SUBJECT = 'CN=NodeContactSubject,O=Google,C=US,DC=cilogon,DC=org'
 CLIENT_CERT_PATH = None
 CLIENT_CERT_PRIVATE_KEY_PATH = None
 OBJECT_STORE_PATH = '/tmp/gmn_test_obj_store'
-LOG_PATH = d1_common.util.abs_path('/tmp/gmn_test.log')
+LOG_PATH = d1_common.utils.filesystem.abs_path('/tmp/gmn_test.log')
 
 DATAONE_ROOT = 'http://mock/root/cn'
 
@@ -139,4 +140,4 @@ LOGGING = {
     },
 }
 
-FIXTURE_DIRS = (d1_common.util.abs_path('./fixtures'),)
+FIXTURE_DIRS = (d1_common.utils.filesystem.abs_path('./fixtures'),)

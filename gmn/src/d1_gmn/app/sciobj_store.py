@@ -39,6 +39,7 @@ import d1_common.iter.file
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.filesystem
 
 import django.conf
 import d1_gmn
@@ -131,7 +132,7 @@ def open_sciobj_file_by_path(abs_path, write=False):
     file location in a suitable form for storing in the DB.
     """
     if write:
-        d1_common.util.create_missing_directories_for_file(abs_path)
+        d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
     with open(abs_path, 'wb' if write else 'rb') as sciobj_file:
         yield sciobj_file
 
@@ -288,7 +289,7 @@ def get_store_version_path():
 
 def create_store():
     assert_sciobj_store_does_not_exist()
-    d1_common.util.create_missing_directories_for_dir(get_abs_sciobj_store_path())
+    d1_common.utils.filesystem.create_missing_directories_for_dir(get_abs_sciobj_store_path())
     save_store_version()
 
 

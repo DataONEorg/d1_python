@@ -35,6 +35,7 @@ import logging
 import os
 import re
 
+import d1_common.utils.filesystem
 import responses
 
 import d1_common.const
@@ -68,7 +69,7 @@ def _request_callback(request):
     version_tag = _parse_url(request.url)
     if version_tag not in ('v1', 'v2'):
         assert False, 'Unknown API version. tag="{}"'.format(version_tag)
-    qed_xml_path = d1_common.util.abs_path(
+    qed_xml_path = d1_common.utils.filesystem.abs_path(
         os.path.join('type_docs', 'query_engine_description_1_1.xml')
     )
     with open(qed_xml_path, 'rb') as f:

@@ -22,6 +22,7 @@ import os
 import sys
 
 import d1_common.util
+import d1_common.utils.filesystem
 
 import django
 import django.core.handlers.wsgi
@@ -32,8 +33,8 @@ import django.utils.datastructures
 os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings'
 
 # Add the service folder to the search path.
-sys.path.append(d1_common.util.abs_path('.'))
-sys.path.append(d1_common.util.abs_path('..'))
+sys.path.append(d1_common.utils.filesystem.abs_path('.'))
+sys.path.append(d1_common.utils.filesystem.abs_path('..'))
 
 
 class D1WSGIRequest(django.core.handlers.wsgi.WSGIRequest):
