@@ -359,16 +359,14 @@ class AccessPolicyWrapper(object):
     def dump(self):
         """Dump the current state to debug level log."""
         logging.debug('AccessPolicy:')
-        list(
-            map(
-                logging.debug,
-                [
-                    '  {}'.format(s)
-                    for s in pprint.pformat(
-                        self.get_normalized_perm_list()
-                    ).splitlines()
-                ],
-            )
+        map(
+            logging.debug,
+            [
+                '  {}'.format(s)
+                for s in pprint.pformat(
+                    self.get_normalized_perm_list()
+                ).splitlines()
+            ],
         )
 
     # Check current state

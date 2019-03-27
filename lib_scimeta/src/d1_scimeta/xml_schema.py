@@ -60,10 +60,6 @@ class Validate(object):
             self._format_id_to_schema_root_dict = self.load_format_id_to_schema_root_dict(
                 FORMAT_ID_JSON_PATH
             )
-            # self.dump(
-            #   'format_id_to_schema_root_dict', self._format_id_to_schema_root_dict
-            # )
-        # self.validate(format_id, self.strip_xml_encoding_declaration(xml_str))
         self.validate(format_id, xml_str)
 
     def validate(self, format_id, xml_str):

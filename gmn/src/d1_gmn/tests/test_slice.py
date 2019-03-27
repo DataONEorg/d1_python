@@ -96,7 +96,6 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 multiple_slice_pyxb = slicable_api_func(
                     start=start_int, count=vary_count_in, fromDate=from_date
                 )
-                # self.dump(log_pyxb)
                 multi_slice_pyxb_list.extend(
                     getattr(multiple_slice_pyxb, iterable_attr)
                 )
