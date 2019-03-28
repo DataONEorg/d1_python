@@ -36,7 +36,6 @@ import d1_x509v3_certificate_generator
 import settings
 import subject_dn
 
-# Get an instance of a logger.
 logger = logging.getLogger()
 
 # The SubjectInfo to include in the certificate.

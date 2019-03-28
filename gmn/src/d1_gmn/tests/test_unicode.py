@@ -29,7 +29,7 @@ import d1_gmn.tests.gmn_test_case
 import d1_common
 import d1_common.system_metadata
 
-
+logger = logging.getLogger(__name__)
 
 class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
@@ -37,7 +37,7 @@ class TestUnicode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """Unicode: GMN and libraries handle Unicode correctly"""
         unicode_pid = tricky_identifier_tup[0]
         with d1_gmn.tests.gmn_mock.disable_auth():
-            logging.debug('Testing PID: {}'.format(unicode_pid))
+            logger.debug('Testing PID: {}'.format(unicode_pid))
             pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2, pid=unicode_pid, sid=True
             )

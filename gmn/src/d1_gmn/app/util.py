@@ -33,6 +33,7 @@ import django.conf
 import django.contrib.staticfiles.templatetags.staticfiles
 import django.http
 
+logger = logging.getLogger(__name__)
 
 # This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember
@@ -96,7 +97,7 @@ def _mk_http_basic_auth_header():
 def dump_stack():
     frame = inspect.currentframe()
     stack_trace = traceback.format_stack(frame)
-    logging.debug(''.join(stack_trace))
+    logger.debug(''.join(stack_trace))
 
 
 def is_proxy_url(url):
@@ -105,7 +106,7 @@ def is_proxy_url(url):
 
 
 def create_http_echo_response(request):
-    logging.warning(
+    logger.warning(
         'Echoing request (triggered by vendor extension or '
         'django.conf.settings.DEBUG_ECHO_REQUEST=True)'
     )

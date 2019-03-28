@@ -33,7 +33,6 @@ import git
 
 logger = logging.getLogger(__name__)
 
-
 def main():
     """Remove unused imports
     Unsafe! Only tested on our codebase, which uses simple absolute imports on the form,

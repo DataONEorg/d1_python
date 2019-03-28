@@ -28,6 +28,7 @@ import sys
 
 import d1_common.date_time
 
+logger = logging.getLogger(__name__)
 
 def log_setup(is_debug=False, is_multiprocess=False):
     """Set up a standardized log format for the DataONE Python stack. All
@@ -166,7 +167,7 @@ class EventCounter(object):
           inc_int: int
             Optional argument to increase the count for the event by more than 1.
         """
-        logging.info(
+        logger.info(
             ' - '.join(map(str, [v for v in (event_str, msg_str, inc_int) if v]))
         )
         self.count(event_str, inc_int or 1)
@@ -179,11 +180,11 @@ class EventCounter(object):
         are not zeroed.
         """
         if self._event_dict:
-            logging.info('Events:')
+            logger.info('Events:')
             for event_str, count_int in sorted(self._event_dict.items()):
-                logging.info('  {}: {}'.format(event_str, count_int))
+                logger.info('  {}: {}'.format(event_str, count_int))
         else:
-            logging.info('No Events')
+            logger.info('No Events')
 
 
 # ===============================================================================

@@ -97,6 +97,8 @@ import d1_common.type_conversions
 import d1_common.wrap.access_policy
 import d1_common.xml
 
+logger = logging.getLogger(__name__)
+
 SYSMETA_ROOT_CHILD_LIST = [
     'serialVersion',
     'identifier',
@@ -218,8 +220,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
     b_xml = d1_common.xml.serialize_to_xml_str(b_pyxb)
     are_equivalent = d1_common.xml.are_equivalent(a_xml, b_xml)
     if not are_equivalent:
-        logging.debug('XML documents not equivalent:')
-        logging.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
+        logger.debug('XML documents not equivalent:')
+        logger.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
     return are_equivalent
 
 

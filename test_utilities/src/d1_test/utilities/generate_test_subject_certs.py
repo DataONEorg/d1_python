@@ -29,7 +29,6 @@ import OpenSSL
 
 import d1_common.types.dataoneTypes_v1
 
-# Get an instance of a logger.
 logger = logging.getLogger()
 
 # Config

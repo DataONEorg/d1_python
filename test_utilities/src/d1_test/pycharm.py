@@ -46,6 +46,8 @@ except ImportError:
 
 import d1_dev.util
 
+logger = logging.getLogger(__name__)
+
 # Set this path to the binary that launches PyCharm. If an environment variable
 # of the same name exists, it is used instead of this setting.
 PYCHARM_BIN_PATH = os.path.expanduser("~/bin/JetBrains/pycharm.sh")
@@ -61,7 +63,7 @@ def open_and_set_cursor(src_path, src_line=1):
     if is_headless:
         return
     if src_path == "<string>":
-        logging.debug("Unable to find location of error")
+        logger.debug("Unable to find location of error")
         return
     # Handle LocalPath from pytest
     src_path = str(src_path)

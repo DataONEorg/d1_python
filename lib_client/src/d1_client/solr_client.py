@@ -74,6 +74,8 @@ import requests.structures
 
 import d1_client.baseclient_1_2
 
+logger = logging.getLogger(__name__)
+
 FIELD_TYPE_CONVERSION_MAP = {
     't': 'text',
     's': 'string',
@@ -310,7 +312,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                         idx_l = int(c_offset) * 2
                         idx_u = (int(c_offset + delta) * 2) - 2
                         a_bin = [f_vals[name][idx_l], f_vals[name][idx_u], 0]
-                        # logging.info(str(a_bin))
+                        # logger.info(str(a_bin))
                         try:
                             if i == 0:
                                 bin_q = '{}:[* TO {}]'.format(

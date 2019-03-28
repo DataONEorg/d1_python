@@ -41,6 +41,7 @@ import django.core.exceptions
 
 RESOURCE_MAP_CREATE_MODE_LIST = ['block', 'open']
 
+logger = logging.getLogger(__name__)
 
 class Startup(django.apps.AppConfig):
     name = 'd1_gmn.app'
@@ -128,7 +129,7 @@ class Startup(django.apps.AppConfig):
             valid_str,
             str(cur_val),
         )
-        logging.error(msg_str)
+        logger.error(msg_str)
         raise django.core.exceptions.ImproperlyConfigured(msg_str)
 
     def _warn_unsafe_for_prod(self):
@@ -144,7 +145,7 @@ class Startup(django.apps.AppConfig):
         for setting_str, setting_safe in safe_settings_list:
             setting_current = self._get_setting(setting_str)
             if setting_current != setting_safe:
-                logging.warning(
+                logger.warning(
                     'Setting is unsafe for use in production. setting="{}" current="{}" '
                     'safe="{}"'.format(setting_str, setting_current, setting_safe)
                 )
@@ -187,7 +188,7 @@ class Startup(django.apps.AppConfig):
                 'new. path="{}"'.format(django.conf.settings.SECRET_KEY_PATH)
             )
         else:
-            logging.info(
+            logger.info(
                 'Generated new secret key file. path="{}"'.format(
                     django.conf.settings.SECRET_KEY_PATH
                 )
@@ -205,7 +206,7 @@ class Startup(django.apps.AppConfig):
                 )
             )
         if not d1_gmn.app.sciobj_store.is_matching_version():
-            logging.warning(
+            logger.warning(
                 'Configuration error: Incorrect object store version. '
                 'store="{}" gmn="{}"'.format(
                     d1_gmn.app.sciobj_store.get_store_version(),

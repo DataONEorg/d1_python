@@ -31,6 +31,7 @@ import logging
 import d1_gmn.app
 import d1_gmn.app.models
 
+logger = logging.getLogger(__name__)
 
 def get_sci_model(pid):
     return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
@@ -56,7 +57,7 @@ def delete_unused_subjects():
     query = query.filter(permission__isnull=True)
     query = query.filter(whitelistforcreateupdatedelete__isnull=True)
 
-    logging.debug('Deleting {} unused subjects:'.format(query.count()))
+    logger.debug('Deleting {} unused subjects:'.format(query.count()))
     for s in query.all():
         logging.debug('  {}'.format(s.subject))
 
