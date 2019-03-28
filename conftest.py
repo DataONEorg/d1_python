@@ -52,6 +52,8 @@ import django.db
 if not 'TRAVIS' in os.environ:
     import d1_test.pycharm
 
+logger = logging.getLogger(__name__)
+
 D1_SKIP_LIST = 'skip_passed/list'
 D1_SKIP_COUNT = 'skip_passed/count'
 
@@ -66,7 +68,6 @@ TEST_DB_KEY = 'default'
 # Hack to get access to print and logging output when running under pytest-xdist
 # and pytest-catchlog. Without this, only output from failed tests is displayed.
 sys.stdout = sys.stderr
-
 
 def pytest_addoption(parser):
     """Add command line switches for pytest customization. See README.md for
@@ -178,19 +179,19 @@ def pytest_sessionstart(session):
         ],
     )
     if session.config.getoption('--sample-tidy'):
-        logging.info('Starting sample tidy')
+        logger.info('Starting sample tidy')
         d1_test.sample.start_tidy()
 
     if session.config.getoption('--fixture-refresh'):
-        logging.info(
+        logger.info(
             'Dropping and creating GMN template database from JSON fixture file'
         )
         db_drop(TEMPLATE_DB_KEY)
     if session.config.getoption('--skip-clear'):
-        logging.info('Clearing list of passed tests')
+        logger.info('Clearing list of passed tests')
         _clear_skip_list(session)
     if session.config.getoption('--skip-print'):
-        logging.info('Printing list of passed tests')
+        logger.info('Printing list of passed tests')
         _print_skip_list(session)
 
 
@@ -200,7 +201,7 @@ def pytest_sessionfinish(session, exitstatus):
     if session.config.getoption('--skip'):
         skipped_count = session.config.cache.get(D1_SKIP_COUNT, 0)
         if skipped_count:
-            logging.warning('Skipped {} previously passed tests'.format(skipped_count))
+            logger.warning('Skipped {} previously passed tests'.format(skipped_count))
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -240,11 +241,11 @@ def pytest_collection_modifyitems(session, config, items):
     cur_skip_count = len(items) - len(new_item_list)
 
     if prev_skip_count == cur_skip_count:
-        logging.info('No tests were run (--skip). Restarting with complete test set')
+        logger.info('No tests were run (--skip). Restarting with complete test set')
         _clear_skip_list(session)
     else:
         session.config.cache.set(D1_SKIP_COUNT, cur_skip_count)
-        logging.info(
+        logger.info(
             'Skipping {} previously passed tests (--skip)'.format(cur_skip_count)
         )
         items[:] = new_item_list
@@ -269,7 +270,7 @@ def _clear_skip_list(session):
 
 
 def _print_skip_list(session):
-    list(map(logging.info, sorted(session.config.cache.get(D1_SKIP_LIST, []))))
+    list(map(logger.info, sorted(session.config.cache.get(D1_SKIP_LIST, []))))
 
 
 def _open_error_in_pycharm(call):
@@ -277,13 +278,13 @@ def _open_error_in_pycharm(call):
 
     Use with --exitfirst (-x)
     """
-    logging.error('Test raised exception: {}'.format(call.excinfo.exconly()))
+    logger.error('Test raised exception: {}'.format(call.excinfo.exconly()))
     test_path, test_lineno = d1_test.d1_test_case.D1TestCase.get_d1_test_case_location(
         call.excinfo.tb
     )
-    logging.error('D1TestCase location: {}:{}'.format(test_path, test_lineno))
+    logger.error('D1TestCase location: {}:{}'.format(test_path, test_lineno))
     exc_frame = call.excinfo.traceback.getcrashentry()
-    logging.error(
+    logger.error(
         'Exception location: {}({})'.format(exc_frame.path, exc_frame.lineno + 1)
     )
     # src_path = call.excinfo.traceback[-1].path
@@ -402,12 +403,12 @@ def django_sciobj_store_setup(request):
     )
     mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
     django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-    logging.debug('Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
+    logger.debug('Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
     d1_gmn.app.sciobj_store.create_store()
 
     yield
 
-    logging.debug('Deleting sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
+    logger.debug('Deleting sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
     shutil.rmtree(tmp_store_path)
 
 
@@ -432,7 +433,7 @@ def django_db_setup(request, django_db_blocker):
     """Set up DB fixture When running in parallel with xdist, this is called
     once for each worker, causing a separate database to be set up for each
     worker."""
-    logging.info('Setting up DB fixture')
+    logger.info('Setting up DB fixture')
 
     db_set_unique_db_name(request)
 
@@ -445,7 +446,7 @@ def django_db_setup(request, django_db_blocker):
         with posix_ipc.Semaphore(
             '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
         ):
-            logging.warning(
+            logger.warning(
                 'LOCK BEGIN {} {}'.format(
                     db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
                 )
@@ -457,7 +458,7 @@ def django_db_setup(request, django_db_blocker):
                 db_populate_by_json(TEMPLATE_DB_KEY)
                 db_migrate(TEMPLATE_DB_KEY)
 
-            logging.warning(
+            logger.warning(
                 'LOCK END {} {}'.format(
                     db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
                 )
@@ -480,21 +481,21 @@ def django_db_setup(request, django_db_blocker):
 
 
 def db_get_name_by_key(db_key):
-    logging.debug('db_get_name_by_key() {}'.format(db_key))
+    logger.debug('db_get_name_by_key() {}'.format(db_key))
     return django.conf.settings.DATABASES[db_key]['NAME']
 
 
 def db_set_unique_db_name(request):
-    logging.debug('db_set_unique_db_name()')
+    logger.debug('db_set_unique_db_name()')
     db_name = '_'.join([db_get_name_by_key(TEST_DB_KEY), get_unique_suffix(request)])
     django.conf.settings.DATABASES[TEST_DB_KEY]['NAME'] = db_name
 
 
 def db_create_from_template():
-    logging.debug('db_create_from_template()')
+    logger.debug('db_create_from_template()')
     new_db_name = db_get_name_by_key(TEST_DB_KEY)
     template_db_name = db_get_name_by_key(TEMPLATE_DB_KEY)
-    logging.info(
+    logger.info(
         'Creating new db from template. new_db="{}" template_db="{}"'.format(
             new_db_name, template_db_name
         )
@@ -507,7 +508,7 @@ def db_create_from_template():
 
 def db_populate_by_json(db_key):
     """Load DB fixture from compressed JSON file to template database."""
-    logging.debug('db_populate_by_json() {}'.format(db_key))
+    logger.debug('db_populate_by_json() {}'.format(db_key))
     django.core.management.call_command(
         'loaddata',
         'db_fixture',
@@ -520,22 +521,22 @@ def db_populate_by_json(db_key):
 
 
 def db_migrate(db_key):
-    logging.debug('db_migrate() {}'.format(db_key))
+    logger.debug('db_migrate() {}'.format(db_key))
     django.core.management.call_command('migrate', '--run-syncdb', database=db_key)
     db_commit_and_close(db_key)
 
 
 def db_drop(db_key):
-    logging.debug('db_drop() {}'.format(db_key))
+    logger.debug('db_drop() {}'.format(db_key))
     db_name = db_get_name_by_key(db_key)
-    logging.debug('Dropping database: {}'.format(db_name))
+    logger.debug('Dropping database: {}'.format(db_name))
     db_commit_and_close(db_key)
     run_sql('postgres', 'drop database if exists {};'.format(db_name))
 
 
 # noinspection PyUnresolvedReferences
 def db_commit_and_close(db_key):
-    logging.debug('db_commit_and_close() {}'.format(db_key))
+    logger.debug('db_commit_and_close() {}'.format(db_key))
     # try:
     django.db.connections[db_key].commit()
     # except (Exception, psycopg2.InterfaceError):
@@ -550,21 +551,21 @@ def db_commit_and_close(db_key):
 
 
 def db_create_blank(db_key):
-    logging.debug('db_create_blank() {}'.format(db_key))
+    logger.debug('db_create_blank() {}'.format(db_key))
     db_name = db_get_name_by_key(db_key)
-    logging.debug('Creating blank database: {}'.format(db_name))
+    logger.debug('Creating blank database: {}'.format(db_name))
     run_sql('postgres', "create database {} encoding 'utf-8';".format(db_name))
 
 
 def db_exists(db_key):
-    logging.debug('db_exists() {}'.format(db_key))
+    logger.debug('db_exists() {}'.format(db_key))
     db_name = db_get_name_by_key(db_key)
     exists_bool = bool(
         run_sql(
             'postgres', "select 1 from pg_database WHERE datname='{}'".format(db_name)
         )
     )
-    logging.debug('db_exists(): {}'.format(exists_bool))
+    logger.debug('db_exists(): {}'.format(exists_bool))
     return exists_bool
 
 
@@ -576,7 +577,7 @@ def run_sql(db, sql):
         cur = conn.cursor()
         cur.execute(sql)
     except psycopg2.DatabaseError as e:
-        logging.debug('SQL query error: {}'.format(str(e)))
+        logger.debug('SQL query error: {}'.format(str(e)))
         raise
     try:
         return cur.fetchall()

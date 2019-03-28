@@ -36,6 +36,8 @@ import d1_test.sample
 
 import d1_client.session
 
+logger = logging.getLogger(__name__)
+
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSession')
 @freezegun.freeze_time('1945-01-02')
@@ -103,7 +105,6 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         """HTTP GET against http://some.bogus.address/ raises
         ConnectionError."""
         s = d1_client.session.Session('http://some.bogus.address')
-        logger = logging.getLogger()
         with d1_common.logging_context.LoggingContext(logger):
             logger.setLevel(logging.ERROR)
             with pytest.raises(requests.exceptions.ConnectionError):

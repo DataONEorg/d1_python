@@ -56,7 +56,6 @@ SIZE_UNIT_LIST = [
 
 TAG_CHECKSUM_ALGO = 'SHA1'
 
-
 def validate_bagit_file(bagit_path):
     """Check if a BagIt file is valid.
 
@@ -156,7 +155,7 @@ def _validate_checksums(bagit_zip, manifest_info_list):
                 )
             )
         else:
-            logging.debug(
+            logger.debug(
                 '{}: {}={}: Checksum OK'.format(
                     manifest_info['path'],
                     manifest_info['checksum_algo'],

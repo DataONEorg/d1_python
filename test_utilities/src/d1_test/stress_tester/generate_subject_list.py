@@ -30,9 +30,7 @@ import subject_dn
 # D1
 from d1_test.instance_generator import random_data
 
-# Get an instance of a logger.
 logger = logging.getLogger()
-
 
 def main():
     log_setup()

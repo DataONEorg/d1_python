@@ -32,6 +32,7 @@ import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 from d1_common.type_conversions import str_to_etree
 
+logger = logging.getLogger(__name__)
 
 def deserialize(doc_xml, pyxb_binding=None):
     """Deserialize DataONE XML types to PyXB.
@@ -247,7 +248,7 @@ def are_equal_or_superset(superset_tree, base_tree):
         _compare_attr(superset_tree, base_tree)
         _compare_text(superset_tree, base_tree)
     except CompareError as e:
-        logging.debug(str(e))
+        logger.debug(str(e))
         return False
     return True
 
@@ -295,9 +296,9 @@ def _find_instance(tree, path, find_i):
 
 def _find_instance_idx(tree, find_el):
     path = _get_path(tree, find_el)
-    # logging.debug("element=%s, path=%s" % (find_el.tag, path))
+    # logger.debug("element=%s, path=%s" % (find_el.tag, path))
     elements = tree.findall(path)
-    # logging.debug("ELEMENTS=%s" % str(elements))
+    # logger.debug("ELEMENTS=%s" % str(elements))
     for i, el in enumerate(elements):
         if el is find_el:
             return i

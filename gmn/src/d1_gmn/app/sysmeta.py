@@ -93,8 +93,6 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     """
     # TODO: Make sure that old sections are removed if not included in update.
 
-    # logging.debug(d1_common.xml.pretty_pyxb(sysmeta_pyxb))
-
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
     if sciobj_url is None:

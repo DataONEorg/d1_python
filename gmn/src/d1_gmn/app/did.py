@@ -27,6 +27,7 @@ import d1_gmn.app.models
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
 
+logger = logging.getLogger(__name__)
 
 def is_valid_pid_for_create(did):
     """Return True if ``did`` is the PID of an object that can be created with
@@ -46,10 +47,10 @@ def is_valid_pid_for_create(did):
       - The DataONE subject that is making the call must have write or
       changePermission on the resource map.
     """
-    # logging.debug('existing: {}'.format(is_existing_object(did)))
-    # logging.debug('sid: {}'.format(is_sid(did)))
-    # logging.debug('local_replica: {}'.format(is_local_replica(did)))
-    # logging.debug('revision: {}'.format(d1_gmn.app.revision.is_revision(did)))
+    # logger.debug('existing: {}'.format(is_existing_object(did)))
+    # logger.debug('sid: {}'.format(is_sid(did)))
+    # logger.debug('local_replica: {}'.format(is_local_replica(did)))
+    # logger.debug('revision: {}'.format(d1_gmn.app.revision.is_revision(did)))
     return (
         not is_existing_object(did)
         and not is_sid(did)
@@ -172,7 +173,7 @@ def classify_identifier(did):
             'a Persistent ID (PID) of a remote or non-existing object aggregated in '
             'a local Resource Map'
         )
-    logging.warning('Unable to classify known identifier. did="{}"'.format(did))
+    logger.warning('Unable to classify known identifier. did="{}"'.format(did))
     return '<UNKNOWN>'
 
 

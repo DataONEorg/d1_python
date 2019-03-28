@@ -40,6 +40,7 @@ import logging
 
 import iso8601
 
+logger = logging.getLogger(__name__)
 
 class UTC(datetime.tzinfo):
     """datetime.tzinfo based class that represents the UTC timezone.
@@ -226,9 +227,9 @@ def are_equal(a_dt, b_dt, round_sec=1):
     """
     ra_dt = round_to_nearest(a_dt, round_sec)
     rb_dt = round_to_nearest(b_dt, round_sec)
-    logging.debug('Rounded:')
-    logging.debug('{} -> {}'.format(a_dt, ra_dt))
-    logging.debug('{} -> {}'.format(b_dt, rb_dt))
+    logger.debug('Rounded:')
+    logger.debug('{} -> {}'.format(a_dt, ra_dt))
+    logger.debug('{} -> {}'.format(b_dt, rb_dt))
     return normalize_datetime_to_utc(ra_dt) == normalize_datetime_to_utc(rb_dt)
 
 

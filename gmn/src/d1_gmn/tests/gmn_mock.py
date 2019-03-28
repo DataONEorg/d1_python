@@ -39,6 +39,8 @@ import d1_test.instance_generator.random_data
 
 import django.test
 
+logger = logging.getLogger(__name__)
+
 # class DeContext(object):
 #   """Makes a context manager also act as a decorator
 #   https://stackoverflow.com/questions/9213600
@@ -64,7 +66,6 @@ import django.test
 
 # Active and trusted subjects
 
-
 @contextlib2.contextmanager
 def active_subjects_context(active_subject_set):
     """Override list of active subjects that GMN detects for authentication.
@@ -75,7 +76,7 @@ def active_subjects_context(active_subject_set):
     by the client.
     """
     expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(active_subject_set)
-    logging.debug('ContextManager: active_subjects()')
+    logger.debug('ContextManager: active_subjects()')
     with mock.patch(
         'd1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set',
         return_value=(sorted(expanded_set)[0], expanded_set),
@@ -87,7 +88,7 @@ def active_subjects_context(active_subject_set):
 def trusted_subjects_context(trusted_subject_set):
     """Override list of trusted subjects that GMN detects for
     authentication."""
-    logging.debug('ContextManager: trusted_subjects()')
+    logger.debug('ContextManager: trusted_subjects()')
     with mock.patch(
         'd1_gmn.app.auth.get_trusted_subjects',
         return_value=d1_test.d1_test_case.D1TestCase.expand_subjects(
