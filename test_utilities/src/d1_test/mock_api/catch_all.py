@@ -110,7 +110,7 @@ def add_callback(base_url):
 def assert_expected_echo(received_echo_dict, name_postfix_str, client=None):
     # _dict_key_val_to_unicode(received_echo_dict)
     _delete_volatile_keys(received_echo_dict)
-    d1_test.sample.assert_equals(received_echo_dict, name_postfix_str, client, 'echo')
+    d1_test.sample.assert_equals(received_echo_dict, name_postfix_str, client, '.echo')
 
 
 def delete_volatile_post_keys(echo_dict):

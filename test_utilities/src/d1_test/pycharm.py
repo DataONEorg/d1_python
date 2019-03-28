@@ -34,6 +34,8 @@ import logging
 import os
 import subprocess
 import time
+import sys
+import select
 
 import Xlib
 import Xlib.display
@@ -70,20 +72,23 @@ def diff(left_path, right_path):
     wait_for_diff_to_close(left_path, right_path)
 
 
-def wait_for_diff_to_close(left_path, right_path):
+
+def _wait_for_diff_to_close(left_path, right_path):
     """Wait for the user to close the diff window"""
     # Wait for window to open.
-    logging.info("Waiting for Pycharm diff window to close...")
+    logging.info("Waiting for PyCharm diff window to close. Press Enter to skip...")
     # Wait for window to open
     for i in range(6):
         if diff_window_is_open(left_path, right_path):
             break
-        time.sleep(0.5)
-    # Wait for window to close
+        time.sleep(sleep_interval_sec)
+    # Wait for window to close or for something to register on stdin.
     while True:
-        if not diff_window_is_open(left_path, right_path):
+        if select.select([sys.stdin], [], [], 0)[0]:
             break
-        time.sleep(1)
+        if not _diff_window_is_open(left_path, right_path):
+            break
+        time.sleep(sleep_interval_sec)
 
 
 def diff_window_is_open(left_path, right_path):

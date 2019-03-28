@@ -58,7 +58,6 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create
-
             pid = d1_test.instance_generator.identifier.generate_pid()
             if do_redirect:
                 pid = d1_test.mock_api.get.decorate_pid_for_redirect(pid)
@@ -79,9 +78,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
                     send_sysmeta_pyxb,
                     vendorSpecific=self.vendor_proxy_mode(proxy_url),
                 )
-
             # Check
-
             # Object was not stored locally
             sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
             assert not os.path.isfile(sciobj_path)
@@ -89,9 +86,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
             received_sciobj_bytes = self.call_d1_client(
                 client.get, pid, vendorSpecific=self.vendor_proxy_mode(proxy_url)
             ).content
-
-            self.sample.assert_equal_str(send_sciobj_bytes, received_sciobj_bytes)
-            # assert send_sciobj_bytes == received_sciobj_bytes
+            assert send_sciobj_bytes == received_sciobj_bytes
 
     def get_remote_sciobj_url(self, pid, client):
         return d1_common.url.joinPathElements(
