@@ -37,8 +37,12 @@ import time
 import sys
 import select
 
-import Xlib
-import Xlib.display
+try:
+    import Xlib
+    import Xlib.display
+    is_headless = False
+except ImportError:
+    is_headless = True
 
 import d1_dev.util
 
@@ -54,23 +58,26 @@ def open_and_set_cursor(src_path, src_line=1):
     - ``src_path`` can be an absolute path, or a path relative to the root of the
     DataONE Git repository.
     """
+    if is_headless:
+        return
     if src_path == "<string>":
         logging.debug("Unable to find location of error")
         return
     # Handle LocalPath from pytest
     src_path = str(src_path)
-    src_path = get_abs_path(src_path)
-    call_pycharm("--line", src_line, src_path)
+    src_path = _get_abs_path(src_path)
+    _call_pycharm("--line", src_line, src_path)
 
 
 def diff(left_path, right_path):
     """Attempt to open a diff of the two files in the PyCharm Diff & Merge
     tool."""
-    tag_empty_file(left_path)
-    tag_empty_file(right_path)
-    call_pycharm("diff", left_path, right_path)
-    wait_for_diff_to_close(left_path, right_path)
-
+    if is_headless:
+        return
+    _tag_empty_file(left_path)
+    _tag_empty_file(right_path)
+    _call_pycharm("diff", left_path, right_path)
+    _wait_for_diff_to_close(left_path, right_path)
 
 
 def _wait_for_diff_to_close(left_path, right_path):
@@ -78,8 +85,10 @@ def _wait_for_diff_to_close(left_path, right_path):
     # Wait for window to open.
     logging.info("Waiting for PyCharm diff window to close. Press Enter to skip...")
     # Wait for window to open
-    for i in range(6):
-        if diff_window_is_open(left_path, right_path):
+    sleep_interval_sec = .1
+    wait_sec = 3
+    for i in range(int(wait_sec / sleep_interval_sec)):
+        if _diff_window_is_open(left_path, right_path):
             break
         time.sleep(sleep_interval_sec)
     # Wait for window to close or for something to register on stdin.
@@ -91,7 +100,7 @@ def _wait_for_diff_to_close(left_path, right_path):
         time.sleep(sleep_interval_sec)
 
 
-def diff_window_is_open(left_path, right_path):
+def _diff_window_is_open(left_path, right_path):
     """Return True if PyCharm is currently showing a diff window for the given paths
 
     The search iterates over all windows managed by X and examines the properties /
@@ -132,7 +141,7 @@ def diff_window_is_open(left_path, right_path):
         return False
 
 
-def tag_empty_file(path):
+def _tag_empty_file(path):
     """If path is to empty file, write the text "<empty>" to the file.
 
     - This works around the issue that PyCharm PyCharm Diff & Merge errors out
@@ -144,13 +153,13 @@ def tag_empty_file(path):
             f.write("<empty>")
 
 
-def get_abs_path(src_path):
+def _get_abs_path(src_path):
     if not os.path.isabs(src_path):
         src_path = os.path.join(d1_dev.util.find_repo_root_by_path(__file__), src_path)
     return src_path
 
 
-def call_pycharm(*arg_list):
+def _call_pycharm(*arg_list):
     arg_list = list(map(str, arg_list))
     arg_str = ", ".join(arg_list)
     pycharm_bin_path = os.environ.get("PYCHARM_BIN_PATH", PYCHARM_BIN_PATH)
