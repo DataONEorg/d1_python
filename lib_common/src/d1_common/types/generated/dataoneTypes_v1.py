@@ -41,8 +41,7 @@ Namespace.configureCategories(['typeBinding', 'elementBinding'])
 
 
 def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
-    """Parse the given XML and use the document element to create a Python
-    instance.
+    """Parse the given XML and use the document element to create a Python instance.
 
     @param xml_text An XML document.  This should be data (Python 2
     str or Python 3 bytes), or a text (Python 2 unicode or Python 3
@@ -57,6 +56,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
     L{pyxb.utils.utility.Location} instances associated with events and
     objects handled by the parser.  You might pass the URI from which
     the document was obtained.
+
     """
 
     if pyxb.XMLStyle_saxer != pyxb._XMLStyle:
@@ -77,10 +77,11 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
 
 
 def CreateFromDOM(node, default_namespace=None):
-    """Create a Python instance from the given DOM node. The node tag must
-    correspond to an element declaration in this module.
+    """Create a Python instance from the given DOM node. The node tag must correspond to
+    an element declaration in this module.
 
     @deprecated: Forcing use of DOM interface is unnecessary; use L{CreateFromDocument}.
+
     """
     if default_namespace is None:
         default_namespace = Namespace.fallbackNamespace()
@@ -92,12 +93,15 @@ class ChecksumAlgorithm(pyxb.binding.datatypes.string):
 
     """The cryptographic hash algorithm used to calculate a checksum.
 
-    DataONE recognizes the Library of Congress list of
-    cryptographic hash algorithms that can be used as names in this field,
-    and specifically uses the *madsrdf:authoritativeLabel* field as the name
-    of the algorithm in this field. See: `Library of Congress Cryptographic
-    Algorithm Vocabulary`_. All compliant implementations must support at
-    least SHA-1 and MD5, but may support other algorithms as well.Valid entries include: SHA-1, MD5The default checksum is *SHA-1*... _Library of Congress Cryptographic Algorithm Vocabulary: http://id.loc.gov/vocabulary/cryptographicHashFunctions.rdf
+    DataONE recognizes the Library of Congress list of cryptographic hash algorithms
+    that can be used as names in this field, and specifically uses the
+    *madsrdf:authoritativeLabel* field as the name of the algorithm in this field. See:
+    `Library of Congress Cryptographic Algorithm Vocabulary`_. All compliant
+    implementations must support at least SHA-1 and MD5, but may support other
+    algorithms as well.Valid entries include: SHA-1, MD5The default checksum is
+    *SHA-1*... _Library of Congress Cryptographic Algorithm Vocabulary:
+    http://id.loc.gov/vocabulary/cryptographicHashFunctions.rdf
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ChecksumAlgorithm')
@@ -116,11 +120,13 @@ _module_typeBindings.ChecksumAlgorithm = ChecksumAlgorithm
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}CrontabEntry
 class CrontabEntry(pyxb.binding.datatypes.token):
 
-    """A single value in the series of values that together form a single
-    crontab entry.
+    """A single value in the series of values that together form a single crontab entry.
 
-    The format follows the syntax conventions
-    defined by the `Quartz Scheduler`_, as excerpted here under the Apache 2 license:.. _Quartz Scheduler: http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html.. include:: Types_crontabentry.txt
+    The format follows the syntax conventions defined by the `Quartz Scheduler`_, as
+    excerpted here under the Apache 2 license:.. _Quartz Scheduler: http://www.quartz-
+    scheduler.org/api/2.1.0/org/quartz/CronExpression.html.. include::
+    Types_crontabentry.txt
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'CrontabEntry')
@@ -141,12 +147,14 @@ _module_typeBindings.CrontabEntry = CrontabEntry
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}CrontabEntrySeconds
 class CrontabEntrySeconds(pyxb.binding.datatypes.token):
 
-    """A restriction on the seconds field in a single Schedule entry, following
-    the syntax conventions defined by the `Quartz Scheduler`_.The wildcard
-    character value is not allowed in this (seconds) field as this would create
-    an impractical synchronization schedule..
+    """A restriction on the seconds field in a single Schedule entry, following the
+    syntax conventions defined by the `Quartz Scheduler`_.The wildcard character value
+    is not allowed in this (seconds) field as this would create an impractical
+    synchronization schedule..
 
-    _Quartz Scheduler: http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html
+    _Quartz Scheduler: http://www.quartz-
+    scheduler.org/api/2.1.0/org/quartz/CronExpression.html
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'CrontabEntrySeconds')
@@ -173,6 +181,7 @@ class Event(pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin)
 
     *synchronization_failed* and *replication_failed*
     events.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Event')
@@ -215,9 +224,10 @@ class NodeState(pyxb.binding.datatypes.NMTOKEN, pyxb.binding.basis.enumeration_m
 
     """An indicator of the current node accessibility.
 
-    Nodes that are marked *down* are inaccessible for service
-    operations, those that are *up* are in the normal accessible state,
-    and *unknown* indicates that the state has not been determined yet.
+    Nodes that are marked *down* are inaccessible for service operations, those that are
+    *up* are in the normal accessible state, and *unknown* indicates that the state has
+    not been determined yet.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'NodeState')
@@ -246,8 +256,8 @@ _module_typeBindings.NodeState = NodeState
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}NodeType
 class NodeType(pyxb.binding.datatypes.NMTOKEN, pyxb.binding.basis.enumeration_mixin):
 
-    """The type of this node, which is either *mn* for Member Nodes, or *cn*
-    for Coordinating Nodes."""
+    """The type of this node, which is either *mn* for Member Nodes, or *cn* for
+    Coordinating Nodes."""
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'NodeType')
     _XSDLocation = pyxb.utils.utility.Location(
@@ -299,17 +309,16 @@ _module_typeBindings.NonEmptyString = NonEmptyString
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}Permission
 class Permission(pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
-    """A string value indicating the set of actions that can be performed on a
-    resource as specified in an access policy.
+    """A string value indicating the set of actions that can be performed on a resource
+    as specified in an access policy.
 
-    The set of permissions include the ability to read a resource
-    (*read*), modify a resource (*write*), and to change the set of
-    access control policies for a resource (*changePermission*).
-    Permission levels are cumulative, in that write permission
-    implicitly grants read access, and changePermission permission
-    implicitly grants write access (and therefore read as well). If a
-    subject is granted multiple permissions, the highest level of access
-    applies.
+    The set of permissions include the ability to read a resource (*read*), modify a
+    resource (*write*), and to change the set of access control policies for a resource
+    (*changePermission*). Permission levels are cumulative, in that write permission
+    implicitly grants read access, and changePermission permission implicitly grants
+    write access (and therefore read as well). If a subject is granted multiple
+    permissions, the highest level of access applies.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Permission')
@@ -342,9 +351,9 @@ class ReplicationStatus(
     pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin
 ):
 
-    """An enumerated string value indicating the current state of a replica of
-    an object. When an object identified needs to be replicated, it is added to
-    the replication task queue and is marked as.
+    """An enumerated string value indicating the current state of a replica of an
+    object. When an object identified needs to be replicated, it is added to the
+    replication task queue and is marked as.
 
     *queued*; a CN will pick up that task and request that it be replicated
     to a MN and marks that it as *requested*; when a MN finishes replicating
@@ -356,6 +365,7 @@ class ReplicationStatus(
     indicates that the object replication needs to be invoked
     again.The replication process is described in Use Case 09
     (:doc:`/design/UseCases/09_uc`).
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ReplicationStatus')
@@ -396,6 +406,7 @@ class ObjectFormatIdentifier(NonEmptyString):
 
     :class:`Types.ObjectFormat` and MUST be unique within an instance of
     :class:`Types.ObjectFormatList`.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ObjectFormatIdentifier')
@@ -416,8 +427,8 @@ _module_typeBindings.ObjectFormatIdentifier = ObjectFormatIdentifier
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}NonEmptyString800
 class NonEmptyString800(NonEmptyString):
 
-    """An NonEmptyString800 is a NonEmptyString string with a maximum length of
-    800 characters."""
+    """An NonEmptyString800 is a NonEmptyString string with a maximum length of 800
+    characters."""
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'NonEmptyString800')
     _XSDLocation = pyxb.utils.utility.Location(
@@ -458,9 +469,10 @@ class ServiceVersion(NonEmptyString):
 
     """The version of a service provided by a Node.
 
-    Service versions are expressed as version labels such as "v1", "v2".
-    DataONE services are released only as major service versions;
-    patches to services are not indicated in this version label.
+    Service versions are expressed as version labels such as "v1", "v2". DataONE
+    services are released only as major service versions; patches to services are not
+    indicated in this version label.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ServiceVersion')
@@ -479,11 +491,12 @@ _module_typeBindings.ServiceVersion = ServiceVersion
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}NonEmptyNoWhitespaceString800
 class NonEmptyNoWhitespaceString800(NonEmptyString800):
 
-    """A NonEmptyNoWhitespaceString800 is a NonEmptyString800 string that
-    doesn't allow whitespace characters (space, tab, newline, carriage return).
+    """A NonEmptyNoWhitespaceString800 is a NonEmptyString800 string that doesn't allow
+    whitespace characters (space, tab, newline, carriage return).
 
-    Unicode whitespace characters outside of the ASCII character set
-    need to be checked programmatically.
+    Unicode whitespace characters outside of the ASCII character set need to be checked
+    programmatically.
+
     """
 
     _ExpandedName = pyxb.namespace.ExpandedName(
@@ -509,13 +522,14 @@ _module_typeBindings.NonEmptyNoWhitespaceString800 = NonEmptyNoWhitespaceString8
 
 # Complex type {http://ns.dataone.org/service/types/v1}AccessPolicy with content type ELEMENT_ONLY
 class AccessPolicy(pyxb.binding.basis.complexTypeDefinition):
-    """A set of rules that specifies as a whole the allowable permissions that
-    a given user, group, or system has for accessing a resource, including
-    data, metadata, resource map, and service resources.
+    """A set of rules that specifies as a whole the allowable permissions that a given
+    user, group, or system has for accessing a resource, including data, metadata,
+    resource map, and service resources.
 
-    An access policy consists of a sequence of allow rules that grant
-    permissions to principals, which can be individual users, groups of
-    users, symbolic users, or systems and services.
+    An access policy consists of a sequence of allow rules that grant permissions to
+    principals, which can be individual users, groups of users, symbolic users, or
+    systems and services.
+
     """
 
     _TypeDefinition = None
@@ -556,13 +570,13 @@ Namespace.addCategoryObject('typeBinding', 'AccessPolicy', AccessPolicy)
 
 # Complex type {http://ns.dataone.org/service/types/v1}AccessRule with content type ELEMENT_ONLY
 class AccessRule(pyxb.binding.basis.complexTypeDefinition):
-    """A rule that is used to allow a :term:`subject` to perform an action
-    (such as read or write) on an object in DataONE. Rules are tuples (subject,
-    permission) specifying which permissions are allowed for the subjects(s).
-    If a subject is granted multiple permissions, the highest level of access
-    applies. The resource on which the access control rules are being applied
-    is determined by the containing :term:`SystemMetadata` document, or in the
-    case of methods such as :func:`CNAuthorization.setAccessPolicy`, by the.
+    """A rule that is used to allow a :term:`subject` to perform an action (such as read
+    or write) on an object in DataONE. Rules are tuples (subject, permission) specifying
+    which permissions are allowed for the subjects(s). If a subject is granted multiple
+    permissions, the highest level of access applies. The resource on which the access
+    control rules are being applied is determined by the containing
+    :term:`SystemMetadata` document, or in the case of methods such as
+    :func:`CNAuthorization.setAccessPolicy`, by the.
 
     :term:`pid` in the method parameters.Access control rules are specified by
     the.
@@ -571,6 +585,7 @@ class AccessRule(pyxb.binding.basis.complexTypeDefinition):
     DataONE. If no rules are specified at that time, then the object is
     deemed to be private and the only user with access to the object (read,
     write, or otherwise) is the :term:`Rights Holder`.
+
     """
 
     _TypeDefinition = None
@@ -668,12 +683,13 @@ Namespace.addCategoryObject(
 
 # Complex type {http://ns.dataone.org/service/types/v1}Group with content type ELEMENT_ONLY
 class Group(pyxb.binding.basis.complexTypeDefinition):
-    """Group represents metadata about a :term:`Subject` that represents a
-    collection of other Subjects.
+    """Group represents metadata about a :term:`Subject` that represents a collection of
+    other Subjects.
 
     Groups provide a convenient mechanism to express access rules for
     certain roles that are not necessarily tied to particular
     :term:`principals` over time.
+
     """
 
     _TypeDefinition = None
@@ -783,10 +799,11 @@ Namespace.addCategoryObject('typeBinding', 'Group', Group)
 
 # Complex type {http://ns.dataone.org/service/types/v1}LogEntry with content type ELEMENT_ONLY
 class LogEntry(pyxb.binding.basis.complexTypeDefinition):
-    """A single log entry as reported by a Member Node or Coordinating Node
-    through the :func:`MNCore.getLogRecords` or.
+    """A single log entry as reported by a Member Node or Coordinating Node through the
+    :func:`MNCore.getLogRecords` or.
 
     :func:`CNCore.getLogRecords` methods.
+
     """
 
     _TypeDefinition = None
@@ -983,13 +1000,13 @@ Namespace.addCategoryObject('typeBinding', 'LogEntry', LogEntry)
 
 # Complex type {http://ns.dataone.org/service/types/v1}NodeReplicationPolicy with content type ELEMENT_ONLY
 class NodeReplicationPolicy(pyxb.binding.basis.complexTypeDefinition):
-    """The overall replication policy for the node that expresses constraints
-    on object size, total objects, source nodes, and object format types.
+    """The overall replication policy for the node that expresses constraints on object
+    size, total objects, source nodes, and object format types.
 
-    A node may choose to restrict replication from only certain peer
-    nodes, may have file size limits, total allocated size limits, or
-    may want to focus on being a :term:`replication target` for domain-
-    specific object formats.
+    A node may choose to restrict replication from only certain peer nodes, may have
+    file size limits, total allocated size limits, or may want to focus on being a
+    :term:`replication target` for domain- specific object formats.
+
     """
 
     _TypeDefinition = None
@@ -1108,6 +1125,7 @@ class NodeList(pyxb.binding.basis.complexTypeDefinition):
 
     :func:`CNCore.listNodes()`.NodeList is described in
      :mod:`NodeList`.
+
     """
 
     _TypeDefinition = None
@@ -1148,8 +1166,7 @@ Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectFormat with content type ELEMENT_ONLY
 class ObjectFormat(pyxb.binding.basis.complexTypeDefinition):
-    """One value from the DataONE Object Format Vocabulary which is returned
-    by.
+    """One value from the DataONE Object Format Vocabulary which is returned by.
 
     :func:`CNCore.getFormat()`.An *ObjectFormat* is the structure returned from
     the.
@@ -1158,6 +1175,7 @@ class ObjectFormat(pyxb.binding.basis.complexTypeDefinition):
     the unique identifier and the name associated with the object format.
     Future versions may contain additional structured content from external
     common typing systems.
+
     """
 
     _TypeDefinition = None
@@ -1249,10 +1267,10 @@ Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectInfo with content type ELEMENT_ONLY
 class ObjectInfo(pyxb.binding.basis.complexTypeDefinition):
-    """Metadata about an object, representing a subset of the metadata found
-    in.
+    """Metadata about an object, representing a subset of the metadata found in.
 
     :class:`Types.SystemMetadata`.
+
     """
 
     _TypeDefinition = None
@@ -1363,14 +1381,15 @@ Namespace.addCategoryObject('typeBinding', 'ObjectInfo', ObjectInfo)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectLocation with content type ELEMENT_ONLY
 class ObjectLocation(pyxb.binding.basis.complexTypeDefinition):
-    """Portion of an :class:`Types.ObjectLocationList` indicating the node from
-    which the object can be retrieved. The principal information on each
-    location is found in the *nodeIdentifier*, all other fields are provided
-    for convenience, but could also be looked up from the.
+    """Portion of an :class:`Types.ObjectLocationList` indicating the node from which
+    the object can be retrieved. The principal information on each location is found in
+    the *nodeIdentifier*, all other fields are provided for convenience, but could also
+    be looked up from the.
 
     :class:`Types.NodeList` information obtained from.
 
     :func:`CNCore.listNodes`.
+
     """
 
     _TypeDefinition = None
@@ -1510,6 +1529,7 @@ class ObjectLocationList(pyxb.binding.basis.complexTypeDefinition):
 
     It provides a list of locations from which the specified object can
     be retrieved.
+
     """
 
     _TypeDefinition = None
@@ -1832,8 +1852,8 @@ Namespace.addCategoryObject('typeBinding', 'Ping', Ping)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Replica with content type ELEMENT_ONLY
 class Replica(pyxb.binding.basis.complexTypeDefinition):
-    """Replica information that describes the existence of a replica of some
-    object managed by the DataONE infrastructure, and its status."""
+    """Replica information that describes the existence of a replica of some object
+    managed by the DataONE infrastructure, and its status."""
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -1924,12 +1944,12 @@ Namespace.addCategoryObject('typeBinding', 'Replica', Replica)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ReplicationPolicy with content type ELEMENT_ONLY
 class ReplicationPolicy(pyxb.binding.basis.complexTypeDefinition):
-    """The *ReplicationPolicy* for an object defines if replication should be
-    attempted for this object, and if so, how many replicas should be
-    maintained.
+    """The *ReplicationPolicy* for an object defines if replication should be attempted
+    for this object, and if so, how many replicas should be maintained.
 
-    It also permits specification of preferred and blocked nodes as
-    potential replication targets.
+    It also permits specification of preferred and blocked nodes as potential
+    replication targets.
+
     """
 
     _TypeDefinition = None
@@ -2057,8 +2077,9 @@ Namespace.addCategoryObject('typeBinding', 'ReplicationPolicy', ReplicationPolic
 class Services(pyxb.binding.basis.complexTypeDefinition):
     """A list of services that are provided by a node.
 
-    Used in Node descriptions so that Nodes can provide metadata about
-    each service they implement and support.
+    Used in Node descriptions so that Nodes can provide metadata about each service they
+    implement and support.
+
     """
 
     _TypeDefinition = None
@@ -2099,16 +2120,17 @@ Namespace.addCategoryObject('typeBinding', 'Services', Services)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Session with content type ELEMENT_ONLY
 class Session(pyxb.binding.basis.complexTypeDefinition):
-    """Information about the authenticated session for a service transaction.
-    Session data is retrieved from the SSL client certificate and populated in
-    the *Session* object. The subject represents the person or system that
-    authenticated successfully, and the.
+    """Information about the authenticated session for a service transaction. Session
+    data is retrieved from the SSL client certificate and populated in the *Session*
+    object. The subject represents the person or system that authenticated successfully,
+    and the.
 
     *subjectInfo* contains a listing of alternate identities (both Persons
     and Groups) that are also valid identities for this user. The
     *subjectInfo* should include at least one :class:`Types.Person` or
     :class:`Types.Group` entry that provides the attributes of the subject
     that was authenticated.
+
     """
 
     _TypeDefinition = None
@@ -2166,10 +2188,10 @@ Namespace.addCategoryObject('typeBinding', 'Session', Session)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Slice with content type EMPTY
 class Slice(pyxb.binding.basis.complexTypeDefinition):
-    """An abstract type used as a common base for other types that need to
-    include *count*, *start*, and *total* attributes to indicate which slice of
-    a list is represented by a set of records.The first element in a list is
-    always index 0, i.e. list indexes are zero-based."""
+    """An abstract type used as a common base for other types that need to include
+    *count*, *start*, and *total* attributes to indicate which slice of a list is
+    represented by a set of records.The first element in a list is always index 0, i.e.
+    list indexes are zero-based."""
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
@@ -2271,15 +2293,16 @@ Namespace.addCategoryObject('typeBinding', 'Slice', Slice)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Synchronization with content type ELEMENT_ONLY
 class Synchronization(pyxb.binding.basis.complexTypeDefinition):
-    """Configuration information for the process by which metadata is harvested
-    from Member Nodes to Coordinating Nodes, including the schedule on which
-    harvesting should occur, and information about the last.
+    """Configuration information for the process by which metadata is harvested from
+    Member Nodes to Coordinating Nodes, including the schedule on which harvesting
+    should occur, and information about the last.
 
     :term:`synchronization` attempts for the node. Member Nodes providing
     *Synchronization* information only need to provide the.
 
     *schedule*. Coordinating Nodes must set values for the *lastHarvested*
     and *lastCompleteHarvest* fields.
+
     """
 
     _TypeDefinition = None
@@ -2376,6 +2399,7 @@ class SubjectInfo(pyxb.binding.basis.complexTypeDefinition):
     :class:`Types.Person` and :class:`Types.Group` entries returned from
     the :func:`CNIdentity.getSubjectInfo` service and
     :func:`CNIdentity.listSubjects` services.
+
     """
 
     _TypeDefinition = None
@@ -2495,6 +2519,7 @@ class SystemMetadata(pyxb.binding.basis.complexTypeDefinition):
     classes: metadata elements that must be provided by client software to
     the DataONE system, and elements that are generated by DataONE itself in
     the course of managing objects.
+
     """
 
     _TypeDefinition = None
@@ -2880,15 +2905,15 @@ Namespace.addCategoryObject('typeBinding', 'SystemMetadata', SystemMetadata)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Checksum with content type SIMPLE
 class Checksum(pyxb.binding.basis.complexTypeDefinition):
-    """Represents the value of a computed :term:`checksum` expressed as a
-    hexadecimal formatted version of the message digest.
+    """Represents the value of a computed :term:`checksum` expressed as a hexadecimal
+    formatted version of the message digest.
 
-    Note that these hex values should be treated as case-insensitive
-    strings, in that leading zeros must be preserved, and digests can
-    use a mixture of upper and lower case letters to represent the hex
-    values. Comparison algorithms MUST be able to handle any variant of
-    these representations (e.g., by performing a case-insensitive string
-    match on hex digests from the same algorithm).
+    Note that these hex values should be treated as case-insensitive strings, in that
+    leading zeros must be preserved, and digests can use a mixture of upper and lower
+    case letters to represent the hex values. Comparison algorithms MUST be able to
+    handle any variant of these representations (e.g., by performing a case-insensitive
+    string match on hex digests from the same algorithm).
+
     """
 
     _TypeDefinition = pyxb.binding.datatypes.string
@@ -2935,8 +2960,8 @@ Namespace.addCategoryObject('typeBinding', 'Checksum', Checksum)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Log with content type ELEMENT_ONLY
 class Log(Slice):
-    """Represents a collection of :class:`Types.LogEntry` elements, used to
-    transfer log information between DataONE components."""
+    """Represents a collection of :class:`Types.LogEntry` elements, used to transfer log
+    information between DataONE components."""
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -2981,10 +3006,11 @@ Namespace.addCategoryObject('typeBinding', 'Log', Log)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Node with content type ELEMENT_ONLY
 class Node(pyxb.binding.basis.complexTypeDefinition):
-    """A set of values that describe a member or coordinating node, its
-    Internet location, and the services it supports.
+    """A set of values that describe a member or coordinating node, its Internet
+    location, and the services it supports.
 
     Several nodes may exist on a single physical device or hostname.
+
     """
 
     _TypeDefinition = None
@@ -3339,6 +3365,7 @@ class NodeReference(pyxb.binding.basis.complexTypeDefinition):
     *NodeReference* must be unique across nodes, and must always be
     assigned to one Member or Coordinating Node instance even in the event of
     the *BaseURL* or other characteristics changing.
+
     """
 
     _TypeDefinition = NonEmptyString
@@ -3370,6 +3397,7 @@ class ObjectFormatList(Slice):
     Each :class:`Types.ObjectFormat` returned in the list describes the
     object format via its name, and future versions may contain additional
     structured content from common external typing systems.
+
     """
 
     _TypeDefinition = None
@@ -3415,8 +3443,7 @@ Namespace.addCategoryObject('typeBinding', 'ObjectFormatList', ObjectFormatList)
 
 # Complex type {http://ns.dataone.org/service/types/v1}ObjectList with content type ELEMENT_ONLY
 class ObjectList(Slice):
-    """A list of object locations (nodes) from which the object can be
-    retrieved."""
+    """A list of object locations (nodes) from which the object can be retrieved."""
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -3463,9 +3490,10 @@ Namespace.addCategoryObject('typeBinding', 'ObjectList', ObjectList)
 class ServiceMethodRestriction(SubjectList):
     """Describes an optional restriction policy for a given method.
 
-    If this element exists for a service method, its use is restricted,
-    and only :term:`Subjects` listed in the list are allowed to invoke
-    the method named in the *methodName* attribute.
+    If this element exists for a service method, its use is restricted, and only
+    :term:`Subjects` listed in the list are allowed to invoke the method named in the
+    *methodName* attribute.
+
     """
 
     _TypeDefinition = None
@@ -3521,12 +3549,12 @@ Namespace.addCategoryObject(
 
 # Complex type {http://ns.dataone.org/service/types/v1}Schedule with content type EMPTY
 class Schedule(pyxb.binding.basis.complexTypeDefinition):
-    """The schedule on which :term:`synchronization` will run for a particular
-    node.
+    """The schedule on which :term:`synchronization` will run for a particular node.
 
-    Syntax for each time slot follows the syntax
-    conventions defined by the Quartz Scheduler
-    (http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html)
+    Syntax for each time slot follows the syntax conventions defined by the Quartz
+    Scheduler (http://www.quartz-
+    scheduler.org/api/2.1.0/org/quartz/CronExpression.html)
+
     """
 
     _TypeDefinition = None
@@ -3718,6 +3746,7 @@ class Subject(pyxb.binding.basis.complexTypeDefinition):
 
     :class:`Types.Identifier`. Subjects are immutable and can not be
     deleted.
+
     """
 
     _TypeDefinition = NonEmptyString
@@ -3744,11 +3773,11 @@ Namespace.addCategoryObject('typeBinding', 'Subject', Subject)
 class Service(pyxb.binding.basis.complexTypeDefinition):
     """The available Dataone Service APIs that are exposed on a Node.
 
-    Without a restriction, all service methods are available to all
-    callers. Restrictions may be placed on individual methods of the
-    service to limit the service to a certain set of :term:`Subjects`.
-    Enforcement of these service restrictions is incumbent on the Node
-    service implementation.
+    Without a restriction, all service methods are available to all callers.
+    Restrictions may be placed on individual methods of the service to limit the service
+    to a certain set of :term:`Subjects`. Enforcement of these service restrictions is
+    incumbent on the Node service implementation.
+
     """
 
     _TypeDefinition = None
@@ -3877,18 +3906,19 @@ Namespace.addCategoryObject('typeBinding', 'Service', Service)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Identifier with content type SIMPLE
 class Identifier(pyxb.binding.basis.complexTypeDefinition):
-    """An :term:`identifier` (:term:`PID`) in the DataONE system that is used
-    to uniquely and globally identify an object. Identifiers can not be reused
-    once assigned. Identifiers can not be deleted from the DataONE
-    system.Identifiers are represented by a Unicode string of printable
-    characters, excluding :term:`whitespace`. All representations of
-    identifiers must be encoded in 7-bit ASCII or UTF-8.Identifiers have a
-    maximum length of 800 characters, and a variety of other properties
-    designed for preservation and longevity. Some discussion on this is
-    described in the `PID documentation`_ and in decision `ticket 577`_. ..
-    _ticket 577: https://redmine.dataone.org/issues/577.
+    """An :term:`identifier` (:term:`PID`) in the DataONE system that is used to
+    uniquely and globally identify an object. Identifiers can not be reused once
+    assigned. Identifiers can not be deleted from the DataONE system.Identifiers are
+    represented by a Unicode string of printable characters, excluding
+    :term:`whitespace`. All representations of identifiers must be encoded in 7-bit
+    ASCII or UTF-8.Identifiers have a maximum length of 800 characters, and a variety of
+    other properties designed for preservation and longevity. Some discussion on this is
+    described in the `PID documentation`_ and in decision `ticket 577`_. .. _ticket 577:
+    https://redmine.dataone.org/issues/577.
 
-    .. _PID documentation: https://releases.dataone.org/online/api-documentation-v2.0.1/design/PIDs.html
+    .. _PID documentation: https://releases.dataone.org/online/api-
+    documentation-v2.0.1/design/PIDs.html
+
     """
 
     _TypeDefinition = NonEmptyNoWhitespaceString800
@@ -4593,8 +4623,12 @@ def _BuildAutomaton_3():
     transitions.append(pyxb.utils.fac.Transition(st_3, []))
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_2._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_3, []))
@@ -5065,22 +5099,42 @@ def _BuildAutomaton_5():
     )
     states.append(st_3)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
     st_3._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -5608,7 +5662,9 @@ def _BuildAutomaton_9():
     transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_4._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -5702,7 +5758,9 @@ def _BuildAutomaton_10():
     transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_1._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -5987,22 +6045,42 @@ def _BuildAutomaton_11():
     transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
     st_6._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -6219,11 +6297,17 @@ def _BuildAutomaton_13():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
     st_1._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -6360,7 +6444,9 @@ def _BuildAutomaton_15():
     transitions.append(pyxb.utils.fac.Transition(st_1, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_1._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -6496,11 +6582,17 @@ def _BuildAutomaton_16():
     transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_1._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
     st_2._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -6598,11 +6690,17 @@ def _BuildAutomaton_17():
     )
     states.append(st_1)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
     st_1._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -6660,7 +6758,9 @@ def _BuildAutomaton_18():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -7326,8 +7426,12 @@ def _BuildAutomaton_19():
     )
     states.append(st_16)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_0._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_2, []))
@@ -7343,8 +7447,12 @@ def _BuildAutomaton_19():
     transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_5._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_7, []))
@@ -7359,79 +7467,277 @@ def _BuildAutomaton_19():
     transitions.append(pyxb.utils.fac.Transition(st_16, []))
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
     st_8._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
     st_9._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
     st_10._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_6, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_6, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
     st_11._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_7, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_7, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
     st_12._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_8, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_8, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
     st_13._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_9, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_9, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
     st_14._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_10, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_10, True)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]
+        )
+    )
     st_15._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_11, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_11, True)]
+        )
+    )
     st_16._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -7489,7 +7795,9 @@ def _BuildAutomaton_20():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -7874,34 +8182,74 @@ def _BuildAutomaton_21():
     transitions.append(pyxb.utils.fac.Transition(st_9, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_4, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, False)])
+    )
     st_8._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_9, []))
@@ -8009,7 +8357,9 @@ def _BuildAutomaton_23():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -8055,7 +8405,9 @@ def _BuildAutomaton_24():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -8114,7 +8466,9 @@ def _BuildAutomaton_25():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 

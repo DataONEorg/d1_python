@@ -51,9 +51,9 @@ def assert_map_is_valid_for_create(resource_map):
 
 
 def is_sciobj_valid_for_create():
-    """When RESOURCE_MAP_CREATE == 'reserve', objects that are created and that
-    are also aggregated in one or more resource maps can only be created by a
-    DataONE subject that has write or changePermission on the resource map."""
+    """When RESOURCE_MAP_CREATE == 'reserve', objects that are created and that are also
+    aggregated in one or more resource maps can only be created by a DataONE subject
+    that has write or changePermission on the resource map."""
     # TODO
     return True
 
@@ -84,8 +84,7 @@ def create_or_update(map_pid, resource_map):
 
 
 def get_resource_map_members(pid):
-    """``pid`` is the PID of a Resource Map or the PID of a member of a
-    Resource Map."""
+    """``pid`` is the PID of a Resource Map or the PID of a member of a Resource Map."""
     if d1_gmn.app.did.is_resource_map_db(pid):
         return get_resource_map_members_by_map(pid)
     elif d1_gmn.app.did.is_resource_map_member(pid):

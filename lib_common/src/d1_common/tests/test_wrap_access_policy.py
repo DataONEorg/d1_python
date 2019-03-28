@@ -34,13 +34,13 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1000(self):
-        """__init__(): Correctly initialized from AccessPolicy PyXB obj"""
+        """__init__(): Correctly initialized from AccessPolicy PyXB obj."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             assert not ap.is_empty()
             self.sample.assert_equals(ap.get_normalized_perm_list(), 'init')
 
     def test_1010(self):
-        """clear(): All permissions are removed"""
+        """clear(): All permissions are removed."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             assert not ap.is_empty()
             ap.clear()
@@ -137,7 +137,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             assert not ap.subj_has_perm('subj4', 'changePermission')
 
     def test_1120(self):
-        """add_perm(): Add permissions for existing subj"""
+        """add_perm(): Add permissions for existing subj."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             assert ap.get_effective_perm_list('public') == ['read']
@@ -151,7 +151,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_diff_equals(before_dict, after_dict, 'add_perm_existing')
 
     def test_1130(self):
-        """add_perm(): Add permissions for new subj"""
+        """add_perm(): Add permissions for new subj."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.add_perm('newsubj', 'write')
@@ -160,7 +160,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_diff_equals(before_dict, after_dict, 'add_perm_new')
 
     def test_1140(self):
-        """remove_perm(): No change if subj exists but does not have the perm"""
+        """remove_perm(): No change if subj exists but does not have the perm."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_perm('public', 'changePermission')
@@ -168,7 +168,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             assert before_dict == after_dict
 
     def test_1150(self):
-        """remove_perm(): No change if subj does not exist"""
+        """remove_perm(): No change if subj does not exist."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_perm('public', 'changePermission')
@@ -176,7 +176,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             assert before_dict == after_dict
 
     def test_1160(self):
-        """remove_perm(): Removing read removes subj entirely"""
+        """remove_perm(): Removing read removes subj entirely."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_perm('subj4', 'read')
@@ -184,7 +184,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_diff_equals(before_dict, after_dict, 'remove_perm_read')
 
     def test_1170(self):
-        """remove_perm(): Lower perms remain after removing higher"""
+        """remove_perm(): Lower perms remain after removing higher."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_perm('subj5', 'changePermission')
@@ -192,7 +192,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_diff_equals(before_dict, after_dict, 'remove_perm_lower')
 
     def test_1180(self):
-        """remove_subj(): Remove known subj"""
+        """remove_subj(): Remove known subj."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_subj('subj5')
@@ -200,7 +200,7 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_diff_equals(before_dict, after_dict, 'remove_subj_known')
 
     def test_1190(self):
-        """remove_subj(): No change if subj does not exist"""
+        """remove_subj(): No change if subj does not exist."""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
             before_dict = ap.get_normalized_perm_list()
             ap.remove_subj('newsubj')

@@ -30,6 +30,7 @@ modules with matching package name which was imported with relative name.
 
 The scripts can be directly specified and/or discovered through filtered
 recursive searches.
+
 """
 
 import argparse

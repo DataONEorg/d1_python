@@ -43,8 +43,7 @@ Namespace.configureCategories(['typeBinding', 'elementBinding'])
 
 
 def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
-    """Parse the given XML and use the document element to create a Python
-    instance.
+    """Parse the given XML and use the document element to create a Python instance.
 
     @param xml_text An XML document.  This should be data (Python 2
     str or Python 3 bytes), or a text (Python 2 unicode or Python 3
@@ -59,6 +58,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
     L{pyxb.utils.utility.Location} instances associated with events and
     objects handled by the parser.  You might pass the URI from which
     the document was obtained.
+
     """
 
     if pyxb.XMLStyle_saxer != pyxb._XMLStyle:
@@ -79,10 +79,11 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
 
 
 def CreateFromDOM(node, default_namespace=None):
-    """Create a Python instance from the given DOM node. The node tag must
-    correspond to an element declaration in this module.
+    """Create a Python instance from the given DOM node. The node tag must correspond to
+    an element declaration in this module.
 
     @deprecated: Forcing use of DOM interface is unnecessary; use L{CreateFromDocument}.
+
     """
     if default_namespace is None:
         default_namespace = Namespace.fallbackNamespace()
@@ -145,14 +146,14 @@ class MediaType(pyxb.binding.basis.complexTypeDefinition):
     """Value drawn from the value space of IANA Media Types (
     http://www.iana.org/assignments/media-types/media-types.xhtml ).
 
-    When   specified, indicates the IANA Media Type (aka MIME-Type) of
-    the object.   The name attribute MUST include the media type and
-    subtype   (e.g. text/csv). The media type value is not case
-    sensitive. Any required media type parameters must be provided, and
-    optional parameters may be specified. There are no explicit
-    constraints   on the name of media-type properties or their values,
-    however they   SHOULD conform to media type optional and required
-    parameters as   specified in the respective media type RFC.
+    When   specified, indicates the IANA Media Type (aka MIME-Type) of the object.   The
+    name attribute MUST include the media type and subtype   (e.g. text/csv). The media
+    type value is not case sensitive. Any required media type parameters must be
+    provided, and optional parameters may be specified. There are no explicit
+    constraints   on the name of media-type properties or their values, however they
+    SHOULD conform to media type optional and required parameters as   specified in the
+    respective media type RFC.
+
     """
 
     _TypeDefinition = None
@@ -231,6 +232,7 @@ class SystemMetadata(_ImportedBinding_dataoneTypes_v1.SystemMetadata):
     :term:`seriesId`, :term:`mediaType`, and :term:`fileName` elements. Each
     of these are optional, so Version 1.x System Metadata is compatible with
     Version 2.x, though not vice-versa.
+
     """
 
     _TypeDefinition = None
@@ -360,6 +362,7 @@ class NodeList(pyxb.binding.basis.complexTypeDefinition):
 
     :func:`CNCore.listNodes()`.
     NodeList is described in :mod:`NodeList`.
+
     """
 
     _TypeDefinition = None
@@ -400,9 +403,8 @@ Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Node with content type ELEMENT_ONLY
 class Node(_ImportedBinding_dataoneTypes_v1.Node):
-    """Extends the Version 1.x :class:`Types.Node` by adding an optional
-    unbounded parameter entry providing additional simple metadata relevant to
-    a Node."""
+    """Extends the Version 1.x :class:`Types.Node` by adding an optional unbounded
+    parameter entry providing additional simple metadata relevant to a Node."""
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
@@ -474,11 +476,11 @@ Namespace.addCategoryObject('typeBinding', 'Node', Node)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Property with content type SIMPLE
 class Property(pyxb.binding.basis.complexTypeDefinition):
-    """Additional Property elements can be included to describe the Node in
-    more detail.
+    """Additional Property elements can be included to describe the Node in more detail.
 
-    Some properties will come from controlled vocabularies indicated by
-    the type attribute, while others will be free-form key value pairs.
+    Some properties will come from controlled vocabularies indicated by the type
+    attribute, while others will be free-form key value pairs.
+
     """
 
     _TypeDefinition = pyxb.binding.datatypes.string
@@ -558,6 +560,7 @@ class ObjectFormat(_ImportedBinding_dataoneTypes_v1.ObjectFormat):
     """Extends Version 1.x :class:`Types.ObjectFormat` by adding.
 
     :term:`mediaType` and :term:`extension` elements.
+
     """
 
     _TypeDefinition = None
@@ -634,6 +637,7 @@ class ObjectFormatList(_ImportedBinding_dataoneTypes_v1.Slice):
     """Extends :class:`Types.ObjectFormatList` to provide a list of.
 
     :class:`v2_0.Types.ObjectFormat`.
+
     """
 
     _TypeDefinition = None
@@ -683,6 +687,7 @@ class Log(_ImportedBinding_dataoneTypes_v1.Slice):
 
     :class:`v2_0.Types.LogEntry` elements, used to transfer log information
     between DataONE components.
+
     """
 
     _TypeDefinition = None
@@ -731,6 +736,7 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
     """Extends :class:`Types.LogEntry` by relaxing the value space for the.
 
     *event* element.
+
     """
 
     _TypeDefinition = None
@@ -927,16 +933,15 @@ Namespace.addCategoryObject('typeBinding', 'LogEntry', LogEntry)
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}OptionList with content type ELEMENT_ONLY
 class OptionList(pyxb.binding.basis.complexTypeDefinition):
-    """A list of options that indicate the possible values for a DataONE
-    service.
+    """A list of options that indicate the possible values for a DataONE service.
 
-    Each option that can be validly sent to a service is listed,
-    providing the specific key that should be used when interacting with
-    the service, as well as a description of that key that allows API
-    users to understand the usage of the key.  For example, an
-    OptionList might contain a list of themes that can be used with the
-    MNView.view service, or for other services that have a configurable
-    but controlled set of parameters.
+    Each option that can be validly sent to a service is listed, providing the specific
+    key that should be used when interacting with the service, as well as a description
+    of that key that allows API users to understand the usage of the key.  For example,
+    an OptionList might contain a list of themes that can be used with the MNView.view
+    service, or for other services that have a configurable but controlled set of
+    parameters.
+
     """
 
     _TypeDefinition = None
@@ -1200,7 +1205,9 @@ def _BuildAutomaton():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -1751,8 +1758,12 @@ def _BuildAutomaton_():
     )
     states.append(st_19)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_0._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_2, []))
@@ -1768,8 +1779,12 @@ def _BuildAutomaton_():
     transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_5._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_7, []))
@@ -1787,121 +1802,463 @@ def _BuildAutomaton_():
     transitions.append(pyxb.utils.fac.Transition(st_19, []))
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]
+        )
+    )
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]
+        )
+    )
     st_8._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_10, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]
+        )
+    )
     st_9._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_11, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_5, False)]
+        )
+    )
     st_10._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_6, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_11, [pyxb.utils.fac.UpdateInstruction(cc_6, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_12, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_6, False)]
+        )
+    )
     st_11._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_7, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_12, [pyxb.utils.fac.UpdateInstruction(cc_7, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_13, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_7, False)]
+        )
+    )
     st_12._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_8, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_13, [pyxb.utils.fac.UpdateInstruction(cc_8, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_14, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_8, False)]
+        )
+    )
     st_13._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_9, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_14, [pyxb.utils.fac.UpdateInstruction(cc_9, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_9, False)]
+        )
+    )
     st_14._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_15, [pyxb.utils.fac.UpdateInstruction(cc_10, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_15, [pyxb.utils.fac.UpdateInstruction(cc_10, True)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_10, False)]
+        )
+    )
     st_15._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_16, [pyxb.utils.fac.UpdateInstruction(cc_11, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_16, [pyxb.utils.fac.UpdateInstruction(cc_11, True)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_11, False)]
+        )
+    )
     st_16._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_17, [pyxb.utils.fac.UpdateInstruction(cc_12, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_12, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_12, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_17, [pyxb.utils.fac.UpdateInstruction(cc_12, True)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_12, False)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_12, False)]
+        )
+    )
     st_17._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_18, [pyxb.utils.fac.UpdateInstruction(cc_13, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_13, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_18, [pyxb.utils.fac.UpdateInstruction(cc_13, True)]
+        )
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_13, False)]
+        )
+    )
     st_18._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_19, [pyxb.utils.fac.UpdateInstruction(cc_14, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(
+            st_19, [pyxb.utils.fac.UpdateInstruction(cc_14, True)]
+        )
+    )
     st_19._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -2234,41 +2591,83 @@ def _BuildAutomaton_3():
     transitions.append(pyxb.utils.fac.Transition(st_9, []))
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_4._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_5, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_2, False)])
+    )
     st_6._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_3, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_7, [pyxb.utils.fac.UpdateInstruction(cc_3, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_3, False)])
+    )
     st_7._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_4, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_8, [pyxb.utils.fac.UpdateInstruction(cc_4, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_9, [pyxb.utils.fac.UpdateInstruction(cc_4, False)])
+    )
     st_8._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_9, []))
     transitions.append(pyxb.utils.fac.Transition(st_10, []))
     st_9._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_10, [pyxb.utils.fac.UpdateInstruction(cc_5, True)])
+    )
     st_10._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -2426,11 +2825,17 @@ def _BuildAutomaton_4():
     transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
     st_4._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -2535,7 +2940,9 @@ def _BuildAutomaton_6():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -2872,7 +3279,9 @@ def _BuildAutomaton_8():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 

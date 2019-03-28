@@ -19,8 +19,9 @@
 # limitations under the License.
 """Start ONEDrive from the Mac OS X GUI.
 
-Automatically creates and deletes a mount point for ONEDrive and passes
-some OS X specific options to ONEDrive.
+Automatically creates and deletes a mount point for ONEDrive and passes some OS X
+specific options to ONEDrive.
+
 """
 
 import os

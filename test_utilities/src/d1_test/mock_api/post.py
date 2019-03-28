@@ -20,8 +20,8 @@
 # limitations under the License.
 """Mock a generic POST request by echoing the posted body.
 
-A DataONEException can be triggered by adding a custom header. See
-d1_exception.py
+A DataONEException can be triggered by adding a custom header. See d1_exception.py
+
 """
 
 import logging

@@ -51,8 +51,8 @@ class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @django.test.override_settings(CLIENT_CERT_PATH='/invalid/cert/path')
     def test_1010(self):
-        """Setting PATH to non-existing path triggers ImproperlyConfigured with
-        expected message."""
+        """Setting PATH to non-existing path triggers ImproperlyConfigured with expected
+        message."""
         with pytest.raises(
             django.core.exceptions.ImproperlyConfigured,
             match='If set, setting CLIENT_CERT_PATH must be a path to a readable file',
@@ -91,8 +91,8 @@ class TestSettings(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @django.test.override_settings(SCIMETA_VALIDATION_OVER_SIZE_ACTION=123)
     def test_1050(self):
-        """Setting keyword to number triggers ImproperlyConfigured with
-        expected message."""
+        """Setting keyword to number triggers ImproperlyConfigured with expected
+        message."""
         with pytest.raises(
             django.core.exceptions.ImproperlyConfigured,
             match='Setting SCIMETA_VALIDATION_OVER_SIZE_ACTION must be "reject" or "accept"',

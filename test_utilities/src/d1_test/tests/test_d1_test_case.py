@@ -48,19 +48,19 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
 
     # flake8: noqa: F841
     def test_1010(self):
-        """memory_limit() context manager: Raises no exceptions with allocation
-        below limit."""
+        """memory_limit() context manager: Raises no exceptions with allocation below
+        limit."""
         with d1_test.d1_test_case.memory_limit(10 * MiB):
             self._eat_memory(5, MiB)
 
     # flake8: noqa: F841
     def test_1020(self):
-        """memory_limit() context manager: Raises MemoryError with allocation
-        above limit.
+        """memory_limit() context manager: Raises MemoryError with allocation above
+        limit.
 
-        Note:   The limit is set to 10 MiB while the test attempts to
-        allocated 100 MiB in order   to reliably cause a MemoryError
-        exception.
+        Note:   The limit is set to 10 MiB while the test attempts to allocated 100 MiB
+        in order   to reliably cause a MemoryError exception.
+
         """
         with d1_test.d1_test_case.memory_limit(10 * MiB):
             with pytest.raises(MemoryError):

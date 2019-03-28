@@ -29,6 +29,7 @@ Python. It shows how to:
 Operation:
 
 - Configure the script in the Config section below
+
 """
 import argparse
 import logging
@@ -36,7 +37,6 @@ import sys
 
 import d1_common.env
 import d1_common.resource_map
-
 
 # Config
 

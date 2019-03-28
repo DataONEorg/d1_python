@@ -20,6 +20,7 @@
 # limitations under the License.
 """Holds only dynamic data.
 
-All tests import this module and use it for sharing information that is
-used across tests.
+All tests import this module and use it for sharing information that is used across
+tests.
+
 """

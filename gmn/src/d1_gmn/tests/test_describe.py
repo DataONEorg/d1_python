@@ -28,7 +28,7 @@ import d1_gmn.tests.gmn_test_case
 class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """MNStorage.describe(): Returns valid header for valid object"""
+        """MNStorage.describe(): Returns valid header for valid object."""
 
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(

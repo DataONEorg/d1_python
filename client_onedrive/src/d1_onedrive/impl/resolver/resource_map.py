@@ -21,6 +21,7 @@
 """Resolve resource map.
 
 Resolve a filesystem path pointing to a resource map.
+
 """
 
 import logging

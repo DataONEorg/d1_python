@@ -20,10 +20,10 @@
 # limitations under the License.
 """Cache Python objects in memory.
 
-Cache Python objects with a limit on how many objects can be cached.
-When the cache reaches a configured size, adding a new object causes the
-oldest object to be removed. The oldest object is the object that was
-added first of the objects still in the cache.
+Cache Python objects with a limit on how many objects can be cached. When the cache
+reaches a configured size, adding a new object causes the oldest object to be removed.
+The oldest object is the object that was added first of the objects still in the cache.
+
 """
 
 import logging

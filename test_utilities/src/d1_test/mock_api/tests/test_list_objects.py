@@ -31,7 +31,9 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.listObjects() returns a DataONE ObjectList PyXB object."""
-        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         assert isinstance(
             mn_client_v1_v2.listObjects(), mn_client_v1_v2.pyxb_binding.ObjectList
         )
@@ -39,14 +41,19 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1010(self, mn_client_v1_v2):
         """mock_api.listObjects() returns a populated ObjectList."""
-        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         object_list = mn_client_v1_v2.listObjects()
         self.sample.assert_equals(object_list, 'populated')
 
     @responses.activate
     def test_1020(self, mn_client_v1_v2):
-        """mock_api.listObjects(): Passing a trigger header triggers a DataONEException"""
-        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        """mock_api.listObjects(): Passing a trigger header triggers a
+        DataONEException."""
+        d1_test.mock_api.list_objects.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         with pytest.raises(d1_common.types.exceptions.ServiceFailure):
             mn_client_v1_v2.listObjects(vendorSpecific={'trigger': '500'})
 

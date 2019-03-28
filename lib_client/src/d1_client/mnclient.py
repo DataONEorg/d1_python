@@ -28,12 +28,13 @@ import d1_client.baseclient
 
 
 class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
-    """Extend DataONEBaseClient by adding REST API wrappers for APIs that are
-    available on Member Nodes.
+    """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available
+    on Member Nodes.
 
     For details on how to use these methods, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):

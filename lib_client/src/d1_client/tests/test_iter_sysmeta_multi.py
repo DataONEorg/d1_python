@@ -47,7 +47,8 @@ def n_workers(request):
 # noinspection PyShadowingNames
 @d1_test.d1_test_case.reproducible_random_decorator('TestSysMetaIterator')
 class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
-    """Run with misc variations and verify that they give the same result"""
+    """Run with misc variations and verify that they give the same result."""
+
     parameterize_dict = {
         'test_1000': [
             dict(
@@ -62,8 +63,8 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
     }
 
     def _get_combined_xml(self, sysmeta_pyxb_list, n_total):
-        """When using multiple threads, docs are returned in random order, so
-        we sort them and use the first and last few ones for checking."""
+        """When using multiple threads, docs are returned in random order, so we sort
+        them and use the first and last few ones for checking."""
         sorted_list = sorted(sysmeta_pyxb_list, key=lambda x: x.identifier.value())
         return '\n'.join(
             [
@@ -77,7 +78,9 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.list_objects.add_callback(
             d1_test.d1_test_case.MOCK_MN_BASE_URL, n_total=N_TOTAL
         )
-        d1_test.mock_api.get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_system_metadata.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
 
         sysmeta_pyxb_list = []
         # with freezegun.freeze_time('1977-07-27') as freeze_time:

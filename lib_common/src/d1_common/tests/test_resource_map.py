@@ -334,17 +334,18 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         return obj
 
     def test_1000(self, mn_client_v2):
-        """__init__(): Empty"""
+        """__init__(): Empty."""
         ore = d1_common.resource_map.ResourceMap()
         assert isinstance(ore, d1_common.resource_map.ResourceMap)
 
     def test_1010(self, mn_client_v2):
-        """__init__(): Instantiate resource map by ORE PID"""
+        """__init__(): Instantiate resource map by ORE PID."""
         ore = d1_common.resource_map.ResourceMap('test_pid', ore_software_id='TEST')
         self.sample.assert_equals(ore, 'init', mn_client_v2)
 
     def test_1020(self, mn_client_v2):
-        """serialize_to_display(): Instantiate resource map by pid, scimeta and scidata"""
+        """serialize_to_display(): Instantiate resource map by pid, scimeta and
+        scidata."""
         ore = self._create()
         self.sample.assert_equals(ore, 'serialize', mn_client_v2)
 
@@ -467,8 +468,8 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
 
     # tricky_identifier_tup
     def test_1180(self):
-        """Unicode identifiers that use various reserved characters and
-        embedded URL segments are correctly escaped."""
+        """Unicode identifiers that use various reserved characters and embedded URL
+        segments are correctly escaped."""
         # import xml.etree.ElementTree
 
         did_str = 'DIDDID'

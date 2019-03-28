@@ -20,11 +20,11 @@
 # limitations under the License.
 """Create DataONE compliant certificate.
 
-The certificate can optionally include a SubjectInfo XML document in
-which equivalent identities and group memberships are described. The
-certificate will normally be signed with a test CA that is trusted by a
-test instance of a Member Node. Test instances set up by DataONE will
-normally trust the DataONE Test CA.
+The certificate can optionally include a SubjectInfo XML document in which equivalent
+identities and group memberships are described. The certificate will normally be signed
+with a test CA that is trusted by a test instance of a Member Node. Test instances set
+up by DataONE will normally trust the DataONE Test CA.
+
 """
 
 # Example: ./create_dataone_test_certificate.py --ca-path sample_files/ca_test.crt

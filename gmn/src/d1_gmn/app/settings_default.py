@@ -22,6 +22,7 @@ in settings.py are missing.
 - This allows settings to be added without having to modify settings.py
 in existing deployments.
 - Settings that are not described here are described in settings_template.py.
+
 """
 
 # noinspection PyUnresolvedReferences

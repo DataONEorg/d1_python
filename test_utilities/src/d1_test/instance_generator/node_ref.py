@@ -25,8 +25,7 @@ import d1_test.instance_generator.random_data
 
 
 def generate(prefix='urn:node:', min_len=5, max_len=20):
-    """Generate instance of nodeReference holding a urn:node:<random>
-    string."""
+    """Generate instance of nodeReference holding a urn:node:<random> string."""
     s = generate_bare(prefix, min_len, max_len)
     return d1_common.types.dataoneTypes.nodeReference(s)
 

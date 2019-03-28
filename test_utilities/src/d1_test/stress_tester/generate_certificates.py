@@ -20,9 +20,9 @@
 # limitations under the License.
 """Create set of test certificates signed by the local test CA.
 
-For use by the stress tester. A certificate is created for each subject
-in the subject list and two certificates are created for test subjects
-with special permissions.
+For use by the stress tester. A certificate is created for each subject in the subject
+list and two certificates are created for test subjects with special permissions.
+
 """
 
 import codecs

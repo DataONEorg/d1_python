@@ -61,11 +61,11 @@ def generate_science_object_with_sysmeta(
 
 
 def _create_science_object_bytes(pid, min_bytes, max_bytes):
-    """Create a string of pseudo-random bytes that are always the same for a
-    given ``pid``.
+    """Create a string of pseudo-random bytes that are always the same for a given
+    ``pid``.
 
-    The length if set randomly between ``num_min_bytes`` and
-    ``num_max_bytes`` including
+    The length if set randomly between ``num_min_bytes`` and ``num_max_bytes`` including
+
     """
     # Seeding the PRNG with the PID causes the same sequence to be generated each
     # time.

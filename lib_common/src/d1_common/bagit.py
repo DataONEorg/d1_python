@@ -25,6 +25,7 @@ See Also:
     MN_APIs.html#MNPackage.getPackage
   - https://releases.dataone.org/online/api-documentation-v2.0/design/
     DataPackage.html
+
 """
 
 import logging
@@ -56,6 +57,7 @@ SIZE_UNIT_LIST = [
 
 TAG_CHECKSUM_ALGO = 'SHA1'
 
+
 def validate_bagit_file(bagit_path):
     """Check if a BagIt file is valid.
 
@@ -67,6 +69,7 @@ def validate_bagit_file(bagit_path):
         - The tag and manifest files are correctly formatted.
         - Contains all the files listed in the manifests.
         - The file checksums match the manifests.
+
     """
     _assert_zip_file(bagit_path)
     bagit_zip = zipfile.ZipFile(bagit_path)
@@ -87,6 +90,7 @@ def create_bagit_stream(dir_name, payload_info_list):
 
         - keys: pid, filename, iter, checksum, checksum_algorithm
         - If the filename is None, the pid is used for the filename.
+
     """
     zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
     _add_path(dir_name, payload_info_list)

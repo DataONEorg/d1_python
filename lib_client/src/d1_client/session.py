@@ -45,9 +45,9 @@ UBUNTU_CA_BUNDLE_PATH = "/etc/ssl/certs/ca-certificates.crt"
 
 class Session(object):
     def __init__(self, base_url, cert_pem_path=None, cert_key_path=None, **kwargs_dict):
-        """The Session improves performance by keeping connection related state
-        and allowing it to be reused in multiple API calls to a DataONE
-        Coordinating Node or Member Node. This includes:
+        """The Session improves performance by keeping connection related state and
+        allowing it to be reused in multiple API calls to a DataONE Coordinating Node or
+        Member Node. This includes:
 
         - A connection pool
         - HTTP persistent connections (HTTP/1.1 and keep-alive)
@@ -116,6 +116,7 @@ class Session(object):
         :type charset: str
 
         :returns: None
+
         """
         self._log = logging.getLogger(__name__)
         self._base_url = base_url
@@ -172,28 +173,28 @@ class Session(object):
         return self._base_url
 
     def GET(self, rest_path_list, **kwargs):
-        """Send a GET request. See requests.sessions.request for optional
-        parameters.
+        """Send a GET request. See requests.sessions.request for optional parameters.
 
         :returns: Response object
+
         """
         return self._request("GET", rest_path_list, **kwargs)
 
     def HEAD(self, rest_path_list, **kwargs):
-        """Send a HEAD request. See requests.sessions.request for optional
-        parameters.
+        """Send a HEAD request. See requests.sessions.request for optional parameters.
 
         :returns: Response object
+
         """
         kwargs.setdefault("allow_redirects", False)
         return self._request("HEAD", rest_path_list, **kwargs)
 
     def POST(self, rest_path_list, **kwargs):
         """Send a POST request with optional streaming multipart encoding. See
-        requests.sessions.request for optional parameters. To post regular
-        data, pass a string, iterator or generator as the ``data`` argument. To
-        post a multipart stream, pass a dictionary of multipart elements as the
-        ``fields`` argument. E.g.:
+        requests.sessions.request for optional parameters. To post regular data, pass a
+        string, iterator or generator as the ``data`` argument. To post a multipart
+        stream, pass a dictionary of multipart elements as the ``fields`` argument.
+        E.g.:
 
         fields = {
           'field0': 'value',
@@ -202,6 +203,7 @@ class Session(object):
         }
 
         :returns: Response object
+
         """
         fields = kwargs.pop("fields", None)
         if fields is not None:
@@ -211,10 +213,10 @@ class Session(object):
 
     def PUT(self, rest_path_list, **kwargs):
         """Send a PUT request with optional streaming multipart encoding. See
-        requests.sessions.request for optional parameters. See post() for
-        parameters.
+        requests.sessions.request for optional parameters. See post() for parameters.
 
         :returns: Response object
+
         """
         fields = kwargs.pop("fields", None)
         if fields is not None:
@@ -223,10 +225,10 @@ class Session(object):
             return self._request("PUT", rest_path_list, **kwargs)
 
     def DELETE(self, rest_path_list, **kwargs):
-        """Send a DELETE request. See requests.sessions.request for optional
-        parameters.
+        """Send a DELETE request. See requests.sessions.request for optional parameters.
 
         :returns: Response object
+
         """
         return self._request("DELETE", rest_path_list, **kwargs)
 
@@ -235,6 +237,7 @@ class Session(object):
         parameters.
 
         :returns: Response object
+
         """
         return self._request("OPTIONS", rest_path_list, **kwargs)
 
@@ -253,11 +256,12 @@ class Session(object):
         return " ".join(curl_list)
 
     def dump_request_and_response(self, response):
-        """Return a string containing a nicely formatted representation of the
-        request and response objects for logging and debugging.
+        """Return a string containing a nicely formatted representation of the request
+        and response objects for logging and debugging.
 
         - Note: Does not work if the request or response body is a MultipartEncoder
         object.
+
         """
         if response.reason is None:
             response.reason = "<unknown>"
@@ -332,8 +336,9 @@ class Session(object):
     def _timeout_to_float(self, timeout):
         """Convert timeout to float.
 
-        Return None if timeout is None, 0 or 0.0. timeout=None disables
-        timeouts in Requests.
+        Return None if timeout is None, 0 or 0.0. timeout=None disables timeouts in
+        Requests.
+
         """
         if timeout is not None:
             try:

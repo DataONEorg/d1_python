@@ -18,11 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Convert PEM formatted certificates to and from HTTP header compatible
-values.
+"""Convert PEM formatted certificates to and from HTTP header compatible values.
 
-For debugging certificate processing logic, it is sometimes convenient
-to pass the certificates via HTTP headers instead of HTTPS.
+For debugging certificate processing logic, it is sometimes convenient to pass the
+certificates via HTTP headers instead of HTTPS.
+
 """
 
 import io

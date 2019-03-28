@@ -36,6 +36,7 @@ Examples::
     <blockedMemberNode>node4</blockedMemberNode>
     <blockedMemberNode>node5</blockedMemberNode>
   </replicationPolicy>
+
 """
 
 import d1_common.types.dataoneTypes
@@ -43,19 +44,18 @@ import d1_common.xml
 
 
 def has_replication_policy(sysmeta_pyxb):
-    """
-  Args:
-    sysmeta_pyxb: SystemMetadata PyXB object.
+    """Args: sysmeta_pyxb: SystemMetadata PyXB object.
 
-  Returns:
-    bool: ``True`` if SystemMetadata includes the optional ReplicationPolicy section.
-  """
+    Returns:   bool: ``True`` if SystemMetadata includes the optional ReplicationPolicy
+    section.
+
+    """
     return bool(getattr(sysmeta_pyxb, 'replicationPolicy', False))
 
 
 def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
-    """Add a remote Member Node to the list of preferred replication targets to
-    this System Metadata object.
+    """Add a remote Member Node to the list of preferred replication targets to this
+    System Metadata object.
 
     Also remove the target MN from the list of blocked Member Nodes if present.
 
@@ -70,6 +70,7 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
 
       node_urn : str
         Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+
     """
     if not has_replication_policy(sysmeta_pyxb):
         sysmeta_set_default_rp(sysmeta_pyxb)
@@ -79,8 +80,8 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
 
 
 def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
-    """Add a remote Member Node to the list of blocked replication targets to
-    this System Metadata object.
+    """Add a remote Member Node to the list of blocked replication targets to this
+    System Metadata object.
 
     The blocked node will not be considered a possible replication target for the associated System Metadata.
 
@@ -97,6 +98,7 @@ def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
 
       node_urn : str
         Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+
     """
     if not has_replication_policy(sysmeta_pyxb):
         sysmeta_set_default_rp(sysmeta_pyxb)
@@ -115,6 +117,7 @@ def sysmeta_set_default_rp(sysmeta_pyxb):
     Args:
       sysmeta_pyxb : SystemMetadata PyXB object.
         System Metadata in which to set a default Replication Policy.
+
     """
     sysmeta_pyxb.replicationPolicy = dict_to_pyxb(
         {'allowed': False, 'num': 0, 'block': set(), 'pref': set()}
@@ -132,6 +135,7 @@ def normalize(rp_pyxb):
     Args:
       rp_pyxb : ReplicationPolicy PyXB object
         The object will be normalized in place.
+
     """
 
     # noinspection PyMissingOrEmptyDocstring
@@ -191,6 +195,7 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb):
 
     Returns:
       bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+
     """
     return pyxb_to_dict(a_pyxb) == pyxb_to_dict(b_pyxb)
 
@@ -205,6 +210,7 @@ def are_equivalent_xml(a_xml, b_xml):
 
     Returns:
       bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+
     """
     return are_equivalent_pyxb(
         d1_common.xml.deserialize(a_xml), d1_common.xml.deserialize(b_xml)
@@ -225,6 +231,7 @@ def add_preferred(rp_pyxb, node_urn):
 
       node_urn : str
         Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+
     """
     _add_node(rp_pyxb, 'pref', node_urn)
     _remove_node(rp_pyxb, 'block', node_urn)
@@ -244,6 +251,7 @@ def add_blocked(rp_pyxb, node_urn):
 
       node_urn : str
         Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+
     """
     _add_node(rp_pyxb, 'block', node_urn)
     _remove_node(rp_pyxb, 'pref', node_urn)
@@ -266,6 +274,7 @@ def pyxb_to_dict(rp_pyxb):
         'blockedMemberNode': {'urn:node:NODE1', 'urn:node:NODE2', 'urn:node:NODE3'},
         'preferredMemberNode': {'urn:node:NODE4', 'urn:node:NODE5'},
       }
+
     """
     return {
         'allowed': bool(_get_attr_or_list(rp_pyxb, 'allowed')),
@@ -292,6 +301,7 @@ def dict_to_pyxb(rp_dict):
 
     Returns:
       ReplicationPolicy PyXB object.
+
     """
     rp_pyxb = d1_common.types.dataoneTypes.replicationPolicy()
     rp_pyxb.replicationAllowed = rp_dict['allowed']

@@ -46,11 +46,10 @@ def parse_rest_url(rest_url):
     """Parse a DataONE REST API URL.
 
     Return: version_tag, endpoint_str, param_list, query_dict, client.pyxb_binding.
-    E.g.:
-      http://dataone.server.edu/dataone/mn/v1/objects/mypid ->
-      'v1', 'objects', ['mypid'], {}, <v1 client>
-    The version tag must be present. Everything leading up to the version tag is
-    the baseURL and is discarded.
+    E.g.: http://dataone.server.edu/dataone/mn/v1/objects/mypid ->   'v1', 'objects',
+    ['mypid'], {}, <v1 client> The version tag must be present. Everything leading up to
+    the version tag is the baseURL and is discarded.
+
     """
     # urlparse(): <scheme>://<netloc>/<path>;<params>?<query>#<fragment>
     version_tag, path = split_url_at_version_tag(rest_url)[1:]
@@ -72,10 +71,10 @@ def _decode_path_elements(path):
 def split_url_at_version_tag(url):
     """Split a DataONE REST API URL.
 
-    Return: BaseURL, version tag, path + query
-    E.g.:
+    Return: BaseURL, version tag, path + query E.g.:
     http://dataone.server.edu/dataone/mn/v1/objects/mypid ->
     'http://dataone.server.edu/dataone/mn/', 'v1', 'objects/mypid'
+
     """
     m = re.match(r'(.*?)(/|^)(v[123])(/|$)(.*)', url)
     if not m:
@@ -84,7 +83,7 @@ def split_url_at_version_tag(url):
 
 
 def get_page(query_dict, n_total):
-    """Return: start, count"""
+    """Return: start, count."""
     n_start = int(query_dict['start'][0]) if 'start' in query_dict else 0
     n_count = int(query_dict['count'][0]) if 'count' in query_dict else n_total
     if n_start + n_count > n_total:

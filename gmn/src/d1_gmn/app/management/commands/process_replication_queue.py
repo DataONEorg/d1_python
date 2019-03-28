@@ -19,17 +19,16 @@
 # limitations under the License.
 """Process queue of replication requests received from Coordinating Nodes.
 
-Coordinating Nodes call MNReplication.replicate() to request the
-creation of replicas. GMN queues the requests and processes them
-asynchronously. This command iterates over the requests and attempts to
-create the replicas. It is intended to be run as a cron job but cut can
-also be run manually.
+Coordinating Nodes call MNReplication.replicate() to request the creation of replicas.
+GMN queues the requests and processes them asynchronously. This command iterates over
+the requests and attempts to create the replicas. It is intended to be run as a cron job
+but cut can also be run manually.
+
 """
 
 import argparse
 import logging
 
-import d1_common.utils.filesystem
 import d1_gmn.app.did
 import d1_gmn.app.event_log
 # noinspection PyProtectedMember
@@ -40,6 +39,7 @@ import d1_gmn.app.sysmeta
 
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_client.cnclient
@@ -65,7 +65,9 @@ class Command(django.core.management.base.BaseCommand):
                 __name__
             )  # util.get_command_name())
         )
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
         d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         try:
             self._handle(opt)
@@ -228,11 +230,12 @@ class ReplicationQueueProcessor(object):
 
     def _create_replica(self, sysmeta_pyxb, sciobj_bytestream):
         """GMN handles replicas differently from native objects, with the main
-        differences being related to handling of restrictions related to
-        revision chains and SIDs.
+        differences being related to handling of restrictions related to revision chains
+        and SIDs.
 
-        So this create sequence differs significantly from the regular
-        one that is accessed through MNStorage.create().
+        So this create sequence differs significantly from the regular one that is
+        accessed through MNStorage.create().
+
         """
         pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
         self._assert_is_pid_of_local_unprocessed_replica(pid)

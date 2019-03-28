@@ -131,10 +131,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     # Request handlers.
 
     def _handle_isNodeAuthorized(self, url):
-        """CNReplication.isNodeAuthorized(session, targetNodeSubject, pid) →
-        boolean GET.
+        """CNReplication.isNodeAuthorized(session, targetNodeSubject, pid) → boolean
+        GET.
 
-        /replicaAuthorizations/{pid}?targetNodeSubject={targetNodeSubject}
+        /replicaAuthorizations/{pid}?targetNodeSubject={targetNodeSubjec t}
+
         """
         m = re.match(r'/v1/replicaAuthorizations/(.*)', url.path)
         if not m:
@@ -162,13 +163,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def _handle_getReplica(self, url):
         """MNRead.getReplica(session, pid) → OctetStream GET /replica/{pid}
 
-        For the purposes of testing, a call to MNRead.getReplica() can
-        either be for an existing or unknown object and the certificate
-        can either be accepted or rejected. Thus, there are 4 possible
-        combinations. However, if the certificate is rejected, the
-        client receives the same NotAuthorized exception regardless of
-        if the object exists or not, which leaves 3 combinations to be
-        tested.
+        For the purposes of testing, a call to MNRead.getReplica() can either be for an
+        existing or unknown object and the certificate can either be accepted or
+        rejected. Thus, there are 4 possible combinations. However, if the certificate
+        is rejected, the client receives the same NotAuthorized exception regardless of
+        if the object exists or not, which leaves 3 combinations to be tested.
+
         """
         m = re.match(r'/v1/replica/(.*)', url.path)
         if not m:
@@ -198,10 +198,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def _handle_getSystemMetadata(self, url):
         """MNRead.getSystemMetadata(session, pid) → SystemMetadata GET.
 
-        /meta/``pid`` A MN may either save the System Metadata from the
-        original MNReplication.replicate() call or pull it from the CN
-        again when processing the request, to ensure that the latest
-        version of the System Metadata is used.
+        /meta/``pid`` A MN may either save the System Metadata from the original
+        MNReplication.replicate() call or pull it from the CN again when processing the
+        request, to ensure that the latest version of the System Metadata is used.
+
         """
         m = re.match(r'/v1/meta/(.*)', url.path)
         if not m:
@@ -212,8 +212,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return True
 
     def _handle_setReplicationStatus(self, url):
-        """CNReplication.setReplicationStatus(session, pid, nodeRef, status,
-        failure) → boolean PUT /replicaNotifications/{pid}"""
+        """CNReplication.setReplicationStatus(session, pid, nodeRef, status, failure) →
+        boolean PUT /replicaNotifications/{pid}"""
         m = re.match(r'/v1/replicaNotifications/(.*)', url.path)
         if not m:
             return False

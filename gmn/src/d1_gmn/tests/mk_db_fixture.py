@@ -37,6 +37,7 @@ we're stuck with a bit of a messy import section that isort and flake8 don't
 like.
 
 isort:skip_file
+
 """
 # flake8:noqa:E402
 
@@ -180,8 +181,9 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def save_pid_list_sample(self, chunk_size=500, **list_objects_kwargs):
         """Get list of all PIDs in the DB fixture.
 
-        These are for use in any tests that need to know which PIDs and
-        SIDs are available in the DB.
+        These are for use in any tests that need to know which PIDs and SIDs are
+        available in the DB.
+
         """
         client = self.client_v2
         with d1_gmn.tests.gmn_mock.disable_auth():
@@ -210,8 +212,12 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
                 start_idx += object_list_pyxb.count
 
-        self.sample.save(self.sample.obj_to_pretty_str(pid_list)[1], 'db_fixture_pid.json')
-        self.sample.save(self.sample.obj_to_pretty_str(sid_list)[1], 'db_fixture_sid.json')
+        self.sample.save(
+            self.sample.obj_to_pretty_str(pid_list)[1], 'db_fixture_pid.json'
+        )
+        self.sample.save(
+            self.sample.obj_to_pretty_str(sid_list)[1], 'db_fixture_sid.json'
+        )
 
 
 if __name__ == '__main__':

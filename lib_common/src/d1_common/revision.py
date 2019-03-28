@@ -25,8 +25,8 @@ import d1_common.xml
 def get_identifiers(sysmeta_pyxb):
     """Get set of identifiers that provide revision context for SciObj.
 
-    Returns:
-      tuple: PID, SID, OBSOLETES_PID, OBSOLETED_BY_PID
+    Returns:   tuple: PID, SID, OBSOLETES_PID, OBSOLETED_BY_PID
+
     """
     pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'identifier')
     sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
@@ -66,6 +66,7 @@ def topological_sort(unsorted_dict):
       moving PIDs to the sorted list as they become available. A PID is available to
       be moved to the sorted list if it does not obsolete a PID or if the PID it
       obsoletes is already in the sorted list.
+
     """
     sorted_list = []
     sorted_set = set()
@@ -83,19 +84,19 @@ def topological_sort(unsorted_dict):
 
 
 def get_pids_in_revision_chain(client, did):
+    """Args: client: d1_client.cnclient.CoordinatingNodeClient or
+    d1_client.mnclient.MemberNodeClient.
+
+      did : str
+        SID or a PID of any object in a revision chain.
+
+    Returns:
+      list of str:
+        All PIDs in the chain. The returned list is in the same order as the chain. The
+        initial PID is typically obtained by resolving a SID. If the given PID is not in a
+        chain, a list containing the single object is returned.
+
     """
-  Args:
-    client: d1_client.cnclient.CoordinatingNodeClient or d1_client.mnclient.MemberNodeClient
-
-    did : str
-      SID or a PID of any object in a revision chain.
-
-  Returns:
-    list of str:
-      All PIDs in the chain. The returned list is in the same order as the chain. The
-      initial PID is typically obtained by resolving a SID. If the given PID is not in a
-      chain, a list containing the single object is returned.
-  """
 
     def _req(p):
         return d1_common.xml.get_req_val(p)
@@ -116,14 +117,12 @@ def get_pids_in_revision_chain(client, did):
 
 
 def revision_list_to_obsoletes_dict(revision_list):
-    """
-  Args:
-    revision_list: list of tuple
-      tuple: PID, SID, OBSOLETES_PID, OBSOLETED_BY_PID
+    """Args: revision_list: list of tuple tuple: PID, SID, OBSOLETES_PID,
+    OBSOLETED_BY_PID.
 
-  Returns:
-    dict: Dict of obsoleted PID to obsoleting PID.
-  """
+    Returns:   dict: Dict of obsoleted PID to obsoleting PID.
+
+    """
     return {
         pid: obsoletes_pid
         for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list
@@ -131,14 +130,12 @@ def revision_list_to_obsoletes_dict(revision_list):
 
 
 def revision_list_to_obsoleted_by_dict(revision_list):
-    """
-  Args:
-    revision_list: list of tuple
-      tuple: PID, SID, OBSOLETES_PID, OBSOLETED_BY_PID
+    """Args: revision_list: list of tuple tuple: PID, SID, OBSOLETES_PID,
+    OBSOLETED_BY_PID.
 
-  Returns:
-    dict: Dict of obsoleting PID to obsoleted PID.
-  """
+    Returns:   dict: Dict of obsoleting PID to obsoleted PID.
+
+    """
     return {
         pid: obsoleted_by_pid
         for pid, sid, obsoletes_pid, obsoleted_by_pid in revision_list

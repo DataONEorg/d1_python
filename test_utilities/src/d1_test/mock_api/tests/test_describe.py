@@ -27,7 +27,7 @@ import d1_test.mock_api.describe
 class TestMockDescribe(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
-        """mock_api.describe(): Returns a dict with the expected headers"""
+        """mock_api.describe(): Returns a dict with the expected headers."""
         d1_test.mock_api.describe.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         header_dict = mn_client_v1_v2.describe('test_pid')
         assert 'Last-Modified' in header_dict

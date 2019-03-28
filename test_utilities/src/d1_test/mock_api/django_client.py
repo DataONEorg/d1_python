@@ -51,6 +51,7 @@ test code that converts streams to strings by accessing .content (production
 code should not do this since it causes the entire stream to be buffered in
 memory). So we convert streaming responses to string before passing them to
 Responses.
+
 """
 
 import logging

@@ -69,6 +69,7 @@ def cut_from_chain(sciobj_model):
     that was created or remove dangling reference at the head or tail.
     - If the object was the last object in the chain and the chain has a SID, the
     SID reference is shifted over to the new last object in the chain.
+
     """
     if _is_head(sciobj_model):
         old_pid = sciobj_model.obsoletes.did
@@ -97,13 +98,13 @@ def resolve_sid(sid):
 
     Preconditions:
     - ``sid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_sid().
+
     """
     return d1_gmn.app.models.Chain.objects.get(sid__did=sid).head_pid.did
 
 
 def get_sid_by_pid(pid):
-    """Given the ``pid`` of the object in a chain, return the SID for the
-    chain.
+    """Given the ``pid`` of the object in a chain, return the SID for the chain.
 
     Return None if there is no SID for the chain. This operation is also valid
     for standalone objects which may or may not have a SID.
@@ -114,6 +115,7 @@ def get_sid_by_pid(pid):
 
     Preconditions:
     - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
+
     """
     return d1_gmn.app.did.get_did_by_foreign_key(_get_chain_by_pid(pid).sid)
 
@@ -129,23 +131,21 @@ def set_revision_links(sciobj_model, obsoletes_pid=None, obsoleted_by_pid=None):
 
 
 def is_obsoletes_pid(pid):
-    """Return True if ``pid`` is referenced in the obsoletes field of any
-    object.
+    """Return True if ``pid`` is referenced in the obsoletes field of any object.
 
-    This will return True even if the PID is in the obsoletes field of
-    an object that does not exist on the local MN, such as replica that
-    is in an incomplete chain.
+    This will return True even if the PID is in the obsoletes field of an object that
+    does not exist on the local MN, such as replica that is in an incomplete chain.
+
     """
     return d1_gmn.app.models.ScienceObject.objects.filter(obsoletes__did=pid).exists()
 
 
 def is_obsoleted_by_pid(pid):
-    """Return True if ``pid`` is referenced in the obsoletedBy field of any
-    object.
+    """Return True if ``pid`` is referenced in the obsoletedBy field of any object.
 
-    This will return True even if the PID is in the obsoletes field of
-    an object that does not exist on the local MN, such as replica that
-    is in an incomplete chain.
+    This will return True even if the PID is in the obsoletes field of an object that
+    does not exist on the local MN, such as replica that is in an incomplete chain.
+
     """
     return d1_gmn.app.models.ScienceObject.objects.filter(
         obsoleted_by__did=pid
@@ -153,12 +153,12 @@ def is_obsoleted_by_pid(pid):
 
 
 def is_revision(pid):
-    """Return True if ``pid`` is referenced in the obsoletes or obsoletedBy
-    field of any object.
+    """Return True if ``pid`` is referenced in the obsoletes or obsoletedBy field of any
+    object.
 
-    This will return True even if the PID is in the obsoletes field of
-    an object that does not exist on the local MN, such as replica that
-    is in an incomplete chain.
+    This will return True even if the PID is in the obsoletes field of an object that
+    does not exist on the local MN, such as replica that is in an incomplete chain.
+
     """
     return is_obsoletes_pid(pid) or is_obsoleted_by_pid(pid)
 
@@ -210,6 +210,7 @@ def _merge_chains(chain_model_a, chain_model_b):
     are in the same chain, which means that A and B are in the same chain. At
     this point, the two chains need to be merged. Merging the chains causes A
     to take on the SID of B.
+
     """
     _set_chain_sid(
         chain_model_a, d1_gmn.app.did.get_did_by_foreign_key(chain_model_b.sid)
@@ -230,8 +231,9 @@ def _add_pid_to_chain(chain_model, pid):
 def _set_chain_sid(chain_model, sid):
     """Set or update SID for chain.
 
-    If the chain already has a SID, ``sid`` must either be None or match
-    the existing SID.
+    If the chain already has a SID, ``sid`` must either be None or match the existing
+    SID.
+
     """
     if not sid:
         return
@@ -260,12 +262,13 @@ def _assert_sid_is_in_chain(sid, pid):
 
 
 def _find_head_or_latest_connected(pid, last_pid=None):
-    """Find latest existing sciobj that can be reached by walking towards the
-    head from ``pid``
+    """Find latest existing sciobj that can be reached by walking towards the head from
+    ``pid``
 
-    If ``pid`` does not exist, return None. If chain is connected all
-    the way to head and head exists, return the head. If chain ends in a
-    dangling obsoletedBy, return the last existing object.
+    If ``pid`` does not exist, return None. If chain is connected all the way to head
+    and head exists, return the head. If chain ends in a dangling obsoletedBy, return
+    the last existing object.
+
     """
     try:
         sci_model = d1_gmn.app.model_util.get_sci_model(pid)
@@ -280,6 +283,7 @@ def _get_chain_by_pid(pid):
     """Find chain by pid.
 
     Return None if not found.
+
     """
     try:
         return d1_gmn.app.models.ChainMember.objects.get(pid__did=pid).chain
@@ -296,15 +300,15 @@ def _get_chain_by_sid(sid):
 
 
 def _update_sid_to_last_existing_pid_map(pid):
-    """Set chain head PID to the last existing object in the chain to which
-    ``pid`` belongs. If SID has been set for chain, it resolves to chain head
-    PID.
+    """Set chain head PID to the last existing object in the chain to which ``pid``
+    belongs. If SID has been set for chain, it resolves to chain head PID.
 
     Intended to be called in MNStorage.delete() and other chain manipulation.
 
     Preconditions:
     - ``pid`` must exist and be verified to be a PID.
       d1_gmn.app.views.asserts.is_existing_object()
+
     """
     last_pid = _find_head_or_latest_connected(pid)
     chain_model = _get_chain_by_pid(last_pid)
@@ -315,12 +319,13 @@ def _update_sid_to_last_existing_pid_map(pid):
 
 
 def _create_chain(pid, sid):
-    """Create the initial chain structure for a new standalone object. Intended
-    to be called in MNStorage.create().
+    """Create the initial chain structure for a new standalone object. Intended to be
+    called in MNStorage.create().
 
     Preconditions:
     - ``sid`` must be verified to be available to be assigned to a new standalone
     object. E.g., with is_valid_sid_for_new_standalone().
+
     """
     chain_model = d1_gmn.app.models.Chain(
         # sid=d1_gmn.app.models.did(sid) if sid else None,

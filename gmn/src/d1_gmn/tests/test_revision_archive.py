@@ -28,7 +28,7 @@ import d1_gmn.tests.gmn_test_case
 class TestRevisionArchive(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """archive(): Archived flag correctly set and represented"""
+        """archive(): Archived flag correctly set and represented."""
 
         def assert_archived(client, pid):
             unarchived_sysmeta_pyxb = client.getSystemMetadata(pid)

@@ -17,8 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Combine all PyXB bindings required for handling DataONE types up to and
-including v1.1."""
+"""Combine all PyXB bindings required for handling DataONE types up to and including
+v1.1."""
 
 import logging
 

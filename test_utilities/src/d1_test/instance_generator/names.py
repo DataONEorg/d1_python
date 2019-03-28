@@ -301,5 +301,6 @@ def random_names(count=10):
   """Returns a random selection of ``count`` names.
 
   No repetitions.
+
   """
   return random.sample(NAMES_2K, count)

@@ -19,8 +19,8 @@
 # limitations under the License.
 """Asserts used in views.
 
-These directly return a DataONE Exception to the client if a test
-condition is not true.
+These directly return a DataONE Exception to the client if a test condition is not true.
+
 """
 
 import contextlib
@@ -68,8 +68,8 @@ def is_valid_pid_for_create(did):
 
 
 def is_valid_pid_to_be_updated(did):
-    """Assert that ``did`` is the PID of an object that can be updated
-    (obsoleted) with MNStorage.update()"""
+    """Assert that ``did`` is the PID of an object that can be updated (obsoleted) with
+    MNStorage.update()"""
     if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
@@ -149,6 +149,7 @@ def post_has_mime_parts(request, parts):
     part_type header: request.META['HTTP_<UPPER CASE NAME>']
     part_type file: request.FILES['<name>']
     part_type field: request.POST['<name>']
+
     """
     missing = []
 

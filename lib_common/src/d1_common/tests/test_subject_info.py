@@ -61,8 +61,9 @@ class TestSubjectInfo(d1_test.d1_test_case.D1TestCase):
     ):
         """SubjectInfo methods give expected results.
 
-        See the subject_info_*.xml sample files for notes on the
-        individual tests and expected results
+        See the subject_info_*.xml sample files for notes on the individual tests and
+        expected results
+
         """
         subject_info_pyxb = d1_common.cert.subject_info.deserialize_subject_info(
             self.test_files.load_xml_to_str(subj_info_testfile)

@@ -28,6 +28,7 @@ Add any missing obsoleted and obsoletedBy references
 obsoleted and obsoletedBy references should not break during regular use of GMN
 in production, but it may happen during development or if the database is
 manipulated directly during testing.
+
 """
 
 import argparse
@@ -40,6 +41,7 @@ import d1_gmn.app.management.commands.util.util
 import d1_common.util
 
 import django.core.management.base
+
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
@@ -57,7 +59,9 @@ class Command(django.core.management.base.BaseCommand):
         d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info("test")
         logging.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
         self._opt = opt
         try:
             # profiler = profile.Profile()

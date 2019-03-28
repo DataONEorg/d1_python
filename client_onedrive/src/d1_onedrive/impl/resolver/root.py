@@ -27,6 +27,7 @@ resolver, based on the path which is entered.
 
 The root resolver unescapes path entries before they are passed into the
 resolver hierarchy and escapes entries that are received.
+
 """
 
 import logging

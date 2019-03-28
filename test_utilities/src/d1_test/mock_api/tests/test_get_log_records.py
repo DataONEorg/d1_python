@@ -31,14 +31,19 @@ class TestMockLogRecords(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.getLogRecords() returns a DataONE Log PyXB object."""
-        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_log_records.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         assert isinstance(
             mn_client_v1_v2.getLogRecords(), mn_client_v1_v2.pyxb_binding.Log
         )
 
     @responses.activate
     def test_1010(self, mn_client_v1_v2):
-        """mock_api.getLogRecords(): Passing a trigger header triggers a DataONEException"""
-        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        """mock_api.getLogRecords(): Passing a trigger header triggers a
+        DataONEException."""
+        d1_test.mock_api.get_log_records.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         with pytest.raises(d1_common.types.exceptions.NotFound):
             mn_client_v1_v2.getLogRecords('test_pid', vendorSpecific={'trigger': '404'})

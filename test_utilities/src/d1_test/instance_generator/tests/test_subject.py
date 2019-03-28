@@ -29,5 +29,8 @@ import d1_test.instance_generator.subject
 class TestSubject(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
-        subject_list = [d1_test.instance_generator.subject.generate().toxml('utf-8') for _ in range(10)]
+        subject_list = [
+            d1_test.instance_generator.subject.generate().toxml('utf-8')
+            for _ in range(10)
+        ]
         self.sample.assert_equals(subject_list, 'inst_gen__subject__generate')

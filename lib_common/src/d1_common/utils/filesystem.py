@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for filesystem paths and operations
-"""
+"""Utilities for filesystem paths and operations."""
 
 import os
 import sys
@@ -36,13 +35,9 @@ def gen_safe_path(*path_list):
 
     Returns:
         str : A path safe for use as a as a file- or directory name.
+
     """
-    return os.path.join(
-        *[
-            gen_safe_path_element(p)
-            for p in path_list
-        ]
-    )
+    return os.path.join(*[gen_safe_path_element(p) for p in path_list])
 
 
 def gen_safe_path_element(s):
@@ -55,6 +50,7 @@ def gen_safe_path_element(s):
 
     Returns:
         str : A string safe for use as a file- or directory name.
+
     """
     return urllib.parse.quote(s.encode('utf-8'), safe=FILENAME_SAFE_CHARS)
 
@@ -71,6 +67,7 @@ def create_missing_directories_for_file(file_path):
 
     See Also:
       create_missing_directories_for_dir()
+
     """
     create_missing_directories_for_dir(os.path.dirname(file_path))
 
@@ -87,13 +84,14 @@ def create_missing_directories_for_dir(dir_path):
 
     See Also:
       create_missing_directories_for_file()
+
     """
     os.makedirs(dir_path, exist_ok=True)
 
 
 def abs_path_from_base(base_path, rel_path):
-    """Join a base and a relative path and return an absolute path to the
-    resulting location.
+    """Join a base and a relative path and return an absolute path to the resulting
+    location.
 
     Args:
       base_path: str
@@ -104,6 +102,7 @@ def abs_path_from_base(base_path, rel_path):
 
     Returns:
         str : Absolute path to the location specified by ``rel_path``.
+
     """
     # noinspection PyProtectedMember
     return os.path.abspath(
@@ -114,8 +113,8 @@ def abs_path_from_base(base_path, rel_path):
 
 
 def abs_path(rel_path):
-    """Convert a path that is relative to the module from which this function
-    is called, to an absolute path.
+    """Convert a path that is relative to the module from which this function is called,
+    to an absolute path.
 
     Args:
       rel_path: str
@@ -123,6 +122,7 @@ def abs_path(rel_path):
 
     Returns:
         str : Absolute path to the location specified by ``rel_path``.
+
     """
     # noinspection PyProtectedMember
     return os.path.abspath(

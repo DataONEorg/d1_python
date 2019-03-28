@@ -36,7 +36,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert d1_cli.impl.replication_policy.ReplicationPolicy() is not None
 
     def test_1010(self):
-        """get_preferred(): Returns empty list"""
+        """get_preferred(): Returns empty list."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         assert not len(s.get_preferred())
 
@@ -64,8 +64,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "blocked_mn_3" in s.get_blocked()
 
     def test_1050(self):
-        """add_preferred() followed by add_blocked() switches item from
-        preferred to blocked."""
+        """add_preferred() followed by add_blocked() switches item from preferred to
+        blocked."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["preferred_mn"])
         assert not ("preferred_mn" in s.get_blocked())
@@ -73,8 +73,8 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert "preferred_mn" in s.get_blocked()
 
     def test_1060(self):
-        """add_blocked() followed by add_preferred() switches item from blocked
-        to preferred."""
+        """add_blocked() followed by add_preferred() switches item from blocked to
+        preferred."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.add_preferred(["blocked_mn"])
         assert not ("blocked_mn" in s.get_blocked())
@@ -119,8 +119,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert 0 == s.get_number_of_replicas()
 
     def test_1120(self):
-        """set_number_of_replicas(0) implicitly sets replication_allowed to
-        False."""
+        """set_number_of_replicas(0) implicitly sets replication_allowed to False."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         s.set_replication_allowed(True)
         assert s.get_replication_allowed()

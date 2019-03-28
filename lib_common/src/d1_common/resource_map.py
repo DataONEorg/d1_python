@@ -45,6 +45,7 @@ Note:
 
   In order for Resource Maps to be recognized and indexed by DataONE, they must be created
   with ``formatId`` set to ``http://www.openarchives.org/ore/terms``.
+
 """
 
 import logging
@@ -63,8 +64,8 @@ ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["ore"])
 
 
 def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
-    """Create a simple OAI-ORE Resource Map with one Science Metadata document
-    and any number of Science Data objects.
+    """Create a simple OAI-ORE Resource Map with one Science Metadata document and any
+    number of Science Data objects.
 
     This creates a document that establishes an association between a Science Metadata
     object and any number of Science Data objects. The Science Metadata object contains
@@ -84,6 +85,7 @@ def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
 
     Returns:
       ResourceMap : OAI-ORE Resource Map
+
     """
     ore = ResourceMap()
     ore.initialize(ore_pid)
@@ -93,8 +95,8 @@ def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
 
 
 def createResourceMapFromStream(in_stream, base_url=d1_common.const.URL_DATAONE_ROOT):
-    """Create a simple OAI-ORE Resource Map with one Science Metadata document
-    and any number of Science Data objects, using a stream of PIDs.
+    """Create a simple OAI-ORE Resource Map with one Science Metadata document and any
+    number of Science Data objects, using a stream of PIDs.
 
     Args:
       in_stream:
@@ -116,6 +118,7 @@ def createResourceMapFromStream(in_stream, base_url=d1_common.const.URL_DATAONE_
 
     Returns:
       ResourceMap : OAI-ORE Resource Map
+
     """
     pids = []
     for line in in_stream:
@@ -177,6 +180,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
           args and kwargs:
             Optional arguments forwarded to rdflib.ConjunctiveGraph.__init__().
+
         """
         super().__init__(*args, **kwargs)
         self._base_url = base_url
@@ -225,14 +229,14 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Note:
           Only the default, "xml", is automatically indexed by DataONE.
+
         """
         return super(ResourceMap, self).serialize(
             format=doc_format, encoding="utf-8", *args, **kwargs
         )
 
     def serialize_to_display(self, doc_format="pretty-xml", *args, **kwargs):
-        """Serialize ResourceMap to an XML doc that is pretty printed for
-        display.
+        """Serialize ResourceMap to an XML doc that is pretty printed for display.
 
         Args:
           doc_format: str
@@ -246,6 +250,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Note:
           Only the default, "xml", is automatically indexed by DataONE.
+
         """
         return (
             super(ResourceMap, self)
@@ -284,6 +289,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Raises:
           xml.sax.SAXException based exception: On parse error.
+
         """
         self.parse(*args, **kwargs)
         self._ore_initialized = True
@@ -292,6 +298,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         """Returns:
 
         str : URIRef of the Aggregation entity
+
         """
         self._check_initialized()
         return [
@@ -315,6 +322,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Args:
           pid : str
+
         """
         self._check_initialized()
         try:
@@ -343,6 +351,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
           documented_pid: str
             PID of a Science Object that is documented by ``documenting_pid``.
+
         """
         self._check_initialized()
         documenting_id = self.getObjectByPid(documenting_pid)
@@ -361,6 +370,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
           documenting_pid: str
             PID of a Science Object that documents ``documented_pid``.
+
         """
         self._check_initialized()
         documented_id = self.getObjectByPid(documented_pid)
@@ -373,6 +383,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         Args:
           pid : str
             PID of a Science Metadata object.
+
         """
         self.addResource(pid)
 
@@ -385,6 +396,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
           scimeta_pid: str
             PID of a Science Metadata object that documents the Science Data objects.
+
         """
         mpids = self.getAggregatedScienceMetadataPids()
         if scimeta_pid is None:
@@ -406,6 +418,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         """Returns:
 
         str : PID of the Resource Map itself.
+
         """
         ore = [
             o for o in self.subjects(predicate=rdflib.RDF.type, object=ORE.ResourceMap)
@@ -419,6 +432,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         """Returns:
 
         list of tuples : Each tuple holds a subject, predicate, object triple
+
         """
         return [(str(s), str(p), str(o)) for s, p, o in self]
 
@@ -437,6 +451,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             WHERE {
               ?s ?p ?o .
             }
+
         """
         return sorted(set([str(o) for o in self.predicates()]))
 
@@ -487,6 +502,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
               ?s ore:aggregates ?o .
               ?o dcterms:identifier ?pid .
             }
+
         """
         q = """
     PREFIX ore: <http://www.openarchives.org/ore/terms/>
@@ -517,6 +533,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
               ?o cito:documents ?o2 .
               ?o dcterms:identifier ?pid .
             }
+
         """
         q = """
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
@@ -550,6 +567,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
               ?o cito:isDocumentedBy ?o2 .
               ?o dcterms:identifier ?pid .
             }
+
         """
         q = """
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
@@ -569,16 +587,17 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     def asGraphvizDot(self, stream):
         """Serialize the graph to .DOT format for ingestion in Graphviz.
 
-        Args:
-          stream: file-like object open for writing that will receive the resulting document.
+        Args:   stream: file-like object open for writing that will receive the
+        resulting document.
+
         """
         rdflib.tools.rdf2dot.rdf2dot(self, stream)
 
     def parseDoc(self, doc_str, format="xml"):
         """Parse a OAI-ORE Resource Maps document.
 
-        See Also:   ``rdflib.ConjunctiveGraph.parse`` for documentation
-        on arguments.
+        See Also:   ``rdflib.ConjunctiveGraph.parse`` for documentation on arguments.
+
         """
         self.parse(data=doc_str, format=format)
         self._ore_initialized = True
@@ -587,8 +606,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     # Private
 
     def _pid_to_id(self, pid):
-        """Converts a pid to a URI that can be used as an OAI-ORE
-        identifier."""
+        """Converts a pid to a URI that can be used as an OAI-ORE identifier."""
         return d1_common.url.joinPathElements(
             self._base_url,
             self._version_tag,

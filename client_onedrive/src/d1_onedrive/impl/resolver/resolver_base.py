@@ -24,6 +24,7 @@ Abstract Base Class (ABC) for the resolvers.
 
 The resolvers are a class of objects that translate filesystem paths to their
 corresponding files and folders.
+
 """
 
 import logging
@@ -53,9 +54,9 @@ class Resolver(object):
         return not len(path)
 
     def _raise_exception_if_empty_directory(self, directory, msg=None):
-        """In hierarchies where ONEDrive dynamically renders directories only
-        after having determined that there are contents for them, an empty
-        directory means that the path is invalid."""
+        """In hierarchies where ONEDrive dynamically renders directories only after
+        having determined that there are contents for them, an empty directory means
+        that the path is invalid."""
         if len(directory) <= 2:
             raise onedrive_exceptions.PathException(msg)
 

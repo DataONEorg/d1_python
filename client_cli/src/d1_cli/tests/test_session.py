@@ -58,8 +58,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s is not None, "Could not instantiate session"
 
     def test_1010(self):
-        """After instantiation, the default session parameters are available
-        via get()"""
+        """After instantiation, the default session parameters are available via
+        get()"""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         # self.assertEqual(s.get('pretty'), True)
         assert s.get("cn-url") == d1_common.const.URL_DATAONE_ROOT
@@ -80,8 +80,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s.get("cn-url") == valid_cn
 
     def test_1040(self):
-        """Session parameters can be brought back to their defaults with
-        reset()"""
+        """Session parameters can be brought back to their defaults with reset()"""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         s.set("query", "testquery"),
         assert s.get("query") == "testquery"
@@ -89,8 +88,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s.get("query") == "*:*"
 
     def test_1050(self):
-        """Getting an non-existing session parameter raises
-        InvalidArguments."""
+        """Getting an non-existing session parameter raises InvalidArguments."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             s.get("bogus-value")
@@ -110,8 +108,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert s.get("verbose") == 1
 
     def test_1080(self):
-        """set_with_conversion() raises InvalidArguments on non-existing
-        session parameter."""
+        """set_with_conversion() raises InvalidArguments on non-existing session
+        parameter."""
         s = d1_cli.impl.session.Session(nodes, format_ids)
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             s.set_with_conversion("bogus-value", "1")
@@ -137,8 +135,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
         assert type(out) is str
 
     def test_1110(self, tmpdir):
-        """Session is successfully saved and then loaded (pickled and
-        unpickled)"""
+        """Session is successfully saved and then loaded (pickled and unpickled)"""
         tmp_pickle_path = str(tmpdir.join("session.pickle"))
         s1 = d1_cli.impl.session.Session(nodes, format_ids)
         u = str(uuid.uuid1())

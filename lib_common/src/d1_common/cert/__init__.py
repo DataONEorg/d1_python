@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This package contains certificate related functionality, such as functions
-for extracting DataONE subjects from PEM (base64) encoded X.509 v3 certificates
-and Java Web Tokens (JTWs) as used in DataONE.
+"""This package contains certificate related functionality, such as functions for
+extracting DataONE subjects from PEM (base64) encoded X.509 v3 certificates and Java Web
+Tokens (JTWs) as used in DataONE.
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.
+
 """
 
 import logging
@@ -30,11 +31,14 @@ import logging
 try:
     from logging import NullHandler
 except ImportError:
+
     class NullHandler(logging.Handler):
         """Suppress log messages instead of raising exception if the program using the
         library does not configure the logging system."""
+
         # noinspection PyMissingOrEmptyDocstring
         def emit(self, record):
             pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())

@@ -18,6 +18,7 @@
 """Test and debug settings for GMN.
 
 - These settings are in effect when GMN is called through unit tests.
+
 """
 
 # noinspection PyUnresolvedReferences
@@ -26,10 +27,10 @@
 import logging
 import warnings
 
-import d1_common.utils.filesystem
 from d1_gmn.app.settings_default import *
 
 import d1_common.util
+import d1_common.utils.filesystem
 
 # When running tests, turn Django's RuntimeWarning into exception
 warnings.filterwarnings(

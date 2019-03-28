@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.systemMetadataChanged() and the process_refresh_queue
-management command."""
+"""Test MNStorage.systemMetadataChanged() and the process_refresh_queue management
+command."""
 import datetime
 
 import freezegun
@@ -53,7 +53,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized"""
+        """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized."""
         with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
                 gmn_client_v1_v2.systemMetadataChanged(
@@ -62,7 +62,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """systemMetadataChanged(): fails when called with invalid PID"""
+        """systemMetadataChanged(): fails when called with invalid PID."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             with pytest.raises(d1_common.types.exceptions.NotFound):
                 gmn_client_v1_v2.systemMetadataChanged(
@@ -71,7 +71,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """systemMetadataChanged(): Succeeds when called with valid PID"""
+        """systemMetadataChanged(): Succeeds when called with valid PID."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2, sid=True
@@ -83,7 +83,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     @django.test.override_settings(STAND_ALONE=False)
     def test_1030(self, gmn_client_v1_v2):
-        """systemMetadataChanged(): Async processing"""
+        """systemMetadataChanged(): Async processing."""
         # Create 3 new objects and add them to the refresh queue
         sysmeta_pyxb_list = []
         with freezegun.freeze_time('2014-12-14') as freeze_time:
@@ -118,5 +118,5 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     @django.test.override_settings(STAND_ALONE=False)
     def test_1040(self):
-        """systemMetadataChanged(): Async processing, handling empty queue"""
+        """systemMetadataChanged(): Async processing, handling empty queue."""
         self._call_process_refresh_queue()

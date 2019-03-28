@@ -38,9 +38,8 @@ sys.path.append(d1_common.utils.filesystem.abs_path('..'))
 
 
 class D1WSGIRequest(django.core.handlers.wsgi.WSGIRequest):
-    """Overrides the _load_post_and_files method of the standard Django WSGI
-    handler to ensure that PUT message bodies are parsed the same way as a
-    POST."""
+    """Overrides the _load_post_and_files method of the standard Django WSGI handler to
+    ensure that PUT message bodies are parsed the same way as a POST."""
 
     def _load_post_and_files(self):
         # Populates self._post and self._files

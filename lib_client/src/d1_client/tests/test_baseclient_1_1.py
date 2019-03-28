@@ -43,7 +43,7 @@ class TestDataONEBaseClient_1_1(d1_test.d1_test_case.D1TestCase):
 
     @d1_test.mock_api.catch_all.activate
     def test_1010(self, cn_mn_client_v1):
-        """MNRead.query(): Generates expected REST query"""
+        """MNRead.query(): Generates expected REST query."""
         d1_test.mock_api.catch_all.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
@@ -56,7 +56,7 @@ class TestDataONEBaseClient_1_1(d1_test.d1_test_case.D1TestCase):
 
     @d1_test.mock_api.catch_all.activate
     def test_1020(self, cn_mn_client_v1):
-        """MNRead.query(): Converts DataONEException XML doc to exception"""
+        """MNRead.query(): Converts DataONEException XML doc to exception."""
         d1_test.mock_api.catch_all.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )

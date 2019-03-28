@@ -40,8 +40,7 @@ import d1_test_case
 
 class Test070GetChecksum(d1_test_case.D1TestCase):
     def test_010_get_checksum_by_invalid_pid(self):
-        """404 NotFound when attempting to get checksum for non-existing
-        object."""
+        """404 NotFound when attempting to get checksum for non-existing object."""
         client = test_client.TestClient(context.node['baseurl'])
         with pytest.raises(d1_common.types.exceptions.NotFound):
             client.get(context.TOKEN, '_invalid_pid_')

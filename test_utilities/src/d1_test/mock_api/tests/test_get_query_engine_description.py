@@ -28,7 +28,7 @@ class TestMockQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, cn_client_v1_v2):
         """mock_api.getQueryEngineDescription(): Returns a DataONE
-    QueryEngineDescription PyXB object"""
+        QueryEngineDescription PyXB object."""
         d1_test.mock_api.query_engine_description.add_callback(
             d1_test.d1_test_case.MOCK_CN_BASE_URL
         )

@@ -19,8 +19,9 @@
 # limitations under the License.
 """Event Log utilities.
 
-The Event Log is a log of all operations performed on SciObjs. It is
-retrieved with MNCore.getLogRecords() and aggregated by CNs.
+The Event Log is a log of all operations performed on SciObjs. It is retrieved with
+MNCore.getLogRecords() and aggregated by CNs.
+
 """
 import re
 
@@ -115,6 +116,7 @@ def _is_ignored_read_event(request):
     indicated by the user configurable LOG_IGNORE* settings.
 
     See settings_site.py for description and rationale for the settings.
+
     """
     if (
         django.conf.settings.LOG_IGNORE_TRUSTED_SUBJECT

@@ -108,6 +108,7 @@ ore:Aggregation rdfs:label "Aggregation" ;
 <https://cn.dataone.org/cn/v2/resolve/c> dcterms:identifier "c" ;
     cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/c> ;
     ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/a#aggregation> .
+
 """
 
 import argparse

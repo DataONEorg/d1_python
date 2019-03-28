@@ -23,6 +23,7 @@ Warning:
 
   The ``MD5`` checksum algorithm is not cryptographically secure. It's possible to craft
   a sequence of bytes that yields a predetermined checksum.
+
 """
 
 import hashlib
@@ -55,6 +56,7 @@ def create_checksum_object_from_stream(
 
     Returns:
       Populated Checksum PyXB object.
+
     """
     checksum_str = calculate_checksum_on_stream(f, algorithm)
     checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
@@ -76,6 +78,7 @@ def create_checksum_object_from_iterator(
 
     Returns:
       Populated Checksum PyXB object.
+
     """
     checksum_str = calculate_checksum_on_iterator(itr, algorithm)
     checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
@@ -101,6 +104,7 @@ def create_checksum_object_from_bytes(
 
     Returns:
       Populated PyXB Checksum object.
+
     """
     checksum_str = calculate_checksum_on_bytes(b, algorithm)
     checksum_pyxb = d1_common.types.dataoneTypes.checksum(checksum_str)
@@ -130,6 +134,7 @@ def calculate_checksum_on_stream(
 
     Returns:
       str : Checksum as a hexadecimal string, with length decided by the algorithm.
+
     """
     checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
     while True:
@@ -154,6 +159,7 @@ def calculate_checksum_on_iterator(
 
     Returns:
       str : Checksum as a hexadecimal string, with length decided by the algorithm.
+
     """
     checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
     for chunk in itr:
@@ -179,6 +185,7 @@ def calculate_checksum_on_bytes(
 
     Returns:
       str : Checksum as a hexadecimal string, with length decided by the algorithm.
+
     """
     checksum_calc = get_checksum_calculator_by_dataone_designator(algorithm)
     checksum_calc.update(b)
@@ -205,6 +212,7 @@ def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
     Raises:
       ValueError
         The checksums were calculated with different algorithms, hence cannot be compared.
+
     """
     if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
         raise ValueError(
@@ -228,6 +236,7 @@ def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
       Checksum calculator from the ``hashlib`` library
 
       Object that supports ``update(arg)``, ``digest()``, ``hexdigest()`` and ``copy()``.
+
     """
     return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP[dataone_algorithm_name]()
 
@@ -241,6 +250,7 @@ def get_default_checksum_algorithm():
 
       The returned string can be passed as the ``algorithm_str`` to the functions in this
       module.
+
     """
     return d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
 
@@ -257,17 +267,19 @@ def is_supported_algorithm(algorithm_str):
         - **True**: The string contains the name of a supported algorithm and
           can be passed as the ``algorithm_str`` to the functions in this module.
         - **False**: The string is not a supported algorithm.
+
     """
     return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP
 
 
 def get_supported_algorithms():
-    """Get a list of the checksum algorithms that are supported by the DataONE
-    Python stack.
+    """Get a list of the checksum algorithms that are supported by the DataONE Python
+    stack.
 
     Returns:
       list : List of algorithms that are supported by the DataONE Python stack and can be
       passed to as the ``algorithm_str`` to the functions in this module.
+
     """
     return list(DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())
 
@@ -283,6 +295,7 @@ def format_checksum(checksum_pyxb):
 
     Returns:
       str : Combined hexadecimal value and algorithm name.
+
     """
     return '{}/{}'.format(
         checksum_pyxb.algorithm.upper().replace('-', ''), checksum_pyxb.value().lower()

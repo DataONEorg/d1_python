@@ -29,13 +29,13 @@ import tempfile
 import textwrap
 import traceback
 
-import d1_common.utils.filesystem
 import posix_ipc
 import requests.structures
 import requests_toolbelt.utils.dump
 
 import d1_common
 import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_test.pycharm
@@ -55,13 +55,14 @@ options = {}
 
 logger = logging.getLogger(__name__)
 
+
 def start_tidy():
     """Call at start of test run to tidy the samples directory.
 
-    Pytest will run regular session scope fixtures in parallel with test
-    collection, while this function must complete before collection
-    starts. The best place to call it from appears to be
-    ./conftest.pytest_sessionstart().
+    Pytest will run regular session scope fixtures in parallel with test collection,
+    while this function must complete before collection starts. The best place to call
+    it from appears to be ./conftest.pytest_sessionstart().
+
     """
     logging.info("Moving files to tidy dir")
     sample_dir_path = get_abs_sample_file_path("")
@@ -89,8 +90,8 @@ def get_abs_sample_tidy_file_path(filename):
 
 
 def assert_diff_equals(left_obj, right_obj, file_post_str, client=None):
-    """Check that the difference between two objects, typically captured before
-    and after some operation, is as expected."""
+    """Check that the difference between two objects, typically captured before and
+    after some operation, is as expected."""
     file_ext_str, left_str = obj_to_pretty_str(left_obj)
     right_str = obj_to_pretty_str(right_obj)[1]
     diff_str = _get_sxs_diff_str(left_str, right_str)
@@ -221,6 +222,7 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
     before being passed in.
     - Serialization that breaks long lines into multiple lines is preferred, since
     multiple lines makes differences easier to spot in diffs.
+
     """
 
     # noinspection PyUnreachableCode
@@ -347,8 +349,11 @@ def get_test_module_name():
 
 
 def _clobber_uncontrolled_volatiles(o_str):
-    """Some volatile values in results are not controlled by freezing the time
-    and/or PRNG seed. We replace those with a fixed string here.
+    """Some volatile values in results are not controlled by freezing the time and/or
+    PRNG seed.
+
+    We replace those with a fixed string here.
+
     """
     # requests-toolbelt is using another prng for mmp docs
     o_str = re.sub(r"(?<=boundary=)[0-9a-fA-F]+", "[BOUNDARY]", o_str)
@@ -373,10 +378,10 @@ def _clobber_uncontrolled_volatiles(o_str):
 
 
 def _get_or_create_path(filename):
-    """Get the path to a sample file and enable cleaning out unused sample
-    files.
+    """Get the path to a sample file and enable cleaning out unused sample files.
 
     See the test docs for usage.
+
     """
     path = get_path(filename)
     logging.debug("Sample path: {}".format(path))
@@ -407,10 +412,11 @@ def _get_sxs_diff_str(got_str, exp_str):
 
 
 def _get_sxs_diff_file(got_str, exp_path):
-    """Return a minimal formatted side by side diff if there are any none-
-    whitespace changes, else None.
+    """Return a minimal formatted side by side diff if there are any none- whitespace
+    changes, else None.
 
     - Return: str
+
     """
     assert isinstance(got_str, str)
     try:
@@ -565,9 +571,7 @@ def ask_diff_ignore():
 
 
 def input_with_sigint_capture(question_str):
-    """input() with SIGINT (Ctrl-C) capture and redirect to "Fail".
-
-    """
+    """input() with SIGINT (Ctrl-C) capture and redirect to "Fail"."""
     try:
         answer_str = input(question_str).lower()
     except KeyboardInterrupt:

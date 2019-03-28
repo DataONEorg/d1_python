@@ -23,6 +23,7 @@
 Handle callbacks from Dokan.
 
 The callbacks are called by Dokan when actions are performed on the filesystem.
+
 """
 
 import errno

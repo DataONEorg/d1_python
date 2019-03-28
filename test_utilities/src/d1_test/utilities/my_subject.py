@@ -15,9 +15,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Given a certificate, show the subject in DataONE format and optionally
-display included subject information such as mapped identities and group
-memberships."""
+"""Given a certificate, show the subject in DataONE format and optionally display
+included subject information such as mapped identities and group memberships."""
 
 import logging
 import optparse
@@ -32,11 +31,12 @@ from pyasn1.error import PyAsn1Error
 
 
 def getSubjectFromName(xName):
-    """Given a DN, returns a DataONE subject
-  TODO: This assumes that RDNs are in reverse order...
+    """Given a DN, returns a DataONE subject TODO: This assumes that RDNs are in reverse
+    order...
 
-  @param
-  """
+    @param
+
+    """
     parts = xName.get_components()
     res = []
     for part in parts:

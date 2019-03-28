@@ -130,6 +130,7 @@ Given ACL containing: F
 - B -> person subject, but not authenticated
 
 Authorization: Denied
+
 """
 import os
 
@@ -229,6 +230,7 @@ def extract_subjects(subject_info_xml, primary_str):
             - Handled by skipping recursive add for subjects that are already added
 
         - See the unit tests for example SubjectInfo XML documents for each of these issues and the expected results.
+
     """
     subject_info_pyxb = deserialize_subject_info(subject_info_xml)
     subject_info_tree = gen_subject_info_tree(subject_info_pyxb, primary_str)
@@ -244,6 +246,7 @@ def deserialize_subject_info(subject_info_xml):
 
     Returns:
         SubjectInfo PyXB object
+
     """
     try:
         return d1_common.xml.deserialize(subject_info_xml)
@@ -258,8 +261,7 @@ def deserialize_subject_info(subject_info_xml):
 
 # noinspection PyTypeChecker
 def gen_subject_info_tree(subject_info_pyxb, authn_subj, include_duplicates=False):
-    """Convert the flat, self referential lists in the SubjectInfo to a tree
-    structure.
+    """Convert the flat, self referential lists in the SubjectInfo to a tree structure.
 
     Args:
         subject_info_pyxb: SubjectInfo PyXB object
@@ -276,6 +278,7 @@ def gen_subject_info_tree(subject_info_pyxb, authn_subj, include_duplicates=Fals
 
     Returns:
         SubjectInfoNode : Tree of nodes holding information about subjects that are directly or indirectly connected to the authenticated subject in the root.
+
     """
 
     class State:
@@ -364,6 +367,7 @@ def _trim_tree(state):
 
     - Removing a leaf node may cause the parent to become a new empty leaf node, so
     the function is repeated until there are no more empty leaf nodes.
+
     """
     for n in list(state.tree.leaf_node_gen):
         if n.type_str == TYPE_NODE_TAG:
@@ -374,9 +378,10 @@ def _trim_tree(state):
 class SubjectInfoNode:
     """Tree representation of SubjectInfo.
 
-    In SubjectInfo, nested information is represented via self-
-    referential lists. This class holds a recursive tree of nodes which
-    simplifies processing of SubjectInfo for client apps.
+    In SubjectInfo, nested information is represented via self- referential lists. This
+    class holds a recursive tree of nodes which simplifies processing of SubjectInfo for
+    client apps.
+
     """
 
     SUBJECT_NODE_TAG = "is_subject_node"
@@ -399,8 +404,8 @@ class SubjectInfoNode:
     def node_gen(self):
         """Generate all nodes for the tree rooted at this node.
 
-        Yields:     SubjectInfoNode         All nodes rooted at this
-        node.
+        Yields:     SubjectInfoNode         All nodes rooted at this node.
+
         """
         for n in self.child_list:
             yield from n.node_gen
@@ -410,8 +415,8 @@ class SubjectInfoNode:
     def leaf_node_gen(self):
         """Generate all leaf nodes for the tree rooted at this node.
 
-        Yields:     SubjectInfoNode         All leaf nodes rooted at
-        this node.
+        Yields:     SubjectInfoNode         All leaf nodes rooted at this node.
+
         """
         return (v for v in self.node_gen if v.is_leaf)
 
@@ -419,8 +424,9 @@ class SubjectInfoNode:
     def parent_gen(self):
         """Generate this node, then all parents from this node to the root.
 
-        Yields:     SubjectInfoNode         This node, then all parents
-        from this node to the root.
+        Yields:     SubjectInfoNode         This node, then all parents from this node
+        to the root.
+
         """
         yield self
         if self.parent is not None:
@@ -438,6 +444,7 @@ class SubjectInfoNode:
 
         Returns:
             str: String describing the path from the root to this node.
+
         """
         return sep.join(
             list(
@@ -463,12 +470,12 @@ class SubjectInfoNode:
 
         Returns:
             list of str: The paths to the leaf nodes for the tree rooted at this node.
+
         """
         return [v.get_path_str(sep, type_str) for v in self.leaf_node_gen]
 
     def get_path_list(self, type_str=None):
-        """Get list of the labels of the nodes leading up to this node from the
-        root.
+        """Get list of the labels of the nodes leading up to this node from the root.
 
         Args:
             type_str:
@@ -476,6 +483,7 @@ class SubjectInfoNode:
 
         Returns:
             list of str: The labels of the nodes leading up to this node from the root.
+
         """
         return list(
             reversed(
@@ -497,14 +505,15 @@ class SubjectInfoNode:
 
         Returns:
             set: The labels of the nodes leading up to this node from the root.
+
         """
         return {v.label_str for v in self.node_gen if type_str in (None, v.type_str)}
 
     def get_subject_set(self):
         """Get a set of subjects for the tree rooted at this node.
 
-        Returns:
-            set: The subjects for the tree rooted at this node.
+        Returns:     set: The subjects for the tree rooted at this node.
+
         """
         return self.get_label_set(SUBJECT_NODE_TAG)
 

@@ -24,6 +24,7 @@ Provide overview of what has changed in the online Zotero library since last
 sync.
 
 Expose a simple API to query and refresh the cache.
+
 """
 
 # Zotero API:
@@ -83,6 +84,7 @@ class ZoteroClient(object):
         """Get a sub-tree rooted at [path] that contains only DataONE items.
 
         The path is a list of collection names.
+
         """
         return self._get_filtered_sub_tree_recursive(path)
 

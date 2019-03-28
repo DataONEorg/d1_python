@@ -53,10 +53,11 @@ def redbaron_tree_to_module_str(baron_tree, strict=False):
 
 
 def update_module_file(redbaron_tree, module_path, show_diff=False, dry_run=False):
-    """Set show_diff to False to overwrite module_path with a new file
-    generated from ``redbaron_tree``.
+    """Set show_diff to False to overwrite module_path with a new file generated from
+    ``redbaron_tree``.
 
     Returns True if tree is different from source.
+
     """
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(redbaron_tree_to_module_str(redbaron_tree))
@@ -179,8 +180,7 @@ def has_doc_str(node):
 
 
 def find_repo_root_by_path(path):
-    """Given a path to an item in a git repository, find the root of the
-    repository."""
+    """Given a path to an item in a git repository, find the root of the repository."""
     repo = git.Repo(path, search_parent_directories=True)
     repo_path = repo.git.rev_parse('--show-toplevel')
     logging.info('Repository: {}'.format(repo_path))

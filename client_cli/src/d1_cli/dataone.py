@@ -429,8 +429,8 @@ def handle_options(cli, options):
 
 
 def handle_unexpected_exception(max_traceback_levels=100):
-    """Suppress stack traces for common errors and provide hints for how to
-    resolve them."""
+    """Suppress stack traces for common errors and provide hints for how to resolve
+    them."""
     exc_type, exc_msgs = sys.exc_info()[:2]
     if exc_type.__name__ == "SSLError":
         d1_cli.impl.util.print_error(

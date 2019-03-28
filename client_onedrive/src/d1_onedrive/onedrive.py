@@ -23,13 +23,13 @@
 - Parse arguments
 - Instantiate the Root resolver
 - Mount FUSE / Dokan
+
 """
 
 import logging
 import optparse
 import platform
 import sys
-
 
 # flake8: noqa: F402
 

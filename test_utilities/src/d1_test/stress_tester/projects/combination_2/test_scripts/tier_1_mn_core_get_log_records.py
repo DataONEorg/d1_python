@@ -34,8 +34,7 @@ class Transaction(transaction.Transaction):
         super().__init__()
 
     def d1_mn_api_call(self):
-        """MNCore.getLogRecords() for specific object called by regular
-        subject."""
+        """MNCore.getLogRecords() for specific object called by regular subject."""
         obj, subject = self.select_random_private_object()
         client = self.create_client_for_subject(subject)
         response = client.getLogRecordsResponse(pidFilter=obj)

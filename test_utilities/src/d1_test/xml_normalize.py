@@ -58,6 +58,7 @@ the tree must be traversed depth first, and the sort performed as the algorithm 
 stepping up from a completed level.
 
 - To avoid having to build a new tree depth first, inline sort is used.
+
 """
 import io
 
@@ -65,8 +66,7 @@ import d1_common.type_conversions
 
 
 def get_normalized_xml_representation(xml):
-    """Return a str that contains a normalized representation of an XML
-    document."""
+    """Return a str that contains a normalized representation of an XML document."""
     etree = d1_common.type_conversions.str_to_etree(xml)
     stable_tree = etree_to_stable_tree(etree)
     stable_tree.sortme()
@@ -81,6 +81,7 @@ def etree_to_stable_tree(t, e=None):
     - name is the name of the xml element
     - dict contains the direct children of the element
     - list contains a list of dict
+
     """
     tag = d1_common.type_conversions.replace_namespace_with_prefix(t.tag)
     e = e or StableNode(tag)
@@ -99,8 +100,8 @@ def etree_to_stable_tree(t, e=None):
 
 
 class StableNode:
-    """Tree structure that uses lists instead of dicts, as lists have
-    deterministic ordering."""
+    """Tree structure that uses lists instead of dicts, as lists have deterministic
+    ordering."""
 
     def __init__(self, name, child_node=None):
         """child is E or str."""

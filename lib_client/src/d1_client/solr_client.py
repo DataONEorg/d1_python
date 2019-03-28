@@ -62,6 +62,7 @@ Example:
   })
 
   pprint.pprint(search_result)
+
 """
 
 import datetime
@@ -117,8 +118,8 @@ RESERVED_CHAR_LIST = [
 
 
 class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
-    """Extend DataONEBaseClient_1_2 with functions for querying Solr indexes
-    hosted on CNs and MNs.
+    """Extend DataONEBaseClient_1_2 with functions for querying Solr indexes hosted on
+    CNs and MNs.
 
     Example:
 
@@ -145,6 +146,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     For more information about DataONE's Solr index, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/design/SearchMetadata.html
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -169,6 +171,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         Example:
 
         result_dict = search(q=['id:abc*'], fq=['id:def*', 'id:ghi'])
+
         """
         return self._get_query(**query_dict)
 
@@ -197,8 +200,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return resp_dict['response']['numFound']
 
     def get_field_values(self, name, maxvalues=-1, sort=True, **query_dict):
-        """Retrieve the unique values for a field, along with their usage
-        counts.
+        """Retrieve the unique values for a field, along with their usage counts.
 
         :param name: Name of field for which to retrieve values
         :type name: string
@@ -210,6 +212,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         :type maxvalues: int
 
         :returns: dict of {fieldname: [[value, count], ... ], }
+
         """
         param_dict = query_dict.copy()
         param_dict.update(
@@ -228,15 +231,16 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return result_dict
 
     def get_field_min_max(self, name, **query_dict):
-        """Returns the minimum and maximum values of the specified field. This
-        requires two search calls to the service, each requesting a single
-        value of a single field.
+        """Returns the minimum and maximum values of the specified field. This requires
+        two search calls to the service, each requesting a single value of a single
+        field.
 
         @param name(string) Name of the field
         @param q(string) Query identifying range of records for min and max values
         @param fq(string) Filter restricting range of query
 
         @return list of [min, max]
+
         """
         param_dict = query_dict.copy()
         param_dict.update({'rows': 1, 'fl': name, 'sort': '%s asc' % name})
@@ -257,8 +261,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     ):
         """Generates a histogram of values from a string field.
 
-        Output is: [[low, high, count, query], ... ]. Bin edges is
-        determined by equal division of the fields.
+        Output is: [[low, high, count, query], ... ]. Bin edges is determined by equal
+        division of the fields.
+
         """
         bin_list = []
         q_bin = []
@@ -379,8 +384,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         )
 
     def add_docs(self, docs):
-        """docs is a list of fields that are a dictionary of name:value for a
-        record."""
+        """docs is a list of fields that are a dictionary of name:value for a record."""
         return self.query(
             'solr',
             '<add>{}</add>'.format(
@@ -407,11 +411,11 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return quoteattr(s).encode('utf-8')
 
     def _coerce_type(self, field_type, value):
-        """Returns unicode(value) after trying to coerce it into the Solr field
-        type.
+        """Returns unicode(value) after trying to coerce it into the Solr field type.
 
         @param field_type(string) The Solr field type for the value
         @param value(any) The value that is to be represented as Unicode text.
+
         """
         if value is None:
             return None
@@ -450,8 +454,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     def _get_solr_type(self, field):
         """Returns the Solr type of the specified field name.
 
-        Assumes the convention of dynamic fields using an underscore +
-        type character code for the field name.
+        Assumes the convention of dynamic fields using an underscore + type character
+        code for the field name.
+
         """
         field_type = 'string'
         try:
@@ -495,20 +500,18 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return ''.join(el_list)
 
     def _get_query(self, **query_dict):
-        """Perform a GET query against Solr and return the response as a Python
-        dict."""
+        """Perform a GET query against Solr and return the response as a Python dict."""
         param_dict = query_dict.copy()
         return self._send_query(do_post=False, **param_dict)
 
     def _post_query(self, **query_dict):
-        """Perform a POST query against Solr and return the response as a
-        Python dict."""
+        """Perform a POST query against Solr and return the response as a Python
+        dict."""
         param_dict = query_dict.copy()
         return self._send_query(do_post=True, **param_dict)
 
     def _send_query(self, do_post=False, **query_dict):
-        """Perform a query against Solr and return the response as a Python
-        dict."""
+        """Perform a query against Solr and return the response as a Python dict."""
         # self._prepare_query_term()
         param_dict = query_dict.copy()
         param_dict.setdefault('wt', 'json')
@@ -521,8 +524,8 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     def _prepare_query_term(self, field, term):
         """Prepare a query term for inclusion in a query.
 
-        This escapes the term and if necessary, wraps the term in
-        quotes.
+        This escapes the term and if necessary, wraps the term in quotes.
+
         """
         if term == "*":
             return term
@@ -541,6 +544,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """Escape a query term for inclusion in a query.
 
         - Also see: prepare_query_term().
+
         """
         term = term.replace('\\', '\\\\')
         for c in RESERVED_CHAR_LIST:
@@ -554,8 +558,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 class SolrRecordTransformerBase(object):
     """Base for Solr record transformers.
 
-    Used to transform a Solr search response document into some other
-    form, such as a dictionary or list of values.
+    Used to transform a Solr search response document into some other form, such as a
+    dictionary or list of values.
+
     """
 
     def __init__(self):
@@ -569,8 +574,7 @@ class SolrRecordTransformerBase(object):
 
 
 class SolrArrayTransformer(SolrRecordTransformerBase):
-    """A transformer that returns a list of values for the specified
-    columns."""
+    """A transformer that returns a list of values for the specified columns."""
 
     def __init__(self, cols=None):
         super().__init__()
@@ -594,8 +598,8 @@ class SolrArrayTransformer(SolrRecordTransformerBase):
 
 
 class SolrSearchResponseIterator(object):
-    """Performs a search against a Solr index and acts as an iterator to
-    retrieve all the values."""
+    """Performs a search against a Solr index and acts as an iterator to retrieve all
+    the values."""
 
     def __init__(
         self,
@@ -643,8 +647,7 @@ class SolrSearchResponseIterator(object):
         return self
 
     def process_row(self, row):
-        """Override this method in derived classes to reformat the row
-        response."""
+        """Override this method in derived classes to reformat the row response."""
         return row
 
     def __next__(self):
@@ -674,8 +677,9 @@ class SolrSearchResponseIterator(object):
 class SolrArrayResponseIterator(SolrSearchResponseIterator):
     """Returns an iterator that operates on a Solr result set.
 
-    The output for each document is a list of values for the columns
-    specified in the cols parameter of the constructor.
+    The output for each document is a list of values for the columns specified in the
+    cols parameter of the constructor.
+
     """
 
     def __init__(self, client, page_size=100, cols=None, **query_dict):
@@ -698,9 +702,10 @@ class SolrArrayResponseIterator(SolrSearchResponseIterator):
 class SolrSubsampleResponseIterator(SolrSearchResponseIterator):
     """Returns a pseudo-random subsample of the result set.
 
-    Works by calculating the number of pages required for the entire
-    data set and taking a random sample of pages until n_samples can be
-    retrieved.  So pages are random, but records within a page are not.
+    Works by calculating the number of pages required for the entire data set and taking
+    a random sample of pages until n_samples can be retrieved.  So pages are random, but
+    records within a page are not.
+
     """
 
     def __init__(
@@ -728,9 +733,8 @@ class SolrSubsampleResponseIterator(SolrSearchResponseIterator):
             self._page_starts.sort()
 
     def __next__(self):
-        """Overrides the default iteration by sequencing through records within
-        a page and when necessary selecting the next page from the randomly
-        generated list."""
+        """Overrides the default iteration by sequencing through records within a page
+        and when necessary selecting the next page from the randomly generated list."""
         if self.done:
             raise StopIteration()
         idx = self.c_record - self.res['response']['start']
@@ -757,6 +761,7 @@ class SolrValuesResponseIterator(object):
     """Iterates over a Solr get values response.
 
     This returns a list of distinct values for a particular field.
+
     """
 
     def __init__(self, client, field, page_size=1000, **query_dict):
@@ -768,6 +773,7 @@ class SolrValuesResponseIterator(object):
         @param fq(string) A facet query, restricts the set of rows that q is applied to
         @param fields(string) A comma delimited list of field names to return
         @param page_size(int) Number of rows to retrieve in each call.
+
         """
 
         self._log = logging.getLogger(__name__)

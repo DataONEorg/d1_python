@@ -28,6 +28,7 @@
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
+
 """
 
 import logging

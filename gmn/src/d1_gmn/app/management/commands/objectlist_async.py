@@ -20,6 +20,7 @@
 """Async ObjectList Iterator.
 
 Fast retrieval of ObjectInfo from a DataONE Node.
+
 """
 
 import asyncio
@@ -51,7 +52,9 @@ class ObjectListIteratorAsync:
         self._logger.debug("Object count: {}".format(object_count))
 
         page_count = (object_count - 1) // self._page_size + 1
-        self._logger.debug("Page count: {} at {} events per page".format(page_count, self._page_size))
+        self._logger.debug(
+            "Page count: {} at {} events per page".format(page_count, self._page_size)
+        )
 
         # Debug
         # page_count = 10
@@ -59,16 +62,13 @@ class ObjectListIteratorAsync:
         task_set = set()
 
         for page_idx in range(page_count):
-            if (
-                len(task_set) >= self._max_concurrent_d1_rest_calls
-            ):
+            if len(task_set) >= self._max_concurrent_d1_rest_calls:
                 done_set, task_set = await asyncio.wait(
                     task_set, return_when=asyncio.FIRST_COMPLETED
                 )
 
                 async for item_pyxb in self._iter_done(done_set):
                     yield item_pyxb
-
 
             task_set.add(self._get_page(page_idx))
 

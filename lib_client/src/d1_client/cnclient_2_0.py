@@ -31,9 +31,8 @@ class CoordinatingNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
     d1_client.cnclient_1_2.CoordinatingNodeClient_1_2,
 ):
-    """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_2 with
-    functionality for Coordinating nodes that was added in v2.0 of the DataONE
-    infrastructure.
+    """Extend DataONEBaseClient_2_0 and CoordinatingNodeClient_1_2 with functionality
+    for Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
 
     Updated in v2:
 
@@ -45,6 +44,7 @@ class CoordinatingNodeClient_2_0(
     called through this class.
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -70,6 +70,7 @@ class CoordinatingNodeClient_2_0(
           pid:
 
         Returns:
+
         """
         return self.DELETE(['object', pid])
 
@@ -80,6 +81,7 @@ class CoordinatingNodeClient_2_0(
           pid:
 
         Returns:
+
         """
         response = self.deleteResponse(pid)
         return self._read_dataone_type_response(response, 'Identifier')
@@ -92,6 +94,7 @@ class CoordinatingNodeClient_2_0(
         """CNRead.synchronize(session, pid) → boolean POST /synchronize.
 
         Args:   pid:   vendorSpecific:
+
         """
         mmp_dict = {'pid': pid}
         return self.POST(['synchronize'], fields=mmp_dict, headers=vendorSpecific)
@@ -100,6 +103,7 @@ class CoordinatingNodeClient_2_0(
         """See Also: synchronizeResponse() Args: pid: vendorSpecific:
 
         Returns:
+
         """
         response = self.synchronizeResponse(pid, vendorSpecific)
         return self._read_boolean_response(response)

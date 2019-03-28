@@ -30,13 +30,14 @@ import d1_common.date_time
 
 logger = logging.getLogger(__name__)
 
+
 def log_setup(is_debug=False, is_multiprocess=False):
-    """Set up a standardized log format for the DataONE Python stack. All
-    Python components should use this function. If ``is_multiprocess`` is True,
-    include process ID in the log so that logs can be separated for each
-    process.
+    """Set up a standardized log format for the DataONE Python stack. All Python
+    components should use this function. If ``is_multiprocess`` is True, include process
+    ID in the log so that logs can be separated for each process.
 
     Output only to stdout and stderr.
+
     """
     format_str = (
         '%(asctime)s %(name)s %(module)s:%(lineno)d %(process)4d %(levelname)-8s %(message)s'
@@ -71,6 +72,7 @@ def get_content_type(content_type):
 
       Input:   multipart/form-data; boundary=aBoundaryString
       Returns: multipart/form-data
+
     """
     m = email.message.Message()
     m['Content-Type'] = content_type
@@ -90,6 +92,7 @@ def nested_update(d, u):
 
       u: dict
         dict with contents that will be merged into ``d``. May or may not contain nested dicts.
+
     """
     for k, v in list(u.items()):
         if isinstance(v, collections.Mapping):
@@ -104,8 +107,8 @@ def nested_update(d, u):
 
 
 class EventCounter(object):
-    """Count events during a lengthy operation and write running totals and/or
-    a summary to a logger when the operation has completed.
+    """Count events during a lengthy operation and write running totals and/or a summary
+    to a logger when the operation has completed.
 
     The summary contains the name and total count of each event that was counted.
 
@@ -121,6 +124,7 @@ class EventCounter(object):
       Skipped Node registry update: 1
       Updating obsoletedBy: 42
       Whitelisted subject: 2
+
     """
 
     def __init__(self):
@@ -128,11 +132,10 @@ class EventCounter(object):
 
     @property
     def event_dict(self):
-        """Provide direct access to the underlying dict where events are
-        recorded.
+        """Provide direct access to the underlying dict where events are recorded.
 
-        Returns:
-          dict: Events and event counts.
+        Returns:   dict: Events and event counts.
+
         """
         return self._event_dict
 
@@ -146,6 +149,7 @@ class EventCounter(object):
 
           inc_int: int
             Optional argument to increase the count for the event by more than 1.
+
         """
         self._event_dict.setdefault(event_str, 0)
         self._event_dict[event_str] += inc_int
@@ -166,6 +170,7 @@ class EventCounter(object):
 
           inc_int: int
             Optional argument to increase the count for the event by more than 1.
+
         """
         logger.info(
             ' - '.join(map(str, [v for v in (event_str, msg_str, inc_int) if v]))
@@ -173,11 +178,11 @@ class EventCounter(object):
         self.count(event_str, inc_int or 1)
 
     def dump_to_log(self):
-        """Write summary to logger with the name and number of times each event
-        has been counted.
+        """Write summary to logger with the name and number of times each event has been
+        counted.
 
-        This function may be called at any point in the process. Counts
-        are not zeroed.
+        This function may be called at any point in the process. Counts are not zeroed.
+
         """
         if self._event_dict:
             logger.info('Events:')
@@ -192,8 +197,8 @@ class EventCounter(object):
 
 @contextlib.contextmanager
 def print_logging():
-    """Context manager to temporarily suppress additional information such as
-    timestamps when writing to loggers.
+    """Context manager to temporarily suppress additional information such as timestamps
+    when writing to loggers.
 
     This makes logging look like ``print()``. The main use case is in scripts that mix
     logging and ``print()``, as Python uses separate streams for those, and output can and
@@ -209,6 +214,7 @@ def print_logging():
     By modifying the log levels to WARNING instead of completely disabling the loggers, it
     is ensured that potentially serious issues can still be logged while the context
     manager is in effect.
+
     """
     root_logger = logging.getLogger()
     old_level_list = [h.level for h in root_logger.handlers]
@@ -226,8 +232,8 @@ def print_logging():
 
 
 def save_json(py_obj, json_path):
-    """Serialize a native object to JSON and save it normalized, pretty printed
-    to a file.
+    """Serialize a native object to JSON and save it normalized, pretty printed to a
+    file.
 
     The JSON string is normalized by sorting any dictionary keys.
 
@@ -242,6 +248,7 @@ def save_json(py_obj, json_path):
 
     See Also:
       ToJsonCompatibleTypes()
+
     """
     with open(json_path, 'w') as f:
         f.write(serialize_to_normalized_pretty_json(py_obj))
@@ -256,6 +263,7 @@ def load_json(json_path):
 
     Returns:
       object : Typically a nested structure of ``list`` and ``dict`` objects.
+
     """
     with open(json_path, 'r') as f:
         return json.load(f)
@@ -272,6 +280,7 @@ def format_json_to_normalized_pretty_json(json_str):
 
     Returns:
       str: normalized, pretty printed JSON string.
+
     """
     return serialize_to_normalized_pretty_json(json.loads(json_str))
 
@@ -288,6 +297,7 @@ def serialize_to_normalized_pretty_json(py_obj):
 
     Returns:
       str: normalized, pretty printed JSON string.
+
     """
     return json.dumps(py_obj, sort_keys=True, indent=2, cls=ToJsonCompatibleTypes)
 
@@ -305,6 +315,7 @@ def serialize_to_normalized_compact_json(py_obj):
 
     Returns:
       str: normalized, compact JSON string.
+
     """
     return json.dumps(
         py_obj, sort_keys=True, separators=(',', ':'), cls=ToJsonCompatibleTypes
@@ -312,11 +323,12 @@ def serialize_to_normalized_compact_json(py_obj):
 
 
 class ToJsonCompatibleTypes(json.JSONEncoder):
-    """Some native objects such as ``datetime.datetime`` are not automatically
-    converted to strings for use as values in JSON.
+    """Some native objects such as ``datetime.datetime`` are not automatically converted
+    to strings for use as values in JSON.
 
-    This helper adds such conversions for types that the DataONE Python
-    stack encounters frequently in objects that are to be JSON encoded.
+    This helper adds such conversions for types that the DataONE Python stack encounters
+    frequently in objects that are to be JSON encoded.
+
     """
 
     # noinspection PyMissingOrEmptyDocstring
@@ -342,10 +354,9 @@ def format_sec_to_dhm(sec):
 
     Returns:
       Period of time represented as a string on the form ``0d:00h:00m``.
+
     """
     rem_int, s_int = divmod(int(sec), 60)
     rem_int, m_int, = divmod(rem_int, 60)
     d_int, h_int, = divmod(rem_int, 24)
     return '{}d{:02d}h{:02d}m'.format(d_int, h_int, m_int)
-
-

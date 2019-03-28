@@ -28,12 +28,12 @@ import d1_test.d1_test_case
 
 class TestXml(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
-        """are_equivalent(): True for identical docs"""
+        """are_equivalent(): True for identical docs."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         assert d1_common.xml.are_equivalent(valid_xml, valid_xml)
 
     def test_1010(self):
-        """are_equivalent(): True for docs identical except for swapped attributes"""
+        """are_equivalent(): True for docs identical except for swapped attributes."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         valid_swapped_attr_xml = self.test_files.load_utf8_to_str(
             'xml/test_xml_valid_swapped_attr_xml.xml'
@@ -41,7 +41,7 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
         assert d1_common.xml.are_equivalent(valid_xml, valid_swapped_attr_xml)
 
     def test_1020(self):
-        """are_equivalent(): False when an attribute is missing"""
+        """are_equivalent(): False when an attribute is missing."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         missing_count_xml = self.test_files.load_utf8_to_str(
             'xml/test_xml_missing_count_xml.xml'
@@ -49,7 +49,7 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
         assert not d1_common.xml.are_equivalent(valid_xml, missing_count_xml)
 
     def test_1030(self):
-        """are_equivalent(): False when an element is missing"""
+        """are_equivalent(): False when an element is missing."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         missing_entry_xml = self.test_files.load_utf8_to_str(
             'xml/test_xml_missing_entry_xml.xml'
@@ -57,7 +57,7 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
         assert not d1_common.xml.are_equivalent(valid_xml, missing_entry_xml)
 
     def test_1040(self):
-        """are_equivalent(): False when elements are in wrong order"""
+        """are_equivalent(): False when elements are in wrong order."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         wrong_order_xml = self.test_files.load_xml_to_str(
             'test_xml_wrong_order_xml.xml'
@@ -65,7 +65,7 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
         assert not d1_common.xml.are_equivalent(valid_xml, wrong_order_xml)
 
     def test_1050(self):
-        """are_equivalent(): False when an element is missing text"""
+        """are_equivalent(): False when an element is missing text."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         missing_text_xml = self.test_files.load_xml_to_str(
             'test_xml_missing_text_xml.xml'
@@ -73,7 +73,7 @@ class TestXml(d1_test.d1_test_case.D1TestCase):
         assert not d1_common.xml.are_equivalent(valid_xml, missing_text_xml)
 
     def test_1060(self):
-        """are_equivalent(): False when the document is not well formed"""
+        """are_equivalent(): False when the document is not well formed."""
         valid_xml = self.test_files.load_xml_to_str('test_xml_valid_xml.xml')
         syntax_error_xml = self.test_files.load_xml_to_str(
             'test_xml_syntax_error_xml.xml'

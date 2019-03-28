@@ -35,10 +35,11 @@ def random_date():
 
 
 def random_datetime(tz_type='utc'):
-    """Return a random datetime within the span of 1970 to ~2070 using the
-    specified timezone type.
+    """Return a random datetime within the span of 1970 to ~2070 using the specified
+    timezone type.
 
     See generate_tz() for ``tz_type``.
+
     """
     century_sec = 60 * 60 * 24 * 365 * 100
     return d1_test.d1_test_case.D1TestCase.dt_from_ts(
@@ -47,10 +48,11 @@ def random_datetime(tz_type='utc'):
 
 
 def reproducible_datetime(did_str, tz_type='utc'):
-    """Return a reproducible datetime within the span of 1970 to ~2070 using
-    the specified timezone type.
+    """Return a reproducible datetime within the span of 1970 to ~2070 using the
+    specified timezone type.
 
     See generate_tz() for ``tz_type``.
+
     """
     with d1_test.d1_test_case.reproducible_random_context(did_str):
         return random_datetime(tz_type)
@@ -66,6 +68,7 @@ def generate_tz(tz_type='utc'):
       offset that is not in UTC (not 0).
     - ``tz_type`` = (other object): Return the supplied object, which must be an
       instance of a class derived from datetime.tzinfo.
+
     """
     if isinstance(tz_type, datetime.tzinfo):
         return tz_type

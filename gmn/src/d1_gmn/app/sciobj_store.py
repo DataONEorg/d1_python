@@ -26,6 +26,7 @@ holding 256 folders, for a total of 65536 folders. The location in the hierarchy
 for a given object is based on its PID.
 
 - Folders are created as required in the hierarchy.
+
 """
 
 import hashlib
@@ -34,6 +35,7 @@ import re
 
 import contextlib2
 
+import d1_gmn
 
 import d1_common.iter.file
 import d1_common.types
@@ -42,7 +44,6 @@ import d1_common.util
 import d1_common.utils.filesystem
 
 import django.conf
-import d1_gmn
 
 SCIOBJ_JSON_NAME = 'gmn_object_store.json'
 
@@ -58,10 +59,9 @@ RELATIVE_PATH_MAGIC_HOST_STR = 'gmn-object-store'
 
 
 def save_in_object_store_by_file(pid, sciobj_file):
-    """Save the Science Object bytes in the ``sciobj_file`` file-like object to
-    the default location within the tree of the local SciObj store and return
-    file_url with the file location in a suitable form for storing in the
-    DB."""
+    """Save the Science Object bytes in the ``sciobj_file`` file-like object to the
+    default location within the tree of the local SciObj store and return file_url with
+    the file location in a suitable form for storing in the DB."""
     return save_in_object_store_by_iter(
         pid,
         d1_common.iter.file.FileLikeObjectIterator(
@@ -71,10 +71,9 @@ def save_in_object_store_by_file(pid, sciobj_file):
 
 
 def save_in_object_store_by_iter(pid, sciobj_iter):
-    """Save the Science Object bytes in the ``sciobj_iter`` iterator object to
-    the default location within the tree of the local SciObj store and return
-    file_url with the file location in a suitable form for storing in the
-    DB."""
+    """Save the Science Object bytes in the ``sciobj_iter`` iterator object to the
+    default location within the tree of the local SciObj store and return file_url with
+    the file location in a suitable form for storing in the DB."""
     with open_sciobj_file_by_pid(pid, True) as (sciobj_file, file_url):
         for chunk_str in sciobj_iter:
             sciobj_file.write(chunk_str)
@@ -83,12 +82,13 @@ def save_in_object_store_by_iter(pid, sciobj_iter):
 
 @contextlib2.contextmanager
 def open_sciobj_file_by_pid(pid, write=False):
-    """Open the file containing the Science Object bytes of ``pid`` in the
-    default location within the tree of the local SciObj store.
+    """Open the file containing the Science Object bytes of ``pid`` in the default
+    location within the tree of the local SciObj store.
 
-    If ``write`` is True, the file is opened for writing and any missing
-    directories are created. Return the file handle and file_url with
-    the file location in a suitable form for storing in the DB.
+    If ``write`` is True, the file is opened for writing and any missing directories are
+    created. Return the file handle and file_url with the file location in a suitable
+    form for storing in the DB.
+
     """
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
     with open_sciobj_file_by_path(abs_path, write) as sciobj_file:
@@ -99,10 +99,9 @@ def open_sciobj_file_by_pid(pid, write=False):
 
 
 def save_in_custom_location_by_file(abs_path, sciobj_file):
-    """Save the Science Object bytes in the ``sciobj_file`` file-like object to
-    the custom location ``abs_path`` in the local filesystem and return
-    file_url with the file location in a suitable form for storing in the
-    DB."""
+    """Save the Science Object bytes in the ``sciobj_file`` file-like object to the
+    custom location ``abs_path`` in the local filesystem and return file_url with the
+    file location in a suitable form for storing in the DB."""
     return save_in_custom_location_by_iter(
         abs_path,
         d1_common.iter.file.FileLikeObjectIterator(
@@ -112,10 +111,9 @@ def save_in_custom_location_by_file(abs_path, sciobj_file):
 
 
 def save_in_custom_location_by_iter(abs_path, sciobj_iter):
-    """Save the Science Object bytes in the ``sciobj_file`` iterator object to
-    the custom location ``abs_path`` in the local filesystem and return
-    file_url with the file location in a suitable form for storing in the
-    DB."""
+    """Save the Science Object bytes in the ``sciobj_file`` iterator object to the
+    custom location ``abs_path`` in the local filesystem and return file_url with the
+    file location in a suitable form for storing in the DB."""
     with open_sciobj_file_by_path(abs_path, True) as sciobj_file:
         for chunk_str in sciobj_iter:
             sciobj_file.write(chunk_str)
@@ -127,9 +125,10 @@ def open_sciobj_file_by_path(abs_path, write=False):
     """Open the file containing the Science Object bytes at the custom location
     ``abs_path`` in the local filesystem.
 
-    If ``write`` is True, the file is opened for writing and any missing
-    directores are created. Return the file handle and file_url with the
-    file location in a suitable form for storing in the DB.
+    If ``write`` is True, the file is opened for writing and any missing directores are
+    created. Return the file handle and file_url with the file location in a suitable
+    form for storing in the DB.
+
     """
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
@@ -145,6 +144,7 @@ def get_rel_sciobj_file_path(pid):
     - The path is based on a SHA1 hash. It's now possible to craft SHA1
     collisions, but it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
+
     """
     hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
     return os.path.join(hash_str[:2], hash_str[2:4], hash_str)
@@ -158,6 +158,7 @@ def get_abs_sciobj_file_path_by_pid(pid):
     - The path is based on a SHA1 hash. It's now possible to craft SHA1
     collisions, but it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
+
     """
     return os.path.join(get_abs_sciobj_store_path(), get_rel_sciobj_file_path(pid))
 
@@ -170,6 +171,7 @@ def get_abs_sciobj_file_path_by_rel_path(rel_path):
     - The path is based on a SHA1 hash. It's now possible to craft SHA1
     collisions, but it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
+
     """
     return os.path.join(get_abs_sciobj_store_path(), rel_path)
 
@@ -178,6 +180,7 @@ def get_abs_sciobj_store_path():
     """Get the absolute local path to the root of the default SciObj store.
 
     - The path may or may not exist (yet).
+
     """
     return django.conf.settings.OBJECT_STORE_PATH
 
@@ -212,17 +215,16 @@ def is_existing_sciobj_file(pid):
 
 
 def get_rel_sciobj_file_url_by_pid(pid):
-    """Get the URL that will be stored in the database for a SciObj that is
-    saved in GMN's SciObj filesystem hierarchy below
-    settings.OBJECT_STORE_PATH."""
+    """Get the URL that will be stored in the database for a SciObj that is saved in
+    GMN's SciObj filesystem hierarchy below settings.OBJECT_STORE_PATH."""
     return 'file://{}/{}'.format(
         RELATIVE_PATH_MAGIC_HOST_STR, get_rel_sciobj_file_path(pid)
     )
 
 
 def get_abs_sciobj_file_url(abs_sciobj_file_path):
-    """Get the URL that will be stored in the database for a SciObj that is
-    saved in a custom location outside of GMN's SciObj filesystem hierarchy."""
+    """Get the URL that will be stored in the database for a SciObj that is saved in a
+    custom location outside of GMN's SciObj filesystem hierarchy."""
     assert os.path.isabs(abs_sciobj_file_path)
     return 'file:///{}'.format(abs_sciobj_file_path)
 
@@ -231,6 +233,7 @@ def get_abs_sciobj_file_path_by_url(file_url):
     """Get the absolute path to the file holding an object's bytes.
 
     - ``file_url`` is an absolute or relative file:// url as stored in the DB.
+
     """
     assert_sciobj_store_exists()
     m = re.match(r'file://(.*?)/(.*)', file_url, re.IGNORECASE)
@@ -289,7 +292,9 @@ def get_store_version_path():
 
 def create_store():
     assert_sciobj_store_does_not_exist()
-    d1_common.utils.filesystem.create_missing_directories_for_dir(get_abs_sciobj_store_path())
+    d1_common.utils.filesystem.create_missing_directories_for_dir(
+        get_abs_sciobj_store_path()
+    )
     save_store_version()
 
 

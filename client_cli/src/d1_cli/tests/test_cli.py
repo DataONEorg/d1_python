@@ -57,12 +57,12 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         cli.do_set("verbose true")
 
     def test_1000(self, cn_client_v2):
-        """preloop(): Successful initialization"""
+        """preloop(): Successful initialization."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
 
     def test_1010(self, cn_client_v2):
-        """preloop(): Successful deinitialization"""
+        """preloop(): Successful deinitialization."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -70,7 +70,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "Exiting" in out_stream.getvalue()
 
     def test_1020(self, cn_client_v2):
-        """precmd(): Successful line formattting"""
+        """precmd(): Successful line formattting."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         test_cmd_str = "somecommand arg1 arg2 arg3"
@@ -78,7 +78,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert test_cmd_str in received_line
 
     def test_1030(self, cn_client_v2):
-        """default(): Yields unknown command"""
+        """default(): Yields unknown command."""
         cli = d1_cli.impl.command_parser.CLI()
         test_cmd_str = "somecommand arg1 arg2 arg3"
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -94,7 +94,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "Unknown command: somecommand" in out_stream.getvalue()
 
     def test_1050(self, cn_client_v2):
-        """do_help(): Valid command returns help string"""
+        """do_help(): Valid command returns help string."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.stdout = io.StringIO()
         test_cmd_str = "get"
@@ -102,7 +102,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "The object is saved to <file>" in cli.stdout.getvalue()
 
     def test_1060(self, cn_client_v2):
-        """do_history(): Returns history"""
+        """do_history(): Returns history."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         test_cmd_str = "somecommand1 arg1 arg2 arg3"
@@ -117,15 +117,15 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     # do_exit()
 
     def test_1070(self, cn_client_v2):
-        """do_exit(): Gives option to cancel if the operation queue is not empty"""
+        """do_exit(): Gives option to cancel if the operation queue is not empty."""
         self._do_exit("yes", 1)
 
     def test_1080(self, cn_client_v2):
-        """do_exit(): Does not exit if cancelled"""
+        """do_exit(): Does not exit if cancelled."""
         self._do_exit("no", 0)
 
     def _do_exit(self, answer_str, exit_call_count):
-        """do_exit(): Gives option to cancel if the operation queue is not empty"""
+        """do_exit(): Gives option to cancel if the operation queue is not empty."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         fi, tmp_path = tempfile.mkstemp(
@@ -165,8 +165,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             assert mock_method.call_count > 0
 
     def test_1110(self, cn_client_v2):
-        """do_reset(), do_set(), do_save(), do_load(): Session to disk round
-        trip."""
+        """do_reset(), do_set(), do_save(), do_load(): Session to disk round trip."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         fi, path = tempfile.mkstemp(
@@ -203,7 +202,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "key-file: test-key-file" in out_stream.getvalue()
 
     def test_1120(self, cn_client_v2):
-        """set: Command gives expected output on flag toggle"""
+        """set: Command gives expected output on flag toggle."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             cli.do_set("verbose true")
@@ -213,7 +212,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert 'verbose to "false"' in out_stream.getvalue()
 
     def test_1130(self, cn_client_v2):
-        """set: Command gives expected output when setting count"""
+        """set: Command gives expected output when setting count."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             cli.do_set("count 2")
@@ -223,7 +222,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert 'count to "3"' in out_stream.getvalue()
 
     def test_1140(self, cn_client_v2):
-        """set: Command gives expected output when setting query string"""
+        """set: Command gives expected output when setting query string."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             cli.do_set("query a=b")
@@ -231,8 +230,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @d1_test.mock_api.catch_all.activate
     def test_1150(self, cn_client_v2):
-        """ping (no arguments): Ping the CN and MN that is specified in the
-        session."""
+        """ping (no arguments): Ping the CN and MN that is specified in the session."""
         d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         cli = d1_cli.impl.command_parser.CLI()
@@ -242,7 +240,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             cli.do_ping("")
 
     def test_1160(self, cn_client_v2):
-        """do_allowaccess(): Correctly sets access control"""
+        """do_allowaccess(): Correctly sets access control."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             cli.do_allowaccess("test_subject_1 write")
@@ -260,7 +258,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1170(self, cn_client_v2):
-        """do_denyaccess(): Subject without permissions raises InvalidArguments"""
+        """do_denyaccess(): Subject without permissions raises InvalidArguments."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_allowaccess("test_subject_1 write")
         cli.do_allowaccess("test_subject_2 write")
@@ -269,7 +267,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             cli.do_denyaccess("unknown_subject")
 
     def test_1180(self, cn_client_v2):
-        """do_denyaccess(): Subject with permissions is removed"""
+        """do_denyaccess(): Subject with permissions is removed."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_allowaccess("test_subject_1 write")
         cli.do_allowaccess("test_subject_2 write")
@@ -289,7 +287,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "test_subject_3: changePermission" not in env_str
 
     def test_1190(self, cn_client_v2):
-        """do_clearaccess(): Removes all subjects"""
+        """do_clearaccess(): Removes all subjects."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_allowaccess("test_subject_1 write")
         cli.do_allowaccess("test_subject_2 write")
@@ -320,7 +318,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1210(self, cn_client_v2):
-        """do_preferrep(): Adds preferred replication targets"""
+        """do_preferrep(): Adds preferred replication targets."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_preferrep("preferred-mn-1")
@@ -338,7 +336,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         ] == preferred_mn_list
 
     def test_1220(self, cn_client_v2):
-        """do_blockrep(): Adds blocked replication targets"""
+        """do_blockrep(): Adds blocked replication targets."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_blockrep("blocked-mn-1")
@@ -350,7 +348,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert ["blocked-mn-1", "blocked-mn-2", "blocked-mn-3"] == blocked_mn_list
 
     def test_1230(self, cn_client_v2):
-        """do_removerep(): Adds blocked replication targets"""
+        """do_removerep(): Adds blocked replication targets."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_preferrep("preferred-mn-1")
@@ -373,7 +371,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert ["blocked-mn-1", "blocked-mn-3"] == blocked_mn_list
 
     def test_1240(self, cn_client_v2):
-        """do_numberrep(): Sets preferred number of replicas"""
+        """do_numberrep(): Sets preferred number of replicas."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_numberrep("42")
@@ -385,7 +383,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert received_num_replicas == 42
 
     def test_1250(self, cn_client_v2):
-        """do_clearrep(): Resets replication policy to default"""
+        """do_clearrep(): Resets replication policy to default."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_reset("")
         cli.do_preferrep("preferred-mn-1")
@@ -417,7 +415,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1270(self, cn_client_v2):
-        """do_get(): Successful file download"""
+        """do_get(): Successful file download."""
         d1_test.mock_api.get.add_callback("http://responses/cn")
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_set("mn-url http://responses/cn")
@@ -433,7 +431,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1280(self, cn_client_v2, caplog):
-        """do_meta(): Successful system metadata download"""
+        """do_meta(): Successful system metadata download."""
         d1_test.mock_api.get_system_metadata.add_callback("http://responses/cn")
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_set("cn-url http://responses/cn")
@@ -445,7 +443,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1290(self, cn_client_v2):
-        """do_list(): Successful object listing"""
+        """do_list(): Successful object listing."""
         d1_test.mock_api.list_objects.add_callback("http://responses/cn")
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_set("mn-url http://responses/cn")
@@ -457,7 +455,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1300(self, cn_client_v2):
-        """do_log(): Successful object listing"""
+        """do_log(): Successful object listing."""
         d1_test.mock_api.get_log_records.add_callback("http://responses/cn")
         cli = d1_cli.impl.command_parser.CLI()
         cli.do_set("mn-url http://responses/cn")
@@ -480,7 +478,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     @d1_test.mock_api.catch_all.activate
     @freezegun.freeze_time("1977-02-27")
     def test_1310(self, cn_client_v2):
-        """do_create(): Expected REST call is issued"""
+        """do_create(): Expected REST call is issued."""
         d1_test.mock_api.catch_all.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         cli = d1_cli.impl.command_parser.CLI()
         with self._add_write_operation_to_queue(
@@ -506,7 +504,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             self.sample.assert_equals(create_sysmeta_pyxb, "do_create", cn_client_v2)
 
     def test_1320(self, cn_client_v2):
-        """do_clearqueue(): Queue can be cleared"""
+        """do_clearqueue(): Queue can be cleared."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             with self._add_write_operation_to_queue(
@@ -519,7 +517,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "You are about to clear" in out_stream.getvalue()
 
     def test_1330(self, cn_client_v2):
-        """do_update(): Task is added to queue"""
+        """do_update(): Task is added to queue."""
         cli = d1_cli.impl.command_parser.CLI()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             with self._add_write_operation_to_queue(
@@ -532,7 +530,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "You are about to clear" in out_stream.getvalue()
 
     def test_1340(self, cn_client_v2):
-        """do_package(): Task is added to queue"""
+        """do_package(): Task is added to queue."""
         cli = d1_cli.impl.command_parser.CLI()
         with self._add_write_operation_to_queue(
             cli,
@@ -544,7 +542,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             self._assert_queue_empty(cli)
 
     def test_1350(self, cn_client_v2):
-        """do_archive(): Tasks are added to queue for each pid"""
+        """do_archive(): Tasks are added to queue for each pid."""
         cli = d1_cli.impl.command_parser.CLI()
         with self._add_write_operation_to_queue(
             cli, cli.do_archive, "archive1_pid archive2_pid archive3_pid archive4_pid"
@@ -554,7 +552,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
             self._assert_queue_empty(cli)
 
     def test_1360(self, cn_client_v2):
-        """do_updateaccess(): Tasks are added to queue for each pid"""
+        """do_updateaccess(): Tasks are added to queue for each pid."""
         cli = d1_cli.impl.command_parser.CLI()
         with self._disable_check_for_authenticated_access():
             with self._add_write_operation_to_queue(
@@ -565,7 +563,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
                 self._assert_queue_empty(cli)
 
     def test_1370(self, cn_client_v2):
-        """do_updatereplication(): Tasks are added to queue for each pid"""
+        """do_updatereplication(): Tasks are added to queue for each pid."""
         cli = d1_cli.impl.command_parser.CLI()
         with self._disable_check_for_authenticated_access():
             with self._add_write_operation_to_queue(
@@ -640,7 +638,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
     #   assert expect == actual
 
     def test_1380(self, cn_client_v2):
-        """search: Expected Solr query is generated"""
+        """search: Expected Solr query is generated."""
         expect = "id:knb-lter* dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
         cli = d1_cli.impl.command_parser.CLI()
@@ -648,7 +646,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert expect == actual
 
     def test_1390(self, cn_client_v2):
-        """search: Expected Solr query is generated"""
+        """search: Expected Solr query is generated."""
         expect = "id:knb-lter* abstract:water dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
         cli = d1_cli.impl.command_parser.CLI()
@@ -657,7 +655,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert expect == actual
 
     def test_1400(self, cn_client_v2):
-        """search: Expected Solr query is generated"""
+        """search: Expected Solr query is generated."""
         expect = "id:knb-lter* abstract:water dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
         cli = d1_cli.impl.command_parser.CLI()
@@ -666,7 +664,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert expect == actual
 
     def test_1410(self, cn_client_v2):
-        """search: Expected Solr query is generated"""
+        """search: Expected Solr query is generated."""
         expect = "id:knb-lter* formatId:text/csv dateModified:[* TO *]"
         args = " ".join([_f for _f in ("id:knb-lter*",) if _f])
         cli = d1_cli.impl.command_parser.CLI()

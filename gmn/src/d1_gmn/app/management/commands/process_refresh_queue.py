@@ -17,11 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Iterate over queue of objects registered to have their System Metadata
-refreshed and refresh them by pulling the latest version from a CN.
+"""Iterate over queue of objects registered to have their System Metadata refreshed and
+refresh them by pulling the latest version from a CN.
 
 parser.description = __doc__
 parser.formatter_class = argparse.RawDescriptionHelpFormatter
+
 """
 
 import argparse
@@ -63,7 +64,9 @@ class Command(django.core.management.base.BaseCommand):
                 __name__
             )  # util.get_command_name())
         )
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
         d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
         try:
             self._handle(opt)
@@ -154,8 +157,9 @@ class Command(django.core.management.base.BaseCommand):
     def _update_sysmeta(self, sysmeta_pyxb):
         """Update the System Metadata for an existing Science Object.
 
-        No sanity checking is done on the provided System Metadata. It
-        comes from a CN and is implicitly trusted.
+        No sanity checking is done on the provided System Metadata. It comes from a CN
+        and is implicitly trusted.
+
         """
         d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb)
 

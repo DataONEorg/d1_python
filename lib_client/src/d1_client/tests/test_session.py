@@ -67,8 +67,8 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1000(self):
-        """HTTP GET is successful Mocked GET returns object bytes uniquely tied
-        to given PID."""
+        """HTTP GET is successful Mocked GET returns object bytes uniquely tied to given
+        PID."""
         a_pid = 'pid_hy7tf83453y498'
         b_pid = 'pid_09y68gh73n60'
         c_pid = 'pid_987i075058679589060'
@@ -102,8 +102,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1030(self):
-        """HTTP GET against http://some.bogus.address/ raises
-        ConnectionError."""
+        """HTTP GET against http://some.bogus.address/ raises ConnectionError."""
         s = d1_client.session.Session('http://some.bogus.address')
         with d1_common.logging_context.LoggingContext(logger):
             logger.setLevel(logging.ERROR)
@@ -112,8 +111,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1040(self):
-        """HTTP POST is successful Roundtrip for body, headers and query
-        params."""
+        """HTTP POST is successful Roundtrip for body, headers and query params."""
         body_bytes = b'test_body'
         header_dict = {'ijkl': '9876', 'mnop': '5432'}
         response = self._post({}, header_dict, body_bytes)

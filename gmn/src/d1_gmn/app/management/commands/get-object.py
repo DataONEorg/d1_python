@@ -21,12 +21,11 @@
 import asyncio
 import logging
 
-
+import d1_gmn.app.management.commands.async_client
+import d1_gmn.app.management.commands.objectlist_async
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.management.commands.async_client
-import d1_gmn.app.management.commands.objectlist_async
 
 import d1_common.utils.progress_logger
 
@@ -53,7 +52,9 @@ class Command(django.core.management.base.BaseCommand):
             logger=self._logger
         )
         self._logger.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
 
         loop = asyncio.get_event_loop()
         try:

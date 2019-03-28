@@ -114,8 +114,7 @@ class Test310Create(d1_test_case.D1TestCase):
         )
 
     def test_030_object_exists(self):
-        """Verify that created object can be retrieved and that its checksum
-        matches."""
+        """Verify that created object can be retrieved and that its checksum matches."""
         client = test_client.TestClient(context.node['baseurl'])
         response = client.get(context.TOKEN, context.pid_created)
         # Calculate the checksum.
@@ -136,6 +135,7 @@ class Test310Create(d1_test_case.D1TestCase):
         """Successful describe for newly created object.
 
         - Verify that required headers are present.
+
         """
         # TODO: Requests returns case insensitive header dict
         client = test_client.TestClient(context.node['baseurl'])

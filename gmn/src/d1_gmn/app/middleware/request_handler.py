@@ -29,6 +29,7 @@ CORS headers are added here as a final step before passing the response to
 Django, which sends it to the client. By adding the headers as a final step,
 CORS headers are also added to responses created by the other middleware layers,
 such as the exception handler.
+
 """
 
 import d1_gmn.app.util

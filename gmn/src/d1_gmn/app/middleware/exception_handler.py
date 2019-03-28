@@ -35,6 +35,7 @@ exceptions are returned as Django HTML exception pages.
 
 Responses to HEAD requests can not contain a body, so the exception is
 serialized to a set of HTTP headers for HEAD requests.
+
 """
 
 import logging

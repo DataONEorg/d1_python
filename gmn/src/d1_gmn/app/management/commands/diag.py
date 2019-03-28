@@ -17,9 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module contains management commands that may be useful in various
-testing and debugging scenarios but should not be needed and cannot be safely
-used on a production node."""
+"""This module contains management commands that may be useful in various testing and
+debugging scenarios but should not be needed and cannot be safely used on a production
+node."""
 
 import argparse
 import logging
@@ -154,6 +154,7 @@ class ExportObjectIdentifiers(object):
     Permissions are cumulative, so if a subject has, e.g., 'write' permissions on
     an object, 'read' access is implied. So if multiple permissions have been given
     to a subject for an object, only the highest permission is included in the list.
+
     """
 
     def add_arguments(self, parser):
@@ -199,8 +200,8 @@ class ExportObjectIdentifiers(object):
 
 
 class UpdateSystemMetadata(object):
-    """Update the System Metadata for objects on this GMN instance by copying
-    specified elements from external SystemMetadata XML documents.
+    """Update the System Metadata for objects on this GMN instance by copying specified
+    elements from external SystemMetadata XML documents.
 
     The source SystemMetadata is either an XML file or root directory referenced
     by --root or an object on a remote node, referenced by --baseurl.
@@ -219,6 +220,7 @@ class UpdateSystemMetadata(object):
 
     If a discovered object does not have an element that has been specified for
     copy, the element is removed from the local object.
+
     """
 
     def __init__(self):
@@ -262,7 +264,9 @@ class UpdateSystemMetadata(object):
                 __name__
             )  # util.get_command_name())
         )
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
         self._check_debug_mode()
         if opt["root"] and opt["baseurl"]:
             raise django.core.management.base.CommandError(

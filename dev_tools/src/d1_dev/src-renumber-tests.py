@@ -63,6 +63,7 @@ Examples:
 When files are updated, the original file is backed up by appending "~" to the
 original name. Any earlier backups are overwritten. Use clean-tree.py to delete
 the backups.
+
 """
 
 import argparse

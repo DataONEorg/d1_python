@@ -20,8 +20,9 @@
 # limitations under the License.
 """Test replication request handling in source and destination MNs.
 
-RepTest is documented in the Utilities section of the
-dataone.test_utilities package on PyPI.
+RepTest is documented in the Utilities section of the dataone.test_utilities package on
+PyPI.
+
 """
 
 # The DataONE terms for the two MNs involved in creating a replica is origin
@@ -219,7 +220,9 @@ def main():
 
 
 def create_test_object_on_mn(base_url, pid):
-    sys_meta, sci_obj = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(pid)
+    sys_meta, sci_obj = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(
+        pid
+    )
     mn_client = d1_client.mnclient.MemberNodeClient(base_url, retries=1)
     # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
     mn_client.create(pid, io.StringIO(sci_obj), sys_meta)
@@ -295,8 +298,8 @@ class ReplicationTester(object):
     #
 
     def _test_getReplica_with_unknown_pid(self):
-        """Source MN responds correctly to MNRead.getReplica() in which the
-        identifier is unknown."""
+        """Source MN responds correctly to MNRead.getReplica() in which the identifier
+        is unknown."""
         try:
             self._call_src_get_replica(self._pid_unknown)
         except d1_common.types.exceptions.NotFound:
@@ -311,8 +314,8 @@ class ReplicationTester(object):
             )
 
     def _test_getReplica_with_rejected_pid(self):
-        """Source MN responds correctly on MNRead.getReplica() in which the
-        identifier is valid but replication is rejected by the CN."""
+        """Source MN responds correctly on MNRead.getReplica() in which the identifier
+        is valid but replication is rejected by the CN."""
         try:
             self._call_src_get_replica(self._src_existing_pid_deny)
         except d1_common.types.exceptions.NotAuthorized:
@@ -342,8 +345,8 @@ class ReplicationTester(object):
     #
 
     def _test_getReplica_with_approved_pid(self):
-        """Source MN responds correctly on MNRead.getReplica() in which the
-        identifier is valid and replication is approved by the CN."""
+        """Source MN responds correctly on MNRead.getReplica() in which the identifier
+        is valid and replication is approved by the CN."""
         try:
             self._call_src_get_replica(self._src_existing_pid_approve)
         except d1_common.types.exceptions.DataONEException as e:
@@ -377,8 +380,8 @@ class ReplicationTester(object):
     #
 
     def _test_MNReplication_replicate_with_existing_pid(self):
-        """The destination MN correctly rejects a replication request in which
-        the identifier already exists on the MN."""
+        """The destination MN correctly rejects a replication request in which the
+        identifier already exists on the MN."""
         try:
             self._call_dst_replicate(self._dst_existing_pid)
         except d1_common.types.exceptions.IdentifierNotUnique:
@@ -394,9 +397,8 @@ class ReplicationTester(object):
             )
 
     def _test_MNReplication_replicate_with_unauthorized_pid(self):
-        """The destination MN responds correctly on MNReplication.replicate()
-        with an object that is valid for replication but for which the CN
-        denies replication."""
+        """The destination MN responds correctly on MNReplication.replicate() with an
+        object that is valid for replication but for which the CN denies replication."""
         try:
             self._call_dst_replicate(self._pid_not_authorized)
         except d1_common.types.exceptions.DataONEException as e:
@@ -414,9 +416,9 @@ class ReplicationTester(object):
         )
 
     def _test_MNReplication_replicate_with_authorized_pid(self):
-        """Test that the destination MN responds correctly on
-        MNReplication.replicate() with an object that is both valid for
-        replication and approved for replication by the CN."""
+        """Test that the destination MN responds correctly on MNReplication.replicate()
+        with an object that is both valid for replication and approved for replication
+        by the CN."""
         try:
             self._call_dst_replicate(self._pid_known_and_authorized)
         except d1_common.types.exceptions.DataONEException as e:
@@ -435,7 +437,11 @@ class ReplicationTester(object):
 
     def _call_dst_replicate(self, pid):
         mn_client = self._create_mn_client_for_replicate()
-        sys_meta = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(pid)[0]
+        sys_meta = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(
+            pid
+        )[
+            0
+        ]
         try:
             mn_client.replicate(sys_meta, TEST_MN_NODE_ID)
         except socket.error:

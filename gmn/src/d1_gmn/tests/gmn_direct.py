@@ -30,6 +30,7 @@ paths in GMN work correctly.
 These methods also allow testing handling of timezones in datetimes. Some such
 tests cannot be issued via d1_client because PyXB, being based on the XML DOM,
 automatically adjusts all non-naive datetimes to UTC.
+
 """
 
 import io
@@ -142,8 +143,8 @@ def _add_query(query_dict, url_path):
 
 
 def get_object_count(version_tag):
-    """Get total number of objects for which one or more subj in
-    ``active_subj_list`` have read access or better."""
+    """Get total number of objects for which one or more subj in ``active_subj_list``
+    have read access or better."""
     url_path = d1_common.url.joinPathElements('/', version_tag, 'object')
     # url_path += "?identifier={}".format(d1_common.url.encodeQueryElement(pid))
     resp_dict = _get_resp_dict(django.test.Client().get(url_path))
@@ -160,9 +161,8 @@ def get_object_count(version_tag):
 
 
 def _get_resp_dict(response):
-    """Log return status of a django.http.response.HttpResponse and arrange the
-    response into a dict of items generally more convenient to work with from
-    tests."""
+    """Log return status of a django.http.response.HttpResponse and arrange the response
+    into a dict of items generally more convenient to work with from tests."""
     body_str = (
         ''.join(response.streaming_content) if response.streaming else response.content
     )

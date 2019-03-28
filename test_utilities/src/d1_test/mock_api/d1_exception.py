@@ -27,6 +27,7 @@ the vendorSpecific parameter.
 E.g.:
 
 client.create(..., vendorSpecific={'trigger': '401'})
+
 """
 
 import re

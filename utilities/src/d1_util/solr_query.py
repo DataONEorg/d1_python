@@ -25,6 +25,7 @@ shows how to:
 
 - Query DataONE's Solr index
 - Display the results
+
 """
 import argparse
 import logging

@@ -33,6 +33,7 @@ submitted to the CN as an update for an existing registration.
 
 register can only be used for the initial registration, after which update
 must be used.
+
 """
 
 import argparse

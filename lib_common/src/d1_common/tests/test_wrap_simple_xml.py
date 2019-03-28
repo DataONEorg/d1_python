@@ -20,6 +20,7 @@
 """Test the SimpleXML context manager."""
 
 import datetime
+import xml.etree.ElementTree
 
 import pytest
 
@@ -29,8 +30,6 @@ import d1_common.wrap.simple_xml
 import d1_test.d1_test_case
 import d1_test.sample
 import d1_test.test_files
-import d1_common.wrap.simple_xml
-import xml.etree.ElementTree
 
 
 class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
@@ -48,14 +47,16 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
         with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             """get_xml_below_element()"""
             d1_test.sample.assert_equals(
-                xml_wrapper.get_xml_below_element("accessPolicy"), "get_xml_below_element"
+                xml_wrapper.get_xml_below_element("accessPolicy"),
+                "get_xml_below_element",
             )
 
     def test_1020(self):
         """get_element_list_by_attr_key()"""
         with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             assert [
-                el.tag for el in xml_wrapper.get_element_list_by_attr_key("replicationAllowed")
+                el.tag
+                for el in xml_wrapper.get_element_list_by_attr_key("replicationAllowed")
             ] == ["replicationPolicy"]
 
     def test_1030(self):
@@ -84,8 +85,7 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
             assert xml_wrapper.get_element_text("preferredMemberNode", 2) == "node2"
 
     def test_1070(self):
-        """get_element_text(): Non-existing element raises
-        SimpleXMLWrapperException."""
+        """get_element_text(): Non-existing element raises SimpleXMLWrapperException."""
         with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             with pytest.raises(d1_common.wrap.simple_xml.SimpleXMLWrapperException):
                 xml_wrapper.get_element_text("preferredMemberNode", 3)
@@ -93,7 +93,9 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
     def test_1080(self):
         """set_element_text()"""
         with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
-            xml_wrapper.set_element_text("preferredMemberNode", "__preferredMemberNode__2__", 2)
+            xml_wrapper.set_element_text(
+                "preferredMemberNode", "__preferredMemberNode__2__", 2
+            )
             d1_test.sample.assert_equals(xml_wrapper.get_xml(), "set_element_text")
 
     def test_1090(self):
@@ -154,7 +156,7 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
         """replace_by_etree()"""
         with d1_common.wrap.simple_xml.wrap(self.sysmeta_xml) as xml_wrapper:
             new_replication_policy_el = xml.etree.ElementTree.fromstring(
-            """
+                """
                 <replicationPolicy a="b" c="d">
                   <preferredMemberNode>new_preferred</preferredMemberNode>
                   <blockedMemberNode>new_blocked</blockedMemberNode>
@@ -164,8 +166,12 @@ class TestSimpleXMLWrapper(d1_test.d1_test_case.D1TestCase):
             xml_wrapper.replace_by_etree(new_replication_policy_el)
             assert len(xml_wrapper.get_element_list_by_name("preferredMemberNode")) == 1
             assert len(xml_wrapper.get_element_list_by_name("blockedMemberNode")) == 1
-            assert xml_wrapper.get_element_by_name("replicationPolicy").attrib["a"] == "b"
-            assert xml_wrapper.get_element_by_name("replicationPolicy").attrib["c"] == "d"
+            assert (
+                xml_wrapper.get_element_by_name("replicationPolicy").attrib["a"] == "b"
+            )
+            assert (
+                xml_wrapper.get_element_by_name("replicationPolicy").attrib["c"] == "d"
+            )
             d1_test.sample.assert_equals(xml_wrapper.get_xml(), "replace_by_etree")
 
     def test_1130(self):

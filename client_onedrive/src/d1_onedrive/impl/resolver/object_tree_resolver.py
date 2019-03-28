@@ -20,8 +20,9 @@
 # limitations under the License.
 """Resolve object tree.
 
-Resolve a filesystem path that points to a directory to the contents of
-the directory by querying the query engine.
+Resolve a filesystem path that points to a directory to the contents of the directory by
+querying the query engine.
+
 """
 
 import logging
@@ -243,8 +244,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return object_tree_types.CreateFromDocument(xml_doc)  # noqa: F821
 
     def _split_path_by_reserved_name(self, path):
-        """Return: object_tree_path, resolver, controlled_path
-    """
+        """Return: object_tree_path, resolver, controlled_path."""
         for i, e in enumerate(path):
             if e in self._resolvers or e == self._get_readme_filename():
                 return path[:i], path[i], path[i + 1 :]
@@ -271,8 +271,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         )
 
     def _generate_readme_text(self, object_tree_path):
-        """Generate a human readable description of the folder in text
-        format."""
+        """Generate a human readable description of the folder in text format."""
 
         wdef_folder = self._object_tree.get_source_tree_folder(object_tree_path)
         res = StringIO()

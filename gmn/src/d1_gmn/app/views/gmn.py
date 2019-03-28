@@ -62,6 +62,7 @@ def get_object_list_json(request):
     [, f=sysmetaField ...]) → ObjectListJson
 
     GMN specific API for fast retrieval of object sysmeta elements.
+
     """
     # TODO: Add to documentation
     if 'f' not in request.GET:

@@ -46,6 +46,7 @@ Queues that become too large can cause deadlocks:
 https://stackoverflow.com/questions/21641887/python-multiprocessing-process-hangs-on-join-for-large-queue
 Each item in the queue is a potentially large SysMeta PyXB object, so we set a
 low max queue size.
+
 """
 
 import logging

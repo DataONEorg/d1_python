@@ -45,9 +45,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: start=0, count=0 returns empty slice with
-    correct total event count
-    """
+        """getLogRecords(): Slicing: start=0, count=0 returns empty slice with correct
+        total event count."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(start=0, count=0)
             self.norm_entry_id(log)
@@ -55,8 +54,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: Retrieve front section
-    """
+        """getLogRecords(): Slicing: Retrieve front section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(start=0, count=3)
             self.norm_entry_id(log)
@@ -64,8 +62,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: Retrieve middle section
-    """
+        """getLogRecords(): Slicing: Retrieve middle section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events // 2, count=7)
@@ -74,8 +71,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: Retrieve exact end section
-    """
+        """getLogRecords(): Slicing: Retrieve exact end section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
@@ -84,9 +80,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: Specifying more events than are
-    available returns the available events
-    """
+        """getLogRecords(): Slicing: Specifying more events than are available returns
+        the available events."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
@@ -95,9 +90,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2):
-        """getLogRecords(): Slicing: Specifying start above available events
-    raises InvalidRequest
-    """
+        """getLogRecords(): Slicing: Specifying start above available events raises
+        InvalidRequest."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             with pytest.raises(d1_common.types.exceptions.InvalidRequest):
@@ -106,10 +100,11 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
         """MNCore.getLogRecords(): event type filter: Unknown event returns an empty
-    list
+        list.
 
-    In v2, event type is not an enum.
-    """
+        In v2, event type is not an enum.
+
+        """
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(event='bogus_event')
             self.norm_entry_id(log)
@@ -118,8 +113,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
         """MNCore.getLogRecords(): event type filter: known event returns list of
-    requested size with total equal to the number of events of the type
-    """
+        requested size with total equal to the number of events of the type."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(event='update', count=10)
             self.norm_entry_id(log)
@@ -127,8 +121,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1080(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): Date range query: Get all events from 1979
-    """
+        """MNCore.getLogRecords(): Date range query: Get all events from 1979."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             newest_log = gmn_client_v1_v2.getLogRecords(
                 fromDate=datetime.datetime(1979, 1, 1),
@@ -155,9 +148,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1090(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): Date range query: Using a date range in the
-    future returns empty list
-    """
+        """MNCore.getLogRecords(): Date range query: Using a date range in the future
+        returns empty list."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(
                 fromDate=datetime.datetime(2500, 1, 1),
@@ -170,9 +162,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1100(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): Date range query: End date before start date
-    raises InvalidRequest
-    """
+        """MNCore.getLogRecords(): Date range query: End date before start date raises
+        InvalidRequest."""
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 gmn_client_v1_v2.getLogRecords(
@@ -185,9 +176,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     @freezegun.freeze_time('2388-08-28')
     def test_1110(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): create() of object causes a new create event to
-    be added for the given PID
-    """
+        """MNCore.getLogRecords(): create() of object causes a new create event to be
+        added for the given PID."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_create_events_before = self.get_total_log_records(
                 gmn_client_v1_v2, event='create'
@@ -220,10 +210,12 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1120(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): v1: SID is not resolved, so idFilter with SID
-    returns empty list. v2: SID is resolved, so idFilter returns records for all
-    objects in chain.
-    """
+        """MNCore.getLogRecords(): v1: SID is not resolved, so idFilter with SID returns
+        empty list.
+
+        v2: SID is resolved, so idFilter returns records for all objects in chain.
+
+        """
         sid = self.get_sid_with_min_chain_length()
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(idFilter=sid)
@@ -231,9 +223,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1130(self, gmn_client_v1_v2):
-        """MNCore.getLogRecords(): LogEntry ipAddress and subject are redacted for public
-    objects.
-    """
+        """MNCore.getLogRecords(): LogEntry ipAddress and subject are redacted for
+        public objects."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(idFilter=sid)

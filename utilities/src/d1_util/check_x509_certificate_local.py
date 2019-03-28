@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Parse a PEM (Base64) encoded X.509 v3 certificate
+"""Parse a PEM (Base64) encoded X.509 v3 certificate.
 
 This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
@@ -34,6 +34,7 @@ Notes:
 
 - This does not require the private key of the certificate and does not validate
 the certificate.
+
 """
 import argparse
 import os
@@ -42,54 +43,50 @@ import sys
 import requests
 import requests.packages.urllib3
 
-import d1_common.util
-import d1_common.cert.x509
 import d1_common.cert.subject_info
+import d1_common.cert.x509
+import d1_common.util
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-  )
-  parser.add_argument(
-    '--debug', action='store_true', help='Debug level logging'
-  )
-  parser.add_argument(
-    'cert_pem_path',
-    help='Path to the .PEM certificate file to check'
-  )
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        'cert_pem_path', help='Path to the .PEM certificate file to check'
+    )
 
-  args = parser.parse_args()
+    args = parser.parse_args()
 
-  d1_common.util.log_setup(args.debug)
+    d1_common.util.log_setup(args.debug)
 
-  if not os.path.exists(args.cert_pem_path):
-    raise ValueError('No such file: {}'.format(args.cert_pem_path))
+    if not os.path.exists(args.cert_pem_path):
+        raise ValueError('No such file: {}'.format(args.cert_pem_path))
 
-  requests.packages.urllib3.disable_warnings()
+    requests.packages.urllib3.disable_warnings()
 
-  with open(args.cert_pem_path, 'rb') as f:
-    primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(f.read())
+    with open(args.cert_pem_path, 'rb') as f:
+        primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(f.read())
 
-  print('DN: {}'.format(primary_str))
+    print('DN: {}'.format(primary_str))
 
-  print('SubjectInfo XML doc:')
-  if not subject_info_xml:
-    print("Not present in certificate")
-    return
+    print('SubjectInfo XML doc:')
+    if not subject_info_xml:
+        print("Not present in certificate")
+        return
 
-  print(subject_info_xml)
+    print(subject_info_xml)
 
-  subject_set = d1_common.cert.subject_info.extract_subjects(
-    subject_info_xml, primary_str
-  )
+    subject_set = d1_common.cert.subject_info.extract_subjects(
+        subject_info_xml, primary_str
+    )
 
-  print('List of authenticated subjects:')
+    print('List of authenticated subjects:')
 
-  for subject_str in sorted(subject_set):
-    print(subject_str)
+    for subject_str in sorted(subject_set):
+        print(subject_str)
 
 
 if __name__ == "__main__":
-  sys.exit(main())
+    sys.exit(main())

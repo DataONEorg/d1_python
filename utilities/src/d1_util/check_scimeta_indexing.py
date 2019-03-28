@@ -35,6 +35,7 @@ API:
 CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
 https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
   #CNDiagnostic.echoIndexedObject
+
 """
 
 import argparse

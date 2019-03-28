@@ -36,6 +36,7 @@ def main():
     """Format all tracked .py files.
 
     Black + isort + docformatter.
+
     """
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -95,7 +96,15 @@ def format_all(args, format_path_list):
 def format_single(args, format_path):
     run_cmd('black', '--skip-string-normalization', format_path)
     run_cmd('isort', format_path)
-    run_cmd('docformatter', '-i', format_path)
+    run_cmd(
+        'docformatter',
+        '-i',
+        '--wrap-summaries',
+        '88',
+        '--wrap-descriptions',
+        '88',
+        format_path,
+    )
 
 
 def run_cmd(*cmd_list):

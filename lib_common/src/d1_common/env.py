@@ -54,6 +54,7 @@ def get_d1_env_keys():
 
     Returns:
       list : DataONE env dict keys
+
     """
     # These must match the keys in D1_ENV_DICT.
     return ['prod', 'stage', 'sandbox', 'dev']
@@ -64,5 +65,6 @@ def get_d1_env(k):
 
     Returns:
       dict : Values required in order to connect to a DataONE environment.
+
     """
     return D1_ENV_DICT[k]

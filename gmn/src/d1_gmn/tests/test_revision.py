@@ -85,9 +85,9 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v2):
-        """After updating a standalone object that has a SID without specifying
-        a SID in the new object, the SID resolves to the new object (head of a
-        new 2-object chain)."""
+        """After updating a standalone object that has a SID without specifying a SID in
+        the new object, the SID resolves to the new object (head of a new 2-object
+        chain)."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v2, sid=True)
         upd_pid, upd_sid, upd_sciobj_bytes, upd_sysmeta_pyxb = self.update_obj(
             gmn_client_v2, pid
@@ -97,8 +97,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v2):
-        """After updating a chain that has a SID without specifying a SID in
-        the new object, the SID resolves to the new object."""
+        """After updating a chain that has a SID without specifying a SID in the new
+        object, the SID resolves to the new object."""
         sid, pid_chain_list = self.create_revision_chain(
             gmn_client_v2, chain_len=7, sid=None
         )
@@ -155,12 +155,12 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v2):
-        """Attempt to join chains with conflicting SID using a joining object
-        with no SID raises exception.
+        """Attempt to join chains with conflicting SID using a joining object with no
+        SID raises exception.
 
-        Attempt to create second chain with SID already in use is caught
-        by the initial create() call for the first object in the new
-        chain.
+        Attempt to create second chain with SID already in use is caught by the initial
+        create() call for the first object in the new chain.
+
         """
         a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
             gmn_client_v2, True, True
@@ -192,8 +192,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, gmn_client_v2):
-        """Objects sharing the same SID are assigned to the same chain even if
-        they are disconnected."""
+        """Objects sharing the same SID are assigned to the same chain even if they are
+        disconnected."""
         sid = d1_test.instance_generator.identifier.generate_sid()
         a_pid, a_sid, a_sciobj_bytes, a_sysmeta_pyxb = self.generate_sciobj_with_defaults(
             gmn_client_v2, sid=sid
@@ -211,8 +211,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1080(self, gmn_client_v2):
-        """Object with references to non-existing obsoletes and obsoletedBy can
-        be created and retrieved."""
+        """Object with references to non-existing obsoletes and obsoletedBy can be
+        created and retrieved."""
         a_pid, a_sid, a_sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             gmn_client_v2, sid=True
         )
@@ -222,9 +222,9 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1090(self, gmn_client_v2):
-        """When chains are joined, SID is updated to resolve to the most
-        recent, existing object that can be reached by walking the chain from
-        current towards the head."""
+        """When chains are joined, SID is updated to resolve to the most recent,
+        existing object that can be reached by walking the chain from current towards
+        the head."""
         a_sid, a_chain_list, b_sid, b_chain_list = self._create_two_chains(
             gmn_client_v2, True, None
         )

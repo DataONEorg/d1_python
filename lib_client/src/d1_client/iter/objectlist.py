@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Implements an iterator that iterates over the entire ObjectList for a
-DataONE node. Data is retrieved from the target only when required.
+"""Implements an iterator that iterates over the entire ObjectList for a DataONE node.
+Data is retrieved from the target only when required.
 
 The ObjectListIterator takes a CoordinatingNodeClient or MemberNodeClient together with
 filters to select a set of objects. It returns an iterator object which enables using a
@@ -101,6 +101,7 @@ Output::
     algorithm: MD5
   -
     ...
+
 """
 
 import http.client
@@ -112,10 +113,11 @@ import d1_common.types.exceptions
 
 
 class ObjectListIterator(object):
-    """Implements an iterator that iterates over the entire ObjectList for a
-    DataONE node.
+    """Implements an iterator that iterates over the entire ObjectList for a DataONE
+    node.
 
     Data is retrieved from the target only when required.
+
     """
 
     def __init__(
@@ -135,6 +137,7 @@ class ObjectListIterator(object):
         :type pagesize: integer
         :param max: Maximum number of items to retrieve (all)
         :type max: integer
+
         """
         self._log = logging.getLogger(__name__)
         self._object_list = None
@@ -164,8 +167,9 @@ class ObjectListIterator(object):
     def __next__(self):
         """Implements the next() method for the iterator.
 
-        Returns the next ObjectInfo instance. Loads more if at the end
-        of the page and there's more pages to load.
+        Returns the next ObjectInfo instance. Loads more if at the end of the page and
+        there's more pages to load.
+
         """
         self._log.debug(
             "%d / %d (%d)"

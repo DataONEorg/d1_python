@@ -21,6 +21,7 @@
 """Unicode test names.
 
 Source: http://www.i18nguy.com/unicode-example.html.
+
 """
 
 UNICODE_NAMES = [

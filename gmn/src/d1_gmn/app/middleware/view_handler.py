@@ -80,8 +80,8 @@ class ViewHandler:
         # process_view() in other middleware classes then the view.
 
     def get_active_subject_set(self, request):
-        """Get a set containing all subjects for which the current connection
-        has been successfully authenticated."""
+        """Get a set containing all subjects for which the current connection has been
+        successfully authenticated."""
         # Handle complete certificate in vendor specific extension.
         if django.conf.settings.DEBUG_GMN:
             if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:

@@ -46,7 +46,9 @@ class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
         systemMetadata_v1_0_str = self.test_files.load_xml_to_str(
             'systemMetadata_v1_0.xml'
         )
-        systemMetadata_v1_0_pyxb = d1_common.type_conversions.str_to_pyxb(systemMetadata_v1_0_str)
+        systemMetadata_v1_0_pyxb = d1_common.type_conversions.str_to_pyxb(
+            systemMetadata_v1_0_str
+        )
         assert d1_common.type_conversions.pyxb_is_v1(systemMetadata_v1_0_pyxb)
 
     def test_1030(self):
@@ -54,7 +56,9 @@ class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
         systemMetadata_v2_0_str = self.test_files.load_xml_to_str(
             'systemMetadata_v2_0.xml'
         )
-        systemMetadata_v2_0_pyxb = d1_common.type_conversions.str_to_pyxb(systemMetadata_v2_0_str)
+        systemMetadata_v2_0_pyxb = d1_common.type_conversions.str_to_pyxb(
+            systemMetadata_v2_0_str
+        )
         assert d1_common.type_conversions.pyxb_is_v2(systemMetadata_v2_0_pyxb)
         assert not d1_common.type_conversions.pyxb_is_v1(systemMetadata_v2_0_pyxb)
 
@@ -98,6 +102,8 @@ class TestTypeConversions(d1_test.d1_test_case.D1TestCase):
         systemMetadata_v2_0_str = self.test_files.load_xml_to_str(
             'systemMetadata_v2_0.xml'
         )
-        systemMetadata_v1_str = d1_common.type_conversions.str_to_v1_str(systemMetadata_v2_0_str)
+        systemMetadata_v1_str = d1_common.type_conversions.str_to_v1_str(
+            systemMetadata_v2_0_str
+        )
         assert d1_common.type_conversions.str_is_v1(systemMetadata_v1_str)
         assert not d1_common.type_conversions.str_is_v2(systemMetadata_v1_str)

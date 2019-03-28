@@ -40,8 +40,8 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @freezegun.freeze_time('2011-02-01')
     def test_1000(self):
-        """_download_and_decode_cn_cert(): Successfully retrieves and decodes CN
-    server cert"""
+        """_download_and_decode_cn_cert(): Successfully retrieves and decodes CN server
+        cert."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
             'jwt_token_20170612_232523.base64',
@@ -53,8 +53,8 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @freezegun.freeze_time('2011-02-01')
     def test_1010(self):
-        """_get_cn_cert(): Retrieves the cert from the CN on the first download and
-    from the cache on the second"""
+        """_get_cn_cert(): Retrieves the cert from the CN on the first download and from
+        the cache on the second."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
             'jwt_token_20170612_232523.base64',

@@ -55,8 +55,7 @@ class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.sample.assert_equals(stdout, 'whitelist_new')
 
     def test_1020(self, capsys):
-        """cert whitelist <pem>: Raise on cert with subj already
-        whitelisted."""
+        """cert whitelist <pem>: Raise on cert with subj already whitelisted."""
         self._cert_whitelist(capsys)
         with pytest.raises(django.core.management.CommandError) as exc_info:
             self._cert_whitelist(capsys)

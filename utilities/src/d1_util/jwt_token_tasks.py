@@ -20,8 +20,8 @@
 # limitations under the License.
 """Perform various operations on Java Web Tokens (JWTs)
 
-This is an example on how to use the DataONE Client and Common libraries
-for Python.
+This is an example on how to use the DataONE Client and Common libraries for Python.
+
 """
 import argparse
 import logging
@@ -81,10 +81,11 @@ def main():
 
 
 def validate_and_decode(jwt_bu64, cert_obj):
-    """Example for validating the signature of a JWT using only the
-    cryptography library.
+    """Example for validating the signature of a JWT using only the cryptography
+    library.
 
     Note that this does NOT validate the claims in the claim set.
+
     """
     public_key = cert_obj.public_key()
     message = '.'.join(d1_common.cert.jwt.get_bu64_tup(jwt_bu64)[:2])
@@ -102,9 +103,9 @@ def validate_and_decode(jwt_bu64, cert_obj):
 
 
 def find_valid_combinations(cert_file_name_list, jwt_file_name_list):
-    """Given a list of cert and JWT file names, print a list showing each
-    combination along with indicators for combinations where the JWT signature
-    was successfully validated with the cert."""
+    """Given a list of cert and JWT file names, print a list showing each combination
+    along with indicators for combinations where the JWT signature was successfully
+    validated with the cert."""
     for cert_file_name in cert_file_name_list:
         cert_pem = ''  # self.test_files.load_utf8_to_str(cert_file_name)
         cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)

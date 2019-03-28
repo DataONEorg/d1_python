@@ -29,5 +29,7 @@ import d1_test.instance_generator.replication_policy
 class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
-        replication_policy_obj = d1_test.instance_generator.replication_policy.generate()
+        replication_policy_obj = (
+            d1_test.instance_generator.replication_policy.generate()
+        )
         self.sample.assert_equals(replication_policy_obj, 'inst_gen_generate')

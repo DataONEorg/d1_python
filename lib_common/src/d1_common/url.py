@@ -28,11 +28,11 @@ import d1_common.const
 
 
 def parseUrl(url):
-    """Return a dict containing scheme, netloc, url, params, query, fragment
-    keys.
+    """Return a dict containing scheme, netloc, url, params, query, fragment keys.
 
-    query is a dict where the values are always lists. If the query key
-    appears only once in the URL, the list will have a single value.
+    query is a dict where the values are always lists. If the query key appears only
+    once in the URL, the list will have a single value.
+
     """
     scheme, netloc, url, params, query, fragment = urllib.parse.urlparse(url)
     query_dict = {
@@ -53,6 +53,7 @@ def isHttpOrHttps(url):
     """URL is HTTP or HTTPS protocol.
 
     Upper and lower case protocol names are recognized.
+
     """
     return urllib.parse.urlparse(url).scheme in ('http', 'https')
 
@@ -103,19 +104,20 @@ def stripElementSlashes(element):
 def joinPathElements(*elements):
     """Join two or more URL elements, inserting '/' as needed.
 
-    Note: Any leading
-    and trailing slashes are stripped from the resulting URL. An empty element
-    ('') causes an empty spot in the path ('//').
+    Note: Any leading and trailing slashes are stripped from the resulting URL. An empty
+    element ('') causes an empty spot in the path ('//').
+
     """
     return '/'.join([stripElementSlashes(e) for e in elements])
 
 
 def encodeAndJoinPathElements(*elements):
-    """Encode URL path element according to RFC3986 then join them, inserting
-    '/' as needed.
+    """Encode URL path element according to RFC3986 then join them, inserting '/' as
+    needed.
 
-    Note: Any leading and trailing slashes are stripped from the
-    resulting URL. An empty element ('') causes an empty spot in the path ('//').
+    Note: Any leading and trailing slashes are stripped from the resulting URL. An empty
+    element ('') causes an empty spot in the path ('//').
+
     """
     return joinPathElements(*[encodePathElement(e) for e in elements])
 
@@ -127,9 +129,9 @@ def normalizeTarget(target):
 
 # TODO: verify the Unicode encoding process - looks a bit suspect.
 def urlencode(query, doseq=0):
-    """Modified version of the standard urllib.urlencode that is conforms to
-    RFC3986. The urllib version encodes spaces as '+' which can lead to
-    inconsistency. This version will always encode spaces as '%20'.
+    """Modified version of the standard urllib.urlencode that is conforms to RFC3986.
+    The urllib version encodes spaces as '+' which can lead to inconsistency. This
+    version will always encode spaces as '%20'.
 
     Encode a sequence of two-element tuples or dictionary into a URL query string.
 
@@ -139,6 +141,7 @@ def urlencode(query, doseq=0):
     If the query arg is a sequence of two-element tuples, the order of the
     parameters in the output will match the order of parameters in the
     input.
+
     """
     if hasattr(query, "items"):
         # Remove None parameters from query. Dictionaries are mutable, so we can
@@ -207,8 +210,8 @@ def urlencode(query, doseq=0):
 
 
 def makeCNBaseURL(url):
-    """Attempt to create a valid CN BaseURL when one or more sections of the
-    URL are missing."""
+    """Attempt to create a valid CN BaseURL when one or more sections of the URL are
+    missing."""
     o = urllib.parse.urlparse(url, scheme=d1_common.const.DEFAULT_CN_PROTOCOL)
     if o.netloc and o.path:
         netloc = o.netloc
@@ -232,8 +235,8 @@ def makeCNBaseURL(url):
 
 
 def makeMNBaseURL(url):
-    """Attempt to create a valid MN BaseURL when one or more sections of the
-    URL are missing."""
+    """Attempt to create a valid MN BaseURL when one or more sections of the URL are
+    missing."""
     o = urllib.parse.urlparse(url, scheme=d1_common.const.DEFAULT_MN_PROTOCOL)
     if o.netloc and o.path:
         netloc = o.netloc
@@ -259,8 +262,9 @@ def makeMNBaseURL(url):
 def find_url_mismatches(a_url, b_url):
     """Given two URLs, return a list of any mismatches.
 
-    If the list is empty, the URLs are equivalent. Implemented by
-    parsing and comparing the elements. See RFC 1738 for details.
+    If the list is empty, the URLs are equivalent. Implemented by parsing and comparing
+    the elements. See RFC 1738 for details.
+
     """
     diff_list = []
     a_parts = urllib.parse.urlparse(a_url)

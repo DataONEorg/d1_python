@@ -20,8 +20,8 @@
 # limitations under the License.
 """Resolve time period.
 
-Resolve a filesystem path pointing into a TimePeriod controlled
-hierarchy.
+Resolve a filesystem path pointing into a TimePeriod controlled hierarchy.
+
 """
 
 import logging
@@ -171,8 +171,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return year >= begin_date.year and year <= end_date.year
 
     def _years_in_date_range_within_decade(self, decade, begin_date, end_date):
-        """Return a list of years in one decade which is covered by date
-        range."""
+        """Return a list of years in one decade which is covered by date range."""
         begin_year = begin_date.year
         end_year = end_date.year
         if begin_year < decade:

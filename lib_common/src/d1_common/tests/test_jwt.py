@@ -62,7 +62,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2030-01-01')
     def test_1000(self):
-        """validate_and_decode(): Validation fails after JWT has expired"""
+        """validate_and_decode(): Validation fails after JWT has expired."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_dataone_org_20170517_122900.pem',
             'jwt_token_20170612_232523.base64',
@@ -72,7 +72,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2011-01-01')
     def test_1010(self):
-        """validate_and_decode(): Validation succeeds before JWT has expired"""
+        """validate_and_decode(): Validation succeeds before JWT has expired."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_dataone_org_20170517_122900.pem',
             'jwt_token_20170612_232523.base64',
@@ -81,7 +81,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2011-01-01')
     def test_1020(self):
-        """validate_and_decode(): Decoded token matches expected"""
+        """validate_and_decode(): Decoded token matches expected."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_dataone_org_20170517_122900.pem',
             'jwt_token_20170612_232523.base64',
@@ -91,8 +91,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2011-01-01')
     def test_1030(self):
-        """validate_and_decode(): Validation fails when signed with
-    other cert"""
+        """validate_and_decode(): Validation fails when signed with other cert."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
             'jwt_token_20170612_232523.base64',
@@ -103,7 +102,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
     @freezegun.freeze_time('2011-01-01')
     def test_1040(self):
         """get_subject_with_local_validation(): After successful validation, returns
-    subject from JWT"""
+        subject from JWT."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_dataone_org_20170517_122900.pem',
             'jwt_token_20170612_232523.base64',
@@ -116,7 +115,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
     @freezegun.freeze_time('2011-01-01')
     def test_1050(self):
         """get_subject_with_remote_validation(): Receive expected call to
-    getpeercert()"""
+        getpeercert()"""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
             'jwt_token_20170612_232523.base64',
@@ -130,7 +129,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
     @freezegun.freeze_time('2011-01-01')
     def test_1060(self):
         """get_subject_with_file_validation(): After successful validation, returns
-    subject from JWT"""
+        subject from JWT."""
         cert_path = self.test_files.get_abs_test_file_path(
             'cert/cert_cn_dataone_org_20170517_122900.pem'
         )
@@ -142,8 +141,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2020-01-01')
     def test_1070(self):
-        """get_subject_with_file_validation(): Fails with expired token
-    """
+        """get_subject_with_file_validation(): Fails with expired token."""
         cert_path = self.test_files.get_abs_test_file_path(
             'cert/cert_cn_dataone_org_20170517_122900.pem'
         )
@@ -155,7 +153,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2021-01-01')
     def test_1080(self, caplog):
-        """log_jwt_bu64_info(): Outputs expected log"""
+        """log_jwt_bu64_info(): Outputs expected log."""
         jwt_bu64 = self.test_files.load_jwt('jwt_token_20170612_232523.base64')
         with caplog.at_level(logging.INFO):
             d1_test.d1_test_case.clear_caplog(caplog)

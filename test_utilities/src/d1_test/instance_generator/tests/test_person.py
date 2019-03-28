@@ -29,5 +29,8 @@ import d1_test.instance_generator.person
 class TestPerson(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
-        person_list = [d1_test.instance_generator.person.generate().toxml('utf-8') for _ in range(3)]
+        person_list = [
+            d1_test.instance_generator.person.generate().toxml('utf-8')
+            for _ in range(3)
+        ]
         self.sample.assert_equals(person_list, 'inst_gen_person')

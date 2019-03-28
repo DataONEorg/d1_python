@@ -34,8 +34,7 @@ def random_checksum_algorithm():
 
 
 def generate():
-    """Generate a Checksum object for a random string, using random
-    algorithm."""
+    """Generate a Checksum object for a random string, using random algorithm."""
     return d1_common.checksum.create_checksum_object_from_bytes(
         d1_test.instance_generator.random_data.random_bytes(10),
         random_checksum_algorithm(),

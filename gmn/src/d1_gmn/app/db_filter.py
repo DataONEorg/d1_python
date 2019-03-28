@@ -33,6 +33,7 @@ column_name: Table column name
 column_name: string
 return: Filtered query
 return: QuerySet
+
 """
 
 import d1_gmn.app.auth
@@ -44,12 +45,14 @@ import d1_gmn.app.views.util
 
 import django.db.models
 
-def add_access_policy_filter(request, query, column_name):
-    """Filter records that do not have ``read`` or better access for one or
-    more of the active subjects.
 
-    Since ``read`` is the lowest access level that a subject can have,
-    this method only has to filter on the presence of the subject.
+def add_access_policy_filter(request, query, column_name):
+    """Filter records that do not have ``read`` or better access for one or more of the
+    active subjects.
+
+    Since ``read`` is the lowest access level that a subject can have, this method only
+    has to filter on the presence of the subject.
+
     """
     q = d1_gmn.app.models.Subject.objects.filter(
         subject__in=request.all_subjects_set
@@ -59,14 +62,15 @@ def add_access_policy_filter(request, query, column_name):
 
 
 def add_redact_annotation(request, query):
-    """Flag LogEntry records that require ``ipAddress`` and ``subject`` fields
-    to be redacted before being returned to the client.
+    """Flag LogEntry records that require ``ipAddress`` and ``subject`` fields to be
+    redacted before being returned to the client.
 
     Only trusted subjects and subjects with ``write`` or ``changePermission`` on a
     SciObj receive unredacted ``ipAddress`` and ``subject`` in LogEntry records for the
     associated SciObj.
 
     Subjects with only ``read`` access receive redacted records.
+
     """
     return query.annotate(
         redact=django.db.models.Exists(

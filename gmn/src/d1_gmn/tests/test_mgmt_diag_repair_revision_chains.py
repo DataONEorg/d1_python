@@ -48,16 +48,14 @@ class TestMgmtFixChains(d1_gmn.tests.gmn_test_case.GMNTestCase):
         ]
 
     def test_1000(self):
-        """diag_repair_revision_chains: No broken chains
-    """
+        """diag_repair_revision_chains: No broken chains."""
         rev_list_before = self._get_rev_list()
         self._call_diag_repair_revision_chains()
         rev_list_after = self._get_rev_list()
         assert rev_list_before == rev_list_after
 
     def test_1010(self):
-        """diag_repair_revision_chains: Broken chains
-    """
+        """diag_repair_revision_chains: Broken chains."""
         rev_list = self._get_rev_list()
         rev_sample_list = random.sample(rev_list, 30)
         # Break chains

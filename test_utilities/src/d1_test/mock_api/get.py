@@ -38,6 +38,7 @@ Redirects can be triggered by passing a pid that starts with
 of desired redirects. E.g.:
 
 client.get('<REDIRECT:303:3>pid')
+
 """
 
 import logging

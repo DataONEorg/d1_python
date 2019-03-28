@@ -19,8 +19,9 @@
 # limitations under the License.
 """Psycopg Postgres adapter for Python.
 
-Registers custom adapters with Psycopg, which simplify reading and
-writing custom DataONE PyXB types to/from database models.
+Registers custom adapters with Psycopg, which simplify reading and writing custom
+DataONE PyXB types to/from database models.
+
 """
 
 import psycopg2.extensions

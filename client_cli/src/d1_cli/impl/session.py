@@ -161,10 +161,10 @@ class Session(object):
     def set_with_conversion(self, variable, value_string):
         """Convert user supplied string to Python type.
 
-        Lets user use values such as True, False and integers. All
-        variables can be set to None, regardless of type. Handle the
-        case where a string is typed by the user and is not quoted, as a
-        string literal.
+        Lets user use values such as True, False and integers. All variables can be set
+        to None, regardless of type. Handle the case where a string is typed by the user
+        and is not quoted, as a string literal.
+
         """
         self._assert_valid_variable(variable)
         try:
@@ -302,7 +302,9 @@ class Session(object):
                 if not d1_cli.impl.util.confirm(
                     '"{}" is not a known DataONE Member Node. Use anyway?'.format(value)
                 ):
-                    raise d1_cli.impl.exceptions.InvalidArguments("Member Node update cancelled")
+                    raise d1_cli.impl.exceptions.InvalidArguments(
+                        "Member Node update cancelled"
+                    )
         elif variable == FORMAT_NAME:
             cn_base_url = self.get(CN_URL_NAME)
             if value not in self._format_ids.get(cn_base_url):

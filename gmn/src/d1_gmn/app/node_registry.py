@@ -22,6 +22,7 @@
 - Retrieve, hold and update a cache of the Node Registry for the DataONE
 environment in which this MN is registered.
 - Query the Node Registry.
+
 """
 
 import logging

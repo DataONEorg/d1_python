@@ -38,7 +38,7 @@ import d1_test.instance_generator.sciobj
 class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self):
-        """getSystemMetadata(): Non-existing object raises NotFound"""
+        """getSystemMetadata(): Non-existing object raises NotFound."""
 
         def test(client):
             with pytest.raises(d1_common.types.exceptions.NotFound):
@@ -50,7 +50,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self):
-        """SysMeta: Roundtrip of fully populated System Metadata"""
+        """SysMeta: Roundtrip of fully populated System Metadata."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Prepare fully populated sysmeta
             orig_sysmeta_pyxb = self.test_files.load_xml_to_pyxb(

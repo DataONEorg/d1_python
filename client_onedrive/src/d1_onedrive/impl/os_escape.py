@@ -42,6 +42,7 @@ The current implementation simply uses URL percent-encoding of an utf-8 encoding
 of the Unicode strings.
 
 Quote and unquote are somewhat borrowed from python urllib standard library.
+
 """
 
 import logging
@@ -76,8 +77,8 @@ def unquote(s):
 
 
 def quote(s, unsafe='/'):
-    """Pass in a dictionary that has unsafe characters as the keys, and the
-    percent encoded value as the value."""
+    """Pass in a dictionary that has unsafe characters as the keys, and the percent
+    encoded value as the value."""
     res = s.replace('%', '%25')
     for c in unsafe:
         res = res.replace(c, '%' + (hex(ord(c)).upper())[2:])
@@ -96,6 +97,7 @@ def windows_filename_from_identifier(identifier):
     """On Windows, the following characters are not allowed:
 
     \ / :  * ? " < > |
+
     """
     return quote(identifier, r'\/:*?"<>|')
 

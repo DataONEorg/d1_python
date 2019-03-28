@@ -20,8 +20,9 @@
 # limitations under the License.
 """Resolve flat space.
 
-Resolve a filesystem path that points to a directory to the contents of
-the directory by querying the query engine.
+Resolve a filesystem path that points to a directory to the contents of the directory by
+querying the query engine.
+
 """
 
 import logging

@@ -50,10 +50,14 @@ T1_UTC_EPOCH = 915246245.789
 T_ABS_1 = datetime.datetime(
     2050, 7, 18, 10, 11, 12, 230000, d1_common.date_time.FixedOffset('TZ1', -5, 30)
 )
-T_ABS_2 = datetime.datetime(2050, 7, 18, 21, 41, 12, 230000, d1_common.date_time.FixedOffset('TZ1', 7))
+T_ABS_2 = datetime.datetime(
+    2050, 7, 18, 21, 41, 12, 230000, d1_common.date_time.FixedOffset('TZ1', 7)
+)
 
 
-@pytest.fixture(scope='function', params=[None, d1_common.date_time.UTC(), TZ_MST, TZ_YEKT])
+@pytest.fixture(
+    scope='function', params=[None, d1_common.date_time.UTC(), TZ_MST, TZ_YEKT]
+)
 def tz_fixture(request):
     yield request.param
 
@@ -187,43 +191,53 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
     #
 
     def test_1000(self):
-        """has_tz(): Returns false for naive dt"""
+        """has_tz(): Returns false for naive dt."""
         assert not d1_common.date_time.has_tz(T1_NAIVE)
 
     def test_1010(self):
-        """has_tz(): Returns True for dt that has tz"""
+        """has_tz(): Returns True for dt that has tz."""
         assert d1_common.date_time.has_tz(T1_MST)
         assert d1_common.date_time.has_tz(T2_UTC)
         assert d1_common.date_time.has_tz(T1_YEKT)
 
     def test_1020(self):
-        """is_utc(): Returns False for naive dt"""
+        """is_utc(): Returns False for naive dt."""
         assert not d1_common.date_time.is_utc(T1_NAIVE)
 
     def test_1030(self):
-        """is_utc(): Returns False for dt with tz other than UTC"""
+        """is_utc(): Returns False for dt with tz other than UTC."""
         assert not d1_common.date_time.is_utc(T1_MST)
 
     def test_1040(self):
-        """is_utc(): Returns True for dt in UTC"""
+        """is_utc(): Returns True for dt in UTC."""
         assert d1_common.date_time.is_utc(T2_UTC)
 
     def test_1050(self):
-        """ts_from_dt(): Assumes naive dt to be in UTC"""
-        assert d1_common.date_time.ts_from_dt(T1_NAIVE) == d1_common.date_time.ts_from_dt(T1_UTC)
+        """ts_from_dt(): Assumes naive dt to be in UTC."""
+        assert d1_common.date_time.ts_from_dt(
+            T1_NAIVE
+        ) == d1_common.date_time.ts_from_dt(T1_UTC)
 
     def test_1060(self):
-        """ts_from_dt(): Includes tz"""
-        assert d1_common.date_time.ts_from_dt(T1_MST) != d1_common.date_time.ts_from_dt(T1_UTC)
+        """ts_from_dt(): Includes tz."""
+        assert d1_common.date_time.ts_from_dt(T1_MST) != d1_common.date_time.ts_from_dt(
+            T1_UTC
+        )
 
     def test_1070(self, dt_fixture):
         """dt_from_ts():
 
         - Naive dt is assumed to be at UTC
         - Round trips preserve original value
+
         """
         dt_utc = d1_common.date_time.normalize_datetime_to_utc(dt_fixture)
-        assert d1_common.date_time.dt_from_ts(d1_common.date_time.ts_from_dt(dt_fixture), dt_fixture.tzinfo) == dt_utc
+        assert (
+            d1_common.date_time.dt_from_ts(
+                d1_common.date_time.ts_from_dt(dt_fixture), dt_fixture.tzinfo
+            )
+            == dt_utc
+        )
 
     def test_1080(self, rounding_fixture, tz_fixture):
         """round_to_nearest()"""
@@ -235,8 +249,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
 
     def test_1090(self, rounding_fixture, tz_fixture):
         """are_equal(): Returns True if two naive dts are equal to within the fuzz
-    factor
-    """
+        factor."""
         round_sec, t, t_rounded = rounding_fixture
         t = t.replace(tzinfo=tz_fixture)
         t_rounded = t_rounded.replace(tzinfo=tz_fixture)
@@ -244,9 +257,8 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         assert d1_common.date_time.are_equal(t, t_rounded, round_sec)
 
     def test_1100(self):
-        """are_equal(): Returns True when comparing the same point in time specified
-    in two different tz
-    """
+        """are_equal(): Returns True when comparing the same point in time specified in
+        two different tz."""
         assert d1_common.date_time.are_equal(T_ABS_1, T_ABS_2)
 
     #
@@ -254,7 +266,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
     #
 
     def test_1110(self):
-        """ts_from_dt(): Assumes naive datetime is in UTC"""
+        """ts_from_dt(): Assumes naive datetime is in UTC."""
         assert d1_common.date_time.ts_from_dt(T1_NAIVE) == T1_UTC_EPOCH
 
     def test_1120(self):
@@ -266,51 +278,64 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         assert d1_common.date_time.ts_from_dt(T1_YEKT) == T1_UTC_EPOCH - 6 * 3600
 
     def test_1140(self):
-        """http_datetime_str_from_dt(): Assumes naive datetime is in UTC"""
-        assert d1_common.date_time.http_datetime_str_from_dt(T1_NAIVE) == 'Sat, 02 Jan 1999 03:04:05 GMT'
+        """http_datetime_str_from_dt(): Assumes naive datetime is in UTC."""
+        assert (
+            d1_common.date_time.http_datetime_str_from_dt(T1_NAIVE)
+            == 'Sat, 02 Jan 1999 03:04:05 GMT'
+        )
 
     def test_1150(self):
         """http_datetime_str_from_dt(): Inludes timezone (MST, UTC-7)"""
-        assert d1_common.date_time.http_datetime_str_from_dt(T1_MST) == 'Sat, 02 Jan 1999 10:04:05 GMT'
+        assert (
+            d1_common.date_time.http_datetime_str_from_dt(T1_MST)
+            == 'Sat, 02 Jan 1999 10:04:05 GMT'
+        )
 
     def test_1160(self):
         """http_datetime_str_from_dt() includes timezone (YEKT, UTC+6)"""
-        assert d1_common.date_time.http_datetime_str_from_dt(T1_YEKT) == 'Fri, 01 Jan 1999 21:04:05 GMT'
+        assert (
+            d1_common.date_time.http_datetime_str_from_dt(T1_YEKT)
+            == 'Fri, 01 Jan 1999 21:04:05 GMT'
+        )
 
     def _from_http_datetime(self, that_fateful_day_in_november_94):
-        d = d1_common.date_time.dt_from_http_datetime_str(that_fateful_day_in_november_94)
+        d = d1_common.date_time.dt_from_http_datetime_str(
+            that_fateful_day_in_november_94
+        )
         assert d == d1_common.date_time.create_utc_datetime(1994, 11, 6, 8, 49, 37)
 
     def test_1170(self):
-        """from_http_datetime(): RFC 822, updated by RFC 1123"""
+        """from_http_datetime(): RFC 822, updated by RFC 1123."""
         self._from_http_datetime('Sun, 06 Nov 1994 08:49:37 GMT')
 
     def test_1180(self):
-        """from_http_datetime(): RFC 850, obsoleted by RFC 1036"""
+        """from_http_datetime(): RFC 850, obsoleted by RFC 1036."""
         self._from_http_datetime('Sunday, 06-Nov-94 08:49:37 GMT')
 
     def test_1190(self):
-        """from_http_datetime(): ANSI C's asctime() format"""
+        """from_http_datetime(): ANSI C's asctime() format."""
         self._from_http_datetime('Sun Nov  6 08:49:37 1994')
 
     def test_1200(self):
-        """is_utc(): Returns False for naive datetime"""
+        """is_utc(): Returns False for naive datetime."""
         assert not d1_common.date_time.is_utc(T1_NAIVE)
 
     def test_1210(self):
-        """is_utc(): Returns False for timezone aware datetime not in UTC (MST, UTC-7)"""
+        """is_utc(): Returns False for timezone aware datetime not in UTC (MST,
+        UTC-7)"""
         assert not d1_common.date_time.is_utc(T1_MST)
 
     def test_1220(self):
-        """is_utc(): Returns False for timezone aware datetime not in UTC (YEKT, UTC+6)"""
+        """is_utc(): Returns False for timezone aware datetime not in UTC (YEKT,
+        UTC+6)"""
         assert not d1_common.date_time.is_utc(T1_YEKT)
 
     def test_1230(self):
-        """is_utc(): Returns True for datetime with tz in UTC"""
+        """is_utc(): Returns True for datetime with tz in UTC."""
         assert d1_common.date_time.is_utc(T2_UTC)
 
     def test_1240(self):
-        """normalize_datetime_to_utc(): Adjusts for tz"""
+        """normalize_datetime_to_utc(): Adjusts for tz."""
         t1_utc = d1_common.date_time.normalize_datetime_to_utc(T_ABS_1)
         t2_utc = d1_common.date_time.normalize_datetime_to_utc(T_ABS_2)
         assert d1_common.date_time.is_utc(t1_utc)
@@ -318,13 +343,13 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         assert d1_common.date_time.are_equal(t1_utc, t2_utc)
 
     def test_1250(self):
-        """normalize_datetime_to_utc(): Assumes that naive dt is in UTC"""
+        """normalize_datetime_to_utc(): Assumes that naive dt is in UTC."""
         utc_dt = d1_common.date_time.normalize_datetime_to_utc(T2_NAIVE)
         assert d1_common.date_time.is_utc(utc_dt)
         assert d1_common.date_time.are_equal(utc_dt, T2_NAIVE)
 
     def test_1260(self):
-        """normalize_datetime_to_utc(): Includes tz"""
+        """normalize_datetime_to_utc(): Includes tz."""
         utc_dt = d1_common.date_time.normalize_datetime_to_utc(T1_YEKT)
         assert d1_common.date_time.is_utc(utc_dt)
         assert d1_common.date_time.are_equal(utc_dt, T1_YEKT)

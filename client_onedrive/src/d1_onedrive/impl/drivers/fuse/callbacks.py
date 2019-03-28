@@ -20,8 +20,8 @@
 # limitations under the License.
 """Handle callbacks from FUSE.
 
-The callbacks are called by FUSE when actions are performed on the
-filesystem.
+The callbacks are called by FUSE when actions are performed on the filesystem.
+
 """
 
 import errno
@@ -61,8 +61,7 @@ class FUSECallbacks(fuse.Operations):
         )
 
     def getattr(self, path, fh):
-        """Called by FUSE when the attributes for a file or directory are
-        required.
+        """Called by FUSE when the attributes for a file or directory are required.
 
         Returns a dictionary with keys identical to the stat C structure of stat(2).
         st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
@@ -71,6 +70,7 @@ class FUSECallbacks(fuse.Operations):
         field is ignored except if the 'use_ino' mount option is given.
 
         This method gets very heavy traffic.
+
         """
         self._raise_error_if_os_special_file(path)
         # log.debug(u'getattr(): {0}'.format(path))
@@ -82,6 +82,7 @@ class FUSECallbacks(fuse.Operations):
         """Called by FUSE when a directory is opened.
 
         Returns a list of file and directory names for the directory.
+
         """
         log.debug('readdir(): {}'.format(path))
         try:
@@ -95,6 +96,7 @@ class FUSECallbacks(fuse.Operations):
         """Called by FUSE when a file is opened.
 
         Determines if the provided path and open flags are valid.
+
         """
         log.debug('open(): {}'.format(path))
         # ONEDrive is currently read only. Anything but read access is denied.

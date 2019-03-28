@@ -49,8 +49,8 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(cert_obj, 'deserialize_pem_to_crypt_cert')
 
     def test_1010(self):
-        """Extract primary subject from certificate and returns as DataONE
-        compliant serialization."""
+        """Extract primary subject from certificate and returns as DataONE compliant
+        serialization."""
         cert_obj = d1_common.cert.x509.deserialize_pem(
             self.cert_simple_subject_info_pem
         )
@@ -78,8 +78,8 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         assert missing_subject_info is None
 
     def test_1040(self):
-        """Extract primary and equivalent subjects from certificate,
-        SubjectInfo present."""
+        """Extract primary and equivalent subjects from certificate, SubjectInfo
+        present."""
         primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
             self.cert_simple_subject_info_pem
         )
@@ -89,8 +89,8 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1050(self):
-        """Extract primary and equivalent subjects from certificate,
-        SubjectInfo missing."""
+        """Extract primary and equivalent subjects from certificate, SubjectInfo
+        missing."""
         primary_str, equivalent_set = d1_common.cert.subjects.extract_subjects(
             self.cert_no_subject_info_pem
         )
@@ -101,7 +101,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
 
     @freezegun.freeze_time('2021-01-01')
     def test_1060(self, caplog):
-        """log_cert_info(): Outputs expected log"""
+        """log_cert_info(): Outputs expected log."""
         cert_obj = d1_common.cert.x509.deserialize_pem(
             self.cert_simple_subject_info_pem
         )
@@ -112,7 +112,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1070(self):
-        """get_val_list(): Retrieves expected attributes"""
+        """get_val_list(): Retrieves expected attributes."""
 
         class O1:
             a = '1'

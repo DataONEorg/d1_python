@@ -17,8 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test the ability of fully trusted clients, such as Slender Node adapters, to
-pass values to GMN that are normally controlled by MNs."""
+"""Test the ability of fully trusted clients, such as Slender Node adapters, to pass
+values to GMN that are normally controlled by MNs."""
 
 import io
 

@@ -17,10 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""GMN can handle storage of the object bytes itself, or it can defer storage
-of the object bytes to another web server (proxy mode).
+"""GMN can handle storage of the object bytes itself, or it can defer storage of the
+object bytes to another web server (proxy mode).
 
 The mode is selectable on a per object basis
+
 """
 
 import io
@@ -49,12 +50,12 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
 
     def create_and_check_proxy_obj(self, client, do_redirect, use_invalid_url=False):
-        """Create a sciobj that wraps object bytes stored on a 3rd party
-        server. We use Responses to simulate the 3rd party server.
+        """Create a sciobj that wraps object bytes stored on a 3rd party server. We use
+        Responses to simulate the 3rd party server.
 
-        If ``do_redirect`` is True, a 302 redirect operation is added.
-        This tests that GMN is able to follow redirects when
-        establishing the proxy stream.
+        If ``do_redirect`` is True, a 302 redirect operation is added. This tests that
+        GMN is able to follow redirects when establishing the proxy stream.
+
         """
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create
@@ -114,27 +115,27 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self):
-        """create(): Proxy mode: Create and retrieve proxied object"""
+        """create(): Proxy mode: Create and retrieve proxied object."""
         self.create_and_check_proxy_obj(self.client_v1, do_redirect=False)
 
     @responses.activate
     def test_1010(self):
-        """create(): Proxy mode: Create and retrieve proxied object"""
+        """create(): Proxy mode: Create and retrieve proxied object."""
         self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
 
     @responses.activate
     def test_1020(self):
-        """create(): Proxy mode: Create and retrieve proxied object with redirect"""
+        """create(): Proxy mode: Create and retrieve proxied object with redirect."""
         self.create_and_check_proxy_obj(self.client_v1, do_redirect=True)
 
     @responses.activate
     def test_1030(self):
-        """create(): Proxy mode: Create and retrieve proxied object with redirect"""
+        """create(): Proxy mode: Create and retrieve proxied object with redirect."""
         self.create_and_check_proxy_obj(self.client_v2, do_redirect=True)
 
     @responses.activate
     def test_1040(self):
-        """create(): Proxy mode: Passing invalid url raises InvalidRequest"""
+        """create(): Proxy mode: Passing invalid url raises InvalidRequest."""
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             self.create_and_check_proxy_obj(
                 self.client_v2,

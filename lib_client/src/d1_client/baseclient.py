@@ -33,9 +33,8 @@ import d1_client.session
 
 
 class DataONEBaseClient(d1_client.session.Session):
-    """Extend Session by adding REST API wrappers for APIs that are available
-    on both Coordinating Nodes and Member Nodes, and that have the same
-    signature on both:
+    """Extend Session by adding REST API wrappers for APIs that are available on both
+    Coordinating Nodes and Member Nodes, and that have the same signature on both:
 
     CNCore/MNCore.getLogRecords()
     CNRead/MNRead.get()
@@ -151,6 +150,7 @@ class DataONEBaseClient(d1_client.session.Session):
       ONEMercury science data search engine.
 
       * d1_client.solr_client
+
     """
 
     def __init__(self, base_url, *args, **kwargs):
@@ -162,6 +162,7 @@ class DataONEBaseClient(d1_client.session.Session):
         :type api_minor: integer
 
         :returns: None
+
         """
         super(DataONEBaseClient, self).__init__(base_url, *args, **kwargs)
 
@@ -314,8 +315,8 @@ class DataONEBaseClient(d1_client.session.Session):
     def _read_and_deserialize_dataone_type(self, response):
         """Given a response body, try to create an instance of a DataONE type.
 
-        The return value will be either an instance of a type or a
-        DataONE exception.
+        The return value will be either an instance of a type or a DataONE exception.
+
         """
         try:
             return d1_common.xml.deserialize(response.content)
@@ -487,8 +488,8 @@ class DataONEBaseClient(d1_client.session.Session):
         return self.GET(['object', pid], headers=vendorSpecific, stream=stream)
 
     def get(self, pid, stream=False, vendorSpecific=None):
-        """Initiate a MNRead.get(). Return a Requests Response object from
-        which the object bytes can be retrieved.
+        """Initiate a MNRead.get(). Return a Requests Response object from which the
+        object bytes can be retrieved.
 
         When ``stream`` is False, Requests buffers the entire object in memory before
         returning the Response. This can exhaust available memory on the local
@@ -505,6 +506,7 @@ class DataONEBaseClient(d1_client.session.Session):
 
         - http://docs.python-requests.org/en/master/user/advanced/body-content-workflow
         - get_and_save() in this module.
+
         """
         response = self.getResponse(pid, stream, vendorSpecific)
         return self._read_stream_response(response)
@@ -512,17 +514,19 @@ class DataONEBaseClient(d1_client.session.Session):
     def get_and_save(
         self, pid, sciobj_path, create_missing_dirs=False, vendorSpecific=None
     ):
-        """Like MNRead.get(), but also retrieve the object bytes and store them
-        in a local file at ``sciobj_path``. This method does not have the
-        potential issue with excessive memory usage that get() with
-        ``stream``=False has.
+        """Like MNRead.get(), but also retrieve the object bytes and store them in a
+        local file at ``sciobj_path``. This method does not have the potential issue
+        with excessive memory usage that get() with ``stream``=False has.
 
         Also see MNRead.get().
+
         """
         response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
         try:
             if create_missing_dirs:
-                d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
+                d1_common.utils.filesystem.create_missing_directories_for_file(
+                    sciobj_path
+                )
             with open(sciobj_path, 'wb') as f:
                 for chunk_str in response.iter_content(
                     chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
@@ -555,10 +559,9 @@ class DataONEBaseClient(d1_client.session.Session):
         return response
 
     def describe(self, pid, vendorSpecific=None):
-        """Note: If the server returns a status code other than 200 OK, a
-    ServiceFailure will be raised, as this method is based on a HEAD request,
-    which cannot carry exception information.
-    """
+        """Note: If the server returns a status code other than 200 OK, a ServiceFailure
+        will be raised, as this method is based on a HEAD request, which cannot carry
+        exception information."""
         response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
         return self._read_header_response(response)
 
@@ -667,7 +670,7 @@ class DataONEBaseClient(d1_client.session.Session):
         )
 
     def isAuthorized(self, pid, action, vendorSpecific=None):
-        """Return True if user is allowed to perform ``action`` on ``pid``,
-        else False."""
+        """Return True if user is allowed to perform ``action`` on ``pid``, else
+        False."""
         response = self.isAuthorizedResponse(pid, action, vendorSpecific)
         return self._read_boolean_401_response(response)

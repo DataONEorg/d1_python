@@ -24,6 +24,7 @@ generate_sysmeta.py -f $OBJECT \
                     -i "Some_Identifier" \
                     -s "CN=Dave Vieglais T799,O=Google,C=US,DC=cilogon,DC=org" \
                     -t "some_format"
+
 """
 
 import logging
@@ -73,7 +74,9 @@ def processDoc(fname, options={}):
         "command:: generate_sysmeta.py %s\n"
         % (tnow, repr(sys.argv[1:]), " ".join(sys.argv[1:]))
     )
-    sysm = d1_test.instance_generator.system_metadata.generate_from_file_path(fname, options)
+    sysm = d1_test.instance_generator.system_metadata.generate_from_file_path(
+        fname, options
+    )
     root = lxml.etree.fromstring(sysm.toxml('utf-8'))
     root.insert(0, comment)
     pxml = lxml.etree.tostring(

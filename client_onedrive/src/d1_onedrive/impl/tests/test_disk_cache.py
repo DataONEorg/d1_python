@@ -50,7 +50,7 @@ def dc(max_items=3):
 
 class TestDiskCache(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
-        """DiskCache(): Init and basic use case"""
+        """DiskCache(): Init and basic use case."""
         with dc() as c:
             assert len(c) == 0
             c['a'] = 'xyz'
@@ -59,7 +59,7 @@ class TestDiskCache(d1_test.d1_test_case.D1TestCase):
             assert len(c) == 1
 
     def test_1010(self):
-        """DiskCache(): Oldest file is deleted when cache is full"""
+        """DiskCache(): Oldest file is deleted when cache is full."""
         with dc() as c:
             assert len(c) == 0
             c['a'] = 1

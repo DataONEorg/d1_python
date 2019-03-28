@@ -24,6 +24,7 @@ Based on the ETE Toolkit for analysis and visualization of trees.
 ETE is a somewhat large dependency, so it is not installed by default with the
 DataONE stack. To install, follow the instructions on the ETE site:
     http://etetoolkit.org.
+
 """
 # See the module level docstring if ImportError is raised here
 import ete3
@@ -61,6 +62,7 @@ class SubjectInfoRenderer:
     """Render a SubjectInfoTree to UI or image file.
 
     - Based on the ETE Toolkit for analysis and visualization of trees.
+
     """
 
     def __init__(self, subject_info_tree):
@@ -89,6 +91,7 @@ class SubjectInfoRenderer:
 
         Returns:
             None
+
         """
         self._render_type = "file"
         self._tree.render(
@@ -108,8 +111,9 @@ class SubjectInfoRenderer:
     def render_to_ascii_art(self):
         """Render the SubjectInfo to a string containing an "ASCII art" tree.
 
-        Returns:     str         String containing an "ASCII art"
-        representation of the tree.
+        Returns:     str         String containing an "ASCII art" representation of the
+        tree.
+
         """
         self._render_type = "ascii"
         return self._tree.get_ascii()
@@ -142,8 +146,7 @@ class SubjectInfoRenderer:
         return child
 
     def _get_node_path(self, node):
-        """Return the path from the root to ``node`` as a list of node
-        names."""
+        """Return the path from the root to ``node`` as a list of node names."""
         path = []
         while node.up:
             path.append(node.name)
@@ -167,6 +170,7 @@ class SubjectInfoRenderer:
             - A Style is a specification for how to render the node itself
             - A Face defines extra information that is rendered outside of the node
         - Face objects are used here to provide more control on how to draw the nodes.
+
         """
 
         def set_edge_style():
@@ -209,6 +213,7 @@ class SubjectInfoRenderer:
 
             - Add space between inner_border and border on TextFace.
             - Add space outside bounding area of CircleFace.
+
             """
             face.margin_left = 5
             face.margin_right = 5

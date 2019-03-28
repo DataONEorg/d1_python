@@ -37,6 +37,7 @@ class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """Extract primary and equivalent subjects from certificate.
 
         This does not perform validation
+
         """
         primary_str, equivalent_set = d1_gmn.app.middleware.session_cert.get_authenticated_subjects(
             self.cert_simple_subject_info_pem

@@ -33,6 +33,7 @@ files out of the box. I found a plugin, setuptools_git, which I thought would
 do the job, but it only makes sure that that all tracked files are included,
 not that un-tracked files are not included. Still, what it does has some
 benefits, so we use it for all the packages in d1_python.
+
 """
 
 import logging

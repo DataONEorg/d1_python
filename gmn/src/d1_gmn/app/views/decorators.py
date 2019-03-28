@@ -45,6 +45,7 @@ def resolve_sid(f):
     it's not valid.
     - For v2 calls, if DID is a valid PID, return it. If not, try to resolve it as
     a SID and, if successful, return the new PID. Else, raise NotFound exception.
+
     """
 
     @functools.wraps(f)
@@ -73,8 +74,8 @@ def resolve_sid_func(request, did):
 
 
 def decode_did(f):
-    """View handler decorator that decodes "%2f" ("/") in SID or PID extracted
-    from URL path segment by Django."""
+    """View handler decorator that decodes "%2f" ("/") in SID or PID extracted from URL
+    path segment by Django."""
 
     @functools.wraps(f)
     def wrapper(request, did, *args, **kwargs):
@@ -84,10 +85,11 @@ def decode_did(f):
 
 
 def decode_path_segment(s):
-    """Django decodes URL elements before passing them to views, but passes
-    "%2f" ("/") through undecoded.
+    """Django decodes URL elements before passing them to views, but passes "%2f" ("/")
+    through undecoded.
 
     Why..?
+
     """
     return s.replace('%2f', '/').replace('%2F', '/')
 
@@ -153,8 +155,8 @@ def trusted(request):
 
 
 def assert_create_update_delete_permission(f):
-    """Access only by subjects with Create/Update/Delete permission and by
-    trusted infrastructure (CNs)."""
+    """Access only by subjects with Create/Update/Delete permission and by trusted
+    infrastructure (CNs)."""
 
     @functools.wraps(f)
     def wrapper(request, *args, **kwargs):
@@ -183,8 +185,7 @@ def authenticated(f):
 
 
 def verified(f):
-    """Access only with a valid session where the primary subject is
-    verified."""
+    """Access only with a valid session where the primary subject is verified."""
 
     @functools.wraps(f)
     def wrapper(request, *args, **kwargs):

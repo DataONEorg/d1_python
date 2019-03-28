@@ -20,6 +20,7 @@
 """Test MNRead.listObjects()
 
 TODO: Test PUBLIC_OBJECT_LIST setting for both True and False
+
 """
 
 import datetime
@@ -44,9 +45,8 @@ import d1_test.d1_test_case
 class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: start=0, count=0 returns empty slice with
-    correct total object count
-    """
+        """listObjects(): Slicing: start=0, count=0 returns empty slice with correct
+        total object count."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             object_list_pyxb = gmn_client_v1_v2.listObjects(start=0, count=0)
             self.sample.assert_equals(
@@ -55,8 +55,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: Retrieve front section
-    """
+        """listObjects(): Slicing: Retrieve front section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             object_list_pyxb = gmn_client_v1_v2.listObjects(start=0, count=21)
             self.sample.assert_equals(
@@ -65,8 +64,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: Retrieve middle section
-    """
+        """listObjects(): Slicing: Retrieve middle section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             object_list_pyxb = gmn_client_v1_v2.listObjects(start=612, count=15)
             self.sample.assert_equals(
@@ -75,8 +73,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: Retrieve exact end section
-    """
+        """listObjects(): Slicing: Retrieve exact end section."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_objects = self.get_total_objects(gmn_client_v1_v2)
             object_list_pyxb = gmn_client_v1_v2.listObjects(
@@ -88,9 +85,8 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: Specifying more objects than are
-    available returns the available objects
-    """
+        """listObjects(): Slicing: Specifying more objects than are available returns
+        the available objects."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_objects = self.get_total_objects(gmn_client_v1_v2)
             # Slice indexes are zero based.
@@ -103,8 +99,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2):
-        """listObjects(): Slicing: Specifying start above raises InvalidRequest
-    """
+        """listObjects(): Slicing: Specifying start above raises InvalidRequest."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             with pytest.raises(d1_common.types.exceptions.InvalidRequest):
                 n_objects = self.get_total_objects(gmn_client_v1_v2)
@@ -112,9 +107,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): DID filter: Unknown DID returns an empty
-    list
-    """
+        """MNRead.listObjects(): DID filter: Unknown DID returns an empty list."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             object_list_pyxb = gmn_client_v1_v2.listObjects(identifier='bogus_did')
             self.sample.assert_equals(
@@ -123,9 +116,8 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): DID filter: Existing DID returns a list
-    with a single item
-    """
+        """MNRead.listObjects(): DID filter: Existing DID returns a list with a single
+        item."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid = random.choice(self.get_pid_list())
             object_list_pyxb = gmn_client_v1_v2.listObjects(identifier=pid)
@@ -135,9 +127,8 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1080(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): DID filter: SID returns list of
-    the objects in the chain
-    """
+        """MNRead.listObjects(): DID filter: SID returns list of the objects in the
+        chain."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             sid = random.choice(self.get_sid_list())
             object_list_pyxb = gmn_client_v1_v2.listObjects(identifier=sid)
@@ -145,8 +136,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1090(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): Date range query: Get all objects uploaded in 1980
-    """
+        """MNRead.listObjects(): Date range query: Get all objects uploaded in 1980."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             newest_log = gmn_client_v1_v2.listObjects(
                 fromDate=datetime.datetime(1980, 1, 1),
@@ -171,9 +161,8 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1100(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): Date range query: Using a date range in the
-    future returns empty list
-    """
+        """MNRead.listObjects(): Date range query: Using a date range in the future
+        returns empty list."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             object_list_pyxb = gmn_client_v1_v2.listObjects(
                 fromDate=datetime.datetime(2500, 1, 1),
@@ -187,9 +176,8 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1110(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): Date range query: End date before start date
-    raises InvalidRequest
-    """
+        """MNRead.listObjects(): Date range query: End date before start date raises
+        InvalidRequest."""
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 gmn_client_v1_v2.listObjects(
@@ -201,7 +189,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1120(self, gmn_client_v1_v2):
-        """MNRead.listObjects(): replicaStatus filter"""
+        """MNRead.listObjects(): replicaStatus filter."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid_list = self.get_pid_list()
             rnd_pid = random.choice(pid_list)

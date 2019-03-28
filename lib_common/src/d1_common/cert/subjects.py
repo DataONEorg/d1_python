@@ -19,10 +19,11 @@
 # limitations under the License.
 """Extract subjects from a DataONE PEM (Base64) encoded X.509 v3 certificate.
 
-The DataONE infrastructure uses X.509 v3 certificates to represent
-sessions. A session contains assertions about the identity of the
-caller. In particular, the session contains the primary identity, a list
-of equivalent identities and group memberships of the caller.
+The DataONE infrastructure uses X.509 v3 certificates to represent sessions. A session
+contains assertions about the identity of the caller. In particular, the session
+contains the primary identity, a list of equivalent identities and group memberships of
+the caller.
+
 """
 
 import d1_common.cert.subject_info
@@ -31,8 +32,7 @@ import d1_common.const
 
 
 def extract_subjects(cert_pem):
-    """Extract subjects from a DataONE PEM (Base64) encoded X.509 v3
-    certificate.
+    """Extract subjects from a DataONE PEM (Base64) encoded X.509 v3 certificate.
 
     Args:
       cert_pem: str or bytes
@@ -44,6 +44,7 @@ def extract_subjects(cert_pem):
         - A set of equivalent identities, group memberships and inferred symbolic subjects extracted from the SubjectInfo (if present.)
         - All returned subjects are DataONE compliant serializations.
         - A copy of the primary subject is always included in the set of equivalent identities.
+
     """
     primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(cert_pem)
     equivalent_set = {

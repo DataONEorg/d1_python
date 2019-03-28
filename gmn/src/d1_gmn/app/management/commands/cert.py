@@ -34,6 +34,7 @@ The certificate must be in PEM format.
 If the certificate is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
 authenticated for the subjects.
+
 """
 
 import argparse

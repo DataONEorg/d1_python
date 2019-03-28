@@ -68,8 +68,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self):
-        """MNRead.synchronizationFailed() with invalid XML document returns 200
-        OK."""
+        """MNRead.synchronizationFailed() with invalid XML document returns 200 OK."""
 
         def test(client):
             # noinspection PyClassHasNoInit

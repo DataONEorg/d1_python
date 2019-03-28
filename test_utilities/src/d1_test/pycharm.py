@@ -29,22 +29,25 @@ When active, the test framework will:
       error
     - Show syntax highlighted diffs for scripts and data files using PyCharm's powerful
       diff viewer
+
 """
 import logging
 import os
-import subprocess
-import time
-import sys
 import select
+import subprocess
+import sys
+import time
+
+import d1_dev.util
 
 try:
     import Xlib
     import Xlib.display
+
     is_headless = False
 except ImportError:
     is_headless = True
 
-import d1_dev.util
 
 logger = logging.getLogger(__name__)
 
@@ -54,11 +57,12 @@ PYCHARM_BIN_PATH = os.path.expanduser("~/bin/JetBrains/pycharm.sh")
 
 
 def open_and_set_cursor(src_path, src_line=1):
-    """Attempt to open the file at ``src_path`` in the PyCharm IDE and move the
-    cursor to line ``src_line``
+    """Attempt to open the file at ``src_path`` in the PyCharm IDE and move the cursor
+    to line ``src_line``
 
     - ``src_path`` can be an absolute path, or a path relative to the root of the
     DataONE Git repository.
+
     """
     if is_headless:
         return
@@ -72,8 +76,7 @@ def open_and_set_cursor(src_path, src_line=1):
 
 
 def diff(left_path, right_path):
-    """Attempt to open a diff of the two files in the PyCharm Diff & Merge
-    tool."""
+    """Attempt to open a diff of the two files in the PyCharm Diff & Merge tool."""
     if is_headless:
         return
     _tag_empty_file(left_path)
@@ -83,11 +86,11 @@ def diff(left_path, right_path):
 
 
 def _wait_for_diff_to_close(left_path, right_path):
-    """Wait for the user to close the diff window"""
+    """Wait for the user to close the diff window."""
     # Wait for window to open.
     logging.info("Waiting for PyCharm diff window to close. Press Enter to skip...")
     # Wait for window to open
-    sleep_interval_sec = .1
+    sleep_interval_sec = 0.1
     wait_sec = 3
     for i in range(int(wait_sec / sleep_interval_sec)):
         if _diff_window_is_open(left_path, right_path):
@@ -103,11 +106,12 @@ def _wait_for_diff_to_close(left_path, right_path):
 
 
 def _diff_window_is_open(left_path, right_path):
-    """Return True if PyCharm is currently showing a diff window for the given paths
+    """Return True if PyCharm is currently showing a diff window for the given paths.
 
     The search iterates over all windows managed by X and examines the properties /
     atoms. The window must have "jetbrains" as part of one or more classes and have
     "{left_path} vs {right_path}" as part of its window name.
+
     """
     display = Xlib.display.Display()
     net_wm_name = display.intern_atom("_NET_WM_NAME")  # Modern, UTF-8
@@ -127,18 +131,21 @@ def _diff_window_is_open(left_path, right_path):
         return False
 
     def get_window_name(window_id):
-        """Return window title if one can be found or None"""
+        """Return window title if one can be found or None."""
         for atom in (net_wm_name, wm_name):
-                window_obj = display.create_resource_object("window", window_id)
-                name_str = window_obj.get_full_property(atom, 0).value
-                if isinstance(name_str, bytes):
-                    return name_str.decode("latin1", "replace")
-                return name_str
+            window_obj = display.create_resource_object("window", window_id)
+            name_str = window_obj.get_full_property(atom, 0).value
+            if isinstance(name_str, bytes):
+                return name_str.decode("latin1", "replace")
+            return name_str
 
     try:
         return find_diff_window(display.screen().root)
     except (
-        Xlib.error.XError, Xlib.error.BadWindow, UnicodeDecodeError, AttributeError
+        Xlib.error.XError,
+        Xlib.error.BadWindow,
+        UnicodeDecodeError,
+        AttributeError,
     ):
         return False
 
@@ -149,6 +156,7 @@ def _tag_empty_file(path):
     - This works around the issue that PyCharm PyCharm Diff & Merge errors out
     if one of the input files are empty.
     - Is probably less confusing when debugging
+
     """
     if not os.path.getsize(path):
         with open(path, "w") as f:

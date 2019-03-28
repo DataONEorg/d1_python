@@ -42,8 +42,7 @@ import d1_test_case
 
 class Test060Describe(d1_test_case.D1TestCase):
     def test_010_describe_by_invalid_pid(self):
-        """404 NotFound when attempting to get description for non-existing
-        object."""
+        """404 NotFound when attempting to get description for non-existing object."""
         client = test_client.TestClient(context.node['baseurl'])
         # The exception is caused by the body being empty since describe() uses a
         # HEAD request.
@@ -58,6 +57,7 @@ class Test060Describe(d1_test_case.D1TestCase):
           reported by listObjects.
         - Verify that date header contains a valid date.
         - Verify that date header matches what was reported by listObjects.
+
         """
         # Verify that the checksums retrieved by getChecksum match what listObjects
         # reported.

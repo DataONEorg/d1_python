@@ -86,7 +86,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1010(self):
-        """ping(): Without list of hosts, pings CN and MN set in session"""
+        """ping(): Without list of hosts, pings CN and MN set in session."""
         stdout_str = self._ping()
         assert re.search(
             r"Responded:.*{}".format(d1_test.d1_test_case.MOCK_CN_BASE_URL), stdout_str
@@ -97,7 +97,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1020(self):
-        """ping(): With list of hosts, pings each host"""
+        """ping(): With list of hosts, pings each host."""
         host_list = [
             d1_test.d1_test_case.MOCK_MN_BASE_URL + "/mn1/",
             d1_test.d1_test_case.MOCK_MN_BASE_URL + "/mn2/",
@@ -120,7 +120,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1030(self, mn_client_v1_v2):
-        """search(): Generates expected REST request and formatted result"""
+        """search(): Generates expected REST request and formatted result."""
         self._set_mock_session()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.cp.search("test-search-query-string")
@@ -131,7 +131,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1040(self):
-        """list_format_ids(): Generates expected REST request and formatted result"""
+        """list_format_ids(): Generates expected REST request and formatted result."""
         self._set_mock_session()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.cp.list_format_ids()
@@ -143,7 +143,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1050(self):
-        """list_nodes(): Generates expected REST request and formatted result"""
+        """list_nodes(): Generates expected REST request and formatted result."""
         self._set_mock_session()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.cp.list_nodes()
@@ -154,7 +154,7 @@ class TestCommandProcessor(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1060(self):
-        """resolve(): Generates expected REST request and formatted result"""
+        """resolve(): Generates expected REST request and formatted result."""
         self._set_mock_session()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.cp.resolve("123")

@@ -31,13 +31,13 @@ class CoordinatingNodeClient_1_2(
     d1_client.baseclient_1_2.DataONEBaseClient_1_2,
     d1_client.cnclient.CoordinatingNodeClient,
 ):
-    """Extend DataONEBaseClient_1_2 and CoordinatingNodeClient with
-    functionality for Coordinating nodes that was added in v1.1 of the DataONE
-    infrastructure.
+    """Extend DataONEBaseClient_1_2 and CoordinatingNodeClient with functionality for
+    Coordinating nodes that was added in v1.1 of the DataONE infrastructure.
 
     For details on how to use these methods, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):
