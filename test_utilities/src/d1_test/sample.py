@@ -54,6 +54,9 @@ MAX_LINE_WIDTH = 130
 options = {}
 
 
+logger = logging.getLogger(__name__)
+
+
 def start_tidy():
     """Call at start of test run to tidy the samples directory.
 
