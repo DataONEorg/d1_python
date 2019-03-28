@@ -29,7 +29,6 @@ import warnings
 
 from d1_gmn.app.settings_default import *
 
-import d1_common.util
 import d1_common.utils.filesystem
 
 # When running tests, turn Django's RuntimeWarning into exception

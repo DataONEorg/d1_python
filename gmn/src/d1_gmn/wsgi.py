@@ -21,7 +21,6 @@
 import os
 import sys
 
-import d1_common.util
 import d1_common.utils.filesystem
 
 import django

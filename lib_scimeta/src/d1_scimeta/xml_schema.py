@@ -39,7 +39,6 @@ import re
 import lxml
 import lxml.etree
 
-import d1_common.util
 import d1_common.utils.filesystem
 
 NS_MAP = {

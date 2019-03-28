@@ -49,7 +49,6 @@ import d1_gmn.app.sysmeta
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.exceptions
-import d1_common.util
 import d1_common.utils.filesystem
 import d1_common.utils.progress_logger
 import d1_common.xml

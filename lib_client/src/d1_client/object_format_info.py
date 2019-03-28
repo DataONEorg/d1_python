@@ -28,8 +28,6 @@ mappings are provided in a CSV file. Raises KeyError for unknown values.
 
 import csv
 
-import d1_common.util
-# Config
 import d1_common.utils.filesystem
 
 MIME_MAPPINGS_CSV_PATH = d1_common.utils.filesystem.abs_path('mime_mappings.csv')

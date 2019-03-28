@@ -31,7 +31,6 @@ in existing deployments.
 import os.path
 
 import d1_common.const
-import d1_common.util
 import d1_common.utils.filesystem
 
 DEBUG = False

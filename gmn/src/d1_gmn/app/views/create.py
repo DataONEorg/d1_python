@@ -28,7 +28,7 @@ import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.assert_sysmeta
 
 import d1_common.date_time
-import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import django.conf
