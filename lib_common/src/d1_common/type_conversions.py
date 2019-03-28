@@ -52,13 +52,11 @@ import xml.etree.ElementTree
 
 import pyxb
 import pyxb.namespace.utility
-import pyxb.utils.domutils
 
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v1_2
 import d1_common.types.dataoneTypes_v2_0
-import d1_common.util
 
 # Map common namespace prefixes to namespaces
 NS_DICT = {

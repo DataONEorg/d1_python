@@ -78,7 +78,6 @@ import logging
 import traceback
 
 import d1_common.type_conversions
-import d1_common.util
 import d1_common.xml
 from d1_common.types import dataoneErrors
 

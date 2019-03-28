@@ -32,7 +32,6 @@ import d1_common.types.exceptions
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
-import d1_test.instance_generator.system_metadata
 
 import django.test
 

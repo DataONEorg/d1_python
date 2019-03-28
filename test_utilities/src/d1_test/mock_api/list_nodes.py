@@ -41,7 +41,6 @@ import responses
 
 import d1_common.const
 import d1_common.url
-import d1_common.util
 import d1_common.utils.filesystem
 
 import d1_test.mock_api.d1_exception
