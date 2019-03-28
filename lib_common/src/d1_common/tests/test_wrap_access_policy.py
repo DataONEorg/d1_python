@@ -121,7 +121,6 @@ class TestAccessPolicyWrapper(d1_test.d1_test_case.D1TestCase):
     def test_1100(self):
         """are_equivalent_xml()"""
         with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(self.sysmeta_pyxb) as ap:
-            # self.sample.save_obj(self.sysmeta_pyxb.accessPolicy, 'accessPolicy_v1_0.xml')
             other_xml = self.test_files.load_xml_to_str(
                 'accessPolicy_v1_0.redundant.xml'
             )
