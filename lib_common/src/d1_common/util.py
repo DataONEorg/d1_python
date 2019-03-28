@@ -24,7 +24,6 @@ import datetime
 import email.message
 import json
 import logging
-import os
 import sys
 
 import d1_common.date_time
@@ -51,77 +50,6 @@ def log_setup(is_debug=False, is_multiprocess=False):
         logging.getLogger('').setLevel(logging.DEBUG)
     else:
         logging.getLogger('').setLevel(logging.INFO)
-
-
-def abs_path(rel_path):
-    """Convert a path that is relative to the module from which this function
-    is called, to an absolute path.
-
-    Args:
-      rel_path: str
-        Path relative to the location of the module file from which this function is called.
-
-    Returns:
-        str : Absolute path to the location specified by ``rel_path``.
-    """
-    # noinspection PyProtectedMember
-    return os.path.abspath(
-        os.path.join(os.path.dirname(sys._getframe(1).f_code.co_filename), rel_path)
-    )
-
-
-def abs_path_from_base(base_path, rel_path):
-    """Join a base and a relative path and return an absolute path to the
-    resulting location.
-
-    Args:
-      base_path: str
-        Relative or absolute path to prepend to ``rel_path``.
-
-      rel_path: str
-        Path relative to the location of the module file from which this function is called.
-
-    Returns:
-        str : Absolute path to the location specified by ``rel_path``.
-    """
-    # noinspection PyProtectedMember
-    return os.path.abspath(
-        os.path.join(
-            os.path.dirname(sys._getframe(1).f_code.co_filename), base_path, rel_path
-        )
-    )
-
-
-def create_missing_directories_for_dir(dir_path):
-    """Create any directories in ``dir_path`` that do not yet exist.
-
-    Args:
-      dir_path : str
-        Relative or absolute path to a directory that may or may not exist.
-
-        Must be a directory path, as any filename element at the end of the path will also
-        be created as a directory.
-
-    See Also:
-      create_missing_directories_for_file()
-    """
-    os.makedirs(dir_path, exist_ok=True)
-
-
-def create_missing_directories_for_file(file_path):
-    """Create any directories in ``dir_path`` that do not yet exist.
-
-    Args:
-      file_path : str
-        Relative or absolute path to a file that may or may not exist.
-
-        Must be a file path, as any directory element at the end of the path will not
-        be created.
-
-    See Also:
-      create_missing_directories_for_dir()
-    """
-    create_missing_directories_for_dir(os.path.dirname(file_path))
 
 
 def get_content_type(content_type):
@@ -418,3 +346,5 @@ def format_sec_to_dhm(sec):
     rem_int, m_int, = divmod(rem_int, 60)
     d_int, h_int, = divmod(rem_int, 24)
     return '{}d{:02d}h{:02d}m'.format(d_int, h_int, m_int)
+
+
