@@ -17,12 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""App performing filesystem setup and basic sanity checks on configuration
-values in settings.py before GMN starts servicing requests.
+"""App performing filesystem setup and basic sanity checks on configuration values in
+settings.py before GMN starts servicing requests.
 
-Django loads apps into the Application Registry in the order specified
-in settings.INSTALLED_APPS. This app must be set to load before the main
-GMN app by listing it above the main app in settings.INSTALLED_APPS.
+Django loads apps into the Application Registry in the order specified in
+settings.INSTALLED_APPS. This app must be set to load before the main GMN app by listing
+it above the main app in settings.INSTALLED_APPS.
+
 """
 
 import collections
@@ -43,15 +44,17 @@ RESOURCE_MAP_CREATE_MODE_LIST = ['block', 'open']
 
 logger = logging.getLogger(__name__)
 
+
 class Startup(django.apps.AppConfig):
     name = 'd1_gmn.app'
 
     def ready(self):
         """Called once per Django process instance.
 
-        If the filesystem setup fails or if an error is found in
-        settings.py, django.core.exceptions.ImproperlyConfigured is
-        raised, causing Django not to launch the main GMN app.
+        If the filesystem setup fails or if an error is found in settings.py,
+        django.core.exceptions.ImproperlyConfigured is raised, causing Django not to
+        launch the main GMN app.
+
         """
         # Stop the startup code from running automatically from pytest unit tests.
         # When running tests in parallel with xdist, an instance of GMN is launched
@@ -215,10 +218,10 @@ class Startup(django.apps.AppConfig):
             )
 
     def _add_xslt_mimetype(self):
-        """Register the mimetype for .xsl files in order for Django to serve
-        static.
+        """Register the mimetype for .xsl files in order for Django to serve static.
 
         .xsl files with the correct mimetype
+
         """
         # 'application/xslt+xml'
         mimetypes.add_type('text/xsl', '.xsl')
@@ -227,6 +230,7 @@ class Startup(django.apps.AppConfig):
         """Return the value of a potentially nested dict setting.
 
         E.g., 'DATABASES.default.NAME
+
         """
         name_list = setting_dotted_name.split('.')
         setting_obj = getattr(django.conf.settings, name_list[0], default)

@@ -23,6 +23,7 @@
 Note: Currently issues requests to the production DataONE Solr index.
 
 TODO: Create Solr mockup
+
 """
 import d1_common.const
 
@@ -93,14 +94,14 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     # search()
 
     def test_1020(self):
-        """search(): Query with no results returns valid dict"""
+        """search(): Query with no results returns valid dict."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_dict = solr_client.search(q='id:invalid_solr_record_id')
         self._delete_volatile_keys(solr_dict)
         self.sample.assert_equals(solr_dict, 'search_no_results')
 
     def test_1030(self):
-        """search(): q + fq + fl query returns expected results"""
+        """search(): q + fq + fl query returns expected results."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_dict = solr_client.search(
             **self.span_limit(
@@ -111,20 +112,20 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(solr_dict, 'search_expected')
 
     def test_1040(self):
-        """count(): Query returns valid count"""
+        """count(): Query returns valid count."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         obj_count = solr_client.count(**self.span_limit(SHORT_SPAN, q='id:*'))
         self.sample.assert_equals(obj_count, 'count')
 
     def test_1050(self):
-        """get_ids(): Query returns list of IDs"""
+        """get_ids(): Query returns list of IDs."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_dict = solr_client.get_ids(**self.span_limit(SHORT_SPAN, q='id:a*'))
         self._delete_volatile_keys(solr_dict)
         self.sample.assert_equals(solr_dict, 'get_ids')
 
     def test_1060(self):
-        """get_field_values(): Query returns unique field values"""
+        """get_field_values(): Query returns unique field values."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_dict = solr_client.get_field_values(
             'formatId', **self.span_limit(SHORT_SPAN, q='id:a*')
@@ -133,7 +134,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(solr_dict, 'get_field_values')
 
     def test_1070(self):
-        """get_field_min_max(): Query returns min and max field values"""
+        """get_field_min_max(): Query returns min and max field values."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         min_max_tup = solr_client.get_field_min_max(
             'id', **self.span_limit(SHORT_SPAN, q='id:a*')
@@ -141,7 +142,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(min_max_tup, 'get_field_min_max')
 
     def test_1080(self):
-        """field_alpha_histogram(): Query returns histogram"""
+        """field_alpha_histogram(): Query returns histogram."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         bin_list = solr_client.field_alpha_histogram(
             'formatId', **self.span_limit(SHORT_SPAN, n_bins=10, q='id:*')
@@ -152,7 +153,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     # SolrSearchResponseIterator()
 
     def test_1090(self):
-        """SolrSearchResponseIterator(): Query 1"""
+        """SolrSearchResponseIterator(): Query 1."""
         client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_iter = d1_client.solr_client.SolrSearchResponseIterator(
             client,
@@ -166,7 +167,7 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     # SolrValuesResponseIterator
 
     def test_1100(self):
-        """SolrValuesResponseIterator(): Query 1"""
+        """SolrValuesResponseIterator(): Query 1."""
         client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_iter = d1_client.solr_client.SolrValuesResponseIterator(
             client, **self.span_limit(LONG_SPAN, field='size', page_size=5, q='id:*')

@@ -20,8 +20,9 @@
 # limitations under the License.
 """Test MNStorage.update() and MNRead.get() with SID.
 
-The access control subsystem is mostly shared between the MNStorage
-methods, so most are tested in MNStorage.create()
+The access control subsystem is mostly shared between the MNStorage methods, so most are
+tested in MNStorage.create()
+
 """
 
 import freezegun
@@ -40,9 +41,8 @@ import d1_test.d1_test_case
 class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v2):
-        """MNStorage.update(): Reusing SID when creating two standalone objects
-    raises IdentifierNotUnique
-    """
+        """MNStorage.update(): Reusing SID when creating two standalone objects raises
+        IdentifierNotUnique."""
         other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=True
         )
@@ -51,9 +51,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v2):
-        """MNStorage.update(): Reusing PID as SID when creating two standalone
-    objects raises IdentifierNotUnique
-    """
+        """MNStorage.update(): Reusing PID as SID when creating two standalone objects
+        raises IdentifierNotUnique."""
         other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=True
         )
@@ -63,8 +62,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1020(self, gmn_client_v2):
         """MNStorage.update(): Updating standalone object that has SID with SID
-    belonging to another object or chain raises IdentifierNotUnique
-    """
+        belonging to another object or chain raises IdentifierNotUnique."""
         other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=True
         )
@@ -76,9 +74,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v2):
-        """MNStorage.update(): Updating standalone object that does not have SID,
-    with SID belonging to another object or chain raises IdentifierNotUnique
-    """
+        """MNStorage.update(): Updating standalone object that does not have SID, with
+        SID belonging to another object or chain raises IdentifierNotUnique."""
         other_pid, other_sid, other_sciobj_bytes, other_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=True
         )
@@ -90,8 +87,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v2):
-        """A chain can be created by updating a standalone object, when neither
-        objects have a SID."""
+        """A chain can be created by updating a standalone object, when neither objects
+        have a SID."""
         old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=None
         )
@@ -102,9 +99,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v2):
-        """MNStorage.update(): Updating an object that has a SID without specifying
-    a SID in the update causes the SID to be retained in both objects
-    """
+        """MNStorage.update(): Updating an object that has a SID without specifying a
+        SID in the update causes the SID to be retained in both objects."""
         old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self.create_obj(
             gmn_client_v2, sid=True
         )
@@ -115,10 +111,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1060(self, gmn_client_v2):
-        """MNStorage.update(): Updating a chain that does not have a SID with an
-    object that has a SID causes the SID to be retained in all objects of the
-    chain
-    """
+        """MNStorage.update(): Updating a chain that does not have a SID with an object
+        that has a SID causes the SID to be retained in all objects of the chain."""
         sid, pid_chain_list = self.create_revision_chain(
             gmn_client_v2, chain_len=7, sid=None
         )
@@ -130,9 +124,8 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, gmn_client_v2):
-        """MNStorage.update(): dateSysMetadataModified of the modified object is
-    set to the current date and time
-    """
+        """MNStorage.update(): dateSysMetadataModified of the modified object is set to
+        the current date and time."""
         # Create object with dateSysMetadataModified set to random, non-current
         # time.
         first_pid, first_sid, first_sciobj_bytes, first_sysmeta_pyxb = self.create_obj(

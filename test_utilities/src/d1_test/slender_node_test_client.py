@@ -38,13 +38,14 @@ SID_MAP_FILENAME = "sid.json"
 
 # noinspection PyUnusedLocal
 class SlenderNodeTestClient:
-    """A simple drop-in replacement for a MN client, for use when developing
-    and testing SlenderNode scripts.
+    """A simple drop-in replacement for a MN client, for use when developing and testing
+    SlenderNode scripts.
 
     - MN is simulated to the bare minimum required by SN scripts
     - Objects are stored in local files instead of on an MN
     - SID to PID dict is held in memory and dumped to file
     - Most args are simply ignored
+
     """
 
     def __init__(
@@ -59,6 +60,7 @@ class SlenderNodeTestClient:
         - Store the sciobj and sysmeta in ``sciobj_store_path``
         - ``sciobj_store_path`` is created if it does not exist
         - If ``delete_existing`` is True, delete any existing files in ``sciobj_store_path``
+
         """
         self.sciobj_store_path = os.path.abspath(sciobj_store_path)
         os.makedirs(sciobj_store_path, exist_ok=True)
@@ -133,6 +135,7 @@ class SlenderNodeTestClient:
         """Return sysmeta_pyxb.
 
         - Raise NotFound if ``did`` does not exist as SID or PID
+
         """
         return d1_common.types.dataoneTypes.CreateFromDocument(
             self._read_file(self._get_sysmeta_path(did))
@@ -142,6 +145,7 @@ class SlenderNodeTestClient:
         """Write sysmeta_pyxb.
 
         - Raise IdentifierNotUnique if ``did`` already exists
+
         """
         self._write_file(
             self._get_sysmeta_path(did),

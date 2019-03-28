@@ -58,8 +58,7 @@ def generate_science_object_with_sysmeta(pid, include_revision_bool=False):
 
 
 def _create_science_object_bytes(pid):
-    """Create a set of pseudo-random bytes that are always the same for a given
-    SID."""
+    """Create a set of pseudo-random bytes that are always the same for a given SID."""
     # Seeding the PRNG with the PID causes the same sequence to be generated each
     # time.
     random.seed(pid)

@@ -21,6 +21,7 @@
 """Map DataONE ObjectFormatIDs to Content-Type and filename extension.
 
 mappings are provided in a CSV file. Raises KeyError for unknown values.
+
 """
 
 # TODO: Move this module to d1_common.
@@ -28,7 +29,6 @@ mappings are provided in a CSV file. Raises KeyError for unknown values.
 import csv
 
 import d1_common.util
-
 # Config
 import d1_common.utils.filesystem
 
@@ -57,11 +57,11 @@ class ObjectFormatInfo(Singleton):
 
     By default, ObjectFormatInfo uses DataONE's standard table of mappings. If desired, a
     custom table can be provided.
+
     """
 
     def __init__(self, csv_file=None):
-        """``csv_file`` is a file like object containing comma separate values
-        (CSV)"""
+        """``csv_file`` is a file like object containing comma separate values (CSV)"""
         if csv_file is None:
             self.csv_file = open(MIME_MAPPINGS_CSV_PATH, 'r', encoding='utf-8')
         else:

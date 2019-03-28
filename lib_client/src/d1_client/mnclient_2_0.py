@@ -32,12 +32,13 @@ class MemberNodeClient_2_0(
     d1_client.baseclient_2_0.DataONEBaseClient_2_0,
     d1_client.mnclient_1_2.MemberNodeClient_1_2,
 ):
-    """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_2 with functionality
-    for Member nodes that was added in v2.0 of the DataONE infrastructure.
+    """Extend DataONEBaseClient_2_0 and MemberNodeClient_1_2 with functionality for
+    Member nodes that was added in v2.0 of the DataONE infrastructure.
 
     For details on how to use these methods, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):

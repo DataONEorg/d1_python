@@ -35,7 +35,9 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self):
         """PageSize=5, start=0."""
-        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.get_log_records.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
         self._log_record_iterator_test(5)
 
     def _test_110(self):

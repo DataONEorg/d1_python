@@ -18,8 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""A set of Unicode strings that are particularly likely to trip up the
-unwary."""
+"""A set of Unicode strings that are particularly likely to trip up the unwary."""
 
 UNICODE_TEST_STRINGS = [
     'common-unicode-ascii-safe-ABCDEFGHIJKLMNOPQRSTUVWXYZ',

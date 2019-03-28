@@ -20,10 +20,10 @@
 """This module implements GMNTestClient, which extends
 d1_client.mnclient.MemberNodeClient with GMN specific test functionality.
 
-The REST interfaces on GMN that provide this functionality are prefixed
-with "/diag/" and are only enabled when GMN runs in debug mode. The
-interfaces are not versioned, and so there is no version tag (such as
-"v1") in the URL for these methods.
+The REST interfaces on GMN that provide this functionality are prefixed with "/diag/"
+and are only enabled when GMN runs in debug mode. The interfaces are not versioned, and
+so there is no version tag (such as "v1") in the URL for these methods.
+
 """
 
 import logging
@@ -37,6 +37,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
         """Extend MemberNodeClient with GMN specific diagnostics wrappers.
 
         See d1baseclient.DataONEBaseClient for args.
+
         """
         self.logger = logging.getLogger(__name__)
         # Turn off server certificate validation by default when running unit tests

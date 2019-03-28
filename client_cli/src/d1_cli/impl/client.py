@@ -20,8 +20,9 @@
 # limitations under the License.
 """CN and MN clients of the DataONE Command Line Interface.
 
-The logic was factored out of these and reimplemented in more natural
-locations. This is just a placeholder for now. May remove.
+The logic was factored out of these and reimplemented in more natural locations. This is
+just a placeholder for now. May remove.
+
 """
 
 import d1_client.baseclient_2_0

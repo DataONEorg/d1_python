@@ -40,6 +40,7 @@ an IdentifierNotUnique exception should be returned. This indicates that the
 identifier is now in use by the previously created object.
 
 - Any other errors will also be returned as DataONE exceptions.
+
 """
 import argparse
 import hashlib

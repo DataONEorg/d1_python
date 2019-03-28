@@ -23,6 +23,7 @@
 See the file_iterator module for details on the arguments.
 
 TODO: Matching directories in the root directory are not deleted.
+
 """
 
 import argparse

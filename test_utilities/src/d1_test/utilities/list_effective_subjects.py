@@ -19,8 +19,9 @@
 # limitations under the License.
 """Get active subjects from DataONE X.509 v3 Certificate.
 
-Given a DataONE X.509 v3 Certificate, list all subjects, equivalent
-identities and groups for which the certificate holder is authenticated.
+Given a DataONE X.509 v3 Certificate, list all subjects, equivalent identities and
+groups for which the certificate holder is authenticated.
+
 """
 
 import logging

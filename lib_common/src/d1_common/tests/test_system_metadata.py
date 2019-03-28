@@ -50,9 +50,8 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
         assert d1_common.system_metadata.are_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb)
 
     def test_1030(self):
-        """are_equivalent() Returns True for sysmeta where elements that can
-        occur in any order without changing the meaning of the doc have been
-        shuffled around."""
+        """are_equivalent() Returns True for sysmeta where elements that can occur in
+        any order without changing the meaning of the doc have been shuffled around."""
         swizzled_pyxb = self.test_files.load_xml_to_pyxb(
             'systemMetadata_v2_0.swizzled.xml'
         )
@@ -61,7 +60,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1040(self):
-        """update_elements(): Elements are copied from src to dst"""
+        """update_elements(): Elements are copied from src to dst."""
         dst_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
         src_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_2.xml')
         d1_common.system_metadata.update_elements(
@@ -72,7 +71,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(dst_pyxb, 'update_elements_copy')
 
     def test_1050(self):
-        """update_elements(): Passing invalid element raies ValueError"""
+        """update_elements(): Passing invalid element raies ValueError."""
         dst_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_1.xml')
         src_pyxb = self.test_files.load_xml_to_pyxb('sysmeta_variation_2.xml')
         with pytest.raises(ValueError) as exc_info:

@@ -55,13 +55,13 @@ def _get_jwt_header(request):
 
 def _get_cn_cert():
     """Get the public TLS/SSL X.509 certificate from the root CN of the DataONE
-    environment. The certificate is used for validating the signature of the
-    JWTs.
+    environment. The certificate is used for validating the signature of the JWTs.
 
     If certificate retrieval fails, a new attempt to retrieve the certificate
     is performed after the cache expires (settings.CACHES.default.TIMEOUT).
 
     If successful, returns a cryptography.Certificate().
+
     """
     try:
         cert_obj = django.core.cache.cache.cn_cert_obj

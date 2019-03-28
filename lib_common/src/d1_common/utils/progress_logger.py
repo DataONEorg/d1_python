@@ -80,6 +80,7 @@ Yields progress output such as:
       Task has issue: 2
       Task has other issue: 1
     Completed. runtime_sec=5.44 total_run_dhm="0d00h00m"
+
 """
 
 import logging
@@ -109,6 +110,7 @@ class ProgressLogger:
                 with less time between entries if the total processing time for a task
                 type is less than the interval, or if processing multiple task types
                 concurrently.
+
         """
         self._task_dict = {}
         self._event_dict = {}
@@ -139,6 +141,7 @@ class ProgressLogger:
         of the given type.
 
         The task type is included in progress updates until end_task_type() is called.
+
         """
         assert (
             task_type_str not in self._task_dict
@@ -158,6 +161,7 @@ class ProgressLogger:
         Progress messages logged at intervals will typically not include the final entry
         which shows that processing is 100% complete, so a final progress message is
         logged here.
+
         """
         assert (
             task_type_str in self._task_dict
@@ -178,6 +182,7 @@ class ProgressLogger:
             current_task_index (int):
                 If the task processing loop may skip or repeat tasks, the index of the current
                 task must be provided here. This parameter can normally be left unset.
+
         """
         assert (
             task_type_str in self._task_dict
@@ -189,12 +194,13 @@ class ProgressLogger:
         self._log_progress_if_interval_elapsed()
 
     def event(self, event_name):
-        """Register an event that occurred during processing of a task of the given type.
+        """Register an event that occurred during processing of a task of the given
+        type.
 
-        Args:
-            event_name: str
-                A name for a type of events. Events of the same type are displayed as
-                a single entry and a total count of occurences.
+        Args:     event_name: str         A name for a type of events. Events of the
+        same type are displayed as         a single entry and a total count of
+        occurences.
+
         """
         self._event_dict.setdefault(event_name, 0)
         self._event_dict[event_name] += 1
@@ -207,9 +213,9 @@ class ProgressLogger:
         task types. Active task types should be closed with end_task_type() when
         processing is completed for tasks of the given type in order for accurate
         progress messages to be displayed.
+
         """
         del self
-
 
     def _log_progress_if_interval_elapsed(self):
         if time.time() >= self._last_log_time + self._log_interval_sec:
@@ -256,10 +262,7 @@ class ProgressLogger:
 
     def _log_active_task_types(self):
         if self._task_dict:
-            self._log_msg('Active task types: {}'.format(
-                    ", ".join(self._task_dict)
-                )
-            )
+            self._log_msg('Active task types: {}'.format(", ".join(self._task_dict)))
         else:
             self._log_msg("Active task types: None")
 

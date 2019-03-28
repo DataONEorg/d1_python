@@ -35,7 +35,8 @@ class TestSciObj(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1000(self, cn_client_v1_v2):
-        """generate_reproducible(): Generated objects are not affected by the current time"""
+        """generate_reproducible(): Generated objects are not affected by the current
+        time."""
         pid = 'an_unchanging_pid'
         with freezegun.freeze_time('1940-01-01'):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
@@ -49,7 +50,8 @@ class TestSciObj(d1_test.d1_test_case.D1TestCase):
             self._assert(cn_client_v1_v2, sciobj_bytes, sysmeta_pyxb)
 
     def test_1010(self, cn_client_v1_v2):
-        """generate_reproducible(): Generated objects are not affected by setting the PRNG seed"""
+        """generate_reproducible(): Generated objects are not affected by setting the
+        PRNG seed."""
         pid = 'an_unchanging_pid'
         with d1_test.d1_test_case.reproducible_random_context('random_seed'):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(

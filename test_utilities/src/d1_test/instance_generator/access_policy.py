@@ -37,6 +37,7 @@ purposes.
 
 For example, an <allow> clause that contains any subject with the string
 "_read_" in it, should also contain the read permission entry.
+
 """
 
 import random
@@ -72,8 +73,8 @@ def permissions_to_tag_string(permissions):
 
 
 def random_subject_with_permission_labels(permissions, group_chance=0.1):
-    """Generate a random subject that is tagged with the provided permissions
-    and has a certain chance of being tagged as group."""
+    """Generate a random subject that is tagged with the provided permissions and has a
+    certain chance of being tagged as group."""
     subject_base = 'subj_{}'.format(
         d1_test.instance_generator.random_data.random_lower_ascii()
     )

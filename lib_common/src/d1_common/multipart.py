@@ -35,6 +35,7 @@ def parse_response(response, encoding='utf-8'):
     Returns:
       tuple of BodyPart
         Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+
     """
     return requests_toolbelt.multipart.decoder.MultipartDecoder.from_response(
         response, encoding
@@ -60,6 +61,7 @@ def parse_str(mmp_bytes, content_type, encoding='utf-8'):
     Returns:
       tuple of BodyPart
         Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+
     """
     return requests_toolbelt.multipart.decoder.MultipartDecoder(
         mmp_bytes, content_type, encoding
@@ -69,9 +71,9 @@ def parse_str(mmp_bytes, content_type, encoding='utf-8'):
 def normalize(body_part_tup,):
     """Normalize a tuple of BodyPart objects to a string.
 
-    Normalization is done by sorting the body_parts by the Content-
-    Disposition headers, which is typically on the form, ``form-data;
-    name="name_of_part``.
+    Normalization is done by sorting the body_parts by the Content- Disposition headers,
+    which is typically on the form, ``form-data; name="name_of_part``.
+
     """
     return '\n\n'.join(
         [

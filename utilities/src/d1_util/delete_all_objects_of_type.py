@@ -57,6 +57,7 @@ all Member Nodes as it is intended primarily for use by Coordinating Nodes.
 Operation:
 
 - Configure the script in the Config section below
+
 """
 import argparse
 import logging
@@ -65,7 +66,6 @@ import sys
 import d1_common.const
 import d1_common.env
 import d1_common.types.exceptions
-
 
 # Config
 

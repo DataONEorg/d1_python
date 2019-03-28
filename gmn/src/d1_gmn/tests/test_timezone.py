@@ -33,6 +33,7 @@ of datetime and timezone in GMN. Since d1_client also generates XML with PyXB,
 this renders the regular test procedures, based on django_client which wraps
 d1_client, and much of the GMNTestCase functionality unusable for most of these
 tests.
+
 """
 
 # import freezegun
@@ -194,8 +195,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """PyXB accepts dt with tz for xs:dateTime types and normalizes
-        timezone to UTC."""
+        """PyXB accepts dt with tz for xs:dateTime types and normalizes timezone to
+        UTC."""
         pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = self._generate_sciobj(
             gmn_client_v1_v2, 'random_not_utc'
         )
@@ -215,8 +216,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v2):
-        """PyXB accepts dt without tz for xs:dateTime types and returns it
-        unmodified and without tz."""
+        """PyXB accepts dt without tz for xs:dateTime types and returns it unmodified
+        and without tz."""
         pid, sid, sciobj_bytes, sysmeta_pyxb, uploaded_dt, modified_dt = self._generate_sciobj(
             gmn_client_v2, 'naive'
         )
@@ -234,8 +235,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self):
-        """PyXB deserializes XML doc with naive dt for xs:dateTime types and
-        returns dt unmodified and without tz."""
+        """PyXB deserializes XML doc with naive dt for xs:dateTime types and returns dt
+        unmodified and without tz."""
         sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
             'systemMetadata_v2_0.tz_naive.xml'
         )
@@ -243,8 +244,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self):
-        """PyXB deserializes XML doc with non-UTC dt for xs:dateTime types and
-        returns dt as normalized to UTC."""
+        """PyXB deserializes XML doc with non-UTC dt for xs:dateTime types and returns
+        dt as normalized to UTC."""
         sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
             'systemMetadata_v2_0.tz_non_utc.xml'
         )
@@ -252,8 +253,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self):
-        """PyXB deserializes XML doc with UTC dt for xs:dateTime types and
-        returns dt unmodified and with tz."""
+        """PyXB deserializes XML doc with UTC dt for xs:dateTime types and returns dt
+        unmodified and with tz."""
         sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
             'systemMetadata_v2_0.tz_utc.xml'
         )
@@ -272,8 +273,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, tag_v1_v2):
-        """SysMeta with ts where tz is other than UTC are accepted and returned
-        in UTC."""
+        """SysMeta with ts where tz is other than UTC are accepted and returned in
+        UTC."""
         self._assert_sysmeta_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')
 
     # ObjectList
@@ -289,8 +290,8 @@ class TestTimeZone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1100(self, tag_v1_v2):
-        """ObjectList with ts where tz is other than UTC are accepted and
-        returned in UTC."""
+        """ObjectList with ts where tz is other than UTC are accepted and returned in
+        UTC."""
         self._assert_object_list_in_utc(tag_v1_v2, 'systemMetadata_v2_0.tz_non_utc.xml')
 
     # Log

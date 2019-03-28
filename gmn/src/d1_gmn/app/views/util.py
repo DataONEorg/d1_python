@@ -191,6 +191,7 @@ def parse_and_normalize_url_date(date_str):
 
     - Return as datetime with timezone adjusted to UTC.
     - Return naive date-time set to UTC.
+
     """
     if date_str is None:
         return None

@@ -44,25 +44,25 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     # confirm()
 
     def test_1000(self):
-        """confirm(): default=no, answer=no"""
+        """confirm(): default=no, answer=no."""
         self._test_confirm(
             default="no", answer="no", expected_prompt="[yes/NO]", expected_result=False
         )
 
     def test_1010(self):
-        """confirm(): default=no, answer=yes"""
+        """confirm(): default=no, answer=yes."""
         self._test_confirm(
             default="no", answer="yes", expected_prompt="[yes/NO]", expected_result=True
         )
 
     def test_1020(self):
-        """confirm(): default=no, answer=unset"""
+        """confirm(): default=no, answer=unset."""
         self._test_confirm(
             default="no", expected_prompt="[yes/NO]", expected_result=False
         )
 
     def test_1030(self):
-        """confirm(): default=yes, answer=no"""
+        """confirm(): default=yes, answer=no."""
         self._test_confirm(
             default="yes",
             answer="no",
@@ -71,7 +71,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1040(self):
-        """confirm(): default=yes, answer=yes"""
+        """confirm(): default=yes, answer=yes."""
         self._test_confirm(
             default="yes",
             answer="yes",
@@ -80,7 +80,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1050(self):
-        """confirm(): default=yes, answer=unset"""
+        """confirm(): default=yes, answer=unset."""
         self._test_confirm(
             default="yes",
             answer="yes",
@@ -89,15 +89,15 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1060(self):
-        """confirm(): default=unset, answer=no"""
+        """confirm(): default=unset, answer=no."""
         self._test_confirm(answer="no", expected_result=False)
 
     def test_1070(self):
-        """confirm(): default=unset, answer=yes"""
+        """confirm(): default=unset, answer=yes."""
         self._test_confirm(answer="yes", expected_result=True)
 
     def test_1080(self):
-        """confirm(): default=unset, answer=unset"""
+        """confirm(): default=unset, answer=unset."""
         self._test_confirm(allow_blank=True)
 
     def _test_confirm(
@@ -123,14 +123,14 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     # output()
 
     def test_1090(self):
-        """output(): Output to screen when no file path is provided"""
+        """output(): Output to screen when no file path is provided."""
         msg_str = "line1\nline2\n"
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             d1_cli.impl.util.output(io.StringIO(msg_str), path=None)
         assert msg_str == out_stream.getvalue()
 
     def test_1100(self):
-        """output(): Output to file when file path is provided"""
+        """output(): Output to file when file path is provided."""
         msg_str = "line1\nline2\n"
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -141,7 +141,7 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
             assert msg_str == tmp_file.read()
 
     def test_1110(self):
-        """output(): Raises CLIError on invalid path"""
+        """output(): Raises CLIError on invalid path."""
         msg_str = "line1\nline2\n"
         with pytest.raises(d1_cli.impl.exceptions.CLIError):
             d1_cli.impl.util.output(io.StringIO(msg_str), path="/some/invalid/path")
@@ -149,19 +149,19 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
     # assert_file_exists()
 
     def test_1120(self):
-        """assert_file_exists(): Returns silently if path references a file"""
+        """assert_file_exists(): Returns silently if path references a file."""
         with tempfile.NamedTemporaryFile() as tmp_file:
             assert d1_cli.impl.util.assert_file_exists(tmp_file.name) is None
 
     def test_1130(self):
-        """assert_file_exists(): Raises InvalidArguments if path is invalid"""
+        """assert_file_exists(): Raises InvalidArguments if path is invalid."""
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             d1_cli.impl.util.assert_file_exists("/")
 
     # copy_file_like_object_to_file()
 
     def test_1140(self):
-        """copy_file_like_object_to_file(): Copies f to file when path is valid"""
+        """copy_file_like_object_to_file(): Copies f to file when path is valid."""
         msg_f = io.StringIO("line1\nline2\n")
         with tempfile.NamedTemporaryFile() as tmp_file:
             tmp_file_path = tmp_file.name
@@ -171,7 +171,8 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
             assert msg_f.read() == tmp_file.read()
 
     def test_1150(self):
-        """copy_file_like_object_to_file(): Raises InvalidArguments if path is invalid"""
+        """copy_file_like_object_to_file(): Raises InvalidArguments if path is
+        invalid."""
         msg_str = "line1\nline2\n"
         with pytest.raises(d1_cli.impl.exceptions.CLIError):
             d1_cli.impl.util.copy_file_like_object_to_file(msg_str, "/")
@@ -180,7 +181,8 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1160(self):
-        """copy_requests_stream_to_file(): Copies Requests Response body to file when path is valid"""
+        """copy_requests_stream_to_file(): Copies Requests Response body to file when
+        path is valid."""
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
             d1_test.d1_test_case.MOCK_MN_BASE_URL
@@ -196,7 +198,8 @@ class TestCLIUtil(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1170(self):
-        """copy_requests_stream_to_file(): Raises InvalidArguments if path is invalid"""
+        """copy_requests_stream_to_file(): Raises InvalidArguments if path is
+        invalid."""
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
             d1_test.d1_test_case.MOCK_MN_BASE_URL

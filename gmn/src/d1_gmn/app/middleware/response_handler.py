@@ -19,8 +19,9 @@
 # limitations under the License.
 """Response handler middleware.
 
-Serialize DataONE response objects according to Accept header and set
-header (Size and Content-Type) accordingly.
+Serialize DataONE response objects according to Accept header and set header (Size and
+Content-Type) accordingly.
+
 """
 
 import logging
@@ -50,6 +51,7 @@ class ResponseHandler:
         - If view_result is a HttpResponse, return it unchanged.
         - If response is a database query, run the query and create a response.
         - If response is a string, assume that it is a PID.
+
         """
         view_result = self.next_in_chain_func(request)
 
@@ -78,6 +80,7 @@ class ResponseHandler:
         This causes the browser to not try to format the output in any way.
         - If SQL profiling is turned on, return a page with SQL query timing
         information instead of the actual response.
+
         """
         if django.conf.settings.DEBUG_GMN:
             if 'pretty' in request.GET:
@@ -210,10 +213,11 @@ class ResponseHandler:
         response['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
 
     def _latest_date(self, query, datetime_field_name):
-        """Given a QuerySet and the name of field containing datetimes, return
-        the latest (most recent) date.
+        """Given a QuerySet and the name of field containing datetimes, return the
+        latest (most recent) date.
 
         Return None if QuerySet is empty.
+
         """
         return list(
             query.aggregate(django.db.models.Max(datetime_field_name)).values()

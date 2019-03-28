@@ -69,6 +69,7 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
     - The database is set up to track a new replica, with initial status,
     "queued".
     - The PID provided in the sysmeta_pyxb is reserved for the replica.
+
     """
     replica_info_model = d1_gmn.app.models.replica_info(
         status_str='queued', source_node_urn=source_node_urn

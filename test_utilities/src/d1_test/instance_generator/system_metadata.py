@@ -47,6 +47,7 @@ def generate_random(client, option_dict=None, normalize=True):
 
     E.g., providing an Identifier object in options['identifier'] causes that
     object to be used as the PID instead of a randomly generated Identifier.
+
     """
     option_dict = option_dict or {}
 
@@ -62,15 +63,22 @@ def generate_random(client, option_dict=None, normalize=True):
     sysmeta_pyxb.checksum = lazy_get(
         option_dict, 'checksum', d1_test.instance_generator.checksum.generate
     )
-    sysmeta_pyxb.submitter = lazy_get(option_dict, 'submitter', d1_test.instance_generator.random_data.random_subj)
+    sysmeta_pyxb.submitter = lazy_get(
+        option_dict, 'submitter', d1_test.instance_generator.random_data.random_subj
+    )
     sysmeta_pyxb.rightsHolder = lazy_get(
         option_dict, 'rightsHolder', d1_test.instance_generator.random_data.random_subj
     )
     sysmeta_pyxb.accessPolicy = lazy_get(
-        option_dict, 'accessPolicy', d1_test.instance_generator.access_policy.generate, min_rules=0
+        option_dict,
+        'accessPolicy',
+        d1_test.instance_generator.access_policy.generate,
+        min_rules=0,
     )
     sysmeta_pyxb.replicationPolicy = lazy_get(
-        option_dict, 'replicationPolicy', d1_test.instance_generator.replication_policy.generate
+        option_dict,
+        'replicationPolicy',
+        d1_test.instance_generator.replication_policy.generate,
     )
 
     # obsoletes
@@ -89,16 +97,23 @@ def generate_random(client, option_dict=None, normalize=True):
         sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10),
     )
     sysmeta_pyxb.originMemberNode = lazy_get(
-        option_dict, 'originMemberNode', d1_test.instance_generator.random_data.random_mn
+        option_dict,
+        'originMemberNode',
+        d1_test.instance_generator.random_data.random_mn,
     )
     sysmeta_pyxb.authoritativeMemberNode = lazy_get(
-        option_dict, 'authoritativeMemberNode', d1_test.instance_generator.random_data.random_mn
+        option_dict,
+        'authoritativeMemberNode',
+        d1_test.instance_generator.random_data.random_mn,
     )
     sysmeta_pyxb.replica = lazy_get(
         option_dict, 'replica', d1_test.instance_generator.replica.generate
     )
     sysmeta_pyxb.seriesId = lazy_get(
-        option_dict, 'seriesId', d1_test.instance_generator.identifier.generate_sid, probability=0.5
+        option_dict,
+        'seriesId',
+        d1_test.instance_generator.identifier.generate_sid,
+        probability=0.5,
     )
     sysmeta_pyxb.mediaType = lazy_get(
         option_dict, 'mediaType', d1_test.instance_generator.media_type.generate
@@ -120,6 +135,7 @@ def lazy_get(d, key, func, *args, **kwargs):
     """dict.get(k, f()) will evaluate b() even if s exists.
 
     This is a workaround
+
     """
     try:
         return d[key]

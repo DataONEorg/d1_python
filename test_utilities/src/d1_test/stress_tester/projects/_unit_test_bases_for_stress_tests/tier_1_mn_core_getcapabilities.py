@@ -36,8 +36,7 @@ import d1_test_case
 
 class Test020GetCapabilities(d1_test_case.D1TestCase):
     def test_010_get_capabilities(self):
-        """GetCapabilities returns a NodeList containing a single, valid Node
-        object."""
+        """GetCapabilities returns a NodeList containing a single, valid Node object."""
         client = test_client.TestClient(context.node['baseurl'])
         node_list = client.listNodes()
         assert len(node_list.node) == 1

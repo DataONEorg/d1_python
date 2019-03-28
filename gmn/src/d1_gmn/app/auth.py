@@ -19,8 +19,9 @@
 # limitations under the License.
 """Authentication and authorization.
 
-Decorators and functions that verify that a user has the permissions
-required for performing the attempted operation.
+Decorators and functions that verify that a user has the permissions required for
+performing the attempted operation.
+
 """
 
 import logging
@@ -83,8 +84,8 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
-    """Get set of subjects that have unlimited access to all SciObj and APIs on
-    this node."""
+    """Get set of subjects that have unlimited access to all SciObj and APIs on this
+    node."""
     cert_subj = _get_client_side_certificate_subject()
     return (
         d1_gmn.app.node_registry.get_cn_subjects()
@@ -96,8 +97,8 @@ def get_trusted_subjects():
 
 
 def get_trusted_subjects_string():
-    """Get subjects that have unlimited access to all SciObj and APIs on this
-    node as string for display."""
+    """Get subjects that have unlimited access to all SciObj and APIs on this node as
+    string for display."""
     return ', '.join(sorted(get_trusted_subjects()))
 
 
@@ -114,16 +115,17 @@ def is_trusted_subject(request):
 
 
 def is_client_side_cert_subject(request):
-    """Return True if the current connection has been authenticated by the MN's
-    own client side cert."""
+    """Return True if the current connection has been authenticated by the MN's own
+    client side cert."""
     return _get_client_side_certificate_subject() == request.primary_subject_str
 
 
 def _get_client_side_certificate_subject():
-    """Return the DN from the client side certificate as a D1 subject if a
-    client side cert has been configured.
+    """Return the DN from the client side certificate as a D1 subject if a client side
+    cert has been configured.
 
     Else return None.
+
     """
     subject = django.core.cache.cache.get('client_side_certificate_subject')
     if subject is not None:
@@ -161,8 +163,7 @@ def _extract_subject_from_pem(cert_pem):
 
 
 def is_allowed(request, level, pid):
-    """Check if one or more subjects are allowed to perform action level on
-    object.
+    """Check if one or more subjects are allowed to perform action level on object.
 
     If a subject holds permissions for one action level on object, all lower action levels
     are also allowed. Any included subject that is unknown to this MN is treated as a
@@ -184,6 +185,7 @@ def is_allowed(request, level, pid):
             level or for lower levels.
           - OR PID does not exist
           - OR access level is invalid
+
     """
     if is_trusted_subject(request):
         return True
@@ -211,8 +213,8 @@ def get_whitelisted_subject_set():
 
 
 def assert_create_update_delete_permission(request):
-    """Access only by subjects with Create/Update/Delete permission and by
-    trusted infrastructure (CNs)."""
+    """Access only by subjects with Create/Update/Delete permission and by trusted
+    infrastructure (CNs)."""
     if not has_create_update_delete_permission(request):
         raise d1_common.types.exceptions.NotAuthorized(
             0,
@@ -222,11 +224,11 @@ def assert_create_update_delete_permission(request):
 
 
 def assert_allowed(request, level, pid):
-    """Assert that one or more subjects are allowed to perform action on
-    object.
+    """Assert that one or more subjects are allowed to perform action on object.
 
-    Raise NotAuthorized if object exists and subject is not allowed.
-    Raise NotFound if object does not exist.
+    Raise NotAuthorized if object exists and subject is not allowed. Raise NotFound if
+    object does not exist.
+
     """
     if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
         raise d1_common.types.exceptions.NotFound(
@@ -245,8 +247,8 @@ def assert_allowed(request, level, pid):
 
 
 def format_active_subjects(request):
-    """Create a string listing active subjects for this connection, suitable
-    for appending to authentication error messages."""
+    """Create a string listing active subjects for this connection, suitable for
+    appending to authentication error messages."""
     decorated_subject_list = [request.primary_subject_str + ' (primary)']
     for subject in request.all_subjects_set:
         if subject != request.primary_subject_str:

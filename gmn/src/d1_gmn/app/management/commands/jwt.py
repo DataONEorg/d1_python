@@ -30,6 +30,7 @@ The JWT must be in Base64 format.
 If the JWT is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
 authenticated for the subject.
+
 """
 
 import argparse

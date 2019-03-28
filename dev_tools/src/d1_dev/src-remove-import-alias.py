@@ -25,15 +25,17 @@ import logging
 import os
 import sys
 
+import git
+
 import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
-import git
 
 logger = logging.getLogger(__name__)
 
 processed_module_count = 0
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -77,6 +79,7 @@ def main():
     )
     for format_path in format_path_list:
         proc_module(args, format_path)
+
 
 def get_specified_file_path_list(args):
     specified_file_path_list = [
@@ -130,9 +133,7 @@ def print_alias(head_str, alias_dict):
 
 
 def remove_import_alias(red):
-    """Remove the alias from an import
-    import a.b.c as d -> import a.b.c
-    """
+    """Remove the alias from an import import a.b.c as d -> import a.b.c."""
     for n in red.find_all("import"):
         # print(n.help())
         n.value[0].target = ""
@@ -167,8 +168,11 @@ def replace_alias_with_full(red, alias_dict):
 
 
 def get_atomtrailer_list(r):
-    """Capture only the leading dotted name list. A full sequence typically includes
-    function calls and parameters. pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+    """Capture only the leading dotted name list.
+
+    A full sequence typically includes function calls and parameters.
+    pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+
     """
     dot_set = set()
     for n in r.find_all(("atomtrailers",)):

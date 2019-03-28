@@ -32,6 +32,7 @@ from d1_test.instance_generator import random_data
 
 logger = logging.getLogger()
 
+
 def main():
     log_setup()
 

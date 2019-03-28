@@ -25,7 +25,7 @@ import d1_test.sample
 
 class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
-        """trigger_by_status_code(): GET request returns DataONEException XML doc"""
+        """trigger_by_status_code(): GET request returns DataONEException XML doc."""
 
         class FakeRequest:
             method = 'GET'
@@ -36,7 +36,7 @@ class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
         d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_status_code_regular')
 
     def test_1010(self):
-        """trigger_by_status_code(): HEAD request returns DataONEException headers"""
+        """trigger_by_status_code(): HEAD request returns DataONEException headers."""
 
         class FakeRequest:
             method = 'HEAD'

@@ -20,6 +20,7 @@
 """Multiprocessed ObjectList Iterator.
 
 Fast retrieval of ObjectInfo from a DataONE Node.
+
 """
 
 import logging

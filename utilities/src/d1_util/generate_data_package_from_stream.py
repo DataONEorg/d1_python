@@ -19,8 +19,8 @@
 # limitations under the License.
 """Generate a Data Package (Resource Map) from a stream of PIDs.
 
-This is an example on how to use the DataONE Client and Common libraries
-for Python.
+This is an example on how to use the DataONE Client and Common libraries for Python.
+
 """
 import argparse
 import logging
@@ -62,8 +62,7 @@ def main():
 
 
 def createSimpleResourceMap(ore_pid, sci_meta_pid, data_pids):
-    """Create a simple resource map with one metadata document and n data
-    objects."""
+    """Create a simple resource map with one metadata document and n data objects."""
     ore = ResourceMap()
     ore.initialize(ore_pid)
     ore.addMetadataDocument(sci_meta_pid)
@@ -74,8 +73,8 @@ def createSimpleResourceMap(ore_pid, sci_meta_pid, data_pids):
 def pids2ore(in_stream, fmt='xml', base_url='https://cn.dataone.org/cn'):
     """read pids from in_stream and generate a resource map.
 
-    first pid is the ore_pid second is the sci meta pid remainder are
-    data pids
+    first pid is the ore_pid second is the sci meta pid remainder are data pids
+
     """
     pids = []
     for line in in_stream:

@@ -32,6 +32,7 @@ Timezones (tz):
 
 - **tz-aware**: The datetime includes a timezone, specified as an abbreviation or as
   a hour and minute offset. It specifies an exact point in time.
+
 """
 
 import datetime
@@ -42,12 +43,14 @@ import iso8601
 
 logger = logging.getLogger(__name__)
 
+
 class UTC(datetime.tzinfo):
     """datetime.tzinfo based class that represents the UTC timezone.
 
-    Date-times in DataONE should have timezone information that is fixed
-    to UTC. A naive Python datetime can be fixed to UTC by attaching it
-    to this datetime.tzinfo based class.
+    Date-times in DataONE should have timezone information that is fixed to UTC. A naive
+    Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo based
+    class.
+
     """
 
     def __repr__(self):
@@ -57,6 +60,7 @@ class UTC(datetime.tzinfo):
         """Returns:
 
         UTC offset of zero
+
         """
         return datetime.timedelta(0)
 
@@ -64,17 +68,16 @@ class UTC(datetime.tzinfo):
         """Returns:
 
         str: "UTC"
+
         """
         return 'UTC'
 
     def dst(self, dt=None):
-        """
-    Args:
-      dt: Ignored
+        """Args: dt: Ignored.
 
-    Returns:
-      timedelta(0), meaning that daylight saving is never in effect.
-    """
+        Returns:   timedelta(0), meaning that daylight saving is never in effect.
+
+        """
         return datetime.timedelta(0)
 
 
@@ -82,27 +85,26 @@ class UTC(datetime.tzinfo):
 
 
 class FixedOffset(datetime.tzinfo):
-    """datetime.tzinfo derived class that represents any timezone as fixed
-    offset in minutes east of UTC.
+    """datetime.tzinfo derived class that represents any timezone as fixed offset in
+    minutes east of UTC.
 
     - Date-times in DataONE should have timezone information that is fixed to
       UTC. A naive Python datetime can be fixed to UTC by attaching it to this
       datetime.tzinfo based class.
     - See the UTC class for representing timezone in UTC.
+
     """
 
     def __init__(self, name, offset_hours=0, offset_minutes=0):
+        """Args: name: str Name of the timezone this offset represents.
+
+        offset_hours:
+          Number of hours offset from UTC.
+
+        offset_minutes:
+          Number of minutes offset from UTC.
+
         """
-    Args:
-      name: str
-        Name of the timezone this offset represents.
-
-      offset_hours:
-        Number of hours offset from UTC.
-
-      offset_minutes:
-        Number of minutes offset from UTC.
-    """
         self.__offset = datetime.timedelta(hours=offset_hours, minutes=offset_minutes)
         self.__name = name
 
@@ -110,34 +112,28 @@ class FixedOffset(datetime.tzinfo):
         return '{} {}'.format(str(self.__offset), self.__name)
 
     def utcoffset(self, dt):
-        """
-    Args:
-      dt: Ignored
+        """Args: dt: Ignored.
 
-    Returns:
-      datetime.timedelta : The time offset from UTC.
-    """
+        Returns:
+          datetime.timedelta : The time offset from UTC.
+
+        """
         return self.__offset
 
     def tzname(self, dt):
+        """Args: dt: Ignored.
+
+        Returns:   Name of the timezone this offset represents.
+
         """
-
-    Args:
-      dt: Ignored
-
-    Returns:
-      Name of the timezone this offset represents.
-    """
         return self.__name
 
     def dst(self, dt=None):
-        """
-    Args:
-      dt: Ignored
+        """Args: dt: Ignored.
 
-    Returns:
-      timedelta(0), meaning that daylight saving is never in effect.
-    """
+        Returns:   timedelta(0), meaning that daylight saving is never in effect.
+
+        """
         return datetime.timedelta(0)
 
 
@@ -157,6 +153,7 @@ def is_valid_iso8601(iso8601_str):
 
     Returns:
       bool : ``True`` if string is a valid ISO 8601 date, time, or datetime.
+
     """
     try:
         iso8601.parse_date(iso8601_str)
@@ -175,6 +172,7 @@ def has_tz(dt):
       bool
         - **True**: ``datetime`` is tz-aware.
         - **False**: ``datetime`` is tz-naive.
+
     """
     return dt.tzinfo is not None
 
@@ -187,6 +185,7 @@ def is_utc(dt):
 
     Returns:
       bool : ``True`` if datetime has timezone and the timezone is in UTC
+
     """
     return dt.utcoffset() == datetime.timedelta(0)
 
@@ -224,6 +223,7 @@ def are_equal(a_dt, b_dt, round_sec=1):
     Returns:
       bool
         - **True**: If the two datetimes are equal after being rounded by ``round_sec``.
+
     """
     ra_dt = round_to_nearest(a_dt, round_sec)
     rb_dt = round_to_nearest(b_dt, round_sec)
@@ -257,6 +257,7 @@ def ts_from_dt(dt):
 
     See Also:
       ``dt_from_ts()`` for the reverse operation.
+
     """
     dt = normalize_datetime_to_utc(dt)
     return (dt - create_utc_datetime(1970, 1, 1)).total_seconds()
@@ -281,6 +282,7 @@ def dt_from_ts(ts, tz=None):
 
     See Also:
       ``ts_from_dt()`` for the reverse operation.
+
     """
     return datetime.datetime.fromtimestamp(ts, tz or UTC())
 
@@ -303,6 +305,7 @@ def http_datetime_str_from_dt(dt):
 
     See Also:
       - http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+
     """
     epoch_seconds = ts_from_dt(dt)
     return email.utils.formatdate(epoch_seconds, localtime=False, usegmt=True)
@@ -321,6 +324,7 @@ def xsd_datetime_str_from_dt(dt):
       str
         The returned format can be used as the date in xs:dateTime XML elements. It will
         be on the form ``YYYY-MM-DDTHH:MM:SS.mmm+00:00``.
+
     """
     return dt.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00')
 
@@ -344,6 +348,7 @@ def dt_from_http_datetime_str(http_full_datetime):
 
     See Also:
       http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+
     """
     date_parts = list(email.utils.parsedate(http_full_datetime)[:6])
     year = date_parts[0]
@@ -373,6 +378,7 @@ def dt_from_iso8601_str(iso8601_str):
     Raises:
       d1_common.date_time.iso8601.ParseError
         If ``iso8601_string` is not on the general form of ISO 8601.
+
     """
     return iso8601.parse_date(iso8601_str)
 
@@ -407,6 +413,7 @@ def normalize_datetime_to_utc(dt):
 
     See Also:
       ``cast_naive_datetime_to_tz()``
+
     """
 
     return datetime.datetime(
@@ -415,8 +422,8 @@ def normalize_datetime_to_utc(dt):
 
 
 def cast_naive_datetime_to_tz(dt, tz=UTC()):
-    """If datetime is tz-naive, set it to ``tz``. If datetime is tz-aware,
-    return it unmodified.
+    """If datetime is tz-naive, set it to ``tz``. If datetime is tz-aware, return it
+    unmodified.
 
     Args:
       dt : datetime
@@ -435,6 +442,7 @@ def cast_naive_datetime_to_tz(dt, tz=UTC()):
 
     See Also:
       ``normalize_datetime_to_utc()``
+
     """
     if has_tz(dt):
         return dt
@@ -452,6 +460,7 @@ def strip_timezone(dt):
     Returns:
       datetime
         tz-naive datetime.
+
     """
     return dt.replace(tzinfo=None)
 
@@ -462,14 +471,15 @@ def strip_timezone(dt):
 
 
 def utc_now():
-    """Returns: tz-aware datetime: The current local date and time adjusted to
-    the UTC timezone.
+    """Returns: tz-aware datetime: The current local date and time adjusted to the UTC
+    timezone.
 
     Notes:
       - Local time is retrieved from the local machine clock.
       - Relies on correctly set timezone on the local machine.
       - Relies on current tables for Daylight Saving periods.
       - Local machine timezone can be checked with: ``$ date +'%z %Z'``.
+
     """
     return datetime.datetime.now(datetime.timezone.utc)
 
@@ -479,6 +489,7 @@ def date_utc_now_iso():
 
     str : The current local date as an ISO 8601 string in the UTC timezone
       Does not include the time.
+
     """
     return utc_now().date().isoformat()
 
@@ -487,6 +498,7 @@ def local_now():
     """Returns:
 
     tz-aware datetime : The current local date and time in the local timezone
+
     """
     return datetime.datetime.now(datetime.timezone.utc).astimezone()
 
@@ -495,18 +507,17 @@ def local_now_iso():
     """Returns:
 
     str : The current local date and time as an ISO 8601 string in the local timezone
+
     """
     return local_now().isoformat()
 
 
 def to_iso8601_utc(dt):
-    """
-  Args:
-    dt: datetime
+    """Args: dt: datetime.
 
-  Returns:
-     str: ISO 8601 string in the UTC timezone
-   """
+    Returns:    str: ISO 8601 string in the UTC timezone
+
+    """
     return dt.isoformat()
 
 
@@ -518,6 +529,7 @@ def create_utc_datetime(*datetime_parts):
 
     Returns:
       datetime
+
     """
     return datetime.datetime(*datetime_parts, tzinfo=UTC())
 
@@ -540,6 +552,7 @@ def round_to_nearest(dt, n_round_sec=1.0):
       - ``n_round_sec`` = 0.1: nearest 10th of a second.
       - ``n_round_sec`` = 1: nearest second.
       - ``n_round_sec`` = 30: nearest half minute.
+
     """
     ts = ts_from_dt(strip_timezone(dt)) + n_round_sec / 2.0
     res = dt_from_ts(ts - (ts % n_round_sec))

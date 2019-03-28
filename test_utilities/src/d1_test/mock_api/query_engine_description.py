@@ -29,18 +29,19 @@ Only {queryType} solr is supported.
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
+
 """
 
 import logging
 import os
 import re
 
-import d1_common.utils.filesystem
 import responses
 
 import d1_common.const
 import d1_common.url
 import d1_common.util
+import d1_common.utils.filesystem
 
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util

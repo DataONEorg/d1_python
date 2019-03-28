@@ -77,8 +77,8 @@ UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
 
 
 def extract_subjects(cert_pem):
-    """Extract primary subject and SubjectInfo from a DataONE PEM (Base64)
-    encoded X.509 v3 certificate.
+    """Extract primary subject and SubjectInfo from a DataONE PEM (Base64) encoded X.509
+    v3 certificate.
 
     Args:
       cert_pem: str or bytes
@@ -88,6 +88,7 @@ def extract_subjects(cert_pem):
       2-tuple:
         - Primary subject (str) extracted from the certificate DN.
         - SubjectInfo (XML str) if present (see the subject_info module for parsing)
+
     """
     cert_obj = deserialize_pem(cert_pem)
     return (extract_subject_from_dn(cert_obj), extract_subject_info_extension(cert_obj))
@@ -110,6 +111,7 @@ def extract_subject_from_dn(cert_obj):
     In particular, the sequence of RDNs is reversed. Attribute values are escaped, attribute type and value pairs are separated by "=", and AVAs are joined together with ",". If an RDN contains an unknown OID, the OID is serialized as a dotted string.
 
     As all the information in the DN is preserved, it is not possible to create the same subject with two different DNs, and the DN can be recreated from the subject.
+
     """
     return ','.join(
         '{}={}'.format(
@@ -129,6 +131,7 @@ def deserialize_pem(cert_pem):
 
     Returns:
       cert_obj: cryptography.Certificate
+
     """
     if isinstance(cert_pem, str):
         cert_pem = cert_pem.encode('utf-8')
@@ -146,6 +149,7 @@ def deserialize_pem_file(cert_path):
 
     Returns:
       cert_obj: cryptography.Certificate
+
     """
     with open(cert_path, 'rb') as f:
         return deserialize_pem(f.read())
@@ -161,6 +165,7 @@ def rdn_escape(rdn_str):
 
     Returns:
       str: Escaped string ready for use in an RDN (.)
+
     """
     return re.sub(r'([,=+<>#;\\])', r'\\\1', rdn_str)
 
@@ -175,6 +180,7 @@ def extract_subject_info_extension(cert_obj):
 
     Returns:
       str : SubjectInfo XML doc if present, else None
+
     """
     try:
         subject_info_der = cert_obj.extensions.get_extension_for_oid(
@@ -189,8 +195,7 @@ def download_as_der(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-    """Download public certificate from a TLS/SSL web server as DER encoded
-    ``bytes``.
+    """Download public certificate from a TLS/SSL web server as DER encoded ``bytes``.
 
     If the certificate is being downloaded in order to troubleshoot validation issues, the
     download itself may fail due to the validation issue that is being investigated. To
@@ -204,6 +209,7 @@ def download_as_der(
           Timeout for the SSL socket operations
     Returns:
       bytes: The server's public certificate as DER encoded bytes.
+
     """
     # TODO: It is unclear which SSL and TLS protocols are supported by the method
     # currently being used. The current method and the two commented out below
@@ -249,8 +255,7 @@ def download_as_pem(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-    """Download public certificate from a TLS/SSL web server as PEM encoded
-    string.
+    """Download public certificate from a TLS/SSL web server as PEM encoded string.
 
     Also see download_as_der().
 
@@ -262,6 +267,7 @@ def download_as_pem(
 
     Returns:
       str: The certificate as a PEM encoded string.
+
     """
     return ssl.DER_cert_to_PEM_cert(download_as_der(base_url, timeout_sec))
 
@@ -270,8 +276,7 @@ def download_as_obj(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
 ):
-    """Download public certificate from a TLS/SSL web server as Certificate
-    object.
+    """Download public certificate from a TLS/SSL web server as Certificate object.
 
     Also see download_as_der().
 
@@ -283,6 +288,7 @@ def download_as_obj(
 
     Returns:
       cryptography.Certificate
+
     """
     return decode_der(download_as_der(base_url, timeout_sec))
 
@@ -295,6 +301,7 @@ def decode_der(cert_der):
 
     Returns:
       cryptography.Certificate()
+
     """
     return cryptography.x509.load_der_x509_certificate(
         cert_der, cryptography.hazmat.backends.default_backend()
@@ -304,12 +311,13 @@ def decode_der(cert_der):
 # noinspection PyProtectedMember
 @contextlib2.contextmanager
 def disable_cert_validation():
-    """Context manager to temporarily disable certificate validation in the
-    standard SSL library.
+    """Context manager to temporarily disable certificate validation in the standard SSL
+    library.
 
     Note: This should not be used in production code but is sometimes useful for troubleshooting certificate validation issues.
 
     By design, the standard SSL library does not provide a way to disable verification of the server side certificate. However, a patch to disable validation is described by the library developers. This context manager allows applying the patch for specific sections of code.
+
     """
     current_context = ssl._create_default_https_context
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -331,6 +339,7 @@ def extract_issuer_ca_cert_url(cert_obj):
 
     Returns:
       str: Issuer certificate URL if present, else None
+
     """
     for extension in cert_obj.extensions:
         if extension.oid.dotted_string == AUTHORITY_INFO_ACCESS_OID:
@@ -356,6 +365,7 @@ def log_cert_info(log, msg_str, cert_obj):
 
     Returns:
       None
+
     """
     list(
         map(
@@ -407,6 +417,7 @@ def get_extension_by_name(cert_obj, extension_name):
 
     Returns:
       Cryptography.Extension
+
     """
     try:
         return cert_obj.extensions.get_extension_for_oid(
@@ -433,6 +444,7 @@ def get_val_list(obj, path_list, reverse=False):
 
     Returns:
       list of objects
+
     """
     try:
         y = getattr(obj, path_list[0])
@@ -448,8 +460,8 @@ def get_val_list(obj, path_list, reverse=False):
 
 
 def get_val_str(obj, path_list=None, reverse=False):
-    """Extract values from nested objects by attribute names and concatenate
-    their string representations.
+    """Extract values from nested objects by attribute names and concatenate their
+    string representations.
 
     Args:
       obj: object
@@ -463,6 +475,7 @@ def get_val_str(obj, path_list=None, reverse=False):
 
     Returns:
       str: Concatenated extracted values.
+
     """
     val_list = get_val_list(obj, path_list or [], reverse)
     return '<not found>' if obj is None else ' / '.join(map(str, val_list))
@@ -483,6 +496,7 @@ def get_ext_val_str(cert_obj, extension_name, path_list=None):
 
     Returns:
       str : String value of extension
+
     """
     return get_val_str(get_extension_by_name(cert_obj, extension_name), path_list or [])
 
@@ -495,6 +509,7 @@ def serialize_cert_to_pem(cert_obj):
 
     Returns:
       bytes: PEM encoded certificate
+
     """
     return cert_obj.public_bytes(
         cryptography.hazmat.primitives.serialization.Encoding.PEM
@@ -509,6 +524,7 @@ def serialize_cert_to_der(cert_obj):
 
     Returns:
       bytes: DER encoded certificate
+
     """
     return cert_obj.public_bytes(
         cryptography.hazmat.primitives.serialization.Encoding.DER
@@ -523,6 +539,7 @@ def get_public_key_pem(cert_obj):
 
     Returns:
       bytes: PEM encoded PKCS#1 public key.
+
     """
     return cert_obj.public_key().public_bytes(
         cryptography.hazmat.primitives.serialization.Encoding.PEM,

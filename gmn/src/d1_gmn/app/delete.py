@@ -47,6 +47,7 @@ def delete_all_from_db():
     """Clear the database.
 
     Used for testing and debugging.
+
     """
     # The models.CASCADE property is set on all ForeignKey fields, so tables can
     # be deleted in any order without breaking constraints.

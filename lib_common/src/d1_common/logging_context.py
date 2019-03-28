@@ -20,6 +20,7 @@
 """Context manager that enables temporary changes in logging level.
 
 Source: https://docs.python.org/2/howto/logging-cookbook.html
+
 """
 
 
@@ -27,21 +28,19 @@ class LoggingContext(object):
     """Logging Context Manager."""
 
     def __init__(self, logger, level=None, handler=None, close=True):
+        """Args: logger: logger Logger for which to change the logging level.
+
+        level:
+          Temporary logging level.
+
+        handler:
+          Optional logging handler to use. Supplying a new handler allows temporarily
+          changing the logging format as well.
+
+        close:
+          Automatically close handler (if supplied).
+
         """
-    Args:
-      logger: logger
-        Logger for which to change the logging level.
-
-      level:
-        Temporary logging level.
-
-      handler:
-        Optional logging handler to use. Supplying a new handler allows temporarily
-        changing the logging format as well.
-
-      close:
-        Automatically close handler (if supplied).
-    """
         self.logger = logger
         self.level = level
         self.handler = handler

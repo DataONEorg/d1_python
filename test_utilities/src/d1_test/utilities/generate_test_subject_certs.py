@@ -153,6 +153,7 @@ def create_key_pair(key_type, n_bits):
     :type n_bits: int
     :returns: Public/private key pair.
     :return type: PKey
+
     """
     pkey = OpenSSL.crypto.PKey()
     pkey.generate_key(key_type, n_bits)
@@ -179,6 +180,7 @@ def create_cert_request(pkey, digest="md5", **name):
       OU - Organizational unit name
       CN - Common name
       emailAddress - E-mail address
+
     """
     req = OpenSSL.crypto.X509Req()
     subj = req.get_subject()
@@ -199,6 +201,7 @@ def create_session_extension(subject, persons, groups):
     :type subjects: list
     :returns: X.509 v3 certificate extension.
     :return type: X509Extension
+
     """
 
     subject_list = d1_common.types.dataoneTypes_v1.SubjectList()
@@ -270,6 +273,7 @@ def create_certificate(
     :type digest: str
     :returns: The signed certificate.
     :return type: X509
+
     """
     (issuer_cert, issuer_key) = xxx_todo_changeme
     (not_before, not_after) = xxx_todo_changeme1

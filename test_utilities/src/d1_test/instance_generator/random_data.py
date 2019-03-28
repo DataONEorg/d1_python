@@ -66,6 +66,7 @@ def random_bytes(num_bytes, max_bytes=None):
     - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
     - If both ``num_bytes`` and ``max_bytes`` are set, a random number of bytes between
     ``num_bytes`` and ``max_bytes`` (including) is returned.
+
     """
     return bytearray(
         random.getrandbits(8) for _ in range(random_within_range(num_bytes, max_bytes))
@@ -78,6 +79,7 @@ def random_bytes_file(num_bytes, max_bytes=None):
     - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
     - If both ``num_bytes`` and ``max_bytes`` is set, a random number of bytes between
     ``num_bytes`` and ``max_bytes`` (including) is returned.
+
     """
     return io.BytesIO(random_bytes(num_bytes, max_bytes))
 
@@ -91,6 +93,7 @@ def random_unicode_name_list(n_names):
     """Return a list of random Unicode names.
 
     Names may be repeated
+
     """
     names = []
     for i in range(n_names):
@@ -102,6 +105,7 @@ def random_unicode_name_unique_list(n_names):
     """Return a list of random Unicode names.
 
     Names are unique
+
     """
     return random.sample(
         d1_test.instance_generator.unicode_names.UNICODE_NAMES, n_names
@@ -122,6 +126,7 @@ def random_word_list(n_words):
     """Return a list of random words.
 
     Words may be repeated
+
     """
     names = []
     for i in range(n_words):
@@ -133,6 +138,7 @@ def random_word_unique_list(n_names):
     """Return a list of random words.
 
     Words are unique
+
     """
     return random.sample(d1_test.instance_generator.words.WORDS_1K, n_names)
 
@@ -153,6 +159,7 @@ def random_unicode_str(num_chars=5, max_chars=None):
     - If only ``num_chars`` is set, exactly ``num_chars`` characters are returned.
     - If both ``num_chars`` and ``max_chars`` are set, a random number of characters between
     ``num_chars`` and ``max_chars`` (including) is returned.
+
     """
     return ''.join(
         [
@@ -177,12 +184,13 @@ def random_bool():
 
 
 def random_bool_factor(f=0.5):
-    """Return random bool value that is more likely to be True the closer ``f``
-    is to 1.0.
+    """Return random bool value that is more likely to be True the closer ``f`` is to
+    1.0.
 
     - ``f`` == [0, 1)
     - ``f`` = 1.0: Always return True
     - ``f`` = 0.1: Return True 10% of the time
+
     """
     return random.random() < f
 
@@ -190,8 +198,9 @@ def random_bool_factor(f=0.5):
 def random_sized_sample(seq, min_size=1, max_size=10):
     """Return a random number of randomly selected values from ``seq``
 
-    If it's not possible to meet the min_size and/or max_size criteria
-    due to the number of values in ``seq``, a best effort is made.
+    If it's not possible to meet the min_size and/or max_size criteria due to the number
+    of values in ``seq``, a best effort is made.
+
     """
     min_size = min(min_size, len(seq))
     max_size = min(max_size, len(seq))
@@ -201,11 +210,12 @@ def random_sized_sample(seq, min_size=1, max_size=10):
 
 
 def random_sized_sample_pop(seq, min_size=1, max_size=10):
-    """Return a random number of randomly selected values from ``seq``, then
-    remove them from ``seq``.
+    """Return a random number of randomly selected values from ``seq``, then remove them
+    from ``seq``.
 
-    If it's not possible to meet the min_size and/or max_size criteria
-    due to the number of values in ``seq``, a best effort is made.
+    If it's not possible to meet the min_size and/or max_size criteria due to the number
+    of values in ``seq``, a best effort is made.
+
     """
     s = random_sized_sample(seq, min_size, max_size)
     if isinstance(seq, set):
@@ -228,5 +238,6 @@ def random_within_range(num_bytes, max_bytes=None):
     - If only ``num_bytes`` is set, return ``num_bytes``
     - If both ``num_bytes`` and ``max_bytes`` are set, return random int within
     between ``num_bytes`` and ``max_bytes`` (including).
+
     """
     return num_bytes if max_bytes is None else random.randint(num_bytes, max_bytes)

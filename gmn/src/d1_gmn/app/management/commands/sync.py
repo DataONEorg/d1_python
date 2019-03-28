@@ -45,15 +45,16 @@ CN of the existence of a specific object that was not discovered during regular 
 and request that the CN synchronizes it. The CN responds by adding a task to sync the
 specified object to its task queue. When the CN later processes the task, the object is
 synced just as if it was discovered by the regular poll based sync.
+
 """
 
 import asyncio
 import logging
 
+import d1_gmn.app.management.commands.async_client
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.management.commands.async_client
 import d1_gmn.app.models
 
 import d1_common.utils.progress_logger
@@ -88,7 +89,9 @@ class Command(django.core.management.base.BaseCommand):
         )
         # util.log_setup(self.options["debug"])
         self._log.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
 
         # Python 3.7
         # asyncio.run(self._handle())
@@ -152,6 +155,7 @@ class Command(django.core.management.base.BaseCommand):
         This assumes that the call is being made over a connection that has
         been authenticated and has read or better access on the given object if
         it exists.
+
         """
         status = await client.describe(pid)
         if status == 200:
@@ -167,9 +171,7 @@ class Command(django.core.management.base.BaseCommand):
         return True
 
     async def send_synchronization_request(self, client, pid):
-        """Issue a notification and request for sync for object with {pid} to
-        the CN.
-        """
+        """Issue a notification and request for sync for object with {pid} to the CN."""
         # Skip CN call for debugging
         # status = 200
         status = await client.synchronize(pid)

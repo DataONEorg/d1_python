@@ -154,7 +154,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         return sorted([v[len(test_path) :] for v in itr])
 
     def test_1000(self, tree_path, return_dir_paths, recursive):
-        """file_iter(): Empty dir"""
+        """file_iter(): Empty dir."""
         self._check(
             tree_path,
             "empty",
@@ -164,7 +164,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1010(self, tree_path, return_dir_paths, recursive):
-        """file_iter(): Dir with dir and file"""
+        """file_iter(): Dir with dir and file."""
         self._check(
             tree_path,
             "dir_file",
@@ -174,7 +174,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1020(self, tree_path, return_dir_paths, recursive):
-        """file_iter(): Root of deeply nested"""
+        """file_iter(): Root of deeply nested."""
         self._check(
             tree_path,
             "dir_root_nested",
@@ -195,7 +195,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
     def test_1030(
         self, tree_path, return_dir_paths, recursive, sample_postfix, exclude_glob_list
     ):
-        """file_iter(): Root of deeply nested"""
+        """file_iter(): Root of deeply nested."""
         self._check(
             tree_path,
             "dir_root_exclude_{}".format(sample_postfix),

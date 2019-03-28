@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Synchronize the install_requires sections in all setup.py files with the
-currently installed versions of all packages.
+"""Synchronize the install_requires sections in all setup.py files with the currently
+installed versions of all packages.
 
-The two required params are the root to the DataONE Python software
-stack and the new version number to use in the next release of the
-stack. We keep the version numbers for all the packages in the d1_python
-repository in sync.
+The two required params are the root to the DataONE Python software stack and the new
+version number to use in the next release of the stack. We keep the version numbers for
+all the packages in the d1_python repository in sync.
+
 """
 
 import argparse

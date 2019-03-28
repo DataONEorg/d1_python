@@ -45,6 +45,7 @@ class FileIterator(object):
         """Returns:
 
         int : The total number of bytes that will be returned by the iterator.
+
         """
         return self._byte_count
 
@@ -68,5 +69,6 @@ class FileLikeObjectIterator(object):
         """Returns:
 
         int : The total number of bytes that will be returned by the iterator.
+
         """
         return len(self._file)

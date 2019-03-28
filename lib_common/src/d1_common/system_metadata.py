@@ -87,6 +87,7 @@ Examples:
       <!--Optional:-->
       <fileName>string</fileName>
     </v2:systemMetadata>
+
 """
 
 import datetime
@@ -124,13 +125,13 @@ SYSMETA_ROOT_CHILD_LIST = [
 
 
 def is_sysmeta_pyxb(sysmeta_pyxb):
-    """Args: sysmeta_pyxb: Object that may or may not be a SystemMetadata PyXB
-    object.
+    """Args: sysmeta_pyxb: Object that may or may not be a SystemMetadata PyXB object.
 
     Returns:
       bool:
         - ``True`` if ``sysmeta_pyxb`` is a SystemMetadata PyXB object.
         - ``False`` if ``sysmeta_pyxb`` is not a PyXB object or is a PyXB object of a type other than SystemMetadata.
+
     """
     return (
         d1_common.type_conversions.is_pyxb_d1_type(sysmeta_pyxb)
@@ -155,6 +156,7 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
       The SystemMetadata is normalized by removing any redundant information and ordering
       all sections where there are no semantics associated with the order. The normalized
       SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+
     """
     if sysmeta_pyxb.accessPolicy is not None:
         sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
@@ -213,6 +215,7 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
       The SystemMetadata is normalized by removing any redundant information and ordering
       all sections where there are no semantics associated with the order. The normalized
       SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+
     """
     normalize_in_place(a_pyxb, ignore_timestamps)
     normalize_in_place(b_pyxb, ignore_timestamps)
@@ -245,6 +248,7 @@ def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
       The SystemMetadata is normalized by removing any redundant information and ordering
       all sections where there are no semantics associated with the order. The normalized
       SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+
     """
 
     """Normalizes then compares SystemMetadata XML docs for equivalency.
@@ -259,11 +263,11 @@ def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
 
 
 def clear_elements(sysmeta_pyxb, clear_replica=True, clear_serial_version=True):
-    """{clear_replica} causes any replica information to be removed from the
-    object.
+    """{clear_replica} causes any replica information to be removed from the object.
 
-    {clear_replica} ignores any differences in replica information, as
-    this information is often different between MN and CN.
+    {clear_replica} ignores any differences in replica information, as this information
+    is often different between MN and CN.
+
     """
     if clear_replica:
         sysmeta_pyxb.replica = None
@@ -281,6 +285,7 @@ def update_elements(dst_pyxb, src_pyxb, el_list):
 
     If an element in ``el_list`` does not exist in ``src_pyxb``, it is removed from
     ``dst_pyxb``.
+
     """
     invalid_element_set = set(el_list) - set(SYSMETA_ROOT_CHILD_LIST)
     if invalid_element_set:

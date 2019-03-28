@@ -20,8 +20,9 @@
 # limitations under the License.
 """Resolve a DataONE object.
 
-Determine what type of DataONE object a given PID references and branch
-out to a resolver that is specialized for that type.
+Determine what type of DataONE object a given PID references and branch out to a
+resolver that is specialized for that type.
+
 """
 
 import logging

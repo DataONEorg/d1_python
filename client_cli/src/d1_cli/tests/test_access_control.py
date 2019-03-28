@@ -37,7 +37,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         assert len(a.allow) == 0
 
     def test_1010(self):
-        """clear(): Removes all allowed subjects"""
+        """clear(): Removes all allowed subjects."""
         a = d1_cli.impl.access_control.AccessControl()
         a.add_allowed_subject("subject_1", None)
         a.add_allowed_subject("subject_2", None)
@@ -46,8 +46,8 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         assert len(a.allow) == 0
 
     def test_1020(self):
-        """add_allowed_subject(): Single subject added without specified permission
-    is retained and defaults to read"""
+        """add_allowed_subject(): Single subject added without specified permission is
+        retained and defaults to read."""
         a = d1_cli.impl.access_control.AccessControl()
         a.add_allowed_subject("subject_1", None)
         assert len(a.allow) == 1
@@ -67,8 +67,8 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         assert a.allow["subject_1"] == "write"
 
     def test_1040(self):
-        """add_allowed_subject(): Subject added with invalid permission raises
-    exception InvalidArguments"""
+        """add_allowed_subject(): Subject added with invalid permission raises exception
+        InvalidArguments."""
         a = d1_cli.impl.access_control.AccessControl()
         with pytest.raises(d1_cli.impl.exceptions.InvalidArguments):
             a.add_allowed_subject("subject_1", "invalid_permission")
@@ -76,7 +76,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
 
     def test_1050(self):
         """add_allowed_subject(): Multiple subjects with different permissions are
-    correctly retained"""
+        correctly retained."""
         a = d1_cli.impl.access_control.AccessControl()
         a.add_allowed_subject("subject_1", None)
         a.add_allowed_subject("subject_2", "write")
@@ -114,7 +114,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
         # assert actual[3] == 'changePermission              "subject_3"'
 
     def test_1080(self):
-        """_confirm_special_subject_write(): Allows setting if user answers 'yes"""
+        """_confirm_special_subject_write(): Allows setting if user answers 'yes."""
         a = d1_cli.impl.access_control.AccessControl()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             with d1_test.d1_test_case.mock_input("yes"):
@@ -127,7 +127,7 @@ class TestAccessControl(d1_test.d1_test_case.D1TestCase):
 
     def test_1090(self):
         """_confirm_special_subject_write(): Raises InvalidArguments if user answers
-    'no"""
+        'no."""
         a = d1_cli.impl.access_control.AccessControl()
         with d1_test.d1_test_case.capture_std():
             with d1_test.d1_test_case.mock_input("no"):

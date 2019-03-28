@@ -23,6 +23,7 @@
 A handy way to search for files in a Python source code tree.
 
 See the file_iterator module for details on the arguments.
+
 """
 
 import argparse

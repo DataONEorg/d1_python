@@ -20,8 +20,8 @@
 # limitations under the License.
 """Mock a generic POST request by echoing the posted body.
 
-A DataONEException can be triggered by adding a custom header. See
-d1_exception.py
+A DataONEException can be triggered by adding a custom header. See d1_exception.py
+
 """
 
 import base64
@@ -53,9 +53,10 @@ def add_callback(base_url):
 def _request_callback(request):
     """Echo an MN.create() POST.
 
-    Return a valid Identifier XML doc in the body to satisfy the
-    requirements for create() and echo of the POSTed information in
-    headers (serialized to Base64 encoded JSON).
+    Return a valid Identifier XML doc in the body to satisfy the requirements for
+    create() and echo of the POSTed information in headers (serialized to Base64 encoded
+    JSON).
+
     """
     logging.debug('Received callback. url="{}"'.format(request.url))
     # Return DataONEException if triggered

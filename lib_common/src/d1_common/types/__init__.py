@@ -61,6 +61,7 @@ See also:
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.
+
 """
 
 import logging
@@ -68,11 +69,14 @@ import logging
 try:
     from logging import NullHandler
 except ImportError:
+
     class NullHandler(logging.Handler):
         """Suppress log messages instead of raising exception if the program using the
         library does not configure the logging system."""
+
         # noinspection PyMissingOrEmptyDocstring
         def emit(self, record):
             pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())

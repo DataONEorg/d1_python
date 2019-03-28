@@ -82,6 +82,7 @@ def capture_std():
 
     - Does NOT capture logging.
     - Use the caplog fixture and get_caplog_text() for log capture.
+
     """
     new_out, new_err = io.StringIO(), io.StringIO()
     old_out, old_err = sys.stdout, sys.stderr
@@ -98,6 +99,7 @@ def get_caplog_text(caplog, logger_name=None):
     - If ``logger_name`` is set, only messages from the given logger are returned.
     - This differs from `caplog.text` in that only the message part of the logs
     are retrieved, not the timestamps, loggers and log levels.
+
     """
     return '\n'.join(
         [
@@ -190,12 +192,13 @@ def reproducible_random_context(seed=None):
 
 @contextlib.contextmanager
 def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
-    """Context manager providing a temporary file of size ``gib`` GiB + ``mib``
-    MiB + ``kib`` KiB + ``b`` bytes.
+    """Context manager providing a temporary file of size ``gib`` GiB + ``mib`` MiB +
+    ``kib`` KiB + ``b`` bytes.
 
     - The file is created as a sparse empty file in tmp, so does not allocate
     actual space on disk.
     - Intended for use when large, empty (all zero), test files are needed.
+
     """
     with tempfile.TemporaryFile() as f:
         f.seek(gib * 1024 ** 3 + mib * 1024 ** 2 + kib * 1024 + b - 1)
@@ -206,8 +209,8 @@ def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
 
 @contextlib.contextmanager
 def temp_file_name(suffix=None):
-    """Provide a file path that can be used as the location of a temporary
-    file, and delete any file written to the path on exit."""
+    """Provide a file path that can be used as the location of a temporary file, and
+    delete any file written to the path on exit."""
     with tempfile.NamedTemporaryFile(suffix=suffix) as f:
         temp_file_path = f.name
     yield temp_file_path
@@ -219,14 +222,14 @@ def temp_file_name(suffix=None):
 
 @contextlib.contextmanager
 def disable_garbage_collector():
-    """Context manager that disables the garbage collector while in the
-    context.
+    """Context manager that disables the garbage collector while in the context.
 
     Warnings:
 
       ``gc.collect()`` is called before entering the context in order to force Python to
       allocate new memory for objects that are created within the context. However, that
       does not seem to work reliably in the tested versions of Python 3.
+
     """
     gc.disable()
     gc.collect()
@@ -238,8 +241,8 @@ def disable_garbage_collector():
 
 @contextlib.contextmanager
 def memory_limit(max_mem_bytes):
-    """Raise MemoryError if code within the manager causes memory used by
-    process to increase by more than ``max_mem_bytes``.
+    """Raise MemoryError if code within the manager causes memory used by process to
+    increase by more than ``max_mem_bytes``.
 
     This can be used for detecting excessive memory usage, for instance due to objects
     being buffered in memory instead of being streamed.
@@ -257,6 +260,7 @@ def memory_limit(max_mem_bytes):
       ``max_mem_bytes`` in order to reliably raise a MemoryError. Current values for a
       unit test for this context manager, is 10 MiB for ``max_mem_bytes`` and a combined
       100 MiB of attempted allocations.
+
     """
     with disable_garbage_collector():
         process = psutil.Process(os.getpid())
@@ -368,12 +372,12 @@ class D1TestCase(object):
 
     @staticmethod
     def get_d1_test_case_location(exc_traceback=None):
-        """Return the last stack frame that holds a D1TestCase unit test
-        method.
+        """Return the last stack frame that holds a D1TestCase unit test method.
 
         - Use the exception currently being handled if exc_traceback is None,
         else use exc_traceback.
         - The unit test must be a method in a class that derives from D1TestCase.
+
         """
         exc_traceback = D1TestCase.get_and_check_traceback(exc_traceback)
         location_tup = None
@@ -441,6 +445,7 @@ class D1TestCase(object):
         - If ``tz`` not supplied: the dt is returned as naive.
         - Keeping this function out of d1_common.date_time since naive datetimes
         are only needed for testing.
+
         """
         return datetime.datetime.fromtimestamp(ts, tz)
 

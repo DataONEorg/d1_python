@@ -37,6 +37,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
     https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -60,9 +61,8 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
     ):
         """CNRead.query(session, queryEngine, query) → OctetStream
         https://releases.dataone.org/online/api-
-        documentation-v2.0.1/apis/CN_APIs.html#CNRead.query
-        MNQuery.query(session, queryEngine, query) → OctetStream
-        http://jenkins.
+        documentation-v2.0.1/apis/CN_APIs.html#CNRead.query MNQuery.query(session,
+        queryEngine, query) → OctetStream http://jenkins.
 
         -1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-
         documentation/build/html/apis/MN_APIs.html#MNQuery.query.
@@ -75,6 +75,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         self._log.debug(
             'Solr query: {}'.format(
@@ -98,6 +99,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         response = self.queryResponse(
             queryEngine, query_str, vendorSpecific, do_post, **kwargs
@@ -111,9 +113,9 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         """CNRead.getQueryEngineDescription(session, queryEngine) →
         QueryEngineDescription https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
-        MNQuery.getQueryEngineDescription(session, queryEngine) →
-        QueryEngineDescription http://jenkins-1.dataone.org/jenkins/job/API%20D
-        ocumentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.h
+        MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
+        http://jenkins-1.dataone.org/jenkins/job/API%20D ocumentation%20-%20trunk/ws
+        /api-documentation/build/html/apis/MN_APIs.h
         tml#MNQuery.getQueryEngineDescription.
 
         Args:
@@ -121,6 +123,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         return self.GET(['query', queryEngine], query=kwargs)
 
@@ -132,6 +135,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
         return self._read_dataone_type_response(response, 'QueryEngineDescription')

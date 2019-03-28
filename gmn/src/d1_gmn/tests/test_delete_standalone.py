@@ -19,9 +19,9 @@
 # limitations under the License.
 """Test MNStorage.delete() for "standalone" objects.
 
-These are single objects that are not members of a revision chain (both
-obsoletes and obsoletedBy are unset). For v2, the objects may or may not
-have a SID
+These are single objects that are not members of a revision chain (both obsoletes and
+obsoletedBy are unset). For v2, the objects may or may not have a SID
+
 """
 
 import pytest
@@ -56,13 +56,13 @@ class TestDeleteStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.assert_sysmeta_pid_and_sid(reused_sysmeta_pyxb, pid, sid)
 
     def test_1000(self, gmn_client_v1):
-        """MNStorage.delete(): Standalone object, SID unsupported in v1"""
+        """MNStorage.delete(): Standalone object, SID unsupported in v1."""
         self._assert_delete(gmn_client_v1)
 
     def test_1010(self, gmn_client_v2):
-        """MNStorage.delete(): Standalone object without SID"""
+        """MNStorage.delete(): Standalone object without SID."""
         self._assert_delete(gmn_client_v2)
 
     def test_1020(self, gmn_client_v2):
-        """MNStorage.delete(): Standalone object with SID"""
+        """MNStorage.delete(): Standalone object with SID."""
         self._assert_delete(gmn_client_v2, sid=True)

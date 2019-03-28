@@ -138,6 +138,7 @@ class CommandProcessor:
         """First try the MN set in the session.
 
         Then try to resolve via the CN set in the session.
+
         """
         mn_client = d1_cli.impl.client.CLIMNClient(
             **self._mn_client_connect_params_from_session()

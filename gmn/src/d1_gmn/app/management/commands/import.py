@@ -26,6 +26,7 @@ an existing MN. The import has been tested with other versions of GMN but should
 also work with other node stacks.
 
 See the GMN setup documentation for more information on how to use this command.
+
 """
 import asyncio
 import contextlib
@@ -33,14 +34,13 @@ import datetime
 import logging
 import os
 
-import d1_common.utils.filesystem
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
+import d1_gmn.app.management.commands.async_client
 import d1_gmn.app.management.commands.util.standard_args
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.management.commands.async_client
 import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.sciobj_store
@@ -50,6 +50,7 @@ import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.utils.progress_logger
 import d1_common.xml
 
@@ -117,7 +118,9 @@ class Command(django.core.management.base.BaseCommand):
         #   logger = multiprocessing.log_to_stderr()
         #   logger.setLevel(multiprocessing.SUBDEBUG)
         logging.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
 
         # import logging_tree
         # logging_tree.printout()
@@ -137,7 +140,10 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.completed()
 
     async def _handle(self):
-        if not d1_gmn.app.management.commands.util.util.is_db_empty() and not self.options["force"]:
+        if (
+            not d1_gmn.app.management.commands.util.util.is_db_empty()
+            and not self.options["force"]
+        ):
             raise django.core.management.base.CommandError(
                 "There are already local objects or event logs in the DB. "
                 "Use --force to import anyway. "
@@ -362,6 +368,7 @@ class Command(django.core.management.base.BaseCommand):
         """If object is proxied, return the proxy location URL.
 
         If object is local, return None.
+
         """
         return await client.describe(pid).get("DataONE-Proxy")
 
@@ -383,8 +390,10 @@ class Command(django.core.management.base.BaseCommand):
 
     def get_list_objects_arg_dict(self, node_type):
         """Create a dict of arguments that will be passed to listObjects().
-        If {node_type} is a CN, add filtering to include only objects from this GMN instance
-        in the ObjectList returned by CNCore.listObjects().
+
+        If {node_type} is a CN, add filtering to include only objects from this GMN
+        instance in the ObjectList returned by CNCore.listObjects().
+
         """
         arg_dict = {
             # Restrict query for faster debugging
@@ -421,8 +430,10 @@ class Command(django.core.management.base.BaseCommand):
 
     def get_log_records_arg_dict(self, node_type):
         """Create a dict of arguments that will be passed to getLogRecords().
-        If {node_type} is a CN, add filtering to include only objects from this GMN instance
-        in the ObjectList returned by CNCore.listObjects().
+
+        If {node_type} is a CN, add filtering to include only objects from this GMN
+        instance in the ObjectList returned by CNCore.listObjects().
+
         """
         arg_dict = {
             # Restrict query for faster debugging
@@ -466,21 +477,25 @@ class Command(django.core.management.base.BaseCommand):
         return client_dict
 
     async def is_cn(self, client):
-        """Return True if node at {base_url} is a CN, False if it is an MN. Raise a
-        DataONEException if it's not a functional CN or MN.
+        """Return True if node at {base_url} is a CN, False if it is an MN.
+
+        Raise a DataONEException if it's not a functional CN or MN.
+
         """
         node_pyxb = await client.get_capabilities()
         return d1_common.type_conversions.pyxb_get_type_name(node_pyxb) == "NodeList"
 
     async def get_node_doc(self, client):
-        """If options["baseurl"] is a CN, return the NodeList. If it's a MN, return the
-        Node doc.
+        """If options["baseurl"] is a CN, return the NodeList.
+
+        If it's a MN, return the Node doc.
+
         """
         return await client.get_capabilities()
 
     async def probe_node_type_major(self, client):
-        """Determine if import source node is a CN or MN and which major version API to use
-        """
+        """Determine if import source node is a CN or MN and which major version API to
+        use."""
         try:
             node_pyxb = await self.get_node_doc(client)
         except d1_common.types.exceptions.DataONEException as e:
@@ -515,15 +530,18 @@ class Command(django.core.management.base.BaseCommand):
             return "mn", self.find_node_api_version(node_pyxb)
 
     def find_node(self, node_list_pyxb, base_url):
-        """Search NodeList for Node that has {base_url}. Return matching Node or None"""
+        """Search NodeList for Node that has {base_url}.
+
+        Return matching Node or None
+
+        """
         for node_pyxb in node_list_pyxb.node:
             if node_pyxb.baseURL == base_url:
                 return node_pyxb
 
     def assert_is_known_node_id(self, node_list_pyxb, node_id):
         """When importing from a CN, ensure that the NodeID which the ObjectList will be
-        filtered by is known to the CN
-        """
+        filtered by is known to the CN."""
         node_pyxb = self.find_node_by_id(node_list_pyxb, node_id)
         assert node_pyxb is not None, (
             "The NodeID of this GMN instance is unknown to the CN at the provided BaseURL. "
@@ -531,14 +549,18 @@ class Command(django.core.management.base.BaseCommand):
         )
 
     def find_node_api_version(self, node_pyxb):
-        """Find the highest API major version supported by node"""
+        """Find the highest API major version supported by node."""
         max_major = 0
         for s in node_pyxb.services.service:
             max_major = max(max_major, int(s.version[1:]))
         return max_major
 
     def find_node_by_id(self, node_list_pyxb, node_id):
-        """Search NodeList for Node with {node_id}. Return matching Node or None"""
+        """Search NodeList for Node with {node_id}.
+
+        Return matching Node or None
+
+        """
         for node_pyxb in node_list_pyxb.node:
             # if node_pyxb.baseURL == base_url:
             if d1_common.xml.get_req_val(node_pyxb.identifier) == node_id:

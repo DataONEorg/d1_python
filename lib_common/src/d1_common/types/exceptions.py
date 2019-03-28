@@ -70,6 +70,7 @@ Notes:
     auth.py(315)
     </traceInformation>
     </error>
+
 """
 
 import io
@@ -127,8 +128,8 @@ def deserialize(dataone_exception_xml):
 
 
 def deserialize_from_headers(headers):
-    """Deserialize a DataONE Exception that is stored in a map of HTTP headers
-    (used in responses to HTTP HEAD requests)."""
+    """Deserialize a DataONE Exception that is stored in a map of HTTP headers (used in
+    responses to HTTP HEAD requests)."""
     return create_exception_by_name(
         _get_header(headers, 'DataONE-Exception-Name'),
         _get_header(headers, 'DataONE-Exception-DetailCode'),
@@ -176,6 +177,7 @@ def create_exception_by_name(
 
     See Also:
       For remaining args, see: ``DataONEException()``
+
     """
     try:
         dataone_exception = globals()[name]
@@ -198,6 +200,7 @@ def create_exception_by_error_code(
     """Create a DataONE Exception object by errorCode.
 
     See Also:   For args, see: ``DataONEException()``
+
     """
     try:
         dataone_exception = ERROR_CODE_TO_EXCEPTION_DICT[errorCode]
@@ -235,28 +238,26 @@ class DataONEException(Exception):
         identifier=None,
         nodeId=None,
     ):
+        """Args: errorCode: int HTTP Status code for the error. E.g., NotFound is 404.
+
+        detailCode: int
+          Optional index into a table of predefined error conditions.
+
+        description: str
+          Optional additional information about the error, intended for users. E.g., if the
+          error is NotFound, this may the resource that was not found.
+
+        traceInformation: str
+          Optional additional information about the error, intended for developers. E.g.,
+          stack traces or source code references.
+
+        identifier: str
+          Optional Persistent ID (PID) or Series ID (SID).
+
+        nodeId: str
+          Optional Node Identifier URN. E.g., urn:node:MyNode
+
         """
-    Args:
-      errorCode: int
-        HTTP Status code for the error. E.g., NotFound is 404.
-
-      detailCode: int
-        Optional index into a table of predefined error conditions.
-
-      description: str
-        Optional additional information about the error, intended for users. E.g., if the
-        error is NotFound, this may the resource that was not found.
-
-      traceInformation: str
-        Optional additional information about the error, intended for developers. E.g.,
-        stack traces or source code references.
-
-      identifier: str
-        Optional Persistent ID (PID) or Series ID (SID).
-
-      nodeId: str
-        Optional Node Identifier URN. E.g., urn:node:MyNode
-    """
         self.errorCode = errorCode
         self.detailCode = detailCode
         self.description = description
@@ -297,17 +298,12 @@ class DataONEException(Exception):
         return msg.getvalue()
 
     def _fmt(self, tag, msg):
-        """Format a string for inclusion in the exception's string
-        representation.
+        """Format a string for inclusion in the exception's string representation.
 
-        If msg is None, format to empty string.
-        If msg has a single line, format to:
-        tag: msg
-        If msg has multiple lines, format to:
-        tag:
-          line 1
-          line 2
-        Msg is truncated to 1024 chars.
+        If msg is None, format to empty string. If msg has a single line, format to:
+        tag: msg If msg has multiple lines, format to: tag:   line 1   line 2 Msg is
+        truncated to 1024 chars.
+
         """
         msg = msg or '<unset>'
         msg = str(msg)
@@ -343,6 +339,7 @@ class DataONEException(Exception):
 
         Returns:
           bytes: XML holding a DataONEError based type.
+
         """
         assert encoding in ('utf-8', 'UTF-8')
         dataone_exception_pyxb = self.get_pyxb()
@@ -353,10 +350,9 @@ class DataONEException(Exception):
     def serialize_to_display(self, xslt_url=None):
         """Serialize to a pretty printed Unicode str, suitable for display.
 
-        Args:
-          xslt_url: url
-            Optional link to an XSLT stylesheet. If provided, a processing instruction for
-            the stylesheet is included in the XML prolog.
+        Args:   xslt_url: url     Optional link to an XSLT stylesheet. If provided, a
+        processing instruction for     the stylesheet is included in the XML prolog.
+
         """
         return d1_common.xml.serialize_to_xml_str(
             self.get_pyxb(), pretty=True, xslt_url=xslt_url
@@ -369,10 +365,11 @@ class DataONEException(Exception):
     def serialize_to_headers(self):
         """Serialize to a dict of HTTP headers.
 
-        Used in responses to HTTP HEAD requests. As with regular HTTP
-        GET requests, HEAD requests may return DataONE Exceptions. Since
-        a response to a HEAD request cannot include a body, the error is
-        returned as a set of HTTP headers instead of an XML document.
+        Used in responses to HTTP HEAD requests. As with regular HTTP GET requests, HEAD
+        requests may return DataONE Exceptions. Since a response to a HEAD request
+        cannot include a body, the error is returned as a set of HTTP headers instead of
+        an XML document.
+
         """
         return {
             'DataONE-Exception-Name': self.__class__.__name__,
@@ -389,8 +386,9 @@ class DataONEException(Exception):
     def get_pyxb(self):
         """Generate a DataONE Exception PyXB object.
 
-        The PyXB object supports directly reading and writing the
-        individual values that may be included in a DataONE Exception.
+        The PyXB object supports directly reading and writing the individual values that
+        may be included in a DataONE Exception.
+
         """
         dataone_exception_pyxb = dataoneErrors.error()
         dataone_exception_pyxb.name = self.__class__.__name__
@@ -415,7 +413,9 @@ class DataONEException(Exception):
     def name(self):
         """Returns:
 
-        str: Type name of object based on DataONEException. E.g.: ``AuthenticationTimeout``.
+        str: Type name of object based on DataONEException. E.g.:
+        ``AuthenticationTimeout``.
+
         """
         return self.__class__.__name__
 
@@ -427,6 +427,7 @@ class AuthenticationTimeout(DataONEException):
     """DataONE Exception of type AuthenticationTimeout.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -446,6 +447,7 @@ class IdentifierNotUnique(DataONEException):
     """DataONE Exception of type IdentifierNotUnique.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -465,6 +467,7 @@ class InsufficientResources(DataONEException):
     """DataONE Exception of type InsufficientResources.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -484,6 +487,7 @@ class InvalidCredentials(DataONEException):
     """DataONE Exception of type InvalidCredentials.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -503,6 +507,7 @@ class InvalidRequest(DataONEException):
     """DataONE Exception of type InvalidRequest.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -522,6 +527,7 @@ class InvalidSystemMetadata(DataONEException):
     """DataONE Exception of type InvalidSystemMetadata.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -541,6 +547,7 @@ class InvalidToken(DataONEException):
     """DataONE Exception of type InvalidToken.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -560,6 +567,7 @@ class NotAuthorized(DataONEException):
     """DataONE Exception of type NotAuthorized.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -579,6 +587,7 @@ class NotFound(DataONEException):
     """DataONE Exception of type NotFound.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -600,6 +609,7 @@ class NotImplemented(DataONEException):
     """DataONE Exception of type NotImplemented.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -619,6 +629,7 @@ class ServiceFailure(DataONEException):
     """DataONE Exception of type ServiceFailure.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -638,6 +649,7 @@ class UnsupportedMetadataType(DataONEException):
     """DataONE Exception of type UnsupportedMetadataType.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -657,6 +669,7 @@ class UnsupportedType(DataONEException):
     """DataONE Exception of type UnsupportedType.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -676,6 +689,7 @@ class SynchronizationFailed(DataONEException):
     """DataONE Exception of type SynchronizationFailed.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(
@@ -695,6 +709,7 @@ class VersionMismatch(DataONEException):
     """DataONE Exception of type VersionMismatch.
 
     See Also:   ``DataONEException()``
+
     """
 
     def __init__(

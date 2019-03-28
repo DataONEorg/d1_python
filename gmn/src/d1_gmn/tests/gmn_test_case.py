@@ -99,12 +99,11 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
     @classmethod
     def capture_exception(cls):
-        """If GMN responds with something that cannot be parsed by d1_client as
-        a valid response for the particular call, d1_client raises a DataONE
-        ServiceFailure exception with the response stored in the
-        traceInformation member. The Django diagnostics page triggers this
-        behavior, so, in order to access the diagnostics page, we check for
-        unhandled DataONEExceptions here and write any provided
+        """If GMN responds with something that cannot be parsed by d1_client as a valid
+        response for the particular call, d1_client raises a DataONE ServiceFailure
+        exception with the response stored in the traceInformation member. The Django
+        diagnostics page triggers this behavior, so, in order to access the diagnostics
+        page, we check for unhandled DataONEExceptions here and write any provided
         traceInformation to temporary storage, typically.
 
         /tmp.
@@ -116,6 +115,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         When serializing a DataONEException to a string, traceInformation is
         truncated to 1024 characters, but the files written here will always contain
         the complete traceInformation.
+
         """
         exc_type, exc_value, exc_traceback = sys.exc_info()
         if not isinstance(exc_value, Exception):
@@ -185,8 +185,8 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         )
 
     def assert_slice(self, slice_pyxb, start, count, total):
-        """Check that slice matches the expected slice and that actual number
-        of objects matches the slice count."""
+        """Check that slice matches the expected slice and that actual number of objects
+        matches the slice count."""
         assert slice_pyxb.start == start
         assert slice_pyxb.count == count
         assert slice_pyxb.total == total
@@ -253,9 +253,10 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     def create_revision_chain(self, client, chain_len, sid=None, *args, **kwargs):
         """Create a revision chain with a total of ``chain_len`` objects.
 
-        If client is v2, can assign a SID to the chain. Return the SID
-        (None for v1) and a list of the PIDs in the chain. The first PID
-        in the list is the tail and the last is the head.
+        If client is v2, can assign a SID to the chain. Return the SID (None for v1) and
+        a list of the PIDs in the chain. The first PID in the list is the tail and the
+        last is the head.
+
         """
 
         def did(idx):
@@ -284,16 +285,16 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         return base_sid, pid_chain_list
 
     def convert_to_replica(self, pid):
-        """Convert a local sciobj to a simulated replica by adding a
-        LocalReplica model to it."""
+        """Convert a local sciobj to a simulated replica by adding a LocalReplica model
+        to it."""
         replica_info_model = d1_gmn.app.models.replica_info(
             'completed', 'urn:node:testReplicaSource'
         )
         d1_gmn.app.models.local_replica(pid, replica_info_model)
 
     def call_d1_client(self, api_func, *arg_list, **arg_dict):
-        """Issue d1_client calls under a mocked GMN authentication and
-        authorization subsystem.
+        """Issue d1_client calls under a mocked GMN authentication and authorization
+        subsystem.
 
         Mock GMN authn and authz so calls are detected as having been made with a
         specific set of active and trusted subjects. Then call GMN through
@@ -308,6 +309,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         Args:
           Optional args: active_subj_list, trusted_subj_list, disable_auth
           All other args are sent to the api function
+
         """
         # TODO: Handling the args manually like this was necessary to get the
         # signature I wanted, but it may be done better with
@@ -358,8 +360,8 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     ):
         """Generate a test object and call MNStorage.create() Parameters:
 
-        True: Use a default or generated value
-        Other: Use the supplied value
+        True: Use a default or generated value Other: Use the supplied value
+
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             client, pid, sid, submitter, rights_holder, permission_list, now_dt
@@ -395,8 +397,8 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     ):
         """Generate a test object and call MNStorage.update() Parameters:
 
-        True: Use a default or generate a value
-        Other: Use the supplied value
+        True: Use a default or generate a value Other: Use the supplied value
+
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             client, new_pid, sid, submitter, rights_holder, permission_list, now_dt
@@ -427,8 +429,8 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     ):
         """Combined MNRead.get() and MNRead.getSystemMetadata() Parameters:
 
-        True: Use a default or generate a value
-        Other: Use the supplied value
+        True: Use a default or generate a value Other: Use the supplied value
+
         """
         sciobj_bytes = self.call_d1_client(
             client.get,
@@ -463,8 +465,8 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     ):
         """Generate a test object and call MNStorage.create() Parameters:
 
-        True: Use a default or generated value
-        Other: Use the supplied value
+        True: Use a default or generated value Other: Use the supplied value
+
         """
         pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
         send_sciobj_bytes = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_bytes(
@@ -637,13 +639,14 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 django.core.management.call_command(*args, **kwargs)
 
     def run_django_sql(self, sql_str, dump=True, *sql_arg_list):
-        """Run raw SQL in the current Django database context and return any
-        results as a list of dicts, where they keys are the column names.
+        """Run raw SQL in the current Django database context and return any results as
+        a list of dicts, where they keys are the column names.
 
         - By default, also dump the result with logging.debug(). Disable with
         dump=False.
         - This can be used for checking the state of a database within the implicit
         transactions that wrap the unit tests.
+
         """
 
         def dict_fetchall(c):

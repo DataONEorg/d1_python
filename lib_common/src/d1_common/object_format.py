@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for handling the DataONE ObjectFormat and ObjectFormatList
-types."""
+"""Utilities for handling the DataONE ObjectFormat and ObjectFormatList types."""
 
 
 def pyxb_to_dict(object_format_list_pyxb):

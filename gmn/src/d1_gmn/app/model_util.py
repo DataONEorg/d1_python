@@ -25,6 +25,7 @@ context.
 
 Importing this module outside of Django context raises
 django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
+
 """
 import logging
 
@@ -32,6 +33,7 @@ import d1_gmn.app
 import d1_gmn.app.models
 
 logger = logging.getLogger(__name__)
+
 
 def get_sci_model(pid):
     return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
@@ -46,8 +48,9 @@ def get_pids_for_all_locally_stored_objects():
 def delete_unused_subjects():
     """Delete any unused subjects from the database.
 
-    This is not strictly required as any unused subjects will
-    automatically be reused if needed in the future.
+    This is not strictly required as any unused subjects will automatically be reused if
+    needed in the future.
+
     """
     # This causes Django to create a single join (check with query.query)
     query = d1_gmn.app.models.Subject.objects.all()

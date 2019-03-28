@@ -22,6 +22,7 @@
 Exported classes:
 
 Dokan -- "no-op" Dokan implementation
+
 """
 
 import ctypes
@@ -48,6 +49,7 @@ class Dokan(object):
         :type DriverOption: long
         :param num_threads: number of threads to launch Dokan with
         :type num_threads: int
+
         """
         self.mountPoint = mountPoint
         self.driverOptions = driverOptions
@@ -90,6 +92,7 @@ class Dokan(object):
         :type DokanOperations: DokanOperations
         :return: error code
         :rtype: int
+
         """
         return int(
             self.dokanDLL.DokanMain(
@@ -159,6 +162,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('createFile', fileName)
 
@@ -171,6 +175,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('openDirectory', fileName)
 
@@ -183,6 +188,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('createDirectory', fileName)
 
@@ -195,6 +201,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('cleanup', fileName)
 
@@ -207,6 +214,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('closeFile', fileName)
 
@@ -235,6 +243,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         try:
             ret = self.operations('readFile', fileName, numberOfBytesToRead, offset)
@@ -276,6 +285,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations(
             'writeFile', fileName, buffer, numberOfBytesToWrite, offset
@@ -290,6 +300,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('flushFileBuffers', fileName)
 
@@ -348,6 +359,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('findFiles', fileName)
 
@@ -366,6 +378,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         try:
             ret = self.operations('findFilesWithPattern', fileName, searchPattern)
@@ -409,6 +422,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('setFileAttributes', fileName)
 
@@ -429,6 +443,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('setFileTime', fileName)
 
@@ -441,6 +456,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('deleteFile', fileName)
 
@@ -453,6 +469,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('deleteDirectory', fileName)
 
@@ -469,6 +486,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('moveFile', existingFileName, newFileName)
 
@@ -483,6 +501,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('setEndOfFile', fileName)
 
@@ -497,6 +516,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('setAllocationSize', fileName)
 
@@ -513,6 +533,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('lockFile', fileName, byteOffset, length)
 
@@ -529,6 +550,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('unlockFile', fileName, byteOffset, length)
 
@@ -551,6 +573,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         ret = self.operations('getDiskFreeSpace')
         ctypes.memmove(
@@ -601,6 +624,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         ret = self.operations('getVolumeInformation')
         # populate volume name buffer
@@ -647,6 +671,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('unmount', dokanFileInfo)
 
@@ -675,6 +700,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('getFileSecurity', fileName)
 
@@ -700,6 +726,7 @@ class Dokan(object):
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
         :rtype: ctypes.c_int
+
         """
         return self.operations('setFileSecurity', fileName)
 
@@ -717,8 +744,7 @@ class Dokan(object):
         return (loworder, highorder)
 
     def main(self):
-        """Starts Dokan drive which dispatches events to the appropriate
-        handlers."""
+        """Starts Dokan drive which dispatches events to the appropriate handlers."""
         return self.dokanMain(self.options, self.dokan_ops)
 
 

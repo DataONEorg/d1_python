@@ -17,11 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""TODO: In Python 3, contextlib supports creating combined context managers and
-decorators. django.test has a ContextDecorator class that works with Python 2.
-Follow the pattern there to convert all these to ContextDecorators.
+"""TODO: In Python 3, contextlib supports creating combined context managers
+and decorators. django.test has a ContextDecorator class that works with Python
+2. Follow the pattern there to convert all these to ContextDecorators.
 
 TODO: In Python 3, items() is a view, so must use d.copy.items(), etc.
+
 """
 
 import functools
@@ -66,14 +67,15 @@ logger = logging.getLogger(__name__)
 
 # Active and trusted subjects
 
+
 @contextlib2.contextmanager
 def active_subjects_context(active_subject_set):
     """Override list of active subjects that GMN detects for authentication.
 
-    the Active subjects is a list of DataONE subject strings for which
-    the currently connected client is authenticated. Normally, the
-    active subject list is derived from certificates and tokens passed
-    by the client.
+    the Active subjects is a list of DataONE subject strings for which the currently
+    connected client is authenticated. Normally, the active subject list is derived from
+    certificates and tokens passed by the client.
+
     """
     expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(active_subject_set)
     logger.debug('ContextManager: active_subjects()')
@@ -86,8 +88,7 @@ def active_subjects_context(active_subject_set):
 
 @contextlib2.contextmanager
 def trusted_subjects_context(trusted_subject_set):
-    """Override list of trusted subjects that GMN detects for
-    authentication."""
+    """Override list of trusted subjects that GMN detects for authentication."""
     logger.debug('ContextManager: trusted_subjects()')
     with mock.patch(
         'd1_gmn.app.auth.get_trusted_subjects',
@@ -100,8 +101,8 @@ def trusted_subjects_context(trusted_subject_set):
 
 @contextlib2.contextmanager
 def whitelisted_subjects_context(whitelisted_subject_iter):
-    """Override list of whitelists subjects that GMN detects as having access
-    to create, update and delete APIs."""
+    """Override list of whitelists subjects that GMN detects as having access to create,
+    update and delete APIs."""
     # def mock(request):
     #   return d1_test.d1_test_case.D1TestCase.expand_subjects(whitelisted_subject_set)
     logging.debug('ContextManager: whitelisted_subjects_context()')
@@ -155,8 +156,8 @@ def set_auth_context(
 
 @contextlib2.contextmanager
 def isolated_whitelisted_subj():
-    """Create a unique subject and override GMN auth so that the subject
-    appears as single active and whitelisted, but not trusted, in API calls."""
+    """Create a unique subject and override GMN auth so that the subject appears as
+    single active and whitelisted, but not trusted, in API calls."""
     isolated_subj = 'ISOLATED_{}'.format(
         d1_test.instance_generator.random_data.random_subj(fixed_len=12)
     )
@@ -178,9 +179,9 @@ def set_auth_context_with_defaults(
 ):
     """Set the active, trusted and whitelisted subjects for an GMN API call.
 
-    ``disable_auth``=True: The other subj lists are ignored and GMN sees all calls
-    as coming from a fully trusted subject.
-    ``param``=True: Use a default list of subjects.
+    ``disable_auth``=True: The other subj lists are ignored and GMN sees all calls as
+    coming from a fully trusted subject. ``param``=True: Use a default list of subjects.
+
     """
     with d1_gmn.tests.gmn_mock.set_auth_context(
         ['active_subj_1', 'active_subj_2', 'active_subj_3']
@@ -210,10 +211,11 @@ def set_auth_context_with_defaults(
 
 @contextlib2.contextmanager
 def disable_auth():
-    """Context manager that makes GMN think that all calls are issued by a
-    fully trusted subject, "trusted_subj".
+    """Context manager that makes GMN think that all calls are issued by a fully trusted
+    subject, "trusted_subj".
 
     This subject can call any API and received unfiltered results.
+
     """
     logging.debug('ContextManager: disable_auth()')
     with mock.patch(
@@ -252,8 +254,8 @@ def disable_sysmeta_sanity_checks():
 
 @contextlib2.contextmanager
 def disable_management_command_logging():
-    """Prevent management commands from setting up logging, which cause
-    duplicated log messages when the commands are launched multiple times."""
+    """Prevent management commands from setting up logging, which cause duplicated log
+    messages when the commands are launched multiple times."""
     with mock.patch('d1_gmn.app.management.commands.util.util.log_setup'):
         yield
 

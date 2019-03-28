@@ -15,8 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Constants used by the DataONE drive for Windows which is built using
-Dokan."""
+"""Constants used by the DataONE drive for Windows which is built using Dokan."""
 
 # IO error codes
 ERROR_FILE_NOT_FOUND = 2

@@ -22,11 +22,11 @@ import asyncio
 import logging
 
 import d1_gmn.app.did
+import d1_gmn.app.management.commands.async_client
+import d1_gmn.app.management.commands.objectlist_async
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.management.commands.async_client
-import d1_gmn.app.management.commands.objectlist_async
 import d1_gmn.app.models
 
 import d1_common.types.exceptions
@@ -36,13 +36,16 @@ import d1_common.xml
 import django.conf
 import django.core.management.base
 
+
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def _init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def add_arguments(self, parser):
-        d1_gmn.app.management.commands.util.standard_args.add_arguments(parser, __doc__, add_base_url=False)
+        d1_gmn.app.management.commands.util.standard_args.add_arguments(
+            parser, __doc__, add_base_url=False
+        )
 
     def handle(self, *args, **options):
         self.options = options
@@ -52,7 +55,9 @@ class Command(django.core.management.base.BaseCommand):
             logger=self._logger
         )
         self._logger.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
 
         loop = asyncio.get_event_loop()
         try:
@@ -127,6 +132,7 @@ class Command(django.core.management.base.BaseCommand):
         This assumes that the call is being made over a connection that has
         been authenticated and has read or better access on the given object if
         it exists.
+
         """
         try:
             await client.describe(pid)
@@ -144,7 +150,8 @@ class Command(django.core.management.base.BaseCommand):
         )
 
         object_list_iterator = d1_gmn.app.management.commands.objectlist_async.ObjectListIteratorAsync(
-            client, retry_count=self.options["retries"],
+            client,
+            retry_count=self.options["retries"],
             list_objects_args_dict={'nodeId': django.conf.settings.NODE_IDENTIFIER},
         )
         async for object_info_pyxb in object_list_iterator.itr():
@@ -160,7 +167,6 @@ class Command(django.core.management.base.BaseCommand):
         self.progress_logger.end_task_type(task_name)
 
     def is_object_still_on_mn(self, pid):
-        """Check if object with {pid} that the CN reports to be on this GMN instance
-        is actually here.
-        """
+        """Check if object with {pid} that the CN reports to be on this GMN instance is
+        actually here."""
         return d1_gmn.app.did.is_existing_object(pid)

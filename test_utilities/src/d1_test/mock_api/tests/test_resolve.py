@@ -30,7 +30,7 @@ import d1_test.mock_api.resolve
 class TestMockResolve(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, cn_client_v2):
-        """mock_api.resolve(): Returns a valid ObjectLocationList"""
+        """mock_api.resolve(): Returns a valid ObjectLocationList."""
         d1_test.mock_api.resolve.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         assert isinstance(
             cn_client_v2.resolve('valid_pid'),
@@ -39,14 +39,14 @@ class TestMockResolve(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1010(self, cn_client_v2):
-        """mock_api.resolve(): Unknown PID returns D1 NotFound"""
+        """mock_api.resolve(): Unknown PID returns D1 NotFound."""
         d1_test.mock_api.resolve.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
             cn_client_v2.resolve('<NotFound>pid')
 
     @responses.activate
     def test_1020(self, cn_client_v2):
-        """mock_api.resolve(): Passing a trigger header triggers a DataONEException"""
+        """mock_api.resolve(): Passing a trigger header triggers a DataONEException."""
         d1_test.mock_api.resolve.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
             cn_client_v2.resolve('valid_pid', vendorSpecific={'trigger': '404'})

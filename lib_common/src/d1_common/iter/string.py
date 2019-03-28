@@ -46,5 +46,6 @@ class StringIterator(object):
         """Returns:
 
         int : The total number of characters that will be returned by the iterator.
+
         """
         return len(self._string)

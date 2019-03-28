@@ -41,8 +41,7 @@ import d1_test_case
 
 class Test050Get(d1_test_case.D1TestCase):
     def validate_object(self, object_info):
-        """Get object and verify retrieved information against its
-        ObjectInfo."""
+        """Get object and verify retrieved information against its ObjectInfo."""
         # The ObjectInfo records were retrieved during the listObjects tests.
         client = test_client.TestClient(context.node['baseurl'])
         pid = object_info.identifier.value()

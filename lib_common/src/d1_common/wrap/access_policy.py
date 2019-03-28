@@ -199,6 +199,7 @@ Notes:
       ['write', ['subj1', 'subj4']],
       ['changePermission', ['subj2', 'subj3', 'subj5', 'subj6']]
     ]
+
 """
 
 import copy
@@ -230,6 +231,7 @@ def wrap(access_pyxb, read_only=False):
 
     When only a single AccessPolicy operation is needed, there's no need to use this
     context manager. Instead, use the generated context manager wrappers.
+
     """
     w = AccessPolicyWrapper(access_pyxb)
     yield w
@@ -258,6 +260,7 @@ def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
     AccessPolicy when working with AccessPolicy that is within SystemMetadata, the wrapper
     can handle the situation of empty AccessPolicy by instead dropping the AccessPolicy
     from the SystemMetadata.
+
     """
     w = AccessPolicyWrapper(sysmeta_pyxb.accessPolicy)
     yield w
@@ -269,12 +272,12 @@ def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
 
 
 class AccessPolicyWrapper(object):
-    """Wrap an AccessPolicy and provide convenient methods to read, write and
-    update it.
+    """Wrap an AccessPolicy and provide convenient methods to read, write and update it.
 
     Args:
       access_pyxb : AccessPolicy PyXB object
         The AccessPolicy to modify.
+
     """
 
     def __init__(self, access_pyxb):
@@ -283,8 +286,8 @@ class AccessPolicyWrapper(object):
         self._orig_perm_dict = self._perm_dict.copy()
 
     def update(self):
-        """Update the wrapped AccessPolicy PyXB object with normalized and
-        minimal rules representing current state."""
+        """Update the wrapped AccessPolicy PyXB object with normalized and minimal rules
+        representing current state."""
         self._access_pyxb.allow = self.get_normalized_pyxb().allow
 
     # Examine current state
@@ -294,14 +297,16 @@ class AccessPolicyWrapper(object):
 
         AccessPolicy PyXB object : Current state of the wrapper as the minimal rules
         required for correctly representing the perms.
+
         """
         return self._pyxb_from_perm_dict(self._perm_dict)
 
     def get_normalized_perm_list(self):
         """Returns:
 
-        A minimal, ordered, hashable list of subjects and permissions
-        that represents the current state of the wrapper.
+        A minimal, ordered, hashable list of subjects and permissions that represents
+        the current state of the wrapper.
+
         """
         return self._norm_perm_list_from_perm_dict(self._perm_dict)
 
@@ -363,9 +368,7 @@ class AccessPolicyWrapper(object):
             logging.debug,
             [
                 '  {}'.format(s)
-                for s in pprint.pformat(
-                    self.get_normalized_perm_list()
-                ).splitlines()
+                for s in pprint.pformat(self.get_normalized_perm_list()).splitlines()
             ],
         )
 
@@ -375,6 +378,7 @@ class AccessPolicyWrapper(object):
         """Returns:
 
         bool: ``True`` if AccessPolicy allows public ``read``.
+
         """
         return self.subj_has_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
 
@@ -382,6 +386,7 @@ class AccessPolicyWrapper(object):
         """Returns:
 
         bool: **True** if AccessPolicy does not grant access to any subjects.
+
         """
         return not self.get_subjects_with_equal_or_higher_perm('read')
 
@@ -389,6 +394,7 @@ class AccessPolicyWrapper(object):
         """Returns:
 
         bool: ``True`` if AccessPolicy does not grant access to any subjects.
+
         """
         return self.is_private()
 
@@ -423,6 +429,7 @@ class AccessPolicyWrapper(object):
         """Returns:
 
         bool: ``True`` if ``subj_str`` has perm equal to or higher than ``perm_str``.
+
         """
         self._assert_valid_permission(perm_str)
         return perm_str in self.get_effective_perm_list(subj_str)
@@ -432,18 +439,19 @@ class AccessPolicyWrapper(object):
     def clear(self):
         """Remove AccessPolicy.
 
-        Only the rightsHolder set in the SystemMetadata will be able to
-        access the object unless new perms are added after calling this
-        method.
+        Only the rightsHolder set in the SystemMetadata will be able to access the
+        object unless new perms are added after calling this method.
+
         """
         self._perm_dict = {}
 
     def add_public_read(self):
         """Add public public ``read`` perm.
 
-        Add an allow rule with a ``read`` permission for the symbolic
-        subject, ``public``. It is a no no-op if any of the existing
-        rules already provide ``read`` or higher to ``public``.
+        Add an allow rule with a ``read`` permission for the symbolic subject,
+        ``public``. It is a no no-op if any of the existing rules already provide
+        ``read`` or higher to ``public``.
+
         """
         self.add_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
 
@@ -451,6 +459,7 @@ class AccessPolicyWrapper(object):
         """Add ``read`` perm for all authenticated subj.
 
         Public ``read`` is removed if present.
+
         """
         self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
         self.add_perm(d1_common.const.SUBJECT_AUTHENTICATED, 'read')
@@ -459,6 +468,7 @@ class AccessPolicyWrapper(object):
         """Add ``read`` perm for all verified subj.
 
         Public ``read`` is removed if present.
+
         """
         self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
         self.add_perm(d1_common.const.SUBJECT_VERIFIED, 'read')
@@ -473,6 +483,7 @@ class AccessPolicyWrapper(object):
           perm_str : str
             Permission to add. Implicitly adds all lower permissions. E.g., ``write``
             will also add ``read``.
+
         """
         self._assert_valid_permission(perm_str)
         self._perm_dict.setdefault(perm_str, set()).add(subj_str)
@@ -487,6 +498,7 @@ class AccessPolicyWrapper(object):
           perm_str : str
             Permission to remove. Implicitly removes all higher permissions. E.g., ``write``
             will also remove ``changePermission`` if previously granted.
+
         """
         self._assert_valid_permission(perm_str)
         for perm_str in self._equal_or_higher_perm(perm_str):
@@ -507,6 +519,7 @@ class AccessPolicyWrapper(object):
             * The subj has indirect access by being in a group which has access.
             * The subj has an equivalent subj that has access.
             * The subj is set as the rightsHolder for the object.
+
         """
         for subj_set in list(self._perm_dict.values()):
             subj_set -= {subj_str}
@@ -536,6 +549,7 @@ class AccessPolicyWrapper(object):
         AccessPolicy to be empty, but in SystemMetadata, it can be left out
         altogether. So returning None instead of an empty AccessPolicy allows the
         result to be inserted directly into a SystemMetadata PyXB object.
+
         """
         norm_perm_list = self._norm_perm_list_from_perm_dict(perm_dict)
         return self._pyxb_from_norm_perm_list(norm_perm_list)
@@ -556,11 +570,11 @@ class AccessPolicyWrapper(object):
             return access_pyxb
 
     def _subj_dict_from_pyxb(self, access_pyxb):
-        """Return a dict representation of ``access_pyxb``, which is an
-        AccessPolicy PyXB object.
-
-        This also remove any duplicate subjects and permissions in the
+        """Return a dict representation of ``access_pyxb``, which is an AccessPolicy
         PyXB object.
+
+        This also remove any duplicate subjects and permissions in the PyXB object.
+
         """
         subj_dict = {}
         for allow_pyxb in access_pyxb.allow:
@@ -572,8 +586,8 @@ class AccessPolicyWrapper(object):
         return subj_dict
 
     def _highest_perm_dict_from_perm_dict(self, perm_dict):
-        """Return a perm_dict where only the highest permission for each
-        subject is included."""
+        """Return a perm_dict where only the highest permission for each subject is
+        included."""
         highest_perm_dict = copy.copy(perm_dict)
         for ordered_str in reversed(ORDERED_PERM_LIST):
             for lower_perm in self._lower_perm_list(ordered_str):
@@ -582,8 +596,7 @@ class AccessPolicyWrapper(object):
         return highest_perm_dict
 
     def _norm_perm_list_from_perm_dict(self, perm_dict):
-        """Return a minimal, ordered, hashable list of subjects and
-        permissions."""
+        """Return a minimal, ordered, hashable list of subjects and permissions."""
         high_perm_dict = self._highest_perm_dict_from_perm_dict(perm_dict)
         return [
             [k, list(sorted(high_perm_dict[k]))]
@@ -593,8 +606,7 @@ class AccessPolicyWrapper(object):
 
     def _effective_perm_list_from_iter(self, perm_iter):
         """Return list of effective permissions for for highest permission in
-        ``perm_iter``, ordered lower to higher, or None if ``perm_iter`` is
-        empty."""
+        ``perm_iter``, ordered lower to higher, or None if ``perm_iter`` is empty."""
         highest_perm_str = self._highest_perm_from_iter(perm_iter)
         return (
             self._equal_or_lower_perm_list(highest_perm_str)
@@ -608,33 +620,33 @@ class AccessPolicyWrapper(object):
         return {p for p, s in list(perm_dict.items()) if subj_str in s}
 
     def _highest_perm_from_iter(self, perm_iter):
-        """Return the highest perm present in ``perm_iter`` or None if
-        ``perm_iter`` is empty."""
+        """Return the highest perm present in ``perm_iter`` or None if ``perm_iter`` is
+        empty."""
         perm_set = set(perm_iter)
         for perm_str in reversed(ORDERED_PERM_LIST):
             if perm_str in perm_set:
                 return perm_str
 
     def _ordered_idx_from_perm(self, perm_str):
-        """Return the ordered index of ``perm_str`` or None if ``perm_str`` is
-        not a valid permission."""
+        """Return the ordered index of ``perm_str`` or None if ``perm_str`` is not a
+        valid permission."""
         for i, ordered_str in enumerate(ORDERED_PERM_LIST):
             if perm_str == ordered_str:
                 return i
 
     def _lower_perm_list(self, perm_str):
-        """Return a list containing the 0, 1 or 2 permissions that are lower
-        than ``perm_str``, ordered lower to higher."""
+        """Return a list containing the 0, 1 or 2 permissions that are lower than
+        ``perm_str``, ordered lower to higher."""
         return ORDERED_PERM_LIST[: self._ordered_idx_from_perm(perm_str)]
 
     def _equal_or_lower_perm_list(self, perm_str):
-        """Return a list containing the 1, 2 or 3 permissions that are equal or
-        lower than ``perm_str``, ordered lower to higher."""
+        """Return a list containing the 1, 2 or 3 permissions that are equal or lower
+        than ``perm_str``, ordered lower to higher."""
         return ORDERED_PERM_LIST[: self._ordered_idx_from_perm(perm_str) + 1]
 
     def _equal_or_higher_perm(self, perm_str):
-        """Return a list containing the 0, 1 or 2 permissions that are equal or
-        higher than than ``perm_str``, ordered lower to higher."""
+        """Return a list containing the 0, 1 or 2 permissions that are equal or higher
+        than than ``perm_str``, ordered lower to higher."""
         return ORDERED_PERM_LIST[self._ordered_idx_from_perm(perm_str) :]
 
     def _has_access_policy(self, sysmeta_pyxb):

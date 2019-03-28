@@ -29,6 +29,7 @@ Python. It shows how to:
 Operation:
 
 - Configure the script in the Config section below
+
 """
 import argparse
 import logging
@@ -42,7 +43,6 @@ import d1_common.env
 # import d1_common.types.generated.dataoneTypes as v2
 import d1_common.types.exceptions
 import d1_common.xml
-
 
 # Config
 

@@ -22,6 +22,7 @@
 Fast retrieval of event log records from a DataONE Node.
 
 See additional notes in SysMeta iter docstring.
+
 """
 
 import logging

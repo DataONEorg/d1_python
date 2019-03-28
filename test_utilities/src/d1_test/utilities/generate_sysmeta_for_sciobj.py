@@ -24,6 +24,7 @@ generate_sysmeta.py -f $OBJECT \
                     -i "Some_Identifier" \
                     -s "CN=My Name,O=Google,C=US,DC=cilogon,DC=org" \
                     -t "some_format"
+
 """
 
 import logging

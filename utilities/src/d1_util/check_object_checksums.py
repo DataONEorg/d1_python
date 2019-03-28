@@ -25,6 +25,7 @@ Python. It shows how to:
 
 - Download Science Object checksums from CNs and MNs
 - Compare the checksums to audit that replicas are valid
+
 """
 import argparse
 import json
@@ -111,8 +112,7 @@ def main():
 
 
 def make_checksum_validation_script(stats_list):
-    """Make batch files required for checking checksums from another
-    machine."""
+    """Make batch files required for checking checksums from another machine."""
     if not os.path.exists('./hash_check'):
         os.mkdir('./hash_check')
 

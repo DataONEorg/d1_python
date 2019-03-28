@@ -47,15 +47,12 @@ class AsyncDataONEClient:
         max_concurrent_connections=DEFAULT_MAX_CONCURRENT_CONNECTIONS,
         retry_count=DEFAULT_RETRY_COUNT,
     ):
-        """
-        Args:
-            base_url:
-            timeout_sec:
-            cert_pub_path:
-            cert_key_path:
-            disable_server_cert_validation:
-            max_concurrent_connections: Limit on concurrent outgoing connections enforced internally by aiohttp.
-            retry_count:
+        """Args:
+
+        base_url: timeout_sec: cert_pub_path: cert_key_path:
+        disable_server_cert_validation: max_concurrent_connections: Limit on concurrent
+        outgoing connections enforced internally by aiohttp. retry_count:
+
         """
         self._logger = logging.getLogger(__name__)
         self._base_url = base_url
@@ -107,10 +104,13 @@ class AsyncDataONEClient:
         with excessive memory usage that get() with ``stream``=False has.
 
         Also see MNRead.get().
+
         """
         async with self.get(pid, vendor_specific=vendor_specific) as content:
             if create_missing_dirs:
-                d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
+                d1_common.utils.filesystem.create_missing_directories_for_file(
+                    sciobj_path
+                )
             with open(sciobj_path, "wb") as f:
                 for chunk_str in await content.iter_chunks():
                     f.write(chunk_str)
@@ -174,15 +174,13 @@ class AsyncDataONEClient:
         )
 
     async def describe(self, pid, vendor_specific=None):
-        """Get headers describing an object
-        """
+        """Get headers describing an object."""
         return await self._request_head(
             "head", ["object", pid], {}, vendor_specific=vendor_specific
         )
 
     async def synchronize(self, pid, vendor_specific=None):
-        """Send an object synchronization request to the CN
-        """
+        """Send an object synchronization request to the CN."""
         return await self._request_pyxb(
             "post",
             ["synchronize", pid],

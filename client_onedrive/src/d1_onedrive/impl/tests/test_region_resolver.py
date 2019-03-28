@@ -54,14 +54,14 @@ class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
         pass
 
     def test_1010(self):
-        """_merge_region_trees(): Simple"""
+        """_merge_region_trees(): Simple."""
         dst = {}
         src = {}
         self._resolver._merge_region_trees(dst, src, 'testpid')
         assert dst == {}
 
     def test_1020(self):
-        """_merge_region_trees(): Merge simple to empty"""
+        """_merge_region_trees(): Merge simple to empty."""
         dst = {}
         src = {'d1': {}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
         self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -75,7 +75,7 @@ class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
         }
 
     def test_1030(self):
-        """_merge_region_trees(): Merge simple to simple"""
+        """_merge_region_trees(): Merge simple to simple."""
         dst = {'f1': None, 'd1': {'f21': None}}
         src = {'d1': {}, 'd2': {}, 'd3': {'d31': {'d311': {}}, 'd32': {}}}
         self._resolver._merge_region_trees(dst, src, 'testpid')
@@ -91,7 +91,7 @@ class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
         }
 
     def test_1040(self):
-        """_merge_region_trees(): Merge simple to complex"""
+        """_merge_region_trees(): Merge simple to complex."""
         dst = {
             'f1': None,
             'd1': {'d11': {}, 'd12': {'f121': None}},
@@ -115,21 +115,21 @@ class TestRegionResolver(d1_test.d1_test_case.D1TestCase):
         }
 
     def test_1050(self):
-        """_merge_region_trees(): Handle merge conflict 1"""
+        """_merge_region_trees(): Handle merge conflict 1."""
         dst = {'x1': {}}
         src = {'x1': None}
         self._resolver._merge_region_trees(dst, src, 'x')
         assert dst == {'x1': {'x': None}}
 
     def test_1060(self):
-        """_merge_region_trees(): Handle merge conflict 2"""
+        """_merge_region_trees(): Handle merge conflict 2."""
         dst = {'x1': {'x': None}}
         src = {'x1': {'x': {}}}
         self._resolver._merge_region_trees(dst, src, 'x')
         assert dst == {'x1': {'x': {'x': None}}}
 
     def test_1070(self):
-        """_merge_region_trees(): Handle merge conflict 3"""
+        """_merge_region_trees(): Handle merge conflict 3."""
         dst = {}
         self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
         self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')

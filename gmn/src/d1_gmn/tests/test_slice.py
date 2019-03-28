@@ -52,13 +52,14 @@ def _assert_pyxb_objects_are_equivalent(arg_tup):
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSlice')
 class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
-    """Retrieving a filtered result set in many small slices gives the same
-    result as retrieving everything in a single call without slicing.
+    """Retrieving a filtered result set in many small slices gives the same result as
+    retrieving everything in a single call without slicing.
 
     The small slices are retrieved with slight variations in size, so that some
     slices are same size as previous, and some are different.
 
     Slicing is tested through getLogRecords() and listObjects().
+
     """
 
     def _get_api_func(self, client, use_get_log_records):

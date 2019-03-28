@@ -22,6 +22,7 @@
 - Translate System Metadata between XML and PyXB.
 - Translate System Metadata between PyXB and GMN database representations.
 - Query the database for System Metadata properties.
+
 """
 
 import pyxb
@@ -53,6 +54,7 @@ def archive_sciobj(pid):
     - The object with the pid is verified to exist.
     - The object is not a replica.
     - The object is not archived.
+
     """
     sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
     sciobj_model.is_archived = True
@@ -76,8 +78,8 @@ def deserialize(xml_str):
 
 
 def create_or_update(sysmeta_pyxb, sciobj_url=None):
-    """Create or update database representation of a System Metadata object and
-    closely related internal state.
+    """Create or update database representation of a System Metadata object and closely
+    related internal state.
 
     - If ``sciobj_url`` is not passed on create, storage in the internal sciobj
     store is assumed
@@ -90,6 +92,7 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
 
     Preconditions:
     - All values in ``sysmeta_pyxb`` must be valid for the operation being performed
+
     """
     # TODO: Make sure that old sections are removed if not included in update.
 
@@ -280,8 +283,7 @@ def _media_type_model_to_pyxb(sciobj_model):
 
 
 def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
-    """Create or update the database representation of the sysmeta_pyxb access
-    policy.
+    """Create or update the database representation of the sysmeta_pyxb access policy.
 
     If called without an access policy, any existing permissions on the object
     are removed and the access policy for the rights holder is recreated.
@@ -302,6 +304,7 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
         contains a lower action level. The end result is that there is one row for
         each subject, for each object and this row contains the highest action
         level.
+
     """
     _delete_existing_access_policy(sysmeta_pyxb)
     # Add an implicit allow rule with all permissions for the rights holder.

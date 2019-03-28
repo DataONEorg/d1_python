@@ -28,6 +28,7 @@ JWT representations:
 (header_bu64, payload_bu64, signature_bu64)
 - jwt_tup: A complete JWT consisting of a tuple of 3 decoded (raw) parts:
 (header_str, payload_str, signature_str)
+
 """
 
 import base64
@@ -77,6 +78,7 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
       - On successful validation, the subject contained in the JWT is returned.
 
       - If validation fails for any reason, errors are logged and None is returned.
+
     """
     try:
         jwt_dict = validate_and_decode(jwt_bu64, cert_obj)
@@ -89,20 +91,21 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
 
 
 def get_subject_with_remote_validation(jwt_bu64, base_url):
-    """Same as get_subject_with_local_validation() except that the signing
-    certificate is automatically downloaded from the CN.
+    """Same as get_subject_with_local_validation() except that the signing certificate
+    is automatically downloaded from the CN.
 
     - Additional possible validations errors:
 
       - The certificate could not be retrieved from the root CN.
+
     """
     cert_obj = d1_common.cert.x509.download_as_obj(base_url)
     return get_subject_with_local_validation(jwt_bu64, cert_obj)
 
 
 def get_subject_with_file_validation(jwt_bu64, cert_path):
-    """Same as get_subject_with_local_validation() except that the signing
-    certificate is read from a local PEM file."""
+    """Same as get_subject_with_local_validation() except that the signing certificate
+    is read from a local PEM file."""
     cert_obj = d1_common.cert.x509.deserialize_pem_file(cert_path)
     return get_subject_with_local_validation(jwt_bu64, cert_obj)
 
@@ -118,6 +121,7 @@ def get_subject_without_validation(jwt_bu64):
 
     Returns:
       str: The subject contained in the JWT.
+
     """
     try:
         jwt_dict = get_jwt_dict(jwt_bu64)
@@ -138,6 +142,7 @@ def get_bu64_tup(jwt_bu64):
 
     Returns:
       3-tup of Base64: Component sections of the JWT.
+
     """
     return jwt_bu64.strip().split(b'.')
 
@@ -153,6 +158,7 @@ def get_jwt_tup(jwt_bu64):
 
     Returns:
       3-tup of bytes: Raw component sections of the JWT.
+
     """
     return [decode_bu64(v) for v in get_bu64_tup(jwt_bu64)]
 
@@ -169,6 +175,7 @@ def get_jwt_bu64(jwt_tup):
     Returns:
       jwt_bu64: bytes
         JWT, encoded using a a URL safe flavor of Base64.
+
     """
     return b'.'.join([encode_bu64(v) for v in jwt_tup])
 
@@ -186,6 +193,7 @@ def get_jwt_dict(jwt_bu64):
 
     Returns:
       dict: Values embedded in and derived from the JWT.
+
     """
     jwt_tup = get_jwt_tup(jwt_bu64)
     try:
@@ -215,6 +223,7 @@ def validate_and_decode(jwt_bu64, cert_obj):
 
     Returns:
       dict: Values embedded in the JWT.
+
     """
     try:
         return jwt.decode(
@@ -239,6 +248,7 @@ def log_jwt_dict_info(log, msg_str, jwt_dict):
 
     Returns:
       None
+
     """
     d = ts_to_str(jwt_dict)
     # Log known items in specific order, then the rest just sorted
@@ -268,6 +278,7 @@ def log_jwt_bu64_info(log, msg_str, jwt_bu64):
 
     Returns:
       None
+
     """
     return log_jwt_dict_info(log, msg_str, get_jwt_dict(jwt_bu64))
 
@@ -281,6 +292,7 @@ def ts_to_str(jwt_dict):
 
     Returns:
       dict: Copy of input dict where timestamps have been replaced with human readable dates.
+
     """
     d = ts_to_dt(jwt_dict)
     for k, v in list(d.items()):
@@ -298,6 +310,7 @@ def ts_to_dt(jwt_dict):
 
     Returns:
       dict: Copy of input dict where timestamps have been replaced with datetime.datetime() objects.
+
     """
     d = jwt_dict.copy()
     for k, v in [v[:2] for v in CLAIM_LIST if v[2]]:
@@ -317,6 +330,7 @@ def encode_bu64(b):
 
     Returns:
       bytes: URL safe Base64 encoded version of input.
+
     """
     s = base64.standard_b64encode(b)
     s = s.rstrip('=')
@@ -336,6 +350,7 @@ def decode_bu64(b):
 
     Returns:
       bytes: Decoded bytes.
+
     """
     s = b
     s = s.replace(b'-', b'+')

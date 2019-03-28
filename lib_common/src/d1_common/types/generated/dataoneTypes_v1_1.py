@@ -43,8 +43,7 @@ Namespace.configureCategories(['typeBinding', 'elementBinding'])
 
 
 def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
-    """Parse the given XML and use the document element to create a Python
-    instance.
+    """Parse the given XML and use the document element to create a Python instance.
 
     @param xml_text An XML document.  This should be data (Python 2
     str or Python 3 bytes), or a text (Python 2 unicode or Python 3
@@ -59,6 +58,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
     L{pyxb.utils.utility.Location} instances associated with events and
     objects handled by the parser.  You might pass the URI from which
     the document was obtained.
+
     """
 
     if pyxb.XMLStyle_saxer != pyxb._XMLStyle:
@@ -79,10 +79,11 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
 
 
 def CreateFromDOM(node, default_namespace=None):
-    """Create a Python instance from the given DOM node. The node tag must
-    correspond to an element declaration in this module.
+    """Create a Python instance from the given DOM node. The node tag must correspond to
+    an element declaration in this module.
 
     @deprecated: Forcing use of DOM interface is unnecessary; use L{CreateFromDocument}.
+
     """
     if default_namespace is None:
         default_namespace = Namespace.fallbackNamespace()
@@ -93,8 +94,9 @@ def CreateFromDOM(node, default_namespace=None):
 class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
     """Describes a query engine that can be used to search content on the node.
 
-    Query engines may be general purpose or specialized for particular
-    communities or domains.
+    Query engines may be general purpose or specialized for particular communities or
+    domains.
+
     """
 
     _TypeDefinition = None
@@ -680,19 +682,29 @@ def _BuildAutomaton():
     transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_1._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_3, []))
     transitions.append(pyxb.utils.fac.Transition(st_4, []))
     st_2._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_3, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_1, False)])
+    )
     st_3._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_2, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_4, [pyxb.utils.fac.UpdateInstruction(cc_2, True)])
+    )
     st_4._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 
@@ -751,7 +763,9 @@ def _BuildAutomaton_():
     )
     states.append(st_0)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_0, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
     st_0._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, True, containing_state=None)
 
@@ -1004,8 +1018,12 @@ def _BuildAutomaton_2():
     transitions.append(pyxb.utils.fac.Transition(st_2, []))
     st_0._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)]))
-    transitions.append(pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_1, [pyxb.utils.fac.UpdateInstruction(cc_0, True)])
+    )
+    transitions.append(
+        pyxb.utils.fac.Transition(st_2, [pyxb.utils.fac.UpdateInstruction(cc_0, False)])
+    )
     st_1._set_transitionSet(transitions)
     transitions = []
     transitions.append(pyxb.utils.fac.Transition(st_3, []))
@@ -1020,7 +1038,9 @@ def _BuildAutomaton_2():
     transitions.append(pyxb.utils.fac.Transition(st_6, []))
     st_5._set_transitionSet(transitions)
     transitions = []
-    transitions.append(pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, True)]))
+    transitions.append(
+        pyxb.utils.fac.Transition(st_6, [pyxb.utils.fac.UpdateInstruction(cc_1, True)])
+    )
     st_6._set_transitionSet(transitions)
     return pyxb.utils.fac.Automaton(states, counters, False, containing_state=None)
 

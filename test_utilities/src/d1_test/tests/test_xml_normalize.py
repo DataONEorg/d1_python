@@ -28,16 +28,14 @@ class TestXmlNormalize(d1_test.d1_test_case.D1TestCase):
     @pytest.mark.parametrize(
         "xml_testfile",
         [
-          'xml_normalize_1.xml',
-          'xml_normalize_2.xml',
-          'systemMetadata_v2_0.swizzled.xml',
-          'node_list_gmn_valid_swizzled.xml',
+            'xml_normalize_1.xml',
+            'xml_normalize_2.xml',
+            'systemMetadata_v2_0.swizzled.xml',
+            'node_list_gmn_valid_swizzled.xml',
         ],
     )
     def test_1000(self, xml_testfile):
-      xml = self.test_files.load_xml_to_str(xml_testfile)
-      norm_str = d1_test.xml_normalize.get_normalized_xml_representation(xml)
-      # self.sample.gui_sxs_diff(xml, norm_str)
-      self.sample.assert_equals(
-        norm_str, xml_testfile
-      )
+        xml = self.test_files.load_xml_to_str(xml_testfile)
+        norm_str = d1_test.xml_normalize.get_normalized_xml_representation(xml)
+        # self.sample.gui_sxs_diff(xml, norm_str)
+        self.sample.assert_equals(norm_str, xml_testfile)

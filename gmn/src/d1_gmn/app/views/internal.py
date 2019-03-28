@@ -19,8 +19,9 @@
 # limitations under the License.
 """Views for GMN web pages.
 
-Functionality that is not part of the DataONE Member Node API yet is
-designed to be available when the MN is in production.
+Functionality that is not part of the DataONE Member Node API yet is designed to be
+available when the MN is in production.
+
 """
 
 import ctypes
@@ -55,6 +56,7 @@ def home(request):
     """Home page.
 
     Root of web server should redirect to here.
+
     """
     if request.path.endswith('/'):
         return django.http.HttpResponseRedirect(request.path[:-1])
@@ -71,10 +73,9 @@ def home_xslt(request):
 
 
 def error_404(request, exception):
-    """Handle 404s outside of the valid API URL endpoints
-  Note: Cannot raise NotFound() here, as this method is not covered by the GMN
-  middleware handler that catches DataONE exceptions raised by normal views.
-  """
+    """Handle 404s outside of the valid API URL endpoints Note: Cannot raise NotFound()
+    here, as this method is not covered by the GMN middleware handler that catches
+    DataONE exceptions raised by normal views."""
     return django.http.HttpResponseNotFound(
         d1_common.types.exceptions.NotFound(
             0,
@@ -229,8 +230,8 @@ def get_object_count_by_format():
 
 
 def get_obj_store_free_space_bytes():
-    """Return total free space available on the disk on which the object
-    storage resides (in bytes)"""
+    """Return total free space available on the disk on which the object storage resides
+    (in bytes)"""
     obj_store_path = django.conf.settings.OBJECT_STORE_PATH
     if platform.system() == 'Windows':
         free_bytes = ctypes.c_ulonglong(0)

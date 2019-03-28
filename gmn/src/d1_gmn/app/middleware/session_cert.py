@@ -29,6 +29,7 @@ A user can connect with a certificate that does not contain a list of
 equivalent identities and group memberships (no SubjectInfo). This limits the
 user's access to data that is publicly available and that is available directly
 to that user (as designated in the Subject DN).
+
 """
 
 import d1_common.cert.subjects
@@ -43,6 +44,7 @@ def get_subjects(request):
     identities, groups and group memberships)
     - The primary subject is the certificate subject DN, serialized to a DataONE
     compliant subject string.
+
     """
     if _is_certificate_provided(request):
         try:
@@ -57,10 +59,10 @@ def get_subjects(request):
 
 
 def get_authenticated_subjects(cert_pem):
-    """Return primary subject and set of equivalents authenticated by
-    certificate.
+    """Return primary subject and set of equivalents authenticated by certificate.
 
     - ``cert_pem`` can be str or bytes
+
     """
     if isinstance(cert_pem, str):
         cert_pem = cert_pem.encode('utf-8')

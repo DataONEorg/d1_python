@@ -34,6 +34,7 @@ from d1_common.type_conversions import str_to_etree
 
 logger = logging.getLogger(__name__)
 
+
 def deserialize(doc_xml, pyxb_binding=None):
     """Deserialize DataONE XML types to PyXB.
 
@@ -48,6 +49,7 @@ def deserialize(doc_xml, pyxb_binding=None):
 
     See Also:
       ``deserialize_d1_exception()`` for deserializing DataONE Exception types.
+
     """
     pyxb_binding = pyxb_binding or d1_common.types.dataoneTypes
     try:
@@ -67,14 +69,12 @@ def deserialize(doc_xml, pyxb_binding=None):
 
 
 def deserialize_d1_exception(doc_xml):
-    """
-  Args:
-    doc_xml: UTF-8 encoded ``bytes``
-      An XML doc that conforms to the dataoneErrors XML Schema.
+    """Args: doc_xml: UTF-8 encoded ``bytes`` An XML doc that conforms to the
+    dataoneErrors XML Schema.
 
-  Returns:
-    DataONEException object
-  """
+    Returns:   DataONEException object
+
+    """
     return deserialize(doc_xml, pyxb_binding=d1_common.types.dataoneErrors)
 
 
@@ -103,6 +103,7 @@ def serialize_gen(
 
     Returns:
       XML document
+
     """
     assert d1_common.type_conversions.is_pyxb(obj_pyxb)
     assert encoding in (None, 'utf-8', 'UTF-8')
@@ -141,8 +142,8 @@ def serialize_gen(
 
 
 def serialize_for_transport(obj_pyxb, pretty=False, strip_prolog=False, xslt_url=None):
-    """Serialize PyXB object to XML ``bytes`` with UTF-8 encoding for transport
-    over the network, filesystem storage and other machine usage.
+    """Serialize PyXB object to XML ``bytes`` with UTF-8 encoding for transport over the
+    network, filesystem storage and other machine usage.
 
     Args:
       obj_pyxb: PyXB object
@@ -164,6 +165,7 @@ def serialize_for_transport(obj_pyxb, pretty=False, strip_prolog=False, xslt_url
 
     See Also:
       ``serialize_for_display()``
+
     """
     return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog, xslt_url)
 
@@ -189,6 +191,7 @@ def serialize_to_xml_str(obj_pyxb, pretty=True, strip_prolog=False, xslt_url=Non
 
     Returns:
       str: Pretty printed XML document
+
     """
     return serialize_gen(obj_pyxb, None, pretty, strip_prolog, xslt_url)
 
@@ -202,6 +205,7 @@ def reformat_to_pretty_xml(doc_xml):
 
     Returns:
       str: Pretty printed XML doc
+
     """
     assert isinstance(doc_xml, str)
     dom_obj = xml.dom.minidom.parseString(doc_xml)
@@ -211,8 +215,7 @@ def reformat_to_pretty_xml(doc_xml):
 
 
 def are_equivalent_pyxb(a_pyxb, b_pyxb):
-    """Return True if two PyXB objects are semantically equivalent, else
-    False."""
+    """Return True if two PyXB objects are semantically equivalent, else False."""
     return are_equivalent(
         serialize_for_transport(a_pyxb), serialize_for_transport(b_pyxb)
     )
@@ -223,6 +226,7 @@ def are_equivalent(a_xml, b_xml, encoding=None):
 
     - TODO: Include test for tails. Skipped for now because tails are not used
     in any D1 types.
+
     """
     assert isinstance(a_xml, str)
     assert isinstance(b_xml, str)
@@ -234,8 +238,7 @@ def are_equivalent(a_xml, b_xml, encoding=None):
 
 
 def are_equal_or_superset(superset_tree, base_tree):
-    """Return True if ``superset_tree`` is equal to or a superset of
-    ``base_tree``
+    """Return True if ``superset_tree`` is equal to or a superset of ``base_tree``
 
     - Checks that all elements and attributes in ``superset_tree`` are present and
     contain the same values as in ``base_tree``. For elements, also checks that the
@@ -243,6 +246,7 @@ def are_equal_or_superset(superset_tree, base_tree):
     - Can be used for checking if one XML document is based on another, as long as
     all the information in ``base_tree`` is also present and unmodified in
     ``superset_tree``.
+
     """
     try:
         _compare_attr(superset_tree, base_tree)
@@ -333,8 +337,8 @@ def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
 
 
 def are_equal_xml(a_xml, b_xml):
-    """Normalize and compare XML documents for equality. The document may or
-    may not be a DataONE type.
+    """Normalize and compare XML documents for equality. The document may or may not be
+    a DataONE type.
 
     Args:
       a_xml: str
@@ -343,6 +347,7 @@ def are_equal_xml(a_xml, b_xml):
 
     Returns:
       bool: ``True`` if the XML documents are semantically equivalent.
+
     """
     a_dom = xml.dom.minidom.parseString(a_xml)
     b_dom = xml.dom.minidom.parseString(b_xml)
@@ -359,6 +364,7 @@ def are_equal_pyxb(a_pyxb, b_pyxb):
 
     Returns:
       bool: ``True`` if the PyXB objects are semantically equivalent.
+
     """
     return are_equal_xml(a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8'))
 
@@ -373,6 +379,7 @@ def are_equal_elements(a_el, b_el):
 
     Returns:
       bool: ``True`` if the ElementTrees are semantically equivalent.
+
     """
     if a_el.tagName != b_el.tagName:
         return False
@@ -398,21 +405,22 @@ def are_equal_elements(a_el, b_el):
 def sort_value_list_pyxb(obj_pyxb):
     """In-place sort complex value siblings in a PyXB object.
 
-    Args:
-      obj_pyxb: PyXB object
+    Args:   obj_pyxb: PyXB object
+
     """
     obj_pyxb.sort(key=lambda x: x.value())
 
 
 def sort_elements_by_child_values(obj_pyxb, child_name_list):
-    """In-place sort simple or complex elements in a PyXB object by values they
-    contain in child elements.
+    """In-place sort simple or complex elements in a PyXB object by values they contain
+    in child elements.
 
     Args:
       obj_pyxb: PyXB object
 
       child_name_list: list of str
         List of element names that are direct children of the PyXB object.
+
     """
     obj_pyxb.sort(key=lambda x: [get_auto(getattr(x, n)) for n in child_name_list])
 
@@ -426,6 +434,7 @@ def format_diff_pyxb(a_pyxb, b_pyxb):
 
     Returns:
       str : `Differ`-style delta
+
     """
     return '\n'.join(
         difflib.ndiff(
@@ -444,6 +453,7 @@ def format_diff_xml(a_xml, b_xml):
 
     Returns:
       str : `Differ`-style delta
+
     """
     return '\n'.join(
         difflib.ndiff(
@@ -466,6 +476,7 @@ def is_valid_utf8(o):
       - An empty ``bytes`` object is valid UTF-8.
 
       - Any type of object can be checked, not only ``bytes``.
+
     """
     try:
         o.decode('utf-8')
@@ -488,6 +499,7 @@ def get_auto(obj_pyxb):
 
     Returns:
       str : Value of the PyXB object.
+
     """
     try:
         return get_req_val(obj_pyxb)
@@ -513,6 +525,7 @@ def get_opt_attr(obj_pyxb, attr_str, default_val=None):
 
     Returns:
       str : Value of the attribute if present, else ``default_val``.
+
     """
     v = getattr(obj_pyxb, attr_str, default_val)
     return v if v is not None else default_val
@@ -537,6 +550,7 @@ def get_opt_val(obj_pyxb, attr_str, default_val=None):
 
     Returns:
       str : Value of the attribute if present, else ``default_val``.
+
     """
     try:
         return get_req_val(getattr(obj_pyxb, attr_str))
@@ -562,12 +576,12 @@ def get_req_val(obj_pyxb):
 
     Returns:
       str : Value of the element.
+
     """
     return str(obj_pyxb.value())
 
 
 class CompareError(Exception):
-    """Raised when objects are compared and found not to be semantically
-    equivalent."""
+    """Raised when objects are compared and found not to be semantically equivalent."""
 
     pass

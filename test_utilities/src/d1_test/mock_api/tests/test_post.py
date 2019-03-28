@@ -29,7 +29,7 @@ import d1_test.sample
 class TestMockPost(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self):
-        """mock_api.post(): Echoes the request"""
+        """mock_api.post(): Echoes the request."""
         d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         response = requests.post(d1_test.d1_test_case.MOCK_MN_BASE_URL + '/v1/post')
         body_dict = response.json()

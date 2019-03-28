@@ -21,6 +21,7 @@
 """Resolve region.
 
 Resolve a filesystem path pointing into a Region controlled hierarchy.
+
 """
 
 import hashlib
@@ -217,12 +218,12 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return geo_records
 
     def _merge_region_trees(self, dst_tree, src_tree, pid):
-        """Merge conflicts occur if a folder in one tree is a file in the
-        other.
+        """Merge conflicts occur if a folder in one tree is a file in the other.
 
-        As the files are PIDs, this can only happen if a PID matches one
-        of the geographical areas that the dataset covers and should be
-        very rare. In such conflicts, the destination wins.
+        As the files are PIDs, this can only happen if a PID matches one of the
+        geographical areas that the dataset covers and should be very rare. In such
+        conflicts, the destination wins.
+
         """
         for k, v in list(src_tree.items()):
             # Prepend an underscore to the administrative area names, to make them
@@ -237,8 +238,8 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     def _get_region_tree_item_and_unconsumed_path(
         self, region_tree, path, parent_key=''
     ):
-        """Return the region_tree item specified by path. An item can be a a
-        folder (represented by a dictionary) or a PID (represented by None).
+        """Return the region_tree item specified by path. An item can be a a folder
+        (represented by a dictionary) or a PID (represented by None).
 
         This function is also used for determining which section of a path is within
         the region tree and which section should be passed to the next resolver. To
@@ -257,6 +258,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
         - If the path goes to an invalid location within the region tree, an
           "invalid path" PathException is raised.
+
         """
         # Handle valid item within region tree.
         if not path:

@@ -39,7 +39,7 @@ class TestMockSolrSearch(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1010(self, cn_client_v1_v2):
-        """mock_api.search(): Passing a trigger header triggers a DataONEException"""
+        """mock_api.search(): Passing a trigger header triggers a DataONEException."""
         d1_test.mock_api.solr_search.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.ServiceFailure):
             cn_client_v1_v2.search(

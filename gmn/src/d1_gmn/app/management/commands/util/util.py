@@ -44,8 +44,9 @@ single_instance_lock_file = None
 def log_setup(debug_bool):
     """Set up logging.
 
-    We output only to stdout. Instead of also writing to a log file,
-    redirect stdout to a log file when the script is executed from cron.
+    We output only to stdout. Instead of also writing to a log file, redirect stdout to
+    a log file when the script is executed from cron.
+
     """
 
     level = logging.DEBUG if debug_bool else logging.INFO
@@ -128,11 +129,11 @@ class Db(object):
     def connect(self, dsn):
         """Connect to DB.
 
-        dbname: the database name
-        user: user name used to authenticate
-        password: password used to authenticate
-        host: database host address (defaults to UNIX socket if not provided)
-        port: connection port number (defaults to 5432 if not provided)
+        dbname: the database name user: user name used to authenticate password:
+        password used to authenticate host: database host address (defaults to UNIX
+        socket if not provided) port: connection port number (defaults to 5432 if not
+        provided)
+
         """
         self.con = psycopg2.connect(dsn)
         self.cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)

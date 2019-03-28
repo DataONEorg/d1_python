@@ -26,6 +26,7 @@ try:
   d1_scimeta.xml_schema.validate(format_id, xml_str)
 except d1_scimeta.xml_schema.SciMetaValidationError as e:
   ...
+
 """
 import inspect
 import io
@@ -35,11 +36,11 @@ import os
 import pprint
 import re
 
-import d1_common.utils.filesystem
 import lxml
 import lxml.etree
 
 import d1_common.util
+import d1_common.utils.filesystem
 
 NS_MAP = {
     # None : 'http://www.w3.org/2001/XMLSchema',
@@ -111,6 +112,7 @@ class Validate(object):
         formatType of METADATA)
         - And the XML Schema (XSD) files required for validating the object is
         installed in this validator's local schema store.
+
         """
         try:
             self.get_schema_root_path('/', format_id)
@@ -139,7 +141,9 @@ class Validate(object):
         return self.normalize_path(schema_store_root_path, schema_root_path)
 
     def load_format_id_to_schema_root_dict(self, format_id_json_path):
-        abs_format_id_json_path = d1_common.utils.filesystem.abs_path(format_id_json_path)
+        abs_format_id_json_path = d1_common.utils.filesystem.abs_path(
+            format_id_json_path
+        )
         with open(abs_format_id_json_path, 'r') as f:
             return json.load(f)
 
@@ -217,7 +221,8 @@ class Validate(object):
         if os.path.isfile(base_path):
             base_path = os.path.split(base_path)[0]
         res = os.path.realpath(
-            d1_common.utils.filesystem.abs_path_from_base(base_path, rel_path))
+            d1_common.utils.filesystem.abs_path_from_base(base_path, rel_path)
+        )
         if os.path.exists(res):
             return res
 

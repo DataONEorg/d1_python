@@ -33,6 +33,7 @@ Django automatically creates:
   - Index on primary key
   - Index on ForeignKey
   - Index on unique=True
+
 """
 
 import d1_gmn.app.did
@@ -231,9 +232,9 @@ def update_replica_status(replica_info_model, status_str, timestamp=None):
 class LocalReplica(django.db.models.Model):
     """Keep track of replication requests and locally stored replicas.
 
-    Relate directly to IdNamespace because tracking of local replicas
-    starts before there is a local object (when the replica is first
-    requested by the CN)
+    Relate directly to IdNamespace because tracking of local replicas starts before
+    there is a local object (when the replica is first requested by the CN)
+
     """
 
     pid = django.db.models.OneToOneField(

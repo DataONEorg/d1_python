@@ -64,6 +64,7 @@ Example
     print "User agent = %s" % event.userAgent
     print "Subject  = %s" % event.subject
     print '-' * 79
+
 """
 
 import d1_common.const
@@ -120,6 +121,7 @@ class LogRecordIterator(object):
 
             Depending on network conditions and Node implementation, changing this value
             from its default may affect performance and resource usage.
+
         """
         self._get_log_records_arg_dict = get_log_records_arg_dict or {}
         self._client = client

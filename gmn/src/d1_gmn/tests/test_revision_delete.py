@@ -19,9 +19,9 @@
 # limitations under the License.
 """Test MNStorage.delete() for objects in revision chains.
 
-When an object in a revision chains is deleted, GMN repairs the chain by
-connecting any objects on either side of the deleted object with each
-other
+When an object in a revision chains is deleted, GMN repairs the chain by connecting any
+objects on either side of the deleted object with each other
+
 """
 
 import pytest
@@ -56,7 +56,7 @@ class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """MNStorage.delete(): Deleted flag correctly set and represented"""
+        """MNStorage.delete(): Deleted flag correctly set and represented."""
         sid, pid_chain_list = self.create_revision_chain(gmn_client_v1_v2, chain_len=5)
         self.assert_valid_chain(gmn_client_v1_v2, pid_chain_list, sid)
         # Delete head

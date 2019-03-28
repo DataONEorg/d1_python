@@ -20,10 +20,11 @@
 # limitations under the License.
 import copy
 
+import pytest
+
 import d1_common.util
 
 import d1_test.d1_test_case
-import pytest
 
 
 @pytest.fixture(
@@ -67,7 +68,7 @@ def dict_config_fixture(request):
 
 class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
     def test_1010(self, dict_config_fixture):
-        """nested_update(): Update existing values"""
+        """nested_update(): Update existing values."""
         # dict_config_fixture = copy.deepcopy(TEST_DICT)
 
         d1_common.util.nested_update(
@@ -82,7 +83,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(dict_config_fixture, "nested_update_existing")
 
     def test_1020(self, dict_config_fixture):
-        """nested_update(): Add new keys in existing tree"""
+        """nested_update(): Add new keys in existing tree."""
         d1_common.util.nested_update(
             dict_config_fixture,
             {
@@ -107,7 +108,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(dict_config_fixture, "nested_update_new")
 
     def test_1030(self, dict_config_fixture):
-        """nested_update(): Combined"""
+        """nested_update(): Combined."""
         d1_common.util.nested_update(
             dict_config_fixture,
             {

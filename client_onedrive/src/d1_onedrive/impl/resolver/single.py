@@ -21,6 +21,7 @@
 """Resolve single.
 
 This resolver simply renders all objects into a single folder.
+
 """
 
 import logging

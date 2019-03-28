@@ -32,9 +32,8 @@ import d1_test.d1_test_case
 class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """MNStorage.generateIdentifier(): Returns a valid identifier that
-    matches scheme and fragment
-    """
+        """MNStorage.generateIdentifier(): Returns a valid identifier that matches
+        scheme and fragment."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             fragment = 'test_fragment_volatile_'
             identifier_pyxb = gmn_client_v1_v2.generateIdentifier('UUID', fragment)
@@ -42,9 +41,8 @@ class TestGenerateIdentifier(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """MNStorage.generateIdentifier(): Returns a different, valid identifier
-    when called second time
-    """
+        """MNStorage.generateIdentifier(): Returns a different, valid identifier when
+        called second time."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             fragment = 'test_fragment_volatile_'
             identifier_pyxb = gmn_client_v1_v2.generateIdentifier('UUID', fragment)

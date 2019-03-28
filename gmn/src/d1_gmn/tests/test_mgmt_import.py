@@ -38,9 +38,15 @@ import d1_test.mock_api.list_objects
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, caplog):
-        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-        d1_test.mock_api.get_log_records.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-        d1_test.mock_api.get_system_metadata.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(
+            d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+        )
+        d1_test.mock_api.get_log_records.add_callback(
+            d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+        )
+        d1_test.mock_api.get_system_metadata.add_callback(
+            d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+        )
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.call_management_command(

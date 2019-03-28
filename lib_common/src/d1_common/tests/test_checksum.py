@@ -41,10 +41,12 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
     }
 
     def test_1000(self, filename, raises_pyxb_exc):
-        """Deserialize: XML -> Checksum"""
+        """Deserialize: XML -> Checksum."""
         exp_dict = self.test_files.load_json(filename)
         try:
-            checksum_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(exp_dict['xml'])
+            checksum_pyxb = d1_common.types.dataoneTypes.CreateFromDocument(
+                exp_dict['xml']
+            )
         except (pyxb.PyXBException, xml.sax.SAXParseException):
             if not raises_pyxb_exc:
                 raise
@@ -53,7 +55,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
             assert checksum_pyxb.value() == exp_dict['checksum']
 
     def test_1010(self):
-        """Serialization: Checksum -> XML -> Checksum"""
+        """Serialization: Checksum -> XML -> Checksum."""
         checksum_obj_in = d1_common.types.dataoneTypes.checksum('1' * 32)
         checksum_obj_in.algorithm = 'MD5'
         checksum_xml = checksum_obj_in.toxml('utf-8')
@@ -62,7 +64,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
         assert checksum_obj_in.algorithm == checksum_obj_out.algorithm
 
     def test_1020(self):
-        """checksums_are_equal(): Same checksum, same algorithm"""
+        """checksums_are_equal(): Same checksum, same algorithm."""
         c1 = d1_common.types.dataoneTypes.Checksum('BAADF00D')
         c1.algorithm = 'SHA-1'
         c2 = d1_common.types.dataoneTypes.Checksum('BAADF00D')
@@ -70,7 +72,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
         assert d1_common.checksum.are_checksums_equal(c1, c2)
 
     def test_1030(self):
-        """checksums_are_equal(): Same checksum, different algorithm"""
+        """checksums_are_equal(): Same checksum, different algorithm."""
         c1 = d1_common.types.dataoneTypes.Checksum('BAADF00D')
         c1.algorithm = 'SHA-1'
         c2 = d1_common.types.dataoneTypes.Checksum('BAADF00D')
@@ -79,7 +81,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
             d1_common.checksum.are_checksums_equal(c1, c2)
 
     def test_1040(self):
-        """checksums_are_equal(): Different checksum, same algorithm"""
+        """checksums_are_equal(): Different checksum, same algorithm."""
         c1 = d1_common.types.dataoneTypes.Checksum('BAADF00DX')
         c1.algorithm = 'MD5'
         c2 = d1_common.types.dataoneTypes.Checksum('BAADF00D')
@@ -87,7 +89,7 @@ class TestChecksum(d1_test.d1_test_case.D1TestCase):
         assert not d1_common.checksum.are_checksums_equal(c1, c2)
 
     def test_1050(self):
-        """checksums_are_equal(): Case insensitive checksum comparison"""
+        """checksums_are_equal(): Case insensitive checksum comparison."""
         c1 = d1_common.types.dataoneTypes.Checksum('baadf00d')
         c1.algorithm = 'MD5'
         c2 = d1_common.types.dataoneTypes.Checksum('BAADF00D')

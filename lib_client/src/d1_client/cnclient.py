@@ -27,12 +27,13 @@ import d1_client.baseclient
 
 
 class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
-    """Extend DataONEBaseClient by adding REST API wrappers for APIs that are
-    available on Coordinating Nodes.
+    """Extend DataONEBaseClient by adding REST API wrappers for APIs that are available
+    on Coordinating Nodes.
 
     For details on how to use these methods, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -67,6 +68,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET('formats', headers=vendorSpecific)
 
@@ -77,6 +79,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.listFormatsResponse(vendorSpecific)
         return self._read_dataone_type_response(response, 'ObjectFormatList')
@@ -91,6 +94,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET(['formats', formatId], headers=vendorSpecific)
 
@@ -102,15 +106,16 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.getFormatResponse(formatId, vendorSpecific)
         return self._read_dataone_type_response(response, 'ObjectFormat')
 
     def reserveIdentifierResponse(self, pid, vendorSpecific=None):
-        """CNCore.getLogRecords(session[, fromDate][, toDate][, event][,
-        start][, count]) → Log https://releases.dataone.org/online/api-
-        documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords Implemented
-        in d1_client.baseclient.py.
+        """CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][,
+        count]) → Log https://releases.dataone.org/online/api-
+        documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords Implemented in
+        d1_client.baseclient.py.
 
         CNCore.reserveIdentifier(session, pid) → Identifier
         https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.reserveIdentifier
@@ -120,6 +125,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'pid': pid}
         return self.POST(['reserve', pid], fields=mmp_dict, headers=vendorSpecific)
@@ -132,6 +138,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.reserveIdentifierResponse(pid, vendorSpecific)
         return self._read_dataone_type_response(response, 'Identifier', vendorSpecific)
@@ -145,6 +152,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET('checksum', headers=vendorSpecific)
 
@@ -155,6 +163,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.listChecksumAlgorithmsResponse(vendorSpecific)
         return self._read_dataone_type_response(response, 'ChecksumAlgorithmList')
@@ -162,8 +171,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def setObsoletedByResponse(
         self, pid, obsoletedByPid, serialVersion, vendorSpecific=None
     ):
-        """CNCore.setObsoletedBy(session, pid, obsoletedByPid, serialVersion) →
-        boolean https://releases.dataone.org/online/api-
+        """CNCore.setObsoletedBy(session, pid, obsoletedByPid, serialVersion) → boolean
+        https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNCore.setObsoletedBy.
 
         Args:
@@ -173,6 +182,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'obsoletedByPid': obsoletedByPid,
@@ -190,6 +200,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.setObsoletedByResponse(
             pid, obsoletedByPid, serialVersion, vendorSpecific
@@ -197,14 +208,14 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         return self._read_boolean_response(response)
 
     def listNodesResponse(self, vendorSpecific=None):
-        """CNCore.listNodes() → NodeList
-        https://releases.dataone.org/online/api-
+        """CNCore.listNodes() → NodeList https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNCore.listNodes.
 
         Args:
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET('node', headers=vendorSpecific)
 
@@ -215,6 +226,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.listNodesResponse(vendorSpecific)
         return self._read_dataone_type_response(response, 'NodeList')
@@ -232,6 +244,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET(['reserve', pid, subject], headers=vendorSpecific)
 
@@ -244,6 +257,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.hasReservationResponse(pid, subject, vendorSpecific)
         return self._read_boolean_404_response(response)
@@ -267,6 +281,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET(['resolve', pid], headers=vendorSpecific)
 
@@ -278,6 +293,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.resolveResponse(pid, vendorSpecific)
         return self._read_dataone_type_response(
@@ -294,6 +310,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET(['checksum', pid], headers=vendorSpecific)
 
@@ -305,6 +322,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.getChecksumResponse(pid, vendorSpecific)
         return self._read_dataone_type_response(response, 'Checksum')
@@ -321,6 +339,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         return self.GET(
             ['search', queryType, query], headers=vendorSpecific, query=kwargs
@@ -336,6 +355,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         response = self.searchResponse(queryType, query, vendorSpecific, **kwargs)
         return self._read_dataone_type_response(response, 'ObjectList')
@@ -352,6 +372,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         return self.GET(
             ['query', queryEngine, query], headers=vendorSpecific, query=kwargs
@@ -367,6 +388,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         response = self.queryResponse(queryEngine, query, vendorSpecific, **kwargs)
         return self._read_stream_response(response)
@@ -384,6 +406,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         return self.GET(['query', queryEngine], headers=vendorSpecific, query=kwargs)
 
@@ -396,6 +419,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           **kwargs:
 
         Returns:
+
         """
         response = self.getQueryEngineDescriptionResponse(
             queryEngine, vendorSpecific, **kwargs
@@ -419,6 +443,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'userId': userId, 'serialVersion': str(serialVersion)}
         return self.PUT(['owner', pid], headers=vendorSpecific, fields=mmp_dict)
@@ -433,6 +458,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.setRightsHolderResponse(
             pid, userId, serialVersion, vendorSpecific
@@ -442,8 +468,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def setAccessPolicyResponse(
         self, pid, accessPolicy, serialVersion, vendorSpecific=None
     ):
-        """CNAuthorization.setAccessPolicy(session, pid, accessPolicy,
-        serialVersion) → boolean https://releases.dataone.org/online/api-
+        """CNAuthorization.setAccessPolicy(session, pid, accessPolicy, serialVersion) →
+        boolean https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNAuthorization.setAccessPolicy.
 
         Args:
@@ -453,6 +479,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'serialVersion': str(serialVersion),
@@ -470,6 +497,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.setAccessPolicyResponse(
             pid, accessPolicy, serialVersion, vendorSpecific
@@ -490,6 +518,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'person': ('person.xml', person.toxml('utf-8'))}
         return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
@@ -502,6 +531,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.registerAccountResponse(person, vendorSpecific)
         return self._read_boolean_response(response)
@@ -517,6 +547,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'person': ('person.xml', person.toxml('utf-8'))}
         return self.PUT(['accounts', subject], fields=mmp_dict, headers=vendorSpecific)
@@ -530,6 +561,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.updateAccountResponse(subject, person, vendorSpecific)
         return self._read_boolean_response(response)
@@ -544,6 +576,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.PUT(['accounts', subject], headers=vendorSpecific)
 
@@ -555,6 +588,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.verifyAccountResponse(subject, vendorSpecific)
         return self._read_boolean_response(response)
@@ -569,6 +603,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.GET(['accounts', subject], headers=vendorSpecific)
 
@@ -580,6 +615,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.getSubjectInfoResponse(subject, vendorSpecific)
         return self._read_dataone_type_response(response, 'SubjectInfo')
@@ -587,8 +623,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def listSubjectsResponse(
         self, query, status=None, start=None, count=None, vendorSpecific=None
     ):
-        """CNIdentity.listSubjects(session, query, status, start, count) →
-        SubjectList https://releases.dataone.org/online/api-
+        """CNIdentity.listSubjects(session, query, status, start, count) → SubjectList
+        https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNIdentity.listSubjects.
 
         Args:
@@ -599,6 +635,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         url_query = {'status': status, 'start': start, 'count': count, 'query': query}
         return self.GET('accounts', query=url_query, headers=vendorSpecific)
@@ -616,6 +653,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.listSubjectsResponse(
             query, status, start, count, vendorSpecific
@@ -635,6 +673,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'primarySubject': primarySubject.toxml('utf-8'),
@@ -651,6 +690,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.mapIdentityResponse(
             primarySubject, secondarySubject, vendorSpecific
@@ -667,6 +707,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.DELETE(['accounts', 'map', subject], headers=vendorSpecific)
 
@@ -678,6 +719,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.removeMapIdentityResponse(subject, vendorSpecific)
         return self._read_boolean_response(response)
@@ -692,6 +734,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.DELETE(['accounts', 'pendingmap', subject], headers=vendorSpecific)
 
@@ -703,6 +746,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.denyMapIdentityResponse(subject, vendorSpecific)
         return self._read_boolean_response(response)
@@ -717,6 +761,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'subject': subject.toxml('utf-8')}
         return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
@@ -729,6 +774,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.requestMapIdentityResponse(subject, vendorSpecific)
         return self._read_boolean_response(response)
@@ -743,6 +789,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         return self.PUT(['accounts', 'pendingmap', subject], headers=vendorSpecific)
 
@@ -754,6 +801,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.confirmMapIdentityResponse(subject, vendorSpecific)
         return self._read_boolean_response(response)
@@ -768,6 +816,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'group': ('group.xml', group.toxml('utf-8'))}
         return self.POST('groups', fields=mmp_dict, headers=vendorSpecific)
@@ -780,6 +829,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.createGroupResponse(group, vendorSpecific)
         return self._read_boolean_response(response)
@@ -794,6 +844,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'group': ('group.xml', group.toxml('utf-8'))}
         return self.PUT('groups', fields=mmp_dict, headers=vendorSpecific)
@@ -806,6 +857,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.updateGroupResponse(group, vendorSpecific)
         return self._read_boolean_response(response)
@@ -817,8 +869,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def setReplicationStatusResponse(
         self, pid, nodeRef, status, dataoneError=None, vendorSpecific=None
     ):
-        """CNReplication.setReplicationStatus(session, pid, nodeRef, status,
-        failure) → boolean https://releases.dataone.org/online/api-documentatio
+        """CNReplication.setReplicationStatus(session, pid, nodeRef, status, failure) →
+        boolean https://releases.dataone.org/online/api-documentatio
         n-v2.0.1/apis/CN_APIs.html#CNReplication.setReplicationStatus.
 
         Args:
@@ -829,6 +881,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'nodeRef': nodeRef, 'status': status}  # .toxml('utf-8'),
         if dataoneError is not None:
@@ -850,6 +903,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.setReplicationStatusResponse(
             pid, nodeRef, status, dataoneError, vendorSpecific
@@ -859,10 +913,10 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def updateReplicationMetadataResponse(
         self, pid, replicaMetadata, serialVersion, vendorSpecific=None
     ):
-        """CNReplication.updateReplicationMetadata(session, pid,
-        replicaMetadata, serialVersion) → boolean
-        https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_AP
-        Is.html#CNReplication.updateReplicationMetadata Not implemented.
+        """CNReplication.updateReplicationMetadata(session, pid, replicaMetadata,
+        serialVersion) → boolean https://releases.dataone.org/online/api-
+        documentation-v2.0.1/apis/CN_AP Is.html#CNReplication.updateReplicationMetadata
+        Not implemented.
 
         Args:
           pid:
@@ -871,6 +925,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'replicaMetadata': ('replicaMetadata.xml', replicaMetadata.toxml('utf-8')),
@@ -892,6 +947,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.updateReplicationMetadataResponse(
             pid, replicaMetadata, serialVersion, vendorSpecific
@@ -901,8 +957,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def setReplicationPolicyResponse(
         self, pid, policy, serialVersion, vendorSpecific=None
     ):
-        """CNReplication.setReplicationPolicy(session, pid, policy,
-        serialVersion) → boolean https://releases.dataone.org/online/api-docume
+        """CNReplication.setReplicationPolicy(session, pid, policy, serialVersion) →
+        boolean https://releases.dataone.org/online/api-docume
         ntation-v2.0.1/apis/CN_APIs.html#CNReplication.setReplicationPolicy.
 
         Args:
@@ -912,6 +968,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'policy': ('policy.xml', policy.toxml('utf-8')),
@@ -931,6 +988,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.setReplicationPolicyResponse(
             pid, policy, serialVersion, vendorSpecific
@@ -941,8 +999,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
     def isNodeAuthorizedResponse(self, targetNodeSubject, pid, vendorSpecific=None):
         """CNReplication.isNodeAuthorized(session, targetNodeSubject, pid,
-        replicatePermission) → boolean()
-        https://releases.dataone.org/online/api-
+        replicatePermission) → boolean() https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNReplication.isNodeAuthorized.
 
         Args:
@@ -951,6 +1008,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         query_dict = {'targetNodeSubject': targetNodeSubject}
         return self.GET(
@@ -966,6 +1024,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.isNodeAuthorizedResponse(targetNodeSubject, pid, vendorSpecific)
         return self._read_boolean_401_response(response)
@@ -973,10 +1032,9 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
     def deleteReplicationMetadataResponse(
         self, pid, nodeId, serialVersion, vendorSpecific=None
     ):
-        """CNReplication.deleteReplicationMetadata(session, pid, policy,
-        serialVersion) → boolean https://releases.dataone.org/online/api-docume
-        ntation-v2.0.1/apis/CN_APIs.html#CNReplication.deleteReplicationMetadat
-        a.
+        """CNReplication.deleteReplicationMetadata(session, pid, policy, serialVersion)
+        → boolean https://releases.dataone.org/online/api-docume
+        ntation-v2.0.1/apis/CN_APIs.html#CNReplication.deleteReplicationMetadat a.
 
         Args:
           pid:
@@ -985,6 +1043,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'nodeId': nodeId, 'serialVersion': str(serialVersion)}
         return self.PUT(
@@ -1003,6 +1062,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.deleteReplicationMetadataResponse(
             pid, nodeId, serialVersion, vendorSpecific
@@ -1024,6 +1084,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'node': ('node.xml', node.toxml('utf-8'))}
         return self.PUT(['node', nodeId], fields=mmp_dict, headers=vendorSpecific)
@@ -1037,6 +1098,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.updateNodeCapabilitiesResponse(nodeId, node, vendorSpecific)
         return self._read_boolean_response(response)
@@ -1051,6 +1113,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {'node': ('node.xml', node.toxml('utf-8'))}
         return self.POST('node', fields=mmp_dict, headers=vendorSpecific)
@@ -1063,6 +1126,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
           vendorSpecific:
 
         Returns:
+
         """
         response = self.registerResponse(node, vendorSpecific)
         return self._read_boolean_response(response)

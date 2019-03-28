@@ -34,6 +34,7 @@ def generate_sid(prefix_str='SID_', probability=1.0):
     """Generate a SID ``probability``*100 percent of the time.
 
     Else return None.
+
     """
     if random.random() <= probability:
         return generate_bare(prefix_str, min_len=12, max_len=12)
@@ -47,8 +48,8 @@ def generate(prefix_str='DID_', min_len=5, max_len=20):
 
 
 def generate_bare(prefix_str='DID_', min_len=5, max_len=20):
-    """Generate bare Identifier holding a random Unicode string min and max
-    length does not include the length of the prefix."""
+    """Generate bare Identifier holding a random Unicode string min and max length does
+    not include the length of the prefix."""
     return prefix_str + d1_test.instance_generator.random_data.random_lower_ascii(
         min_len, max_len
     )

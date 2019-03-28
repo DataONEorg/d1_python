@@ -49,5 +49,6 @@ class BytesIterator(object):
         """Returns:
 
         int: The total number of bytes that will be returned by the iterator.
+
         """
         return len(self._bytes)

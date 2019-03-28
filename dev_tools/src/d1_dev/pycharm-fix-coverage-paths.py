@@ -18,10 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""PyCharm can't resolve the relative paths written by pytest's coverage
-plugin.
+"""PyCharm can't resolve the relative paths written by pytest's coverage plugin.
 
 This converts them to absolute, which PyCharm handles.
+
 """
 
 import os

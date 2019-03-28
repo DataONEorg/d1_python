@@ -23,6 +23,7 @@ This is an example on how to use the DataONE Client and Common libraries for
 Python. It shows how to:
 
 - Extract formatIds from a DataONE ObjectFormatList using XPath
+
 """
 import argparse
 import sys

@@ -38,12 +38,11 @@ logger = logging.getLogger(__name__)
 # This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember
 def coerce_put_post(request):
-    """Django doesn't particularly understand REST. In case we send data over
-    PUT, Django won't actually look at the data and load it. We need to twist
-    its arm here.
+    """Django doesn't particularly understand REST. In case we send data over PUT,
+    Django won't actually look at the data and load it. We need to twist its arm here.
 
-    The try/except abomination here is due to a bug in mod_python. This
-    should fix it.
+    The try/except abomination here is due to a bug in mod_python. This should fix it.
+
     """
     if request.method == "PUT":
         # Bug fix: if _load_post_and_files has already been called, for example by

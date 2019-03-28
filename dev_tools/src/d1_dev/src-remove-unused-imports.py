@@ -25,18 +25,22 @@ import logging
 import os
 import sys
 
+import git
+
 import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
-import git
 
 logger = logging.getLogger(__name__)
 
+
 def main():
-    """Remove unused imports
-    Unsafe! Only tested on our codebase, which uses simple absolute imports on the form,
-    "import a.b.c".
+    """Remove unused imports Unsafe!
+
+    Only tested on our codebase, which uses simple absolute imports on the form, "import
+    a.b.c".
+
     """
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -176,8 +180,11 @@ def get_import_list(r):
 
 
 def get_atomtrailer_list(r):
-    """Capture only the leading dotted name list. A full sequence typically includes
-    function calls and parameters. pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+    """Capture only the leading dotted name list.
+
+    A full sequence typically includes function calls and parameters.
+    pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+
     """
     dot_set = set()
     for n in r.find_all(("atomtrailers",)):

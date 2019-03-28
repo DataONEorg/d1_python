@@ -159,8 +159,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         assert d1_exception.traceInformation == TRACE_SECTION.strip()
 
     def test_1040(self):
-        """deserialize, serialize, deserialize round trip of valid error XML
-        doc."""
+        """deserialize, serialize, deserialize round trip of valid error XML doc."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
         sxml = x1.serialize_to_display()
         x2 = exceptions.deserialize(sxml)
@@ -222,8 +221,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         self.sample.assert_equals(e.serialize_to_display(), 'create_with_detail_code')
 
     def test_1100(self):
-        """create with string detailCode and description, then
-        serialize_to_display()"""
+        """create with string detailCode and description, then serialize_to_display()"""
         e = exceptions.ServiceFailure('123.456.789', 'test description')
         self.sample.assert_equals(e.serialize_to_display(), 'create_with_description')
 
@@ -283,6 +281,7 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         2) Serialize the object to XML
         3) Deserialize XML to object
         4) Verify that the object contains the same information as in (1)
+
         """
         # Create a native DataONE IdentifierNotUnique Exception object.
         exc = exceptions.IdentifierNotUnique(

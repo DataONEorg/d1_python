@@ -34,7 +34,9 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """Object List iteration."""
-        d1_test.mock_api.list_objects.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        d1_test.mock_api.list_objects.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
 
         api_major = d1_client.d1client.get_version_tag_by_d1_client(mn_client_v1_v2)
 

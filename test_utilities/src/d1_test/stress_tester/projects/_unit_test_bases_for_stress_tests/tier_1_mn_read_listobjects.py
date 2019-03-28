@@ -89,8 +89,9 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     def test_030_get_slices(self):
         """Get test object slices.
 
-        3 slices are needed, each with 5 objects. They are picked from
-        the beginning, center and end of the available range.
+        3 slices are needed, each with 5 objects. They are picked from the beginning,
+        center and end of the available range.
+
         """
         client = test_client.TestClient(context.node['baseurl'])
         for start in (0, context.object_total / 2, context.object_total - 5):
@@ -114,8 +115,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
             )
 
     def test_050_invalid_request_invalid_count(self):
-        """count parameter higher than DEFAULT_SLICE_SIZE returns
-        InvalidRequest."""
+        """count parameter higher than DEFAULT_SLICE_SIZE returns InvalidRequest."""
         client = test_client.TestClient(context.node['baseurl'])
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             client.listObjects(
@@ -129,8 +129,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
             client.listObjects(context.TOKEN, count=-1)
 
     def test_070_date_range_1(self):
-        """fromDate and toDate parameters are accepted separately and limit the
-        number of returned objects."""
+        """fromDate and toDate parameters are accepted separately and limit the number
+        of returned objects."""
         # Find two unique datetimes.
         dates = []
         for object_list in context.slices:
@@ -156,8 +156,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         assert object_list.count < context.object_total
 
     def test_075_date_range_2(self):
-        """fromDate and toDate correctly split the number of returned
-        objects."""
+        """fromDate and toDate correctly split the number of returned objects."""
         # Find middle timestamp.
         dates = []
         for object_list in context.slices:
@@ -176,8 +175,8 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         assert low + high == context.object_total
 
     def test_080_date_range_3(self):
-        """fromDate and toDate parameters are accepted together and limit the
-        number of returned objects."""
+        """fromDate and toDate parameters are accepted together and limit the number of
+        returned objects."""
         # Find two unique datetimes.
         dates = []
         for object_list in context.slices:

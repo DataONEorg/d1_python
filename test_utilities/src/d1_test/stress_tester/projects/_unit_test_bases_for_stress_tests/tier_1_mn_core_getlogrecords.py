@@ -58,10 +58,10 @@ class Test040GetLogRecords(d1_test_case.D1TestCase):
 
     @d1_test_case.skip('TODO')
     def xevent_log_contains_create_events(self):
-        """Event log contains create events for all objects that are currently
-        known.
+        """Event log contains create events for all objects that are currently known.
 
         Timestamp slicing includes the correct object.
+
         """
         dates = []
         for object_list in context.slices:

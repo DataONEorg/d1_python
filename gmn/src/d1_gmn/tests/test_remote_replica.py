@@ -29,6 +29,7 @@
 </replica>
 
 [...]
+
 """
 
 import responses
@@ -90,6 +91,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         - Two different PIDs can hold different replica info for the same replica
         nodes
+
         """
         # Create obj with replica info for node1 and node2 on pid_1
         sysmeta_1_pyxb = d1_test.test_files.load_xml_to_pyxb(

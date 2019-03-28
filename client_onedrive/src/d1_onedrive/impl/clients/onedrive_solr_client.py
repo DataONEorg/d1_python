@@ -76,8 +76,8 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
                 )
 
     def _close_open_date_ranges(self, record):
-        """If a date range is missing the start or end date, close it by
-        copying the date from the existing value."""
+        """If a date range is missing the start or end date, close it by copying the
+        date from the existing value."""
         date_ranges = (('beginDate', 'endDate'),)
         for begin, end in date_ranges:
             if begin in record and end in record:

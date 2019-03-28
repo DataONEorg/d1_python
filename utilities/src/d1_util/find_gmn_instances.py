@@ -30,6 +30,7 @@ Python. It shows how to:
 Operation:
 
 - Configure the script in the Config section below
+
 """
 import argparse
 import json
@@ -180,6 +181,7 @@ def get_gmn_version(base_url):
     """Return the version currently running on a GMN instance.
 
     (is_gmn, version_or_error)
+
     """
     home_url = d1_common.url.joinPathElements(base_url, 'home')
     try:

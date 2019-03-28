@@ -29,7 +29,9 @@ import d1_test.instance_generator.system_metadata
 class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
     def test_1000(self, cn_client_v1_v2):
         """generate()"""
-        sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_random(cn_client_v1_v2)
+        sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_random(
+            cn_client_v1_v2
+        )
         self.sample.assert_equals(sysmeta_pyxb, 'inst_gen_generate', cn_client_v1_v2)
 
     def test_1010(self, cn_client_v1_v2):
@@ -37,7 +39,9 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
         sysmeta_path = self.test_files.get_abs_test_file_path(
             'xml/systemMetadata_v2_0.xml'
         )
-        sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file_path(cn_client_v1_v2, sysmeta_path)
+        sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file_path(
+            cn_client_v1_v2, sysmeta_path
+        )
         self.sample.assert_equals(
             sysmeta_pyxb, 'inst_gen_generate_from_file_path', cn_client_v1_v2
         )

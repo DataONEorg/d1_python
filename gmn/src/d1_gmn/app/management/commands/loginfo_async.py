@@ -20,6 +20,7 @@
 """Async ObjectList Iterator.
 
 Fast retrieval of logEntry from a DataONE Node.
+
 """
 import asyncio
 import logging
@@ -50,7 +51,9 @@ class EventLogIteratorAsync:
         self._logger.debug("Event count: {}".format(event_count))
 
         page_count = (event_count - 1) // self._page_size + 1
-        self._logger.debug("Page count: {} at {} events per page".format(page_count, self._page_size))
+        self._logger.debug(
+            "Page count: {} at {} events per page".format(page_count, self._page_size)
+        )
 
         # Debug
         # page_count = 10
@@ -58,9 +61,7 @@ class EventLogIteratorAsync:
         task_set = set()
 
         for page_idx in range(page_count):
-            if (
-                len(task_set) >= self._max_concurrent_d1_rest_calls
-            ):
+            if len(task_set) >= self._max_concurrent_d1_rest_calls:
                 done_set, task_set = await asyncio.wait(
                     task_set, return_when=asyncio.FIRST_COMPLETED
                 )
@@ -68,14 +69,12 @@ class EventLogIteratorAsync:
                 async for item_pyxb in self._iter_done(done_set):
                     yield item_pyxb
 
-
             task_set.add(self._get_page(page_idx))
 
         done_set, task_set = await asyncio.wait(task_set)
 
         async for item_pyxb in self._iter_done(done_set):
             yield item_pyxb
-
 
     async def _get_page(self, page_idx):
         page_start_idx = page_idx * self._page_size

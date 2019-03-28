@@ -48,6 +48,7 @@ update-ca-certificates
 
 update-ca-certificates only processes ".crt" files, so this script saves the
 certificates with that extension.
+
 """
 import argparse
 import logging

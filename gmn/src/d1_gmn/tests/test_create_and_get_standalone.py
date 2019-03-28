@@ -40,7 +40,7 @@ import d1_test.instance_generator
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """get(): Response contains expected headers"""
+        """get(): Response contains expected headers."""
         with freezegun.freeze_time('1981-01-02'):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
@@ -56,7 +56,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """get(): Non-existing object raises NotFound"""
+        """get(): Non-existing object raises NotFound."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             with pytest.raises(d1_common.types.exceptions.NotFound):
                 gmn_client_v1_v2.get(
@@ -65,7 +65,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """get(): Read object back and do byte-by-byte comparison"""
+        """get(): Read object back and do byte-by-byte comparison."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sent_sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2
@@ -75,8 +75,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """create(): Raises NotAuthorized if none of the trusted subjects are
-    active"""
+        """create(): Raises NotAuthorized if none of the trusted subjects are active."""
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
             self.create_obj(
                 gmn_client_v1_v2,
@@ -87,7 +86,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """create(): Creates the object if one or more trusted subjects are active"""
+        """create(): Creates the object if one or more trusted subjects are active."""
         self.create_obj(
             gmn_client_v1_v2,
             active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
@@ -97,8 +96,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2):
-        """create() / get(): Object with no explicit permissions can be
-        retrieved by a trusted subject."""
+        """create() / get(): Object with no explicit permissions can be retrieved by a
+        trusted subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
         self.get_obj(
             gmn_client_v1_v2,
@@ -110,8 +109,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
-        """create() / get(): Object with no explicit permissions cannot be
-        retrieved by non-trusted subjects."""
+        """create() / get(): Object with no explicit permissions cannot be retrieved by
+        non-trusted subjects."""
         # This applies even when the non-trusted subjects were previously trusted
         # and allowed to create the object.
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
@@ -128,8 +127,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
-        """create() / get(): Object with no explicit permissions cannot be
-        retrieved by the submitter."""
+        """create() / get(): Object with no explicit permissions cannot be retrieved by
+        the submitter."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, permission_list=None
         )
@@ -144,8 +143,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1080(self, gmn_client_v1_v2):
-        """create() / get(): Object with no explicit permissions can be
-        retrieved by the rightsHolder."""
+        """create() / get(): Object with no explicit permissions can be retrieved by the
+        rightsHolder."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, permission_list=None
         )
@@ -159,8 +158,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1090(self, gmn_client_v1_v2):
-        """create() / get(): Object that has read access for subject can be
-        retrieved by that subject."""
+        """create() / get(): Object that has read access for subject can be retrieved by
+        that subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, permission_list=[(['subj5'], ['read'])]
         )
@@ -170,8 +169,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1100(self, gmn_client_v1_v2):
-        """create() / get(): Object that has higher level access for subject
-        also allows lower level access by subject."""
+        """create() / get(): Object that has higher level access for subject also allows
+        lower level access by subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, permission_list=[(['subj5'], ['changePermission'])]
         )
@@ -196,8 +195,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         ],
     )
     def test_1110(self, did, gmn_client_v1_v2):
-        """create() / get(): Identifiers with starting, ending or embedded
-        whitespace are rejected."""
+        """create() / get(): Identifiers with starting, ending or embedded whitespace
+        are rejected."""
         with pytest.raises(pyxb.SimpleFacetValueError):
             self.create_obj(
                 gmn_client_v1_v2,

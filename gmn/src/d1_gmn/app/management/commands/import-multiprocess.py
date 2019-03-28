@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Bulk Import
+"""Bulk Import.
 
 Copy from a running MN: Science objects, Permissions, Subjects,  Event logs
 
@@ -26,6 +26,7 @@ an existing MN. The import has been tested with other versions of GMN but should
 also work with other node stacks.
 
 See the GMN setup documentation for more information on how to use this command.
+
 """
 
 import argparse
@@ -33,7 +34,6 @@ import logging
 import os
 import time
 
-import d1_common.utils.filesystem
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
@@ -50,6 +50,7 @@ import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_client.d1client
@@ -69,20 +70,22 @@ MAX_TASK_QUEUE_SIZE = 16
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
-        """
-    Args:
+        """Args:
+
         *args:
         **kwargs:
-    """
+
+        """
         super().__init__(*args, **kwargs)
         self._db = d1_gmn.app.management.commands.util.util.Db()
         self._events = d1_common.util.EventCounter()
 
     def add_arguments(self, parser):
-        """
-    Args:
+        """Args:
+
         parser:
-    """
+
+        """
         parser.description = __doc__
         parser.formatter_class = argparse.RawDescriptionHelpFormatter
         parser.add_argument("--debug", action="store_true", help="Debug level logging")
@@ -155,18 +158,21 @@ class Command(django.core.management.base.BaseCommand):
         parser.add_argument("baseurl", help="Source MN BaseURL")
 
     def handle(self, *args, **opt):
-        """
-    Args:
+        """Args:
+
         *args:
         **opt:
-    """
+
+        """
         d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
         logging.info(
             "Running management command: {}".format(
                 __name__
             )  # util.get_command_name())
         )
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(__name__)
+        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
+            __name__
+        )
         self._opt = opt
         try:
             # profiler = profile.Profile()
@@ -179,7 +185,10 @@ class Command(django.core.management.base.BaseCommand):
         self._events.dump_to_log()
 
     def _handle(self):
-        if not self._opt["force"] and not d1_gmn.app.management.commands.util.util.is_db_empty():
+        if (
+            not self._opt["force"]
+            and not d1_gmn.app.management.commands.util.util.is_db_empty()
+        ):
             raise django.core.management.base.CommandError(
                 "There are already objects in the local database. "
                 "Use --force to import anyway"
@@ -331,10 +340,11 @@ class Command(django.core.management.base.BaseCommand):
             self._create_log_entry(log_record_pyxb)
 
     def _create_log_entry(self, log_record_pyxb):
-        """
-    Args:
+        """Args:
+
         log_record_pyxb:
-    """
+
+        """
         event_log_model = d1_gmn.app.event_log.create_log_entry(
             d1_gmn.app.model_util.get_sci_model(
                 d1_common.xml.get_req_val(log_record_pyxb.identifier)
@@ -351,20 +361,19 @@ class Command(django.core.management.base.BaseCommand):
 
     def _get_object_proxy_location(self, client, pid):
         """If object is proxied, return the proxy location URL. If object is local,
-    return None.
+        return None.
 
-    Args:
-        client:
-        pid:
-    """
+        Args:     client:     pid:
+
+        """
         return client.describe(pid).get("DataONE-Proxy")
 
     def _download_source_sciobj_bytes_to_store(self, client, pid):
+        """Args:
+
+        client: pid:
+
         """
-    Args:
-        client:
-        pid:
-    """
         abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
         if os.path.isfile(abs_sciobj_path):
             self._events.log_and_count(
@@ -372,7 +381,9 @@ class Command(django.core.management.base.BaseCommand):
                 'pid="{}" path="{}"'.format(pid, abs_sciobj_path),
             )
         else:
-            d1_common.utils.filesystem.create_missing_directories_for_file(abs_sciobj_path)
+            d1_common.utils.filesystem.create_missing_directories_for_file(
+                abs_sciobj_path
+            )
             client.get_and_save(pid, abs_sciobj_path)
         return
 
@@ -406,10 +417,11 @@ class Command(django.core.management.base.BaseCommand):
         )
 
     def _assert_path_is_dir(self, dir_path):
-        """
-    Args:
+        """Args:
+
         dir_path:
-    """
+
+        """
         if not os.path.isdir(dir_path):
             raise django.core.management.base.CommandError(
                 'Invalid dir path. path="{}"'.format(dir_path)

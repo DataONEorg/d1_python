@@ -26,8 +26,7 @@ import d1_dev.util
 
 
 def main():
-    """Print the RedBaron syntax tree for a Python module
-    """
+    """Print the RedBaron syntax tree for a Python module."""
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -36,6 +35,7 @@ def main():
 
     r = d1_dev.util.redbaron_module_path_to_tree(args.path)
     print(r.help(True))
+
 
 if __name__ == "__main__":
     sys.exit(main())

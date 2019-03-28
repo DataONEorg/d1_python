@@ -28,8 +28,8 @@ import django.conf
 
 
 def assert_valid(sysmeta_pyxb, sciobj_path):
-    """Validate file at {sciobj_path} against schema selected via formatId and
-    raise InvalidRequest if invalid.
+    """Validate file at {sciobj_path} against schema selected via formatId and raise
+    InvalidRequest if invalid.
 
     Validation is only performed when:
 
@@ -38,6 +38,7 @@ def assert_valid(sysmeta_pyxb, sciobj_path):
     - and formatId designates object as a Science Metadata object which is recognized
       and parsed by DataONE CNs
     - and XML Schema (XSD) files for formatId are present on local system
+
     """
     if not (_is_validation_enabled() and _is_installed_scimeta_format_id(sysmeta_pyxb)):
         return

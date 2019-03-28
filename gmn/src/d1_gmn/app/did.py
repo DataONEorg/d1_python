@@ -29,6 +29,7 @@ import d1_gmn.app.revision
 
 logger = logging.getLogger(__name__)
 
+
 def is_valid_pid_for_create(did):
     """Return True if ``did`` is the PID of an object that can be created with
     MNStorage.create() or MNStorage.update().
@@ -46,6 +47,7 @@ def is_valid_pid_for_create(did):
 
       - The DataONE subject that is making the call must have write or
       changePermission on the resource map.
+
     """
     # logger.debug('existing: {}'.format(is_existing_object(did)))
     # logger.debug('sid: {}'.format(is_sid(did)))
@@ -66,8 +68,8 @@ def is_valid_sid_for_new_standalone(did):
 
 
 def is_valid_pid_to_be_updated(did):
-    """Return True if ``did`` is the PID of an object that can be updated
-    (obsoleted) with MNStorage.update()"""
+    """Return True if ``did`` is the PID of an object that can be updated (obsoleted)
+    with MNStorage.update()"""
     return (
         is_existing_object(did)
         and not is_local_replica(did)
@@ -77,8 +79,8 @@ def is_valid_pid_to_be_updated(did):
 
 
 def is_valid_sid_for_chain(pid, sid):
-    """Return True if ``sid`` can be assigned to the single object ``pid`` or
-    to the chain to which ``pid`` belongs.
+    """Return True if ``sid`` can be assigned to the single object ``pid`` or to the
+    chain to which ``pid`` belongs.
 
     - If the chain does not have a SID, the new SID must be previously unused.
     - If the chain already has a SID, the new SID must match the existing SID.
@@ -88,6 +90,7 @@ def is_valid_sid_for_chain(pid, sid):
     Preconditions:
     - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
     - ``sid`` is None or verified to be a SID
+
     """
     if _is_unused_did(sid):
         return True
@@ -98,24 +101,23 @@ def is_valid_sid_for_chain(pid, sid):
 
 
 def get_did_by_foreign_key(did_foreign_key):
-    """Return the DID referenced by a ForeignKey or OneToOneField to
-    IdNamespace.
+    """Return the DID referenced by a ForeignKey or OneToOneField to IdNamespace.
 
     Return None if ForeignKey or OneToOneField is NULL.
 
     This is used instead of "did_foreign_key.*.did" on ForeignKeys and
     OneToOneFields that allow NULL (null=True in the model).
+
     """
     return getattr(did_foreign_key, 'did', None)
 
 
 def is_existing_object(did):
-    """Return True if PID is for an object for which science bytes are stored
-    locally.
+    """Return True if PID is for an object for which science bytes are stored locally.
 
-    This excludes SIDs and PIDs for unprocessed replica requests, remote
-    or non-existing revisions of local replicas and objects aggregated
-    in Resource Maps.
+    This excludes SIDs and PIDs for unprocessed replica requests, remote or non-existing
+    revisions of local replicas and objects aggregated in Resource Maps.
+
     """
     return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=did).exists()
 
@@ -125,8 +127,7 @@ def is_sid(did):
 
 
 def is_obsoleted(did):
-    """Return True if ``did`` is the PID of an object that has been
-    obsoleted."""
+    """Return True if ``did`` is the PID of an object that has been obsoleted."""
     return d1_gmn.app.model_util.get_sci_model(did).obsoleted_by is not None
 
 
@@ -141,9 +142,9 @@ def is_resource_map_member(pid):
 def classify_identifier(did):
     """Return a text fragment classifying the ``did``
 
-    Return <UNKNOWN> if the DID could not be classified. This should not
-    normally happen and may indicate that the DID was orphaned in the
-    database.
+    Return <UNKNOWN> if the DID could not be classified. This should not normally happen
+    and may indicate that the DID was orphaned in the database.
+
     """
     if _is_unused_did(did):
         return 'unused on this Member Node'
@@ -204,8 +205,8 @@ def is_unprocessed_local_replica(pid):
 
 
 def is_revision_chain_placeholder(pid):
-    """For replicas, the PIDs referenced in revision chains are reserved for
-    use by other replicas."""
+    """For replicas, the PIDs referenced in revision chains are reserved for use by
+    other replicas."""
     return d1_gmn.app.models.ReplicaRevisionChainReference.objects.filter(
         pid__did=pid
     ).exists()
@@ -222,6 +223,7 @@ def _is_unused_did(did):
     ``did``=None is supported and returns True.
 
     A DID can be classified with classify_identifier().
+
     """
     return not _is_did(did)
 
@@ -232,6 +234,7 @@ def _is_did(did):
     ``did``=None is supported and returns False.
 
     A DID can be classified with classify_identifier().
+
     """
     return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
 
@@ -243,5 +246,6 @@ def _is_pid(did):
 
     Note: Non-existing and remote DIDs may not be known to be SIDs or PIDs, and
     are assumed to be PIDs by this function.
+
     """
     return _is_did(did) and not is_sid(did)

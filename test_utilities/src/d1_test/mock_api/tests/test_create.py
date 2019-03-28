@@ -31,7 +31,7 @@ import d1_test.mock_api.create
 class TestMockCreate(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
-        """mock_api.create(): Echoes the request"""
+        """mock_api.create(): Echoes the request."""
         d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             mn_client_v1_v2, 'post_pid'

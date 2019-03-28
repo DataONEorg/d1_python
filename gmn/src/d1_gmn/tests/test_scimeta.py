@@ -51,7 +51,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
         """MNStorage.create(SciMeta): Uninstalled schema causes validation to be
-    silently skipped"""
+        silently skipped."""
         self._create_and_check_scimeta(
             gmn_client_v1_v2,
             d1_test.instance_generator.identifier.generate_pid('PID_SCIMETA_'),
@@ -61,8 +61,8 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): Unknown formatId causes validation to be
-    silently skipped"""
+        """MNStorage.create(SciMeta): Unknown formatId causes validation to be silently
+        skipped."""
         self._create_and_check_scimeta(
             gmn_client_v1_v2,
             d1_test.instance_generator.identifier.generate_pid('PID_SCIMETA_'),
@@ -72,7 +72,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): onedcx does not validate as EML"""
+        """MNStorage.create(SciMeta): onedcx does not validate as EML."""
         with pytest.raises(
             d1_common.types.exceptions.InvalidRequest, match='validation failed'
         ):
@@ -85,8 +85,8 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): onedcx validates successfully as DataONE
-    Dublin Core Extended"""
+        """MNStorage.create(SciMeta): onedcx validates successfully as DataONE Dublin
+        Core Extended."""
         self._create_and_check_scimeta(
             gmn_client_v1_v2,
             d1_test.instance_generator.identifier.generate_pid('PID_SCIMETA_'),
@@ -96,7 +96,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): ISO/TC 211 does not validate as Dryad"""
+        """MNStorage.create(SciMeta): ISO/TC 211 does not validate as Dryad."""
         with pytest.raises(
             d1_common.types.exceptions.InvalidRequest, match='validation failed'
         ):
@@ -109,7 +109,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): Valid EML 2.1.1"""
+        """MNStorage.create(SciMeta): Valid EML 2.1.1."""
         self._create_and_check_scimeta(
             gmn_client_v1_v2,
             d1_test.instance_generator.identifier.generate_pid('PID_SCIMETA_'),
@@ -119,7 +119,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): Invalid EML 2.1.1: Unexpected element"""
+        """MNStorage.create(SciMeta): Invalid EML 2.1.1: Unexpected element."""
         with pytest.raises(
             d1_common.types.exceptions.InvalidRequest, match='unexpectedElement'
         ):
@@ -132,7 +132,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
-        """MNStorage.create(SciMeta): Invalid EML 2.1.1: Missing child element"""
+        """MNStorage.create(SciMeta): Invalid EML 2.1.1: Missing child element."""
         with pytest.raises(
             d1_common.types.exceptions.InvalidRequest, match='Missing child element'
         ):

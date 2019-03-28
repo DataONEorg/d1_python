@@ -27,6 +27,7 @@ http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-
 
 A DataONEException can be triggered by adding a custom header. See
 d1_exception.py
+
 """
 
 import re

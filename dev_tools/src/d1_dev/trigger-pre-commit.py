@@ -17,8 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""For each file that is specified, tracked and modified in a repository,
-trigger pre-commit hooks until the hooks pass.
+"""For each file that is specified, tracked and modified in a repository, trigger pre-
+commit hooks until the hooks pass.
 
 If our pre-commit hooks are triggered during a commit, the files that were
 modified by the hooks must be staged again. When a new commit is issued, the
@@ -34,6 +34,7 @@ in the IDE to the line that triggered the error.
 
 After fixing an error, hit Enter to retrigger the hooks in order to check if
 there are more errors or S to skip directly to the next file.
+
 """
 
 import argparse

@@ -43,6 +43,7 @@ to:
 
 - PyXB provides translation to/from string and DOM.
 - ElementTree provides translation to/from string.
+
 """
 
 import re
@@ -58,7 +59,6 @@ import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v1_2
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.util
-
 
 # Map common namespace prefixes to namespaces
 NS_DICT = {
@@ -78,7 +78,12 @@ NS_DICT = {
 # Map common namespaces to prefixes
 NS_REVERSE_DICT = {v: k for k, v in NS_DICT.items()}
 
-BINDING_TO_VERSION_TAG_DICT = {d1_common.types.dataoneTypes_v1: 'v1', d1_common.types.dataoneTypes_v1_1: 'v1', d1_common.types.dataoneTypes_v1_2: 'v1', d1_common.types.dataoneTypes_v2_0: 'v2'}
+BINDING_TO_VERSION_TAG_DICT = {
+    d1_common.types.dataoneTypes_v1: 'v1',
+    d1_common.types.dataoneTypes_v1_1: 'v1',
+    d1_common.types.dataoneTypes_v1_2: 'v1',
+    d1_common.types.dataoneTypes_v2_0: 'v2',
+}
 
 VERSION_TO_BINDING_DICT = {
     'v1': d1_common.types.dataoneTypes_v1_2,
@@ -104,6 +109,7 @@ def get_version_tag_by_pyxb_binding(pyxb_binding):
 
     Returns:
       DataONE API major version number, currently, ``v1``, ``1``, ``v2`` or ``2``.
+
     """
     try:
         return BINDING_TO_VERSION_TAG_DICT[pyxb_binding]
@@ -131,6 +137,7 @@ def get_pyxb_binding_by_api_version(api_major, api_minor=0):
 
     Returns:
       PyXB binding: E.g., ``d1_common.types.dataoneTypes_v1_1``.
+
     """
     try:
         return VERSION_TO_BINDING_DICT[api_major, api_minor]
@@ -143,10 +150,10 @@ def get_pyxb_binding_by_api_version(api_major, api_minor=0):
 def get_version_tag(api_major):
     """Args:
 
-    api_major: int
-        DataONE API major version. Valid versions are currently 1 or 2.
-    Returns:
-      str: DataONE API version tag. Valid version tags are currently ``v1`` or ``v2``.
+    api_major: int     DataONE API major version. Valid versions are currently 1 or 2.
+    Returns:   str: DataONE API version tag. Valid version tags are currently ``v1`` or
+    ``v2``.
+
     """
     return 'v{}'.format(api_major)
 
@@ -160,6 +167,7 @@ def extract_version_tag_from_url(url):
 
     Returns:
       str : Valid version tags are currently ``v1`` or ``v2``.
+
     """
     m = re.match(r'(/|^)(v\d)(/|$)', url)
     if not m:
@@ -171,6 +179,7 @@ def get_pyxb_namespaces():
     """Returns:
 
     list of str: XML namespaces currently known to PyXB
+
     """
     return pyxb.namespace.utility.AvailableNamespaces()
 
@@ -193,6 +202,7 @@ def str_to_v1_str(xml_str):
 
     Returns:
       str : API v1 XML doc. E.g.: ``SystemMetadata v1``.
+
     """
     if str_is_v1(xml_str):
         return xml_str
@@ -213,6 +223,7 @@ def pyxb_to_v1_str(pyxb_obj):
 
     Returns:
       str : API v1 XML doc. E.g.: ``SystemMetadata v1``.
+
     """
     return str_to_v1_str(pyxb_to_str(pyxb_obj))
 
@@ -228,6 +239,7 @@ def str_to_v1_pyxb(xml_str):
 
     Returns:
       PyXB object: API v1 PyXB object. E.g.: ``SystemMetadata v1_2``.
+
     """
     str_to_pyxb(str_to_v1_str(xml_str))
 
@@ -248,6 +260,7 @@ def str_to_v2_str(xml_str):
 
     Returns:
       str : API v2 XML doc. E.g.: ``SystemMetadata v2``.
+
     """
     if str_is_v2(xml_str):
         return xml_str
@@ -267,6 +280,7 @@ def pyxb_to_v2_str(pyxb_obj):
 
     Returns:
       str : API v2 XML doc. E.g.: ``SystemMetadata v2``.
+
     """
     return str_to_v2_str(pyxb_to_str(pyxb_obj))
 
@@ -282,6 +296,7 @@ def str_to_v2_pyxb(xml_str):
 
     Returns:
       PyXB object: API v2 PyXB object. E.g.: ``SystemMetadata v2_0``.
+
     """
     str_to_pyxb(str_to_v2_str(xml_str))
 
@@ -293,6 +308,7 @@ def is_pyxb(pyxb_obj):
     """Returns:
 
     bool: **True** if ``pyxb_obj`` is a PyXB object.
+
     """
     return isinstance(pyxb_obj, pyxb.cscRoot)
 
@@ -301,6 +317,7 @@ def is_pyxb_d1_type(pyxb_obj):
     """Returns:
 
     bool: **True** if ``pyxb_obj`` is a PyXB object holding a DataONE API type.
+
     """
     try:
         return pyxb_is_v1(pyxb_obj) or pyxb_is_v2(pyxb_obj)
@@ -329,29 +346,27 @@ def is_pyxb_d1_type_name(pyxb_obj, expected_pyxb_type_name):
 
 
 def pyxb_get_type_name(obj_pyxb):
+    """Args: obj_pyxb: PyXB object.
+
+    Returns:
+       str: Name of the type the PyXB object is holding.
+
+       E.g.: ``SystemMetadata``, ``LogEntry``, ``ObjectInfo``.
+
     """
-  Args:
-    obj_pyxb: PyXB object
-
-  Returns:
-     str: Name of the type the PyXB object is holding.
-
-     E.g.: ``SystemMetadata``, ``LogEntry``, ``ObjectInfo``.
-  """
     return pyxb_get_namespace_name(obj_pyxb).split('}')[-1]
 
 
 # noinspection PyProtectedMember
 def pyxb_get_namespace_name(obj_pyxb):
+    """Args: obj_pyxb: PyXB object.
+
+    Returns:
+       str: Namespace and Name of the type the PyXB object is holding.
+
+       E.g.: ``{http://ns.dataone.org/service/types/v2.0}SystemMetadata``
+
     """
-  Args:
-    obj_pyxb: PyXB object
-
-  Returns:
-     str: Namespace and Name of the type the PyXB object is holding.
-
-     E.g.: ``{http://ns.dataone.org/service/types/v2.0}SystemMetadata``
-  """
     return str(obj_pyxb._ExpandedName)
 
 
@@ -449,7 +464,10 @@ def pyxb_is_v1(pyxb_obj):
     bool: **True** if ``pyxb_obj`` holds an API v1 type.
   """
     # TODO: Will not detect v1.2 as v1.
-    return pyxb_obj._element().name().namespace() == d1_common.types.dataoneTypes_v1.Namespace
+    return (
+        pyxb_obj._element().name().namespace()
+        == d1_common.types.dataoneTypes_v1.Namespace
+    )
 
 
 # noinspection PyProtectedMember
@@ -462,7 +480,10 @@ def pyxb_is_v2(pyxb_obj):
   Returns:
     bool: **True** if ``pyxb_obj`` holds an API v2 type.
   """
-    return pyxb_obj._element().name().namespace() == d1_common.types.dataoneTypes_v2_0.Namespace
+    return (
+        pyxb_obj._element().name().namespace()
+        == d1_common.types.dataoneTypes_v2_0.Namespace
+    )
 
 
 # Conversions between XML representations
@@ -477,6 +498,7 @@ def str_to_pyxb(xml_str):
 
     Returns:
       PyXB object: Matching the API version of the XML doc.
+
     """
     # PyXB shares information about all known types between all imported pyxb_binding, so
     # a v1 binding will work for deserializing a v2 type.
@@ -495,6 +517,7 @@ def str_to_etree(xml_str, encoding='utf-8'):
 
     Returns:
       ElementTree: Matching the API version of the XML doc.
+
     """
     parser = xml.etree.ElementTree.XMLParser(encoding=encoding)
     return xml.etree.ElementTree.fromstring(xml_str, parser=parser)
@@ -512,6 +535,7 @@ def pyxb_to_str(pyxb_obj, encoding='utf-8'):
 
     Returns:
       str: API XML doc, matching the API version of ``pyxb_obj``.
+
     """
     return pyxb_obj.toxml(encoding)
 
@@ -528,6 +552,7 @@ def etree_to_str(etree_obj, encoding='utf-8'):
 
     Returns:
       str: API XML doc matching the API version of ``etree_obj``.
+
     """
     return xml.etree.ElementTree.tostring(etree_obj, encoding)
 
@@ -540,6 +565,7 @@ def pyxb_to_etree(pyxb_obj):
 
     Returns:
       ElementTree: Matching the API version of the PyXB object.
+
     """
     return str_to_etree(pyxb_to_str(pyxb_obj))
 
@@ -552,6 +578,7 @@ def etree_to_pyxb(etree_obj):
 
     Returns:
       PyXB object: Matching the API version of the ElementTree object.
+
     """
     return pyxb_to_str(str_to_etree(etree_obj))
 
@@ -560,8 +587,8 @@ def etree_to_pyxb(etree_obj):
 
 
 def replace_namespace_with_prefix(tag_str, ns_reverse_dict=None):
-    """Convert XML tag names with namespace on the form ``{namespace}tag`` to
-    form ``prefix:tag``.
+    """Convert XML tag names with namespace on the form ``{namespace}tag`` to form
+    ``prefix:tag``.
 
     Args:
       tag_str: str
@@ -573,6 +600,7 @@ def replace_namespace_with_prefix(tag_str, ns_reverse_dict=None):
 
     Returns:
       str: Tag name with prefix. E.g.: ``ore:ResourceMap``.
+
     """
     ns_reverse_dict = ns_reverse_dict or NS_REVERSE_DICT
     for namespace_str, prefix_str in ns_reverse_dict.items():
@@ -590,6 +618,7 @@ def etree_replace_namespace(etree_obj, ns_str):
 
       ns_str : str
         The namespace to set. E.g.: ``http://ns.dataone.org/service/types/v1``.
+
     """
 
     def _replace_recursive(el, n):
@@ -605,9 +634,9 @@ def etree_replace_namespace(etree_obj, ns_str):
 def strip_v2_elements(etree_obj):
     """In-place remove elements and attributes that are only valid in v2 types.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding one of the DataONE API types that changed between v1 and v2.
+    Args:   etree_obj: ElementTree     ElementTree holding one of the DataONE API types
+    that changed between v1 and v2.
+
     """
     if etree_obj.tag == v2_0_tag('logEntry'):
         strip_logEntry(etree_obj)
@@ -624,12 +653,11 @@ def strip_v2_elements(etree_obj):
 
 
 def strip_system_metadata(etree_obj):
-    """In-place remove elements and attributes that are only valid in v2 types
-    from v1 System Metadata.
+    """In-place remove elements and attributes that are only valid in v2 types from v1
+    System Metadata.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding a v1 SystemMetadata.
+    Args:   etree_obj: ElementTree     ElementTree holding a v1 SystemMetadata.
+
     """
     for series_id_el in etree_obj.findall('seriesId'):
         etree_obj.remove(series_id_el)
@@ -640,24 +668,22 @@ def strip_system_metadata(etree_obj):
 
 
 def strip_log(etree_obj):
-    """In-place remove elements and attributes that are only valid in v2 types
-    from v1 Log.
+    """In-place remove elements and attributes that are only valid in v2 types from v1
+    Log.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding a v1 Log.
+    Args:   etree_obj: ElementTree     ElementTree holding a v1 Log.
+
     """
     for log_entry_el in etree_obj.findall('logEntry'):
         strip_logEntry(log_entry_el)
 
 
 def strip_logEntry(etree_obj):
-    """In-place remove elements and attributes that are only valid in v2 types
-    from v1 LogEntry.
+    """In-place remove elements and attributes that are only valid in v2 types from v1
+    LogEntry.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding a v1 LogEntry.
+    Args:   etree_obj: ElementTree     ElementTree holding a v1 LogEntry.
+
     """
     for event_el in etree_obj.findall('event'):
         if event_el.text not in (
@@ -673,24 +699,22 @@ def strip_logEntry(etree_obj):
 
 
 def strip_node(etree_obj):
-    """In-place remove elements and attributes that are only valid in v2 types
-    from v1 Node.
+    """In-place remove elements and attributes that are only valid in v2 types from v1
+    Node.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding a v1 Node.
+    Args:   etree_obj: ElementTree     ElementTree holding a v1 Node.
+
     """
     for property_el in etree_obj.findall('property'):
         etree_obj.remove(property_el)
 
 
 def strip_node_list(etree_obj):
-    """In-place remove elements and attributes that are only valid in v2 types
-    from v1 NodeList.
+    """In-place remove elements and attributes that are only valid in v2 types from v1
+    NodeList.
 
-    Args:
-      etree_obj: ElementTree
-        ElementTree holding a v1 NodeList.
+    Args:   etree_obj: ElementTree     ElementTree holding a v1 NodeList.
+
     """
     for node_el in etree_obj.findall('node'):
         strip_node(node_el)
@@ -706,5 +730,6 @@ def v2_0_tag(element_name):
     Returns:
       str: The tag name with DataONE API v2 namespace. E.g.:
       ``{http://ns.dataone.org/service/types/v2.0}NodeList``
+
     """
     return '{{{}}}{}'.format(NS_DICT['v2'], element_name)

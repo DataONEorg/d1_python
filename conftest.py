@@ -36,7 +36,6 @@ import d1_common.date_time
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
-
 import d1_test.sample
 import d1_test.test_files
 
@@ -69,11 +68,12 @@ TEST_DB_KEY = 'default'
 # and pytest-catchlog. Without this, only output from failed tests is displayed.
 sys.stdout = sys.stderr
 
+
 def pytest_addoption(parser):
-    """Add command line switches for pytest customization. See README.md for
-    info.
+    """Add command line switches for pytest customization. See README.md for info.
 
     Note: None of these options can be used with xdist (-n --dist -tx).
+
     """
     # Sample files
 
@@ -134,12 +134,12 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    """Allow plugins and conftest files to perform initial configuration This
-    hook is called for every plugin and initial conftest file after command
-    line options have been parsed.
+    """Allow plugins and conftest files to perform initial configuration This hook is
+    called for every plugin and initial conftest file after command line options have
+    been parsed.
 
-    After that, the hook is called for other conftest files as they are
-    imported.
+    After that, the hook is called for other conftest files as they are imported.
+
     """
 
     sys.is_running_under_travis = 'TRAVIS' in os.environ
@@ -163,6 +163,7 @@ def pytest_sessionstart(session):
 
     - When running in parallel with xdist, this is called once for each worker. By
     default, the number of workers is the same as the number of CPU cores.
+
     """
     exit_if_switch_used_with_xdist(
         session,
@@ -206,8 +207,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """Called by pytest after setup, after call and after teardown of each
-    test."""
+    """Called by pytest after setup, after call and after teardown of each test."""
     outcome = yield
     rep = outcome.get_result()
     # Ignore setup and teardown
@@ -225,8 +225,9 @@ def pytest_runtest_makereport(item, call):
 def pytest_collection_modifyitems(session, config, items):
     """Called by pytest after collecting tests.
 
-    The collected tests and the order in which they will be called are
-    in ``items``, which can be manipulated in place.
+    The collected tests and the order in which they will be called are in ``items``,
+    which can be manipulated in place.
+
     """
     if not session.config.getoption('--skip'):
         return
@@ -277,6 +278,7 @@ def _open_error_in_pycharm(call):
     """Attempt to open error locations in PyCharm.
 
     Use with --exitfirst (-x)
+
     """
     logger.error('Test raised exception: {}'.format(call.excinfo.exconly()))
     test_path, test_lineno = d1_test.d1_test_case.D1TestCase.get_d1_test_case_location(
@@ -382,12 +384,12 @@ def mn_client_v1_v2(request):
 
 @pytest.fixture(scope='function', params=d1_test.test_files.TRICKY_IDENTIFIER_LIST)
 def tricky_identifier_tup(request):
-    """Unicode identifiers that use various reserved characters and embedded
-    URL segments.
+    """Unicode identifiers that use various reserved characters and embedded URL
+    segments.
 
-    Each fixture is a 2-tuple where the first value is a Unicode
-    identifier and the second is a URL escaped version of the
-    identifier.
+    Each fixture is a 2-tuple where the first value is a Unicode identifier and the
+    second is a URL escaped version of the identifier.
+
     """
     yield request.param
 
@@ -430,9 +432,8 @@ def enable_db_access(db):
 @pytest.yield_fixture(scope='session', autouse=True)
 @pytest.mark.django_db
 def django_db_setup(request, django_db_blocker):
-    """Set up DB fixture When running in parallel with xdist, this is called
-    once for each worker, causing a separate database to be set up for each
-    worker."""
+    """Set up DB fixture When running in parallel with xdist, this is called once for
+    each worker, causing a separate database to be set up for each worker."""
     logger.info('Setting up DB fixture')
 
     db_set_unique_db_name(request)
@@ -600,10 +601,11 @@ def get_random_ascii_str():
 
 
 def get_xdist_worker_id(request):
-    """Return a different string for each worker when running in parallel under
-    pytest-xdist, else return an empty string.
+    """Return a different string for each worker when running in parallel under pytest-
+    xdist, else return an empty string.
 
     Returned strings are on the form, "gwN".
+
     """
     s = getattr(request.config, 'slaveinput', {}).get('slaveid')
     return s if s is not None else ''

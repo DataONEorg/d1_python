@@ -27,6 +27,7 @@ to modify the files.
 When files are updated, the original file is backed up by appending "~" to the
 original name. Any earlier backups are overwritten. Use clean-tree.py to delete
 the backups.
+
 """
 
 import argparse
@@ -169,8 +170,7 @@ def futurize_module(module_path, show_diff, write_update):
 
 
 def _remove_single_line_import_comments(r):
-    """We previously used more groups for the import statements and named each
-    group."""
+    """We previously used more groups for the import statements and named each group."""
     logging.info('Removing single line import comments')
     import_r, remaining_r = split_by_last_import(r)
     new_import_r = redbaron.NodeList()
@@ -196,8 +196,7 @@ def _is_keep_comment(r):
 
 
 def _remove_module_level_docstrs_in_unit_tests(r):
-    """We previously used more groups for the import statements and named each
-    group."""
+    """We previously used more groups for the import statements and named each group."""
     logging.info('Removing module level docstrs in tests')
     new_r = redbaron.NodeList()
     first = True

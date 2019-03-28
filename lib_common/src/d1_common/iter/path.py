@@ -17,8 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Generator that resolves a list of file and dir paths and returns file paths
-with optional filtering and client feedback."""
+"""Generator that resolves a list of file and dir paths and returns file paths with
+optional filtering and client feedback."""
 
 import fnmatch
 import logging
@@ -153,6 +153,7 @@ def path_generator(
 
       Remember to escape the include and exclude glob patterns on the command line so
       that they're not expanded by the shell.
+
     """
     include_glob_list = include_glob_list or []
     exclude_glob_list = exclude_glob_list or []

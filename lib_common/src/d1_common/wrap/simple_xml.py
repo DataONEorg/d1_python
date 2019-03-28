@@ -66,6 +66,7 @@ Notes:
   - In some cases, it may be possible read or write XML that is not well formed by manipulating the XML directly as a string before wrapping or after generating.
 
   - This wrapper is based on the ElementTree module.
+
 """
 
 import xml.etree.ElementTree
@@ -88,12 +89,13 @@ def wrap(xml_str):
 
 
 class SimpleXMLWrapper(object):
-    """Wrap an XML document and provide convenient methods for performing
-    simple processing on it.
+    """Wrap an XML document and provide convenient methods for performing simple
+    processing on it.
 
     Args:
       xml_str : str
         XML document to read, write or modify.
+
     """
 
     def __init__(self, xml_str):
@@ -106,6 +108,7 @@ class SimpleXMLWrapper(object):
         """Returns:
 
         str : Current state of the wrapper as XML
+
         """
         return xml.etree.ElementTree.tostring(self._root_el, encoding)
 
@@ -113,6 +116,7 @@ class SimpleXMLWrapper(object):
         """Returns:
 
         str : Current state of the wrapper as a pretty printed XML string.
+
         """
         return d1_common.xml.reformat_to_pretty_xml(
             xml.etree.ElementTree.tostring(self._root_el, encoding)
@@ -131,7 +135,9 @@ class SimpleXMLWrapper(object):
     Returns:
       str : XML fragment rooted at ``el``.
     """
-        return xml.etree.ElementTree.tostring(self.get_element_by_name(el_name, el_idx), encoding)
+        return xml.etree.ElementTree.tostring(
+            self.get_element_by_name(el_name, el_idx), encoding
+        )
 
     def get_element_list_by_name(self, el_name):
         """
@@ -304,6 +310,7 @@ class SimpleXMLWrapper(object):
 
         Returns:
           str : Value of the selected attribute in the selected element.
+
         """
         return self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key]
 
@@ -320,14 +327,14 @@ class SimpleXMLWrapper(object):
           el_idx : int
             Index of element to use in the event that there are multiple sibling
             elements with the same name.
+
         """
         self.get_element_by_attr_key(attr_key, el_idx).attrib[attr_key] = attr_val
 
     # get/set datetime
 
     def get_element_dt(self, el_name, tz=None, el_idx=0):
-        """Return the text of the selected element as a ``datetime.datetime``
-        object.
+        """Return the text of the selected element as a ``datetime.datetime`` object.
 
         The element text must be a ISO8601 formatted datetime
 
@@ -352,12 +359,12 @@ class SimpleXMLWrapper(object):
 
         Returns:
           datetime.datetime
+
         """
         return iso8601.parse_date(self.get_element_by_name(el_name, el_idx).text, tz)
 
     def set_element_dt(self, el_name, dt, tz=None, el_idx=0):
-        """Set the text of the selected element to an ISO8601 formatted
-        datetime.
+        """Set the text of the selected element to an ISO8601 formatted datetime.
 
         Args:
           el_name : str
@@ -380,6 +387,7 @@ class SimpleXMLWrapper(object):
           el_idx : int
             Index of element to use in the event that there are multiple sibling
             elements with the same name.
+
         """
         dt = d1_common.date_time.cast_naive_datetime_to_tz(dt, tz)
         self.get_element_by_name(el_name, el_idx).text = dt.isoformat()
@@ -396,6 +404,7 @@ class SimpleXMLWrapper(object):
           el_idx : int
             Index of element to use in the event that there are multiple sibling
             elements with the same name.
+
         """
         self.get_element_by_name(el_name, el_idx)[:] = []
 
@@ -411,6 +420,7 @@ class SimpleXMLWrapper(object):
         Args:
           root_el : element
             New element that will replace the existing element.
+
         """
         el = self.get_element_by_name(root_el.tag, el_idx)
         el[:] = list(root_el)
@@ -427,6 +437,7 @@ class SimpleXMLWrapper(object):
         Args:
           xml_str : str
             New element that will replace the existing element.
+
         """
         root_el = self.parse_xml(xml_str)
         self.replace_by_etree(root_el, el_idx)

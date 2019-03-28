@@ -39,7 +39,7 @@ class TestCLIExceptions(d1_test.d1_test_case.D1TestCase):
             self._raise(d1_cli.impl.exceptions.InvalidArguments("test_message"))
 
     def test_1010(self):
-        """InvalidArguments(): Returns string"""
+        """InvalidArguments(): Returns string."""
         msg_str = "test_message"
         ex = d1_cli.impl.exceptions.InvalidArguments(msg_str)
         assert msg_str == str(ex)
@@ -50,7 +50,7 @@ class TestCLIExceptions(d1_test.d1_test_case.D1TestCase):
             self._raise(d1_cli.impl.exceptions.CLIError("test_message"))
 
     def test_1030(self):
-        """CLIError(): Returns string"""
+        """CLIError(): Returns string."""
         msg_str = "test_message"
         ex = d1_cli.impl.exceptions.CLIError(msg_str)
         assert msg_str == str(ex)

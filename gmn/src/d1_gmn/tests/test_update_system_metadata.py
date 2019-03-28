@@ -59,9 +59,11 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v2):
-        """updateSystemMetadata(): Access Policy adjustment
+        """updateSystemMetadata(): Access Policy adjustment.
+
         - Remove permissions for subj1-4
         - Lower permissions for subj9-12 from changePermission to write
+
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v2)
         new_permission_list = [
@@ -88,9 +90,8 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1010(self, gmn_client_v2):
-        """MNStorage.updateSystemMetadata(): Update blocked due to modified
-        timestamp mismatch
-        """
+        """MNStorage.updateSystemMetadata(): Update blocked due to modified timestamp
+        mismatch."""
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
@@ -109,7 +110,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v2):
-        """MNStorage.updateSystemMetadata(): Successful update"""
+        """MNStorage.updateSystemMetadata(): Successful update."""
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
@@ -132,8 +133,10 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @d1_gmn.tests.gmn_mock.no_client_trust_decorator
     def test_1030(self):
         """MNStorage.updateSystemMetadata()
+
         - Does not change dateUploaded
         - Does update dateSysMetadataModified
+
         """
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
@@ -153,14 +156,17 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 assert old_sysmeta_pyxb.dateUploaded == new_sysmeta_pyxb.dateUploaded
                 assert (
                     new_sysmeta_pyxb.dateSysMetadataModified
-                    >= old_sysmeta_pyxb.dateSysMetadataModified + datetime.timedelta(days=1)
+                    >= old_sysmeta_pyxb.dateSysMetadataModified
+                    + datetime.timedelta(days=1)
                 )
 
     @responses.activate
     def test_1040(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata():
-        A series of updates and downloads using the same gmn_client_v2
-        and network connection correctly frees up the connection
+
+        A series of updates and downloads using the same gmn_client_v2 and network
+        connection correctly frees up the connection
+
         """
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
@@ -180,8 +186,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v2):
-        """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes
-        """
+        """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes."""
         # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create base object with SID

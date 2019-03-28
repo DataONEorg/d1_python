@@ -20,8 +20,9 @@
 # limitations under the License.
 """Test MNReplication.replicate()
 
-These tests do NOT check if GMN acts on the request and actually
-performs the replication.
+These tests do NOT check if GMN acts on the request and actually performs the
+replication.
+
 """
 
 import pytest
@@ -45,9 +46,8 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """MNReplication.replicate(): Returns NotAuthorized on request from
-    non-trusted subject
-    """
+        """MNReplication.replicate(): Returns NotAuthorized on request from non-trusted
+        subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(self.client_v2, sid=True)
         with django.test.override_settings(NODE_REPLICATE=True):
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
@@ -56,8 +56,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
         """MNReplication.replicate(): Returns InvalidRequest when not accepting
-    replicas
-    """
+        replicas."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             gmn_client_v1_v2
         )
@@ -68,9 +67,8 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """MNReplication.replicate(): Returns InvalidRequest if requested replica
-    is larger than local limit
-    """
+        """MNReplication.replicate(): Returns InvalidRequest if requested replica is
+        larger than local limit."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             gmn_client_v1_v2
         )
@@ -83,9 +81,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """MNReplication.replicate(): Request to replicate new object returns 200
-    OK
-    """
+        """MNReplication.replicate(): Request to replicate new object returns 200 OK."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
             gmn_client_v1_v2
         )
@@ -96,8 +92,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
         """MNReplication.replicate(): Request to replicate existing object raises
-    IdentifierNotUnique
-    """
+        IdentifierNotUnique."""
         with django.test.override_settings(NODE_REPLICATE=True):
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
             with d1_gmn.tests.gmn_mock.disable_auth():
@@ -110,9 +105,8 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2, true_or_false):
-        """MNReplication.replicate(): Request to replicate public object is accepted
-    if REPLICATION_ALLOW_ONLY_PUBLIC is True or False
-    """
+        """MNReplication.replicate(): Request to replicate public object is accepted if
+        REPLICATION_ALLOW_ONLY_PUBLIC is True or False."""
         with django.test.override_settings(
             NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=true_or_false
         ):
@@ -128,9 +122,8 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
-        """MNReplication.replicate(): Request to replicate access control is
-    accepted if REPLICATION_ALLOW_ONLY_PUBLIC is False
-    """
+        """MNReplication.replicate(): Request to replicate access control is accepted if
+        REPLICATION_ALLOW_ONLY_PUBLIC is False."""
         with django.test.override_settings(
             NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=False
         ):
@@ -147,8 +140,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
         """MNReplication.replicate(): Request to replicate access controlled object
-    raises InvalidRequest if REPLICATION_ALLOW_ONLY_PUBLIC is True
-    """
+        raises InvalidRequest if REPLICATION_ALLOW_ONLY_PUBLIC is True."""
         with django.test.override_settings(
             NODE_REPLICATE=True, REPLICATION_ALLOW_ONLY_PUBLIC=True
         ):

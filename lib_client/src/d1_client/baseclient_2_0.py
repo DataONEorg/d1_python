@@ -28,14 +28,14 @@ import d1_client.baseclient_1_2
 
 
 class DataONEBaseClient_2_0(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
-    """Extend DataONEBaseClient_1_2 with functionality common between Member
-    and Coordinating nodes that was added in v2.0 of the DataONE
-    infrastructure.
+    """Extend DataONEBaseClient_1_2 with functionality common between Member and
+    Coordinating nodes that was added in v2.0 of the DataONE infrastructure.
 
     For details on how to use these methods, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/apis/MN_APIs.html
     https://releases.dataone.org/online/api-documentation-v2.0/apis/CN_APIs.html
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -65,6 +65,7 @@ class DataONEBaseClient_2_0(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
           vendorSpecific:
 
         Returns:
+
         """
         mmp_dict = {
             'pid': pid.encode('utf-8'),

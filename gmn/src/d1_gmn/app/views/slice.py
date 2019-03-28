@@ -81,8 +81,9 @@ def cache_add_last_in_slice(request, query, start_int, total_int, sort_field_lis
 def _get_and_assert_slice_param(url_dict, param_name, default_int):
     """Return ``param_str`` converted to an int.
 
-    If str cannot be converted to int or int is not zero or positive,
-    raise InvalidRequest.
+    If str cannot be converted to int or int is not zero or positive, raise
+    InvalidRequest.
+
     """
     param_str = url_dict['query'].get(param_name, default_int)
     try:
@@ -105,10 +106,11 @@ def _get_and_assert_slice_param(url_dict, param_name, default_int):
 
 
 def _assert_valid_start(start_int, count_int, total_int):
-    """Assert that the number of objects visible to the active subject is
-    higher than the requested start position for the slice.
+    """Assert that the number of objects visible to the active subject is higher than
+    the requested start position for the slice.
 
     This ensures that it's possible to create a valid slice.
+
     """
     if total_int and start_int >= total_int:
         raise d1_common.types.exceptions.InvalidRequest(
@@ -120,12 +122,12 @@ def _assert_valid_start(start_int, count_int, total_int):
 
 
 def _adjust_count_if_required(start_int, count_int, total_int):
-    """Adjust requested object count down if there are not enough objects
-    visible to the active subjects to cover the requested slice start and
-    count.
+    """Adjust requested object count down if there are not enough objects visible to the
+    active subjects to cover the requested slice start and count.
 
-    Preconditions: start is verified to be lower than the number of visible
-    objects, making it possible to create a valid slice by adjusting count.
+    Preconditions: start is verified to be lower than the number of visible objects,
+    making it possible to create a valid slice by adjusting count.
+
     """
     if start_int + count_int > total_int:
         count_int = total_int - start_int
@@ -155,8 +157,9 @@ def _add_fast_slice_filter(query, last_ts_tup, count_int):
 def _add_fallback_slice_filter(query, start_int, count_int, total_int):
     """Create a slice of a query based on request start and count parameters.
 
-    This adds `OFFSET <start> LIMIT <count>` to the SQL query, which
-    causes slicing to run very slowly on large result sets.
+    This adds `OFFSET <start> LIMIT <count>` to the SQL query, which causes slicing to
+    run very slowly on large result sets.
+
     """
     logging.debug(
         'Adding fallback slice filter. start={} count={} total={} '.format(
@@ -182,9 +185,9 @@ def _cache_get_last_in_slice(url_dict, start_int, total_int, authn_subj_list):
 
 
 def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
-    """Generate cache key for the REST URL the client is currently accessing or
-    is expected to access in order to get the slice starting at the given
-    ``start_int`` of a multi-slice result set.
+    """Generate cache key for the REST URL the client is currently accessing or is
+    expected to access in order to get the slice starting at the given ``start_int`` of
+    a multi-slice result set.
 
     When used for finding the key to check in the current call, ``start_int`` is
     0, or the start that was passed in the current call.
@@ -211,6 +214,7 @@ def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
     The url_dict is normalized by encoding it to a JSON string with sorted keys. A
     hash of the JSON is used for better distribution in a hash map and to avoid
     the 256 bytes limit on keys in some caches.
+
     """
     # logging.debug('Gen key. result_record_count={}'.format(result_record_count))
     key_url_dict = copy.deepcopy(url_dict)
