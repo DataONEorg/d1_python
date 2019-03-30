@@ -1,5 +1,4 @@
 # ./d1_common/types/generated/dataoneTypes_v1_1.py
-# -*- coding: utf-8 -*-
 # PyXB bindings for NM:360f646bcacd4796da7a71be6ffd7cac7a35ff8a
 # Generated 2017-10-17 10:39:46.546406 by PyXB version 1.2.6 using Python 2.7.12.final.0
 # Namespace http://ns.dataone.org/service/types/v1.1

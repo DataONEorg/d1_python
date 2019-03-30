@@ -1,5 +1,4 @@
 # ./d1_common/types/generated/dataoneErrors.py
-# -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
 # Generated 2017-10-17 10:39:46.965354 by PyXB version 1.2.6 using Python 2.7.12.final.0
 # Namespace AbsentNamespace0
