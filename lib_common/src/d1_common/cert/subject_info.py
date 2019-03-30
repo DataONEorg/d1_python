@@ -24,9 +24,9 @@ Overview of Access Control in DataONE
 
 Access control in DataONE works much like traditional Access Control Lists (ACLs). Each
 science object is associated with an ACL. The ACL contains a list of subjects and an
-access level for each subject. The access levels are `read`, `write` and `changePermission`.
-Each access level implicitly grants access to the lower levels, so only only the highest
-access level for a given subject needs to be specified in the ACL.
+access level for each subject. The access levels are `read`, `write` and
+`changePermission`. Each access level implicitly grants access to the lower levels, so
+only only the highest access level for a given subject needs to be specified in the ACL.
 
 This module handles the information that will be used for creating a list of
 authenticated subjects that can be compared against an ACL in order to determine if a
@@ -56,19 +56,20 @@ Notes
 -----
 
 - It's important to separate the roles of groups in the ACL and groups in the
-  SubjectInfo. Including a group subject in an ACL grants access to all subjects in that
-  group. However, including a subject that is in a group, in the ACL, does not give
-  access to the other subjects of the group or to the group itself. In other words, groups
-  add access for their members, not the other way around.
+  SubjectInfo. Including a group subject in an ACL grants access to all subjects in
+  that group. However, including a subject that is in a group, in the ACL, does not
+  give access to the other subjects of the group or to the group itself. In other
+  words, groups add access for their members, not the other way around.
 
-- In terms of generating a list of equivalent subjects based on SubjectInfo, the one way
-  transfer of access from groups to their subjects means that, when a subject is found to
-  belong to a group, only the group subject is included in the list (after which it may
-  chain to more equivalent identifies, etc). The group members are not included.
+- In terms of generating a list of equivalent subjects based on SubjectInfo, the one
+  way transfer of access from groups to their subjects means that, when a subject is
+  found to belong to a group, only the group subject is included in the list (after
+  which it may chain to more equivalent identifies, etc). The group members are not
+  included.
 
 - For deriving a list of indirectly authenticated subjects, the SubjectInfo contains a
-  set of statements that establish subject types and relationships between subjects. There
-  are 4 kinds of statements:
+  set of statements that establish subject types and relationships between subjects.
+  There are 4 kinds of statements:
 
   - Subject is a person
   - Subject is an equivalent of another subject
@@ -76,12 +77,12 @@ Notes
   - Subject is member of a group
 
 - An equivalent subject can only be the equivalent for a person. The equivalence
-  relationship is the only one that causes each side to be granted all the rights of the
-  other side, and so allows the two subjects to be used interchangeably. The other
+  relationship is the only one that causes each side to be granted all the rights of
+  the other side, and so allows the two subjects to be used interchangeably. The other
   relationships cause one side to be granted the rights of the other side, but not the
-  other way around. E.g.: Designating a subject as a member of a group causes the subject
-  to be granted the rights of the group, but does not cause the group to be granted the
-  rights of the subject.
+  other way around. E.g.: Designating a subject as a member of a group causes the
+  subject to be granted the rights of the group, but does not cause the group to be
+  granted the rights of the subject.
 
 
 Authorization examples
@@ -152,8 +153,9 @@ def extract_subjects(subject_info_xml, primary_str):
             A SubjectInfo XML document.
 
         primary_str : str
-            A DataONE subject, typically a DataONE compliant serialization of the DN of the
-            DataONE X.509 v3 certificate extension from which the SubjectInfo was extracted.
+            A DataONE subject, typically a DataONE compliant serialization of the DN of
+            the DataONE X.509 v3 certificate extension from which the SubjectInfo was
+            extracted.
 
             The primary subject can be viewed as the root of a tree. Any subject in the
             SubjectInfo that is directly or indirectly connected to the root subject is
@@ -163,27 +165,31 @@ def extract_subjects(subject_info_xml, primary_str):
     Returns:
         set: Set of authenticated subjects. Will always include the primary subject.
 
-        - All subjects in the returned set are equivalent to ``primary_str`` for the purpose of
-          access control for private science objects.
+        - All subjects in the returned set are equivalent to ``primary_str`` for the
+          purpose of access control for private science objects.
 
-        - If SubjectInfo does not contain all relevant records, it is still considered to
-          be valid, but the authenticated set will be incomplete.
+        - If SubjectInfo does not contain all relevant records, it is still considered
+          to be valid, but the authenticated set will be incomplete.
 
         - Only the subject strings and relationships in SubjectInfo are used by this
-          function. Other information about subjects, such as name and email address, is ignored.
+          function. Other information about subjects, such as name and email address,
+          is ignored.
 
-        - No attempt should be made to infer type of subject from the content of a subject
-          string. Subject strings should be handled as random Unicode sequences, each of which may
-          designate an person subject, an equivalent subject, or a group subject.
+        - No attempt should be made to infer type of subject from the content of a
+          subject string. Subject strings should be handled as random Unicode
+          sequences, each of which may designate an person subject, an equivalent
+          subject, or a group subject.
 
-        - To determine if an action is authorized, the returned set is checked against the
-          authorized_set for a given object. If one or more subjects exist in both sets, the
-          action is authorized. The check can be performed with high performance using a set union
-          operation in Python or an inner join in Postgres.
+        - To determine if an action is authorized, the returned set is checked against
+          the authorized_set for a given object. If one or more subjects exist in both
+          sets, the action is authorized. The check can be performed with high
+          performance using a set union operation in Python or an inner join in
+          Postgres.
 
-        - Subject types are only known and relevant while processing the SubjectInfo type.
-        - The type of each subject in the authenticated_subjects and allowed_subjects lists are
-          unknown and irrelevant.
+        - Subject types are only known and relevant while processing the SubjectInfo
+          type.
+        - The type of each subject in the authenticated_subjects and allowed_subjects
+          lists are unknown and irrelevant.
 
     Notes:
         Procedure:
@@ -194,42 +200,50 @@ def extract_subjects(subject_info_xml, primary_str):
         - Start with empty set of subjects
         - Add authenticatedUser
         - If ``subject`` is not in set of subjects:
-            - Add ``subject``
-            - Iterate over Person records
-                - If Person.subject is ``subject``:
-                    - If Person.verified is present and set:
-                        - Add "verifiedUser"
-                    - Iterate over Person.equivalentIdentity:
-                        - Recursively add those subjects
-                    - Iterate over Person.isMemberOf
-                        - Recursively add those subjects, but ONLY check Group subjects
-            - Iterate over Group records
-                - If any Group.hasMember is ``subject``:
-                    - Recursively add Group.subject (not group members)
+        - Add ``subject``
+        - Iterate over Person records
+        - If Person.subject is ``subject``:
+        - If Person.verified is present and set:
+        - Add "verifiedUser"
+        - Iterate over Person.equivalentIdentity:
+        - Recursively add those subjects
+        - Iterate over Person.isMemberOf
+        - Recursively add those subjects, but ONLY check Group subjects
+        - Iterate over Group records
+        - If any Group.hasMember is ``subject``:
+        - Recursively add Group.subject (not group members)
 
 
         Handling of various invalid SubjectInfo and corner cases:
 
         - SubjectInfo XML doc that is not well formed
-            - Return an exception that includes a useful error message with the line number of the issue
+        - Return an exception that includes a useful error message with the line number
+          of the issue
 
-        - person.isMemberOf and group.hasMember should always form pairs referencing each other.
-            - One side of the pair is missing
-                - Process the available side as normal
-            - person.isMemberOf subject references a person or equivalent instead of a group
-                - Only Group subjects are searched for isMemberOf references, so only the referenced Group subject is added to the list of authorized subjects
+        - person.isMemberOf and group.hasMember should always form pairs referencing
+          each other.
+        - One side of the pair is missing
+        - Process the available side as normal
+        - person.isMemberOf subject references a person or equivalent instead of a
+          group
+        - Only Group subjects are searched for isMemberOf references, so only the
+          referenced Group subject is added to the list of authorized subjects
 
         - Multiple Person or Group records conflict by using the same subject
-            - The records are handled as equivalents
+        - The records are handled as equivalents
 
         - person.isMemberOf subject does not reference a known subject
-            - If the Person containing the dangling isMemberOf IS NOT connected with the authenticated subject, the whole record, including the isMemberOf subject is simply ignored
-            - If it IS connected with an authenticated subject, the isMemberOf subject is authenticated and recursive processing of the subject is skipped
+        - If the Person containing the dangling isMemberOf IS NOT connected with the
+          authenticated subject, the whole record, including the isMemberOf subject is
+          simply ignored
+        - If it IS connected with an authenticated subject, the isMemberOf subject is
+          authenticated and recursive processing of the subject is skipped
 
         - Circular references
-            - Handled by skipping recursive add for subjects that are already added
+        - Handled by skipping recursive add for subjects that are already added
 
-        - See the unit tests for example SubjectInfo XML documents for each of these issues and the expected results.
+        - See the unit tests for example SubjectInfo XML documents for each of these
+          issues and the expected results.
 
     """
     subject_info_pyxb = deserialize_subject_info(subject_info_xml)
@@ -267,17 +281,22 @@ def gen_subject_info_tree(subject_info_pyxb, authn_subj, include_duplicates=Fals
         subject_info_pyxb: SubjectInfo PyXB object
 
         authn_subj: str
-            The authenticated subject that becomes the root subject in the tree of subjects built from the SubjectInfo.
+            The authenticated subject that becomes the root subject in the tree of
+            subjects built from the SubjectInfo.
 
-            Only subjects that are authenticated by a direct or indirect connection to this subject are included in the tree.
+            Only subjects that are authenticated by a direct or indirect connection to
+            this subject are included in the tree.
 
         include_duplicates:
-            Include branches of the tree that contain subjects that have already been included via other branches.
+            Include branches of the tree that contain subjects that have already been
+            included via other branches.
 
-            If the tree is intended for rendering, including the duplicates will provide a more complete view of the SubjectInfo.
+            If the tree is intended for rendering, including the duplicates will
+            provide a more complete view of the SubjectInfo.
 
     Returns:
-        SubjectInfoNode : Tree of nodes holding information about subjects that are directly or indirectly connected to the authenticated subject in the root.
+        SubjectInfoNode : Tree of nodes holding information about subjects that are
+        directly or indirectly connected to the authenticated subject in the root.
 
     """
 
@@ -361,12 +380,12 @@ def _subject_is_member_of_group(group_pyxb, subject_str):
 def _trim_tree(state):
     """Trim empty leaf nodes from the tree.
 
-    - To simplify the tree conversion, empty nodes are added before it is known if
-    they will contain items that connect back to the authenticated subject. If there
-    are no connections, the nodes remain empty, which causes them to be removed here.
+    - To simplify the tree conversion, empty nodes are added before it is known if they
+      will contain items that connect back to the authenticated subject. If there are
+      no connections, the nodes remain empty, which causes them to be removed here.
 
-    - Removing a leaf node may cause the parent to become a new empty leaf node, so
-    the function is repeated until there are no more empty leaf nodes.
+    - Removing a leaf node may cause the parent to become a new empty leaf node, so the
+      function is repeated until there are no more empty leaf nodes.
 
     """
     for n in list(state.tree.leaf_node_gen):
@@ -437,10 +456,12 @@ class SubjectInfoNode:
 
         Args:
             sep: str
-                One or more characters to insert between each element in the path. Defaults to "/" on Unix and "\" on Windows.
+                One or more characters to insert between each element in the path.
+                Defaults to "/" on Unix and "\" on Windows.
 
             type_str:
-                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include information from nodes of that type.
+                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include
+                information from nodes of that type.
 
         Returns:
             str: String describing the path from the root to this node.
@@ -463,10 +484,12 @@ class SubjectInfoNode:
 
         Args:
             sep: str
-                One or more characters to insert between each element in the path. Defaults to "/" on Unix and "\" on Windows.
+                One or more characters to insert between each element in the path.
+                Defaults to "/" on Unix and "\" on Windows.
 
             type_str:
-                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include information from nodes of that type.
+                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include
+                information from nodes of that type.
 
         Returns:
             list of str: The paths to the leaf nodes for the tree rooted at this node.
@@ -479,7 +502,8 @@ class SubjectInfoNode:
 
         Args:
             type_str:
-                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include information from nodes of that type.
+                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include
+                information from nodes of that type.
 
         Returns:
             list of str: The labels of the nodes leading up to this node from the root.
@@ -501,7 +525,8 @@ class SubjectInfoNode:
 
         Args:
             type_str:
-                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include information from nodes of that type.
+                SUBJECT_NODE_TAG, TYPE_NODE_TAG or None. If set, only include
+                information from nodes of that type.
 
         Returns:
             set: The labels of the nodes leading up to this node from the root.

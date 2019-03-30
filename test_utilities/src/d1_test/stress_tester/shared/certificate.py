@@ -22,11 +22,7 @@
 :mod:`certificate`
 ==================
 
-:Created: 2012-07-16
-:Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
-"""
+:Created: 2012-07-16 :Author: DataONE (Dahl) :Dependencies: - python 2.6 """
 
 import os
 
@@ -37,7 +33,8 @@ from . import subject_dn
 def check_path(path):
     """Because the authors of OpenSSL think that, "ssl.SSLError: [Errno 336445442]
     _ssl.c:365: error:140DC002:SSL routines:SSL_CTX_use_certificate_chain_file:system
-    lib" is a good error message for "file not found", do explicit checks of certificate
+    lib" is a good error message for "file not found", do explicit checks of
+    certificate
     paths."""
     if not os.path.exists(path):
         raise Exception('Certificate or key does not exist: {}'.format(path))

@@ -248,16 +248,16 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         - If the path points to an item in the region tree, the item is returned and
           the path, having been fully consumed, is returned as an empty list.
 
-        - If the path exits through a valid PID in the region tree, the PID is
-          returned for the item and the section of the path that was not consumed
-          within the region tree is returned.
+        - If the path exits through a valid PID in the region tree, the PID is returned
+          for the item and the section of the path that was not consumed within the
+          region tree is returned.
 
         - If the path exits through a valid folder in the region tree, an "invalid
-          path" PathException is raised. This is because only the PIDs are valid
-          "exit points" in the tree.
+          path" PathException is raised. This is because only the PIDs are valid "exit
+          points" in the tree.
 
-        - If the path goes to an invalid location within the region tree, an
-          "invalid path" PathException is raised.
+        - If the path goes to an invalid location within the region tree, an "invalid
+          path" PathException is raised.
 
         """
         # Handle valid item within region tree.

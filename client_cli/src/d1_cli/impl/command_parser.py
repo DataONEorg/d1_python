@@ -401,7 +401,8 @@ be lost if you exit.""".format(
         )
 
     def do_package(self, line):
-        """package <package-pid> <science-metadata-pid> <science-pid> [science- pid ...]
+        """package <package-pid> <science-metadata-pid> <science-pid> [science- pid
+        ...]
         Create a simple OAI-ORE Resource Map on a Member Node."""
         pids = self._split_args(line, 3, -1, pad=False)
         self._command_processor.create_package(pids)
@@ -574,9 +575,9 @@ Write Operation Queue:   queue run edit clearqueue
 
 Command History:         Arrow Up, Arrow Down
 Command Editing:         Arrow Left, Arrow Right, Delete
-"""
+        """
         if platform.system() != "Windows":
             msg += """Command Completion:      Single Tab: Complete unique command
                          Double Tab: Display possible commands
-"""
+            """
         d1_cli.impl.util.print_info(msg)

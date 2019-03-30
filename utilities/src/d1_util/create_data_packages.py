@@ -20,17 +20,17 @@
 # limitations under the License.
 """Create Data Package (Resource Map) on Member Node.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Create Data Packages (Resource Maps) from local files
 - Upload local files and Data Packages to a Member Node
 
 Operation:
 
-Data packages are created from files in a folder provided by the user.
-Files with the same basename are combined into a package, with the basename
-being the name of the package.
+Data packages are created from files in a folder provided by the user. Files with the
+same basename are combined into a package, with the basename being the name of the
+package.
 
 Example:
 
@@ -40,15 +40,15 @@ The files
   myfile.2.txt
   myfile.jpg
 
-would be grouped into a package because they share the same basename. First,
-each of the files would be uploaded to the Member Node separately. The full
-filename is used as the PID.
+would be grouped into a package because they share the same basename. First, each of
+the files would be uploaded to the Member Node separately. The full filename is used as
+the PID.
 
-For each file, a system metadata file is generated, based on information
-from the file and from a set of fixed settings.
+For each file, a system metadata file is generated, based on information from the file
+and from a set of fixed settings.
 
-Then, a package for all the files is generated. System metadata is generated
-for the package, and the package is uploaded to the Member Node.
+Then, a package for all the files is generated. System metadata is generated for the
+package, and the package is uploaded to the Member Node.
 
 """
 import argparse

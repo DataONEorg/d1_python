@@ -91,7 +91,8 @@ def nested_update(d, u):
         dict that will be updated in-place. May or may not contain nested dicts.
 
       u: dict
-        dict with contents that will be merged into ``d``. May or may not contain nested dicts.
+        dict with contents that will be merged into ``d``. May or may not contain
+        nested dicts.
 
     """
     for k, v in list(u.items()):
@@ -144,8 +145,8 @@ class EventCounter(object):
 
         Args:
           event_str:
-            The name of an event to count. Used as a key in the event dict. The same name
-            will also be used in the summary.
+            The name of an event to count. Used as a key in the event dict. The same
+            name will also be used in the summary.
 
           inc_int: int
             Optional argument to increase the count for the event by more than 1.
@@ -159,14 +160,14 @@ class EventCounter(object):
 
         Args:
           event_str: str
-            The name of an event to count. Used as a key in the event dict. The same name
-            will be used in the summary. This also becomes a part of the message logged by
-            this function.
+            The name of an event to count. Used as a key in the event dict. The same
+            name will be used in the summary. This also becomes a part of the message
+            logged by this function.
 
           msg_str: str
-            Optional message with details about the events. The message is only written to
-            the log. While the ``event_str`` functions as a key and must remain the same for
-            the same type of event, ``log_str`` may change between calls.
+            Optional message with details about the events. The message is only written
+            to the log. While the ``event_str`` functions as a key and must remain the
+            same for the same type of event, ``log_str`` may change between calls.
 
           inc_int: int
             Optional argument to increase the count for the event by more than 1.
@@ -201,8 +202,8 @@ def print_logging():
     when writing to loggers.
 
     This makes logging look like ``print()``. The main use case is in scripts that mix
-    logging and ``print()``, as Python uses separate streams for those, and output can and
-    does end up getting shuffled if ``print()`` and logging is used interchangeably.
+    logging and ``print()``, as Python uses separate streams for those, and output can
+    and does end up getting shuffled if ``print()`` and logging is used interchangeably.
 
     When entering the context, the logging levels on the current handlers are saved then
     modified to WARNING levels. A new DEBUG level handler with a formatter that does not
@@ -211,8 +212,8 @@ def print_logging():
     When leaving the context, the DEBUG handler is removed and existing loggers are
     restored to their previous levels.
 
-    By modifying the log levels to WARNING instead of completely disabling the loggers, it
-    is ensured that potentially serious issues can still be logged while the context
+    By modifying the log levels to WARNING instead of completely disabling the loggers,
+    it is ensured that potentially serious issues can still be logged while the context
     manager is in effect.
 
     """
@@ -243,8 +244,8 @@ def save_json(py_obj, json_path):
         automatically converted to strings.
 
       json_path: str
-        File path to which to write the JSON file. E.g.: The path must exist. The filename
-        will normally end with ".json".
+        File path to which to write the JSON file. E.g.: The path must exist. The
+        filename will normally end with ".json".
 
     See Also:
       ToJsonCompatibleTypes()
@@ -326,7 +327,8 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
     """Some native objects such as ``datetime.datetime`` are not automatically converted
     to strings for use as values in JSON.
 
-    This helper adds such conversions for types that the DataONE Python stack encounters
+    This helper adds such conversions for types that the DataONE Python stack
+    encounters
     frequently in objects that are to be JSON encoded.
 
     """

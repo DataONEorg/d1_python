@@ -41,9 +41,11 @@ def extract_subjects(cert_pem):
     Returns:
       2-tuple:
         - The primary subject string, extracted from the certificate DN.
-        - A set of equivalent identities, group memberships and inferred symbolic subjects extracted from the SubjectInfo (if present.)
+        - A set of equivalent identities, group memberships and inferred symbolic
+          subjects extracted from the SubjectInfo (if present.)
         - All returned subjects are DataONE compliant serializations.
-        - A copy of the primary subject is always included in the set of equivalent identities.
+        - A copy of the primary subject is always included in the set of equivalent
+          identities.
 
     """
     primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(cert_pem)

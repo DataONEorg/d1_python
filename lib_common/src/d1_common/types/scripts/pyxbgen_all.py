@@ -202,7 +202,7 @@ SVNREVISION="{2}"
 
 # The version tag of the schema
 VERSION="{3}"
-""".format(
+        """.format(
             tstamp, svnpath, svnrev, version
         )
 

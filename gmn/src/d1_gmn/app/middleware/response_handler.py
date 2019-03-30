@@ -76,10 +76,10 @@ class ResponseHandler:
     def _debug_mode_responses(self, request, response):
         """Extra functionality available in debug mode.
 
-        - If pretty printed output was requested, force the content type to text.
-        This causes the browser to not try to format the output in any way.
+        - If pretty printed output was requested, force the content type to text. This
+          causes the browser to not try to format the output in any way.
         - If SQL profiling is turned on, return a page with SQL query timing
-        information instead of the actual response.
+          information instead of the actual response.
 
         """
         if django.conf.settings.DEBUG_GMN:

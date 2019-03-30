@@ -162,7 +162,7 @@ def pytest_sessionstart(session):
     """Called by pytest before calling session.main()
 
     - When running in parallel with xdist, this is called once for each worker. By
-    default, the number of workers is the same as the number of CPU cores.
+      default, the number of workers is the same as the number of CPU cores.
 
     """
     exit_if_switch_used_with_xdist(

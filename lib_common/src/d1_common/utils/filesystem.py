@@ -113,8 +113,8 @@ def abs_path_from_base(base_path, rel_path):
 
 
 def abs_path(rel_path):
-    """Convert a path that is relative to the module from which this function is called,
-    to an absolute path.
+    """Convert a path that is relative to the module from which this function is
+    called, to an absolute path.
 
     Args:
       rel_path: str

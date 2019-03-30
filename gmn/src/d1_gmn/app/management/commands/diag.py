@@ -148,12 +148,11 @@ class ClearDb(object):
 class ExportObjectIdentifiers(object):
     """Export objects identifiers and related subjects strings to CSV.
 
-    The CSV file can be analyzed to determine if objects have the expected
-    permissions.
+    The CSV file can be analyzed to determine if objects have the expected permissions.
 
-    Permissions are cumulative, so if a subject has, e.g., 'write' permissions on
-    an object, 'read' access is implied. So if multiple permissions have been given
-    to a subject for an object, only the highest permission is included in the list.
+    Permissions are cumulative, so if a subject has, e.g., 'write' permissions on an
+    object, 'read' access is implied. So if multiple permissions have been given to a
+    subject for an object, only the highest permission is included in the list.
 
     """
 
@@ -203,23 +202,22 @@ class UpdateSystemMetadata(object):
     """Update the System Metadata for objects on this GMN instance by copying specified
     elements from external SystemMetadata XML documents.
 
-    The source SystemMetadata is either an XML file or root directory referenced
-    by --root or an object on a remote node, referenced by --baseurl.
+    The source SystemMetadata is either an XML file or root directory referenced by
+    --root or an object on a remote node, referenced by --baseurl.
 
     When --root is a root directory or when using --baseurl, a bulk operation is
-    performed where all discovered objects are matched up with local objects by
-    PID. The specified elements are then copied from the discovered object to the
-    matching local object.
+    performed where all discovered objects are matched up with local objects by PID.
+    The specified elements are then copied from the discovered object to the matching
+    local object.
 
-    Any discovered objects that do not have a local matching PID are ignored. A
-    regular expression can also be specified to ignore discovered objects even
-    when there are matching local objects.
+    Any discovered objects that do not have a local matching PID are ignored. A regular
+    expression can also be specified to ignore discovered objects even when there are
+    matching local objects.
 
-    Only elements that are children of root are supported. See
-    SYSMETA_ROOT_CHILD_LIST.
+    Only elements that are children of root are supported. See SYSMETA_ROOT_CHILD_LIST.
 
-    If a discovered object does not have an element that has been specified for
-    copy, the element is removed from the local object.
+    If a discovered object does not have an element that has been specified for copy,
+    the element is removed from the local object.
 
     """
 

@@ -24,16 +24,16 @@ DataONE services use XML messaging over HTTP as the primary means of communicati
 between service nodes and clients. The XML messages are defined by XML Schema
 specifications and must be valid.
 
-This package provides serialization, deserialization and validation of DataONE API
-XML types, allowing developers to handle the DataONE types as native objects,
-reducing development time.
+This package provides serialization, deserialization and validation of DataONE API XML
+types, allowing developers to handle the DataONE types as native objects, reducing
+development time.
 
 Implicit validation is performed whenever objects are serialized and deserialized, so
 that developers can assume that information that was received from a DataONE node is
 complete and syntactically correct before attempting to process it. Also, attempts to
 submit incomplete or syntactically incorrect information to a DataONE node cause local
-errors that are easy to debug, rather than less specific errors returned from the target
-node to which the incorrect types were sent.
+errors that are easy to debug, rather than less specific errors returned from the
+target node to which the incorrect types were sent.
 
 Notes:
 
@@ -57,7 +57,6 @@ See also:
     The DataONE API XML `Schemas`_.
 
 .. _Schemas: https://repository.dataone.org/software/cicore/trunk/schemas/
-
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.

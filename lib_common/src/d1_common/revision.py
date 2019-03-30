@@ -43,9 +43,9 @@ def topological_sort(unsorted_dict):
 
     Args:
       unsorted_dict : dict
-        Dict that holds obsolescence information. Each ``key/value`` pair establishes that
-        the PID in ``key`` identifies an object that obsoletes an object identifies by the
-        PID in ``value``.
+        Dict that holds obsolescence information. Each ``key/value`` pair establishes
+        that the PID in ``key`` identifies an object that obsoletes an object identifies
+        by the PID in ``value``.
 
 
     Returns:
@@ -55,8 +55,8 @@ def topological_sort(unsorted_dict):
       are listed after the object they obsolete.
 
       ``unconnected_dict``: A dict of PID to obsoleted PID of any objects that could not
-      be added to a revision chain. These items will have obsoletes PIDs that directly or
-      indirectly reference a PID that could not be sorted.
+      be added to a revision chain. These items will have obsoletes PIDs that directly
+      or indirectly reference a PID that could not be sorted.
 
     Notes:
       ``obsoletes_dict`` is modified by the sort and on return holds any items that
@@ -93,8 +93,8 @@ def get_pids_in_revision_chain(client, did):
     Returns:
       list of str:
         All PIDs in the chain. The returned list is in the same order as the chain. The
-        initial PID is typically obtained by resolving a SID. If the given PID is not in a
-        chain, a list containing the single object is returned.
+        initial PID is typically obtained by resolving a SID. If the given PID is not in
+        a chain, a list containing the single object is returned.
 
     """
 

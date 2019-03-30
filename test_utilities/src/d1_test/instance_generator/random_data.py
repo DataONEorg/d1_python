@@ -65,7 +65,7 @@ def random_bytes(num_bytes, max_bytes=None):
 
     - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
     - If both ``num_bytes`` and ``max_bytes`` are set, a random number of bytes between
-    ``num_bytes`` and ``max_bytes`` (including) is returned.
+      ``num_bytes`` and ``max_bytes`` (including) is returned.
 
     """
     return bytearray(
@@ -78,7 +78,7 @@ def random_bytes_file(num_bytes, max_bytes=None):
 
     - If only ``num_bytes`` is set, exactly ``num_bytes`` are returned.
     - If both ``num_bytes`` and ``max_bytes`` is set, a random number of bytes between
-    ``num_bytes`` and ``max_bytes`` (including) is returned.
+      ``num_bytes`` and ``max_bytes`` (including) is returned.
 
     """
     return io.BytesIO(random_bytes(num_bytes, max_bytes))
@@ -157,8 +157,8 @@ def random_unicode_str(num_chars=5, max_chars=None):
     """Return a str containing random Unicode characters.
 
     - If only ``num_chars`` is set, exactly ``num_chars`` characters are returned.
-    - If both ``num_chars`` and ``max_chars`` are set, a random number of characters between
-    ``num_chars`` and ``max_chars`` (including) is returned.
+    - If both ``num_chars`` and ``max_chars`` are set, a random number of characters
+      between ``num_chars`` and ``max_chars`` (including) is returned.
 
     """
     return ''.join(
@@ -236,8 +236,8 @@ def random_within_range(num_bytes, max_bytes=None):
     """Return a random int within range.
 
     - If only ``num_bytes`` is set, return ``num_bytes``
-    - If both ``num_bytes`` and ``max_bytes`` are set, return random int within
-    between ``num_bytes`` and ``max_bytes`` (including).
+    - If both ``num_bytes`` and ``max_bytes`` are set, return random int within between
+      ``num_bytes`` and ``max_bytes`` (including).
 
     """
     return num_bytes if max_bytes is None else random.randint(num_bytes, max_bytes)

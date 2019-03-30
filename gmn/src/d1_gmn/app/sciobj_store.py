@@ -19,11 +19,11 @@
 # limitations under the License.
 """Manage the filesystem tree in which science object bytes are stored.
 
-- Because it may be inefficient to store millions of files in a single folder
-and because such a folder is hard to deal with when performing backups and
-maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
-holding 256 folders, for a total of 65536 folders. The location in the hierarchy
-for a given object is based on its PID.
+- Because it may be inefficient to store millions of files in a single folder and
+  because such a folder is hard to deal with when performing backups and maintenance,
+  GMN stores the objects in a folder hierarchy of 256 folders, each holding 256
+  folders, for a total of 65536 folders. The location in the hierarchy for a given
+  object is based on its PID.
 
 - Folders are created as required in the hierarchy.
 
@@ -141,8 +141,8 @@ def get_rel_sciobj_file_path(pid):
 
     - The path is relative to settings.OBJECT_STORE_PATH
     - There is a one-to-one mapping between pid and path
-    - The path is based on a SHA1 hash. It's now possible to craft SHA1
-    collisions, but it's so unlikely that we ignore it for now
+    - The path is based on a SHA1 hash. It's now possible to craft SHA1 collisions, but
+      it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
 
     """
@@ -155,8 +155,8 @@ def get_abs_sciobj_file_path_by_pid(pid):
 
     - The path is to a location below settings.OBJECT_STORE_PATH
     - There is a one-to-one mapping between pid and path
-    - The path is based on a SHA1 hash. It's now possible to craft SHA1
-    collisions, but it's so unlikely that we ignore it for now
+    - The path is based on a SHA1 hash. It's now possible to craft SHA1 collisions, but
+      it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
 
     """
@@ -168,8 +168,8 @@ def get_abs_sciobj_file_path_by_rel_path(rel_path):
 
     - The path is to a location below settings.OBJECT_STORE_PATH
     - There is a one-to-one mapping between pid and path
-    - The path is based on a SHA1 hash. It's now possible to craft SHA1
-    collisions, but it's so unlikely that we ignore it for now
+    - The path is based on a SHA1 hash. It's now possible to craft SHA1 collisions, but
+      it's so unlikely that we ignore it for now
     - The path may or may not exist (yet).
 
     """

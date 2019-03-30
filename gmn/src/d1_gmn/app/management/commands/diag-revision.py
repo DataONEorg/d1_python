@@ -19,15 +19,14 @@
 # limitations under the License.
 """Examine and repair revision / obsolescence chains.
 
-diag- management commands may be useful in various testing and debugging
-scenarios but should not be needed and cannot be safely used on a production
-node.
+diag- management commands may be useful in various testing and debugging scenarios but
+should not be needed and cannot be safely used on a production node.
 
 Add any missing obsoleted and obsoletedBy references
 
-obsoleted and obsoletedBy references should not break during regular use of GMN
-in production, but it may happen during development or if the database is
-manipulated directly during testing.
+obsoleted and obsoletedBy references should not break during regular use of GMN in
+production, but it may happen during development or if the database is manipulated
+directly during testing.
 
 """
 

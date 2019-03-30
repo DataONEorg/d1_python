@@ -643,9 +643,9 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         a list of dicts, where they keys are the column names.
 
         - By default, also dump the result with logging.debug(). Disable with
-        dump=False.
+          dump=False.
         - This can be used for checking the state of a database within the implicit
-        transactions that wrap the unit tests.
+          transactions that wrap the unit tests.
 
         """
 

@@ -20,8 +20,8 @@
 # limitations under the License.
 """Download and display Data Package (Resource Map) from Member Node.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Download a Data Package (Resource Map)
 - Parse and display the Resource Map.

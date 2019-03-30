@@ -19,21 +19,20 @@
 # limitations under the License.
 """View or whitelist DataONE subjects in an X.509 PEM certificate file.
 
-view <cert-path>: List primary subject and any subjects in the optional DataONE SubjectInfo
-certificate extension.
+view <cert-path>: List primary subject and any subjects in the optional DataONE
+SubjectInfo certificate extension.
 
 cert whitelist: Add primary subject to whitelist for create, update and delete.
 
 The certificate is not verified by this command.
 
-When whitelisting a certificate, only the primary subject is whitelisted. The
-primary subject is a DataONE specific serialization of the certificate DN.
+When whitelisting a certificate, only the primary subject is whitelisted. The primary
+subject is a DataONE specific serialization of the certificate DN.
 
 The certificate must be in PEM format.
 
-If the certificate is used when connecting to a DataONE Node and passes
-verification on the node, the calls made through the connection are
-authenticated for the subjects.
+If the certificate is used when connecting to a DataONE Node and passes verification on
+the node, the calls made through the connection are authenticated for the subjects.
 
 """
 

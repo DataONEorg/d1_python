@@ -20,9 +20,9 @@
 # limitations under the License.
 """DataONE Utilities and Examples.
 
-A collection of scripts intended to be useful both as command line
-utilities and as examples on how to interact with the DataONE
-infrastructure via the DataONE Python stack.
+A collection of scripts intended to be useful both as command line utilities and as
+examples on how to interact with the DataONE infrastructure via the DataONE Python
+stack.
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.

@@ -20,8 +20,8 @@
 # limitations under the License.
 """Create Science Object on Member Node.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Upload a local file to a Member Node as a Science Object
 - Generate the system metadata for a local file
@@ -32,12 +32,12 @@ Operation:
 - Configure the script in the Config section below
 
 - The first time the script is run, a message indicating that the object was
-successfully created should be displayed, and the object should become
-available on the Member Node.
+  successfully created should be displayed, and the object should become available on
+  the Member Node.
 
-- If the script is then launched again without changing the identifier (PID),
-an IdentifierNotUnique exception should be returned. This indicates that the
-identifier is now in use by the previously created object.
+- If the script is then launched again without changing the identifier (PID), an
+  IdentifierNotUnique exception should be returned. This indicates that the identifier
+  is now in use by the previously created object.
 
 - Any other errors will also be returned as DataONE exceptions.
 

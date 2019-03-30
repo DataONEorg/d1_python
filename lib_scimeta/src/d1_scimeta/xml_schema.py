@@ -106,11 +106,11 @@ class Validate(object):
     def is_installed_scimeta_format_id(self, format_id):
         """Return True if:
 
-        - {format_id} is formatId of a Science Metadata format that is recognized
-        and parsed by CNs (in the objectFormatList, the objectFormat has a
-        formatType of METADATA)
+        - {format_id} is formatId of a Science Metadata format that is recognized and
+          parsed by CNs (in the objectFormatList, the objectFormat has a formatType of
+          METADATA)
         - And the XML Schema (XSD) files required for validating the object is
-        installed in this validator's local schema store.
+          installed in this validator's local schema store.
 
         """
         try:

@@ -25,9 +25,9 @@ JWT representations:
 
 - bu64: A URL safe flavor of Base64 used by JWTs
 - jwt_bu64: A complete JWT consisting of three dot separated bu64 encoded parts:
-(header_bu64, payload_bu64, signature_bu64)
-- jwt_tup: A complete JWT consisting of a tuple of 3 decoded (raw) parts:
-(header_str, payload_str, signature_str)
+  (header_bu64, payload_bu64, signature_bu64)
+- jwt_tup: A complete JWT consisting of a tuple of 3 decoded (raw) parts: (header_str,
+  payload_str, signature_str)
 
 """
 
@@ -61,8 +61,8 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
 
     - Possible validation errors include:
 
-        - A trusted (TLS/SSL) connection could not be made to the CN holding the signing
-          certificate.
+        - A trusted (TLS/SSL) connection could not be made to the CN holding the
+          signing certificate.
         - The JWT could not be decoded.
         - The JWT signature signature was invalid.
         - The JWT claim set contains invalid "Not Before" or "Expiration Time" claims.
@@ -209,7 +209,7 @@ def validate_and_decode(jwt_bu64, cert_obj):
     """Validate the JWT and return as a dict.
 
     - JWTs contain a set of values serialized to a JSON dict. This decodes the JWT and
-    returns it as a dict.
+      returns it as a dict.
 
     Args:
       jwt_bu64: bytes
@@ -291,7 +291,8 @@ def ts_to_str(jwt_dict):
         JWT with some keys containing timestamps.
 
     Returns:
-      dict: Copy of input dict where timestamps have been replaced with human readable dates.
+      dict: Copy of input dict where timestamps have been replaced with human readable
+      dates.
 
     """
     d = ts_to_dt(jwt_dict)
@@ -309,7 +310,8 @@ def ts_to_dt(jwt_dict):
         JWT with some keys containing timestamps.
 
     Returns:
-      dict: Copy of input dict where timestamps have been replaced with datetime.datetime() objects.
+      dict: Copy of input dict where timestamps have been replaced with
+      datetime.datetime() objects.
 
     """
     d = jwt_dict.copy()

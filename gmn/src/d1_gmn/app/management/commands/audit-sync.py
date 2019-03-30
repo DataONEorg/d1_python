@@ -129,9 +129,8 @@ class Command(django.core.management.base.BaseCommand):
 
         CNRead.describe() is used as it's a light-weight HTTP HEAD request.
 
-        This assumes that the call is being made over a connection that has
-        been authenticated and has read or better access on the given object if
-        it exists.
+        This assumes that the call is being made over a connection that has been
+        authenticated and has read or better access on the given object if it exists.
 
         """
         try:

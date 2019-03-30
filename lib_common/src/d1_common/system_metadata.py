@@ -19,7 +19,8 @@
 # limitations under the License.
 """Utilities for handling the DataONE SystemMetadata type.
 
-DataONE API methods such as `MNStorage.create()` require a Science Object and System Metadata pair.
+DataONE API methods such as `MNStorage.create()` require a Science Object and System
+Metadata pair.
 
 Examples:
 
@@ -130,7 +131,8 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
     Returns:
       bool:
         - ``True`` if ``sysmeta_pyxb`` is a SystemMetadata PyXB object.
-        - ``False`` if ``sysmeta_pyxb`` is not a PyXB object or is a PyXB object of a type other than SystemMetadata.
+        - ``False`` if ``sysmeta_pyxb`` is not a PyXB object or is a PyXB object of a
+          type other than SystemMetadata.
 
     """
     return (
@@ -149,13 +151,14 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
 
       reset_timestamps: bool
         ``True``: Timestamps in the SystemMetadata are set to a standard value so that
-        objects that are compared after normalization register as equivalent if only their
-        timestamps differ.
+        objects that are compared after normalization register as equivalent if only
+        their timestamps differ.
 
     Notes:
-      The SystemMetadata is normalized by removing any redundant information and ordering
-      all sections where there are no semantics associated with the order. The normalized
-      SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+      The SystemMetadata is normalized by removing any redundant information and
+      ordering all sections where there are no semantics associated with the order. The
+      normalized SystemMetadata is intended to be semantically equivalent to the
+      un-normalized one.
 
     """
     if sysmeta_pyxb.accessPolicy is not None:
@@ -205,16 +208,17 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
 
       reset_timestamps: bool
         ``True``: Timestamps in the SystemMetadata are set to a standard value so that
-        objects that are compared after normalization register as equivalent if only their
-        timestamps differ.
+        objects that are compared after normalization register as equivalent if only
+        their timestamps differ.
 
     Returns:
       bool: **True** if SystemMetadata PyXB objects are semantically equivalent.
 
     Notes:
-      The SystemMetadata is normalized by removing any redundant information and ordering
-      all sections where there are no semantics associated with the order. The normalized
-      SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+      The SystemMetadata is normalized by removing any redundant information and
+      ordering all sections where there are no semantics associated with the order. The
+      normalized SystemMetadata is intended to be semantically equivalent to the
+      un-normalized one.
 
     """
     normalize_in_place(a_pyxb, ignore_timestamps)
@@ -245,9 +249,10 @@ def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
       bool: **True** if SystemMetadata XML docs are semantically equivalent.
 
     Notes:
-      The SystemMetadata is normalized by removing any redundant information and ordering
-      all sections where there are no semantics associated with the order. The normalized
-      SystemMetadata is intended to be semantically equivalent to the un-normalized one.
+      The SystemMetadata is normalized by removing any redundant information and
+      ordering all sections where there are no semantics associated with the order. The
+      normalized SystemMetadata is intended to be semantically equivalent to the
+      un-normalized one.
 
     """
 

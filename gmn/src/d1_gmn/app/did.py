@@ -39,14 +39,15 @@ def is_valid_pid_for_create(did):
     - Must not be the PID of an object that exists on this MN
     - Must not be a known SID known to this MN
     - Must not have been accepted for replication by this MN.
-    - Must not be referenced as obsoletes or obsoletedBy in an object that exists on this MN
+    - Must not be referenced as obsoletes or obsoletedBy in an object that exists on
+      this MN
 
     In addition, if the DID exists in a resource map:
 
     - If RESOURCE_MAP_CREATE = 'reserve':
 
-      - The DataONE subject that is making the call must have write or
-      changePermission on the resource map.
+      - The DataONE subject that is making the call must have write or changePermission
+        on the resource map.
 
     """
     # logger.debug('existing: {}'.format(is_existing_object(did)))
@@ -88,7 +89,8 @@ def is_valid_sid_for_chain(pid, sid):
     All known PIDs are associated with a chain.
 
     Preconditions:
-    - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
+    - ``pid`` is verified to exist. E.g., with
+      d1_gmn.app.views.asserts.is_existing_object().
     - ``sid`` is None or verified to be a SID
 
     """
@@ -105,8 +107,8 @@ def get_did_by_foreign_key(did_foreign_key):
 
     Return None if ForeignKey or OneToOneField is NULL.
 
-    This is used instead of "did_foreign_key.*.did" on ForeignKeys and
-    OneToOneFields that allow NULL (null=True in the model).
+    This is used instead of "did_foreign_key.*.did" on ForeignKeys and OneToOneFields
+    that allow NULL (null=True in the model).
 
     """
     return getattr(did_foreign_key, 'did', None)
@@ -115,8 +117,8 @@ def get_did_by_foreign_key(did_foreign_key):
 def is_existing_object(did):
     """Return True if PID is for an object for which science bytes are stored locally.
 
-    This excludes SIDs and PIDs for unprocessed replica requests, remote or non-existing
-    revisions of local replicas and objects aggregated in Resource Maps.
+    This excludes SIDs and PIDs for unprocessed replica requests, remote or
+    non-existing revisions of local replicas and objects aggregated in Resource Maps.
 
     """
     return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=did).exists()
@@ -142,8 +144,8 @@ def is_resource_map_member(pid):
 def classify_identifier(did):
     """Return a text fragment classifying the ``did``
 
-    Return <UNKNOWN> if the DID could not be classified. This should not normally happen
-    and may indicate that the DID was orphaned in the database.
+    Return <UNKNOWN> if the DID could not be classified. This should not normally
+    happen and may indicate that the DID was orphaned in the database.
 
     """
     if _is_unused_did(did):
@@ -244,8 +246,8 @@ def _is_pid(did):
 
     ``did``=None is supported and returns False.
 
-    Note: Non-existing and remote DIDs may not be known to be SIDs or PIDs, and
-    are assumed to be PIDs by this function.
+    Note: Non-existing and remote DIDs may not be known to be SIDs or PIDs, and are
+    assumed to be PIDs by this function.
 
     """
     return _is_did(did) and not is_sid(did)

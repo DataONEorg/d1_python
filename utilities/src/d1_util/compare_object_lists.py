@@ -20,8 +20,8 @@
 # limitations under the License.
 """Check for discrepancies between MN and CN by comparing object lists.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Retrieve list of objects originating from a specific MN, from a CN
 - Retrieve list of objects from a MN

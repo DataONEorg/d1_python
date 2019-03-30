@@ -28,13 +28,13 @@ the HTTP specification [RFC 2616] for a complete explanation.
 Contents:
     - parse_mime_type():   Parses a mime-type into its component parts.
     - parse_media_range(): Media-ranges are mime-types with wild-cards and a 'q'
-    quality parameter.
-    - quality():           Determines the quality ('q') of a mime-type when
-    compared against a list of media-ranges.
-    - quality_parsed():    Just like quality() except the second parameter must
-    be pre-parsed.
-    - best_match():        Choose the mime-type with the highest quality ('q')
-    from a list of candidates.
+      quality parameter.
+    - quality():           Determines the quality ('q') of a mime-type when compared
+      against a list of media-ranges.
+    - quality_parsed():    Just like quality() except the second parameter must be
+      pre-parsed.
+    - best_match():        Choose the mime-type with the highest quality ('q') from a
+      list of candidates.
 
 """
 from functools import reduce
@@ -141,7 +141,8 @@ def quality(mime_type, ranges):
     """Returns the quality 'q' of a mime-type when compared against the media- ranges in
     ranges. For example:
 
-    >>> quality('text/html', 'text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5')
+    >>> quality('text/html', 'text/*;q=0.3, text/html;q=0.7, text/html;level=1,
+    text/html;level=2;q=0.4, */*;q=0.5')
     0.7
 
     """

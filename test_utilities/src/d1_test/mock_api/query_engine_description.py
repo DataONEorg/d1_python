@@ -21,7 +21,7 @@
 """Mock:
 
 # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-# https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+# https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.geQueryEngineDescription
 
 # GET /query/{queryType}
 

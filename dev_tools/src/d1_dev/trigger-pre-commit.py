@@ -27,10 +27,10 @@ be time consuming.
 
 This tool helps speed up large commits by:
 
-- Retriggering the hooks on each file until it passes, then going to the next
-file instead of starting over.
-- If PyCharm integration is enabled, the script will attempt to move the cursor
-in the IDE to the line that triggered the error.
+- Retriggering the hooks on each file until it passes, then going to the next file
+  instead of starting over.
+- If PyCharm integration is enabled, the script will attempt to move the cursor in the
+  IDE to the line that triggered the error.
 
 After fixing an error, hit Enter to retrigger the hooks in order to check if
 there are more errors or S to skip directly to the next file.

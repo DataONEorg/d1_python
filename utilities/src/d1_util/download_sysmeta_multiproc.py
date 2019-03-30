@@ -20,11 +20,11 @@
 # limitations under the License.
 """Bulk download System Metadata object from MN.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
-- Use the multiprocessed System Metadata iterator to efficiently perform bulk
-downloads of System Metadata from a Member Node
+- Use the multiprocessed System Metadata iterator to efficiently perform bulk downloads
+  of System Metadata from a Member Node
 
 """
 

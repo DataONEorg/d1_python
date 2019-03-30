@@ -398,7 +398,8 @@ class ReplicationTester(object):
 
     def _test_MNReplication_replicate_with_unauthorized_pid(self):
         """The destination MN responds correctly on MNReplication.replicate() with an
-        object that is valid for replication but for which the CN denies replication."""
+        object that is valid for replication but for which the CN denies
+        replication."""
         try:
             self._call_dst_replicate(self._pid_not_authorized)
         except d1_common.types.exceptions.DataONEException as e:

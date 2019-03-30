@@ -129,7 +129,8 @@ class Dokan(object):
       ))
 
   # Get the handle to Access Token
-  # This method needs be called in CreateFile, OpenDirectory or CreateDirectly callback.
+  # This method needs be called in CreateFile, OpenDirectory or CreateDirectly
+  callback.
   # The caller must call CloseHandle for the returned handle.
   def DokanOpenRequestorToken(self, DokanFileInfo):
       return wintypes.HANDLE(self.DokanDLL.DokanOpenRequestorToken(

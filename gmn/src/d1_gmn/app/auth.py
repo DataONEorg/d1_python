@@ -165,24 +165,24 @@ def _extract_subject_from_pem(cert_pem):
 def is_allowed(request, level, pid):
     """Check if one or more subjects are allowed to perform action level on object.
 
-    If a subject holds permissions for one action level on object, all lower action levels
-    are also allowed. Any included subject that is unknown to this MN is treated as a
-    subject without permissions.
+    If a subject holds permissions for one action level on object, all lower action
+    levels are also allowed. Any included subject that is unknown to this MN is treated
+    as a subject without permissions.
 
     Returns:
       bool
         True:
           - The active subjects include one or more subjects that:
-              - are fully trusted DataONE infrastructure subjects, causing all rights to
-                be granted regardless of requested access level and SciObj
-              - OR are in the object's ACL for the requested access level. The ACL
-                contains the subjects from the object's allow rules and the object's
-                rightsHolder, which has all rights.
+          - are fully trusted DataONE infrastructure subjects, causing all rights to be
+            granted regardless of requested access level and SciObj
+          - OR are in the object's ACL for the requested access level. The ACL contains
+            the subjects from the object's allow rules and the object's rightsHolder,
+            which has all rights.
           - OR object is public, which always yields a match on the "public" symbolic
             subject.
-        False:
-          - None of the active subjects are in the object's ACL for the requested access
-            level or for lower levels.
+          False:
+          - None of the active subjects are in the object's ACL for the requested
+            access level or for lower levels.
           - OR PID does not exist
           - OR access level is invalid
 

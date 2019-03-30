@@ -29,12 +29,13 @@ def parse_response(response, encoding='utf-8'):
       response: Requests.Response
 
       encoding:
-        The parser will assume that any text in the HTML body is encoded with this encoding
-        when decoding it for use in the ``text`` attribute.
+        The parser will assume that any text in the HTML body is encoded with this
+        encoding when decoding it for use in the ``text`` attribute.
 
     Returns:
       tuple of BodyPart
-        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode),
+        encoding (str).
 
     """
     return requests_toolbelt.multipart.decoder.MultipartDecoder.from_response(
@@ -51,16 +52,17 @@ def parse_str(mmp_bytes, content_type, encoding='utf-8'):
 
       content_type : str
         Must be on the form, ``multipart/form-data; boundary=<BOUNDARY>``, where
-        ``<BOUNDARY>`` is the string that separates the parts of the multipart document in
-        ``mmp_bytes``. In HTTP requests and responses, it is passed in the Content-Type
-        header.
+        ``<BOUNDARY>`` is the string that separates the parts of the multipart document
+        in ``mmp_bytes``. In HTTP requests and responses, it is passed in the
+        Content-Type header.
 
       encoding : str
         The coding used for the text in the HTML body.
 
     Returns:
       tuple of BodyPart
-        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode), encoding (str).
+        Members: headers (CaseInsensitiveDict), content (bytes), text (Unicode),
+        encoding (str).
 
     """
     return requests_toolbelt.multipart.decoder.MultipartDecoder(

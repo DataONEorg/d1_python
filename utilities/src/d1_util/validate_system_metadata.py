@@ -26,11 +26,11 @@ Metadata available on a CN or MN.
 This is an example on how to use the DataONE Client Library for Python. It
 shows how to:
 
-- Iterate over all objects that are available on a CN or MN when
-  authenticating with a specific certificate
+- Iterate over all objects that are available on a CN or MN when authenticating with a
+  specific certificate
 - Work around System Metadata issues that cause validation errors
-- Compare the size and checksum recorded in an object's System Metadata with
-  the actual size and checksum of the object
+- Compare the size and checksum recorded in an object's System Metadata with the actual
+  size and checksum of the object
 
 Operation:
 

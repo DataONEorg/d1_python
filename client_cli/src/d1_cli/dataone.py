@@ -444,14 +444,14 @@ def handle_unexpected_exception(max_traceback_levels=100):
   key in a separate file, also set "key-file" to the private key file.
   Otherwise, set "key-file" to None. Note that CILogon certificates must be
   renewed after 18 hours.
-"""
+            """
         )
     elif exc_type.__name__ == "timeout":
         d1_cli.impl.util.print_error(
             """Timeout error:
   A connection to a DataONE node timed out. Verify that a DataONE node responds
   at the URL provided in the cn-url or mn-url session variable.
-"""
+            """
         )
     else:
         _print_unexpected_exception(max_traceback_levels)

@@ -20,9 +20,9 @@
 # limitations under the License.
 """Mock DataONEException.
 
-A DataONEException can be triggered in any of the mock APIs by adding a custom
-header named "trigger" with the status code of the error to trigger, using
-the vendorSpecific parameter.
+A DataONEException can be triggered in any of the mock APIs by adding a custom header
+named "trigger" with the status code of the error to trigger, using the vendorSpecific
+parameter.
 
 E.g.:
 
