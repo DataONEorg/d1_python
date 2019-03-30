@@ -15,6 +15,7 @@ Subpackages
     d1_common.ext
     d1_common.iter
     d1_common.types
+    d1_common.utils
     d1_common.wrap
 
 Submodules
