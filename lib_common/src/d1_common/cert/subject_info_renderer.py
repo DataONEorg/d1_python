@@ -78,7 +78,8 @@ class SubjectInfoRenderer:
 
         Args:
             image_out_path : str
-                Path to where image image will be written. Valid extensions are ``.svg,`` ``.pdf``, and ``.png``.
+                Path to where image image will be written. Valid extensions are
+                ``.svg,`` ``.pdf``, and ``.png``.
 
             width_pixels : int
                 Width of image to write.
@@ -87,7 +88,9 @@ class SubjectInfoRenderer:
                 Height of image to write, in pixels.
 
             dpi:
-                Dots Per Inch to declare in image file. This does not change the resolution of the image but may change the size of the image when rendered.
+                Dots Per Inch to declare in image file. This does not change the
+                resolution of the image but may change the size of the image when
+                rendered.
 
         Returns:
             None
@@ -167,8 +170,8 @@ class SubjectInfoRenderer:
         """ETE calls this function to style each node before rendering.
 
         - ETE terms:
-            - A Style is a specification for how to render the node itself
-            - A Face defines extra information that is rendered outside of the node
+        - A Style is a specification for how to render the node itself
+        - A Face defines extra information that is rendered outside of the node
         - Face objects are used here to provide more control on how to draw the nodes.
 
         """

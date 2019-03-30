@@ -40,10 +40,10 @@ import d1_common.types.exceptions
 def get_subjects(request):
     """Get all subjects in the certificate.
 
-    - Returns: primary_str (primary subject), equivalent_set (equivalent
-    identities, groups and group memberships)
+    - Returns: primary_str (primary subject), equivalent_set (equivalent identities,
+      groups and group memberships)
     - The primary subject is the certificate subject DN, serialized to a DataONE
-    compliant subject string.
+      compliant subject string.
 
     """
     if _is_certificate_provided(request):

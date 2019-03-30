@@ -59,7 +59,8 @@ class SlenderNodeTestClient:
 
         - Store the sciobj and sysmeta in ``sciobj_store_path``
         - ``sciobj_store_path`` is created if it does not exist
-        - If ``delete_existing`` is True, delete any existing files in ``sciobj_store_path``
+        - If ``delete_existing`` is True, delete any existing files in
+          ``sciobj_store_path``
 
         """
         self.sciobj_store_path = os.path.abspath(sciobj_store_path)

@@ -63,12 +63,12 @@ def cut_from_chain(sciobj_model):
     d1_gmn.app.views.asserts.is_in_revision_chain(pid)
 
     Postconditions:
-    - The given object is a standalone object with empty obsoletes, obsoletedBy
-    and seriesId fields.
-    - The previously adjacent objects in the chain are adjusted to close any gap
-    that was created or remove dangling reference at the head or tail.
-    - If the object was the last object in the chain and the chain has a SID, the
-    SID reference is shifted over to the new last object in the chain.
+    - The given object is a standalone object with empty obsoletes, obsoletedBy and
+      seriesId fields.
+    - The previously adjacent objects in the chain are adjusted to close any gap that
+      was created or remove dangling reference at the head or tail.
+    - If the object was the last object in the chain and the chain has a SID, the SID
+      reference is shifted over to the new last object in the chain.
 
     """
     if _is_head(sciobj_model):
@@ -114,7 +114,8 @@ def get_sid_by_pid(pid):
     All known PIDs are associated with a chain.
 
     Preconditions:
-    - ``pid`` is verified to exist. E.g., with d1_gmn.app.views.asserts.is_existing_object().
+    - ``pid`` is verified to exist. E.g., with
+      d1_gmn.app.views.asserts.is_existing_object().
 
     """
     return d1_gmn.app.did.get_did_by_foreign_key(_get_chain_by_pid(pid).sid)
@@ -202,14 +203,14 @@ def _merge_chains(chain_model_a, chain_model_b):
 
     E.g.:
 
-    - A obsoleted by X is created. A has no SID. X does not exist
-    yet. A chain is created for A.
-    - B obsoleting Y is created. B has SID. Y does not exist yet. A
-    chain is created for B.
-    - C obsoleting X, obsoleted by Y is created. C tells us that X and Y
-    are in the same chain, which means that A and B are in the same chain. At
-    this point, the two chains need to be merged. Merging the chains causes A
-    to take on the SID of B.
+    - A obsoleted by X is created. A has no SID. X does not exist yet. A chain is
+      created for A.
+    - B obsoleting Y is created. B has SID. Y does not exist yet. A chain is created
+      for B.
+    - C obsoleting X, obsoleted by Y is created. C tells us that X and Y are in the
+      same chain, which means that A and B are in the same chain. At this point, the
+      two chains need to be merged. Merging the chains causes A to take on the SID of
+      B.
 
     """
     _set_chain_sid(
@@ -324,7 +325,7 @@ def _create_chain(pid, sid):
 
     Preconditions:
     - ``sid`` must be verified to be available to be assigned to a new standalone
-    object. E.g., with is_valid_sid_for_new_standalone().
+      object. E.g., with is_valid_sid_for_new_standalone().
 
     """
     chain_model = d1_gmn.app.models.Chain(

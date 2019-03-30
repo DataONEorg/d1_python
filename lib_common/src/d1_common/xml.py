@@ -224,8 +224,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb):
 def are_equivalent(a_xml, b_xml, encoding=None):
     """Return True if two XML docs are semantically equivalent, else False.
 
-    - TODO: Include test for tails. Skipped for now because tails are not used
-    in any D1 types.
+    - TODO: Include test for tails. Skipped for now because tails are not used in any
+      D1 types.
 
     """
     assert isinstance(a_xml, str)
@@ -241,11 +241,11 @@ def are_equal_or_superset(superset_tree, base_tree):
     """Return True if ``superset_tree`` is equal to or a superset of ``base_tree``
 
     - Checks that all elements and attributes in ``superset_tree`` are present and
-    contain the same values as in ``base_tree``. For elements, also checks that the
-    order is the same.
-    - Can be used for checking if one XML document is based on another, as long as
-    all the information in ``base_tree`` is also present and unmodified in
-    ``superset_tree``.
+      contain the same values as in ``base_tree``. For elements, also checks that the
+      order is the same.
+    - Can be used for checking if one XML document is based on another, as long as all
+      the information in ``base_tree`` is also present and unmodified in
+      ``superset_tree``.
 
     """
     try:

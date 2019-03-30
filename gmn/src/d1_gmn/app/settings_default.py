@@ -17,10 +17,10 @@
 # limitations under the License.
 """Default settings for GMN.
 
-- These settings are only used as fallbacks in case the corresponding settings
-in settings.py are missing.
-- This allows settings to be added without having to modify settings.py
-in existing deployments.
+- These settings are only used as fallbacks in case the corresponding settings in
+  settings.py are missing.
+- This allows settings to be added without having to modify settings.py in existing
+  deployments.
 - Settings that are not described here are described in settings_template.py.
 
 """

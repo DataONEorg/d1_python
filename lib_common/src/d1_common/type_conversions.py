@@ -29,8 +29,8 @@ docs:
 - As native Unicode ``str``, typically "pretty printed" with indentations, when
   formatted for display.
 
-- As UTF-8 encoded ``bytes`` when send sending or receiving over the network,
-  or loading or saving as files.
+- As UTF-8 encoded ``bytes`` when send sending or receiving over the network, or
+  loading or saving as files.
 
 - Schema validation and manipulation in Python code as PyXB binding objects.
 
@@ -130,8 +130,9 @@ def get_pyxb_binding_by_api_version(api_major, api_minor=0):
         - If ``api_major`` is an integer, it is combined with ``api_minor`` to form an
           exact version.
 
-        - If ``api_major`` is a string of ``v1`` or ``v2``, ``api_minor`` is ignored and the latest
-          PyXB bindingavailable for the ``api_major`` version is returned.
+        - If ``api_major`` is a string of ``v1`` or ``v2``, ``api_minor`` is ignored
+          and the latest PyXB bindingavailable for the ``api_major`` version is
+          returned.
 
     Returns:
       PyXB binding: E.g., ``d1_common.types.dataoneTypes_v1_1``.
@@ -590,7 +591,8 @@ def replace_namespace_with_prefix(tag_str, ns_reverse_dict=None):
 
     Args:
       tag_str: str
-        Tag name with namespace. E.g.: ``{http://www.openarchives.org/ore/terms/}ResourceMap``.
+        Tag name with namespace. E.g.:
+        ``{http://www.openarchives.org/ore/terms/}ResourceMap``.
 
       ns_reverse_dict : dict
         A dictionary of namespace to prefix to use for the conversion. If not supplied, a

@@ -225,7 +225,8 @@ class Session(object):
             return self._request("PUT", rest_path_list, **kwargs)
 
     def DELETE(self, rest_path_list, **kwargs):
-        """Send a DELETE request. See requests.sessions.request for optional parameters.
+        """Send a DELETE request. See requests.sessions.request for optional
+        parameters.
 
         :returns: Response object
 
@@ -260,7 +261,7 @@ class Session(object):
         and response objects for logging and debugging.
 
         - Note: Does not work if the request or response body is a MultipartEncoder
-        object.
+          object.
 
         """
         if response.reason is None:

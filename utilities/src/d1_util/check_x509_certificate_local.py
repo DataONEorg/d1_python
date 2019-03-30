@@ -20,20 +20,19 @@
 # limitations under the License.
 """Parse a PEM (Base64) encoded X.509 v3 certificate.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
-- Parse a PEM (Base64) encoded X.509 v3 certificate, optionally containing a
-DataONE SubjectInfo extension, to determine which DataONE subjects are
-authenticated by it.
+- Parse a PEM (Base64) encoded X.509 v3 certificate, optionally containing a DataONE
+  SubjectInfo extension, to determine which DataONE subjects are authenticated by it.
 
 - Process the lists of equivalent identities and group memberships in a DataONE
-SubjectInfo extension into a list of authenticated DataONE subjects.
+  SubjectInfo extension into a list of authenticated DataONE subjects.
 
 Notes:
 
-- This does not require the private key of the certificate and does not validate
-the certificate.
+- This does not require the private key of the certificate and does not validate the
+  certificate.
 
 """
 import argparse

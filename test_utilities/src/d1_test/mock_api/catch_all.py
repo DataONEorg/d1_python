@@ -20,19 +20,18 @@
 # limitations under the License.
 """Mock any requests not specifically supported in the other mock API handlers.
 
-This provides a simple way to perform a basic check of API wrappers without
-writing specific mock handlers. It disables PyXB deserialization in the client
-and returns a dict with an echo of the request.
+This provides a simple way to perform a basic check of API wrappers without writing
+specific mock handlers. It disables PyXB deserialization in the client and returns a
+dict with an echo of the request.
 
-If the echoed information is not checked, only the presence of the wrapper and
-being able to call it without error is tested.
+If the echoed information is not checked, only the presence of the wrapper and being
+able to call it without error is tested.
 
-Note: The catch_all handler cannot be used together with the mock APIs as it
-patches the _read_dataone_* methods that the other APIs rely on, and redirects
-them to mock_read_response() in this module.
+Note: The catch_all handler cannot be used together with the mock APIs as it patches
+the _read_dataone_* methods that the other APIs rely on, and redirects them to
+mock_read_response() in this module.
 
-A DataONEException can be triggered by adding a custom header. See
-d1_exception.py
+A DataONEException can be triggered by adding a custom header. See d1_exception.py
 
 Usage:
 

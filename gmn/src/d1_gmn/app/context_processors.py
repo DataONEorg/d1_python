@@ -21,8 +21,8 @@
 
 Before rendering a template, Django calls context processors as set up in
 settings_default.TEMPLATE_CONTEXT_PROCESSORS. The context processors are functions that
-are expected to return a dict which will be merged into the environment available to the
-template.
+are expected to return a dict which will be merged into the environment available to
+the template.
 
 """
 

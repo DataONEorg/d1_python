@@ -217,11 +217,11 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
     """Serialize object to str.
 
     - Create a normalized string representation of the object that is suitable for
-    using in a diff.
-    - XML and PyXB is not normalized here, so the objects must be normalized
-    before being passed in.
+      using in a diff.
+    - XML and PyXB is not normalized here, so the objects must be normalized before
+      being passed in.
     - Serialization that breaks long lines into multiple lines is preferred, since
-    multiple lines makes differences easier to spot in diffs.
+      multiple lines makes differences easier to spot in diffs.
 
     """
 

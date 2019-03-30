@@ -20,46 +20,47 @@
 # limitations under the License.
 """Download all Science Objects in a DataONE environment.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Retrieve a list of all DataONE Member Nodes
-- Retrieve a list of all objects of specific FormatID on each of those Member
-  Nodes
+
+- Retrieve a list of all objects of specific FormatID on each of those Member Nodes
+
 - Retrieve and examine the System Metadata for each of the listed objects
-- Based on information in the System Metadata, determine if the corresponding
-  object should be downloaded
+
+- Based on information in the System Metadata, determine if the corresponding object
+  should be downloaded
+
 - Download the corresponding object
 
 Notes:
 
-- This approach retrieves object lists directly from each Member Node and is
-mainly suitable in special situations where a 3rd party wishes to examine the
-overall state of objects in DataONE, for instance, for creating statistics or
-data quality reports.
+- This approach retrieves object lists directly from each Member Node and is mainly
+  suitable in special situations where a 3rd party wishes to examine the overall state
+  of objects in DataONE, for instance, for creating statistics or data quality reports.
 
-- This approach uses the listObjects() Member Node API method, which has
-limited filtering facilities. The example shows how to use this filtering to
-list objects that are of a specific type (FormatID) and that are native to the
-Member Node (i.e., not replicas). If a more specific set of objects is desired,
-it is better to use DataONE's query interface, which offers much richer
-filtering facilities.
+- This approach uses the listObjects() Member Node API method, which has limited
+  filtering facilities. The example shows how to use this filtering to list objects
+  that are of a specific type (FormatID) and that are native to the Member Node (i.e.,
+  not replicas). If a more specific set of objects is desired, it is better to use
+  DataONE's query interface, which offers much richer filtering facilities.
 
-- It is not possible to filter out non-public objects with listObjects().
-Instead, this script attempts to download the object's System Metadata and
-checks for NotAuthorized exceptions.
+- It is not possible to filter out non-public objects with listObjects(). Instead, this
+  script attempts to download the object's System Metadata and checks for NotAuthorized
+  exceptions.
 
-- If a completely unfiltered object list is required, simply remove the formatId
-and replicaStatus parameters in the listObjects() call below.
+- If a completely unfiltered object list is required, simply remove the formatId and
+  replicaStatus parameters in the listObjects() call below.
 
-- The Member Node object list is retrieved in small sections, called pages. The
-objects on each page are processed before retrieving the next page.
+- The Member Node object list is retrieved in small sections, called pages. The objects
+  on each page are processed before retrieving the next page.
 
-- The listObjects() Member Node API method may not be efficiently implemented by
-all Member Nodes as it is intended primarily for use by Coordinating Nodes.
+- The listObjects() Member Node API method may not be efficiently implemented by all
+  Member Nodes as it is intended primarily for use by Coordinating Nodes.
 
-- The listObjects() method may miss objects that are created while the method is
-in use.
+- The listObjects() method may miss objects that are created while the method is in
+  use.
 
 """
 import argparse

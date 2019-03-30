@@ -21,8 +21,8 @@
 
 Warning:
 
-  The ``MD5`` checksum algorithm is not cryptographically secure. It's possible to craft
-  a sequence of bytes that yields a predetermined checksum.
+  The ``MD5`` checksum algorithm is not cryptographically secure. It's possible to
+  craft a sequence of bytes that yields a predetermined checksum.
 
 """
 
@@ -172,9 +172,8 @@ def calculate_checksum_on_bytes(
 ):
     """Calculate the checksum of ``bytes``.
 
-    Warning:
-      This method requires the entire object to be buffered in (virtual) memory, which
-      should normally be avoided in production code.
+    Warning: This method requires the entire object to be buffered in (virtual) memory,
+    which should normally be avoided in production code.
 
     Args:
       b: bytes
@@ -203,15 +202,16 @@ def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
 
     Returns:
       bool
-        - **True**: The checksums contain the same hexadecimal values calculated with the same
-          algorithm. Identical checksums guarantee (for all practical purposes) that the
-          checksums were calculated from the same sequence of bytes.
-        - **False**: The checksums were calculated with the same algorithm but the hexadecimal
-          values are different.
+        - **True**: The checksums contain the same hexadecimal values calculated with
+          the same algorithm. Identical checksums guarantee (for all practical
+          purposes) that the checksums were calculated from the same sequence of bytes.
+        - **False**: The checksums were calculated with the same algorithm but the
+          hexadecimal values are different.
 
     Raises:
       ValueError
-        The checksums were calculated with different algorithms, hence cannot be compared.
+        The checksums were calculated with different algorithms, hence cannot be
+        compared.
 
     """
     if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
@@ -235,7 +235,8 @@ def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
     Returns:
       Checksum calculator from the ``hashlib`` library
 
-      Object that supports ``update(arg)``, ``digest()``, ``hexdigest()`` and ``copy()``.
+      Object that supports ``update(arg)``, ``digest()``, ``hexdigest()`` and
+      ``copy()``.
 
     """
     return DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP[dataone_algorithm_name]()
@@ -245,11 +246,11 @@ def get_default_checksum_algorithm():
     """Get the default checksum algorithm.
 
     Returns:
-      str : Checksum algorithm that is supported by DataONE, the DataONE Python stack and
-      is in common use within the DataONE federation. Currently, ``SHA-1``.
+      str : Checksum algorithm that is supported by DataONE, the DataONE Python stack
+      and is in common use within the DataONE federation. Currently, ``SHA-1``.
 
-      The returned string can be passed as the ``algorithm_str`` to the functions in this
-      module.
+      The returned string can be passed as the ``algorithm_str`` to the functions in
+      this module.
 
     """
     return d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
@@ -264,8 +265,8 @@ def is_supported_algorithm(algorithm_str):
 
     Returns:
       bool
-        - **True**: The string contains the name of a supported algorithm and
-          can be passed as the ``algorithm_str`` to the functions in this module.
+        - **True**: The string contains the name of a supported algorithm and can be
+          passed as the ``algorithm_str`` to the functions in this module.
         - **False**: The string is not a supported algorithm.
 
     """
@@ -277,8 +278,8 @@ def get_supported_algorithms():
     stack.
 
     Returns:
-      list : List of algorithms that are supported by the DataONE Python stack and can be
-      passed to as the ``algorithm_str`` to the functions in this module.
+      list : List of algorithms that are supported by the DataONE Python stack and can
+      be passed to as the ``algorithm_str`` to the functions in this module.
 
     """
     return list(DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys())

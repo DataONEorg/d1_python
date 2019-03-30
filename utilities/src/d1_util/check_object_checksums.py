@@ -20,8 +20,8 @@
 # limitations under the License.
 """Compare Science Object checksums for replicas on CNs and MNs.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Download Science Object checksums from CNs and MNs
 - Compare the checksums to audit that replicas are valid

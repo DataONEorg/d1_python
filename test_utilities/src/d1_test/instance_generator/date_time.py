@@ -64,8 +64,8 @@ def generate_tz(tz_type='utc'):
     - ``tz_type`` = 'naive': Return None (use to create a "naive" datetime).
     - ``tz_type`` = 'utc': Return tz in UTC.
     - ``tz_type`` = 'random': Return tz at a random positive or negative offset.
-    - ``tz_type`` = 'random_not_utc': Return tz at a random positive or negative
-      offset that is not in UTC (not 0).
+    - ``tz_type`` = 'random_not_utc': Return tz at a random positive or negative offset
+      that is not in UTC (not 0).
     - ``tz_type`` = (other object): Return the supplied object, which must be an
       instance of a class derived from datetime.tzinfo.
 

@@ -20,8 +20,8 @@
 # limitations under the License.
 """Download Science Objects from a Member Node.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Retrieve a list of all objects on a MN
 - Retrieve the bytes and System Metadata for each object

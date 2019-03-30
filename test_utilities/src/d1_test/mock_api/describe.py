@@ -25,8 +25,7 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#C
 MNRead.describe(session, pid) → DescribeResponse
 https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
-A DataONEException can be triggered by adding a custom header. See
-d1_exception.py
+A DataONEException can be triggered by adding a custom header. See d1_exception.py
 
 """
 

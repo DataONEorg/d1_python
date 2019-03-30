@@ -20,19 +20,17 @@
 # limitations under the License.
 """Mock Requests to issue requests through the Django test client.
 
-Django includes a test framework with a test client that provides an interface
-that's similar to that of an HTTP client, but calls Django internals directly.
-The client enables testing of most functionality of a Django app without
-actually starting the app as a network service.
+Django includes a test framework with a test client that provides an interface that's
+similar to that of an HTTP client, but calls Django internals directly. The client
+enables testing of most functionality of a Django app without actually starting the app
+as a network service.
 
-For testing GMN's D1 REST interfaces, we want to issue the test requests via the
-D1 MN client. Without going through the D1 MN client, we would have to
-reimplement much of what the client does, related to formatting and parsing D1
-REST requests.
+For testing GMN's D1 REST interfaces, we want to issue the test requests via the D1 MN
+client. Without going through the D1 MN client, we would have to reimplement much of
+what the client does, related to formatting and parsing D1 REST requests.
 
-This module is typically used in tests running under django.test.TestCase
-and requires an active Django context, such as the one provided by
-`./manage.py test`.
+This module is typically used in tests running under django.test.TestCase and requires
+an active Django context, such as the one provided by `./manage.py test`.
 
 Usage:
 
@@ -191,5 +189,5 @@ The type/class name of the received instance is probably in this string:
 {1}
 
 {0}
-"""
+        """
     ).format('#' * 100, str(e))

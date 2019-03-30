@@ -64,10 +64,10 @@ class FUSECallbacks(fuse.Operations):
         """Called by FUSE when the attributes for a file or directory are required.
 
         Returns a dictionary with keys identical to the stat C structure of stat(2).
-        st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
-        count all files inside the directory. On Linux, only the subdirectories are
-        counted. The 'st_dev' and 'st_blksize' fields are ignored. The 'st_ino'
-        field is ignored except if the 'use_ino' mount option is given.
+        st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should count
+        all files inside the directory. On Linux, only the subdirectories are counted.
+        The 'st_dev' and 'st_blksize' fields are ignored. The 'st_ino' field is ignored
+        except if the 'use_ino' mount option is given.
 
         This method gets very heavy traffic.
 

@@ -248,18 +248,19 @@ def memory_limit(max_mem_bytes):
     being buffered in memory instead of being streamed.
 
     This is implemented by setting a memory allocation limit at the process level and
-    disabling garbage collection before entering the context and reversing that at exit.
+    disabling garbage collection before entering the context and reversing that at
+    exit.
 
     Warnings:
 
-      This has turned out to not be very accurate. It may be due to Python holding on to
-      memory after it has been garbage collected, though ``gc.collect()`` is called by the
-      context manager in an attempt to avoid that.
+      This has turned out to not be very accurate. It may be due to Python holding on
+      to memory after it has been garbage collected, though ``gc.collect()`` is called
+      by the context manager in an attempt to avoid that.
 
       It's currently necessary to massively overshoot the limit specified by
       ``max_mem_bytes`` in order to reliably raise a MemoryError. Current values for a
-      unit test for this context manager, is 10 MiB for ``max_mem_bytes`` and a combined
-      100 MiB of attempted allocations.
+      unit test for this context manager, is 10 MiB for ``max_mem_bytes`` and a
+      combined 100 MiB of attempted allocations.
 
     """
     with disable_garbage_collector():
@@ -374,8 +375,8 @@ class D1TestCase(object):
     def get_d1_test_case_location(exc_traceback=None):
         """Return the last stack frame that holds a D1TestCase unit test method.
 
-        - Use the exception currently being handled if exc_traceback is None,
-        else use exc_traceback.
+        - Use the exception currently being handled if exc_traceback is None, else use
+          exc_traceback.
         - The unit test must be a method in a class that derives from D1TestCase.
 
         """
@@ -443,8 +444,8 @@ class D1TestCase(object):
 
         - If ``tz`` supplied: The dt is adjusted to that tz before being returned.
         - If ``tz`` not supplied: the dt is returned as naive.
-        - Keeping this function out of d1_common.date_time since naive datetimes
-        are only needed for testing.
+        - Keeping this function out of d1_common.date_time since naive datetimes are
+          only needed for testing.
 
         """
         return datetime.datetime.fromtimestamp(ts, tz)

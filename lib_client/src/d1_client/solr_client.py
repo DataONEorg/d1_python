@@ -129,8 +129,8 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     d1_client.session.Session()
 
-    - Most methods take a **query_dict as a parameter. It allows passing any number
-    of query parameters that will be sent to Solr.
+    - Most methods take a **query_dict as a parameter. It allows passing any number of
+      query parameters that will be sent to Solr.
 
     Pass the query parameters as regular keyword arguments. E.g.:
 

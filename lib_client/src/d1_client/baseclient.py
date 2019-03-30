@@ -51,18 +51,21 @@ class DataONEBaseClient(d1_client.session.Session):
 
     On error response, raises a DataONEException.
 
-    Methods with names that end in "Response" return the HTTPResponse object
-    directly for manual processing by the client. The *Response methods are only
-    needed in rare cases where the default handling is inadequate, e.g., for
-    dealing with nodes that don't fully comply with the spec.
+    Methods with names that end in "Response" return the HTTPResponse object directly
+    for manual processing by the client. The *Response methods are only needed in rare
+    cases where the default handling is inadequate, e.g., for dealing with nodes that
+    don't fully comply with the spec.
 
+    The client classes wrap all the DataONE API methods, hiding the many details
+    related to interacting with the DataONE API, such as creating MIME multipart
+    messages, encoding parameters into URLs and handling Unicode.
 
+    The clients allow the developer to communicate with nodes by calling native Python
+    methods which take and return native objects.
 
-    The client classes wrap all the DataONE API methods, hiding the many details related to interacting with the DataONE API, such as creating MIME multipart messages, encoding parameters into URLs and handling Unicode.
-
-    The clients allow the developer to communicate with nodes by calling native Python methods which take and return native objects.
-
-    The clients also convert any errors received from the nodes into native exceptions, enabling clients to use Python’s concise exception handling system to handle errors.
+    The clients also convert any errors received from the nodes into native exceptions,
+    enabling clients to use Python’s concise exception handling system to handle
+    errors.
 
     The clients are arranged into the following class hierarchy:
 
@@ -101,12 +104,14 @@ class DataONEBaseClient(d1_client.session.Session):
         CoordinatingNodeClient_2_0 -> DataONEClient;
       }
 
-    The classes without version designators implement functionality defined in v1.0 of the DataONE service specifications. The classes with version designators implement support for the corresponding DataONE service specifications.
+    The classes without version designators implement functionality defined in v1.0 of
+    the DataONE service specifications. The classes with version designators implement
+    support for the corresponding DataONE service specifications.
 
     DataONEBaseClient
 
-      The DataONEBaseClient classes contain methods that allow access to APIs
-      that are common to Coordinating Nodes and Member Nodes.
+      The DataONEBaseClient classes contain methods that allow access to APIs that are
+      common to Coordinating Nodes and Member Nodes.
 
       * d1_client.d1baseclient
       * d1_client.d1baseclient_1_1
@@ -114,8 +119,8 @@ class DataONEBaseClient(d1_client.session.Session):
 
     MemberNodeClient
 
-      The MemberNodeClient classes contain methods that allow access to APIs that
-      are specific to Member Nodes.
+      The MemberNodeClient classes contain methods that allow access to APIs that are
+      specific to Member Nodes.
 
       * d1_client.mnclient
       * d1_client.mnclient_1_1
@@ -123,8 +128,8 @@ class DataONEBaseClient(d1_client.session.Session):
 
     CoordinatingNodeClient
 
-      The CoordinatingNodeClient classes contain methods that allow access to APIs
-      that are specific to Coordinating Nodes.
+      The CoordinatingNodeClient classes contain methods that allow access to APIs that
+      are specific to Coordinating Nodes.
 
       * d1_client.cnclient
       * d1_client.cnclient_1_1
@@ -139,8 +144,8 @@ class DataONEBaseClient(d1_client.session.Session):
 
     DataONEObject
 
-      Wraps a single DataONE Science Object and adds functionality such as resolve
-      and get.
+      Wraps a single DataONE Science Object and adds functionality such as resolve and
+      get.
 
       * d1_client.d1client
 
@@ -492,15 +497,15 @@ class DataONEBaseClient(d1_client.session.Session):
         object bytes can be retrieved.
 
         When ``stream`` is False, Requests buffers the entire object in memory before
-        returning the Response. This can exhaust available memory on the local
-        machine when retrieving large science objects. The solution is to set
-        ``stream`` to True, which causes the returned Response object to contain a
-        a stream. However, see note below.
+        returning the Response. This can exhaust available memory on the local machine
+        when retrieving large science objects. The solution is to set ``stream`` to
+        True, which causes the returned Response object to contain a a stream. However,
+        see note below.
 
-        When ``stream`` = True, the Response object will contain a stream which can
-        be processed without buffering the entire science object in memory. However,
-        failure to read all data from the stream can cause connections to be
-        blocked. Due to this, the ``stream`` parameter is False by default.
+        When ``stream`` = True, the Response object will contain a stream which can be
+        processed without buffering the entire science object in memory. However,
+        failure to read all data from the stream can cause connections to be blocked.
+        Due to this, the ``stream`` parameter is False by default.
 
         Also see:
 

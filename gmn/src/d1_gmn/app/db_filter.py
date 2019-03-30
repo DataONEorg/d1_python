@@ -19,9 +19,8 @@
 # limitations under the License.
 """Data Django model query filters.
 
-These methods add various filters to a QuerySet and return the modified
-QuerySet. If the provided parameter name is not present in the request, no
-filtering is performed.
+These methods add various filters to a QuerySet and return the modified QuerySet. If
+the provided parameter name is not present in the request, no filtering is performed.
 
 query: The query to which to add the filters
 query: QuerySet

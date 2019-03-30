@@ -36,7 +36,8 @@ Example:
 
 Notes:
 
-  Typically, the DataONE Python stack, and any apps based on the stack, process XML using
+  Typically, the DataONE Python stack, and any apps based on the stack, process XML
+  using
   the PyXB bindings for the DataONE XML types. However, in some rare cases, it is
   necessary to process XML without using PyXB, and this wrapper provides some basic
   methods for such processing.
@@ -45,25 +46,34 @@ Notes:
 
   - Process XML that is not DataONE types, and so does not have PyXB binding.
 
-  - Process XML that is invalid in such a way that PyXB cannot parse or generate
-    it.
+  - Process XML that is invalid in such a way that PyXB cannot parse or generate it.
 
-  - Process XML without causing xs:dateTime fields to be normalized to the UTC
-    time zone (PyXB is based on the XML DOM, which requires such normalization.)
+  - Process XML without causing xs:dateTime fields to be normalized to the UTC time
+    zone (PyXB is based on the XML DOM, which requires such normalization.)
 
-  - Generate intentionally invalid XML for DataONE types in order to test how MNs, CNs and other components of the DataONE architecture handle and recover from invalid input.
+  - Generate intentionally invalid XML for DataONE types in order to test how MNs, CNs
+    and other components of the DataONE architecture handle and recover from invalid
+    input.
 
-  - Speed up simple processing, when the performance overhead of converting the documents to and from PyXB objects, with the schema validation and other processing that it entails, would be considered too high.
+  - Speed up simple processing, when the performance overhead of converting the
+    documents to and from PyXB objects, with the schema validation and other processing
+    that it entails, would be considered too high.
 
   Usage:
 
-  - Methods that take ``el_name`` and ``el_idx`` operate on the element with index ``el_idx`` of elements with name ``el_name``. If ``el_idx`` is higher than the number of elements with name ``el_name``, SimpleXMLWrapperException is raised.
+  - Methods that take ``el_name`` and ``el_idx`` operate on the element with index
+    ``el_idx`` of elements with name ``el_name``. If ``el_idx`` is higher than the
+    number of elements with name ``el_name``, SimpleXMLWrapperException is raised.
 
-  - Though this wrapper does not require XML to validate against the DataONE schemas, it does require that the wrapped XML is well formed and it will only generate well formed XML.
+  - Though this wrapper does not require XML to validate against the DataONE schemas,
+    it does require that the wrapped XML is well formed and it will only generate well
+    formed XML.
 
-  - If it's necessary to process XML that is not well formed, a library such as BeautifulSoup may be required.
+  - If it's necessary to process XML that is not well formed, a library such as
+    BeautifulSoup may be required.
 
-  - In some cases, it may be possible read or write XML that is not well formed by manipulating the XML directly as a string before wrapping or after generating.
+  - In some cases, it may be possible read or write XML that is not well formed by
+    manipulating the XML directly as a string before wrapping or after generating.
 
   - This wrapper is based on the ElementTree module.
 
@@ -345,7 +355,8 @@ class SimpleXMLWrapper(object):
           tz : datetime.tzinfo
             Timezone in which to return the datetime.
 
-            - Without a timezone, other contextual information is required in order to determine the exact represented time.
+            - Without a timezone, other contextual information is required in order to
+              determine the exact represented time.
             - If dt has timezone: The ``tz`` parameter is ignored.
             - If dt is naive (without timezone): The timezone is set to ``tz``.
             - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
@@ -376,7 +387,8 @@ class SimpleXMLWrapper(object):
           tz : datetime.tzinfo
             Timezone to set
 
-            - Without a timezone, other contextual information is required in order to determine the exact represented time.
+            - Without a timezone, other contextual information is required in order to
+              determine the exact represented time.
             - If dt has timezone: The ``tz`` parameter is ignored.
             - If dt is naive (without timezone): The timezone is set to ``tz``.
             - ``tz=None``: Prevent naive dt from being set to a timezone. Without a
@@ -413,7 +425,8 @@ class SimpleXMLWrapper(object):
     def replace_by_etree(self, root_el, el_idx=0):
         """Replace element.
 
-        Select element that has the same name as ``root_el``, then replace the selected element with ``root_el``
+        Select element that has the same name as ``root_el``, then replace the selected
+        element with ``root_el``
 
         ``root_el`` can be a single element or the root of an element tree.
 
@@ -429,7 +442,8 @@ class SimpleXMLWrapper(object):
     def replace_by_xml(self, xml_str, el_idx=0):
         """Replace element.
 
-        Select element that has the same name as ``xml_str``, then replace the selected element with ``xml_str``
+        Select element that has the same name as ``xml_str``, then replace the selected
+        element with ``xml_str``
 
         - ``xml_str`` must have a single element in the root.
         - The root element in ``xml_str`` can have an arbitrary number of children.

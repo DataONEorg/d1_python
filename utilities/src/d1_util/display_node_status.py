@@ -20,8 +20,8 @@
 # limitations under the License.
 """Display node status.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Retrieve a list of all DataONE Nodes
 - Get and display key metrics for each of the Nodes.
@@ -29,7 +29,7 @@ Python. It shows how to:
 Notes:
 
 - See the description for the CERTIFICATE setting below for limitations in the
-information displayed by this script.
+  information displayed by this script.
 
 Operation:
 

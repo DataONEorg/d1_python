@@ -79,8 +79,8 @@ def path_generator(
         If the include list contains any file patterns, files must match one or more of
         the patterns in order to be returned.
 
-        If the include list contains any dir patterns, dirs must match one or more of the
-        patterns in order for the recursive search to descend into them.
+        If the include list contains any dir patterns, dirs must match one or more of
+        the patterns in order for the recursive search to descend into them.
 
         The exclude list works in the same way except that matching files and dirs are
         excluded instead of included. If both include and exclude lists are specified,
@@ -101,8 +101,8 @@ def path_generator(
       default_excludes: bool
 
         - **True**: A list of glob patterns for files and dirs that should typically be
-          ignored is added to any exclude patterns passed to the function. These include
-          dirs such as .git and backup files, such as files appended with "~".
+          ignored is added to any exclude patterns passed to the function. These
+          include dirs such as .git and backup files, such as files appended with "~".
         - **False**: No files or dirs are excluded by default.
 
       return_dir_paths: bool
@@ -115,15 +115,15 @@ def path_generator(
 
     Notes:
 
-      During iteration, the iterator can be prevented from descending into a directory by
-      sending a "skip" flag when the iterator yields the directory path. This allows the
-      client to determine if directories should be iterated by, for instance, which files
-      are present in the directory. This can be used in conjunction with the include and
-      exclude glob lists. Note that, in order to receive directory paths that can be
-      skipped, ``return_dir_paths`` must be set to True.
+      During iteration, the iterator can be prevented from descending into a directory
+      by sending a "skip" flag when the iterator yields the directory path. This allows
+      the client to determine if directories should be iterated by, for instance, which
+      files are present in the directory. This can be used in conjunction with the
+      include and exclude glob lists. Note that, in order to receive directory paths
+      that can be skipped, ``return_dir_paths`` must be set to True.
 
-      The regular ``for...in`` syntax does not support sending the "skip" flag back to the
-      iterator. Instead, use a pattern like:
+      The regular ``for...in`` syntax does not support sending the "skip" flag back to
+      the iterator. Instead, use a pattern like:
 
       .. highlight: python
 

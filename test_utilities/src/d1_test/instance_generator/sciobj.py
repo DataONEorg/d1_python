@@ -34,11 +34,11 @@ def generate_reproducible_sciobj_with_sysmeta(client, pid=None, option_dict=None
     """Generate science object bytes and a random, fully populated System Metadata
     object that is always the same for a given PID.
 
-    - The PID can be seen as a handle through which the same science object bytes
-    and sysmeta can always be retrieved.
+    - The PID can be seen as a handle through which the same science object bytes and
+      sysmeta can always be retrieved.
     - ``allow_resource_map=False`` causes the Resource Map FormatId to not be used.
-    This method does not generate resource maps, and resource maps undergo special
-    processing in GMN.
+      This method does not generate resource maps, and resource maps undergo special
+      processing in GMN.
 
     """
     option_dict = option_dict or {}
@@ -61,9 +61,9 @@ def generate_reproducible_sciobj_bytes(pid):
     """Return a bytes object containing a set of bytes that is unique and always the
     same for a given PID.
 
-    - This object includes a set of random bytes, ensuring that the object cannot
-    be decoded as valid ASCII or UTF-8 and that the bytes cannot be truncated
-    without losing information.
+    - This object includes a set of random bytes, ensuring that the object cannot be
+      decoded as valid ASCII or UTF-8 and that the bytes cannot be truncated without
+      losing information.
 
     """
     undecorated_pid = re.sub(r'^<.*?>', '', pid)

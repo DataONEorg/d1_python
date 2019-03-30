@@ -35,9 +35,8 @@ log = logging.getLogger(__name__)
 
 README_TXT = """Author Folder
 
-This folder contains the items of the object_tree folder (the parent of this
-folder) sorted by author. Any items with unknown author are not included.
-"""
+This folder contains the items of the object_tree folder (the parent of this folder)
+sorted by author. Any items with unknown author are not included. """
 
 
 class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):

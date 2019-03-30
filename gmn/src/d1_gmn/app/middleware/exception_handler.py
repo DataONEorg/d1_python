@@ -21,20 +21,18 @@
 
 Catch, log and serialize exceptions that are raised when processing a request.
 
-Implements the system for returning information about exceptional conditions
-(errors) as described in Raised by MN and CN APIs
-http://mule1.dataone.org/ArchitectureDocs/html
+Implements the system for returning information about exceptional conditions (errors)
+as described in Raised by MN and CN APIs http://mule1.dataone.org/ArchitectureDocs/html
 
-An MN is required to always return a DataONE exception on errors. When running
-in production mode (settings.DEBUG = False and settings.DEBUG_GMN = False), GMN
-complies with this by wrapping any unhandled internal exception in a DataONE
-exception.
+An MN is required to always return a DataONE exception on errors. When running in
+production mode (settings.DEBUG = False and settings.DEBUG_GMN = False), GMN complies
+with this by wrapping any unhandled internal exception in a DataONE exception.
 
-When running in Django debug mode (settings.DEBUG = True), non-DataONE
-exceptions are returned as Django HTML exception pages.
+When running in Django debug mode (settings.DEBUG = True), non-DataONE exceptions are
+returned as Django HTML exception pages.
 
-Responses to HEAD requests can not contain a body, so the exception is
-serialized to a set of HTTP headers for HEAD requests.
+Responses to HEAD requests can not contain a body, so the exception is serialized to a
+set of HTTP headers for HEAD requests.
 
 """
 

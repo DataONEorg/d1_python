@@ -17,7 +17,8 @@
 # limitations under the License.
 """Asserts used in views.
 
-These directly return a DataONE Exception to the client if a test condition is not true.
+These directly return a DataONE Exception to the client if a test condition is not
+true.
 
 """
 

@@ -180,8 +180,9 @@ class ProgressLogger:
                 updates.
 
             current_task_index (int):
-                If the task processing loop may skip or repeat tasks, the index of the current
-                task must be provided here. This parameter can normally be left unset.
+                If the task processing loop may skip or repeat tasks, the index of the
+                current task must be provided here. This parameter can normally be left
+                unset.
 
         """
         assert (

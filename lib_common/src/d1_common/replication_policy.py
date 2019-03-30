@@ -66,10 +66,13 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
       sysmeta_pyxb : SystemMetadata PyXB object.
         System Metadata in which to add the preferred replication target.
 
-        If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and populated with the preferred replication target.
+        If the System Metadata does not already have a Replication Policy, a default
+        replication policy which enables replication is added and populated with the
+        preferred replication target.
 
       node_urn : str
-        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+        Node URN of the remote MN that will be added. On the form
+       ``urn:node:MyMemberNode``.
 
     """
     if not has_replication_policy(sysmeta_pyxb):
@@ -83,7 +86,8 @@ def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
     """Add a remote Member Node to the list of blocked replication targets to this
     System Metadata object.
 
-    The blocked node will not be considered a possible replication target for the associated System Metadata.
+    The blocked node will not be considered a possible replication target for the
+    associated System Metadata.
 
     Also remove the target MN from the list of preferred Member Nodes if present.
 
@@ -94,10 +98,13 @@ def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
       sysmeta_pyxb : SystemMetadata PyXB object.
         System Metadata in which to add the blocked replication target.
 
-        If the System Metadata does not already have a Replication Policy, a default replication policy which enables replication is added and then populated with the blocked replication target.
+        If the System Metadata does not already have a Replication Policy, a default
+        replication policy which enables replication is added and then populated with
+        the blocked replication target.
 
       node_urn : str
-        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+        Node URN of the remote MN that will be added. On the form
+        ``urn:node:MyMemberNode``.
 
     """
     if not has_replication_policy(sysmeta_pyxb):
@@ -112,7 +119,8 @@ def sysmeta_set_default_rp(sysmeta_pyxb):
 
     This will clear any existing Replication Policy in the System Metadata.
 
-    The default Replication Policy disables replication and sets number of replicas to 0.
+    The default Replication Policy disables replication and sets number of replicas to
+    0.
 
     Args:
       sysmeta_pyxb : SystemMetadata PyXB object.
@@ -130,7 +138,9 @@ def sysmeta_set_default_rp(sysmeta_pyxb):
 def normalize(rp_pyxb):
     """Normalize a ReplicationPolicy PyXB type in place.
 
-    The preferred and blocked lists are sorted alphabetically. As blocked nodes override preferred nodes, and any node present in both lists is removed from the preferred list.
+    The preferred and blocked lists are sorted alphabetically. As blocked nodes
+    override preferred nodes, and any node present in both lists is removed from the
+    preferred list.
 
     Args:
       rp_pyxb : ReplicationPolicy PyXB object
@@ -156,12 +166,13 @@ def is_preferred(rp_pyxb, node_urn):
       The object will be normalized in place.
 
     node_urn : str
-      Node URN of the remote MN for which to check preference. 
+      Node URN of the remote MN for which to check preference.
 
   Returns:
     bool: ``True`` if ``node_urn`` is a preferred replica target.
 
-    As blocked nodes override preferred nodes, return False if ``node_urn`` is in both lists.
+    As blocked nodes override preferred nodes, return False if ``node_urn`` is in both
+    lists.
   """
     return node_urn in _get_attr_or_list(
         rp_pyxb, 'pref'
@@ -175,12 +186,13 @@ def is_blocked(rp_pyxb, node_urn):
       The object will be normalized in place.
 
     node_urn : str
-      Node URN of the remote MN for which to check preference. 
+      Node URN of the remote MN for which to check preference.
 
   Returns:
     bool: ``True`` if ``node_urn`` is a blocked replica target.
 
-    As blocked nodes override preferred nodes, return True if ``node_urn`` is in both lists.
+    As blocked nodes override preferred nodes, return True if ``node_urn`` is in both
+    lists.
   """
     return node_urn in _get_attr_or_list(rp_pyxb, 'block')
 
@@ -194,7 +206,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb):
       a_pyxb, b_pyxb : ReplicationPolicy PyXB objects to compare
 
     Returns:
-      bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+      bool: ``True`` if the resulting policies for the two objects are semantically
+      equivalent.
 
     """
     return pyxb_to_dict(a_pyxb) == pyxb_to_dict(b_pyxb)
@@ -209,7 +222,8 @@ def are_equivalent_xml(a_xml, b_xml):
       a_xml, b_xml: ReplicationPolicy XML docs to compare
 
     Returns:
-      bool: ``True`` if the resulting policies for the two objects are semantically equivalent.
+      bool: ``True`` if the resulting policies for the two objects are semantically
+      equivalent.
 
     """
     return are_equivalent_pyxb(
@@ -230,7 +244,8 @@ def add_preferred(rp_pyxb, node_urn):
         Replication Policy in which to add the preferred replication target.
 
       node_urn : str
-        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+        Node URN of the remote MN that will be added. On the form
+        ``urn:node:MyMemberNode``.
 
     """
     _add_node(rp_pyxb, 'pref', node_urn)
@@ -250,7 +265,8 @@ def add_blocked(rp_pyxb, node_urn):
         Replication Policy in which to add the blocked replication target.
 
       node_urn : str
-        Node URN of the remote MN that will be added. On the form ``urn:node:MyMemberNode``.
+        Node URN of the remote MN that will be added. On the form
+        ``urn:node:MyMemberNode``.
 
     """
     _add_node(rp_pyxb, 'block', node_urn)

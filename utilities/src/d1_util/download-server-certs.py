@@ -20,8 +20,8 @@
 # limitations under the License.
 """Download the issuer CA X.509 certificates for all DataONE nodes.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
 - Downloads server side certificate from a DataONE nodes
 - Parse certificates to find the issuer CA certificate URLs
@@ -29,16 +29,14 @@ Python. It shows how to:
 
 Operation:
 
-This process downloads the server side certificates from the DataONE nodes and
-parses them to find the issuer CA certificate URLs. It then downloads the CA
-certs.
+This process downloads the server side certificates from the DataONE nodes and parses
+them to find the issuer CA certificate URLs. It then downloads the CA certs.
 
-The CA certs can then be installed as trusted CAs in the local environment in
-order to ensure that the DataONE client library trusts all server side certs
-currently in use in DataONE.
+The CA certs can then be installed as trusted CAs in the local environment in order to
+ensure that the DataONE client library trusts all server side certs currently in use in
+DataONE.
 
-To install the CA bundles on Ubuntu and derived distributions, move the files
-to:
+To install the CA bundles on Ubuntu and derived distributions, move the files to:
 
 /usr/local/share/ca-certificates
 

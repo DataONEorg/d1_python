@@ -39,22 +39,23 @@
 
 - Wrap the PyXB client with Exception based classes
 - PyXB based XML serialization and deserialization
+
 - Add deserialize to string and HTTP headers
 
 Notes:
 
   traceInformation:
 
-  traceInformation is an xs:anyType, meaning that is essentially the root of a new
-  XML document of arbitrary complexity. Since the contents of the elements are
-  unknown at the time when the PyXB binding are created, PyXB cannot
-  automatically serialize and deserialize the traceInformation field together with
-  the rest of the ``DataONEException`` XML type.
+  traceInformation is an xs:anyType, meaning that is essentially the root of a new XML
+  document of arbitrary complexity. Since the contents of the elements are unknown at
+  the time when the PyXB binding are created, PyXB cannot automatically serialize and
+  deserialize the traceInformation field together with the rest of the
+  ``DataONEException`` XML type.
 
   To make it easier to use the traceInformation element, we support a special case
-  where it can be read and written as a single string of bytes, where the contents
-  are application specific. Any other content must be generated and parsed as XML
-  by the user.
+  where it can be read and written as a single string of bytes, where the contents are
+  application specific. Any other content must be generated and parsed as XML by the
+  user.
 
   Example of serialized DataONE Exception:
 
@@ -168,8 +169,8 @@ def create_exception_by_name(
         The type name of a DataONE Exception. E.g. NotFound.
 
         If an unknown type name is used, it is automatically set to ServiceFailure. As
-        the XML Schema for DataONE Exceptions does not restrict the type names, this may
-        occur when deserializing an exception not defined by DataONE.
+        the XML Schema for DataONE Exceptions does not restrict the type names, this
+        may occur when deserializing an exception not defined by DataONE.
 
       detailCode: int
         Optional index into a table of predefined error conditions.
@@ -364,10 +365,10 @@ class DataONEException(Exception):
     def serialize_to_headers(self):
         """Serialize to a dict of HTTP headers.
 
-        Used in responses to HTTP HEAD requests. As with regular HTTP GET requests, HEAD
-        requests may return DataONE Exceptions. Since a response to a HEAD request
-        cannot include a body, the error is returned as a set of HTTP headers instead of
-        an XML document.
+        Used in responses to HTTP HEAD requests. As with regular HTTP GET requests,
+        HEAD requests may return DataONE Exceptions. Since a response to a HEAD request
+        cannot include a body, the error is returned as a set of HTTP headers instead
+        of an XML document.
 
         """
         return {
@@ -385,8 +386,8 @@ class DataONEException(Exception):
     def get_pyxb(self):
         """Generate a DataONE Exception PyXB object.
 
-        The PyXB object supports directly reading and writing the individual values that
-        may be included in a DataONE Exception.
+        The PyXB object supports directly reading and writing the individual values
+        that may be included in a DataONE Exception.
 
         """
         dataone_exception_pyxb = dataoneErrors.error()

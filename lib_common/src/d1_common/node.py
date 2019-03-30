@@ -23,7 +23,8 @@
 def pyxb_to_dict(node_list_pyxb):
     """
   Returns:
-     dict : Representation of ``node_list_pyxb``, keyed on the Node identifier (``urn:node:*``).
+     dict : Representation of ``node_list_pyxb``, keyed on the Node identifier
+     (``urn:node:*``).
 
   Example::
 

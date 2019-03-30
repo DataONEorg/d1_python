@@ -81,13 +81,12 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     """Create or update database representation of a System Metadata object and closely
     related internal state.
 
-    - If ``sciobj_url`` is not passed on create, storage in the internal sciobj
-    store is assumed
+    - If ``sciobj_url`` is not passed on create, storage in the internal sciobj store
+      is assumed
     - If ``sciobj_url`` is passed on create, it can reference a location in the
-    internal sciobj store, or an arbitrary location on disk, or a remote web
-    server. See the sciobj_store module for more information
-    - if ``sciobj_url`` is not passed on update, the sciobj location remains
-    unchanged
+      internal sciobj store, or an arbitrary location on disk, or a remote web server.
+      See the sciobj_store module for more information
+    - if ``sciobj_url`` is not passed on update, the sciobj location remains unchanged
     - If ``sciobj_url`` is passed on update, the sciobj location is updated
 
     Preconditions:
@@ -297,13 +296,12 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
 
     Notes:
       - There can be multiple rules in a policy and each rule can contain multiple
-        subjects. So there are two ways that the same subject can be specified
-        multiple times in a policy. If this happens, multiple, conflicting action
-        levels may be provided for the subject. This is handled by checking for an
-        existing row for the subject for this object and updating it if it
-        contains a lower action level. The end result is that there is one row for
-        each subject, for each object and this row contains the highest action
-        level.
+        subjects. So there are two ways that the same subject can be specified multiple
+        times in a policy. If this happens, multiple, conflicting action levels may be
+        provided for the subject. This is handled by checking for an existing row for
+        the subject for this object and updating it if it contains a lower action
+        level. The end result is that there is one row for each subject, for each
+        object and this row contains the highest action level.
 
     """
     _delete_existing_access_policy(sysmeta_pyxb)

@@ -78,10 +78,12 @@ def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
         Persistent Identifier (PID) to use for the new Resource Map
 
       scimeta_pid: str
-        PID for an object that will be listed as the Science Metadata that is describing the Science Data objects.
+        PID for an object that will be listed as the Science Metadata that is
+        describing the Science Data objects.
 
       sciobj_pid_list: list of str
-        List of PIDs that will be listed as the Science Data objects that are being described by the Science Metadata.
+        List of PIDs that will be listed as the Science Data objects that are being
+        described by the Science Metadata.
 
     Returns:
       ResourceMap : OAI-ORE Resource Map
@@ -100,8 +102,8 @@ def createResourceMapFromStream(in_stream, base_url=d1_common.const.URL_DATAONE_
 
     Args:
       in_stream:
-        The first non-blank line is the PID of the resource map itself. Second line is the
-        science metadata PID and remaining lines are science data PIDs.
+        The first non-blank line is the PID of the resource map itself. Second line is
+        the science metadata PID and remaining lines are science data PIDs.
 
         Example stream contents:
 
@@ -164,19 +166,25 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             Persistent Identifier (PID) to use for the new Resource Map
 
           scimeta_pid: str
-            PID for an object that will be listed as the Science Metadata that is describing the Science Data objects.
+            PID for an object that will be listed as the Science Metadata that is
+            describing the Science Data objects.
 
           scidata_pid_list: list of str
-            List of PIDs that will be listed as the Science Data objects that are being described by the Science Metadata.
+            List of PIDs that will be listed as the Science Data objects that are being
+            described by the Science Metadata.
 
           base_url: str
             Root of the DataONE environment in which the Resource Map will be used.
 
           api_major:
-            The DataONE API version to use for the the DataONE Resolve API. Clients call the Resolve API to get a list of download locations for the objects in the Resource Map.
+            The DataONE API version to use for the the DataONE Resolve API. Clients
+            call the Resolve API to get a list of download locations for the objects in
+            the Resource Map.
 
           ore_software_id: str
-            Optional string which identifies the software that was used for creating the Resource Map. If specified, should be on the form of a UserAgent string.
+            Optional string which identifies the software that was used for creating
+            the Resource Map. If specified, should be on the form of a UserAgent
+            string.
 
           args and kwargs:
             Optional arguments forwarded to rdflib.ConjunctiveGraph.__init__().
@@ -219,7 +227,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Args:
           doc_format: str
-            One of: ``xml``, ``n3``, ``turtle``, ``nt``, ``pretty-xml``, ``trix``, ``trig`` and ``nquads``.
+            One of: ``xml``, ``n3``, ``turtle``, ``nt``, ``pretty-xml``, ``trix``,
+            ``trig`` and ``nquads``.
 
           args and kwargs:
             Optional arguments forwarded to rdflib.ConjunctiveGraph.serialize().
@@ -240,7 +249,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
 
         Args:
           doc_format: str
-            One of: ``xml``, ``n3``, ``turtle``, ``nt``, ``pretty-xml``, ``trix``, ``trig`` and ``nquads``.
+            One of: ``xml``, ``n3``, ``turtle``, ``nt``, ``pretty-xml``, ``trix``,
+            ``trig`` and ``nquads``.
 
           args and kwargs:
             Optional arguments forwarded to rdflib.ConjunctiveGraph.serialize().
@@ -269,8 +279,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             In the case of a string the string is the location of the source.
 
           location: str
-            String indicating the relative or absolute URL of the source. Graph``s absolutize
-            method is used if a relative location is specified.
+            String indicating the relative or absolute URL of the source. Graph``s
+            absolutize method is used if a relative location is specified.
 
           file: file-like object
 
@@ -284,8 +294,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             Built-in: ``xml``, ``n3``, ``nt``, ``trix``, ``rdfa``
 
           publicID: str
-            Logical URI to use as the document base. If None specified the document location
-            is used (at least in the case where there is a document location).
+            Logical URI to use as the document base. If None specified the document
+            location is used (at least in the case where there is a document location).
 
         Raises:
           xml.sax.SAXException based exception: On parse error.
@@ -465,13 +475,13 @@ class ResourceMap(rdflib.ConjunctiveGraph):
       list of subject, object tuples: All subject/objects with ``predicate``.
 
     Notes:
-    
+
       Equivalent SPARQL:
-    
+
       .. highlight: sql
-    
+
       ::
-          
+
         SELECT DISTINCT ?s ?o
         WHERE {{
           ?s {0} ?o .

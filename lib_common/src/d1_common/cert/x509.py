@@ -37,23 +37,23 @@ import pyasn1.codec.der.decoder
 import d1_common.const
 
 OID_TO_SHORT_NAME_DICT = {
-    """Map OID to short names for use when creating DataONE compliant serialization of the
+  """Map OID to short names for use when creating DataONE compliant serialization of the
   DN.
-  
+
   This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
-  
+
   The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514 refers to
   a registry but, if the registry exists, it's probably too large to be useful to us. So
   we pull in OIDs for a small set that can be expected in RDNs in certs from CILogon and
   will just need to expand it if required.
-  
+
   RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
-  
-  If the AttributeType is defined to have a short name (descriptor) [RFC4512] and
-  that short name is known to be registered [REGISTRY] [RFC4520] as identifying
-  the AttributeType , that short name a <descr>, is used.  Otherwise the
-  AttributeType is encoded as the dotted-decimal encoding , a <numericoid> of its
-  OBJECT IDENTIFIER. The <descr> and <numericoid> are defined in [RFC4512].
+
+  If the AttributeType is defined to have a short name (descriptor) [RFC4512] and that
+  short name is known to be registered [REGISTRY] [RFC4520] as identifying the
+  AttributeType , that short name a <descr>, is used.  Otherwise the AttributeType is
+  encoded as the dotted-decimal encoding , a <numericoid> of its OBJECT IDENTIFIER. The
+  <descr> and <numericoid> are defined in [RFC4512].
   """
     '0.9.2342.19200300.100.1.1': 'UID',  # userId
     '0.9.2342.19200300.100.1.25': 'DC',  # domainComponent
@@ -104,13 +104,21 @@ def extract_subject_from_dn(cert_obj):
       str:
         Primary subject extracted from the certificate DN.
 
-    The certificate DN (DistinguishedName) is a sequence of RDNs (RelativeDistinguishedName). Each RDN is a set of AVAs (AttributeValueAssertion / AttributeTypeAndValue). A DataONE subject is a plain string. As there is no single standard specifying how to create a string representation of a DN, DataONE selected one of the most common ways, which yield strings such as:
+    The certificate DN (DistinguishedName) is a sequence of RDNs
+    (RelativeDistinguishedName). Each RDN is a set of AVAs (AttributeValueAssertion /
+    AttributeTypeAndValue). A DataONE subject is a plain string. As there is no single
+    standard specifying how to create a string representation of a DN, DataONE selected
+    one of the most common ways, which yield strings such as:
 
     CN=Some Name A123,O=Some Organization,C=US,DC=Some Domain,DC=org
 
-    In particular, the sequence of RDNs is reversed. Attribute values are escaped, attribute type and value pairs are separated by "=", and AVAs are joined together with ",". If an RDN contains an unknown OID, the OID is serialized as a dotted string.
+    In particular, the sequence of RDNs is reversed. Attribute values are escaped,
+    attribute type and value pairs are separated by "=", and AVAs are joined together
+    with ",". If an RDN contains an unknown OID, the OID is serialized as a dotted
+    string.
 
-    As all the information in the DN is preserved, it is not possible to create the same subject with two different DNs, and the DN can be recreated from the subject.
+    As all the information in the DN is preserved, it is not possible to create the
+    same subject with two different DNs, and the DN can be recreated from the subject.
 
     """
     return ','.join(
@@ -173,7 +181,10 @@ def rdn_escape(rdn_str):
 def extract_subject_info_extension(cert_obj):
     """Extract DataONE SubjectInfo XML doc from certificate.
 
-    Certificates issued by DataONE may include an embedded XML doc containing additional information about the subject specified in the certificate DN. If present, the doc is stored as an extension with an OID specified by DataONE and formatted as specified in the DataONE SubjectInfo schema definition.
+    Certificates issued by DataONE may include an embedded XML doc containing
+    additional information about the subject specified in the certificate DN. If
+    present, the doc is stored as an extension with an OID specified by DataONE and
+    formatted as specified in the DataONE SubjectInfo schema definition.
 
     Args:
       cert_obj: cryptography.Certificate
@@ -197,10 +208,11 @@ def download_as_der(
 ):
     """Download public certificate from a TLS/SSL web server as DER encoded ``bytes``.
 
-    If the certificate is being downloaded in order to troubleshoot validation issues, the
-    download itself may fail due to the validation issue that is being investigated. To
-    work around such chicken-and-egg problems, temporarily wrap calls to the download_*
-    functions with the ``disable_cert_validation()`` context manager (also in this module).
+    If the certificate is being downloaded in order to troubleshoot validation issues,
+    the download itself may fail due to the validation issue that is being investigated.
+    To work around such chicken-and-egg problems, temporarily wrap calls to the
+    download_* functions with the ``disable_cert_validation()`` context manager (also in
+    this module).
 
     Args:
         base_url : str
@@ -314,9 +326,13 @@ def disable_cert_validation():
     """Context manager to temporarily disable certificate validation in the standard SSL
     library.
 
-    Note: This should not be used in production code but is sometimes useful for troubleshooting certificate validation issues.
+    Note: This should not be used in production code but is sometimes useful for
+    troubleshooting certificate validation issues.
 
-    By design, the standard SSL library does not provide a way to disable verification of the server side certificate. However, a patch to disable validation is described by the library developers. This context manager allows applying the patch for specific sections of code.
+    By design, the standard SSL library does not provide a way to disable verification
+    of the server side certificate. However, a patch to disable validation is described
+    by the library developers. This context manager allows applying the patch for
+    specific sections of code.
 
     """
     current_context = ssl._create_default_https_context
@@ -330,9 +346,13 @@ def disable_cert_validation():
 def extract_issuer_ca_cert_url(cert_obj):
     """Extract issuer CA certificate URL from certificate.
 
-    Certificates may include a URL where the root certificate for the CA which was used for signing the certificate can be downloaded. This function returns the URL if present.
+    Certificates may include a URL where the root certificate for the CA which was used
+    for signing the certificate can be downloaded. This function returns the URL if
+    present.
 
-    The primary use for this is to fix validation failure due to non-trusted issuer by downloading the root CA certificate from the URL and installing it in the local trust store.
+    The primary use for this is to fix validation failure due to non-trusted issuer by
+    downloading the root CA certificate from the URL and installing it in the local
+    trust store.
 
     Args:
       cert_obj: cryptography.Certificate
@@ -430,7 +450,9 @@ def get_extension_by_name(cert_obj, extension_name):
 def get_val_list(obj, path_list, reverse=False):
     """Extract values from nested objects by attribute names.
 
-    Objects contain attributes which are named references to objects. This will descend down a tree of nested objects, starting at the given object, following the given path.
+    Objects contain attributes which are named references to objects. This will descend
+    down a tree of nested objects, starting at the given object, following the given
+    path.
 
     Args:
       obj: object

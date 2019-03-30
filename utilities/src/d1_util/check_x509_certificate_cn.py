@@ -20,21 +20,21 @@
 # limitations under the License.
 """Submit a PEM (Base64) encoded X.509 v3 certificate to a CN for validation.
 
-This is an example on how to use the DataONE Client and Common libraries for
-Python. It shows how to:
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
 
-- Submit a PEM (Base64) encoded X.509 v3 certificate, optionally containing a
-DataONE SubjectInfo extension, to a CN to check if it passes validation and to
-determine which DataONE subjects are authenticated by it.
+- Submit a PEM (Base64) encoded X.509 v3 certificate, optionally containing a DataONE
+  SubjectInfo extension, to a CN to check if it passes validation and to determine
+  which DataONE subjects are authenticated by it.
 
 Notes:
 
-- This requires the private key of the certificate, and the CN validates
-the certificate.
+- This requires the private key of the certificate, and the CN validates the
+  certificate.
 
-- See `check_x509_certificate_local.py` for how to process the lists of
-equivalent identities and group memberships in a DataONE SubjectInfo extension
-into a list of authenticated DataONE subjects.
+- See `check_x509_certificate_local.py` for how to process the lists of equivalent
+  identities and group memberships in a DataONE SubjectInfo extension into a list of
+  authenticated DataONE subjects.
 
 """
 import argparse

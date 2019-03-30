@@ -24,14 +24,14 @@ Timezones (tz):
 - A datetime object can be **tz-naive** or **tz-aware**.
 
 - **tz-naive**: The datetime does not include timezone information. As such, it does
-  not by itself fully specify an absolute point in time. The exact point in time depends
-  on in which timezone the time is specified, and the information may not be accessible to the end user.
-  However, as timezones go from GMT-12 to GMT+14, and when including a possible
-  daylight saving offset of 1 hour, a tz-naive datetime will always be within 14 hours
-  of the real time.
+  not by itself fully specify an absolute point in time. The exact point in time
+  depends on in which timezone the time is specified, and the information may not be
+  accessible to the end user. However, as timezones go from GMT-12 to GMT+14, and when
+  including a possible daylight saving offset of 1 hour, a tz-naive datetime will
+  always be within 14 hours of the real time.
 
-- **tz-aware**: The datetime includes a timezone, specified as an abbreviation or as
-  a hour and minute offset. It specifies an exact point in time.
+- **tz-aware**: The datetime includes a timezone, specified as an abbreviation or as a
+  hour and minute offset. It specifies an exact point in time.
 
 """
 
@@ -47,9 +47,9 @@ logger = logging.getLogger(__name__)
 class UTC(datetime.tzinfo):
     """datetime.tzinfo based class that represents the UTC timezone.
 
-    Date-times in DataONE should have timezone information that is fixed to UTC. A naive
-    Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo based
-    class.
+    Date-times in DataONE should have timezone information that is fixed to UTC. A
+    naive Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo
+    based class.
 
     """
 
@@ -88,9 +88,9 @@ class FixedOffset(datetime.tzinfo):
     """datetime.tzinfo derived class that represents any timezone as fixed offset in
     minutes east of UTC.
 
-    - Date-times in DataONE should have timezone information that is fixed to
-      UTC. A naive Python datetime can be fixed to UTC by attaching it to this
-      datetime.tzinfo based class.
+    - Date-times in DataONE should have timezone information that is fixed to UTC. A
+      naive Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo
+      based class.
     - See the UTC class for representing timezone in UTC.
 
     """
@@ -203,7 +203,8 @@ def are_equal(a_dt, b_dt, round_sec=1):
         Timestamp to compare.
 
       round_sec: int or float
-        Round the timestamps to the closest second divisible by this value before comparing them.
+        Round the timestamps to the closest second divisible by this value before
+        comparing them.
 
         E.g.:
 
@@ -212,17 +213,23 @@ def are_equal(a_dt, b_dt, round_sec=1):
         - ``n_round_sec`` = 30: nearest half minute.
 
         Timestamps may lose resolution or otherwise change slightly as they go through
-        various transformations and storage systems. This again may cause timestamps that
-        have been processed in different systems to fail an exact equality compare even if
-        they were initially the same timestamp. This rounding avoids such problems as long
-        as the error introduced to the original timestamp is not higher than the rounding
+        various transformations and storage systems. This again may cause timestamps
+        that
+        have been processed in different systems to fail an exact equality compare even
+        if
+        they were initially the same timestamp. This rounding avoids such problems as
+        long
+        as the error introduced to the original timestamp is not higher than the
+        rounding
         value. Of course, the rounding also causes a loss in resolution in the values
-        compared, so should be kept as low as possible. The default value of 1 second should
+        compared, so should be kept as low as possible. The default value of 1 second
+        should
         be a good tradeoff in most cases.
 
     Returns:
       bool
-        - **True**: If the two datetimes are equal after being rounded by ``round_sec``.
+        - **True**: If the two datetimes are equal after being rounded by
+          ``round_sec``.
 
     """
     ra_dt = round_to_nearest(a_dt, round_sec)
@@ -252,8 +259,8 @@ def ts_from_dt(dt):
     Returns:
       int or float
         - The number of seconds since Midnight, January 1st, 1970, UTC.
-        - If ``dt`` contains sub-second values, the returned value will be a
-          float with fraction.
+        - If ``dt`` contains sub-second values, the returned value will be a float with
+          fraction.
 
     See Also:
       ``dt_from_ts()`` for the reverse operation.
@@ -271,8 +278,8 @@ def dt_from_ts(ts, tz=None):
         The number of seconds since Midnight, January 1st, 1970, UTC.
 
       tz : datetime.tzinfo
-        - If supplied: The dt is adjusted to that tz before being returned. It
-          does not affect the ts, which is always in UTC.
+        - If supplied: The dt is adjusted to that tz before being returned. It does not
+          affect the ts, which is always in UTC.
 
         - If not supplied: the dt is returned in UTC.
 
@@ -298,7 +305,8 @@ def http_datetime_str_from_dt(dt):
 
     Returns:
       str
-        The returned format is a is fixed-length subset of that defined by RFC 1123 and is
+        The returned format is a is fixed-length subset of that defined by RFC 1123 and
+        is
         the preferred format for use in the HTTP Date header. E.g.:
 
         ``Sat, 02 Jan 1999 03:04:05 GMT``
@@ -322,7 +330,8 @@ def xsd_datetime_str_from_dt(dt):
 
     Returns:
       str
-        The returned format can be used as the date in xs:dateTime XML elements. It will
+        The returned format can be used as the date in xs:dateTime XML elements. It
+        will
         be on the form ``YYYY-MM-DDTHH:MM:SS.mmm+00:00``.
 
     """
@@ -367,8 +376,9 @@ def dt_from_iso8601_str(iso8601_str):
         - tz-aware: Used in the formatted string.
         - tz-naive: Assumed to be in UTC.
         - Partial strings are accepted as long as they're on the general form.
-          Everything from just ``2014`` to ``2006-10-20T15:34:56.123+02:30`` will work. The sections
-          that are not present in the string are set to zero in the returned datetime.
+          Everything from just ``2014`` to ``2006-10-20T15:34:56.123+02:30`` will work.
+          The sections that are not present in the string are set to zero in the
+          returned datetime.
         - See ``test_iso8601.py`` in the iso8601 package for examples.
 
     Returns:
