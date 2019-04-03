@@ -17,7 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """SciObj create for view methods."""
-import d1_common.utils.filesystem
 import d1_gmn.app.event_log
 import d1_gmn.app.resource_map
 import d1_gmn.app.scimeta
@@ -56,7 +55,7 @@ def create_sciobj(request, sysmeta_pyxb):
     """
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
-    _set_mn_controlled_values(request, sysmeta_pyxb)
+    _set_mn_controlled_values(request, sysmeta_pyxb, is_modification=False)
     d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
     d1_gmn.app.views.assert_sysmeta.sanity(request, sysmeta_pyxb)
 
@@ -120,15 +119,14 @@ def _read_sciobj_bytes_from_request(request):
 
 
 def _save_sciobj_bytes_from_request(request, sciobj_path):
-    """Django stores small uploads in memory and streams large uploads directly
-    to disk.
+    """Django stores small uploads in memory and streams large uploads directly to disk.
 
-    Uploads stored in memory are represented by UploadedFile and on
-    disk, TemporaryUploadedFile. To store an UploadedFile on disk, it's
-    iterated and saved in chunks. To store a TemporaryUploadedFile, it's
-    moved from the temporary to the final location. Django automatically
-    handles this when using the file related fields in the models, but
-    GMN is not using those, so has to do it manually here.
+    Uploads stored in memory are represented by UploadedFile and on disk,
+    TemporaryUploadedFile. To store an UploadedFile on disk, it's iterated and saved in
+    chunks. To store a TemporaryUploadedFile, it's moved from the temporary to the final
+    location. Django automatically handles this when using the file related fields in
+    the models, but GMN is not using those, so has to do it manually here.
+
     """
     d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
     try:
@@ -147,22 +145,27 @@ def _save_sciobj_bytes_from_str(map_xml, sciobj_path):
         f.write(map_xml)
 
 
-def _set_mn_controlled_values(request, sysmeta_pyxb, update_submitter=True):
+def _set_mn_controlled_values(request, sysmeta_pyxb, is_modification):
     """See the description of TRUST_CLIENT_* in settings.py."""
     now_datetime = d1_common.date_time.utc_now()
 
     default_value_list = [
         ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
         ('authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
-        ('dateSysMetadataModified', now_datetime, False),
         ('serialVersion', 1, False),
         ('dateUploaded', now_datetime, False),
     ]
 
-    if update_submitter:
+    if not is_modification:
+        # submitter cannot be updated as the CN does not allow it.
         default_value_list.append(('submitter', request.primary_subject_str, True))
+        # dateSysMetadataModified cannot be updated as it is used for optimistic
+        # locking. If changed, it is assumed that optimistic locking failed, and the
+        # update is rejected in order to prevent a concurrent update from being lost.
+        default_value_list.append(('dateSysMetadataModified', now_datetime, False))
     else:
         sysmeta_pyxb.submitter = None
+        sysmeta_pyxb.dateSysMetadataModified = now_datetime
 
     for attr_str, default_value, is_simple_content in default_value_list:
         is_trusted_from_client = getattr(

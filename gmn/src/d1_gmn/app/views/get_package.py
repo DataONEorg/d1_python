@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -21,6 +20,7 @@ import d1_gmn.app.model_util
 import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.views.decorators
+import d1_gmn.app.views.headers
 import d1_gmn.app.views.util
 
 import d1_common.bagit
@@ -46,8 +46,8 @@ def _get_package(request, pid, package_type):
     if package_type != d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID:
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Unsupported Data Package format. '
-            'Currently, only BagIt (formatId={}) is supported'.format(
+            "Unsupported Data Package format. "
+            "Currently, only BagIt (formatId={}) is supported".format(
                 d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID
             ),
         )
@@ -55,10 +55,8 @@ def _get_package(request, pid, package_type):
     sciobj_info_list = _create_sciobj_info_list(request, pid_list)
     bagit_file = d1_common.bagit.create_bagit_stream(pid, sciobj_info_list)
     response = django.http.StreamingHttpResponse(
-        bagit_file, content_type='application/zip'
+        bagit_file, content_type="application/zip"
     )
-    response['Content-Disposition'] = 'attachment; filename={}'.format('files.zip')
-
     return response
 
 
@@ -75,25 +73,24 @@ def _create_sciobj_info_list(request, pid_list):
 def _create_sciobj_info_dict(pid):
     sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
     return {
-        'pid': pid,
-        'filename': sciobj_model.filename,
-        'iter': _create_sciobj_iterator(pid),
-        'checksum': sciobj_model.checksum,
-        'checksum_algorithm': sciobj_model.checksum_algorithm.checksum_algorithm,
+        "pid": pid,
+        "filename": sciobj_model.filename,
+        "iter": _create_sciobj_iterator(pid),
+        "checksum": sciobj_model.checksum,
+        "checksum_algorithm": sciobj_model.checksum_algorithm.checksum_algorithm,
     }
 
 
 def _create_sysmeta_info_dict(request, pid):
     sysmeta_iter = _create_sysmeta_iterator(request, pid)
     checksum_str = d1_common.checksum.calculate_checksum_on_iterator(sysmeta_iter)
+    filename_str = d1_gmn.app.model_util.get_sci_model(pid).filename
     return {
-        'pid': pid,
-        'filename': '{}.sysmeta.xml'.format(
-            d1_gmn.app.model_util.get_sci_model(pid).filename
-        ),
-        'iter': sysmeta_iter,
-        'checksum': checksum_str,
-        'checksum_algorithm': d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
+        "pid": pid,
+        "filename": "{}.sysmeta.xml".format(filename_str) if filename_str else None,
+        "iter": sysmeta_iter,
+        "checksum": checksum_str,
+        "checksum_algorithm": d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
     }
 
 

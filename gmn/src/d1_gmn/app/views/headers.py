@@ -24,35 +24,43 @@ import d1_gmn.app.views.util
 
 import d1_common.date_time
 import d1_common.url
+import d1_common.utils.filesystem
 
 
-def add_sciobj_properties_headers_to_response(response, sciobj):
-    response['Content-Length'] = sciobj.size
-    response['Content-Type'] = d1_gmn.app.views.util.content_type_from_format(
-        sciobj.format.format
-    )
-    response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
-        d1_common.date_time.normalize_datetime_to_utc(sciobj.modified_timestamp)
-    )
+def add_sciobj_properties_headers_to_response(response, sciobj_model):
+    _add_standard_headers(response, sciobj_model)
+    add_http_date_header(response)
+    add_custom_dataone_headers(response, sciobj_model)
+    add_content_disposition_header(response, sciobj_model)
+
+
+def add_custom_dataone_headers(response, sciobj_model):
     response['DataONE-GMN'] = d1_gmn.__version__
-    response['DataONE-FormatId'] = sciobj.format.format
+    response['DataONE-FormatId'] = sciobj_model.format.format
     response['DataONE-Checksum'] = '{},{}'.format(
-        sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
+        sciobj_model.checksum_algorithm.checksum_algorithm, sciobj_model.checksum
     )
-    response['DataONE-SerialVersion'] = sciobj.serial_version
-    add_http_date_header_to_response(response)
-    if d1_common.url.isHttpOrHttps(sciobj.url):
-        response['DataONE-Proxy'] = sciobj.url
-    if sciobj.obsoletes:
-        response['DataONE-Obsoletes'] = sciobj.obsoletes.did
-    if sciobj.obsoleted_by:
-        response['DataONE-ObsoletedBy'] = sciobj.obsoleted_by.did
-    sid = d1_gmn.app.revision.get_sid_by_pid(sciobj.pid.did)
+    response['DataONE-SerialVersion'] = sciobj_model.serial_version
+    if d1_common.url.isHttpOrHttps(sciobj_model.url):
+        response['DataONE-Proxy'] = sciobj_model.url
+    if sciobj_model.obsoletes:
+        response['DataONE-Obsoletes'] = sciobj_model.obsoletes.did
+    if sciobj_model.obsoleted_by:
+        response['DataONE-ObsoletedBy'] = sciobj_model.obsoleted_by.did
+    sid = d1_gmn.app.revision.get_sid_by_pid(sciobj_model.pid.did)
     if sid:
         response['DataONE-SeriesId'] = sid
 
 
-def add_http_date_header_to_response(response, date_time=None):
+def add_content_disposition_header(response, sciobj_model):
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+        d1_common.utils.filesystem.gen_safe_path_element(
+            sciobj_model.filename or '{}.zip'.format(sciobj_model.pid.did)
+        )
+    )
+
+
+def add_http_date_header(response, date_time=None):
     response['Date'] = d1_common.date_time.http_datetime_str_from_dt(
         d1_common.date_time.normalize_datetime_to_utc(date_time)
         if date_time
@@ -63,9 +71,10 @@ def add_http_date_header_to_response(response, date_time=None):
 def add_cors_headers_to_response(response, request):
     """Add Cross-Origin Resource Sharing (CORS) headers to response.
 
-    - ``method_list`` is a list of HTTP methods that are allowed for the endpoint
-    that was called. It should not include "OPTIONS", which is included
-    automatically since it's allowed for all endpoints.
+    - ``method_list`` is a list of HTTP methods that are allowed for the endpoint that
+      was called. It should not include "OPTIONS", which is included automatically
+      since it's allowed for all endpoints.
+
     """
     opt_method_list = ','.join(request.allowed_method_list + ['OPTIONS'])
     response['Allow'] = opt_method_list
@@ -73,3 +82,13 @@ def add_cors_headers_to_response(response, request):
     response['Access-Control-Allow-Origin'] = request.META.get('Origin', '*')
     response['Access-Control-Allow-Headers'] = 'Authorization'
     response['Access-Control-Allow-Credentials'] = 'true'
+
+
+def _add_standard_headers(response, sciobj_model):
+    response['Content-Length'] = sciobj_model.size
+    response['Content-Type'] = d1_gmn.app.views.util.content_type_from_format(
+        sciobj_model.format.format
+    )
+    response['Last-Modified'] = d1_common.date_time.http_datetime_str_from_dt(
+        d1_common.date_time.normalize_datetime_to_utc(sciobj_model.modified_timestamp)
+    )
