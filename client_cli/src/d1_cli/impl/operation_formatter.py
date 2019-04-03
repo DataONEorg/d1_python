@@ -30,6 +30,7 @@ class OperationFormatter(object):
 
     The template contains all parameters that can be in any of the operations and
     determines the relative position of each parameter that is present in the operation.
+
     """
 
     def __init__(self):

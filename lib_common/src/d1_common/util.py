@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -326,8 +325,7 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
     """Some native objects such as ``datetime.datetime`` are not automatically converted
     to strings for use as values in JSON.
 
-    This helper adds such conversions for types that the DataONE Python stack
-    encounters
+    This helper adds such conversions for types that the DataONE Python stack encounters
     frequently in objects that are to be JSON encoded.
 
     """

@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -224,8 +223,7 @@ class Session(object):
             return self._request("PUT", rest_path_list, **kwargs)
 
     def DELETE(self, rest_path_list, **kwargs):
-        """Send a DELETE request. See requests.sessions.request for optional
-        parameters.
+        """Send a DELETE request. See requests.sessions.request for optional parameters.
 
         :returns: Response object
 

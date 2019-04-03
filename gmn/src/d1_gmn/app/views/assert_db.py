@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -18,8 +17,7 @@
 # limitations under the License.
 """Asserts used in views.
 
-These directly return a DataONE Exception to the client if a test condition is not
-true.
+These directly return a DataONE Exception to the client if a test condition is not true.
 
 """
 

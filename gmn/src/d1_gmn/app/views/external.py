@@ -53,7 +53,6 @@ import d1_client.cnclient
 import django.conf
 import django.http
 
-
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP method)
 # ==============================================================================

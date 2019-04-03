@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -27,12 +26,16 @@ import urllib.parse
 
 import d1_common
 import d1_common.const
+import d1_common.object_format_cache
 
 import django.conf
 import django.contrib.staticfiles.templatetags.staticfiles
 import django.http
 
 logger = logging.getLogger(__name__)
+
+
+object_format_list_cache = d1_common.object_format_cache.ObjectFormatListCache()
 
 # This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember

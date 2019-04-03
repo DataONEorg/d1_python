@@ -391,8 +391,11 @@ be lost if you exit.""".format(
         )
 
     def do_update(self, line):
-        """update <old-pid> <new-pid> <file> Replace an existing Science Object in a
-        :term:`MN` with another."""
+        """update <old-pid> <new-pid> <file> Replace an existing Science Object in a.
+
+        :term:`MN` with another.
+
+        """
         curr_pid, pid_new, input_file = self._split_args(line, 3, 0)
         self._command_processor.science_object_update(curr_pid, input_file, pid_new)
         self._print_info_if_verbose(
@@ -400,9 +403,11 @@ be lost if you exit.""".format(
         )
 
     def do_package(self, line):
-        """package <package-pid> <science-metadata-pid> <science-pid> [science- pid
-        ...]
-        Create a simple OAI-ORE Resource Map on a Member Node."""
+        """package <package-pid> <science-metadata-pid> <science-pid> [science- pid.
+
+        ...] Create a simple OAI-ORE Resource Map on a Member Node.
+
+        """
         pids = self._split_args(line, 3, -1, pad=False)
         self._command_processor.create_package(pids)
         self._print_info_if_verbose(

@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -29,7 +28,6 @@ See the GMN setup documentation for more information on how to use this command.
 """
 import asyncio
 import contextlib
-import datetime
 import logging
 import os
 
@@ -42,11 +40,13 @@ import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.model_util
 import d1_gmn.app.models
+import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 
 import d1_common.date_time
 import d1_common.type_conversions
+import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.utils.filesystem
 import d1_common.utils.progress_logger
@@ -102,13 +102,19 @@ class Command(django.core.management.base.BaseCommand):
             action="store",
             help="Limit number of objects to import",
         )
+        parser.add_argument(
+            "--pid-path",
+            action="store",
+            help='Import only the Science Objects specified by a text file. The file must be UTF-8 encoded and contain one PIDs or SIDs per line',
+        )
+        parser.add_argument("pid", nargs="*", help="")
 
     def handle(self, *args, **options):
         self.options = options
         d1_gmn.app.management.commands.util.util.log_setup(self.options["debug"])
-        self._log = logging.getLogger(__name__.split(".")[-1])
+        self._logger = logging.getLogger(__name__.split(".")[-1])
         self.progress_logger = d1_common.utils.progress_logger.ProgressLogger(
-            logger=self._log
+            logger=self._logger
         )
         # Suppress error logging from d1_client
         logging.getLogger("d1_client").setLevel(logging.CRITICAL)
@@ -131,7 +137,7 @@ class Command(django.core.management.base.BaseCommand):
         try:
             loop.run_until_complete(self._handle())
         except Exception as e:
-            self._log.exception("Import failed with exception")
+            self._logger.exception("Import failed with exception")
             raise django.core.management.base.CommandError(str(e))
         finally:
             loop.close()
@@ -159,24 +165,29 @@ class Command(django.core.management.base.BaseCommand):
         async with self.create_async_client() as async_client:
             node_type, api_major = await self.probe_node_type_major(async_client)
 
-            if not self.options["only_log"]:
-                await self.import_all(
-                    async_client,
-                    async_client.list_objects,
-                    self.get_list_objects_arg_dict(node_type),
-                    "objectInfo",
-                    self.import_object,
-                    "Importing objects",
-                )
+            if not self.options['pid_path']:
+                await self.bulk_import(async_client, node_type)
+            else:
+                await self.restricted_import(async_client, node_type)
 
+    async def bulk_import(self, async_client, node_type):
+        if not self.options["only_log"]:
             await self.import_all(
                 async_client,
-                async_client.get_log_records,
-                self.get_log_records_arg_dict(node_type),
-                "logEntry",
-                self.import_event,
-                "Importing logs",
+                async_client.list_objects,
+                self.get_list_objects_arg_dict(node_type),
+                "objectInfo",
+                self.import_object,
+                "Importing objects",
             )
+        await self.import_all(
+            async_client,
+            async_client.get_log_records,
+            self.get_log_records_arg_dict(node_type),
+            "logEntry",
+            self.import_event,
+            "Importing logs",
+        )
 
     async def import_all(
         self,
@@ -187,11 +198,13 @@ class Command(django.core.management.base.BaseCommand):
         import_func,
         import_task_name,
     ):
-        total_count = await list_func(count=0, **list_arg_dict).total
+        total_count = (await list_func(count=0, **list_arg_dict)).total
 
         if not total_count:
-            self.progress_logger.event("{}: Aborted: Received empty list from Node")
-            logging.debug(
+            self.progress_logger.event(
+                "{}: Aborted: Received empty list from Node".format(import_task_name)
+            )
+            self._logger.info(
                 "{}: Aborted: Received empty list from Node. list_arg_dict={}".format(
                     import_task_name, list_arg_dict
                 )
@@ -216,6 +229,7 @@ class Command(django.core.management.base.BaseCommand):
                     task_set, return_when=asyncio.FIRST_COMPLETED
                 )
 
+            # noinspection PyTypeChecker
             task_set.add(
                 self.import_page(
                     client,
@@ -229,14 +243,13 @@ class Command(django.core.management.base.BaseCommand):
             )
 
             # Debug
-            if page_idx >= 10:
-                break
+            # if page_idx >= 10:
+            #     break
 
-        result_set, task_set = await asyncio.wait(task_set)
-        assert not task_set, "There should be no remaining tasks at this point"
+        await asyncio.wait(task_set)
 
         # except Exception as e:
-        #     logging.debug(
+        #     self._logger.error(
         #         '{}: Retrieved slice failed: page_idx={} n_pages={} error="{}"'.format(
         #             import_task_name, page_idx, n_pages, str(e)
         #         )
@@ -244,6 +257,71 @@ class Command(django.core.management.base.BaseCommand):
 
         self.progress_logger.end_task_type(slice_task_name)
         self.progress_logger.end_task_type(item_task_name)
+
+    async def restricted_import(self, async_client, node_type):
+        """Import only the Science Objects specified by a text file.
+
+        The file must be UTF-8 encoded and contain one PIDs or SIDs per line.
+
+        """
+        item_task_name = "Importing objects"
+        pid_path = self.options['pid_path']
+
+        if not os.path.exists(pid_path):
+            raise ConnectionError('File does not exist: {}'.format(pid_path))
+
+        with open(pid_path, encoding='UTF-8') as pid_file:
+            self.progress_logger.start_task_type(
+                item_task_name, len(pid_file.readlines())
+            )
+            pid_file.seek(0)
+
+            for pid in pid_file.readlines():
+                pid = pid.strip()
+                self.progress_logger.start_task(item_task_name)
+
+                # Ignore any blank lines in the file
+                if not pid:
+                    continue
+
+                await self.import_aggregated(async_client, pid)
+
+        self.progress_logger.end_task_type(item_task_name)
+
+    async def import_aggregated(self, async_client, pid):
+        """Import the SciObj at {pid}.
+
+        If the SciObj is a Resource Map, also recursively import the aggregated objects.
+
+        """
+        self._logger.info('Importing: {}'.format(pid))
+
+        task_set = set()
+
+        object_info_pyxb = d1_common.types.dataoneTypes.ObjectInfo()
+        object_info_pyxb.identifier = pid
+        task_set.add(self.import_object(async_client, object_info_pyxb))
+
+        result_set, task_set = await asyncio.wait(task_set)
+
+        assert len(result_set) == 1
+        assert not task_set
+
+        sysmeta_pyxb = result_set.pop().result()
+
+        if not sysmeta_pyxb:
+            # Import was skipped
+            return
+
+        assert d1_common.xml.get_req_val(sysmeta_pyxb.identifier) == pid
+
+        if d1_gmn.app.did.is_resource_map_db(pid):
+            for member_pid in d1_gmn.app.resource_map.get_resource_map_members_by_map(
+                pid
+            ):
+                self.progress_logger.event("Importing aggregated SciObj")
+                self._logger.info('Importing aggregated SciObj. pid="{}"'.format(pid))
+                await self.import_aggregated(async_client, member_pid)
 
     async def import_page(
         self,
@@ -264,7 +342,7 @@ class Command(django.core.management.base.BaseCommand):
             )
         except Exception as e:
             self.progress_logger.event("{}: Skipped slice".format(import_task_name))
-            logging.debug(
+            self._logger.error(
                 '{}: Skipped slice. page_idx={} page_start_idx={} page_size={} error="{}"'.format(
                     import_task_name,
                     page_idx,
@@ -276,7 +354,7 @@ class Command(django.core.management.base.BaseCommand):
 
         list_pyxb = getattr(type_pyxb, iterable_attr)
         self.progress_logger.event("{}: Retrieved slice".format(import_task_name))
-        logging.debug(
+        self._logger.debug(
             "{}: Retrieved slice: page_idx={} n_items={} page_size={}".format(
                 import_task_name, page_idx, len(list_pyxb), self.options["page_size"]
             )
@@ -297,17 +375,16 @@ class Command(django.core.management.base.BaseCommand):
             task_set.add(import_func(client, item_pyxb))
 
             # Debug
-            if i >= 10:
-                break
+            # if i >= 10:
+            #     break
 
-        result_set, task_set = await asyncio.wait(task_set)
-        assert not task_set, "There should be no remaining tasks at this point"
+        await asyncio.wait(task_set)
 
-        # logging.debug(
-        #     "{}: Completed page: page_idx={} n_items={}".format(
-        #         import_task_name, page_idx, len(list_pyxb)
-        #     )
-        # )
+        self._logger.debug(
+            "{}: Completed page: page_idx={} n_items={}".format(
+                import_task_name, page_idx, len(list_pyxb)
+            )
+        )
 
     # SciObj
 
@@ -318,7 +395,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.event(
                 "Skipped object import: Local object already exists"
             )
-            logging.debug(
+            self._logger.info(
                 'Skipped object import: Local object already exists. pid="{}"'.format(
                     pid
                 )
@@ -329,7 +406,7 @@ class Command(django.core.management.base.BaseCommand):
 
         if sciobj_url:
             self.progress_logger.event("Skipped object download: Proxy object")
-            logging.debug(
+            self._logger.info(
                 'Skipped object download: Proxy object. pid="{}" sciobj_url="{}"'.format(
                     pid, sciobj_url
                 )
@@ -339,7 +416,7 @@ class Command(django.core.management.base.BaseCommand):
                 await self.download_source_sciobj_bytes_to_store(client, pid)
             except d1_common.types.exceptions.DataONEException as e:
                 self.progress_logger.event("Skipped object import: Download failed")
-                logging.debug(
+                self._logger.error(
                     'Skipped object import: Download failed. pid="{}" error="{}"'.format(
                         pid, e.friendly_format()
                     )
@@ -353,7 +430,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.event(
                 "Skipped object import: getSystemMetadata() failed"
             )
-            logging.debug(
+            self._logger.error(
                 'Skipped object import: getSystemMetadata() failed. pid="{}" error="{}"'.format(
                     pid, e.friendly_format()
                 )
@@ -361,6 +438,11 @@ class Command(django.core.management.base.BaseCommand):
             return
 
         d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
+        d1_gmn.app.resource_map.create_or_update_db(sysmeta_pyxb)
+        self.progress_logger.event("Imported object")
+        self._logger.info('Imported object: pid="{}"'.format(pid)),
+
+        return sysmeta_pyxb
 
     async def get_object_proxy_location(self, client, pid):
         """If object is proxied, return the proxy location URL.
@@ -368,23 +450,29 @@ class Command(django.core.management.base.BaseCommand):
         If object is local, return None.
 
         """
-        return await client.describe(pid).get("DataONE-Proxy")
+        try:
+            return (await client.describe(pid)).get("DataONE-Proxy")
+        except d1_common.types.exceptions.DataONEException:
+            # Workaround for older GMNs that return 500 instead of 404 for describe()
+            pass
 
     async def download_source_sciobj_bytes_to_store(self, client, pid):
-        abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-        if os.path.isfile(abs_sciobj_path):
-            self.progress_logger.event(
-                "Skipped object download: Bytes already in local object store"
-            )
-            logging.debug(
-                'Skipped object download: Bytes already in local object store. pid="{}" path="{}"'.format(
-                    pid, abs_sciobj_path
-                )
-            )
-            return
+        # if d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
+        #     self.progress_logger.event(
+        #         "Skipped object bytes download: File already in local object store"
+        #     )
+        #     self._logger.info(
+        #         'Skipped object bytes download: File already in local object store. pid="{}"'.format(
+        #             pid
+        #         )
+        #     )
+        #     return
 
-        d1_common.utils.filesystem.create_missing_directories_for_file(abs_sciobj_path)
-        await client.get_and_save(pid, abs_sciobj_path)
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid, write=True) as (
+            sciobj_file,
+            file_url,
+        ):
+            await client.get(sciobj_file, pid)
 
     def get_list_objects_arg_dict(self, node_type):
         """Create a dict of arguments that will be passed to listObjects().
@@ -395,8 +483,8 @@ class Command(django.core.management.base.BaseCommand):
         """
         arg_dict = {
             # Restrict query for faster debugging
-            "fromDate": datetime.datetime(2017, 1, 1),
-            "toDate": datetime.datetime(2017, 1, 10),
+            # "fromDate": datetime.datetime(2017, 1, 1),
+            # "toDate": datetime.datetime(2017, 1, 10),
         }
         if node_type == "cn":
             arg_dict["nodeId"] = django.conf.settings.NODE_IDENTIFIER
@@ -404,12 +492,12 @@ class Command(django.core.management.base.BaseCommand):
 
     # Event Logs
 
-    async def import_event(self, log_entry_pyxb):
+    async def import_event(self, client_, log_entry_pyxb):
         pid = d1_common.xml.get_req_val(log_entry_pyxb.identifier)
 
         if not d1_gmn.app.did.is_existing_object(pid):
             self.progress_logger.event("Skipped event log: Local object does not exist")
-            logging.debug(
+            self._logger.info(
                 'Skipped event log: Local object does not exist. pid="{}"'.format(pid)
             )
             return
@@ -455,9 +543,10 @@ class Command(django.core.management.base.BaseCommand):
 
     @contextlib.asynccontextmanager
     async def create_async_client(self):
-        yield d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
+        async with d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
             self.options["baseurl"]
-        )
+        ) as async_client:
+            yield async_client
 
     def get_client_arg_dict(self):
         client_dict = {"timeout_sec": self.options["timeout"]}

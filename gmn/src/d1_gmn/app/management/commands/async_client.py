@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -82,7 +81,6 @@ class AsyncDataONEClient:
     async def __aexit__(self, exc_type, exc, tb):
         await self.close()
 
-
     @property
     def session(self):
         return self._session
@@ -90,12 +88,9 @@ class AsyncDataONEClient:
     async def close(self):
         await self._session.close()
 
-
     # D1 API
 
-    async def get(
-        self, file_stream, pid, vendor_specific=None
-    ):
+    async def get(self, file_stream, pid, vendor_specific=None):
         """MNRead.get()
 
         Retrieve the SciObj bytes and write them to a file or other stream.
@@ -234,18 +229,14 @@ class AsyncDataONEClient:
             'url': url,
             'params': params,
             'data': data,
-            'headers': headers
+            'headers': headers,
         }
 
-        self._logger.debug('Request: {}'.format(
-            request_arg_dict
-        ))
+        self._logger.debug('Request: {}'.format(request_arg_dict))
 
         for i in range(self._retry_count):
             try:
-                response = await self._session.request(
-                    **request_arg_dict
-                )
+                response = await self._session.request(**request_arg_dict)
             except aiohttp.ClientError as e:
                 self._logger.warning(
                     "Retrying due to exception: {}: {}".format(

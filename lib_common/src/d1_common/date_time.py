@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -46,9 +45,9 @@ logger = logging.getLogger(__name__)
 class UTC(datetime.tzinfo):
     """datetime.tzinfo based class that represents the UTC timezone.
 
-    Date-times in DataONE should have timezone information that is fixed to UTC. A
-    naive Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo
-    based class.
+    Date-times in DataONE should have timezone information that is fixed to UTC. A naive
+    Python datetime can be fixed to UTC by attaching it to this datetime.tzinfo based
+    class.
 
     """
 

@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -32,11 +31,10 @@ missing_args_message = (
 
 import argparse
 
-# noinspection PyProtectedMember
-import d1_gmn.app
-
 from . import jwt
 
+# noinspection PyProtectedMember
+import d1_gmn.app
 import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 
@@ -88,9 +86,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to add"
             )
-        if is_subject_in_whitelist(
-            subject_str
-        ):
+        if is_subject_in_whitelist(subject_str):
             raise django.core.management.base.CommandError(
                 "Subject already in whitelist: {}".format(subject_str)
             )
@@ -102,9 +98,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to remove"
             )
-        if not is_subject_in_whitelist(
-            subject_str
-        ):
+        if not is_subject_in_whitelist(subject_str):
             raise django.core.management.base.CommandError(
                 "Subject is not in whitelist: {}".format(subject_str)
             )

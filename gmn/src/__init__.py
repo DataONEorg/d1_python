@@ -15,22 +15,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""DataONE Generic Member Node (GMN)
 
-import responses
+Although this directory is not a package, this __init__.py file is required for pytest
+to be able to reach test directories below this directory.
 
-import d1_test.d1_test_case
-import d1_test.mock_api.query_engine_description
+"""
+
+import logging
+
+try:
+    from logging import NullHandler
+except ImportError:
+
+    class NullHandler(logging.Handler):
+        """Suppress log messages instead of raising exception if the program using the
+        library does not configure the logging system."""
+
+        # noinspection PyMissingOrEmptyDocstring
+        def emit(self, record):
+            pass
 
 
-class TestMockQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
-    @responses.activate
-    def test_1000(self, cn_client_v1_v2):
-        """mock_api.getQueryEngineDescription(): Returns a DataONE
-        QueryEngineDescription PyXB object."""
-        d1_test.mock_api.query_engine_description.add_callback(
-            d1_test.d1_test_case.MOCK_CN_BASE_URL
-        )
-        qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
-        self.sample.assert_equals(
-            qed_xml, 'get_query_engine_description', cn_client_v1_v2
-        )
+logging.getLogger(__name__).addHandler(NullHandler())

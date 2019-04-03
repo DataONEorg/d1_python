@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -39,6 +38,7 @@ import d1_common.xml
 
 import d1_test.pycharm
 import d1_test.test_files
+import d1_test.xml_normalize
 
 import d1_client.d1client
 import d1_client.util
@@ -217,22 +217,24 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
                 # We don't have a good way to normalize DOT, so we just sort the lines
                 # and mask out node values.
                 return (
-                    ".rdf",
+                    ".txt",
                     "\n".join(
                         sorted(str(re.sub(r"node\d+", "nodeX", o_)).splitlines())
                     ),
                 )
         # DataONEException
         if isinstance(o_, d1_common.types.exceptions.DataONEException):
-            return (
-                ".txt", str(o_)
-            )
+            return (".txt", str(o_))
 
         # ResourceMap (rdflib.ConjunctiveGraph)
         with ignore_exceptions():
             return (
-                ".rdf",
-                "\n".join(o_.serialize_to_display(doc_format="nt").splitlines()),
+                ".xml.repr.txt",
+                str(
+                    # d1_test.xml_normalize.get_normalized_xml_representation(
+                    o_.serialize_to_display("n3")
+                    # )
+                ),
             )
         # Dict returned from Requests
         if isinstance(o_, requests.structures.CaseInsensitiveDict):
@@ -278,7 +280,7 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
             return ".json", d1_common.util.format_json_to_normalized_pretty_json(o_)
         # Any str
         if isinstance(o_, str):
-            return ".txt.", o_
+            return ".txt", o_
         # PyXB object
         with ignore_exceptions():
             return ".xml", d1_common.xml.serialize_to_xml_str(o_, pretty=True)
@@ -387,7 +389,10 @@ def _format_file_name(client, file_post_str, file_ext_str):
                 d1_client.d1client.get_version_tag_by_d1_client(client),
             ]
         )
-    return "{}{}".format("_".join(section_list), file_ext_str)
+    return "{}{}".format(
+        d1_common.utils.filesystem.gen_safe_path_element("_".join(section_list)),
+        file_ext_str,
+    )
 
 
 def _get_sxs_diff_str(got_str, exp_str):

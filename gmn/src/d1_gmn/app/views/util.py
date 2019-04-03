@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -26,6 +25,7 @@ import d1_gmn.app.db_filter
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
+import d1_gmn.app.util
 import d1_gmn.app.views.external
 import d1_gmn.app.views.slice
 
@@ -178,9 +178,7 @@ def query_object_list(request, type_name):
 
 def content_type_from_format(format_str):
     try:
-        return d1_gmn.app.views.external.OBJECT_FORMAT_INFO.content_type_from_format_id(
-            format_str
-        )
+        return d1_gmn.app.util.object_format_list_cache.get_content_type(format_str)
     except KeyError:
         return d1_common.const.CONTENT_TYPE_OCTET_STREAM
 

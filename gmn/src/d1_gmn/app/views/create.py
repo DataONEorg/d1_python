@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -34,8 +33,8 @@ import django.core.files.move
 
 
 def create_sciobj(request, sysmeta_pyxb):
-    """Create object file and database entries for a new native locally stored
-    (non-proxied) science object.
+    """Create object file and database entries for a new native locally stored (non-
+    proxied) science object.
 
     This method takes a request object and is only called from the views that
     handle:
@@ -52,6 +51,7 @@ def create_sciobj(request, sysmeta_pyxb):
     Postconditions:
     - A new file containing sciobj bytes, and models (database rows) for the newly
     added object.
+
     """
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 

@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -364,10 +363,10 @@ class DataONEException(Exception):
     def serialize_to_headers(self):
         """Serialize to a dict of HTTP headers.
 
-        Used in responses to HTTP HEAD requests. As with regular HTTP GET requests,
-        HEAD requests may return DataONE Exceptions. Since a response to a HEAD request
-        cannot include a body, the error is returned as a set of HTTP headers instead
-        of an XML document.
+        Used in responses to HTTP HEAD requests. As with regular HTTP GET requests, HEAD
+        requests may return DataONE Exceptions. Since a response to a HEAD request
+        cannot include a body, the error is returned as a set of HTTP headers instead of
+        an XML document.
 
         """
         return {
@@ -385,8 +384,8 @@ class DataONEException(Exception):
     def get_pyxb(self):
         """Generate a DataONE Exception PyXB object.
 
-        The PyXB object supports directly reading and writing the individual values
-        that may be included in a DataONE Exception.
+        The PyXB object supports directly reading and writing the individual values that
+        may be included in a DataONE Exception.
 
         """
         dataone_exception_pyxb = dataoneErrors.error()

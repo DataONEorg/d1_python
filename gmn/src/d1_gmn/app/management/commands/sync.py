@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -169,8 +168,7 @@ class Command(django.core.management.base.BaseCommand):
         return True
 
     async def send_synchronization_request(self, client, pid):
-        """Issue a notification and request for sync for object with {pid} to the
-        CN."""
+        """Issue a notification and request for sync for object with {pid} to the CN."""
         # Skip CN call for debugging
         # status = 200
         status = await client.synchronize(pid)

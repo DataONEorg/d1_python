@@ -37,8 +37,8 @@ class DataONEClient(object):
 
 
 def get_api_major_by_base_url(base_url, *client_arg_list, **client_arg_dict):
-    """Read the Node document from a node and return an int containing the latest D1
-    API version supported by the node.
+    """Read the Node document from a node and return an int containing the latest D1 API
+    version supported by the node.
 
     The Node document can always be reached through the v1 API and will list services
     for v1 and any later APIs versions supported by the node.

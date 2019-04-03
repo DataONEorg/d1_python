@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -116,8 +115,8 @@ def get_did_by_foreign_key(did_foreign_key):
 def is_existing_object(did):
     """Return True if PID is for an object for which science bytes are stored locally.
 
-    This excludes SIDs and PIDs for unprocessed replica requests, remote or
-    non-existing revisions of local replicas and objects aggregated in Resource Maps.
+    This excludes SIDs and PIDs for unprocessed replica requests, remote or non-existing
+    revisions of local replicas and objects aggregated in Resource Maps.
 
     """
     return d1_gmn.app.models.ScienceObject.objects.filter(pid__did=did).exists()
@@ -143,8 +142,8 @@ def is_resource_map_member(pid):
 def classify_identifier(did):
     """Return a text fragment classifying the ``did``
 
-    Return <UNKNOWN> if the DID could not be classified. This should not normally
-    happen and may indicate that the DID was orphaned in the database.
+    Return <UNKNOWN> if the DID could not be classified. This should not normally happen
+    and may indicate that the DID was orphaned in the database.
 
     """
     if _is_unused_did(did):
