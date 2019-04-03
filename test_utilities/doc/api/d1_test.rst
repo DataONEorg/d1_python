@@ -67,12 +67,4 @@ d1\_test.xml\_normalize module
     :undoc-members:
     :show-inheritance:
 
-d1\_test.xml\_normalize\_bak module
------------------------------------
-
-.. automodule:: d1_test.xml_normalize_bak
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 

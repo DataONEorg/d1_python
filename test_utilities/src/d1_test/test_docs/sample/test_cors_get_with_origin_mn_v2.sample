@@ -4,7 +4,7 @@
   "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
   "Access-Control-Allow-Origin": "https://somewhere.com",
   "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
-  "Content-Disposition": "attachment; filename=file_ilkwcwvsddni",
+  "Content-Disposition": "attachment; filename=\"file_ilkwcwvsddni\"",
   "Content-Length": "317",
   "Content-Type": "text/xml",
   "DataONE-Checksum": "SHA-1,ba71ea8be4f6c2b2a730512766ef4f6583e823ab",

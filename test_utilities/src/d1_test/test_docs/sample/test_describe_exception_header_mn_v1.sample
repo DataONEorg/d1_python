@@ -1,0 +1,17 @@
+{
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Headers": "Authorization",
+  "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Origin": "*",
+  "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Content-Type": "text/xml",
+  "DataONE-Exception-Description": "Identifier is unused on this Member Node. Expected a Persistent ID (PID) for an existing
+object. id=\"PID_qvndhacjyisb\"",
+  "DataONE-Exception-DetailCode": "0",
+  "DataONE-Exception-ErrorCode": "404",
+  "DataONE-Exception-Identifier": "PID_qvndhacjyisb",
+  "DataONE-Exception-Name": "NotFound",
+  "DataONE-Exception-NodeID": "urn:node:GMNUnitTestInstance",
+  "DataONE-Exception-TraceInformation": "",
+  "HTTP-Version": "HTTP/1.1"
+}

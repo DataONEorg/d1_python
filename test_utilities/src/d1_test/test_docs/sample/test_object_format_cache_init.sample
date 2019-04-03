@@ -1,0 +1,30 @@
+{
+  "FGDC-STD-001.2-1999": {
+    "extension": ".xml",
+    "format_name": "Content Standard for Digital Geospatial Metadata, Metadata Profile for Shoreline Data, version 001.2-1999",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml/a",
+      "property_list": []
+    }
+  },
+  "INCITS-453-2009": {
+    "extension": ".xml",
+    "format_name": "North American Profile of ISO 19115: 2003 Geographic Information - Metadata",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml/b",
+      "property_list": []
+    }
+  },
+  "_last_refresh_timestamp": "2019-04-03T01:37:31.434831+00:00",
+  "anvl/erc-v02": {
+    "extension": ".anvl",
+    "format_name": "Kernel Metadata and Electronic Resource Citations (ERCs), 2010.05.13",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "text/anvl",
+      "property_list": []
+    }
+  }
+}

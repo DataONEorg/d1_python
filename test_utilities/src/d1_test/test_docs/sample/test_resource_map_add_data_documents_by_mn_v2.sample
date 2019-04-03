@@ -1,0 +1,53 @@
+@prefix cito: <http://purl.org/spar/cito/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ore: <http://www.openarchives.org/ore/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://cn.dataone.org/cn/v2/resolve/ore_pid> a ore:ResourceMap ;
+    dcterms:creator "DataONE.org Python ITK[VERSION]" ;
+    dcterms:identifier "ore_pid" ;
+    ore:describes <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+ore:Aggregation rdfs:label "Aggregation" ;
+    rdfs:isDefinedBy ore: .
+
+<https://cn.dataone.org/cn/v2/resolve/data2_pid> dcterms:identifier "data2_pid" ;
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/meta_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/data3_pid> dcterms:identifier "data3_pid" ;
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/meta_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/data_pid> dcterms:identifier "data_pid" ;
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/meta_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/more_data1_pid> dcterms:identifier "more_data1_pid" ;
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/meta_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/more_data2_pid> dcterms:identifier "more_data2_pid" ;
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/meta_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/meta_pid> dcterms:identifier "meta_pid" ;
+    cito:documents <https://cn.dataone.org/cn/v2/resolve/data2_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/data3_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/data_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/more_data1_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/more_data2_pid> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> .
+
+<https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation> a ore:Aggregation ;
+    ore:aggregates <https://cn.dataone.org/cn/v2/resolve/data2_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/data3_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/data_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/meta_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/more_data1_pid>,
+        <https://cn.dataone.org/cn/v2/resolve/more_data2_pid> .
