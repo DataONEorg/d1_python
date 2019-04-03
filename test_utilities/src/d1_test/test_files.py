@@ -27,8 +27,9 @@ import os
 import d1_common
 import d1_common.types
 import d1_common.types.dataoneTypes
-import d1_common.utils.filesystem
 import d1_common.util
+import d1_common.utils.filesystem
+
 
 def get_abs_test_file_path(rel_path):
     return os.path.join(d1_common.utils.filesystem.abs_path('./test_docs'), rel_path)

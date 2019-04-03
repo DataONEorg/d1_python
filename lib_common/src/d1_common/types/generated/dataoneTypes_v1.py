@@ -573,7 +573,8 @@ class AccessRule(pyxb.binding.basis.complexTypeDefinition):
     or write) on an object in DataONE. Rules are tuples (subject, permission) specifying
     which permissions are allowed for the subjects(s). If a subject is granted multiple
     permissions, the highest level of access applies. The resource on which the access
-    control rules are being applied is determined by the containing
+    control rules are being applied is determined by the containing.
+
     :term:`SystemMetadata` document, or in the case of methods such as
     :func:`CNAuthorization.setAccessPolicy`, by the.
 
@@ -798,7 +799,8 @@ Namespace.addCategoryObject('typeBinding', 'Group', Group)
 
 # Complex type {http://ns.dataone.org/service/types/v1}LogEntry with content type ELEMENT_ONLY
 class LogEntry(pyxb.binding.basis.complexTypeDefinition):
-    """A single log entry as reported by a Member Node or Coordinating Node through the
+    """A single log entry as reported by a Member Node or Coordinating Node through the.
+
     :func:`MNCore.getLogRecords` or.
 
     :func:`CNCore.getLogRecords` methods.
@@ -2187,10 +2189,13 @@ Namespace.addCategoryObject('typeBinding', 'Session', Session)
 
 # Complex type {http://ns.dataone.org/service/types/v1}Slice with content type EMPTY
 class Slice(pyxb.binding.basis.complexTypeDefinition):
-    """An abstract type used as a common base for other types that need to include
+    """An abstract type used as a common base for other types that need to include.
+
     *count*, *start*, and *total* attributes to indicate which slice of a list is
     represented by a set of records.The first element in a list is always index 0, i.e.
-    list indexes are zero-based."""
+    list indexes are zero-based.
+
+    """
 
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
@@ -3908,7 +3913,8 @@ class Identifier(pyxb.binding.basis.complexTypeDefinition):
     """An :term:`identifier` (:term:`PID`) in the DataONE system that is used to
     uniquely and globally identify an object. Identifiers can not be reused once
     assigned. Identifiers can not be deleted from the DataONE system.Identifiers are
-    represented by a Unicode string of printable characters, excluding
+    represented by a Unicode string of printable characters, excluding.
+
     :term:`whitespace`. All representations of identifiers must be encoded in 7-bit
     ASCII or UTF-8.Identifiers have a maximum length of 800 characters, and a variety of
     other properties designed for preservation and longevity. Some discussion on this is

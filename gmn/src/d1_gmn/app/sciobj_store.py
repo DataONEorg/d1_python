@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -88,6 +87,8 @@ def open_sciobj_file_by_pid(pid, write=False):
     created. Return the file handle and file_url with the file location in a suitable
     form for storing in the DB.
 
+    If nothing was written to the file, delete it.
+
     """
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
     with open_sciobj_file_by_path(abs_path, write) as sciobj_file:
@@ -127,6 +128,8 @@ def open_sciobj_file_by_path(abs_path, write=False):
     If ``write`` is True, the file is opened for writing and any missing directores are
     created. Return the file handle and file_url with the file location in a suitable
     form for storing in the DB.
+
+    If nothing was written to the file, delete it.
 
     """
     if write:

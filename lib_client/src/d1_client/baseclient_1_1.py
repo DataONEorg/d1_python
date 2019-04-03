@@ -113,7 +113,8 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         QueryEngineDescription https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription
         MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-        http://jenkins-1.dataone.org/jenkins/job/API%20D ocumentation%20-%20trunk/ws
+        http://jenkins-1.dataone.org/jenkins/job/API%20D ocumentation%20-%20trunk/ws.
+
         /api-documentation/build/html/apis/MN_APIs.h
         tml#MNQuery.getQueryEngineDescription.
 

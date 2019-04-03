@@ -18,8 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNStorage.create() and MNRead.get() with standalone objects."""
-
 import datetime
+import logging
 
 import freezegun
 import pytest
@@ -29,12 +29,14 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_common.system_metadata
 import d1_common.types.exceptions
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 
 logger = logging.getLogger(__name__)
+
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestCreateAndGetStandalone')
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
@@ -203,3 +205,21 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 'x y',
                 permission_list=[(['subj5'], ['changePermission'])],
             )
+
+    @responses.activate
+    def test_1120(self, gmn_client_v1_v2, tricky_identifier_dict):
+        """create() / get(): Tricky unicode identifers are handled correctly."""
+        if tricky_identifier_dict['status'] != 'pass':
+            return
+        unicode_pid = tricky_identifier_dict['unescaped']
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            logger.debug('Testing PID: {}'.format(unicode_pid))
+            pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
+                gmn_client_v1_v2, pid=unicode_pid, sid=True
+            )
+            recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
+            assert d1_common.system_metadata.are_equivalent_pyxb(
+                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
+            )
+            assert pid == unicode_pid
+            assert recv_sysmeta_pyxb.identifier.value() == unicode_pid

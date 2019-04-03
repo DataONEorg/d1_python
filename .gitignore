@@ -8,6 +8,7 @@ secret_key.txt
 settings.py
 stores/
 sample_tidy/
+.python-version
 
 .idea/
 .project

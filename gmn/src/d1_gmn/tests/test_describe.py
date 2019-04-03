@@ -23,6 +23,10 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_common.types.exceptions
+
+import d1_test.d1_test_case
+import d1_test.instance_generator.identifier
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestDescribe")
@@ -36,8 +40,43 @@ class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2, sid=True
             )
-            info = gmn_client_v1_v2.describe(pid)
-            assert 'dataone-formatid' in info
-            assert 'content-length' in info
-            assert 'last-modified' in info
-            assert 'dataone-checksum' in info
+            info_dict = gmn_client_v1_v2.describe(pid)
+            assert "dataone-formatid" in info_dict
+            assert "content-length" in info_dict
+            assert "last-modified" in info_dict
+            assert "dataone-checksum" in info_dict
+            self.sample.assert_equals(info_dict, "valid_object", gmn_client_v1_v2)
+
+    @responses.activate
+    def test_1010(self, gmn_client_v1_v2):
+        """MNStorage.describe(): Returns 404 for unknown object."""
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            with pytest.raises(d1_common.types.exceptions.NotFound):
+                gmn_client_v1_v2.describe(
+                    d1_test.instance_generator.identifier.generate_pid()
+                )
+
+    @responses.activate
+    def test_1020(self, gmn_client_v1_v2):
+        """MNStorage.describe(): Returns the DataONE exception as headers."""
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            response = gmn_client_v1_v2.describeResponse(
+                d1_test.instance_generator.identifier.generate_pid()
+            )
+            self.sample.assert_equals(
+                response.headers, "exception_header", gmn_client_v1_v2
+            )
+
+    @responses.activate
+    def test_1030(self, gmn_client_v1_v2):
+        """MNStorage.describe(): DataONE exception transferred in headers is detected
+        and raised as DatONEException."""
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            try:
+                gmn_client_v1_v2.describe(
+                    d1_test.instance_generator.identifier.generate_pid()
+                )
+            except d1_common.types.exceptions.NotFound as e:
+                self.sample.assert_equals(
+                    e.friendly_format(), "exception", gmn_client_v1_v2
+                )

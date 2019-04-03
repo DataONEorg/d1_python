@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Resolve a filesystem path pointing into a Taxa controlled hierarchy.
-"""
+"""Resolve a filesystem path pointing into a Taxa controlled hierarchy."""
 
 import logging
 

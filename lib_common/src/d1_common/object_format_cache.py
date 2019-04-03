@@ -145,7 +145,9 @@ class ObjectFormatListCache(Singleton):
     def _load_and_refresh_cache(self):
         with self._serialize_access():
             try:
-                self._format_dict = d1_common.util.load_json(self._object_format_cache_path)
+                self._format_dict = d1_common.util.load_json(
+                    self._object_format_cache_path
+                )
             except (EnvironmentError, json.decoder.JSONDecodeError):
                 self._refresh_cache()
             else:
@@ -158,7 +160,7 @@ class ObjectFormatListCache(Singleton):
                 try:
                     fcntl.lockf(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except IOError:
-                    time.sleep(.1)
+                    time.sleep(0.1)
                 else:
                     break
             yield

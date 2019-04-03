@@ -46,8 +46,8 @@ WRAP_MARGIN_INT = 88
 def main():
     """Remove unused imports Unsafe!
 
-    Only tested on our codebase, which uses simple absolute imports on the form,
-    "import a.b.c".
+    Only tested on our codebase, which uses simple absolute imports on the form, "import
+    a.b.c".
 
     """
     parser = argparse.ArgumentParser(
@@ -142,7 +142,7 @@ def format_all_docstr(args, module_path):
 
 
 def get_docstr_list(red):
-    """Find all triple-quoted docstrings in module"""
+    """Find all triple-quoted docstrings in module."""
     docstr_list = []
     for n in red.find_all("string"):
         if n.value.startswith('"""'):
@@ -184,7 +184,7 @@ def dump_unwrap_list(unwrap_list):
 
 
 def unwrap(s, node_indent):
-    """Group lines of a docstring to blocks
+    """Group lines of a docstring to blocks.
 
     For now, only groups markdown list sections.
 
@@ -209,7 +209,9 @@ def unwrap(s, node_indent):
     Args:
       jwt_bu64: bytes
         JWT, encoded using a a URL safe flavor of Base64.
+
     """
+
     def get_indent():
         if line_str.startswith('"""'):
             return node_indent
@@ -274,6 +276,7 @@ def wrap(indent_int, unwrap_str):
 
     If there are no word breaks (spaces) before WRAP_MARGIN_INT, force a break at
     WRAP_MARGIN_INT.
+
     """
     with io.StringIO() as str_buf:
         is_rest_block = unwrap_str.startswith(("- ", "* "))

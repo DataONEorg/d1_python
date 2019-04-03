@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -36,24 +35,24 @@ import pyasn1.codec.der.decoder
 import d1_common.const
 
 OID_TO_SHORT_NAME_DICT = {
-  """Map OID to short names for use when creating DataONE compliant serialization of the
-  DN.
-
-  This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
-
-  The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514 refers to
-  a registry but, if the registry exists, it's probably too large to be useful to us. So
-  we pull in OIDs for a small set that can be expected in RDNs in certs from CILogon and
-  will just need to expand it if required.
-
-  RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
-
-  If the AttributeType is defined to have a short name (descriptor) [RFC4512] and that
-  short name is known to be registered [REGISTRY] [RFC4520] as identifying the
-  AttributeType , that short name a <descr>, is used.  Otherwise the AttributeType is
-  encoded as the dotted-decimal encoding , a <numericoid> of its OBJECT IDENTIFIER. The
-  <descr> and <numericoid> are defined in [RFC4512].
-  """
+    """Map OID to short names for use when creating DataONE compliant serialization of the
+    DN.
+    
+    This is pulled from LDAPv3 RFCs (RFC 4510 TO RFC 4519).
+    
+    The set of OIDs that can occur in RDNs seems to be poorly defined. RFC 4514 refers to
+    a registry but, if the registry exists, it's probably too large to be useful to us. So
+    we pull in OIDs for a small set that can be expected in RDNs in certs from CILogon and
+    will just need to expand it if required.
+    
+    RFC 4514 section 2: Converting DistinguishedName from ASN.1 to a String
+    
+    If the AttributeType is defined to have a short name (descriptor) [RFC4512] and that
+    short name is known to be registered [REGISTRY] [RFC4520] as identifying the
+    AttributeType , that short name a <descr>, is used.  Otherwise the AttributeType is
+    encoded as the dotted-decimal encoding , a <numericoid> of its OBJECT IDENTIFIER. The
+    <descr> and <numericoid> are defined in [RFC4512].
+    """
     '0.9.2342.19200300.100.1.1': 'UID',  # userId
     '0.9.2342.19200300.100.1.25': 'DC',  # domainComponent
     '1.2.840.113549.1.9.1': 'email',  # emailAddress

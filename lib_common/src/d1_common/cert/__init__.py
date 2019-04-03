@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -17,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This package contains certificate related functionality, such as functions for
-extracting DataONE subjects from PEM (base64) encoded X.509 v3 certificates and Java
-Web Tokens (JTWs) as used in DataONE.
+extracting DataONE subjects from PEM (base64) encoded X.509 v3 certificates and Java Web
+Tokens (JTWs) as used in DataONE.
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.

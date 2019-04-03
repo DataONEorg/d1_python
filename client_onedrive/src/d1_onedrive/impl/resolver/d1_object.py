@@ -45,11 +45,8 @@ log = logging.getLogger(__name__)
 class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     def __init__(self, options, object_tree):
         super().__init__(options, object_tree)
-
-        self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
-            csv_file=open(
-                pkg_resources.resource_filename(d1_client.__name__, 'mime_mappings.csv')
-            )
+        self._object_format_cache = (
+            d1_common.object_format_cache.ObjectFormatListCache()
         )
 
     def get_attributes(self, object_tree_root, path):
@@ -156,9 +153,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _get_pid_filename(self, pid, record):
         try:
-            ext = self._object_format_info.filename_extension_from_format_id(
-                record['formatId']
-            )
+            ext = self._object_format_cache.get_filename_extension(record['formatId'])
         except KeyError:
             return pid
         if ext in (os.path.splitext(pid)[1], 'data'):

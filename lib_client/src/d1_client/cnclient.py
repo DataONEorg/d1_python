@@ -1032,6 +1032,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         self, pid, nodeId, serialVersion, vendorSpecific=None
     ):
         """CNReplication.deleteReplicationMetadata(session, pid, policy, serialVersion)
+
         → boolean https://releases.dataone.org/online/api-docume
         ntation-v2.0.1/apis/CN_APIs.html#CNReplication.deleteReplicationMetadat a.
 
