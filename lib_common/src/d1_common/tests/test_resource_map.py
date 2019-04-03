@@ -305,21 +305,6 @@ import d1_test.d1_test_case
 
 @pytest.mark.skip('Disabled until reproducible XML serialization is fixed')
 class TestResourceMap(d1_test.d1_test_case.D1TestCase):
-    # def _norm_nt(self, nt_str):
-    #   return sorted([sorted(v.split(' ')) for v in nt_str.split('\n')])
-
-    # def _normalize_n_triples(self, nt_str):
-    #   return '\n'.join(sorted(nt_str.splitlines()))
-
-    # def _norm_triples(self, triple_list):
-    #   return sorted([sorted(v) for v in triple_list])
-
-    # def _norm_to_str(self, nt_str):
-    #   return pprint.pformat(self._norm_nt(nt_str))
-
-    # def _assert_are_equal_nt(self, a_nt, b_nt):
-    #   assert self._norm_nt(a_nt) == self._norm_nt(b_nt)
-
     def _create(self):
         return d1_common.resource_map.ResourceMap(
             'ore_pid', 'meta_pid', ['data_pid', 'data2_pid', 'data3_pid'], debug=False

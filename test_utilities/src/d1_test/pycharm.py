@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -24,10 +23,9 @@ started with the --pycharm switch. Otherwise it is ignored.
 
 When active, the test framework will:
 
-    - Automatically open files where errors occur and move the cursor to the line of the
-      error
-    - Show syntax highlighted diffs for scripts and data files using PyCharm's powerful
-      diff viewer
+    - Automatically open files where errors occur and move the cursor to the line of
+      the error - Show syntax highlighted diffs for scripts and data files using
+      PyCharm's powerful diff viewer
 
 """
 import logging
@@ -60,7 +58,7 @@ def open_and_set_cursor(src_path, src_line=1):
     to line ``src_line``
 
     - ``src_path`` can be an absolute path, or a path relative to the root of the
-    DataONE Git repository.
+      DataONE Git repository.
 
     """
     if is_headless:
@@ -97,8 +95,8 @@ def _wait_for_diff_to_close(left_path, right_path):
         time.sleep(sleep_interval_sec)
     # Wait for window to close or for something to register on stdin.
     while True:
-        if select.select([sys.stdin], [], [], 0)[0]:
-            break
+        # if select.select([sys.stdin], [], [], 0)[0]:
+        #     break
         if not _diff_window_is_open(left_path, right_path):
             break
         time.sleep(sleep_interval_sec)
@@ -152,9 +150,8 @@ def _diff_window_is_open(left_path, right_path):
 def _tag_empty_file(path):
     """If path is to empty file, write the text "<empty>" to the file.
 
-    - This works around the issue that PyCharm PyCharm Diff & Merge errors out
-    if one of the input files are empty.
-    - Is probably less confusing when debugging
+    - This works around the issue that PyCharm PyCharm Diff & Merge errors out if one
+      of the input files are empty. - Is probably less confusing when debugging
 
     """
     if not os.path.getsize(path):
