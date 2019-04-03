@@ -108,13 +108,6 @@ def abort_if_not_debug_mode():
         )
 
 
-# def get_command_name():
-#   for arg_str in sys.argv:
-#     if 'manage.py' not in arg_str and 'pytest' not in arg_str:
-#       return arg_str
-#   return '<unknown>'
-
-
 class Db(object):
     def __init__(self):
         pass
