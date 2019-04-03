@@ -76,6 +76,13 @@ class AsyncDataONEClient:
             # headers={"Connection": "close"},
         )
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
+
+
     @property
     def session(self):
         return self._session
@@ -83,35 +90,35 @@ class AsyncDataONEClient:
     async def close(self):
         await self._session.close()
 
-    async def __aexit__(self, exc_type, exc, tb):
-        await self.close()
 
     # D1 API
 
-    #    @contextlib.asynccontextmanager
-    async def get(self, pid, vendor_specific=None):
-        return await self._request_stream(
-            "get", ["object", pid], vendor_specific=vendor_specific
-        )
-
-    async def get_and_save(
-        self, pid, sciobj_path, create_missing_dirs=False, vendor_specific=None
+    async def get(
+        self, file_stream, pid, vendor_specific=None
     ):
-        """Like MNRead.get(), but also retrieve the object bytes and store them in a
-        local file at ``sciobj_path``. This method does not have the potential issue
-        with excessive memory usage that get() with ``stream``=False has.
+        """MNRead.get()
 
-        Also see MNRead.get().
+        Retrieve the SciObj bytes and write them to a file or other stream.
+
+        Args:
+            file_stream: Open file-like object
+                Stream to which the SciObj bytes will be written.
+
+            pid: str
+
+            vendor_specific: dict
+                Custom HTTP headers to include in the request
+
+        See also:
+            MNRead.get().
 
         """
-        async with self.get(pid, vendor_specific=vendor_specific) as content:
-            if create_missing_dirs:
-                d1_common.utils.filesystem.create_missing_directories_for_file(
-                    sciobj_path
-                )
-            with open(sciobj_path, "wb") as f:
-                for chunk_str in await content.iter_chunks():
-                    f.write(chunk_str)
+        async with await self._retry_request(
+            "get", ["object", pid], vendor_specific=vendor_specific
+        ) as response:
+            self._assert_valid_response(response)
+            async for chunk_str, _ in response.content.iter_chunks():
+                file_stream.write(chunk_str)
 
     async def get_system_metadata(self, pid, vendor_specific=None):
         return await self._request_pyxb(
@@ -200,21 +207,13 @@ class AsyncDataONEClient:
     async def _request_pyxb(self, *arg_list, **arg_dict):
         async with await self._retry_request(*arg_list, **arg_dict) as response:
             self._assert_valid_response(response)
-            self.dump_headers(response.headers)
             xml = await response.text()
             return d1_common.types.dataoneTypes.CreateFromDocument(xml)
-
-    async def _request_stream(self, *arg_list, **arg_dict):
-        async with await self._retry_request(*arg_list, **arg_dict) as response:
-            self._assert_valid_response(response)
-            return response.content
-            # response.close()
 
     async def _request_head(self, *arg_list, **arg_dict):
         async with await self._retry_request(*arg_list, **arg_dict) as response:
             self._assert_valid_response(response)
             return response.headers
-            # response.close()
 
     async def _retry_request(
         self,
@@ -229,10 +228,23 @@ class AsyncDataONEClient:
         params = self._prep_query_dict(query_dict) if query_dict else None
         data = mmp_dict
         headers = vendor_specific
+
+        request_arg_dict = {
+            'method': method_str,
+            'url': url,
+            'params': params,
+            'data': data,
+            'headers': headers
+        }
+
+        self._logger.debug('Request: {}'.format(
+            request_arg_dict
+        ))
+
         for i in range(self._retry_count):
             try:
-                return await self._session.request(
-                    method_str, url, params=params, data=data, headers=headers
+                response = await self._session.request(
+                    **request_arg_dict
                 )
             except aiohttp.ClientError as e:
                 self._logger.warning(
@@ -241,6 +253,9 @@ class AsyncDataONEClient:
                     )
                 )
                 await asyncio.sleep(1.0)
+            else:
+                self.dump_headers(response.headers)
+                return response
 
         self._logger.error("Giving up after {} tries".format(self._retry_count))
         raise e
