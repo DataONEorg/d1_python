@@ -176,13 +176,6 @@ def query_object_list(request, type_name):
     }
 
 
-def content_type_from_format(format_str):
-    try:
-        return d1_gmn.app.util.object_format_list_cache.get_content_type(format_str)
-    except KeyError:
-        return d1_common.const.CONTENT_TYPE_OCTET_STREAM
-
-
 def parse_and_normalize_url_date(date_str):
     """Parse a ISO 8601 date-time with optional timezone.
 

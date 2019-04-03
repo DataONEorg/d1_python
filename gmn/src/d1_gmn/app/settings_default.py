@@ -27,7 +27,7 @@
 
 # noinspection PyUnresolvedReferences
 # flake8: noqa: F403,F401
-
+import datetime
 import os.path
 
 import d1_common.const
@@ -133,6 +133,19 @@ STATIC_SERVER = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = d1_common.utils.filesystem.abs_path('./static')
+
+# ObjectFormatList cache
+
+# Path to a file in which the cached ObjectFormatList is or will be stored.
+# The directories must exist. The file is created if it doesn't exist. The
+# file is recreated whenever needed. Paths under "/tmp" will typically
+# cause the file to have to be recreated after reboot while paths under
+# "/var/tmp/" typically persist over reboot.
+OBJECT_FORMAT_CACHE_PATH = "/var/tmp/object_format_cache.json"
+
+# Period of time in which to use the local cache before refreshing it from the CN. The
+# ObjectFormatList does not change often, so a month is probably a sensible default.
+OBJECT_FORMAT_CACHE_REFRESH_PERIOD = datetime.timedelta(days=30)
 
 # Postgres database connection.
 DATABASES = {

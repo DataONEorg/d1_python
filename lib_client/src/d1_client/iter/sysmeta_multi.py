@@ -197,7 +197,7 @@ class SystemMetadataIteratorMulti(object):
             # The pool does not support a clean way to limit the number of queued tasks
             # so we have to access the internals to check the queue size and wait if
             # necessary.
-            # noinspection PyProtectedMember
+            # noinspection PyProtectedMember,PyUnresolvedReferences
             while pool._taskqueue.qsize() > max_task_queue_size:
                 if namespace.stop:
                     self._log.debug(

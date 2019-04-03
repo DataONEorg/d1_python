@@ -35,7 +35,7 @@ from d1_onedrive.impl import util
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
-README_TXT = """Use FlatSpace to go directly to any DataONE object by typing
+README_TXT = r"""Use FlatSpace to go directly to any DataONE object by typing
 the PID in the path.
 
 E.g.,

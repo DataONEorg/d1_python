@@ -55,7 +55,7 @@ def create_sciobj(request, sysmeta_pyxb):
     """
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 
-    _set_mn_controlled_values(request, sysmeta_pyxb, is_modification=False)
+    set_mn_controlled_values(request, sysmeta_pyxb, is_modification=False)
     d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
     d1_gmn.app.views.assert_sysmeta.sanity(request, sysmeta_pyxb)
 
@@ -145,7 +145,7 @@ def _save_sciobj_bytes_from_str(map_xml, sciobj_path):
         f.write(map_xml)
 
 
-def _set_mn_controlled_values(request, sysmeta_pyxb, is_modification):
+def set_mn_controlled_values(request, sysmeta_pyxb, is_modification):
     """See the description of TRUST_CLIENT_* in settings.py."""
     now_datetime = d1_common.date_time.utc_now()
 

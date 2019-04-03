@@ -69,7 +69,9 @@ import d1_common.utils.filesystem
 
 import d1_client.cnclient_2_0
 
-DEFAULT_OBJECT_FORMAT_CACHE_PATH = "/var/tmp/object_format_cache.json"
+DEFAULT_OBJECT_FORMAT_CACHE_PATH = d1_common.utils.filesystem.abs_path(
+    './object_format_cache.json'
+)
 DEFAULT_CACHE_REFRESH_PERIOD = datetime.timedelta(days=30)
 
 
@@ -98,15 +100,31 @@ class ObjectFormatListCache(Singleton):
         """
         Args:
             cn_cn_base_url : str: 
-                BaseURL for a CN in the DataONE Environment being targeted. 
-                
-                This can usually be left at the production root, even if running in other environments.
+                BaseURL for a CN in the DataONE Environment being targeted.
+
+                This can usually be left at the production root, even if running in
+                other environments.
                 
             object_format_cache_path : str
-                The path to a file in which the cached object format info is stored
-                 
-            cache_refresh_period: datetime.timedelta
-                The cache will be refresh  
+                Path to a file in which the cached ObjectFormatList is or will be
+                stored.
+
+                By default, the path is set to a cache file that is distributed together
+                with this module.
+
+                The directories must exist. The file is created if it doesn't exist. The
+                file is recreated whenever needed. Paths under "/tmp" will typically
+                cause the file to have to be recreated after reboot while paths under
+                "/var/tmp/" typically persist over reboot.
+
+            cache_refresh_period: datetime.timedelta or None
+                Period of time in which to use the cached ObjectFormatList before
+                refreshing it by downloading a new copy from the CN. The
+                ObjectFormatList does not change often, so a month is probably a
+                sensible default.
+
+                Set to None to disable refresh. When refresh is disabled,
+                ``object_format_cache_path`` must point to an existing file.
         """
         self._logger = logging.getLogger(__name__)
         self._cn_base_url = cn_cn_base_url
@@ -123,11 +141,17 @@ class ObjectFormatListCache(Singleton):
         self._refresh_cache_if_expired()
         return self._format_dict
 
-    def get_content_type(self, format_id):
-        return self.object_format_dict[format_id]["media_type"]['name']
+    def get_content_type(self, format_id, default=None):
+        try:
+            return self.object_format_dict[format_id]["media_type"]['name']
+        except KeyError:
+            return default
 
-    def get_filename_extension(self, format_id):
-        return self.object_format_dict[format_id]["extension"]
+    def get_filename_extension(self, format_id, default=None):
+        try:
+            return self.object_format_dict[format_id]["extension"]
+        except KeyError:
+            return default
 
     def refresh_cache(self):
         """Force a refresh of the local cached version of the ObjectFormatList.
@@ -170,6 +194,8 @@ class ObjectFormatListCache(Singleton):
             self._refresh_cache()
 
     def _is_cache_expired(self):
+        if self._cache_refresh_period is None:
+            return False
         return (
             d1_common.date_time.dt_from_iso8601_str(
                 self._format_dict["_last_refresh_timestamp"]

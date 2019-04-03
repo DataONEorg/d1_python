@@ -35,8 +35,6 @@ import django.http
 logger = logging.getLogger(__name__)
 
 
-object_format_list_cache = d1_common.object_format_cache.ObjectFormatListCache()
-
 # This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember
 def coerce_put_post(request):

@@ -61,6 +61,7 @@ class Startup(django.apps.AppConfig):
         #   return
         self._assert_readable_file_if_set('CLIENT_CERT_PATH')
         self._assert_readable_file_if_set('CLIENT_CERT_PRIVATE_KEY_PATH')
+        self._assert_dirs_exist('OBJECT_FORMAT_CACHE_PATH')
 
         self._assert_is_type('SCIMETA_VALIDATION_ENABLED', bool)
         self._assert_is_type('SCIMETA_VALIDATION_MAX_SIZE', int)
@@ -103,6 +104,22 @@ class Startup(django.apps.AppConfig):
                 'a path to a readable file. error="{}"'.format(
                     str(e), is_none_allowed=True
                 ),
+            )
+
+    def _assert_dirs_exist(self, setting_name):
+        """Check that the dirs leading up to the given file path exist.
+
+        Does not check if the file exists.
+
+        """
+        v = self._get_setting(setting_name)
+        if (not os.path.isdir(os.path.split(v)[0])) or os.path.isdir(v):
+            self.raise_config_error(
+                setting_name,
+                v,
+                str,
+                'a file path in an existing directory',
+                is_none_allowed=False,
             )
 
     def raise_config_error(

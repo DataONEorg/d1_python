@@ -93,7 +93,7 @@ def posix_identifier_from_filename(filename):
 
 
 def windows_filename_from_identifier(identifier):
-    """On Windows, the following characters are not allowed:
+    r"""On Windows, the following characters are not allowed:
 
     \ / :  * ? " < > |
 
