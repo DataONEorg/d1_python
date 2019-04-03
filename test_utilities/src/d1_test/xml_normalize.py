@@ -161,67 +161,35 @@ class StableNode:
         self.get_str(s, 0)
         return s.getvalue()
 
-    @property
-    def text_nodes(self):
-        return [n for n in self.child_list if isinstance(n, str)]
-
-    @property
-    def element_nodes(self):
-        return [n for n in self.child_list if not isinstance(n, str)]
-
-    @property
-    def is_text_node(self):
-        return len(self.child_list) == 1 and isinstance(self.child_list[0], str)
-
-    @property
-    def have_multiple_text_nodes(self):
-        return len(self.text_nodes) > 1
-
-    @property
-    def have_multiple_element_nodes(self):
-        return len(self.element_nodes) > 1
-
     def add_child(self, e):
         self.child_list.append(e)
 
     def get_str(self, s, indent):
-        self.iwrite(s, indent, "{} = [".format(self.name))
-        # self.iwrite(s, indent, 'key = "{}"'.format(self.get_sort_key()))
+        def indent_write(indent_, line):
+            s.write("{}{}\n".format(" " * indent_, line))
+
+        indent_write(indent, "{} = [".format(self.name))
+
         for c in self.child_list:
-            if c.is_text_node:
-                if c.name == "#text":
-                    self.iwrite(s, indent + 2, "'{}'".format(c.child_list[0]))
-                else:
-                    self.iwrite(
-                        s, indent + 2, "{} = '{}'".format(c.name, c.child_list[0])
-                    )
-            else:
+            if isinstance(c, StableNode):
                 c.get_str(s, indent + 2)
-        self.iwrite(s, indent, "]".format())
-
-    def iwrite(self, s, indent, line):
-        s.write("{}{}\n".format(" " * indent, line))
-
-    def get_sort_key(self):
-        key_list = [self.name]
-        for c in self.child_list:
-            if isinstance(c, str):
-                pass
-            elif c.is_text_node:
-                key_list.append([c.child_list[0]])
             else:
-                key_list.append(c.get_sort_key())
-        return key_list
+                indent_write(indent + 2, "'{}'".format(c))
 
-    def sortme(self):
+        indent_write(indent, "]".format())
+
+    def get_sort_key_(self):
+        return [self.name] + [
+            (c.get_sort_key_() if isinstance(c, StableNode) else c)
+            for c in self.child_list
+        ]
+
+    def sort(self, p=None):
+        p = p or []
         for c in self.child_list:
-            if isinstance(c, str):
-                pass
-            elif c.is_text_node:
-                pass
-            else:
-                c.sortme()
-        self.child_list.sort(key=lambda n: n.get_sort_key())
+            if isinstance(c, StableNode):
+                c.sort(p + [c.name])
+        self.child_list.sort(key=lambda n: n.get_sort_key_())
 
 
 StableTree = StableNode

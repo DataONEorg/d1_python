@@ -35,6 +35,5 @@ class TestXmlNormalize(d1_test.d1_test_case.D1TestCase):
     )
     def test_1000(self, xml_testfile):
         xml = self.test_files.load_xml_to_str(xml_testfile)
-        norm_str = d1_test.xml_normalize.get_normalized_xml_representation(xml)
-        # self.sample.gui_sxs_diff(xml, norm_str)
-        self.sample.assert_equals(norm_str, xml_testfile)
+        json = d1_test.xml_normalize.get_normalized_xml_representation(xml)
+        self.sample.assert_equals(json, xml_testfile)
