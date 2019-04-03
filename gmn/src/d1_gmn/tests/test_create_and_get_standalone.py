@@ -34,6 +34,7 @@ import d1_common.types.exceptions
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 
+logger = logging.getLogger(__name__)
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestCreateAndGetStandalone')
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
