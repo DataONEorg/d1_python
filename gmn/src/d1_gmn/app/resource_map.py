@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -23,10 +22,12 @@ import xml.sax
 import d1_gmn.app
 import d1_gmn.app.did
 import d1_gmn.app.models
+import d1_gmn.app.sciobj_store
 
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
+import d1_common.xml
 
 import django.conf
 
@@ -44,8 +45,8 @@ def assert_map_is_valid_for_create(resource_map):
     if not _is_map_valid_for_create(resource_map):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Resource Map must be created after after creating the objects that it '
-            'aggregates. See the RESOURCE_MAP_CREATE setting',
+            "Resource Map must be created after after creating the objects that it "
+            "aggregates. See the RESOURCE_MAP_CREATE setting",
         )
 
 
@@ -62,7 +63,7 @@ def _is_map_valid_for_create(resource_map):
     # created, depending on its contents. This validation is in addition to the
     # validation that is applied to all sciobjs. Only "block" mode adds validation
     # to the creation of maps.
-    if django.conf.settings.RESOURCE_MAP_CREATE == 'block':
+    if django.conf.settings.RESOURCE_MAP_CREATE == "block":
         return _is_map_valid_for_block_mode_create(resource_map)
     return True
 
@@ -73,6 +74,19 @@ def _is_map_valid_for_block_mode_create(resource_map):
         if not d1_gmn.app.did.is_existing_object(member_pid):
             return False
     return True
+
+
+def create_or_update_db(sysmeta_pyxb):
+    if not is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
+        return
+    pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
+    resource_map = get_resource_map_from_sciobj(pid)
+    create_or_update(pid, resource_map)
+
+
+def get_resource_map_from_sciobj(pid):
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid) as (f, url):
+        return d1_gmn.app.resource_map.parse_resource_map_from_str(f.read())
 
 
 def create_or_update(map_pid, resource_map):
@@ -98,14 +112,14 @@ def get_resource_map_members_by_map(map_pid):
     map_model = _get_map(map_pid)
     return d1_gmn.app.models.ResourceMapMember.objects.filter(
         resource_map=map_model
-    ).values_list('did__did', flat=True)
+    ).values_list("did__did", flat=True)
 
 
 def get_resource_map_members_by_member(member_pid):
     map_model = _get_resource_map_by_member(member_pid)
     return d1_gmn.app.models.ResourceMapMember.objects.filter(
         resource_map=map_model
-    ).values_list('did__did', flat=True)
+    ).values_list("did__did", flat=True)
 
 
 def is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
@@ -115,8 +129,8 @@ def is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
 def _parse_resource_map_from_file(resource_map_path):
     resource_map = d1_common.resource_map.ResourceMap()
     try:
-        with open(resource_map_path, 'rb') as f:
-            resource_map.deserialize(file=f, format='xml')
+        with open(resource_map_path, "rb") as f:
+            resource_map.deserialize(file=f, format="xml")
     except xml.sax.SAXException as e:
         raise d1_common.types.exceptions.InvalidRequest(
             0, 'Invalid Resource Map. error="{}"'.format(str(e))
@@ -127,7 +141,7 @@ def _parse_resource_map_from_file(resource_map_path):
 def parse_resource_map_from_str(resource_map_xml):
     resource_map = d1_common.resource_map.ResourceMap()
     try:
-        resource_map.deserialize(data=resource_map_xml, format='xml')
+        resource_map.deserialize(data=resource_map_xml, format="xml")
     except xml.sax.SAXException as e:
         raise d1_common.types.exceptions.InvalidRequest(
             0, 'Invalid Resource Map. error="{}"'.format(str(e))

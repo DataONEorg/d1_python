@@ -21,17 +21,13 @@ See Also:
 
   - https://en.wikipedia.org/wiki/BagIt
   - https://tools.ietf.org/html/draft-kunze-bagit-05
-  - https://releases.dataone.org/online/api-documentation-v2.0.1/apis/
-    MN_APIs.html#MNPackage.getPackage
-  - https://releases.dataone.org/online/api-documentation-v2.0/design/
-    DataPackage.html
+  - https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
+  - https://releases.dataone.org/online/api-documentation-v2.0/design/DataPackage.html
 
 """
 
 import logging
-import os
 import re
-import urllib.parse
 import zipfile
 
 import zipstream
@@ -40,12 +36,13 @@ import d1_common.checksum
 import d1_common.date_time
 import d1_common.iter.bytes
 import d1_common.types.exceptions
+import d1_common.utils.filesystem
+
+logger = logging.getLogger()
 
 BAGIT_MAJOR_INT = 0
 BAGIT_MINOR_INT = 97
 BAGIT_ENCODING = 'UTF-8'
-
-FILENAME_SAFE_CHARS = ' @$,~*&'
 
 SIZE_UNIT_LIST = [
     (1024 ** 4, 'TB', 'TiB'),
@@ -62,13 +59,13 @@ def validate_bagit_file(bagit_path):
     """Check if a BagIt file is valid.
 
     Raises:
-      ServiceFailure
-        If the BagIt zip archive file fails any of the following checks:
+        ServiceFailure
+            If the BagIt zip archive file fails any of the following checks:
 
-        - Is a valid zip file.
-        - The tag and manifest files are correctly formatted.
-        - Contains all the files listed in the manifests.
-        - The file checksums match the manifests.
+            - Is a valid zip file.
+            - The tag and manifest files are correctly formatted.
+            - Contains all the files listed in the manifests.
+            - The file checksums match the manifests.
 
     """
     _assert_zip_file(bagit_path)
@@ -82,14 +79,15 @@ def create_bagit_stream(dir_name, payload_info_list):
     """Create a stream containing a BagIt zip archive.
 
     Args:
-      dir_name : str
-        The name of the root directory in the zip file, under which all the files are placed (avoids "zip bombs").
+        dir_name : str
+            The name of the root directory in the zip file, under which all the files
+            are placed (avoids "zip bombs").
 
-      payload_info_list: list
-        List of payload_info_dict, each dict describing a file.
+        payload_info_list: list
+            List of payload_info_dict, each dict describing a file.
 
-        - keys: pid, filename, iter, checksum, checksum_algorithm
-        - If the filename is None, the pid is used for the filename.
+            - keys: pid, filename, iter, checksum, checksum_algorithm
+            - If the filename is None, the pid is used for the filename.
 
     """
     zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
@@ -186,7 +184,9 @@ def _add_path(dir_name, payload_info_list):
     """Add a key with the path to each payload_info_dict."""
     for payload_info_dict in payload_info_list:
         file_name = payload_info_dict['filename'] or payload_info_dict['pid']
-        payload_info_dict['path'] = _gen_safe_path(dir_name, 'data', file_name)
+        payload_info_dict['path'] = d1_common.utils.filesystem.gen_safe_path(
+            dir_name, 'data', file_name
+        )
 
 
 def _add_payload_files(zip_file, payload_info_list):
@@ -239,7 +239,7 @@ def _add_tag_manifest_file(zip_file, dir_name, tag_info_list):
 def _add_tag_file(zip_file, dir_name, tag_info_list, tag_tup):
     """Add a tag file to zip_file and record info for the tag manifest file."""
     tag_name, tag_str = tag_tup
-    tag_path = _gen_safe_path(dir_name, tag_name)
+    tag_path = d1_common.utils.filesystem.gen_safe_path(dir_name, tag_name)
     tag_iter = _create_and_add_tag_iter(zip_file, tag_path, tag_str)
     tag_info_list.append(
         {
@@ -325,15 +325,6 @@ def _gen_tag_manifest_file_tup(tag_info_list):
             )
             + '\n'
         ),
-    )
-
-
-def _gen_safe_path(*path_list):
-    return os.path.join(
-        *[
-            urllib.parse.quote(p.encode('utf-8'), safe=FILENAME_SAFE_CHARS)
-            for p in path_list
-        ]
     )
 
 
