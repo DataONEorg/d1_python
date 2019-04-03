@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -45,16 +44,15 @@ import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
 import d1_common.iter.file
+import d1_common.object_format_cache
 import d1_common.types.exceptions
 import d1_common.xml
 
 import d1_client.cnclient
-import d1_client.object_format_info
 
 import django.conf
 import django.http
 
-OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP method)
