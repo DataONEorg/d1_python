@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -65,7 +64,7 @@ TEST_DB_KEY = 'default'
 
 # Hack to get access to print and logging output when running under pytest-xdist
 # and pytest-catchlog. Without this, only output from failed tests is displayed.
-sys.stdout = sys.stderr
+# sys.stdout = sys.stderr
 
 
 def pytest_addoption(parser):
@@ -97,7 +96,7 @@ def pytest_addoption(parser):
         help='Move unused sample files to test_docs_tidy',
     )
 
-    # PyCharm
+    # PyCharm integration
 
     parser.addoption(
         '--pycharm',
@@ -120,9 +119,6 @@ def pytest_addoption(parser):
         '--skip',
         action='store_true',
         help='Skip tests that are in the list of passed tests',
-    )
-    parser.addoption(
-        '--skip-clear', action='store_true', help='Clear the list of passed tests'
     )
     parser.addoption(
         '--skip-print', action='store_true', help='Print the list of passed tests'
@@ -174,7 +170,6 @@ def pytest_sessionstart(session):
             '--pycharm',
             '--fixture-refresh',
             '--skip',
-            '--skip-clear',
             '--skip-print',
         ],
     )
@@ -187,12 +182,15 @@ def pytest_sessionstart(session):
             'Dropping and creating GMN template database from JSON fixture file'
         )
         db_drop(TEMPLATE_DB_KEY)
-    if session.config.getoption('--skip-clear'):
-        logger.info('Clearing list of passed tests')
-        _clear_skip_list(session)
+    # Running the tests without either --skip-print or --skip always clears the passed
+    # list, so that, if --skip is added on the next run, it will continue from the most
+    # recent failed test.
     if session.config.getoption('--skip-print'):
         logger.info('Printing list of passed tests')
         _print_skip_list(session)
+    elif not session.config.getoption('--skip'):
+        logger.info('Clearing list of passed tests')
+        _clear_skip_list(session)
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -381,13 +379,15 @@ def mn_client_v1_v2(request):
     yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
-@pytest.fixture(scope='function', params=d1_test.test_files.TRICKY_IDENTIFIER_LIST)
-def tricky_identifier_tup(request):
+@pytest.fixture(
+    scope='function',
+    params=d1_test.test_files.load_json('combined_tricky_identifiers_unicode.json'),
+)
+def tricky_identifier_dict(request):
     """Unicode identifiers that use various reserved characters and embedded URL
     segments.
 
-    Each fixture is a 2-tuple where the first value is a Unicode identifier and the
-    second is a URL escaped version of the identifier.
+    Each value is a dict with keys, 'unescaped', 'path_escaped', 'query_escaped'.
 
     """
     yield request.param

@@ -1,0 +1,275 @@
+[
+  {
+    "description": "common-bmp-doc-example",
+    "path_escaped": "%E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%81%E0%B8%B4%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%81%E0%B9%84%E0%B8%94%E0%B9%89",
+    "query_escaped": "%E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%81%E0%B8%B4%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%81%E0%B9%84%E0%B8%94%E0%B9%89",
+    "status": "pass",
+    "unescaped": "\u0e09\u0e31\u0e19\u0e01\u0e34\u0e19\u0e01\u0e23\u0e30\u0e08\u0e01\u0e44\u0e14\u0e49"
+  },
+  {
+    "description": "common-unicode-ascii-escaped",
+    "path_escaped": "%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C",
+    "query_escaped": "%22%23%3C%3E%5B%5D%5E%60%7B%7D%7C",
+    "status": "pass",
+    "unescaped": "\"#<>[]^`{}|"
+  },
+  {
+    "description": "common-unicode-ascii-escaped",
+    "path_escaped": "%25",
+    "query_escaped": "%25",
+    "status": "pass",
+    "unescaped": "%"
+  },
+  {
+    "description": "common-unicode-ascii-escaped",
+    "path_escaped": "tomcatBlocked-%255C",
+    "query_escaped": "tomcatBlocked-%255C",
+    "status": "pass",
+    "unescaped": "tomcatBlocked-%5C"
+  },
+  {
+    "description": "common-unicode-ascii-escaped",
+    "path_escaped": "tomcatBlocked-%5C",
+    "query_escaped": "tomcatBlocked-%5C",
+    "status": "pass",
+    "unescaped": "tomcatBlocked-\\"
+  },
+  {
+    "description": "common-unicode-ascii-safe",
+    "path_escaped": "0123456789",
+    "query_escaped": "0123456789",
+    "status": "pass",
+    "unescaped": "0123456789"
+  },
+  {
+    "description": "common-unicode-ascii-safe",
+    "path_escaped": ":@$-_.!*()',~",
+    "query_escaped": ":@$-_.!*()',~",
+    "status": "pass",
+    "unescaped": ":@$-_.!*()',~"
+  },
+  {
+    "description": "common-unicode-ascii-safe",
+    "path_escaped": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "query_escaped": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "status": "pass",
+    "unescaped": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  },
+  {
+    "description": "common-unicode-ascii-safe",
+    "path_escaped": "abcdefghijklmnopqrstuvwxyz",
+    "query_escaped": "abcdefghijklmnopqrstuvwxyz",
+    "status": "pass",
+    "unescaped": "abcdefghijklmnopqrstuvwxyz"
+  },
+  {
+    "description": "common-unicode-ascii-safe-gen-delims",
+    "path_escaped": ":@",
+    "query_escaped": ":@",
+    "status": "pass",
+    "unescaped": ":@"
+  },
+  {
+    "description": "common-unicode-ascii-safe-sub-delims",
+    "path_escaped": "$!*()',",
+    "query_escaped": "$!*()',",
+    "status": "pass",
+    "unescaped": "$!*()',"
+  },
+  {
+    "description": "common-unicode-ascii-safe-unreserved",
+    "path_escaped": "._~",
+    "query_escaped": "._~",
+    "status": "pass",
+    "unescaped": "._~"
+  },
+  {
+    "description": "common-unicode-ascii-semi-colon-test",
+    "path_escaped": "%253B",
+    "query_escaped": "%253B",
+    "status": "pass",
+    "unescaped": "%3B"
+  },
+  {
+    "description": "common-unicode-bmp-1byte-escaped",
+    "path_escaped": "%C2%A1%C2%A2%C2%A3",
+    "query_escaped": "%C2%A1%C2%A2%C2%A3",
+    "status": "pass",
+    "unescaped": "\u00a1\u00a2\u00a3"
+  },
+  {
+    "description": "common-unicode-bmp-2byte-escaped",
+    "path_escaped": "%E4%A6%B9%E4%A6%BA",
+    "query_escaped": "%E4%A6%B9%E4%A6%BA",
+    "status": "pass",
+    "unescaped": "\u49b9\u49ba"
+  },
+  {
+    "description": "decode-space-potential-error-unescaped-plus",
+    "path_escaped": "%2B",
+    "query_escaped": "%2B",
+    "status": "pass",
+    "unescaped": "+"
+  },
+  {
+    "description": "fragment-ascii-doc-example",
+    "path_escaped": "10.1000%2F182",
+    "query_escaped": "10.1000/182",
+    "status": "pass",
+    "unescaped": "10.1000/182"
+  },
+  {
+    "description": "fragment-ascii-doc-example",
+    "path_escaped": "http:%2F%2Fexample.com%2Fdata%2Fmydata%3Frow=24",
+    "query_escaped": "http://example.com/data/mydata?row%3D24",
+    "status": "pass",
+    "unescaped": "http://example.com/data/mydata?row=24"
+  },
+  {
+    "description": "fragment-unicode-ascii-safe",
+    "path_escaped": "&=&=%2F%3F",
+    "query_escaped": "%26%3D%26%3D/?",
+    "status": "pass",
+    "unescaped": "&=&=/?"
+  },
+  {
+    "description": "fragment-unicode-ascii-safe",
+    "path_escaped": "%3B",
+    "query_escaped": ";",
+    "status": "pass",
+    "unescaped": ";"
+  },
+  {
+    "description": "path-ascii-doc-example",
+    "path_escaped": "10.1000%2F182",
+    "query_escaped": "10.1000/182",
+    "status": "pass",
+    "unescaped": "10.1000/182"
+  },
+  {
+    "description": "path-ascii-doc-example",
+    "path_escaped": "http:%2F%2Fexample.com%2Fdata%2Fmydata%3Frow=24",
+    "query_escaped": "http://example.com/data/mydata?row%3D24",
+    "status": "pass",
+    "unescaped": "http://example.com/data/mydata?row=24"
+  },
+  {
+    "description": "path-unicode-ascii-escaped",
+    "path_escaped": "%252F",
+    "query_escaped": "%252F",
+    "status": "fail",
+    "unescaped": "%2F"
+  },
+  {
+    "description": "path-unicode-ascii-escaped",
+    "path_escaped": "%253F",
+    "query_escaped": "%253F",
+    "status": "pass",
+    "unescaped": "%3F"
+  },
+  {
+    "description": "path-unicode-ascii-escaped",
+    "path_escaped": "%2F",
+    "query_escaped": "/",
+    "status": "fail",
+    "unescaped": "/"
+  },
+  {
+    "description": "path-unicode-ascii-escaped",
+    "path_escaped": "%3B",
+    "query_escaped": ";",
+    "status": "pass",
+    "unescaped": ";"
+  },
+  {
+    "description": "path-unicode-ascii-escaped",
+    "path_escaped": "%3F",
+    "query_escaped": "?",
+    "status": "pass",
+    "unescaped": "?"
+  },
+  {
+    "description": "path-unicode-ascii-escaped-double",
+    "path_escaped": "%252F%252Fcase",
+    "query_escaped": "%252F%252Fcase",
+    "status": "fail",
+    "unescaped": "%2F%2Fcase"
+  },
+  {
+    "description": "path-unicode-ascii-escaped-double",
+    "path_escaped": "%2F%2Fcase",
+    "query_escaped": "//case",
+    "status": "pass",
+    "unescaped": "//case"
+  },
+  {
+    "description": "path-unicode-ascii-escaped-double-trailing",
+    "path_escaped": "%252F%252F",
+    "query_escaped": "%252F%252F",
+    "status": "fail",
+    "unescaped": "%2F%2F"
+  },
+  {
+    "description": "path-unicode-ascii-escaped-double-trailing",
+    "path_escaped": "%2F%2F",
+    "query_escaped": "//",
+    "status": "fail",
+    "unescaped": "//"
+  },
+  {
+    "description": "path-unicode-ascii-safe",
+    "path_escaped": "&=&=",
+    "query_escaped": "%26%3D%26%3D",
+    "status": "pass",
+    "unescaped": "&=&="
+  },
+  {
+    "description": "query-ascii-doc-example",
+    "path_escaped": "10.1000%2F182",
+    "query_escaped": "10.1000/182",
+    "status": "pass",
+    "unescaped": "10.1000/182"
+  },
+  {
+    "description": "query-ascii-doc-example",
+    "path_escaped": "http:%2F%2Fexample.com%2Fdata%2Fmydata%3Frow=24",
+    "query_escaped": "http://example.com/data/mydata?row%3D24",
+    "status": "pass",
+    "unescaped": "http://example.com/data/mydata?row=24"
+  },
+  {
+    "description": "query-unicode-ascii-escaped",
+    "path_escaped": "&=&=",
+    "query_escaped": "%26%3D%26%3D",
+    "status": "pass",
+    "unescaped": "&=&="
+  },
+  {
+    "description": "query-unicode-ascii-escaped",
+    "path_escaped": "this&that=theOther",
+    "query_escaped": "this%26that%3DtheOther",
+    "status": "pass",
+    "unescaped": "this&that=theOther"
+  },
+  {
+    "description": "query-unicode-ascii-safe",
+    "path_escaped": "%2F%3F",
+    "query_escaped": "/?",
+    "status": "pass",
+    "unescaped": "/?"
+  },
+  {
+    "description": "query-unicode-ascii-safe",
+    "path_escaped": "%3B",
+    "query_escaped": ";",
+    "status": "pass",
+    "unescaped": ";"
+  },
+  {
+    "description": "common-ascii-doc-example",
+    "path_escaped": "urn:lsid:ubio.org:namebank:11815",
+    "query_escaped": "urn:lsid:ubio.org:namebank:11815",
+    "status": "pass",
+    "unescaped": "urn:lsid:ubio.org:namebank:11815"
+  }
+]
