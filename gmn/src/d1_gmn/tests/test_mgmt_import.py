@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -17,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test the bulk importer management command."""
-import re
-
 import pytest
 import responses
 
@@ -31,8 +28,8 @@ import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_objects
 
 
-@pytest.mark.skip('Need to refactor import.py to work with the tests')
-# import.py closes Django db connections, which breaks pytest-django.
+@pytest.mark.skip('Need to find if responces can be mocked for aiohttp')
+# See: https://docs.aiohttp.org/en/stable/testing.html
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
@@ -53,22 +50,22 @@ class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 '--force',
                 '--clear',
                 '--debug',
-                '--workers=1',
+                '--max-concurrent=2',
                 '--page-size=9',
                 '--major=2',
                 d1_test.d1_test_case.MOCK_REMOTE_BASE_URL,
             )
-        # The importer is multiprocessed but only log output written by the main
-        # process is captured. It's enough to give an indication of successful run
-        # so we leave it at that. Capturing the output from the other processes is
-        # apparently not trivial.
-        #
-        # Due to the multiprocessing, the messages don't look exactly the same each
-        # run, so we strip out the volatile parts before comparing.
+        # # The importer is multiprocessed but only log output written by the main
+        # # process is captured. It's enough to give an indication of successful run
+        # # so we leave it at that. Capturing the output from the other processes is
+        # # apparently not trivial.
+        # #
+        # # Due to the multiprocessing, the messages don't look exactly the same each
+        # # run, so we strip out the volatile parts before comparing.
         log_str = d1_test.d1_test_case.get_caplog_text(caplog)
-        log_str = re.sub('Waiting to queue task\n', '', log_str)
-        log_str = re.sub('start', '[START/COUNT]', log_str)
-        log_str = re.sub('count', '[START/COUNT]', log_str)
-        log_str = re.sub('(?:total_run_sec=)[\d.]*', '[SEC]', log_str)
-        log_str = re.sub('(?:total_run_dhm=)[\ddhm"]*', '[DHM]', log_str)
+        # log_str = re.sub(r'Waiting to queue task\n', '', log_str)
+        # log_str = re.sub(r'start', '[START/COUNT]', log_str)
+        # log_str = re.sub(r'count', '[START/COUNT]', log_str)
+        # log_str = re.sub(r'(?:total_run_sec=)[\d.]*', '[SEC]', log_str)
+        # log_str = re.sub(r'(?:total_run_dhm=)[\ddhm"]*', '[DHM]', log_str)
         self.sample.assert_equals(log_str, 'bulk_import_log')

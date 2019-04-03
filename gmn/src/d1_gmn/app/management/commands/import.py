@@ -510,7 +510,7 @@ class Command(django.core.management.base.BaseCommand):
             self.assert_is_known_node_id(
                 node_pyxb, django.conf.settings.NODE_IDENTIFIER
             )
-            logging.info(
+            self._logger.info(
                 "Importing from CN: {}. filtered on MN: {}".format(
                     d1_common.xml.get_req_val(
                         self.find_node(node_pyxb, self.options["baseurl"]).identifier
@@ -520,7 +520,7 @@ class Command(django.core.management.base.BaseCommand):
             )
             return "cn", "v2"
         else:
-            logging.info(
+            self._logger.info(
                 "Importing from MN: {}".format(
                     d1_common.xml.get_req_val(node_pyxb.identifier)
                 )
