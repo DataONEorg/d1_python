@@ -21,14 +21,6 @@
 import io
 import urllib
 import urllib.parse
-
-import pytest
-import rdflib
-
-import d1_common.resource_map
-
-import d1_test.d1_test_case
-
 # TODO: Move this to docs
 #
 # d1_pyore Examples
@@ -301,13 +293,20 @@ import d1_test.d1_test_case
 #     }
 #   ]
 #
+import warnings
+
+import pytest
+import rdflib
+
+import d1_common.resource_map
+
+import d1_test.d1_test_case
 
 
-@pytest.mark.skip('Disabled until reproducible XML serialization is fixed')
 class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     def _create(self):
         return d1_common.resource_map.ResourceMap(
-            'ore_pid', 'meta_pid', ['data_pid', 'data2_pid', 'data3_pid'], debug=False
+            'ore_pid', 'meta_pid', ['data_pid', 'data2_pid', 'data3_pid']
         )
 
     def _sort_obj(self, obj):
@@ -318,7 +317,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         return obj
 
     def test_1000(self, mn_client_v2):
-        """__init__(): Empty."""
+        """__init__(): Empty object to populate separately."""
         ore = d1_common.resource_map.ResourceMap()
         assert isinstance(ore, d1_common.resource_map.ResourceMap)
 
@@ -442,31 +441,24 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
 
     def test_1170(self, mn_client_v2):
         """asGraphvizDot()"""
+        # Suppress rdflib deprecation warnings
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+
         ore = self._create()
         stream = io.StringIO()
         ore.asGraphvizDot(stream)
         self.sample.assert_equals(stream.getvalue(), 'as_graphviz_dot', mn_client_v2)
 
-    # def _create(self):
-    #   return
-
-    # tricky_identifier_tup
-    def test_1180(self):
+    def test_1180(self, mn_client_v2, tricky_identifier_dict):
         """Unicode identifiers that use various reserved characters and embedded URL
         segments are correctly escaped."""
-        # import xml.etree.ElementTree
+        unicode_pid = tricky_identifier_dict['unescaped']
 
-        did_str = 'DIDDID'
         ore = d1_common.resource_map.ResourceMap(
-            'ORE_PID_' + did_str,
-            'META_PID_' + did_str,
-            ['DATA1_PID_' + did_str, 'DATA2_PID', 'DATA3_PID'],
+            'ORE_PID_' + unicode_pid,
+            'META_PID_' + unicode_pid,
+            ['DATA1_PID_' + unicode_pid, 'DATA2_PID', 'DATA3_PID'],
         )
 
-        xml = ore.serialize_to_display()
-
-        self.sample.assert_equals(
-            xml,
-            urllib.parse.quote(did_str.encode('utf-8'), safe=' @$,~*&'),
-            no_wrap=True,
-        )
+        for agg_pid in ore.getAggregatedScienceMetadataPids():
+            assert unicode_pid in agg_pid
