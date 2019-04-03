@@ -88,7 +88,7 @@ class ExceptionHandler:
         http_response = django.http.HttpResponse(
             '', status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
         )
-        for k, v in exception_headers:
+        for k, v in exception_headers.items():
             http_response[k] = v.encode('utf-8')
         return http_response
 

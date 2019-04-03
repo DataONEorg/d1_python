@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -17,13 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNRead.describe()"""
-
+import freezegun
+import pytest
 import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 
+
+@d1_test.d1_test_case.reproducible_random_decorator("TestDescribe")
+@freezegun.freeze_time("1945-03-01")
 class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
