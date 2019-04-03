@@ -108,7 +108,7 @@ def dispatch_object_list(request):
 def get_monitor_ping(request):
     """MNCore.ping() → Boolean."""
     response = d1_gmn.app.views.util.http_response_with_boolean_true_type()
-    d1_gmn.app.views.headers.add_http_date_header_to_response(response)
+    d1_gmn.app.views.headers.add_http_date_header(response)
     return response
 
 
@@ -124,6 +124,7 @@ def get_log(request):
     [, start=0][, count=1000]) → Log
 
     Sorted by timestamp, id.
+
     """
     query = d1_gmn.app.models.EventLog.objects.all().order_by('timestamp', 'id')
     if not d1_gmn.app.auth.is_trusted_subject(request):
@@ -294,8 +295,8 @@ def get_checksum(request, pid):
 def get_object_list(request):
     """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
 
-    [, identifier][, replicaStatus][, start=0][, count=1000]) →
-    ObjectList
+    [, identifier][, replicaStatus][, start=0][, count=1000]) → ObjectList
+
     """
     return d1_gmn.app.views.util.query_object_list(request, 'object_list')
 
@@ -370,9 +371,10 @@ def _assert_node_is_authorized(request, pid):
 def put_meta(request):
     """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean.
 
-    TODO: Currently, this call allows making breaking changes to SysMeta. We need
-    to clarify what can be modified and what the behavior should be when working
-    with SIDs and chains.
+    TODO: Currently, this call allows making breaking changes to SysMeta. We need to
+    clarify what can be modified and what the behavior should be when working with SIDs
+    and chains.
+
     """
     if django.conf.settings.REQUIRE_WHITELIST_FOR_UPDATE:
         d1_gmn.app.auth.assert_create_update_delete_permission(request)
@@ -385,7 +387,7 @@ def put_meta(request):
     new_sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
     d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(new_sysmeta_pyxb)
     d1_gmn.app.views.create._set_mn_controlled_values(
-        request, new_sysmeta_pyxb, update_submitter=False
+        request, new_sysmeta_pyxb, is_modification=True
     )
     d1_gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)
     d1_gmn.app.event_log.log_update_event(
@@ -534,8 +536,7 @@ def put_object(request, old_pid):
 
 # No locking. Public access.
 def post_generate_identifier(request):
-    """MNStorage.generateIdentifier(session, scheme[, fragment]) →
-    Identifier."""
+    """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier."""
     d1_gmn.app.views.assert_db.post_has_mime_parts(request, (('field', 'scheme'),))
     if request.POST['scheme'] != 'UUID':
         raise d1_common.types.exceptions.InvalidRequest(

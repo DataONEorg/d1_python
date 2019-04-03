@@ -33,6 +33,7 @@ import requests.structures
 import requests_toolbelt.utils.dump
 
 import d1_common
+import d1_common.types
 import d1_common.util
 import d1_common.utils.filesystem
 import d1_common.xml
