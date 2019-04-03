@@ -33,6 +33,8 @@ missing_args_message = (
 import argparse
 
 # noinspection PyProtectedMember
+import d1_gmn.app
+
 from . import jwt
 
 import d1_gmn.app.management.commands.util.util
@@ -86,7 +88,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to add"
             )
-        if d1_gmn.app.management.commands.util.util.is_subject_in_whitelist(
+        if is_subject_in_whitelist(
             subject_str
         ):
             raise django.core.management.base.CommandError(
@@ -100,7 +102,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Please specify a subject to remove"
             )
-        if not d1_gmn.app.management.commands.util.util.is_subject_in_whitelist(
+        if not is_subject_in_whitelist(
             subject_str
         ):
             raise django.core.management.base.CommandError(
@@ -126,3 +128,9 @@ class Command(django.core.management.base.BaseCommand):
                 d1_gmn.app.models.whitelist_for_create_update_delete(subject_str)
                 subject_cnt += 1
         self.stdout.write("Created new whitelist with {} subjects".format(subject_cnt))
+
+
+def is_subject_in_whitelist(subject_str):
+    return d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
+        subject=d1_gmn.app.models.subject(subject_str)
+    ).exists()

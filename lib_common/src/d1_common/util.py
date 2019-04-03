@@ -250,7 +250,7 @@ def save_json(py_obj, json_path):
       ToJsonCompatibleTypes()
 
     """
-    with open(json_path, 'w') as f:
+    with open(json_path, 'w', encoding='utf-8') as f:
         f.write(serialize_to_normalized_pretty_json(py_obj))
 
 
@@ -265,7 +265,7 @@ def load_json(json_path):
       object : Typically a nested structure of ``list`` and ``dict`` objects.
 
     """
-    with open(json_path, 'r') as f:
+    with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 

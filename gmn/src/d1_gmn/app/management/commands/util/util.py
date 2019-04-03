@@ -115,12 +115,6 @@ def abort_if_not_debug_mode():
 #   return '<unknown>'
 
 
-def is_subject_in_whitelist(subject_str):
-    return d1_gmn.app.models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject=d1_gmn.app.models.subject(subject_str)
-    ).exists()
-
-
 class Db(object):
     def __init__(self):
         pass

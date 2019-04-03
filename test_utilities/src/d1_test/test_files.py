@@ -28,7 +28,7 @@ import d1_common
 import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.utils.filesystem
-
+import d1_common.util
 
 def get_abs_test_file_path(rel_path):
     return os.path.join(d1_common.utils.filesystem.abs_path('./test_docs'), rel_path)
@@ -71,20 +71,3 @@ def load_cert(filename):
 
 def load_jwt(filename):
     return load_bin(os.path.join('jwt', filename))
-
-
-def _load_tricky_identifier_list():
-    return [
-        s.strip().split('\t')
-        for s in
-        # load_utf8_to_str('tricky_identifiers_unicode.utf8.txt').splitlines()
-        load_utf8_to_str('combined_tricky_identifiers_unicode.utf8.txt').splitlines()
-        if not s.startswith('#') and len(s) == 2
-    ]
-
-
-# List of Unicode identifiers that use various reserved characters and
-# embedded URL segments. Each item in the list is a a 2-tuple where the first
-# value is a Unicode identifier and the second is a URL escaped version of the
-# identifier.
-TRICKY_IDENTIFIER_LIST = _load_tricky_identifier_list()
