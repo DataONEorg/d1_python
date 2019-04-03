@@ -26,7 +26,7 @@ import setuptools
 def main():
     setuptools.setup(
         name='dataone.scimeta',
-        version='3.3.0',
+        version='3.4.0',
         description='Utilities for processing Science Metadata',
         author='DataONE Project',
         author_email='developers@dataone.org',
@@ -34,7 +34,7 @@ def main():
         license='Apache License, Version 2.0',
         packages=setuptools.find_packages(),
         include_package_data=True,
-        install_requires=['lxml >= 4.3.0'],
+        install_requires=['lxml >= 4.3.3'],
         setup_requires=['setuptools_git >= 1.1'],
         classifiers=[
             'Development Status :: 5 - Production/Stable',
