@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -65,7 +64,7 @@ TEST_DB_KEY = 'default'
 
 # Hack to get access to print and logging output when running under pytest-xdist
 # and pytest-catchlog. Without this, only output from failed tests is displayed.
-sys.stdout = sys.stderr
+# sys.stdout = sys.stderr
 
 
 def pytest_addoption(parser):
@@ -381,13 +380,15 @@ def mn_client_v1_v2(request):
     yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
-@pytest.fixture(scope='function', params=d1_test.test_files.TRICKY_IDENTIFIER_LIST)
-def tricky_identifier_tup(request):
+@pytest.fixture(
+    scope='function',
+    params=d1_test.test_files.load_json('combined_tricky_identifiers_unicode.json'),
+)
+def tricky_identifier_dict(request):
     """Unicode identifiers that use various reserved characters and embedded URL
     segments.
 
-    Each fixture is a 2-tuple where the first value is a Unicode identifier and the
-    second is a URL escaped version of the identifier.
+    Each value is a dict with keys, 'unescaped', 'path_escaped', 'query_escaped'.
 
     """
     yield request.param

@@ -40,16 +40,12 @@ def load_bin(rel_path):
         return f.read()
 
 
-def load_utf8_to_str(rel_path, strip_xml_encoding_declaration=False):
+def load_utf8_to_str(rel_path):
     """Load file, decode from UTF-8 and return as str."""
     logging.debug('Loading test file. rel_path="{}"'.format(rel_path))
     utf8_path = get_abs_test_file_path(rel_path)
     with codecs.open(utf8_path, encoding='utf-8', mode='r') as f:
         unicode_str = f.read()
-    # if strip_xml_encoding_declaration:
-    #   unicode_str = re.sub(
-    #     r'\s*encoding\s*=\s*"UTF-8"\s*', '', unicode_str, re.IGNORECASE
-    #   )
     return unicode_str
 
 
