@@ -73,7 +73,7 @@ DEFAULT_OBJECT_FORMAT_CACHE_PATH = d1_common.utils.filesystem.abs_path(
     './object_format_cache.json'
 )
 DEFAULT_CACHE_REFRESH_PERIOD = datetime.timedelta(days=30)
-
+DEFAULT_LOCK_FILE_PATH = '/tmp/object_format_cache.lock'
 
 # ===============================================================================
 
@@ -96,6 +96,7 @@ class ObjectFormatListCache(Singleton):
         cn_cn_base_url=d1_common.const.URL_DATAONE_ROOT,
         object_format_cache_path=DEFAULT_OBJECT_FORMAT_CACHE_PATH,
         cache_refresh_period=DEFAULT_CACHE_REFRESH_PERIOD,
+        lock_file_path=DEFAULT_LOCK_FILE_PATH,
     ):
         """
         Args:
@@ -130,8 +131,8 @@ class ObjectFormatListCache(Singleton):
         self._cn_base_url = cn_cn_base_url
         self._object_format_cache_path = object_format_cache_path
         self._cache_refresh_period = cache_refresh_period
+        self._lock_file_path = lock_file_path
         self._format_dict = None
-
         self._load_and_refresh_cache()
 
     @property
@@ -179,7 +180,7 @@ class ObjectFormatListCache(Singleton):
 
     @contextlib.contextmanager
     def _serialize_access(self):
-        with open(self._object_format_cache_path + ".single", "w") as lock_file:
+        with open(self._lock_file_path, "w") as lock_file:
             while True:
                 try:
                     fcntl.lockf(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
