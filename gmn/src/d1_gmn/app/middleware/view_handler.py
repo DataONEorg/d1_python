@@ -142,5 +142,5 @@ class ViewHandler:
 
     def create_cors_options_response(self, request):
         response = django.http.HttpResponse(b'Header response to OPTIONS request')
-        d1_gmn.app.views.headers.add_cors_headers_to_response(response, request)
+        d1_gmn.app.views.headers.add_cors_headers(response, request)
         return response

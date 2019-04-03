@@ -39,6 +39,7 @@ import d1_gmn.app.views.decorators
 import d1_gmn.app.views.headers
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
+import d1_gmn.app.object_format_cache
 
 import d1_common.checksum
 import d1_common.const
@@ -182,7 +183,7 @@ def get_node(request):
 def get_object(request, pid):
     """MNRead.get(session, did) → OctetStream."""
     sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-    content_type_str = d1_gmn.app.views.util.content_type_from_format(
+    content_type_str = d1_gmn.app.object_format_cache.get_content_type(
         sciobj.format.format
     )
     response = django.http.StreamingHttpResponse(
@@ -385,7 +386,7 @@ def put_meta(request):
     d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
     new_sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
     d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(new_sysmeta_pyxb)
-    d1_gmn.app.views.create._set_mn_controlled_values(
+    d1_gmn.app.views.create.set_mn_controlled_values(
         request, new_sysmeta_pyxb, is_modification=True
     )
     d1_gmn.app.sysmeta.create_or_update(new_sysmeta_pyxb)

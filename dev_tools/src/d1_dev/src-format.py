@@ -20,6 +20,7 @@
 
 import argparse
 import logging
+import multiprocessing
 import os
 import subprocess
 import sys
@@ -30,6 +31,10 @@ import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
+
+DEFAULT_WORKER_COUNT = 16
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -55,7 +60,14 @@ def main():
     parser.add_argument(
         '--pycharm', action='store_true', help='Enable PyCharm integration'
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        "--workers",
+        type=int,
+        action="store",
+        default=DEFAULT_WORKER_COUNT,
+        help="Max number workers",
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
     d1_common.util.log_setup(args.debug)
@@ -88,9 +100,18 @@ def get_specified_file_path_list(args):
 
 
 def format_all(args, format_path_list):
+    logger.info("Creating pool of {} workers".format(args.workers))
+    pool = multiprocessing.Pool(processes=args.workers)
+
     for format_path in format_path_list:
         logging.info('Formatting file. path="{}"'.format(format_path))
-        format_single(args, format_path)
+        pool.apply_async(format_single, args=(args, format_path))
+
+    # Prevent any more tasks from being submitted to the pool. Once all the
+    # tasks have been completed the worker processes will exit.
+    pool.close()
+    # Wait for the worker processes to exit
+    pool.join()
 
 
 def format_single(args, format_path):
