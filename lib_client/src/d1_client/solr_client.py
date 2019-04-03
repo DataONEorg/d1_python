@@ -547,7 +547,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """
         term = term.replace('\\', '\\\\')
         for c in RESERVED_CHAR_LIST:
-            term = term.replace(c, '\{}'.format(c))
+            term = term.replace(c, r'\{}'.format(c))
         return term
 
 
