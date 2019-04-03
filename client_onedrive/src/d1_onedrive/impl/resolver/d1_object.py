@@ -35,7 +35,7 @@ from d1_onedrive.impl import util
 
 from .. import onedrive_exceptions
 
-import d1_client.object_format_info
+import d1_common.object_format_cache
 
 log = logging.getLogger(__name__)
 
