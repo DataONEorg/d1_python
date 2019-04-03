@@ -241,6 +241,12 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
                         sorted(str(re.sub(r"node\d+", "nodeX", o_)).splitlines())
                     ),
                 )
+        # DataONEException
+        if isinstance(o_, d1_common.types.exceptions.DataONEException):
+            return (
+                ".txt", str(o_)
+            )
+
         # ResourceMap (rdflib.ConjunctiveGraph)
         with ignore_exceptions():
             return (

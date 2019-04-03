@@ -1,4 +1,3 @@
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -59,11 +58,19 @@ def get_d1_env_keys():
     return ['prod', 'stage', 'sandbox', 'dev']
 
 
-def get_d1_env(k):
+def get_d1_env(env_key):
     """Get the values required in order to connect to a DataONE environment.
 
     Returns:
       dict : Values required in order to connect to a DataONE environment.
 
     """
-    return D1_ENV_DICT[k]
+    return D1_ENV_DICT[env_key]
+
+
+def get_d1_env_by_base_url(cn_base_url):
+    """Given the BaseURL for a CN, return the DataONE environment dict for the CN's
+    environemnt."""
+    for k, v in D1_ENV_DICT:
+        if v['base_url'].startswith(cn_base_url):
+            return D1_ENV_DICT[k]

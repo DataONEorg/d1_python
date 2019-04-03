@@ -24,25 +24,21 @@ import d1_common.url
 import d1_test.d1_test_case
 import d1_test.test_files
 
-# HERE_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
-
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):
-    # unicode_str_list = d1_test.test_files.load_utf8_to_str(
-    #   'testUnicodeStrings.utf8.txt'
-    # )
-
-    def test_1000(self):
+    def test_1000(self, tricky_identifier_dict):
         """encodePathElement()"""
-        for did, enc_did in d1_test.test_files.TRICKY_IDENTIFIER_LIST:
-            if did.startswith('common') or did.startswith('path'):
-                assert enc_did == d1_common.url.encodePathElement(did)
+        did = tricky_identifier_dict['unescaped']
+        enc_did = tricky_identifier_dict['path_escaped']
+        if did.startswith('common') or did.startswith('path'):
+            assert enc_did == d1_common.url.encodePathElement(did)
 
-    def test_1010(self):
+    def test_1010(self, tricky_identifier_dict):
         """encodeQueryElement()"""
-        for did, enc_did in d1_test.test_files.TRICKY_IDENTIFIER_LIST:
-            if did.startswith('common') or did.startswith('path'):
-                assert enc_did == d1_common.url.encodeQueryElement(did)
+        did = tricky_identifier_dict['unescaped']
+        enc_did = tricky_identifier_dict['query_escaped']
+        if did.startswith('common') or did.startswith('path'):
+            assert enc_did == d1_common.url.encodeQueryElement(did)
 
     def test_1020(self):
         """stripElementSlashes()"""

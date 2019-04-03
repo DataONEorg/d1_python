@@ -601,11 +601,11 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
     def get_pid_list(self):
         """Get list of all PIDs in the DB fixture."""
-        return json.loads(self.test_files.load_utf8_to_str('db_fixture_pid.json', 'rb'))
+        return json.loads(self.test_files.load_utf8_to_str('db_fixture_pid.json'))
 
     def get_sid_list(self):
         """Get list of all SIDs in the DB fixture."""
-        return json.loads(self.test_files.load_utf8_to_str('db_fixture_sid.json', 'rb'))
+        return json.loads(self.test_files.load_utf8_to_str('db_fixture_sid.json'))
 
     def get_sid_with_min_chain_length(self, min_len=2):
         """Get list of all SIDs in the DB fixture."""

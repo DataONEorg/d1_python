@@ -135,8 +135,7 @@ class Command(django.core.management.base.BaseCommand):
             # if i == 234:
             #     break
 
-        result_set, task_set = await asyncio.wait(task_set)
-        assert not task_set, "There should be no remaining tasks at this point"
+        await asyncio.wait(task_set)
 
         self.progress_logger.end_task_type("Sync MN -> CN")
 

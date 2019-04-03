@@ -558,7 +558,7 @@ def get_opt_val(obj_pyxb, attr_str, default_val=None):
 
 
 def get_req_val(obj_pyxb):
-    """Get an optional Simple Content value from a PyXB element.
+    """Get a required Simple Content value from a PyXB element.
 
     The attributes for elements that are required according to the schema are
     always present, and provide a value() method.

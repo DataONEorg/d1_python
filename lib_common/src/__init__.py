@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -17,26 +15,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""DataONE Common Library.
 
-import d1_common.object_format
+Although this directory is not a package, this __init__.py file is required for pytest
+to be able to reach test directories below this directory.
 
-import d1_test.d1_test_case
-import d1_test.test_files
+"""
+
+import logging
+
+try:
+    from logging import NullHandler
+except ImportError:
+
+    class NullHandler(logging.Handler):
+        """Suppress log messages instead of raising exception if the program using the
+        library does not configure the logging system."""
+
+        # noinspection PyMissingOrEmptyDocstring
+        def emit(self, record):
+            pass
 
 
-class TestObjectFormat(d1_test.d1_test_case.D1TestCase):
-    ofl_pyxb = d1_test.test_files.load_xml_to_pyxb('objectFormatList_v2_0.xml')
-
-    def test_1000(self):
-        """pyxb_to_dict()"""
-        ofl_dict = d1_common.object_format.pyxb_to_dict(self.ofl_pyxb)
-        assert len(ofl_dict) == 117
-
-        expected_text_xml_dict = {
-            'extension': 'html',
-            'format_name': 'Hypertext Markup Language',
-            'format_type': 'DATA',
-            'media_type': {'name': 'text/html', 'property_list': []},
-        }
-
-        assert ofl_dict['text/html'] == expected_text_xml_dict
+logging.getLogger(__name__).addHandler(NullHandler())

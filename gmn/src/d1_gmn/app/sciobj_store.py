@@ -73,7 +73,7 @@ def save_in_object_store_by_iter(pid, sciobj_iter):
     """Save the Science Object bytes in the ``sciobj_iter`` iterator object to the
     default location within the tree of the local SciObj store and return file_url with
     the file location in a suitable form for storing in the DB."""
-    with open_sciobj_file_by_pid(pid, True) as (sciobj_file, file_url):
+    with open_sciobj_file_by_pid(pid, write=True) as (sciobj_file, file_url):
         for chunk_str in sciobj_iter:
             sciobj_file.write(chunk_str)
         return file_url
@@ -131,8 +131,12 @@ def open_sciobj_file_by_path(abs_path, write=False):
     """
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
-    with open(abs_path, 'wb' if write else 'rb') as sciobj_file:
-        yield sciobj_file
+    try:
+        with open(abs_path, 'wb' if write else 'rb') as sciobj_file:
+            yield sciobj_file
+    finally:
+        if not os.path.getsize(abs_path):
+            os.unlink(abs_path)
 
 
 def get_rel_sciobj_file_path(pid):
