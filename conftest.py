@@ -96,7 +96,7 @@ def pytest_addoption(parser):
         help='Move unused sample files to test_docs_tidy',
     )
 
-    # PyCharm
+    # PyCharm integration
 
     parser.addoption(
         '--pycharm',
@@ -119,9 +119,6 @@ def pytest_addoption(parser):
         '--skip',
         action='store_true',
         help='Skip tests that are in the list of passed tests',
-    )
-    parser.addoption(
-        '--skip-clear', action='store_true', help='Clear the list of passed tests'
     )
     parser.addoption(
         '--skip-print', action='store_true', help='Print the list of passed tests'
@@ -173,7 +170,6 @@ def pytest_sessionstart(session):
             '--pycharm',
             '--fixture-refresh',
             '--skip',
-            '--skip-clear',
             '--skip-print',
         ],
     )
@@ -186,12 +182,15 @@ def pytest_sessionstart(session):
             'Dropping and creating GMN template database from JSON fixture file'
         )
         db_drop(TEMPLATE_DB_KEY)
-    if session.config.getoption('--skip-clear'):
-        logger.info('Clearing list of passed tests')
-        _clear_skip_list(session)
+    # Running the tests without either --skip-print or --skip always clears the passed
+    # list, so that, if --skip is added on the next run, it will continue from the most
+    # recent failed test.
     if session.config.getoption('--skip-print'):
         logger.info('Printing list of passed tests')
         _print_skip_list(session)
+    elif not session.config.getoption('--skip'):
+        logger.info('Clearing list of passed tests')
+        _clear_skip_list(session)
 
 
 def pytest_sessionfinish(session, exitstatus):

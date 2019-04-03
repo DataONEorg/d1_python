@@ -16,7 +16,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import base64
 import bz2
 import contextlib
@@ -108,7 +107,6 @@ def assert_equals(
     logging.info('Using sample file. filename="{}"'.format(filename))
     exp_path = _get_or_create_path(filename)
 
-    # if pytest.config.getoption('--sample-review'):
     if options.get("review"):
         _review_interactive(got_str, exp_path, file_post_str, file_ext_str)
         return
@@ -125,11 +123,9 @@ def assert_equals(
     )
 
     if options.get("update"):
-        # if pytest.config.getoption('--sample-update'):
         save(got_str, filename)
         return
 
-    # if pytest.config.getoption('--sample-ask'):
     if options.get("ask"):
         _save_interactive(got_str, exp_path, file_post_str, file_ext_str)
         return
@@ -139,22 +135,6 @@ def assert_equals(
             filename, "-" * 10, diff_str
         )
     )
-
-
-# def assert_equal_str(got_obj, exp_obj, file_post_str):
-#     file_ext_str, got_str = obj_to_pretty_str(got_obj)
-#     exp_str = obj_to_pretty_str(exp_obj)[1]
-#     diff_str = _get_sxs_diff_str(got_str, exp_str)
-#     if diff_str is None:
-#         return
-#     err_msg = "\n{0} Diff mismatch. A <-> B {0}\n{1}".format("-" * 10, diff_str)
-#     # if options['ask']:
-#     if options.get("ask"):
-#         # if pytest.config.getoption('--sample-ask'):
-#         logging.error(err_msg)
-#         _diff_interactive(got_str, exp_str, file_post_str, file_ext_str)
-#     else:
-#         raise AssertionError(err_msg)
 
 
 def get_path(filename):
