@@ -1,0 +1,18 @@
+{
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Headers": "Authorization",
+  "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Origin": "*",
+  "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
+  "Content-Disposition": "attachment; filename=\"file_jydrhifapxxh\"",
+  "Content-Length": "248",
+  "Content-Type": "audio/x-wav",
+  "DataONE-Checksum": "SHA-1,6f7f17cffdff694f0b8e16362d72d9fcfd0c0909",
+  "DataONE-FormatId": "audio/x-wav",
+  "DataONE-GMN": "3.3.0",
+  "DataONE-SerialVersion": "32",
+  "DataONE-SeriesId": "SID_dhacjyisbmzd",
+  "Date": "Thu, 01 Mar 1945 00:00:00 GMT",
+  "HTTP-Version": "HTTP/1.1",
+  "Last-Modified": "Sat, 23 Apr 1994 19:45:57 GMT"
+}

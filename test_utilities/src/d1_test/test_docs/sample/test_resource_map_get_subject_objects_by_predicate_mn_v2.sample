@@ -1,0 +1,18 @@
+[
+  [
+    "https://cn.dataone.org/cn/v2/resolve/data2_pid",
+    "https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation"
+  ],
+  [
+    "https://cn.dataone.org/cn/v2/resolve/data3_pid",
+    "https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation"
+  ],
+  [
+    "https://cn.dataone.org/cn/v2/resolve/data_pid",
+    "https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation"
+  ],
+  [
+    "https://cn.dataone.org/cn/v2/resolve/meta_pid",
+    "https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation"
+  ]
+]

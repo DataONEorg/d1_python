@@ -1,201 +1,450 @@
 v1:nodeList = [
-  @{http://www.w3.org/2001/XMLSchema-instance}schemaLocation = 'http://ns.dataone.org/service/types/v1
-file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd'
+  @{http://www.w3.org/2001/XMLSchema-instance}schemaLocation = [
+    http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd =
+[
+    ]
+  ]
   node = [
-    @replicate = 'false'
-    @state = 'up'
-    @synchronize = 'false'
-    @type = 'mn'
+    @replicate = [
+      false = [
+      ]
+    ]
+    @state = [
+      up = [
+      ]
+    ]
+    @synchronize = [
+      false = [
+      ]
+    ]
+    @type = [
+      mn = [
+      ]
+    ]
     baseURL = [
-      'http://www.oxygenxml.com/'
+      #text = [
+        http://www.oxygenxml.com/ = [
+        ]
+      ]
     ]
     contactSubject = [
-      'contactSubject0'
+      #text = [
+        contactSubject0 = [
+        ]
+      ]
     ]
     contactSubject = [
-      'contactSubject1'
+      #text = [
+        contactSubject1 = [
+        ]
+      ]
     ]
     description = [
-      'description0'
+      #text = [
+        description0 = [
+        ]
+      ]
     ]
     identifier = [
-      'identifier0'
+      #text = [
+        identifier0 = [
+        ]
+      ]
     ]
     name = [
-      'name0'
+      #text = [
+        name0 = [
+        ]
+      ]
     ]
     ping = [
-      @lastSuccess = '2006-05-04T18:13:51.0Z'
-      @success = 'false'
+      @lastSuccess = [
+        2006-05-04T18:13:51.0Z = [
+        ]
+      ]
+      @success = [
+        false = [
+        ]
+      ]
     ]
     services = [
       service = [
-        @available = 'false'
-        @name = 'name1'
-        @version = 'version0'
-        restriction = [
-          @methodName = 'methodName0'
-          subject = [
-            'subject0'
+        @available = [
+          false = [
           ]
-          subject = [
-            'subject1'
+        ]
+        @name = [
+          name1 = [
+          ]
+        ]
+        @version = [
+          version0 = [
           ]
         ]
         restriction = [
-          @methodName = 'methodName1'
-          subject = [
-            'subject2'
+          @methodName = [
+            methodName0 = [
+            ]
           ]
           subject = [
-            'subject3'
+            #text = [
+              subject0 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject1 = [
+              ]
+            ]
+          ]
+        ]
+        restriction = [
+          @methodName = [
+            methodName1 = [
+            ]
+          ]
+          subject = [
+            #text = [
+              subject2 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject3 = [
+              ]
+            ]
           ]
         ]
       ]
       service = [
-        @available = 'false'
-        @name = 'name2'
-        @version = 'version1'
-        restriction = [
-          @methodName = 'methodName2'
-          subject = [
-            'subject4'
+        @available = [
+          false = [
           ]
-          subject = [
-            'subject5'
+        ]
+        @name = [
+          name2 = [
+          ]
+        ]
+        @version = [
+          version1 = [
           ]
         ]
         restriction = [
-          @methodName = 'methodName3'
-          subject = [
-            'subject6'
+          @methodName = [
+            methodName2 = [
+            ]
           ]
           subject = [
-            'subject7'
+            #text = [
+              subject4 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject5 = [
+              ]
+            ]
+          ]
+        ]
+        restriction = [
+          @methodName = [
+            methodName3 = [
+            ]
+          ]
+          subject = [
+            #text = [
+              subject6 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject7 = [
+              ]
+            ]
           ]
         ]
       ]
     ]
     subject = [
-      'subject8'
+      #text = [
+        subject8 = [
+        ]
+      ]
     ]
     subject = [
-      'subject9'
+      #text = [
+        subject9 = [
+        ]
+      ]
     ]
     synchronization = [
       lastCompleteHarvest = [
-        '2006-05-04T18:13:51.0Z'
+        #text = [
+          2006-05-04T18:13:51.0Z = [
+          ]
+        ]
       ]
       lastHarvested = [
-        '2006-05-04T18:13:51.0Z'
+        #text = [
+          2006-05-04T18:13:51.0Z = [
+          ]
+        ]
       ]
       schedule = [
-        @hour = '*'
-        @mday = '*'
-        @min = '*'
-        @mon = '*'
-        @sec = '1'
-        @wday = '*'
-        @year = '*'
+        @hour = [
+          * = [
+          ]
+        ]
+        @mday = [
+          * = [
+          ]
+        ]
+        @min = [
+          * = [
+          ]
+        ]
+        @mon = [
+          * = [
+          ]
+        ]
+        @sec = [
+          1 = [
+          ]
+        ]
+        @wday = [
+          * = [
+          ]
+        ]
+        @year = [
+          * = [
+          ]
+        ]
       ]
     ]
   ]
   node = [
-    @replicate = 'false'
-    @state = 'up'
-    @synchronize = 'false'
-    @type = 'mn'
+    @replicate = [
+      false = [
+      ]
+    ]
+    @state = [
+      up = [
+      ]
+    ]
+    @synchronize = [
+      false = [
+      ]
+    ]
+    @type = [
+      mn = [
+      ]
+    ]
     baseURL = [
-      'http://www.oxygenxml.com/'
+      #text = [
+        http://www.oxygenxml.com/ = [
+        ]
+      ]
     ]
     contactSubject = [
-      'contactSubject2'
+      #text = [
+        contactSubject2 = [
+        ]
+      ]
     ]
     contactSubject = [
-      'contactSubject3'
+      #text = [
+        contactSubject3 = [
+        ]
+      ]
     ]
     description = [
-      'description1'
+      #text = [
+        description1 = [
+        ]
+      ]
     ]
     identifier = [
-      'identifier1'
+      #text = [
+        identifier1 = [
+        ]
+      ]
     ]
     name = [
-      'name3'
+      #text = [
+        name3 = [
+        ]
+      ]
     ]
     ping = [
-      @lastSuccess = '2006-05-04T18:13:51.0Z'
-      @success = 'false'
+      @lastSuccess = [
+        2006-05-04T18:13:51.0Z = [
+        ]
+      ]
+      @success = [
+        false = [
+        ]
+      ]
     ]
     services = [
       service = [
-        @available = 'false'
-        @name = 'name4'
-        @version = 'version2'
-        restriction = [
-          @methodName = 'methodName4'
-          subject = [
-            'subject10'
+        @available = [
+          false = [
           ]
-          subject = [
-            'subject11'
+        ]
+        @name = [
+          name4 = [
+          ]
+        ]
+        @version = [
+          version2 = [
           ]
         ]
         restriction = [
-          @methodName = 'methodName5'
-          subject = [
-            'subject12'
+          @methodName = [
+            methodName4 = [
+            ]
           ]
           subject = [
-            'subject13'
+            #text = [
+              subject10 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject11 = [
+              ]
+            ]
+          ]
+        ]
+        restriction = [
+          @methodName = [
+            methodName5 = [
+            ]
+          ]
+          subject = [
+            #text = [
+              subject12 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject13 = [
+              ]
+            ]
           ]
         ]
       ]
       service = [
-        @available = 'false'
-        @name = 'name5'
-        @version = 'version3'
-        restriction = [
-          @methodName = 'methodName6'
-          subject = [
-            'subject14'
+        @available = [
+          false = [
           ]
-          subject = [
-            'subject15'
+        ]
+        @name = [
+          name5 = [
+          ]
+        ]
+        @version = [
+          version3 = [
           ]
         ]
         restriction = [
-          @methodName = 'methodName7'
-          subject = [
-            'subject16'
+          @methodName = [
+            methodName6 = [
+            ]
           ]
           subject = [
-            'subject17'
+            #text = [
+              subject14 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject15 = [
+              ]
+            ]
+          ]
+        ]
+        restriction = [
+          @methodName = [
+            methodName7 = [
+            ]
+          ]
+          subject = [
+            #text = [
+              subject16 = [
+              ]
+            ]
+          ]
+          subject = [
+            #text = [
+              subject17 = [
+              ]
+            ]
           ]
         ]
       ]
     ]
     subject = [
-      'subject18'
+      #text = [
+        subject18 = [
+        ]
+      ]
     ]
     subject = [
-      'subject19'
+      #text = [
+        subject19 = [
+        ]
+      ]
     ]
     synchronization = [
       lastCompleteHarvest = [
-        '2006-05-04T18:13:51.0Z'
+        #text = [
+          2006-05-04T18:13:51.0Z = [
+          ]
+        ]
       ]
       lastHarvested = [
-        '2006-05-04T18:13:51.0Z'
+        #text = [
+          2006-05-04T18:13:51.0Z = [
+          ]
+        ]
       ]
       schedule = [
-        @hour = '*'
-        @mday = '*'
-        @min = '*'
-        @mon = '*'
-        @sec = '1'
-        @wday = '*'
-        @year = '*'
+        @hour = [
+          * = [
+          ]
+        ]
+        @mday = [
+          * = [
+          ]
+        ]
+        @min = [
+          * = [
+          ]
+        ]
+        @mon = [
+          * = [
+          ]
+        ]
+        @sec = [
+          1 = [
+          ]
+        ]
+        @wday = [
+          * = [
+          ]
+        ]
+        @year = [
+          * = [
+          ]
+        ]
       ]
     ]
   ]

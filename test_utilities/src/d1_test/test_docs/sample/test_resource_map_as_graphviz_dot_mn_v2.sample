@@ -1,0 +1,65 @@
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:documents</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:documents</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:documents</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:isDocumentedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:isDocumentedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>cito:isDocumentedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:aggregates</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:aggregates</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:aggregates</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:aggregates</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:describes</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:isAggregatedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:isAggregatedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:isAggregatedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>ore:isAggregatedBy</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+        nodeX -> nodeX [ color=BLACK, label=< <font point-size='10' color='#336633'>rdfs:isDefinedBy</font> > ] ;
+ node [ fontname="DejaVu Sans" ] ;
+# http://www.openarchives.org/ore/terms/ nodeX
+# http://www.openarchives.org/ore/terms/Aggregation nodeX
+# http://www.openarchives.org/ore/terms/ResourceMap nodeX
+# https://cn.dataone.org/cn/v2/resolve/data2_pid nodeX
+# https://cn.dataone.org/cn/v2/resolve/data3_pid nodeX
+# https://cn.dataone.org/cn/v2/resolve/data_pid nodeX
+# https://cn.dataone.org/cn/v2/resolve/meta_pid nodeX
+# https://cn.dataone.org/cn/v2/resolve/ore_pid nodeX
+# https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation nodeX
+digraph {
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>Aggregation</B></td></tr><tr><td href='http://www.openarchives.org/ore/terms/Aggregation' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>http://www.openarchives.org/ore/terms/Aggregation</font></td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>ResourceMap</B></td></tr><tr><td href='http://www.openarchives.org/ore/terms/ResourceMap' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>http://www.openarchives.org/ore/terms/ResourceMap</font></td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>aggregation</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation'
+bgcolor='#eeeeee' colspan='2'><font point-size='10'
+color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation</font></td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>data2_pid</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/data2_pid' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/data2_pid</font></td></tr><tr><td
+align='left'>dcterms:identifier</td><td align='left'>&quot;data2_pid&quot;</td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>data3_pid</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/data3_pid' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/data3_pid</font></td></tr><tr><td
+align='left'>dcterms:identifier</td><td align='left'>&quot;data3_pid&quot;</td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>data_pid</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/data_pid' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/data_pid</font></td></tr><tr><td
+align='left'>dcterms:identifier</td><td align='left'>&quot;data_pid&quot;</td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>http://www.openarchives.org/ore/terms/</B></td></tr><tr><td href='http://www.openarchives.org/ore/terms/'
+bgcolor='#eeeeee' colspan='2'><font point-size='10'
+color='#6666ff'>http://www.openarchives.org/ore/terms/</font></td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>meta_pid</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/meta_pid' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/meta_pid</font></td></tr><tr><td
+align='left'>dcterms:identifier</td><td align='left'>&quot;meta_pid&quot;</td></tr></table> > ]
+nodeX [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2'
+bgcolor='grey'><B>ore_pid</B></td></tr><tr><td href='https://cn.dataone.org/cn/v2/resolve/ore_pid' bgcolor='#eeeeee'
+colspan='2'><font point-size='10' color='#6666ff'>https://cn.dataone.org/cn/v2/resolve/ore_pid</font></td></tr><tr><td
+align='left'>dcterms:creator</td><td align='left'>&quot;DataONE.org Python ITK[VERSION]&quot;</td></tr><tr><td
+align='left'>dcterms:identifier</td><td align='left'>&quot;ore_pid&quot;</td></tr></table> > ]
+}
