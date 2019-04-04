@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<objectInfo>
+  <identifier>object#0000</identifier>
+  <formatId>application/msword</formatId>
+  <checksum algorithm="SHA-1">704c016556b91caf99a449fc825b4c813a62ab28</checksum>
+  <dateSysMetadataModified>1980-07-07T07:41:36Z</dateSysMetadataModified>
+  <size>225</size>
+</objectInfo>
+<?xml version="1.0" ?>
+<objectInfo>
+  <identifier>object#0001</identifier>
+  <formatId>text/turtle</formatId>
+  <checksum algorithm="SHA-1">fcf83745d452341b744d8a51edf3802e44206caa</checksum>
+  <dateSysMetadataModified>1972-12-21T19:03:52Z</dateSysMetadataModified>
+  <size>215</size>
+</objectInfo>
+<?xml version="1.0" ?>
+<objectInfo>
+  <identifier>object#0002</identifier>
+  <formatId>image/jp2</formatId>
+  <checksum algorithm="SHA-1">90c9bc3f0c42928f6abd6e140bfcfff69877b49f</checksum>
+  <dateSysMetadataModified>2044-03-10T15:43:39Z</dateSysMetadataModified>
+  <size>306</size>
+</objectInfo>
+<?xml version="1.0" ?>
+<objectInfo>
+  <identifier>object#0003</identifier>
+  <formatId>text/html</formatId>
+  <checksum algorithm="SHA-1">07864f0be4c4cdfc1e1c19760385ca1c89971fd3</checksum>
+  <dateSysMetadataModified>2041-03-18T21:37:06Z</dateSysMetadataModified>
+  <size>303</size>
+</objectInfo>
+<?xml version="1.0" ?>
+<objectInfo>
+  <identifier>object#0004</identifier>
+  <formatId>text/xml</formatId>
+  <checksum algorithm="SHA-1">54c9386c13fe3e43edc3f94922d20b7df50bec4d</checksum>
+  <dateSysMetadataModified>2050-08-22T07:24:36Z</dateSysMetadataModified>
+  <size>264</size>
+</objectInfo>
