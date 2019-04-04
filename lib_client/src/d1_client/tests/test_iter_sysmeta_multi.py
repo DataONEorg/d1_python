@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
-
+import freezegun
 import pytest
 import responses
 
@@ -34,46 +33,48 @@ import d1_client.iter.sysmeta_multi
 N_TOTAL = 50
 
 
-@pytest.fixture(scope='function', params=[3, 44, 55, 300])
-def page_size(request):
-    yield request.param
-
-
-@pytest.fixture(scope='function', params=[1, 5])
-def n_workers(request):
-    yield request.param
-
-
-# noinspection PyShadowingNames
-@pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= 3.7")
-@d1_test.d1_test_case.reproducible_random_decorator('TestSysMetaIterator')
+# @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
+@d1_test.d1_test_case.reproducible_random_decorator("TestSysMetaIterator")
+@freezegun.freeze_time("1945-07-01")
 class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
     """Run with misc variations and verify that they give the same result."""
 
-    parameterize_dict = {
-        'test_1000': [
-            dict(
-                from_date=d1_common.date_time.create_utc_datetime(1990, 7, 20),
-                to_date=d1_common.date_time.create_utc_datetime(2010, 8, 20),
-            ),
-            dict(
-                from_date=d1_common.date_time.create_utc_datetime(1980, 8, 5),
-                to_date=None,
-            ),
-        ]
-    }
+    # parameterize_dict = {
+    #     'test_1000': [
+    #         dict(
+    #             from_date=d1_common.date_time.create_utc_datetime(1990, 7, 20),
+    #             to_date=d1_common.date_time.create_utc_datetime(2010, 8, 20),
+    #         ),
+    #         dict(
+    #             from_date=d1_common.date_time.create_utc_datetime(1980, 8, 5),
+    #             to_date=None,
+    #         ),
+    #     ]
+    # }
 
     def _get_combined_xml(self, sysmeta_pyxb_list, n_total):
         """When using multiple threads, docs are returned in random order, so we sort
         them and use the first and last few ones for checking."""
         sorted_list = sorted(sysmeta_pyxb_list, key=lambda x: x.identifier.value())
-        return '\n'.join(
+        return "\n".join(
             [
                 d1_common.xml.serialize_to_xml_str(p)
                 for p in (sorted_list[:2] + sorted_list[n_total - 2 :])
             ]
         )
 
+    @pytest.mark.parametrize(
+        "from_date,to_date",
+        [
+            (
+                d1_common.date_time.create_utc_datetime(1990, 7, 20),
+                d1_common.date_time.create_utc_datetime(2010, 8, 20),
+            ),
+            (d1_common.date_time.create_utc_datetime(1980, 8, 5), None),
+        ],
+    )
+    @pytest.mark.parametrize("page_size", [3, 44, 55])
+    @pytest.mark.parametrize("n_workers", [1, 5])
     @responses.activate
     def test_1000(self, page_size, n_workers, from_date, to_date):
         d1_test.mock_api.list_objects.add_callback(
@@ -82,7 +83,6 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.get_system_metadata.add_callback(
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
-
         sysmeta_pyxb_list = []
         # with freezegun.freeze_time('1977-07-27') as freeze_time:
         sysmeta_iter = d1_client.iter.sysmeta_multi.SystemMetadataIteratorMulti(
@@ -93,7 +93,7 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
                 # 'cert_pem_path': cert_pem_path,
                 # 'cert_key_path': cert_key_path,
             },
-            list_objects_dict={'fromDate': from_date, 'toDate': to_date},
+            list_objects_dict={"fromDate": from_date, "toDate": to_date},
         )
 
         for sysmeta_pyxb in sysmeta_iter:
@@ -104,8 +104,8 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
 
         self.sample.assert_equals(
             combined_sysmeta_xml,
-            'from_{}_to_{}'.format(
-                from_date.strftime('%Y%m%d') if from_date else 'unset',
-                to_date.strftime('%Y%m%d') if to_date else 'unset',
+            "from_{}_to_{}".format(
+                from_date.strftime("%Y%m%d") if from_date else "unset",
+                to_date.strftime("%Y%m%d") if to_date else "unset",
             ),
         )
