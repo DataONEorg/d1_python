@@ -428,7 +428,7 @@ def enable_db_access(db):
     pass
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope='function')
 def profile_sql(db):
     django.db.connection.queries = []
     yield
