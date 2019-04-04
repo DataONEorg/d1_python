@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<logEntry>
+  <entryId>[ENTRY-ID]</entryId>
+  <identifier>object#0000</identifier>
+  <ipAddress>1.2.3.4</ipAddress>
+  <userAgent>Mock getLogRecords() UserAgent #0</userAgent>
+  <subject>Mock getLogRecords() Subject #0</subject>
+  <event>create</event>
+  <dateLogged>1945-05-01T00:00:00Z</dateLogged>
+  <nodeIdentifier>urn:node:MockLogRecords</nodeIdentifier>
+</logEntry>
+<?xml version="1.0" ?>
+<logEntry>
+  <entryId>[ENTRY-ID]</entryId>
+  <identifier>object#0001</identifier>
+  <ipAddress>1.2.3.4</ipAddress>
+  <userAgent>Mock getLogRecords() UserAgent #1</userAgent>
+  <subject>Mock getLogRecords() Subject #1</subject>
+  <event>create</event>
+  <dateLogged>1945-05-01T00:00:00Z</dateLogged>
+  <nodeIdentifier>urn:node:MockLogRecords</nodeIdentifier>
+</logEntry>
+<?xml version="1.0" ?>
+<logEntry>
+  <entryId>[ENTRY-ID]</entryId>
+  <identifier>object#0002</identifier>
+  <ipAddress>1.2.3.4</ipAddress>
+  <userAgent>Mock getLogRecords() UserAgent #2</userAgent>
+  <subject>Mock getLogRecords() Subject #2</subject>
+  <event>create</event>
+  <dateLogged>1945-05-01T00:00:00Z</dateLogged>
+  <nodeIdentifier>urn:node:MockLogRecords</nodeIdentifier>
+</logEntry>
+<?xml version="1.0" ?>
+<logEntry>
+  <entryId>[ENTRY-ID]</entryId>
+  <identifier>object#0003</identifier>
+  <ipAddress>1.2.3.4</ipAddress>
+  <userAgent>Mock getLogRecords() UserAgent #3</userAgent>
+  <subject>Mock getLogRecords() Subject #3</subject>
+  <event>create</event>
+  <dateLogged>1945-05-01T00:00:00Z</dateLogged>
+  <nodeIdentifier>urn:node:MockLogRecords</nodeIdentifier>
+</logEntry>
+<?xml version="1.0" ?>
+<logEntry>
+  <entryId>[ENTRY-ID]</entryId>
+  <identifier>object#0004</identifier>
+  <ipAddress>1.2.3.4</ipAddress>
+  <userAgent>Mock getLogRecords() UserAgent #4</userAgent>
+  <subject>Mock getLogRecords() Subject #4</subject>
+  <event>create</event>
+  <dateLogged>1945-05-01T00:00:00Z</dateLogged>
+  <nodeIdentifier>urn:node:MockLogRecords</nodeIdentifier>
+</logEntry>
