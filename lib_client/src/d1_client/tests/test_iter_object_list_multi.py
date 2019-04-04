@@ -17,7 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 
+import pytest
 import responses
 
 import d1_test.d1_test_case
@@ -29,6 +31,7 @@ import d1_client.iter.objectlist_multi
 MAX_OBJECTS = 20
 
 
+@pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= 3.7")
 class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):

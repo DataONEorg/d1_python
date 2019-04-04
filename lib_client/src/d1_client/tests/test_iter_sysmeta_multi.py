@@ -17,6 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 
 import pytest
 import responses
@@ -44,6 +45,7 @@ def n_workers(request):
 
 
 # noinspection PyShadowingNames
+@pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= 3.7")
 @d1_test.d1_test_case.reproducible_random_decorator('TestSysMetaIterator')
 class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
     """Run with misc variations and verify that they give the same result."""
