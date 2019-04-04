@@ -428,6 +428,15 @@ def enable_db_access(db):
     pass
 
 
+@pytest.fixture(scope='function', autouse=True)
+def profile_sql(db):
+    django.db.connection.queries = []
+    yield
+    logging.info('SQL queries by all methods:')
+    list(map(logging.info, django.db.connection.queries))
+
+
+
 @pytest.yield_fixture(scope='session', autouse=True)
 @pytest.mark.django_db
 def django_db_setup(request, django_db_blocker):
