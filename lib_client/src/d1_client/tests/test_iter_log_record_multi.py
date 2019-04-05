@@ -20,6 +20,7 @@
 
 import datetime
 
+import freezegun
 import responses
 
 import d1_common.types.dataoneTypes
@@ -28,42 +29,52 @@ import d1_test.d1_test_case
 import d1_test.mock_api.get_log_records
 
 import d1_client.iter.logrecord_multi
+import d1_common.xml
 
 
+# @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
+@d1_test.d1_test_case.reproducible_random_decorator("TestLogRecordIterator")
+@freezegun.freeze_time("1945-05-01")
 class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
-    @responses.activate
-    def test_1000(self):
-        """PageSize=5, start=0."""
+    def _log_record_iterator_test(self, page_size, from_date=None, to_date=None):
         d1_test.mock_api.get_log_records.add_callback(
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
+        log_record_iter = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
+            base_url=d1_test.d1_test_case.MOCK_MN_BASE_URL,
+            page_size=page_size,
+            api_major=2,
+            client_dict={"verify_tls": False, "timeout_sec": 0},
+            get_log_records_dict={"fromDate": from_date, "toDate": to_date},
+        )
+
+        i = 0
+        log_entry_list = []
+        for i, log_entry_pyxb in enumerate(log_record_iter):
+            assert isinstance(log_entry_pyxb, d1_common.types.dataoneTypes.LogEntry)
+            log_entry_list.append(log_entry_pyxb)
+
+        assert i == d1_test.mock_api.get_log_records.N_TOTAL - 1
+
+        log_entry_list.sort(key=lambda x: x.identifier.value())
+
+        self.sample.assert_equals(
+            "\n".join(
+                d1_common.xml.serialize_to_xml_str(v) for v in log_entry_list[:5]
+            ),
+            "page_size_{}".format(page_size),
+        )
+
+    @responses.activate
+    def test_1000(self):
+        """PageSize=5, no date filter"""
         self._log_record_iterator_test(5)
 
-    def _test_110(self):
-        """PageSize=1, start=63."""
-        self._log_record_iterator_test(1)
-
-    def _test_130(self):
-        """PageSize=5, start=10, fromDate=2005-01-01."""
-        self._log_record_iterator_test(2000, from_date=datetime.datetime(2005, 1, 1))
-
-    def _log_record_iterator_test(self, page_size, from_date=None, to_date=None):
-        log_record_iterator = d1_client.iter.logrecord_multi.LogRecordIteratorMulti(
-            base_url=d1_test.d1_test_case.MOCK_MN_BASE_URL,
-            # base_url='https://gmn2/mn',
-            page_size=page_size,
-            api_major=2,  # api_major = d1_client.util.get_version_tag_by_d1_client(mn_client_v1_v2)
-            client_dict={'verify_tls': False, 'timeout_sec': 0},
-            get_log_records_dict={'fromDate': from_date, 'toDate': to_date},
+    @responses.activate
+    def test_1010(self):
+        """PageSize=100, from- and to-date filter"""
+        self._log_record_iterator_test(
+            100,
+            from_date=datetime.datetime(2005, 1, 1),
+            to_date=datetime.datetime(2006, 1, 1),
         )
-        cnt = 0
-        for log_entry in log_record_iterator:
-            assert isinstance(log_entry, d1_common.types.dataoneTypes.LogEntry)
-            # logging.info("Event      = {}".format(log_entry.event))
-            # logging.info("Timestamp  = {}".format(log_entry.dateLogged.isoformat()))
-            # logging.info("IP Address = {}".format(log_entry.ipAddress))
-            # logging.info("Identifier = {}".format(log_entry.identifier.value()))
-            # logging.info("User agent = {}".format(log_entry.userAgent))
-            # logging.info("Subject    = {}".format(log_entry.subject.value()))
-            # logging.info('-' * 100)
-            cnt += 1

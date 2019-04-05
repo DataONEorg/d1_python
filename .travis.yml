@@ -5,7 +5,7 @@ dist:
 sudo:
   required
 python:
-  - 3.6
+  - "3.6"
 services:
   - postgresql
 addons:
@@ -48,10 +48,6 @@ script:
   - pytest --cov=. --cov-config .coveragerc --cov-report=term --cov-report=xml -n auto
   # --cov-config=tox.ini
   # --cov-config=coverage.cfg --cov-report=term --cov-report=xml
-  # -n auto
 after_success:
   # Submit results to Coveralls.io.
-  ## Coveralls has a requirement for requests >= 1.0.0, so we install it after
-  ## our packages to prevent it from pulling in the latest version, which is
-  ## likely to conflict with the fixed version our packages pull in.
   - coveralls

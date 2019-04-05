@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import d1_common
+import freezegun
 import responses
 
 import d1_test.d1_test_case
@@ -25,10 +27,12 @@ import d1_test.mock_api.list_objects
 
 import d1_client.d1client
 import d1_client.iter.objectlist_multi
+import d1_common.xml
 
-MAX_OBJECTS = 20
 
-
+# @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
+@d1_test.d1_test_case.reproducible_random_decorator('TestIterObjectListIterator')
+@freezegun.freeze_time('1945-06-01')
 class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
@@ -43,13 +47,23 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL,
             page_size=13,
             max_workers=2,
-            max_queue_size=10,
+            max_result_queue_size=10,
             api_major=api_major,
         )
 
         i = 0
-
+        object_list = []
         for i, object_info_pyxb in enumerate(object_list_iter):
             assert isinstance(object_info_pyxb, mn_client_v1_v2.pyxb_binding.ObjectInfo)
+            object_list.append(object_info_pyxb)
 
         assert i == d1_test.mock_api.list_objects.N_TOTAL - 1
+
+        object_list.sort(key=lambda x: x.identifier.value())
+
+        self.sample.assert_equals(
+            "\n".join(
+                d1_common.xml.serialize_to_xml_str(v) for v in object_list[:5]
+            ),
+            "iter",
+        )

@@ -63,18 +63,6 @@ MOCK_GMN_BASE_URL = 'http://gmn.client/node'
 
 
 class GMNTestCase(d1_test.d1_test_case.D1TestCase):
-    def setup_class(self):
-        """Run for each test class that derives from GMNTestCase."""
-        if ENABLE_SQL_PROFILING:
-            django.db.connection.queries = []
-
-    def teardown_class(self):
-        """Run for each test class that derives from GMNTestCase."""
-        GMNTestCase.capture_exception()
-        if ENABLE_SQL_PROFILING:
-            logging.info('SQL queries by all methods:')
-            list(map(logging.info, django.db.connection.queries))
-
     def setup_method(self, method):
         """Run for each test method that derives from GMNTestCase."""
         # logging.error('GMNTestCase.setup_method()')
