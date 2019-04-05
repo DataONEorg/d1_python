@@ -89,11 +89,11 @@ class TestSysMetaIterator(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL,
             page_size=page_size,
             max_workers=n_workers,
-            client_dict={
+            client_arg_dict={
                 # 'cert_pem_path': cert_pem_path,
                 # 'cert_key_path': cert_key_path,
             },
-            list_objects_dict={"fromDate": from_date, "toDate": to_date},
+            list_objects_arg_dict={"fromDate": from_date, "toDate": to_date},
         )
 
         for sysmeta_pyxb in sysmeta_iter:

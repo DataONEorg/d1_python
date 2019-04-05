@@ -17,150 +17,47 @@
 # limitations under the License.
 """Multiprocessed ObjectList Iterator.
 
-Fast retrieval of ObjectInfo from a DataONE Node.
+Fast retrieval of ObjectList from a DataONE Node.
+
+See additional notes in SysMeta iter docstring.
 
 """
 
 import logging
-import multiprocessing
 
-import d1_client.mnclient_1_2
-import d1_client.mnclient_2_0
+import d1_client.iter.base_multi
 
-# Defaults
-OBJECT_LIST_PAGE_SIZE = 100
-MAX_WORKERS = 10
-MAX_QUEUE_SIZE = 100
-API_MAJOR = 2
+logger = logging.getLogger(__name__)
 
 
-class ObjectListIteratorMulti(object):
+# fmt: off
+class ObjectListIteratorMulti(d1_client.iter.base_multi.MultiprocessedIteratorBase):
     def __init__(
         self,
         base_url,
-        page_size=OBJECT_LIST_PAGE_SIZE,
-        max_workers=MAX_WORKERS,
-        max_queue_size=MAX_QUEUE_SIZE,
-        api_major=API_MAJOR,
-        client_args_dict=None,
-        list_objects_args_dict=None,
+        page_size=d1_client.iter.base_multi.PAGE_SIZE,
+        max_workers=d1_client.iter.base_multi.MAX_WORKERS,
+        max_result_queue_size=d1_client.iter.base_multi.MAX_RESULT_QUEUE_SIZE,
+        max_task_queue_size=d1_client.iter.base_multi.MAX_TASK_QUEUE_SIZE,
+        api_major=d1_client.iter.base_multi.API_MAJOR,
+        client_arg_dict=None,
+        list_objects_arg_dict=None,
     ):
-        self._log = logging.getLogger(__name__)
-        self._base_url = base_url
-        self._page_size = page_size
-        self._max_workers = max_workers
-        self._max_queue_size = max_queue_size
-        self._api_major = api_major
-        self._client_args_dict = client_args_dict or {}
-        self._list_objects_args_dict = list_objects_args_dict or {}
-        # d1_common.type_conversions.set_default_pyxb_namespace(api_major)
-        self.total = self._get_total_object_count(
-            base_url, api_major, self._client_args_dict, self._list_objects_args_dict
+        super(ObjectListIteratorMulti, self).__init__(
+            base_url, page_size, max_workers, max_result_queue_size,
+            max_task_queue_size, api_major, client_arg_dict, list_objects_arg_dict,
+            None, _page_func, _iter_func, _item_proc_func
         )
 
-    def __iter__(self):
-        manager = multiprocessing.Manager()
-        queue = manager.Queue(maxsize=self._max_queue_size)
 
-        process = multiprocessing.Process(
-            target=self._get_all_pages,
-            args=(
-                queue,
-                self._base_url,
-                self._page_size,
-                self._max_workers,
-                self._client_args_dict,
-                self._list_objects_args_dict,
-                self.total,
-            ),
-        )
+def _page_func(client):
+    return client.listObjects
 
-        process.start()
 
-        while True:
-            object_info_pyxb = queue.get()
-            if object_info_pyxb is None:
-                self._log.debug("Received None sentinel value. Stopping iteration")
-                break
-            yield object_info_pyxb
+def _iter_func(page_pyxb):
+    return page_pyxb.objectInfo
 
-        process.join()
 
-    def _get_total_object_count(
-        self, base_url, api_major, client_args_dict, list_objects_args_dict
-    ):
-        client = self._create_client(base_url, api_major, client_args_dict)
-        args_dict = list_objects_args_dict.copy()
-        args_dict["count"] = 0
-        return client.listObjects(**args_dict).total
-
-    def _get_all_pages(
-        self,
-        queue,
-        base_url,
-        page_size,
-        max_workers,
-        client_args_dict,
-        list_objects_args_dict,
-        n_total,
-    ):
-        self._log.info("Creating pool of {} workers".format(max_workers))
-        pool = multiprocessing.Pool(processes=max_workers)
-        n_pages = (n_total - 1) // page_size + 1
-
-        for page_idx in range(n_pages):
-            self._log.debug(
-                "apply_async(): page_idx={} n_pages={}".format(page_idx, n_pages)
-            )
-            pool.apply_async(
-                self._get_page,
-                args=(
-                    queue,
-                    base_url,
-                    page_idx,
-                    n_pages,
-                    page_size,
-                    client_args_dict,
-                    list_objects_args_dict,
-                ),
-            )
-        # Prevent any more tasks from being submitted to the pool. Once all the
-        # tasks have been completed the worker processes will exit.
-        pool.close()
-        # Wait for the worker processes to exit
-        pool.join()
-        # Use None as sentinel value to stop the generator
-        queue.put(None)
-
-    def _get_page(
-        self,
-        queue,
-        base_url,
-        page_idx,
-        n_pages,
-        page_size,
-        client_args_dict,
-        list_objects_args_dict,
-    ):
-        client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-            base_url, **client_args_dict
-        )
-        try:
-            object_list_pyxb = client.listObjects(
-                start=page_idx * page_size, count=page_size, **list_objects_args_dict
-            )
-            self._log.debug("Retrieved page: {}/{}".format(page_idx + 1, n_pages))
-            for object_info_pyxb in object_list_pyxb.objectInfo:
-                queue.put(object_info_pyxb)
-        except Exception as e:
-            self._log.error(
-                "Failed to retrieve page: {}/{}. Error: {}".format(
-                    page_idx + 1, n_pages, str(e)
-                )
-            )
-
-    def _create_client(self, base_url, api_major, client_dict):
-        if api_major in (1, "1", "v1"):
-            return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_dict)
-        else:
-            return d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url, **client_dict)
+# noinspection PyUnusedLocal
+def _item_proc_func(client_, item_pyxb, item_proc_arg_dict_):
+    return item_pyxb

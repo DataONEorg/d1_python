@@ -17,11 +17,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
 
 import d1_common
 import freezegun
-import pytest
 import responses
 
 import d1_test.d1_test_case
@@ -49,7 +47,7 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL,
             page_size=13,
             max_workers=2,
-            max_queue_size=10,
+            max_result_queue_size=10,
             api_major=api_major,
         )
 
