@@ -44,8 +44,8 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
             base_url=d1_test.d1_test_case.MOCK_MN_BASE_URL,
             page_size=page_size,
             api_major=2,
-            client_dict={"verify_tls": False, "timeout_sec": 0},
-            get_log_records_dict={"fromDate": from_date, "toDate": to_date},
+            client_arg_dict={"verify_tls": False, "timeout_sec": 0},
+            get_log_records_arg_dict={"fromDate": from_date, "toDate": to_date},
         )
 
         i = 0
