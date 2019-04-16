@@ -22,13 +22,22 @@ import re
 import socket
 import ssl
 import urllib.parse
+import datetime
+import ipaddress
 
 import contextlib2
+import cryptography
 import cryptography.hazmat
 import cryptography.hazmat.backends
+import cryptography.hazmat.primitives
+import cryptography.hazmat.primitives.asymmetric
+import cryptography.hazmat.primitives.asymmetric.ec
+import cryptography.hazmat.primitives.asymmetric.rsa
+import cryptography.hazmat.primitives.hashes
 import cryptography.hazmat.primitives.serialization
 import cryptography.x509
 import cryptography.x509.oid
+
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
 
@@ -53,25 +62,28 @@ OID_TO_SHORT_NAME_DICT = {
     encoded as the dotted-decimal encoding , a <numericoid> of its OBJECT IDENTIFIER. The
     <descr> and <numericoid> are defined in [RFC4512].
     """
-    '0.9.2342.19200300.100.1.1': 'UID',  # userId
-    '0.9.2342.19200300.100.1.25': 'DC',  # domainComponent
-    '1.2.840.113549.1.9.1': 'email',  # emailAddress
-    '2.5.4.3': 'CN',  # commonName
-    '2.5.4.4': 'SN',  # surname
-    '2.5.4.6': 'C',  # countryName
-    '2.5.4.7': 'L',  # localityName
-    '2.5.4.8': 'ST',  # stateOrProvinceName
-    '2.5.4.9': 'STREET',  # streetAddress
-    '2.5.4.10': 'O',  # organizationName
-    '2.5.4.11': 'OU',  # organizationalUnitName
+    "0.9.2342.19200300.100.1.1": "UID",  # userId
+    "0.9.2342.19200300.100.1.25": "DC",  # domainComponent
+    "1.2.840.113549.1.9.1": "email",  # emailAddress
+    "2.5.4.3": "CN",  # commonName
+    "2.5.4.4": "SN",  # surname
+    "2.5.4.6": "C",  # countryName
+    "2.5.4.7": "L",  # localityName
+    "2.5.4.8": "ST",  # stateOrProvinceName
+    "2.5.4.9": "STREET",  # streetAddress
+    "2.5.4.10": "O",  # organizationName
+    "2.5.4.11": "OU",  # organizationalUnitName
 }
 
-DATAONE_SUBJECT_INFO_OID = '1.3.6.1.4.1.34998.2.1'
-AUTHORITY_INFO_ACCESS_OID = '1.3.6.1.5.5.7.1.1'  # authorityInfoAccess
-CA_ISSUERS_OID = '1.3.6.1.5.5.7.48.2'  # caIssuers
-OCSP_OID = '1.3.6.1.5.5.7.48.1'  # OCSP
+DATAONE_SUBJECT_INFO_OID = "1.3.6.1.4.1.34998.2.1"
+AUTHORITY_INFO_ACCESS_OID = "1.3.6.1.5.5.7.1.1"  # authorityInfoAccess
+CA_ISSUERS_OID = "1.3.6.1.5.5.7.48.2"  # caIssuers
+OCSP_OID = "1.3.6.1.5.5.7.48.1"  # OCSP
 
-UBUNTU_CA_BUNDLE_PATH = '/etc/ssl/certs/ca-certificates.crt'
+UBUNTU_CA_BUNDLE_PATH = "/etc/ssl/certs/ca-certificates.crt"
+
+
+# Subjects
 
 
 def extract_subjects(cert_pem):
@@ -89,7 +101,7 @@ def extract_subjects(cert_pem):
 
     """
     cert_obj = deserialize_pem(cert_pem)
-    return (extract_subject_from_dn(cert_obj), extract_subject_info_extension(cert_obj))
+    return extract_subject_from_dn(cert_obj), extract_subject_info_extension(cert_obj)
 
 
 def extract_subject_from_dn(cert_obj):
@@ -119,13 +131,97 @@ def extract_subject_from_dn(cert_obj):
     same subject with two different DNs, and the DN can be recreated from the subject.
 
     """
-    return ','.join(
-        '{}={}'.format(
+    return ",".join(
+        "{}={}".format(
             OID_TO_SHORT_NAME_DICT.get(v.oid.dotted_string, v.oid.dotted_string),
             rdn_escape(v.value),
         )
         for v in reversed(list(cert_obj.subject))
     )
+
+
+def create_ca_subject():
+    return cryptography.x509.Name(
+        [
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "Root CA"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COMMON_NAME, "ca.ca.com"
+            ),
+        ]
+    )
+
+
+def create_csr_subject():
+    return cryptography.x509.Name(
+        [
+            # Provide various details about who we are.
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "CSR Requester"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COMMON_NAME, "csr.csr.com"
+            ),
+        ]
+    )
+
+
+# CSR
+
+
+def generate_csr(private_key_bytes, subject_name, fqdn_list):
+    """Generate a Certificate Signing Request (CSR).
+
+    Args:
+        private_key_bytes: bytes
+            Private key with which the CSR will be signed.
+
+        subject_name: str
+            Certificate Subject Name
+
+        fqdn_list:
+            List of Fully Qualified Domain Names (FQDN) and/or IP addresses for which
+            this certificate will provide authentication.
+
+            E.g.: ['my.membernode.org', '1.2.3.4']
+    """
+    return (
+        cryptography.x509.CertificateSigningRequestBuilder()
+        .subject_name(subject_name)
+        .add_extension(
+            extension=cryptography.x509.SubjectAlternativeName(
+                [cryptography.x509.DNSName(v) for v in fqdn_list]
+            ),
+            critical=False,
+        )
+        .sign(
+            private_key=private_key_bytes,
+            algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
+            backend=cryptography.hazmat.backends.default_backend(),
+        )
+    )
+
+
+# PEM
 
 
 def deserialize_pem(cert_pem):
@@ -140,9 +236,9 @@ def deserialize_pem(cert_pem):
 
     """
     if isinstance(cert_pem, str):
-        cert_pem = cert_pem.encode('utf-8')
+        cert_pem = cert_pem.encode("utf-8")
     return cryptography.x509.load_pem_x509_certificate(
-        cert_pem, cryptography.hazmat.backends.default_backend()
+        data=cert_pem, backend=cryptography.hazmat.backends.default_backend()
     )
 
 
@@ -157,23 +253,28 @@ def deserialize_pem_file(cert_path):
       cert_obj: cryptography.Certificate
 
     """
-    with open(cert_path, 'rb') as f:
+    with open(cert_path, "rb") as f:
         return deserialize_pem(f.read())
 
 
-def rdn_escape(rdn_str):
-    """Escape string for use as an RDN (RelativeDistinguishedName)
+def serialize_cert_to_pem(cert_obj):
+    """Serialize certificate to PEM.
 
-    The following chars must be escaped in RDNs: , = + < > # ; \ "
+    The certificate can be also be a Certificate Signing Request (CSR).
 
     Args:
-      rdn_str : str
+      cert_obj: cryptography.Certificate
 
     Returns:
-      str: Escaped string ready for use in an RDN (.)
+      bytes: PEM encoded certificate
 
     """
-    return re.sub(r'([,=+<>#;\\])', r'\\\1', rdn_str)
+    return cert_obj.public_bytes(
+        encoding=cryptography.hazmat.primitives.serialization.Encoding.PEM
+    )
+
+
+# DataONE SubjectInfo Extension
 
 
 def extract_subject_info_extension(cert_obj):
@@ -198,6 +299,9 @@ def extract_subject_info_extension(cert_obj):
         return str(pyasn1.codec.der.decoder.decode(subject_info_der)[0])
     except Exception as e:
         logging.debug('SubjectInfo not extracted. reason="{}"'.format(e))
+
+
+# Download Certificate
 
 
 def download_as_der(
@@ -261,6 +365,9 @@ def download_as_der(
     #       raise
 
 
+# Download
+
+
 def download_as_pem(
     base_url=d1_common.const.URL_DATAONE_ROOT,
     timeout_sec=d1_common.const.DEFAULT_HTTP_TIMEOUT,
@@ -314,7 +421,7 @@ def decode_der(cert_der):
 
     """
     return cryptography.x509.load_der_x509_certificate(
-        cert_der, cryptography.hazmat.backends.default_backend()
+        data=cert_der, backend=cryptography.hazmat.backends.default_backend()
     )
 
 
@@ -367,12 +474,267 @@ def extract_issuer_ca_cert_url(cert_obj):
                     return access_description.access_location.value
 
 
+# Private key
+
+
+def serialize_private_key_to_pem(private_key, passphrase_bytes=None):
+    """Serialize private key to PEM.
+
+    Args:
+      private_key:
+      passphrase_bytes:
+
+    Returns:
+      bytes: PEM encoded private key
+
+    """
+    return private_key.private_bytes(
+        encoding=cryptography.hazmat.primitives.serialization.Encoding.PEM,
+        format=cryptography.hazmat.primitives.serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=cryptography.hazmat.primitives.serialization.BestAvailableEncryption(
+            passphrase_bytes
+        )
+        if passphrase_bytes is not None
+        else cryptography.hazmat.primitives.serialization.NoEncryption(),
+    )
+
+
+def generate_private_key(key_size=2048):
+    """Generate a private key"""
+    return cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=key_size,
+        backend=cryptography.hazmat.backends.default_backend(),
+    )
+
+
+# Public Key
+
+
+def get_public_key_pem(cert_obj):
+    """Extract public key from certificate as PEM encoded PKCS#1.
+
+    Args:
+      cert_obj: cryptography.Certificate
+
+    Returns:
+      bytes: PEM encoded PKCS#1 public key.
+
+    """
+    return cert_obj.public_key().public_bytes(
+        encoding=cryptography.hazmat.primitives.serialization.Encoding.PEM,
+        format=cryptography.hazmat.primitives.serialization.PublicFormat.PKCS1,
+    )
+
+
+# File
+
+
+def save_pem(pem_path, pem_bytes):
+    """Save PEM encoded bytes to file"""
+    with open(pem_path, "wb") as f:
+        f.write(pem_bytes)
+
+
+def load_csr(pem_path):
+    """Load CSR from PEM encoded file"""
+    with open(pem_path, "rb") as f:
+        return cryptography.x509.load_pem_x509_csr(
+            data=f.read(), backend=cryptography.hazmat.backends.default_backend()
+        )
+
+
+def load_private_key(pem_path, passphrase_bytes=None):
+    """Load private key from PEM encoded file"""
+    with open(pem_path, "rb") as f:
+        return cryptography.hazmat.primitives.serialization.load_pem_private_key(
+            data=f.read(),
+            password=passphrase_bytes,
+            backend=cryptography.hazmat.backends.default_backend(),
+        )
+
+
+# Client Side Certificate
+
+
+def generate_cert(ca_issuer, ca_key, csr_subject, csr_pub_key):
+    # Various details about who we are. For a self-signed certificate the
+    # subject and issuer are always the same.
+    # Sign our certificate with our private key
+    return (
+        cryptography.x509.CertificateBuilder()
+        .subject_name(csr_subject)
+        .issuer_name(ca_issuer)
+        .public_key(csr_pub_key)
+        .serial_number(cryptography.x509.random_serial_number())
+        .not_valid_before(datetime.datetime.utcnow())
+        .not_valid_after(
+            # Our certificate will be valid for 10 days
+            datetime.datetime.utcnow()
+            + datetime.timedelta(days=10)
+        )
+        .add_extension(
+            extension=cryptography.x509.SubjectAlternativeName(
+                [cryptography.x509.DNSName("localhost")]
+            ),
+            critical=False,
+        )
+        .sign(
+            private_key=ca_key,
+            algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
+            backend=cryptography.hazmat.backends.default_backend(),
+        )
+    )
+
+
+def serialize_cert_to_der(cert_obj):
+    """Serialize certificate to DER.
+
+    Args:
+      cert_obj: cryptography.Certificate
+
+    Returns:
+      bytes: DER encoded certificate
+
+    """
+    return cert_obj.public_bytes(
+        cryptography.hazmat.primitives.serialization.Encoding.DER
+    )
+
+
+# CA
+
+
+def generate_ca_cert(
+    hostname,
+    private_key,
+    fqdn_str=None,
+    public_ip=None,
+    private_ip=None,
+    valid_days=10 * 365,
+):
+    """
+
+    Args:
+        hostname:
+
+        private_key: RSAPrivateKey, etc
+
+        fqdn_str:
+        public_ip:
+        private_ip:
+
+        valid_days: int
+            Number of days from now until the certificate expires.
+
+    Returns:
+
+    """
+    name = cryptography.x509.Name(
+        [
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COMMON_NAME, hostname
+            )
+        ]
+    )
+
+    # best practice seem to be to include the hostname in the SAN, which *SHOULD*
+    # mean COMMON_NAME is ignored.
+    # allow addressing by IP, for when you don't have real DNS (common in most
+    # testing scenarios)
+    # openssl wants DNSnames for ips
+    # cryptography.x509.DNSName(private_ip),
+
+    alt_name_list = [
+        cryptography.x509.DNSName(hostname),
+        cryptography.x509.DNSName("localhost"),
+    ]
+
+    if fqdn_str:
+        alt_name_list.append(cryptography.x509.DNSName(fqdn_str))
+
+    if public_ip:
+        alt_name_list.append(cryptography.x509.DNSName(public_ip))
+        alt_name_list.append(
+            cryptography.x509.IPAddress(ipaddress.IPv4Address(public_ip))
+        )
+
+    if private_ip:
+        alt_name_list.append(cryptography.x509.DNSName(private_ip))
+        alt_name_list.append(
+            cryptography.x509.IPAddress(ipaddress.IPv4Address(private_ip))
+        )
+
+    alt_names = cryptography.x509.SubjectAlternativeName(alt_name_list)
+
+    # path_len=0: This cert can only sign itself, not other certs.
+    basic_contraints = cryptography.x509.BasicConstraints(ca=True, path_length=0)
+    now = datetime.datetime.utcnow()
+    return (
+        cryptography.x509.CertificateBuilder()
+        .subject_name(name)
+        .issuer_name(name)
+        .public_key(private_key.public_key())
+        .serial_number(cryptography.x509.random_serial_number())
+        .not_valid_before(now)
+        .not_valid_after(now + datetime.timedelta(days=valid_days))
+        .add_extension(basic_contraints, critical=False)
+        .add_extension(alt_names, critical=False)
+        .sign(
+            private_key=private_key,
+            algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
+            backend=cryptography.hazmat.backends.default_backend(),
+        )
+    )
+
+
+# Misc
+
+
+def input_key_passphrase(applicable_str="private key"):
+    passphrase_str = input(
+        "Passphrase for {} (Press Enter for no passphrase): ".format(applicable_str)
+    )
+    if passphrase_str == "":
+        return None
+    return passphrase_str.encode("utf-8")
+
+
+def check_cert_type(cert):
+    public_key = cert.public_key()
+    if isinstance(
+        public_key, cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey
+    ):
+        print("IS RSA")
+    elif isinstance(
+        public_key, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey
+    ):
+        print("IS EllipticCurvePublicKey")
+    else:
+        print("UNKNOWN")
+
+
+def rdn_escape(rdn_str):
+    """Escape string for use as an RDN (RelativeDistinguishedName)
+
+    The following chars must be escaped in RDNs: , = + < > # ; \ "
+
+    Args:
+      rdn_str : str
+
+    Returns:
+      str: Escaped string ready for use in an RDN (.)
+
+    """
+    return re.sub(r"([,=+<>#;\\])", r"\\\1", rdn_str)
+
+
 # noinspection PyProtectedMember
-def log_cert_info(log, msg_str, cert_obj):
+def log_cert_info(logger, msg_str, cert_obj):
     """Dump basic certificate values to the log.
 
     Args:
-      log: Logger
+      logger: Logger
         Logger to which to write the certificate values.
 
       msg_str: str
@@ -387,35 +749,35 @@ def log_cert_info(log, msg_str, cert_obj):
     """
     list(
         map(
-            log,
-            ['{}:'.format(msg_str)]
+            logger,
+            ["{}:".format(msg_str)]
             + [
-                '  {}'.format(v)
+                "  {}".format(v)
                 for v in [
-                    'Subject: {}'.format(
-                        get_val_str(cert_obj, ['subject', 'value'], reverse=True)
+                    "Subject: {}".format(
+                        _get_val_str(cert_obj, ["subject", "value"], reverse=True)
                     ),
-                    'Issuer: {}'.format(
-                        get_val_str(cert_obj, ['issuer', 'value'], reverse=True)
+                    "Issuer: {}".format(
+                        _get_val_str(cert_obj, ["issuer", "value"], reverse=True)
                     ),
-                    'Not Valid Before: {}'.format(
+                    "Not Valid Before: {}".format(
                         cert_obj.not_valid_before.isoformat()
                     ),
-                    'Not Valid After: {}'.format(cert_obj.not_valid_after.isoformat()),
-                    'Subject Alt Names: {}'.format(
-                        get_ext_val_str(
-                            cert_obj, 'SUBJECT_ALTERNATIVE_NAME', ['value', 'value']
+                    "Not Valid After: {}".format(cert_obj.not_valid_after.isoformat()),
+                    "Subject Alt Names: {}".format(
+                        _get_ext_val_str(
+                            cert_obj, "SUBJECT_ALTERNATIVE_NAME", ["value", "value"]
                         )
                     ),
-                    'CRL Distribution Points: {}'.format(
-                        get_ext_val_str(
+                    "CRL Distribution Points: {}".format(
+                        _get_ext_val_str(
                             cert_obj,
-                            'CRL_DISTRIBUTION_POINTS',
-                            ['value', 'full_name', 'value', 'value'],
+                            "CRL_DISTRIBUTION_POINTS",
+                            ["value", "full_name", "value", "value"],
                         )
                     ),
-                    'Authority Access Location: {}'.format(
-                        extract_issuer_ca_cert_url(cert_obj) or '<not found>'
+                    "Authority Access Location: {}".format(
+                        extract_issuer_ca_cert_url(cert_obj) or "<not found>"
                     ),
                 ]
             ],
@@ -445,7 +807,10 @@ def get_extension_by_name(cert_obj, extension_name):
         pass
 
 
-def get_val_list(obj, path_list, reverse=False):
+# Private
+
+
+def _get_val_list(obj, path_list, reverse=False):
     """Extract values from nested objects by attribute names.
 
     Objects contain attributes which are named references to objects. This will descend
@@ -473,13 +838,13 @@ def get_val_list(obj, path_list, reverse=False):
     if len(path_list) == 1:
         return [y]
     else:
-        val_list = [x for a in y for x in get_val_list(a, path_list[1:], reverse)]
+        val_list = [x for a in y for x in _get_val_list(a, path_list[1:], reverse)]
         if reverse:
             val_list.reverse()
         return val_list
 
 
-def get_val_str(obj, path_list=None, reverse=False):
+def _get_val_str(obj, path_list=None, reverse=False):
     """Extract values from nested objects by attribute names and concatenate their
     string representations.
 
@@ -497,11 +862,11 @@ def get_val_str(obj, path_list=None, reverse=False):
       str: Concatenated extracted values.
 
     """
-    val_list = get_val_list(obj, path_list or [], reverse)
-    return '<not found>' if obj is None else ' / '.join(map(str, val_list))
+    val_list = _get_val_list(obj, path_list or [], reverse)
+    return "<not found>" if obj is None else " / ".join(map(str, val_list))
 
 
-def get_ext_val_str(cert_obj, extension_name, path_list=None):
+def _get_ext_val_str(cert_obj, extension_name, path_list=None):
     """Get value from certificate extension.
 
     Args:
@@ -518,50 +883,6 @@ def get_ext_val_str(cert_obj, extension_name, path_list=None):
       str : String value of extension
 
     """
-    return get_val_str(get_extension_by_name(cert_obj, extension_name), path_list or [])
-
-
-def serialize_cert_to_pem(cert_obj):
-    """Serialize certificate to PEM.
-
-    Args:
-      cert_obj: cryptography.Certificate
-
-    Returns:
-      bytes: PEM encoded certificate
-
-    """
-    return cert_obj.public_bytes(
-        cryptography.hazmat.primitives.serialization.Encoding.PEM
-    )
-
-
-def serialize_cert_to_der(cert_obj):
-    """Serialize certificate to DER.
-
-    Args:
-      cert_obj: cryptography.Certificate
-
-    Returns:
-      bytes: DER encoded certificate
-
-    """
-    return cert_obj.public_bytes(
-        cryptography.hazmat.primitives.serialization.Encoding.DER
-    )
-
-
-def get_public_key_pem(cert_obj):
-    """Extract public key from certificate as PEM encoded PKCS#1.
-
-    Args:
-      cert_obj: cryptography.Certificate
-
-    Returns:
-      bytes: PEM encoded PKCS#1 public key.
-
-    """
-    return cert_obj.public_key().public_bytes(
-        cryptography.hazmat.primitives.serialization.Encoding.PEM,
-        cryptography.hazmat.primitives.serialization.PublicFormat.PKCS1,
+    return _get_val_str(
+        get_extension_by_name(cert_obj, extension_name), path_list or []
     )

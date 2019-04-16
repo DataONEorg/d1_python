@@ -127,6 +127,6 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
             h = 'g1'
             i = O2
 
-        assert d1_common.cert.x509.get_val_list(O3, ['invalid_attr']) == []
-        assert d1_common.cert.x509.get_val_list(O3, ['g']) == ['s1']
-        assert d1_common.cert.x509.get_val_list(O3, ['g', 'invalid']) == []
+        assert d1_common.cert.x509._get_val_list(O3, ['invalid_attr']) == []
+        assert d1_common.cert.x509._get_val_list(O3, ['g']) == ['s1']
+        assert d1_common.cert.x509._get_val_list(O3, ['g', 'invalid']) == []
