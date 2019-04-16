@@ -205,7 +205,7 @@ def cert_cleanup():
 
 
 def filename_from_cert_obj(cert_obj):
-    subject_str = d1_common.cert.x509.get_val_str(cert_obj, ['subject', 'value'])
+    subject_str = d1_common.cert.x509._get_val_str(cert_obj, ['subject', 'value'])
     subject_str = re.sub(r'\W+', '_', subject_str.lower())
     not_valid_before_str = re.sub(
         r'[:-]', '', cert_obj.not_valid_before.isoformat().replace('T', '_')
