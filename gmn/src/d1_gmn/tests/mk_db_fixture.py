@@ -148,7 +148,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
             freeze_time.tick(delta=datetime.timedelta(days=1))
 
-            read_subj = d1_test.instance_generator.random_data.random_subj()
+            read_subj = d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
             with d1_gmn.tests.gmn_mock.set_auth_context(
                 active_subj_list=[read_subj],
                 trusted_subj_list=[read_subj],
@@ -163,19 +163,20 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 )
 
     def save_compressed_db_fixture(self):
-        fixture_file_path = self.test_files.get_abs_test_file_path(
-            'db_fixture.json.bz2'
-        )
+        fixture_file_path = 'db_fixture.json.bz2'
         logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
+        buf = io.StringIO()
+        django.core.management.call_command(
+            'dumpdata',
+            exclude=['auth.permission', 'contenttypes'],
+            database=TEST_DB_KEY,
+            stdout=buf,
+        )
         with bz2.BZ2File(
-            fixture_file_path, 'w', buffering=1024, compresslevel=9
+            fixture_file_path, 'w', buffering=1024**2, compresslevel=9
         ) as bz2_file:
-            django.core.management.call_command(
-                'dumpdata',
-                exclude=['auth.permission', 'contenttypes'],
-                database=TEST_DB_KEY,
-                stdout=io.TextIOWrapper(bz2_file),
-            )
+            bz2_file.write(buf.getvalue().encode('utf-8'))
+
 
     def save_pid_list_sample(self, chunk_size=500, **list_objects_kwargs):
         """Get list of all PIDs in the DB fixture.
