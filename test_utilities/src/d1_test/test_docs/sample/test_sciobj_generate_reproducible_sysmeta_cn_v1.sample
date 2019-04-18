@@ -6,40 +6,50 @@
   <size>278</size>
   <checksum algorithm="SHA-1">1d8fdefc38a1ed81dae4f45356b2ff328fab3f55</checksum>
   <submitter>subj_te</submitter>
-  <rightsHolder>subj_xn</rightsHolder>
+  <rightsHolder>subj_po</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>subj_de</subject>
-      <subject>subj_ed</subject>
-      <subject>subj_ek</subject>
-      <subject>subj_mq</subject>
-      <subject>subj_nv</subject>
-      <subject>subj_tv</subject>
-      <subject>subj_vp</subject>
-      <subject>subj_wo</subject>
-      <subject>subj_xe</subject>
+      <subject>subj_deev</subject>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="1" replicationAllowed="true">
-    <preferredMemberNode>mn_ck</preferredMemberNode>
-    <blockedMemberNode>mn_jv</blockedMemberNode>
-    <blockedMemberNode>mn_u</blockedMemberNode>
-    <blockedMemberNode>mn_xj</blockedMemberNode>
+  <replicationPolicy numberReplicas="4" replicationAllowed="true">
+    <preferredMemberNode>mn_be</preferredMemberNode>
+    <preferredMemberNode>mn_c</preferredMemberNode>
+    <preferredMemberNode>mn_k</preferredMemberNode>
+    <preferredMemberNode>mn_kd</preferredMemberNode>
+    <blockedMemberNode>mn_es</blockedMemberNode>
+    <blockedMemberNode>mn_nt</blockedMemberNode>
+    <blockedMemberNode>mn_rh</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2064-04-09T07:11:09Z</dateUploaded>
   <dateSysMetadataModified>2064-04-19T07:11:09Z</dateSysMetadataModified>
-  <originMemberNode>mn_py</originMemberNode>
-  <authoritativeMemberNode>mn_y</authoritativeMemberNode>
+  <originMemberNode>mn_n</originMemberNode>
+  <authoritativeMemberNode>mn_rg</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2014-03-24T12:20:33Z</replicaVerified>
+    <replicaMemberNode>mn_n</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>1977-12-28T08:23:47Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_wn</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2034-07-18T00:29:57Z</replicaVerified>
+    <replicaMemberNode>mn_jv</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1995-06-13T10:51:50Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_xj</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2032-07-22T17:33:53Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_kl</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2033-10-01T07:42:51Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_py</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2045-12-17T23:29:11Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>

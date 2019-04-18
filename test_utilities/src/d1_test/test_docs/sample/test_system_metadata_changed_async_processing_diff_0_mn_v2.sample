@@ -6,147 +6,88 @@
     <size>308</size>
     <checksum algorithm="SHA-1">b68963db1dce90b3696220fa72c565d2bb5779e2</checksum>
     <submitter>subj_ag</submitter>
-    <rightsHolder>subj_cc</rightsHolder>
+    <rightsHolder>subj_c</rightsHolder>
     <accessPolicy>
       <allow>
 -       <subject>subj1</subject>
 ?                    ^
 
-+       <subject>subj_aw</subject>
-?                    ^^^
++       <subject>subj_qyk</subject>
+?                    ^^^^
 
 -       <permission>read</permission>
 -     </allow>
 -     <allow>
 -       <subject>subj2</subject>
-?                    ^
-
-+       <subject>subj_bx</subject>
-?                    ^^^
-
 -       <subject>subj3</subject>
-?                    ^
-
-+       <subject>subj_ot</subject>
-?                    ^^^
-
 -       <subject>subj4</subject>
-        <permission>write</permission>
-      </allow>
-      <allow>
+-       <permission>write</permission>
+-     </allow>
+-     <allow>
 -       <subject>subj10</subject>
 -       <subject>subj11</subject>
 -       <subject>subj12</subject>
 -       <subject>subj5</subject>
-?                    ^
-
-+       <subject>subj_az</subject>
-?                    ^^^
-
-+       <subject>subj_bj_group</subject>
 -       <subject>subj6</subject>
-?                    ^
-
-+       <subject>subj_fi</subject>
-?                    ^^^
-
 -       <subject>subj7</subject>
-?                    ^
-
-+       <subject>subj_nu</subject>
-?                    ^^^
-
 -       <subject>subj8</subject>
-?                    ^
-
-+       <subject>subj_pi</subject>
-?                    ^^^
-
 -       <subject>subj9</subject>
         <permission>changePermission</permission>
       </allow>
     </accessPolicy>
--   <replicationPolicy numberReplicas="8" replicationAllowed="true">
-?                                      ^
+-   <replicationPolicy numberReplicas="0" replicationAllowed="false">
+?                                      ^                      ^^^^
 
-+   <replicationPolicy numberReplicas="3" replicationAllowed="true">
-?                                      ^
++   <replicationPolicy numberReplicas="8" replicationAllowed="true">
+?                                      ^                      ^^^
 
--     <preferredMemberNode>mn_d</preferredMemberNode>
-+     <preferredMemberNode>mn_dw</preferredMemberNode>
-?                              +
+-     <preferredMemberNode>mn_x</preferredMemberNode>
+?                             ^
 
-+     <blockedMemberNode>mn_ui</blockedMemberNode>
--     <preferredMemberNode>mn_n</preferredMemberNode>
--     <preferredMemberNode>mn_qy</preferredMemberNode>
--     <blockedMemberNode>mn_op</blockedMemberNode>
-?                           ^^
++     <preferredMemberNode>mn_w</preferredMemberNode>
+?                             ^
 
-+     <blockedMemberNode>mn_v</blockedMemberNode>
-?                           ^
-
++     <preferredMemberNode>mn_z</preferredMemberNode>
++     <blockedMemberNode>mn_bx</blockedMemberNode>
++     <blockedMemberNode>mn_ot</blockedMemberNode>
++     <blockedMemberNode>mn_t</blockedMemberNode>
     </replicationPolicy>
     <archived>false</archived>
     <dateUploaded>2041-02-10T11:11:17Z</dateUploaded>
     <dateSysMetadataModified>2041-02-20T11:11:17Z</dateSysMetadataModified>
--   <originMemberNode>mn_w</originMemberNode>
+-   <originMemberNode>mn_ul</originMemberNode>
+?                        ^^
+
++   <originMemberNode>mn_a</originMemberNode>
 ?                        ^
 
-+   <originMemberNode>mn_q</originMemberNode>
-?                        ^
-
--   <authoritativeMemberNode>mn_z</authoritativeMemberNode>
-?                               ^
-
-+   <authoritativeMemberNode>mn_x</authoritativeMemberNode>
-?                               ^
-
-    <replica>
--     <replicaMemberNode>mn_tm</replicaMemberNode>
-?                           ^^
-
-+     <replicaMemberNode>mn_i</replicaMemberNode>
-?                           ^
-
--     <replicationStatus>failed</replicationStatus>
-?                        ^^^
-
-+     <replicationStatus>completed</replicationStatus>
-?                        ^^^^ ++
-
--     <replicaVerified>1972-09-29T20:53:22Z</replicaVerified>
-?                        ^^  ^ ^^ - --  ^^
-
-+     <replicaVerified>1993-05-16T03:34:15Z</replicaVerified>
-?                        ^^  ^ ^^    ^^^^^
-
-    </replica>
-    <replica>
--     <replicaMemberNode>mn_op</replicaMemberNode>
-?                           ^^
-
-+     <replicaMemberNode>mn_wj</replicaMemberNode>
-?                           ^^
-
--     <replicationStatus>completed</replicationStatus>
-?                        ^^^^^ ^
-
-+     <replicationStatus>queued</replicationStatus>
-?                        ^^ ^
-
--     <replicaVerified>2025-02-19T10:24:33Z</replicaVerified>
-?                      ^^^^  ^  ^ - --  ^^
-
-+     <replicaVerified>1998-08-12T04:44:51Z</replicaVerified>
-?                      ^^^^  ^  ^    ^^^^^
-
-    </replica>
+    <authoritativeMemberNode>mn_op</authoritativeMemberNode>
     <replica>
 -     <replicaMemberNode>mn_bx</replicaMemberNode>
 ?                           ^^
 
-+     <replicaMemberNode>mn_tg</replicaMemberNode>
++     <replicaMemberNode>mn_a</replicaMemberNode>
+?                           ^
+
+-     <replicationStatus>requested</replicationStatus>
+?                        ^^^^^^
+
++     <replicationStatus>invalidated</replicationStatus>
+?                        ^^^^^^^^
+
+-     <replicaVerified>2030-06-18T21:06:59Z</replicaVerified>
+?                         ^  ^  ---  ^^  ^
+
++     <replicaVerified>2039-01-27T11:43:58Z</replicaVerified>
+?                         ^  ^ +++   ^^  ^
+
+    </replica>
+    <replica>
+-     <replicaMemberNode>mn_aw</replicaMemberNode>
 ?                           ^^
+
++     <replicaMemberNode>mn_f</replicaMemberNode>
+?                           ^
 
 -     <replicationStatus>requested</replicationStatus>
 ?                        ^ ----
@@ -154,36 +95,18 @@
 +     <replicationStatus>completed</replicationStatus>
 ?                        ^^^^^
 
--     <replicaVerified>2030-06-18T21:06:59Z</replicaVerified>
-?                         -  ^ ^^ ^  ^^^^^
+-     <replicaVerified>2049-08-19T23:53:00Z</replicaVerified>
+?                         ^   ^ ^^^ ^^^^^^
 
-+     <replicaVerified>2023-09-04T05:31:14Z</replicaVerified>
-?                        +   ^ ^^ ^^^^  ^^
-
-    </replica>
-    <replica>
--     <replicaMemberNode>mn_f</replicaMemberNode>
-?                           ^
-
-+     <replicaMemberNode>mn_uy</replicaMemberNode>
-?                           ^^
-
--     <replicationStatus>completed</replicationStatus>
-?                        ^^^^^ ^
-
-+     <replicationStatus>queued</replicationStatus>
-?                        ^^ ^
-
--     <replicaVerified>2047-04-27T18:41:31Z</replicaVerified>
-?                        ^   ^  ^  ^ ^^ ^
-
-+     <replicaVerified>2057-08-25T17:53:51Z</replicaVerified>
-?                        ^   ^  ^  ^ ^^ ^
++     <replicaVerified>2047-04-27T18:41:31Z</replicaVerified>
+?                         ^  ++++++ ^^ ^ ^
 
     </replica>
     <seriesId>SID_lcjnhzxmwdwg</seriesId>
-    <mediaType name="media_type_zt">
-      <property name="prop_vouinffqudxq">bjccwzgksodw</property>
+    <mediaType name="media_type_pa">
+      <property name="prop_ircauwqfofpq">jzfiywwihpkt</property>
+      <property name="prop_xqwumuycupwj">sodwdvouinff</property>
+      <property name="prop_aztwpbjccwzg">wpopirxbfiyh</property>
     </mediaType>
--   <fileName>file_uycupwjzycjz</fileName>
+-   <fileName>file_jjqeerjcuzut</fileName>
   </ns1:systemMetadata>

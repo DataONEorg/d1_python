@@ -32,15 +32,24 @@ sysmeta: <?xml version="1.0" ?>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_b</blockedMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+  </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2388-08-28T00:00:00</dateUploaded>
   <dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_eb</originMemberNode>
-  <authoritativeMemberNode>mn_o</authoritativeMemberNode>
+  <originMemberNode>mn_ti</originMemberNode>
+  <authoritativeMemberNode>mn_bb</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicaMemberNode>mn_gi</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>1997-10-24T22:20:37Z</replicaVerified>
+    <replicaVerified>2010-05-24T05:05:24Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_v</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2025-08-10T17:52:59Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_f</replicaMemberNode>
@@ -48,26 +57,22 @@ sysmeta: <?xml version="1.0" ?>
     <replicaVerified>2028-09-24T13:08:03Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_vj</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2036-03-05T11:53:10Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_bb</replicaMemberNode>
+    <replicaMemberNode>mn_xf</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2043-06-10T13:08:29Z</replicaVerified>
+    <replicaVerified>2036-10-02T00:41:59Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_lt</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
     <replicaVerified>2058-11-17T13:22:33Z</replicaVerified>
   </replica>
-  <mediaType name="media_type_iz">
-    <property name="prop_ddjfefvbjmoz">eeuzolcbrehz</property>
-    <property name="prop_iegijihihhvh">mqwifapyihfz</property>
-    <property name="prop_mssjwtyifpcq">uvhgqxahgqyt</property>
+  <mediaType name="media_type_fa">
+    <property name="prop_vbjmozluvhgq">brehzzgddjfe</property>
+    <property name="prop_fpcqdbmpcrdd">hgqytzwmmssj</property>
+    <property name="prop_ihhvhleeuzol">yihfzliegiji</property>
+    <property name="prop_nxvudjnpumsd">zorcjzlvzzww</property>
   </mediaType>
-  <fileName>file_bmpcrddgzorc</fileName>
+  <fileName>file_oqaqgrmlfher</fileName>
 </ns1:systemMetadata>
 create_event: <?xml version="1.0" ?>
 <ns1:log count="1" start="0" total="1244" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">

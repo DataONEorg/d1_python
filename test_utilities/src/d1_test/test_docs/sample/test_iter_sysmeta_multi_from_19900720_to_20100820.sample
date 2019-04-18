@@ -6,40 +6,74 @@
   <size>259</size>
   <checksum algorithm="SHA-1">a631227eff1d502c9a4498fb47daeede022692b5</checksum>
   <submitter>subj_o</submitter>
-  <rightsHolder>subj_t</rightsHolder>
+  <rightsHolder>subj_m_group</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>subj_asqhx</subject>
+      <subject>subj_ekam</subject>
+      <subject>subj_r</subject>
+      <subject>subj_xgknh</subject>
+      <subject>verifiedUser</subject>
+      <permission>write</permission>
+    </allow>
+    <allow>
+      <subject>public</subject>
+      <subject>subj_b_group</subject>
+      <subject>subj_jg</subject>
+      <subject>subj_kj</subject>
+      <subject>subj_qrz</subject>
+      <subject>subj_rg</subject>
+      <subject>subj_tn</subject>
+      <subject>subj_vgrbd</subject>
+      <permission>changePermission</permission>
+    </allow>
+  </accessPolicy>
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_o</preferredMemberNode>
-    <preferredMemberNode>mn_t</preferredMemberNode>
-    <preferredMemberNode>mn_z</preferredMemberNode>
+    <preferredMemberNode>mn_f</preferredMemberNode>
+    <preferredMemberNode>mn_iu</preferredMemberNode>
+    <blockedMemberNode>mn_s</blockedMemberNode>
+    <blockedMemberNode>mn_x</blockedMemberNode>
+    <blockedMemberNode>mn_y</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2007-05-10T14:08:58Z</dateUploaded>
   <dateSysMetadataModified>2007-05-20T14:08:58Z</dateSysMetadataModified>
-  <originMemberNode>mn_cp</originMemberNode>
-  <authoritativeMemberNode>mn_eh</authoritativeMemberNode>
+  <originMemberNode>mn_s</originMemberNode>
+  <authoritativeMemberNode>mn_f</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_h</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>1972-08-30T19:24:16Z</replicaVerified>
+    <replicaMemberNode>mn_wn</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>1974-03-11T04:42:24Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_s</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>1983-05-21T11:05:30Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_a</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2033-10-28T14:06:44Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_yz</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2039-03-09T11:13:17Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_x</replicaMemberNode>
-    <replicationStatus>completed</replicationStatus>
-    <replicaVerified>2021-01-29T19:45:28Z</replicaVerified>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2043-12-13T08:20:03Z</replicaVerified>
   </replica>
-  <replica>
-    <replicaMemberNode>mn_k</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
-    <replicaVerified>2068-04-29T04:10:06Z</replicaVerified>
-  </replica>
-  <seriesId>SID_knhmzilszxgr</seriesId>
-  <mediaType name="media_type_qr">
-    <property name="prop_lyzowhfxuzrx">fwhamunfszpe</property>
-    <property name="prop_fcshxqshyaes">jttxvluznjiu</property>
-    <property name="prop_jqvgrbdzfmgh">ukemjhyergfr</property>
-    <property name="prop_bcqtaejgyfas">xhtnimxtwwvz</property>
+  <seriesId>SID_cjnojuhikkkh</seriesId>
+  <mediaType name="media_type_np">
+    <property name="prop_izgloegaiysj">cavpwxotcrbm</property>
+    <property name="prop_mqddxibbsahn">jdjstomekpls</property>
+    <property name="prop_gwxcwysirjpy">qidkzewfmrqf</property>
+    <property name="prop_ahpcsizpafby">xlaapmklzuhc</property>
+    <property name="prop_kwvftzistlyv">zxfkhswdpywx</property>
   </mediaType>
-  <fileName>file_pwnjbdbcjcjn</fileName>
+  <fileName>file_jhrhntcgljaa</fileName>
 </ns1:systemMetadata>
 <?xml version="1.0" ?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
@@ -49,27 +83,42 @@
   <size>254</size>
   <checksum algorithm="SHA-1">83c44b509ad842b77d48cb3e58c84c89a40991e5</checksum>
   <submitter>subj_wa</submitter>
-  <rightsHolder>subj_ro</rightsHolder>
-  <accessPolicy>
-    <allow>
-      <subject>subj_ba</subject>
-      <subject>subj_eb</subject>
-      <subject>subj_yw</subject>
-      <permission>changePermission</permission>
-    </allow>
-  </accessPolicy>
+  <rightsHolder>subj_fw</rightsHolder>
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_vq</preferredMemberNode>
-    <blockedMemberNode>mn_gs</blockedMemberNode>
+    <preferredMemberNode>mn_b</preferredMemberNode>
+    <preferredMemberNode>mn_ys</preferredMemberNode>
+    <blockedMemberNode>mn_ba</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2002-12-09T18:16:14Z</dateUploaded>
   <dateSysMetadataModified>2002-12-19T18:16:14Z</dateSysMetadataModified>
-  <originMemberNode>mn_c</originMemberNode>
-  <authoritativeMemberNode>mn_n</authoritativeMemberNode>
-  <mediaType name="media_type_sn">
-    <property name="prop_kvayiuheivfz">eusgezvzlzme</property>
-    <property name="prop_uqryqrqgzzdj">mquuqgpiffmr</property>
-  </mediaType>
-  <fileName>file_zjfnjlisblhp</fileName>
+  <originMemberNode>mn_f</originMemberNode>
+  <authoritativeMemberNode>mn_j</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_vr</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1975-10-29T03:28:05Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_c</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2010-08-24T03:47:39Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_z</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2048-02-06T19:26:27Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_gs</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2058-05-23T04:14:19Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_oe</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>2066-10-11T18:44:30Z</replicaVerified>
+  </replica>
+  <seriesId>SID_kvayiuheivfz</seriesId>
+  <fileName>file_quuqgpiffmry</fileName>
 </ns1:systemMetadata>

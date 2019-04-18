@@ -1,0 +1,312 @@
+[
+  {
+    "permissions": {
+      "subj_fa": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_it": [
+        "read"
+      ],
+      "subj_lb": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_os_group": [
+        "read",
+        "write"
+      ],
+      "subj_pl": [
+        "read",
+        "write"
+      ],
+      "subj_pm": [
+        "read"
+      ],
+      "subj_qv": [
+        "read",
+        "write"
+      ],
+      "subj_ui": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_ur": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_ur_group": [
+        "read",
+        "write"
+      ],
+      "subj_xa": [
+        "read",
+        "write"
+      ],
+      "subj_xo": [
+        "read",
+        "write"
+      ],
+      "subj_yg": [
+        "read",
+        "write"
+      ],
+      "subj_yu": [
+        "read",
+        "write",
+        "changePermission"
+      ]
+    }
+  },
+  {
+    "permissions": {
+      "subj_aj_group": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_ao": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_bd": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_fm": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_g": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_hw": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_ju": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_kd": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_nf": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_rg": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_tx": [
+        "read",
+        "write",
+        "changePermission"
+      ]
+    }
+  },
+  {
+    "permissions": {
+      "subj_ah": [
+        "read",
+        "write"
+      ],
+      "subj_f": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_gz": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_io_group": [
+        "read",
+        "write"
+      ],
+      "subj_mm": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_nc": [
+        "read",
+        "write"
+      ],
+      "subj_ov": [
+        "read",
+        "write"
+      ],
+      "subj_rl": [
+        "read",
+        "write"
+      ]
+    }
+  },
+  {
+    "permissions": {
+      "subj_a": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_bg": [
+        "read"
+      ],
+      "subj_cn": [
+        "read"
+      ],
+      "subj_cx": [
+        "read",
+        "write"
+      ],
+      "subj_fr": [
+        "read"
+      ],
+      "subj_jg": [
+        "read",
+        "write"
+      ],
+      "subj_jm": [
+        "read"
+      ],
+      "subj_kk": [
+        "read",
+        "write"
+      ],
+      "subj_my": [
+        "read",
+        "write"
+      ],
+      "subj_ni": [
+        "read",
+        "write"
+      ],
+      "subj_ry": [
+        "read"
+      ],
+      "subj_sb": [
+        "read"
+      ],
+      "subj_sr": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_st": [
+        "read"
+      ],
+      "subj_vr": [
+        "read"
+      ],
+      "subj_xe": [
+        "read",
+        "write"
+      ],
+      "subj_zj": [
+        "read",
+        "write"
+      ],
+      "subj_zn": [
+        "read"
+      ]
+    }
+  },
+  {
+    "permissions": {
+      "subj_au": [
+        "read",
+        "write"
+      ],
+      "subj_cd": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_dr": [
+        "read",
+        "write"
+      ],
+      "subj_hd": [
+        "read"
+      ],
+      "subj_ho": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_kx_group": [
+        "read",
+        "write"
+      ],
+      "subj_mb": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_no": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_oi": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_tz": [
+        "read",
+        "write"
+      ],
+      "subj_ue": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_uh": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_vb": [
+        "read"
+      ],
+      "subj_wn": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_xl": [
+        "read",
+        "write"
+      ],
+      "subj_xs": [
+        "read",
+        "write",
+        "changePermission"
+      ],
+      "subj_zr": [
+        "read",
+        "write",
+        "changePermission"
+      ]
+    }
+  }
+]

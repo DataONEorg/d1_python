@@ -4,7 +4,7 @@
     "Accept-Encoding": "gzip, deflate",
     "Charset": "utf-8",
     "Connection": "keep-alive",
-    "Content-Length": "2511",
+    "Content-Length": "2479",
     "Content-Type": "multipart/form-data; boundary=[BOUNDARY]",
     "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/"
   },

@@ -6,7 +6,7 @@
   <size>272</size>
   <checksum algorithm="SHA-1">9c5c8fc550c17a4f48a8542c0077f3252472e243</checksum>
   <submitter>subj_q</submitter>
-  <rightsHolder>subj_e</rightsHolder>
+  <rightsHolder>subj_r</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -31,16 +31,21 @@
     </allow>
   </accessPolicy>
   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_th</preferredMemberNode>
-    <blockedMemberNode>mn_f</blockedMemberNode>
-    <blockedMemberNode>mn_ge</blockedMemberNode>
-    <blockedMemberNode>mn_s</blockedMemberNode>
-    <blockedMemberNode>mn_v</blockedMemberNode>
+    <preferredMemberNode>mn_f</preferredMemberNode>
+    <preferredMemberNode>mn_ge</preferredMemberNode>
+    <preferredMemberNode>mn_s</preferredMemberNode>
+    <preferredMemberNode>mn_v</preferredMemberNode>
+    <blockedMemberNode>mn_g</blockedMemberNode>
   </replicationPolicy>
   <obsoletedBy>PID_gnrxcixhsfxi</obsoletedBy>
   <archived>false</archived>
   <dateUploaded>2013-08-10T05:54:39Z</dateUploaded>
   <dateSysMetadataModified>1955-05-15T00:00:00Z</dateSysMetadataModified>
-  <originMemberNode>mn_t</originMemberNode>
-  <authoritativeMemberNode>mn_e</authoritativeMemberNode>
+  <originMemberNode>mn_y</originMemberNode>
+  <authoritativeMemberNode>mn_a</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_dh</replicaMemberNode>
+    <replicationStatus>invalidated</replicationStatus>
+    <replicaVerified>1982-05-23T09:32:55Z</replicaVerified>
+  </replica>
 </ns1:systemMetadata>

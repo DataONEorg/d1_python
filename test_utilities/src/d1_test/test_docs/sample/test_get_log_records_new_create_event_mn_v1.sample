@@ -32,15 +32,24 @@ sysmeta: <?xml version="1.0" ?>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <blockedMemberNode>mn_b</blockedMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+  </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2388-08-28T00:00:00</dateUploaded>
   <dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_eb</originMemberNode>
-  <authoritativeMemberNode>mn_o</authoritativeMemberNode>
+  <originMemberNode>mn_ti</originMemberNode>
+  <authoritativeMemberNode>mn_bb</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_i</replicaMemberNode>
+    <replicaMemberNode>mn_gi</replicaMemberNode>
     <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>1997-10-24T22:20:37Z</replicaVerified>
+    <replicaVerified>2010-05-24T05:05:24Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_v</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2025-08-10T17:52:59Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_f</replicaMemberNode>
@@ -48,14 +57,9 @@ sysmeta: <?xml version="1.0" ?>
     <replicaVerified>2028-09-24T13:08:03Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_vj</replicaMemberNode>
-    <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2036-03-05T11:53:10Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_bb</replicaMemberNode>
+    <replicaMemberNode>mn_xf</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2043-06-10T13:08:29Z</replicaVerified>
+    <replicaVerified>2036-10-02T00:41:59Z</replicaVerified>
   </replica>
   <replica>
     <replicaMemberNode>mn_lt</replicaMemberNode>

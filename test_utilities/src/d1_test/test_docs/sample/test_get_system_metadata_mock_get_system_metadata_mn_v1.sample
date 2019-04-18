@@ -9,17 +9,51 @@
   <rightsHolder>subj_aa</rightsHolder>
   <accessPolicy>
     <allow>
+      <subject>subj_beh</subject>
+      <subject>subj_qdii_group</subject>
+      <subject>subj_vgdac</subject>
+      <permission>read</permission>
+    </allow>
+    <allow>
+      <subject>public</subject>
+      <subject>subj_brzub</subject>
+      <subject>subj_e</subject>
       <subject>subj_hm</subject>
-      <subject>subj_vf</subject>
+      <subject>subj_jnbhv</subject>
+      <subject>subj_yh_group</subject>
       <permission>write</permission>
     </allow>
+    <allow>
+      <subject>subj_bvdf</subject>
+      <subject>subj_jvfui</subject>
+      <subject>subj_la</subject>
+      <subject>subj_z</subject>
+      <permission>changePermission</permission>
+    </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="7" replicationAllowed="true">
-    <blockedMemberNode>mn_ov</blockedMemberNode>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_fw</preferredMemberNode>
+    <preferredMemberNode>mn_g</preferredMemberNode>
+    <preferredMemberNode>mn_r</preferredMemberNode>
+    <preferredMemberNode>mn_us</preferredMemberNode>
+    <blockedMemberNode>mn_gg</blockedMemberNode>
+    <blockedMemberNode>mn_pl</blockedMemberNode>
+    <blockedMemberNode>mn_wi</blockedMemberNode>
+    <blockedMemberNode>mn_x</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2030-04-27T11:20:34Z</dateUploaded>
   <dateSysMetadataModified>2030-05-07T11:20:34Z</dateSysMetadataModified>
-  <originMemberNode>mn_h</originMemberNode>
-  <authoritativeMemberNode>mn_i</authoritativeMemberNode>
+  <originMemberNode>mn_nn</originMemberNode>
+  <authoritativeMemberNode>mn_ji</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_fa</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>1992-03-04T10:51:20Z</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>mn_sj</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2048-04-02T08:26:26Z</replicaVerified>
+  </replica>
 </ns1:systemMetadata>

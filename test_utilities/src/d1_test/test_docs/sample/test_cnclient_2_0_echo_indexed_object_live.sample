@@ -1,16 +1,12 @@
 VALID-UTF-8-BYTES:<?xml version="1.0" encoding="utf-8"?>
-<add><doc><field name="id">PID_sfvqjdlkljbn</field><field name="seriesId">SID_subnqnteyhgc</field><field
-name="fileName">file_kdsikxjvcqfu</field><field name="mediaType">media_type_hq</field><field
-name="mediaTypeProperty">prop_rvqnvdldjeue qdammvxuoekm</field><field name="formatId">netCDF-4</field><field
-name="formatType">DATA</field><field name="size">309</field><field
+<add><doc><field name="id">PID_sfvqjdlkljbn</field><field name="fileName">file_qnteyhgcexwl</field><field
+name="formatId">netCDF-4</field><field name="formatType">DATA</field><field name="size">309</field><field
 name="checksum">48c2f3f7b235590859c6b46b2ece7a0041bec92d</field><field name="submitter">subj_c</field><field
-name="checksumAlgorithm">SHA-1</field><field name="rightsHolder">subj_za</field><field
-name="replicationAllowed">false</field><field name="numberReplicas">0</field><field
-name="preferredReplicationMN">mn_fq</field><field name="preferredReplicationMN">mn_w</field><field
-name="blockedReplicationMN">mn_fh</field><field name="blockedReplicationMN">mn_o</field><field
-name="blockedReplicationMN">mn_w</field><field name="dateUploaded">2067-02-06T23:04:11.000Z</field><field
-name="dateModified">2067-02-16T23:04:11.000Z</field><field name="datasource">mn_i</field><field
-name="authoritativeMN">mn_na</field><field name="changePermission">subj_cr</field><field
-name="changePermission">subj_ri</field><field name="changePermission">subj_sc</field><field
-name="changePermission">subj_sj</field><field
+name="checksumAlgorithm">SHA-1</field><field name="rightsHolder">subj_h</field><field name="replicationAllowed">true</field><field
+name="numberReplicas">5</field><field name="preferredReplicationMN">mn_w</field><field
+name="blockedReplicationMN">mn_d</field><field name="dateUploaded">2067-02-06T23:04:11.000Z</field><field
+name="dateModified">2067-02-16T23:04:11.000Z</field><field name="datasource">mn_ac</field><field
+name="authoritativeMN">mn_gr</field><field name="readPermission">subj_fqr</field><field
+name="readPermission">subj_jizlr</field><field name="readPermission">subj_jvunv</field><field
+name="readPermission">subj_ox</field><field name="readPermission">subj_scf</field><field
 name="dataUrl">https://cn.dataone.org/cn/v2/resolve/PID_sfvqjdlkljbn</field></doc></add>

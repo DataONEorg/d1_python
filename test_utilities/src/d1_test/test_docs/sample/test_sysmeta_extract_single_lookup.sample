@@ -1,0 +1,17 @@
+[
+  {
+    "formatid": "video/mp4"
+  },
+  {
+    "formatid": "application/x-gzip"
+  },
+  {
+    "formatid": "application/SAS"
+  },
+  {
+    "formatid": "text/n3"
+  },
+  {
+    "formatid": "application/x-tar"
+  }
+]

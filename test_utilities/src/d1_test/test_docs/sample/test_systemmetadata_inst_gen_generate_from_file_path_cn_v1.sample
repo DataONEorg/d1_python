@@ -6,52 +6,39 @@
   <size>3012</size>
   <checksum algorithm="SHA-1">765e797b097d17da3cd5e8ccfe33c004303fb7f5</checksum>
   <submitter>subj_p</submitter>
-  <rightsHolder>subj_vc</rightsHolder>
+  <rightsHolder>subj_o</rightsHolder>
   <accessPolicy>
     <allow>
-      <subject>subj_fm</subject>
-      <subject>subj_il</subject>
-      <subject>subj_wo</subject>
-      <permission>read</permission>
-    </allow>
-    <allow>
-      <subject>subj_bs</subject>
-      <subject>subj_dk_group</subject>
-      <subject>subj_fi_group</subject>
-      <subject>subj_fl</subject>
-      <subject>subj_xb</subject>
+      <subject>authenticatedUser</subject>
+      <subject>subj_aay</subject>
+      <subject>subj_aso</subject>
+      <subject>subj_h</subject>
+      <subject>subj_iypxb</subject>
+      <subject>subj_jlryf</subject>
+      <subject>subj_ncevt</subject>
+      <subject>subj_rnfm</subject>
+      <subject>subj_xsiyp</subject>
+      <subject>subj_y</subject>
       <permission>write</permission>
     </allow>
-    <allow>
-      <subject>subj_jz</subject>
-      <subject>subj_lr</subject>
-      <subject>subj_ra_group</subject>
-      <subject>subj_yw</subject>
-      <permission>changePermission</permission>
-    </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
-    <preferredMemberNode>mn_e</preferredMemberNode>
-    <preferredMemberNode>mn_h</preferredMemberNode>
-    <preferredMemberNode>mn_ky</preferredMemberNode>
-    <preferredMemberNode>mn_p</preferredMemberNode>
-    <blockedMemberNode>mn_bj</blockedMemberNode>
-    <blockedMemberNode>mn_iv</blockedMemberNode>
-    <blockedMemberNode>mn_xp</blockedMemberNode>
+  <replicationPolicy numberReplicas="5" replicationAllowed="true">
+    <preferredMemberNode>mn_sv</preferredMemberNode>
+    <preferredMemberNode>mn_xp</preferredMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>1999-09-25T23:10:12Z</dateUploaded>
   <dateSysMetadataModified>1999-10-05T23:10:12Z</dateSysMetadataModified>
-  <originMemberNode>mn_lq</originMemberNode>
-  <authoritativeMemberNode>mn_ld</authoritativeMemberNode>
+  <originMemberNode>mn_v</originMemberNode>
+  <authoritativeMemberNode>mn_lq</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_mw</replicaMemberNode>
+    <replicaMemberNode>mn_gr</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
-    <replicaVerified>1989-06-18T18:19:43Z</replicaVerified>
+    <replicaVerified>1991-07-10T07:05:39Z</replicaVerified>
   </replica>
   <replica>
-    <replicaMemberNode>mn_go</replicaMemberNode>
+    <replicaMemberNode>mn_di</replicaMemberNode>
     <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2014-02-10T07:45:40Z</replicaVerified>
+    <replicaVerified>2009-06-06T22:05:32Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>
