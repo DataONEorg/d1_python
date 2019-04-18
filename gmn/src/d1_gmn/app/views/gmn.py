@@ -16,10 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Views for vendor specific extensions for GMN."""
-
+import d1_gmn.app.sysmeta_extract
 import d1_gmn.app.util
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.util
+import d1_gmn.app.sysmeta
 
 import d1_common
 import d1_common.const
@@ -27,29 +28,6 @@ import d1_common.types.exceptions
 import d1_common.util
 
 import django.http
-
-SYSMETA_TO_MODEL_LIST = [
-    ('identifier', 'pid__did'),
-    ('seriesId', 'pid__chainmember_pid__chain__sid__did'),
-    ('obsoletes', 'obsoletes__did'),
-    ('obsoletedBy', 'obsoleted_by__did'),
-    ('size', 'size'),
-    ('checksum', 'checksum'),
-    ('checksumAlgorithm', 'checksum_algorithm__checksum_algorithm'),
-    ('serialVersion', 'serial_version'),
-    ('formatId', 'format__format'),
-    ('submitter', 'submitter__subject'),
-    ('rightsHolder', 'rights_holder__subject'),
-    ('archived', 'is_archived'),
-    ('dateUploaded', 'uploaded_timestamp'),
-    ('dateSysMetadataModified', 'modified_timestamp'),
-    ('originMemberNode', 'origin_member_node__urn'),
-    ('authoritativeMemberNode', 'authoritative_member_node__urn'),
-    ('mediaType', 'mediatype__name'),
-    ('fileName', 'filename'),
-]
-
-SYSMETA_TO_MODEL_DICT = dict(SYSMETA_TO_MODEL_LIST)
 
 
 @d1_gmn.app.views.decorators.list_objects_access
@@ -63,23 +41,17 @@ def get_object_list_json(request):
 
     """
     # TODO: Add to documentation
-    if 'f' not in request.GET:
-        field_list, lookup_list = list(zip(*SYSMETA_TO_MODEL_LIST))
+    if "f" in request.GET:
+        field_list = request.GET.getlist("f")
     else:
-        try:
-            field_list, lookup_list = list(
-                zip(*[(f, SYSMETA_TO_MODEL_DICT[f]) for f in request.GET.getlist('f')])
-            )
-        except KeyError as e:
-            raise d1_common.types.exceptions.InvalidRequest(
-                0, 'Unknown field "{}"'.format(e.args[0])
-            )
+        field_list = None
 
-    result_dict = d1_gmn.app.views.util.query_object_list(request, 'object_list_json')
-
-    result_dict['fields'] = field_list
-    result_dict['objects'] = list(result_dict['query'].values_list(*lookup_list))
-    del result_dict['query']
+    result_dict = d1_gmn.app.views.util.query_object_list(request, "object_list_json")
+    result_dict["fields"] = field_list
+    result_dict["objects"] = d1_gmn.app.sysmeta_extract.extract_values_query(
+        result_dict["query"], field_list
+    )
+    del result_dict["query"]
 
     return django.http.HttpResponse(
         d1_common.util.serialize_to_normalized_pretty_json(result_dict),
@@ -90,7 +62,7 @@ def get_object_list_json(request):
 def echo_session(request):
     return django.http.HttpResponse(
         d1_common.util.serialize_to_normalized_pretty_json(
-            {'subjects': sorted(request.all_subjects_set)}
+            {"subjects": sorted(request.all_subjects_set)}
         ),
         d1_common.const.CONTENT_TYPE_JSON,
     )
