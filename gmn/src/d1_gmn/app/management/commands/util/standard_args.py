@@ -26,9 +26,9 @@ DEFAULT_MAX_CONCURRENT_TASK_COUNT = 20
 DEFAULT_RETRY_COUNT = 3
 
 
-def add_arguments(parser, docstr, add_base_url=True):
+def add_arguments(parser, doc_str, add_base_url=True):
     """Add standard arguments for DataONE utilities to a command line parser."""
-    parser.description = __doc__
+    parser.description = doc_str
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
