@@ -24,12 +24,20 @@ import random
 import re
 import string
 
+import d1_common.const
+
 import d1_test.instance_generator.unicode_names
 import d1_test.instance_generator.words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
 UNICODE_CHARACTERS = ''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES)
 UNICODE_CHARACTERS_NO_WHITESPACE = re.sub(r'\s', '', UNICODE_CHARACTERS)
+
+SYMBOLIC_SUBJECT_LIST = [
+    d1_common.const.SUBJECT_PUBLIC,
+    d1_common.const.SUBJECT_VERIFIED,
+    d1_common.const.SUBJECT_AUTHENTICATED,
+]
 
 # Seed the PRNG one time, when this module is first imported. This instance is
 # shared between all importing modules.
@@ -44,10 +52,27 @@ def random_cn(min_len=1, max_len=1):
     return 'cn_{}'.format(random_lower_ascii(min_len, max_len))
 
 
-def random_subj(min_len=1, max_len=2, fixed_len=None):
+def random_subj(min_len=1, max_len=2, fixed_len=None, group_chance=0.1):
     if fixed_len is not None:
         min_len = max_len = fixed_len
-    return 'subj_{}'.format(random_lower_ascii(min_len, max_len))
+    return 'subj_{}{}'.format(random_lower_ascii(min_len, max_len),
+                              '_group' if random.random() <= group_chance else '')
+
+
+def random_regular_or_symbolic_subj(min_len=1, max_len=2, fixed_len=None, symbolic_chance=0.1, group_chance=0.1):
+    """Return a random regular subject on the form ``subj_xx`` or a random symbolic subject.
+    """
+    if random.random() <= symbolic_chance:
+        return random_symbolic_subject()
+    else:
+        return random_subj(min_len, max_len, fixed_len, group_chance)
+
+
+def random_symbolic_subject():
+    """Return a random symbolic subject.
+    ``public``, ``verifiedUser`` or ``authenticatedUser``.
+    """
+    return random.choice(SYMBOLIC_SUBJECT_LIST)
 
 
 def random_lower_ascii(min_len=2, max_len=2):
