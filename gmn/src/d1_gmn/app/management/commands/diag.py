@@ -48,11 +48,12 @@ import django.core.management.base
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._events = d1_common.util.EventCounter()
 
         self._command_class_map = {
             "cleardb": ClearDb,
-            "exportobj": ExportObjectIdentifiers,
-            "updatesysmeta": UpdateSystemMetadata,
+            # "exportobj": ExportObjectIdentifiers,
+            # "updatesysmeta": UpdateSystemMetadata,
         }
 
         self._events = d1_common.util.EventCounter()
@@ -132,68 +133,8 @@ class ClearDb(object):
     def __init__(self):
         pass
 
-    # def add_arguments(self, parser):
-    #   parser.add_argument(
-    #     '--limit', type=int, default=0,
-    #     help='Limit number of objects exported. 0 (default) is no limit'
-    #   )
-    #   parser.add_argument('path', type=str, help='Path to export file')
-
     def run(self):
         d1_gmn.app.delete.delete_all_from_db()
-
-
-class ExportObjectIdentifiers(object):
-    """Export objects identifiers and related subjects strings to CSV.
-
-    The CSV file can be analyzed to determine if objects have the expected permissions.
-
-    Permissions are cumulative, so if a subject has, e.g., 'write' permissions on an
-    object, 'read' access is implied. So if multiple permissions have been given to a
-    subject for an object, only the highest permission is included in the list.
-
-    """
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--limit",
-            type=int,
-            default=0,
-            help="Limit number of objects exported. 0 (default) is no limit",
-        )
-        parser.add_argument("path", type=str, help="Path to export file")
-
-    def _handle(self, opt):
-        logging.info("Exported object list to: {}".format(opt["path"]))
-        with open(opt["path"], "w") as f:
-            for i, sciobj_model in enumerate(
-                d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
-            ):
-                f.write(
-                    "{}\t{}\n".format(
-                        sciobj_model.pid.did,
-                        ",".join(
-                            [
-                                "{}={}".format(
-                                    subj, d1_gmn.app.auth.level_to_action(level)
-                                )
-                                for (subj, level) in self.get_object_permissions(
-                                    sciobj_model
-                                )
-                            ]
-                        ),
-                    )
-                )
-                if i + 1 == opt["limit"]:
-                    break
-
-    def get_object_permissions(self, sciobj_model):
-        return [
-            (p.subject.subject, p.level)
-            for p in d1_gmn.app.models.Permission.objects.filter(
-                sciobj=sciobj_model
-            ).order_by("subject__subject")
-        ]
 
 
 class UpdateSystemMetadata(object):

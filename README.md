@@ -335,7 +335,12 @@ Build and publish the packages:
     $ rm -rf ~/d1_python_build
     $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
     $ cd ~/d1_python_build
-    $ python3 ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
+    
+    $ pyenv virtualenv <Version of Python used for testing on Travis> venv_build
+    $ pyenv activate venv_build
+    $ pip install wheel    
+
+    $ python ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
 
 ### Building the documentation
 

@@ -146,7 +146,6 @@ def pytest_configure(config):
         'update': config.getoption('--sample-update'),
     }
 
-
 # noinspection PyUnresolvedReferences
 def pytest_unconfigure(config):
     del sys.is_running_under_travis

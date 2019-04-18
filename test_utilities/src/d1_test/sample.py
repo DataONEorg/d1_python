@@ -486,11 +486,11 @@ def _diff_interactive(left_str, right_str, file_post_str, file_ext_str):
 
 def _review_interactive(got_str, exp_path, file_post_str, file_ext_str):
     _gui_diff_str_path(got_str, exp_path, file_post_str, file_ext_str)
-    # answer_str = ask_sample_file_update(exp_path)
-    # if answer_str == 'y':
-    #     save_path(got_str, exp_path)
-    # elif answer_str == 'f':
-    #     raise AssertionError('Failure triggered interactively')
+    answer_str = ask_sample_file_update(exp_path)
+    if answer_str == 'y':
+        save_path(got_str, exp_path)
+    elif answer_str == 'f':
+        raise AssertionError('Failure triggered interactively')
 
 
 @contextlib.contextmanager

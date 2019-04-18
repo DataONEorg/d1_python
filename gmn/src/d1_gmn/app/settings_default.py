@@ -81,7 +81,6 @@ CLIENT_CERT_PRIVATE_KEY_PATH = (
 )
 
 OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
-LOG_PATH = d1_common.utils.filesystem.abs_path('../gmn.log')
 
 NODE_REPLICATE = False
 
