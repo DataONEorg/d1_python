@@ -34,9 +34,7 @@ the node, the calls made through the connection are authenticated for the subjec
 
 """
 
-import argparse
-
-# noinspection PyProtectedMember
+import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.middleware.session_cert
 import d1_gmn.app.models
 
@@ -46,15 +44,16 @@ import d1_common.util
 import django.core.management.base
 
 
-# noinspection PyClassHasNoInit
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._events = d1_common.util.EventCounter()
 
     def add_arguments(self, parser):
-        parser.description = __doc__
-        parser.formatter_class = argparse.RawDescriptionHelpFormatter
+        d1_gmn.app.management.commands.util.standard_args.add_arguments(
+            parser, __doc__, add_base_url=False
+        )
         parser.add_argument("command", choices=["view", "whitelist"], help="Action")
         parser.add_argument(
             "cert_pem_path", help="Path to DataONE X.509 PEM certificate file"
