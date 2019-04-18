@@ -91,11 +91,15 @@ def random_subject_list_with_permission_labels(
     return subjects
 
 
-def random_subject_list(min_len=1, max_len=10, group_chance=0.1):
+def random_subject_list(min_len=1, max_len=10, fixed_len=None, symbolic_chance=0.1, group_chance=0.1):
+    """Return a list of random subjects.
+    Subjects are regular, on the form ``subj_xx``, group subjects on form
+    ``subj_xx_group`` or one of the ``public``, ``verifiedUser`` or
+    ``authenticatedUser`` symbolic subjects.
+    """
     return [
-        'subj_{}{}'.format(
-            d1_test.instance_generator.random_data.random_lower_ascii(),
-            '_group' if random.random() <= group_chance else '',
+        d1_test.instance_generator.random_data.random_regular_or_symbolic_subj(
+            min_len, max_len, fixed_len, symbolic_chance, group_chance
         )
         for _ in range(random.randint(min_len, max_len))
     ]
