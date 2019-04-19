@@ -113,6 +113,13 @@ class Session(object):
           (default: utf-8)
         :type charset: str
 
+        :param mmp_boundary:
+            By default, boundary strings used in Mime Multipart (MMP) documents are automatically
+            generated as required. If provided, this string will be used instead. This is typically required for creating reproducible test results and may be required by non-compliant MMP parsers. It is
+            also required for tests that pass MMP to the Responses library, as it checks for a hardcoded
+            boundary of
+        :type mmp_boundary: str
+
         :returns: None
 
         """
@@ -164,6 +171,9 @@ class Session(object):
             self._default_request_arg_dict["Authorization"] = "Bearer {}".format(
                 jwt_token
             )
+        # Override randomly generated MMP boundary string.
+        self._mmp_boundary_str = kwargs_dict.pop("mmp_boundary", None)
+
         self._session = self._create_requests_session()
 
     @property
@@ -280,8 +290,14 @@ class Session(object):
 
     def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
         url = self._prep_url(rest_path_list)
+
+        mmp_stream = requests_toolbelt.MultipartEncoder(
+            fields=fields,
+            boundary=(kwargs['headers'] or {}).pop(
+                "mmp_boundary", self._mmp_boundary_str
+            ),
+        )
         kwargs = self._prep_request_kwargs(kwargs)
-        mmp_stream = requests_toolbelt.MultipartEncoder(fields=fields)
         kwargs["data"] = mmp_stream
         kwargs["headers"].update(
             {
