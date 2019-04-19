@@ -401,7 +401,7 @@ def tricky_identifier_dict(request):
 # Settings
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def django_sciobj_store_setup(request):
     tmp_store_path = os.path.join(
         tempfile.gettempdir(),
@@ -442,24 +442,24 @@ def profile_sql(db):
 
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 @pytest.mark.django_db
 def django_db_setup(request, django_db_blocker):
-    """Set up DB fixture When running in parallel with xdist, this is called once for
+    """Set up DB fixture When running in parallel with xdist, this is called single_db_setup for
     each worker, causing a separate database to be set up for each worker."""
     global DO_FIXTURE_REFRESH
 
-    # once = posix_ipc.SharedMemory(name=None, flags=posix_ipc.O_CREAT)
-    once = posix_ipc.Semaphore(name=__name__ + '1', flags=posix_ipc.O_CREAT, initial_value=1)
+    single_db_setup = posix_ipc.Semaphore(name=__name__ + 'db_setup', flags=posix_ipc.O_CREAT, initial_value=1)
 
     with open('oo_{}.txt'.format(get_xdist_worker_id(request)), 'w', encoding='utf-8') as f:
-        f.write('1\n')
         logger.info('Setting up DB fixture')
 
         db_set_unique_db_name(request)
 
         with django_db_blocker.unblock():
-            f.write('2\n')
+            # Let one worker through here and block all the others until the database
+            # fixture is ready to be dupliced into the per-worker databases.
+            #
             # Regular multiprocessing.Lock() context manager did not work here. Also
             # tried creating the lock at module scope, and also directly calling
             # acquire() and release(). It's probably related to how the worker processes
@@ -468,7 +468,6 @@ def django_db_setup(request, django_db_blocker):
             with posix_ipc.Semaphore(
                 name=__name__ + 'db_refresh', flags=posix_ipc.O_CREAT, initial_value=1
             ):
-                f.write('3\n')
                 logger.warning(
                     'LOCK BEGIN {} {}'.format(
                         db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
@@ -476,12 +475,11 @@ def django_db_setup(request, django_db_blocker):
                 )
 
                 try:
-                    once.acquire(timeout=0)
+                    single_db_setup.acquire(timeout=0)
                 except posix_ipc.BusyError:
                     pass
                 else:
                     if DO_FIXTURE_REFRESH:
-                        f.write('4\n')
                         DO_FIXTURE_REFRESH = False
                         logger.info(
                             'Dropping and creating GMN template database from JSON fixture file'
@@ -489,13 +487,11 @@ def django_db_setup(request, django_db_blocker):
                         db_drop(TEMPLATE_DB_KEY)
 
                     if not db_exists(TEMPLATE_DB_KEY):
-                        f.write('5\n')
                         db_create_blank(TEMPLATE_DB_KEY)
                         db_migrate(TEMPLATE_DB_KEY)
                         db_populate_by_json(TEMPLATE_DB_KEY)
                         db_migrate(TEMPLATE_DB_KEY)
 
-                f.write('7\n')
                 logger.warning(
                     'LOCK END {} {}'.format(
                         db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
@@ -512,10 +508,8 @@ def django_db_setup(request, django_db_blocker):
             # django.db.connections[TEST_DB_KEY].commit()
 
             # print(django.conf.settings)
-            f.write('8\n')
 
             yield
-            f.write('9\n')
 
             db_drop(TEST_DB_KEY)
 

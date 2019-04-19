@@ -76,10 +76,11 @@ def main():
     repo = git.Repo(repo_path)
 
     specified_file_path_list = get_specified_file_path_list(args)
-    tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
-    format_path_list = sorted(
-        set(specified_file_path_list).intersection(tracked_path_list)
-    )
+    # tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
+    # format_path_list = sorted(
+    #     set(specified_file_path_list).intersection(tracked_path_list)
+    # )
+    format_path_list = specified_file_path_list
     for format_path in format_path_list:
         comment_unused_imports(args, format_path)
 

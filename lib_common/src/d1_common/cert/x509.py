@@ -140,6 +140,47 @@ def extract_subject_from_dn(cert_obj):
     )
 
 
+def create_d1_dn_subject(common_name_str):
+    """Create the DN Subject for certificate that will be used in a DataONE environment.
+
+    The DN is formatted into a DataONE subject, which is used in authentication,
+    authorization and event tracking.
+
+    Args:
+        common_name_str: str
+            DataONE uses simple DNs without physical location information, so only the
+            ``common_name_str`` (``CommonName``) needs to be specified.
+
+            For Member Node Client Side certificates or CSRs, ``common_name_str`` is the
+            ``node_id``, e.g., ``urn:node:ABCD`` for production, or
+            ``urn:node:mnTestABCD`` for the test environments.
+
+            For a local CA, something like ``localCA`` may be used.
+
+            For a locally trusted client side certificate, something like
+            ``localClient`` may be used.
+    """
+    return cryptography.x509.Name(
+        [
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "Root CA"
+            ),
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.COMMON_NAME, "ca.ca.com"
+            ),
+        ]
+    )
+
+
 def create_ca_subject():
     return cryptography.x509.Name(
         [

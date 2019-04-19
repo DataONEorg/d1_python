@@ -20,6 +20,7 @@
 """Test: Extract SciObj information from models."""
 import io
 
+import freezegun
 import responses
 
 import d1_gmn.app.sysmeta_extract
@@ -29,6 +30,7 @@ import d1_test.d1_test_case
 
 
 @d1_test.d1_test_case.reproducible_random_decorator('TestSciObjExtract')
+@freezegun.freeze_time('1917-7-17')
 class TestSciObjExtract(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v2):

@@ -140,7 +140,6 @@ def path_lock(path):
         flags=posix_ipc.O_CREAT,
         initial_value=1,
     ):
-        print('2' * 100)
         logger.debug('Acquired lock on path: {}'.format(path))
         yield
         logger.debug('Released lock on path: {}'.format(path))
