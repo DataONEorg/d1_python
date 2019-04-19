@@ -339,7 +339,7 @@ Build and publish the packages:
     $ pyenv virtualenv <Version of Python used for testing on Travis> venv_build
     $ pyenv activate venv_build
     $ pip install wheel    
-
+    
     $ python ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
 
 ### Building the documentation
