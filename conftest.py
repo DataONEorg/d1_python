@@ -145,7 +145,6 @@ def pytest_configure(config):
     sys.is_running_under_travis = 'TRAVIS' in os.environ
     sys.is_running_under_pytest = True
 
-
     d1_test.sample.options = {
         'ask': config.getoption('--sample-ask'),
         'review': config.getoption('--sample-review'),
@@ -451,67 +450,66 @@ def django_db_setup(request, django_db_blocker):
 
     single_db_setup = posix_ipc.Semaphore(name=__name__ + 'db_setup', flags=posix_ipc.O_CREAT, initial_value=1)
 
-    with open('oo_{}.txt'.format(get_xdist_worker_id(request)), 'w', encoding='utf-8') as f:
-        logger.info('Setting up DB fixture')
+    logger.info('Setting up DB fixture')
 
-        db_set_unique_db_name(request)
+    db_set_unique_db_name(request)
 
-        with django_db_blocker.unblock():
-            # Let one worker through here and block all the others until the database
-            # fixture is ready to be dupliced into the per-worker databases.
-            #
-            # Regular multiprocessing.Lock() context manager did not work here. Also
-            # tried creating the lock at module scope, and also directly calling
-            # acquire() and release(). It's probably related to how the worker processes
-            # relate to each other when launched by pytest-xdist as compared to what the
-            # multiprocessing module expects.
-            with posix_ipc.Semaphore(
-                name=__name__ + 'db_refresh', flags=posix_ipc.O_CREAT, initial_value=1
-            ):
-                logger.warning(
-                    'LOCK BEGIN {} {}'.format(
-                        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
-                    )
+    with django_db_blocker.unblock():
+        # Let one worker through here and block all the others until the database
+        # fixture is ready to be dupliced into the per-worker databases.
+        #
+        # Regular multiprocessing.Lock() context manager did not work here. Also
+        # tried creating the lock at module scope, and also directly calling
+        # acquire() and release(). It's probably related to how the worker processes
+        # relate to each other when launched by pytest-xdist as compared to what the
+        # multiprocessing module expects.
+        with posix_ipc.Semaphore(
+            name=__name__ + 'db_refresh', flags=posix_ipc.O_CREAT, initial_value=1
+        ):
+            logger.warning(
+                'LOCK BEGIN {} {}'.format(
+                    db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
                 )
+            )
 
-                try:
-                    single_db_setup.acquire(timeout=0)
-                except posix_ipc.BusyError:
-                    pass
-                else:
-                    if DO_FIXTURE_REFRESH:
-                        DO_FIXTURE_REFRESH = False
-                        logger.info(
-                            'Dropping and creating GMN template database from JSON fixture file'
-                        )
-                        db_drop(TEMPLATE_DB_KEY)
-
-                    if not db_exists(TEMPLATE_DB_KEY):
-                        db_create_blank(TEMPLATE_DB_KEY)
-                        db_migrate(TEMPLATE_DB_KEY)
-                        db_populate_by_json(TEMPLATE_DB_KEY)
-                        db_migrate(TEMPLATE_DB_KEY)
-
-                logger.warning(
-                    'LOCK END {} {}'.format(
-                        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+            try:
+                single_db_setup.acquire(timeout=0)
+            except posix_ipc.BusyError:
+                pass
+            else:
+                if DO_FIXTURE_REFRESH:
+                    DO_FIXTURE_REFRESH = False
+                    logger.info(
+                        'Dropping and creating GMN template database from JSON fixture file'
                     )
+                    db_drop(TEMPLATE_DB_KEY)
+
+                if not db_exists(TEMPLATE_DB_KEY):
+                    db_create_blank(TEMPLATE_DB_KEY)
+                    db_migrate(TEMPLATE_DB_KEY)
+                    db_populate_by_json(TEMPLATE_DB_KEY)
+                    db_migrate(TEMPLATE_DB_KEY)
+
+            logger.warning(
+                'LOCK END {} {}'.format(
+                    db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
                 )
+            )
 
-            db_drop(TEST_DB_KEY)
-            db_create_from_template()
-            # db_migrate(TEST_DB_KEY)
+        db_drop(TEST_DB_KEY)
+        db_create_from_template()
+        # db_migrate(TEST_DB_KEY)
 
-            # Haven't found out how to prevent transactions from being started. so
-            # closing the implicit transaction here so that template fixture remains
-            # available.
-            # django.db.connections[TEST_DB_KEY].commit()
+        # Haven't found out how to prevent transactions from being started. so
+        # closing the implicit transaction here so that template fixture remains
+        # available.
+        # django.db.connections[TEST_DB_KEY].commit()
 
-            # print(django.conf.settings)
+        # print(django.conf.settings)
 
-            yield
+        yield
 
-            db_drop(TEST_DB_KEY)
+        db_drop(TEST_DB_KEY)
 
 
 def db_get_name_by_key(db_key):

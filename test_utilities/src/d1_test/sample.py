@@ -23,6 +23,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import textwrap
 import traceback
@@ -134,15 +135,15 @@ def assert_equals(
 @contextlib.contextmanager
 def path_lock(path):
     path = str(path)
-    logger.debug('Waiting for lock on path: {}'.format(path))
+    logger.debug("Waiting for lock on path: {}".format(path))
     with posix_ipc.Semaphore(
-        name='/{}'.format(hashlib.md5(path.encode('utf-8')).hexdigest()),
+        name="/{}".format(hashlib.md5(path.encode("utf-8")).hexdigest()),
         flags=posix_ipc.O_CREAT,
         initial_value=1,
     ):
-        logger.debug('Acquired lock on path: {}'.format(path))
+        logger.debug("Acquired lock on path: {}".format(path))
         yield
-        logger.debug('Released lock on path: {}'.format(path))
+        logger.debug("Released lock on path: {}".format(path))
 
 
 @contextlib.contextmanager
@@ -164,7 +165,7 @@ def get_path(filename):
 def _get_sample_path(filename=None):
     """``filename==None``: Return path to sample directory."""
     p = os.path.join(
-        d1_common.utils.filesystem.abs_path('./test_docs/sample'), filename or ''
+        d1_common.utils.filesystem.abs_path("./test_docs/sample"), filename or ""
     )
     with path_lock(p):
         yield p
@@ -174,7 +175,7 @@ def _get_sample_path(filename=None):
 def _get_tidy_path(filename=None):
     """``filename==None``: Return path to sample tidy directory."""
     p = os.path.join(
-        d1_common.utils.filesystem.abs_path('./test_docs/sample_tidy'), filename or ''
+        d1_common.utils.filesystem.abs_path("./test_docs/sample_tidy"), filename or ""
     )
     with path_lock(p):
         yield p
@@ -434,6 +435,10 @@ def _get_sxs_diff_file(got_str, exp_path):
 
     """
     assert isinstance(got_str, str)
+    # Work around a bug in ``sdiff``, where it may not detect differences on the last
+    # line if the string does not end with LF.
+    if not got_str.endswith('\n'):
+        got_str += '\n'
     try:
         sdiff_proc = subprocess.Popen(
             [
@@ -479,7 +484,6 @@ def _gui_diff_str_path(got_str, exp_path, file_post_str, file_ext_str):
         got_f,
         exp_f,
     ):
-        # subprocess.call(['kdiff3', got_f.name, exp_f.name])
         d1_test.pycharm.diff(got_f.name, exp_f.name)
 
 
@@ -488,33 +492,32 @@ def _gui_diff_str_str(left_str, right_str, file_post_str, file_ext_str):
         left_f,
         right_f,
     ):
-        # subprocess.call(['kdiff3', left_f.name, right_f.name])
         d1_test.pycharm.diff(left_f.name, right_f.name)
 
 
 def _save_interactive(got_str, exp_path, file_post_str, file_ext_str):
     _gui_diff_str_path(got_str, exp_path, file_post_str, file_ext_str)
-    answer_str = ask_sample_file_update(exp_path)
-    if answer_str == "y":
+    response_str = ask_sample_file_update(exp_path)
+    if response_str == "y":
         save_path(got_str, exp_path)
-    elif answer_str == "f":
+    elif response_str == "f":
         raise AssertionError("Failure triggered interactively")
 
 
 def _diff_interactive(left_str, right_str, file_post_str, file_ext_str):
     _gui_diff_str_str(left_str, right_str, file_post_str, file_ext_str)
-    answer_str = ask_diff_ignore()
-    if answer_str == "f":
+    response_str = ask_diff_ignore()
+    if response_str == "f":
         raise AssertionError("Failure triggered interactively")
 
 
 def _review_interactive(got_str, exp_path, file_post_str, file_ext_str):
     _gui_diff_str_path(got_str, exp_path, file_post_str, file_ext_str)
-    answer_str = ask_sample_file_update(exp_path)
-    if answer_str == 'y':
+    response_str = ask_sample_file_update(exp_path)
+    if response_str == "y":
         save_path(got_str, exp_path)
-    elif answer_str == 'f':
-        raise AssertionError('Failure triggered interactively')
+    elif response_str == "f":
+        raise AssertionError("Failure triggered interactively")
 
 
 @contextlib.contextmanager
@@ -556,32 +559,47 @@ def save_compressed_db_fixture(filename):
 
 
 def ask_sample_file_update(sample_path):
-    answer_str = None
-    while answer_str not in ("", "y", "n", "f"):
-        answer_str = input_with_sigint_capture(
-            'Update sample file "{}"? Yes/No/Fail [Enter/n/f] '.format(
-                os.path.split(sample_path)[1]
-            )
-        )
-    return answer_str
+    return user_prompt(
+        'Update sample file "{}"? Yes/No/Fail [Enter/n/f]'.format(
+            os.path.split(sample_path)[1]
+        ),
+        set("n"),
+    )
 
 
 def ask_diff_ignore():
-    answer_str = None
-    while answer_str not in ("", "y", "f"):
-        answer_str = input_with_sigint_capture("Ignore difference? Yes/Fail [Enter/f] ")
-    return answer_str
+    return user_prompt("Ignore difference? Yes/Fail [Enter/f]")
 
 
-def input_with_sigint_capture(question_str):
-    """input() with SIGINT (Ctrl-C) capture and redirect to "Fail"."""
+def user_prompt(
+    question_str, response_set=None, ok_response_str="y", cancel_response_str="f"
+):
+    """``input()`` function that accesses the stdin and stdout file descriptors
+    directly. For prompting for user input under ``pytest`` ``--capture=sys`` and
+    ``--capture=no``. Does not work with ``--capture=fd``.
+    """
+    valid_response_set = (
+        (response_set or set()) | set(ok_response_str) | set(cancel_response_str)
+    )
+
+    def fd_input():
+        while True:
+            with os.fdopen(os.dup(1), "w") as stdout:
+                stdout.write("\n{}: ".format(question_str))
+
+            with os.fdopen(os.dup(2), "r") as stdin:
+                response_str = stdin.readline().lower().strip()
+
+            if response_str in valid_response_set:
+                return response_str
+
+            if response_str == "":
+                return ok_response_str
+
     try:
-        answer_str = input(question_str).lower()
+        return fd_input()
     except KeyboardInterrupt:
-        return "f"
-    if answer_str == "":
-        answer_str = "y"
-    return answer_str
+        return cancel_response_str
 
 
 # ==============================================================================

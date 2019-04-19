@@ -336,8 +336,12 @@ Build and publish the packages:
     $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
     $ cd ~/d1_python_build
     
-    $ pyenv virtualenv <Version of Python used for testing on Travis> venv_build
+    $ pyenv versions
+      * Pick a version that is close or the same as the version of Python used for testing on Travis
+    
+    $ pyenv virtualenv x.y.z venv_build
     $ pyenv activate venv_build
+    $ pip install --upgrade pip
     $ pip install wheel    
     
     $ python ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
