@@ -60,6 +60,7 @@ django.setup()
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
+import d1_gmn.app.sysmeta_extract
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
@@ -121,7 +122,6 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                     client, pid
                 )
                 sciobj_file = io.BytesIO(sciobj_bytes)
-                # recv_sysmeta_pyxb = client.getSystemMetadata(pid)
 
                 if not do_chain:
                     client.create(pid, sciobj_file, sysmeta_pyxb)
@@ -148,7 +148,9 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
             freeze_time.tick(delta=datetime.timedelta(days=1))
 
-            read_subj = d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
+            read_subj = (
+                d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
+            )
             with d1_gmn.tests.gmn_mock.set_auth_context(
                 active_subj_list=[read_subj],
                 trusted_subj_list=[read_subj],
@@ -163,7 +165,9 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 )
 
     def save_compressed_db_fixture(self):
-        fixture_file_path = 'db_fixture.json.bz2'
+        fixture_file_path = self.test_files.get_abs_test_file_path(
+            'json/db_fixture.json.bz2'
+        )
         logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
         buf = io.StringIO()
         django.core.management.call_command(
@@ -173,51 +177,24 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
             stdout=buf,
         )
         with bz2.BZ2File(
-            fixture_file_path, 'w', buffering=1024**2, compresslevel=9
+            fixture_file_path, 'w', buffering=1024 ** 2, compresslevel=9
         ) as bz2_file:
             bz2_file.write(buf.getvalue().encode('utf-8'))
 
-
-    def save_pid_list_sample(self, chunk_size=500, **list_objects_kwargs):
+    def save_pid_list_sample(self):
         """Get list of all PIDs in the DB fixture.
 
         These are for use in any tests that need to know which PIDs and SIDs are
         available in the DB.
 
         """
-        client = self.client_v2
-        with d1_gmn.tests.gmn_mock.disable_auth():
-            start_idx = 0
-            n_total = self.get_total_objects(client)
-            pid_list = []
-            sid_list = []
-            while start_idx < n_total:
-                object_list_pyxb = self.call_d1_client(
-                    client.listObjects,
-                    start=start_idx,
-                    count=chunk_size,
-                    **list_objects_kwargs
-                )
-                if not object_list_pyxb.objectInfo:
-                    break
-
-                for o in object_list_pyxb.objectInfo:
-                    pid = o.identifier.value()
-                    pid_list.append(pid)
-
-                    sysmeta_pyxb = self.call_d1_client(client.getSystemMetadata, pid)
-                    sid = getattr(sysmeta_pyxb, 'seriesId', None)
-                    if sid is not None:
-                        sid_list.append(sid.value())
-
-                start_idx += object_list_pyxb.count
-
-        self.sample.save(
-            self.sample.obj_to_pretty_str(pid_list)[1], 'db_fixture_pid.json'
-        )
-        self.sample.save(
-            self.sample.obj_to_pretty_str(sid_list)[1], 'db_fixture_sid.json'
-        )
+        for did in ['pid', 'sid']:
+            with open(
+                self.test_files.get_abs_test_file_path('json/db_fixture_{}.json'.format(did)),
+                'w',
+                encoding='utf-8',
+            ) as f:
+                d1_gmn.app.sysmeta_extract.extract_values(field_list=[did], out_stream=f)
 
 
 if __name__ == '__main__':
