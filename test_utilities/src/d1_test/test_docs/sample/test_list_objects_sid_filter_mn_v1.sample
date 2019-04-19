@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <ns1:objectList count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_zxdviufpzktc</identifier>
-    <formatId>image/png</formatId>
-    <checksum algorithm="SHA-1">c0216ea5791320d5713a23918a0c13483df5f34d</checksum>
-    <dateSysMetadataModified>1988-06-23T09:40:07Z</dateSysMetadataModified>
-    <size>247</size>
+    <identifier>PID_GMNFXT_vchqnhswfkww</identifier>
+    <formatId>application/vnd.ms-powerpoint</formatId>
+    <checksum algorithm="SHA-1">fb40bfc1085b289529de697552a60fb1787223db</checksum>
+    <dateSysMetadataModified>2002-04-07T00:00:00Z</dateSysMetadataModified>
+    <size>251</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_GMNFXT_qpwdahjjpfjb</identifier>
-    <formatId>video/quicktime</formatId>
-    <checksum algorithm="SHA-1">08299993b30a43a0b1081e473961501c6e17fba3</checksum>
-    <dateSysMetadataModified>2002-06-18T00:00:00Z</dateSysMetadataModified>
-    <size>255</size>
+    <identifier>PID_GMNFXT_giejqujkenbh</identifier>
+    <formatId>image/jpeg</formatId>
+    <checksum algorithm="SHA-1">996f2534094a1c93ea3c9e43d86a802b7fb23385</checksum>
+    <dateSysMetadataModified>2054-06-10T15:18:34Z</dateSysMetadataModified>
+    <size>231</size>
   </objectInfo>
 </ns1:objectList>

@@ -1,29 +1,29 @@
 PyXB type instance:
   <?xml version="1.0" ?>
-  <ns1:log count="1" start="0" total="9" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <ns1:log count="1" start="0" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <logEntry>
       <entryId>[ENTRY-ID]</entryId>
-      <identifier>PID_GMNFXT_bjxfvlyihnmy</identifier>
+      <identifier>PID_GMNFXT_dqriuebvskub</identifier>
       <ipAddress>127.0.0.1</ipAddress>
       <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
       <subject>trusted_subj</subject>
       <event>create</event>
-      <dateLogged>1979-01-14T06:52:58Z</dateLogged>
+      <dateLogged>1979-05-09T01:44:16Z</dateLogged>
       <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
     </logEntry>
   </ns1:log>
 
 PyXB type instance:
   <?xml version="1.0" ?>
-  <ns1:log count="1" start="8" total="9" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <ns1:log count="1" start="7" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <logEntry>
       <entryId>[ENTRY-ID]</entryId>
-      <identifier>PID_GMNFXT_xolbzvjczexa</identifier>
+      <identifier>PID_GMNFXT_nworcrosdvxq</identifier>
       <ipAddress>127.0.0.1</ipAddress>
       <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
       <subject>trusted_subj</subject>
-      <event>create</event>
-      <dateLogged>1979-12-26T09:40:00Z</dateLogged>
+      <event>update</event>
+      <dateLogged>1979-12-10T19:47:02Z</dateLogged>
       <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
     </logEntry>
   </ns1:log>

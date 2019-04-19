@@ -1,33 +1,33 @@
 <?xml version="1.0" ?>
-<ns1:log count="3" start="0" total="1243" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:log count="3" start="0" total="1236" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_ozzmphwkqwxl</identifier>
+    <identifier>PID_GMNFXT_ybfsemxjeeed</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>1970-02-05T09:24:20Z</dateLogged>
+    <dateLogged>1970-01-21T20:37:55Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_mdudtklncsai</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
-    <subject>trusted_subj</subject>
-    <event>update</event>
-    <dateLogged>1970-02-05T09:24:20Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_kgajbvyvldhh</identifier>
+    <identifier>PID_GMNFXT_ykuvizwjrtxh</identifier>
     <ipAddress>127.0.0.1</ipAddress>
     <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>1970-03-05T19:44:47Z</dateLogged>
+    <dateLogged>1970-02-23T22:04:14Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_GMNFXT_qqmgftdvngsa</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>1970-07-09T08:18:57Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

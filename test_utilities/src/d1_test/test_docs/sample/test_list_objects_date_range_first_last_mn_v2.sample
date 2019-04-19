@@ -2,11 +2,11 @@ PyXB type instance:
   <?xml version="1.0" ?>
   <ns1:objectList count="1" start="0" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
-      <identifier>PID_GMNFXT_kbiqnoekvqkx</identifier>
-      <formatId>audio/x-wav</formatId>
-      <checksum algorithm="SHA-1">dd4bf1eb6076d8c83237225f556e98bd978ca14b</checksum>
-      <dateSysMetadataModified>1980-04-03T16:58:31Z</dateSysMetadataModified>
-      <size>237</size>
+      <identifier>PID_GMNFXT_dursvfhuoeaw</identifier>
+      <formatId>http://www.w3.org/TR/rdf-syntax-grammar</formatId>
+      <checksum algorithm="SHA-1">e2cb81a3a73d760975055e49d6d10a3183b6626d</checksum>
+      <dateSysMetadataModified>1980-02-07T21:31:55Z</dateSysMetadataModified>
+      <size>236</size>
     </objectInfo>
   </ns1:objectList>
 
@@ -14,10 +14,10 @@ PyXB type instance:
   <?xml version="1.0" ?>
   <ns1:objectList count="1" start="7" total="8" xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
-      <identifier>PID_GMNFXT_fzdehopolsow</identifier>
-      <formatId>application/octet-stream</formatId>
-      <checksum algorithm="SHA-1">82806985b1c0bb303a527f61bc08e0e1a3062e88</checksum>
-      <dateSysMetadataModified>1980-11-26T14:34:42Z</dateSysMetadataModified>
+      <identifier>PID_GMNFXT_eyeumlsmotfa</identifier>
+      <formatId>netCDF-3</formatId>
+      <checksum algorithm="SHA-1">38a138241251fe91ab689c2bf17d568866eb5515</checksum>
+      <dateSysMetadataModified>1980-10-21T00:42:49Z</dateSysMetadataModified>
       <size>237</size>
     </objectInfo>
   </ns1:objectList>

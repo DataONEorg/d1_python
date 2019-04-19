@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <ns1:objectList count="1" start="999" total="1000" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_iyvpmmumystl</identifier>
-    <formatId>nexus/1997</formatId>
-    <checksum algorithm="SHA-1">6f026cc94280e592a9ee524a65c1a605d317a0a3</checksum>
-    <dateSysMetadataModified>2069-10-16T18:02:16Z</dateSysMetadataModified>
-    <size>277</size>
+    <identifier>PID_GMNFXT_uyojxnqbirgh</identifier>
+    <formatId>http://www.w3.org/2005/Atom</formatId>
+    <checksum algorithm="SHA-1">71b4dab7beb4d6ef80d2ccf6ab549ff53848f12a</checksum>
+    <dateSysMetadataModified>2069-12-16T03:49:42Z</dateSysMetadataModified>
+    <size>273</size>
   </objectInfo>
 </ns1:objectList>

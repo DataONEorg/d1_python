@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <ns1:objectList count="1" start="0" total="1" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_zyoiqetmpxba</identifier>
-    <formatId>image/tiff</formatId>
-    <checksum algorithm="SHA-1">c6ffb733f384ff277e7ecd80b02f4dbf8c163b92</checksum>
-    <dateSysMetadataModified>2002-03-22T00:00:00Z</dateSysMetadataModified>
-    <size>320</size>
+    <identifier>PID_GMNFXT_ecgeoxttfppe</identifier>
+    <formatId>http://www.w3.org/TR/rdfa-syntax</formatId>
+    <checksum algorithm="SHA-1">7149a539d6473aeebdccb21eca455d38a75cd51f</checksum>
+    <dateSysMetadataModified>2002-01-25T00:00:00Z</dateSysMetadataModified>
+    <size>280</size>
   </objectInfo>
 </ns1:objectList>

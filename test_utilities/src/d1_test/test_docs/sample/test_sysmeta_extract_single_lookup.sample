@@ -1,17 +1,35 @@
 [
   {
-    "formatid": "video/mp4"
-  },
-  {
-    "formatid": "application/x-gzip"
-  },
-  {
-    "formatid": "application/SAS"
-  },
-  {
-    "formatid": "text/n3"
-  },
-  {
     "formatid": "application/x-tar"
+  },
+  {
+    "formatid": "http://www.w3.org/TR/rdf-syntax-grammar"
+  },
+  {
+    "formatid": "netCDF-3"
+  },
+  {
+    "formatid": "http://www.w3.org/TR/rdf-syntax-grammar"
+  },
+  {
+    "formatid": "CF-1.3"
+  },
+  {
+    "formatid": "text/plain"
+  },
+  {
+    "formatid": "application/zip"
+  },
+  {
+    "formatid": "http://www.w3.org/TR/rdf-syntax-grammar"
+  },
+  {
+    "formatid": "application/msword"
+  },
+  {
+    "formatid": "audio/mpeg"
+  },
+  {
+    "formatid": "application/x-rar-compressed"
   }
 ]
