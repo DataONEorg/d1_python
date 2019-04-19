@@ -18,6 +18,7 @@
 import base64
 import bz2
 import contextlib
+import hashlib
 import logging
 import os
 import re
@@ -32,6 +33,7 @@ import requests_toolbelt.utils.dump
 
 import d1_common
 import d1_common.types
+import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem
 import d1_common.xml
@@ -64,28 +66,20 @@ def start_tidy():
 
     """
     logging.info("Moving files to tidy dir")
-    sample_dir_path = get_abs_sample_file_path("")
-    tidy_dir_path = get_abs_sample_tidy_file_path("")
-    d1_common.utils.filesystem.create_missing_directories_for_dir(sample_dir_path)
-    d1_common.utils.filesystem.create_missing_directories_for_dir(tidy_dir_path)
-    i = 0
-    for i, item_name in enumerate(os.listdir(sample_dir_path)):
-        sample_path = os.path.join(sample_dir_path, item_name)
-        tidy_path = os.path.join(tidy_dir_path, item_name)
-        if os.path.exists(tidy_path):
-            os.unlink(tidy_path)
-        os.rename(sample_path, tidy_path)
-    logging.info("Moved {} files".format(i))
-
-
-def get_abs_sample_file_path(filename):
-    return d1_test.test_files.get_abs_test_file_path(os.path.join("sample", filename))
-
-
-def get_abs_sample_tidy_file_path(filename):
-    return d1_test.test_files.get_abs_test_file_path(
-        os.path.join("sample_tidy", filename)
-    )
+    with _get_tidy_path() as tidy_dir_path:
+        with _get_sample_path() as sample_dir_path:
+            d1_common.utils.filesystem.create_missing_directories_for_dir(
+                sample_dir_path
+            )
+            d1_common.utils.filesystem.create_missing_directories_for_dir(tidy_dir_path)
+            i = 0
+            for i, item_name in enumerate(os.listdir(sample_dir_path)):
+                sample_path = os.path.join(sample_dir_path, item_name)
+                tidy_path = os.path.join(tidy_dir_path, item_name)
+                if os.path.exists(tidy_path):
+                    os.unlink(tidy_path)
+                os.rename(sample_path, tidy_path)
+            logging.info("Moved {} files".format(i))
 
 
 def assert_diff_equals(left_obj, right_obj, file_post_str, client=None):
@@ -137,22 +131,54 @@ def assert_equals(
     )
 
 
+@contextlib.contextmanager
+def path_lock(path):
+    path = str(path)
+    logger.debug('Waiting for lock on path: {}'.format(path))
+    with posix_ipc.Semaphore(
+        name='/{}'.format(hashlib.md5(path.encode('utf-8')).hexdigest()),
+        flags=posix_ipc.O_CREAT,
+        initial_value=1,
+    ):
+        print('2' * 100)
+        logger.debug('Acquired lock on path: {}'.format(path))
+        yield
+        logger.debug('Released lock on path: {}'.format(path))
+
+
+@contextlib.contextmanager
 def get_path(filename):
     # When tidying, get_path_list() may move samples, which can cause concurrent calls
-    # to receive different paths for the same file. This is resolved by
-    # serializing calls to get_path_list(). Regular multiprocessing.Lock() does not
-    # seem to work under pytest-xdist.
+    # to receive different paths for the same file. This is resolved by serializing
+    # calls to get_path_list(). Regular multiprocessing.Lock() does not seem to work
+    # under pytest-xdist.
     # noinspection PyUnresolvedReferences
-    with posix_ipc.Semaphore(
-        "/{}".format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
-    ):
-        path = get_abs_sample_file_path(filename)
-        if os.path.isfile(path):
-            return path
-        tidy_file_path = get_abs_sample_tidy_file_path(filename)
-        if os.path.isfile(tidy_file_path):
-            os.rename(tidy_file_path, path)
-        return path
+    with _get_sample_path(filename) as sample_path:
+        if not os.path.isfile(sample_path):
+            with _get_tidy_path(filename) as tidy_file_path:
+                if os.path.isfile(tidy_file_path):
+                    os.rename(tidy_file_path, sample_path)
+        yield sample_path
+
+
+@contextlib.contextmanager
+def _get_sample_path(filename=None):
+    """``filename==None``: Return path to sample directory."""
+    p = os.path.join(
+        d1_common.utils.filesystem.abs_path('./test_docs/sample'), filename or ''
+    )
+    with path_lock(p):
+        yield p
+
+
+@contextlib.contextmanager
+def _get_tidy_path(filename=None):
+    """``filename==None``: Return path to sample tidy directory."""
+    p = os.path.join(
+        d1_common.utils.filesystem.abs_path('./test_docs/sample_tidy'), filename or ''
+    )
+    with path_lock(p):
+        yield p
 
 
 def dump(o, log_func=logger.debug):
@@ -371,13 +397,12 @@ def _get_or_create_path(filename):
     See the test docs for usage.
 
     """
-    path = get_path(filename)
-    logging.debug("Sample path: {}".format(path))
-    if not os.path.isfile(path):
-        logging.info("Write new sample file: {}".format(path))
-        with open(path, "w") as f:
-            f.write("<new sample file>\n")
-    return path
+    with get_path(filename) as path:
+        if not os.path.isfile(path):
+            logging.info("Write new sample file: {}".format(path))
+            with open(path, "w") as f:
+                f.write("<new sample file>\n")
+        return path
 
 
 def _format_file_name(client, file_post_str, file_ext_str):
@@ -522,25 +547,13 @@ def _tmp_file_pair(got_str, exp_str, file_post_str, file_ext_str):
             yield got_f, exp_f
 
 
-# def _guess_file_ext_strension(obj_str):
-#     {
-#         'text/plain': '.txt',
-#         'application/octet-stream': '',
-#
-#
-#     }
-#     buffer = magic.from_buffer(obj_str, mime=True)
-#     print('{}\n{}\n{}'.format('#'*100, obj_str, buffer))
-#     return mimetypes.guess_extension(buffer) or '.txt'
-
-
 def save_compressed_db_fixture(filename):
-    fixture_file_path = get_path(filename)
-    logging.info('Writing fixture sample. path="{}"'.format(fixture_file_path))
-    with bz2.BZ2File(
-        fixture_file_path, "w", buffering=1024, compresslevel=9
-    ) as bz2_file:
-        django.core.management.call_command("dumpdata", stdout=bz2_file)
+    with get_path(filename) as fixture_file_path:
+        logging.info('Writing fixture sample. path="{}"'.format(fixture_file_path))
+        with bz2.BZ2File(
+            fixture_file_path, "w", buffering=1024, compresslevel=9
+        ) as bz2_file:
+            django.core.management.call_command("dumpdata", stdout=bz2_file)
 
 
 def ask_sample_file_update(sample_path):

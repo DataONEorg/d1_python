@@ -111,14 +111,18 @@ def _create_sciobj_list(query, lookup_list, lookup_dict, generate_dict):
 
 def _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
     out_stream.write("[\n")
-    for sciobj_value_list in query.values_list(*lookup_list):
+    for j, sciobj_value_list in enumerate(query.values_list(*lookup_list)):
         json_str = d1_common.util.serialize_to_normalized_pretty_json(
             _value_list_to_sciobj_dict(
                 sciobj_value_list, lookup_list, lookup_dict, generate_dict
             )
         )
-        for json_line in json_str.splitlines():
-            out_stream.write("  {}\n".format(json_line))
+        is_last_dict = j == query.count() - 1
+        json_list = json_str.splitlines()
+        for i, json_line in enumerate(json_list):
+            is_last_line = i == len(json_list) - 1
+            sep_str = ',' if is_last_line and not is_last_dict else ''
+            out_stream.write("  {}{}\n".format(json_line, sep_str))
     out_stream.write("]\n")
 
 

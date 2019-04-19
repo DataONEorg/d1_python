@@ -58,6 +58,9 @@ D1_SKIP_COUNT = 'skip_passed/count'
 TEMPLATE_DB_KEY = 'template'
 TEST_DB_KEY = 'default'
 
+DO_FIXTURE_REFRESH = False
+
+
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
 # flake8: noqa: F811
@@ -136,9 +139,12 @@ def pytest_configure(config):
     After that, the hook is called for other conftest files as they are imported.
 
     """
+    global DO_FIXTURE_REFRESH
+    DO_FIXTURE_REFRESH = config.getoption('--fixture-refresh'),
 
     sys.is_running_under_travis = 'TRAVIS' in os.environ
     sys.is_running_under_pytest = True
+
 
     d1_test.sample.options = {
         'ask': config.getoption('--sample-ask'),
@@ -162,12 +168,17 @@ def pytest_sessionstart(session):
     exit_if_switch_used_with_xdist(
         session,
         [
+            # User input doesn't work well under xdist
             '--sample-ask',
-            '--sample-update',
             '--sample-review',
-            # --sample-tidy is supported with xdist
             '--pycharm',
-            '--fixture-refresh',
+            # Samples can be updated under xdist
+            # '--sample-update',
+            # Samples can be tidied under xdist
+            # --sample-tidy
+            # '--fixture-refresh',
+            # Recently passed tests cannot be skipped in parallel run since all xdist
+            # workers must collect the same number of tests.
             '--skip',
             '--skip-print',
         ],
@@ -176,11 +187,6 @@ def pytest_sessionstart(session):
         logger.info('Starting sample tidy')
         d1_test.sample.start_tidy()
 
-    if session.config.getoption('--fixture-refresh'):
-        logger.info(
-            'Dropping and creating GMN template database from JSON fixture file'
-        )
-        db_drop(TEMPLATE_DB_KEY)
     # Running the tests without either --skip-print or --skip always clears the passed
     # list, so that, if --skip is added on the next run, it will continue from the most
     # recent failed test.
@@ -441,51 +447,77 @@ def profile_sql(db):
 def django_db_setup(request, django_db_blocker):
     """Set up DB fixture When running in parallel with xdist, this is called once for
     each worker, causing a separate database to be set up for each worker."""
-    logger.info('Setting up DB fixture')
+    global DO_FIXTURE_REFRESH
 
-    db_set_unique_db_name(request)
+    # once = posix_ipc.SharedMemory(name=None, flags=posix_ipc.O_CREAT)
+    once = posix_ipc.Semaphore(name=__name__ + '1', flags=posix_ipc.O_CREAT, initial_value=1)
 
-    with django_db_blocker.unblock():
-        # Regular multiprocessing.Lock() context manager did not work here. Also
-        # tried creating the lock at module scope, and also directly calling
-        # acquire() and release(). It's probably related to how the worker processes
-        # relate to each other when launched by pytest-xdist as compared to what the
-        # multiprocessing module expects.
-        with posix_ipc.Semaphore(
-            '/{}'.format(__name__), flags=posix_ipc.O_CREAT, initial_value=1
-        ):
-            logger.warning(
-                'LOCK BEGIN {} {}'.format(
-                    db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+    with open('oo_{}.txt'.format(get_xdist_worker_id(request)), 'w', encoding='utf-8') as f:
+        f.write('1\n')
+        logger.info('Setting up DB fixture')
+
+        db_set_unique_db_name(request)
+
+        with django_db_blocker.unblock():
+            f.write('2\n')
+            # Regular multiprocessing.Lock() context manager did not work here. Also
+            # tried creating the lock at module scope, and also directly calling
+            # acquire() and release(). It's probably related to how the worker processes
+            # relate to each other when launched by pytest-xdist as compared to what the
+            # multiprocessing module expects.
+            with posix_ipc.Semaphore(
+                name=__name__ + 'db_refresh', flags=posix_ipc.O_CREAT, initial_value=1
+            ):
+                f.write('3\n')
+                logger.warning(
+                    'LOCK BEGIN {} {}'.format(
+                        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+                    )
                 )
-            )
 
-            if not db_exists(TEMPLATE_DB_KEY):
-                db_create_blank(TEMPLATE_DB_KEY)
-                db_migrate(TEMPLATE_DB_KEY)
-                db_populate_by_json(TEMPLATE_DB_KEY)
-                db_migrate(TEMPLATE_DB_KEY)
+                try:
+                    once.acquire(timeout=0)
+                except posix_ipc.BusyError:
+                    pass
+                else:
+                    if DO_FIXTURE_REFRESH:
+                        f.write('4\n')
+                        DO_FIXTURE_REFRESH = False
+                        logger.info(
+                            'Dropping and creating GMN template database from JSON fixture file'
+                        )
+                        db_drop(TEMPLATE_DB_KEY)
 
-            logger.warning(
-                'LOCK END {} {}'.format(
-                    db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+                    if not db_exists(TEMPLATE_DB_KEY):
+                        f.write('5\n')
+                        db_create_blank(TEMPLATE_DB_KEY)
+                        db_migrate(TEMPLATE_DB_KEY)
+                        db_populate_by_json(TEMPLATE_DB_KEY)
+                        db_migrate(TEMPLATE_DB_KEY)
+
+                f.write('7\n')
+                logger.warning(
+                    'LOCK END {} {}'.format(
+                        db_get_name_by_key(TEMPLATE_DB_KEY), d1_common.date_time.utc_now()
+                    )
                 )
-            )
 
-        db_drop(TEST_DB_KEY)
-        db_create_from_template()
-        # db_migrate(TEST_DB_KEY)
+            db_drop(TEST_DB_KEY)
+            db_create_from_template()
+            # db_migrate(TEST_DB_KEY)
 
-        # Haven't found out how to prevent transactions from being started. so
-        # closing the implicit transaction here so that template fixture remains
-        # available.
-        # django.db.connections[TEST_DB_KEY].commit()
+            # Haven't found out how to prevent transactions from being started. so
+            # closing the implicit transaction here so that template fixture remains
+            # available.
+            # django.db.connections[TEST_DB_KEY].commit()
 
-        # print(django.conf.settings)
+            # print(django.conf.settings)
+            f.write('8\n')
 
-        yield
+            yield
+            f.write('9\n')
 
-        db_drop(TEST_DB_KEY)
+            db_drop(TEST_DB_KEY)
 
 
 def db_get_name_by_key(db_key):
@@ -517,9 +549,13 @@ def db_create_from_template():
 def db_populate_by_json(db_key):
     """Load DB fixture from compressed JSON file to template database."""
     logger.debug('db_populate_by_json() {}'.format(db_key))
+    fixture_file_path = d1_test.test_files.get_abs_test_file_path(
+        'json/db_fixture.json.bz2'
+    )
+
     django.core.management.call_command(
         'loaddata',
-        'db_fixture',
+        fixture_file_path,#'db_fixture',
         database=db_key,
         # d1_test.sample.get_path_list('db_fixture.json.bz2'),
         # verbosity=0,

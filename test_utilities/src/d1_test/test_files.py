@@ -68,3 +68,8 @@ def load_cert(filename):
 
 def load_jwt(filename):
     return load_bin(os.path.join('jwt', filename))
+
+
+def save(obj_str, rel_path, encoding='utf-8'):
+    with open(get_abs_test_file_path(rel_path), 'w', encoding=encoding) as f:
+        return f.write(obj_str)
