@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test: Extract SciObj information from models."""
+import io
+
 import responses
 
 import d1_gmn.app.sysmeta_extract
@@ -48,3 +50,13 @@ class TestSciObjExtract(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
         self.sample.assert_equals(sciobj_list, 'single_generate')
 
+
+    @responses.activate
+    def test_1020(self, gmn_client_v2):
+        """Extract all values to stream
+        """
+        str_buf = io.StringIO()
+        d1_gmn.app.sysmeta_extract.extract_values(
+            out_stream=str_buf,
+        )
+        self.sample.assert_equals(str_buf.getvalue(), 'all_stream')
