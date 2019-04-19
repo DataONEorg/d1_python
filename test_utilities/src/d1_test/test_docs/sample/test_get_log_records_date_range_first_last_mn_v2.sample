@@ -5,7 +5,7 @@ PyXB type instance:
       <entryId>[ENTRY-ID]</entryId>
       <identifier>PID_GMNFXT_dqriuebvskub</identifier>
       <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+      <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
       <subject>trusted_subj</subject>
       <event>create</event>
       <dateLogged>1979-05-09T01:44:16Z</dateLogged>
@@ -20,7 +20,7 @@ PyXB type instance:
       <entryId>[ENTRY-ID]</entryId>
       <identifier>PID_GMNFXT_nworcrosdvxq</identifier>
       <ipAddress>127.0.0.1</ipAddress>
-      <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+      <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
       <subject>trusted_subj</subject>
       <event>update</event>
       <dateLogged>1979-12-10T19:47:02Z</dateLogged>

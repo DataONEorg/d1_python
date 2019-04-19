@@ -9,7 +9,7 @@
   "Content-Type": "application/octet-stream",
   "DataONE-Checksum": "SHA-1,ba71ea8be4f6c2b2a730512766ef4f6583e823ab",
   "DataONE-FormatId": "text/xml",
-  "DataONE-GMN": "3.4.0",
+  "DataONE-GMN": "3.4.1",
   "DataONE-SerialVersion": "49",
   "Date": "Fri, 02 Jan 1981 00:00:00 GMT",
   "HTTP-Version": "HTTP/1.1",

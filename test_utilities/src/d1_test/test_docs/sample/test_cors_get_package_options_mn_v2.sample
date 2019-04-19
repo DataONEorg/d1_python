@@ -5,7 +5,7 @@
 < Content-Length: 0
 < Host: gmn.client
 < OPTIONS /node/v2/packages/application%2Fbagit-097/PID_ORE_saiccnxheocb HTTP/1.1
-< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
+< User-Agent: DataONE-Python[VERSION] +http://dataone.org/
 
 > Access-Control-Allow-Credentials: true
 > Access-Control-Allow-Headers: Authorization
