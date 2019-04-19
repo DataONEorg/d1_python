@@ -378,9 +378,9 @@ def _clobber_uncontrolled_volatiles(o_str):
     # The uuid module uses MAC address, etc
     o_str = re.sub(r"(?<=test_fragment_volatile_)[0-9a-fA-F]+", "[UUID]", o_str)
     # Version numbers
-    o_str = re.sub(r"(?<=DataONE-Python/)\s*\d+\.\d+\.\d+", "[VERSION]", o_str)
-    o_str = re.sub(r"(?<=DataONE-GMN:)\s*\d+\.\d+\.\d+", "[VERSION]", o_str)
-    o_str = re.sub(r"(?<=Python ITK)\s*\d+\.\d+\.\d+", "[VERSION]", o_str)
+    o_str = re.sub(r"(?<=DataONE-Python).?\s*\d\.\d\.\d", "[VERSION]", o_str)
+    o_str = re.sub(r"(?<=DataONE-GMN).?\s*\d\.\d\.\d", "[VERSION]", o_str)
+    o_str = re.sub(r"(?<=Python ITK).?\s*\d\.\d\.\d", "[VERSION]", o_str)
     # ETA depends on how fast the computer is
     o_str = re.sub(r"\d{1,3}h\d{2}m\d{2}s", "[ETA-HMS]", o_str)
     # Disk space
