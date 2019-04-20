@@ -25,6 +25,7 @@ TODO: In Python 3, items() is a view, so must use d.copy.items(), etc.
 
 import functools
 import logging
+import os
 
 import contextlib2
 import mock
@@ -76,9 +77,9 @@ def active_subjects_context(active_subject_set):
 
     """
     expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(active_subject_set)
-    logger.debug('ContextManager: active_subjects()')
+    logger.debug("ContextManager: active_subjects()")
     with mock.patch(
-        'd1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set',
+        "d1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set",
         return_value=(sorted(expanded_set)[0], expanded_set),
     ):
         yield
@@ -87,9 +88,9 @@ def active_subjects_context(active_subject_set):
 @contextlib2.contextmanager
 def trusted_subjects_context(trusted_subject_set):
     """Override list of trusted subjects that GMN detects for authentication."""
-    logger.debug('ContextManager: trusted_subjects()')
+    logger.debug("ContextManager: trusted_subjects()")
     with mock.patch(
-        'd1_gmn.app.auth.get_trusted_subjects',
+        "d1_gmn.app.auth.get_trusted_subjects",
         return_value=d1_test.d1_test_case.D1TestCase.expand_subjects(
             trusted_subject_set
         ),
@@ -103,9 +104,9 @@ def whitelisted_subjects_context(whitelisted_subject_iter):
     update and delete APIs."""
     # def mock(request):
     #   return d1_test.d1_test_case.D1TestCase.expand_subjects(whitelisted_subject_set)
-    logging.debug('ContextManager: whitelisted_subjects_context()')
+    logging.debug("ContextManager: whitelisted_subjects_context()")
     with mock.patch(
-        'd1_gmn.app.auth.get_whitelisted_subject_set',
+        "d1_gmn.app.auth.get_whitelisted_subject_set",
         return_value=d1_test.d1_test_case.D1TestCase.expand_subjects(
             whitelisted_subject_iter
         ),
@@ -156,7 +157,7 @@ def set_auth_context(
 def isolated_whitelisted_subj():
     """Create a unique subject and override GMN auth so that the subject appears as
     single active and whitelisted, but not trusted, in API calls."""
-    isolated_subj = 'ISOLATED_{}'.format(
+    isolated_subj = "ISOLATED_{}".format(
         d1_test.instance_generator.random_data.random_subj(fixed_len=12)
     )
     with set_auth_context(
@@ -182,13 +183,13 @@ def set_auth_context_with_defaults(
 
     """
     with d1_gmn.tests.gmn_mock.set_auth_context(
-        ['active_subj_1', 'active_subj_2', 'active_subj_3']
+        ["active_subj_1", "active_subj_2", "active_subj_3"]
         if active_subj_list is True
         else active_subj_list,
-        ['trusted_subj_1', 'trusted_subj_2']
+        ["trusted_subj_1", "trusted_subj_2"]
         if trusted_subj_list is True
         else trusted_subj_list,
-        ['whitelisted_subj_1', 'whitelisted_subj_2']
+        ["whitelisted_subj_1", "whitelisted_subj_2"]
         if whitelisted_subj_list is True
         else whitelisted_subj_list,
         disable_auth,
@@ -197,7 +198,7 @@ def set_auth_context_with_defaults(
             yield
         except requests.exceptions.ConnectionError as e:
             pytest.fail(
-                'Check that the test function is decorated with '
+                "Check that the test function is decorated with "
                 '"@responses.activate". error="{}"'.format(str(e))
             )
 
@@ -215,15 +216,15 @@ def disable_auth():
     This subject can call any API and received unfiltered results.
 
     """
-    logging.debug('ContextManager: disable_auth()')
+    logging.debug("ContextManager: disable_auth()")
     with mock.patch(
-        'd1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set',
-        return_value=('trusted_subj', {'trusted_subj'}),
+        "d1_gmn.app.middleware.view_handler.ViewHandler.get_active_subject_set",
+        return_value=("trusted_subj", {"trusted_subj"}),
     ):
-        with mock.patch('d1_gmn.app.auth.is_trusted_subject', return_value=True):
+        with mock.patch("d1_gmn.app.auth.is_trusted_subject", return_value=True):
             with mock.patch(
-                'd1_gmn.app.auth.get_trusted_subjects_string',
-                return_value='trusted_subj',
+                "d1_gmn.app.auth.get_trusted_subjects_string",
+                return_value="trusted_subj",
             ):
                 yield
 
@@ -246,7 +247,7 @@ def no_client_trust_decorator(func):
 
 @contextlib2.contextmanager
 def disable_sysmeta_sanity_checks():
-    with mock.patch('d1_gmn.app.views.assert_sysmeta.sanity'):
+    with mock.patch("d1_gmn.app.views.assert_sysmeta.sanity"):
         yield
 
 
@@ -254,7 +255,7 @@ def disable_sysmeta_sanity_checks():
 def disable_management_command_logging():
     """Prevent management commands from setting up logging, which cause duplicated log
     messages when the commands are launched multiple times."""
-    with mock.patch('d1_gmn.app.management.commands.util.util.log_setup'):
+    with mock.patch("d1_gmn.app.management.commands.util.util.log_setup"):
         yield
 
 
@@ -262,13 +263,14 @@ def disable_management_command_logging():
 def disable_management_command_concurrent_instance_check():
     """Allow concurrent instances of the same management command."""
     with mock.patch(
-        'd1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running'
+        "d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running"
     ):
         yield
 
 
 @contextlib2.contextmanager
 def disable_sciobj_store_write():
-    """"""
-    with mock.patch('d1_gmn.app.views.assert_sysmeta.sanity'):
-        yield
+    """Prevent SciObj bytes from being stored in the SciObj store on disk."""
+    logging.debug("ContextManager: disable_sciobj_store_write()")
+    with mock.patch("d1_gmn.app.sciobj_store.open_sciobj_file_by_path_PLAIN"):
+        yield os.devnull

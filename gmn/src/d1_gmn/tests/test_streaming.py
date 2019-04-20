@@ -21,6 +21,7 @@
 buffered in memory."""
 import logging
 
+import pytest
 import requests_toolbelt
 
 import d1_gmn.tests.gmn_mock
@@ -32,7 +33,7 @@ import d1_common.xml
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.system_metadata
-import pytest
+
 logger = logging.getLogger(__name__)
 
 # Size in GiB of the SciObj that will be submitted to GMN.

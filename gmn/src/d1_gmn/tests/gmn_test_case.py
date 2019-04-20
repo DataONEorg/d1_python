@@ -15,7 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import contextlib
 import copy
 import datetime
 import io
@@ -23,6 +23,7 @@ import json
 import logging
 import os
 import random
+import shutil
 import sys
 import tempfile
 import traceback
@@ -33,6 +34,7 @@ import requests
 import d1_gmn.app
 import d1_gmn.app.models
 import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
 import d1_gmn.tests.gmn_mock
 
 import d1_common.checksum
@@ -42,11 +44,13 @@ import d1_common.types
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
+import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy
 import d1_test.instance_generator.identifier
+import d1_test.instance_generator.random_data
 import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.system_metadata
 import d1_test.mock_api.django_client
@@ -56,10 +60,39 @@ import d1_client.mnclient_2_0
 
 import django.core.management
 import django.db
+import django.test
 
 ENABLE_SQL_PROFILING = False
 
-MOCK_GMN_BASE_URL = 'http://gmn.client/node'
+MOCK_GMN_BASE_URL = "http://gmn.client/node"
+
+
+logger = logging.getLogger(__name__)
+
+
+@contextlib.contextmanager
+def unique_sciobj_store(store_root_path):
+    # TODO: Turn into a fixture. Current solution leaves temp upload dirs.
+    root_path = os.path.join(
+        store_root_path,
+        d1_test.instance_generator.random_data.random_lower_ascii(fixed_len=10),
+    )
+    store_path = os.path.join(root_path, 'store')
+    upload_path = os.path.join(root_path, 'upload')
+    with django.test.override_settings(
+        OBJECT_STORE_PATH=store_path, FILE_UPLOAD_TEMP_DIR=upload_path
+    ):
+        try:
+            logger.debug('Creating sciobj store. store_path="{}"'.format(store_path))
+            # d1_common.utils.filesystem.create_missing_directories_for_dir(store_path)
+            d1_gmn.app.sciobj_store.create_store()
+            logger.debug(
+                'Creating tmp upload dir. upload_path="{}"'.format(upload_path)
+            )
+            yield
+        finally:
+            logger.debug('Deleting sciobj store. store_path="{}"'.format(root_path))
+            shutil.rmtree(root_path)
 
 
 class GMNTestCase(d1_test.d1_test_case.D1TestCase):
@@ -106,15 +139,15 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         if not isinstance(exc_value, Exception):
             return
-        logging.exception('Test failed with exception:')
+        logging.exception("Test failed with exception:")
         if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
             return
         func_name_str = GMNTestCase.get_test_func_name()
         file_path = os.path.join(
-            tempfile.gettempdir(), 'gmn_test_failed_{}.txt'.format(func_name_str)
+            tempfile.gettempdir(), "gmn_test_failed_{}.txt".format(func_name_str)
         )
         # Dump the entire exception
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             f.write(str(exc_value))
         logging.error('Wrote exception to file. path="{}"'.format(file_path))
         # Dump any HTML (typically from the Django diags page)
@@ -122,13 +155,13 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             ss = io.StringIO()
             is_in_html = False
             for line_str in exc_value.traceInformation.splitlines():
-                if '<!DOCTYPE' in line_str or '<html' in line_str:
+                if "<!DOCTYPE" in line_str or "<html" in line_str:
                     is_in_html = True
                 if is_in_html:
                     ss.write(line_str)
             if is_in_html:
-                file_path = os.path.join(tempfile.gettempdir(), 'gmn_test_failed.html')
-                with open(file_path, 'w') as f:
+                file_path = os.path.join(tempfile.gettempdir(), "gmn_test_failed.html")
+                with open(file_path, "w") as f:
                     f.write(str(ss.getvalue()))
                 logging.error(
                     'Wrote HTML from exception to file. path="{}"'.format(file_path)
@@ -140,9 +173,9 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         for stack_trace in traceback.extract_tb(exc_traceback):
             module_path = stack_trace[0]
             func_name = stack_trace[2]
-            if func_name.startswith('test_'):
-                return '{}_{}'.format(os.path.split(module_path)[1][:-3], func_name)
-        return '<not a test>'
+            if func_name.startswith("test_"):
+                return "{}_{}".format(os.path.split(module_path)[1][:-3], func_name)
+        return "<not a test>"
 
     # def disable_server_cert_validation(self):
     #   requests.packages.urllib3.disable_warnings()
@@ -160,14 +193,14 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         self.assert_sysmeta_sid(sysmeta_pyxb, sid)
 
     def assert_sysmeta_pid(self, sysmeta_pyxb, pid):
-        assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
+        assert self.get_pyxb_value(sysmeta_pyxb, "identifier") == pid
 
     def assert_sysmeta_sid(self, sysmeta_pyxb, sid):
-        assert self.get_pyxb_value(sysmeta_pyxb, 'seriesId') == sid
+        assert self.get_pyxb_value(sysmeta_pyxb, "seriesId") == sid
 
     def assert_eq_sysmeta_sid(self, sysmeta_a_pyxb, sysmeta_b_pyxb):
-        assert self.get_pyxb_value(sysmeta_a_pyxb, 'seriesId') == self.get_pyxb_value(
-            sysmeta_b_pyxb, 'seriesId'
+        assert self.get_pyxb_value(sysmeta_a_pyxb, "seriesId") == self.get_pyxb_value(
+            sysmeta_b_pyxb, "seriesId"
         )
 
     def assert_slice(self, slice_pyxb, start, count, total):
@@ -176,18 +209,18 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         assert slice_pyxb.start == start
         assert slice_pyxb.count == count
         assert slice_pyxb.total == total
-        if hasattr(slice_pyxb, 'objectInfo'):
+        if hasattr(slice_pyxb, "objectInfo"):
             assert len(slice_pyxb.objectInfo) == count
-        elif hasattr(slice_pyxb, 'logEntry'):
+        elif hasattr(slice_pyxb, "logEntry"):
             assert len(slice_pyxb.logEntry) == count
 
     def assert_required_response_headers_present(self, response):
-        assert 'last-modified' in response.headers
-        assert 'content-length' in response.headers
-        assert 'content-type' in response.headers
+        assert "last-modified" in response.headers
+        assert "content-length" in response.headers
+        assert "content-type" in response.headers
 
     def assert_valid_date(self, date_str):
-        assert datetime.datetime(*list(map(int, date_str.split('-'))))
+        assert datetime.datetime(*list(map(int, date_str.split("-"))))
 
     def assert_sci_obj_size_matches_sysmeta(self, sciobj_bytes, sysmeta_pyxb):
         assert sysmeta_pyxb.size == len(sciobj_bytes)
@@ -204,20 +237,20 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         assert d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb)
 
     def assert_valid_chain(self, client, pid_chain_list, sid):
-        logging.debug('Chain: {}'.format(' - '.join(pid_chain_list)))
+        logging.debug("Chain: {}".format(" - ".join(pid_chain_list)))
         pad_pid_chain_list = [None] + pid_chain_list + [None]
         i = 0
         for prev_pid, cur_pid, next_pid in zip(
             pad_pid_chain_list, pad_pid_chain_list[1:], pad_pid_chain_list[2:]
         ):
             logging.debug(
-                'Link {}: {} <- {} -> {}'.format(i, prev_pid, cur_pid, next_pid)
+                "Link {}: {} <- {} -> {}".format(i, prev_pid, cur_pid, next_pid)
             )
             obj_str, sysmeta_pyxb = self.get_obj(client, cur_pid)
-            assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletes') == prev_pid
-            assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == cur_pid
-            assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') == next_pid
-            assert self.get_pyxb_value(sysmeta_pyxb, 'seriesId') == sid
+            assert self.get_pyxb_value(sysmeta_pyxb, "obsoletes") == prev_pid
+            assert self.get_pyxb_value(sysmeta_pyxb, "identifier") == cur_pid
+            assert self.get_pyxb_value(sysmeta_pyxb, "obsoletedBy") == next_pid
+            assert self.get_pyxb_value(sysmeta_pyxb, "seriesId") == sid
             i += 1
 
     def are_equivalent_pyxb(self, a_pyxb, b_pyxb):
@@ -246,7 +279,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         """
 
         def did(idx):
-            return '#{:03d}_{}'.format(
+            return "#{:03d}_{}".format(
                 idx, d1_test.instance_generator.identifier.generate_pid()
             )
 
@@ -274,7 +307,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         """Convert a local sciobj to a simulated replica by adding a LocalReplica model
         to it."""
         replica_info_model = d1_gmn.app.models.replica_info(
-            'completed', 'urn:node:testReplicaSource'
+            "completed", "urn:node:testReplicaSource"
         )
         d1_gmn.app.models.local_replica(pid, replica_info_model)
 
@@ -300,19 +333,19 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         # TODO: Handling the args manually like this was necessary to get the
         # signature I wanted, but it may be done better with
         # functools.partial(func[,*args][, **keywords]).
-        active_subj_list = arg_dict.pop('active_subj_list', True)
-        trusted_subj_list = arg_dict.pop('trusted_subj_list', True)
-        whitelisted_subj_list = arg_dict.pop('whitelisted_subj_list', True)
-        disable_auth = arg_dict.pop('disable_auth', True)
+        active_subj_list = arg_dict.pop("active_subj_list", True)
+        trusted_subj_list = arg_dict.pop("trusted_subj_list", True)
+        whitelisted_subj_list = arg_dict.pop("whitelisted_subj_list", True)
+        disable_auth = arg_dict.pop("disable_auth", True)
 
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            ['active_subj_1', 'active_subj_2', 'active_subj_3']
+            ["active_subj_1", "active_subj_2", "active_subj_3"]
             if active_subj_list is True
             else active_subj_list,
-            ['trusted_subj_1', 'trusted_subj_2']
+            ["trusted_subj_1", "trusted_subj_2"]
             if trusted_subj_list is True
             else trusted_subj_list,
-            ['whitelisted_subj_1', 'whitelisted_subj_2']
+            ["whitelisted_subj_1", "whitelisted_subj_2"]
             if whitelisted_subj_list is True
             else whitelisted_subj_list,
             disable_auth,
@@ -322,9 +355,9 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             except requests.exceptions.ConnectionError as e:
                 pytest.fail(
                     'Make sure: Test function is decorated with "@responses.activate", '
-                    'class derives from GMNTestCase, '
-                    'The correct client fixture is used (mn_client / gmn_client), '
-                    'class setup_method() calls super(). '
+                    "class derives from GMNTestCase, "
+                    "The correct client fixture is used (mn_client / gmn_client), "
+                    "class setup_method() calls super(). "
                     'error="{}"'.format(str(e))
                 )
                 # coercing to Unicode: need string or buffer, NoneType found:
@@ -363,7 +396,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 trusted_subj_list=trusted_subj_list,
                 disable_auth=disable_auth,
             )
-        assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
+        assert self.get_pyxb_value(sysmeta_pyxb, "identifier") == pid
         return pid, sid, sciobj_bytes, sysmeta_pyxb
 
     def update_obj(
@@ -401,7 +434,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 trusted_subj_list=trusted_subj_list,
                 disable_auth=disable_auth,
             )
-        assert self.get_pyxb_value(sysmeta_pyxb, 'identifier') == pid
+        assert self.get_pyxb_value(sysmeta_pyxb, "identifier") == pid
         return pid, sid, sciobj_bytes, sysmeta_pyxb
 
     def get_obj(
@@ -516,18 +549,18 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         option_dict = {
             k: v
             for (k, v) in (
-                ('identifier', pid),
-                ('seriesId', sid),
-                ('submitter', submitter),
-                ('rightsHolder', rights_holder),
+                ("identifier", pid),
+                ("seriesId", sid),
+                ("submitter", submitter),
+                ("rightsHolder", rights_holder),
                 (
-                    'accessPolicy',
+                    "accessPolicy",
                     d1_test.instance_generator.access_policy.generate_from_permission_list(
                         client, permission_list
                     ),
                 ),
-                ('dateUploaded', now_dt),
-                ('dateSysMetadataModified', now_dt),
+                ("dateUploaded", now_dt),
+                ("dateSysMetadataModified", now_dt),
             )
             if v is not True
         }
@@ -540,7 +573,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
     def create_resource_map(self, client, pid_list, ore_pid=None):
         ore_pid = ore_pid or d1_test.instance_generator.identifier.generate_pid(
-            'PID_ORE_'
+            "PID_ORE_"
         )
         ore = d1_common.resource_map.createSimpleResourceMap(
             ore_pid, scimeta_pid=pid_list[0], sciobj_pid_list=pid_list[1:]
@@ -550,9 +583,9 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             client,
             io.BytesIO(ore_xml),
             {
-                'identifier': ore_pid,
-                'formatId': d1_common.const.ORE_FORMAT_ID,
-                'replica': None,
+                "identifier": ore_pid,
+                "formatId": d1_common.const.ORE_FORMAT_ID,
+                "replica": None,
             },
         )
         self.call_d1_client(client.create, ore_pid, io.BytesIO(ore_xml), sysmeta_pyxb)
@@ -569,23 +602,22 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         return sorted([v.identifier.value() for v in log_record_list_pyxb.logEntry])
 
     def vendor_proxy_mode(self, object_stream_url):
-        return {'VENDOR-GMN-REMOTE-URL': object_stream_url}
+        return {"VENDOR-GMN-REMOTE-URL": object_stream_url}
 
     def dump_permissions(self):
-        logging.debug('Permissions:')
+        logging.debug("Permissions:")
         for s in d1_gmn.app.models.Permission.objects.order_by(
-            'subject__subject', 'level', 'sciobj__pid__did'
+            "subject__subject", "level", "sciobj__pid__did"
         ):
             logging.debug(s.sciobj.pid.did)
             logging.debug(s.subject)
             logging.debug(s.level)
-            logging.debug('')
+            logging.debug("")
 
     def dump_subjects(self):
-        logging.debug('Subjects:')
-        for s in d1_gmn.app.models.Subject.objects.order_by('subject'):
-            logging.debug('  {}'.format(s.subject))
-
+        logging.debug("Subjects:")
+        for s in d1_gmn.app.models.Subject.objects.order_by("subject"):
+            logging.debug("  {}".format(s.subject))
 
     def get_sid_with_min_chain_length(self, min_len=2):
         """Get list of all SIDs in the DB fixture."""
@@ -607,7 +639,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         return random.sample(
             [
                 v.pid.did
-                for v in d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
+                for v in d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
             ],
             n_pids,
         )
@@ -635,13 +667,13 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
         try:
             with django.db.connection.cursor() as cursor:
-                logging.debug('Running SQL query: {}'.format(sql_str.strip()))
-                logging.debug('SQL query args: {}'.format(', '.join(sql_arg_list)))
+                logging.debug("Running SQL query: {}".format(sql_str.strip()))
+                logging.debug("SQL query args: {}".format(", ".join(sql_arg_list)))
                 cursor.execute(sql_str, sql_arg_list)
                 row_dict = dict_fetchall(cursor)
-                logging.debug('SQL query result:')
+                logging.debug("SQL query result:")
                 if dump:
                     self.sample.dump(row_dict)
         except Exception as e:
-            logging.error('SQL query error: {}'.format(str(e)))
+            logging.error("SQL query error: {}".format(str(e)))
             raise

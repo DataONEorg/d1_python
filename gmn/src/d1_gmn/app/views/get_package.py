@@ -92,6 +92,7 @@ def _create_sysmeta_info_dict(request, pid):
         "checksum_algorithm": d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
     }
 
+
 def _create_sysmeta_iterator(request, pid):
     return d1_common.iter.bytes.BytesIterator(
         d1_gmn.app.views.util.generate_sysmeta_xml_matching_api_version(request, pid)

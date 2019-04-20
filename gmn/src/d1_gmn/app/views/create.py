@@ -67,9 +67,7 @@ def create_sciobj(request, sysmeta_pyxb):
 
     if not _is_proxy_sciobj(request):
         if d1_gmn.app.resource_map.is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
-            _create_resource_map(
-                pid, request, sysmeta_pyxb, sciobj_url
-            )
+            _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url)
         else:
             _save_sciobj_bytes_from_request(request, pid)
             d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, pid)
@@ -89,7 +87,9 @@ def _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url):
     map_xml = _read_sciobj_bytes_from_request(request)
     resource_map = d1_gmn.app.resource_map.parse_resource_map_from_str(map_xml)
     d1_gmn.app.resource_map.assert_map_is_valid_for_create(resource_map)
-    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_CTX(pid, write=True) as sciobj_file:
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_CTX(
+        pid, write=True
+    ) as sciobj_file:
         sciobj_file.write(map_xml)
     d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
     d1_gmn.app.resource_map.create_or_update(pid, resource_map)
@@ -133,7 +133,9 @@ def _save_sciobj_bytes_from_request(request, pid):
             request.FILES['object'].temporary_file_path(), sciobj_path
         )
     else:
-        with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_CTX(sciobj_path, write=True) as sciobj_stream:
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_CTX(
+            sciobj_path, write=True
+        ) as sciobj_stream:
             for chunk in request.FILES['object'].chunks():
                 sciobj_stream.write(chunk)
 

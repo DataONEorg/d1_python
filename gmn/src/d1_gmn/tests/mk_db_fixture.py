@@ -190,11 +190,15 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         for did in ['pid', 'sid']:
             with open(
-                self.test_files.get_abs_test_file_path('json/db_fixture_{}.json'.format(did)),
+                self.test_files.get_abs_test_file_path(
+                    'json/db_fixture_{}.json'.format(did)
+                ),
                 'w',
                 encoding='utf-8',
             ) as f:
-                d1_gmn.app.sysmeta_extract.extract_values(field_list=[did], out_stream=f)
+                d1_gmn.app.sysmeta_extract.extract_values(
+                    field_list=[did], out_stream=f
+                )
 
 
 if __name__ == '__main__':

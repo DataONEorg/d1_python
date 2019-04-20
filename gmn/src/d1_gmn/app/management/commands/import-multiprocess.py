@@ -374,11 +374,12 @@ class Command(django.core.management.base.BaseCommand):
         """
         if d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
             self._events.log_and_count(
-                "Skipped download of existing sciobj bytes",
-                'pid="{}"'.format(pid),
+                "Skipped download of existing sciobj bytes", 'pid="{}"'.format(pid)
             )
         else:
-            with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(pid, write=True) as sciobj_file:
+            with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(
+                pid, write=True
+            ) as sciobj_file:
                 client.get_and_save(pid, sciobj_file)
 
     def _get_client_dict(self):

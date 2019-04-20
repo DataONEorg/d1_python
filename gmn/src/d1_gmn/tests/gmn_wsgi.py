@@ -24,6 +24,7 @@ import django
 import django.core.handlers.base
 import django.core.handlers.wsgi
 
+
 class WSGIClient(django.core.handlers.base.BaseHandler):
     """Submit requests to GMN directly via its WSGI interface.
 
@@ -32,9 +33,12 @@ class WSGIClient(django.core.handlers.base.BaseHandler):
 
     The test client that is bundled with Django collapses all streams to ``bytes``, both
     in requests and responses, so cannot be used for testing stream handling.
+
     """
 
-    def __init__(self, django_settings_module=None, enforce_csrf_checks=True, *args, **kwargs):
+    def __init__(
+        self, django_settings_module=None, enforce_csrf_checks=True, *args, **kwargs
+    ):
         """Initialize the client and corresponding Django service.
 
         Args:
@@ -47,6 +51,7 @@ class WSGIClient(django.core.handlers.base.BaseHandler):
 
             enforce_csrf_checks: bool
                 Disable Cross Site Request Forgery protection.
+
         """
         django.setup(set_prefix=False)
         self.enforce_csrf_checks = enforce_csrf_checks
@@ -76,6 +81,7 @@ class WSGIClient(django.core.handlers.base.BaseHandler):
 
         Returns:
             HttpResponse
+
         """
         # Set up middleware if needed. We couldn't do this earlier, because
         # settings weren't available.

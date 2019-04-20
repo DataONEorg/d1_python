@@ -26,23 +26,22 @@
 - Folders are created as required in the hierarchy.
 
 """
-import d1_common.iter.stream
-
-import d1_common.const
 import hashlib
 import os
 import re
 
 import contextlib2
-import d1_common.iter
 
 import d1_gmn
+import d1_gmn.app
 
+import d1_common.const
+import d1_common.iter
+import d1_common.iter.stream
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem
-import d1_gmn.app
 
 import django.conf
 
@@ -109,17 +108,22 @@ def open_sciobj_file_by_path_CTX(abs_path, write=False):
         if os.path.exists(abs_path) and not os.path.getsize(abs_path):
             os.unlink(abs_path)
 
+
 def get_sciobj_iter_by_url(sciobj_url):
     abs_path = get_abs_sciobj_file_path_by_url(sciobj_url)
     return d1_common.iter.stream.StreamIterator(
         open_sciobj_file_by_path_PLAIN(abs_path)
     )
 
+
 # @contextlib2.contextmanager
 def get_sciobj_byte_iterator_by_url(sciobj_url):
-    with open_sciobj_file_by_pid_PLAIN(get_abs_sciobj_file_path_by_url(sciobj_url)) as sciobj_file:
+    with open_sciobj_file_by_pid_PLAIN(
+        get_abs_sciobj_file_path_by_url(sciobj_url)
+    ) as sciobj_file:
         with d1_common.iter.stream.StreamIterator(sciobj_file) as sciobj_iter:
             yield sciobj_iter
+
 
 def get_sciobj_iter_by_pid(pid):
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
@@ -139,7 +143,6 @@ def get_sciobj_iter_by_pid(pid):
 #     abs_path = get_abs_sciobj_file_path_by_url(sciobj_url)
 #     sciobj_file = open_sciobj_file_by_path_PLAIN(abs_path)
 #     return d1_common.iter.stream.StreamIterator(sciobj_file)
-
 
 
 # def save_in_object_store_by_iter(pid, sciobj_iter):
@@ -185,8 +188,7 @@ def get_sciobj_iter_by_pid(pid):
 
 def open_sciobj_file_by_pid_PLAIN(pid, write=False):
     """Open the file containing the Science Object bytes at the custom location
-    ``abs_path`` in the local filesystem for read.
-    """
+    ``abs_path`` in the local filesystem for read."""
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
@@ -195,8 +197,8 @@ def open_sciobj_file_by_pid_PLAIN(pid, write=False):
 
 def open_sciobj_file_by_path_PLAIN(abs_path, write=False):
     """Open a SciObj file for read or write. If opened for write, create any missing
-    directories. For a SciObj stored in the default SciObj store, the path includes
-    the PID hash based directory levels.
+    directories. For a SciObj stored in the default SciObj store, the path includes the
+    PID hash based directory levels.
 
     This is the only method in GMN that opens SciObj files, so can be modified to
     customize the SciObj storage locations and can be mocked for testing.
@@ -204,6 +206,7 @@ def open_sciobj_file_by_path_PLAIN(abs_path, write=False):
     Note that when a SciObj is created by a client via MNStorage.create(), Django
     streams the SciObj bytes to a temporary file or memory location as set by
     ``FILE_UPLOAD_TEMP_DIR`` and related settings.
+
     """
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
