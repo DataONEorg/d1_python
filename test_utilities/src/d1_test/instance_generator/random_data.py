@@ -75,7 +75,9 @@ def random_symbolic_subject():
     return random.choice(SYMBOLIC_SUBJECT_LIST)
 
 
-def random_lower_ascii(min_len=2, max_len=2):
+def random_lower_ascii(min_len=2, max_len=2, fixed_len=None):
+    if fixed_len is not None:
+        min_len = max_len = fixed_len
     return ''.join(
         [
             random.choice(string.ascii_lowercase)

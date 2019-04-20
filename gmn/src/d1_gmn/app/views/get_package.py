@@ -27,7 +27,6 @@ import d1_common.bagit
 import d1_common.checksum
 import d1_common.const
 import d1_common.iter.bytes
-import d1_common.iter.file
 import d1_common.types.exceptions
 
 import django.http
@@ -75,7 +74,7 @@ def _create_sciobj_info_dict(pid):
     return {
         "pid": pid,
         "filename": sciobj_model.filename,
-        "iter": _create_sciobj_iterator(pid),
+        "iter": d1_gmn.app.sciobj_store.get_sciobj_iter_by_pid(pid),
         "checksum": sciobj_model.checksum,
         "checksum_algorithm": sciobj_model.checksum_algorithm.checksum_algorithm,
     }
@@ -92,13 +91,6 @@ def _create_sysmeta_info_dict(request, pid):
         "checksum": checksum_str,
         "checksum_algorithm": d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
     }
-
-
-def _create_sciobj_iterator(pid):
-    return d1_common.iter.file.FileIterator(
-        d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-    )
-
 
 def _create_sysmeta_iterator(request, pid):
     return d1_common.iter.bytes.BytesIterator(

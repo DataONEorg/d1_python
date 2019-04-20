@@ -41,8 +41,8 @@ import pip
 
 import d1_dev.util
 
-import d1_common.iter.file
 import d1_common.util
+import d1_common.iter.path
 
 
 def main():
@@ -82,13 +82,14 @@ def main():
 
 def find_pkg_names(args):
     dep_set = set()
-    for module_path in d1_common.iter.file.dir_iter(
-        path_list=args.path,
-        include_glob_list=['*.py'],
-        exclude_glob_list=args.exclude,
-        recursive=args.recursive,
-        ignore_invalid=args.ignore_invalid,
-        default_excludes=args.default_excludes,
+    for module_path in d1_common.iter.path.path_generator(
+            path_list=args.path,
+            include_glob_list=['*.py'],
+            exclude_glob_list=args.exclude,
+            recursive=args.recursive,
+            ignore_invalid=args.ignore_invalid,
+            default_excludes=False,
+            return_dir_paths=True,
     ):
         dep_set.update(find_deps_in_source(module_path))
     return sorted(get_external_deps(dep_set))

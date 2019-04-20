@@ -85,13 +85,11 @@ def create_or_update_db(sysmeta_pyxb):
 
 
 def get_resource_map_from_sciobj(pid):
-    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid) as (f, url):
-        return d1_gmn.app.resource_map.parse_resource_map_from_str(f.read())
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(pid) as sciobj_file:
+        return d1_gmn.app.resource_map.parse_resource_map_from_str(sciobj_file.read())
 
 
 def create_or_update(map_pid, resource_map):
-    # resource_map_path = d1_gmn.app.sciobj_store.get_sciobj_file_path(map_pid)
-    # resource_map = _parse_resource_map_from_file(resource_map_path)
     member_pid_list = resource_map.getAggregatedPids()
     _create_or_update_map(map_pid, member_pid_list)
 
