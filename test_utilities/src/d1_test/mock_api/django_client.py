@@ -41,14 +41,6 @@ def test_1000(self):
   d1_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(MOCK_MN_BASE_URL)
   node_pyxb = d1_client.getCapabilities()
 
-Note: for get(), GMN returns a StreamingHttpResponse that Requests detects as a
-streaming response and handles accordingly. However, when returning a
-StreamingHttpResponse from Responses, no special handling occurs. This breaks
-test code that converts streams to strings by accessing .content (production
-code should not do this since it causes the entire stream to be buffered in
-memory). So we convert streaming responses to string before passing them to
-Responses.
-
 """
 
 import logging
@@ -60,6 +52,7 @@ import responses
 
 import django.http
 import django.test
+import django.test.client
 
 base_url_list = []
 
@@ -115,37 +108,42 @@ def _request_callback(request):
     # repr, that is used for debugging, and passes that on as the body.
     # MultipartEncoder generates a unique boundary value for the Content-Type each
     # time a multipart document is created, and there's no clean way to pass in
-    # the hard coded string, that the Django test client expects, through
+    # the hard coded string that the Django test client expects through
     # d1_client. So the buggy function in the Django test client is disabled here.
 
+    # The Django test client does not handle streams and forces everything to bytes.
+    # It does not recognize the MultipartEncoder as a stream, and ends up getting
+    # the ``repr()`` instead of the body. So we convert it to bytes here.
     if isinstance(request.body, requests_toolbelt.MultipartEncoder):
         data = request.body.read()
-        # data = request.body
     else:
         data = request.body
 
-    with mock.patch('django.test.RequestFactory._encode_data', return_value=data):
-        django_client = django.test.Client()
-        try:
-            django_response = getattr(django_client, request.method.lower())(
-                url_path,
-                data=data,
-                content_type=request.headers.get('Content-Type', ''),
-                **_headers_to_wsgi_env(request.headers or {})
+    # Attempt to mock the test client in order to allow passing a stream to GMN.
+    # with mock.patch('django.test.RequestFactory._encode_data', return_value=data):
+
+    django_client = django.test.Client()
+    try:
+        # Call GMN API endpoint
+        django_response = getattr(django_client, request.method.lower())(
+            url_path,
+            data=data,
+            content_type = request.headers.get('Content-Type', 'MISSING-CONTENT-TYPE'),
+            **_headers_to_wsgi_env(request.headers or {}),
+        )
+    except AttributeError as e:
+        if "object has no attribute '_closable_objects" in str(e):
+            msg = _make_attribute_error_msg(e)
+            logging.error(msg)
+            return django.http.HttpResponse(msg)
+        raise
+    except Exception:
+        logging.exception(
+            'Django test client raised exception. base_url="{}" url_path="{}"'.format(
+                base_url, url_path
             )
-        except AttributeError as e:
-            if "object has no attribute '_closable_objects" in str(e):
-                msg = _make_attribute_error_msg(e)
-                logging.error(msg)
-                return django.http.HttpResponse(msg)
-            raise
-        except Exception:
-            logging.exception(
-                'Django test client raised exception. base_url="{}" url_path="{}"'.format(
-                    base_url, url_path
-                )
-            )
-            raise
+        )
+        raise
 
     django_response.setdefault('HTTP-Version', 'HTTP/1.1')
     return (
