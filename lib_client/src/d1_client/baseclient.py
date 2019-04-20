@@ -516,11 +516,11 @@ class DataONEBaseClient(d1_client.session.Session):
         return self._read_stream_response(response)
 
     def get_and_save(
-        self, pid, sciobj_path, create_missing_dirs=False, vendorSpecific=None
+        self, pid, sciobj_stream, create_missing_dirs=False, vendorSpecific=None
     ):
         """Like MNRead.get(), but also retrieve the object bytes and store them in a
-        local file at ``sciobj_path``. This method does not have the potential issue
-        with excessive memory usage that get() with ``stream``=False has.
+        stream. This method does not have the potential issue with excessive memory
+        usage that get() with ``stream``=False has.
 
         Also see MNRead.get().
 
@@ -529,14 +529,13 @@ class DataONEBaseClient(d1_client.session.Session):
         try:
             if create_missing_dirs:
                 d1_common.utils.filesystem.create_missing_directories_for_file(
-                    sciobj_path
+                    sciobj_stream
                 )
-            with open(sciobj_path, 'wb') as f:
-                for chunk_str in response.iter_content(
-                    chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
-                ):
-                    if chunk_str:
-                        f.write(chunk_str)
+            for chunk_str in response.iter_content(
+                chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
+            ):
+                if chunk_str:
+                    sciobj_stream.write(chunk_str)
         finally:
             response.close()
         return response

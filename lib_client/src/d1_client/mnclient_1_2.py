@@ -55,8 +55,8 @@ class MemberNodeClient_1_2(
     # MNView.view(session, theme, id) → OctetStream
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.view
 
-    def viewResponse(self, theme, did, **kwargs):
-        return self.GET(['views', theme, did], query=kwargs)
+    def viewResponse(self, theme, did, vendorSpecific=None, **kwargs):
+        return self.GET(['views', theme, did], query=kwargs, headers=vendorSpecific)
 
     def view(self, theme, did, **kwargs):
         response = self.viewResponse(theme, did, **kwargs)
@@ -65,8 +65,8 @@ class MemberNodeClient_1_2(
     # MNView.listViews(session) → OptionList
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.listViews
 
-    def listViewsResponse(self, **kwargs):
-        return self.GET(['view'], query=kwargs)
+    def listViewsResponse(self, vendorSpecific=None, **kwargs):
+        return self.GET(['view'], query=kwargs, headers=vendorSpecific)
 
     def listViews(self, **kwargs):
         response = self.listViewsResponse(**kwargs)
@@ -76,9 +76,9 @@ class MemberNodeClient_1_2(
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
     def getPackageResponse(
-        self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, **kwargs
+        self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, vendorSpecific=None, **kwargs
     ):
-        return self.GET(['packages', packageType, did], query=kwargs)
+        return self.GET(['packages', packageType, did], query=kwargs, headers=vendorSpecific)
 
     def getPackage(
         self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, **kwargs
