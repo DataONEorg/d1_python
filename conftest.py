@@ -18,7 +18,6 @@
 """pytest setup and customization."""
 import logging
 import os
-import shutil
 import sys
 import tempfile
 
@@ -29,6 +28,7 @@ import psycopg2.extensions
 import pytest
 
 import d1_gmn.app.sciobj_store
+import d1_gmn.tests.gmn_test_case
 
 import d1_common.date_time
 
@@ -45,6 +45,7 @@ from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 import django.conf
 import django.core.management
 import django.db
+import django.test
 
 if not 'TRAVIS' in os.environ:
     import d1_test.pycharm
@@ -140,7 +141,7 @@ def pytest_configure(config):
 
     """
     global DO_FIXTURE_REFRESH
-    DO_FIXTURE_REFRESH = config.getoption('--fixture-refresh'),
+    DO_FIXTURE_REFRESH = (config.getoption('--fixture-refresh'),)
 
     sys.is_running_under_travis = 'TRAVIS' in os.environ
     sys.is_running_under_pytest = True
@@ -150,6 +151,7 @@ def pytest_configure(config):
         'review': config.getoption('--sample-review'),
         'update': config.getoption('--sample-update'),
     }
+
 
 # noinspection PyUnresolvedReferences
 def pytest_unconfigure(config):
@@ -402,19 +404,17 @@ def tricky_identifier_dict(request):
 
 @pytest.fixture(scope='session', autouse=True)
 def django_sciobj_store_setup(request):
+    """Create a unique SciObj store dir under /tmp for each worker.
+
+    This overrides the path set in settings_test.OBJECT_STORE_PATH.
+
+    """
     tmp_store_path = os.path.join(
-        tempfile.gettempdir(),
-        'gmn_test_obj_store_{}'.format(get_unique_suffix(request)),
+        tempfile.gettempdir(), 'gmn_test_obj_store', get_xdist_worker_id(request)
     )
     mock.patch('d1_gmn.app.startup._create_sciobj_store_root')
-    django.conf.settings.OBJECT_STORE_PATH = tmp_store_path
-    logger.debug('Creating sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
-    d1_gmn.app.sciobj_store.create_store()
-
-    yield
-
-    logger.debug('Deleting sciobj store. tmp_store_path="{}"'.format(tmp_store_path))
-    shutil.rmtree(tmp_store_path)
+    with d1_gmn.tests.gmn_test_case.unique_sciobj_store(tmp_store_path):
+        yield
 
 
 # Database setup
@@ -440,15 +440,21 @@ def profile_sql(db):
     list(map(logging.info, django.db.connection.queries))
 
 
-
 @pytest.fixture(scope='session', autouse=True)
 @pytest.mark.django_db
 def django_db_setup(request, django_db_blocker):
-    """Set up DB fixture When running in parallel with xdist, this is called single_db_setup for
-    each worker, causing a separate database to be set up for each worker."""
+    """Set up DB fixture.
+
+    When running in parallel with xdist, each worker is handled as a separate session,
+    so session scoped fixtures are called for each worker, causing a separate database
+    to be set up for each worker.
+
+    """
     global DO_FIXTURE_REFRESH
 
-    single_db_setup = posix_ipc.Semaphore(name=__name__ + 'db_setup', flags=posix_ipc.O_CREAT, initial_value=1)
+    single_db_setup = posix_ipc.Semaphore(
+        name=__name__ + 'db_setup', flags=posix_ipc.O_CREAT, initial_value=1
+    )
 
     logger.info('Setting up DB fixture')
 
@@ -547,7 +553,7 @@ def db_populate_by_json(db_key):
 
     django.core.management.call_command(
         'loaddata',
-        fixture_file_path,#'db_fixture',
+        fixture_file_path,
         database=db_key,
         # d1_test.sample.get_path_list('db_fixture.json.bz2'),
         # verbosity=0,
@@ -626,13 +632,12 @@ def run_sql(db, sql):
 
 
 def get_unique_suffix(request):
-    return '_'.join([get_random_ascii_str(), get_xdist_worker_id(request)]).strip('_')
-
-
-def get_random_ascii_str():
-    return d1_test.instance_generator.random_data.random_lower_ascii(
-        min_len=12, max_len=12
-    )
+    return '_'.join(
+        [
+            d1_test.instance_generator.random_data.random_lower_ascii(fixed_len=10),
+            get_xdist_worker_id(request),
+        ]
+    ).strip('_')
 
 
 def get_xdist_worker_id(request):
