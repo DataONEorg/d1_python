@@ -87,7 +87,7 @@ def _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url):
     map_xml = _read_sciobj_bytes_from_request(request)
     resource_map = d1_gmn.app.resource_map.parse_resource_map_from_str(map_xml)
     d1_gmn.app.resource_map.assert_map_is_valid_for_create(resource_map)
-    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_CTX(
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(
         pid, write=True
     ) as sciobj_file:
         sciobj_file.write(map_xml)
@@ -133,7 +133,7 @@ def _save_sciobj_bytes_from_request(request, pid):
             request.FILES['object'].temporary_file_path(), sciobj_path
         )
     else:
-        with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_CTX(
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_ctx(
             sciobj_path, write=True
         ) as sciobj_stream:
             for chunk in request.FILES['object'].chunks():

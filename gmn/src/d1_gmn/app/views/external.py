@@ -328,7 +328,7 @@ def get_replica(request, pid):
     )
     # Replica is always a local file that can be handled with FileResponse()
     response = django.http.FileResponse(
-        d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(pid), content_type_str
+        d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid), content_type_str
     )
     d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(response, sciobj)
     # Log the replication of this object.

@@ -57,7 +57,7 @@ def assert_valid(sysmeta_pyxb, pid):
                 ),
             )
 
-    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_CTX(pid) as sciobj_file:
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(pid) as sciobj_file:
         try:
             d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, sciobj_file.read())
         except d1_scimeta.xml_schema.SciMetaValidationError as e:

@@ -377,7 +377,7 @@ class Command(django.core.management.base.BaseCommand):
                 "Skipped download of existing sciobj bytes", 'pid="{}"'.format(pid)
             )
         else:
-            with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(
+            with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(
                 pid, write=True
             ) as sciobj_file:
                 client.get_and_save(pid, sciobj_file)

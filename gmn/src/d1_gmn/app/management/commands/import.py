@@ -468,7 +468,7 @@ class Command(django.core.management.base.BaseCommand):
         #     )
         #     return
 
-        with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_PLAIN(pid, write=True) as (
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid, write=True) as (
             sciobj_file,
             file_url,
         ):

@@ -272,5 +272,5 @@ def disable_management_command_concurrent_instance_check():
 def disable_sciobj_store_write():
     """Prevent SciObj bytes from being stored in the SciObj store on disk."""
     logging.debug("ContextManager: disable_sciobj_store_write()")
-    with mock.patch("d1_gmn.app.sciobj_store.open_sciobj_file_by_path_PLAIN"):
+    with mock.patch("d1_gmn.app.sciobj_store.open_sciobj_file_by_path"):
         yield os.devnull

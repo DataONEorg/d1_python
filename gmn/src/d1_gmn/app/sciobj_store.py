@@ -71,7 +71,7 @@ RELATIVE_PATH_MAGIC_HOST_STR = 'gmn-object-store'
 
 
 @contextlib2.contextmanager
-def open_sciobj_file_by_pid_CTX(pid, write=False):
+def open_sciobj_file_by_pid_ctx(pid, write=False):
     """Open the file containing the Science Object bytes of ``pid`` in the default
     location within the tree of the local SciObj store.
 
@@ -83,12 +83,12 @@ def open_sciobj_file_by_pid_CTX(pid, write=False):
 
     """
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
-    with open_sciobj_file_by_path_CTX(abs_path, write) as sciobj_file:
+    with open_sciobj_file_by_path_ctx(abs_path, write) as sciobj_file:
         yield sciobj_file
 
 
 @contextlib2.contextmanager
-def open_sciobj_file_by_path_CTX(abs_path, write=False):
+def open_sciobj_file_by_path_ctx(abs_path, write=False):
     """Open the file containing the Science Object bytes at the custom location
     ``abs_path`` in the local filesystem.
 
@@ -112,13 +112,12 @@ def open_sciobj_file_by_path_CTX(abs_path, write=False):
 def get_sciobj_iter_by_url(sciobj_url):
     abs_path = get_abs_sciobj_file_path_by_url(sciobj_url)
     return d1_common.iter.stream.StreamIterator(
-        open_sciobj_file_by_path_PLAIN(abs_path)
+        open_sciobj_file_by_path(abs_path)
     )
 
 
-# @contextlib2.contextmanager
 def get_sciobj_byte_iterator_by_url(sciobj_url):
-    with open_sciobj_file_by_pid_PLAIN(
+    with open_sciobj_file_by_pid(
         get_abs_sciobj_file_path_by_url(sciobj_url)
     ) as sciobj_file:
         with d1_common.iter.stream.StreamIterator(sciobj_file) as sciobj_iter:
@@ -128,74 +127,20 @@ def get_sciobj_byte_iterator_by_url(sciobj_url):
 def get_sciobj_iter_by_pid(pid):
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
     return d1_common.iter.stream.StreamIterator(
-        open_sciobj_file_by_path_PLAIN(abs_path)
+        open_sciobj_file_by_path(abs_path)
     )
 
 
-# @contextlib2.contextmanager
-# def get_sciobj_byte_iterator_by_pid(pid):
-#     with open_sciobj_file_by_pid_PLAIN(pid) as sciobj_file:
-#         with d1_common.iter.stream.StreamIterator(sciobj_file) as sciobj_iter:
-#             yield sciobj_iter
-
-
-# def get_sciobj_byte_iterator_by_url_not_context(sciobj_url):
-#     abs_path = get_abs_sciobj_file_path_by_url(sciobj_url)
-#     sciobj_file = open_sciobj_file_by_path_PLAIN(abs_path)
-#     return d1_common.iter.stream.StreamIterator(sciobj_file)
-
-
-# def save_in_object_store_by_iter(pid, sciobj_iter):
-#     """Save the Science Object bytes in the ``sciobj_iter`` iterator object to the
-#     default location within the tree of the local SciObj store and return file_url with
-#     the file location in a suitable form for storing in the DB."""
-#     with open_sciobj_file_by_pid(pid, write=True) as (sciobj_file, file_url):
-#         for chunk_str in sciobj_iter:
-#             sciobj_file.write(chunk_str)
-#         return file_url
-
-
-# Custom location
-
-
-# def save_in_custom_location_by_file(abs_path, sciobj_file):
-#     """Save the Science Object bytes in the ``sciobj_file`` file-like object to the
-#     custom location ``abs_path`` in the local filesystem and return file_url with the
-#     file location in a suitable form for storing in the DB."""
-#     return save_in_custom_location_by_iter(
-#         abs_path,
-#         d1_common.iter.stream.StreamIterator(
-#             sciobj_file, chunk_size=django.conf.settings.NUM_CHUNK_BYTES
-#         ),
-#     )
-
-
-# def save_in_custom_location_by_iter(abs_path, sciobj_iter):
-#     """Save the Science Object bytes in the ``sciobj_file`` iterator object to the
-#     custom location ``abs_path`` in the local filesystem and return file_url with the
-#     file location in a suitable form for storing in the DB."""
-#     with open_sciobj_file_by_path_CTX(abs_path, True) as sciobj_file:
-#         for chunk_str in sciobj_iter:
-#             sciobj_file.write(chunk_str)
-#     return get_abs_sciobj_file_url(abs_path)
-
-
-# def save_sciobj_bytes_from_str(map_xml, sciobj_path):
-#     d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
-#     with open(sciobj_path, 'wb') as f:
-#         f.write(map_xml)
-
-
-def open_sciobj_file_by_pid_PLAIN(pid, write=False):
+def open_sciobj_file_by_pid(pid, write=False):
     """Open the file containing the Science Object bytes at the custom location
     ``abs_path`` in the local filesystem for read."""
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
-    return open_sciobj_file_by_path_PLAIN(abs_path, write)
+    return open_sciobj_file_by_path(abs_path, write)
 
 
-def open_sciobj_file_by_path_PLAIN(abs_path, write=False):
+def open_sciobj_file_by_path(abs_path, write=False):
     """Open a SciObj file for read or write. If opened for write, create any missing
     directories. For a SciObj stored in the default SciObj store, the path includes the
     PID hash based directory levels.
