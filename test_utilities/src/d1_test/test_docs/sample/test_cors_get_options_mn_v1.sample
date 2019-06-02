@@ -10,7 +10,7 @@
 > Access-Control-Allow-Credentials: true
 > Access-Control-Allow-Headers: Authorization
 > Access-Control-Allow-Methods: GET,HEAD,PUT,DELETE,OPTIONS
-> Access-Control-Allow-Origin: *
+> Access-Control-Allow-Origin: https://search.dataone.org
 > Allow: GET,HEAD,PUT,DELETE,OPTIONS
 > Content-Type:[CONTENT-TYPE]
 > HTTP-Version: HTTP/1.1

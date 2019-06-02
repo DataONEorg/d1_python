@@ -2,7 +2,7 @@
   "Access-Control-Allow-Credentials": "true",
   "Access-Control-Allow-Headers": "Authorization",
   "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://search.dataone.org",
   "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
   "Content-Disposition": "attachment; filename=\"file_xxhqdhvidrye\"",
   "Content-Length": "248",
