@@ -724,8 +724,8 @@ class VersionMismatch(DataONEException):
 
 
 ERROR_CODE_TO_EXCEPTION_DICT = {
-    # 400: InvalidRequest,
-    400: InvalidSystemMetadata,
+    400: InvalidRequest,
+    # 400: InvalidSystemMetadata,
     # 400: UnsupportedMetadataType,
     # 400: UnsupportedType,
     # 401: InvalidCredentials,
