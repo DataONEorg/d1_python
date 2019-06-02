@@ -171,6 +171,9 @@ Note: None of these switches can be used when running tests in parallel with xdi
 
 * The settings in `settings_test.py` are optimized for testing and debugging, while the settings in `settings_template.py` are optimized for production. To use `settings_test.py` when debugging tests in PyCharm, go to `Run / Debug Configurations > Edit Configurations > Defaults > pytest > Environment variables`, add `DJANGO_SETTINGS_MODULE` and set it to `d1_gmn.settings_test`.
 
+* If the `requirements.txt` file is out of date, the `Package requirements` inspection in PyCharm will display a list of missing packages at the top of the screen. Do not follow PyCharm's suggestion to install the missing packages as it's probably the `requirements.txt` file that should be updated instead.  See the section describing how to update dependencies for more information.
+ 
+
 ### Django
 
 * Testing of the GMN Django web app is based on pytest and [pytest-django](https://pytest-django.readthedocs.io/en/latest/).
