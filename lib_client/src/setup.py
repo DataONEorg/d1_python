@@ -40,6 +40,7 @@ def main():
             'pyxb >= 1.2.6',
             'requests-toolbelt >= 0.9.1',
             'requests[security] >= 2.21.0',
+            'aiohttp >= 3.5.4',
         ],
         setup_requires=['setuptools_git >= 1.1'],
         classifiers=[
