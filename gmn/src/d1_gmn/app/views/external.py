@@ -108,7 +108,7 @@ def dispatch_object_list(request):
 def get_monitor_ping(request):
     """MNCore.ping() → Boolean."""
     response = d1_gmn.app.views.util.http_response_with_boolean_true_type()
-    d1_gmn.app.views.headers.add_http_date_header(response)
+    d1_gmn.app.views.headers.add_http_date(response)
     return response
 
 

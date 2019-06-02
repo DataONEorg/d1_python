@@ -76,9 +76,15 @@ class MemberNodeClient_1_2(
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
 
     def getPackageResponse(
-        self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, vendorSpecific=None, **kwargs
+        self,
+        did,
+        packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID,
+        vendorSpecific=None,
+        **kwargs
     ):
-        return self.GET(['packages', packageType, did], query=kwargs, headers=vendorSpecific)
+        return self.GET(
+            ['packages', packageType, did], query=kwargs, headers=vendorSpecific
+        )
 
     def getPackage(
         self, did, packageType=d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID, **kwargs

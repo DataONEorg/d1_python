@@ -54,6 +54,6 @@ class RequestHandler:
         if isinstance(response, django.http.response.HttpResponseBase) and hasattr(
             request, 'allowed_method_list'
         ):
-            d1_gmn.app.views.headers.add_cors_headers(response, request)
+            d1_gmn.app.views.headers.add_cors(response, request)
 
         return response

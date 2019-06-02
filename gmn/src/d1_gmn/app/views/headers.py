@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Read and write HTTP Headers."""
+import os
+
 import d1_gmn.app
 import d1_gmn.app.object_format_cache
 import d1_gmn.app.revision
@@ -26,20 +28,86 @@ import d1_common.date_time
 import d1_common.url
 import d1_common.utils.filesystem
 
+import django.conf
+
 
 def add_sciobj_properties_headers_to_response(response, sciobj_model):
-    _add_standard_headers(response, sciobj_model)
-    add_http_date_header(response)
-    add_custom_dataone_headers(response, sciobj_model)
-    add_content_disposition_header(response, sciobj_model)
+    """Add headers for SciObj to response."""
+    _add_standard(response, sciobj_model)
+    _add_sciobj_standard(response, sciobj_model)
+    _add_custom_dataone(response, sciobj_model)
+    _add_sciobj_custom_dataone(response, sciobj_model)
 
 
-def add_custom_dataone_headers(response, sciobj_model):
-    response["DataONE-GMN"] = d1_gmn.__version__
-    response["DataONE-FormatId"] = sciobj_model.format.format
-    response["DataONE-Checksum"] = "{},{}".format(
-        sciobj_model.checksum_algorithm.checksum_algorithm, sciobj_model.checksum
+def add_bagit_zip_properties_headers_to_response(response, sciobj_model):
+    """Add headers for dynamically generated BagIt ZIP files to response.
+
+    - ``sciobj_model`` will hold the underlying ORE RDF SciObj.
+    - Since the BagIt ZIP file is generated on the fly, there are some headers that
+    cannot be provided. Among these are ``Content-Length``, so the browser will not be
+    able to display an ETA or progress bar during download.
+
+    """
+    _add_standard(response, sciobj_model)
+    _add_bagit_standard(response, sciobj_model)
+    _add_custom_dataone(response, sciobj_model)
+    _add_bagit_custom_dataone(response)
+
+
+def add_cors(response, request):
+    """Add Cross-Origin Resource Sharing (CORS) headers to response.
+
+    - ``allowed_method_list`` is a list of HTTP methods that are allowed for the
+    endpoint that was called. It should not include "OPTIONS", which is included
+    automatically since it's allowed for all endpoints.
+
+    """
+    opt_method_list = ",".join(request.allowed_method_list + ["OPTIONS"])
+    response["Allow"] = opt_method_list
+    response["Access-Control-Allow-Methods"] = opt_method_list
+    response["Access-Control-Allow-Origin"] = request.META.get(
+        "HTTP_ORIGIN", django.conf.settings.CORS_DEFAULT_ORIGIN
     )
+    response["Access-Control-Allow-Headers"] = "Authorization"
+    response["Access-Control-Allow-Credentials"] = "true"
+
+
+def add_http_date(response, date_time=None):
+    response["Date"] = d1_common.date_time.http_datetime_str_from_dt(
+        d1_common.date_time.normalize_datetime_to_utc(date_time)
+        if date_time
+        else d1_common.date_time.utc_now()
+    )
+
+
+def _add_standard(response, sciobj_model):
+    add_http_date(response)
+    response["Last-Modified"] = d1_common.date_time.http_datetime_str_from_dt(
+        d1_common.date_time.normalize_datetime_to_utc(sciobj_model.modified_timestamp)
+    )
+
+
+def _add_sciobj_standard(response, sciobj_model):
+    response["Content-Length"] = sciobj_model.size
+    response["Content-Type"] = d1_gmn.app.object_format_cache.get_content_type(
+        sciobj_model
+    )
+    response["Content-Disposition"] = 'attachment; filename="{}"'.format(
+        d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+    )
+
+
+def _add_bagit_standard(response, sciobj_model):
+    """Use the base of any name provided in the SysMeta for the underlying ORE RDF
+    SciObj and change any provided extension (typically .rdf) to .zip."""
+    response["Content-Type"] = "application/zip"
+    rdf_file_name = d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+    zip_file_name = os.path.splitext(rdf_file_name)[0] + ".zip"
+    response["Content-Disposition"] = 'attachment; filename="{}"'.format(zip_file_name)
+
+
+def _add_custom_dataone(response, sciobj_model):
+    response["DataONE-GMN"] = d1_gmn.__version__
     response["DataONE-SerialVersion"] = sciobj_model.serial_version
     if d1_common.url.isHttpOrHttps(sciobj_model.url):
         response["DataONE-Proxy"] = sciobj_model.url
@@ -52,41 +120,12 @@ def add_custom_dataone_headers(response, sciobj_model):
         response["DataONE-SeriesId"] = sid
 
 
-def add_content_disposition_header(response, sciobj_model):
-    response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-        d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+def _add_sciobj_custom_dataone(response, sciobj_model):
+    response["DataONE-FormatId"] = sciobj_model.format.format
+    response["DataONE-Checksum"] = "{},{}".format(
+        sciobj_model.checksum_algorithm.checksum_algorithm, sciobj_model.checksum
     )
 
 
-def add_http_date_header(response, date_time=None):
-    response["Date"] = d1_common.date_time.http_datetime_str_from_dt(
-        d1_common.date_time.normalize_datetime_to_utc(date_time)
-        if date_time
-        else d1_common.date_time.utc_now()
-    )
-
-
-def add_cors_headers(response, request):
-    """Add Cross-Origin Resource Sharing (CORS) headers to response.
-
-    - ``method_list`` is a list of HTTP methods that are allowed for the endpoint that
-      was called. It should not include "OPTIONS", which is included automatically
-      since it's allowed for all endpoints.
-
-    """
-    opt_method_list = ",".join(request.allowed_method_list + ["OPTIONS"])
-    response["Allow"] = opt_method_list
-    response["Access-Control-Allow-Methods"] = opt_method_list
-    response["Access-Control-Allow-Origin"] = request.META.get("Origin", "*")
-    response["Access-Control-Allow-Headers"] = "Authorization"
-    response["Access-Control-Allow-Credentials"] = "true"
-
-
-def _add_standard_headers(response, sciobj_model):
-    response["Content-Length"] = sciobj_model.size
-    response["Content-Type"] = d1_gmn.app.object_format_cache.get_content_type(
-        sciobj_model
-    )
-    response["Last-Modified"] = d1_common.date_time.http_datetime_str_from_dt(
-        d1_common.date_time.normalize_datetime_to_utc(sciobj_model.modified_timestamp)
-    )
+def _add_bagit_custom_dataone(response):
+    response["DataONE-FormatId"] = d1_common.const.DEFAULT_DATA_PACKAGE_FORMAT_ID
