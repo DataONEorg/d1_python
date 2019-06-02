@@ -17,13 +17,13 @@
 # limitations under the License.
 """Utilities for processing X.509 v3 certificates."""
 
+import datetime
+import ipaddress
 import logging
 import re
 import socket
 import ssl
 import urllib.parse
-import datetime
-import ipaddress
 
 import contextlib2
 import cryptography
@@ -37,7 +37,6 @@ import cryptography.hazmat.primitives.hashes
 import cryptography.hazmat.primitives.serialization
 import cryptography.x509
 import cryptography.x509.oid
-
 import pyasn1.codec.der
 import pyasn1.codec.der.decoder
 
@@ -159,6 +158,7 @@ def create_d1_dn_subject(common_name_str):
 
             For a locally trusted client side certificate, something like
             ``localClient`` may be used.
+
     """
     return cryptography.x509.Name(
         [
@@ -244,6 +244,7 @@ def generate_csr(private_key_bytes, subject_name, fqdn_list):
             this certificate will provide authentication.
 
             E.g.: ['my.membernode.org', '1.2.3.4']
+
     """
     return (
         cryptography.x509.CertificateSigningRequestBuilder()
@@ -541,7 +542,7 @@ def serialize_private_key_to_pem(private_key, passphrase_bytes=None):
 
 
 def generate_private_key(key_size=2048):
-    """Generate a private key"""
+    """Generate a private key."""
     return cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key(
         public_exponent=65537,
         key_size=key_size,
@@ -572,13 +573,13 @@ def get_public_key_pem(cert_obj):
 
 
 def save_pem(pem_path, pem_bytes):
-    """Save PEM encoded bytes to file"""
+    """Save PEM encoded bytes to file."""
     with open(pem_path, "wb") as f:
         f.write(pem_bytes)
 
 
 def load_csr(pem_path):
-    """Load CSR from PEM encoded file"""
+    """Load CSR from PEM encoded file."""
     with open(pem_path, "rb") as f:
         return cryptography.x509.load_pem_x509_csr(
             data=f.read(), backend=cryptography.hazmat.backends.default_backend()
@@ -586,7 +587,7 @@ def load_csr(pem_path):
 
 
 def load_private_key(pem_path, passphrase_bytes=None):
-    """Load private key from PEM encoded file"""
+    """Load private key from PEM encoded file."""
     with open(pem_path, "rb") as f:
         return cryptography.hazmat.primitives.serialization.load_pem_private_key(
             data=f.read(),
