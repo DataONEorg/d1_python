@@ -20,15 +20,17 @@
 import tempfile
 
 import freezegun
-import pytest
 import responses
+
+import pytest
 
 import d1_common.object_format_cache
 
 import d1_test.d1_test_case
 import d1_test.mock_api.list_formats
 
-JSON = """
+# Test cache with a last refresh timestamp of 2019-04-03.
+CACHE_JSON = """
 {
   "_last_refresh_timestamp": "2019-04-03T01:37:31.434831+00:00",
     "FGDC-STD-001.2-1999": {
@@ -64,18 +66,25 @@ JSON = """
 
 @pytest.fixture(scope="function")
 def format_info_cache():
+    """Fixture providing an ObjectFormatListCache loaded from a test cache.
+
+    The cache is instantiated ~1 week after the last refresh timestamp in the test
+    cache, so will not refresh with the default refresh period of 30 days.
+
+    """
     d1_test.mock_api.list_formats.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
     with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as tmp_file:
-        tmp_file.write(JSON.strip())
+        tmp_file.write(CACHE_JSON.strip())
         tmp_file.seek(0)
-        yield d1_common.object_format_cache.ObjectFormatListCache(
-            d1_test.d1_test_case.MOCK_MN_BASE_URL,
-            object_format_cache_path=tmp_file.name,
-        )
+        # Instantiate one week after last refresh timestamp
+        with freezegun.freeze_time("2019-04-10"):
+            yield d1_common.object_format_cache.ObjectFormatListCache(
+                d1_test.d1_test_case.MOCK_MN_BASE_URL,
+                object_format_cache_path=tmp_file.name,
+            )
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestObjectFormatList")
-@freezegun.freeze_time("1945-04-02")
 class TestObjectFormatList(d1_test.d1_test_case.D1TestCase):
     def test_1000(self, format_info_cache):
         """Successful instantiation."""
@@ -83,16 +92,17 @@ class TestObjectFormatList(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1010(self, format_info_cache):
-        """object_format_dict: Property access: Cache is not refreshed if not
-        expired."""
-        with freezegun.freeze_time("2019-04-10"):
+        """object_format_dict property access: Cache is not refreshed if not expired."""
+        # Property access two weeks after last refresh timestamp
+        with freezegun.freeze_time("2019-04-17"):
             self.sample.assert_equals(
                 format_info_cache.object_format_dict, "no_refresh"
             )
 
     @responses.activate
     def test_1020(self, format_info_cache):
-        """object_format_dict: Property access: Cache is refreshed if expired."""
+        """object_format_dict property access: Cache is refreshed if expired."""
+        # Property access 31 days after last refresh timestamp
         with freezegun.freeze_time("2019-05-04"):
             self.sample.assert_equals(format_info_cache.object_format_dict, "refresh")
             assert 'format_id_96' in format_info_cache.object_format_dict
