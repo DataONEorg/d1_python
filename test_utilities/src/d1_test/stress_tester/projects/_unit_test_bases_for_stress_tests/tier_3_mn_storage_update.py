@@ -29,9 +29,8 @@
 
 import os
 
-import pytest
-
 import context
+import pytest
 import test_client
 
 import d1_test_case

@@ -295,8 +295,9 @@ import urllib.parse
 #
 import warnings
 
-import pytest
 import rdflib
+
+import pytest
 
 import d1_common.resource_map
 

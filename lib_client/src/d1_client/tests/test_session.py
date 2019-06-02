@@ -22,9 +22,10 @@ import hashlib
 import logging
 
 import freezegun
-import pytest
 import requests
 import responses
+
+import pytest
 
 import d1_common.logging_context
 

@@ -22,8 +22,9 @@ objects on either side of the deleted object with each other
 
 """
 
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

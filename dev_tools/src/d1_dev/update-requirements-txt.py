@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import shutil
-import d1_dev.util
 import os
-import pip._internal.utils.misc
 import re
+import shutil
 
+import pip._internal.utils.misc
+
+import d1_dev.util
 
 REQUIREMENTS_FILENAME = 'requirements.txt'
 
@@ -26,6 +27,7 @@ MODULE_FILTER_REGEX_LIST = {
     'redbaron',
 }
 
+
 def main():
     repo_dir = d1_dev.util.find_repo_root()
     req_path = os.path.join(repo_dir, REQUIREMENTS_FILENAME)
@@ -42,11 +44,14 @@ def main():
 def get_reqs():
     req_list = []
     # noinspection PyProtectedMember
-    for package_dist in pip._internal.utils.misc.get_installed_distributions(local_only=True):
+    for package_dist in pip._internal.utils.misc.get_installed_distributions(
+        local_only=True
+    ):
         if not is_filtered_package(package_dist.project_name):
             req_str = str(package_dist.as_requirement())
             req_list.append(req_str)
     return req_list
+
 
 def is_filtered_package(project_name):
     for filter_rx in MODULE_FILTER_REGEX_LIST:
