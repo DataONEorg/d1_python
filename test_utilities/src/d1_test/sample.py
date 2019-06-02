@@ -575,8 +575,11 @@ def user_prompt(
     question_str, response_set=None, ok_response_str="y", cancel_response_str="f"
 ):
     """``input()`` function that accesses the stdin and stdout file descriptors
-    directly. For prompting for user input under ``pytest`` ``--capture=sys`` and
+    directly.
+
+    For prompting for user input under ``pytest`` ``--capture=sys`` and
     ``--capture=no``. Does not work with ``--capture=fd``.
+
     """
     valid_response_set = (
         (response_set or set()) | set(ok_response_str) | set(cancel_response_str)

@@ -74,8 +74,16 @@ SUBJ_DICT = {
     'submitter': 'gmn_test_subject_submitter',
 }
 
-DB_FIXTURE_PID_LIST = [v['pid'] for v in d1_test.test_files.load_json('db_fixture_pid.json') if v['pid'] is not None]
-DB_FIXTURE_SID_LIST = [v['sid'] for v in d1_test.test_files.load_json('db_fixture_sid.json') if v['sid'] is not None]
+DB_FIXTURE_PID_LIST = [
+    v['pid']
+    for v in d1_test.test_files.load_json('db_fixture_pid.json')
+    if v['pid'] is not None
+]
+DB_FIXTURE_SID_LIST = [
+    v['sid']
+    for v in d1_test.test_files.load_json('db_fixture_sid.json')
+    if v['sid'] is not None
+]
 
 
 @contextlib.contextmanager
@@ -282,6 +290,7 @@ def memory_limit(max_mem_bytes):
         logging.debug('Removing memory limit. limit={:,} bytes'.format(limit_bytes))
         resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
 
+
 # ===============================================================================
 
 
@@ -303,7 +312,6 @@ class D1TestCase(object):
     def db_fixture_sid_list(self):
         """Get list of all SIDs in the DB fixture."""
         return DB_FIXTURE_SID_LIST
-
 
     @staticmethod
     def deserialize_and_check(doc, raises_pyxb_exc=False):

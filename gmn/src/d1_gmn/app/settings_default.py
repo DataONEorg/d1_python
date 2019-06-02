@@ -115,6 +115,9 @@ PROXY_MODE_BASIC_AUTH_USERNAME = ''
 PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
+# Fallback origin to use if the CGI environment does not contain HTTP_ORIGIN.
+CORS_DEFAULT_ORIGIN = "https://search.dataone.org"
+
 MAX_XML_DOCUMENT_SIZE = 10 * 1024 ** 2
 NUM_CHUNK_BYTES = 1024 ** 2
 MAX_SLICE_ITEMS = 5000

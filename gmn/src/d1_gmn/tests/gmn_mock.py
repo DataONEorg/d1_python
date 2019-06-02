@@ -29,8 +29,9 @@ import os
 
 import contextlib2
 import mock
-import pytest
 import requests
+
+import pytest
 
 import d1_gmn.tests
 

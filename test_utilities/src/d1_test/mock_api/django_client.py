@@ -128,7 +128,7 @@ def _request_callback(request):
         django_response = getattr(django_client, request.method.lower())(
             url_path,
             data=data,
-            content_type = request.headers.get('Content-Type', 'MISSING-CONTENT-TYPE'),
+            content_type=request.headers.get('Content-Type', 'MISSING-CONTENT-TYPE'),
             **_headers_to_wsgi_env(request.headers or {}),
         )
     except AttributeError as e:

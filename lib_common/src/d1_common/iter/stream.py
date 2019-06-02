@@ -19,6 +19,7 @@ import os
 
 import d1_common.const
 
+
 class StreamIterator(object):
     """Generator that returns a stream in chunks.
 
@@ -27,7 +28,9 @@ class StreamIterator(object):
     by the ``read()`` method at any point during iteration.
 
     Typical sources for streams are files and HTML responses.
+
     """
+
     def __init__(self, stream, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
         """
         Args:

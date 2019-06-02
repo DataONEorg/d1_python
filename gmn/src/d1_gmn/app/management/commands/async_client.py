@@ -225,14 +225,14 @@ class AsyncDataONEClient:
         headers = vendor_specific
 
         request_arg_dict = {
-            'method': method_str,
-            'url': url,
-            'params': params,
-            'data': data,
-            'headers': headers,
+            "method": method_str,
+            "url": url,
+            "params": params,
+            "data": data,
+            "headers": headers,
         }
 
-        self._logger.debug('Request: {}'.format(request_arg_dict))
+        self._logger.debug("Request: {}".format(request_arg_dict))
 
         for i in range(self._retry_count):
             try:

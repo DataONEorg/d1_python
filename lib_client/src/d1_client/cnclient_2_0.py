@@ -159,7 +159,9 @@ class CoordinatingNodeClient_2_0(
     # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
     # POST /diag/object
 
-    def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj, vendorSpecific=None):
+    def echoIndexedObjectResponse(
+        self, queryEngine, sysmeta_pyxb, obj, vendorSpecific=None
+    ):
         mmp_dict = {
             'queryEngine': queryEngine.encode('utf-8'),
             'object': ('content.bin', obj),
@@ -168,5 +170,7 @@ class CoordinatingNodeClient_2_0(
         return self.POST(['diag', 'object'], fields=mmp_dict, headers=vendorSpecific)
 
     def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj, vendorSpecific=None):
-        response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj, vendorSpecific)
+        response = self.echoIndexedObjectResponse(
+            queryEngine, sysmeta_pyxb, obj, vendorSpecific
+        )
         return self._read_stream_response(response)

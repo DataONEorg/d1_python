@@ -111,9 +111,7 @@ def open_sciobj_file_by_path_ctx(abs_path, write=False):
 
 def get_sciobj_iter_by_url(sciobj_url):
     abs_path = get_abs_sciobj_file_path_by_url(sciobj_url)
-    return d1_common.iter.stream.StreamIterator(
-        open_sciobj_file_by_path(abs_path)
-    )
+    return d1_common.iter.stream.StreamIterator(open_sciobj_file_by_path(abs_path))
 
 
 def get_sciobj_byte_iterator_by_url(sciobj_url):
@@ -126,9 +124,7 @@ def get_sciobj_byte_iterator_by_url(sciobj_url):
 
 def get_sciobj_iter_by_pid(pid):
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
-    return d1_common.iter.stream.StreamIterator(
-        open_sciobj_file_by_path(abs_path)
-    )
+    return d1_common.iter.stream.StreamIterator(open_sciobj_file_by_path(abs_path))
 
 
 def open_sciobj_file_by_pid(pid, write=False):

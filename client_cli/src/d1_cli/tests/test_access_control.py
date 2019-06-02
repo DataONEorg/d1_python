@@ -19,10 +19,10 @@
 # limitations under the License.
 """Test generation of AccessControl in SysMeta."""
 import freezegun
-import pytest
 
 import d1_cli.impl.access_control
 import d1_cli.impl.exceptions
+import pytest
 
 import d1_test.d1_test_case
 

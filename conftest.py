@@ -25,6 +25,7 @@ import mock
 import posix_ipc
 import psycopg2
 import psycopg2.extensions
+
 import pytest
 
 import d1_gmn.app.sciobj_store

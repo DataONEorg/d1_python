@@ -18,8 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Generate a Certificate Signing Request (CSR) for a Member Node Client Side
-Certificate, suitable for submitting to DataONE.
-"""
+Certificate, suitable for submitting to DataONE."""
 import argparse
 import logging
 import os

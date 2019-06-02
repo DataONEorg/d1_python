@@ -28,8 +28,9 @@ import sys
 import tempfile
 import traceback
 
-import pytest
 import requests
+
+import pytest
 
 import d1_gmn.app
 import d1_gmn.app.models

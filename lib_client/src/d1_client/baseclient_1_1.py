@@ -108,7 +108,9 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         else:
             return self._read_stream_response(response)
 
-    def getQueryEngineDescriptionResponse(self, queryEngine, vendorSpecific=None, **kwargs):
+    def getQueryEngineDescriptionResponse(
+        self, queryEngine, vendorSpecific=None, **kwargs
+    ):
         """CNRead.getQueryEngineDescription(session, queryEngine) →
         QueryEngineDescription https://releases.dataone.org/online/api-
         documentation-v2.0.1/apis/CN_APIs.html#CNRead.getQueryEngineDescription

@@ -182,6 +182,7 @@ def get_node(request):
 @d1_gmn.app.views.decorators.read_permission
 def get_object(request, pid):
     """MNRead.get(session, did) → OctetStream."""
+    # TODO: Replace all ScienceObject.objects.get() with d1_gmn.app.model_util.get_sci_model()
     sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
     content_type_str = d1_gmn.app.object_format_cache.get_content_type(
         sciobj.format.format
