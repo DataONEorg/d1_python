@@ -147,7 +147,7 @@ class SimpleXMLWrapper(object):
             self.get_element_by_name(el_name, el_idx), encoding
         )
 
-    def get_element_list_by_name(self, el_name):
+    def get_element_list_by_name(self, el_name, namespaces=None):
         """
     Args:
       el_name : str
@@ -158,9 +158,9 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-        return self._root_el.findall('.//{}'.format(el_name))
+        return self._root_el.findall('.//{}'.format(el_name), namespaces)
 
-    def get_element_list_by_attr_key(self, attr_key):
+    def get_element_list_by_attr_key(self, attr_key, namespaces=None):
         """
     Args:
       attr_key : str
@@ -171,7 +171,7 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-        return self._root_el.findall('.//*[@{}]'.format(attr_key))
+        return self._root_el.findall('.//*[@{}]'.format(attr_key), namespaces)
 
     # get element
 
