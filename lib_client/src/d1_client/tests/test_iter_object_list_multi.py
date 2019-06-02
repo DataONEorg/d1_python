@@ -18,16 +18,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import d1_common
 import freezegun
 import responses
+
+import d1_common
+import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.mock_api.list_objects
 
 import d1_client.d1client
 import d1_client.iter.objectlist_multi
-import d1_common.xml
 
 
 # @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
@@ -62,8 +63,6 @@ class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):
         object_list.sort(key=lambda x: x.identifier.value())
 
         self.sample.assert_equals(
-            "\n".join(
-                d1_common.xml.serialize_to_xml_str(v) for v in object_list[:5]
-            ),
+            "\n".join(d1_common.xml.serialize_to_xml_str(v) for v in object_list[:5]),
             "iter",
         )

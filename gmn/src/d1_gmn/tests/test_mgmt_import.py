@@ -16,8 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test the bulk importer management command."""
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_test_case
 

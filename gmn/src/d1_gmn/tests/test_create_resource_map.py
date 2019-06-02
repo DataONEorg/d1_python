@@ -20,8 +20,9 @@
 """Test MNStorage.create() and MNStorage.update() with Resource Map."""
 import logging
 
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.app.resource_map
 import d1_gmn.tests.gmn_test_case

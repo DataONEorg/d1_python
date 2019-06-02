@@ -18,8 +18,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import freezegun
-import pytest
 import responses
+
+import pytest
 
 import d1_common.date_time
 import d1_common.xml
