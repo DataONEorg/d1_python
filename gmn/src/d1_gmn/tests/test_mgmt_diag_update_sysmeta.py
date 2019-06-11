@@ -34,7 +34,7 @@ N_SYSMETA_DOCS = 10
 
 # TODO:
 @pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
-@d1_test.d1_test_case.reproducible_random_decorator('TestMgmtUpdateSysMeta')
+@d1_test.d1_test_case.reproducible_random_decorator("TestMgmtUpdateSysMeta")
 class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def _create_test_dir_with_sysmeta_docs(self, client):
         rnd_pid_list = self.get_random_pid_sample(N_SYSMETA_DOCS)
@@ -42,7 +42,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         tmp_file_list = []
         for pid in rnd_pid_list:
             with tempfile.NamedTemporaryFile(
-                dir=tmp_dir_path, suffix='.xml', delete=False
+                dir=tmp_dir_path, suffix=".xml", delete=False
             ) as tmp_file:
                 sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_random(
                     client
@@ -53,7 +53,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
         return tmp_dir_path, tmp_file_list, rnd_pid_list
 
     def _call_diag_update_sysmeta(self, *args, **kwargs):
-        self.call_management_command('diag_update_sysmeta', '--debug', *args, **kwargs)
+        self.call_management_command("diag_update_sysmeta", "--debug", *args, **kwargs)
 
     def test_1000(self, gmn_client_v2):
         """diag_update_sysmeta: local XML docs."""
@@ -61,9 +61,9 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
             gmn_client_v2
         )
         self._call_diag_update_sysmeta(
-            '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'
+            "--root", tmp_dir_path, "size", "checksum", "rightsHolder", "accessPolicy"
         )
-        combined_sysmeta_xml = '\n'.join(
+        combined_sysmeta_xml = "\n".join(
             [
                 d1_common.xml.serialize_to_xml_str(
                     d1_gmn.app.sysmeta.model_to_pyxb(pid)
@@ -71,7 +71,7 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 for pid in rnd_pid_list
             ]
         )
-        self.sample.assert_equals(combined_sysmeta_xml, 'local_file_search')
+        self.sample.assert_equals(combined_sysmeta_xml, "local_file_search")
 
     def test_1010(self, gmn_client_v2):
         """diag_update_sysmeta: remote node."""
@@ -79,9 +79,9 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
             gmn_client_v2
         )
         self._call_diag_update_sysmeta(
-            '--root', tmp_dir_path, 'size', 'checksum', 'rightsHolder', 'accessPolicy'
+            "--root", tmp_dir_path, "size", "checksum", "rightsHolder", "accessPolicy"
         )
-        combined_sysmeta_xml = '\n'.join(
+        combined_sysmeta_xml = "\n".join(
             [
                 d1_common.xml.serialize_to_xml_str(
                     d1_gmn.app.sysmeta.model_to_pyxb(pid)
@@ -89,4 +89,4 @@ class TestMgmtUpdateSysMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 for pid in rnd_pid_list
             ]
         )
-        self.sample.assert_equals(combined_sysmeta_xml, 'remote_node')
+        self.sample.assert_equals(combined_sysmeta_xml, "remote_node")

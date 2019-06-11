@@ -30,6 +30,7 @@ Objects are randomly distributed between categories:
 
 Though object bytes are also created, they are not captured in the db fixture.
 See the README.md for more info on the fixtures.
+
 """
 # The Django init needs to occur before the django and gmn_test_case imports, so we're
 # stuck with a bit of a messy import section that isort and flake8 don't like.

@@ -118,30 +118,30 @@ class ScienceObject(django.db.models.Model):
     )
     size = django.db.models.BigIntegerField(db_index=True)
     submitter = django.db.models.ForeignKey(
-        Subject, django.db.models.CASCADE, related_name='%(class)s_submitter'
+        Subject, django.db.models.CASCADE, related_name="%(class)s_submitter"
     )
     rights_holder = django.db.models.ForeignKey(
-        Subject, django.db.models.CASCADE, related_name='%(class)s_rights_holder'
+        Subject, django.db.models.CASCADE, related_name="%(class)s_rights_holder"
     )
     origin_member_node = django.db.models.ForeignKey(
-        Node, django.db.models.CASCADE, related_name='%(class)s_origin_member_node'
+        Node, django.db.models.CASCADE, related_name="%(class)s_origin_member_node"
     )
     authoritative_member_node = django.db.models.ForeignKey(
         Node,
         django.db.models.CASCADE,
-        related_name='%(class)s_authoritative_member_node',
+        related_name="%(class)s_authoritative_member_node",
     )
     obsoletes = django.db.models.OneToOneField(
         IdNamespace,
         django.db.models.CASCADE,
         null=True,
-        related_name='%(class)s_obsoletes',
+        related_name="%(class)s_obsoletes",
     )
     obsoleted_by = django.db.models.OneToOneField(
         IdNamespace,
         django.db.models.CASCADE,
         null=True,
-        related_name='%(class)s_obsoleted_by',
+        related_name="%(class)s_obsoleted_by",
     )
     is_archived = django.db.models.BooleanField(db_index=True)
     # Internal fields (not used in System Metadata)
@@ -152,7 +152,7 @@ class ScienceObject(django.db.models.Model):
         # ordering = ['modified_timestamp', 'id'] # pid__did
         # Django creates many indexes by default, but not the one specified in
         # Meta.ordering.
-        indexes = [django.db.models.Index(fields=['modified_timestamp', 'id'])]
+        indexes = [django.db.models.Index(fields=["modified_timestamp", "id"])]
 
 
 # ------------------------------------------------------------------------------
@@ -196,11 +196,11 @@ class ReplicaStatus(django.db.models.Model):
 
 def replica_status(status_str):
     assert status_str in [
-        'queued',
-        'requested',
-        'completed',
-        'failed',
-        'invalidated',
+        "queued",
+        "requested",
+        "completed",
+        "failed",
+        "invalidated",
     ], 'Invalid replication status. status="{}"'.format(status_str)
     return ReplicaStatus.objects.get_or_create(status=status_str)[0]
 
@@ -236,7 +236,7 @@ class LocalReplica(django.db.models.Model):
     """
 
     pid = django.db.models.OneToOneField(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_pid"
     )
     info = django.db.models.OneToOneField(ReplicaInfo, django.db.models.CASCADE)
 
@@ -329,10 +329,10 @@ class Chain(django.db.models.Model):
 
     # id = ChainId
     sid = django.db.models.OneToOneField(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_sid', null=True
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_sid", null=True
     )
     head_pid = django.db.models.OneToOneField(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_head_pid'
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_head_pid"
     )
 
 
@@ -341,7 +341,7 @@ class ChainMember(django.db.models.Model):
 
     chain = django.db.models.ForeignKey(Chain, django.db.models.CASCADE)
     pid = django.db.models.OneToOneField(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_pid"
     )
 
 
@@ -358,13 +358,13 @@ def event(event_str):
     # In v2.0, events are no longer restricted to this set. However, GMN still only
     # records these types of events, so we'll leave it in while that remains the case.
     assert event_str in [
-        'create',
-        'read',
-        'update',
-        'delete',
-        'replicate',
-        'synchronization_failed',
-        'replication_failed',
+        "create",
+        "read",
+        "update",
+        "delete",
+        "replicate",
+        "synchronization_failed",
+        "replication_failed",
     ], 'Invalid event type. event="{}"'.format(event_str)
     return Event.objects.get_or_create(event=event_str)[0]
 
@@ -399,7 +399,7 @@ class EventLog(django.db.models.Model):
     class Meta:
         # The slice module must be updated if ordering is modified
         # ordering = ['timestamp', 'id']
-        indexes = [django.db.models.Index(fields=['timestamp', 'id'])]
+        indexes = [django.db.models.Index(fields=["timestamp", "id"])]
 
 
 # EventLog.objects.filter(times)
@@ -415,9 +415,9 @@ class SystemMetadataRefreshQueueStatus(django.db.models.Model):
 
 def sysmeta_refresh_status(status_str):
     assert status_str in [
-        'queued',
-        'completed',
-        'failed',
+        "queued",
+        "completed",
+        "failed",
     ], 'Invalid replication status. status="{}"'.format(status_str)
     return SystemMetadataRefreshQueueStatus.objects.get_or_create(status=status_str)[0]
 
@@ -439,10 +439,10 @@ def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
     return SystemMetadataRefreshQueue.objects.get_or_create(
         sciobj=ScienceObject.objects.get(pid__did=pid),
         defaults={
-            'status': sysmeta_refresh_status(status),
-            'serial_version': serial_version,
-            'sysmeta_timestamp': sysmeta_timestamp,
-            'failed_attempts': 0,
+            "status": sysmeta_refresh_status(status),
+            "serial_version": serial_version,
+            "sysmeta_timestamp": sysmeta_timestamp,
+            "failed_attempts": 0,
         },
     )[0]
 
@@ -505,7 +505,7 @@ class BlockedMemberNode(django.db.models.Model):
 
 class ResourceMap(django.db.models.Model):
     pid = django.db.models.OneToOneField(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_pid'
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_pid"
     )
 
 
@@ -513,5 +513,5 @@ class ResourceMapMember(django.db.models.Model):
     resource_map = django.db.models.ForeignKey(ResourceMap, django.db.models.CASCADE)
     # Any number of Resource Maps can aggregate the same DIDs
     did = django.db.models.ForeignKey(
-        IdNamespace, django.db.models.CASCADE, related_name='%(class)s_did'
+        IdNamespace, django.db.models.CASCADE, related_name="%(class)s_did"
     )

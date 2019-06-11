@@ -27,7 +27,7 @@ import d1_test.mock_api.create
 class TestMNClient(d1_test.d1_test_case.D1TestCase):
     def setup_class(self):
         self.sysmeta_pyxb = d1_test.test_files.load_xml_to_pyxb(
-            'BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+            "BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml"
         )
 
     # =========================================================================
@@ -41,7 +41,7 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
         response = mn_client_v1.createResponse(
-            '1234', b'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
+            "1234", b"BAYXXX_015ADCP015R00_20051215.50.9", self.sysmeta_pyxb
         )
         assert response.status_code == 200
         echo_dict = d1_test.mock_api.create.unpack_echo_header(response.headers)
@@ -49,13 +49,13 @@ class TestMNClient(d1_test.d1_test_case.D1TestCase):
         # echo_dict['identifier'] = (
         #   d1_common.types.dataoneTypes.CreateFromDocument(response.content).value()
         # )
-        self.sample.assert_equals(echo_dict, 'mmp_encoding', mn_client_v1)
+        self.sample.assert_equals(echo_dict, "mmp_encoding", mn_client_v1)
 
     @responses.activate
     def test_1010(self, mn_client_v1):
         """MNCore.create(): Returned Identifier object is correctly parsed."""
         d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         identifier_pyxb = mn_client_v1.create(
-            '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta_pyxb
+            "1234", "BAYXXX_015ADCP015R00_20051215.50.9", self.sysmeta_pyxb
         )
-        assert identifier_pyxb.value() == 'echo-post'
+        assert identifier_pyxb.value() == "echo-post"

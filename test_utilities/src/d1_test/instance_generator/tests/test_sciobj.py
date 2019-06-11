@@ -27,22 +27,22 @@ import d1_test.instance_generator.sciobj
 class TestSciObj(d1_test.d1_test_case.D1TestCase):
     def _assert(self, cn_client_v1_v2, sciobj_bytes, sysmeta_pyxb):
         self.sample.assert_equals(
-            sciobj_bytes, 'generate_reproducible_sciobj', cn_client_v1_v2
+            sciobj_bytes, "generate_reproducible_sciobj", cn_client_v1_v2
         )
         self.sample.assert_equals(
-            sysmeta_pyxb, 'generate_reproducible_sysmeta', cn_client_v1_v2
+            sysmeta_pyxb, "generate_reproducible_sysmeta", cn_client_v1_v2
         )
 
     def test_1000(self, cn_client_v1_v2):
         """generate_reproducible(): Generated objects are not affected by the current
         time."""
-        pid = 'an_unchanging_pid'
-        with freezegun.freeze_time('1940-01-01'):
+        pid = "an_unchanging_pid"
+        with freezegun.freeze_time("1940-01-01"):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
                 cn_client_v1_v2, pid
             )
             self._assert(cn_client_v1_v2, sciobj_bytes, sysmeta_pyxb)
-        with freezegun.freeze_time('1950-01-01'):
+        with freezegun.freeze_time("1950-01-01"):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
                 cn_client_v1_v2, pid
             )
@@ -51,13 +51,13 @@ class TestSciObj(d1_test.d1_test_case.D1TestCase):
     def test_1010(self, cn_client_v1_v2):
         """generate_reproducible(): Generated objects are not affected by setting the
         PRNG seed."""
-        pid = 'an_unchanging_pid'
-        with d1_test.d1_test_case.reproducible_random_context('random_seed'):
+        pid = "an_unchanging_pid"
+        with d1_test.d1_test_case.reproducible_random_context("random_seed"):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
                 cn_client_v1_v2, pid
             )
             self._assert(cn_client_v1_v2, sciobj_bytes, sysmeta_pyxb)
-        with d1_test.d1_test_case.reproducible_random_context('another_seed'):
+        with d1_test.d1_test_case.reproducible_random_context("another_seed"):
             pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
                 cn_client_v1_v2, pid
             )

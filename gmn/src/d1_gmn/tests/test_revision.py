@@ -71,8 +71,8 @@ class TestRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.assert_valid_chain(client, pid_chain_list, sid)
             # Cut object is still available but now standalone
             sciobj_bytes, sysmeta_pyxb = self.get_obj(client, pid)
-            assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletes') is None
-            assert self.get_pyxb_value(sysmeta_pyxb, 'obsoletedBy') is None
+            assert self.get_pyxb_value(sysmeta_pyxb, "obsoletes") is None
+            assert self.get_pyxb_value(sysmeta_pyxb, "obsoletedBy") is None
 
     @responses.activate
     def test_1000(self, gmn_client_v2):

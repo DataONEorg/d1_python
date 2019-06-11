@@ -81,12 +81,12 @@ class SlenderNodeTestClient:
         old_sysmeta_pyxb = self._read_sysmeta_file(old_pid)
         assert old_sysmeta_pyxb.obsoletedBy is None
         assert new_sysmeta_pyxb.obsoletes is None
-        old_sid = d1_common.xml.get_opt_val(old_sysmeta_pyxb, 'seriesId')
-        new_sid = d1_common.xml.get_opt_val(new_sysmeta_pyxb, 'seriesId')
+        old_sid = d1_common.xml.get_opt_val(old_sysmeta_pyxb, "seriesId")
+        new_sid = d1_common.xml.get_opt_val(new_sysmeta_pyxb, "seriesId")
         if old_sid is not None:
             assert (
                 new_sid is None or new_sid == old_sid
-            ), 'Attempted to create chain with conflicting SIDs'
+            ), "Attempted to create chain with conflicting SIDs"
         old_sysmeta_pyxb.seriesId = new_sid
         old_sysmeta_pyxb.obsoletedBy = new_pid
         new_sysmeta_pyxb.obsoletes = old_pid
@@ -157,7 +157,7 @@ class SlenderNodeTestClient:
         return self.did_dict.get(did, did)
 
     def _add_sid_map(self, sysmeta_pyxb):
-        sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
+        sid = d1_common.xml.get_opt_val(sysmeta_pyxb, "seriesId")
         if sid is not None:
             self.did_dict[sid] = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
 

@@ -56,15 +56,15 @@ import d1_client.mnclient_2_0
 # Config
 
 # The path to the file that will be uploaded as a Science Object.
-SCIENCE_OBJECT_FILE_PATH = './my_test_object.bin'
+SCIENCE_OBJECT_FILE_PATH = "./my_test_object.bin"
 
 # The identifier (PID) to use for the Science Object.
-SCIENCE_OBJECT_PID = 'dataone_test_object_pid'
+SCIENCE_OBJECT_PID = "dataone_test_object_pid"
 
 # The formatId to use for the Science Object. It should be the ID of an Object
 # Format that is registered in the DataONE Object Format Vocabulary. The valid
 # IDs can be retrieved from https://cn.dataone.org/cn/v1/formats.
-SYSMETA_FORMATID = 'application/octet-stream'
+SYSMETA_FORMATID = "application/octet-stream"
 
 # The DataONE subject to set as the rights holder of the created objects. The
 # rights holder must be a subject that is registered with DataONE. Subjects are
@@ -74,11 +74,11 @@ SYSMETA_FORMATID = 'application/octet-stream'
 # uploaded object may be lost if the rights holder subject is set to a
 # non-existing subject or to a subject that is not prepared to handle the
 # object.
-SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
+SYSMETA_RIGHTSHOLDER = "CN=First Last,O=Google,C=US,DC=cilogon,DC=org"
 
 # BaseURL for the Member Node. If the script is run on the same server as the
 # Member Node, this can be localhost.
-MN_BASE_URL = 'https://dataone-test.researchworkspace.com/mn'
+MN_BASE_URL = "https://dataone-test.researchworkspace.com/mn"
 # MN_BASE_URL = 'https://localhost/mn'
 # MN_BASE_URL = 'https://d1_gmn.test.dataone.org/mn'
 
@@ -89,38 +89,38 @@ MN_BASE_URL = 'https://dataone-test.researchworkspace.com/mn'
 # Member Node (GMN) instance, see the "Using GMN" section in the documentation
 # for GMN for information on how to create and use certificates. The information
 # there may be relevant for other types of Member Nodes as well.
-CERTIFICATE_FOR_CREATE = 'urn_node_mnTestRW/urn_node_mnTestRW.crt'
-CERTIFICATE_FOR_CREATE_KEY = 'urn_node_mnTestRW/private/urn_node_mnTestRW.key'
+CERTIFICATE_FOR_CREATE = "urn_node_mnTestRW/urn_node_mnTestRW.crt"
+CERTIFICATE_FOR_CREATE_KEY = "urn_node_mnTestRW/private/urn_node_mnTestRW.key"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     # Create a Member Node client that can be used for running commands against a
@@ -131,7 +131,7 @@ def main():
         cert_key_path=CERTIFICATE_FOR_CREATE_KEY,
     )
     # Get the bytes for the Science Object.
-    science_object = open(SCIENCE_OBJECT_FILE_PATH, 'rb').read()
+    science_object = open(SCIENCE_OBJECT_FILE_PATH, "rb").read()
 
     # Create the System Metadata for the object that is to be uploaded. The System
     # Metadata contains information about the object, such as its format, access control
@@ -146,7 +146,7 @@ def main():
     # MD5 checksum calculation.
     client.create(SCIENCE_OBJECT_PID, io.BytesIO(science_object), sys_meta)
 
-    print('Object created successfully')
+    print("Object created successfully")
 
 
 def generate_system_metadata_for_science_object(science_object):
@@ -165,7 +165,7 @@ def generate_sysmeta(pid, size, md5, now):
     sysmeta_pyxb.size = size
     sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
     sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(md5)
-    sysmeta_pyxb.checksum.algorithm = 'MD5'
+    sysmeta_pyxb.checksum.algorithm = "MD5"
     sysmeta_pyxb.dateUploaded = now
     sysmeta_pyxb.dateSysMetadataModified = now
     sysmeta_pyxb.accessPolicy = generate_public_access_policy()
@@ -176,11 +176,11 @@ def generate_public_access_policy():
     access_policy_pyxb = d1_common.types.dataoneTypes.accessPolicy()
     access_rule_pyxb = d1_common.types.dataoneTypes.AccessRule()
     access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission_pyxb = d1_common.types.dataoneTypes.Permission('read')
+    permission_pyxb = d1_common.types.dataoneTypes.Permission("read")
     access_rule_pyxb.permission.append(permission_pyxb)
     access_policy_pyxb.append(access_rule_pyxb)
     return access_policy_pyxb
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -40,17 +40,17 @@ import d1_common.url
 import d1_test.mock_api.d1_exception
 import d1_test.mock_api.util
 
-IS_AUTHORIZED_ENDPOINT_RX = r'v([123])/isAuthorized/(.*)'
+IS_AUTHORIZED_ENDPOINT_RX = r"v([123])/isAuthorized/(.*)"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
         re.compile(
-            r'^' + d1_common.url.joinPathElements(base_url, IS_AUTHORIZED_ENDPOINT_RX)
+            r"^" + d1_common.url.joinPathElements(base_url, IS_AUTHORIZED_ENDPOINT_RX)
         ),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -62,16 +62,16 @@ def _request_callback(request):
         return exc_response_tup
     # Return NotFound
     pid, client = _parse_url(request.url)
-    if pid == 'unauthorized_pid':
+    if pid == "unauthorized_pid":
         return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 401)
     # Return regular response
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM}
-    return 200, header_dict, 'OK'
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_OCTET_STREAM}
+    return 200, header_dict, "OK"
 
 
 def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'isAuthorized'
+    assert endpoint_str == "isAuthorized"
     return param_list[0], client

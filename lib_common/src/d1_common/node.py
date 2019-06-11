@@ -52,14 +52,14 @@ def pyxb_to_dict(node_list_pyxb):
     f_dict = {}
     for f_pyxb in sorted(node_list_pyxb.node, key=lambda x: x.identifier.value()):
         f_dict[f_pyxb.identifier.value()] = {
-            'name': f_pyxb.name,
-            'description': f_pyxb.description,
-            'base_url': f_pyxb.baseURL,
-            'ping': f_pyxb.ping,
-            'replicate': f_pyxb.replicate,
-            'synchronize': f_pyxb.synchronize,
-            'type': f_pyxb.type,
-            'state': f_pyxb.state,
+            "name": f_pyxb.name,
+            "description": f_pyxb.description,
+            "base_url": f_pyxb.baseURL,
+            "ping": f_pyxb.ping,
+            "replicate": f_pyxb.replicate,
+            "synchronize": f_pyxb.synchronize,
+            "type": f_pyxb.type,
+            "state": f_pyxb.state,
         }
         # TODO:
         # f_pyxb.services

@@ -70,10 +70,10 @@ import d1_common.utils.filesystem
 import d1_client.cnclient_2_0
 
 DEFAULT_OBJECT_FORMAT_CACHE_PATH = d1_common.utils.filesystem.abs_path(
-    './object_format_cache.json'
+    "./object_format_cache.json"
 )
 DEFAULT_CACHE_REFRESH_PERIOD = datetime.timedelta(days=30)
-DEFAULT_LOCK_FILE_PATH = '/tmp/object_format_cache.lock'
+DEFAULT_LOCK_FILE_PATH = "/tmp/object_format_cache.lock"
 
 # ===============================================================================
 
@@ -144,7 +144,7 @@ class ObjectFormatListCache(Singleton):
 
     def get_content_type(self, format_id, default=None):
         try:
-            return self.object_format_dict[format_id]["media_type"]['name']
+            return self.object_format_dict[format_id]["media_type"]["name"]
         except KeyError:
             return default
 
@@ -237,8 +237,8 @@ class ObjectFormatListCache(Singleton):
                 "format_type": o.formatType,
                 "extension": ".{}".format(getattr(o, "extension", "bin")),
                 "media_type": {
-                    "name": getattr(o.mediaType, 'name', None),
-                    "property_list": list(getattr(o.mediaType, 'property_', [])),
+                    "name": getattr(o.mediaType, "name", None),
+                    "property_list": list(getattr(o.mediaType, "property_", [])),
                 },
             }
             for o in object_format_list_pyxb.objectFormat

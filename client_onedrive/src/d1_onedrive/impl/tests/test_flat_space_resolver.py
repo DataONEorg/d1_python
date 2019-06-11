@@ -35,8 +35,8 @@ class TestOptions:
 class TestFlatSpaceResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
         options = TestOptions()
-        options.base_url = 'https://localhost/'
-        options.object_tree_xml = './test_flat_space.xml'
+        options.base_url = "https://localhost/"
+        options.object_tree_xml = "./test_flat_space.xml"
         options.max_error_path_cache_size = 1000
         options.max_solr_query_cache_size = 1000
         self._w = d1_onedrive.impl.resolver.flat_space.Resolver(

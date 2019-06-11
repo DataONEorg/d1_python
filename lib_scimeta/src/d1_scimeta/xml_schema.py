@@ -43,12 +43,12 @@ import d1_common.utils.filesystem
 
 NS_MAP = {
     # None : 'http://www.w3.org/2001/XMLSchema',
-    'xs': 'http://www.w3.org/2001/XMLSchema',
-    'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    "xs": "http://www.w3.org/2001/XMLSchema",
+    "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
 
-SCHEMA_ROOT_PATH = './schema'
-FORMAT_ID_JSON_PATH = './schema/format_id_to_schema_root.json'
+SCHEMA_ROOT_PATH = "./schema"
+FORMAT_ID_JSON_PATH = "./schema/format_id_to_schema_root.json"
 
 
 class Validate(object):
@@ -72,7 +72,7 @@ class Validate(object):
             xml_schema.assertValid(xml_tree)
         except (lxml.etree.DocumentInvalid, lxml.etree.XMLSyntaxError) as e:
             self.raise_validation_error(
-                '{}\n{}'.format(str(e), '\n'.join(map(str, xml_schema.error_log))),
+                "{}\n{}".format(str(e), "\n".join(map(str, xml_schema.error_log))),
                 format_id,
             )
 
@@ -114,7 +114,7 @@ class Validate(object):
 
         """
         try:
-            self.get_schema_root_path('/', format_id)
+            self.get_schema_root_path("/", format_id)
         except SciMetaValidationError:
             return False
         return True
@@ -143,14 +143,14 @@ class Validate(object):
         abs_format_id_json_path = d1_common.utils.filesystem.abs_path(
             format_id_json_path
         )
-        with open(abs_format_id_json_path, 'r') as f:
+        with open(abs_format_id_json_path, "r") as f:
             return json.load(f)
 
     def remove_imported(self, xsd_path_to_info_dict):
         indirect_import_set = {
             v[1]
             for info_dict in list(xsd_path_to_info_dict.values())
-            for v in info_dict['import_list']
+            for v in info_dict["import_list"]
         }
         # self.dump('indirect_import_set', indirect_import_set)
         direct_import_set = set()
@@ -168,18 +168,18 @@ class Validate(object):
     def gen_xsd_info_dict(self, xsd_path):
         xsd_tree = self.parse_xml_file(xsd_path)
         return {
-            'target_ns': self.get_target_ns(xsd_tree),
-            'import_list': self.get_import_uri_path_list(xsd_tree),
+            "target_ns": self.get_target_ns(xsd_tree),
+            "import_list": self.get_import_uri_path_list(xsd_tree),
         }
 
     def gen_ns_to_xsd_dict(self, xsd_path_to_info_dict):
         ns_to_xsd_dict = {}
         for xsd_path, xsd_info in list(xsd_path_to_info_dict.items()):
-            ns_to_xsd_dict.setdefault(xsd_info['target_ns'], []).append(xsd_path)
+            ns_to_xsd_dict.setdefault(xsd_info["target_ns"], []).append(xsd_path)
         return ns_to_xsd_dict
 
     def parse_xml_file(self, xml_path):
-        with open(xml_path, 'rb') as f:
+        with open(xml_path, "rb") as f:
             return self.parse_xml_bytes(f.read())
 
     def parse_xml_bytes(self, xml_bytes):
@@ -191,29 +191,29 @@ class Validate(object):
         xsd_path_list = []
         for root_path, dir_list, file_list in os.walk(schema_root_dir):
             for file_name in file_list:
-                if not os.path.splitext(file_name)[1] == '.xsd':
+                if not os.path.splitext(file_name)[1] == ".xsd":
                     continue
                 xsd_path = os.path.join(root_path, file_name)
                 xsd_path_list.append(xsd_path)
         return xsd_path_list
 
     def get_target_ns(self, xml_tree):
-        ns_list = xml_tree.xpath('//*[@targetNamespace]')
+        ns_list = xml_tree.xpath("//*[@targetNamespace]")
         assert len(ns_list) in (0, 1)
         if len(ns_list):
-            return ns_list[0].attrib['targetNamespace']
+            return ns_list[0].attrib["targetNamespace"]
 
     def get_import_uri_path_list(self, xsd_tree):
         flat_list = xsd_tree.xpath(
-            '//xs:import/@namespace|xs:import/@schemaLocation', namespaces=NS_MAP
+            "//xs:import/@namespace|xs:import/@schemaLocation", namespaces=NS_MAP
         )
         return list(zip(flat_list[::2], flat_list[1::2]))
 
     def rel_to_abs_import_list(self, xsd_path_to_info_dict):
         for xsd_path, info_dict in list(xsd_path_to_info_dict.items()):
-            info_dict['import_list'] = [
+            info_dict["import_list"] = [
                 (import_uri, self.normalize_path(xsd_path, import_path))
-                for import_uri, import_path in info_dict['import_list']
+                for import_uri, import_path in info_dict["import_list"]
             ]
 
     def normalize_path(self, base_path, rel_path=None):
@@ -227,13 +227,13 @@ class Validate(object):
 
     def gen_combined_xsd_tree(self, ns_to_xsd_dict, prefix_uri_list):
         ns_uri_list = [v[1] for v in prefix_uri_list]
-        root_el = lxml.etree.Element("{{{}}}schema".format(NS_MAP['xs']), nsmap=NS_MAP)
+        root_el = lxml.etree.Element("{{{}}}schema".format(NS_MAP["xs"]), nsmap=NS_MAP)
         for ns_uri in ns_uri_list:
             if ns_uri in ns_to_xsd_dict:
                 for xsd_path in ns_to_xsd_dict[ns_uri]:
-                    xsd_file_url = 'file://{}'.format(xsd_path)
+                    xsd_file_url = "file://{}".format(xsd_path)
                     import_el = lxml.etree.Element(
-                        '{{{}}}import'.format(NS_MAP['xs']),
+                        "{{{}}}import".format(NS_MAP["xs"]),
                         namespace=ns_uri,
                         schemaLocation=xsd_file_url,
                     )
@@ -257,19 +257,19 @@ class Validate(object):
     def strip_xml_encoding_declaration(self, xml_str):
         # It's safe to do this with a regex since it operates only on the first
         # line, containing the XML declaration, not on the XML doc itself.
-        return re.sub(r'\s*encoding\s*=\s*"UTF-8"\s*', '', xml_str, re.IGNORECASE)
+        return re.sub(r'\s*encoding\s*=\s*"UTF-8"\s*', "", xml_str, re.IGNORECASE)
 
     def dump_tree(self, xml_tree):
         self.dump(self.pretty_format_tree(xml_tree))
 
     def dump_tree_to_file(self, xml_tree, xml_path):
-        with open(xml_path, 'wb') as f:
+        with open(xml_path, "wb") as f:
             f.write(self.pretty_format_tree(xml_tree))
 
     def dump_ns_to_xsd_dict(self, ns_to_xsd_dict):
         for target_ns, xsd_list in sorted(ns_to_xsd_dict.items()):
-            logging.debug('{}:'.format(target_ns))
-            list(map(logging.debug, ['  {}'.format(p) for p in xsd_list]))
+            logging.debug("{}:".format(target_ns))
+            list(map(logging.debug, ["  {}".format(p) for p in xsd_list]))
 
     def dump(self, msg_str, o):
         line_int = inspect.currentframe().f_back.f_lineno
@@ -277,8 +277,8 @@ class Validate(object):
             map(
                 logging.debug,
                 (
-                    '{} LINE {} {}'.format('#' * 40, line_int, '#' * 40),
-                    '{}:'.format(msg_str),
+                    "{} LINE {} {}".format("#" * 40, line_int, "#" * 40),
+                    "{}:".format(msg_str),
                 ),
             )
         )
@@ -286,7 +286,7 @@ class Validate(object):
 
     def pretty_format_tree(self, xml_tree):
         return lxml.etree.tostring(
-            xml_tree, pretty_print=True, xml_declaration=True, encoding='utf-8'
+            xml_tree, pretty_print=True, xml_declaration=True, encoding="utf-8"
         )
 
 

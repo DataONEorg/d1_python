@@ -82,7 +82,7 @@ ENABLE_SQL_PROFILING = False
 
 MOCK_GMN_BASE_URL = "http://gmn.client/node"
 REL_DB_FIXTURE_PATH = "json/db_fixture.json.bz2"
-DEFAULT_DB_KEY = 'default'
+DEFAULT_DB_KEY = "default"
 
 logger = logging.getLogger(__name__)
 
@@ -247,9 +247,8 @@ def django_dump_db_stats():
 
 
 def django_clear_db(db_key=DEFAULT_DB_KEY):
-    django.core.management.call_command(
-        "flush", interactive=False, database=db_key
-    )
+    django.core.management.call_command("flush", interactive=False, database=db_key)
+
 
 def django_commit_and_close(db_key=DEFAULT_DB_KEY):
     django_commit(db_key)
@@ -265,6 +264,7 @@ def django_close_all_connections():
         connection.close()
     # TODO: Needed?
     django.db.connections.close_all()
+
 
 # =============================================================================
 

@@ -39,15 +39,15 @@ import d1_common.url
 
 import d1_test.mock_api.d1_exception
 
-PING_ENDPOINT_RX = r'v([123])/monitor/ping'
+PING_ENDPOINT_RX = r"v([123])/monitor/ping"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, PING_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, PING_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -58,6 +58,6 @@ def _request_callback(request):
     if exc_response_tup:
         return exc_response_tup
     # Return regular response
-    body_str = 'OK'
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_OCTET_STREAM}
+    body_str = "OK"
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_OCTET_STREAM}
     return 200, header_dict, body_str

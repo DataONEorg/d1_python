@@ -61,7 +61,7 @@ class ResponseHandler:
             response = self._http_response_with_identifier_type(request, view_result)
         elif isinstance(view_result, Exception):
             logging.error(
-                'View exception: '.format(type(view_result), str(view_result))
+                "View exception: ".format(type(view_result), str(view_result))
             )
             return view_result
         else:
@@ -81,48 +81,48 @@ class ResponseHandler:
 
         """
         if django.conf.settings.DEBUG_GMN:
-            if 'pretty' in request.GET:
-                response['Content-Type'] = d1_common.const.CONTENT_TYPE_TEXT
+            if "pretty" in request.GET:
+                response["Content-Type"] = d1_common.const.CONTENT_TYPE_TEXT
             if (
-                'HTTP_VENDOR_PROFILE_SQL' in request.META
+                "HTTP_VENDOR_PROFILE_SQL" in request.META
                 or django.conf.settings.DEBUG_PROFILE_SQL
             ):
                 response_list = []
                 for query in django.db.connection.queries:
-                    response_list.append('{}\n{}'.format(query['time'], query['sql']))
+                    response_list.append("{}\n{}".format(query["time"], query["sql"]))
                 return django.http.HttpResponse(
-                    '\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
+                    "\n\n".join(response_list), d1_common.const.CONTENT_TYPE_TEXT
                 )
         return response
 
     def _serialize_object(self, request, view_result):
         response = django.http.HttpResponse()
         name_to_func_map = {
-            'object_list': (self._generate_object_list, ['modified_timestamp', 'id']),
-            'object_list_json': (
+            "object_list": (self._generate_object_list, ["modified_timestamp", "id"]),
+            "object_list_json": (
                 self._generate_object_field_json,
-                ['modified_timestamp', 'id'],
+                ["modified_timestamp", "id"],
             ),
-            'log': (self._generate_log_records, ['timestamp', 'id']),
+            "log": (self._generate_log_records, ["timestamp", "id"]),
         }
-        d1_type_generator, sort_field_list = name_to_func_map[view_result['type']]
+        d1_type_generator, sort_field_list = name_to_func_map[view_result["type"]]
         d1_type_pyxb = d1_type_generator(
-            request, view_result['query'], view_result['start'], view_result['total']
+            request, view_result["query"], view_result["start"], view_result["total"]
         )
         d1_type_latest_date = self._latest_date(
-            view_result['query'], sort_field_list[0]
+            view_result["query"], sort_field_list[0]
         )
         d1_gmn.app.views.slice.cache_add_last_in_slice(
             request,
-            view_result['query'],
-            view_result['start'],
-            view_result['total'],
+            view_result["query"],
+            view_result["start"],
+            view_result["total"],
             sort_field_list,
         )
         response.write(
             d1_common.xml.serialize_for_transport(
                 d1_type_pyxb,
-                xslt_url=django.urls.base.reverse('home_xslt')
+                xslt_url=django.urls.base.reverse("home_xslt")
                 # d1_gmn.app.util.get_static_path('xslt/xhtml_grid.xsl')
             )
         )
@@ -179,9 +179,9 @@ class ResponseHandler:
             logEntry.identifier = row.sciobj.pid.did
             # Redact ipAddress and subject on records for which client has only "read"
             # access.
-            if getattr(row, 'redact', False):
-                logEntry.ipAddress = '<NotAuthorized>'
-                logEntry.subject = '<NotAuthorized>'
+            if getattr(row, "redact", False):
+                logEntry.ipAddress = "<NotAuthorized>"
+                logEntry.subject = "<NotAuthorized>"
             else:
                 logEntry.ipAddress = row.ip_address.ip_address
                 logEntry.subject = row.subject.subject
@@ -199,16 +199,16 @@ class ResponseHandler:
 
     def _http_response_with_identifier_type(self, request, pid):
         pid_pyxb = d1_gmn.app.views.util.dataoneTypes(request).identifier(pid)
-        pid_xml = pid_pyxb.toxml('utf-8')
+        pid_xml = pid_pyxb.toxml("utf-8")
         return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
     def _set_headers(self, response, content_modified_timestamp, content_length):
         if content_modified_timestamp is not None:
-            response['Last-Modified'] = d1_common.date_time.normalize_datetime_to_utc(
+            response["Last-Modified"] = d1_common.date_time.normalize_datetime_to_utc(
                 content_modified_timestamp
             )
-        response['Content-Length'] = content_length
-        response['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
+        response["Content-Length"] = content_length
+        response["Content-Type"] = d1_common.const.CONTENT_TYPE_XML
 
     def _latest_date(self, query, datetime_field_name):
         """Given a QuerySet and the name of field containing datetimes, return the

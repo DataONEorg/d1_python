@@ -36,7 +36,7 @@ class Attributes(object):
         return self.__dict__ == other.__dict__
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__, self.__dict__)
+        return "{}({})".format(self.__class__, self.__dict__)
 
     def size(self):
         return self._size_

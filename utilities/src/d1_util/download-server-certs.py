@@ -68,57 +68,57 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('dir', help='Path to download directory')
+    parser.add_argument("dir", help="Path to download directory")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     args = parser.parse_args()
 
     d1_common.util.log_setup(args.debug)
 
     if not os.path.isdir(args.dir):
-        raise ValueError('Directory does not exist: {}'.format(args.dir))
+        raise ValueError("Directory does not exist: {}".format(args.dir))
 
     if args.env not in d1_common.env.D1_ENV_DICT:
         raise ValueError(
-            'Environment must be one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT))
+            "Environment must be one of {}".format(", ".join(d1_common.env.D1_ENV_DICT))
         )
 
     env_dict = d1_common.env.get_d1_env(args.env)
-    cn_base_url = env_dict['base_url']
+    cn_base_url = env_dict["base_url"]
 
     node_iterator = d1_client.iter.node.NodeListIterator(cn_base_url)
 
@@ -129,37 +129,37 @@ def main():
                 node_pyxb.baseURL, node_pyxb.identifier.value(), args.dir
             )
         except Exception as e:
-            logging.info('{}'.format(str(e)))
+            logging.info("{}".format(str(e)))
 
 
 def download_server_cert(base_url, node_id, download_dir_path):
-    logging.info('-' * 100)
-    logging.info('{} - {}'.format(base_url, node_id))
+    logging.info("-" * 100)
+    logging.info("{} - {}".format(base_url, node_id))
 
-    logging.info('Downloading server side cert: {}'.format(base_url))
+    logging.info("Downloading server side cert: {}".format(base_url))
     server_der = d1_common.cert.x509.download_as_der(base_url)
     server_cert = d1_common.cert.x509.decode_der(server_der)
     issuer_cert_url = d1_common.cert.x509.extract_issuer_ca_cert_url(server_cert)
 
-    logging.info('Downloading CA issuer cert: {}'.format(issuer_cert_url))
+    logging.info("Downloading CA issuer cert: {}".format(issuer_cert_url))
     issuer_der = requests.get(issuer_cert_url).content
     issuer_pem = ssl.DER_cert_to_PEM_cert(issuer_der)
     issuer_cert = d1_common.cert.x509.decode_der(issuer_der)
 
     for n in issuer_cert.issuer:
-        if n.oid.dotted_string == '2.5.4.3':
+        if n.oid.dotted_string == "2.5.4.3":
             issuer_name = n.value
             break
     else:
         issuer_name = issuer_cert_url
 
-    logging.info('Issuer: {}'.format(issuer_name))
+    logging.info("Issuer: {}".format(issuer_name))
 
-    pem_file_name = '{}.crt'.format(re.sub(r'\W+', '_', issuer_name).lower())
+    pem_file_name = "{}.crt".format(re.sub(r"\W+", "_", issuer_name).lower())
     pem_file_path = os.path.join(download_dir_path, pem_file_name)
-    with open(pem_file_path, 'wb') as f:
+    with open(pem_file_path, "wb") as f:
         f.write(issuer_pem)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -46,7 +46,7 @@ class DiskCache(dict):
         return self._clear_cache()
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__, self.__dict__)
+        return "{}({})".format(self.__class__, self.__dict__)
 
     def __setitem__(self, key, value):
         self._delete_oldest_file_if_full()
@@ -101,14 +101,14 @@ class DiskCache(dict):
         return os.path.join(self._cache_directory_path, self._filename_from_key(key))
 
     def _filename_from_key(self, key):
-        return urllib.parse.quote(key.encode('utf-8'), safe='')  # doseq=True
+        return urllib.parse.quote(key.encode("utf-8"), safe="")  # doseq=True
 
     def _write_key_value_to_disk(self, key, value):
-        with open(self._path_from_key(key), 'wb') as f:
+        with open(self._path_from_key(key), "wb") as f:
             pickle.dump(value, f)
 
     def _read_value_of_key_from_disk(self, key):
-        with open(self._path_from_key(key), 'rb') as f:
+        with open(self._path_from_key(key), "rb") as f:
             return pickle.load(f)
 
     def _make_cache_directory(self, cache_directory_path):

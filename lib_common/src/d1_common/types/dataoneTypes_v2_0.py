@@ -35,6 +35,6 @@ from d1_common.types.generated.dataoneTypes_v2_0 import *
 #
 # This warning occurs because traceInformation is an xs:anyType, which can
 # hold any XML structure so noPyXB bindingcan be generated.
-logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+logging.getLogger("pyxb.binding.basis").setLevel(logging.ERROR)
 
 # TODO: Add a replacement for CreateFromDocument() that raises DataONEExceptions.

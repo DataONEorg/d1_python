@@ -22,7 +22,7 @@ import os
 import sys
 import urllib.parse
 
-FILENAME_SAFE_CHARS = ' @$,~*&'
+FILENAME_SAFE_CHARS = " @$,~*&"
 
 
 def gen_safe_path(*path_list):
@@ -52,7 +52,7 @@ def gen_safe_path_element(s):
         str : A string safe for use as a file- or directory name.
 
     """
-    return urllib.parse.quote(s.encode('utf-8'), safe=FILENAME_SAFE_CHARS)
+    return urllib.parse.quote(s.encode("utf-8"), safe=FILENAME_SAFE_CHARS)
 
 
 def create_missing_directories_for_file(file_path):

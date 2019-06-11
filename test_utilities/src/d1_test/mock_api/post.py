@@ -36,15 +36,15 @@ import d1_common.util
 
 import d1_test.mock_api.d1_exception
 
-POST_ENDPOINT_RX = r'v([123])/post'
+POST_ENDPOINT_RX = r"v([123])/post"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.POST,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, POST_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, POST_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -64,18 +64,18 @@ def _request_callback(request):
 
     if d1_common.multipart.is_multipart(request.headers):
         body_part_tup = d1_common.multipart.parse_str(
-            body_str, request.headers['Content-Type']
+            body_str, request.headers["Content-Type"]
         )
         body_str = d1_common.multipart.normalize(body_part_tup)
 
     url_obj = urllib.parse.urlparse(request.url)
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_JSON}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_JSON}
     body_json = d1_common.util.serialize_to_normalized_pretty_json(
         {
             #'body_str': base64.standard_b64encode(body_str or ''),
-            'body_str': body_str,
-            'query_dict': urllib.parse.parse_qs(url_obj.query),
-            'header_dict': dict(request.headers),
+            "body_str": body_str,
+            "query_dict": urllib.parse.parse_qs(url_obj.query),
+            "header_dict": dict(request.headers),
         }
     )
     return 200, header_dict, body_json

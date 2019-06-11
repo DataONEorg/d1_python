@@ -38,13 +38,13 @@ import django.apps
 import django.conf
 import django.core.exceptions
 
-RESOURCE_MAP_CREATE_MODE_LIST = ['block', 'open']
+RESOURCE_MAP_CREATE_MODE_LIST = ["block", "open"]
 
 logger = logging.getLogger(__name__)
 
 
 class Startup(django.apps.AppConfig):
-    name = 'd1_gmn.app'
+    name = "d1_gmn.app"
 
     def ready(self):
         """Called once per Django process instance.
@@ -59,13 +59,13 @@ class Startup(django.apps.AppConfig):
         # before thread specific settings have been applied.
         # if hasattr(sys, '_launched_by_pytest'):
         #   return
-        self._assert_readable_file_if_set('CLIENT_CERT_PATH')
-        self._assert_readable_file_if_set('CLIENT_CERT_PRIVATE_KEY_PATH')
-        self._assert_dirs_exist('OBJECT_FORMAT_CACHE_PATH')
+        self._assert_readable_file_if_set("CLIENT_CERT_PATH")
+        self._assert_readable_file_if_set("CLIENT_CERT_PRIVATE_KEY_PATH")
+        self._assert_dirs_exist("OBJECT_FORMAT_CACHE_PATH")
 
-        self._assert_is_type('SCIMETA_VALIDATION_ENABLED', bool)
-        self._assert_is_type('SCIMETA_VALIDATION_MAX_SIZE', int)
-        self._assert_is_in('SCIMETA_VALIDATION_OVER_SIZE_ACTION', ('reject', 'accept'))
+        self._assert_is_type("SCIMETA_VALIDATION_ENABLED", bool)
+        self._assert_is_type("SCIMETA_VALIDATION_MAX_SIZE", int)
+        self._assert_is_in("SCIMETA_VALIDATION_OVER_SIZE_ACTION", ("reject", "accept"))
 
         self._warn_unsafe_for_prod()
         self._check_resource_map_create()
@@ -91,10 +91,10 @@ class Startup(django.apps.AppConfig):
         self._assert_is_type(setting_name, str)
         if not os.path.isfile(v):
             self.raise_config_error(
-                setting_name, v, str, 'a path to a readable file', is_none_allowed=True
+                setting_name, v, str, "a path to a readable file", is_none_allowed=True
             )
         try:
-            with open(v, 'r') as f:
+            with open(v, "r") as f:
                 f.read(1)
         except EnvironmentError as e:
             self.raise_config_error(
@@ -118,7 +118,7 @@ class Startup(django.apps.AppConfig):
                 setting_name,
                 v,
                 str,
-                'a file path in an existing directory',
+                "a file path in an existing directory",
                 is_none_allowed=False,
             )
 
@@ -128,21 +128,21 @@ class Startup(django.apps.AppConfig):
         valid_str = (
             valid_str
             if valid_str is not None
-            else 'a whole number'
+            else "a whole number"
             if exp_type is int
-            else 'a number'
+            else "a number"
             if exp_type is float
-            else 'a string'
+            else "a string"
             if (exp_type is str or exp_type is str)
-            else 'True or False'
+            else "True or False"
             if exp_type is bool
-            else ' or '.join(['"{}"'.format(s) for s in exp_type])
+            else " or ".join(['"{}"'.format(s) for s in exp_type])
             if isinstance(exp_type, collections.Iterable)
-            else 'of type {}'.format(exp_type.__name__)
+            else "of type {}".format(exp_type.__name__)
         )
 
         msg_str = 'Configuration error: {} {} must be {}. current="{}"'.format(
-            'If set, setting' if is_none_allowed else 'Setting',
+            "If set, setting" if is_none_allowed else "Setting",
             setting_name,
             valid_str,
             str(cur_val),
@@ -153,12 +153,12 @@ class Startup(django.apps.AppConfig):
     def _warn_unsafe_for_prod(self):
         """Warn on settings that are not safe for production."""
         safe_settings_list = [
-            ('DEBUG', False),
-            ('DEBUG_GMN', False),
-            ('STAND_ALONE', False),
-            ('DATABASES.default.ATOMIC_REQUESTS', True),
-            ('SECRET_KEY', '<Do not modify this placeholder value>'),
-            ('STATIC_SERVER', False),
+            ("DEBUG", False),
+            ("DEBUG_GMN", False),
+            ("STAND_ALONE", False),
+            ("DATABASES.default.ATOMIC_REQUESTS", True),
+            ("SECRET_KEY", "<Do not modify this placeholder value>"),
+            ("STATIC_SERVER", False),
         ]
         for setting_str, setting_safe in safe_settings_list:
             setting_current = self._get_setting(setting_str)
@@ -174,35 +174,35 @@ class Startup(django.apps.AppConfig):
             not in RESOURCE_MAP_CREATE_MODE_LIST
         ):
             raise django.core.exceptions.ImproperlyConfigured(
-                'Configuration error: Invalid RESOURCE_MAP_CREATE setting. '
+                "Configuration error: Invalid RESOURCE_MAP_CREATE setting. "
                 'valid="{}" current="{}"'.format(
-                    ', '.join(RESOURCE_MAP_CREATE_MODE_LIST),
+                    ", ".join(RESOURCE_MAP_CREATE_MODE_LIST),
                     django.conf.settings.RESOURCE_MAP_CREATE,
                 )
             )
 
     def _set_secret_key(self):
         try:
-            with open(django.conf.settings.SECRET_KEY_PATH, 'rb') as f:
+            with open(django.conf.settings.SECRET_KEY_PATH, "rb") as f:
                 django.conf.settings.SECRET_KEY = f.read().strip()
         except EnvironmentError:
             django.conf.settings.SECRET_KEY = self._create_secret_key_file()
 
     def _create_secret_key_file(self):
-        secret_key_str = ''.join(
+        secret_key_str = "".join(
             [
                 random.SystemRandom().choice(
-                    '{}{}'.format(string.ascii_letters, string.digits)
+                    "{}{}".format(string.ascii_letters, string.digits)
                 )
                 for _ in range(64)
             ]
         )
         try:
-            with open(django.conf.settings.SECRET_KEY_PATH, 'wb') as f:
-                f.write(secret_key_str.encode('utf-8'))
+            with open(django.conf.settings.SECRET_KEY_PATH, "wb") as f:
+                f.write(secret_key_str.encode("utf-8"))
         except EnvironmentError:
             raise django.core.exceptions.ImproperlyConfigured(
-                'Configuration error: Secret key file not found and unable to write '
+                "Configuration error: Secret key file not found and unable to write "
                 'new. path="{}"'.format(django.conf.settings.SECRET_KEY_PATH)
             )
         else:
@@ -218,14 +218,14 @@ class Startup(django.apps.AppConfig):
             d1_gmn.app.sciobj_store.create_store()
         except EnvironmentError as e:
             raise django.core.exceptions.ImproperlyConfigured(
-                'Configuration error: Invalid object store root path. '
+                "Configuration error: Invalid object store root path. "
                 'path="{}". msg="{}"'.format(
                     django.conf.settings.OBJECT_STORE_PATH, str(e)
                 )
             )
         if not d1_gmn.app.sciobj_store.is_matching_version():
             logger.warning(
-                'Configuration error: Incorrect object store version. '
+                "Configuration error: Incorrect object store version. "
                 'store="{}" gmn="{}"'.format(
                     d1_gmn.app.sciobj_store.get_store_version(),
                     d1_gmn.app.sciobj_store.get_gmn_version(),
@@ -239,7 +239,7 @@ class Startup(django.apps.AppConfig):
 
         """
         # 'application/xslt+xml'
-        mimetypes.add_type('text/xsl', '.xsl')
+        mimetypes.add_type("text/xsl", ".xsl")
 
     def _get_setting(self, setting_dotted_name, default=None):
         """Return the value of a potentially nested dict setting.
@@ -247,7 +247,7 @@ class Startup(django.apps.AppConfig):
         E.g., 'DATABASES.default.NAME
 
         """
-        name_list = setting_dotted_name.split('.')
+        name_list = setting_dotted_name.split(".")
         setting_obj = getattr(django.conf.settings, name_list[0], default)
         # if len(name_list) == 1:
         #   return setting_obj

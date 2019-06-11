@@ -36,16 +36,16 @@ import django.db.models
 
 def add_slice_filter(request, query, total_int):
     url_dict = d1_common.url.parseUrl(request.get_full_path())
-    start_int = _get_and_assert_slice_param(url_dict, 'start', 0)
+    start_int = _get_and_assert_slice_param(url_dict, "start", 0)
     count_int = _get_and_assert_slice_param(
-        url_dict, 'count', d1_common.const.DEFAULT_SLICE_SIZE
+        url_dict, "count", d1_common.const.DEFAULT_SLICE_SIZE
     )
     _assert_valid_start(start_int, count_int, total_int)
     count_int = _adjust_count_if_required(start_int, count_int, total_int)
     authn_subj_list = _get_authenticated_subj_list(request)
     logging.debug(
-        'Adding slice filter. start={} count={} total={} subj={}'.format(
-            start_int, count_int, total_int, ','.join(authn_subj_list)
+        "Adding slice filter. start={} count={} total={} subj={}".format(
+            start_int, count_int, total_int, ",".join(authn_subj_list)
         )
     )
     last_ts_tup = _cache_get_last_in_slice(
@@ -83,7 +83,7 @@ def _get_and_assert_slice_param(url_dict, param_name, default_int):
     InvalidRequest.
 
     """
-    param_str = url_dict['query'].get(param_name, default_int)
+    param_str = url_dict["query"].get(param_name, default_int)
     try:
         n = int(param_str)
     except ValueError:
@@ -113,7 +113,7 @@ def _assert_valid_start(start_int, count_int, total_int):
     if total_int and start_int >= total_int:
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Requested a non-existing slice. start={} count={} total={}'.format(
+            "Requested a non-existing slice. start={} count={} total={}".format(
                 start_int, count_int, total_int
             ),
         )
@@ -143,7 +143,7 @@ def _get_authenticated_subj_list(request):
 
 def _add_fast_slice_filter(query, last_ts_tup, count_int):
     logging.debug(
-        'Adding fast slice filter. last={} count={}'.format(last_ts_tup, count_int)
+        "Adding fast slice filter. last={} count={}".format(last_ts_tup, count_int)
     )
     last_timestamp, last_id = last_ts_tup
     return query.filter(
@@ -160,7 +160,7 @@ def _add_fallback_slice_filter(query, start_int, count_int, total_int):
 
     """
     logging.debug(
-        'Adding fallback slice filter. start={} count={} total={} '.format(
+        "Adding fallback slice filter. start={} count={} total={} ".format(
             start_int, count_int, total_int
         )
     )
@@ -216,15 +216,15 @@ def _gen_cache_key_for_slice(url_dict, start_int, total_int, authn_subj_list):
     """
     # logging.debug('Gen key. result_record_count={}'.format(result_record_count))
     key_url_dict = copy.deepcopy(url_dict)
-    key_url_dict['query'].pop('start', None)
-    key_url_dict['query'].pop('count', None)
+    key_url_dict["query"].pop("start", None)
+    key_url_dict["query"].pop("count", None)
     key_json = d1_common.util.serialize_to_normalized_compact_json(
         {
-            'url_dict': key_url_dict,
-            'start': start_int,
-            'total': total_int,
-            'subject': authn_subj_list,
+            "url_dict": key_url_dict,
+            "start": start_int,
+            "total": total_int,
+            "subject": authn_subj_list,
         }
     )
-    logging.debug('key_json={}'.format(key_json))
-    return hashlib.sha256(key_json.encode('utf-8')).hexdigest()
+    logging.debug("key_json={}".format(key_json))
+    return hashlib.sha256(key_json.encode("utf-8")).hexdigest()

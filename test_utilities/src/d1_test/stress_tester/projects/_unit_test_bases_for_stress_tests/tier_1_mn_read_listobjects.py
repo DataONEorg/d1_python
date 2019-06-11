@@ -46,7 +46,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
 
     def test_010_get_object_count(self):
         """Get object count."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
 
         object_list = client.listObjects(context.TOKEN, start=0, count=0)
 
@@ -62,7 +62,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
     def test_020_validate_object_count_1(self):
         """Provided object count is correct (1)."""
         # Get a slice that contains the last object.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         object_list = client.listObjects(
             context.TOKEN,
             start=context.object_total - 1,
@@ -76,7 +76,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         # returns anything, the initially obtained object count was wrong.
         # - Verify that server responds correctly when more than the available number
         # of objects are requsted.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         object_list = client.listObjects(
             context.TOKEN,
             start=context.object_total,
@@ -91,7 +91,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         center and end of the available range.
 
         """
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         for start in (0, context.object_total / 2, context.object_total - 5):
             object_list = client.listObjects(context.TOKEN, start=start, count=5)
             # Each slice should be 5 objects, starting at the requested start.
@@ -106,7 +106,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         """Negative 'start' parameter returns InvalidRequest."""
         # It's common to forget to check for negative numbers when validating
         # indexes.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             client.listObjects(
                 context.TOKEN, start=-1, count=d1_common.const.DEFAULT_SLICE_SIZE
@@ -114,7 +114,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
 
     def test_050_invalid_request_invalid_count(self):
         """count parameter higher than DEFAULT_SLICE_SIZE returns InvalidRequest."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             client.listObjects(
                 context.TOKEN, count=d1_common.const.DEFAULT_SLICE_SIZE + 1
@@ -122,7 +122,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
 
     def test_060_invalid_request_negative_count(self):
         """Negative 'count' parameter returns InvalidRequest."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             client.listObjects(context.TOKEN, count=-1)
 
@@ -143,7 +143,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         else:
             context.non_unique_timestamps = False
 
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         # It is now known that there are objects with at least two different
         # timestamps on the node, so filtering on the lowest timestamp must
         # eliminate at least one object.
@@ -161,7 +161,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
             for object_info in object_list.objectInfo:
                 dates.append(object_info.dateSysMetadataModified)
         dates.sort()
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         middle_date = dates[7]
         # Get object count for objects with timestamps lower than middle_date.
         low = client.listObjects(context.TOKEN, toDate=middle_date).total
@@ -184,7 +184,7 @@ class Test030ListObjects(d1_test_case.D1TestCase):
         # A range query between the lowest and highest datetime in the range must
         # include at last the number of objects that were included in the three
         # slices.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         object_list = client.listObjects(
             context.TOKEN,
             fromDate=dates[0],

@@ -307,7 +307,7 @@ import d1_test.d1_test_case
 class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     def _create(self):
         return d1_common.resource_map.ResourceMap(
-            'ore_pid', 'meta_pid', ['data_pid', 'data2_pid', 'data3_pid']
+            "ore_pid", "meta_pid", ["data_pid", "data2_pid", "data3_pid"]
         )
 
     def _sort_obj(self, obj):
@@ -324,76 +324,76 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
 
     def test_1010(self, mn_client_v2):
         """__init__(): Instantiate resource map by ORE PID."""
-        ore = d1_common.resource_map.ResourceMap('test_pid', ore_software_id='TEST')
-        self.sample.assert_equals(ore, 'init', mn_client_v2)
+        ore = d1_common.resource_map.ResourceMap("test_pid", ore_software_id="TEST")
+        self.sample.assert_equals(ore, "init", mn_client_v2)
 
     def test_1020(self, mn_client_v2):
         """serialize_to_display(): Instantiate resource map by pid, scimeta and
         scidata."""
         ore = self._create()
-        self.sample.assert_equals(ore, 'serialize', mn_client_v2)
+        self.sample.assert_equals(ore, "serialize", mn_client_v2)
 
     def test_1030(self, mn_client_v2):
         """getAggregation()"""
         ore = self._create()
         aggr = ore.getAggregation()
         assert isinstance(aggr, rdflib.URIRef)
-        assert str(aggr) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation'
+        assert str(aggr) == "https://cn.dataone.org/cn/v2/resolve/ore_pid#aggregation"
 
     def test_1040(self, mn_client_v2):
         """getObjectByPid()"""
         ore = self._create()
-        u = ore.getObjectByPid('ore_pid')
+        u = ore.getObjectByPid("ore_pid")
         assert isinstance(u, rdflib.URIRef)
-        assert str(u) == 'https://cn.dataone.org/cn/v2/resolve/ore_pid'
+        assert str(u) == "https://cn.dataone.org/cn/v2/resolve/ore_pid"
 
     def test_1050(self, mn_client_v2):
         """addResource()"""
         ore = self._create()
-        ore.addResource('resource1_pid')
-        self.sample.assert_equals(ore, 'add_resource', mn_client_v2)
+        ore.addResource("resource1_pid")
+        self.sample.assert_equals(ore, "add_resource", mn_client_v2)
 
     def test_1060(self, mn_client_v2):
         """setDocuments()"""
         ore = self._create()
-        ore.addResource('resource1_pid')
-        ore.addResource('resource2_pid')
-        ore.setDocuments('resource1_pid', 'resource2_pid')
-        self.sample.assert_equals(ore, 'set_documents', mn_client_v2)
+        ore.addResource("resource1_pid")
+        ore.addResource("resource2_pid")
+        ore.setDocuments("resource1_pid", "resource2_pid")
+        self.sample.assert_equals(ore, "set_documents", mn_client_v2)
 
     def test_1070(self, mn_client_v2):
         """setDocumentedBy()"""
         ore = self._create()
-        ore.addResource('resource1_pid')
-        ore.addResource('resource2_pid')
-        ore.setDocuments('resource1_pid', 'resource2_pid')
-        self.sample.assert_equals(ore, 'set_documented_by', mn_client_v2)
+        ore.addResource("resource1_pid")
+        ore.addResource("resource2_pid")
+        ore.setDocuments("resource1_pid", "resource2_pid")
+        self.sample.assert_equals(ore, "set_documented_by", mn_client_v2)
 
     def test_1080(self, mn_client_v2):
         """addMetadataDocument()"""
         ore = self._create()
-        ore.addMetadataDocument('meta_pid')
-        self.sample.assert_equals(ore, 'add_metadata_document_by', mn_client_v2)
+        ore.addMetadataDocument("meta_pid")
+        self.sample.assert_equals(ore, "add_metadata_document_by", mn_client_v2)
 
     def test_1090(self, mn_client_v2):
         """addDataDocuments()"""
         ore = self._create()
-        ore.addDataDocuments(['more_data1_pid', 'more_data2_pid'], 'meta_pid')
-        self.sample.assert_equals(ore, 'add_data_documents_by', mn_client_v2)
+        ore.addDataDocuments(["more_data1_pid", "more_data2_pid"], "meta_pid")
+        self.sample.assert_equals(ore, "add_data_documents_by", mn_client_v2)
 
     def test_1100(self, mn_client_v2):
         """getResourceMapPid()"""
         ore = self._create()
         resource_map_pid = ore.getResourceMapPid()
         assert isinstance(resource_map_pid, str)
-        assert resource_map_pid == 'ore_pid'
+        assert resource_map_pid == "ore_pid"
 
     def test_1110(self, mn_client_v2):
         """getAllTriples()"""
         ore = self._create()
         triple_list = ore.getAllTriples()
         sorted_triple_list = self._sort_obj(triple_list)
-        self.sample.assert_equals(sorted_triple_list, 'get_all_triples', mn_client_v2)
+        self.sample.assert_equals(sorted_triple_list, "get_all_triples", mn_client_v2)
 
     def test_1120(self, mn_client_v2):
         """getAllPredicates()"""
@@ -401,18 +401,18 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         predicate_list = ore.getAllPredicates()
         sorted_predicate_list = self._sort_obj(predicate_list)
         self.sample.assert_equals(
-            sorted_predicate_list, 'get_all_predicates', mn_client_v2
+            sorted_predicate_list, "get_all_predicates", mn_client_v2
         )
 
     def test_1130(self, mn_client_v2):
         """getSubjectObjectsByPredicate()"""
         ore = self._create()
         subobj_list = ore.getSubjectObjectsByPredicate(
-            'http://www.openarchives.org/ore/terms/isAggregatedBy'
+            "http://www.openarchives.org/ore/terms/isAggregatedBy"
         )
         sorted_subobj_list = self._sort_obj(subobj_list)
         self.sample.assert_equals(
-            sorted_subobj_list, 'get_subject_objects_by_predicate', mn_client_v2
+            sorted_subobj_list, "get_subject_objects_by_predicate", mn_client_v2
         )
 
     def test_1140(self, mn_client_v2):
@@ -420,7 +420,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         ore = self._create()
         pid_list = ore.getAggregatedPids()
         sorted_pid_list = self._sort_obj(pid_list)
-        self.sample.assert_equals(sorted_pid_list, 'get_aggregated_pids', mn_client_v2)
+        self.sample.assert_equals(sorted_pid_list, "get_aggregated_pids", mn_client_v2)
 
     def test_1150(self, mn_client_v2):
         """getAggregatedScienceMetadataPids()"""
@@ -428,7 +428,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         pid_list = ore.getAggregatedScienceMetadataPids()
         sorted_pid_list = self._sort_obj(pid_list)
         self.sample.assert_equals(
-            sorted_pid_list, 'get_aggregated_science_metadata_pids', mn_client_v2
+            sorted_pid_list, "get_aggregated_science_metadata_pids", mn_client_v2
         )
 
     def test_1160(self, mn_client_v2):
@@ -437,7 +437,7 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         pid_list = ore.getAggregatedScienceDataPids()
         sorted_pid_list = self._sort_obj(pid_list)
         self.sample.assert_equals(
-            sorted_pid_list, 'get_aggregated_science_data_pids', mn_client_v2
+            sorted_pid_list, "get_aggregated_science_data_pids", mn_client_v2
         )
 
     def test_1170(self, mn_client_v2):
@@ -448,17 +448,17 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         ore = self._create()
         stream = io.StringIO()
         ore.asGraphvizDot(stream)
-        self.sample.assert_equals(stream.getvalue(), 'as_graphviz_dot', mn_client_v2)
+        self.sample.assert_equals(stream.getvalue(), "as_graphviz_dot", mn_client_v2)
 
     def test_1180(self, mn_client_v2, tricky_identifier_dict):
         """Unicode identifiers that use various reserved characters and embedded URL
         segments are correctly escaped."""
-        unicode_pid = tricky_identifier_dict['unescaped']
+        unicode_pid = tricky_identifier_dict["unescaped"]
 
         ore = d1_common.resource_map.ResourceMap(
-            'ORE_PID_' + unicode_pid,
-            'META_PID_' + unicode_pid,
-            ['DATA1_PID_' + unicode_pid, 'DATA2_PID', 'DATA3_PID'],
+            "ORE_PID_" + unicode_pid,
+            "META_PID_" + unicode_pid,
+            ["DATA1_PID_" + unicode_pid, "DATA2_PID", "DATA3_PID"],
         )
 
         for agg_pid in ore.getAggregatedScienceMetadataPids():

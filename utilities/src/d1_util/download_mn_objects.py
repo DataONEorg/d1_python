@@ -64,7 +64,7 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT  # (recommended, production)
 LIST_OBJECTS_PAGE_SIZE = 100
 
 # The location in which to store downloaded objects.
-DOWNLOAD_FOLDER = './d1_objects'
+DOWNLOAD_FOLDER = "./d1_objects"
 
 # Don't download objects larger than this size.
 MAX_FILE_SIZE_TO_DOWNLOAD = 1024 ** 3
@@ -74,43 +74,43 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig()
     # Setting the default logger to level "DEBUG" causes the script to become
     # very verbose.
-    logging.getLogger('').setLevel(logging.DEBUG)
+    logging.getLogger("").setLevel(logging.DEBUG)
 
     try:
         os.makedirs(DOWNLOAD_FOLDER)
     except OSError:
         pass
 
-    base_url = 'https://mynpn.usanpn.org/knb/d1/mn'
+    base_url = "https://mynpn.usanpn.org/knb/d1/mn"
 
     member_node_object_downloader = MemberNodeObjectDownloader(
         base_url, DOWNLOAD_FOLDER
@@ -137,7 +137,7 @@ class MemberNodeObjectDownloader(object):
         self._max_object_size = max_object_size
 
     def download_all(self):
-        logging.info('Retrieving objects for Member Node: {}'.format(self._base_url))
+        logging.info("Retrieving objects for Member Node: {}".format(self._base_url))
         current_start = 0
         while True:
             try:
@@ -148,11 +148,11 @@ class MemberNodeObjectDownloader(object):
                     # replicaStatus=False
                 )
             except d1_common.types.exceptions.DataONEException as e:
-                logging.exception('listObjects() failed with exception:')
+                logging.exception("listObjects() failed with exception:")
                 raise
             else:
                 logging.info(
-                    'Retrieved page: {}/{}'.format(
+                    "Retrieved page: {}/{}".format(
                         current_start / LIST_OBJECTS_PAGE_SIZE + 1,
                         object_list.total / LIST_OBJECTS_PAGE_SIZE,
                     )
@@ -179,7 +179,7 @@ class MemberNodeObjectDownloader(object):
         # Filter on information in System Metadata
         if self._max_object_size and sysmeta_pyxb.size > self._max_object_size:
             raise DownloadError(
-                'Ignoring large object. pid={}, size={}, max={}'.format(
+                "Ignoring large object. pid={}, size={}, max={}".format(
                     pid, sysmeta_pyxb.size, self._max_object_size
                 )
             )
@@ -190,15 +190,15 @@ class MemberNodeObjectDownloader(object):
         try:
             return self._mn_client.getSystemMetadata(pid)
         except d1_common.types.exceptions.NotAuthorized:
-            raise DownloadError('Ignoring non-public object. pid={}'.format(pid))
+            raise DownloadError("Ignoring non-public object. pid={}".format(pid))
 
     def _write_system_metadata_to_file(self, sysmeta_pyxb, pid):
         with open(
             os.path.join(
                 self._download_folder,
-                '{}.sysmeta.xml'.format(self._pid_to_filename(pid)),
+                "{}.sysmeta.xml".format(self._pid_to_filename(pid)),
             ),
-            'wb',
+            "wb",
         ) as f:
             f.write(d1_common.xml.serialize_for_transport(sysmeta_pyxb))
 
@@ -206,14 +206,14 @@ class MemberNodeObjectDownloader(object):
         try:
             object_stream = self._mn_client.get(pid)
         except d1_common.types.exceptions.DataONEException:
-            logging.exception('get() failed with exception:')
+            logging.exception("get() failed with exception:")
             raise
         # The PID (DataONE Persistent Identifier) can contain characters that are
         # not valid for use as filenames (most commonly, slashes). A simple way to
         # make a PID safe for use as a filename is to "percent-encode" it.
-        pid_filename = urllib.parse.quote(pid, safe='')
+        pid_filename = urllib.parse.quote(pid, safe="")
         with open(
-            os.path.join(self._download_folder, '{}.bin'.format(pid_filename)), 'wb'
+            os.path.join(self._download_folder, "{}.bin".format(pid_filename)), "wb"
         ) as f:
             for chunk_str in object_stream.iter_content(chunk_size=4096):
                 f.write(chunk_str)
@@ -222,12 +222,12 @@ class MemberNodeObjectDownloader(object):
     # not valid for use as filenames (most commonly, slashes). A simple way to
     # make a PID safe for use as a filename is to "percent-encode" it.
     def _pid_to_filename(self, pid):
-        return urllib.parse.quote(pid, safe='')
+        return urllib.parse.quote(pid, safe="")
 
 
 class DownloadError(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

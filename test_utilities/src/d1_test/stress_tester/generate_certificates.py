@@ -55,12 +55,12 @@ def main():
     log_setup()
 
     # Command line opts.
-    parser = optparse.OptionParser('usage: %prog [options]')
-    parser.add_option('--verbose', action='store_true')
+    parser = optparse.OptionParser("usage: %prog [options]")
+    parser.add_option("--verbose", action="store_true")
     (options, arguments) = parser.parse_args()
 
     if len(arguments) != 0:
-        logging.error('No arguments are required')
+        logging.error("No arguments are required")
         exit()
 
     create_certificates()
@@ -78,7 +78,7 @@ def create_certificates():
         create_certificate(subject, subject_dn_tuple, subject_info)
     print(
         (
-            'Created {} client side certificates in {}'.format(
+            "Created {} client side certificates in {}".format(
                 len(subjects), settings.CLIENT_CERT_DIR
             )
         )
@@ -86,7 +86,7 @@ def create_certificates():
 
 
 def get_subject_list():
-    return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf-8').read().splitlines()
+    return codecs.open(settings.SUBJECTS_PATH, "r", "utf-8").read().splitlines()
 
 
 def create_certificate(subject, subject_dn_tuple, subject_info):
@@ -108,16 +108,16 @@ def create_certificate(subject, subject_dn_tuple, subject_info):
 
 
 def create_subject_info(subject):
-    return subject_info_template.replace('%subject%', xml.sax.saxutils.escape(subject))
+    return subject_info_template.replace("%subject%", xml.sax.saxutils.escape(subject))
 
 
 def log_setup():
-    logging.getLogger('').setLevel(logging.INFO)
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    logging.getLogger("").setLevel(logging.INFO)
+    formatter = logging.Formatter("%(levelname)-8s %(message)s")
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
+    logging.getLogger("").addHandler(console_logger)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

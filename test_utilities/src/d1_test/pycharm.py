@@ -123,7 +123,7 @@ def _diff_window_is_open(left_path, right_path):
                 return True
             else:
                 if any(["jetbrains" in c for c in w.get_wm_class() or []]):
-                    if title_str in get_window_name(w) or '':
+                    if title_str in get_window_name(w) or "":
                         return True
         return False
 

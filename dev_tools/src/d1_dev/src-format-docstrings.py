@@ -159,7 +159,7 @@ def format_docstr(docstr_node):
 
     with io.StringIO() as str_buf:
         for indent_int, wrap_str in unwrap_list:
-            if wrap_str == '':
+            if wrap_str == "":
                 str_buf.write("\n")
             else:
                 block_str = wrap(indent_int, wrap_str)
@@ -177,10 +177,10 @@ def format_docstr(docstr_node):
 
 
 def dump_unwrap_list(unwrap_list):
-    print('>' * 100)
+    print(">" * 100)
     for indent_int, unwrap_str in unwrap_list:
         print("UNWRAP: {:03d} {}".format(indent_int, unwrap_str))
-    print('<' * 100)
+    print("<" * 100)
 
 
 def unwrap(s, node_indent):

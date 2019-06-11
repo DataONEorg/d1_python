@@ -20,7 +20,7 @@
 import requests_toolbelt.multipart.decoder
 
 
-def parse_response(response, encoding='utf-8'):
+def parse_response(response, encoding="utf-8"):
     """Parse a multipart Requests.Response into a tuple of BodyPart objects.
 
     Args:
@@ -41,7 +41,7 @@ def parse_response(response, encoding='utf-8'):
     ).parts
 
 
-def parse_str(mmp_bytes, content_type, encoding='utf-8'):
+def parse_str(mmp_bytes, content_type, encoding="utf-8"):
     """Parse multipart document bytes into a tuple of BodyPart objects.
 
     Args:
@@ -75,13 +75,13 @@ def normalize(body_part_tup,):
     which is typically on the form, ``form-data; name="name_of_part``.
 
     """
-    return '\n\n'.join(
+    return "\n\n".join(
         [
-            '{}\n\n{}'.format(
-                str(p.headers[b'Content-Disposition'], p.encoding), p.text
+            "{}\n\n{}".format(
+                str(p.headers[b"Content-Disposition"], p.encoding), p.text
             )
             for p in sorted(
-                body_part_tup, key=lambda p: p.headers[b'Content-Disposition']
+                body_part_tup, key=lambda p: p.headers[b"Content-Disposition"]
             )
         ]
     )
@@ -98,6 +98,6 @@ def is_multipart(header_dict):
   """
     return (
         {k.lower(): v for k, v in header_dict.items()}
-        .get('content-type', '')
-        .startswith('multipart')
+        .get("content-type", "")
+        .startswith("multipart")
     )

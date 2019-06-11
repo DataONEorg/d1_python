@@ -30,8 +30,8 @@ import d1_test.d1_test_case
 T1 = 1999, 1, 2, 3, 4, 5, 789000
 T2 = 1999, 3, 4, 5, 6, 7, 901000
 
-TZ_MST = d1_common.date_time.FixedOffset('MST', -7)
-TZ_YEKT = d1_common.date_time.FixedOffset('YEKT', 6)
+TZ_MST = d1_common.date_time.FixedOffset("MST", -7)
+TZ_YEKT = d1_common.date_time.FixedOffset("YEKT", 6)
 
 T1_NAIVE = datetime.datetime(*T1, tzinfo=None)
 T2_NAIVE = datetime.datetime(*T2, tzinfo=None)
@@ -47,29 +47,29 @@ T1_UTC_EPOCH = 915246245.789
 
 # The same point in time in different tz
 T_ABS_1 = datetime.datetime(
-    2050, 7, 18, 10, 11, 12, 230000, d1_common.date_time.FixedOffset('TZ1', -5, 30)
+    2050, 7, 18, 10, 11, 12, 230000, d1_common.date_time.FixedOffset("TZ1", -5, 30)
 )
 T_ABS_2 = datetime.datetime(
-    2050, 7, 18, 21, 41, 12, 230000, d1_common.date_time.FixedOffset('TZ1', 7)
+    2050, 7, 18, 21, 41, 12, 230000, d1_common.date_time.FixedOffset("TZ1", 7)
 )
 
 
 @pytest.fixture(
-    scope='function', params=[None, d1_common.date_time.UTC(), TZ_MST, TZ_YEKT]
+    scope="function", params=[None, d1_common.date_time.UTC(), TZ_MST, TZ_YEKT]
 )
 def tz_fixture(request):
     yield request.param
 
 
 @pytest.fixture(
-    scope='function', params=[T1_NAIVE, T2_NAIVE, T1_UTC, T2_UTC, T1_MST, T1_YEKT]
+    scope="function", params=[T1_NAIVE, T2_NAIVE, T1_UTC, T2_UTC, T1_MST, T1_YEKT]
 )
 def dt_fixture(request):
     yield request.param
 
 
 @pytest.fixture(
-    scope='function',
+    scope="function",
     params=[
         # Nearest 500 ms
         (
@@ -243,7 +243,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         round_sec, t, t_rounded = rounding_fixture
         t = t.replace(tzinfo=tz_fixture)
         t_rounded = t_rounded.replace(tzinfo=tz_fixture)
-        logging.debug('round_sec={} t={} t_rounded={}'.format(round_sec, t, t_rounded))
+        logging.debug("round_sec={} t={} t_rounded={}".format(round_sec, t, t_rounded))
         assert d1_common.date_time.round_to_nearest(t, round_sec) == t_rounded
 
     def test_1090(self, rounding_fixture, tz_fixture):
@@ -252,7 +252,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         round_sec, t, t_rounded = rounding_fixture
         t = t.replace(tzinfo=tz_fixture)
         t_rounded = t_rounded.replace(tzinfo=tz_fixture)
-        logging.debug('round_sec={} t={} t_rounded={}'.format(round_sec, t, t_rounded))
+        logging.debug("round_sec={} t={} t_rounded={}".format(round_sec, t, t_rounded))
         assert d1_common.date_time.are_equal(t, t_rounded, round_sec)
 
     def test_1100(self):
@@ -280,21 +280,21 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         """http_datetime_str_from_dt(): Assumes naive datetime is in UTC."""
         assert (
             d1_common.date_time.http_datetime_str_from_dt(T1_NAIVE)
-            == 'Sat, 02 Jan 1999 03:04:05 GMT'
+            == "Sat, 02 Jan 1999 03:04:05 GMT"
         )
 
     def test_1150(self):
         """http_datetime_str_from_dt(): Inludes timezone (MST, UTC-7)"""
         assert (
             d1_common.date_time.http_datetime_str_from_dt(T1_MST)
-            == 'Sat, 02 Jan 1999 10:04:05 GMT'
+            == "Sat, 02 Jan 1999 10:04:05 GMT"
         )
 
     def test_1160(self):
         """http_datetime_str_from_dt() includes timezone (YEKT, UTC+6)"""
         assert (
             d1_common.date_time.http_datetime_str_from_dt(T1_YEKT)
-            == 'Fri, 01 Jan 1999 21:04:05 GMT'
+            == "Fri, 01 Jan 1999 21:04:05 GMT"
         )
 
     def _from_http_datetime(self, that_fateful_day_in_november_94):
@@ -305,15 +305,15 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
 
     def test_1170(self):
         """from_http_datetime(): RFC 822, updated by RFC 1123."""
-        self._from_http_datetime('Sun, 06 Nov 1994 08:49:37 GMT')
+        self._from_http_datetime("Sun, 06 Nov 1994 08:49:37 GMT")
 
     def test_1180(self):
         """from_http_datetime(): RFC 850, obsoleted by RFC 1036."""
-        self._from_http_datetime('Sunday, 06-Nov-94 08:49:37 GMT')
+        self._from_http_datetime("Sunday, 06-Nov-94 08:49:37 GMT")
 
     def test_1190(self):
         """from_http_datetime(): ANSI C's asctime() format."""
-        self._from_http_datetime('Sun Nov  6 08:49:37 1994')
+        self._from_http_datetime("Sun Nov  6 08:49:37 1994")
 
     def test_1200(self):
         """is_utc(): Returns False for naive datetime."""

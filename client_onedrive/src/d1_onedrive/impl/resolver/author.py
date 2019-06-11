@@ -53,7 +53,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def get_attributes(self, object_tree_folder, path):
         log.debug(
-            'get_attributes: {}'.format(
+            "get_attributes: {}".format(
                 d1_onedrive.impl.util.string_from_path_elements(path)
             )
         )
@@ -65,7 +65,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def get_directory(self, object_tree_folder, path):
         log.debug(
-            'get_directory: {}'.format(
+            "get_directory: {}".format(
                 d1_onedrive.impl.util.string_from_path_elements(path)
             )
         )
@@ -77,7 +77,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def read_file(self, object_tree_folder, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 d1_onedrive.impl.util.string_from_path_elements(path), size, offset
             )
         )
@@ -87,7 +87,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
             return self._resource_map_resolver.read_file(
                 object_tree_folder, path[1:], size, offset
             )
-        raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid file')
+        raise d1_onedrive.impl.onedrive_exceptions.PathException("Invalid file")
 
     # Private.
 
@@ -108,9 +108,9 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     def _resolve_author_root(self, object_tree_folder):
         d = d1_onedrive.impl.directory.Directory()
         authors = set()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             try:
-                authors.add(self._object_tree.get_object_record(pid)['author'])
+                authors.add(self._object_tree.get_object_record(pid)["author"])
             except KeyError:
                 pass
         d.extend(authors)
@@ -118,15 +118,15 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _resolve_author(self, author, object_tree_folder):
         d = d1_onedrive.impl.directory.Directory()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             try:
                 record = self._object_tree.get_object_record(pid)
-                if record['author'] == author:
-                    d.append(record['id'])
+                if record["author"] == author:
+                    d.append(record["id"])
             except KeyError:
                 pass
         # As each author folder in the root has at least one object, an empty folder
         # here can only be due to an invalid path.
         if not d:
-            raise d1_onedrive.impl.onedrive_exceptions.PathException('Invalid author')
+            raise d1_onedrive.impl.onedrive_exceptions.PathException("Invalid author")
         return d

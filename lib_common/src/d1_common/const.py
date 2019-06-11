@@ -21,22 +21,22 @@
 
 # The root of all DataONE.  Used to perform introspection on the system when
 # no other node information is provided.
-DEFAULT_CN_PROTOCOL = 'https'
-DEFAULT_CN_HOST = 'cn.dataone.org'
-DEFAULT_CN_PATH = '/cn'
-DEFAULT_MN_PROTOCOL = 'https'
-DEFAULT_MN_HOST = 'localhost'
-DEFAULT_MN_PATH = '/mn'
-URL_DATAONE_ROOT = ''.join(
-    (DEFAULT_CN_PROTOCOL, '://', DEFAULT_CN_HOST, DEFAULT_CN_PATH)
+DEFAULT_CN_PROTOCOL = "https"
+DEFAULT_CN_HOST = "cn.dataone.org"
+DEFAULT_CN_PATH = "/cn"
+DEFAULT_MN_PROTOCOL = "https"
+DEFAULT_MN_HOST = "localhost"
+DEFAULT_MN_PATH = "/mn"
+URL_DATAONE_ROOT = "".join(
+    (DEFAULT_CN_PROTOCOL, "://", DEFAULT_CN_HOST, DEFAULT_CN_PATH)
 )
-DEFAULT_MN_BASEURL = ''.join(
-    (DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH)
+DEFAULT_MN_BASEURL = "".join(
+    (DEFAULT_MN_PROTOCOL, "://", DEFAULT_MN_HOST, DEFAULT_MN_PATH)
 )
-URL_DATAONE_SEARCH = 'https://search.dataone.org'
+URL_DATAONE_SEARCH = "https://search.dataone.org"
 
 # Version of the DataONE Python stack
-VERSION = '3.4.1'
+VERSION = "3.4.1"
 
 # Default number of items in a single page of a multi-page result set
 DEFAULT_SLICE_SIZE = 100
@@ -45,27 +45,27 @@ DEFAULT_SLICE_SIZE = 100
 DEFAULT_HTTP_TIMEOUT = 60.0
 
 # HTTP User Agent used by d1_python by default
-USER_AGENT = 'DataONE-Python/{} +http://dataone.org/'.format(VERSION)
+USER_AGENT = "DataONE-Python/{} +http://dataone.org/".format(VERSION)
 
 # The system wide default checksum algorithm
-DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
+DEFAULT_CHECKSUM_ALGORITHM = "SHA-1"
 
 # Replicas
 DEFAULT_REPLICATION_ALLOWED = True
 DEFAULT_NUMBER_OF_REPLICAS = 3
 
 # MIME types
-CONTENT_TYPE_HTML = 'text/html'
-CONTENT_TYPE_JSON = 'application/json'
-CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream'
-CONTENT_TYPE_TEXT = 'text/plain'
-CONTENT_TYPE_XHTML = 'text/html'
-CONTENT_TYPE_XML = 'text/xml'
-CONTENT_TYPE_XSLT = 'text/xsl'
-CONTENT_TYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
+CONTENT_TYPE_HTML = "text/html"
+CONTENT_TYPE_JSON = "application/json"
+CONTENT_TYPE_OCTET_STREAM = "application/octet-stream"
+CONTENT_TYPE_TEXT = "text/plain"
+CONTENT_TYPE_XHTML = "text/html"
+CONTENT_TYPE_XML = "text/xml"
+CONTENT_TYPE_XSLT = "text/xsl"
+CONTENT_TYPE_XML_MEDIA_TYPES = "application/xml", "text/xml"
 
-DATAONE_SCHEMA_ATTRIBUTE_BASE = 'http://ns.dataone.org/service/types/'
-DEFAULT_CHARSET = 'utf-8'
+DATAONE_SCHEMA_ATTRIBUTE_BASE = "http://ns.dataone.org/service/types/"
+DEFAULT_CHARSET = "utf-8"
 
 # Designate characters which do not have to be percent-encoded in URLs. The
 # character set is different for various URL sections, which is why "/" and "?"
@@ -76,26 +76,26 @@ URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
 URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 
 # Symbolic subjects
-SUBJECT_VERIFIED = 'verifiedUser'
-SUBJECT_AUTHENTICATED = 'authenticatedUser'
-SUBJECT_PUBLIC = 'public'
+SUBJECT_VERIFIED = "verifiedUser"
+SUBJECT_AUTHENTICATED = "authenticatedUser"
+SUBJECT_PUBLIC = "public"
 
 # Search
-DEFAULT_SEARCH_ENGINE = 'solr'
+DEFAULT_SEARCH_ENGINE = "solr"
 
 # OAI-ORE Resource Maps
 ORE_NAMESPACE_DICT = {
-    'cito': 'http://purl.org/spar/cito/',
-    'dc': 'http://purl.org/dc/elements/1.1/',
-    'dcterms': 'http://purl.org/dc/terms/',
-    'ore': 'http://www.openarchives.org/ore/terms/',
-    'foaf': 'http://xmlns.com/foaf/0.1/',
+    "cito": "http://purl.org/spar/cito/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "ore": "http://www.openarchives.org/ore/terms/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
 }
-ORE_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
-ORE_SOFTWARE_ID = 'DataONE.org Python ITK {}'.format(VERSION)
+ORE_FORMAT_ID = "http://www.openarchives.org/ore/terms"
+ORE_SOFTWARE_ID = "DataONE.org Python ITK {}".format(VERSION)
 
 # Data Package
-DEFAULT_DATA_PACKAGE_FORMAT_ID = 'application/bagit-097'
+DEFAULT_DATA_PACKAGE_FORMAT_ID = "application/bagit-097"
 
 # Streams
 DEFAULT_CHUNK_SIZE = 1024

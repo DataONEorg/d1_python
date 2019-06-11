@@ -32,12 +32,12 @@ EG_PID_GMN = (
     ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
     ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
     'file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">'
-    'testpid</d1:identifier>',
-    'testpid',
+    "testpid</d1:identifier>",
+    "testpid",
 )
 
 # TODO.
-EG_PID_KNB = ("""""", '')
+EG_PID_KNB = ("""""", "")
 
 # Blank pid.
 EG_BAD_PID_1 = (
@@ -46,12 +46,12 @@ EG_BAD_PID_1 = (
     ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
     ' xsi:schemaLocation="http://ns.dataone.org/service/types/v1 '
     'file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">'
-    '</d1:identifier>',
-    'testpid',
+    "</d1:identifier>",
+    "testpid",
 )
 
 # Missing identifier.
-EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="utf-8"?>""", 'testpid')
+EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="utf-8"?>""", "testpid")
 
 
 class TestPID(d1_test.d1_test_case.D1TestCase):
@@ -64,7 +64,7 @@ class TestPID(d1_test.d1_test_case.D1TestCase):
             else:
                 raise
         if raises_pyxb_exc:
-            raise Exception('Did not receive expected exception')
+            raise Exception("Did not receive expected exception")
         assert obj.value() == doc[1]
 
     def test_1000(self):

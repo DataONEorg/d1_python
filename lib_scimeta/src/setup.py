@@ -25,31 +25,31 @@ import setuptools
 
 def main():
     setuptools.setup(
-        name='dataone.scimeta',
-        version='3.4.1',
-        description='Utilities for processing Science Metadata',
-        author='DataONE Project',
-        author_email='developers@dataone.org',
-        url='https://github.com/DataONEorg/d1_python',
-        license='Apache License, Version 2.0',
+        name="dataone.scimeta",
+        version="3.4.1",
+        description="Utilities for processing Science Metadata",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_python",
+        license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        install_requires=['lxml >= 4.3.3'],
-        setup_requires=['setuptools_git >= 1.1'],
+        install_requires=["lxml >= 4.3.3"],
+        setup_requires=["setuptools_git >= 1.1"],
         classifiers=[
-            'Development Status :: 5 - Production/Stable',
-            'Intended Audience :: Developers',
-            'Topic :: Scientific/Engineering',
-            'License :: OSI Approved :: Apache Software License',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.6',
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
         ],
         keywords=(
-            'DataONE client server member-node coordinating-node science metadata '
-            'scimeta xml catalogue xsd validate '
+            "DataONE client server member-node coordinating-node science metadata "
+            "scimeta xml catalogue xsd validate "
         ),
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

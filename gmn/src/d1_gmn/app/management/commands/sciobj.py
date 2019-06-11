@@ -83,18 +83,18 @@ class Command(django.core.management.base.BaseCommand):
         )
 
         if self.options["fields"] is not None:
-            field_list = [v.strip() for v in self.options["fields"].split(',')]
+            field_list = [v.strip() for v in self.options["fields"].split(",")]
         else:
             field_list = None
 
-        json_path = self.options['json_path']
-        if not json_path.lower().endswith('.json'):
-            json_path += '.json'
+        json_path = self.options["json_path"]
+        if not json_path.lower().endswith(".json"):
+            json_path += ".json"
 
         self._list(field_list, json_path)
 
     def _list(self, field_list, json_path):
-        with open(json_path, 'w', encoding='utf-8') as f:
+        with open(json_path, "w", encoding="utf-8") as f:
             d1_gmn.app.sysmeta_extract.extract_values(
                 # filter_arg_dict={
                 #     'pid__chainmember_pid__chain__sid__did__contains': 'bc'},

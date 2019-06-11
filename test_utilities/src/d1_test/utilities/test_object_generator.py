@@ -26,13 +26,13 @@ import d1_test.instance_generator
 import d1_test.instance_generator.random_data
 
 # Defaults
-FORMAT_ID = 'application/octet-stream'
+FORMAT_ID = "application/octet-stream"
 
 
 def generate_random_ascii(prefix, num_chars=10):
-    return '{}_{}'.format(
+    return "{}_{}".format(
         prefix,
-        ''.join(
+        "".join(
             random.choice(
                 string.ascii_uppercase + string.ascii_lowercase + string.digits
             )
@@ -87,16 +87,16 @@ def _generate_system_metadata_for_science_object(
     sysmeta_pyxb.dateUploaded = now
     sysmeta_pyxb.formatId = format_id
     sysmeta_pyxb.identifier = pid
-    sysmeta_pyxb.rightsHolder = generate_random_ascii('rights_holder')
+    sysmeta_pyxb.rightsHolder = generate_random_ascii("rights_holder")
     sysmeta_pyxb.size = len(sciobj_bytes)
-    sysmeta_pyxb.submitter = generate_random_ascii('submitter')
+    sysmeta_pyxb.submitter = generate_random_ascii("submitter")
 
     if include_revision_bool:
-        sysmeta_pyxb.obsoletedBy = generate_random_ascii('obsoleted_by_pid')
-        sysmeta_pyxb.obsoletes = generate_random_ascii('obsoletes_pid')
+        sysmeta_pyxb.obsoletedBy = generate_random_ascii("obsoleted_by_pid")
+        sysmeta_pyxb.obsoletes = generate_random_ascii("obsoletes_pid")
 
-    sysmeta_pyxb.originMemberNode = generate_random_ascii('origin_mn')
-    sysmeta_pyxb.authoritativeMemberNode = generate_random_ascii('auth_mn')
+    sysmeta_pyxb.originMemberNode = generate_random_ascii("origin_mn")
+    sysmeta_pyxb.authoritativeMemberNode = generate_random_ascii("auth_mn")
 
     return sysmeta_pyxb
 
@@ -105,7 +105,7 @@ def _generate_public_access_policy(client):
     access_policy_pyxb = client.pyxb_binding.accessPolicy()
     access_rule_pyxb = client.pyxb_binding.AccessRule()
     access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission_pyxb = client.pyxb_binding.Permission('read')
+    permission_pyxb = client.pyxb_binding.Permission("read")
     access_rule_pyxb.permission.append(permission_pyxb)
     access_policy_pyxb.append(access_rule_pyxb)
     return access_policy_pyxb

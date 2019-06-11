@@ -24,11 +24,11 @@ import d1_test.instance_generator.replication_policy
 # ===============================================================================
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestReplicationPolicy')
+@d1_test.d1_test_case.reproducible_random_decorator("TestReplicationPolicy")
 class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
         replication_policy_obj = (
             d1_test.instance_generator.replication_policy.generate()
         )
-        self.sample.assert_equals(replication_policy_obj, 'inst_gen_generate')
+        self.sample.assert_equals(replication_policy_obj, "inst_gen_generate")

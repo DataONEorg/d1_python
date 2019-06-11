@@ -26,10 +26,10 @@ def get_identifiers(sysmeta_pyxb):
     Returns:   tuple: PID, SID, OBSOLETES_PID, OBSOLETED_BY_PID
 
     """
-    pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'identifier')
-    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
-    obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
+    pid = d1_common.xml.get_opt_val(sysmeta_pyxb, "identifier")
+    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, "seriesId")
+    obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, "obsoletes")
+    obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, "obsoletedBy")
     return pid, sid, obsoletes_pid, obsoleted_by_pid
 
 
@@ -104,12 +104,12 @@ def get_pids_in_revision_chain(client, did):
 
     sysmeta_pyxb = client.getSystemMetadata(did)
     # Walk to tail
-    while _opt(sysmeta_pyxb, 'obsoletes'):
-        sysmeta_pyxb = client.getSystemMetadata(_opt(sysmeta_pyxb, 'obsoletes'))
+    while _opt(sysmeta_pyxb, "obsoletes"):
+        sysmeta_pyxb = client.getSystemMetadata(_opt(sysmeta_pyxb, "obsoletes"))
     chain_pid_list = [_req(sysmeta_pyxb.identifier)]
     # Walk from tail to head, recording traversed PIDs
-    while _opt(sysmeta_pyxb, 'obsoletedBy'):
-        sysmeta_pyxb = client.getSystemMetadata(_opt(sysmeta_pyxb, 'obsoletedBy'))
+    while _opt(sysmeta_pyxb, "obsoletedBy"):
+        sysmeta_pyxb = client.getSystemMetadata(_opt(sysmeta_pyxb, "obsoletedBy"))
         chain_pid_list.append(_req(sysmeta_pyxb.identifier))
     return chain_pid_list
 

@@ -71,9 +71,9 @@ class Transaction(transaction.Transaction):
         return system_metadata.generate_from_file(
             sci_obj,
             {
-                'identifier': self.generate_random_ascii_pid(),
-                'accessPolicy': access_policy,
-                'rightsHolder': self.select_random_subject(),
+                "identifier": self.generate_random_ascii_pid(),
+                "accessPolicy": access_policy,
+                "rightsHolder": self.select_random_subject(),
             },
         )
 
@@ -81,12 +81,12 @@ class Transaction(transaction.Transaction):
         ap = d1_common.types.dataoneTypes.AccessPolicy()
         ar = d1_common.types.dataoneTypes.AccessRule()
         ar.subject = subjects
-        ar.permission = ['changePermission']
+        ar.permission = ["changePermission"]
         ap.allow.append(ar)
         return ap
 
     def generate_random_ascii_pid(self):
-        return ''.join(
+        return "".join(
             random.choice(
                 string.ascii_uppercase + string.ascii_lowercase + string.digits
             )
@@ -94,7 +94,7 @@ class Transaction(transaction.Transaction):
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     t = Transaction()
     t.run()
     # import cProfile

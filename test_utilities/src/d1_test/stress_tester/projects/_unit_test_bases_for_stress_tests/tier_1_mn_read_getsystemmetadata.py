@@ -39,13 +39,13 @@ import d1_test_case
 class Test080GetSystemMetadata(d1_test_case.D1TestCase):
     def test_010_get_sysmeta_by_invalid_pid(self):
         """404 NotFound when attempting to get non-existing SysMeta."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            client.getSystemMetadata(context.TOKEN, '_invalid_pid_')
+            client.getSystemMetadata(context.TOKEN, "_invalid_pid_")
 
     def test_020_get_sysmeta_by_valid_pid(self):
         """Successful retrieval of valid SysMeta objects."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         for object_list in context.slices:
             for object_info in object_list.objectInfo:
                 pid = object_info.identifier.value()

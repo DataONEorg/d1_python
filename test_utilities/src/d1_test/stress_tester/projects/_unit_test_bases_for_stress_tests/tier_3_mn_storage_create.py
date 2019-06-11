@@ -67,7 +67,7 @@ class Test310Create(d1_test_case.D1TestCase):
             checksum,
             datetime.datetime.isoformat(create_date),
         ).encode(
-            'utf-8'
+            "utf-8"
         )
 
     def generate_random_file(self, num_bytes):
@@ -77,17 +77,17 @@ class Test310Create(d1_test_case.D1TestCase):
 
     def test_020_create_object(self):
         """Create a single test object."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
 
         # scidata_path = test_utilities.get_resource_path(
         #  'd1_testdocs/test_objects/hdl%3A10255%2Fdryad.167%2Fmets.xml')
         # sysmeta_path = test_utilities.get_resource_path(
         #  'd1_testdocs/test_objects/hdl%3A10255%2Fdryad.167%2Fmets.xml.sysmeta')
 
-        context.pid_created = '__invalid_test_object__' + str(uuid.uuid1())
+        context.pid_created = "__invalid_test_object__" + str(uuid.uuid1())
 
         context.scidata_size = 1024 ** 2 + random.randint(0, 1024)
-        context.checksum_algorithm = 'SHA-1'
+        context.checksum_algorithm = "SHA-1"
 
         context.scidata_file = self.generate_random_file(context.scidata_size)
 
@@ -114,7 +114,7 @@ class Test310Create(d1_test_case.D1TestCase):
 
     def test_030_object_exists(self):
         """Verify that created object can be retrieved and that its checksum matches."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         response = client.get(context.TOKEN, context.pid_created)
         # Calculate the checksum.
         checksum = test_utilities.calculate_checksum_on_string(
@@ -124,7 +124,7 @@ class Test310Create(d1_test_case.D1TestCase):
 
     def test_040_log_records_total_increased_by_one(self):
         """Total number of log records increased by one."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         log_records = client.getLogRecords(
             context.TOKEN, datetime.datetime(1800, 1, 1), 0, 0
         )
@@ -137,20 +137,20 @@ class Test310Create(d1_test_case.D1TestCase):
 
         """
         # TODO: Requests returns case insensitive header dict
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         response = client.describe(context.TOKEN, context.pid_created)
         headers = response.getheaders()
         # Build dict with lower case keys.
         headers_lower = dict((header.lower(), value) for header, value in headers)
         # Check for the required headers.
         # Verify that date is a valid date.
-        assert d1_common.date_time.dt_from_iso8601_str(headers_lower['date'])
-        assert 'content-type' in headers_lower
-        assert 'content-length' in headers_lower
+        assert d1_common.date_time.dt_from_iso8601_str(headers_lower["date"])
+        assert "content-type" in headers_lower
+        assert "content-length" in headers_lower
 
     def test_080_total_number_of_objects_increased_by_one(self):
         """Total number of objects reported by listObjects increased by one."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         object_list = client.listObjects(context.TOKEN, start=0, count=0)
         assert object_list.total == context.object_total + 1
 

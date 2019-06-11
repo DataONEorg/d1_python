@@ -71,13 +71,13 @@ def add_callback(base_url):
     for method in method_list:
         responses.add_callback(
             method,
-            re.compile('^{}'.format(base_url)),
+            re.compile("^{}".format(base_url)),
             callback=_request_callback,
-            content_type='',
+            content_type="",
         )
     logging.debug(
         'Added callbacks for all methods. base_url="{}" methods="{}"'.format(
-            base_url, '/'.join(method_list)
+            base_url, "/".join(method_list)
         )
     )
 
@@ -128,7 +128,7 @@ def _request_callback(request):
         django_response = getattr(django_client, request.method.lower())(
             url_path,
             data=data,
-            content_type=request.headers.get('Content-Type', 'MISSING-CONTENT-TYPE'),
+            content_type=request.headers.get("Content-Type", "MISSING-CONTENT-TYPE"),
             **_headers_to_wsgi_env(request.headers or {}),
         )
     except AttributeError as e:
@@ -145,11 +145,11 @@ def _request_callback(request):
         )
         raise
 
-    django_response.setdefault('HTTP-Version', 'HTTP/1.1')
+    django_response.setdefault("HTTP-Version", "HTTP/1.1")
     return (
         django_response.status_code,
         list(django_response.items()),
-        b''.join(django_response.streaming_content)
+        b"".join(django_response.streaming_content)
         if django_response.streaming
         else django_response.content,
     )
@@ -158,7 +158,7 @@ def _request_callback(request):
 def _headers_to_wsgi_env(header_dict):
     wsgi_dict = header_dict.copy()
     wsgi_dict.update(
-        {'HTTP_' + k.upper().replace('-', '_'): v for k, v in list(header_dict.items())}
+        {"HTTP_" + k.upper().replace("-", "_"): v for k, v in list(header_dict.items())}
     )
     return wsgi_dict
 
@@ -187,4 +187,4 @@ The type/class name of the received instance is probably in this string:
 
 {0}
         """
-    ).format('#' * 100, str(e))
+    ).format("#" * 100, str(e))

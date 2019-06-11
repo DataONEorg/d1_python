@@ -52,7 +52,7 @@ MAP_CHANCE = 0.2
 
 class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
-    @django.test.override_settings(RESOURCE_MAP_CREATE='block')
+    @django.test.override_settings(RESOURCE_MAP_CREATE="block")
     def test_1000(self, gmn_client_v2):
         """MNStorage.create(): "block" mode: Creating a resource map after creating its
         aggregated objects is supported."""
@@ -62,19 +62,19 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         assert sorted(pid_list) == sorted(member_list)
 
     @responses.activate
-    @django.test.override_settings(RESOURCE_MAP_CREATE='block')
+    @django.test.override_settings(RESOURCE_MAP_CREATE="block")
     def test_1010(self, gmn_client_v2):
         """MNStorage.create(): "block" mode: Creating a resource map before creating its
         aggregated objects raises InvalidRequest."""
         pid_list = [
-            d1_test.instance_generator.identifier.generate_pid('PID_AGGR_')
+            d1_test.instance_generator.identifier.generate_pid("PID_AGGR_")
             for _ in range(10)
         ]
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             self.create_resource_map(gmn_client_v2, pid_list)
 
     @responses.activate
-    @django.test.override_settings(RESOURCE_MAP_CREATE='open')
+    @django.test.override_settings(RESOURCE_MAP_CREATE="open")
     def test_1020(self, gmn_client_v2):
         """MNStorage.create(): "open" mode: Creating a resource map after creating its
         aggregated objects is supported."""
@@ -84,12 +84,12 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         assert sorted(pid_list) == sorted(member_list)
 
     @responses.activate
-    @django.test.override_settings(RESOURCE_MAP_CREATE='open')
+    @django.test.override_settings(RESOURCE_MAP_CREATE="open")
     def test_1030(self, gmn_client_v2):
         """MNStorage.create(): "open" mode: Creating a resource map before creating its
         aggregated objects is supported."""
         pid_list = [
-            d1_test.instance_generator.identifier.generate_pid('PID_AGGR_')
+            d1_test.instance_generator.identifier.generate_pid("PID_AGGR_")
             for _ in range(10)
         ]
         ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
@@ -97,7 +97,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
         assert sorted(pid_list) == sorted(member_list)
 
     @responses.activate
-    @django.test.override_settings(RESOURCE_MAP_CREATE='open')
+    @django.test.override_settings(RESOURCE_MAP_CREATE="open")
     def test_1040(self, gmn_client_v1_v2, none_true):
         """MNStorage.create(): "open" mode: Creating a random series of objects and
         resource maps.
@@ -134,7 +134,7 @@ class TestCreateResourceMap(d1_gmn.tests.gmn_test_case.GMNTestCase):
             else:
                 self.create_obj(gmn_client_v1_v2, pid, sid=none_true)
             logging.info(
-                'uncreated={} available={} ORE={} aggr_list={}'.format(
+                "uncreated={} available={} ORE={} aggr_list={}".format(
                     len(uncreated_pid_set), len(avail_pid_set), is_ore, len(aggr_list)
                 )
             )

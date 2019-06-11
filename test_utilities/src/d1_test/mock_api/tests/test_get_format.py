@@ -32,7 +32,7 @@ class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
         """mock_api.getFormat(): Valid formatId returns ObjectFormat PyXB object."""
         d1_test.mock_api.get_format.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         assert isinstance(
-            cn_client_v1_v2.getFormat('valid_format_id'),
+            cn_client_v1_v2.getFormat("valid_format_id"),
             cn_client_v1_v2.pyxb_binding.ObjectFormat,
         )
 
@@ -41,7 +41,7 @@ class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
         """mock_api.getFormat(): Unknown formatId returns D1 NotFound."""
         d1_test.mock_api.get_format.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_client_v1_v2.getFormat('<NotFound>format_id')
+            cn_client_v1_v2.getFormat("<NotFound>format_id")
 
     @responses.activate
     def test_1020(self, cn_client_v1_v2):
@@ -50,5 +50,5 @@ class TestMockGetFormat(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.get_format.add_callback(d1_test.d1_test_case.MOCK_CN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
             cn_client_v1_v2.getFormat(
-                'valid_format_id', vendorSpecific={'trigger': '404'}
+                "valid_format_id", vendorSpecific={"trigger": "404"}
             )

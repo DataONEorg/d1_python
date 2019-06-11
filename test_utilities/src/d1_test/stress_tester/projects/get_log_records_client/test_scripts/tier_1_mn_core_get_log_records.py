@@ -40,7 +40,7 @@ class Transaction(transaction.Transaction):
         self.check_response(response)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     t = Transaction()
     t.run()
     # import cProfile

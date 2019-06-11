@@ -41,8 +41,8 @@ import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestUpdateWithoutSid')
-@freezegun.freeze_time('1955-05-15')
+@d1_test.d1_test_case.reproducible_random_decorator("TestUpdateWithoutSid")
+@freezegun.freeze_time("1955-05-15")
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
@@ -54,8 +54,8 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.update_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=['subj1', 'subj2', 'subj3'],
-                trusted_subj_list=['subj4', 'subj5'],
+                active_subj_list=["subj1", "subj2", "subj3"],
+                trusted_subj_list=["subj4", "subj5"],
                 disable_auth=False,
             )
 
@@ -63,7 +63,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1010(self, gmn_client_v1_v2):
         """update(): Non-existing object raises NotFound."""
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            self.get_obj(gmn_client_v1_v2, '_invalid_pid_')
+            self.get_obj(gmn_client_v1_v2, "_invalid_pid_")
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
@@ -74,8 +74,8 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.update_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=['subj1', 'subj2', 'subj3'],
-            trusted_subj_list=['subj2', 'subj5'],
+            active_subj_list=["subj1", "subj2", "subj3"],
+            trusted_subj_list=["subj2", "subj5"],
             disable_auth=False,
         )
 
@@ -91,8 +91,8 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.get_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
-            trusted_subj_list=['active_and_trusted_subj', 'subj4'],
+            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
+            trusted_subj_list=["active_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -110,8 +110,8 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=['subj1', 'subj2', 'shared_subj', 'subj4'],
-                trusted_subj_list=['subj5', 'subj6'],
+                active_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
+                trusted_subj_list=["subj5", "subj6"],
                 disable_auth=False,
             )
 
@@ -146,7 +146,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 self.update_obj(gmn_client_v1_v2, pid_create, permission_list=None)
                 # Obsoleted object has a create and an update event
                 log = gmn_client_v1_v2.getLogRecords(pidFilter=pid_create)
-                self.sample.assert_equals(log, 'update_records_event', gmn_client_v1_v2)
+                self.sample.assert_equals(log, "update_records_event", gmn_client_v1_v2)
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
@@ -169,12 +169,12 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 # dateUploaded remains unchanged on obsoleted object
                 self.sample.assert_equals(
                     sysmeta_before_update_pyxb,
-                    'update_adjusts_obsoleted_obj_before',
+                    "update_adjusts_obsoleted_obj_before",
                     gmn_client_v1_v2,
                 )
                 self.sample.assert_equals(
                     sysmeta_after_update_pyxb,
-                    'update_adjusts_obsoleted_obj_after',
+                    "update_adjusts_obsoleted_obj_after",
                     gmn_client_v1_v2,
                 )
 

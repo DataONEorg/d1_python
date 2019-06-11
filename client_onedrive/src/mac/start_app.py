@@ -36,8 +36,8 @@ def main():
 def start_onedrive(mount_point):
     sys.argv.extend(
         [
-            '--mountpoint=' + mount_point,
-            '--macfuse-icon=mac_dataone.icns',
+            "--mountpoint=" + mount_point,
+            "--macfuse-icon=mac_dataone.icns",
             #'--disable-macfuse-local-disk',
             #'modules=volicon,iconpath=mac_dataone.icns'
             #'volicon=mac_dataone.icns',
@@ -58,20 +58,20 @@ class MountPoint:
     def _find_available_mount_point_and_create(self):
         # Increment the Drive name by 1 each time until the mount point can be made.
         # Give up at 100 failed attempts.
-        mount_point_base = '/Volumes/ONEDrive'
+        mount_point_base = "/Volumes/ONEDrive"
         mount_point = mount_point_base
         for i in range(100):
             if not i:
                 mount_point = mount_point_base
             else:
-                mount_point = '{}{}'.format(mount_point_base, i)
+                mount_point = "{}{}".format(mount_point_base, i)
             try:
                 os.mkdir(mount_point)
             except OSError:
                 pass
             else:
                 return mount_point
-        raise Exception('Unable to find available mount point')
+        raise Exception("Unable to find available mount point")
 
     def _delete_mount_point(self):
         try:
@@ -80,5 +80,5 @@ class MountPoint:
             pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

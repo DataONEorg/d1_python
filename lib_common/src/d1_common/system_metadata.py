@@ -100,26 +100,26 @@ import d1_common.xml
 logger = logging.getLogger(__name__)
 
 SYSMETA_ROOT_CHILD_LIST = [
-    'serialVersion',
-    'identifier',
-    'formatId',
-    'size',
-    'checksum',
-    'submitter',
-    'rightsHolder',
-    'accessPolicy',
-    'replicationPolicy',
-    'obsoletes',
-    'obsoletedBy',
-    'archived',
-    'dateUploaded',
-    'dateSysMetadataModified',
-    'originMemberNode',
-    'authoritativeMemberNode',
-    'replica',
-    'seriesId',
-    'mediaType',
-    'fileName',
+    "serialVersion",
+    "identifier",
+    "formatId",
+    "size",
+    "checksum",
+    "submitter",
+    "rightsHolder",
+    "accessPolicy",
+    "replicationPolicy",
+    "obsoletes",
+    "obsoletedBy",
+    "archived",
+    "dateUploaded",
+    "dateSysMetadataModified",
+    "originMemberNode",
+    "authoritativeMemberNode",
+    "replica",
+    "seriesId",
+    "mediaType",
+    "fileName",
 ]
 
 
@@ -136,7 +136,7 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
     return (
         d1_common.type_conversions.is_pyxb_d1_type(sysmeta_pyxb)
         and d1_common.type_conversions.pyxb_get_type_name(sysmeta_pyxb)
-        == 'SystemMetadata'
+        == "SystemMetadata"
     )
 
 
@@ -163,9 +163,9 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
         sysmeta_pyxb.accessPolicy = d1_common.wrap.access_policy.get_normalized_pyxb(
             sysmeta_pyxb.accessPolicy
         )
-    if getattr(sysmeta_pyxb, 'mediaType', False):
+    if getattr(sysmeta_pyxb, "mediaType", False):
         d1_common.xml.sort_value_list_pyxb(sysmeta_pyxb.mediaType.property_)
-    if getattr(sysmeta_pyxb, 'replicationPolicy', False):
+    if getattr(sysmeta_pyxb, "replicationPolicy", False):
         d1_common.xml.sort_value_list_pyxb(
             sysmeta_pyxb.replicationPolicy.preferredMemberNode
         )
@@ -174,14 +174,14 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
         )
     d1_common.xml.sort_elements_by_child_values(
         sysmeta_pyxb.replica,
-        ['replicaVerified', 'replicaMemberNode', 'replicationStatus'],
+        ["replicaVerified", "replicaMemberNode", "replicationStatus"],
     )
     sysmeta_pyxb.archived = bool(sysmeta_pyxb.archived)
     if reset_timestamps:
         epoch_dt = datetime.datetime(1970, 1, 1, tzinfo=d1_common.date_time.UTC())
         sysmeta_pyxb.dateUploaded = epoch_dt
         sysmeta_pyxb.dateSysMetadataModified = epoch_dt
-        for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
+        for replica_pyxb in getattr(sysmeta_pyxb, "replica", []):
             replica_pyxb.replicaVerified = epoch_dt
     else:
         sysmeta_pyxb.dateUploaded = d1_common.date_time.round_to_nearest(
@@ -190,7 +190,7 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
         sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.round_to_nearest(
             sysmeta_pyxb.dateSysMetadataModified
         )
-        for replica_pyxb in getattr(sysmeta_pyxb, 'replica', []):
+        for replica_pyxb in getattr(sysmeta_pyxb, "replica", []):
             replica_pyxb.replicaVerified = d1_common.date_time.round_to_nearest(
                 replica_pyxb.replicaVerified
             )
@@ -225,7 +225,7 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
     b_xml = d1_common.xml.serialize_to_xml_str(b_pyxb)
     are_equivalent = d1_common.xml.are_equivalent(a_xml, b_xml)
     if not are_equivalent:
-        logger.debug('XML documents not equivalent:')
+        logger.debug("XML documents not equivalent:")
         logger.debug(d1_common.xml.format_diff_xml(a_xml, b_xml))
     return are_equivalent
 
@@ -294,7 +294,7 @@ def update_elements(dst_pyxb, src_pyxb, el_list):
     if invalid_element_set:
         raise ValueError(
             'Passed one or more invalid elements. invalid="{}"'.format(
-                ', '.join(sorted(list(invalid_element_set)))
+                ", ".join(sorted(list(invalid_element_set)))
             )
         )
     for el_str in el_list:

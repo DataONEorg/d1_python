@@ -31,8 +31,8 @@ class TestMgMtExportObjectList(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """diag_export_object_list."""
         with tempfile.NamedTemporaryFile() as exp_f:
             self.call_management_command(
-                'diag_export_object_list', '--limit', 10, exp_f.name
+                "diag_export_object_list", "--limit", 10, exp_f.name
             )
             exp_f.seek(0)
             obj_list = exp_f.read()
-            self.sample.assert_equals(obj_list, 'diag_export_object_list')
+            self.sample.assert_equals(obj_list, "diag_export_object_list")

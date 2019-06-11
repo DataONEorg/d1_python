@@ -8,23 +8,23 @@ import pip._internal.utils.misc
 
 import d1_dev.util
 
-REQUIREMENTS_FILENAME = 'requirements.txt'
+REQUIREMENTS_FILENAME = "requirements.txt"
 
 
 # Modules in my dev environment that are not required by the stack
 
 MODULE_FILTER_REGEX_LIST = {
-    'beautifulsoup',
-    'black',
-    'bs4',
-    'dataone.*',
-    'ete3',
-    'Flask',
-    'logging-tree',
-    'PyQt.*',
-    'pyqt5',
-    'python-magic',
-    'redbaron',
+    "beautifulsoup",
+    "black",
+    "bs4",
+    "dataone.*",
+    "ete3",
+    "Flask",
+    "logging-tree",
+    "PyQt.*",
+    "pyqt5",
+    "python-magic",
+    "redbaron",
 }
 
 
@@ -56,21 +56,21 @@ def get_reqs():
 def is_filtered_package(project_name):
     for filter_rx in MODULE_FILTER_REGEX_LIST:
         if re.match(filter_rx, project_name, re.IGNORECASE):
-            print('Filtered: {}'.format(project_name, filter_rx))
+            print("Filtered: {}".format(project_name, filter_rx))
             return True
-    print('Included: {}'.format(project_name))
+    print("Included: {}".format(project_name))
     return False
 
 
 def write_reqs(req_path, req_list):
+    """Args:
+
+    req_path: req_list:
+
     """
-    Args:
-        req_path:
-        req_list:
-    """
-    with open(req_path, 'w') as f:
-        f.write('\n'.join(req_list) + "\n")
+    with open(req_path, "w") as f:
+        f.write("\n".join(req_list) + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

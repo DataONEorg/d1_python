@@ -43,37 +43,37 @@ import d1_common.util
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Sync the install_requires sections in setup.py files'
+        description="Sync the install_requires sections in setup.py files"
     )
-    parser.add_argument('path', help='Root of Python source tree')
-    parser.add_argument('d1_version', help='Version to use for new D1 Py stack release')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", help="Root of Python source tree")
+    parser.add_argument("d1_version", help="Version to use for new D1 Py stack release")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
-    )
-    parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--no-default-excludes',
-        dest='default_excludes',
-        action='store_false',
-        help='Don\'t add default glob exclude patterns',
-    )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
-    parser.add_argument(
-        '--diff',
-        dest='show_diff',
-        action='store_true',
-        help='Show diff and do not modify any files',
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Perform a trial run without changing any files',
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
+    parser.add_argument(
+        "--diff",
+        dest="show_diff",
+        action="store_true",
+        help="Show diff and do not modify any files",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Perform a trial run without changing any files",
     )
 
     args = parser.parse_args()
@@ -82,7 +82,7 @@ def main():
 
     for setup_path in d1_common.iter.path.path_generator(
         path_list=[args.path],
-        include_glob_list=['setup.py'],
+        include_glob_list=["setup.py"],
         exclude_glob_list=args.exclude,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
@@ -94,13 +94,13 @@ def main():
             logging.error(str(e))
 
     update_version_const(
-        'd1_common', ['const.py'], args.d1_version, args.show_diff, args.dry_run
+        "d1_common", ["const.py"], args.d1_version, args.show_diff, args.dry_run
     )
     update_version_const(
-        'd1_gmn', ['version.py'], args.d1_version, args.show_diff, args.dry_run
+        "d1_gmn", ["version.py"], args.d1_version, args.show_diff, args.dry_run
     )
     update_version_const(
-        'd1_cli', ['version.py'], args.d1_version, args.show_diff, args.dry_run
+        "d1_cli", ["version.py"], args.d1_version, args.show_diff, args.dry_run
     )
 
 
@@ -124,7 +124,7 @@ def update_deps_on_tree(r, d1_version):
 
 
 def update_install_requires(r, d1_version):
-    dep_node = find_call_argument_node(r, 'install_requires')
+    dep_node = find_call_argument_node(r, "install_requires")
     for str_node in dep_node.value:
         # logging.debug(str_node.help(True))
         update_dep_str(str_node, d1_version)
@@ -132,15 +132,15 @@ def update_install_requires(r, d1_version):
 
 
 def update_version(r, d1_version):
-    n = find_call_argument_node(r, 'version')
-    n.value = '\'{}\''.format(d1_version)
+    n = find_call_argument_node(r, "version")
+    n.value = "'{}'".format(d1_version)
     return r
 
 
 def find_call_argument_node(r, value_str):
-    node_list = r('CallArgumentNode')
+    node_list = r("CallArgumentNode")
     for n in node_list:
-        if hasattr(n.target, 'value') and n.target.value == value_str:
+        if hasattr(n.target, "value") and n.target.value == value_str:
             return n
     raise UpdateException('CallArgumentNode not found. value="{}"'.format(value_str))
 
@@ -155,7 +155,7 @@ def update_dep_str(str_node, d1_version):
     else:
         new_version_str = get_package_version(package_name, d1_version)
         if old_version_str != new_version_str:
-            str_node.value = '\'{} >= {}\''.format(package_name, new_version_str)
+            str_node.value = "'{} >= {}'".format(package_name, new_version_str)
             logging.debug(
                 'Dependency updated. package="{}" old="{}" new="{}"'.format(
                     package_name, old_version_str, new_version_str
@@ -170,14 +170,14 @@ def update_dep_str(str_node, d1_version):
 
 
 def parse_dep_str(dep_str):
-    m = re.match(r'(.*)\s*>=\s*(.*)', dep_str)
+    m = re.match(r"(.*)\s*>=\s*(.*)", dep_str)
     if not m:
         raise UpdateException('Dependency not set to ">="')
-    return m.group(1).strip('\'" '), m.group(2).strip('\'" ')
+    return m.group(1).strip("'\" "), m.group(2).strip("'\" ")
 
 
 def get_package_version(package_name, d1_version):
-    if package_name.startswith('dataone.'):
+    if package_name.startswith("dataone."):
         return d1_version
     else:
         return pkg_resources.get_distribution(package_name).version
@@ -187,8 +187,8 @@ def update_version_const(base_name, path_list, d1_version, only_diff, dry_run):
     module_path = get_module_path(base_name, path_list)
     logging.debug('Updating version in module. path="{}"'.format(module_path))
     r = d1_dev.util.redbaron_module_path_to_tree(module_path)
-    for n in r('AssignmentNode'):
-        if n.target.value in ('VERSION', '__version__'):
+    for n in r("AssignmentNode"):
+        if n.target.value in ("VERSION", "__version__"):
             n.value.value = "'{}'".format(d1_version)
             d1_dev.util.update_module_file(r, module_path, only_diff, dry_run)
             break
@@ -202,5 +202,5 @@ class UpdateException(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

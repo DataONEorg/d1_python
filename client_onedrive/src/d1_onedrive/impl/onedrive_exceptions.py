@@ -30,14 +30,14 @@ log = logging.getLogger(__name__)
 class PathException(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
-        trace = ', '.join(['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+        trace = ", ".join(["{}({})".format(s[1], s[2]) for s in inspect.stack()[1:5]])
         log.debug('PathException("{}"): {}'.format(message, trace))
 
 
 class ONEDriveException(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
-        trace = ', '.join(['{}({})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+        trace = ", ".join(["{}({})".format(s[1], s[2]) for s in inspect.stack()[1:5]])
         log.debug('ONEDriveException("{}"): {}'.format(message, trace))
 
 

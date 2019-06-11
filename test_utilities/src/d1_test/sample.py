@@ -137,9 +137,9 @@ def path_lock(path):
     path = str(path)
     logger.debug("Waiting for lock on path: {}".format(path))
     sem = posix_ipc.Semaphore(
-            name="/{}".format(hashlib.md5(path.encode("utf-8")).hexdigest()),
-            flags=posix_ipc.O_CREAT,
-            initial_value=1,
+        name="/{}".format(hashlib.md5(path.encode("utf-8")).hexdigest()),
+        flags=posix_ipc.O_CREAT,
+        initial_value=1,
     )
     # posix_ipc.Semaphore() can be used as a context manager, and ``with`` uses implicit
     # ``try/finally`` blocks. However, as a context manager, posix_ipc.Semaphore() does
@@ -445,8 +445,8 @@ def _get_sxs_diff_file(got_str, exp_path):
     assert isinstance(got_str, str)
     # Work around a bug in ``sdiff``, where it may not detect differences on the last
     # line if the string does not end with LF.
-    if not got_str.endswith('\n'):
-        got_str += '\n'
+    if not got_str.endswith("\n"):
+        got_str += "\n"
     try:
         sdiff_proc = subprocess.Popen(
             [

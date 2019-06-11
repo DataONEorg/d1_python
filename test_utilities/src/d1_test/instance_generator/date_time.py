@@ -33,7 +33,7 @@ def random_date():
     return datetime.date(dt.year, dt.month, dt.day)
 
 
-def random_datetime(tz_type='utc'):
+def random_datetime(tz_type="utc"):
     """Return a random datetime within the span of 1970 to ~2070 using the specified
     timezone type.
 
@@ -46,7 +46,7 @@ def random_datetime(tz_type='utc'):
     )
 
 
-def reproducible_datetime(did_str, tz_type='utc'):
+def reproducible_datetime(did_str, tz_type="utc"):
     """Return a reproducible datetime within the span of 1970 to ~2070 using the
     specified timezone type.
 
@@ -57,7 +57,7 @@ def reproducible_datetime(did_str, tz_type='utc'):
         return random_datetime(tz_type)
 
 
-def generate_tz(tz_type='utc'):
+def generate_tz(tz_type="utc"):
     """Generate a timezone.
 
     - ``tz_type`` = 'naive': Return None (use to create a "naive" datetime).
@@ -72,17 +72,17 @@ def generate_tz(tz_type='utc'):
     if isinstance(tz_type, datetime.tzinfo):
         return tz_type
     assert isinstance(tz_type, str)
-    if tz_type == 'naive':
+    if tz_type == "naive":
         return None
-    elif tz_type == 'utc':
+    elif tz_type == "utc":
         return d1_common.date_time.UTC()
-    elif tz_type == 'random':
+    elif tz_type == "random":
         return d1_common.date_time.FixedOffset(
-            'RND_TZ', random.randint(-11, 11), random.randint(0, 59)
+            "RND_TZ", random.randint(-11, 11), random.randint(0, 59)
         )
-    elif tz_type == 'random_not_utc':
+    elif tz_type == "random_not_utc":
         while True:
-            tz = generate_tz('random')
+            tz = generate_tz("random")
             if tz.utcoffset(0) != datetime.timedelta(0):
                 return tz
     else:

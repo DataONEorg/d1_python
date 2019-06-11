@@ -37,37 +37,37 @@ def main():
 
     # Command line opts.
     parser = optparse.OptionParser(
-        'usage: %prog [options] <number of subjects to create>'
+        "usage: %prog [options] <number of subjects to create>"
     )
-    parser.add_option('--verbose', action='store_true')
+    parser.add_option("--verbose", action="store_true")
     (options, arguments) = parser.parse_args()
 
     if len(arguments) != 1 or not arguments[0].isdigit():
-        logging.error('Must provide the number of subjects to create')
+        logging.error("Must provide the number of subjects to create")
         exit()
 
     n_subjects = int(arguments[0])
 
     create_subject_list(n_subjects)
 
-    print(('{} test subjects written to {}'.format(n_subjects, settings.SUBJECTS_PATH)))
+    print(("{} test subjects written to {}".format(n_subjects, settings.SUBJECTS_PATH)))
 
 
 def create_subject_list(n_subjects):
-    with open(settings.SUBJECTS_PATH, 'w') as f:
+    with open(settings.SUBJECTS_PATH, "w") as f:
         for i in range(n_subjects):
             cn = random_data.random_3_words()
             f.write(subject_dn.get_dataone_compliant_dn_serialization_by_subject(cn))
-            f.write('\n')
+            f.write("\n")
 
 
 def log_setup():
-    logging.getLogger('').setLevel(logging.INFO)
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    logging.getLogger("").setLevel(logging.INFO)
+    formatter = logging.Formatter("%(levelname)-8s %(message)s")
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
+    logging.getLogger("").addHandler(console_logger)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -34,18 +34,18 @@ class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def _test_override(self, gmn_client_v2):
         override_list = [
-            (True, 'submitter', 'override_submitter_subj'),
-            (True, 'originMemberNode', 'urn:node:OverrideOriginMN'),
-            (True, 'authoritativeMemberNode', 'urn:node:OverrideAuthMN'),
+            (True, "submitter", "override_submitter_subj"),
+            (True, "originMemberNode", "urn:node:OverrideOriginMN"),
+            (True, "authoritativeMemberNode", "urn:node:OverrideAuthMN"),
             (
                 False,
-                'dateSysMetadataModified',
+                "dateSysMetadataModified",
                 d1_common.date_time.create_utc_datetime(1980, 1, 1, 1, 1, 1),
             ),
-            (False, 'serialVersion', 99),
+            (False, "serialVersion", 99),
             (
                 False,
-                'dateUploaded',
+                "dateUploaded",
                 d1_common.date_time.create_utc_datetime(1981, 1, 1, 1, 1, 1),
             ),
         ]

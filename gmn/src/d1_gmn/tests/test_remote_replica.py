@@ -55,10 +55,10 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         sysmeta_pyxb.replica.append(replica_pyxb)
 
     def _add_regular_replica_sections(self, sysmeta_pyxb):
-        self._add_replica(sysmeta_pyxb, 'node1', 'queued', '2013-05-21T19:02:49-06:00')
-        self._add_replica(sysmeta_pyxb, 'node2', 'failed', '2014-05-21T19:02:49-06:00')
+        self._add_replica(sysmeta_pyxb, "node1", "queued", "2013-05-21T19:02:49-06:00")
+        self._add_replica(sysmeta_pyxb, "node2", "failed", "2014-05-21T19:02:49-06:00")
         self._add_replica(
-            sysmeta_pyxb, 'node3', 'completed', '2015-05-21T19:02:49-06:00'
+            sysmeta_pyxb, "node3", "completed", "2015-05-21T19:02:49-06:00"
         )
 
     # TODO: Many sysmeta tests could handily be refactored to this
@@ -78,9 +78,9 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1000(self, gmn_client_v2):
         """Regular replica sections correctly represented."""
         sysmeta_pyxb = d1_test.test_files.load_xml_to_pyxb(
-            'systemMetadata_v2_0_remote_replica_base.xml'
+            "systemMetadata_v2_0_remote_replica_base.xml"
         )
-        sysmeta_pyxb.identifier = 'remote_rep_pid_1'
+        sysmeta_pyxb.identifier = "remote_rep_pid_1"
         self._add_regular_replica_sections(sysmeta_pyxb)
         self._assert_sysmeta_round_trip(gmn_client_v2, sysmeta_pyxb)
 
@@ -94,15 +94,15 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         # Create obj with replica info for node1 and node2 on pid_1
         sysmeta_1_pyxb = d1_test.test_files.load_xml_to_pyxb(
-            'systemMetadata_v2_0_remote_replica_base.xml'
+            "systemMetadata_v2_0_remote_replica_base.xml"
         )
-        sysmeta_1_pyxb.identifier = 'remote_rep_pid_1'
+        sysmeta_1_pyxb.identifier = "remote_rep_pid_1"
         sysmeta_1_pyxb.seriesId = None
         self._add_replica(
-            sysmeta_1_pyxb, 'node1', 'queued', '2013-05-21T19:02:49-06:00'
+            sysmeta_1_pyxb, "node1", "queued", "2013-05-21T19:02:49-06:00"
         )
         self._add_replica(
-            sysmeta_1_pyxb, 'node2', 'failed', '2014-05-21T19:02:49-06:00'
+            sysmeta_1_pyxb, "node2", "failed", "2014-05-21T19:02:49-06:00"
         )
         send_sciobj_1_str, send_sysmeta_1_pyxb = self.create_obj_by_sysmeta(
             gmn_client_v2, sysmeta_1_pyxb
@@ -110,15 +110,15 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         # Create obj with different replica info for node1 and node2 on pid_2
         sysmeta_2_pyxb = d1_test.test_files.load_xml_to_pyxb(
-            'systemMetadata_v2_0_remote_replica_base.xml'
+            "systemMetadata_v2_0_remote_replica_base.xml"
         )
-        sysmeta_2_pyxb.identifier = 'remote_rep_pid_2'
+        sysmeta_2_pyxb.identifier = "remote_rep_pid_2"
         sysmeta_2_pyxb.seriesId = None
         self._add_replica(
-            sysmeta_2_pyxb, 'node1', 'completed', '2113-05-21T19:02:49-06:00'
+            sysmeta_2_pyxb, "node1", "completed", "2113-05-21T19:02:49-06:00"
         )
         self._add_replica(
-            sysmeta_2_pyxb, 'node2', 'invalidated', '2114-05-21T19:02:49-06:00'
+            sysmeta_2_pyxb, "node2", "invalidated", "2114-05-21T19:02:49-06:00"
         )
         send_sciobj_2_str, send_sysmeta_2_pyxb = self.create_obj_by_sysmeta(
             gmn_client_v2, sysmeta_2_pyxb

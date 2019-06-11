@@ -68,7 +68,7 @@ def resolve_sid_func(request, did):
                 0, 'Unknown identifier. id="{}"'.format(did), identifier=did
             )
     else:
-        assert False, 'Unable to determine API version'
+        assert False, "Unable to determine API version"
 
 
 def decode_did(f):
@@ -89,7 +89,7 @@ def decode_path_segment(s):
     Why..?
 
     """
-    return s.replace('%2f', '/').replace('%2F', '/')
+    return s.replace("%2f", "/").replace("%2F", "/")
 
 
 # ------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ def authenticated(f):
         if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
             raise d1_common.types.exceptions.NotAuthorized(
                 0,
-                'Access allowed only for authenticated subjects. Please reconnect with '
+                "Access allowed only for authenticated subjects. Please reconnect with "
                 'a valid DataONE session certificate. active_subjects="{}"'.format(
                     d1_gmn.app.auth.format_active_subjects(request)
                 ),
@@ -190,8 +190,8 @@ def verified(f):
         if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
             raise d1_common.types.exceptions.NotAuthorized(
                 0,
-                'Access allowed only for verified accounts. Please reconnect with a '
-                'valid DataONE session certificate in which the identity of the '
+                "Access allowed only for verified accounts. Please reconnect with a "
+                "valid DataONE session certificate in which the identity of the "
                 'primary subject has been verified. active_subjects="{}"'.format(
                     d1_gmn.app.auth.format_active_subjects(request)
                 ),

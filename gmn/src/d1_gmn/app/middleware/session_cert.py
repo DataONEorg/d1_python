@@ -46,7 +46,7 @@ def get_subjects(request):
     """
     if _is_certificate_provided(request):
         try:
-            return get_authenticated_subjects(request.META['SSL_CLIENT_CERT'])
+            return get_authenticated_subjects(request.META["SSL_CLIENT_CERT"])
         except Exception as e:
             raise d1_common.types.exceptions.InvalidToken(
                 0,
@@ -63,9 +63,9 @@ def get_authenticated_subjects(cert_pem):
 
     """
     if isinstance(cert_pem, str):
-        cert_pem = cert_pem.encode('utf-8')
+        cert_pem = cert_pem.encode("utf-8")
     return d1_common.cert.subjects.extract_subjects(cert_pem)
 
 
 def _is_certificate_provided(request):
-    return 'SSL_CLIENT_CERT' in request.META and request.META['SSL_CLIENT_CERT'] != ''
+    return "SSL_CLIENT_CERT" in request.META and request.META["SSL_CLIENT_CERT"] != ""

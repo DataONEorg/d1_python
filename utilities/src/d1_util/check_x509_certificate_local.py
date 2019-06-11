@@ -50,9 +50,9 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        'cert_pem_path', help='Path to the .PEM certificate file to check'
+        "cert_pem_path", help="Path to the .PEM certificate file to check"
     )
 
     args = parser.parse_args()
@@ -60,16 +60,16 @@ def main():
     d1_common.util.log_setup(args.debug)
 
     if not os.path.exists(args.cert_pem_path):
-        raise ValueError('No such file: {}'.format(args.cert_pem_path))
+        raise ValueError("No such file: {}".format(args.cert_pem_path))
 
     requests.packages.urllib3.disable_warnings()
 
-    with open(args.cert_pem_path, 'rb') as f:
+    with open(args.cert_pem_path, "rb") as f:
         primary_str, subject_info_xml = d1_common.cert.x509.extract_subjects(f.read())
 
-    print('DN: {}'.format(primary_str))
+    print("DN: {}".format(primary_str))
 
-    print('SubjectInfo XML doc:')
+    print("SubjectInfo XML doc:")
     if not subject_info_xml:
         print("Not present in certificate")
         return
@@ -80,7 +80,7 @@ def main():
         subject_info_xml, primary_str
     )
 
-    print('List of authenticated subjects:')
+    print("List of authenticated subjects:")
 
     for subject_str in sorted(subject_set):
         print(subject_str)

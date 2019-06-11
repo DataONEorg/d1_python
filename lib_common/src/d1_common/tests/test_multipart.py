@@ -33,21 +33,21 @@ class TestMultipart(d1_test.d1_test_case.D1TestCase):
     def _post_fields(self, fields_dict):
         d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        return s.POST(['post'], fields=fields_dict)
+        return s.POST(["post"], fields=fields_dict)
 
     @responses.activate
     def test_1000(self):
         """Parse and normalize multipart str."""
         field_dict = {
-            'bcd': '333',
-            'abc': '111',
-            'cde': '444',
-            'efg': '555',
-            'def': '222',
+            "bcd": "333",
+            "abc": "111",
+            "cde": "444",
+            "efg": "555",
+            "def": "222",
         }
         mmp_stream = requests_toolbelt.MultipartEncoder(fields=field_dict)
         body_part_tup = d1_common.multipart.parse_str(
             mmp_stream.read(), mmp_stream.content_type
         )
         body_str = d1_common.multipart.normalize(body_part_tup)
-        self.sample.assert_equals(body_str, 'parse_and_normalize')
+        self.sample.assert_equals(body_str, "parse_and_normalize")

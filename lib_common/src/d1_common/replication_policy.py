@@ -48,7 +48,7 @@ def has_replication_policy(sysmeta_pyxb):
     section.
 
     """
-    return bool(getattr(sysmeta_pyxb, 'replicationPolicy', False))
+    return bool(getattr(sysmeta_pyxb, "replicationPolicy", False))
 
 
 def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
@@ -76,8 +76,8 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
     if not has_replication_policy(sysmeta_pyxb):
         sysmeta_set_default_rp(sysmeta_pyxb)
     rp_pyxb = sysmeta_pyxb.replicationPolicy
-    _add_node(rp_pyxb, 'pref', node_urn)
-    _remove_node(rp_pyxb, 'block', node_urn)
+    _add_node(rp_pyxb, "pref", node_urn)
+    _remove_node(rp_pyxb, "block", node_urn)
 
 
 def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
@@ -108,8 +108,8 @@ def sysmeta_add_blocked(sysmeta_pyxb, node_urn):
     if not has_replication_policy(sysmeta_pyxb):
         sysmeta_set_default_rp(sysmeta_pyxb)
     rp_pyxb = sysmeta_pyxb.replicationPolicy
-    _add_node(rp_pyxb, 'block', node_urn)
-    _remove_node(rp_pyxb, 'pref', node_urn)
+    _add_node(rp_pyxb, "block", node_urn)
+    _remove_node(rp_pyxb, "pref", node_urn)
 
 
 def sysmeta_set_default_rp(sysmeta_pyxb):
@@ -126,7 +126,7 @@ def sysmeta_set_default_rp(sysmeta_pyxb):
 
     """
     sysmeta_pyxb.replicationPolicy = dict_to_pyxb(
-        {'allowed': False, 'num': 0, 'block': set(), 'pref': set()}
+        {"allowed": False, "num": 0, "block": set(), "pref": set()}
     )
 
 
@@ -150,11 +150,11 @@ def normalize(rp_pyxb):
     def sort(r, a):
         d1_common.xml.sort_value_list_pyxb(_get_attr_or_list(r, a))
 
-    rp_pyxb.preferredMemberNode = set(_get_attr_or_list(rp_pyxb, 'pref')) - set(
-        _get_attr_or_list(rp_pyxb, 'block')
+    rp_pyxb.preferredMemberNode = set(_get_attr_or_list(rp_pyxb, "pref")) - set(
+        _get_attr_or_list(rp_pyxb, "block")
     )
-    sort(rp_pyxb, 'block')
-    sort(rp_pyxb, 'pref')
+    sort(rp_pyxb, "block")
+    sort(rp_pyxb, "pref")
 
 
 def is_preferred(rp_pyxb, node_urn):
@@ -173,8 +173,8 @@ def is_preferred(rp_pyxb, node_urn):
     lists.
   """
     return node_urn in _get_attr_or_list(
-        rp_pyxb, 'pref'
-    ) and node_urn not in _get_attr_or_list(rp_pyxb, 'block')
+        rp_pyxb, "pref"
+    ) and node_urn not in _get_attr_or_list(rp_pyxb, "block")
 
 
 def is_blocked(rp_pyxb, node_urn):
@@ -192,7 +192,7 @@ def is_blocked(rp_pyxb, node_urn):
     As blocked nodes override preferred nodes, return True if ``node_urn`` is in both
     lists.
   """
-    return node_urn in _get_attr_or_list(rp_pyxb, 'block')
+    return node_urn in _get_attr_or_list(rp_pyxb, "block")
 
 
 def are_equivalent_pyxb(a_pyxb, b_pyxb):
@@ -246,8 +246,8 @@ def add_preferred(rp_pyxb, node_urn):
         ``urn:node:MyMemberNode``.
 
     """
-    _add_node(rp_pyxb, 'pref', node_urn)
-    _remove_node(rp_pyxb, 'block', node_urn)
+    _add_node(rp_pyxb, "pref", node_urn)
+    _remove_node(rp_pyxb, "block", node_urn)
 
 
 def add_blocked(rp_pyxb, node_urn):
@@ -267,8 +267,8 @@ def add_blocked(rp_pyxb, node_urn):
         ``urn:node:MyMemberNode``.
 
     """
-    _add_node(rp_pyxb, 'block', node_urn)
-    _remove_node(rp_pyxb, 'pref', node_urn)
+    _add_node(rp_pyxb, "block", node_urn)
+    _remove_node(rp_pyxb, "pref", node_urn)
 
 
 def pyxb_to_dict(rp_pyxb):
@@ -291,10 +291,10 @@ def pyxb_to_dict(rp_pyxb):
 
     """
     return {
-        'allowed': bool(_get_attr_or_list(rp_pyxb, 'allowed')),
-        'num': _get_as_int(rp_pyxb),
-        'block': _get_as_set(rp_pyxb, 'block'),
-        'pref': _get_as_set(rp_pyxb, 'pref'),
+        "allowed": bool(_get_attr_or_list(rp_pyxb, "allowed")),
+        "num": _get_as_int(rp_pyxb),
+        "block": _get_as_set(rp_pyxb, "block"),
+        "pref": _get_as_set(rp_pyxb, "pref"),
     }
 
 
@@ -318,10 +318,10 @@ def dict_to_pyxb(rp_dict):
 
     """
     rp_pyxb = d1_common.types.dataoneTypes.replicationPolicy()
-    rp_pyxb.replicationAllowed = rp_dict['allowed']
-    rp_pyxb.numberReplicas = rp_dict['num']
-    rp_pyxb.blockedMemberNode = rp_dict['block']
-    rp_pyxb.preferredMemberNode = rp_dict['pref']
+    rp_pyxb.replicationAllowed = rp_dict["allowed"]
+    rp_pyxb.numberReplicas = rp_dict["num"]
+    rp_pyxb.blockedMemberNode = rp_dict["block"]
+    rp_pyxb.preferredMemberNode = rp_dict["pref"]
     normalize(rp_pyxb)
     return rp_pyxb
 
@@ -354,13 +354,13 @@ def _get_as_set(rp_pyxb, attr):
 
 
 def _get_as_int(rp_pyxb):
-    return int(getattr(rp_pyxb, _map_dict_key('num'), 0))
+    return int(getattr(rp_pyxb, _map_dict_key("num"), 0))
 
 
 def _map_dict_key(attr):
     return {
-        'block': 'blockedMemberNode',
-        'pref': 'preferredMemberNode',
-        'allowed': 'replicationAllowed',
-        'num': 'numberReplicas',
+        "block": "blockedMemberNode",
+        "pref": "preferredMemberNode",
+        "allowed": "replicationAllowed",
+        "num": "numberReplicas",
     }[attr]

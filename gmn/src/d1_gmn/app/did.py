@@ -109,7 +109,7 @@ def get_did_by_foreign_key(did_foreign_key):
     that allow NULL (null=True in the model).
 
     """
-    return getattr(did_foreign_key, 'did', None)
+    return getattr(did_foreign_key, "did", None)
 
 
 def is_existing_object(did):
@@ -147,35 +147,35 @@ def classify_identifier(did):
 
     """
     if _is_unused_did(did):
-        return 'unused on this Member Node'
+        return "unused on this Member Node"
     elif is_sid(did):
-        return 'a Series ID (SID) of a revision chain'
+        return "a Series ID (SID) of a revision chain"
     elif is_local_replica(did):
-        return 'a Persistent ID (PID) of a local replica'
+        return "a Persistent ID (PID) of a local replica"
     elif is_unprocessed_local_replica(did):
         return (
-            'a Persistent ID (PID) of an accepted but not yet processed local replica'
+            "a Persistent ID (PID) of an accepted but not yet processed local replica"
         )
     elif is_archived(did):
-        return 'a Persistent ID (PID) of a previously archived local object'
+        return "a Persistent ID (PID) of a previously archived local object"
     elif is_obsoleted(did):
-        return 'a Persistent ID (PID) of a previously updated (obsoleted) local object'
+        return "a Persistent ID (PID) of a previously updated (obsoleted) local object"
     elif is_resource_map_db(did):
-        return 'a Persistent ID (PID) of a local resource map'
+        return "a Persistent ID (PID) of a local resource map"
     elif is_existing_object(did):
-        return 'a Persistent ID (PID) of an existing local object'
+        return "a Persistent ID (PID) of an existing local object"
     elif is_revision_chain_placeholder(did):
         return (
-            'a Persistent ID (PID) of a remote or non-existing revision of a local '
-            'replica'
+            "a Persistent ID (PID) of a remote or non-existing revision of a local "
+            "replica"
         )
     elif is_resource_map_member(did):
         return (
-            'a Persistent ID (PID) of a remote or non-existing object aggregated in '
-            'a local Resource Map'
+            "a Persistent ID (PID) of a remote or non-existing object aggregated in "
+            "a local Resource Map"
         )
     logger.warning('Unable to classify known identifier. did="{}"'.format(did))
-    return '<UNKNOWN>'
+    return "<UNKNOWN>"
 
 
 def get_or_create_did(id_str):
@@ -200,7 +200,7 @@ def is_local_replica(pid):
 def is_unprocessed_local_replica(pid):
     """Is local replica with status "queued"."""
     return d1_gmn.app.models.LocalReplica.objects.filter(
-        pid__did=pid, info__status__status='queued'
+        pid__did=pid, info__status__status="queued"
     ).exists()
 
 

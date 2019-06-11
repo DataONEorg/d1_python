@@ -53,36 +53,36 @@ import d1_test.test_files
 
 CN_URL = d1_common.const.URL_DATAONE_ROOT
 
-MOCK_MN_BASE_URL = 'http://mock.mn/node'
-MOCK_CN_BASE_URL = 'http://mock.cn/node'
-MOCK_CN_MN_BASE_URL = 'http://mock.cn.mn/node'
+MOCK_MN_BASE_URL = "http://mock.mn/node"
+MOCK_CN_BASE_URL = "http://mock.cn/node"
+MOCK_CN_MN_BASE_URL = "http://mock.cn.mn/node"
 
-MOCK_REMOTE_BASE_URL = 'http://mock/remote'
-MOCK_INVALID_BASE_URL = 'http://mock/invalid'
+MOCK_REMOTE_BASE_URL = "http://mock/remote"
+MOCK_INVALID_BASE_URL = "http://mock/invalid"
 
-SOLR_QUERY_ENDPOINT = '/cn/v1/query/solr/'
+SOLR_QUERY_ENDPOINT = "/cn/v1/query/solr/"
 
 DEFAULT_PERMISSION_LIST = [
-    (['subj1'], ['read']),
-    (['subj2', 'subj3', 'subj4'], ['read', 'write']),
-    (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
-    (['subj9', 'subj10', 'subj11', 'subj12'], ['changePermission']),
+    (["subj1"], ["read"]),
+    (["subj2", "subj3", "subj4"], ["read", "write"]),
+    (["subj5", "subj6", "subj7", "subj8"], ["read", "changePermission"]),
+    (["subj9", "subj10", "subj11", "subj12"], ["changePermission"]),
 ]
 
 SUBJ_DICT = {
-    'trusted': 'gmn_test_subject_trusted',
-    'submitter': 'gmn_test_subject_submitter',
+    "trusted": "gmn_test_subject_trusted",
+    "submitter": "gmn_test_subject_submitter",
 }
 
 DB_FIXTURE_PID_LIST = [
-    v['pid']
-    for v in d1_test.test_files.load_json('db_fixture_pid.json')
-    if v['pid'] is not None
+    v["pid"]
+    for v in d1_test.test_files.load_json("db_fixture_pid.json")
+    if v["pid"] is not None
 ]
 DB_FIXTURE_SID_LIST = [
-    v['sid']
-    for v in d1_test.test_files.load_json('db_fixture_sid.json')
-    if v['sid'] is not None
+    v["sid"]
+    for v in d1_test.test_files.load_json("db_fixture_sid.json")
+    if v["sid"] is not None
 ]
 
 
@@ -111,7 +111,7 @@ def get_caplog_text(caplog, logger_name=None):
     are retrieved, not the timestamps, loggers and log levels.
 
     """
-    return '\n'.join(
+    return "\n".join(
         [
             r.getMessage()
             for r in caplog.records
@@ -130,7 +130,7 @@ def mock_input(answer_str):
         sys.stdout.write(prompt_str)
         return mock.DEFAULT
 
-    with mock.patch('builtins.input', side_effect=_log, return_value=answer_str):
+    with mock.patch("builtins.input", side_effect=_log, return_value=answer_str):
         yield
 
 
@@ -157,14 +157,14 @@ def reproducible_random_decorator(seed):
         elif isinstance(cls_or_func, collections.Callable):
             return _reproducible_random_func_decorator(cls_or_func, seed)
         else:
-            raise ValueError('Decorated object must be a class or callable (function)')
+            raise ValueError("Decorated object must be a class or callable (function)")
 
     return reproducible_random_decorator_real
 
 
 def _reproducible_random_class_decorator(cls, seed):
     for test_name, test_func in list(cls.__dict__.items()):
-        if test_name.startswith('test_'):
+        if test_name.startswith("test_"):
             # logging.debug(
             #   'Decorating: {}.{}: reproducible_random()'.
             #   format(cls.__name__, test_name)
@@ -212,7 +212,7 @@ def temp_sparse_file(gib=0, mib=0, kib=0, b=0):
     """
     with tempfile.TemporaryFile() as f:
         f.seek(gib * 1024 ** 3 + mib * 1024 ** 2 + kib * 1024 + b - 1)
-        f.write(b'0')
+        f.write(b"0")
         f.seek(0)
         yield f
 
@@ -279,7 +279,7 @@ def memory_limit(max_mem_bytes):
         current_used_bytes = process.memory_info().vms
         limit_bytes = current_used_bytes + max_mem_bytes
         logging.debug(
-            'Setting memory limit. current={:,} bytes, limit={:,} bytes'.format(
+            "Setting memory limit. current={:,} bytes, limit={:,} bytes".format(
                 current_used_bytes, limit_bytes
             )
         )
@@ -287,7 +287,7 @@ def memory_limit(max_mem_bytes):
 
         yield
 
-        logging.debug('Removing memory limit. limit={:,} bytes'.format(limit_bytes))
+        logging.debug("Removing memory limit. limit={:,} bytes".format(limit_bytes))
         resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
 
 
@@ -323,7 +323,7 @@ class D1TestCase(object):
             else:
                 raise
         if raises_pyxb_exc:
-            raise Exception('Did not receive expected exception')
+            raise Exception("Did not receive expected exception")
 
     @staticmethod
     def deserialize_exception_and_check(doc, raises_pyxb_exc=False):
@@ -335,7 +335,7 @@ class D1TestCase(object):
             else:
                 raise
         if raises_pyxb_exc:
-            raise Exception('Did not receive expected exception')
+            raise Exception("Did not receive expected exception")
         return obj
 
     @staticmethod
@@ -351,7 +351,7 @@ class D1TestCase(object):
         try:
             return object_list.objectInfo[0].identifier.value()
         except IndexError:
-            raise Exception('No objects')
+            raise Exception("No objects")
 
     @staticmethod
     def get_random_valid_pid(client):
@@ -360,7 +360,7 @@ class D1TestCase(object):
 
     @staticmethod
     def touch(module_path, times=None):
-        with open(module_path, 'a'):
+        with open(module_path, "a"):
             os.utime(module_path, times)
 
     #
@@ -419,7 +419,7 @@ class D1TestCase(object):
     @staticmethod
     def frame_is_d1_test_case_method(exc_traceback):
         try:
-            return isinstance(exc_traceback.tb_frame.f_locals['self'], D1TestCase)
+            return isinstance(exc_traceback.tb_frame.f_locals["self"], D1TestCase)
         except KeyError:
             return False
 
@@ -442,9 +442,9 @@ class D1TestCase(object):
         """Simulate successful cert download by catching call to
         ssl.SSLSocket.getpeercert() and returning {cert_obj} in DER format."""
         cert_der = d1_common.cert.x509.serialize_cert_to_der(cert_obj)
-        with mock.patch('d1_common.cert.x509.ssl.SSLSocket.connect') as mock_connect:
+        with mock.patch("d1_common.cert.x509.ssl.SSLSocket.connect") as mock_connect:
             with mock.patch(
-                'd1_common.cert.x509.ssl.SSLSocket.getpeercert'
+                "d1_common.cert.x509.ssl.SSLSocket.getpeercert"
             ) as mock_getpeercert:
                 mock_getpeercert.return_value = cert_der
                 yield mock_connect, mock_getpeercert
@@ -489,11 +489,11 @@ class D1TestCase(object):
 
     def format_pyxb(self, type_pyxb):
         ss = io.StringIO()
-        ss.write('PyXB type instance:\n')
+        ss.write("PyXB type instance:\n")
         ss.write(
-            '\n'.join(
+            "\n".join(
                 [
-                    '  {}'.format(s)
+                    "  {}".format(s)
                     for s in d1_common.xml.serialize_to_xml_str(type_pyxb).splitlines()
                 ]
             )
@@ -506,7 +506,7 @@ class D1TestCase(object):
     #   return c.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     @staticmethod
-    def run_sql(sql_str='', db_str=None, *args):
+    def run_sql(sql_str="", db_str=None, *args):
         """Run raw SQL using a separate DB connection."""
         try:
             conn = psycopg2.connect(database=db_str)
@@ -536,9 +536,9 @@ class D1TestCase(object):
             return None
         elif isinstance(node_list, list):
             return node_list
-        elif node_list == 'random':
+        elif node_list == "random":
             return [
-                'urn:node:{}'.format(self.random_tag(tag_str)) for _ in range(num_nodes)
+                "urn:node:{}".format(self.random_tag(tag_str)) for _ in range(num_nodes)
             ]
 
 
@@ -570,11 +570,11 @@ class D1TestCase(object):
 
 
 class ColorStreamHandler(logging.StreamHandler):
-    DEFAULT = '\x1b[0m'
-    RED = '\x1b[31m'
-    GREEN = '\x1b[32m'
-    YELLOW = '\x1b[33m'
-    CYAN = '\x1b[36m'
+    DEFAULT = "\x1b[0m"
+    RED = "\x1b[31m"
+    GREEN = "\x1b[32m"
+    YELLOW = "\x1b[33m"
+    CYAN = "\x1b[36m"
 
     CRITICAL = RED
     ERROR = RED
@@ -609,5 +609,5 @@ class ColorStreamHandler(logging.StreamHandler):
 def get_test_module_name():
     for module_path, line_num, func_name, line_str in traceback.extract_stack():
         module_name = os.path.splitext(os.path.split(module_path)[1])[0]
-        if module_name.startswith('test_') and func_name.startswith('test_'):
+        if module_name.startswith("test_") and func_name.startswith("test_"):
             return module_name

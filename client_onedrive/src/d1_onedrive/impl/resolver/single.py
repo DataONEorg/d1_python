@@ -52,7 +52,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         self._readme_txt = util.os_format(README_TXT)
 
     def get_attributes(self, object_tree_root, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
         if not path:
             return attributes.Attributes(is_dir=True)
         if self._is_readme_file(path):
@@ -60,19 +60,19 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
     def get_directory(self, object_tree_root, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
         if not path:
             return self._get_directory(object_tree_root, path)
         return self._resource_map_resolver.get_directory(object_tree_root, path)
 
     def read_file(self, object_tree_root, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
         if not path:
-            raise onedrive_exceptions.PathException('Invalid file')
+            raise onedrive_exceptions.PathException("Invalid file")
         if self._is_readme_file(path):
             return self._get_readme_text(size, offset)
         return self._resource_map_resolver.read_file(
@@ -87,5 +87,5 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     def _get_directory(self, object_tree_root, path):
         d = directory.Directory()
         d.append(self._get_readme_filename())
-        d.extend(object_tree_root['items'])
+        d.extend(object_tree_root["items"])
         return d

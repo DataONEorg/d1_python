@@ -77,40 +77,40 @@ import d1_common.util
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Renumber test functions to free up space for new tests'
+        description="Renumber test functions to free up space for new tests"
     )
-    parser.add_argument('path', help='Root of Python source tree')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", help="Root of Python source tree")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
-    )
-    parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--no-default-excludes',
-        dest='default_excludes',
-        action='store_false',
-        help='Don\'t add default glob exclude patterns',
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--move',
-        action='store_true',
-        help='Move remaining part of test function name to the test\'s docstring',
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
     )
     parser.add_argument(
-        '--diff',
-        dest='show_diff',
-        action='store_true',
-        help='Show diff and do not modify any files',
+        "--move",
+        action="store_true",
+        help="Move remaining part of test function name to the test's docstring",
     )
     parser.add_argument(
-        '--dry-run', action='store_true', help='Process files but do not write results'
+        "--diff",
+        dest="show_diff",
+        action="store_true",
+        help="Show diff and do not modify any files",
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Process files but do not write results"
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
 
@@ -118,7 +118,7 @@ def main():
 
     for module_path in d1_common.iter.path.path_generator(
         path_list=[args.path],
-        include_glob_list=['test_*.py'],
+        include_glob_list=["test_*.py"],
         exclude_glob_list=args.exclude,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
@@ -135,7 +135,7 @@ def main():
 
 
 def renumber_module(module_path, do_move, show_diff, dry_run):
-    logging.info('Renumbering: {}'.format(module_path))
+    logging.info("Renumbering: {}".format(module_path))
     r = d1_dev.util.redbaron_module_path_to_tree(module_path)
     if not d1_dev.util.has_test_class(r):
         logging.info('Skipped: No Test class in module. path="{}"'.format(module_path))
@@ -146,17 +146,17 @@ def renumber_module(module_path, do_move, show_diff, dry_run):
 
 def renumber_all(r, do_move):
     test_idx = 1000
-    for node in r('DefNode'):
+    for node in r("DefNode"):
         if d1_dev.util.is_test_func(node.name):
             renumber_method(node, test_idx, do_move)
             test_idx += 10
 
 
 def renumber_method(node, test_idx, do_move):
-    new_name = 'test_{:04d}'.format(test_idx)
+    new_name = "test_{:04d}".format(test_idx)
     if node.name != new_name:
         with d1_common.util.print_logging():
-            logging.info('Method: {} -> {}'.format(node.name, new_name))
+            logging.info("Method: {} -> {}".format(node.name, new_name))
     node.name = new_name
     if not do_move:
         return
@@ -173,5 +173,5 @@ def renumber_method(node, test_idx, do_move):
             node.value.pop(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

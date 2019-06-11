@@ -26,31 +26,31 @@ class TestMockD1Exception(d1_test.d1_test_case.D1TestCase):
         """trigger_by_status_code(): GET request returns DataONEException XML doc."""
 
         class FakeRequest:
-            method = 'GET'
+            method = "GET"
 
         exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
             FakeRequest(), 413
         )
-        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_status_code_regular')
+        d1_test.sample.assert_equals(exc_response_tup, "trigger_by_status_code_regular")
 
     def test_1010(self):
         """trigger_by_status_code(): HEAD request returns DataONEException headers."""
 
         class FakeRequest:
-            method = 'HEAD'
+            method = "HEAD"
 
         exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_status_code(
             FakeRequest(), 413
         )
-        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_status_code_head')
+        d1_test.sample.assert_equals(exc_response_tup, "trigger_by_status_code_head")
 
     def test_1020(self):
         """trigger_by_pid()"""
 
         class FakeRequest:
-            method = 'GET'
+            method = "GET"
 
         exc_response_tup = d1_test.mock_api.d1_exception.trigger_by_pid(
-            FakeRequest, 'trigger_413'
+            FakeRequest, "trigger_413"
         )
-        d1_test.sample.assert_equals(exc_response_tup, 'trigger_by_pid')
+        d1_test.sample.assert_equals(exc_response_tup, "trigger_by_pid")

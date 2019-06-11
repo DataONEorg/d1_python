@@ -44,41 +44,41 @@ import d1_client.objectlistiterator
 # Config
 
 # CN_BASE_URL = d1_common.const.URL_CN_BASE_URL
-CN_BASE_URL = 'https://cn-stage.test.dataone.org/cn'
+CN_BASE_URL = "https://cn-stage.test.dataone.org/cn"
 # CN_BASE_URL = 'https://cn-sandbox.test.dataone.org/cn'
 # CN_BASE_URL = 'https://cn-dev.test.dataone.org/cn'
 
-NODE_ID = 'urn:node:mnTestR2R'
+NODE_ID = "urn:node:mnTestR2R"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig(level=logging.INFO)
@@ -86,16 +86,16 @@ def main():
     node_pyxb = find_node(NODE_ID)
 
     if node_pyxb is None:
-        print('Node not found: {}'.format(NODE_ID))
+        print("Node not found: {}".format(NODE_ID))
         return
 
-    if node_pyxb.type != 'mn':
+    if node_pyxb.type != "mn":
         print(
-            ('Expected NodeID be for an MN. Found a {}'.format(node_pyxb.type.upper()))
+            ("Expected NodeID be for an MN. Found a {}".format(node_pyxb.type.upper()))
         )
         return
 
-    print('BaseURL: {}'.format(node_pyxb.baseURL))
+    print("BaseURL: {}".format(node_pyxb.baseURL))
 
     mn_base_url = node_pyxb.baseURL
 
@@ -111,11 +111,11 @@ def main():
 
 def dump_unique(from_dict, not_in_dict, base_url):
     only_pid_set = set(from_dict.keys()).difference(set(not_in_dict.keys()))
-    print('{} only in {}:'.format(len(only_pid_set), base_url))
+    print("{} only in {}:".format(len(only_pid_set), base_url))
     for pid_str in sorted(
         only_pid_set, key=lambda x: from_dict[x].dateSysMetadataModified
     ):
-        print('  {} {}'.format(pid_str, from_dict[pid_str].dateSysMetadataModified))
+        print("  {} {}".format(pid_str, from_dict[pid_str].dateSysMetadataModified))
 
 
 def get_object_dict(client, node_id=None):
@@ -134,5 +134,5 @@ def find_node(node_id):
             return node_pyxb
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -36,7 +36,7 @@ import d1_common.types.exceptions
 
 
 def trigger_by_pid(request, pid):
-    m = re.match(r'trigger_(\d{3})$', pid)
+    m = re.match(r"trigger_(\d{3})$", pid)
     if not m:
         return
     return trigger_by_status_code(request, int(m.group(1)))
@@ -44,7 +44,7 @@ def trigger_by_pid(request, pid):
 
 def trigger_by_header(request):
     try:
-        status_int = int(request.headers['trigger'])
+        status_int = int(request.headers["trigger"])
     except (ValueError, LookupError):
         return
     else:
@@ -52,7 +52,7 @@ def trigger_by_header(request):
 
 
 def trigger_by_status_code(request, status_code_int):
-    if request.method == 'HEAD':
+    if request.method == "HEAD":
         return create_header_d1_exception(status_code_int)
     else:
         return create_regular_d1_exception(status_code_int)
@@ -63,7 +63,7 @@ def create_regular_d1_exception(status_code_int):
         status_code_int
     )
     body_str = d1_exception.serialize_to_transport()
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
     return status_code_int, header_dict, body_str
 
 
@@ -72,5 +72,5 @@ def create_header_d1_exception(status_code_int):
         status_code_int
     )
     header_dict = d1_exception.serialize_to_headers()
-    header_dict['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
-    return status_code_int, header_dict, ''
+    header_dict["Content-Type"] = d1_common.const.CONTENT_TYPE_XML
+    return status_code_int, header_dict, ""

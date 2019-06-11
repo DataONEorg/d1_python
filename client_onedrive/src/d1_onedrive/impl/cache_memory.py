@@ -41,7 +41,7 @@ class Cache(dict):
         self._data = {}
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__, self.__dict__)
+        return "{}({})".format(self.__class__, self.__dict__)
 
     def __setitem__(self, key, value):
         if key not in self._data:
@@ -69,10 +69,10 @@ class Cache(dict):
         return copyDict
 
     def log_dump(self):
-        log.debug('-' * 100)
-        log.debug('Cache:')
+        log.debug("-" * 100)
+        log.debug("Cache:")
         util.log_dump(self._data)
-        log.debug('-' * 100)
+        log.debug("-" * 100)
 
     # Private.
 

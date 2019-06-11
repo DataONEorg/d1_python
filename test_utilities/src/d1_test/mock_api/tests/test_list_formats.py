@@ -46,7 +46,7 @@ class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
         object_format_list = cn_client_v1_v2.listFormats()
         assert len(object_format_list.objectFormat) == 100
         for object_format in object_format_list.objectFormat:
-            assert object_format.formatId == 'format_id_0'
+            assert object_format.formatId == "format_id_0"
             break
 
     @responses.activate
@@ -57,4 +57,4 @@ class TestMockObjectFormatList(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_CN_BASE_URL
         )
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_client_v1_v2.listFormats(vendorSpecific={'trigger': '404'})
+            cn_client_v1_v2.listFormats(vendorSpecific={"trigger": "404"})

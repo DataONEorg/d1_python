@@ -77,42 +77,42 @@ import d1_client.baseclient_1_2
 logger = logging.getLogger(__name__)
 
 FIELD_TYPE_CONVERSION_MAP = {
-    't': 'text',
-    's': 'string',
-    'dt': 'date',
-    'd': 'double',
-    'f': 'float',
-    'i': 'int',
-    'l': 'long',
-    'tw': 'text_ws',
-    'text': 'text',
-    'guid': 'string',
-    'itype': 'string',
-    'origin': 'string',
-    'oid': 'string',
-    'gid': 'string',
-    'modified': 'date',
-    'created': 'date',
+    "t": "text",
+    "s": "string",
+    "dt": "date",
+    "d": "double",
+    "f": "float",
+    "i": "int",
+    "l": "long",
+    "tw": "text_ws",
+    "text": "text",
+    "guid": "string",
+    "itype": "string",
+    "origin": "string",
+    "oid": "string",
+    "gid": "string",
+    "modified": "date",
+    "created": "date",
 }
 
 RESERVED_CHAR_LIST = [
-    '+',
-    '-',
-    '&',
-    '|',
-    '!',
-    '(',
-    ')',
-    '{',
-    '}',
-    '[',
-    ']',
-    '^',
+    "+",
+    "-",
+    "&",
+    "|",
+    "!",
+    "(",
+    ")",
+    "{",
+    "}",
+    "[",
+    "]",
+    "^",
     '"',
-    '~',
-    '*',
-    '?',
-    ':',
+    "~",
+    "*",
+    "?",
+    ":",
 ]
 
 
@@ -150,11 +150,11 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     def __init__(self, *args, **kwargs):
         self._log = logging.getLogger(__name__)
-        header_dict = requests.structures.CaseInsensitiveDict(kwargs.pop('headers', {}))
+        header_dict = requests.structures.CaseInsensitiveDict(kwargs.pop("headers", {}))
         header_dict.setdefault(
-            'Content-Type', 'application/x-www-form-urlencoded; charset=utf-8'
+            "Content-Type", "application/x-www-form-urlencoded; charset=utf-8"
         )
-        self._query_engine = kwargs.pop('query_engine', 'solr')
+        self._query_engine = kwargs.pop("query_engine", "solr")
         d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
             self, headers=header_dict, *args, **kwargs
         )
@@ -177,26 +177,26 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     # noinspection PyMethodOverriding
     def get(self, doc_id):
         """Retrieve the specified document."""
-        resp_dict = self._get_query(q='id:{}'.format(doc_id))
-        if resp_dict['response']['numFound'] > 0:
-            return resp_dict['response']['docs'][0]
+        resp_dict = self._get_query(q="id:{}".format(doc_id))
+        if resp_dict["response"]["numFound"] > 0:
+            return resp_dict["response"]["docs"][0]
 
     # noinspection PyTypeChecker
     def get_ids(self, start=0, rows=1000, **query_dict):
         """Retrieve a list of identifiers for documents matching the query."""
         resp_dict = self._get_query(start=start, rows=rows, **query_dict)
         return {
-            'matches': resp_dict['response']['numFound'],
-            'start': start,
-            'ids': [d['id'] for d in resp_dict['response']['docs']],
+            "matches": resp_dict["response"]["numFound"],
+            "start": start,
+            "ids": [d["id"] for d in resp_dict["response"]["docs"]],
         }
 
     def count(self, **query_dict):
         """Return the number of entries that match query."""
         param_dict = query_dict.copy()
-        param_dict['count'] = 0
+        param_dict["count"] = 0
         resp_dict = self._get_query(**param_dict)
-        return resp_dict['response']['numFound']
+        return resp_dict["response"]["numFound"]
 
     def get_field_values(self, name, maxvalues=-1, sort=True, **query_dict):
         """Retrieve the unique values for a field, along with their usage counts.
@@ -216,17 +216,17 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         param_dict = query_dict.copy()
         param_dict.update(
             {
-                'rows': '0',
-                'facet': 'true',
-                'facet.field': name,
-                'facet.limit': str(maxvalues),
-                'facet.zeros': 'false',
-                'facet.sort': str(sort).lower(),
+                "rows": "0",
+                "facet": "true",
+                "facet.field": name,
+                "facet.limit": str(maxvalues),
+                "facet.zeros": "false",
+                "facet.sort": str(sort).lower(),
             }
         )
         resp_dict = self._post_query(**param_dict)
-        result_dict = resp_dict['facet_counts']['facet_fields']
-        result_dict['numFound'] = resp_dict['response']['numFound']
+        result_dict = resp_dict["facet_counts"]["facet_fields"]
+        result_dict["numFound"] = resp_dict["response"]["numFound"]
         return result_dict
 
     def get_field_min_max(self, name, **query_dict):
@@ -242,17 +242,17 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
         """
         param_dict = query_dict.copy()
-        param_dict.update({'rows': 1, 'fl': name, 'sort': '%s asc' % name})
+        param_dict.update({"rows": 1, "fl": name, "sort": "%s asc" % name})
         try:
             min_resp_dict = self._post_query(**param_dict)
-            param_dict['sort'] = '%s desc' % name
+            param_dict["sort"] = "%s desc" % name
             max_resp_dict = self._post_query(**param_dict)
             return (
-                min_resp_dict['response']['docs'][0][name],
-                max_resp_dict['response']['docs'][0][name],
+                min_resp_dict["response"]["docs"][0][name],
+                max_resp_dict["response"]["docs"][0][name],
             )
         except Exception:
-            self._log.exception('Exception')
+            self._log.exception("Exception")
             raise
 
     def field_alpha_histogram(
@@ -282,7 +282,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                 # values
                 for i in range(n_bins):
                     a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-                    bin_q = '{}:{}'.format(
+                    bin_q = "{}:{}".format(
                         name, self._prepare_query_term(name, a_bin[0])
                     )
                     q_bin.append(bin_q)
@@ -294,14 +294,14 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                     # remainder of terms
                     for i in range(n_bins - 1):
                         a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-                        bin_q = '{}:{}'.format(
+                        bin_q = "{}:{}".format(
                             name, self._prepare_query_term(name, a_bin[0])
                         )
                         q_bin.append(bin_q)
                         bin_list.append(a_bin)
                     term = f_vals[name][(n_bins - 1) * 2]
                     a_bin = [term, f_vals[name][((n_values - 1) * 2)], 0]
-                    bin_q = '{}:[{} TO *]'.format(
+                    bin_q = "{}:[{} TO *]".format(
                         name, self._prepare_query_term(name, term)
                     )
                     q_bin.append(bin_q)
@@ -319,21 +319,21 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                         # logger.info(str(a_bin))
                         try:
                             if i == 0:
-                                bin_q = '{}:[* TO {}]'.format(
+                                bin_q = "{}:[* TO {}]".format(
                                     name, self._prepare_query_term(name, a_bin[1])
                                 )
                             elif i == n_bins - 1:
-                                bin_q = '{}:[{} TO *]'.format(
+                                bin_q = "{}:[{} TO *]".format(
                                     name, self._prepare_query_term(name, a_bin[0])
                                 )
                             else:
-                                bin_q = '{}:[{} TO {}]'.format(
+                                bin_q = "{}:[{} TO {}]".format(
                                     name,
                                     self._prepare_query_term(name, a_bin[0]),
                                     self._prepare_query_term(name, a_bin[1]),
                                 )
                         except Exception:
-                            self._log.exception('Exception:')
+                            self._log.exception("Exception:")
                             raise
                         q_bin.append(bin_q)
                         bin_list.append(a_bin)
@@ -342,22 +342,22 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
             param_dict = query_dict.copy()
             param_dict.update(
                 {
-                    'rows': '0',
-                    'facet': 'true',
-                    'facet.field': name,
-                    'facet.limit': '1',
-                    'facet.mincount': 1,
-                    'facet.query': [sq.encode('utf-8') for sq in q_bin],
+                    "rows": "0",
+                    "facet": "true",
+                    "facet.field": name,
+                    "facet.limit": "1",
+                    "facet.mincount": 1,
+                    "facet.query": [sq.encode("utf-8") for sq in q_bin],
                 }
             )
             resp_dict = self._post_query(**param_dict)
             for i in range(len(bin_list)):
-                v = resp_dict['facet_counts']['facet_queries'][q_bin[i]]
+                v = resp_dict["facet_counts"]["facet_queries"][q_bin[i]]
                 bin_list[i][2] = v
                 if include_queries:
                     bin_list[i].append(q_bin[i])
         except Exception:
-            self._log.exception('Exception')
+            self._log.exception("Exception")
             raise
         return bin_list
 
@@ -365,49 +365,49 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     def delete(self, doc_id):
         return self.query(
-            'solr',
-            '<delete><id>' + self._escape_xml_entity(str(doc_id)) + '</id></delete>',
+            "solr",
+            "<delete><id>" + self._escape_xml_entity(str(doc_id)) + "</id></delete>",
             do_post=True,
         )
 
     def delete_by_query(self, query):
         return self.query(
-            'solr',
-            '<delete><query>' + self._escape_xml_entity(query) + '</query></delete>',
+            "solr",
+            "<delete><query>" + self._escape_xml_entity(query) + "</query></delete>",
             do_post=True,
         )
 
     def add(self, **fields):
         return self.query(
-            'solr', '<add>{}</add>'.format(self._format_add(fields)), do_post=True
+            "solr", "<add>{}</add>".format(self._format_add(fields)), do_post=True
         )
 
     def add_docs(self, docs):
         """docs is a list of fields that are a dictionary of name:value for a record."""
         return self.query(
-            'solr',
-            '<add>{}</add>'.format(
-                ''.join([self._format_add(fields) for fields in docs])
+            "solr",
+            "<add>{}</add>".format(
+                "".join([self._format_add(fields) for fields in docs])
             ),
             do_post=True,
         )
 
     def commit(self, waitFlush=True, waitSearcher=True, optimize=False):
-        xstr = '<commit'
+        xstr = "<commit"
         if optimize:
-            xstr = '<optimize'
+            xstr = "<optimize"
         if not waitSearcher:  # just handle deviations from the default
             if not waitFlush:
                 xstr += ' waitFlush="false" waitSearcher="false"'
             else:
                 xstr += ' waitSearcher="false"'
-        xstr += '/>'
-        return self.query('solr', xstr, do_post=True)
+        xstr += "/>"
+        return self.query("solr", xstr, do_post=True)
 
     # Private
 
     def _escape_xml_entity(self, s):
-        return quoteattr(s).encode('utf-8')
+        return quoteattr(s).encode("utf-8")
 
     def _coerce_type(self, field_type, value):
         """Returns unicode(value) after trying to coerce it into the Solr field type.
@@ -418,33 +418,33 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """
         if value is None:
             return None
-        if field_type == 'string':
+        if field_type == "string":
             return str(value)
-        elif field_type == 'text':
+        elif field_type == "text":
             return str(value)
-        elif field_type == 'int':
+        elif field_type == "int":
             try:
                 v = int(value)
                 return str(v)
             except:
                 return None
-        elif field_type == 'float':
+        elif field_type == "float":
             try:
                 v = float(value)
                 return str(v)
             except:
                 return None
-        elif field_type == 'date':
+        elif field_type == "date":
             try:
                 v = datetime.datetime(
-                    value['year'],
-                    value['month'],
-                    value['day'],
-                    value['hour'],
-                    value['minute'],
-                    value['second'],
+                    value["year"],
+                    value["month"],
+                    value["day"],
+                    value["hour"],
+                    value["minute"],
+                    value["second"],
                 )
-                v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
+                v = v.strftime("%Y-%m-%dT%H:%M:%S.0Z")
                 return v
             except:
                 return None
@@ -457,13 +457,13 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         code for the field name.
 
         """
-        field_type = 'string'
+        field_type = "string"
         try:
             field_type = FIELD_TYPE_CONVERSION_MAP[field]
             return field_type
         except:
             pass
-        fta = field.split('_')
+        fta = field.split("_")
         if len(fta) > 1:
             ft = fta[len(fta) - 1]
             try:
@@ -475,7 +475,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return field_type
 
     def _format_add(self, fields):
-        el_list = ['<doc>']
+        el_list = ["<doc>"]
         for f, v in list(fields.items()):
             field_type = self._get_solr_type(f)
             if isinstance(v, list):
@@ -486,7 +486,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                         el_list.append(self._escape_xml_entity(str(f)))
                         el_list.append('">')
                         el_list.append(self._escape_xml_entity(vi))
-                        el_list.append('</field>')
+                        el_list.append("</field>")
             else:
                 v = self._coerce_type(field_type, v)
                 if v is not None:
@@ -494,9 +494,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
                     el_list.append(self._escape_xml_entity(str(f)))
                     el_list.append('">')
                     el_list.append(self._escape_xml_entity(v))
-                    el_list.append('</field>')
-        el_list.append('</doc>')
-        return ''.join(el_list)
+                    el_list.append("</field>")
+        el_list.append("</doc>")
+        return "".join(el_list)
 
     def _get_query(self, **query_dict):
         """Perform a GET query against Solr and return the response as a Python dict."""
@@ -513,10 +513,10 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """Perform a query against Solr and return the response as a Python dict."""
         # self._prepare_query_term()
         param_dict = query_dict.copy()
-        param_dict.setdefault('wt', 'json')
-        param_dict.setdefault('q', '*.*')
-        param_dict.setdefault('fl', '*')
-        return self.query('solr', '', do_post=do_post, query=param_dict)
+        param_dict.setdefault("wt", "json")
+        param_dict.setdefault("q", "*.*")
+        param_dict.setdefault("fl", "*")
+        return self.query("solr", "", do_post=do_post, query=param_dict)
 
     # Building queries
 
@@ -529,13 +529,13 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         if term == "*":
             return term
         add_star = False
-        if term[len(term) - 1] == '*':
+        if term[len(term) - 1] == "*":
             add_star = True
             term = term[0 : len(term) - 1]
         term = self._escape_query_term(term)
         if add_star:
-            term = '{}*'.format(term)
-        if self._get_solr_type(field) in ['string', 'text', 'text_ws']:
+            term = "{}*".format(term)
+        if self._get_solr_type(field) in ["string", "text", "text_ws"]:
             return '"{}"'.format(term)
         return term
 
@@ -545,9 +545,9 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         - Also see: prepare_query_term().
 
         """
-        term = term.replace('\\', '\\\\')
+        term = term.replace("\\", "\\\\")
         for c in RESERVED_CHAR_LIST:
-            term = term.replace(c, r'\{}'.format(c))
+            term = term.replace(c, r"\{}".format(c))
         return term
 
 
@@ -577,7 +577,7 @@ class SolrArrayTransformer(SolrRecordTransformerBase):
 
     def __init__(self, cols=None):
         super().__init__()
-        self.cols = cols or ['lng', 'lat']
+        self.cols = cols or ["lng", "lat"]
 
     def transform(self, record):
         res = []
@@ -622,7 +622,7 @@ class SolrSearchResponseIterator(object):
         self._next_page(self.c_record)
         self._num_hits = 0
 
-        self._log.debug("Iterator hits={}".format(self.res['response']['numFound']))
+        self._log.debug("Iterator hits={}".format(self.res["response"]["numFound"]))
 
     def _next_page(self, offset):
         """Retrieves the next set of results from the service."""
@@ -633,14 +633,14 @@ class SolrSearchResponseIterator(object):
         param_dict = self.query_dict.copy()
         param_dict.update(
             {
-                'start': str(offset),
-                'rows': str(page_size),
-                'explainOther': '',
-                'hl.fl': '',
+                "start": str(offset),
+                "rows": str(page_size),
+                "explainOther": "",
+                "hl.fl": "",
             }
         )
         self.res = self.client.search(**param_dict)
-        self._num_hits = int(self.res['response']['numFound'])
+        self._num_hits = int(self.res["response"]["numFound"])
 
     def __iter__(self):
         return self
@@ -655,14 +655,14 @@ class SolrSearchResponseIterator(object):
         if self.c_record > self.max_records:
             self.done = True
             raise StopIteration()
-        idx = self.c_record - self.res['response']['start']
+        idx = self.c_record - self.res["response"]["start"]
         try:
-            row = self.res['response']['docs'][idx]
+            row = self.res["response"]["docs"][idx]
         except IndexError:
             self._next_page(self.c_record)
-            idx = self.c_record - self.res['response']['start']
+            idx = self.c_record - self.res["response"]["start"]
             try:
-                row = self.res['response']['docs'][idx]
+                row = self.res["response"]["docs"][idx]
             except IndexError:
                 self.done = True
                 raise StopIteration()
@@ -684,11 +684,11 @@ class SolrArrayResponseIterator(SolrSearchResponseIterator):
     def __init__(self, client, page_size=100, cols=None, **query_dict):
         self._log = logging.getLogger(__name__)
 
-        cols = cols or ['lng', 'lat']
+        cols = cols or ["lng", "lat"]
         transformer = SolrArrayTransformer(cols)
 
         param_dict = query_dict.copy()
-        param_dict.update({'fields': ",".join(cols)})
+        param_dict.update({"fields": ",".join(cols)})
 
         SolrSearchResponseIterator.__init__(
             self, client, page_size, transformer=transformer, **param_dict
@@ -712,7 +712,7 @@ class SolrSubsampleResponseIterator(SolrSearchResponseIterator):
         client,
         q,
         fq=None,
-        fields='*',
+        fields="*",
         page_size=100,
         n_samples=10000,
         transformer=SolrRecordTransformerBase(),
@@ -736,16 +736,16 @@ class SolrSubsampleResponseIterator(SolrSearchResponseIterator):
         and when necessary selecting the next page from the randomly generated list."""
         if self.done:
             raise StopIteration()
-        idx = self.c_record - self.res['response']['start']
+        idx = self.c_record - self.res["response"]["start"]
         try:
-            row = self.res['response']['docs'][idx]
+            row = self.res["response"]["docs"][idx]
         except IndexError:
             self._c_page += 1
             try:
                 self._c_record = self._page_starts[self._c_page]
                 self._next_page(self.c_record)
-                idx = self.c_record - self.res['response']['start']
-                row = self.res['response']['docs'][idx]
+                idx = self.c_record - self.res["response"]["start"]
+                row = self.res["response"]["docs"][idx]
             except IndexError:
                 self.done = True
                 raise StopIteration()
@@ -798,11 +798,11 @@ class SolrValuesResponseIterator(object):
         param_dict = self.query_dict.copy()
         param_dict.update(
             {
-                'rows': '0',
-                'facet': 'true',
-                'facet.limit': str(self.page_size),
-                'facet.offset': str(offset),
-                'facet.zeros': 'false',
+                "rows": "0",
+                "facet": "true",
+                "facet.limit": str(self.page_size),
+                "facet.offset": str(offset),
+                "facet.zeros": "false",
             }
         )
         print(param_dict)
@@ -811,7 +811,7 @@ class SolrValuesResponseIterator(object):
         # resp_dict = self.client.search(**param_dict)
         pprint.pprint(resp_dict)
         try:
-            self.res = resp_dict['facet_counts']['facet_fields'][self.field]
+            self.res = resp_dict["facet_counts"]["facet_fields"][self.field]
             self._log.debug(self.res)
         except Exception:
             self.res = []

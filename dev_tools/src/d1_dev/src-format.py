@@ -46,19 +46,19 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--pycharm', action='store_true', help='Enable PyCharm integration'
+        "--pycharm", action="store_true", help="Enable PyCharm integration"
     )
     parser.add_argument(
         "--workers",
@@ -88,7 +88,7 @@ def get_specified_file_path_list(args):
         os.path.realpath(p)
         for p in d1_common.iter.path.path_generator(
             path_list=args.path,
-            include_glob_list=['*.py'],
+            include_glob_list=["*.py"],
             exclude_glob_list=args.exclude,
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
@@ -118,24 +118,24 @@ def format_single(args, format_path):
     run_cmd("black", format_path)
     run_cmd("isort", format_path)
     run_cmd(
-        'docformatter',
-        '-i',
-        '--wrap-summaries',
-        '88',
-        '--wrap-descriptions',
-        '88',
+        "docformatter",
+        "-i",
+        "--wrap-summaries",
+        "88",
+        "--wrap-descriptions",
+        "88",
         format_path,
     )
 
 
 def run_cmd(*cmd_list):
-    print('Running command: {}'.format(' '.join(cmd_list)))
+    print("Running command: {}".format(" ".join(cmd_list)))
     try:
         subprocess.check_call(cmd_list)
     except subprocess.CalledProcessError as e:
-        print('Failed: {}'.format(str(e)))
+        print("Failed: {}".format(str(e)))
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

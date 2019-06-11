@@ -149,7 +149,7 @@ class Command(django.core.management.base.BaseCommand):
         object_list_iterator = d1_gmn.app.management.commands.objectlist_async.ObjectListIteratorAsync(
             client,
             retry_count=self.options["retries"],
-            list_objects_args_dict={'nodeId': django.conf.settings.NODE_IDENTIFIER},
+            list_objects_args_dict={"nodeId": django.conf.settings.NODE_IDENTIFIER},
         )
         async for object_info_pyxb in object_list_iterator.itr():
             self.progress_logger.start_task(task_name)

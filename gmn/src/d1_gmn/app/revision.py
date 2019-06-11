@@ -239,7 +239,7 @@ def _set_chain_sid(chain_model, sid):
     if chain_model.sid and chain_model.sid.did != sid:
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'Attempted to modify existing SID. '
+            "Attempted to modify existing SID. "
             'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid),
         )
     chain_model.sid = d1_gmn.app.did.get_or_create_did(sid)
@@ -255,7 +255,7 @@ def _assert_sid_is_in_chain(sid, pid):
     if chain_model.sid.did != sid:
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'Attempted to create object in chain with non-matching SID. '
+            "Attempted to create object in chain with non-matching SID. "
             'existing_sid="{}", new_sid="{}"'.format(chain_model.sid.did, sid),
         )
 

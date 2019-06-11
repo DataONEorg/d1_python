@@ -44,17 +44,17 @@ class TestUpdate(d1_test_case.D1TestCase):
         """Update an object."""
         # New object.
         # SysMeta
-        sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
+        sysmeta_file = "hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta"
         sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
         sysmeta_xml = open(sysmeta_path).read()
         # SciData
         object_path = os.path.splitext(sysmeta_path)[0]
-        object_str = open(object_path, 'rb')
+        object_str = open(object_path, "rb")
         #
-        obsoleted_pid = 'AnserMatrix.htm'
-        new_pid = 'update_object_pid'
+        obsoleted_pid = "AnserMatrix.htm"
+        new_pid = "update_object_pid"
         # Update.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         response = client.updateResponse(
             context.TOKEN, obsoleted_pid, object_str, new_pid, sysmeta_xml
         )
@@ -62,7 +62,7 @@ class TestUpdate(d1_test_case.D1TestCase):
 
     def delete(self):
         """MN_crud.delete() in GMN and libraries."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         # Find the PID for a random object that exists on the server.
         pid = self.find_valid_pid(client)
         # Delete the object on GMN.

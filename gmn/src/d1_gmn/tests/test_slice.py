@@ -48,7 +48,7 @@ def _assert_pyxb_objects_are_equivalent(arg_tup):
         )
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestSlice')
+@d1_test.d1_test_case.reproducible_random_decorator("TestSlice")
 class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
     """Retrieving a filtered result set in many small slices gives the same result as
     retrieving everything in a single call without slicing.
@@ -62,9 +62,9 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     def _get_api_func(self, client, use_get_log_records):
         if use_get_log_records:
-            return client.getLogRecords, 'logEntry'
+            return client.getLogRecords, "logEntry"
         else:
-            return client.listObjects, 'objectInfo'
+            return client.listObjects, "objectInfo"
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2, true_false):
@@ -77,7 +77,7 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             total_int = slicable_api_func(start=0, count=0, fromDate=from_date).total
             # logging.debug('total_int={}'.format(total_int))
-            assert total_int >= 500, 'Insufficient number of objects available for test'
+            assert total_int >= 500, "Insufficient number of objects available for test"
             single_slice_pyxb = slicable_api_func(
                 start=0, count=total_int, fromDate=from_date
             )
@@ -107,8 +107,8 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
                     break
 
             assert len(single_slice_pyxb_list) == len(multi_slice_pyxb_list), (
-                'Retrieving multiple smaller slices did not give the same item count '
-                'as retrieving a single large slice'
+                "Retrieving multiple smaller slices did not give the same item count "
+                "as retrieving a single large slice"
             )
 
             item_count = len(multi_slice_pyxb_list)
@@ -121,7 +121,7 @@ class TestSlice(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 )
             )
             logging.info(
-                'Comparing single large slice with multiple small slices. pair_count={}'.format(
+                "Comparing single large slice with multiple small slices. pair_count={}".format(
                     len(arg_list)
                 )
             )

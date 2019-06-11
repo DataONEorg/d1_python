@@ -230,20 +230,20 @@ class DataONEBaseClient(d1_client.session.Session):
         except TypeError:
             trace_str = None
         e = d1_common.types.exceptions.ServiceFailure(0, msg, trace_str)
-        self._log.error('Raised: {}'.format(str(e)))
+        self._log.error("Raised: {}".format(str(e)))
         raise e
 
     def _raise_service_failure_invalid_content_type(self, response):
         self._raise_service_failure(
-            response, 'Response did not contain the expected Content-Type'
+            response, "Response did not contain the expected Content-Type"
         )
 
     def _raise_service_failure_invalid_dataone_type(
         self, response, deserialize_exception
     ):
         msg = io.StringIO()
-        msg.write('Response did not contain a valid DataONE type')
-        msg.write('Deserialize exception: {}'.format(str(deserialize_exception)))
+        msg.write("Response did not contain a valid DataONE type")
+        msg.write("Deserialize exception: {}".format(str(deserialize_exception)))
         self._raise_service_failure(response, msg.getvalue())
 
     def _raise_service_failure_incorrect_dataone_type(
@@ -251,7 +251,7 @@ class DataONEBaseClient(d1_client.session.Session):
     ):
         self._raise_service_failure(
             response,
-            'Received unexpected DataONE type. Expected: {}. Received: {}'.format(
+            "Received unexpected DataONE type. Expected: {}. Received: {}".format(
                 expected_type_str, received_type_str
             ),
         )
@@ -269,7 +269,7 @@ class DataONEBaseClient(d1_client.session.Session):
             d1_exception = d1_common.types.exceptions.deserialize(response.content)
         except d1_common.types.exceptions.DataONEException as e:
             self._raise_service_failure(
-                response, 'Node returned an invalid response:\n{}\n'.format(str(e))
+                response, "Node returned an invalid response:\n{}\n".format(str(e))
             )
         else:
             try:
@@ -279,17 +279,17 @@ class DataONEBaseClient(d1_client.session.Session):
             raise d1_exception
 
     def _content_type_is_xml(self, response):
-        if 'Content-Type' not in response.headers:
+        if "Content-Type" not in response.headers:
             return False
         # TODO: get_content_type() not needed with Requests
         return (
-            d1_common.util.get_content_type(response.headers['Content-Type'])
+            d1_common.util.get_content_type(response.headers["Content-Type"])
             in d1_common.const.CONTENT_TYPE_XML_MEDIA_TYPES
         )
 
     def _content_type_is_json(self, response):
         return d1_common.const.CONTENT_TYPE_JSON in response.headers.get(
-            'Content-Type', ''
+            "Content-Type", ""
         )
 
     def _status_is_200_ok(self, response):
@@ -400,7 +400,7 @@ class DataONEBaseClient(d1_client.session.Session):
     def _date_span_sanity_check(self, fromDate, toDate):
         if toDate is not None and fromDate is not None and fromDate > toDate:
             raise d1_common.types.exceptions.InvalidRequest(
-                0, 'Ending date must be later than starting date'
+                0, "Ending date must be later than starting date"
             )
 
     # ----------------------------------------------------------------------------
@@ -430,18 +430,18 @@ class DataONEBaseClient(d1_client.session.Session):
         self._slice_sanity_check(start, count)
         self._date_span_sanity_check(fromDate, toDate)
         query = {
-            'fromDate': fromDate,
-            'toDate': toDate,
-            'event': event,
-            'start': int(start),
-            'count': int(count),
+            "fromDate": fromDate,
+            "toDate": toDate,
+            "event": event,
+            "start": int(start),
+            "count": int(count),
         }
         if self._api_major >= 2:
-            query['idFilter'] = idFilter or pidFilter
+            query["idFilter"] = idFilter or pidFilter
         else:
-            query['pidFilter'] = pidFilter or idFilter
+            query["pidFilter"] = pidFilter or idFilter
 
-        return self.GET('log', query=query, headers=vendorSpecific)
+        return self.GET("log", query=query, headers=vendorSpecific)
 
     def getLogRecords(
         self,
@@ -464,7 +464,7 @@ class DataONEBaseClient(d1_client.session.Session):
             count=count,
             vendorSpecific=vendorSpecific,
         )
-        return self._read_dataone_type_response(response, 'Log')
+        return self._read_dataone_type_response(response, "Log")
 
     # CNCore.ping() → null
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.ping
@@ -472,7 +472,7 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.ping
 
     def pingResponse(self, vendorSpecific=None):
-        response = self.GET(['monitor', 'ping'], headers=vendorSpecific)
+        response = self.GET(["monitor", "ping"], headers=vendorSpecific)
         return response
 
     def ping(self, vendorSpecific=None):
@@ -489,7 +489,7 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.get
 
     def getResponse(self, pid, stream=False, vendorSpecific=None):
-        return self.GET(['object', pid], headers=vendorSpecific, stream=stream)
+        return self.GET(["object", pid], headers=vendorSpecific, stream=stream)
 
     def get(self, pid, stream=False, vendorSpecific=None):
         """Initiate a MNRead.get(). Return a Requests Response object from which the
@@ -546,11 +546,11 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getSystemMetadata
 
     def getSystemMetadataResponse(self, pid, vendorSpecific=None):
-        return self.GET(['meta', pid], headers=vendorSpecific)
+        return self.GET(["meta", pid], headers=vendorSpecific)
 
     def getSystemMetadata(self, pid, vendorSpecific=None):
         response = self.getSystemMetadataResponse(pid, vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 'SystemMetadata')
+        return self._read_dataone_type_response(response, "SystemMetadata")
 
     # CNRead.describe(d1_client.session, pid) → DescribeResponse
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNRead.describe
@@ -558,7 +558,7 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.describe
 
     def describeResponse(self, pid, vendorSpecific=None):
-        response = self.HEAD(['object', pid], headers=vendorSpecific)
+        response = self.HEAD(["object", pid], headers=vendorSpecific)
         return response
 
     def describe(self, pid, vendorSpecific=None):
@@ -590,16 +590,16 @@ class DataONEBaseClient(d1_client.session.Session):
         self._slice_sanity_check(start, count)
         self._date_span_sanity_check(fromDate, toDate)
         query = {
-            'fromDate': fromDate,
-            'toDate': toDate,
-            'formatId': formatId,
-            'identifier': identifier,
-            'replicaStatus': replicaStatus,
-            'nodeId': nodeId,
-            'start': int(start),
-            'count': int(count),
+            "fromDate": fromDate,
+            "toDate": toDate,
+            "formatId": formatId,
+            "identifier": identifier,
+            "replicaStatus": replicaStatus,
+            "nodeId": nodeId,
+            "start": int(start),
+            "count": int(count),
         }
-        return self.GET('object', query=query, headers=vendorSpecific)
+        return self.GET("object", query=query, headers=vendorSpecific)
 
     def listObjects(
         self,
@@ -624,7 +624,7 @@ class DataONEBaseClient(d1_client.session.Session):
             count,
             vendorSpecific,
         )
-        return self._read_dataone_type_response(response, 'ObjectList')
+        return self._read_dataone_type_response(response, "ObjectList")
 
     # ----------------------------------------------------------------------------
     # CNCore / MNStorage
@@ -636,14 +636,14 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.generateIdentifier
 
     def generateIdentifierResponse(self, scheme, fragment=None, vendorSpecific=None):
-        mmp_dict = {'scheme': scheme.encode('utf-8')}
+        mmp_dict = {"scheme": scheme.encode("utf-8")}
         if fragment is not None:
-            mmp_dict['fragment'] = fragment.encode('utf-8')
-        return self.POST('generate', fields=mmp_dict, headers=vendorSpecific)
+            mmp_dict["fragment"] = fragment.encode("utf-8")
+        return self.POST("generate", fields=mmp_dict, headers=vendorSpecific)
 
     def generateIdentifier(self, scheme, fragment=None, vendorSpecific=None):
         response = self.generateIdentifierResponse(scheme, fragment, vendorSpecific)
-        return self._read_dataone_type_response(response, 'Identifier')
+        return self._read_dataone_type_response(response, "Identifier")
 
     # CNStorage.delete(d1_client.session, pid) → Identifier
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNStorage.archive
@@ -651,12 +651,12 @@ class DataONEBaseClient(d1_client.session.Session):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.archive
 
     def archiveResponse(self, pid, vendorSpecific=None):
-        response = self.PUT(['archive', pid], headers=vendorSpecific)
+        response = self.PUT(["archive", pid], headers=vendorSpecific)
         return response
 
     def archive(self, pid, vendorSpecific=None):
         response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 'Identifier')
+        return self._read_dataone_type_response(response, "Identifier")
 
     # ----------------------------------------------------------------------------
     # CNAuthorization / MNAuthorization
@@ -669,7 +669,7 @@ class DataONEBaseClient(d1_client.session.Session):
 
     def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
         return self.GET(
-            ['isAuthorized', pid], query={'action': action}, headers=vendorSpecific
+            ["isAuthorized", pid], query={"action": action}, headers=vendorSpecific
         )
 
     def isAuthorized(self, pid, action, vendorSpecific=None):

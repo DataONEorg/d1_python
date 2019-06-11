@@ -50,16 +50,16 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         )
 
     def get_attributes(self, object_tree_root, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
         return self._get_attributes(object_tree_root, path)
 
     def get_directory(self, object_tree_root, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
         return self._get_directory(object_tree_root, path)
 
     def read_file(self, object_tree_root, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
@@ -98,7 +98,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         # filesystem dependent size).
         if len(path) == 1:
             return attributes.Attributes(
-                is_dir=True, size=record['size'], date=record['dateUploaded']
+                is_dir=True, size=record["size"], date=record["dateUploaded"]
             )
         elif len(path) == 2:
             filename = path[1]
@@ -106,12 +106,12 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
                 return self._get_search_fields_file_attributes(record)
             elif filename == self._get_pid_filename(pid, record):
                 return attributes.Attributes(
-                    size=record['size'], date=record['dateUploaded']
+                    size=record["size"], date=record["dateUploaded"]
                 )
             elif filename == "system.xml":
                 sys_meta_xml = self._object_tree.get_system_metadata(pid)
                 return attributes.Attributes(
-                    size=len(sys_meta_xml), date=record['dateUploaded']
+                    size=len(sys_meta_xml), date=record["dateUploaded"]
                 )
 
         self._raise_invalid_path()
@@ -122,8 +122,8 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         pid = path[0]
         record = self._object_tree.get_object_record(pid)
         return [
-            self._get_pid_filename(record['id'], record),
-            'system.xml',
+            self._get_pid_filename(record["id"], record),
+            "system.xml",
             self._get_search_fields_filename(),
         ]
 
@@ -146,17 +146,17 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         self._raise_invalid_path()
 
     def _raise_invalid_pid(self, pid):
-        raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
+        raise onedrive_exceptions.PathException("Invalid PID: {}".format(pid))
 
     def _raise_invalid_path(self):
-        raise onedrive_exceptions.PathException('Invalid path')
+        raise onedrive_exceptions.PathException("Invalid path")
 
     def _get_pid_filename(self, pid, record):
         try:
-            ext = self._object_format_cache.get_filename_extension(record['formatId'])
+            ext = self._object_format_cache.get_filename_extension(record["formatId"])
         except KeyError:
             return pid
-        if ext in (os.path.splitext(pid)[1], 'data'):
+        if ext in (os.path.splitext(pid)[1], "data"):
             return pid
         else:
             return pid + ext
@@ -164,7 +164,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # Search fields.
 
     def _get_search_fields_filename(self):
-        return 'search_fields.txt'
+        return "search_fields.txt"
 
     def _get_search_fields_file_attributes(self, record):
         return attributes.Attributes(
@@ -173,5 +173,5 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _generate_search_fields_text(self, record):
         return util.os_format(
-            '\n'.join(sorted(['{}: {}'.format(k, v) for k, v in list(record.items())]))
+            "\n".join(sorted(["{}: {}".format(k, v) for k, v in list(record.items())]))
         )

@@ -25,17 +25,17 @@ import d1_test.instance_generator.sciobj
 import d1_test.mock_api.create
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestMockCreate')
+@d1_test.d1_test_case.reproducible_random_decorator("TestMockCreate")
 class TestMockCreate(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """mock_api.create(): Echoes the request."""
         d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
-            mn_client_v1_v2, 'post_pid'
+            mn_client_v1_v2, "post_pid"
         )
         response = mn_client_v1_v2.createResponse(
-            'post_pid', io.BytesIO(sciobj_bytes), sysmeta_pyxb
+            "post_pid", io.BytesIO(sciobj_bytes), sysmeta_pyxb
         )
         assert response.status_code == 200
         echo_dict = d1_test.mock_api.create.unpack_echo_header(response.headers)
@@ -44,4 +44,4 @@ class TestMockCreate(d1_test.d1_test_case.D1TestCase):
         #   mn_client_v1_v2.pyxb_binding.CreateFromDocument(response.content).value()
         # )
         # del echo_dict['body']
-        self.sample.assert_equals(echo_dict, 'echoes_request', mn_client_v1_v2)
+        self.sample.assert_equals(echo_dict, "echoes_request", mn_client_v1_v2)

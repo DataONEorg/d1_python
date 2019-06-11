@@ -31,7 +31,7 @@ def generate(min_properties=0, max_properties=5):
     if not n_properties:
         return None
     media_type_pyxb = d1_common.types.dataoneTypes.MediaType(
-        name='media_type_{}'.format(
+        name="media_type_{}".format(
             d1_test.instance_generator.random_data.random_lower_ascii()
         )
     )
@@ -40,7 +40,7 @@ def generate(min_properties=0, max_properties=5):
             d1_test.instance_generator.random_data.random_lower_ascii(
                 min_len=12, max_len=12
             ),
-            name='prop_{}'.format(
+            name="prop_{}".format(
                 d1_test.instance_generator.random_data.random_lower_ascii(
                     min_len=12, max_len=12
                 )

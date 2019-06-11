@@ -63,14 +63,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         self._readme_txt = util.os_format(README_TXT)
 
         self._classifications = [
-            'kingdom',
-            'phylum',
-            'class',
-            'order',
-            'family',
-            'genus',
-            'species',
-            'scientificName',
+            "kingdom",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "genus",
+            "species",
+            "scientificName",
         ]
 
     # The taxa resolver handles hierarchy levels:
@@ -80,7 +80,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # All longer paths are handled by d1_object resolver.
 
     def get_attributes(self, object_tree_folder, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
 
         if self._is_readme_file(path):
             return self._get_readme_file_attributes()
@@ -91,7 +91,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._resource_map_resolver.get_attributes(object_tree_folder, path[2:])
 
     def get_directory(self, object_tree_folder, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
 
         if len(path) <= 2:
             return self._get_directory(object_tree_folder, path)
@@ -100,14 +100,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def read_file(self, object_tree_folder, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
         if self._is_readme_file(path):
             return self._get_readme_text(size, offset)
         if len(path) <= 2:
-            raise onedrive_exceptions.PathException('Invalid file')
+            raise onedrive_exceptions.PathException("Invalid file")
         return self._resource_map_resolver.read_file(path[2:], size, offset)
 
     # Private.
@@ -133,7 +133,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     def _resolve_taxa_root(self, object_tree_folder):
         d = directory.Directory()
         for g in self._classifications:
-            if g in object_tree_folder['items']:
+            if g in object_tree_folder["items"]:
                 d.append(g)
                 break
         return d
@@ -147,24 +147,24 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         self, classification, value, object_tree_folder
     ):
         d = directory.Directory()
-        for pid in object_tree_folder.get_records['items']:
+        for pid in object_tree_folder.get_records["items"]:
             record = self._object_tree.get_object_record(pid)
             try:
                 if value in record[classification]:
-                    d.append(record['id'])
+                    d.append(record["id"])
             except KeyError:
                 pass
         # As empty folders in the taxa tree are pruned in the root and first level,
         # an empty folder here can only be due to an invalid path.
         if not len(d):
             raise onedrive_exceptions.PathException(
-                'Invalid taxonomic classification value'
+                "Invalid taxonomic classification value"
             )
         return d
 
     def _get_unique_values_for_classification(self, classification, object_tree_folder):
         u = set()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             record = self._object_tree.get_object_record(pid)
             try:
                 for v in record[classification]:

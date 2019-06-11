@@ -50,7 +50,7 @@ class Directory(collections.MutableSequence):
         return str(self._list)
 
     def __str__(self):
-        return str(self).encode('utf-8')
+        return str(self).encode("utf-8")
 
     def __repr__(self):
         return str(self)

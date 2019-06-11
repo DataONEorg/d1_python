@@ -18,7 +18,6 @@
 """pytest setup and customization."""
 import logging
 import os
-
 import sys
 import tempfile
 
@@ -45,7 +44,6 @@ import django.core.management
 import django.db
 import django.test
 
-
 if not "TRAVIS" in os.environ:
     import d1_test.pycharm
 
@@ -53,9 +51,6 @@ logger = logging.getLogger(__name__)
 
 D1_SKIP_LIST = "skip_passed/list"
 D1_SKIP_COUNT = "skip_passed/count"
-
-# Dict lookup keys matching the keys in settings_test.DATABASE
-DB_KEY = "default"
 
 # Allow redefinition of functions. Pytest allows multiple hooks with the same
 # name.
@@ -471,13 +466,13 @@ def django_db_setup(request, django_db_blocker):
     """
     logger.info("Setting up GMN test DB from template")
 
-    template_db_name = django.conf.settings.DATABASES[DB_KEY]['NAME']
+    template_db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key()
     unique_db_name = get_unique_db_name(request)
-    django.conf.settings.DATABASES[DB_KEY]['NAME'] = unique_db_name
+    d1_gmn.tests.gmn_test_case.django_set_db_name_by_key(unique_db_name)
 
     with django_db_blocker.unblock():
         postgres_create_from_template(unique_db_name, template_db_name)
-        d1_gmn.tests.gmn_test_case.django_migrate(DB_KEY)
+        d1_gmn.tests.gmn_test_case.django_migrate()
         d1_gmn.tests.gmn_test_case.django_dump_db_stats()
 
     try:
@@ -488,7 +483,12 @@ def django_db_setup(request, django_db_blocker):
 
 
 def get_unique_db_name(request):
-    return "_".join([d1_gmn.tests.gmn_test_case.django_get_db_name_by_key(DB_KEY), get_unique_suffix(request)])
+    return "_".join(
+        [
+            d1_gmn.tests.gmn_test_case.django_get_db_name_by_key(),
+            get_unique_suffix(request),
+        ]
+    )
 
 
 def postgres_create_from_template(new_db_name, template_db_name):

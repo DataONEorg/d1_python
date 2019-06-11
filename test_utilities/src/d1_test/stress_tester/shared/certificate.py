@@ -35,7 +35,7 @@ def check_path(path):
     lib" is a good error message for "file not found", do explicit checks of certificate
     paths."""
     if not os.path.exists(path):
-        raise Exception('Certificate or key does not exist: {}'.format(path))
+        raise Exception("Certificate or key does not exist: {}".format(path))
 
 
 def get_certificate_path_for_subject(subject):

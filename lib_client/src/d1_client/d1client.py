@@ -57,11 +57,11 @@ def get_api_major_by_base_url(base_url, *client_arg_list, **client_arg_dict):
 
 def get_client_type(d1_client_obj):
     if isinstance(d1_client_obj, d1_client.mnclient.MemberNodeClient):
-        return 'mn'
+        return "mn"
     elif isinstance(d1_client_obj, d1_client.cnclient.CoordinatingNodeClient):
-        return 'cn'
+        return "cn"
     else:
-        assert False, 'Unable to determine d1_client type'
+        assert False, "Unable to determine d1_client type"
 
 
 def get_version_tag_by_d1_client(d1_client_obj):
@@ -71,9 +71,9 @@ def get_version_tag_by_d1_client(d1_client_obj):
 
 def get_client_class_by_version_tag(api_major):
     api_major = str(api_major)
-    if api_major in ('v1', '1'):
+    if api_major in ("v1", "1"):
         return d1_client.mnclient_1_2.MemberNodeClient_1_2
-    elif api_major in ('v2', '2'):
+    elif api_major in ("v2", "2"):
         return d1_client.mnclient_2_0.MemberNodeClient_2_0
     else:
-        raise ValueError('Unknown DataONE API version tag: {}'.format(api_major))
+        raise ValueError("Unknown DataONE API version tag: {}".format(api_major))

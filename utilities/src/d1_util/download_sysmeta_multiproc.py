@@ -53,30 +53,30 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     args = parse_cmd_line()
@@ -103,11 +103,11 @@ def main():
             args.cert_key_path,
         )
     except SysMetaRetrieveError as e:
-        logging.error('Error: {}'.format(str(e)))
+        logging.error("Error: {}".format(str(e)))
     except d1_common.types.exceptions.DataONEException as e:
-        logging.error('Node returned an error: {}'.format(str(e)))
+        logging.error("Node returned an error: {}".format(str(e)))
     except Exception:
-        logging.error('Internal error: {}'.format(str(e)))
+        logging.error("Internal error: {}".format(str(e)))
 
     events.dump_to_log()
 
@@ -118,49 +118,49 @@ def parse_cmd_line():
     )
     parser.description = __doc__
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
+        "--timeout",
         type=float,
-        action='store',
+        action="store",
         default=DEFAULT_TIMEOUT_SEC,
-        help='Timeout for D1 API call to the source MN',
+        help="Timeout for D1 API call to the source MN",
     )
     parser.add_argument(
-        '--workers',
+        "--workers",
         type=int,
-        action='store',
+        action="store",
         default=DEFAULT_N_WORKERS,
-        help='Max number of concurrent connections made to the source MN',
+        help="Max number of concurrent connections made to the source MN",
     )
     parser.add_argument(
-        '--object-page-size',
+        "--object-page-size",
         type=int,
-        action='store',
+        action="store",
         default=d1_common.const.DEFAULT_SLICE_SIZE,
-        help='Number of objects to retrieve in each listObjects() call',
+        help="Number of objects to retrieve in each listObjects() call",
     )
     parser.add_argument(
-        '--major',
+        "--major",
         type=int,
-        action='store',
-        help='Use API major version instead of finding by connecting to CN',
+        action="store",
+        help="Use API major version instead of finding by connecting to CN",
     )
-    parser.add_argument('baseurl', help='Source MN BaseURL')
+    parser.add_argument("baseurl", help="Source MN BaseURL")
     parser.add_argument(
-        'dst_dir_path', help='Path to directory in which to store downloaded objects'
+        "dst_dir_path", help="Path to directory in which to store downloaded objects"
     )
     return parser.parse_args()
 
@@ -185,7 +185,7 @@ def _download_objects(args, api_major, events, timeout, cert_pem_path, cert_key_
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
         # if i > 100:
         #   break
-        msg_str = 'Error'
+        msg_str = "Error"
         if d1_common.system_metadata.is_sysmeta_pyxb(sysmeta_pyxb):
             pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
             try:
@@ -210,7 +210,7 @@ def _download_objects(args, api_major, events, timeout, cert_pem_path, cert_key_
             logging.error(str(sysmeta_pyxb))
 
         _log_progress(
-            events, 'Importing objects', i, sysmeta_iter.total, msg_str, start_sec
+            events, "Importing objects", i, sysmeta_iter.total, msg_str, start_sec
         )
 
 
@@ -222,21 +222,21 @@ def _get_source_sysmeta(baseurl, api_major, pid, timeout, cert_pem_path, cert_ke
 
 
 def _save_sysmeta(sysmeta_pyxb, pid, dst_dir_path):
-    file_name = _get_safe_filename(pid, 'sysmeta.xml')
+    file_name = _get_safe_filename(pid, "sysmeta.xml")
     sysmeta_path = os.path.join(dst_dir_path, file_name)
     xml_str = d1_common.xml.serialize_pretty(sysmeta_pyxb)
-    with open(sysmeta_path, 'wb') as f:
+    with open(sysmeta_path, "wb") as f:
         f.write(xml_str)
 
 
 def _download_source_sciobj_bytes(
     baseurl, api_major, pid, events, dst_dir_path, timeout, cert_pem_path, cert_key_path
 ):
-    file_name = _get_safe_filename(pid, 'sciobj.bin')
+    file_name = _get_safe_filename(pid, "sciobj.bin")
     sciobj_path = os.path.join(dst_dir_path, file_name)
     if os.path.isfile(sciobj_path):
         events.log_and_count(
-            'Skipped download of existing sciobj bytes',
+            "Skipped download of existing sciobj bytes",
             'pid="{}" path="{}"'.format(pid, sciobj_path),
         )
         return
@@ -248,12 +248,12 @@ def _download_source_sciobj_bytes(
 
 def _get_client_dict(timeout, cert_pem_path, cert_key_path):
     return {
-        'timeout_sec': timeout,
-        'verify_tls': False,
-        'suppress_verify_warnings': True,
-        'use_cache': False,
-        'cert_pem_path': cert_pem_path,
-        'cert_key_path': cert_key_path,
+        "timeout_sec": timeout,
+        "verify_tls": False,
+        "suppress_verify_warnings": True,
+        "use_cache": False,
+        "cert_pem_path": cert_pem_path,
+        "cert_key_path": cert_key_path,
     }
 
 
@@ -286,11 +286,11 @@ def _log_progress(event_counter, msg, i, n, pid, start_sec=None):
         m_int = eta_sec % 60
         eta_sec //= 60
         h_int = eta_sec
-        eta_str = ' {}h{:02d}m{:02d}s'.format(h_int, m_int, s_int)
+        eta_str = " {}h{:02d}m{:02d}s".format(h_int, m_int, s_int)
     else:
-        eta_str = ''
+        eta_str = ""
     logging.info(
-        '{} - {}/{} ({:.2f}%{}) - {}'.format(
+        "{} - {}/{} ({:.2f}%{}) - {}".format(
             msg, i + 1, n, (i + 1) / float(n) * 100, eta_str, pid
         )
     )
@@ -299,9 +299,9 @@ def _log_progress(event_counter, msg, i, n, pid, start_sec=None):
 
 def _get_safe_filename(pid, ext_str=None):
     return (
-        urllib.parse.quote(pid.encode('utf-8'), safe=' @$,~*&') + '.{}'.format(ext_str)
+        urllib.parse.quote(pid.encode("utf-8"), safe=" @$,~*&") + ".{}".format(ext_str)
         if ext_str is not None
-        else ''
+        else ""
     )
 
 
@@ -309,5 +309,5 @@ class SysMetaRetrieveError(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

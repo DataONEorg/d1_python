@@ -28,48 +28,48 @@ import os
 # BASEURL = 'https://stress-1-unm.test.dataone.org/mn'
 # BASEURL = 'https://stress-2-unm.test.dataone.org'
 # BASEURL = 'https://gmn-dev.test.dataone.org/mn'
-BASEURL = 'https://192.168.1.135/mn'
+BASEURL = "https://192.168.1.135/mn"
 # Number of objects to retrieve with listObjects.
 PAGE_SIZE = 1000
 
 # Misc.
 
-SHARED_ROOT = './shared'
-GENERATED_ROOT = './generated'
+SHARED_ROOT = "./shared"
+GENERATED_ROOT = "./generated"
 
-PUBLIC_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'public_objects.txt')
-PRIVATE_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'private_objects.txt')
-SUBJECTS_PATH = os.path.join(GENERATED_ROOT, 'subjects.txt')
-ERROR_PATH = './stress_test_error.html'
+PUBLIC_OBJECTS_PATH = os.path.join(GENERATED_ROOT, "public_objects.txt")
+PRIVATE_OBJECTS_PATH = os.path.join(GENERATED_ROOT, "private_objects.txt")
+SUBJECTS_PATH = os.path.join(GENERATED_ROOT, "subjects.txt")
+ERROR_PATH = "./stress_test_error.html"
 
 # Certificates.
 
-CERT_ROOT = './generated/certificates/'
+CERT_ROOT = "./generated/certificates/"
 
 # CA
-CA_CERT_PATH = os.path.join(CERT_ROOT, 'local_test_ca.crt')
-CA_KEY_PATH = os.path.join(CERT_ROOT, 'local_test_ca.nopassword.key')
+CA_CERT_PATH = os.path.join(CERT_ROOT, "local_test_ca.crt")
+CA_KEY_PATH = os.path.join(CERT_ROOT, "local_test_ca.nopassword.key")
 # Only required if the password has not been removed from the CA private key.
-CA_KEY_PW = ''
+CA_KEY_PW = ""
 
-CLIENT_CERT_DIR = os.path.join(CERT_ROOT, 'client_side_certs')
+CLIENT_CERT_DIR = os.path.join(CERT_ROOT, "client_side_certs")
 CLIENT_CERT_PUBLIC_KEY_PATH = os.path.join(
-    CERT_ROOT, 'local_test_client_cert.public.key'
+    CERT_ROOT, "local_test_client_cert.public.key"
 )
 CLIENT_CERT_PRIVATE_KEY_PATH = os.path.join(
-    CERT_ROOT, 'local_test_client_cert.nopassword.key'
+    CERT_ROOT, "local_test_client_cert.nopassword.key"
 )
 
-SUBJECT_ALT_NAME = 'DNS:dataone.org'
+SUBJECT_ALT_NAME = "DNS:dataone.org"
 
 # A DataONE subject that has permissions for creating objects on the MN
 # being tested. For GMN, this means that the subject must be in the
 # update / delete / create whitelist.
 SUBJECT_WITH_CREATE_PERMISSIONS = (
-    'CN=subject_with_create_permissions,O=d1-stress-tester,'
-    'C=US,DC=d1-stress-tester,DC=com'
+    "CN=subject_with_create_permissions,O=d1-stress-tester,"
+    "C=US,DC=d1-stress-tester,DC=com"
 )
 SUBJECT_WITH_CN_PERMISSIONS = (
-    'CN=subject_with_cn_permissions,O=d1-stress-tester,'
-    'C=US,DC=d1-stress-tester,DC=com'
+    "CN=subject_with_cn_permissions,O=d1-stress-tester,"
+    "C=US,DC=d1-stress-tester,DC=com"
 )

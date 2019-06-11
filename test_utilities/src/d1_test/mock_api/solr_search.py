@@ -41,15 +41,15 @@ import d1_test.mock_api.util
 
 # Config
 N_TOTAL = 100
-SEARCH_ENDPOINT_RX = r'v([123])/search/.*'
+SEARCH_ENDPOINT_RX = r"v([123])/search/.*"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, SEARCH_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, SEARCH_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -63,7 +63,7 @@ def _request_callback(request):
     # Return regular response
     n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
     # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
     return (
         200,
         header_dict,
@@ -75,6 +75,6 @@ def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'search'
-    assert len(param_list) == 2, 'search() accept 2 parameters, the queryType and query'
+    assert endpoint_str == "search"
+    assert len(param_list) == 2, "search() accept 2 parameters, the queryType and query"
     return param_list[0], param_list[1], query_dict, client

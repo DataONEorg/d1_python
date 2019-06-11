@@ -53,8 +53,8 @@ def add_access_policy_filter(request, query, column_name):
     """
     q = d1_gmn.app.models.Subject.objects.filter(
         subject__in=request.all_subjects_set
-    ).values('permission__sciobj')
-    filter_arg = '{}__in'.format(column_name)
+    ).values("permission__sciobj")
+    filter_arg = "{}__in".format(column_name)
     return query.filter(**{filter_arg: q})
 
 
@@ -72,7 +72,7 @@ def add_redact_annotation(request, query):
     return query.annotate(
         redact=django.db.models.Exists(
             d1_gmn.app.models.Permission.objects.filter(
-                sciobj=django.db.models.OuterRef('sciobj'),
+                sciobj=django.db.models.OuterRef("sciobj"),
                 subject__subject__in=request.all_subjects_set,
                 level__gte=d1_gmn.app.auth.WRITE_LEVEL,
             ),
@@ -82,7 +82,7 @@ def add_redact_annotation(request, query):
 
 
 def add_replica_filter(request, query):
-    param_name = 'replicaStatus'
+    param_name = "replicaStatus"
     bool_val = request.GET.get(param_name, True)
     if bool_val is None:
         return query
@@ -107,7 +107,7 @@ def add_datetime_filter(request, query, column_name, param_name, operator):
     )
     if dt is None:
         return query
-    filter_arg = '{}__{}'.format(column_name, operator)
+    filter_arg = "{}__{}".format(column_name, operator)
     return query.filter(**{filter_arg: dt})
 
 
@@ -120,7 +120,7 @@ def add_string_filter(request, query, column_name, param_name):
 
 def add_sid_filter(request, query, column_name, param_name):
     sid = request.GET.get(param_name, None)
-    filter_arg = '{}__in'.format(column_name)
+    filter_arg = "{}__in".format(column_name)
     return query.filter(**{filter_arg: d1_gmn.app.revision.get_all_pid_by_sid(sid)})
 
 
@@ -128,7 +128,7 @@ def add_string_begins_with_filter(request, query, column_name, param_name):
     value = request.GET.get(param_name, None)
     if value is None:
         return query
-    filter_arg = '{}__startswith'.format(column_name)
+    filter_arg = "{}__startswith".format(column_name)
     return query.filter(**{filter_arg: value})
 
 

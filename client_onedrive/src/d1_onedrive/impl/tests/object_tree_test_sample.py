@@ -17,36 +17,36 @@
 # limitations under the License.
 
 object_tree = {
-    'dirs': {
-        'c1': {
-            'dirs': {'c3': {'dirs': {}, 'items': {}, 'name': 'c3'}},
-            'items': {'ark:/13030/m56m372c/2/cadwsap-s3410003-004.xml': True},
-            'name': 'c1',
+    "dirs": {
+        "c1": {
+            "dirs": {"c3": {"dirs": {}, "items": {}, "name": "c3"}},
+            "items": {"ark:/13030/m56m372c/2/cadwsap-s3410003-004.xml": True},
+            "name": "c1",
         },
-        'c2': {
-            'dirs': {},
-            'items': {
-                'ECHIDNA_1045.zip': True,
-                'EDM_SA_VEGETATION_1149.zip': True,
-                'EDM_US_CARBON_1160.zip': True,
-                'EMDI_615.zip': True,
+        "c2": {
+            "dirs": {},
+            "items": {
+                "ECHIDNA_1045.zip": True,
+                "EDM_SA_VEGETATION_1149.zip": True,
+                "EDM_US_CARBON_1160.zip": True,
+                "EMDI_615.zip": True,
             },
-            'name': 'c2',
+            "name": "c2",
         },
-        'c4': {'dirs': {}, 'items': {}, 'name': 'c4'},
+        "c4": {"dirs": {}, "items": {}, "name": "c4"},
     },
-    'items': {
-        'ECHIDNA_1045.zip': True,
-        'EDM_SA_VEGETATION_1149.zip': True,
-        'EDM_US_CARBON_1160.zip': True,
-        'EMDI_615.zip': True,
-        'ark:/13030/m5513zdc/2/cadwsap-s3410003-006.xml': True,
-        'ark:/13030/m56m372c/2/cadwsap-s3410003-004.xml': True,
-        'ark:/13030/m5gb22vz/2/cadwsap-s4900546-002.xml': True,
-        'ark:/13030/m5mk6bww/2/cadwsap-s4900546-001.xml': True,
-        'ark:/13030/m5qv3mnm/2/cadwsap-s3410003-002.xml': True,
-        'ark:/13030/m5sq90m7/2/cadwsap-s3410003-008.xml': True,
-        'ark:/13030/m5z60p9f/2/cadwsap-s3410003-005.xml': True,
-        'scimeta_1067.xml': True,
+    "items": {
+        "ECHIDNA_1045.zip": True,
+        "EDM_SA_VEGETATION_1149.zip": True,
+        "EDM_US_CARBON_1160.zip": True,
+        "EMDI_615.zip": True,
+        "ark:/13030/m5513zdc/2/cadwsap-s3410003-006.xml": True,
+        "ark:/13030/m56m372c/2/cadwsap-s3410003-004.xml": True,
+        "ark:/13030/m5gb22vz/2/cadwsap-s4900546-002.xml": True,
+        "ark:/13030/m5mk6bww/2/cadwsap-s4900546-001.xml": True,
+        "ark:/13030/m5qv3mnm/2/cadwsap-s3410003-002.xml": True,
+        "ark:/13030/m5sq90m7/2/cadwsap-s3410003-008.xml": True,
+        "ark:/13030/m5z60p9f/2/cadwsap-s3410003-005.xml": True,
+        "scimeta_1067.xml": True,
     },
 }

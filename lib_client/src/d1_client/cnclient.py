@@ -69,7 +69,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET('formats', headers=vendorSpecific)
+        return self.GET("formats", headers=vendorSpecific)
 
     def listFormats(self, vendorSpecific=None):
         """See Also: listFormatsResponse()
@@ -81,7 +81,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.listFormatsResponse(vendorSpecific)
-        return self._read_dataone_type_response(response, 'ObjectFormatList')
+        return self._read_dataone_type_response(response, "ObjectFormatList")
 
     def getFormatResponse(self, formatId, vendorSpecific=None):
         """CNCore.getFormat(formatId) → ObjectFormat
@@ -95,7 +95,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['formats', formatId], headers=vendorSpecific)
+        return self.GET(["formats", formatId], headers=vendorSpecific)
 
     def getFormat(self, formatId, vendorSpecific=None):
         """See Also: getFormatResponse()
@@ -108,7 +108,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.getFormatResponse(formatId, vendorSpecific)
-        return self._read_dataone_type_response(response, 'ObjectFormat')
+        return self._read_dataone_type_response(response, "ObjectFormat")
 
     def reserveIdentifierResponse(self, pid, vendorSpecific=None):
         """CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][,
@@ -126,8 +126,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'pid': pid}
-        return self.POST(['reserve', pid], fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"pid": pid}
+        return self.POST(["reserve", pid], fields=mmp_dict, headers=vendorSpecific)
 
     def reserveIdentifier(self, pid, vendorSpecific=None):
         """See Also: reserveIdentifierResponse()
@@ -140,7 +140,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.reserveIdentifierResponse(pid, vendorSpecific)
-        return self._read_dataone_type_response(response, 'Identifier', vendorSpecific)
+        return self._read_dataone_type_response(response, "Identifier", vendorSpecific)
 
     def listChecksumAlgorithmsResponse(self, vendorSpecific=None):
         """CNCore.listChecksumAlgorithms() → ChecksumAlgorithmList
@@ -153,7 +153,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET('checksum', headers=vendorSpecific)
+        return self.GET("checksum", headers=vendorSpecific)
 
     def listChecksumAlgorithms(self, vendorSpecific=None):
         """See Also: listChecksumAlgorithmsResponse()
@@ -165,7 +165,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.listChecksumAlgorithmsResponse(vendorSpecific)
-        return self._read_dataone_type_response(response, 'ChecksumAlgorithmList')
+        return self._read_dataone_type_response(response, "ChecksumAlgorithmList")
 
     def setObsoletedByResponse(
         self, pid, obsoletedByPid, serialVersion, vendorSpecific=None
@@ -184,10 +184,10 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         mmp_dict = {
-            'obsoletedByPid': obsoletedByPid,
-            'serialVersion': str(serialVersion),
+            "obsoletedByPid": obsoletedByPid,
+            "serialVersion": str(serialVersion),
         }
-        return self.PUT(['obsoletedBy', pid], fields=mmp_dict, headers=vendorSpecific)
+        return self.PUT(["obsoletedBy", pid], fields=mmp_dict, headers=vendorSpecific)
 
     def setObsoletedBy(self, pid, obsoletedByPid, serialVersion, vendorSpecific=None):
         """See Also: setObsoletedByResponse()
@@ -216,7 +216,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET('node', headers=vendorSpecific)
+        return self.GET("node", headers=vendorSpecific)
 
     def listNodes(self, vendorSpecific=None):
         """See Also: listNodesResponse()
@@ -228,7 +228,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.listNodesResponse(vendorSpecific)
-        return self._read_dataone_type_response(response, 'NodeList')
+        return self._read_dataone_type_response(response, "NodeList")
 
     def hasReservationResponse(self, pid, subject, vendorSpecific=None):
         """CNCore.registerSystemMetadata(session, pid, sysmeta) → Identifier CN
@@ -245,7 +245,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['reserve', pid, subject], headers=vendorSpecific)
+        return self.GET(["reserve", pid, subject], headers=vendorSpecific)
 
     def hasReservation(self, pid, subject, vendorSpecific=None):
         """See Also: hasReservationResponse()
@@ -282,7 +282,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['resolve', pid], headers=vendorSpecific)
+        return self.GET(["resolve", pid], headers=vendorSpecific)
 
     def resolve(self, pid, vendorSpecific=None):
         """See Also: resolveResponse()
@@ -296,7 +296,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         """
         response = self.resolveResponse(pid, vendorSpecific)
         return self._read_dataone_type_response(
-            response, 'ObjectLocationList', response_is_303_redirect=True
+            response, "ObjectLocationList", response_is_303_redirect=True
         )
 
     def getChecksumResponse(self, pid, vendorSpecific=None):
@@ -311,7 +311,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['checksum', pid], headers=vendorSpecific)
+        return self.GET(["checksum", pid], headers=vendorSpecific)
 
     def getChecksum(self, pid, vendorSpecific=None):
         """See Also: getChecksumResponse()
@@ -324,7 +324,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.getChecksumResponse(pid, vendorSpecific)
-        return self._read_dataone_type_response(response, 'Checksum')
+        return self._read_dataone_type_response(response, "Checksum")
 
     def searchResponse(self, queryType, query, vendorSpecific=None, **kwargs):
         """CNRead.search(session, queryType, query) → ObjectList
@@ -341,7 +341,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         return self.GET(
-            ['search', queryType, query], headers=vendorSpecific, query=kwargs
+            ["search", queryType, query], headers=vendorSpecific, query=kwargs
         )
 
     def search(self, queryType, query=None, vendorSpecific=None, **kwargs):
@@ -357,7 +357,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.searchResponse(queryType, query, vendorSpecific, **kwargs)
-        return self._read_dataone_type_response(response, 'ObjectList')
+        return self._read_dataone_type_response(response, "ObjectList")
 
     def queryResponse(self, queryEngine, query=None, vendorSpecific=None, **kwargs):
         """CNRead.query(session, queryEngine, query) → OctetStream
@@ -374,7 +374,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         return self.GET(
-            ['query', queryEngine, query], headers=vendorSpecific, query=kwargs
+            ["query", queryEngine, query], headers=vendorSpecific, query=kwargs
         )
 
     def query(self, queryEngine, query=None, vendorSpecific=None, **kwargs):
@@ -407,7 +407,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['query', queryEngine], headers=vendorSpecific, query=kwargs)
+        return self.GET(["query", queryEngine], headers=vendorSpecific, query=kwargs)
 
     def getQueryEngineDescription(self, queryEngine, vendorSpecific=None, **kwargs):
         """See Also: getQueryEngineDescriptionResponse()
@@ -423,7 +423,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         response = self.getQueryEngineDescriptionResponse(
             queryEngine, vendorSpecific, **kwargs
         )
-        return self._read_dataone_type_response(response, 'QueryEngineDescription')
+        return self._read_dataone_type_response(response, "QueryEngineDescription")
 
     # =========================================================================
     # Authorization API
@@ -444,8 +444,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'userId': userId, 'serialVersion': str(serialVersion)}
-        return self.PUT(['owner', pid], headers=vendorSpecific, fields=mmp_dict)
+        mmp_dict = {"userId": userId, "serialVersion": str(serialVersion)}
+        return self.PUT(["owner", pid], headers=vendorSpecific, fields=mmp_dict)
 
     def setRightsHolder(self, pid, userId, serialVersion, vendorSpecific=None):
         """See Also: setRightsHolderResponse()
@@ -481,10 +481,10 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         mmp_dict = {
-            'serialVersion': str(serialVersion),
-            'accessPolicy': ('accessPolicy.xml', accessPolicy.toxml('utf-8')),
+            "serialVersion": str(serialVersion),
+            "accessPolicy": ("accessPolicy.xml", accessPolicy.toxml("utf-8")),
         }
-        return self.PUT(['accessRules', pid], fields=mmp_dict, headers=vendorSpecific)
+        return self.PUT(["accessRules", pid], fields=mmp_dict, headers=vendorSpecific)
 
     def setAccessPolicy(self, pid, accessPolicy, serialVersion, vendorSpecific=None):
         """See Also: setAccessPolicyResponse()
@@ -519,8 +519,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'person': ('person.xml', person.toxml('utf-8'))}
-        return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"person": ("person.xml", person.toxml("utf-8"))}
+        return self.POST("accounts", fields=mmp_dict, headers=vendorSpecific)
 
     def registerAccount(self, person, vendorSpecific=None):
         """See Also: registerAccountResponse()
@@ -548,8 +548,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'person': ('person.xml', person.toxml('utf-8'))}
-        return self.PUT(['accounts', subject], fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"person": ("person.xml", person.toxml("utf-8"))}
+        return self.PUT(["accounts", subject], fields=mmp_dict, headers=vendorSpecific)
 
     def updateAccount(self, subject, person, vendorSpecific=None):
         """See Also: updateAccountResponse()
@@ -577,7 +577,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.PUT(['accounts', subject], headers=vendorSpecific)
+        return self.PUT(["accounts", subject], headers=vendorSpecific)
 
     def verifyAccount(self, subject, vendorSpecific=None):
         """See Also: verifyAccountResponse()
@@ -604,7 +604,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['accounts', subject], headers=vendorSpecific)
+        return self.GET(["accounts", subject], headers=vendorSpecific)
 
     def getSubjectInfo(self, subject, vendorSpecific=None):
         """See Also: getSubjectInfoResponse()
@@ -617,7 +617,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.getSubjectInfoResponse(subject, vendorSpecific)
-        return self._read_dataone_type_response(response, 'SubjectInfo')
+        return self._read_dataone_type_response(response, "SubjectInfo")
 
     def listSubjectsResponse(
         self, query, status=None, start=None, count=None, vendorSpecific=None
@@ -636,8 +636,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        url_query = {'status': status, 'start': start, 'count': count, 'query': query}
-        return self.GET('accounts', query=url_query, headers=vendorSpecific)
+        url_query = {"status": status, "start": start, "count": count, "query": query}
+        return self.GET("accounts", query=url_query, headers=vendorSpecific)
 
     def listSubjects(
         self, query, status=None, start=None, count=None, vendorSpecific=None
@@ -657,7 +657,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         response = self.listSubjectsResponse(
             query, status, start, count, vendorSpecific
         )
-        return self._read_dataone_type_response(response, 'SubjectInfo')
+        return self._read_dataone_type_response(response, "SubjectInfo")
 
     def mapIdentityResponse(
         self, primarySubject, secondarySubject, vendorSpecific=None
@@ -675,10 +675,10 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         mmp_dict = {
-            'primarySubject': primarySubject.toxml('utf-8'),
-            'secondarySubject': secondarySubject.toxml('utf-8'),
+            "primarySubject": primarySubject.toxml("utf-8"),
+            "secondarySubject": secondarySubject.toxml("utf-8"),
         }
-        return self.POST(['accounts', 'map'], fields=mmp_dict, headers=vendorSpecific)
+        return self.POST(["accounts", "map"], fields=mmp_dict, headers=vendorSpecific)
 
     def mapIdentity(self, primarySubject, secondarySubject, vendorSpecific=None):
         """See Also: mapIdentityResponse()
@@ -708,7 +708,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.DELETE(['accounts', 'map', subject], headers=vendorSpecific)
+        return self.DELETE(["accounts", "map", subject], headers=vendorSpecific)
 
     def removeMapIdentity(self, subject, vendorSpecific=None):
         """See Also: removeMapIdentityResponse()
@@ -735,7 +735,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.DELETE(['accounts', 'pendingmap', subject], headers=vendorSpecific)
+        return self.DELETE(["accounts", "pendingmap", subject], headers=vendorSpecific)
 
     def denyMapIdentity(self, subject, vendorSpecific=None):
         """See Also: denyMapIdentityResponse()
@@ -762,8 +762,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'subject': subject.toxml('utf-8')}
-        return self.POST('accounts', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"subject": subject.toxml("utf-8")}
+        return self.POST("accounts", fields=mmp_dict, headers=vendorSpecific)
 
     def requestMapIdentity(self, subject, vendorSpecific=None):
         """See Also: requestMapIdentityResponse()
@@ -790,7 +790,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.PUT(['accounts', 'pendingmap', subject], headers=vendorSpecific)
+        return self.PUT(["accounts", "pendingmap", subject], headers=vendorSpecific)
 
     def confirmMapIdentity(self, subject, vendorSpecific=None):
         """See Also: confirmMapIdentityResponse()
@@ -817,8 +817,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'group': ('group.xml', group.toxml('utf-8'))}
-        return self.POST('groups', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"group": ("group.xml", group.toxml("utf-8"))}
+        return self.POST("groups", fields=mmp_dict, headers=vendorSpecific)
 
     def createGroup(self, group, vendorSpecific=None):
         """See Also: createGroupResponse()
@@ -845,8 +845,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'group': ('group.xml', group.toxml('utf-8'))}
-        return self.PUT('groups', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"group": ("group.xml", group.toxml("utf-8"))}
+        return self.PUT("groups", fields=mmp_dict, headers=vendorSpecific)
 
     def updateGroup(self, group, vendorSpecific=None):
         """See Also: updateGroupResponse()
@@ -882,11 +882,11 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'nodeRef': nodeRef, 'status': status}  # .toxml('utf-8'),
+        mmp_dict = {"nodeRef": nodeRef, "status": status}  # .toxml('utf-8'),
         if dataoneError is not None:
-            mmp_dict['failure'] = ('failure.xml', dataoneError.serialize_to_transport())
+            mmp_dict["failure"] = ("failure.xml", dataoneError.serialize_to_transport())
         return self.PUT(
-            ['replicaNotifications', pid], fields=mmp_dict, headers=vendorSpecific
+            ["replicaNotifications", pid], fields=mmp_dict, headers=vendorSpecific
         )
 
     def setReplicationStatus(
@@ -927,11 +927,11 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         mmp_dict = {
-            'replicaMetadata': ('replicaMetadata.xml', replicaMetadata.toxml('utf-8')),
-            'serialVersion': str(serialVersion),
+            "replicaMetadata": ("replicaMetadata.xml", replicaMetadata.toxml("utf-8")),
+            "serialVersion": str(serialVersion),
         }
         return self.PUT(
-            ['replicaMetadata', pid], fields=mmp_dict, headers=vendorSpecific
+            ["replicaMetadata", pid], fields=mmp_dict, headers=vendorSpecific
         )
 
     def updateReplicationMetadata(
@@ -970,11 +970,11 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
 
         """
         mmp_dict = {
-            'policy': ('policy.xml', policy.toxml('utf-8')),
-            'serialVersion': (str(serialVersion)),
+            "policy": ("policy.xml", policy.toxml("utf-8")),
+            "serialVersion": (str(serialVersion)),
         }
         return self.PUT(
-            ['replicaPolicies', pid], fields=mmp_dict, headers=vendorSpecific
+            ["replicaPolicies", pid], fields=mmp_dict, headers=vendorSpecific
         )
 
     def setReplicationPolicy(self, pid, policy, serialVersion, vendorSpecific=None):
@@ -1009,9 +1009,9 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        query_dict = {'targetNodeSubject': targetNodeSubject}
+        query_dict = {"targetNodeSubject": targetNodeSubject}
         return self.GET(
-            ['replicaAuthorizations', pid], query=query_dict, headers=vendorSpecific
+            ["replicaAuthorizations", pid], query=query_dict, headers=vendorSpecific
         )
 
     def isNodeAuthorized(self, targetNodeSubject, pid, vendorSpecific=None):
@@ -1045,9 +1045,9 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'nodeId': nodeId, 'serialVersion': str(serialVersion)}
+        mmp_dict = {"nodeId": nodeId, "serialVersion": str(serialVersion)}
         return self.PUT(
-            ['removeReplicaMetadata', pid], fields=mmp_dict, headers=vendorSpecific
+            ["removeReplicaMetadata", pid], fields=mmp_dict, headers=vendorSpecific
         )
 
     def deleteReplicationMetadata(
@@ -1086,8 +1086,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'node': ('node.xml', node.toxml('utf-8'))}
-        return self.PUT(['node', nodeId], fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"node": ("node.xml", node.toxml("utf-8"))}
+        return self.PUT(["node", nodeId], fields=mmp_dict, headers=vendorSpecific)
 
     def updateNodeCapabilities(self, nodeId, node, vendorSpecific=None):
         """See Also: updateNodeCapabilitiesResponse()
@@ -1115,8 +1115,8 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        mmp_dict = {'node': ('node.xml', node.toxml('utf-8'))}
-        return self.POST('node', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"node": ("node.xml", node.toxml("utf-8"))}
+        return self.POST("node", fields=mmp_dict, headers=vendorSpecific)
 
     def register(self, node, vendorSpecific=None):
         """See Also: registerResponse()

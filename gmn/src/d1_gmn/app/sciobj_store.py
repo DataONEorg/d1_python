@@ -45,7 +45,7 @@ import d1_common.utils.filesystem
 
 import django.conf
 
-SCIOBJ_JSON_NAME = 'gmn_object_store.json'
+SCIOBJ_JSON_NAME = "gmn_object_store.json"
 
 # http://en.wikipedia.org/wiki/File_URI_scheme
 #
@@ -53,7 +53,7 @@ SCIOBJ_JSON_NAME = 'gmn_object_store.json'
 # paths in the database. However, The file URI scheme does not support relative
 # paths, so we use a magic value in the host part of the URI to designate paths
 # that are relative to the path set in settings.OBJECT_STORE_PATH.
-RELATIVE_PATH_MAGIC_HOST_STR = 'gmn-object-store'
+RELATIVE_PATH_MAGIC_HOST_STR = "gmn-object-store"
 
 # Default location
 
@@ -102,7 +102,7 @@ def open_sciobj_file_by_path_ctx(abs_path, write=False):
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
     try:
-        with open(abs_path, 'wb' if write else 'rb') as sciobj_file:
+        with open(abs_path, "wb" if write else "rb") as sciobj_file:
             yield sciobj_file
     finally:
         if os.path.exists(abs_path) and not os.path.getsize(abs_path):
@@ -151,7 +151,7 @@ def open_sciobj_file_by_path(abs_path, write=False):
     """
     if write:
         d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
-    return open(abs_path, 'wb' if write else 'rb')
+    return open(abs_path, "wb" if write else "rb")
 
 
 def get_rel_sciobj_file_path(pid):
@@ -164,7 +164,7 @@ def get_rel_sciobj_file_path(pid):
     - The path may or may not exist (yet).
 
     """
-    hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
+    hash_str = hashlib.sha1(pid.encode("utf-8")).hexdigest()
     return os.path.join(hash_str[:2], hash_str[2:4], hash_str)
 
 
@@ -207,7 +207,7 @@ def assert_sciobj_store_exists():
     if not is_existing_store():
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'Science object store does not exist. '
+            "Science object store does not exist. "
             'store_path="{}"'.format(django.conf.settings.OBJECT_STORE_PATH),
         )
 
@@ -216,7 +216,7 @@ def assert_sciobj_store_does_not_exist():
     if is_existing_store():
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'Science object store already exists. '
+            "Science object store already exists. "
             'store_path="{}"'.format(django.conf.settings.OBJECT_STORE_PATH),
         )
 
@@ -235,7 +235,7 @@ def is_existing_sciobj_file(pid):
 def get_rel_sciobj_file_url_by_pid(pid):
     """Get the URL that will be stored in the database for a SciObj that is saved in
     GMN's SciObj filesystem hierarchy below settings.OBJECT_STORE_PATH."""
-    return 'file://{}/{}'.format(
+    return "file://{}/{}".format(
         RELATIVE_PATH_MAGIC_HOST_STR, get_rel_sciobj_file_path(pid)
     )
 
@@ -244,7 +244,7 @@ def get_abs_sciobj_file_url(abs_sciobj_file_path):
     """Get the URL that will be stored in the database for a SciObj that is saved in a
     custom location outside of GMN's SciObj filesystem hierarchy."""
     assert os.path.isabs(abs_sciobj_file_path)
-    return 'file:///{}'.format(abs_sciobj_file_path)
+    return "file:///{}".format(abs_sciobj_file_path)
 
 
 def get_abs_sciobj_file_path_by_url(file_url):
@@ -254,7 +254,7 @@ def get_abs_sciobj_file_path_by_url(file_url):
 
     """
     assert_sciobj_store_exists()
-    m = re.match(r'file://(.*?)/(.*)', file_url, re.IGNORECASE)
+    m = re.match(r"file://(.*?)/(.*)", file_url, re.IGNORECASE)
     if m.group(1) == RELATIVE_PATH_MAGIC_HOST_STR:
         return os.path.join(get_abs_sciobj_store_path(), m.group(2))
     assert os.path.isabs(m.group(2))
@@ -265,7 +265,7 @@ def get_abs_sciobj_file_path_by_url(file_url):
 
 
 def get_gmn_version():
-    return [int(re.sub(r'\D', '', x)) for x in d1_gmn.__version__.split('.')]
+    return [int(re.sub(r"\D", "", x)) for x in d1_gmn.__version__.split(".")]
 
 
 def is_matching_version():
@@ -278,13 +278,13 @@ def is_lower_version():
 
 def is_store_subdir(dir_path):
     return bool(
-        re.match(r'[\da-f]', os.path.basename(dir_path), re.IGNORECASE)
+        re.match(r"[\da-f]", os.path.basename(dir_path), re.IGNORECASE)
     ) and os.path.isdir(dir_path)
 
 
 def get_store_version():
     try:
-        return d1_common.util.load_json(get_store_version_path())['version']
+        return d1_common.util.load_json(get_store_version_path())["version"]
     except EnvironmentError:
         return 1, 0, 0
 
@@ -293,8 +293,8 @@ def save_store_version():
     try:
         d1_common.util.save_json(
             {
-                'note': 'DataONE Generic Member Node (GMN) science object storage tree',
-                'version': get_gmn_version(),
+                "note": "DataONE Generic Member Node (GMN) science object storage tree",
+                "version": get_gmn_version(),
             },
             get_store_version_path(),
         )
@@ -322,14 +322,14 @@ def is_empty():
 
 
 def is_tmp():
-    return get_abs_sciobj_store_path().startswith('/tmp/')
+    return get_abs_sciobj_store_path().startswith("/tmp/")
 
 
 def assert_sciobj_store_version_match():
     if not is_matching_version():
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'Attempted to modify non-matching filesystem store version. '
+            "Attempted to modify non-matching filesystem store version. "
             'store="{}" gmn="{}" store_path="{}"'.format(
                 get_store_version(), get_gmn_version(), get_store_version_path()
             ),
@@ -346,7 +346,7 @@ def assert_sciobj_store_version_match():
 
 def delete_sciobj(url_split, pid):
     assert_sciobj_store_version_match()
-    if not url_split.scheme == 'file':
+    if not url_split.scheme == "file":
         return
     sciobj_path = get_abs_sciobj_file_path_by_pid(pid)
     try:

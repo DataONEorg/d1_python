@@ -40,11 +40,12 @@ import redbaron
 
 import d1_dev.util
 
+import d1_common.date_time
 import d1_common.iter.path
 import d1_common.util
 
 # Single line comments containing these strings will not be removed.
-KEEP_COMMENTS = ['noqa', 'noinspection']
+KEEP_COMMENTS = ["noqa", "noinspection"]
 
 COPYRIGHT_NOTICE = """\
 
@@ -74,37 +75,37 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--include', nargs='+', help='Include glob patterns')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
+    parser.add_argument("--include", nargs="+", help="Include glob patterns")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--no-default-excludes',
-        dest='default_excludes',
-        action='store_false',
-        help='Don\'t add default glob exclude patterns',
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
     )
     parser.add_argument(
-        '--diff',
-        dest='show_diff',
-        action='store_true',
-        help='Show diff and do not modify any files',
+        "--diff",
+        dest="show_diff",
+        action="store_true",
+        help="Show diff and do not modify any files",
     )
     parser.add_argument(
-        '--update',
-        action='store_true',
-        help='Apply the updates to the original files. By default, no files are '
-        'changed.',
+        "--update",
+        action="store_true",
+        help="Apply the updates to the original files. By default, no files are "
+        "changed.",
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
 
@@ -114,7 +115,7 @@ def main():
 
     for module_path in d1_common.iter.path.path_generator(
         path_list=args.path,
-        include_glob_list=['*.py'] if not args.include else args.include,
+        include_glob_list=["*.py"] if not args.include else args.include,
         exclude_glob_list=args.exclude,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
@@ -123,7 +124,7 @@ def main():
         try:
             is_cleaned = clean_module(module_path, args.show_diff, args.update)
             if is_cleaned:
-                event_counter.count('Cleaned files')
+                event_counter.count("Cleaned files")
 
             # is_futurized = futurize_module(module_path, args.show_diff, args.update)
             # if is_futurized:
@@ -170,15 +171,15 @@ def futurize_module(module_path, show_diff, write_update):
 
 def _remove_single_line_import_comments(r):
     """We previously used more groups for the import statements and named each group."""
-    logging.info('Removing single line import comments')
+    logging.info("Removing single line import comments")
     import_r, remaining_r = split_by_last_import(r)
     new_import_r = redbaron.NodeList()
     for i, v in enumerate(import_r):
         if 1 < i < len(import_r) - 2:
             if not (
-                import_r[i - 2].type != 'comment'
-                and v.type == 'comment'
-                and import_r[i + 2].type != 'comment'
+                import_r[i - 2].type != "comment"
+                and v.type == "comment"
+                and import_r[i + 2].type != "comment"
             ) or _is_keep_comment(v):
                 new_import_r.append(v)
         else:
@@ -196,11 +197,11 @@ def _is_keep_comment(r):
 
 def _remove_module_level_docstrs_in_unit_tests(r):
     """We previously used more groups for the import statements and named each group."""
-    logging.info('Removing module level docstrs in tests')
+    logging.info("Removing module level docstrs in tests")
     new_r = redbaron.NodeList()
     first = True
     for v in r.node_list:
-        if v.type == 'string' and first:
+        if v.type == "string" and first:
             first = False
         else:
             new_r.append(v)
@@ -208,9 +209,9 @@ def _remove_module_level_docstrs_in_unit_tests(r):
 
 
 def split_by_last_import(r):
-    import_node_list = r('ImportNode', recursive=False)
+    import_node_list = r("ImportNode", recursive=False)
     if not import_node_list:
-        return redbaron.RedBaron('').node_list, r.node_list
+        return redbaron.RedBaron("").node_list, r.node_list
     last_import_n = import_node_list[-1]
     import_r = r.node_list[: last_import_n.index_on_parent_raw + 1]
     remaining_r = r.node_list[last_import_n.index_on_parent_raw + 1 :]
@@ -227,19 +228,19 @@ def _add_absolute_import(r):
     new_r = redbaron.NodeList()
     first = True
     for v in r.node_list:
-        if v.type == 'import' and first:
+        if v.type == "import" and first:
             first = False
-            new_r.append(redbaron.RedBaron('from __future__ import absolute_import\n'))
+            new_r.append(redbaron.RedBaron("from __future__ import absolute_import\n"))
         new_r.append(v)
     return new_r
 
 
 def has_future_absolute_import(r):
-    import_node_list = r('FromImportNode', recursive=False)
+    import_node_list = r("FromImportNode", recursive=False)
     return any(
         [
-            rr.value[0].value == '__future__'
-            and 'absolute_import' in [v.value for v in rr.targets]
+            rr.value[0].value == "__future__"
+            and "absolute_import" in [v.value for v in rr.targets]
             for rr in import_node_list
             if rr.value
         ]
@@ -251,36 +252,36 @@ def has_future_absolute_import(r):
 # projects that are happy to drop support for Py2.5 and below. Applying
 # them first will reduce the size of the patch set for the real porting.
 lib2to3_fix_names_stage1 = {
-    'lib2to3.fixes.fix_apply',
-    'lib2to3.fixes.fix_except',
-    'lib2to3.fixes.fix_exec',
-    'lib2to3.fixes.fix_exitfunc',
-    'lib2to3.fixes.fix_funcattrs',
-    'lib2to3.fixes.fix_has_key',
-    'lib2to3.fixes.fix_idioms',
-    'lib2to3.fixes.fix_intern',
-    'lib2to3.fixes.fix_isinstance',
-    'lib2to3.fixes.fix_methodattrs',
-    'lib2to3.fixes.fix_ne',
-    'lib2to3.fixes.fix_numliterals',
-    'lib2to3.fixes.fix_paren',
-    'lib2to3.fixes.fix_reduce',
-    'lib2to3.fixes.fix_renames',
-    'lib2to3.fixes.fix_repr',
-    'lib2to3.fixes.fix_standarderror',
-    'lib2to3.fixes.fix_sys_exc',
-    'lib2to3.fixes.fix_throw',
-    'lib2to3.fixes.fix_tuple_params',
-    'lib2to3.fixes.fix_types',
-    'lib2to3.fixes.fix_ws_comma',
-    'lib2to3.fixes.fix_xreadlines',
+    "lib2to3.fixes.fix_apply",
+    "lib2to3.fixes.fix_except",
+    "lib2to3.fixes.fix_exec",
+    "lib2to3.fixes.fix_exitfunc",
+    "lib2to3.fixes.fix_funcattrs",
+    "lib2to3.fixes.fix_has_key",
+    "lib2to3.fixes.fix_idioms",
+    "lib2to3.fixes.fix_intern",
+    "lib2to3.fixes.fix_isinstance",
+    "lib2to3.fixes.fix_methodattrs",
+    "lib2to3.fixes.fix_ne",
+    "lib2to3.fixes.fix_numliterals",
+    "lib2to3.fixes.fix_paren",
+    "lib2to3.fixes.fix_reduce",
+    "lib2to3.fixes.fix_renames",
+    "lib2to3.fixes.fix_repr",
+    "lib2to3.fixes.fix_standarderror",
+    "lib2to3.fixes.fix_sys_exc",
+    "lib2to3.fixes.fix_throw",
+    "lib2to3.fixes.fix_tuple_params",
+    "lib2to3.fixes.fix_types",
+    "lib2to3.fixes.fix_ws_comma",
+    "lib2to3.fixes.fix_xreadlines",
 }
 
 libfuturize_fix_names_stage1 = {
-    'libfuturize.fixes.fix_absolute_import',
-    'libfuturize.fixes.fix_next_call',
-    'libfuturize.fixes.fix_print_with_import',
-    'libfuturize.fixes.fix_raise',
+    "libfuturize.fixes.fix_absolute_import",
+    "libfuturize.fixes.fix_next_call",
+    "libfuturize.fixes.fix_print_with_import",
+    "libfuturize.fixes.fix_raise",
 }
 
 
@@ -289,11 +290,11 @@ def back_to_the_futurize(module_path):
     mt = lib2to3.refactor.MultiprocessRefactoringTool(
         fixer_names=sorted(fixer_names_set)
     )
-    with open(module_path, 'rb') as f:
+    with open(module_path, "rb") as f:
         module_str = f.read()
-    tree = mt.refactor_string(module_str, 'urk')
+    tree = mt.refactor_string(module_str, "urk")
     if mt.errors:
-        raise ValueError('lib2to3 refactor error')
+        raise ValueError("lib2to3 refactor error")
     # mt.summarize()
     return tree
 
@@ -304,9 +305,9 @@ def _update_init_all(module_path, r):
     module_list = []
     for item_name in os.listdir(module_dir_path):
         item_path = os.path.join(module_dir_path, item_name)
-        if os.path.isfile(item_path) and item_name in ('__init__.py', 'setup.py'):
+        if os.path.isfile(item_path) and item_name in ("__init__.py", "setup.py"):
             continue
-        if os.path.isfile(item_path) and not item_name.endswith('.py'):
+        if os.path.isfile(item_path) and not item_name.endswith(".py"):
             continue
         # if os.path.isdir(item_path) and not os.path.isfile(
         #     os.path.join(item_path, '__init__.py')
@@ -314,17 +315,17 @@ def _update_init_all(module_path, r):
         #   continue
         if os.path.isdir(item_path):
             continue
-        module_list.append(re.sub(r'.py$', '', item_name).encode('utf-8'))
+        module_list.append(re.sub(r".py$", "", item_name).encode("utf-8"))
     module_literal_str = str(sorted(module_list))
 
-    assignment_node_list = r('AssignmentNode', recursive=False)
+    assignment_node_list = r("AssignmentNode", recursive=False)
     for n in assignment_node_list:
-        if n.type == 'assignment' and n.target.value == '__all__':
+        if n.type == "assignment" and n.target.value == "__all__":
             n.value = module_literal_str
             break
     else:
         r.node_list.append(
-            redbaron.RedBaron('__all__ = {}\n'.format(module_literal_str))
+            redbaron.RedBaron("__all__ = {}\n".format(module_literal_str))
         )
     return r
 
@@ -333,7 +334,7 @@ def _remove_init_all(r):
     """Remove any __all__ in __init__.py file."""
     new_r = redbaron.NodeList()
     for n in r.node_list:
-        if n.type == 'assignment' and n.target.value == '__all__':
+        if n.type == "assignment" and n.target.value == "__all__":
             pass
         else:
             new_r.append(n)
@@ -342,12 +343,12 @@ def _remove_init_all(r):
 
 def _insert_copyright_header(r):
     for i, n in enumerate(r.node_list):
-        if n.type == 'comment' and re.search(r'Copyright.*DataONE', n.value):
+        if n.type == "comment" and re.search(r"Copyright.*DataONE", n.value):
             return r
-    logging.info('Adding copyright header')
+    logging.info("Adding copyright header")
     i = 0
-    for n in r('CommentNode', recursive=False)[:3]:
-        if n.value.startswith('#!') or 'coding' in n.value:
+    for n in r("CommentNode", recursive=False)[:3]:
+        if n.value.startswith("#!") or "coding" in n.value:
             # Skip endl node.
             i = n.index_on_parent_raw + 2
     r.node_list.insert(
@@ -357,5 +358,5 @@ def _insert_copyright_header(r):
     return r
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

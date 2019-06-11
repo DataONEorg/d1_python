@@ -56,11 +56,11 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getCapabilities
 
     def getCapabilitiesResponse(self, vendorSpecific=None):
-        return self.GET('node', headers=vendorSpecific)
+        return self.GET("node", headers=vendorSpecific)
 
     def getCapabilities(self, vendorSpecific=None):
         response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 'Node')
+        return self._read_dataone_type_response(response, "Node")
 
     # ============================================================================
     # MNRead
@@ -70,19 +70,19 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getChecksum
 
     def getChecksumResponse(self, pid, checksumAlgorithm=None, vendorSpecific=None):
-        query = {'checksumAlgorithm': checksumAlgorithm}
-        return self.GET(['checksum', pid], query=query, headers=vendorSpecific)
+        query = {"checksumAlgorithm": checksumAlgorithm}
+        return self.GET(["checksum", pid], query=query, headers=vendorSpecific)
 
     def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
         response = self.getChecksumResponse(pid, checksumAlgorithm, vendorSpecific)
-        return self._read_dataone_type_response(response, 'Checksum')
+        return self._read_dataone_type_response(response, "Checksum")
 
     # MNRead.synchronizationFailed(session, message) → Boolean
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.synchronizationFailed
 
     def synchronizationFailedResponse(self, message, vendorSpecific=None):
-        mmp_dict = {'message': ('message', message)}
-        return self.POST('error', fields=mmp_dict, headers=vendorSpecific)
+        mmp_dict = {"message": ("message", message)}
+        return self.POST("error", fields=mmp_dict, headers=vendorSpecific)
 
     def synchronizationFailed(self, message, vendorSpecific=None):
         response = self.synchronizationFailedResponse(message, vendorSpecific)
@@ -97,45 +97,45 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
 
     def createResponse(self, pid, obj, sysmeta_pyxb, vendorSpecific=None):
         mmp_dict = {
-            'pid': pid.encode('utf-8'),
-            'object': ('content.bin', obj),
-            'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+            "pid": pid.encode("utf-8"),
+            "object": ("content.bin", obj),
+            "sysmeta": ("sysmeta.xml", sysmeta_pyxb.toxml("utf-8")),
         }
-        return self.POST('object', fields=mmp_dict, headers=vendorSpecific)
+        return self.POST("object", fields=mmp_dict, headers=vendorSpecific)
 
     def create(self, pid, obj, sysmeta_pyxb, vendorSpecific=None):
         response = self.createResponse(
             pid, obj, sysmeta_pyxb, vendorSpecific=vendorSpecific
         )
-        return self._read_dataone_type_response(response, 'Identifier')
+        return self._read_dataone_type_response(response, "Identifier")
 
     # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.update
 
     def updateResponse(self, pid, obj, newPid, sysmeta_pyxb, vendorSpecific=None):
         mmp_dict = {
-            'newPid': newPid.encode('utf-8'),
-            'object': ('content.bin', obj),
-            'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+            "newPid": newPid.encode("utf-8"),
+            "object": ("content.bin", obj),
+            "sysmeta": ("sysmeta.xml", sysmeta_pyxb.toxml("utf-8")),
         }
-        return self.PUT(['object', pid], fields=mmp_dict, headers=vendorSpecific)
+        return self.PUT(["object", pid], fields=mmp_dict, headers=vendorSpecific)
 
     def update(self, pid, obj, newPid, sysmeta_pyxb, vendorSpecific=None):
         response = self.updateResponse(
             pid, obj, newPid, sysmeta_pyxb, vendorSpecific=vendorSpecific
         )
-        return self._read_dataone_type_response(response, 'Identifier')
+        return self._read_dataone_type_response(response, "Identifier")
 
     # MNStorage.delete(session, pid) → Identifier
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.delete
 
     def deleteResponse(self, pid, vendorSpecific=None):
-        response = self.DELETE(['object', pid], headers=vendorSpecific)
+        response = self.DELETE(["object", pid], headers=vendorSpecific)
         return response
 
     def delete(self, pid, vendorSpecific=None):
         response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 'Identifier')
+        return self._read_dataone_type_response(response, "Identifier")
 
     # MNStorage.systemMetadataChanged(session, pid, serialVersion, dateSysMetaLastModified) → boolean
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNStorage.systemMetadataChanged
@@ -144,13 +144,13 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
         self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
     ):
         mmp_dict = {
-            'pid': pid.encode('utf-8'),
-            'serialVersion': str(serialVersion),
-            'dateSysMetaLastModified': d1_common.date_time.xsd_datetime_str_from_dt(
+            "pid": pid.encode("utf-8"),
+            "serialVersion": str(serialVersion),
+            "dateSysMetaLastModified": d1_common.date_time.xsd_datetime_str_from_dt(
                 dateSysMetaLastModified
             ),
         }
-        return self.POST('dirtySystemMetadata', fields=mmp_dict, headers=vendorSpecific)
+        return self.POST("dirtySystemMetadata", fields=mmp_dict, headers=vendorSpecific)
 
     def systemMetadataChanged(
         self, pid, serialVersion, dateSysMetaLastModified, vendorSpecific=None
@@ -169,10 +169,10 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
 
     def replicateResponse(self, sysmeta_pyxb, sourceNode, vendorSpecific=None):
         mmp_dict = {
-            'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
-            'sourceNode': sourceNode.encode('utf-8'),
+            "sysmeta": ("sysmeta.xml", sysmeta_pyxb.toxml("utf-8")),
+            "sourceNode": sourceNode.encode("utf-8"),
         }
-        return self.POST('replicate', fields=mmp_dict, headers=vendorSpecific)
+        return self.POST("replicate", fields=mmp_dict, headers=vendorSpecific)
 
     def replicate(self, sysmeta_pyxb, sourceNode, vendorSpecific=None):
         response = self.replicateResponse(sysmeta_pyxb, sourceNode, vendorSpecific)
@@ -182,7 +182,7 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.getReplica
 
     def getReplicaResponse(self, pid, vendorSpecific=None):
-        return self.GET(['replica', pid], headers=vendorSpecific)
+        return self.GET(["replica", pid], headers=vendorSpecific)
 
     def getReplica(self, pid, vendorSpecific=None):
         response = self.getReplicaResponse(pid, vendorSpecific)

@@ -32,23 +32,23 @@ def pem_in_string_to_pem_in_http_header(pem_str):
     header = io.StringIO()
     for pem_line in pem:
         pem_line = pem_line.strip()
-        if pem_line.startswith('-'):
+        if pem_line.startswith("-"):
             continue
         header.write(pem_line)
     pem_header = header.getvalue()
     if len(pem_header) > 8190:
-        raise Exception('PEM certificate is too large for HTTP header')
+        raise Exception("PEM certificate is too large for HTTP header")
     return pem_header
 
 
 def pem_in_http_header_to_pem_in_string(header_str):
     header = io.StringIO(header_str)
     pem = io.StringIO()
-    pem.write('-----BEGIN CERTIFICATE-----\n')
+    pem.write("-----BEGIN CERTIFICATE-----\n")
     while True:
         pem_line = header.read(64)
         if len(pem_line) == 0:
             break
-        pem.write(pem_line + '\n')
-    pem.write('-----END CERTIFICATE-----\n')
+        pem.write(pem_line + "\n")
+    pem.write("-----END CERTIFICATE-----\n")
     return pem.getvalue()

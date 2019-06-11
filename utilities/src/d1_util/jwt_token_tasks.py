@@ -47,30 +47,30 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     d1_common.util.log_setup(True)
@@ -87,7 +87,7 @@ def validate_and_decode(jwt_bu64, cert_obj):
 
     """
     public_key = cert_obj.public_key()
-    message = '.'.join(d1_common.cert.jwt.get_bu64_tup(jwt_bu64)[:2])
+    message = ".".join(d1_common.cert.jwt.get_bu64_tup(jwt_bu64)[:2])
     signature = d1_common.cert.jwt.get_jwt_tup(jwt_bu64)[2]
     try:
         public_key.verify(
@@ -106,11 +106,11 @@ def find_valid_combinations(cert_file_name_list, jwt_file_name_list):
     along with indicators for combinations where the JWT signature was successfully
     validated with the cert."""
     for cert_file_name in cert_file_name_list:
-        cert_pem = ''  # self.test_files.load_utf8_to_str(cert_file_name)
+        cert_pem = ""  # self.test_files.load_utf8_to_str(cert_file_name)
         cert_obj = d1_common.cert.x509.deserialize_pem(cert_pem)
         # d1_common.cert.x509.log_cert_info(logging.info, 'CERT', cert_obj)
         for jwt_file_name in jwt_file_name_list:
-            jwt_bu64 = ''  # self.test_files.load_utf8_to_str(jwt_file_name)
+            jwt_bu64 = ""  # self.test_files.load_utf8_to_str(jwt_file_name)
             # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
             is_ok = False
             try:
@@ -120,8 +120,8 @@ def find_valid_combinations(cert_file_name_list, jwt_file_name_list):
             else:
                 is_ok = True
             logging.info(
-                '{} {} {}'.format(
-                    '***' if is_ok else '   ', cert_file_name, jwt_file_name
+                "{} {} {}".format(
+                    "***" if is_ok else "   ", cert_file_name, jwt_file_name
                 )
             )
 
@@ -131,21 +131,21 @@ def download_cn_certs():
         cert_obj = d1_common.cert.x509.download_as_obj(base_url)
         cert_file_name = filename_from_cert_obj(cert_obj)
         cert_pem = d1_common.cert.x509.serialize_cert_to_pem(cert_obj)
-        cert_file_path = os.path.join('out', cert_file_name)
-        with open(cert_file_path, 'wb') as f:
+        cert_file_path = os.path.join("out", cert_file_name)
+        with open(cert_file_path, "wb") as f:
             f.write(cert_pem)
 
-    d(d1_common.env.get_d1_env('prod')['base_url'])
-    d(d1_common.env.get_d1_env('stage')['base_url'])
+    d(d1_common.env.get_d1_env("prod")["base_url"])
+    d(d1_common.env.get_d1_env("stage")["base_url"])
 
 
 def jwt_cleanup():
     already_have_set = set()
-    cmd_list = ['locate', '--regex', '.*(token|base64).*']
+    cmd_list = ["locate", "--regex", ".*(token|base64).*"]
     jwt_path_list = subprocess.check_output(cmd_list).splitlines()
     for jwt_path in jwt_path_list:
         try:
-            with open(jwt_path, 'rb') as f:
+            with open(jwt_path, "rb") as f:
                 jwt_bu64 = f.read().strip()
         except EnvironmentError:
             continue
@@ -156,31 +156,31 @@ def jwt_cleanup():
             logging.info(str(e))
             continue
 
-        d1_common.cert.jwt.log_jwt_dict_info(logging.info, 'Found JWT', jwt_dict)
+        d1_common.cert.jwt.log_jwt_dict_info(logging.info, "Found JWT", jwt_dict)
 
-        if jwt_dict['_sig_sha1'] in already_have_set:
+        if jwt_dict["_sig_sha1"] in already_have_set:
             os.unlink(jwt_path)
-            logging.info('Deleted: {}'.format(jwt_path))
+            logging.info("Deleted: {}".format(jwt_path))
         else:
-            already_have_set.add(jwt_dict['_sig_sha1'])
+            already_have_set.add(jwt_dict["_sig_sha1"])
             d1_common.cert.jwt.ts_to_str(jwt_dict)
-            new_path = 'jwt_token_{}.base64'.format(
-                re.sub(r'[:-]', '', jwt_dict['iat']).replace(' ', '_')
+            new_path = "jwt_token_{}.base64".format(
+                re.sub(r"[:-]", "", jwt_dict["iat"]).replace(" ", "_")
             )
             shutil.move(jwt_path, new_path)
-            logging.info('Moved {} -> {}'.format(jwt_path, new_path))
+            logging.info("Moved {} -> {}".format(jwt_path, new_path))
 
 
 def cert_cleanup():
     already_have_set = set()
-    cmd_list = ['locate', '--regex', '^/home/dahl/.*(pem|key|cert|crt|).*']
+    cmd_list = ["locate", "--regex", "^/home/dahl/.*(pem|key|cert|crt|).*"]
     cert_path_list = subprocess.check_output(cmd_list).splitlines()
     for cert_path in cert_path_list:
         if not os.path.isfile(cert_path) or os.path.getsize(cert_path) > 10 * 1024 ** 2:
             continue
 
         try:
-            with open(cert_path, 'rb') as f:
+            with open(cert_path, "rb") as f:
                 cert_pem = f.read().strip()
         except EnvironmentError:
             continue
@@ -190,31 +190,31 @@ def cert_cleanup():
         except (TypeError, ValueError):
             continue
 
-        d1_common.cert.x509.log_cert_info(logging.info, 'Found cert', cert_obj)
+        d1_common.cert.x509.log_cert_info(logging.info, "Found cert", cert_obj)
 
         new_name = filename_from_cert_obj(cert_obj)
 
         if new_name in already_have_set:
-            logging.info('Already have: {}'.format(new_name))
+            logging.info("Already have: {}".format(new_name))
             continue
 
         already_have_set.add(new_name)
-        new_path = os.path.join('pem', new_name)
+        new_path = os.path.join("pem", new_name)
         shutil.copy(cert_path, new_path)
-        logging.info('{} -> {}'.format(cert_path, new_path))
+        logging.info("{} -> {}".format(cert_path, new_path))
 
 
 def filename_from_cert_obj(cert_obj):
-    subject_str = d1_common.cert.x509._get_val_str(cert_obj, ['subject', 'value'])
-    subject_str = re.sub(r'\W+', '_', subject_str.lower())
+    subject_str = d1_common.cert.x509._get_val_str(cert_obj, ["subject", "value"])
+    subject_str = re.sub(r"\W+", "_", subject_str.lower())
     not_valid_before_str = re.sub(
-        r'[:-]', '', cert_obj.not_valid_before.isoformat().replace('T', '_')
+        r"[:-]", "", cert_obj.not_valid_before.isoformat().replace("T", "_")
     )
     # not_valid_after_str = re.sub(r'[:-]', '',
     # cert_obj.not_valid_after.isoformat().replace('T', '_'))
-    new_name = 'cert_{}_{}.pem'.format(subject_str, not_valid_before_str)
+    new_name = "cert_{}_{}.pem".format(subject_str, not_valid_before_str)
     return new_name
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

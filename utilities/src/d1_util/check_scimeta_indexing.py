@@ -49,44 +49,44 @@ import d1_test.instance_generator.system_metadata
 
 import d1_client.cnclient_2_0
 
-DEFAULT_FORMAT_ID = 'http://www.isotc211.org/2005/gmd'
+DEFAULT_FORMAT_ID = "http://www.isotc211.org/2005/gmd"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('path', help='Path to science metadata file')
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("path", help="Path to science metadata file")
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
 
@@ -100,27 +100,27 @@ def main():
         cn_client,
         args.path,
         {
-            'identifier': 'test_pid',
-            'formatId': 'http://www.isotc211.org/2005/gmd',
-            'accessPolicy': None,
-            'replicationPolicy': None,
-            'obsoletes': None,
-            'obsoletedBy': None,
-            'archived': None,
-            'replica': None,
-            'mediaType': None,
+            "identifier": "test_pid",
+            "formatId": "http://www.isotc211.org/2005/gmd",
+            "accessPolicy": None,
+            "replicationPolicy": None,
+            "obsoletes": None,
+            "obsoletedBy": None,
+            "archived": None,
+            "replica": None,
+            "mediaType": None,
         },
     )
 
-    with open(args.path, 'rb') as f:
+    with open(args.path, "rb") as f:
         sciobj_bytes = f.read()
 
     response = cn_client.echoIndexedObject(
-        'solr', sysmeta_pyxb, io.BytesIO(sciobj_bytes)
+        "solr", sysmeta_pyxb, io.BytesIO(sciobj_bytes)
     )
 
     print(d1_common.xml.reformat_to_pretty_xml(response.content))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

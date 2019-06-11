@@ -68,7 +68,7 @@ class UTC(datetime.tzinfo):
         str: "UTC"
 
         """
-        return 'UTC'
+        return "UTC"
 
     def dst(self, dt=None):
         """Args: dt: Ignored.
@@ -107,7 +107,7 @@ class FixedOffset(datetime.tzinfo):
         self.__name = name
 
     def __repr__(self):
-        return '{} {}'.format(str(self.__offset), self.__name)
+        return "{} {}".format(str(self.__offset), self.__name)
 
     def utcoffset(self, dt):
         """Args: dt: Ignored.
@@ -232,9 +232,9 @@ def are_equal(a_dt, b_dt, round_sec=1):
     """
     ra_dt = round_to_nearest(a_dt, round_sec)
     rb_dt = round_to_nearest(b_dt, round_sec)
-    logger.debug('Rounded:')
-    logger.debug('{} -> {}'.format(a_dt, ra_dt))
-    logger.debug('{} -> {}'.format(b_dt, rb_dt))
+    logger.debug("Rounded:")
+    logger.debug("{} -> {}".format(a_dt, ra_dt))
+    logger.debug("{} -> {}".format(b_dt, rb_dt))
     return normalize_datetime_to_utc(ra_dt) == normalize_datetime_to_utc(rb_dt)
 
 
@@ -333,7 +333,7 @@ def xsd_datetime_str_from_dt(dt):
         be on the form ``YYYY-MM-DDTHH:MM:SS.mmm+00:00``.
 
     """
-    return dt.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00')
+    return dt.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
 
 
 def dt_from_http_datetime_str(http_full_datetime):

@@ -30,10 +30,10 @@ import d1_test.d1_test_case
 
 # TODO:
 @pytest.mark.skip('Disabled until move to "diag" mgmt cmd completed')
-@d1_test.d1_test_case.reproducible_random_decorator('TestMgmtFixChains')
+@d1_test.d1_test_case.reproducible_random_decorator("TestMgmtFixChains")
 class TestMgmtFixChains(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def _call_diag_repair_revision_chains(self):
-        self.call_management_command('diag_repair_revision_chains')
+        self.call_management_command("diag_repair_revision_chains")
 
     def _get_rev_list(self):
         return [
@@ -42,7 +42,7 @@ class TestMgmtFixChains(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 v.obsoleted_by.did if v.obsoleted_by else None,
                 v.obsoletes.did if v.obsoletes else None,
             )
-            for v in d1_gmn.app.models.ScienceObject.objects.order_by('pid__did')
+            for v in d1_gmn.app.models.ScienceObject.objects.order_by("pid__did")
         ]
 
     def test_1000(self):

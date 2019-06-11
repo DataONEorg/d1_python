@@ -29,36 +29,36 @@ def main():
     # Command line options.
     parser = optparse.OptionParser()
     parser.add_option(
-        '--schemas',
-        dest='schema_dir',
-        action='store',
-        type='string',
-        default='./d1_common/types/schemas',
+        "--schemas",
+        dest="schema_dir",
+        action="store",
+        type="string",
+        default="./d1_common/types/schemas",
     )
     parser.add_option(
-        '--pyxb_binding',
-        dest='binding_dir',
-        action='store',
-        type='string',
-        default='./d1_common/types/generated',
+        "--pyxb_binding",
+        dest="binding_dir",
+        action="store",
+        type="string",
+        default="./d1_common/types/generated",
     )
 
     (options, args) = parser.parse_args()
 
     if not os.path.exists(options.schema_dir):
-        print('Could not find the schema folder: {}'.format(options.schema_dir))
-        print('This script should be run from ./lib_common/src')
+        print("Could not find the schema folder: {}".format(options.schema_dir))
+        print("This script should be run from ./lib_common/src")
         exit()
 
     if not os.path.exists(options.binding_dir):
         print(
             (
-                'Could not find thePyXB bindingdestination folder: {}'.format(
+                "Could not find thePyXB bindingdestination folder: {}".format(
                     options.schema_dir
                 )
             )
         )
-        print('This script should be run from ./lib_common/src')
+        print("This script should be run from ./lib_common/src")
         exit()
 
     g = GenerateBindings(options.schema_dir, options.binding_dir)
@@ -67,33 +67,33 @@ def main():
     # 1.1 pyxb_binding.
     g.generate_pyxb_binding(
         [
-            '--schema-location=dataoneTypes.xsd',
-            '--module=dataoneTypes_v1',
-            '--archive-to-file dataoneTypes.wxs',
-            '--schema-stripped-prefix='
-            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_V1/\'',
+            "--schema-location=dataoneTypes.xsd",
+            "--module=dataoneTypes_v1",
+            "--archive-to-file dataoneTypes.wxs",
+            "--schema-stripped-prefix="
+            "'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_V1/'",
         ]
     )
 
     # Generate additionalPyXB bindingfor 1.1. Pull 1.0 dependencies from archive.
     g.generate_pyxb_binding(
         [
-            '--schema-location=dataoneTypes_v1.1.xsd',
-            '--module=dataoneTypes_v1_1',
-            '--archive-path .:+',
-            '--schema-stripped-prefix='
-            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+            "--schema-location=dataoneTypes_v1.1.xsd",
+            "--module=dataoneTypes_v1_1",
+            "--archive-path .:+",
+            "--schema-stripped-prefix="
+            "'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/'",
         ]
     )
 
     # Generate additionalPyXB bindingfor 2.0. Pull 1.1 dependencies from archive.
     g.generate_pyxb_binding(
         [
-            '--schema-location=dataoneTypes_v2.0.xsd',
-            '--module=dataoneTypes_v2_0',
-            '--archive-path .:+',
-            '--schema-stripped-prefix='
-            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/\'',
+            "--schema-location=dataoneTypes_v2.0.xsd",
+            "--module=dataoneTypes_v2_0",
+            "--archive-path .:+",
+            "--schema-stripped-prefix="
+            "'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v2.0/'",
         ]
     )
 
@@ -107,7 +107,7 @@ def main():
 
     # GeneratePyXB bindingfor the exception types.
     g.generate_pyxb_binding(
-        ['--schema-location=dataoneErrors.xsd', '--module=dataoneErrors']
+        ["--schema-location=dataoneErrors.xsd", "--module=dataoneErrors"]
     )
 
 
@@ -136,11 +136,11 @@ class GenerateBindings(object):
 
         """
         pyxbgen_args = []
-        pyxbgen_args.append('--schema-root=\'{}\''.format(self.schema_dir))
-        pyxbgen_args.append('--binding-root=\'{}\''.format(self.binding_dir))
+        pyxbgen_args.append("--schema-root='{}'".format(self.schema_dir))
+        pyxbgen_args.append("--binding-root='{}'".format(self.binding_dir))
         pyxbgen_args.append(
-            '--schema-stripped-prefix='
-            '\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\''
+            "--schema-stripped-prefix="
+            "'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/'"
         )
         pyxbgen_args.extend(args)
 
@@ -152,7 +152,7 @@ class GenerateBindings(object):
         args:
 
         """
-        cmd = 'pyxbgen {}'.format(' '.join(args))
+        cmd = "pyxbgen {}".format(" ".join(args))
         print(cmd)
         os.system(cmd)
 
@@ -170,7 +170,7 @@ class GenerateVersionFile(object):
     def generate_version_file(self, schema_filename, binding_filename):
         """Given a DataONE schema, generates a file that contains version information
         about the schema."""
-        version_filename = binding_filename + '_version.txt'
+        version_filename = binding_filename + "_version.txt"
         version_path = os.path.join(self.binding_dir, version_filename)
         schema_path = os.path.join(self.schema_dir, schema_filename)
         try:
@@ -205,9 +205,9 @@ VERSION="{3}"
             tstamp, svnpath, svnrev, version
         )
 
-        with open(version_file_path, 'w') as f:
+        with open(version_file_path, "w") as f:
             f.write(txt)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

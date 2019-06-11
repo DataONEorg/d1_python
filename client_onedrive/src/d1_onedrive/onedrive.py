@@ -42,25 +42,25 @@ log = logging.getLogger(__name__)
 
 def main():
     if not check_dependencies.check_dependencies():
-        raise Exception('Dependency check failed')
+        raise Exception("Dependency check failed")
 
-    parser = optparse.OptionParser('%prog [options]')
+    parser = optparse.OptionParser("%prog [options]")
     parser.add_option(
-        '-v',
-        '--version',
-        action='store_true',
-        help='Display version information and exit',
+        "-v",
+        "--version",
+        action="store_true",
+        help="Display version information and exit",
     )
 
     # Add options to override defaults in settings.py.
     for k, v in list(settings.__dict__.items()):
         # Only allow overriding strings, ints and bools.
         if k.isupper():
-            param_name = '--{}'.format(k.lower().replace('_', '-'))
+            param_name = "--{}".format(k.lower().replace("_", "-"))
             if type(v) is str or type(v) is int:
                 parser.add_option(
                     param_name,
-                    action='store',
+                    action="store",
                     type=str(type(v).__name__),
                     dest=k.lower(),
                     default=v,
@@ -69,14 +69,14 @@ def main():
             elif type(v) is bool:
                 if v:
                     parser.add_option(
-                        '--disable-{}'.format(k.lower().replace('_', '-')),
-                        action='store_false',
+                        "--disable-{}".format(k.lower().replace("_", "-")),
+                        action="store_false",
                         dest=k.lower(),
                         metavar=v,
                     )
                 else:
                     parser.add_option(
-                        param_name, action='store_true', dest=k.lower(), metavar=v
+                        param_name, action="store_true", dest=k.lower(), metavar=v
                     )
 
     (options, arguments) = parser.parse_args()
@@ -111,12 +111,12 @@ def main():
     log.info("Starting ONEDrive...")
     log_startup_parameters(options, arguments)
 
-    if platform.system() == 'Linux' or platform.system() == 'Darwin':
+    if platform.system() == "Linux" or platform.system() == "Darwin":
         import d1_onedrive.impl.drivers.fuse.d1_fuse
-    elif platform.system() == 'Windows':
+    elif platform.system() == "Windows":
         import d1_onedrive.impl.drivers.dokan.d1_dokan
     else:
-        log.error('Unknown platform: {}'.format(platform.system()))
+        log.error("Unknown platform: {}".format(platform.system()))
         exit()
 
     # Instantiate the Root resolver.
@@ -132,14 +132,14 @@ def main():
 def log_setup(options):
     # Set up logging.
     formatter = logging.Formatter(
-        '%(asctime)s %(levelname)-8s %(name)s' '(%(lineno)d): %(message)s',
-        '%Y-%m-%d %H:%M:%S',
+        "%(asctime)s %(levelname)-8s %(name)s" "(%(lineno)d): %(message)s",
+        "%Y-%m-%d %H:%M:%S",
     )
     # Log to a file
     if options.log_file_path is not None:
-        file_logger = logging.FileHandler(options.log_file_path, 'a', encoding='utf-8')
+        file_logger = logging.FileHandler(options.log_file_path, "a", encoding="utf-8")
         file_logger.setFormatter(formatter)
-        logging.getLogger('').addHandler(file_logger)
+        logging.getLogger("").addHandler(file_logger)
     # Also log to stdout
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
@@ -149,13 +149,13 @@ def log_setup(options):
 
 
 def log_version():
-    log.info('ONEDrive version: {}'.format(d1_onedrive.__version__))
+    log.info("ONEDrive version: {}".format(d1_onedrive.__version__))
 
 
 def log_startup_parameters(options, arguments):
-    log.debug('Options: {}'.format(str(options)))
-    log.debug('Arguments: {}'.format(str(arguments)))
+    log.debug("Options: {}".format(str(options)))
+    log.debug("Arguments: {}".format(str(arguments)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

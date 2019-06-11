@@ -42,7 +42,7 @@ def generate_reproducible_sciobj_with_sysmeta(client, pid=None, option_dict=None
     """
     option_dict = option_dict or {}
     pid = pid or d1_test.instance_generator.identifier.generate_pid()
-    option_dict['identifier'] = pid
+    option_dict["identifier"] = pid
     with d1_test.d1_test_case.reproducible_random_context(pid):
         sciobj_bytes = generate_reproducible_sciobj_bytes(pid)
         sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file(
@@ -50,7 +50,7 @@ def generate_reproducible_sciobj_with_sysmeta(client, pid=None, option_dict=None
         )
         return (
             pid,
-            d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId'),
+            d1_common.xml.get_opt_val(sysmeta_pyxb, "seriesId"),
             sciobj_bytes,
             sysmeta_pyxb,
         )
@@ -65,12 +65,12 @@ def generate_reproducible_sciobj_bytes(pid):
       losing information.
 
     """
-    undecorated_pid = re.sub(r'^<.*?>', '', pid)
+    undecorated_pid = re.sub(r"^<.*?>", "", pid)
     with d1_test.d1_test_case.reproducible_random_context(undecorated_pid):
-        return 'These are the reproducible Science Object bytes for pid="{}". ' 'What follows is 100 to 200 random bytes: '.format(
+        return 'These are the reproducible Science Object bytes for pid="{}". ' "What follows is 100 to 200 random bytes: ".format(
             undecorated_pid
         ).encode(
-            'utf-8'
+            "utf-8"
         ) + d1_test.instance_generator.random_data.random_bytes(
             100, 200
         )

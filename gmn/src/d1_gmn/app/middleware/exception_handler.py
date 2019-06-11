@@ -67,14 +67,14 @@ class ExceptionHandler:
 
     def _handle_dataone_exception(self, request, e):
         e.nodeId = django.conf.settings.NODE_IDENTIFIER
-        if request.method != 'HEAD':
+        if request.method != "HEAD":
             return self._serialize_dataone_exception_for_regular_request(e)
         else:
             return self._serialize_dataone_exception_for_head_request(e)
 
     def _serialize_dataone_exception_for_regular_request(self, e):
         exception_xml = e.serialize_to_transport(
-            xslt_url=django.urls.base.reverse('home_xslt')
+            xslt_url=django.urls.base.reverse("home_xslt")
         )
         return django.http.HttpResponse(
             exception_xml,
@@ -85,10 +85,10 @@ class ExceptionHandler:
     def _serialize_dataone_exception_for_head_request(self, e):
         exception_headers = e.serialize_to_headers()
         http_response = django.http.HttpResponse(
-            '', status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
+            "", status=e.errorCode, content_type=d1_common.const.CONTENT_TYPE_XML
         )
         for k, v in exception_headers.items():
-            http_response[k] = v.encode('utf-8')
+            http_response[k] = v.encode("utf-8")
         return http_response
 
     def _log_dataone_exception(self, e):
@@ -109,7 +109,7 @@ class ExceptionHandler:
         return None
 
     def _wrap_internal_exception_in_dataone_exception(self, request):
-        e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
+        e = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), "")
         e.detailCode = str(
             d1_gmn.app.middleware.detail_codes.DataoneExceptionToDetailCode().detail_code(
                 request, e
@@ -119,21 +119,21 @@ class ExceptionHandler:
         return e
 
     def _log_internal_exception(self):
-        logging.error('Internal exception:')
+        logging.error("Internal exception:")
         exc_class, exc_msgs, exc_traceback = sys.exc_info()
-        logging.error('  Name: {}'.format(exc_class.__name__))
-        logging.error('  Value: {}'.format(exc_msgs))
-        if 'args' in exc_msgs.__dict__:
-            exc_args = exc_msgs.__dict__['args']
+        logging.error("  Name: {}".format(exc_class.__name__))
+        logging.error("  Value: {}".format(exc_msgs))
+        if "args" in exc_msgs.__dict__:
+            exc_args = exc_msgs.__dict__["args"]
         else:
             exc_args = "<no args>"
-        logging.error('  Args: {}'.format(exc_args))
-        logging.error('  TraceInfo:')
+        logging.error("  Args: {}".format(exc_args))
+        logging.error("  TraceInfo:")
         for location_str in self._traceback_to_trace_info():
-            logging.error('    {}'.format(location_str))
+            logging.error("    {}".format(location_str))
 
     def _traceback_to_text(self):
-        return '\n'.join(self._traceback_to_trace_info())
+        return "\n".join(self._traceback_to_trace_info())
 
     def _traceback_to_trace_info(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -141,12 +141,12 @@ class ExceptionHandler:
         while exc_traceback:
             co = exc_traceback.tb_frame.f_code
             trace_info_list.append(
-                '{}({})'.format(
+                "{}({})".format(
                     os.path.basename(co.co_filename), exc_traceback.tb_lineno
                 )
             )
             exc_traceback = exc_traceback.tb_next
         if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
-            trace_info_list.append('Type: {}'.format(exc_type))
-            trace_info_list.append('Value: {}'.format(exc_value))
+            trace_info_list.append("Type: {}".format(exc_type))
+            trace_info_list.append("Value: {}".format(exc_value))
         return trace_info_list

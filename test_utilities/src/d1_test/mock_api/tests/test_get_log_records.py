@@ -45,4 +45,4 @@ class TestMockLogRecords(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            mn_client_v1_v2.getLogRecords('test_pid', vendorSpecific={'trigger': '404'})
+            mn_client_v1_v2.getLogRecords("test_pid", vendorSpecific={"trigger": "404"})

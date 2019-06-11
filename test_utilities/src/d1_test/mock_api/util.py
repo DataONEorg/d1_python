@@ -37,8 +37,8 @@ import d1_test.mock_api.d1_exception
 import d1_client.d1client
 
 NUM_SCIOBJ_BYTES = 1024
-SYSMETA_FORMATID = 'application/octet-stream'
-SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
+SYSMETA_FORMATID = "application/octet-stream"
+SYSMETA_RIGHTSHOLDER = "CN=First Last,O=Google,C=US,DC=cilogon,DC=org"
 
 
 def parse_rest_url(rest_url):
@@ -57,13 +57,13 @@ def parse_rest_url(rest_url):
     endpoint_str = param_list.pop(0)
     query_dict = urllib.parse.parse_qs(url_obj.query) if url_obj.query else {}
     client = d1_client.d1client.get_client_class_by_version_tag(version_tag)(
-        base_url='http://invalid/'
+        base_url="http://invalid/"
     )
     return version_tag, endpoint_str, param_list, query_dict, client
 
 
 def _decode_path_elements(path):
-    path_element_list = path.strip('/').split('/')
+    path_element_list = path.strip("/").split("/")
     return [d1_common.url.decodePathElement(e) for e in path_element_list]
 
 
@@ -75,7 +75,7 @@ def split_url_at_version_tag(url):
     'http://dataone.server.edu/dataone/mn/', 'v1', 'objects/mypid'
 
     """
-    m = re.match(r'(.*?)(/|^)(v[123])(/|$)(.*)', url)
+    m = re.match(r"(.*?)(/|^)(v[123])(/|$)(.*)", url)
     if not m:
         raise ValueError('Unable to get version tag from URL. url="{}"'.format(url))
     return m.group(1), m.group(3), m.group(5)
@@ -83,8 +83,8 @@ def split_url_at_version_tag(url):
 
 def get_page(query_dict, n_total):
     """Return: start, count."""
-    n_start = int(query_dict['start'][0]) if 'start' in query_dict else 0
-    n_count = int(query_dict['count'][0]) if 'count' in query_dict else n_total
+    n_start = int(query_dict["start"][0]) if "start" in query_dict else 0
+    n_count = int(query_dict["count"][0]) if "count" in query_dict else n_total
     if n_start + n_count > n_total:
         n_count = n_total - n_start
     return n_start, n_count
@@ -102,13 +102,13 @@ def echo_get_callback(request):
     except AttributeError:
         body_str = request.body
     url_obj = urllib.parse.urlparse(request.url)
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_JSON}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_JSON}
     body_dict = {
-        'body_base64': base64.standard_b64encode(
-            (body_str or '<no body>').encode('utf-8')
-        ).decode('ascii'),
-        'query_dict': urllib.parse.parse_qs(url_obj.query),
-        'header_dict': dict(request.headers),
+        "body_base64": base64.standard_b64encode(
+            (body_str or "<no body>").encode("utf-8")
+        ).decode("ascii"),
+        "query_dict": urllib.parse.parse_qs(url_obj.query),
+        "header_dict": dict(request.headers),
     }
     return (
         200,
@@ -123,7 +123,7 @@ def generate_object_list(
     object_list_pyxb = client.pyxb_binding.objectList()
 
     for i in range(n_count):
-        pid = 'object#{:04d}'.format(n_start + i)
+        pid = "object#{:04d}".format(n_start + i)
 
         # freeze_time.tick(delta=datetime.timedelta(days=1))
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
@@ -153,7 +153,7 @@ def generate_object_list(
     object_list_pyxb.count = len(object_list_pyxb.objectInfo)
     object_list_pyxb.total = n_total
 
-    return object_list_pyxb.toxml('utf-8')
+    return object_list_pyxb.toxml("utf-8")
 
 
 # def echo_post_callback(request):
@@ -175,7 +175,7 @@ def _generate_sysmeta_pyxb(client, pid, size, md5, now):
     sysmeta_pyxb.size = size
     sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
     sysmeta_pyxb.checksum = client.pyxb_binding.checksum(md5)
-    sysmeta_pyxb.checksum.algorithm = 'MD5'
+    sysmeta_pyxb.checksum.algorithm = "MD5"
     sysmeta_pyxb.dateUploaded = now
     sysmeta_pyxb.dateSysMetadataModified = now + datetime.timedelta(days=10)
     sysmeta_pyxb.accessPolicy = _generate_public_access_policy(client)
@@ -186,7 +186,7 @@ def _generate_public_access_policy(client):
     accessPolicy = client.pyxb_binding.accessPolicy()
     accessRule = client.pyxb_binding.AccessRule()
     accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission = client.pyxb_binding.Permission('read')
+    permission = client.pyxb_binding.Permission("read")
     accessRule.permission.append(permission)
     accessPolicy.append(accessRule)
     return accessPolicy

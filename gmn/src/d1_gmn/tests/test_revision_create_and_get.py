@@ -81,7 +81,7 @@ class TestCreateAndGetRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):
         recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(self.client_v1, pid)
         assert send_sciobj_bytes == recv_sciobj_bytes
         assert recv_sysmeta_pyxb.identifier.value() == pid
-        assert not hasattr(recv_sysmeta_pyxb, 'seriesId')
+        assert not hasattr(recv_sysmeta_pyxb, "seriesId")
 
     @responses.activate
     def test_1050(self):

@@ -93,7 +93,7 @@ def copy_file_like_object_to_file(file_like_object, path):
         if file_like_object:
             fsrc = file_like_object
         if path:
-            fdst = open(os.path.expanduser(path), 'w', encoding='utf-8')
+            fdst = open(os.path.expanduser(path), "w", encoding="utf-8")
             # fdst = open(os.path.expanduser(path), "wb")
             shutil.copyfileobj(fsrc, fdst)
             fdst.close()

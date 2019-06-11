@@ -40,48 +40,48 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig()
-    logging.getLogger('').setLevel(logging.DEBUG)
+    logging.getLogger("").setLevel(logging.DEBUG)
 
     # Connect to the DataONE Coordinating Nodes in the default (production) environment.
     c = d1_client.solr_client.SolrConnection()
 
     search_result = c.search(
         {
-            'q': 'id:[* TO *]',  # Filter for search
-            'rows': 10,  # Number of results to return
-            'fl': 'formatId',  # List of fields to return for each result
+            "q": "id:[* TO *]",  # Filter for search
+            "rows": 10,  # Number of results to return
+            "fl": "formatId",  # List of fields to return for each result
         }
     )
 
     pprint.pprint(search_result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -67,15 +67,15 @@ import d1_client.mnclient_2_0
 # Config
 
 # The path to the files that will be uploaded as science objects.
-SCIENCE_OBJECTS_DIR_PATH = './d1_objects'
+SCIENCE_OBJECTS_DIR_PATH = "./d1_objects"
 
 # The identifier (PID) to use for the Science Object.
-SCIENCE_OBJECT_PID = 'dataone_test_object_pid'
+SCIENCE_OBJECT_PID = "dataone_test_object_pid"
 
 # The formatId to use for the Science Object. It should be the ID of an Object
 # Format that is registered in the DataONE Object Format Vocabulary. A list of
 # valid IDs can be retrieved from https://cn.dataone.org/cn/v1/formats.
-SYSMETA_FORMATID = 'application/octet-stream'
+SYSMETA_FORMATID = "application/octet-stream"
 
 # The DataONE subject to set as the rights holder of the created objects. The
 # rights holder must be a subject that is registered with DataONE. Subjects are
@@ -85,11 +85,11 @@ SYSMETA_FORMATID = 'application/octet-stream'
 # uploaded object may be lost if the rights holder subject is set to a
 # non-existing subject or to a subject that is not prepared to handle the
 # object.
-SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
+SYSMETA_RIGHTSHOLDER = "CN=First Last,O=Google,C=US,DC=cilogon,DC=org"
 
 # BaseURL for the Member Node. If the script is run on the same server as the
 # Member Node, this can be localhost.
-MN_BASE_URL = 'http://localhost:8000'
+MN_BASE_URL = "http://localhost:8000"
 # MN_BASE_URL = 'https://localhost/mn'
 
 # Paths to the certificate and key to use when creating the object. If the
@@ -99,46 +99,46 @@ MN_BASE_URL = 'http://localhost:8000'
 # Member Node (GMN) instance, see the "Using GMN" section in the documentation
 # for GMN for information on how to create and use certificates. The information
 # there may be relevant for other types of Member Nodes as well.
-CERTIFICATE_FOR_CREATE = 'client.crt'
-CERTIFICATE_FOR_CREATE_KEY = 'client.key'
+CERTIFICATE_FOR_CREATE = "client.crt"
+CERTIFICATE_FOR_CREATE_KEY = "client.key"
 
 # Constants.
 
-RESOURCE_MAP_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
+RESOURCE_MAP_FORMAT_ID = "http://www.openarchives.org/ore/terms"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig()
-    logging.getLogger('').setLevel(logging.DEBUG)
+    logging.getLogger("").setLevel(logging.DEBUG)
 
     # Create a Member Node client that can be used for running commands against
     # a specific Member Node.
@@ -150,16 +150,16 @@ def main():
     # Iterate over the object groups and create them and their resource maps
     # on the Member Node.
     for group in find_file_groups(SCIENCE_OBJECTS_DIR_PATH):
-        print('Group: {}'.format(group))
+        print("Group: {}".format(group))
         files_in_group = find_files_in_group(SCIENCE_OBJECTS_DIR_PATH, group)
         if len(files_in_group) < 2:
-            raise Exception('Each group must have at least 2 files')
+            raise Exception("Each group must have at least 2 files")
         for file_path in files_in_group:
-            print('  File: {}'.format(file_path))
+            print("  File: {}".format(file_path))
             create_science_object_on_member_node(client, file_path)
         create_package_on_member_node(client, files_in_group)
 
-    print('Objects created successfully')
+    print("Objects created successfully")
 
 
 # Create the object on the Member Node. The create() call takes an open
@@ -170,7 +170,7 @@ def main():
 # once, for the MD5 checksum calculation.
 def create_science_object_on_member_node(client, file_path):
     pid = os.path.basename(file_path)
-    sci_obj = open(file_path, 'rb').read()
+    sci_obj = open(file_path, "rb").read()
     sys_meta = generate_system_metadata_for_science_object(
         pid, SYSMETA_FORMATID, sci_obj
     )
@@ -216,7 +216,7 @@ def generate_sys_meta(pid, format_id, size, md5, now):
     sys_meta.size = size
     sys_meta.rightsHolder = SYSMETA_RIGHTSHOLDER
     sys_meta.checksum = d1_common.types.dataoneTypes.checksum(md5)
-    sys_meta.checksum.algorithm = 'MD5'
+    sys_meta.checksum.algorithm = "MD5"
     sys_meta.dateUploaded = now
     sys_meta.dateSysMetadataModified = now
     sys_meta.accessPolicy = generate_public_access_policy()
@@ -227,7 +227,7 @@ def generate_public_access_policy():
     accessPolicy = d1_common.types.dataoneTypes.accessPolicy()
     accessRule = d1_common.types.dataoneTypes.AccessRule()
     accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission = d1_common.types.dataoneTypes.Permission('read')
+    permission = d1_common.types.dataoneTypes.Permission("read")
     accessRule.permission.append(permission)
     accessPolicy.append(accessRule)
     return accessPolicy
@@ -252,12 +252,12 @@ def find_files_in_group(directory_path, group):
 
 def group_name(file_path):
     n = os.path.basename(file_path)
-    return n[: n.find('.')]
+    return n[: n.find(".")]
 
 
 def base_name_without_extension(file_path):
     return os.path.splitext(os.path.basename(file_path))[0]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

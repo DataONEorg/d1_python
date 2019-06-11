@@ -67,10 +67,10 @@ class DataONEBaseClient_2_0(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
         """
         mmp_dict = {
-            'pid': pid.encode('utf-8'),
-            'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
+            "pid": pid.encode("utf-8"),
+            "sysmeta": ("sysmeta.xml", sysmeta_pyxb.toxml("utf-8")),
         }
-        return self.PUT('meta', fields=mmp_dict, headers=vendorSpecific)
+        return self.PUT("meta", fields=mmp_dict, headers=vendorSpecific)
 
     def updateSystemMetadata(self, pid, sysmeta_pyxb, vendorSpecific=None):
         response = self.updateSystemMetadataResponse(pid, sysmeta_pyxb, vendorSpecific)

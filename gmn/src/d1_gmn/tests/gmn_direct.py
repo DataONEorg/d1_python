@@ -50,11 +50,11 @@ def create(version_tag, sciobj_bytes, sysmeta_xml):
         with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml_wrapper:
             return _get_resp_dict(
                 django.test.Client().post(
-                    d1_common.url.joinPathElements('/', version_tag, 'object'),
+                    d1_common.url.joinPathElements("/", version_tag, "object"),
                     {
-                        'pid': xml_wrapper.get_element_text('identifier'),
-                        'object': ('content.bin', io.BytesIO(sciobj_bytes)),
-                        'sysmeta': ('sysmeta.xml', io.BytesIO(sysmeta_xml)),
+                        "pid": xml_wrapper.get_element_text("identifier"),
+                        "object": ("content.bin", io.BytesIO(sciobj_bytes)),
+                        "sysmeta": ("sysmeta.xml", io.BytesIO(sysmeta_xml)),
                     },
                 )
             )
@@ -66,11 +66,11 @@ def create_stream(version_tag, sciobj_bytestream, sysmeta_xml):
         with d1_common.wrap.simple_xml.wrap(sysmeta_xml) as xml_wrapper:
             return _get_resp_dict(
                 django.test.Client().post(
-                    d1_common.url.joinPathElements('/', version_tag, 'object'),
+                    d1_common.url.joinPathElements("/", version_tag, "object"),
                     {
-                        'pid': xml_wrapper.get_element_text('identifier'),
-                        'object': ('content.bin', sciobj_bytestream),
-                        'sysmeta': ('sysmeta.xml', io.StringIO(sysmeta_xml)),
+                        "pid": xml_wrapper.get_element_text("identifier"),
+                        "object": ("content.bin", sciobj_bytestream),
+                        "sysmeta": ("sysmeta.xml", io.StringIO(sysmeta_xml)),
                     },
                 )
             )
@@ -81,7 +81,7 @@ def get(version_tag, pid):
     return _get_resp_dict(
         django.test.Client().get(
             d1_common.url.joinPathElements(
-                '/', version_tag, 'object', pid.encode('utf-8')
+                "/", version_tag, "object", pid.encode("utf-8")
             )
         )
     )
@@ -91,22 +91,22 @@ def get_system_metadata(version_tag, pid):
     """Call MNRead.getSystemMetadata()"""
     return _get_resp_dict(
         django.test.Client().get(
-            d1_common.url.joinPathElements('/', version_tag, 'meta', pid)
+            d1_common.url.joinPathElements("/", version_tag, "meta", pid)
         )
     )
 
 
 def list_objects(version_tag, pid=None, start=None, count=None):
     """Call MNRead.listObjects()"""
-    url_path = d1_common.url.joinPathElements('/', version_tag, 'object')
+    url_path = d1_common.url.joinPathElements("/", version_tag, "object")
 
     query_dict = {}
     if pid is not None:
-        query_dict['identifier'] = pid
+        query_dict["identifier"] = pid
     if start is not None:
-        query_dict['start'] = start
+        query_dict["start"] = start
     if count is not None:
-        query_dict['count'] = count
+        query_dict["count"] = count
 
     url_str = _add_query(query_dict, url_path)
 
@@ -115,15 +115,15 @@ def list_objects(version_tag, pid=None, start=None, count=None):
 
 def get_log_records(version_tag, pid=None, start=None, count=None):
     """Call MNCore.getLogRecords()"""
-    url_path = d1_common.url.joinPathElements('/', version_tag, 'log')
+    url_path = d1_common.url.joinPathElements("/", version_tag, "log")
 
     query_dict = {}
     if pid is not None:
-        query_dict['identifier'] = pid
+        query_dict["identifier"] = pid
     if start is not None:
-        query_dict['start'] = start
+        query_dict["start"] = start
     if count is not None:
-        query_dict['count'] = count
+        query_dict["count"] = count
 
     url_str = _add_query(query_dict, url_path)
 
@@ -132,7 +132,7 @@ def get_log_records(version_tag, pid=None, start=None, count=None):
 
 def _add_query(query_dict, url_path):
     if query_dict:
-        url_str = '{}?{}'.format(
+        url_str = "{}?{}".format(
             url_path, d1_common.url.encodePathElement().urlencode(query_dict)
         )
     else:
@@ -143,16 +143,16 @@ def _add_query(query_dict, url_path):
 def get_object_count(version_tag):
     """Get total number of objects for which one or more subj in ``active_subj_list``
     have read access or better."""
-    url_path = d1_common.url.joinPathElements('/', version_tag, 'object')
+    url_path = d1_common.url.joinPathElements("/", version_tag, "object")
     # url_path += "?identifier={}".format(d1_common.url.encodeQueryElement(pid))
     resp_dict = _get_resp_dict(django.test.Client().get(url_path))
-    if resp_dict['is_ok']:
+    if resp_dict["is_ok"]:
         return int(
-            xml.etree.ElementTree.fromstring(resp_dict['body_str']).attrib['count']
+            xml.etree.ElementTree.fromstring(resp_dict["body_str"]).attrib["count"]
         )
-    resp_dict.pop('response', None)
+    resp_dict.pop("response", None)
     raise Exception(
-        'Unable to get object count. resp_dict={}'.format(
+        "Unable to get object count. resp_dict={}".format(
             d1_common.util.serialize_to_normalized_compact_json(resp_dict)
         )
     )
@@ -162,7 +162,7 @@ def _get_resp_dict(response):
     """Log return status of a django.http.response.HttpResponse and arrange the response
     into a dict of items generally more convenient to work with from tests."""
     body_str = (
-        ''.join(response.streaming_content) if response.streaming else response.content
+        "".join(response.streaming_content) if response.streaming else response.content
     )
     is_ok = response.status_code in (200,)
     if not is_ok:
@@ -172,11 +172,11 @@ def _get_resp_dict(response):
             )
         )
     else:
-        logging.info('Request successful. status_code={}'.format(response.status_code))
+        logging.info("Request successful. status_code={}".format(response.status_code))
     return {
-        'is_ok': is_ok,
-        'status_code_int': response.status_code,
-        'header_dict': dict(list(response.items())),
-        'body_str': body_str,
-        'response': response,
+        "is_ok": is_ok,
+        "status_code_int": response.status_code,
+        "header_dict": dict(list(response.items())),
+        "body_str": body_str,
+        "response": response,
     }

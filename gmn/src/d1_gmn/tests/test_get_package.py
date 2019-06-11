@@ -36,7 +36,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1000(self, gmn_client_v2):
         """MNPackage.getPackage(): Raises NotFound on unknown PID."""
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            self.call_d1_client(gmn_client_v2.getPackage, 'unknown_ore_pid')
+            self.call_d1_client(gmn_client_v2.getPackage, "unknown_ore_pid")
 
     @responses.activate
     def test_1010(self, gmn_client_v2):

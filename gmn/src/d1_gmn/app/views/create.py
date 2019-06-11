@@ -98,7 +98,7 @@ def _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url):
 def _is_proxy_sciobj(request):
     """Return True if sciobj is being created with the proxy vendor specific
     extension."""
-    return 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META
+    return "HTTP_VENDOR_GMN_REMOTE_URL" in request.META
 
 
 def _sanity_check_proxy_url(url):
@@ -107,12 +107,12 @@ def _sanity_check_proxy_url(url):
 
 
 def _get_sciobj_proxy_url(request):
-    return request.META['HTTP_VENDOR_GMN_REMOTE_URL']
+    return request.META["HTTP_VENDOR_GMN_REMOTE_URL"]
 
 
 def _read_sciobj_bytes_from_request(request):
-    request.FILES['object'].seek(0)
-    sciobj_bytes = request.FILES['object'].read()
+    request.FILES["object"].seek(0)
+    sciobj_bytes = request.FILES["object"].read()
     return sciobj_bytes
 
 
@@ -127,16 +127,16 @@ def _save_sciobj_bytes_from_request(request, pid):
 
     """
     sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-    if hasattr(request.FILES['object'], 'temporary_file_path'):
+    if hasattr(request.FILES["object"], "temporary_file_path"):
         d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
         django.core.files.move.file_move_safe(
-            request.FILES['object'].temporary_file_path(), sciobj_path
+            request.FILES["object"].temporary_file_path(), sciobj_path
         )
     else:
         with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_ctx(
             sciobj_path, write=True
         ) as sciobj_stream:
-            for chunk in request.FILES['object'].chunks():
+            for chunk in request.FILES["object"].chunks():
                 sciobj_stream.write(chunk)
 
 
@@ -145,26 +145,26 @@ def set_mn_controlled_values(request, sysmeta_pyxb, is_modification):
     now_datetime = d1_common.date_time.utc_now()
 
     default_value_list = [
-        ('originMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
-        ('authoritativeMemberNode', django.conf.settings.NODE_IDENTIFIER, True),
-        ('serialVersion', 1, False),
-        ('dateUploaded', now_datetime, False),
+        ("originMemberNode", django.conf.settings.NODE_IDENTIFIER, True),
+        ("authoritativeMemberNode", django.conf.settings.NODE_IDENTIFIER, True),
+        ("serialVersion", 1, False),
+        ("dateUploaded", now_datetime, False),
     ]
 
     if not is_modification:
         # submitter cannot be updated as the CN does not allow it.
-        default_value_list.append(('submitter', request.primary_subject_str, True))
+        default_value_list.append(("submitter", request.primary_subject_str, True))
         # dateSysMetadataModified cannot be updated as it is used for optimistic
         # locking. If changed, it is assumed that optimistic locking failed, and the
         # update is rejected in order to prevent a concurrent update from being lost.
-        default_value_list.append(('dateSysMetadataModified', now_datetime, False))
+        default_value_list.append(("dateSysMetadataModified", now_datetime, False))
     else:
         sysmeta_pyxb.submitter = None
         sysmeta_pyxb.dateSysMetadataModified = now_datetime
 
     for attr_str, default_value, is_simple_content in default_value_list:
         is_trusted_from_client = getattr(
-            django.conf.settings, 'TRUST_CLIENT_{}'.format(attr_str.upper()), False
+            django.conf.settings, "TRUST_CLIENT_{}".format(attr_str.upper()), False
         )
         override_value = None
         if is_trusted_from_client:

@@ -76,36 +76,36 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig()
     # Setting the default logger to level "DEBUG" causes the script to become
     # very verbose.
-    logging.getLogger('').setLevel(logging.DEBUG)
+    logging.getLogger("").setLevel(logging.DEBUG)
 
     node_list = get_node_list_from_coordinating_node()
     for node in node_list.node:
@@ -114,7 +114,7 @@ def main():
         elif is_coordinating_node(node):
             get_cn_metrics(node)
         else:
-            logging.error('Unknown node type')
+            logging.error("Unknown node type")
             return
         print()
 
@@ -124,7 +124,7 @@ def get_node_list_from_coordinating_node():
     try:
         return cn_client.listNodes()
     except d1_common.types.exceptions.DataONEException:
-        logging.exception('listNodes() failed with exception:')
+        logging.exception("listNodes() failed with exception:")
         raise
 
 
@@ -141,25 +141,25 @@ def get_mn_metrics(mn):
 
 def print_capabilities(client):
     caps = client.getCapabilities()
-    print('Identifier: {}'.format(caps.identifier.value()))
-    print('Name: {}'.format(caps.name))
-    print('Description: {}'.format(caps.description))
-    print('Member Node subject(s):')
+    print("Identifier: {}".format(caps.identifier.value()))
+    print("Name: {}".format(caps.name))
+    print("Description: {}".format(caps.description))
+    print("Member Node subject(s):")
     for s in caps.subject:
-        print('  {}'.format(s.value()))
-    print('Contact(s):')
+        print("  {}".format(s.value()))
+    print("Contact(s):")
     for c in caps.contactSubject:
-        print('  {}'.format(c.value()))
+        print("  {}".format(c.value()))
     # print 'Contact subject: {0}'.format(caps.contactSubject)
-    print('Services:')
+    print("Services:")
     for s in caps.services.service:
-        print('  Name: {}'.format(s.name))
-        print('  Version: {}'.format(s.version))
-        print('  Available: {}'.format(s.available))
-    print('Synchronization: ')
+        print("  Name: {}".format(s.name))
+        print("  Version: {}".format(s.version))
+        print("  Available: {}".format(s.available))
+    print("Synchronization: ")
     print(
         (
-            '  Schedule: hour={} mday={} min={} mon={} sec={} wday={} year={}'.format(
+            "  Schedule: hour={} mday={} min={} mon={} sec={} wday={} year={}".format(
                 caps.synchronization.schedule.hour,
                 caps.synchronization.schedule.mday,
                 caps.synchronization.schedule.min,
@@ -170,28 +170,28 @@ def print_capabilities(client):
             )
         )
     )
-    print('  Last harvested: {}'.format(caps.synchronization.lastHarvested))
+    print("  Last harvested: {}".format(caps.synchronization.lastHarvested))
     print(
-        ('  Last complete harvest: {}'.format(caps.synchronization.lastCompleteHarvest))
+        ("  Last complete harvest: {}".format(caps.synchronization.lastCompleteHarvest))
     )
 
 
 def get_gen_metrics(client, node):
-    print('Node: {}'.format(node.name))
-    print('Base URL: {}'.format(node.baseURL))
-    print('Node Type: {}'.format(node.type.upper()))
-    print('Ping: {}'.format(get_ping(client)))
-    print('Total number of objects: {}'.format(get_number_of_objects(client)))
+    print("Node: {}".format(node.name))
+    print("Base URL: {}".format(node.baseURL))
+    print("Node Type: {}".format(node.type.upper()))
+    print("Ping: {}".format(get_ping(client)))
+    print("Total number of objects: {}".format(get_number_of_objects(client)))
     try:
         print(
             (
-                'Total number of log records: {}'.format(
+                "Total number of log records: {}".format(
                     get_number_of_log_records(client)
                 )
             )
         )
     except d1_common.types.exceptions.NotAuthorized:
-        print('Log records are restricted')
+        print("Log records are restricted")
 
 
 def get_ping(client):
@@ -202,7 +202,7 @@ def get_number_of_objects(client):
     try:
         return client.listObjects(start=0, count=0).total
     except d1_common.types.exceptions.DataONEException:
-        logging.exception('listObjects() failed with exception:')
+        logging.exception("listObjects() failed with exception:")
         raise
 
 
@@ -211,12 +211,12 @@ def get_number_of_log_records(client):
 
 
 def is_member_node(node):
-    return node.type == 'mn'
+    return node.type == "mn"
 
 
 def is_coordinating_node(node):
-    return node.type == 'cn'
+    return node.type == "cn"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

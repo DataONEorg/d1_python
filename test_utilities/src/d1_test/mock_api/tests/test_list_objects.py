@@ -44,7 +44,7 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
         object_list = mn_client_v1_v2.listObjects()
-        self.sample.assert_equals(object_list, 'populated')
+        self.sample.assert_equals(object_list, "populated")
 
     @responses.activate
     def test_1020(self, mn_client_v1_v2):
@@ -54,6 +54,6 @@ class TestMockListObjects(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
         with pytest.raises(d1_common.types.exceptions.ServiceFailure):
-            mn_client_v1_v2.listObjects(vendorSpecific={'trigger': '500'})
+            mn_client_v1_v2.listObjects(vendorSpecific={"trigger": "500"})
 
     # TODO: More tests

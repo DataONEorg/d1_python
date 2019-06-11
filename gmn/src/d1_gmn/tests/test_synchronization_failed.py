@@ -42,7 +42,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
             # passed to the synchronizationFailed() method. There is currently no way
             # for the test to reach that information.
             pid = d1_test.instance_generator.identifier.generate_pid()
-            msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+            msg = "TEST MESSAGE FROM GMN_INTEGRATION_TESTER"
             exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
             client.synchronizationFailed(exception)
 
@@ -57,9 +57,9 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         def test(client):
             pid = d1_test.instance_generator.identifier.generate_pid()
-            msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+            msg = "TEST MESSAGE FROM GMN_INTEGRATION_TESTER"
             exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-            with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
+            with d1_gmn.tests.gmn_mock.set_auth_context(["unk_subj"], ["trusted_subj"]):
                 with pytest.raises(d1_common.types.exceptions.NotAuthorized):
                     client.synchronizationFailed(exception)
 
@@ -74,7 +74,7 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
             # noinspection PyClassHasNoInit
             class InvalidException(Exception):
                 def encode(self, *a, **b):
-                    return b'INVALID SERIALIZED DATAONE EXCEPTION'
+                    return b"INVALID SERIALIZED DATAONE EXCEPTION"
 
             with d1_gmn.tests.gmn_mock.disable_auth():
                 result_bool = client.synchronizationFailed(InvalidException())

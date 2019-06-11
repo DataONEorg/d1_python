@@ -33,20 +33,20 @@ def check_dependencies():
         exceptions.append(e)
         messages.append('PyXB: Try "sudo pip install pyxb"\n')
 
-    if platform.system() == 'Linux':
+    if platform.system() == "Linux":
         try:
             import fuse  # noqa: F401
         except ImportError as e:
             exceptions.append(e)
             messages.append(
-                'FUSE: Read the documentation for instructions on how to install fusepy'
+                "FUSE: Read the documentation for instructions on how to install fusepy"
             )
 
     if len(exceptions):
-        logging.critical('Importing of the following dependencies failed.')
+        logging.critical("Importing of the following dependencies failed.")
         for msg in messages:
             logging.critical(msg)
-        logging.critical('Import errors:')
+        logging.critical("Import errors:")
         for e in exceptions:
             logging.critical(str(e))
 

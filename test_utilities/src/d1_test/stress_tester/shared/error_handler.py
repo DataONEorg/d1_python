@@ -30,6 +30,6 @@
 
 def check_response(response):
     if response.status_code != 200:
-        with open('/tmp/stress_test_error.html', 'w') as f:
+        with open("/tmp/stress_test_error.html", "w") as f:
             f.write(response.read())
-        raise Exception('Invalid response code: {}'.format(response.status))
+        raise Exception("Invalid response code: {}".format(response.status))

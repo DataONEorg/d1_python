@@ -55,7 +55,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         # All longer paths are handled by d1_object resolver.
 
     def get_attributes(self, object_tree_folder, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
         if self._is_readme_file(path):
             return self._get_readme_file_attributes()
 
@@ -65,7 +65,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._resource_map_resolver.get_attributes(object_tree_folder, path[2:])
 
     def get_directory(self, object_tree_folder, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
 
         if len(path) <= 2:
             return self._get_directory(object_tree_folder, path)
@@ -74,14 +74,14 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def read_file(self, object_tree_folder, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
         if self._is_readme_file(path):
             return self._get_readme_text(size, offset)
         if len(path) <= 2:
-            raise onedrive_exceptions.PathException('Invalid file')
+            raise onedrive_exceptions.PathException("Invalid file")
         return self._resource_map_resolver.read_file(
             object_tree_folder, path[2:], size, offset
         )
@@ -101,18 +101,18 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
             try:
                 year = int(path[1])
             except ValueError:
-                raise onedrive_exceptions.PathException('Expected year element in path')
+                raise onedrive_exceptions.PathException("Expected year element in path")
             else:
                 return self._resolve_objects_in_year(year, object_tree_folder)
 
     def _resolve_decades(self, object_tree_folder):
         dir = directory.Directory()
         sites = set()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             record = self._object_tree.get_object_record(pid)
-            if 'beginDate' in record and 'endDate' in record:
+            if "beginDate" in record and "endDate" in record:
                 for decade in self._decade_ranges_in_date_range(
-                    record['beginDate'], record['endDate']
+                    record["beginDate"], record["endDate"]
                 ):
                     sites.add(decade)
         dir.extend(sites)
@@ -134,11 +134,11 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         first_year_in_decade = self._validate_and_split_decade_range(decade)[0]
         dir = directory.Directory()
         sites = set()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             record = self._object_tree.get_object_record(pid)
-            if 'beginDate' in record and 'endDate' in record:
+            if "beginDate" in record and "endDate" in record:
                 for year in self._years_in_date_range_within_decade(
-                    first_year_in_decade, record['beginDate'], record['endDate']
+                    first_year_in_decade, record["beginDate"], record["endDate"]
                 ):
                     sites.add(str(year))
         dir.extend(sites)
@@ -147,13 +147,13 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _resolve_objects_in_year(self, year, object_tree_folder):
         dir = directory.Directory()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             record = self._object_tree.get_object_record(pid)
-            if 'beginDate' in record and 'endDate' in record:
+            if "beginDate" in record and "endDate" in record:
                 if self._is_year_in_date_range(
-                    year, record['beginDate'], record['endDate']
+                    year, record["beginDate"], record["endDate"]
                 ):
-                    dir.append(record['id'])
+                    dir.append(record["id"])
         self._raise_exception_if_empty_directory(dir)
         return dir
 
@@ -163,7 +163,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         end_dated = end_date.year / 10
         decades = []
         for d in range(begin_dated, end_dated + 1):
-            decades.append('{}-{}'.format(d * 10, d * 10 + 9))
+            decades.append("{}-{}".format(d * 10, d * 10 + 9))
         return decades
 
     def _is_year_in_date_range(self, year, begin_date, end_date):
@@ -181,7 +181,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _validate_and_split_decade_range(self, decade):
         try:
-            first_year, last_year = decade.split('-')
+            first_year, last_year = decade.split("-")
             if len(first_year) != 4 or len(last_year) != 4:
                 raise ValueError
             first_year, last_year = int(first_year), int(last_year)
@@ -189,7 +189,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
                 raise ValueError
         except ValueError:
             raise onedrive_exceptions.PathException(
-                'Expected decade range on form yyyy-yyyy'
+                "Expected decade range on form yyyy-yyyy"
             )
         else:
             return first_year, last_year

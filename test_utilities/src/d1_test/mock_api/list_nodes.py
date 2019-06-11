@@ -48,17 +48,17 @@ import d1_test.mock_api.util
 # Config
 
 N_TOTAL = 100
-LIST_NODES_ENDPOINT_RX = r'v([123])/node'
+LIST_NODES_ENDPOINT_RX = r"v([123])/node"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
         re.compile(
-            r'^' + d1_common.url.joinPathElements(base_url, LIST_NODES_ENDPOINT_RX)
+            r"^" + d1_common.url.joinPathElements(base_url, LIST_NODES_ENDPOINT_RX)
         ),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -70,18 +70,18 @@ def _request_callback(request):
         return exc_response_tup
     # Return regular response
     version_tag = _parse_url(request.url)
-    if version_tag == 'v1':
-        type_doc_name = 'node_list_1_0.xml'
-    elif version_tag == 'v2':
-        type_doc_name = 'node_list_2_0.xml'
+    if version_tag == "v1":
+        type_doc_name = "node_list_1_0.xml"
+    elif version_tag == "v2":
+        type_doc_name = "node_list_2_0.xml"
     else:
         assert False, 'Type doc not available for version. tag="{}"'.format(version_tag)
     node_list_xml_path = d1_common.utils.filesystem.abs_path(
-        os.path.join('type_docs', type_doc_name)
+        os.path.join("type_docs", type_doc_name)
     )
-    with open(node_list_xml_path, 'rb') as f:
+    with open(node_list_xml_path, "rb") as f:
         node_list_xml = f.read()
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
     return 200, header_dict, node_list_xml
 
 
@@ -89,6 +89,6 @@ def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'node'
-    assert not param_list, 'listNodes() accepts no parameters'
+    assert endpoint_str == "node"
+    assert not param_list, "listNodes() accepts no parameters"
     return version_tag

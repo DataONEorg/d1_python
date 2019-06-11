@@ -23,6 +23,7 @@ import logging
 
 import d1_gmn.tests.gmn_test_case
 
+
 def main():
     logger = logging.getLogger(__name__)
     logger.info("Creating GMN test template DB...")

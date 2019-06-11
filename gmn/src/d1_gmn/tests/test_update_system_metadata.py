@@ -44,8 +44,8 @@ import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestUpdateSystemMetadata')
-@freezegun.freeze_time('1988-10-10')
+@d1_test.d1_test_case.reproducible_random_decorator("TestUpdateSystemMetadata")
+@freezegun.freeze_time("1988-10-10")
 class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     # MNStorage.updateSystemMetadata(). Method was added in v2.
     def _update_access_policy(self, pid, permission_list):
@@ -58,7 +58,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
     def _get(self, pid, active_subj_list):
-        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ['trusted_subj']):
+        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ["trusted_subj"]):
             self.client_v2.get(pid)
 
     @responses.activate
@@ -71,24 +71,24 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v2)
         new_permission_list = [
-            (['subj5', 'subj6', 'subj7', 'subj8'], ['read', 'changePermission']),
-            (['subj9', 'subj10', 'subj11'], ['write']),
+            (["subj5", "subj6", "subj7", "subj8"], ["read", "changePermission"]),
+            (["subj9", "subj10", "subj11"], ["write"]),
         ]
         self._update_access_policy(pid, new_permission_list)
         # Access now denied for single previously allowed subjects.
-        for subject_str in [['subj1']]:
+        for subject_str in [["subj1"]]:
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
                 self._get(pid, subject_str)
         # Access now denied for multiple previously allowed subjects that had read,
         # write and changePermission
-        for subject_str in [['subj1', 'subj2'], ['subj3', 'subj4', 'subj12']]:
+        for subject_str in [["subj1", "subj2"], ["subj3", "subj4", "subj12"]]:
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
                 self._get(pid, subject_str)
         # Access still allowed for subject that retained access but switched level
         for subject_str in [
-            ['subj5', 'subj6', 'subj7', 'subj8'],
-            ['subj9', 'subj10'],
-            ['subj11'],
+            ["subj5", "subj6", "subj7", "subj8"],
+            ["subj9", "subj10"],
+            ["subj11"],
         ]:
             self._get(pid, subject_str)
 
@@ -106,7 +106,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             sysmeta_pyxb.dateSysMetadataModified = d1_common.date_time.utc_now() + datetime.timedelta(
                 1, 2
             )
-            sysmeta_pyxb.submitter = 'new_submitter'
+            sysmeta_pyxb.submitter = "new_submitter"
             # Update
             with pytest.raises(d1_common.types.exceptions.InvalidRequest):
                 gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
@@ -116,20 +116,20 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """MNStorage.updateSystemMetadata(): Successful update."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-                gmn_client_v2, sid=True, rights_holder='rights_holder_subj'
+                gmn_client_v2, sid=True, rights_holder="rights_holder_subj"
             )
             # Get sysmeta
             sciobj_bytes, sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
             # Update rightsHolder
             assert (
                 d1_common.xml.get_req_val(sysmeta_pyxb.rightsHolder)
-                == 'rights_holder_subj'
+                == "rights_holder_subj"
             )
-            sysmeta_pyxb.rightsHolder = 'newRightsHolder'
+            sysmeta_pyxb.rightsHolder = "newRightsHolder"
             assert gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
             # Verify
             sciobj_bytes, new_sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
-            assert new_sysmeta_pyxb.rightsHolder.value() == 'newRightsHolder'
+            assert new_sysmeta_pyxb.rightsHolder.value() == "newRightsHolder"
 
     @responses.activate
     @d1_gmn.tests.gmn_mock.no_client_trust_decorator
@@ -142,13 +142,13 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create base object with SID
-            with freezegun.freeze_time('1988-11-01') as freeze_time:
+            with freezegun.freeze_time("1988-11-01") as freeze_time:
                 # create
                 pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                     self.client_v2, sid=True
                 )
                 old_sciobj_bytes, old_sysmeta_pyxb = self.get_obj(self.client_v2, pid)
-                old_sysmeta_pyxb.formatId = 'new_format_id'
+                old_sysmeta_pyxb.formatId = "new_format_id"
                 # update the next day
                 freeze_time.tick(delta=datetime.timedelta(days=1))
                 assert self.client_v2.updateSystemMetadata(pid, old_sysmeta_pyxb)
@@ -197,7 +197,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             ver2_sciobj_bytes, ver2_sysmeta_pyxb = self.get_obj(gmn_client_v2, base_pid)
             # Add a new preferred node
             d1_common.replication_policy.sysmeta_add_preferred(
-                ver2_sysmeta_pyxb, 'new_node'
+                ver2_sysmeta_pyxb, "new_node"
             )
             gmn_client_v2.updateSystemMetadata(base_pid, ver2_sysmeta_pyxb)
             ver3_sciobj_bytes, ver3_sysmeta_pyxb = self.get_obj(gmn_client_v2, base_pid)
@@ -207,16 +207,16 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             ) + 1 == len(ver3_sysmeta_pyxb.replicationPolicy.preferredMemberNode)
             # Second round of changes
             d1_common.replication_policy.sysmeta_add_preferred(
-                ver3_sysmeta_pyxb, 'preferred_1'
+                ver3_sysmeta_pyxb, "preferred_1"
             )
             d1_common.replication_policy.sysmeta_add_preferred(
-                ver3_sysmeta_pyxb, 'preferred_2'
+                ver3_sysmeta_pyxb, "preferred_2"
             )
             d1_common.replication_policy.sysmeta_add_blocked(
-                ver3_sysmeta_pyxb, 'blocked_1'
+                ver3_sysmeta_pyxb, "blocked_1"
             )
             d1_common.replication_policy.sysmeta_add_blocked(
-                ver3_sysmeta_pyxb, 'blocked_2'
+                ver3_sysmeta_pyxb, "blocked_2"
             )
             gmn_client_v2.updateSystemMetadata(base_pid, ver3_sysmeta_pyxb)
             # Check

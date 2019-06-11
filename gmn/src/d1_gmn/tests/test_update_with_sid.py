@@ -37,7 +37,7 @@ import d1_common.types.exceptions
 import d1_test.d1_test_case
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestUpdateWithSid')
+@d1_test.d1_test_case.reproducible_random_decorator("TestUpdateWithSid")
 class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v2):
@@ -134,7 +134,7 @@ class TestUpdateWithSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # The time set in the freeze is not important, but a freeze is needed in
         # order for the now() used within the update() to match the now() used in
         # the test.
-        with freezegun.freeze_time('1967-05-27T01:02:03', tz_offset=5):
+        with freezegun.freeze_time("1967-05-27T01:02:03", tz_offset=5):
             self.update_obj(gmn_client_v2, first_pid)
             recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(
                 gmn_client_v2, first_pid

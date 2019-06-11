@@ -39,13 +39,13 @@ import d1_test.mock_api.util
 
 # Config
 
-QUERY_ENDPOINT_RX = r'v([123])/query(/(.*))?'
+QUERY_ENDPOINT_RX = r"v([123])/query(/(.*))?"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, QUERY_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, QUERY_ENDPOINT_RX)),
         callback=d1_test.mock_api.util.echo_get_callback,
-        content_type='',
+        content_type="",
     )

@@ -83,7 +83,7 @@ class get_subjects_from_certificate(object):
                 return person
         print(
             (
-                'SubjectInfo does not have any Person records matching Subject: {}'.format(
+                "SubjectInfo does not have any Person records matching Subject: {}".format(
                     person.subject.value()
                 )
             )
@@ -103,7 +103,7 @@ class get_subjects_from_certificate(object):
 
     def _get_session_from_certificate(self):
         subject, subject_info_xml = self._extract_session_from_x509_v3_certificate()
-        if subject_info_xml == '':
+        if subject_info_xml == "":
             return subject, None
         else:
             return subject, self._deserialize_subject_info(subject_info_xml)
@@ -112,14 +112,14 @@ class get_subjects_from_certificate(object):
         try:
             return d1_certificate.certificate_extractor.extract(self.cert)
         except Exception as e:
-            print('Error processing certificate: {}'.format(str(e)))
+            print("Error processing certificate: {}".format(str(e)))
             exit()
 
     def _deserialize_subject_info(self, subject_info_xml):
         try:
             return d1_common.types.dataoneTypes_v1.CreateFromDocument(subject_info_xml)
         except Exception as e:
-            print('Error deserializing SubjectInfo: {}'.format(str(e)))
+            print("Error deserializing SubjectInfo: {}".format(str(e)))
             exit()
 
 
@@ -137,38 +137,38 @@ def read_certificate_from_file(cert_pem_path):
         with open(cert_pem_path) as f:
             return f.read()
     except EnvironmentError as e:
-        print('Error reading certificate file: {}'.format(str(e)))
+        print("Error reading certificate file: {}".format(str(e)))
 
 
 def print_effective_subjects(primary_subject, subjects):
-    print('Effective subjects for certificate:')
-    print('{} (primary)'.format(primary_subject))
+    print("Effective subjects for certificate:")
+    print("{} (primary)".format(primary_subject))
     for subject in sorted(list(subjects)):
         if subject != primary_subject:
-            print('{}'.format(subject))
+            print("{}".format(subject))
 
 
 def main():
     parser = optparse.OptionParser()
-    parser.add_option('--verbose', action='store_true')
+    parser.add_option("--verbose", action="store_true")
 
     (options, args) = parser.parse_args()
 
     if len(args) != 1:
         print(
-            'Need a single argument which must be the PEM formatted X.509 v3 '
-            'DataONE certificate to examine'
+            "Need a single argument which must be the PEM formatted X.509 v3 "
+            "DataONE certificate to examine"
         )
         exit()
 
     if options.verbose:
-        logging.getLogger('').setLevel(logging.DEBUG)
+        logging.getLogger("").setLevel(logging.DEBUG)
     else:
-        logging.getLogger('').setLevel(logging.ERROR)
+        logging.getLogger("").setLevel(logging.ERROR)
 
     cert_pem_path = args[0]
     read_cert_from_file_and_print_subjects(options, cert_pem_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
