@@ -16,8 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# The Django init needs to occur before the django and gmn_test_case imports, so we're
+# stuck with a bit of a messy import section that isort and flake8 don't like.
 # isort:skip_file
 
+import bz2
 import contextlib
 import copy
 import datetime
@@ -78,7 +81,8 @@ import d1_client.mnclient_2_0
 ENABLE_SQL_PROFILING = False
 
 MOCK_GMN_BASE_URL = "http://gmn.client/node"
-
+REL_DB_FIXTURE_PATH = "json/db_fixture.json.bz2"
+DEFAULT_DB_KEY = 'default'
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +94,8 @@ def unique_sciobj_store(store_root_path):
         store_root_path,
         d1_test.instance_generator.random_data.random_lower_ascii(fixed_len=10),
     )
-    store_path = os.path.join(root_path, 'store')
-    upload_path = os.path.join(root_path, 'upload')
+    store_path = os.path.join(root_path, "store")
+    upload_path = os.path.join(root_path, "upload")
     with django.test.override_settings(
         OBJECT_STORE_PATH=store_path, FILE_UPLOAD_TEMP_DIR=upload_path
     ):
@@ -113,16 +117,13 @@ def unique_sciobj_store(store_root_path):
 
 def postgres_drop_if_exists(db_name):
     logger.debug("Dropping DB if exists: db_name={}".format(db_name))
-    run_postgres_sql(
-        "postgres", "drop database if exists {};".format(db_name)
-    )
+    run_postgres_sql("postgres", "drop database if exists {};".format(db_name))
 
 
 def postgres_create_blank(db_name):
     logger.debug("Creating blank DB. db_name={}".format(db_name))
-    run_postgres_sql(
-        "postgres", "create database {} encoding 'utf-8';".format(db_name)
-    )
+    run_postgres_sql("postgres", "create database {} encoding 'utf-8';".format(db_name))
+
 
 def postgres_db_exists(db_name):
     logger.debug("Checking if DB exists. db_name={}".format(db_name))
@@ -136,6 +137,7 @@ def postgres_db_exists(db_name):
     else:
         logger.debug("DB does not exist")
     return exists_bool
+
 
 def run_postgres_sql(db, sql):
     try:
@@ -157,11 +159,32 @@ def run_postgres_sql(db, sql):
 
 # Django DB
 
-def django_get_db_name_by_key(db_key):
+
+def django_get_db_name_by_key(db_key=DEFAULT_DB_KEY):
     return django.conf.settings.DATABASES[db_key]["NAME"]
 
 
-def django_populate_by_json(db_key, rel_json_fixture_path):
+def django_set_db_name_by_key(db_name, db_key=DEFAULT_DB_KEY):
+    django.conf.settings.DATABASES[db_key]["NAME"] = db_name
+
+
+def django_save_db_fixture(db_key=DEFAULT_DB_KEY):
+    fixture_file_path = d1_test.test_files.get_abs_test_file_path(REL_DB_FIXTURE_PATH)
+    logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
+    buf = io.StringIO()
+    django.core.management.call_command(
+        "dumpdata",
+        exclude=["auth.permission", "contenttypes"],
+        database=db_key,
+        stdout=buf,
+    )
+    with bz2.BZ2File(
+        fixture_file_path, "w", buffering=1024 ** 2, compresslevel=9
+    ) as bz2_file:
+        bz2_file.write(buf.getvalue().encode("utf-8"))
+
+
+def django_load_db_fixture(rel_json_fixture_path, db_key=DEFAULT_DB_KEY):
     logger.debug(
         "Populating DB from compressed JSON fixture file. db_key={}".format(db_key)
     )
@@ -170,76 +193,80 @@ def django_populate_by_json(db_key, rel_json_fixture_path):
     django_commit_and_close(db_key)
 
 
-def django_migrate(db_key):
+def django_migrate(db_key=DEFAULT_DB_KEY):
     logger.debug("Applying DB migrations. db_key={}".format(db_key))
     django.core.management.call_command("migrate", "--run-syncdb", database=db_key)
     django_commit_and_close(db_key)
 
+
 def django_dump_db_stats():
-    logger.debug('Database:')
-    logger.debug('  db_name={}'.format(django.conf.settings.DATABASES['default']['NAME']))
+    logger.debug("Database:")
     logger.debug(
-        '  total_sciobj_count={}'.format(
+        "  db_name={}".format(django.conf.settings.DATABASES["default"]["NAME"])
+    )
+    logger.debug(
+        "  total_sciobj_count={}".format(
             d1_gmn.app.views.internal.get_total_sciobj_count()
         )
     )
     logger.debug(
-        '  unique_subject_count={}'.format(
+        "  unique_subject_count={}".format(
             d1_gmn.app.views.internal.get_unique_subject_count()
         )
     )
     logger.debug(
-        '  total_permissions_count={}'.format(
+        "  total_permissions_count={}".format(
             d1_gmn.app.views.internal.get_total_permissions_count()
         )
     )
     logger.debug(
-        '  total_event_count={}'.format(
+        "  total_event_count={}".format(
             d1_gmn.app.views.internal.get_total_event_count()
         )
     )
     logger.debug(
-        '  total_format_count={}'.format(
+        "  total_format_count={}".format(
             d1_gmn.app.views.internal.get_total_format_count()
         )
     )
     logger.debug(
-        '  avg_sci_data_size_bytes={}'.format(
+        "  avg_sci_data_size_bytes={}".format(
             d1_gmn.app.views.internal.get_avg_sci_data_size_bytes()
         )
     )
     logger.debug(
-        '  sciobj_storage_used_bytes={}'.format(
+        "  sciobj_storage_used_bytes={}".format(
             d1_gmn.app.views.internal.get_sciobj_storage_used_bytes()
         )
     )
     logger.debug(
-        '  last_hour_event_count={}'.format(
+        "  last_hour_event_count={}".format(
             d1_gmn.app.views.internal.get_last_hour_event_count()
         )
     )
 
-# noinspection PyUnresolvedReferences
-def django_commit_and_close(db_key):
-    # logger.debug("db_commit_and_close() {}".format(db_key))
-    # try:
-    django.db.connections[db_key].commit()
-    # except (Exception, psycopg2.InterfaceError):
-    #   pass
-    # try:
-    django.db.connections.close_all()
-    # except django.db.transaction.TransactionManagementError:
-    # except (Exception, psycopg2.InterfaceError):
-    #   pass
+
+def django_clear_db(db_key=DEFAULT_DB_KEY):
+    django.core.management.call_command(
+        "flush", interactive=False, database=db_key
+    )
+
+def django_commit_and_close(db_key=DEFAULT_DB_KEY):
+    django_commit(db_key)
     django_close_all_connections()
+
+
+def django_commit(db_key=DEFAULT_DB_KEY):
+    django.db.connections[db_key].commit()
 
 
 def django_close_all_connections():
     for connection in django.db.connections.all():
         connection.close()
+    # TODO: Needed?
+    django.db.connections.close_all()
 
-
-#=============================================================================
+# =============================================================================
 
 
 class GMNTestCase(d1_test.d1_test_case.D1TestCase):
@@ -825,4 +852,3 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         except Exception as e:
             logger.error("SQL query error: {}".format(str(e)))
             raise
-

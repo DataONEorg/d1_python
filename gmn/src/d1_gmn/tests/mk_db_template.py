@@ -20,25 +20,20 @@
 
 
 import logging
+
 import d1_gmn.tests.gmn_test_case
-
-# Database key matching a key in settings_test.DATABASE
-TEMPLATE_DB_KEY = "default"
-
-# Path to fixture created with ``mk_db_fixture``.
-REL_DB_FIXTURE_PATH = "json/db_fixture.json.bz2"
-
 
 def main():
     logger = logging.getLogger(__name__)
     logger.info("Creating GMN test template DB...")
 
-    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key(TEMPLATE_DB_KEY)
+    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key()
     d1_gmn.tests.gmn_test_case.postgres_drop_if_exists(db_name)
     d1_gmn.tests.gmn_test_case.postgres_create_blank(db_name)
-    d1_gmn.tests.gmn_test_case.django_migrate(TEMPLATE_DB_KEY)
-    d1_gmn.tests.gmn_test_case.django_populate_by_json(TEMPLATE_DB_KEY, REL_DB_FIXTURE_PATH)
-
+    d1_gmn.tests.gmn_test_case.django_migrate()
+    d1_gmn.tests.gmn_test_case.django_load_db_fixture(
+        d1_gmn.tests.gmn_test_case.REL_DB_FIXTURE_PATH
+    )
     d1_gmn.tests.gmn_test_case.django_dump_db_stats()
 
 
