@@ -59,31 +59,6 @@ Configuration files for isort (`./.isort.cfg`) and Flake8 (`./.style.yapf`) are 
 ### Unit tests
 
 Testing is based on the [pytest](https://docs.pytest.org/en/latest/) unit test framework.
-
-I have found the following aliases handy for running the tests. If using the `bash` shell, these can be added to `~/.bashrc`.
-
-* Run tests serially. If the test uses one or more samples, and the result of the test has changed since the last time the sample was updated, open a diff between the current result and the sample in the PyCharm diff viewer and prompt the user for how to handle the mismatch. Options are to update the sample to match the current result and continue, ignore the mismatch for now and continue, or fail the test. When a test fails, stop the test run and open the location of the test failure in PyCharm, with the cursor set to the last line that was executed before the error and is part of d1_python.
-
-      alias p='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm'
-
-* Same as `p`, but more verbose and disabled capturing of console output. Capturing causes output from tests that passed to be hidden, making it easier to find the output from tests that failed. However, it makes debugging harder, as no output is displayed while stepping through tests that have not yet failed.
-
-      alias pc='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm -vv --capture=no'
-
-* Run tests in parallel using all available CPU cores, and create a coverage report. This greatly speeds up test execution but cannot be used with the PyCharm integration and interactive sample updates. 
-
-      alias pn='pytest -n auto --cov=. --cov-report=term --cov-report=xml'
-
-pytest searches for and runs all tests below the current directory, so starting pytest directly or via one of the aliases from the d1_python directory will run all tests.
-
-To run a specific test module, add a path to the test module. E.g.:
-
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py
- 
-To run only a single test, add a filter on the test number. E.g.:
-
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
-
  
 #### Sample files
 
@@ -137,6 +112,32 @@ We have added some custom functionality to pytest which can be enabled by launch
   * `parameterize_dict`: Support for parameterizing test functions by adding a dict class member containing parameter sets.
 
 Note: None of these switches can be used when running tests in parallel with xdist (`-n`, `--dist`, `--tx`).
+
+#### Aliases
+
+I have found the following aliases handy for running the tests. If using the `bash` shell, these can be added to `~/.bashrc`.
+
+* Run tests serially. If the test uses one or more samples, and the result of the test has changed since the last time the sample was updated, open a diff between the current result and the sample in the PyCharm diff viewer and prompt the user for how to handle the mismatch. Options are to update the sample to match the current result and continue, ignore the mismatch for now and continue, or fail the test. When a test fails, stop the test run and open the location of the test failure in PyCharm, with the cursor set to the last line that was executed before the error and is part of d1_python.
+
+      alias p='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm'
+
+* Same as `p`, but more verbose and disabled capturing of console output. Capturing causes output from tests that passed to be hidden, making it easier to find the output from tests that failed. However, it makes debugging harder, as no output is displayed while stepping through tests that have not yet failed.
+
+      alias pc='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm -vv --capture=no'
+
+* Run tests in parallel using all available CPU cores, and create a coverage report. This greatly speeds up test execution but cannot be used with the PyCharm integration and interactive sample updates. 
+
+      alias pn='pytest -n auto --cov=. --cov-report=term --cov-report=xml'
+
+pytest searches for and runs all tests below the current directory, so starting pytest directly or via one of the aliases from the d1_python directory will run all tests.
+
+To run a specific test module, add a path to the test module. E.g.:
+
+    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py
+ 
+To run only a single test, add a filter on the test number. E.g.:
+
+    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
 
 #### Debugging tests with PyCharm
 
